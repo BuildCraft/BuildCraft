@@ -10,7 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.Box;
 
 public class BlockScanner implements Iterable<BlockPos> {
@@ -81,7 +81,7 @@ public class BlockScanner implements Iterable<BlockPos> {
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
-        nbt.setTag("pos", NBTUtils.writeBlockPos(pos));
+        nbt.setTag("pos", NBTUtilBC.writeBlockPos(pos));
         nbt.setInteger("blocksDone", blocksDone);
         nbt.setInteger("iterationsPerCycle", iterationsPerCycle);
         NBTTagCompound boxNBT = new NBTTagCompound();
@@ -90,7 +90,7 @@ public class BlockScanner implements Iterable<BlockPos> {
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
-        pos = NBTUtils.readBlockPos(nbt.getTag("pos"));
+        pos = NBTUtilBC.readBlockPos(nbt.getTag("pos"));
         blocksDone = nbt.getInteger("blocksDone");
         iterationsPerCycle = nbt.getInteger("iterationsPerCycle");
         box.initialize(nbt.getCompoundTag("box"));

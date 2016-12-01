@@ -22,7 +22,7 @@ import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
@@ -152,10 +152,10 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         super.writeToNBT(nbt);
         nbt.setTag("mj_battery", battery.serializeNBT());
         if (laserPos != null) {
-            nbt.setTag("laser_pos", NBTUtils.writeVec3d(laserPos));
+            nbt.setTag("laser_pos", NBTUtilBC.writeVec3d(laserPos));
         }
         if (targetPos != null) {
-            nbt.setTag("target_pos", NBTUtils.writeBlockPos(targetPos));
+            nbt.setTag("target_pos", NBTUtilBC.writeBlockPos(targetPos));
         }
         for (int i = 0; i < averageValues.length; i++) {
             nbt.setLong("average_value_" + i, averageValues[i]);
@@ -167,8 +167,8 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
-        targetPos = NBTUtils.readBlockPos(nbt.getTag("target_pos"));
-        laserPos = NBTUtils.readVec3d(nbt.getTag("laser_pos"));
+        targetPos = NBTUtilBC.readBlockPos(nbt.getTag("target_pos"));
+        laserPos = NBTUtilBC.readVec3d(nbt.getTag("laser_pos"));
         for (int i = 0; i < averageValues.length; i++) {
             averageValues[i] = nbt.getLong("average_value_" + i);
         }

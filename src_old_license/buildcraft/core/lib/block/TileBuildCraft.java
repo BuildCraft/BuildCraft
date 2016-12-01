@@ -50,7 +50,7 @@ import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.network.PacketTileUpdate;
 import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -271,7 +271,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
                 for (IProperty<?> prop : bcBlock.properties) {
                     Object value = blockstate.getValue(prop);
                     if (value == null) continue;
-                    statenbt.setTag(prop.getName(), NBTUtils.writeObject(value));
+                    statenbt.setTag(prop.getName(), NBTUtilBC.writeObject(value));
                 }
                 nbt.setTag("blockstate", statenbt);
             }

@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.translation.I18n;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -19,7 +20,7 @@ import buildcraft.api.transport.neptune.PipePluggable;
 import buildcraft.api.transport.neptune.PluggableDefinition;
 
 import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.SoundUtil;
 import buildcraft.transport.BCTransportPlugs;
 import buildcraft.transport.gate.EnumGateLogic;
@@ -36,12 +37,12 @@ public class ItemPluggableGate extends ItemBC_Neptune implements IItemPluggable 
     }
 
     public static GateVariant getVariant(ItemStack stack) {
-        return new GateVariant(NBTUtils.getItemData(stack).getCompoundTag("gate"));
+        return new GateVariant(NBTUtilBC.getItemData(stack).getCompoundTag("gate"));
     }
 
     public ItemStack getStack(GateVariant variant) {
         ItemStack stack = new ItemStack(this);
-        NBTUtils.getItemData(stack).setTag("gate", variant.writeToNbt());
+        NBTUtilBC.getItemData(stack).setTag("gate", variant.writeToNbt());
         return stack;
     }
 
@@ -73,7 +74,7 @@ public class ItemPluggableGate extends ItemBC_Neptune implements IItemPluggable 
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> subItems) {
+    public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> subItems) {
         subItems.add(new ItemStack(this));
         for (EnumGateMaterial material : EnumGateMaterial.VALUES) {
             if (!material.canBeModified) {

@@ -32,7 +32,6 @@ import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.misc.ItemStackKey;
-import buildcraft.lib.misc.StackUtil;
 
 public class ItemRenderUtil {
 
@@ -100,7 +99,7 @@ public class ItemRenderUtil {
     /** Used to render a lot of items in sequential order. Assumes that you don't change the glstate inbetween calls.
      * You must call {@link #endItemBatch()} after your have rendered all of the items. */
     public static void renderItemStack(double x, double y, double z, ItemStack stack, EnumFacing dir, VertexBuffer vb) {
-        if (StackUtil.isInvalid(stack)) {
+        if (stack.isEmpty()) {
             return;
         }
         if (dir == null) {

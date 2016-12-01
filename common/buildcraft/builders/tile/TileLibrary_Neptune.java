@@ -50,7 +50,7 @@ public class TileLibrary_Neptune extends TileBCInventory_Neptune implements ITic
 
     @Override
     public void update() {
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             return;
         }
 

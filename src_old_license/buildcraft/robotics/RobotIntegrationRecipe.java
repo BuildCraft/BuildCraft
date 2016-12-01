@@ -15,7 +15,7 @@ import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.recipes.IntegrationRecipeBC;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class RobotIntegrationRecipe extends IntegrationRecipeBC {
     public RobotIntegrationRecipe() {
@@ -35,7 +35,7 @@ public class RobotIntegrationRecipe extends IntegrationRecipeBC {
         ArrayList<ItemStack> example = new ArrayList<>();
         for (RedstoneBoardNBT<?> nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
             ItemStack stack = new ItemStack(BuildCraftRobotics.redstoneBoard);
-            nbt.createBoard(NBTUtils.getItemData(stack));
+            nbt.createBoard(NBTUtilBC.getItemData(stack));
             example.add(stack);
         }
         list.add(example);

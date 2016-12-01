@@ -85,14 +85,14 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.robotics.ai.AIRobotMain;
 import buildcraft.robotics.ai.AIRobotShutdown;
 import buildcraft.robotics.ai.AIRobotSleep;
 import buildcraft.robotics.statements.ActionRobotWorkInArea;
 import buildcraft.robotics.statements.ActionRobotWorkInArea.AreaType;
 
-public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpawnData, IInventory, IFluidHandler, ICommandReceiver, IDebuggable {
+public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpawnData, ICommandReceiver, IDebuggable {
 
     public static final ResourceLocation ROBOT_BASE = new ResourceLocation("buildcraftrobotics", "entities/robot_base");
 
@@ -486,14 +486,14 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
         if (linkedDockingStationIndex != null) {
             NBTTagCompound linkedStationNBT = new NBTTagCompound();
-            linkedStationNBT.setTag("index", NBTUtils.writeBlockPos(linkedDockingStationIndex));
+            linkedStationNBT.setTag("index", NBTUtilBC.writeBlockPos(linkedDockingStationIndex));
             linkedStationNBT.setByte("side", (byte) linkedDockingStationSide.ordinal());
             nbt.setTag("linkedStation", linkedStationNBT);
         }
 
         if (currentDockingStationIndex != null) {
             NBTTagCompound currentStationNBT = new NBTTagCompound();
-            currentStationNBT.setTag("index", NBTUtils.writeBlockPos(currentDockingStationIndex));
+            currentStationNBT.setTag("index", NBTUtilBC.writeBlockPos(currentDockingStationIndex));
             currentStationNBT.setByte("side", (byte) currentDockingStationSide.ordinal());
             nbt.setTag("currentStation", currentStationNBT);
         }
@@ -560,13 +560,13 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
         if (nbt.hasKey("linkedStation")) {
             NBTTagCompound linkedStationNBT = nbt.getCompoundTag("linkedStation");
-            linkedDockingStationIndex = NBTUtils.readBlockPos(linkedStationNBT.getTag("index"));
+            linkedDockingStationIndex = NBTUtilBC.readBlockPos(linkedStationNBT.getTag("index"));
             linkedDockingStationSide = EnumFacing.values()[linkedStationNBT.getByte("side")];
         }
 
         if (nbt.hasKey("currentStation")) {
             NBTTagCompound currentStationNBT = nbt.getCompoundTag("currentStation");
-            currentDockingStationIndex = NBTUtils.readBlockPos(currentStationNBT.getTag("index"));
+            currentDockingStationIndex = NBTUtilBC.readBlockPos(currentStationNBT.getTag("index"));
             currentDockingStationSide = EnumFacing.values()[currentStationNBT.getByte("side")];
 
         }

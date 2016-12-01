@@ -311,7 +311,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         } catch (NumberFormatException nfe) {
             BCLog.logger.warn("[lib.markdown] " + args[1] + " was not a valid number: " + nfe.getLocalizedMessage());
         }
-        stack.stackSize = stackSize;
+        stack.setCount(stackSize);
 
         if (args.length == 2) return stack;
 
@@ -321,7 +321,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
                 // Use oredict
                 meta = OreDictionary.WILDCARD_VALUE;
             }
-            stack = new ItemStack(stack.getItem(), stack.stackSize, meta);
+            stack = new ItemStack(stack.getItem(), stack.getCount(), meta);
         } catch (NumberFormatException nfe) {
             BCLog.logger.warn("[lib.markdown] " + args[2] + " was not a valid number: " + nfe.getLocalizedMessage());
         }

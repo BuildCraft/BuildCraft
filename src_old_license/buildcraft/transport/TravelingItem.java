@@ -21,7 +21,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.utils.TransportUtils;
 
@@ -151,8 +151,8 @@ public class TravelingItem {
     public void readFromNBT(NBTTagCompound data) {
         toCenter = data.getBoolean("toCenter");
 
-        input = NBTUtils.readEnum(data.getTag("input"), EnumFacing.class);
-        output = NBTUtils.readEnum(data.getTag("output"), EnumFacing.class);
+        input = NBTUtilBC.readEnum(data.getTag("input"), EnumFacing.class);
+        output = NBTUtilBC.readEnum(data.getTag("output"), EnumFacing.class);
 
         if (data.hasKey("pos")) {
             pos = data.getFloat("pos");
@@ -183,8 +183,8 @@ public class TravelingItem {
         data.setTag("Item", itemStackTag);
 
         data.setBoolean("toCenter", toCenter);
-        data.setTag("input", NBTUtils.writeEnum(input));
-        data.setTag("output", NBTUtils.writeEnum(output));
+        data.setTag("input", NBTUtilBC.writeEnum(input));
+        data.setTag("output", NBTUtilBC.writeEnum(output));
 
         data.setByte("color", color != null ? (byte) color.getMetadata() : -1);
 

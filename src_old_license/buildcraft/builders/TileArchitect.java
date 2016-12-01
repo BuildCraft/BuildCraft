@@ -35,7 +35,7 @@ import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.Box.Kind;
 
@@ -181,7 +181,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
         NBTTagList subBptList = nbt.getTagList("subBlueprints", Constants.NBT.TAG_COMPOUND);
 
         for (int i = 0; i < subBptList.tagCount(); ++i) {
-            BlockPos index = NBTUtils.readBlockPos(subBptList.getCompoundTagAt(i));
+            BlockPos index = NBTUtilBC.readBlockPos(subBptList.getCompoundTagAt(i));
 
             addSubBlueprint(index);
         }
@@ -210,7 +210,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
         NBTTagList subBptList = new NBTTagList();
 
         for (BlockPos b : subBlueprints) {
-            subBptList.appendTag(NBTUtils.writeBlockPos(b));
+            subBptList.appendTag(NBTUtilBC.writeBlockPos(b));
         }
 
         nbt.setTag("subBlueprints", subBptList);

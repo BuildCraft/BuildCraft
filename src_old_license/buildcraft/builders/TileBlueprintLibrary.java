@@ -29,7 +29,7 @@ import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 import io.netty.buffer.ByteBuf;
 
@@ -229,7 +229,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
             if (handler instanceof LibraryTypeHandlerNBT) {
                 final NBTTagCompound nbt = new NBTTagCompound();
                 if (((LibraryTypeHandlerNBT) handler).store(getStackInSlot(0), nbt)) {
-                    data = NBTUtils.save(nbt);
+                    data = NBTUtilBC.save(nbt);
                 }
             } else if (handler instanceof LibraryTypeHandlerByteArray) {
                 data = ((LibraryTypeHandlerByteArray) handler).store(getStackInSlot(0));
@@ -281,7 +281,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
                         // Work around 32k max limit on client->server
                         final NBTTagCompound compound = BuildCraftBuilders.clientDB.load(entries.get(selected));
                         compound.setString("__filename", entries.get(selected).name);
-                        final byte[] bptData = NBTUtils.save(compound);
+                        final byte[] bptData = NBTUtilBC.save(compound);
                         final int chunks = (bptData.length + CHUNK_SIZE - 1) / CHUNK_SIZE;
 
                         BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadServerBegin", new CommandWriter() {

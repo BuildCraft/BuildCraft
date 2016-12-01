@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -32,25 +33,25 @@ public class TileAssemblyTable extends TileLaserTableBase {
     public static final int NET_RECIPE_STATE = 10;
     public final IItemHandlerModifiable inv = addInventory("", 3 * 4, ItemHandlerManager.EnumAccess.BOTH, EnumPipePart.VALUES);
     public SortedMap<AssemblyRecipe, EnumAssemblyRecipeState> recipesStates = new TreeMap<>(Comparator.comparing(assemblyRecipe -> assemblyRecipe.output.getItem().hashCode() + (assemblyRecipe.output.getTagCompound() == null ? 0
-        : assemblyRecipe.output.getTagCompound().hashCode()) + assemblyRecipe.output.getMetadata() * assemblyRecipe.output.getMaxStackSize() + assemblyRecipe.output.stackSize));
+        : assemblyRecipe.output.getTagCompound().hashCode()) + assemblyRecipe.output.getMetadata() * assemblyRecipe.output.getMaxStackSize() + assemblyRecipe.output.getCount()));
 
     private boolean extract(ImmutableSet<ItemStack> items, boolean simulate) {
-        List<ItemStack> itemsNeeded = items.stream().map(ItemStack::copy).collect(Collectors.toList());
+        NonNullList<ItemStack> itemsNeeded = items.stream().map(ItemStack::copy).collect(Collectors.toList());
         for (int i = 0; i < inv.getSlots(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
             for (Iterator<ItemStack> iterator = itemsNeeded.iterator(); iterator.hasNext();) {
                 ItemStack itemStack = iterator.next();
                 if (StackUtil.canMerge(stack, itemStack) && stack != null) {
-                    int spend = Math.min(itemStack.stackSize, stack.stackSize);
-                    itemStack.stackSize -= spend;
+                    int spend = Math.min(itemStack.getCount(), stack.getCount());
+                    itemStack.setCount(itemStack.getCount() - spend);
                     if (!simulate) {
-                        stack.stackSize -= spend;
+                        stack.setCount(stack.getCount() - spend);
                     }
-                    if (itemStack.stackSize <= 0) {
+                    if (itemStack.getCount() <= 0) {
                         iterator.remove();
                     }
                     if (!simulate) {
-                        if (stack.stackSize <= 0) {
+                        if (stack.getCount() <= 0) {
                             stack = null;
                         }
                         inv.setStackInSlot(i, stack);

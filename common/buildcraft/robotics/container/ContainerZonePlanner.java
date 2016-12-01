@@ -41,7 +41,7 @@ public class ContainerZonePlanner extends ContainerBCTile<TileZonePlanner> {
         addSlotToContainer(new SlotBase(tile.invInputMapLocation, 0, 26, 125) {
             @Override
             public boolean isItemValid(ItemStack stack) {
-                return stack.getItem() instanceof ItemMapLocation && stack.getTagCompound() != null && stack.getTagCompound().hasKey("chunkMapping") && stack.stackSize == 1;
+                return stack.getItem() instanceof ItemMapLocation && stack.getTagCompound() != null && stack.getTagCompound().hasKey("chunkMapping") && stack.getCount() == 1;
             }
         });
         addSlotToContainer(new SlotOutput(tile.invInputResult, 0, 74, 125));
@@ -54,7 +54,7 @@ public class ContainerZonePlanner extends ContainerBCTile<TileZonePlanner> {
         addSlotToContainer(new SlotBase(tile.invOutputMapLocation, 0, 233, 27) {
             @Override
             public boolean isItemValid(ItemStack stack) {
-                return stack.getItem() instanceof ItemMapLocation && stack.stackSize == 1;
+                return stack.getItem() instanceof ItemMapLocation && stack.getCount() == 1;
             }
         });
         addSlotToContainer(new SlotOutput(tile.invOutputResult, 0, 233, 75));

@@ -11,10 +11,11 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.api.inventory.IItemTransactor;
+
+import buildcraft.lib.misc.CapUtil;
 
 public class ItemTransactorHelper {
     @Nonnull
@@ -23,7 +24,12 @@ public class ItemTransactorHelper {
             return NoSpaceTransactor.INSTANCE;
         }
 
-        IItemHandler handler = provider.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
+        IItemTransactor trans = provider.getCapability(CapUtil.CAP_ITEM_TRANS, face);
+        if (trans != null) {
+            return trans;
+        }
+
+        IItemHandler handler = provider.getCapability(CapUtil.CAP_ITEMS, face);
         if (handler == null) {
             if (provider instanceof ISidedInventory) {
                 return new SidedInventoryWrapper((ISidedInventory) provider, face);

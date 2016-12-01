@@ -6,6 +6,8 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.IStackFilter;
 
+import buildcraft.lib.misc.StackUtil;
+
 public final class SidedInventoryWrapper extends AbstractInvItemTransactor {
     private final ISidedInventory sided;
     private final InventoryWrapper normal;
@@ -37,7 +39,7 @@ public final class SidedInventoryWrapper extends AbstractInvItemTransactor {
             // Delegate to the normal inserter - its just easier.
             return normal.extract(sidedSlot, filter, min, max, simulate);
         }
-        return null;
+        return StackUtil.EMPTY;
     }
 
     @Override

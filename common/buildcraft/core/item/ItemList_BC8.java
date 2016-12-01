@@ -24,7 +24,7 @@ import buildcraft.api.items.IList;
 import buildcraft.core.BCCoreGuis;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.list.ListHandler;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
@@ -35,9 +35,9 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         BCCoreGuis.LIST.openGUI(player);
-        return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
+        return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
     }
 
     @Override
@@ -64,12 +64,12 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList {
 
     @Override
     public String getName(ItemStack stack) {
-        return NBTUtils.getItemData(stack).getString("label");
+        return NBTUtilBC.getItemData(stack).getString("label");
     }
 
     @Override
     public boolean setName(ItemStack stack, String name) {
-        NBTUtils.getItemData(stack).setString("label", name);
+        NBTUtilBC.getItemData(stack).setString("label", name);
         return true;
     }
 

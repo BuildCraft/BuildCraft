@@ -62,7 +62,7 @@ public class TravellingItem {
     // List<EnumFacing> tried = null;
 
     public TravellingItem(NBTTagCompound nbt, long tickNow) {
-        stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("stack"));
+        stack = new ItemStack(nbt.getCompoundTag("stack"));
         int c = nbt.getByte("colour");
         this.colour = c == 0 ? null : EnumDyeColor.byMetadata(c - 1);
         this.state = nbt.getBoolean("toCenter") ? EnumTravelState.SERVER_TO_CENTER : EnumTravelState.SERVER_TO_EXIT;

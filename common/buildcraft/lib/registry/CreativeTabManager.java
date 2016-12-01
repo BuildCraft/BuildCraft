@@ -10,6 +10,7 @@ import java.util.Map;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class CreativeTabManager {
     private static final Map<String, CreativeTabBC> tabMap = new HashMap<>();
@@ -37,19 +38,25 @@ public class CreativeTabManager {
 
     public static void setItem(String name, Item item) {
         if (item != null) {
+            setItemStack(name, new ItemStack(item));
+        }
+    }
+
+    public static void setItemStack(String name, ItemStack item) {
+        if (item != null) {
             tabMap.get(name).item = item;
         }
     }
 
     private static class CreativeTabBC extends CreativeTabs {
-        private Item item = Items.COMPARATOR; // Temp.
+        private ItemStack item = new ItemStack(Items.COMPARATOR); // Temp.
 
         public CreativeTabBC(String name) {
             super(name);
         }
 
         @Override
-        public Item getTabIconItem() {
+        public ItemStack getTabIconItem() {
             return item;
         }
     }

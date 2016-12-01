@@ -22,8 +22,8 @@ public class DynamicTextureBC {
     public DynamicTextureBC(int iWidth, int iHeight) {
         width = iWidth;
         height = iHeight;
-        widthPow2 = MathHelper.roundUpToPowerOfTwo(iWidth);
-        heightPow2 = MathHelper.roundUpToPowerOfTwo(iHeight);
+        widthPow2 = MathHelper.smallestEncompassingPowerOfTwo(iWidth);
+        heightPow2 = MathHelper.smallestEncompassingPowerOfTwo(iHeight);
         dynamicTexture = new DynamicTexture(widthPow2, heightPow2);
         colorMap = dynamicTexture.getTextureData();
     }

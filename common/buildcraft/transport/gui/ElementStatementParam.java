@@ -8,7 +8,6 @@ import buildcraft.api.statements.StatementMouseClick;
 
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.IPositionedElement;
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.IReference;
 
 public class ElementStatementParam extends ElementGuiSlot<IStatementParameter> {
@@ -32,7 +31,7 @@ public class ElementStatementParam extends ElementGuiSlot<IStatementParameter> {
             GuiGate.SLOT_COLOUR.drawAt(this);
             super.drawBackground(partialTicks);
             ItemStack stack = param.getItemStack();
-            if (StackUtil.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 gui.drawItemStackAt(stack, getX() + 1, getY() + 1);
             }
         }
@@ -46,7 +45,7 @@ public class ElementStatementParam extends ElementGuiSlot<IStatementParameter> {
             GuiGate.SLOT_COLOUR.drawAt(element);
             super.draw(val, element);
             ItemStack stack = val.getItemStack();
-            if (StackUtil.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 gui.drawItemStackAt(stack, getX() + 1, getY() + 1);
             }
         }

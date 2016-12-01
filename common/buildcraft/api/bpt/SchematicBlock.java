@@ -10,7 +10,7 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public abstract class SchematicBlock extends Schematic {
     public final Block block;
@@ -39,7 +39,7 @@ public abstract class SchematicBlock extends Schematic {
         }
         this.state = block.getDefaultState();
         if (nbt.hasKey("state")) {
-            this.state = NBTUtils.readBlockStateProperties(state, nbt.getCompoundTag("state"));
+            this.state = NBTUtilBC.readBlockStateProperties(state, nbt.getCompoundTag("state"));
         }
     }
 
@@ -47,7 +47,7 @@ public abstract class SchematicBlock extends Schematic {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setString("block", block.getRegistryName().toString());
         if (state.getProperties().size() > 0) {
-            nbt.setTag("state", NBTUtils.writeBlockStateProperties(state));
+            nbt.setTag("state", NBTUtilBC.writeBlockStateProperties(state));
         }
         return nbt;
     }

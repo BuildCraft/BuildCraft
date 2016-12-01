@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
 import buildcraft.api.recipes.IIntegrationRecipeProvider;
 import buildcraft.api.recipes.IIntegrationRecipeRegistry;
@@ -17,7 +18,7 @@ public enum IntegrationRecipeRegistry implements IIntegrationRecipeRegistry {
     private final List<IIntegrationRecipeProvider> providers = new ArrayList<>();
 
     @Override
-    public IntegrationRecipe getRecipeFor(ItemStack target, List<ItemStack> toIntegrate) {
+    public IntegrationRecipe getRecipeFor(ItemStack target, NonNullList<ItemStack> toIntegrate) {
         for (IntegrationRecipe recipe : recipes) {
             if (matches(recipe, target, toIntegrate)) {
                 return recipe;
@@ -32,7 +33,7 @@ public enum IntegrationRecipeRegistry implements IIntegrationRecipeRegistry {
         return null;
     }
 
-    public static boolean matches(IntegrationRecipe recipe, ItemStack target, List<ItemStack> toIntegrate) {
+    public static boolean matches(IntegrationRecipe recipe, ItemStack target, NonNullList<ItemStack> toIntegrate) {
         if (!StackUtil.contains(recipe.target, target)) {
             return false;
         }

@@ -80,7 +80,7 @@ public class MessageMarker implements IMessage {
 
         @SideOnly(Side.CLIENT)
         private static void handleClient(MessageMarker message, MessageContext ctx) {
-            World world = Minecraft.getMinecraft().theWorld;
+            World world = Minecraft.getMinecraft().world;
             if (world == null) {
                 if (DEBUG) {
                     BCLog.logger.warn("[lib.messages][marker] The world was null for a message!");

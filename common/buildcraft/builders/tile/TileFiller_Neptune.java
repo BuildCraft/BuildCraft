@@ -33,8 +33,8 @@ import buildcraft.lib.bpt.vanilla.SchematicAir;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.EnumAxisOrder;
+import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 
@@ -80,7 +80,7 @@ public class TileFiller_Neptune extends TileBC_Neptune implements ITickable, IDe
     @Override
     public void update() {
         battery.tick(getWorld(), getPos());
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             tickingBuilder.tick(Side.CLIENT);
             // client stuffs
         } else {
@@ -152,7 +152,7 @@ public class TileFiller_Neptune extends TileBC_Neptune implements ITickable, IDe
                 double y = changeAt.getY() + 0.5;
                 double z = changeAt.getZ() + 0.5;
                 EnumParticleTypes type = id == NET_CLEAR ? EnumParticleTypes.SMOKE_NORMAL : EnumParticleTypes.CLOUD;
-                worldObj.spawnParticle(type, x, y, z, 0, 0, 0);
+                world.spawnParticle(type, x, y, z, 0, 0, 0);
             }
             // All animation types
             else if (id == NET_ANIM_ITEM) tickingBuilder.readPayload(EnumBuilderMessage.ANIMATION_ITEM, buffer, side);

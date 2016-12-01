@@ -5,7 +5,10 @@
 package buildcraft.core.list;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.lwjgl.input.Keyboard;
 
@@ -13,6 +16,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.lists.ListMatchHandler;
@@ -39,7 +43,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
     private static final GuiIcon ICON_ONE_STACK = new GuiIcon(TEXTURE_BASE, 0, 191, 20, 20);
     private static final int BUTTON_COUNT = 3;
 
-    private final Map<Integer, Map<ListMatchHandler.Type, List<ItemStack>>> exampleCache = new HashMap<>();
+    private final Map<Integer, Map<ListMatchHandler.Type, NonNullList<ItemStack>>> exampleCache = new HashMap<>();
     private GuiTextField textField;
 
     public GuiList(EntityPlayer iPlayer) {
@@ -76,7 +80,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
                         if (shouldDrawHighlight()) {
                             return super.getStack();
                         } else {
-                            List<ItemStack> data = gui.getExamplesList(listSlot.lineIndex, container.lines[listSlot.lineIndex].getSortingType());
+                            NonNullList<ItemStack> data = gui.getExamplesList(listSlot.lineIndex, container.lines[listSlot.lineIndex].getSortingType());
                             if (data.size() >= listSlot.slotIndex) {
                                 return data.get(listSlot.slotIndex - 1);
                             } else {
@@ -150,7 +154,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
     }
 
     private boolean isCarryingNonEmptyList() {
-        ItemStack stack = mc.thePlayer.inventory.getItemStack();
+        ItemStack stack = mc.player.inventory.getItemStack();
         return stack != null && stack.getItem() instanceof ItemList_BC8 && stack.getTagCompound() != null;
     }
 
@@ -189,24 +193,24 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
     }
 
     private void clearExamplesCache(int lineId) {
-        Map<ListMatchHandler.Type, List<ItemStack>> exampleList = exampleCache.get(lineId);
+        Map<ListMatchHandler.Type, NonNullList<ItemStack>> exampleList = exampleCache.get(lineId);
         if (exampleList != null) {
             exampleList.clear();
         }
     }
 
-    private List<ItemStack> getExamplesList(int lineId, ListMatchHandler.Type type) {
-        Map<ListMatchHandler.Type, List<ItemStack>> exampleList = exampleCache.get(lineId);
+    private NonNullList<ItemStack> getExamplesList(int lineId, ListMatchHandler.Type type) {
+        Map<ListMatchHandler.Type, NonNullList<ItemStack>> exampleList = exampleCache.get(lineId);
         if (exampleList == null) {
             exampleList = new EnumMap<>(ListMatchHandler.Type.class);
             exampleCache.put(lineId, exampleList);
         }
 
         if (!exampleList.containsKey(type)) {
-            List<ItemStack> examples = container.lines[lineId].getExamples();
+            NonNullList<ItemStack> examples = container.lines[lineId].getExamples();
             ItemStack input = container.lines[lineId].stacks[0];
             if (input != null) {
-                List<ItemStack> repetitions = new ArrayList<>();
+                NonNullList<ItemStack> repetitions = new ArrayList<>();
                 for (ItemStack is : examples) {
                     if (StackUtil.isMatchingItem(input, is, true, false)) {
                         repetitions.add(is);

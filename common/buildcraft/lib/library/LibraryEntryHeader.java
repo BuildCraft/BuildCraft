@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
 import buildcraft.lib.BCLibDatabase;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.permission.PlayerOwner;
 
 public final class LibraryEntryHeader implements Comparable<LibraryEntryHeader> {
@@ -27,8 +27,8 @@ public final class LibraryEntryHeader implements Comparable<LibraryEntryHeader> 
     }
 
     public LibraryEntryHeader(PacketBuffer buffer) {
-        this.name = buffer.readStringFromBuffer(256);
-        this.kind = buffer.readStringFromBuffer(30);
+        this.name = buffer.readString(256);
+        this.kind = buffer.readString(30);
         int year = buffer.readInt();
         int month = buffer.readByte();
         int dayOfMonth = buffer.readByte();
@@ -57,7 +57,7 @@ public final class LibraryEntryHeader implements Comparable<LibraryEntryHeader> 
     public LibraryEntryHeader(NBTTagCompound nbt) {
         this.name = nbt.getString("name");
         this.kind = nbt.getString("kind");
-        this.creation = NBTUtils.readLocalDateTime(nbt.getCompoundTag("creation"));
+        this.creation = NBTUtilBC.readLocalDateTime(nbt.getCompoundTag("creation"));
         this.author = PlayerOwner.read(nbt.getCompoundTag("author"));
         this.hash = computeHash();
     }
@@ -66,7 +66,7 @@ public final class LibraryEntryHeader implements Comparable<LibraryEntryHeader> 
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setString("name", name);
         nbt.setString("kind", kind);
-        nbt.setTag("creation", NBTUtils.writeLocalDateTime(creation));
+        nbt.setTag("creation", NBTUtilBC.writeLocalDateTime(creation));
         nbt.setTag("author", author.writeToNBT());
         return nbt;
     }

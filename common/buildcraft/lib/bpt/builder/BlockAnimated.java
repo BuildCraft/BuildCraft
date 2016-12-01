@@ -12,7 +12,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.LoadingException;
 
 public class BlockAnimated extends AbstractAnimatedElement {
@@ -34,18 +34,18 @@ public class BlockAnimated extends AbstractAnimatedElement {
 
     public BlockAnimated(NBTTagCompound nbt) throws LoadingException {
         super(nbt);
-        this.state = NBTUtils.readEntireBlockState(nbt.getCompoundTag("state"));
-        this.startPos = NBTUtils.readVec3d(nbt.getTag("startPos"));
-        this.endPos = NBTUtils.readVec3d(nbt.getTag("endPos"));
+        this.state = NBTUtilBC.readEntireBlockState(nbt.getCompoundTag("state"));
+        this.startPos = NBTUtilBC.readVec3d(nbt.getTag("startPos"));
+        this.endPos = NBTUtilBC.readVec3d(nbt.getTag("endPos"));
         this.endMotion = nbt.getLong("endMotion");
     }
 
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = super.serializeNBT();
-        nbt.setTag("state", NBTUtils.writeEntireBlockState(state));
-        nbt.setTag("startPos", NBTUtils.writeVec3d(startPos));
-        nbt.setTag("endPos", NBTUtils.writeVec3d(endPos));
+        nbt.setTag("state", NBTUtilBC.writeEntireBlockState(state));
+        nbt.setTag("startPos", NBTUtilBC.writeVec3d(startPos));
+        nbt.setTag("endPos", NBTUtilBC.writeVec3d(endPos));
         return nbt;
     }
 

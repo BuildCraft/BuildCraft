@@ -23,10 +23,10 @@ import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.gui.slot.IPhantomSlot;
+import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.MessageContainer;
 import buildcraft.lib.net.MessageWidget;
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.net.command.IPayloadWriter;
 
 public abstract class ContainerBC_Neptune extends Container {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.container");
@@ -78,7 +78,7 @@ public abstract class ContainerBC_Neptune extends Container {
             }
         } else {
             MessageWidget message = new MessageWidget(windowId, widgetId, writer);
-            if (player.worldObj.isRemote) {
+            if (player.world.isRemote) {
                 BCMessageHandler.netWrapper.sendToServer(message);
             } else {
                 BCMessageHandler.netWrapper.sendTo(message, (EntityPlayerMP) player);
@@ -99,9 +99,9 @@ public abstract class ContainerBC_Neptune extends Container {
             ItemStack itemStack;
             if (playerStack != null && (slot.getStack() == null || ((IPhantomSlot) slot).canAdjust())) {
                 ItemStack copy = playerStack.copy();
-                copy.stackSize = 1;
+                copy.setCount(1);
                 if (ItemStack.areItemsEqual(copy, slot.getStack()) && ItemStack.areItemStackTagsEqual(copy, slot.getStack())) {
-                    copy.stackSize += slot.getStack().stackSize;
+                    copy.setCount(copy.getCount() + slot.getStack().getCount());
                 }
                 slot.putStack(copy);
             } else {
@@ -119,7 +119,7 @@ public abstract class ContainerBC_Neptune extends Container {
 
     public final void sendMessage(IPayloadWriter writer) {
         MessageContainer message = new MessageContainer(windowId, writer);
-        if (player.worldObj.isRemote) {
+        if (player.world.isRemote) {
             BCMessageHandler.netWrapper.sendToServer(message);
         } else {
             BCMessageHandler.netWrapper.sendTo(message, (EntityPlayerMP) player);

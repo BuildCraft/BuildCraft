@@ -91,7 +91,7 @@ public class ContainerList extends ContainerBC_Neptune {
     public void switchButton(final int lineIndex, final int button) {
         lines[lineIndex].toggleOption(button);
 
-        if (player.worldObj.isRemote) {
+        if (player.world.isRemote) {
             BCMessageHandler.netWrapper.sendToServer(new MessageContainer(this, (buffer) -> {
                 buffer.writeByte(NET_ID_BUTTON);
                 buffer.writeByte(lineIndex);
@@ -113,7 +113,7 @@ public class ContainerList extends ContainerBC_Neptune {
     public void setLabel(final String text) {
         BCCoreItems.list.setName(getListItemStack(), text);
 
-        if (player.worldObj.isRemote) {
+        if (player.world.isRemote) {
             BCMessageHandler.netWrapper.sendToServer(new MessageContainer(this, (buffer) -> {
                 buffer.writeByte(NET_ID_LABEL);
                 buffer.writeString(text);
@@ -127,7 +127,7 @@ public class ContainerList extends ContainerBC_Neptune {
             int id = payload.readUnsignedByte();
             switch (id) {
                 case NET_ID_LABEL: {
-                    setLabel(payload.readStringFromBuffer(1024));
+                    setLabel(payload.readString(1024));
                     return;
                 }
                 case NET_ID_BUTTON: {

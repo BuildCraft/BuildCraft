@@ -18,6 +18,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -213,7 +214,7 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
             enableBindings();
             ItemStack out = currentRecipe.getCraftingResult(crafting);
             if (out != null) {
-                ItemStack[] leftOvers = currentRecipe.getRemainingItems(crafting);
+                NonNullList<ItemStack> leftOvers = currentRecipe.getRemainingItems(crafting);
                 for (int i = 0; i < leftOvers.length; i++) {
                     CraftingSlot slot = craftingSlots[i];
                     ItemStack before = slot.get();
@@ -278,7 +279,7 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
         public ItemStack useAndAdd(@Nonnull ItemStack leftOver) {
             ItemStack current = get();
             if (StackUtil.canMerge(current, leftOver)) {
-                if (leftOver.stackSize == 1) {
+                if (leftOver.getCount() == 1) {
                     return null;
                 }
             }

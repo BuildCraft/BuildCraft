@@ -135,12 +135,12 @@ public abstract class BCLibProxy implements IGuiHandler {
 
         @Override
         public World getClientWorld() {
-            return Minecraft.getMinecraft().theWorld;
+            return Minecraft.getMinecraft().world;
         }
 
         @Override
         public EntityPlayer getClientPlayer() {
-            return Minecraft.getMinecraft().thePlayer;
+            return Minecraft.getMinecraft().player;
         }
 
         @Override
@@ -162,7 +162,7 @@ public abstract class BCLibProxy implements IGuiHandler {
 
         @Override
         public <T extends TileEntity> T getServerTile(T tile) {
-            if (tile != null && tile.hasWorldObj()) {
+            if (tile != null && tile.hasWorld()) {
                 World world = tile.getWorld();
                 if (world.isRemote && Minecraft.getMinecraft().isSingleplayer()) {
                     WorldServer server = DimensionManager.getWorld(world.provider.getDimension());

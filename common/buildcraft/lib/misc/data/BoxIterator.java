@@ -9,7 +9,7 @@ import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.core.IBox;
 
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.VecUtil;
 
 public class BoxIterator implements Iterator<BlockPos> {
@@ -32,22 +32,22 @@ public class BoxIterator implements Iterator<BlockPos> {
     }
 
     public BoxIterator(NBTTagCompound nbt) {
-        min = NBTUtils.readBlockPos(nbt.getTag("min"));
-        max = NBTUtils.readBlockPos(nbt.getTag("max"));
+        min = NBTUtilBC.readBlockPos(nbt.getTag("min"));
+        max = NBTUtilBC.readBlockPos(nbt.getTag("max"));
         invert = nbt.getBoolean("invert");
         repeat = false;
         order = AxisOrder.readNbt(nbt.getCompoundTag("order"));
-        current = NBTUtils.readBlockPos(nbt.getTag("current"));
+        current = NBTUtilBC.readBlockPos(nbt.getTag("current"));
     }
 
     public NBTTagCompound writeToNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag("min", NBTUtils.writeBlockPos(min));
-        nbt.setTag("max", NBTUtils.writeBlockPos(max));
+        nbt.setTag("min", NBTUtilBC.writeBlockPos(min));
+        nbt.setTag("max", NBTUtilBC.writeBlockPos(max));
         nbt.setBoolean("invert", invert);
         // repeat
         nbt.setTag("order", order.writeNBT());
-        nbt.setTag("current", NBTUtils.writeBlockPos(current));
+        nbt.setTag("current", NBTUtilBC.writeBlockPos(current));
         return nbt;
     }
 

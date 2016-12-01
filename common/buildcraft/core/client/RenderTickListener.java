@@ -93,7 +93,7 @@ public enum RenderTickListener {
     public void renderOverlay(RenderGameOverlayEvent.Text event) {
         Minecraft mc = Minecraft.getMinecraft();
         if (!mc.gameSettings.showDebugInfo) return;
-        if (mc.thePlayer.hasReducedDebug() || mc.gameSettings.reducedDebugInfo || !mc.thePlayer.capabilities.isCreativeMode) {
+        if (mc.player.hasReducedDebug() || mc.gameSettings.reducedDebugInfo || !mc.player.capabilities.isCreativeMode) {
             return;
         }
         List<String> left = event.getLeft();
@@ -134,7 +134,7 @@ public enum RenderTickListener {
 
     private static IDebuggable getDebuggableObject(RayTraceResult mouseOver) {
         Type type = mouseOver.typeOfHit;
-        WorldClient world = Minecraft.getMinecraft().theWorld;
+        WorldClient world = Minecraft.getMinecraft().world;
         if (type == Type.BLOCK) {
             BlockPos pos = mouseOver.getBlockPos();
             TileEntity tile = world.getTileEntity(pos);
@@ -192,11 +192,11 @@ public enum RenderTickListener {
 
     private static void renderHeldItemInWorld(float partialTicks) {
         Minecraft mc = Minecraft.getMinecraft();
-        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        EntityPlayer player = Minecraft.getMinecraft().player;
         if (player == null) return;
         ItemStack mainHand = player.getHeldItemMainhand();
         ItemStack offHand = player.getHeldItemOffhand();
-        WorldClient world = mc.theWorld;
+        WorldClient world = mc.world;
 
         mc.mcProfiler.startSection("bc");
         mc.mcProfiler.startSection("renderWorld");

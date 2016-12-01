@@ -27,7 +27,7 @@ import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.AxisOrder;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.BoxIterator;
-import buildcraft.lib.net.command.IPayloadWriter;
+import buildcraft.lib.net.IPayloadWriter;
 
 public class TickingBlueprintBuilder {
     public enum EnumBuilderMessage {

@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -46,7 +47,7 @@ public class NBTAwareShapedOreRecipe extends ShapedOreRecipe {
                 } else if (target instanceof List) {
                     boolean matched = false;
 
-                    Iterator<ItemStack> itr = ((List<ItemStack>) target).iterator();
+                    Iterator<ItemStack> itr = ((NonNullList<ItemStack>) target).iterator();
                     while (itr.hasNext() && !matched) {
                         matched = OreDictionary.itemMatches(itr.next(), slot, false);
                     }

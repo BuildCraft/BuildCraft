@@ -14,8 +14,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import buildcraft.lib.BCLibProxy;
-import buildcraft.lib.net.command.IPayloadReceiver;
-import buildcraft.lib.net.command.IPayloadWriter;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -57,8 +55,8 @@ public class MessageUpdateTile implements IMessage {
         @Override
         public IMessage onMessage(final MessageUpdateTile message, MessageContext ctx) {
             EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
-            if (player == null || player.worldObj == null) return null;
-            TileEntity tile = player.worldObj.getTileEntity(message.pos);
+            if (player == null || player.world == null) return null;
+            TileEntity tile = player.world.getTileEntity(message.pos);
             if (tile instanceof IPayloadReceiver) {
                 try {
                     return ((IPayloadReceiver) tile).receivePayload(ctx, message.payload);

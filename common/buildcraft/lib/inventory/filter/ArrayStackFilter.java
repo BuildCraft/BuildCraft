@@ -5,6 +5,7 @@
 package buildcraft.lib.inventory.filter;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
 import buildcraft.api.core.IStackFilter;
 
@@ -13,7 +14,7 @@ import buildcraft.lib.misc.StackUtil;
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class ArrayStackFilter implements IStackFilter {
 
-    protected ItemStack[] stacks;
+    protected NonNullList<ItemStack> stacks;
 
     public ArrayStackFilter(ItemStack... stacks) {
         this.stacks = stacks;
@@ -42,7 +43,7 @@ public class ArrayStackFilter implements IStackFilter {
         return false;
     }
 
-    public ItemStack[] getStacks() {
+    public NonNullList<ItemStack> getStacks() {
         return stacks;
     }
 

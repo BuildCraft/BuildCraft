@@ -16,7 +16,7 @@ import buildcraft.lib.library.ILibraryEntryData;
 import buildcraft.lib.library.ILibraryStackHandler;
 import buildcraft.lib.library.LibraryEntry;
 import buildcraft.lib.library.LibraryEntryHeader;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.permission.PlayerOwner;
 
 public enum LibraryStackHandlerBook implements ILibraryStackHandler {
@@ -30,14 +30,14 @@ public enum LibraryStackHandlerBook implements ILibraryStackHandler {
         if (from.getItem() == Items.WRITTEN_BOOK) {
 
             LibraryEntryBook data = LibraryEntryBook.create(from);
-            NBTTagCompound nbt = NBTUtils.getItemData(from);
+            NBTTagCompound nbt = NBTUtilBC.getItemData(from);
             if (data != null && nbt != null) {
                 PlayerOwner author = PlayerOwner.lookup(nbt.getString("author"));
                 String title = nbt.getString("title");
 
                 LocalDateTime dateTime = null;
                 if (nbt.hasKey(NBT_DATE)) {
-                    dateTime = NBTUtils.readLocalDateTime(nbt.getCompoundTag(NBT_DATE));
+                    dateTime = NBTUtilBC.readLocalDateTime(nbt.getCompoundTag(NBT_DATE));
                 } else {
                     dateTime = LocalDateTime.now();
                 }
@@ -53,14 +53,14 @@ public enum LibraryStackHandlerBook implements ILibraryStackHandler {
     @Override
     @Nullable
     public ItemStack writeEntryToStack(@Nonnull ItemStack to, LibraryEntryHeader header, ILibraryEntryData data) {
-        if (to.getItem() != Items.BOOK || to.stackSize != 1) {
+        if (to.getItem() != Items.BOOK || to.getCount() != 1) {
             return null;
         }
         if (data instanceof LibraryEntryBook) {
             LibraryEntryBook book = (LibraryEntryBook) data;
             ItemStack newStack = book.saveToStack();
-            NBTTagCompound nbt = NBTUtils.getItemData(newStack);
-            nbt.setTag(NBT_DATE, NBTUtils.writeLocalDateTime(header.creation));
+            NBTTagCompound nbt = NBTUtilBC.getItemData(newStack);
+            nbt.setTag(NBT_DATE, NBTUtilBC.writeLocalDateTime(header.creation));
             String auth = header.author.getOwnerName();
             if (auth == null) {
                 BCLog.logger.warn("Unknown author! (" + header + ")");

@@ -32,7 +32,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
@@ -112,8 +112,8 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
         ItemStack robot = new ItemStack(BuildCraftRobotics.robotItem);
         NBTTagCompound boardCpt = new NBTTagCompound();
         board.createBoard(boardCpt);
-        NBTUtils.getItemData(robot).setTag("board", boardCpt);
-        NBTUtils.getItemData(robot).setInteger("energy", energy);
+        NBTUtilBC.getItemData(robot).setTag("board", boardCpt);
+        NBTUtilBC.getItemData(robot).setInteger("energy", energy);
         return robot;
     }
 
@@ -235,7 +235,7 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
     }
 
     private static NBTTagCompound getNBT(ItemStack stack) {
-        NBTTagCompound cpt = NBTUtils.getItemData(stack);
+        NBTTagCompound cpt = NBTUtilBC.getItemData(stack);
         if (!cpt.hasKey("board")) {
             RedstoneBoardRegistry.instance.getEmptyRobotBoard().createBoard(cpt);
         }

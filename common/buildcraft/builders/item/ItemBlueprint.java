@@ -23,7 +23,7 @@ import buildcraft.builders.BCBuildersConfig;
 import buildcraft.builders.bpt.PerSaveBptStorage;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.migrate.LibraryMigration;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.nbt.NbtSquisher;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -63,12 +63,12 @@ public class ItemBlueprint extends ItemBC_Neptune implements INamedItem {
 
     @Override
     public String getName(ItemStack stack) {
-        return NBTUtils.getItemData(stack).getString(NBT_NAME);
+        return NBTUtilBC.getItemData(stack).getString(NBT_NAME);
     }
 
     @Override
     public boolean setName(ItemStack stack, String name) {
-        NBTUtils.getItemData(stack).setString(NBT_NAME, name);
+        NBTUtilBC.getItemData(stack).setString(NBT_NAME, name);
         return true;
     }
 
@@ -78,7 +78,7 @@ public class ItemBlueprint extends ItemBC_Neptune implements INamedItem {
         super.addInformation(stack, playerIn, tooltip, advanced);
         if (advanced) {
             if (stack.getMetadata() == META_USED) {
-                NBTTagCompound nbt = NBTUtils.getItemData(stack);
+                NBTTagCompound nbt = NBTUtilBC.getItemData(stack);
                 int type = nbt.getInteger(NBT_TYPE);
                 if (type == TYPE_OLD) {
                     tooltip.add(type + ": BC 7.x + before");
@@ -181,7 +181,7 @@ public class ItemBlueprint extends ItemBC_Neptune implements INamedItem {
         public ItemStack save() {
             ItemStack stack = new ItemStack(ItemBlueprint.this, 1, META_USED);
             byte[] compressed = NbtSquisher.squishBuildCraftV1(saved);
-            NBTTagCompound nbt = NBTUtils.getItemData(stack);
+            NBTTagCompound nbt = NBTUtilBC.getItemData(stack);
             if (compressed.length < BCBuildersConfig.bptStoreExternalThreshold) {
                 nbt.setInteger(NBT_TYPE, TYPE_STORED);
                 nbt.setByteArray(NBT_STORED_DATA, compressed);

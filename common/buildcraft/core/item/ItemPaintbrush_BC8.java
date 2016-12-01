@@ -4,8 +4,6 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.item;
 
-import java.util.List;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -45,7 +43,7 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
     }
 
     @Override
-    public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> subItems) {
+    public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> subItems) {
         for (int i = 0; i < 17; i++) {
             subItems.add(new ItemStack(item, 1, i));
         }
@@ -61,7 +59,8 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
         Brush brush = new Brush(stack);
         Vec3d hitPos = VecUtil.add(new Vec3d(hitX, hitY, hitZ), pos);
         if (brush.useOnBlock(world, pos, world.getBlockState(pos), hitPos, facing)) {

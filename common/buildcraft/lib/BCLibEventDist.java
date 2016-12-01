@@ -85,7 +85,7 @@ public enum BCLibEventDist {
     @SideOnly(Side.CLIENT)
     public void renderWorldLast(RenderWorldLastEvent event) {
         Minecraft mc = Minecraft.getMinecraft();
-        EntityPlayer player = mc.thePlayer;
+        EntityPlayer player = mc.player;
         if (player == null) return;
         float partialTicks = event.getPartialTicks();
 

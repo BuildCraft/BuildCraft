@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -45,11 +46,11 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
     }
 
     @Override
-    public List<ItemStack> getClientExamples(Type type, ItemStack stack) {
+    public NonNullList<ItemStack> getClientExamples(Type type, ItemStack stack) {
         if (type == Type.MATERIAL) {
             FluidStack fStack = FluidUtil.getFluidContained(stack);
             if (fStack != null) {
-                List<ItemStack> examples = new ArrayList<>();
+                NonNullList<ItemStack> examples = new ArrayList<>();
                 for (FluidContainerRegistry.FluidContainerData data : FluidContainerRegistry.getRegisteredFluidContainerData()) {
                     if (fStack.isFluidEqual(data.fluid)) {
                         examples.add(data.filledContainer);
@@ -57,9 +58,9 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
                 }
                 return examples;
             }
-        } else if (type == Type.TYPE) {
+        } else if (type == Type.TYPE) {NonNullList<ItemStack>
             if (FluidContainerRegistry.isContainer(stack)) {
-                List<ItemStack> examples = new ArrayList<>();
+                NonNullList<ItemStack> examples = new ArrayList<>();
                 ItemStack emptyContainerStack = FluidContainerRegistry.drainFluidContainer(stack);
                 examples.add(stack);
                 examples.add(emptyContainerStack);

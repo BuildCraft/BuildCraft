@@ -111,7 +111,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
     }
 
     private void onSlotChanged(IItemHandlerModifiable itemHandler, int slot, ItemStack before, ItemStack after) {
-        if (StackUtil.isValid(after)) {
+        if (!after.isEmpty()) {
             if (!filterValid) {
                 currentFilter = slot;
                 filterValid = true;

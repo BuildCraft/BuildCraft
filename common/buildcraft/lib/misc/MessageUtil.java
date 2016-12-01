@@ -72,7 +72,7 @@ public class MessageUtil {
     }
 
     public static void writeBooleanArray(PacketBuffer buf, boolean[] bool) {
-        int byteLength = MathHelper.ceiling_double_int(bool.length / 8.0);
+        int byteLength = MathHelper.ceil(bool.length / 8.0);
         for (int b = 0; b < byteLength; b++) {
             short total = 0;
             for (int i = 0; i < 8 && i + b * 8 < bool.length; i++) {
@@ -91,7 +91,7 @@ public class MessageUtil {
     }
 
     public static void readBooleanArray(PacketBuffer buf, boolean[] into) {
-        int bytes = MathHelper.ceiling_double_int(into.length / 8.0);
+        int bytes = MathHelper.ceil(into.length / 8.0);
         for (int b = 0; b < bytes; b++) {
             short packed = buf.readUnsignedByte();
             for (int i = 0; i < 8 && i + b * 8 < into.length; i++) {

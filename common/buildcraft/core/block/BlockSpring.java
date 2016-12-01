@@ -4,7 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.block;
 
-import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.SoundType;
@@ -64,7 +63,7 @@ public class BlockSpring extends BlockBCBase_Neptune {
     // Other
 
     @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list) {
         for (EnumSpring type : EnumSpring.VALUES) {
             list.add(new ItemStack(this, 1, type.ordinal()));
         }

@@ -43,7 +43,7 @@ public class ItemWaterGel extends ItemBC_Neptune {
         }
 
         if (!player.capabilities.isCreativeMode) {
-            --stack.stackSize;
+            stack.setCount(stack.getCount() - 1);
         }
 
         // Same as ItemSnowball

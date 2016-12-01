@@ -40,8 +40,8 @@ public class GuiRectangle implements IPositionedElement {
     }
 
     public GuiRectangle createProgress(double widthPercent, double heightPercent) {
-        int nWidth = MathHelper.ceiling_double_int(width * widthPercent);
-        int nHeight = MathHelper.ceiling_double_int(height * heightPercent);
+        int nWidth = MathHelper.ceil(width * widthPercent);
+        int nHeight = MathHelper.ceil(height * heightPercent);
         return new GuiRectangle(x, y, nWidth, nHeight);
     }
 }

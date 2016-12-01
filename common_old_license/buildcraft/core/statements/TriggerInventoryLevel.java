@@ -93,7 +93,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
                     ItemStack stackInSlot = slot.getStackInSlot();
                     if (stackInSlot == null || StackUtil.canStacksOrListsMerge(stackInSlot, searchStack)) {
                         stackSpace++;
-                        foundItems += stackInSlot == null ? 0 : stackInSlot.stackSize;
+                        foundItems += stackInSlot == null ? 0 : stackInSlot.getCount();
                     }
                 }
             }

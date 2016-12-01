@@ -23,7 +23,7 @@ import buildcraft.api.blocks.IColorRemovable;
 import buildcraft.api.core.EnumColor;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.ModelHelper;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class ItemPaintbrush extends ItemBuildCraft {
     private static final int MAX_DAMAGE = 63;
@@ -39,7 +39,7 @@ public class ItemPaintbrush extends ItemBuildCraft {
     /** @param color The colour of the paintbrush. Can be null. */
     public ItemStack getItemStack(EnumDyeColor color) {
         ItemStack stack = new ItemStack(this, 1, color == null ? 0 : color.ordinal() + 1);
-        NBTTagCompound nbt = NBTUtils.getItemData(stack);
+        NBTTagCompound nbt = NBTUtilBC.getItemData(stack);
 
         // Tell ItemModelMesher that this is NOT damageable, so it will use the meta for the icon
         nbt.setBoolean("Unbreakable", true);
@@ -66,7 +66,7 @@ public class ItemPaintbrush extends ItemBuildCraft {
             stack.setTagCompound(null);
             super.setDamage(stack, 0);
         } else {
-            NBTTagCompound tag = NBTUtils.getItemData(stack);
+            NBTTagCompound tag = NBTUtilBC.getItemData(stack);
             tag.setByte("damage", (byte) damage);
         }
     }

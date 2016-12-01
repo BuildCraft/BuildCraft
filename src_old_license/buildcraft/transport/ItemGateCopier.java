@@ -16,7 +16,7 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.ModelHelper;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.transport.BlockGenericPipe.Part;
 import buildcraft.transport.BlockGenericPipe.RaytraceResult;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
@@ -43,7 +43,7 @@ public class ItemGateCopier extends ItemBuildCraft {
         boolean isCopying = !player.isSneaking();
         Block block = world.getBlockState(pos).getBlock();
         TileEntity tile = world.getTileEntity(pos);
-        NBTTagCompound data = NBTUtils.getItemData(stack);
+        NBTTagCompound data = NBTUtilBC.getItemData(stack);
         PipePluggable pluggable = null;
         Gate gate = null;
 

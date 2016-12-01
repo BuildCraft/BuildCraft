@@ -82,10 +82,10 @@ public class BuilderPlayer implements IMaterialProvider {
             } else {
                 IItemTransactor trans = ItemTransactorHelper.getTransactor(player.inventory);
                 IStackFilter filter = (stack) -> {
-                    copy.stackSize = stack.stackSize;
+                    copy.setCount(stack.getCount());
                     return ItemStack.areItemsEqual(stack, copy);
                 };
-                held = trans.extract(filter, requested.stackSize, requested.stackSize, false);
+                held = trans.extract(filter, requested.getCount(), requested.getCount(), false);
                 if (held != null) {
                     locked = true;
                     return true;
@@ -117,7 +117,7 @@ public class BuilderPlayer implements IMaterialProvider {
                 IItemTransactor trans = ItemTransactorHelper.getTransactor(player.inventory);
                 ItemStack leftOver = trans.insert(held, false, false);
                 if (leftOver != null) {
-                    InventoryUtil.drop(player.worldObj, player.posX, player.posY, player.posZ, leftOver);
+                    InventoryUtil.drop(player.world, player.posX, player.posY, player.posZ, leftOver);
                 }
                 held = null;
                 locked = false;

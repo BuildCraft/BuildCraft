@@ -97,10 +97,10 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     @Override
     public void update() {
-        if (cannotUpdate() || worldObj.isRemote) return;
+        if (cannotUpdate() || world.isRemote) return;
 
         // Check to see if we are still active
-        isOn = worldObj.isBlockIndirectlyGettingPowered(getPos()) > 0 && hasFuelToBurn();
+        isOn = world.isBlockIndirectlyGettingPowered(getPos()) > 0 && hasFuelToBurn();
 
         // Apply air cooling
         // TODO: biome-based
@@ -161,7 +161,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
             }
             if (pulseStage > 0.4 && pulseStage < 0.6) {
                 double multiplier = pulseStage * 1.8;// Get a number close to, or above 1
-                long power = MathHelper.floor_double_long(multiplier * microJoulesHeld);
+                long power = MathHelper.lfloor(multiplier * microJoulesHeld);
                 if (power > microJoulesHeld) {
                     power = microJoulesHeld;
                 }
@@ -212,7 +212,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     public boolean hasRedstoneSignal() {
-        return worldObj.isBlockPowered(getPos());
+        return world.isBlockPowered(getPos());
     }
 
     protected void addPower(long microJoules) {

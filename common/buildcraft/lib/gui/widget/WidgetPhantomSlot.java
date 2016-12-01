@@ -63,7 +63,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
                 if (toSet != null) {
                     toSet = toSet.copy();
                     if (single) {
-                        toSet.stackSize = 1;
+                        toSet.setCount(1);
                     }
                 }
             }
@@ -75,7 +75,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
     public IMessage handleWidgetDataClient(MessageContext ctx, PacketBufferBC buffer) throws IOException {
         byte id = buffer.readByte();
         if (id == NET_SERVER_TO_CLIENT_ITEM) {
-            stack = buffer.readItemStackFromBuffer();
+            stack = buffer.readItemStack();
             onSetStack();
         }
         return null;
@@ -95,14 +95,14 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
         } else {
             this.stack = stack;
             int max = getMaxStackSize(stack);
-            if (stack.stackSize > max) {
-                this.stack.stackSize = max;
+            if (stack.getCount() > max) {
+                this.stack.setCount(max);
             }
         }
-        if (tellClient && !container.player.worldObj.isRemote) {
+        if (tellClient && !container.player.world.isRemote) {
             sendWidgetData(buffer -> {
                 buffer.writeByte(NET_SERVER_TO_CLIENT_ITEM);
-                buffer.writeItemStackToBuffer(stack);
+                buffer.writeItemStack(stack);
             });
         }
         onSetStack();

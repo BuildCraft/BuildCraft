@@ -15,6 +15,7 @@ public class ItemInjectableHelper {
         if (provider instanceof IInjectable) {
             return (IInjectable) provider;
         }
+        // TODO: get a capability from the provider!
         return null;
     }
 }

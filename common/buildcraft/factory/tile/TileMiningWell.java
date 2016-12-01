@@ -1,10 +1,9 @@
 package buildcraft.factory.tile;
 
-import java.util.List;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.MinecraftForge;
@@ -38,7 +37,7 @@ public class TileMiningWell extends TileMiner {
                     setComplete(true);
                     return;
                 }
-                List<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) worldObj, currentPos, pos);
+                NonNullList<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) worldObj, currentPos, pos);
                 if (stacks != null) {
                     for (ItemStack stack : stacks) {
                         InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, stack);

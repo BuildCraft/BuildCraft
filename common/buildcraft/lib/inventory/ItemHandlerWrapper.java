@@ -6,6 +6,8 @@ import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.api.core.IStackFilter;
 
+import buildcraft.lib.misc.StackUtil;
+
 public final class ItemHandlerWrapper extends AbstractInvItemTransactor {
     private final IItemHandler wrapped;
 
@@ -21,13 +23,13 @@ public final class ItemHandlerWrapper extends AbstractInvItemTransactor {
     @Override
     protected ItemStack extract(int slot, IStackFilter filter, int min, int max, boolean simulate) {
         if (min <= 0) min = 1;
-        if (max < min) return null;
+        if (max < min) return StackUtil.EMPTY;
         ItemStack current = wrapped.getStackInSlot(slot);
-        if (current == null || current.stackSize < min) return null;
+        if (current.isEmpty() || current.getCount() < min) return StackUtil.EMPTY;
         if (filter.matches(asValid(current))) {
             return wrapped.extractItem(slot, max, simulate);
         }
-        return null;
+        return StackUtil.EMPTY;
     }
 
     @Override
@@ -37,6 +39,6 @@ public final class ItemHandlerWrapper extends AbstractInvItemTransactor {
 
     @Override
     protected boolean isEmpty(int slot) {
-        return wrapped.getStackInSlot(slot) == null;
+        return wrapped.getStackInSlot(slot).isEmpty();
     }
 }

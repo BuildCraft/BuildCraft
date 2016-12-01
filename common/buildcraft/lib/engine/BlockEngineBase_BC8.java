@@ -1,7 +1,6 @@
 package buildcraft.lib.engine;
 
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -106,12 +105,12 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile
             return null;
         }
         TileEngineBase_BC8 tile = constructor.get();
-        tile.setWorldObj(world);
+        tile.setWorld(world);
         return tile;
     }
 
     @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
+    public void getSubBlocks(Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
         for (E engine : getEngineProperty().getAllowedValues()) {
             if (engineTileConstructors.containsKey(engine)) {
                 list.add(new ItemStack(item, 1, engine.ordinal()));

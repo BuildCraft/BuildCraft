@@ -17,7 +17,7 @@ public abstract class TileMarker<C extends MarkerConnection<C>> extends TileBC_N
     public abstract MarkerCache<? extends MarkerSubCache<C>> getCache();
 
     public MarkerSubCache<C> getLocalCache() {
-        return getCache().getSubCache(worldObj);
+        return getCache().getSubCache(world);
     }
 
     /** @return True if this has lasers being emitted, or any other reason you want. Activates the surrounding "glow"

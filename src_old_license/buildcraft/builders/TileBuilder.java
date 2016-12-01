@@ -57,7 +57,7 @@ import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
 import buildcraft.lib.inventory.InventoryIterator;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.Box.Kind;
@@ -220,7 +220,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
             iterateBpt(true);
 
             if (initNBT.hasKey("iterator")) {
-                BlockPos expectedTo = NBTUtils.readBlockPos(initNBT.getTag("iterator"));
+                BlockPos expectedTo = NBTUtilBC.readBlockPos(initNBT.getTag("iterator"));
 
                 while (!done && currentBuilder != null && currentPathIterator != null) {
                     BlockPos bi = new BlockPos((int) currentPathIterator.ix, (int) currentPathIterator.iy, (int) currentPathIterator.iz);
@@ -487,7 +487,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
             NBTTagList list = nbttagcompound.getTagList("path", Constants.NBT.TAG_COMPOUND);
 
             for (int i = 0; i < list.tagCount(); ++i) {
-                path.add(NBTUtils.readBlockPos(list.get(i)));
+                path.add(NBTUtilBC.readBlockPos(list.get(i)));
             }
         }
 
@@ -514,7 +514,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
             NBTTagList list = new NBTTagList();
 
             for (BlockPos i : path) {
-                list.appendTag(NBTUtils.writeBlockPos(i));
+                list.appendTag(NBTUtilBC.writeBlockPos(i));
             }
 
             nbttagcompound.setTag("path", list);
@@ -533,7 +533,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
         if (currentPathIterator != null) {
             BlockPos nPos = new BlockPos((int) currentPathIterator.ix, (int) currentPathIterator.iy, (int) currentPathIterator.iz);
-            bptNBT.setTag("iterator", NBTUtils.writeBlockPos(nPos));
+            bptNBT.setTag("iterator", NBTUtilBC.writeBlockPos(nPos));
         }
 
         nbttagcompound.setTag("bptBuilder", bptNBT);

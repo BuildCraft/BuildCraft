@@ -13,6 +13,8 @@ import java.time.LocalTime;
 import java.util.Locale;
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -29,9 +31,9 @@ import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.misc.data.LoadingException;
 
-public final class NBTUtils {
+public final class NBTUtilBC {
     /** Deactivate constructor */
-    private NBTUtils() {
+    private NBTUtilBC() {
 
     }
 
@@ -46,8 +48,8 @@ public final class NBTUtils {
         return null;
     }
 
-    public static NBTTagCompound getItemData(ItemStack stack) {
-        if (stack == null) {
+    public static NBTTagCompound getItemData(@Nonnull ItemStack stack) {
+        if (stack.isEmpty()) {
             return new NBTTagCompound();
         }
         NBTTagCompound nbt = stack.getTagCompound();
@@ -289,7 +291,7 @@ public final class NBTUtils {
 
     public static NBTTagCompound writeBlockStateProperties(IBlockState state) {
         NBTTagCompound nbt = new NBTTagCompound();
-        for (IProperty<?> prop : state.getPropertyNames()) {
+        for (IProperty<?> prop : state.getPropertyKeys()) {
             nbt.setString(prop.getName().toLowerCase(Locale.ROOT), getPropName(state, prop));
         }
         return nbt;
@@ -300,7 +302,7 @@ public final class NBTUtils {
     }
 
     public static IBlockState readBlockStateProperties(IBlockState state, NBTTagCompound nbt) {
-        for (IProperty<?> prop : state.getPropertyNames()) {
+        for (IProperty<?> prop : state.getPropertyKeys()) {
             state = updateState(state, prop, nbt.getString(prop.getName().toLowerCase(Locale.ROOT)));
         }
         return state;

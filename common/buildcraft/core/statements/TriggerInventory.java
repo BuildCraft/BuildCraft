@@ -78,8 +78,8 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
                 // TODO: Replace some of this with StackUtil.isInvalid
                 foundItems |= stack != null && (searchedStack == null || StackUtil.canStacksOrListsMerge(stack, searchedStack));
 
-                foundSpace |= (stack == null || (StackUtil.canStacksOrListsMerge(stack, searchedStack) && stack.stackSize < stack.getMaxStackSize()))//
-                    && (searchedStack == null || searchedStack.getItem() instanceof IList || StackUtil.isInvalid(handler.insertItem(i, searchedStack, true)));
+                foundSpace |= (stack == null || (StackUtil.canStacksOrListsMerge(stack, searchedStack) && stack.getCount() < stack.getMaxStackSize()))//
+                    && (searchedStack == null || searchedStack.getItem() instanceof IList || handler.insertItem(i, searchedStack, true).isEmpty());
                 // On the test above, we deactivate item list as inventories
                 // typically don't check for lists possibility. This is a
                 // heuristic which is more desirable than expensive computation

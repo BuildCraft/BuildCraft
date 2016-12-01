@@ -32,7 +32,7 @@ import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.blueprints.IndexRequirementMap;
 import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class BuildingSlotBlock extends BuildingSlot {
 
@@ -196,7 +196,7 @@ public class BuildingSlotBlock extends BuildingSlot {
     @Override
     public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
         nbt.setByte("mode", (byte) mode.ordinal());
-        nbt.setTag("pos", NBTUtils.writeBlockPos(pos));
+        nbt.setTag("pos", NBTUtilBC.writeBlockPos(pos));
 
         if (schematic != null) {
             NBTTagCompound schematicNBT = new NBTTagCompound();
@@ -220,7 +220,7 @@ public class BuildingSlotBlock extends BuildingSlot {
     @Override
     public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) throws MappingNotFoundException {
         mode = Mode.values()[nbt.getByte("mode")];
-        pos = NBTUtils.readBlockPos(nbt);
+        pos = NBTUtilBC.readBlockPos(nbt);
 
         if (nbt.hasKey("schematic")) {
             schematic = (SchematicBlockBase) SchematicFactory.createSchematicFromWorldNBT(nbt.getCompoundTag("schematic"), registry);

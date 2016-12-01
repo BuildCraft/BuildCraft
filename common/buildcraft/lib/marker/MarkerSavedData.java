@@ -10,7 +10,7 @@ import net.minecraft.world.WorldSavedData;
 
 import buildcraft.api.core.BCLog;
 
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends MarkerConnection<C>> extends WorldSavedData {
     protected static final boolean DEBUG_FULL = MarkerSubCache.DEBUG_FULL;
@@ -30,7 +30,7 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
 
         NBTTagList positionList = (NBTTagList) nbt.getTag("positions");
         for (int i = 0; i < positionList.tagCount(); i++) {
-            markerPositions.add(NBTUtils.readBlockPos(positionList.get(i)));
+            markerPositions.add(NBTUtilBC.readBlockPos(positionList.get(i)));
         }
 
         NBTTagList connectionList = (NBTTagList) nbt.getTag("connections");
@@ -39,7 +39,7 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
             List<BlockPos> inner = new ArrayList<>();
             markerConnections.add(inner);
             for (int j = 0; j < positionList.tagCount(); j++) {
-                inner.add(NBTUtils.readBlockPos(positionList.get(j)));
+                inner.add(NBTUtilBC.readBlockPos(positionList.get(j)));
             }
         }
 
@@ -71,7 +71,7 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
 
         NBTTagList positionList = new NBTTagList();
         for (BlockPos p : markerPositions) {
-            positionList.appendTag(NBTUtils.writeBlockPos(p));
+            positionList.appendTag(NBTUtilBC.writeBlockPos(p));
         }
         nbt.setTag("positions", positionList);
 
@@ -79,7 +79,7 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
         for (List<BlockPos> connection : markerConnections) {
             NBTTagList inner = new NBTTagList();
             for (BlockPos p : connection) {
-                inner.appendTag(NBTUtils.writeBlockPos(p));
+                inner.appendTag(NBTUtilBC.writeBlockPos(p));
             }
             connectionList.appendTag(inner);
         }

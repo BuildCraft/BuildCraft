@@ -11,7 +11,7 @@ import buildcraft.BuildCraftRobotics;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.recipes.IProgrammingRecipe;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class BoardProgrammingRecipe implements IProgrammingRecipe {
     private class BoardSorter implements Comparator<ItemStack> {
@@ -38,7 +38,7 @@ public class BoardProgrammingRecipe implements IProgrammingRecipe {
         List<ItemStack> options = new ArrayList<>(width * height);
         for (RedstoneBoardNBT<?> nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
             ItemStack stack = new ItemStack(BuildCraftRobotics.redstoneBoard);
-            nbt.createBoard(NBTUtils.getItemData(stack));
+            nbt.createBoard(NBTUtilBC.getItemData(stack));
             options.add(stack);
         }
         Collections.sort(options, new BoardSorter(this));

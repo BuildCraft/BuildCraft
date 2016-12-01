@@ -12,7 +12,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class AIRobotGoAndLinkToDock extends AIRobot {
 
@@ -68,7 +68,7 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
         super.writeSelfToNBT(nbt);
 
         if (station != null && station.index() != null) {
-            nbt.setTag("stationIndex", NBTUtils.writeBlockPos(station.index()));
+            nbt.setTag("stationIndex", NBTUtilBC.writeBlockPos(station.index()));
             nbt.setByte("stationSide", (byte) station.side().ordinal());
         }
     }
@@ -76,7 +76,7 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
     @Override
     public void loadSelfFromNBT(NBTTagCompound nbt) {
         if (nbt.hasKey("stationIndex")) {
-            BlockPos index = NBTUtils.readBlockPos(nbt.getTag("stationIndex"));
+            BlockPos index = NBTUtilBC.readBlockPos(nbt.getTag("stationIndex"));
             EnumFacing side = EnumFacing.values()[nbt.getByte("stationSide")];
 
             station = robot.getRegistry().getStation(index, side);

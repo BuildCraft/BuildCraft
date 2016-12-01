@@ -93,12 +93,12 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
-        if (placer.worldObj.isRemote) {
+        if (placer.world.isRemote) {
             return;
         }
-        EnumFacing facing = worldObj.getBlockState(getPos()).getValue(BlockArchitect_Neptune.PROP_FACING);
+        EnumFacing facing = world.getBlockState(getPos()).getValue(BlockArchitect_Neptune.PROP_FACING);
         BlockPos areaPos = getPos().offset(facing.getOpposite());
-        TileEntity tile = worldObj.getTileEntity(areaPos);
+        TileEntity tile = world.getTileEntity(areaPos);
         if (tile instanceof IAreaProvider) {
             IAreaProvider provider = (IAreaProvider) tile;
             box.reset();
@@ -109,9 +109,9 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
             sendNetworkUpdate(NET_BOX);
         } else {
             isValid = false;
-            IBlockState state = worldObj.getBlockState(getPos());
+            IBlockState state = world.getBlockState(getPos());
             state = state.withProperty(BlockArchitect_Neptune.PROP_VALID, Boolean.FALSE);
-            worldObj.setBlockState(getPos(), state);
+            world.setBlockState(getPos(), state);
         }
     }
 
@@ -119,7 +119,7 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
     public void update() {
         deltaProgress.tick();
 
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             return;
         }
 
@@ -168,7 +168,7 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
 
             blueprintScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = schematic;
         } else {
-            boolean solid = !worldObj.isAirBlock(worldScanPos);
+            boolean solid = !world.isAirBlock(worldScanPos);
             templateScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = solid;
         }
 
@@ -188,7 +188,7 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
     }
 
     private SchematicBlock readSchematicForBlock(BlockPos worldScanPos) {
-        IBlockState state = worldObj.getBlockState(worldScanPos);
+        IBlockState state = world.getBlockState(worldScanPos);
         SchematicFactoryWorldBlock factory = BlueprintAPI.getWorldBlockSchematic(state.getBlock());
         if (factory == null) {
             return SchematicAir.INSTANCE;
@@ -209,7 +209,7 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
 
     private void finishScanning() {
         EnumFacing direction = EnumFacing.NORTH;
-        IBlockState state = worldObj.getBlockState(getPos());
+        IBlockState state = world.getBlockState(getPos());
         if (state.getBlock() == BCBuildersBlocks.architect) {
             direction = state.getValue(BlockArchitect_Neptune.PROP_FACING);
         }
@@ -263,7 +263,7 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
                 double x = pos.getX() + 0.5;
                 double y = pos.getY() + 0.5;
                 double z = pos.getZ() + 0.5;
-                worldObj.spawnParticle(EnumParticleTypes.CLOUD, x, y, z, 0, 0, 0);
+                world.spawnParticle(EnumParticleTypes.CLOUD, x, y, z, 0, 0, 0);
             }
         }
     }

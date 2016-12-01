@@ -12,7 +12,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.net.command.IPayloadWriter;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

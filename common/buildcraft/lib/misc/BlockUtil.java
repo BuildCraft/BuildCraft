@@ -5,7 +5,8 @@
 package buildcraft.lib.misc;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -21,6 +22,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -40,19 +42,19 @@ import buildcraft.lib.BCLibConfig;
 
 public final class BlockUtil {
 
-    public static List<ItemStack> getItemStackFromBlock(WorldServer world, BlockPos pos, BlockPos owner) {
+    public static NonNullList<ItemStack> getItemStackFromBlock(WorldServer world, BlockPos pos, BlockPos owner) {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         if (block == null || block.isAir(state, world, pos)) {
             return null;
         }
 
-        List<ItemStack> dropsList = block.getDrops(world, pos, state, 0);
+        NonNullList<ItemStack> dropsList = block.getDrops(world, pos, state, 0);
         // FIXME: Use the player owner
         EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getBuildCraftPlayer(world, pos).get();
         float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, pos, state, 0, 1.0F, false, fakePlayer);
 
-        ArrayList<ItemStack> returnList = new ArrayList<>();
+        NonNullList<ItemStack> returnList = new ArrayList<>();
         for (ItemStack s : dropsList) {
             if (world.rand.nextFloat() <= dropChance) {
                 returnList.add(s);
@@ -67,7 +69,7 @@ public final class BlockUtil {
     }
 
     public static boolean breakBlock(WorldServer world, BlockPos pos, int forcedLifespan, BlockPos owner) {
-        List<ItemStack> items = new ArrayList<>();
+        NonNullList<ItemStack> items = new ArrayList<>();
 
         if (breakBlock(world, pos, items, owner)) {
             for (ItemStack item : items) {
@@ -78,7 +80,7 @@ public final class BlockUtil {
         return false;
     }
 
-    public static boolean harvestBlock(WorldServer world, BlockPos pos, ItemStack tool, BlockPos owner) {
+    public static boolean harvestBlock(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, BlockPos owner) {
         // FIXME: Use the player owner
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), FakePlayerUtil.INSTANCE.getBuildCraftPlayer(world, owner).get());
         MinecraftForge.EVENT_BUS.post(breakEvent);
@@ -103,14 +105,14 @@ public final class BlockUtil {
         return true;
     }
 
-    public static EntityPlayer getFakePlayerWithTool(WorldServer world, BlockPos pos, ItemStack tool) {
+    public static EntityPlayer getFakePlayerWithTool(WorldServer world, BlockPos pos, @Nonnull ItemStack tool) {
         // FIXME: Use the player owner
         EntityPlayer player = FakePlayerUtil.INSTANCE.getBuildCraftPlayer(world, pos).get();
         int i = 0;
 
         while (player.getHeldItemMainhand() != tool && i < 9) {
             if (i > 0) {
-                player.inventory.setInventorySlotContents(i - 1, null);
+                player.inventory.setInventorySlotContents(i - 1, StackUtil.EMPTY);
             }
 
             player.inventory.setInventorySlotContents(i, tool);
@@ -120,7 +122,7 @@ public final class BlockUtil {
         return player;
     }
 
-    public static boolean breakBlock(WorldServer world, BlockPos pos, List<ItemStack> drops, BlockPos owner) {
+    public static boolean breakBlock(WorldServer world, BlockPos pos, NonNullList<ItemStack> drops, BlockPos owner) {
         // FIXME: Use the player owner
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), FakePlayerUtil.INSTANCE.getBuildCraftPlayer(world, owner).get());
         MinecraftForge.EVENT_BUS.post(breakEvent);
@@ -147,7 +149,7 @@ public final class BlockUtil {
         entityitem.lifespan = forcedLifespan;
         entityitem.setDefaultPickupDelay();
 
-        world.spawnEntityInWorld(entityitem);
+        world.spawnEntity(entityitem);
     }
 
     public static boolean canChangeBlock(World world, BlockPos pos) {
@@ -263,7 +265,7 @@ public final class BlockUtil {
                     world.setBlockToAir(pos);
                 }
 
-                return new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
+                return new FluidStack(fluid, 1000);
             }
         } else {
             return null;
@@ -339,10 +341,10 @@ public final class BlockUtil {
     }
 
     public static boolean useItemOnBlock(World world, EntityPlayer player, ItemStack stack, BlockPos pos, EnumFacing direction) {
-        boolean done = stack.getItem().onItemUseFirst(stack, player, world, pos, direction, 0.5F, 0.5F, 0.5F, EnumHand.MAIN_HAND) == EnumActionResult.SUCCESS;
+        boolean done = stack.getItem().onItemUseFirst(player, world, pos, direction, 0.5F, 0.5F, 0.5F, EnumHand.MAIN_HAND) == EnumActionResult.SUCCESS;
 
         if (!done) {
-            done = stack.getItem().onItemUse(stack, player, world, pos, EnumHand.MAIN_HAND, direction, 0.5F, 0.5F, 0.5F) == EnumActionResult.SUCCESS;
+            done = stack.getItem().onItemUse(player, world, pos, EnumHand.MAIN_HAND, direction, 0.5F, 0.5F, 0.5F) == EnumActionResult.SUCCESS;
         }
         return done;
     }

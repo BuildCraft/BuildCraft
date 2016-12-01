@@ -47,12 +47,12 @@ import buildcraft.lib.bpt.Blueprint;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
 import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.EnumAxisOrder;
+import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 
@@ -128,7 +128,7 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
     @Override
     public void update() {
         battery.tick(getWorld(), getPos());
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             tickingBuilder.tick(Side.CLIENT);
             // client stuffs
         } else {
@@ -306,7 +306,7 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
                 double y = changeAt.getY() + 0.5;
                 double z = changeAt.getZ() + 0.5;
                 EnumParticleTypes type = id == NET_CLEAR ? EnumParticleTypes.SMOKE_NORMAL : EnumParticleTypes.CLOUD;
-                worldObj.spawnParticle(type, x, y, z, 0, 0, 0);
+                world.spawnParticle(type, x, y, z, 0, 0, 0);
             }
             // All animation types
             else if (id == NET_ANIM_ITEM) tickingBuilder.readPayload(EnumBuilderMessage.ANIMATION_ITEM, buffer, side);
@@ -329,7 +329,7 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
         } else {
             ImmutableList.Builder<BlockPos> builder = ImmutableList.builder();
             for (int i = 0; i < list.tagCount(); i++) {
-                builder.add(NBTUtils.readBlockPos(list.get(i)));
+                builder.add(NBTUtilBC.readBlockPos(list.get(i)));
             }
             setPath(builder.build());
         }
@@ -342,7 +342,7 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
         if (getPath() != null) {
             NBTTagList list = new NBTTagList();
             for (BlockPos p : getPath()) {
-                list.appendTag(NBTUtils.writeBlockPos(p));
+                list.appendTag(NBTUtilBC.writeBlockPos(p));
             }
             nbt.setTag("path", list);
         }

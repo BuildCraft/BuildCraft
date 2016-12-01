@@ -89,7 +89,7 @@ public class LaserRenderer_BC8 {
     }
 
     public static int computeLightmap(double x, double y, double z) {
-        World world = Minecraft.getMinecraft().theWorld;
+        World world = Minecraft.getMinecraft().world;
         if (world == null) return 0;
         int blockLight = getLightFor(world, EnumSkyBlock.BLOCK, x, y, z);
         int skyLight = getLightFor(world, EnumSkyBlock.SKY, x, y, z);

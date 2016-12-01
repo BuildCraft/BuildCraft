@@ -29,14 +29,15 @@ import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.PipeEventItem;
 import buildcraft.api.transport.PipeEventItem.ItemEntry;
-import buildcraft.api.transport.neptune.*;
+import buildcraft.api.transport.neptune.IFlowItems;
+import buildcraft.api.transport.neptune.IPipe;
 import buildcraft.api.transport.neptune.IPipe.ConnectedType;
+import buildcraft.api.transport.neptune.IPipeHolder;
+import buildcraft.api.transport.neptune.PipeFlow;
 
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.DelayedList;
-import buildcraft.transport.client.render.PipeFlowRendererItems;
 import buildcraft.transport.pipe.flow.TravellingItem.EnumTravelState;
 
 public class PipeFlowItems extends PipeFlow implements IFlowItems {
@@ -55,7 +56,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         long tickNow = pipe.getHolder().getPipeWorld().getTotalWorldTime();
         for (int i = 0; i < list.tagCount(); i++) {
             TravellingItem item = new TravellingItem(list.getCompoundTagAt(i), tickNow);
-            if (StackUtil.isValid(item.stack)) {
+            if (!item.stack.isEmpty()) {
                 items.add(item.getCurrentDelay(tickNow), item);
             }
         }
@@ -117,7 +118,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         ItemStack possible = trans.extract(filter, 1, count, true);
 
-        if (possible == null || possible.stackSize == 0) {
+        if (possible == null || possible.getCount() == 0) {
             return 0;
         }
 
@@ -199,7 +200,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
             /* If an event handled this then we *may* need to fire destination handling events */
 
             ItemStack newStack = reachCenter.stack;
-            if (StackUtil.isInvalid(newStack)) {
+            if (newStack.isEmpty()) {
                 // we must have voided or used up the item => do nothing
                 return;
             } else if (item.colour == reachCenter.colour && ItemStack.areItemStacksEqual(oldStack, newStack)) {
@@ -368,7 +369,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
             insertItemEvents(toInsert, colour, speed, from);
         }
 
-        if (toSplit.stackSize == 0) {
+        if (toSplit.getCount() == 0) {
             toSplit = null;
         }
 

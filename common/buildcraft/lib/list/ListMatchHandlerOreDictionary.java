@@ -1,11 +1,11 @@
 package buildcraft.lib.list;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -98,14 +98,14 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
     }
 
     @Override
-    public List<ItemStack> getClientExamples(Type type, ItemStack stack) {
+    public NonNullList<ItemStack> getClientExamples(Type type, ItemStack stack) {
         int[] oreIds = OreDictionary.getOreIDs(stack);
-        List<ItemStack> stacks = new ArrayList<>();
+        NonNullList<ItemStack> stacks = new ArrayList<>();
 
         if (oreIds.length == 0) {
             // No ore IDs? Time for the best effort plan of METADATA!
             if (type == Type.TYPE) {
-                List<ItemStack> tempStack = new ArrayList<>();
+                NonNullList<ItemStack> tempStack = NonNullList.create();
                 stack.getItem().getSubItems(stack.getItem(), CreativeTabs.MISC, tempStack);
                 for (ItemStack is : tempStack) {
                     if (is.getItem() == stack.getItem()) {
@@ -137,7 +137,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
             }
         }
 
-        List<ItemStack> wildcard = new ArrayList<>();
+        NonNullList<ItemStack> wildcard = new ArrayList<>();
 
         for (ItemStack is : stacks) {
             if (is != null && is.getItemDamage() == OreDictionary.WILDCARD_VALUE && is.getHasSubtypes()) {
@@ -145,7 +145,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
             }
         }
         for (ItemStack is : wildcard) {
-            List<ItemStack> wll = new ArrayList<>();
+            NonNullList<ItemStack> wll = NonNullList.create();
             is.getItem().getSubItems(is.getItem(), CreativeTabs.MISC, wll);
             if (wll.size() > 0) {
                 stacks.remove(is);

@@ -13,7 +13,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.pipe_bc8.IConnection_BC8;
 import buildcraft.api.transport.pipe_bc8.IExtractionManager.IExtractable_BC8;
 import buildcraft.api.transport.pipe_bc8.IInsertionManager.IInsertable_BC8;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.api.transport.pipe_bc8.IPipeHolder_BC8;
 import buildcraft.api.transport.pipe_bc8.IPipe_BC8;
 import buildcraft.api.transport.pipe_bc8.PipeAPI_BC8;
@@ -54,15 +54,15 @@ public abstract class PipeConnection implements IConnection_BC8 {
     }
 
     public static PipeConnection loadConnection(NBTTagCompound nbt, World world) {
-        PipeConnectionType type = NBTUtils.readEnum(nbt.getTag("type"), PipeConnectionType.class);
+        PipeConnectionType type = NBTUtilBC.readEnum(nbt.getTag("type"), PipeConnectionType.class);
         if (type == PipeConnectionType.TILE) {
-            BlockPos pos = NBTUtils.readBlockPos(nbt.getTag("pos"));
+            BlockPos pos = NBTUtilBC.readBlockPos(nbt.getTag("pos"));
             TileEntity tile = world.getTileEntity(pos);
             double length = nbt.getDouble("length");
             if (tile == null) return null;
             return new Tile(length, tile);
         } else if (type == PipeConnectionType.PIPE_TILE) {
-            BlockPos pos = NBTUtils.readBlockPos(nbt.getTag("pos"));
+            BlockPos pos = NBTUtilBC.readBlockPos(nbt.getTag("pos"));
             TileEntity tile = world.getTileEntity(pos);
             if (tile == null) return null;
             if (!(tile instanceof IPipeHolder_BC8)) return null;
@@ -110,8 +110,8 @@ public abstract class PipeConnection implements IConnection_BC8 {
         @Override
         NBTTagCompound saveConnection() {
             NBTTagCompound tag = new NBTTagCompound();
-            tag.setTag("type", NBTUtils.writeEnum(PipeConnectionType.TILE));
-            tag.setTag("pos", NBTUtils.writeBlockPos(tile.getPos()));
+            tag.setTag("type", NBTUtilBC.writeEnum(PipeConnectionType.TILE));
+            tag.setTag("pos", NBTUtilBC.writeBlockPos(tile.getPos()));
             tag.setDouble("length", getLength());
             return tag;
         }
@@ -135,10 +135,10 @@ public abstract class PipeConnection implements IConnection_BC8 {
             NBTTagCompound tag = new NBTTagCompound();
             tag.setDouble("length", getLength());
             if (pipe.getHolder() instanceof TileEntity) {
-                tag.setTag("type", NBTUtils.writeEnum(PipeConnectionType.PIPE_TILE));
-                tag.setTag("pos", NBTUtils.writeBlockPos(((TileEntity) pipe.getHolder()).getPos()));
+                tag.setTag("type", NBTUtilBC.writeEnum(PipeConnectionType.PIPE_TILE));
+                tag.setTag("pos", NBTUtilBC.writeBlockPos(((TileEntity) pipe.getHolder()).getPos()));
             } else if (pipe.getHolder() instanceof Entity) {
-                tag.setTag("type", NBTUtils.writeEnum(PipeConnectionType.PIPE_ENTITY));
+                tag.setTag("type", NBTUtilBC.writeEnum(PipeConnectionType.PIPE_ENTITY));
                 UUID uuid = ((Entity) pipe.getHolder()).getPersistentID();
                 tag.setString("uuid", uuid.toString());
             } else {
@@ -166,7 +166,7 @@ public abstract class PipeConnection implements IConnection_BC8 {
         NBTTagCompound saveConnection() {
             NBTTagCompound tag = new NBTTagCompound();
             tag.setDouble("length", getLength());
-            tag.setTag("type", NBTUtils.writeEnum(PipeConnectionType.ENTITY));
+            tag.setTag("type", NBTUtilBC.writeEnum(PipeConnectionType.ENTITY));
             UUID uuid = entity.getPersistentID();
             tag.setString("uuid", uuid.toString());
             return tag;

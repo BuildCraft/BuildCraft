@@ -1,7 +1,6 @@
 package buildcraft.transport.plug;
 
 import java.io.IOException;
-import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -9,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -24,8 +24,8 @@ import buildcraft.api.transport.neptune.PipePluggable;
 import buildcraft.api.transport.neptune.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
+import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.transport.BCTransportGuis;
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugGate;
@@ -134,7 +134,7 @@ public class PluggableGate extends PipePluggable {
     }
 
     @Override
-    public void onRemove(List<ItemStack> toDrop) {
+    public void onRemove(NonNullList<ItemStack> toDrop) {
         toDrop.add(getPickStack());
     }
 

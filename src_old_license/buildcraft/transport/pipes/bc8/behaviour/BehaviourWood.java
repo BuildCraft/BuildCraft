@@ -28,7 +28,7 @@ import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventInteract_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEvent_BC8;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class BehaviourWood extends PipeBehaviour_BC8 implements IEnergyReceiver {
     private static final int ENERGY_EXTRACT_SINGLE = 20;
@@ -49,7 +49,7 @@ public class BehaviourWood extends PipeBehaviour_BC8 implements IEnergyReceiver 
     @Override
     public NBTTagCompound writeToNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag("extractionFace", NBTUtils.writeEnum(extractionFace));
+        nbt.setTag("extractionFace", NBTUtilBC.writeEnum(extractionFace));
 
         NBTTagCompound battNBT = new NBTTagCompound();
         battery.writeToNBT(battNBT);
@@ -61,7 +61,7 @@ public class BehaviourWood extends PipeBehaviour_BC8 implements IEnergyReceiver 
     @Override
     public BehaviourWood readFromNBT(NBTBase base) {
         NBTTagCompound nbt = (NBTTagCompound) base;
-        extractionFace = NBTUtils.readEnum(nbt.getTag("extractionFace"), EnumPipePart.class);
+        extractionFace = NBTUtilBC.readEnum(nbt.getTag("extractionFace"), EnumPipePart.class);
         battery.readFromNBT(nbt.getCompoundTag("battery"));
         return this;
     }

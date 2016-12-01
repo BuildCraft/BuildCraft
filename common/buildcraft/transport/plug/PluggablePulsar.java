@@ -1,7 +1,6 @@
 package buildcraft.transport.plug;
 
 import java.io.IOException;
-import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -9,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 
@@ -129,7 +129,7 @@ public class PluggablePulsar extends PipePluggable {
     }
 
     @Override
-    public void onRemove(List<ItemStack> toDrop) {
+    public void onRemove(NonNullList<ItemStack> toDrop) {
         toDrop.add(new ItemStack(BCTransportItems.plugPulsar));
     }
 

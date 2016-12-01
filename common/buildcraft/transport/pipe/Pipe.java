@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.capabilities.Capability;
@@ -24,7 +25,7 @@ import buildcraft.api.transport.PipeConnectionAPI;
 import buildcraft.api.transport.neptune.*;
 import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.LoadingException;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.client.model.key.PipeModelKey;
@@ -56,7 +57,7 @@ public final class Pipe implements IPipe, IDebuggable {
 
     public Pipe(IPipeHolder holder, NBTTagCompound nbt) throws LoadingException {
         this.holder = holder;
-        this.colour = NBTUtils.readEnum(nbt.getTag("col"), EnumDyeColor.class);
+        this.colour = NBTUtilBC.readEnum(nbt.getTag("col"), EnumDyeColor.class);
         this.definition = PipeRegistry.INSTANCE.loadDefinition(nbt.getString("def"));
         this.behaviour = definition.logicLoader.loadBehaviour(this, nbt.getCompoundTag("beh"));
         this.flow = definition.flowType.loader.loadFlow(this, nbt.getCompoundTag("flow"));
@@ -64,7 +65,7 @@ public final class Pipe implements IPipe, IDebuggable {
 
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag("col", NBTUtils.writeEnum(colour));
+        nbt.setTag("col", NBTUtilBC.writeEnum(colour));
         nbt.setString("def", definition.identifier.toString());
         nbt.setTag("beh", behaviour.writeToNbt());
         nbt.setTag("flow", flow.writeToNbt());
@@ -266,7 +267,7 @@ public final class Pipe implements IPipe, IDebuggable {
         }
     }
 
-    public void onRemove(List<ItemStack> toDrop) {
+    public void onRemove(NonNullList<ItemStack> toDrop) {
         Item item = (Item) PipeAPI.pipeRegistry.getItemForPipe(definition);
         if (item != null) {
             toDrop.add(new ItemStack(item, 1, colour == null ? 0 : 1 + colour.ordinal()));

@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 
 import buildcraft.builders.tile.TileQuarry;
 import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class EntityQuarry extends Entity {
     private static final DataParameter<BlockPos> TILE_POS = EntityDataManager.createKey(EntityQuarry.class, DataSerializers.BLOCK_POS);
@@ -66,13 +66,13 @@ public class EntityQuarry extends Entity {
 
     @Override
     protected void writeEntityToNBT(NBTTagCompound compound) {
-        compound.setTag("tile_pos", NBTUtils.writeBlockPos(getTilePos()));
+        compound.setTag("tile_pos", NBTUtilBC.writeBlockPos(getTilePos()));
         compound.setInteger("type", getType().ordinal());
     }
 
     @Override
     protected void readEntityFromNBT(NBTTagCompound compound) {
-        dataManager.set(TILE_POS, NBTUtils.readBlockPos(compound.getTag("tile_pos")));
+        dataManager.set(TILE_POS, NBTUtilBC.readBlockPos(compound.getTag("tile_pos")));
         dataManager.set(TYPE, compound.getInteger("type"));
     }
 

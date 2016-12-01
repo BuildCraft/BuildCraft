@@ -21,10 +21,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -387,7 +384,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             } else {
                 tile.replacePluggable(realSide, plug);
                 if (!player.capabilities.isCreativeMode) {
-                    held.stackSize--;
+                    held.setCount(held.getCount() - 1);
                 }
                 return true;
             }
@@ -412,7 +409,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             return super.removedByPlayer(state, world, pos, player, willHarvest);
         }
 
-        List<ItemStack> toDrop = new ArrayList<>();
+        NonNullList<ItemStack> toDrop = new ArrayList<>();
         RayTraceResult trace = rayTrace(world, pos, player);
         EnumFacing side = null;
 
@@ -438,7 +435,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         return super.removedByPlayer(state, world, pos, player, willHarvest);
     }
 
-    private static void removePluggable(EnumFacing side, TilePipeHolder tile, List<ItemStack> toDrop) {
+    private static void removePluggable(EnumFacing side, TilePipeHolder tile, NonNullList<ItemStack> toDrop) {
         PipePluggable removed = tile.replacePluggable(side, null);
         if (removed != null) {
             removed.onRemove(toDrop);

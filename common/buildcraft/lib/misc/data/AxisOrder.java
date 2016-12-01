@@ -8,7 +8,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class AxisOrder {
     private static final Table<EnumAxisOrder, Inversion, AxisOrder> allOrders;
@@ -47,7 +47,7 @@ public class AxisOrder {
 
     public NBTTagCompound writeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-        NBTUtils.writeEnum(order);
+        NBTUtilBC.writeEnum(order);
         nbt.setString("order", order.name());
         nbt.setString("inversion", inversion.name());
         return nbt;

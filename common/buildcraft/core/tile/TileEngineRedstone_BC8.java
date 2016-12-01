@@ -44,7 +44,7 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
     public void update() {
         super.update();
         if (cannotUpdate()) return;
-        if (worldObj.isRemote) return;
+        if (world.isRemote) return;
 
         long target = MICRO_JOULES[getEnergyStage().ordinal()];
 

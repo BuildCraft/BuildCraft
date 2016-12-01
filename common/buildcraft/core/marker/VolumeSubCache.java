@@ -27,10 +27,10 @@ import buildcraft.lib.net.MessageMarker;
 public class VolumeSubCache extends MarkerSubCache<VolumeConnection> {
     public VolumeSubCache(World world) {
         super(world, VolumeCache.CACHES.indexOf(VolumeCache.INSTANCE));
-        VolumeSavedData data = (VolumeSavedData) world.loadItemData(VolumeSavedData.class, VolumeSavedData.NAME);
+        VolumeSavedData data = (VolumeSavedData) world.loadData(VolumeSavedData.class, VolumeSavedData.NAME);
         if (data == null) {
             data = new VolumeSavedData();
-            world.setItemData(VolumeSavedData.NAME, data);
+            world.setData(VolumeSavedData.NAME, data);
         }
         data.loadInto(this);
     }

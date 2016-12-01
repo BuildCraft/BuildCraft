@@ -3,6 +3,8 @@ package buildcraft.lib.client.guide.parts;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -10,6 +12,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -23,11 +26,11 @@ public class GuideCraftingFactory implements GuidePartFactory {
     private static final Field SHAPED_ORE_RECIPE___WIDTH;
     private static final Field SHAPED_ORE_RECIPE___HEIGHT;
 
-    private final ItemStack[][] input;
+    private final NonNullList<ItemStack>[] input;
     private final ItemStack output;
     private final int hash;
 
-    public GuideCraftingFactory(ItemStack[][] input, ItemStack output) {
+    public GuideCraftingFactory(NonNullList<ItemStack>[] input, ItemStack output) {
         this.input = input;
         this.output = output;
         NBTTagCompound hashNbt = new NBTTagCompound();
@@ -58,7 +61,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
         }
     }
 
-    public static GuideCraftingFactory create(ItemStack stack) {
+    public static GuideCraftingFactory create(@Nonnull ItemStack stack) {
         for (IRecipe recipe : CraftingManager.getInstance().getRecipeList()) {
             if (OreDictionary.itemMatches(stack, recipe.getRecipeOutput(), false)) {
                 GuideCraftingFactory val = getFactory(recipe);
@@ -76,17 +79,17 @@ public class GuideCraftingFactory implements GuidePartFactory {
         GuideCraftingFactory val = null;
         if (recipe instanceof ShapedRecipes) {
             ShapedRecipes shaped = (ShapedRecipes) recipe;
-            ItemStack[] input = shaped.recipeItems;
-            ItemStack[][] dimInput = new ItemStack[shaped.recipeWidth][shaped.recipeHeight];
+            NonNullList<ItemStack> input = shaped.recipeItems;
+            NonNullList<ItemStack>[] dimInput = new ItemStack[shaped.recipeWidth][shaped.recipeHeight];
             for (int x = 0; x < dimInput.length; x++) {
                 for (int y = 0; y < dimInput[x].length; y++) {
-                    dimInput[x][y] = ItemStack.copyItemStack(input[x + y * dimInput.length]);
+                    dimInput[x][y] = input[x + y * dimInput.length].copy();
                 }
             }
             val = new GuideCraftingFactory(dimInput, recipe.getRecipeOutput());
         } else if (recipe instanceof ShapedOreRecipe) {
             Object[] input = ((ShapedOreRecipe) recipe).getInput();
-            ItemStack[][] dimInput = getStackSizeArray(recipe);
+            NonNullList<ItemStack>[] dimInput = getStackSizeArray(recipe);
             for (int x = 0; x < dimInput.length; x++) {
                 for (int y = 0; y < dimInput[x].length; y++) {
                     dimInput[x][y] = oreConvert(input[x + y * dimInput.length]);
@@ -95,7 +98,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
             val = new GuideCraftingFactory(dimInput, recipe.getRecipeOutput());
         } else if (recipe instanceof ShapelessOreRecipe) {
             List<Object> input = ((ShapelessOreRecipe) recipe).getInput();
-            ItemStack[][] dimInput = getStackSizeArray(recipe);
+            NonNullList<ItemStack>[] dimInput = getStackSizeArray(recipe);
             for (int x = 0; x < dimInput.length; x++) {
                 for (int y = 0; y < dimInput[x].length; y++) {
                     int index = x + y * dimInput.length;
@@ -106,13 +109,13 @@ public class GuideCraftingFactory implements GuidePartFactory {
             }
             val = new GuideCraftingFactory(dimInput, recipe.getRecipeOutput());
         } else if (recipe instanceof ShapelessRecipes) {
-            List<ItemStack> input = ((ShapelessRecipes) recipe).recipeItems;
-            ItemStack[][] dimInput = getStackSizeArray(recipe);
+            NonNullList<ItemStack> input = ((ShapelessRecipes) recipe).recipeItems;
+            NonNullList<ItemStack>[] dimInput = getStackSizeArray(recipe);
             for (int x = 0; x < dimInput.length; x++) {
                 for (int y = 0; y < dimInput[x].length; y++) {
                     int index = x + y * dimInput.length;
                     if (index < input.size()) {
-                        dimInput[x][y] = ItemStack.copyItemStack(input.get(index));
+                        dimInput[x][y] = input.get(index).copy();
                     }
                 }
             }
@@ -123,7 +126,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
         return val;
     }
 
-    private static ItemStack[][] getStackSizeArray(IRecipe recipe) {
+    private static NonNullList<ItemStack>[] getStackSizeArray(IRecipe recipe) {
         if (recipe instanceof ShapedRecipes) {
             return new ItemStack[((ShapedRecipes) recipe).recipeWidth][((ShapedRecipes) recipe).recipeHeight];
         } else if (recipe instanceof ShapedOreRecipe) {
@@ -149,7 +152,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
             return ((ItemStack) object).copy();
         }
         if (object instanceof String) {
-            List<ItemStack> stacks = OreDictionary.getOres((String) object);
+            NonNullList<ItemStack> stacks = OreDictionary.getOres((String) object);
             // It will be sorted out below
             object = stacks;
         }
@@ -165,7 +168,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
             if (first instanceof ItemStack) {
                 // Technically a safe cast as the first one WAS an Item Stack and we never add to the list
                 @SuppressWarnings("unchecked")
-                List<ItemStack> stacks = (List<ItemStack>) list;
+                NonNullList<ItemStack> stacks = (NonNullList<ItemStack>) list;
                 if (stacks.size() == 0) {
                     return null;
                 }
@@ -209,8 +212,8 @@ public class GuideCraftingFactory implements GuidePartFactory {
 
         if (input.length != other.input.length) return false;
         for (int i = 0; i < input.length; i++) {
-            ItemStack[] compA = input[i];
-            ItemStack[] compB = other.input[i];
+            NonNullList<ItemStack> compA = input[i];
+            NonNullList<ItemStack> compB = other.input[i];
             if (compA.length != compB.length) return false;
             for (int j = 0; j < input.length; j++) {
                 if (!ItemStack.areItemStacksEqual(compA[j], compB[j])) {

@@ -6,6 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -26,7 +27,7 @@ import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.SoundUtil;
 
 public class SchematicChest extends SchematicBlock {
-    private final ItemStack[] stacks = new ItemStack[27];
+    private final NonNullList<ItemStack> stacks = new ItemStack[27];
 
     public SchematicChest(IBlockState at, TileEntityChest chest) {
         super(at);
@@ -42,7 +43,7 @@ public class SchematicChest extends SchematicBlock {
         super(nbt);
         NBTTagList list = nbt.getTagList("items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < 27 && i < list.tagCount(); i++) {
-            stacks[i] = ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i));
+            stacks[i] = new ItemStack(list.getCompoundTagAt(i));
         }
     }
 

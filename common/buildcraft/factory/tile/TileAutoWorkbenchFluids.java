@@ -91,7 +91,7 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
                 IFluidHandler handler = copied.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
                 FluidStack fluid = handler.drain(8000, true);
                 if (fluid != null) {
-                    if (copied.stackSize == stack.stackSize) {
+                    if (copied.getCount() == stack.getCount()) {
                         // This was NOT used up, so we can just ignore the stack altogether and return a fluid version
                         return new CraftSlotFluidBound(this, fluid);
                     }

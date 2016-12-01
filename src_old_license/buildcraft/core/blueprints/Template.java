@@ -17,7 +17,7 @@ import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 /** Use the template system to describe fillers */
 public class Template extends BlueprintBase {
@@ -87,7 +87,7 @@ public class Template extends BlueprintBase {
             throw new Error("Could not find the template item! Did you attempt to use this without buildcraft builders installed?");
         }
         ItemStack stack = new ItemStack(item, 1, 1);
-        NBTTagCompound nbt = NBTUtils.getItemData(stack);
+        NBTTagCompound nbt = NBTUtilBC.getItemData(stack);
         id.write(nbt);
         nbt.setString("author", author);
         nbt.setString("name", id.name);

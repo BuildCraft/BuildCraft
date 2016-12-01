@@ -3,6 +3,7 @@ package buildcraft.lib.client.guide.parts;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.gui.GuiIcon;
@@ -23,10 +24,10 @@ public class GuideCrafting extends GuidePartItem {
         }
     }
 
-    private final ChangingItemStack[][] input;
+    private final ChangingNonNullList<ItemStack>[] input;
     private final ChangingItemStack output;
 
-    GuideCrafting(GuiGuide gui, ItemStack[][] input, ItemStack output) {
+    GuideCrafting(GuiGuide gui, NonNullList<ItemStack>[] input, ItemStack output) {
         super(gui);
         this.input = new ChangingItemStack[input.length][];
         for (int x = 0; x < input.length; x++) {

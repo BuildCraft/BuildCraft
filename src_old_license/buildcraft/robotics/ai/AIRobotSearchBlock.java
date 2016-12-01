@@ -11,7 +11,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.core.lib.utils.*;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class AIRobotSearchBlock extends AIRobot {
 
@@ -100,7 +100,7 @@ public class AIRobotSearchBlock extends AIRobot {
         super.writeSelfToNBT(nbt);
 
         if (blockFound != null) {
-            nbt.setTag("blockFound", NBTUtils.writeBlockPos(blockFound));
+            nbt.setTag("blockFound", NBTUtilBC.writeBlockPos(blockFound));
         }
     }
 
@@ -109,7 +109,7 @@ public class AIRobotSearchBlock extends AIRobot {
         super.loadSelfFromNBT(nbt);
 
         if (nbt.hasKey("blockFound")) {
-            blockFound = NBTUtils.readBlockPos(nbt.getTag("blockFound"));
+            blockFound = NBTUtilBC.readBlockPos(nbt.getTag("blockFound"));
         }
     }
 

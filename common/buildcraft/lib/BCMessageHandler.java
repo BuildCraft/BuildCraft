@@ -24,7 +24,10 @@ import buildcraft.lib.library.network.MessageLibraryDBIndex;
 import buildcraft.lib.library.network.MessageLibraryRequest;
 import buildcraft.lib.library.network.MessageLibraryTransferEntry;
 import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.net.*;
+import buildcraft.lib.net.MessageContainer;
+import buildcraft.lib.net.MessageMarker;
+import buildcraft.lib.net.MessageUpdateTile;
+import buildcraft.lib.net.MessageWidget;
 import buildcraft.lib.particle.MessageParticleVanilla;
 
 public enum BCMessageHandler {
@@ -78,8 +81,8 @@ public enum BCMessageHandler {
     private static <I extends IMessage> IMessageHandler<I, IMessage> wrapHandler(IMessageHandler<I, ?> from) {
         return (message, context) -> {
             EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(context);
-            if (player == null || player.worldObj == null) return null;
-            BCLibProxy.getProxy().addScheduledTask(player.worldObj, () -> {
+            if (player == null || player.world == null) return null;
+            BCLibProxy.getProxy().addScheduledTask(player.world, () -> {
                 IMessage reply = from.onMessage(message, context);
                 if (reply != null) {
                     MessageUtil.sendReturnMessage(context, reply);

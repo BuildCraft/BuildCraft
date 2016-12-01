@@ -21,7 +21,7 @@ import buildcraft.api.robots.EntityRobotBase;
 
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class AIRobotBreak extends AIRobot {
     private BlockPos blockToBreak;
@@ -157,7 +157,7 @@ public class AIRobotBreak extends AIRobot {
         super.writeSelfToNBT(nbt);
 
         if (blockToBreak != null) {
-            nbt.setTag("blockToBreak", NBTUtils.writeBlockPos(blockToBreak));
+            nbt.setTag("blockToBreak", NBTUtilBC.writeBlockPos(blockToBreak));
         }
     }
 
@@ -166,7 +166,7 @@ public class AIRobotBreak extends AIRobot {
         super.loadSelfFromNBT(nbt);
 
         if (nbt.hasKey("blockToBreak")) {
-            blockToBreak = NBTUtils.readBlockPos(nbt.getTag("blockToBreak"));
+            blockToBreak = NBTUtilBC.readBlockPos(nbt.getTag("blockToBreak"));
         }
     }
 }

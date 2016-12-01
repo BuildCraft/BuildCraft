@@ -67,7 +67,7 @@ public class TileChute extends TileBCInventory_Neptune implements ITickable, IDe
                 if (leftOver == null) {
                     return true;
                 }
-                return leftOver.stackSize < stack.stackSize;
+                return leftOver.getCount() < stack.getCount();
             };
 
             ItemStack extracted = inv.extract(filter, 1, 1, false);

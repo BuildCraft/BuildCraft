@@ -27,7 +27,7 @@ public class ParticleUtil {
     }
 
     public static void showTempPower(World world, BlockPos pos, EnumFacing face, long microJoules) {
-        world = Minecraft.getMinecraft().theWorld;
+        world = Minecraft.getMinecraft().world;
 
         double x = pos.getX() + 0.5 + face.getFrontOffsetX() * 0.5;
         double y = pos.getY() + 0.5 + face.getFrontOffsetY() * 0.5;

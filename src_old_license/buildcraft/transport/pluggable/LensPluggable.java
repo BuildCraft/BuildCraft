@@ -18,7 +18,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.client.model.ModelKeyLens;
 import buildcraft.transport.pipes.events.PipeEventItem;
@@ -102,7 +102,7 @@ public class LensPluggable extends PipePluggable {
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         if (tag.hasKey("colour")) {
-            dyeColor = NBTUtils.readEnum(tag.getTag("colour"), EnumDyeColor.class);
+            dyeColor = NBTUtilBC.readEnum(tag.getTag("colour"), EnumDyeColor.class);
         } else {
             dyeColor = EnumDyeColor.byMetadata(tag.getByte("c"));
         }
@@ -111,7 +111,7 @@ public class LensPluggable extends PipePluggable {
 
     @Override
     public void writeToNBT(NBTTagCompound tag) {
-        tag.setTag("colour", NBTUtils.writeEnum(dyeColor));
+        tag.setTag("colour", NBTUtilBC.writeEnum(dyeColor));
         tag.setBoolean("f", isFilter);
     }
 

@@ -115,7 +115,7 @@ public class FluidRenderer {
             sideRender = DEFAULT_FACES;
         }
 
-        double height = MathHelper.clamp_double(amount / cap, 0, 1);
+        double height = MathHelper.clamp(amount / cap, 0, 1);
         final Vec3d realMin, realMax;
         if (fluid.getFluid().isGaseous(fluid)) {
             realMin = VecUtil.replaceValue(min, Axis.Y, MathUtil.interp(1 - height, min.yCoord, max.yCoord));

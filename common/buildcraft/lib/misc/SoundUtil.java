@@ -54,7 +54,7 @@ public class SoundUtil {
     }
 
     public static void playSlideSound(World world, BlockPos pos, IBlockState state) {
-        SoundType soundType = state.getBlock().getSoundType();
+        SoundType soundType = state.getBlock().getSoundType(state, world, pos, null);
         SoundEvent soundEvent = SoundEvents.BLOCK_PISTON_CONTRACT;
         float volume = (soundType.getVolume() + 1.0F) / 2.0F;
         float pitch = soundType.getPitch() * 0.8F;

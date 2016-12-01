@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import buildcraft.lib.misc.MathUtil;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class AverageDouble implements INBTSerializable<NBTTagCompound> {
     private double[] data;
@@ -61,7 +61,7 @@ public class AverageDouble implements INBTSerializable<NBTTagCompound> {
         nbt.setInteger("precise", precise);
         nbt.setDouble("averageRaw", averageRaw);
         nbt.setDouble("tickValue", tickValue);
-        nbt.setTag("data", NBTUtils.writeDoubleArray(data));
+        nbt.setTag("data", NBTUtilBC.writeDoubleArray(data));
         return nbt;
     }
 
@@ -71,6 +71,6 @@ public class AverageDouble implements INBTSerializable<NBTTagCompound> {
         pos = MathUtil.clamp(nbt.getInteger("pos"), 0, precise);
         averageRaw = nbt.getDouble("averageRaw");
         tickValue = nbt.getDouble("tickValue");
-        data = NBTUtils.readDoubleArray(nbt.getTag("data"), precise);
+        data = NBTUtilBC.readDoubleArray(nbt.getTag("data"), precise);
     }
 }

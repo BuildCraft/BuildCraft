@@ -1,8 +1,9 @@
 package buildcraft.api.inventory;
 
-import java.util.List;
+import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
 import buildcraft.api.core.IStackFilter;
 
@@ -12,7 +13,8 @@ public interface IItemTransactor {
      * @param allOrNone If true then either the entire stack will be used or none of it.
      * @param simulate If true then the in-world state of this will not be changed.
      * @return The overflow stack. Will be null if all of it was accepted. */
-    ItemStack insert(ItemStack stack, boolean allOrNone, boolean simulate);
+    @Nonnull
+    ItemStack insert(@Nonnull ItemStack stack, boolean allOrNone, boolean simulate);
 
     /** Similar to {@link #insert(ItemStack, boolean, boolean)} but probably be more efficient at inserting lots of
      * items.
@@ -20,7 +22,7 @@ public interface IItemTransactor {
      * @param stacks The stacks to insert. Must not be null!
      * @param simulate If true then the in-world state of this will not be changed.
      * @return The overflow stacks. Will be an empty list if all of it was accepted. */
-    List<ItemStack> insert(List<ItemStack> stacks, boolean simulate);
+    NonNullList<ItemStack> insert(NonNullList<ItemStack> stacks, boolean simulate);
 
     /** Extracts a number of items that match the given filter
      * 
@@ -29,5 +31,6 @@ public interface IItemTransactor {
      * @param max The maximum number of items to extract.
      * @param simulate If true then the in-world state of this will not be changed.
      * @return The stack that was extracted, or null if it could not be. */
+    @Nonnull
     ItemStack extract(IStackFilter filter, int min, int max, boolean simulate);
 }

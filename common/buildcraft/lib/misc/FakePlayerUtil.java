@@ -38,7 +38,7 @@ public enum FakePlayerUtil implements IBCFakePlayer {
         if (fakeBCPlayer.get() == null) {
             fakeBCPlayer = createNewPlayer(world);
         } else {
-            fakeBCPlayer.get().worldObj = world;
+            fakeBCPlayer.get().world = world;
         }
 
         return fakeBCPlayer;
@@ -48,7 +48,7 @@ public enum FakePlayerUtil implements IBCFakePlayer {
         if (fakeBCPlayer.get() == null) {
             fakeBCPlayer = createNewPlayer(world, pos);
         } else {
-            fakeBCPlayer.get().worldObj = world;
+            fakeBCPlayer.get().world = world;
             fakeBCPlayer.get().posX = pos.getX();
             fakeBCPlayer.get().posY = pos.getY();
             fakeBCPlayer.get().posZ = pos.getZ();

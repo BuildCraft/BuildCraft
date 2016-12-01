@@ -36,18 +36,16 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
-        EnumActionResult result = EnumActionResult.PASS;
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         if (!world.isRemote) {
             for (MarkerCache<?> cache : MarkerCache.CACHES) {
                 if (interactCache(cache.getSubCache(world), player)) {
-                    result = EnumActionResult.SUCCESS;
                     player.swingArm(hand);
                     break;
                 }
             }
         }
-        return newVolumeCacheStuff_onItemRightClick(stack, world, player, hand);
+        return newVolumeCacheStuff_onItemRightClick(player.getHeldItem(hand), world, player, hand);
     }
 
     private static <S extends MarkerSubCache<?>> boolean interactCache(S cache, EntityPlayer player) {

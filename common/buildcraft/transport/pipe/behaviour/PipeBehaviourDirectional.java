@@ -17,7 +17,7 @@ import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 import buildcraft.api.transport.neptune.PipeBehaviour;
 
 import buildcraft.lib.misc.EntityUtil;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public abstract class PipeBehaviourDirectional extends PipeBehaviour {
     protected EnumPipePart currentDir = EnumPipePart.CENTER;
@@ -28,13 +28,13 @@ public abstract class PipeBehaviourDirectional extends PipeBehaviour {
 
     public PipeBehaviourDirectional(IPipe pipe, NBTTagCompound nbt) {
         super(pipe, nbt);
-        setCurrentDir(NBTUtils.readEnum(nbt.getTag("currentDir"), EnumFacing.class));
+        setCurrentDir(NBTUtilBC.readEnum(nbt.getTag("currentDir"), EnumFacing.class));
     }
 
     @Override
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = super.writeToNbt();
-        nbt.setTag("currentDir", NBTUtils.writeEnum(getCurrentDir()));
+        nbt.setTag("currentDir", NBTUtilBC.writeEnum(getCurrentDir()));
         return nbt;
     }
 

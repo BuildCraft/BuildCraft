@@ -157,7 +157,7 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
     public void readData(ByteBuf data) {
         PacketBuffer packet = new PacketBuffer(data);
         for (Tank tank : tanks) {
-            String fluidId = packet.readStringFromBuffer(40);
+            String fluidId = packet.readString(40);
             if (FluidRegistry.getFluid(fluidId) != null) {
                 tank.setFluid(new FluidStack(FluidRegistry.getFluid(fluidId), data.readInt()));
                 tank.colorRenderCache = data.readInt();

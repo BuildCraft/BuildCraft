@@ -77,6 +77,7 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
     }
 
     @Override
+    @SuppressWarnings("unchecked")// lots of (T) instance -- but we know its safe
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             Wrapper wrapper = wrappers.get(EnumPipePart.fromFacing(facing));

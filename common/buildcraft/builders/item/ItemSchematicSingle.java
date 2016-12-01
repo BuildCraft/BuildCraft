@@ -27,7 +27,7 @@ import buildcraft.api.bpt.SchematicFactoryWorldBlock;
 
 import buildcraft.builders.bpt.player.BuilderPlayer;
 import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
@@ -64,7 +64,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
             return new ActionResult<>(EnumActionResult.PASS, stack);
         }
         if (player.isSneaking()) {
-            NBTTagCompound itemData = NBTUtils.getItemData(stack);
+            NBTTagCompound itemData = NBTUtilBC.getItemData(stack);
             itemData.removeTag(NBT_KEY_SCHEMATIC);
             if (itemData.hasNoTags()) {
                 stack.setTagCompound(null);
@@ -81,7 +81,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
             return EnumActionResult.PASS;
         }
         if (player.isSneaking()) {
-            NBTTagCompound itemData = NBTUtils.getItemData(stack);
+            NBTTagCompound itemData = NBTUtilBC.getItemData(stack);
             itemData.removeTag(NBT_KEY_SCHEMATIC);
             if (itemData.hasNoTags()) {
                 stack.setTagCompound(null);
@@ -97,7 +97,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
                 try {
                     SchematicBlock schematic = factory.createFromWorld(world, pos);
                     NBTTagCompound schematicData = schematic.serializeNBT();
-                    NBTTagCompound itemData = NBTUtils.getItemData(stack);
+                    NBTTagCompound itemData = NBTUtilBC.getItemData(stack);
                     itemData.setTag(NBT_KEY_SCHEMATIC, schematicData);
                     stack.setItemDamage(DAMAGE_STORED_SCHEMATIC);
                     return EnumActionResult.SUCCESS;
@@ -107,14 +107,14 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
             }
             return EnumActionResult.FAIL;
         } else {
-            NBTTagCompound schematicNBT = NBTUtils.getItemData(stack).getCompoundTag(NBT_KEY_SCHEMATIC);
+            NBTTagCompound schematicNBT = NBTUtilBC.getItemData(stack).getCompoundTag(NBT_KEY_SCHEMATIC);
             if (schematicNBT == null) {
-                player.addChatMessage(new TextComponentString("No schematic data!"));
+                player.sendMessage(new TextComponentString("No schematic data!"));
                 return EnumActionResult.FAIL;
             }
             BlockPos place = pos.offset(side);
             if (!world.isAirBlock(place)) {
-                player.addChatMessage(new TextComponentString("Not an air block @" + place));
+                player.sendMessage(new TextComponentString("Not an air block @" + place));
                 return EnumActionResult.FAIL;
             } else {
                 world.setBlockToAir(place);

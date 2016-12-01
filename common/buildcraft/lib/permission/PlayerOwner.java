@@ -47,7 +47,7 @@ public final class PlayerOwner implements IOwner {
     private GameProfile owner;
 
     public static PlayerOwner getOwnerOf(Entity entity) {
-        if (entity.worldObj.isRemote) {
+        if (entity.world.isRemote) {
             throw new IllegalArgumentException("Can only use this on the logical server!");
         }
         if (entity.getClass() == EntityPlayerMP.class) {
@@ -87,7 +87,7 @@ public final class PlayerOwner implements IOwner {
         PlayerOwner existing = getOwnerFromUUID(uuid);
 
         // Read the name as well, in case we are offline and it has been saved.
-        String name = buffer.readStringFromBuffer(256);
+        String name = buffer.readString(256);
         if (!StringUtils.isNullOrEmpty(name) && StringUtils.isNullOrEmpty(existing.getOwnerName())) {
             existing = new PlayerOwner(uuid, name);
         }

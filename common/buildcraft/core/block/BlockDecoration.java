@@ -4,8 +4,6 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.block;
 
-import java.util.List;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
@@ -50,7 +48,7 @@ public class BlockDecoration extends BlockBCBase_Neptune {
     // Other
 
     @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
+    public void getSubBlocks(Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
         for (EnumDecoratedBlock type : EnumDecoratedBlock.values()) {
             list.add(new ItemStack(this, 1, type.ordinal()));
         }

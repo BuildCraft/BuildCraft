@@ -1,10 +1,9 @@
 package buildcraft.transport.plug;
 
-import java.util.List;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -53,7 +52,7 @@ public class PluggableBlocker extends PipePluggable {
     }
 
     @Override
-    public void onRemove(List<ItemStack> toDrop) {
+    public void onRemove(NonNullList<ItemStack> toDrop) {
         toDrop.add(new ItemStack(BCTransportItems.plugBlocker));
     }
 

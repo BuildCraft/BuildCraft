@@ -8,7 +8,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.gui.ContainerBC_Neptune;
-import buildcraft.lib.net.command.IPayloadWriter;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

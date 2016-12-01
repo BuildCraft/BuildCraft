@@ -1,6 +1,4 @@
-package buildcraft.lib.net.command;
-
-import buildcraft.lib.net.PacketBufferBC;
+package buildcraft.lib.net;
 
 @FunctionalInterface
 public interface IPayloadWriter {
