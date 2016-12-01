@@ -11,7 +11,6 @@ import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.PipeEventBus;
 import buildcraft.transport.pipe.PluggableHolder;
 import buildcraft.transport.wire.WireManager;
-import buildcraft.transport.wire.WorldSavedDataWireSystems;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -331,7 +330,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
 
         pipe.markForUpdate();
         if(!worldObj.isRemote) {
-            wireManager.getWireSystems().updateWireSystemsAround(this);
+            wireManager.getWireSystems().rebuildWireSystemsAround(this);
         }
         scheduleNetworkUpdate(PipeMessageReceiver.PLUGGABLES[side.getIndex()]);
         scheduleRenderUpdate();

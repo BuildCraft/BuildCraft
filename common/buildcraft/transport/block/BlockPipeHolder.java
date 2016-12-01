@@ -474,7 +474,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             tile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
             return false;
         } else if (between != null) {
-            toDrop.add(new ItemStack(BCTransportItems.wire, 2, tile.wireManager.getColorOfPart(between.parts[0]).getMetadata()));
+            toDrop.add(new ItemStack(BCTransportItems.wire, between.to == null ? 1 : 2, tile.wireManager.getColorOfPart(between.parts[0]).getMetadata()));
             tile.wireManager.removePart(between.parts[0]);
             if(between.to == null) {
                 tile.wireManager.removePart(between.parts[1]);

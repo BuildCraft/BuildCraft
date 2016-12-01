@@ -102,17 +102,11 @@ public class WireSystem {
     }
 
     public boolean update(WorldSavedDataWireSystems wireSystems) {
-        return elements.stream().filter(element -> element.type == Element.Type.EMITTER_SIDE).map(element -> {
-            TileEntity tile = wireSystems.world.getTileEntity(element.blockPos);
-            if(tile instanceof IPipeHolder) {
-                IPipeHolder holder = (IPipeHolder) tile;
-                if(holder.getPluggable(element.emitterSide) instanceof PluggableGate) {
-                    PluggableGate gate = (PluggableGate) holder.getPluggable(element.emitterSide);
-                    return gate.logic.isEmitting(color);
-                }
-            }
-            return false;
-        }).reduce(Boolean::logicalOr).orElse(false);
+        return elements.stream()
+                .filter(element -> element.type == Element.Type.EMITTER_SIDE)
+                .map(element -> wireSystems.isEmitterEmitting(element, color))
+                .reduce(Boolean::logicalOr)
+                .orElse(false);
     }
 
     public List<ChunkPos> getChunkPoses() {
