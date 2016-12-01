@@ -3,6 +3,7 @@ package buildcraft.transport.wire;
 import buildcraft.api.transport.neptune.EnumWirePart;
 import buildcraft.api.transport.neptune.IPipeHolder;
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourStructure;
 import buildcraft.transport.plug.PluggableGate;
 import com.google.common.base.Predicates;
 import io.netty.buffer.ByteBuf;
@@ -31,10 +32,26 @@ public class WireSystem {
         return elements.contains(element);
     }
 
+    public static boolean canWireConnect(IPipeHolder holder, EnumFacing side, boolean recursive) {
+        TileEntity otherTile = holder.getPipeWorld().getTileEntity(holder.getPipePos().offset(side));
+        if(otherTile instanceof IPipeHolder) {
+            IPipeHolder otherHolder = (IPipeHolder) otherTile;
+            if((otherHolder.getPipe() != null && otherHolder.getPipe().getBehaviour() instanceof PipeBehaviourStructure) ||
+                    (!recursive && canWireConnect(otherHolder, side.getOpposite(), true))) {
+                return true;
+            }
+        }
+        return holder.getPipe() != null && holder.getPipe().isConnected(side);
+    }
+
+    public static boolean canWireConnect(IPipeHolder holder, EnumFacing side) {
+        return canWireConnect(holder, side, false);
+    }
+
     public static List<Element> getConnectedElementsOfElement(IPipeHolder holder, Element element) {
         assert element.wirePart != null;
         return element.wirePart.getAllPossibleConnections().stream().map(sidePosPart -> {
-            if(sidePosPart.getLeft() == null || holder.getPipe().isConnected(sidePosPart.getLeft())) {
+            if(sidePosPart.getLeft() == null || canWireConnect(holder, sidePosPart.getLeft())) {
                 return new Element(element.blockPos.add(sidePosPart.getMiddle()), sidePosPart.getRight());
             }
             return null;

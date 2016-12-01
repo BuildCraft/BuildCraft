@@ -1,21 +1,21 @@
 package buildcraft.transport.wire;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.transport.neptune.EnumWirePart;
+import buildcraft.api.transport.neptune.IPipeHolder;
 import buildcraft.lib.BCMessageHandler;
 import com.google.common.base.Predicates;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraftforge.common.util.Constants;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class WorldSavedDataWireSystems extends WorldSavedData {
@@ -50,6 +50,12 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
             wireSystems.put(wireSystem, wireSystem.update(this));
         }
         structureChanged = true;
+    }
+
+    public void updateWireSystemsAround(IPipeHolder holder) {
+        Arrays.stream(EnumWirePart.values())
+                .flatMap(part -> WireSystem.getConnectedElementsOfElement(world, new WireSystem.Element(holder.getPipePos(), part)).stream())
+                .forEach(this::buildAndAddWireSystem);
     }
 
     public void tick() {

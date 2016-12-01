@@ -79,7 +79,7 @@ public class WireManager implements IWireManager {
                             (betweenParts[1] == part && getColorOfPart(betweenParts[0]) == color)) {
                         betweens.put(between, color);
                     }
-                } else if(holder.getPipe().isConnected(between.to)) {
+                } else if(WireSystem.canWireConnect(holder, between.to)) {
                     IPipe pipe = holder.getNeighbouringPipe(between.to);
                     if(pipe != null) {
                         IPipeHolder holder = pipe.getHolder();

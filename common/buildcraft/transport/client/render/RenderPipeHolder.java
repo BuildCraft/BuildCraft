@@ -42,7 +42,7 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         Minecraft.getMinecraft().mcProfiler.startSection("pipe");
 
         Minecraft.getMinecraft().mcProfiler.startSection("wire");
-        renderWire(pipe, x, y, z, vb);
+        renderWires(pipe, x, y, z, vb);
 
         Minecraft.getMinecraft().mcProfiler.endStartSection("pluggable");
         renderPluggables(pipe, x, y, z, partialTicks, vb);
@@ -55,7 +55,7 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
-    private static void renderWire(TilePipeHolder pipe, double x, double y, double z, VertexBuffer vb) {
+    private static void renderWires(TilePipeHolder pipe, double x, double y, double z, VertexBuffer vb) {
         BiConsumer<Pair<AxisAlignedBB, EnumWirePart>, EnumDyeColor> renderAABB = (wireInfo, color) -> {
             EnumWirePart part = wireInfo.getRight();
             AxisAlignedBB bb = wireInfo.getLeft();
