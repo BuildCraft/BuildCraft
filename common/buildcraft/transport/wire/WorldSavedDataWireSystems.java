@@ -18,6 +18,7 @@ import net.minecraftforge.common.util.Constants;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class WorldSavedDataWireSystems extends WorldSavedData {
@@ -120,18 +121,22 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
                     .forEach(changedSystems::add);
         }
         // noinspection Guava
-        world.getPlayers(EntityPlayerMP.class, Predicates.alwaysTrue()).forEach((player) -> {
-            Map<WireSystem.Element, Boolean> elementsPowered = wireSystems.entrySet().stream()
+        world.getPlayers(EntityPlayerMP.class, Predicates.alwaysTrue()).forEach(player -> {
+            Map<Integer, WireSystem> wireSystems = this.wireSystems.keySet().stream()
+                    .filter(wireSystem -> wireSystem.isPlayerWatching(player) && (structureChanged || changedPlayers.contains(player)))
+                    .collect(Collectors.toMap(WireSystem::getWiresHashCode, Function.identity()));
+            if(!wireSystems.isEmpty()) {
+                BCMessageHandler.netWrapper.sendTo(new MessageWireSystems(wireSystems), player);
+            }
+            Map<Integer, Boolean> hashesPowered = this.wireSystems.entrySet().stream()
                     .filter(systemPower ->
                             systemPower.getKey().isPlayerWatching(player) &&
                                     (structureChanged || changedSystems.contains(systemPower.getKey()) || changedPlayers.contains(player))
                     )
-                    .flatMap(systemPower -> systemPower.getKey().elements.stream()
-                            .filter(element -> element.type == WireSystem.Element.Type.WIRE_PART)
-                            .map(element -> Pair.of(element, systemPower.getValue())))
+                    .map(systemPowered -> Pair.of(systemPowered.getKey().getWiresHashCode(), systemPowered.getValue()))
                     .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
-            if(!elementsPowered.isEmpty()) {
-                BCMessageHandler.netWrapper.sendTo(new MessageElementsPowered(elementsPowered), player);
+            if(!hashesPowered.isEmpty()) {
+                BCMessageHandler.netWrapper.sendTo(new MessageWireSystemsPowered(hashesPowered), player);
             }
         });
         if(structureChanged || !changedSystems.isEmpty()) {

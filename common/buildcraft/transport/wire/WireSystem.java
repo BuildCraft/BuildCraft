@@ -125,6 +125,10 @@ public class WireSystem {
         return false;
     }
 
+    public int getWiresHashCode() {
+        return elements.stream().filter(element -> element.type == Element.Type.WIRE_PART).collect(Collectors.toList()).hashCode();
+    }
+
     public NBTTagCompound writeToNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         NBTTagList elementsList = new NBTTagList();
@@ -140,6 +144,30 @@ public class WireSystem {
         IntStream.range(0, elementsList.tagCount()).mapToObj(elementsList::getCompoundTagAt).map(Element::new).forEach(elements::add);
         color = EnumDyeColor.byMetadata(nbt.getInteger("color"));
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) {
+            return true;
+        }
+        if(o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        WireSystem that = (WireSystem) o;
+
+        if(!elements.equals(that.elements)) {
+            return false;
+        }
+        return color == that.color;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = elements.hashCode();
+        result = 31 * result + (color != null ? color.hashCode() : 0);
+        return result;
     }
 
     public static class Element {

@@ -16,7 +16,8 @@ import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.pipe.flow.PipeFlowStructure;
 import buildcraft.transport.plug.PluggableRegistry;
-import buildcraft.transport.wire.MessageElementsPowered;
+import buildcraft.transport.wire.MessageWireSystems;
+import buildcraft.transport.wire.MessageWireSystemsPowered;
 import buildcraft.transport.wire.WorldSavedDataWireSystems;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
@@ -85,12 +86,13 @@ public class BCTransport {
             }
 
             @SubscribeEvent
-            public void onChunkWatch(ChunkWatchEvent.Watch event) {
+            public void onChunkWatch(ChunkWatchEvent event) {
                 WorldSavedDataWireSystems.get(event.getPlayer().worldObj).changedPlayers.add(event.getPlayer());
             }
 
         });
-        BCMessageHandler.addMessageType(MessageElementsPowered.class, MessageElementsPowered.Handler.INSTANCE, Side.CLIENT);
+        BCMessageHandler.addMessageType(MessageWireSystems.class, MessageWireSystems.Handler.INSTANCE, Side.CLIENT);
+        BCMessageHandler.addMessageType(MessageWireSystemsPowered.class, MessageWireSystemsPowered.Handler.INSTANCE, Side.CLIENT);
     }
 
     @SubscribeEvent
