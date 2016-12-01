@@ -120,6 +120,8 @@ public class GuideCraftingFactory implements GuidePartFactory {
                 }
             }
             val = new GuideCraftingFactory(dimInput, recipe.getRecipeOutput());
+        } else if (recipe instanceof IRecipeViewable) {
+            
         } else {
             BCLog.logger.warn("[lib.guide.crafting] Found an unknown recipe " + recipe.getClass());
         }

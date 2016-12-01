@@ -285,7 +285,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         double[] arr = new double[7];
         for (EnumPipePart part : EnumPipePart.VALUES) {
             Section s = sections.get(part);
-            arr[part.getIndex()] = s.clientAmountLast * (1 - partialTicks) + s.clientAmountThis * partialTicks;
+            arr[part.getIndex()] = s.clientAmountLast * (partialTicks) + s.clientAmountThis * (1 - partialTicks);
         }
         return arr;
     }
@@ -296,7 +296,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         for (EnumPipePart part : EnumPipePart.VALUES) {
             Section s = sections.get(part);
             if (s.offsetLast != null & s.offsetThis != null) {
-                arr[part.getIndex()] = s.offsetLast.scale(1 - partialTicks).add(s.offsetThis.scale(partialTicks));
+                arr[part.getIndex()] = s.offsetLast.scale(partialTicks).add(s.offsetThis.scale(1 - partialTicks));
             }
         }
         return arr;
@@ -631,41 +631,34 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
             if (part.face == null) {
                 Vec3d dir = Vec3d.ZERO;
+                // Firstly find all the outgoing faces
                 for (EnumPipePart p : EnumPipePart.FACES) {
                     Section s = sections.get(p);
-                    if (s.amount > 0) {
-                        double mult = Math.signum(s.ticksInDirection);
-                        dir = VecUtil.offset(dir, p.face, -FLOW_MULTIPLIER * mult / 2);
+                    if (s.ticksInDirection > 0) {
+                        dir = dir.add(new Vec3d(p.face.getDirectionVec()));
                     }
                 }
-                offsetThis = offsetThis.add(dir);
+                // If that failed then find all of the incoming faces
+                for (EnumPipePart p : EnumPipePart.FACES) {
+                    Section s = sections.get(p);
+                    if (s.ticksInDirection < 0) {
+                        dir = dir.add(new Vec3d(p.face.getDirectionVec()).scale(-1));
+                    }
+                }
+                dir = new Vec3d(Math.signum(dir.xCoord), Math.signum(dir.yCoord), Math.signum(dir.zCoord));
+                offsetThis = offsetThis.add(dir.scale(-FLOW_MULTIPLIER));
             } else {
                 double mult = Math.signum(ticksInDirection);
                 offsetThis = VecUtil.offset(offsetLast, part.face, -FLOW_MULTIPLIER * (mult));
             }
 
-            if (offsetThis.xCoord >= 0.5) {
-                offsetThis = offsetThis.addVector(-1, 0, 0);
-                offsetLast = offsetLast.addVector(-1, 0, 0);
-            } else if (offsetThis.xCoord <= -0.5) {
-                offsetThis = offsetThis.addVector(1, 0, 0);
-                offsetLast = offsetLast.addVector(1, 0, 0);
+            double dx = offsetThis.xCoord >= 0.5 ? -1 : offsetThis.xCoord <= 0.5 ? 1 : 0;
+            double dy = offsetThis.yCoord >= 0.5 ? -1 : offsetThis.yCoord <= 0.5 ? 1 : 0;
+            double dz = offsetThis.zCoord >= 0.5 ? -1 : offsetThis.zCoord <= 0.5 ? 1 : 0;
+            if (dx != 0 || dy != 0 || dz != 0) {
+                offsetThis = offsetThis.addVector(dx, dy, dz);
+                offsetLast = offsetLast.addVector(dx, dy, dz);
             }
-            if (offsetThis.yCoord >= 0.5) {
-                offsetThis = offsetThis.addVector(0, -1, 0);
-                offsetLast = offsetLast.addVector(0, -1, 0);
-            } else if (offsetThis.yCoord <= -1) {
-                offsetThis = offsetThis.addVector(0, 1, 0);
-                offsetLast = offsetLast.addVector(0, -1, 0);
-            }
-            if (offsetThis.zCoord >= 0.5) {
-                offsetThis = offsetThis.addVector(0, 0, -1);
-                offsetLast = offsetLast.addVector(0, 0, -1);
-            } else if (offsetThis.zCoord <= -0.5) {
-                offsetThis = offsetThis.addVector(0, 0, 1);
-                offsetLast = offsetLast.addVector(0, 0, 1);
-            }
-
             return clientAmountThis > 0 | clientAmountLast > 0;
         }
 
