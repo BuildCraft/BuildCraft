@@ -4,25 +4,35 @@ import buildcraft.api.transport.neptune.EnumWirePart;
 import buildcraft.api.transport.neptune.IPluggableDynamicRenderer;
 import buildcraft.api.transport.neptune.PipePluggable;
 import buildcraft.lib.BCLibProxy;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.flow.PipeFlowFluids;
 import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.tile.TilePipeHolder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.model.animation.FastTESR;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
+
+    private static Map<EnumDyeColor, SpriteHolderRegistry.SpriteHolder> wireSprites = new EnumMap<>(EnumDyeColor.class);
+
+    static {
+        for(EnumDyeColor color : EnumDyeColor.values()) {
+            wireSprites.put(color, SpriteHolderRegistry.getHolder("buildcrafttransport:wires/" + color.getName()));
+        }
+    }
 
     @Override
     public void renderTileEntityFast(TilePipeHolder pipe, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
@@ -45,56 +55,49 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
-    @SuppressWarnings("PointlessBitwiseExpression")
     private static void renderWire(TilePipeHolder pipe, double x, double y, double z, VertexBuffer vb) {
         BiConsumer<Pair<AxisAlignedBB, EnumWirePart>, EnumDyeColor> renderAABB = (wireInfo, color) -> {
-            GlStateManager.disableTexture2D();
-            Tessellator tessellator = Tessellator.getInstance();
-            VertexBuffer vertexbuffer = tessellator.getBuffer();
-            int colorValue = color.getMapColor().colorValue;
-            float modifier = 1;
             EnumWirePart part = wireInfo.getRight();
-            if(part != null) {
-                modifier = pipe.getWireManager().isPowered(part) ? 1 : 0.5F;
+            AxisAlignedBB bb = wireInfo.getLeft();
+            TextureAtlasSprite sprite = wireSprites.get(color).getSprite();
+            Vec3d size = new Vec3d(bb.maxX - bb.minX, bb.maxY - bb.minY, bb.maxZ - bb.minZ).scale(32);
+            int combinedLight = pipe.getWorld().getCombinedLight(pipe.getPipePos(), 0);
+            int light1 = combinedLight >> 16 & 65535;
+            int light2 = combinedLight & 65535;
+            if(pipe.getWireManager().isPowered(part)) {
+                light1 = light2 = 240;
             }
-            float r = ((colorValue >> 16) & 0xFF) / 255.0F * modifier;
-            float g = ((colorValue >> 8) & 0xFF) / 255.0F * modifier;
-            float b = ((colorValue >> 0) & 0xFF) / 255.0F * modifier;
-            GlStateManager.color(r, g, b);
-            vertexbuffer.setTranslation(x, y, z);
-            vertexbuffer.begin(7, DefaultVertexFormats.POSITION_NORMAL);
-            AxisAlignedBB aabb = wireInfo.getLeft();
-            vertexbuffer.pos(aabb.minX, aabb.maxY, aabb.minZ).normal(0.0F, 0.0F, -1.0F).endVertex();
-            vertexbuffer.pos(aabb.maxX, aabb.maxY, aabb.minZ).normal(0.0F, 0.0F, -1.0F).endVertex();
-            vertexbuffer.pos(aabb.maxX, aabb.minY, aabb.minZ).normal(0.0F, 0.0F, -1.0F).endVertex();
-            vertexbuffer.pos(aabb.minX, aabb.minY, aabb.minZ).normal(0.0F, 0.0F, -1.0F).endVertex();
-            vertexbuffer.pos(aabb.minX, aabb.minY, aabb.maxZ).normal(0.0F, 0.0F, 1.0F).endVertex();
-            vertexbuffer.pos(aabb.maxX, aabb.minY, aabb.maxZ).normal(0.0F, 0.0F, 1.0F).endVertex();
-            vertexbuffer.pos(aabb.maxX, aabb.maxY, aabb.maxZ).normal(0.0F, 0.0F, 1.0F).endVertex();
-            vertexbuffer.pos(aabb.minX, aabb.maxY, aabb.maxZ).normal(0.0F, 0.0F, 1.0F).endVertex();
-            vertexbuffer.pos(aabb.minX, aabb.minY, aabb.minZ).normal(0.0F, -1.0F, 0.0F).endVertex();
-            vertexbuffer.pos(aabb.maxX, aabb.minY, aabb.minZ).normal(0.0F, -1.0F, 0.0F).endVertex();
-            vertexbuffer.pos(aabb.maxX, aabb.minY, aabb.maxZ).normal(0.0F, -1.0F, 0.0F).endVertex();
-            vertexbuffer.pos(aabb.minX, aabb.minY, aabb.maxZ).normal(0.0F, -1.0F, 0.0F).endVertex();
-            vertexbuffer.pos(aabb.minX, aabb.maxY, aabb.maxZ).normal(0.0F, 1.0F, 0.0F).endVertex();
-            vertexbuffer.pos(aabb.maxX, aabb.maxY, aabb.maxZ).normal(0.0F, 1.0F, 0.0F).endVertex();
-            vertexbuffer.pos(aabb.maxX, aabb.maxY, aabb.minZ).normal(0.0F, 1.0F, 0.0F).endVertex();
-            vertexbuffer.pos(aabb.minX, aabb.maxY, aabb.minZ).normal(0.0F, 1.0F, 0.0F).endVertex();
-            vertexbuffer.pos(aabb.minX, aabb.minY, aabb.maxZ).normal(-1.0F, 0.0F, 0.0F).endVertex();
-            vertexbuffer.pos(aabb.minX, aabb.maxY, aabb.maxZ).normal(-1.0F, 0.0F, 0.0F).endVertex();
-            vertexbuffer.pos(aabb.minX, aabb.maxY, aabb.minZ).normal(-1.0F, 0.0F, 0.0F).endVertex();
-            vertexbuffer.pos(aabb.minX, aabb.minY, aabb.minZ).normal(-1.0F, 0.0F, 0.0F).endVertex();
-            vertexbuffer.pos(aabb.maxX, aabb.minY, aabb.minZ).normal(1.0F, 0.0F, 0.0F).endVertex();
-            vertexbuffer.pos(aabb.maxX, aabb.maxY, aabb.minZ).normal(1.0F, 0.0F, 0.0F).endVertex();
-            vertexbuffer.pos(aabb.maxX, aabb.maxY, aabb.maxZ).normal(1.0F, 0.0F, 0.0F).endVertex();
-            vertexbuffer.pos(aabb.maxX, aabb.minY, aabb.maxZ).normal(1.0F, 0.0F, 0.0F).endVertex();
-            tessellator.draw();
-            vertexbuffer.setTranslation(0.0D, 0.0D, 0.0D);
-            GlStateManager.enableTexture2D();
-            GlStateManager.resetColor();
+            float c = pipe.getWireManager().isPowered(part) ? 1 : 0.5F;
+            vb.setTranslation(x, y, z);
+            vb.pos(bb.minX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.maxX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.maxX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(size.yCoord)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.minX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.yCoord)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.minX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.maxX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.maxX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(size.yCoord)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.minX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.yCoord)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.minX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.maxX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.maxX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.minX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.minX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.maxX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.maxX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.minX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.minX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.minX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.yCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.minX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.yCoord), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.minX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.maxX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.maxX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.yCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.maxX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.yCoord), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
+            vb.pos(bb.maxX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
+            Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         };
         pipe.getWireManager().parts.forEach((part, color) -> renderAABB.accept(Pair.of(part.boundingBox, part), color));
         pipe.getWireManager().betweens.forEach((between, color) -> renderAABB.accept(Pair.of(between.boundingBox, between.parts[0]), color));
+        vb.setTranslation(0, 0, 0);
     }
 
     private static void renderPluggables(TilePipeHolder pipe, double x, double y, double z, float partialTicks, VertexBuffer vb) {
