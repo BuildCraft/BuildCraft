@@ -56,12 +56,12 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
     }
 
     private static void renderWires(TilePipeHolder pipe, double x, double y, double z, VertexBuffer vb) {
+        int combinedLight = pipe.getWorld().getCombinedLight(pipe.getPipePos(), 0);
         BiConsumer<Pair<AxisAlignedBB, EnumWirePart>, EnumDyeColor> renderAABB = (wireInfo, color) -> {
             EnumWirePart part = wireInfo.getRight();
             AxisAlignedBB bb = wireInfo.getLeft();
             TextureAtlasSprite sprite = wireSprites.get(color).getSprite();
             Vec3d size = new Vec3d(bb.maxX - bb.minX, bb.maxY - bb.minY, bb.maxZ - bb.minZ).scale(32);
-            int combinedLight = pipe.getWorld().getCombinedLight(pipe.getPipePos(), 0);
             int light1 = combinedLight >> 16 & 65535;
             int light2 = combinedLight & 65535;
             if(pipe.getWireManager().isPowered(part)) {

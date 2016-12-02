@@ -328,7 +328,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         eventBus.unregisterHandler(old);
         eventBus.registerHandler(with);
 
-        pipe.markForUpdate();
+        if(pipe != null) {
+            pipe.markForUpdate();
+        }
         if(!worldObj.isRemote) {
             wireManager.getWireSystems().rebuildWireSystemsAround(this);
         }
@@ -383,12 +385,12 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
 
     @Override
     public void sendMessage(PipeMessageReceiver to, IWriter writer) {
-        createAndSendMessage(getReceiverId(to), (buffer) -> writer.write(buffer));
+        createAndSendMessage(getReceiverId(to), writer::write);
     }
 
     @Override
     public void sendGuiMessage(PipeMessageReceiver to, IWriter writer) {
-        createAndSendGuiMessage(getReceiverId(to), (buffer) -> writer.write(buffer));
+        createAndSendGuiMessage(getReceiverId(to), writer::write);
     }
 
     @Override
@@ -403,7 +405,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
 
     @Override
     public int getRedstoneInput(EnumFacing side) {
-        return 0;// TODO!
+        return worldObj.isBlockPowered(pos) ? 15 : 0;
     }
 
     @Override

@@ -120,7 +120,10 @@ public class WireManager implements IWireManager {
         } else {
             return getWireSystems().getWireSystemsWithElement(new WireSystem.Element(holder.getPipePos(), part))
                     .stream()
-                    .map(wireSystem -> getWireSystems().wireSystems.get(wireSystem)).reduce(Boolean::logicalOr).orElse(false);
+                    .map(wireSystem -> getWireSystems().wireSystems.get(wireSystem))
+                    .filter(Objects::nonNull)
+                    .reduce(Boolean::logicalOr)
+                    .orElse(false);
         }
     }
 

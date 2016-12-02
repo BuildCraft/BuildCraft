@@ -21,6 +21,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -69,31 +70,50 @@ public class WireSystem {
         return Collections.emptyList();
     }
 
-    public WireSystem build(WorldSavedDataWireSystems wireSystems, Element element) {
-        if(!elements.contains(element)) {
-            TileEntity tile = wireSystems.world.getTileEntity(element.blockPos);
-            if(tile instanceof IPipeHolder) {
-                IPipeHolder holder = (IPipeHolder) tile;
-                if(element.type == Element.Type.WIRE_PART) {
-                    EnumDyeColor colorOfPart = holder.getWireManager().getColorOfPart(element.wirePart);
-                    if(color == null) {
-                        if(colorOfPart != null) {
-                            color = colorOfPart;
+    public WireSystem build(WorldSavedDataWireSystems wireSystems, Element startElement) {
+        long time = System.currentTimeMillis();
+        Map<BlockPos, IPipeHolder> holdersCache = new HashMap<>();
+        Set<Element> walked = new HashSet<>();
+        Queue<Element> queue = new ArrayDeque<>();
+        Consumer<Element> build = element -> {
+            if(!walked.contains(element)) {
+                if(!holdersCache.containsKey(element.blockPos)) {
+                    TileEntity tile = wireSystems.world.getTileEntity(element.blockPos);
+                    IPipeHolder holder = null;
+                    if(tile instanceof IPipeHolder) {
+                        holder = (IPipeHolder) tile;
+                    }
+                    holdersCache.put(element.blockPos, holder);
+                }
+                IPipeHolder holder = holdersCache.get(element.blockPos);
+                if(holder != null) {
+                    if(element.type == Element.Type.WIRE_PART) {
+                        EnumDyeColor colorOfPart = holder.getWireManager().getColorOfPart(element.wirePart);
+                        if(color == null) {
+                            if(colorOfPart != null) {
+                                color = colorOfPart;
+                            }
+                        }
+                        if(color != null && colorOfPart == color) {
+                            wireSystems.getWireSystemsWithElement(element).stream().filter(wireSystem -> wireSystem != this && wireSystem.color == this.color).forEach(wireSystems::removeWireSystem);
+                            elements.add(element);
+                            queue.addAll(getConnectedElementsOfElement(wireSystems.world, element));
+                            Arrays.stream(EnumFacing.values()).forEach(side -> queue.add(new Element(element.blockPos, side)));
+                        }
+                    } else if(element.type == Element.Type.EMITTER_SIDE) {
+                        if(holder.getPluggable(element.emitterSide) instanceof PluggableGate) {
+                            elements.add(new Element(element.blockPos, element.emitterSide));
                         }
                     }
-                    if(color != null && colorOfPart == color) {
-                        wireSystems.getWireSystemsWithElement(element).stream().filter(wireSystem -> wireSystem != this && wireSystem.color == this.color).forEach(wireSystems::removeWireSystem);
-                        elements.add(element);
-                        getConnectedElementsOfElement(wireSystems.world, element).forEach(localElement -> build(wireSystems, localElement));
-                        Arrays.stream(EnumFacing.values()).forEach(side -> build(wireSystems, new Element(element.blockPos, side)));
-                    }
-                } else if(element.type == Element.Type.EMITTER_SIDE) {
-                    if(holder.getPluggable(element.emitterSide) instanceof PluggableGate) {
-                        elements.add(new Element(element.blockPos, element.emitterSide));
-                    }
                 }
+                walked.add(element);
             }
+        };
+        queue.add(startElement);
+        while(!queue.isEmpty()) {
+            build.accept(queue.poll());
         }
+        System.out.println("Building take: " + (System.currentTimeMillis() - time) + "ms");
         return this;
     }
 
