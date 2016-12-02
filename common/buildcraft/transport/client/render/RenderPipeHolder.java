@@ -9,6 +9,7 @@ import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.flow.PipeFlowFluids;
 import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.tile.TilePipeHolder;
+import buildcraft.transport.wire.EnumWireBetween;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -16,7 +17,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.model.animation.FastTESR;
 
 import java.util.EnumMap;
@@ -53,66 +53,16 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
-    private static void renderWire(TilePipeHolder pipe, VertexBuffer vb, int light1, int light2, AxisAlignedBB bb, Vec3d size, EnumWirePart part, EnumDyeColor color) {
+    private static void renderWire(boolean powered, VertexBuffer vb, int light1, int light2, double[][] poses, double[][] texes, EnumDyeColor color) {
         TextureAtlasSprite sprite = wireSprites.get(color).getSprite();
-        if(pipe.getWireManager().isPowered(part)) {
+        if(powered) {
             light1 = light2 = 240;
         }
-        float c = pipe.getWireManager().isPowered(part) ? 1 : 0.5F;
-        double[][] poses = {
-                {bb.minX, bb.maxY, bb.minZ},
-                {bb.maxX, bb.maxY, bb.minZ},
-                {bb.maxX, bb.minY, bb.minZ},
-                {bb.minX, bb.minY, bb.minZ},
-                {bb.minX, bb.minY, bb.maxZ},
-                {bb.maxX, bb.minY, bb.maxZ},
-                {bb.maxX, bb.maxY, bb.maxZ},
-                {bb.minX, bb.maxY, bb.maxZ},
-                {bb.minX, bb.minY, bb.minZ},
-                {bb.maxX, bb.minY, bb.minZ},
-                {bb.maxX, bb.minY, bb.maxZ},
-                {bb.minX, bb.minY, bb.maxZ},
-                {bb.minX, bb.maxY, bb.maxZ},
-                {bb.maxX, bb.maxY, bb.maxZ},
-                {bb.maxX, bb.maxY, bb.minZ},
-                {bb.minX, bb.maxY, bb.minZ},
-                {bb.minX, bb.minY, bb.maxZ},
-                {bb.minX, bb.maxY, bb.maxZ},
-                {bb.minX, bb.maxY, bb.minZ},
-                {bb.minX, bb.minY, bb.minZ},
-                {bb.maxX, bb.minY, bb.minZ},
-                {bb.maxX, bb.maxY, bb.minZ},
-                {bb.maxX, bb.maxY, bb.maxZ},
-                {bb.maxX, bb.minY, bb.maxZ}
-        };
-        double[][] texes = {
-                {sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)},
-                {sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(0/*      */)},
-                {sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(size.yCoord)},
-                {sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.yCoord)},
-                {sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)},
-                {sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(0/*      */)},
-                {sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(size.yCoord)},
-                {sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.yCoord)},
-                {sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)},
-                {sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(0/*      */)},
-                {sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(size.zCoord)},
-                {sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.zCoord)},
-                {sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)},
-                {sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(0/*      */)},
-                {sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(size.zCoord)},
-                {sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.zCoord)},
-                {sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)},
-                {sprite.getInterpolatedU(size.yCoord), sprite.getInterpolatedV(0/*      */)},
-                {sprite.getInterpolatedU(size.yCoord), sprite.getInterpolatedV(size.zCoord)},
-                {sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.zCoord)},
-                {sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)},
-                {sprite.getInterpolatedU(size.yCoord), sprite.getInterpolatedV(0/*      */)},
-                {sprite.getInterpolatedU(size.yCoord), sprite.getInterpolatedV(size.zCoord)},
-                {sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.zCoord)}
-        };
+        int c = powered ? 255 : 120;
         for(int i = 0; i < 4 * 6; i++) {
-            vb.pos(poses[i][0], poses[i][1], poses[i][2]).color(c, c, c, 1).tex(texes[i][0], texes[i][1]).lightmap(light1, light2).endVertex();
+            double[] pos = poses[i];
+            double[] tex = texes[i];
+            vb.pos(pos[0], pos[1], pos[2]).color(c, c, c, 255).tex(sprite.getInterpolatedU(tex[0]), sprite.getInterpolatedV(tex[1])).lightmap(light1, light2).endVertex();
         }
     }
 
@@ -121,8 +71,16 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         int light1 = combinedLight >> 16 & 65535;
         int light2 = combinedLight & 65535;
         vb.setTranslation(x, y, z);
-        pipe.getWireManager().parts.forEach((part, color) -> renderWire(pipe, vb, light1, light2, part.boundingBox, part.renderingScale, part, color));
-        pipe.getWireManager().betweens.forEach((between, color) -> renderWire(pipe, vb, light1, light2, between.boundingBox, between.renderingScale, between.parts[0], color));
+        for(Map.Entry<EnumWirePart, EnumDyeColor> partColor : pipe.getWireManager().parts.entrySet()) {
+            EnumWirePart part = partColor.getKey();
+            EnumDyeColor color = partColor.getValue();
+            renderWire(pipe.getWireManager().isPowered(part), vb, light1, light2, part.poses, part.texes, color);
+        }
+        for(Map.Entry<EnumWireBetween, EnumDyeColor> betweenColor : pipe.getWireManager().betweens.entrySet()) {
+            EnumWireBetween between = betweenColor.getKey();
+            EnumDyeColor color = betweenColor.getValue();
+            renderWire(pipe.getWireManager().isPowered(between.parts[0]), vb, light1, light2, between.poses, between.texes, color);
+        }
         vb.setTranslation(0, 0, 0);
     }
 
