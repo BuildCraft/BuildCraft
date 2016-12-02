@@ -23,8 +23,8 @@ import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.blueprints.Template;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.ModelHelper;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.StringUtilBC;
 
 public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprintItem {
     public ItemBlueprint() {
@@ -63,23 +63,23 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
             String name = NBTUtilBC.getItemData(stack).getString("name");
 
             if ("".equals(name)) {
-                list.add(StringUtilBC.localize("item.blueprint.unnamed"));
+                list.add(LocaleUtil.localize("item.blueprint.unnamed"));
             } else {
                 list.add(name);
             }
 
-            list.add(StringUtilBC.localize("item.blueprint.author") + " " + NBTUtilBC.getItemData(stack).getString("author"));
+            list.add(LocaleUtil.localize("item.blueprint.author") + " " + NBTUtilBC.getItemData(stack).getString("author"));
         } else {
-            list.add(StringUtilBC.localize("item.blueprint.blank"));
+            list.add(LocaleUtil.localize("item.blueprint.blank"));
         }
 
         if (NBTUtilBC.getItemData(stack).hasKey("permission")) {
             BuildingPermission p = BuildingPermission.values()[NBTUtilBC.getItemData(stack).getByte("permission")];
 
             if (p == BuildingPermission.CREATIVE_ONLY) {
-                list.add(StringUtilBC.localize("item.blueprint.creative_only"));
+                list.add(LocaleUtil.localize("item.blueprint.creative_only"));
             } else if (p == BuildingPermission.NONE) {
-                list.add(StringUtilBC.localize("item.blueprint.no_build"));
+                list.add(LocaleUtil.localize("item.blueprint.no_build"));
             }
         }
 
@@ -87,7 +87,7 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
             boolean isComplete = NBTUtilBC.getItemData(stack).getBoolean("isComplete");
 
             if (!isComplete) {
-                list.add(StringUtilBC.localize("item.blueprint.incomplete"));
+                list.add(LocaleUtil.localize("item.blueprint.incomplete"));
             }
         }
     }

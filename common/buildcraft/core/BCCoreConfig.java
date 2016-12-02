@@ -153,8 +153,8 @@ public class BCCoreConfig {
         BCLibConfig.useColouredLabels = useColouredLabels;
         hidePower = propHidePower.getBoolean();
         hideFluid = propHideFluid.getBoolean();
-        useBucketsStatic = propUseBucketsStatic.getBoolean();
-        useBucketsFlow = propUseBucketsFlow.getBoolean();
+        BCLibConfig.useBucketsStatic = useBucketsStatic = propUseBucketsStatic.getBoolean();
+        BCLibConfig.useBucketsFlow = useBucketsFlow = propUseBucketsFlow.getBoolean();
         itemLifespan = propItemLifespan.getInt();
         BCLibConfig.itemLifespan = itemLifespan;
         markerMaxDistance = propMarkerMaxDistance.getInt();
@@ -167,5 +167,7 @@ public class BCCoreConfig {
         if (config.hasChanged()) {
             config.save();
         }
+
+        BCLibConfig.refreshConfigs();
     }
 }

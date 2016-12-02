@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.items.IList;
 
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public enum ListTooltipHandler {
     INSTANCE;
@@ -22,7 +22,7 @@ public enum ListTooltipHandler {
             ItemStack list = player.getHeldItemMainhand();
             if (list != null && list.getItem() instanceof IList) {
                 if (((IList) list.getItem()).matches(list, stack)) {
-                    event.getToolTip().add(TextFormatting.GREEN + StringUtilBC.localize("tip.list.matches"));
+                    event.getToolTip().add(TextFormatting.GREEN + LocaleUtil.localize("tip.list.matches"));
                 }
             }
         }

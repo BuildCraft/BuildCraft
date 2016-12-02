@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.client.sprite.SpriteBuilder;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 @Deprecated
 public final class GateDefinition {
@@ -23,9 +23,9 @@ public final class GateDefinition {
 
     public static String getLocalizedName(GateMaterial material, GateLogic logic) {
         if (material == GateMaterial.REDSTONE) {
-            return StringUtilBC.localize("gate.name.basic");
+            return LocaleUtil.localize("gate.name.basic");
         } else {
-            return String.format(StringUtilBC.localize("gate.name"), StringUtilBC.localize("gate.material." + material.getTag()), StringUtilBC
+            return String.format(LocaleUtil.localize("gate.name"), LocaleUtil.localize("gate.material." + material.getTag()), LocaleUtil
                     .localize("gate.logic." + logic.getTag()));
         }
     }

@@ -15,7 +15,7 @@ import buildcraft.core.client.CoreIconProvider;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.gui.Ledger;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.silicon.TileLaserTableBase;
 
 public abstract class GuiLaserTable extends GuiBuildCraft {
@@ -46,12 +46,12 @@ public abstract class GuiLaserTable extends GuiBuildCraft {
                 return;
             }
 
-            fontRendererObj.drawStringWithShadow(StringUtilBC.localize("gui.energy"), x + 22, y + 8, headerColour);
-            fontRendererObj.drawStringWithShadow(StringUtilBC.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
+            fontRendererObj.drawStringWithShadow(LocaleUtil.localize("gui.energy"), x + 22, y + 8, headerColour);
+            fontRendererObj.drawStringWithShadow(LocaleUtil.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
             fontRendererObj.drawString(String.format("%d RF", table.clientRequiredEnergy), x + 22, y + 32, textColour);
-            fontRendererObj.drawStringWithShadow(StringUtilBC.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
+            fontRendererObj.drawStringWithShadow(LocaleUtil.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
             fontRendererObj.drawString(String.format("%d RF", table.getEnergy()), x + 22, y + 56, textColour);
-            fontRendererObj.drawStringWithShadow(StringUtilBC.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
+            fontRendererObj.drawStringWithShadow(LocaleUtil.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
             fontRendererObj.drawString(String.format("%.1f RF/t", table.getRecentEnergyAverage() / 100.0f), x + 22, y + 80, textColour);
 
         }
@@ -74,7 +74,7 @@ public abstract class GuiLaserTable extends GuiBuildCraft {
         super.drawGuiContainerForegroundLayer(par1, par2);
         String title = table.getInventoryName();
         fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
-        fontRendererObj.drawString(StringUtilBC.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+        fontRendererObj.drawString(LocaleUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
     }
 
     @Override

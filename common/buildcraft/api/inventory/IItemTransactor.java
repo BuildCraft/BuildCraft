@@ -26,7 +26,7 @@ public interface IItemTransactor {
 
     /** Extracts a number of items that match the given filter
      * 
-     * @param filter
+     * @param filter The filter that MUST be met by the extracted stack.
      * @param min The minimum number of items to extract, or 0 if not enough items can be extracted
      * @param max The maximum number of items to extract.
      * @param simulate If true then the in-world state of this will not be changed.

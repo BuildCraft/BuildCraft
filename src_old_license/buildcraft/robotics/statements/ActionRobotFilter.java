@@ -26,7 +26,7 @@ import buildcraft.lib.inventory.filter.ArrayFluidFilter;
 import buildcraft.lib.inventory.filter.ArrayStackOrListFilter;
 import buildcraft.lib.inventory.filter.PassThroughFluidFilter;
 import buildcraft.lib.inventory.filter.PassThroughStackFilter;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class ActionRobotFilter extends BCStatement implements IActionInternal {
 
@@ -37,7 +37,7 @@ public class ActionRobotFilter extends BCStatement implements IActionInternal {
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("gate.action.robot.filter");
+        return LocaleUtil.localize("gate.action.robot.filter");
     }
 
     @Override

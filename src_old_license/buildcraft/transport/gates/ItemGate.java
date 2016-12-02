@@ -31,7 +31,7 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
@@ -209,12 +209,12 @@ public class ItemGate extends ItemBuildCraft implements IPipePluggableItem {
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean adv) {
         super.addInformation(stack, player, list, adv);
 
-        list.add(StringUtilBC.localize("tip.gate.wires"));
-        list.add(StringUtilBC.localize("tip.gate.wires." + getMaterial(stack).getTag()));
+        list.add(LocaleUtil.localize("tip.gate.wires"));
+        list.add(LocaleUtil.localize("tip.gate.wires." + getMaterial(stack).getTag()));
         Set<IGateExpansion> expansions = getInstalledExpansions(stack);
 
         if (!expansions.isEmpty()) {
-            list.add(StringUtilBC.localize("tip.gate.expansions"));
+            list.add(LocaleUtil.localize("tip.gate.expansions"));
 
             for (IGateExpansion expansion : expansions) {
                 list.add(expansion.getDisplayName());

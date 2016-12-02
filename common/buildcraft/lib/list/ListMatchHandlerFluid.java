@@ -50,7 +50,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
         if (type == Type.MATERIAL) {
             FluidStack fStack = FluidUtil.getFluidContained(stack);
             if (fStack != null) {
-                NonNullList<ItemStack> examples = new ArrayList<>();
+                NonNullList<ItemStack> examples = NonNullList.create();
                 for (FluidContainerRegistry.FluidContainerData data : FluidContainerRegistry.getRegisteredFluidContainerData()) {
                     if (fStack.isFluidEqual(data.fluid)) {
                         examples.add(data.filledContainer);
@@ -58,9 +58,9 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
                 }
                 return examples;
             }
-        } else if (type == Type.TYPE) {NonNullList<ItemStack>
+        } else if (type == Type.TYPE) {
             if (FluidContainerRegistry.isContainer(stack)) {
-                NonNullList<ItemStack> examples = new ArrayList<>();
+                NonNullList<ItemStack> examples = NonNullList.create();
                 ItemStack emptyContainerStack = FluidContainerRegistry.drainFluidContainer(stack);
                 examples.add(stack);
                 examples.add(emptyContainerStack);

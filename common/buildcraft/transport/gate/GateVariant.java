@@ -5,7 +5,7 @@ import java.util.Objects;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class GateVariant {
     public final EnumGateLogic logic;
@@ -69,11 +69,11 @@ public class GateVariant {
 
     public String getLocalizedName() {
         if (material == EnumGateMaterial.CLAY_BRICK) {
-            return StringUtilBC.localize("gate.name.basic");
+            return LocaleUtil.localize("gate.name.basic");
         } else {
-            String gateName = StringUtilBC.localize("gate.name");
-            String materialName = StringUtilBC.localize("gate.material." + material.tag);
-            Object logicName = StringUtilBC.localize("gate.logic." + logic.tag);
+            String gateName = LocaleUtil.localize("gate.name");
+            String materialName = LocaleUtil.localize("gate.material." + material.tag);
+            Object logicName = LocaleUtil.localize("gate.logic." + logic.tag);
             return String.format(gateName, materialName, logicName);
         }
     }

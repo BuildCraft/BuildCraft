@@ -15,12 +15,20 @@ import buildcraft.lib.misc.StackUtil;
 public class ChangingItemStack {
     private final NonNullList<ItemStack> stacks;
 
-    /**
-     * Creates a changing item stack that iterates through 
-     * @param stack
-     */
+    /** Creates a stack list that iterates through all of the given stacks. This does NOT check possible variants.
+     * 
+     * @param stacks The list to iterate through. */
+    public ChangingItemStack(NonNullList<ItemStack> stacks) {
+        this.stacks = stacks;
+    }
+
+    /** Creates a changing item stack that iterates through all {@link OreDictionary} variants of the specified stack.
+     * 
+     * @param stack the stack to check. */
     public ChangingItemStack(@Nonnull ItemStack stack) {
-        if (stack.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
+        if (stack.isEmpty()) {
+            stacks = StackUtil.listOf(StackUtil.EMPTY);
+        } else if (stack.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
             NonNullList<ItemStack> subs = NonNullList.create();
             stack.getItem().getSubItems(stack.getItem(), null, subs);
             this.stacks = subs;
@@ -29,6 +37,7 @@ public class ChangingItemStack {
         }
     }
 
+    /** @return The {@link ItemStack} that should be displayed at the current time. */
     public ItemStack get() {
         long now = System.currentTimeMillis();
         int meta = (int) (now / 1000) % stacks.size();

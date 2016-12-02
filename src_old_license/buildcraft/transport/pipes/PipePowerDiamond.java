@@ -24,7 +24,7 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.PowerMode;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
@@ -56,7 +56,7 @@ public class PipePowerDiamond extends Pipe<PipeTransportPower> {
             }
             if (getWorld().isRemote && !(player instanceof FakePlayer)) {
                 if (BuildCraftCore.hidePowerNumbers) {
-                    player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode.numberless", StringUtilBC.localize(
+                    player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode.numberless", LocaleUtil.localize(
                             "chat.pipe.power.iron.level." + getMode().maxPower)));
                 } else {
                     player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode", getMode().maxPower));

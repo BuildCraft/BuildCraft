@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.*;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.client.resources.I18n;
@@ -229,7 +231,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         return loadAllCrafting(stack);
     }
 
-    public static List<GuidePartFactory> loadAllCrafting(ItemStack stack) {
+    public static List<GuidePartFactory> loadAllCrafting(@Nonnull ItemStack stack) {
         List<GuidePartFactory> list = new ArrayList<>();
         List<GuidePartFactory> recipeParts = RecipeLookupHelper.getAllRecipes(stack);
         if (recipeParts.size() > 0) {

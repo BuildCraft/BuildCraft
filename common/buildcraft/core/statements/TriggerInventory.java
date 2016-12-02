@@ -19,8 +19,8 @@ import buildcraft.api.statements.*;
 import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.StringUtilBC;
 
 public class TriggerInventory extends BCStatement implements ITriggerExternal {
 
@@ -53,7 +53,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("gate.trigger.inventory." + state.name().toLowerCase(Locale.ENGLISH));
+        return LocaleUtil.localize("gate.trigger.inventory." + state.name().toLowerCase(Locale.ENGLISH));
     }
 
     @Override

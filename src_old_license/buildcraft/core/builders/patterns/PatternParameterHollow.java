@@ -13,7 +13,7 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class PatternParameterHollow implements IStatementParameter {
     @SideOnly(Side.CLIENT)
@@ -54,7 +54,7 @@ public class PatternParameterHollow implements IStatementParameter {
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("fillerpattern.parameter." + (filled ? "filled" : "hollow"));
+        return LocaleUtil.localize("fillerpattern.parameter." + (filled ? "filled" : "hollow"));
     }
 
     @Override

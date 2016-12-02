@@ -21,8 +21,8 @@ import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.inventory.InventoryIterator;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.StringUtilBC;
 
 public class TriggerInventoryLevel extends BCStatement implements ITriggerExternal {
 
@@ -68,7 +68,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
 
     @Override
     public String getDescription() {
-        return String.format(StringUtilBC.localize("gate.trigger.inventorylevel.below"), (int) (type.level * 100));
+        return String.format(LocaleUtil.localize("gate.trigger.inventorylevel.below"), (int) (type.level * 100));
     }
 
     @Override

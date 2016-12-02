@@ -20,7 +20,7 @@ import buildcraft.api.statements.*;
 import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class TriggerFluidContainerLevel extends BCStatement implements ITriggerExternal {
 
@@ -58,7 +58,7 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
 
     @Override
     public String getDescription() {
-        return String.format(StringUtilBC.localize("gate.trigger.fluidlevel.below"), (int) (type.level * 100));
+        return String.format(LocaleUtil.localize("gate.trigger.fluidlevel.below"), (int) (type.level * 100));
     }
 
     @Override

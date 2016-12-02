@@ -14,7 +14,7 @@ import buildcraft.api.statements.StatementMouseClick;
 
 import buildcraft.core.BCCoreSprites;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class StatementParamGateSideOnly implements IStatementParameter {
 
@@ -65,7 +65,7 @@ public class StatementParamGateSideOnly implements IStatementParameter {
 
     @Override
     public String getDescription() {
-        return isOn ? StringUtilBC.localize("gate.parameter.redstone.gateSideOnly") : "";
+        return isOn ? LocaleUtil.localize("gate.parameter.redstone.gateSideOnly") : "";
     }
 
     @Override

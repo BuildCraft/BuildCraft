@@ -14,7 +14,7 @@ import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.lib.inventory.filters.StatementParameterStackFilter;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class ActionStationProvideItems extends BCStatement implements IActionInternal {
 
@@ -25,7 +25,7 @@ public class ActionStationProvideItems extends BCStatement implements IActionInt
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("gate.action.station.provide_items");
+        return LocaleUtil.localize("gate.action.station.provide_items");
     }
 
     @Override

@@ -6,7 +6,7 @@ import buildcraft.api.statements.ITriggerInternal;
 
 import buildcraft.core.BCCoreSprites;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class TriggerTrue extends BCStatement implements ITriggerInternal {
 
@@ -26,6 +26,6 @@ public class TriggerTrue extends BCStatement implements ITriggerInternal {
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("gate.trigger.true");
+        return LocaleUtil.localize("gate.trigger.true");
     }
 }

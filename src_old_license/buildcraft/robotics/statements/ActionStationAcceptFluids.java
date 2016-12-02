@@ -10,7 +10,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 
 import buildcraft.core.statements.BCStatement;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class ActionStationAcceptFluids extends BCStatement implements IActionInternal {
 
@@ -21,7 +21,7 @@ public class ActionStationAcceptFluids extends BCStatement implements IActionInt
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("gate.action.station.accept_fluids");
+        return LocaleUtil.localize("gate.action.station.accept_fluids");
     }
 
     // @Override

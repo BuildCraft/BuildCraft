@@ -15,8 +15,8 @@ import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IPositionedElement;
 import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.transport.container.ContainerGate;
 import buildcraft.transport.gate.*;
 
@@ -190,7 +190,7 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
         String localizedName = container.gate.variant.getLocalizedName();
         int cX = x + (GUI_WIDTH - fontRendererObj.getStringWidth(localizedName)) / 2;
         fontRendererObj.drawString(localizedName, cX, y + 5, 0x404040);
-        fontRendererObj.drawString(StringUtilBC.localize("gui.inventory"), x + 8, y + ySize - 97, 0x404040);
+        fontRendererObj.drawString(LocaleUtil.localize("gui.inventory"), x + 8, y + ySize - 97, 0x404040);
         GlStateManager.color(1, 1, 1);
 
         if (currentHover != null) {
@@ -215,7 +215,7 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
                 EnumFacing face = wrapper.sourcePart.face;
                 if (face != null) {
                     String translated = ColourUtil.getTextFullTooltip(face);
-                    translated = StringUtilBC.localize("gate.side", translated);
+                    translated = LocaleUtil.localize("gate.side", translated);
                     arr = new String[] { arr[0], translated };
                 }
                 tooltips.add(new ToolTip(arr));

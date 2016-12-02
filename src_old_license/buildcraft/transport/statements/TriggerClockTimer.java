@@ -11,7 +11,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 
 import buildcraft.core.statements.BCStatement;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class TriggerClockTimer extends BCStatement implements ITriggerInternal {
 
@@ -38,7 +38,7 @@ public class TriggerClockTimer extends BCStatement implements ITriggerInternal {
 
     @Override
     public String getDescription() {
-        return String.format(StringUtilBC.localize("gate.trigger.timer"), time.delay);
+        return String.format(LocaleUtil.localize("gate.trigger.timer"), time.delay);
     }
 
     @Override

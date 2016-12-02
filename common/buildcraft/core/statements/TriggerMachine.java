@@ -19,7 +19,7 @@ import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class TriggerMachine extends BCStatement implements ITriggerExternal {
 
@@ -32,7 +32,7 @@ public class TriggerMachine extends BCStatement implements ITriggerExternal {
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("gate.trigger.machine." + (active ? "scheduled" : "done"));
+        return LocaleUtil.localize("gate.trigger.machine." + (active ? "scheduled" : "done"));
     }
 
     @Override

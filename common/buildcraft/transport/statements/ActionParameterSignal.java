@@ -22,7 +22,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
 import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.transport.BCTransportSprites;
 
 public class ActionParameterSignal implements IStatementParameter {
@@ -92,7 +92,7 @@ public class ActionParameterSignal implements IStatementParameter {
         if (c == null) {
             return null;
         }
-        String format = StringUtilBC.localize("gate.action.pipe.wire");
+        String format = LocaleUtil.localize("gate.action.pipe.wire");
         Object[] args = { ColourUtil.getTextFullTooltip(c) };
         return String.format(format, args);
     }

@@ -13,7 +13,7 @@ import net.minecraftforge.items.IItemHandler;
 import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.transport.container.ContainerDiamondPipe;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
 
@@ -37,9 +37,9 @@ public class GuiDiamondPipe extends GuiBC8<ContainerDiamondPipe> {
 
     @Override
     protected void drawForegroundLayer() {
-        String string = StringUtilBC.localize("gui.pipes.emerald.title");
+        String string = LocaleUtil.localize("gui.pipes.emerald.title");
         fontRendererObj.drawString(string, rootElement.getX() + 8, rootElement.getY() + 6, 0x404040);
-        fontRendererObj.drawString(StringUtilBC.localize("gui.inventory"), rootElement.getX() + 8, rootElement.getY() + ySize - 97, 0x404040);
+        fontRendererObj.drawString(LocaleUtil.localize("gui.inventory"), rootElement.getX() + 8, rootElement.getY() + ySize - 97, 0x404040);
     }
 
     @Override

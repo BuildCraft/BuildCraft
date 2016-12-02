@@ -18,8 +18,8 @@ import buildcraft.api.recipes.IIntegrationRecipe;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.StringUtilBC;
 
 public class TileIntegrationTable extends TileLaserTableBase implements ISidedInventory {
     public static final int SLOT_OUTPUT = 9;
@@ -205,7 +205,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
     @Override
     public String getInventoryName() {
-        return StringUtilBC.localize("tile.integrationTableBlock.name");
+        return LocaleUtil.localize("tile.integrationTableBlock.name");
     }
 
     @Override

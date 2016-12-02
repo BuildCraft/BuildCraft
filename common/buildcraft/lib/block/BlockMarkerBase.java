@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -100,7 +101,7 @@ public abstract class BlockMarkerBase extends BlockBCTile_Neptune implements ICu
     }
 
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState state, World world, BlockPos pos) {
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
         return null;
     }
 
@@ -108,9 +109,9 @@ public abstract class BlockMarkerBase extends BlockBCTile_Neptune implements ICu
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         return BOUNDING_BOXES.get(state.getValue(BuildCraftProperties.BLOCK_FACING_6));
     }
-
+    
     @Override
-    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
         IBlockState state = getDefaultState();
         state = state.withProperty(BuildCraftProperties.BLOCK_FACING_6, facing);
         return state;
@@ -120,9 +121,9 @@ public abstract class BlockMarkerBase extends BlockBCTile_Neptune implements ICu
     public boolean canPlaceBlockOnSide(World world, BlockPos pos, EnumFacing side) {
         return world.isSideSolid(pos.offset(side.getOpposite()), side);
     }
-
+    
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
         if (state.getBlock() != this) {
             return;
         }

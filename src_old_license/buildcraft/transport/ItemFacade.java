@@ -49,7 +49,7 @@ import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.world.FakeBlockAccessSingleBlock;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePluggableItem {
     public static class FacadeState {
@@ -185,7 +185,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
                 String displayName = states.length > 0 ? getFacadeStateDisplayName(states[0]) : "CORRUPT";
                 return super.getItemStackDisplayName(itemstack) + ": " + displayName;
             case Phased:
-                return StringUtilBC.localize("item.FacadePhased.name");
+                return LocaleUtil.localize("item.FacadePhased.name");
             default:
                 return "";
         }
@@ -211,7 +211,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
             }
         }
         if (getFacadeType(stack) == FacadeType.Phased) {
-            String stateString = StringUtilBC.localize("item.FacadePhased.state");
+            String stateString = LocaleUtil.localize("item.FacadePhased.state");
             FacadeState defaultState = null;
             for (FacadeState state : getFacadeStates(stack)) {
                 if (state.wire == null) {
@@ -221,14 +221,14 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
                 list.add(String.format(stateString, state.wire.getColor(), getFacadeStateDisplayName(state)));
             }
             if (defaultState != null) {
-                list.add(1, String.format(StringUtilBC.localize("item.FacadePhased.state_default"), getFacadeStateDisplayName(defaultState)));
+                list.add(1, String.format(LocaleUtil.localize("item.FacadePhased.state_default"), getFacadeStateDisplayName(defaultState)));
             }
         }
     }
 
     public static String getFacadeStateDisplayName(FacadeState state) {
         if (state.state == null) {
-            return StringUtilBC.localize("item.FacadePhased.state_transparent");
+            return LocaleUtil.localize("item.FacadePhased.state_transparent");
         }
         // if (state.state.getBlock().getRenderType() == 31) {
         // TODO: Find out what render type is 31... and what this now means
@@ -238,7 +238,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         // }
         String s = CoreProxy.proxy.getItemDisplayName(new ItemStack(state.state.getBlock(), 1, state.state.getBlock().getMetaFromState(state.state)));
         if (state.hollow) {
-            s += " (" + StringUtilBC.localize("item.Facade.state_hollow") + ")";
+            s += " (" + LocaleUtil.localize("item.Facade.state_hollow") + ")";
         }
         return s;
     }

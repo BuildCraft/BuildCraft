@@ -14,7 +14,7 @@ import buildcraft.api.statements.containers.ISidedStatementContainer;
 import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class TriggerRedstoneInput extends BCStatement implements ITriggerInternal {
 
@@ -33,7 +33,7 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("gate.trigger.redstone.input." + (active ? "active" : "inactive"));
+        return LocaleUtil.localize("gate.trigger.redstone.input." + (active ? "active" : "inactive"));
     }
 
     @Override

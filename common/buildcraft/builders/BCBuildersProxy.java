@@ -6,6 +6,7 @@ package buildcraft.builders;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -79,7 +80,8 @@ public abstract class BCBuildersProxy implements IGuiHandler {
     }
 
     public void fmlInit() {
-        EntityRegistry.registerModEntity(EntityQuarry.class, "quarry", 0, BCBuilders.INSTANCE, 50, 1, true);
+        ResourceLocation idQuarry = new ResourceLocation("buildcraftbuilders:quarry");
+        EntityRegistry.registerModEntity(idQuarry, EntityQuarry.class, "quarry", 0, BCBuilders.INSTANCE, 50, 1, true);
     }
 
     @SideOnly(Side.SERVER)

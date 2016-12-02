@@ -8,6 +8,10 @@ import net.minecraft.world.World;
 
 import buildcraft.lib.bpt.task.TaskUsable;
 
+/**
+ * This class really isn't needed any more - this has been mega-deprecated as its worse than the old schematic class
+ */
+@Deprecated
 public abstract class Schematic {
     /** Attempts to mirror this schematic in the given axis. (So given Axis.Y you should invert top-to-bottom)
      * 

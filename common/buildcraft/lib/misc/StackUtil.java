@@ -3,6 +3,7 @@ package buildcraft.lib.misc;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -263,22 +264,40 @@ public class StackUtil {
         return true;
     }
 
+    /** Checks to see if the given {@link ItemStack} is considered to be a wildcard stack - that is any damage value on
+     * the stack will be considered the same as this for recipe purposes.
+     * 
+     * @param stack The stack to check
+     * @return True if the stack is a wildcard, false if not. */
     public static boolean isWildcard(@Nonnull ItemStack stack) {
         return isWildcard(stack.getItemDamage());
     }
 
+    /** Checks to see if the given {@link ItemStack} is considered to be a wildcard stack - that is any damage value on
+     * the stack will be considered the same as this for recipe purposes.
+     * 
+     * @param damage The damage to check
+     * @return True if the damage does specify a wildcard, false if not. */
     public static boolean isWildcard(int damage) {
         return damage == -1 || damage == OreDictionary.WILDCARD_VALUE;
     }
 
+    /** @return An empty, nonnull list that cannot be modified (as it cannot be expanded and it has a size of 0) */
     public static NonNullList<ItemStack> listOf() {
         return NonNullList.withSize(0, EMPTY);
     }
 
+    /** Creates a {@link NonNullList} of {@link ItemStack}'s with the elements given in the order that they are given.
+     * 
+     * @param stacks The stacks to put into a list
+     * @return A {@link NonNullList} of all the given items. Note that the returned list of of a specified size, and
+     *         cannnot be expanded. */
     public static NonNullList<ItemStack> listOf(ItemStack... stacks) {
         switch (stacks.length) {
-            case 0: return listOf();
-            case 1: return NonNullList.withSize(1, stacks[0]);
+            case 0:
+                return listOf();
+            case 1:
+                return NonNullList.withSize(1, stacks[0]);
             default:
         }
         NonNullList<ItemStack> list = NonNullList.withSize(stacks.length, EMPTY);
@@ -286,5 +305,20 @@ public class StackUtil {
             list.set(i, stacks[i]);
         }
         return list;
+    }
+
+    /** Takes a {@link Nullable} {@link ItemStack} and checks to make sure that it is really {@link Nonnull}, like it is
+     * everywhere else in the codebase. This is only required if some classes do not use the {@link Nonnull} annotation
+     * on return values, or if you have a multi-dimensional array of {@link ItemStack}.
+     * 
+     * @param stack The (potentially) null stack.
+     * @return A Nonnull stack, whish will be the input stack
+     * @throws NullPointerException if the input stack was actually null (Although this should never happen) */
+    @Nonnull
+    public static <T> T asNonNull(@Nullable T stack) {
+        if (stack == null) {
+            throw new NullPointerException("Object was null!");
+        }
+        return stack;
     }
 }

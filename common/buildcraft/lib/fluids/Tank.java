@@ -4,7 +4,6 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.fluids;
 
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -13,9 +12,6 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
@@ -25,13 +21,13 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
 
 import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.StringUtilBC;
 
 import io.netty.buffer.ByteBuf;
 
@@ -177,11 +173,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
     }
 
     public String getContentsString() {
-        FluidStack fluidStack = getFluid();
-        if (fluidStack == null || fluidStack.amount <= 0) {
-            return "Empty";
-        }
-        return (fluidStack.amount / 1000.0) + "B of " + fluidStack.getLocalizedName();
+        return LocaleUtil.localizeFluidStatic(fluid, capacity);
     }
 
     public void writeToBuffer(ByteBuf buffer) {
@@ -195,38 +187,8 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
         super.readFromNBT(tankData);
     }
 
-    @SideOnly(Side.CLIENT)
-    public int getFluidColor() {
-        if (getFluidType() != null) {
-            if (!fluidColors.containsKey(getFluidType())) {
-                try {
-                    TextureMap map = Minecraft.getMinecraft().getTextureMapBlocks();
-                    String flow = getFluidType().getFlowing().toString();
-                    TextureAtlasSprite sprite;
-                    if (map.getTextureExtry(flow) != null) {
-                        sprite = map.getTextureExtry(flow);
-                    } else {
-                        sprite = map.registerSprite(getFluidType().getFlowing());
-                    }
-                    int[] pixels = sprite.getFrameTextureData(0)[0];
-                    int pixel = pixels[pixels.length / 2];
-                    // order: argb -> abgr
-                    byte[] bytes = ByteBuffer.allocate(4).putInt(pixel).array();
-                    int a = ((int) bytes[0]) & 0xFF;
-                    int r = ((int) bytes[1]) & 0xFF;
-                    int g = ((int) bytes[2]) & 0xFF;
-                    int b = ((int) bytes[3]) & 0xFF;
-                    fluidColors.put(getFluidType(), ((a & 0xff) << 24) + ((b & 0xff) << 16) + ((g & 0xff) << 8) + (r & 0xff));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            return fluidColors.get(getFluidType());
-        }
-        return 0xFF_00_00_00;
-    }
-
     public String getDebugString() {
-        return getFluidAmount() + " / " + capacity + " mB of " + (getFluid() != null ? getFluid().getFluid().getName() : "n/a");
+        FluidStack f = getFluid();
+        return getFluidAmount() + " / " + capacity + " mB of " + (f != null ? f.getFluid().getName() : "n/a");
     }
 }

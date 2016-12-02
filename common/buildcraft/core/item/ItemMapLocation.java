@@ -31,8 +31,8 @@ import buildcraft.api.core.IZone;
 import buildcraft.api.items.IMapLocation;
 
 import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.robotics.zone.ZonePlan;
 
@@ -79,7 +79,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                     int z = cpt.getInteger("z");
                     EnumFacing side = EnumFacing.values()[cpt.getByte("side")];
 
-                    strings.add(StringUtilBC.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
+                    strings.add(LocaleUtil.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
                 }
                 break;
             }
@@ -92,7 +92,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                     int yLength = cpt.getInteger("yMax") - y + 1;
                     int zLength = cpt.getInteger("zMax") - z + 1;
 
-                    strings.add(StringUtilBC.localize("{" + x + ", " + y + ", " + z + "} + {" + xLength + " x " + yLength + " x " + zLength + "}"));
+                    strings.add(LocaleUtil.localize("{" + x + ", " + y + ", " + z + "} + {" + xLength + " x " + yLength + " x " + zLength + "}"));
                 }
                 break;
             }
@@ -108,7 +108,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                         int y = first.getY();
                         int z = first.getZ();
 
-                        strings.add(StringUtilBC.localize("{" + x + ", " + y + ", " + z + "} + " + (pathNBT.tagCount() - 1) + " elements"));
+                        strings.add(LocaleUtil.localize("{" + x + ", " + y + ", " + z + "} + " + (pathNBT.tagCount() - 1) + " elements"));
                     }
                 }
                 break;
@@ -118,7 +118,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
             }
         }
         if (type != MapLocationType.CLEAN) {
-            strings.add(StringUtilBC.localize("buildcraft.item.nonclean.usage"));
+            strings.add(LocaleUtil.localize("buildcraft.item.nonclean.usage"));
         }
     }
 

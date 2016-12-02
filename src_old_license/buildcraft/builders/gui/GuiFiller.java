@@ -37,7 +37,7 @@ import buildcraft.lib.gui.button.GuiBetterButton;
 import buildcraft.lib.gui.button.IButtonTextureSet;
 import buildcraft.lib.gui.button.StandardButtonTextureSets;
 import buildcraft.lib.gui.elem.ToolTip;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class GuiFiller extends GuiAdvancedInterface {
     class FillerParameterSlot extends StatementParameterSlot {
@@ -192,10 +192,10 @@ public class GuiFiller extends GuiAdvancedInterface {
     protected void drawGuiContainerForegroundLayer(int mx, int my) {
         super.drawGuiContainerForegroundLayer(mx, my);
 
-        String title = StringUtilBC.localize("tile.fillerBlock.name");
+        String title = LocaleUtil.localize("tile.fillerBlock.name");
         fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
-        fontRendererObj.drawString(StringUtilBC.localize("gui.filling.resources"), 8, 74, 0x404040);
-        fontRendererObj.drawString(StringUtilBC.localize("gui.inventory"), 8, 142, 0x404040);
+        fontRendererObj.drawString(LocaleUtil.localize("gui.filling.resources"), 8, 74, 0x404040);
+        fontRendererObj.drawString(LocaleUtil.localize("gui.inventory"), 8, 142, 0x404040);
         GuiTools.drawCenteredString(fontRendererObj, filler.currentPattern.getDescription(), 56);
 
         drawTooltipForSlotAt(mx, my);

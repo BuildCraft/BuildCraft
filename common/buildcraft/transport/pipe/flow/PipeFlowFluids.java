@@ -30,7 +30,7 @@ import buildcraft.api.transport.neptune.PipeAPI;
 import buildcraft.api.transport.neptune.PipeAPI.FluidTransferInfo;
 import buildcraft.api.transport.neptune.PipeFlow;
 
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.VecUtil;
 
 public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable {
@@ -242,7 +242,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             if (section == null) {
                 continue;
             }
-            String line = " - " + StringUtilBC.getLocalized(part.face) + " = ";
+            String line = " - " + LocaleUtil.localizeFacing(part.face) + " = ";
             line += (section.amount > 0 ? TextFormatting.GREEN : "");
             line += section.amount + "" + TextFormatting.RESET + "mB";
             line += " " + section.getCurrentDirection() + " (" + section.ticksInDirection + ")";

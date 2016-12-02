@@ -21,26 +21,29 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.client.guide.GuiGuide;
+import buildcraft.lib.misc.StackUtil;
 
 public class GuideCraftingFactory implements GuidePartFactory {
     private static final Field SHAPED_ORE_RECIPE___WIDTH;
     private static final Field SHAPED_ORE_RECIPE___HEIGHT;
 
-    private final NonNullList<ItemStack>[] input;
+    private final ItemStack[][] input;
+    @Nonnull
     private final ItemStack output;
     private final int hash;
 
-    public GuideCraftingFactory(NonNullList<ItemStack>[] input, ItemStack output) {
+    public GuideCraftingFactory(ItemStack[][] input, ItemStack output) {
         this.input = input;
-        this.output = output;
+        this.output = StackUtil.asNonNull(output);
         NBTTagCompound hashNbt = new NBTTagCompound();
         hashNbt.setTag("output", output.serializeNBT());
         if (input != null) {
             for (int i = 0; i < input.length; i++) {
                 if (input[i] != null) {
                     for (int j = 0; j < input[i].length; j++) {
-                        if (input[i][j] != null) {
-                            hashNbt.setTag("in[" + i + "," + j + "]", input[i][j].serializeNBT());
+                        ItemStack stack = StackUtil.asNonNull(input[i][j]);
+                        if (!stack.isEmpty()) {
+                            hashNbt.setTag("in[" + i + "," + j + "]", stack.serializeNBT());
                         }
                     }
                 }
@@ -63,7 +66,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
 
     public static GuideCraftingFactory create(@Nonnull ItemStack stack) {
         for (IRecipe recipe : CraftingManager.getInstance().getRecipeList()) {
-            if (OreDictionary.itemMatches(stack, recipe.getRecipeOutput(), false)) {
+            if (OreDictionary.itemMatches(stack, StackUtil.asNonNull(recipe.getRecipeOutput()), false)) {
                 GuideCraftingFactory val = getFactory(recipe);
                 if (val != null) {
                     return val;
@@ -79,8 +82,8 @@ public class GuideCraftingFactory implements GuidePartFactory {
         GuideCraftingFactory val = null;
         if (recipe instanceof ShapedRecipes) {
             ShapedRecipes shaped = (ShapedRecipes) recipe;
-            NonNullList<ItemStack> input = shaped.recipeItems;
-            NonNullList<ItemStack>[] dimInput = new ItemStack[shaped.recipeWidth][shaped.recipeHeight];
+            ItemStack[] input = shaped.recipeItems;
+            ItemStack[][] dimInput = new ItemStack[shaped.recipeWidth][shaped.recipeHeight];
             for (int x = 0; x < dimInput.length; x++) {
                 for (int y = 0; y < dimInput[x].length; y++) {
                     dimInput[x][y] = input[x + y * dimInput.length].copy();
@@ -89,7 +92,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
             val = new GuideCraftingFactory(dimInput, recipe.getRecipeOutput());
         } else if (recipe instanceof ShapedOreRecipe) {
             Object[] input = ((ShapedOreRecipe) recipe).getInput();
-            NonNullList<ItemStack>[] dimInput = getStackSizeArray(recipe);
+            ItemStack[][] dimInput = getStackSizeArray(recipe);
             for (int x = 0; x < dimInput.length; x++) {
                 for (int y = 0; y < dimInput[x].length; y++) {
                     dimInput[x][y] = oreConvert(input[x + y * dimInput.length]);
@@ -98,7 +101,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
             val = new GuideCraftingFactory(dimInput, recipe.getRecipeOutput());
         } else if (recipe instanceof ShapelessOreRecipe) {
             List<Object> input = ((ShapelessOreRecipe) recipe).getInput();
-            NonNullList<ItemStack>[] dimInput = getStackSizeArray(recipe);
+            ItemStack[][] dimInput = getStackSizeArray(recipe);
             for (int x = 0; x < dimInput.length; x++) {
                 for (int y = 0; y < dimInput[x].length; y++) {
                     int index = x + y * dimInput.length;
@@ -109,8 +112,8 @@ public class GuideCraftingFactory implements GuidePartFactory {
             }
             val = new GuideCraftingFactory(dimInput, recipe.getRecipeOutput());
         } else if (recipe instanceof ShapelessRecipes) {
-            NonNullList<ItemStack> input = ((ShapelessRecipes) recipe).recipeItems;
-            NonNullList<ItemStack>[] dimInput = getStackSizeArray(recipe);
+            List<ItemStack> input = ((ShapelessRecipes) recipe).recipeItems;
+            ItemStack[][] dimInput = getStackSizeArray(recipe);
             for (int x = 0; x < dimInput.length; x++) {
                 for (int y = 0; y < dimInput[x].length; y++) {
                     int index = x + y * dimInput.length;
@@ -121,14 +124,14 @@ public class GuideCraftingFactory implements GuidePartFactory {
             }
             val = new GuideCraftingFactory(dimInput, recipe.getRecipeOutput());
         } else if (recipe instanceof IRecipeViewable) {
-            
+            // TODO: Implement IRecipeViewable usage
         } else {
             BCLog.logger.warn("[lib.guide.crafting] Found an unknown recipe " + recipe.getClass());
         }
         return val;
     }
 
-    private static NonNullList<ItemStack>[] getStackSizeArray(IRecipe recipe) {
+    private static ItemStack[][] getStackSizeArray(IRecipe recipe) {
         if (recipe instanceof ShapedRecipes) {
             return new ItemStack[((ShapedRecipes) recipe).recipeWidth][((ShapedRecipes) recipe).recipeHeight];
         } else if (recipe instanceof ShapedOreRecipe) {
@@ -214,8 +217,8 @@ public class GuideCraftingFactory implements GuidePartFactory {
 
         if (input.length != other.input.length) return false;
         for (int i = 0; i < input.length; i++) {
-            NonNullList<ItemStack> compA = input[i];
-            NonNullList<ItemStack> compB = other.input[i];
+            ItemStack[] compA = input[i];
+            ItemStack[] compB = other.input[i];
             if (compA.length != compB.length) return false;
             for (int j = 0; j < input.length; j++) {
                 if (!ItemStack.areItemStacksEqual(compA[j], compB[j])) {

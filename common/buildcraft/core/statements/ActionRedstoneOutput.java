@@ -17,7 +17,7 @@ import buildcraft.api.statements.containers.ISidedStatementContainer;
 
 import buildcraft.core.BCCoreSprites;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class ActionRedstoneOutput extends BCStatement implements IActionInternal {
 
@@ -32,7 +32,7 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("gate.action.redstone.signal");
+        return LocaleUtil.localize("gate.action.redstone.signal");
     }
 
     @Override

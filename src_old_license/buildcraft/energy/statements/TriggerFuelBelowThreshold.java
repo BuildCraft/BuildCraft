@@ -13,7 +13,7 @@ import buildcraft.api.statements.ITriggerExternal;
 
 import buildcraft.core.statements.BCStatement;
 import buildcraft.energy.TileEngineIron;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class TriggerFuelBelowThreshold extends BCStatement implements ITriggerExternal {
 
@@ -27,7 +27,7 @@ public class TriggerFuelBelowThreshold extends BCStatement implements ITriggerEx
 
     @Override
     public String getDescription() {
-        return String.format(StringUtilBC.localize("gate.trigger.fuelLevelBelow"), (int) (threshold * 100));
+        return String.format(LocaleUtil.localize("gate.trigger.fuelLevelBelow"), (int) (threshold * 100));
     }
 
     @Override

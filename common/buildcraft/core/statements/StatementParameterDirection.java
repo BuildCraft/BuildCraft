@@ -25,7 +25,7 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 /** Directions *might* be replaced with indervidual triggers and actions per direction. Not sure yet. */
 @Deprecated
@@ -118,7 +118,7 @@ public class StatementParameterDirection implements IStatementParameter {
         if (dir == null) {
             return "";
         } else {
-            return StringUtilBC.localize("direction." + dir.name().toLowerCase());
+            return LocaleUtil.localize("direction." + dir.name().toLowerCase());
         }
     }
 

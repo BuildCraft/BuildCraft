@@ -15,7 +15,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class TriggerEngineHeat extends BCStatement implements ITriggerExternal {
 
@@ -29,7 +29,7 @@ public class TriggerEngineHeat extends BCStatement implements ITriggerExternal {
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("gate.trigger.engine." + stage.name().toLowerCase(Locale.ROOT));
+        return LocaleUtil.localize("gate.trigger.engine." + stage.name().toLowerCase(Locale.ROOT));
     }
 
     @Override
