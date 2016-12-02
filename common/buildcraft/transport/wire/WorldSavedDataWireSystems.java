@@ -66,6 +66,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
     public void rebuildWireSystemsAround(IPipeHolder holder) {
         Arrays.stream(EnumWirePart.values())
                 .flatMap(part -> WireSystem.getConnectedElementsOfElement(world, new WireSystem.Element(holder.getPipePos(), part)).stream())
+                .distinct()
                 .forEach(this::buildAndAddWireSystem);
     }
 
