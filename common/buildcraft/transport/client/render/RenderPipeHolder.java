@@ -18,11 +18,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.model.animation.FastTESR;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
 
@@ -55,48 +53,45 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
+    private static void renderWire(TilePipeHolder pipe, VertexBuffer vb, int light1, int light2, AxisAlignedBB bb, Vec3d size, EnumWirePart part, EnumDyeColor color) {
+        TextureAtlasSprite sprite = wireSprites.get(color).getSprite();
+        if(pipe.getWireManager().isPowered(part)) {
+            light1 = light2 = 240;
+        }
+        float c = pipe.getWireManager().isPowered(part) ? 1 : 0.5F;
+        vb.pos(bb.minX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.maxX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.maxX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(size.yCoord)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.minX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.yCoord)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.minX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.maxX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.maxX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(size.yCoord)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.minX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.yCoord)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.minX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.maxX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.maxX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.minX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.minX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.maxX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.maxX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.minX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.minX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.minX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.yCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.minX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.yCoord), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.minX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.maxX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.maxX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.yCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.maxX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.yCoord), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
+        vb.pos(bb.maxX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
+    }
+
     private static void renderWires(TilePipeHolder pipe, double x, double y, double z, VertexBuffer vb) {
         int combinedLight = pipe.getWorld().getCombinedLight(pipe.getPipePos(), 0);
-        BiConsumer<Pair<AxisAlignedBB, EnumWirePart>, EnumDyeColor> renderAABB = (wireInfo, color) -> {
-            EnumWirePart part = wireInfo.getRight();
-            AxisAlignedBB bb = wireInfo.getLeft();
-            TextureAtlasSprite sprite = wireSprites.get(color).getSprite();
-            Vec3d size = new Vec3d(bb.maxX - bb.minX, bb.maxY - bb.minY, bb.maxZ - bb.minZ).scale(32);
-            int light1 = combinedLight >> 16 & 65535;
-            int light2 = combinedLight & 65535;
-            if(pipe.getWireManager().isPowered(part)) {
-                light1 = light2 = 240;
-            }
-            float c = pipe.getWireManager().isPowered(part) ? 1 : 0.5F;
-            vb.setTranslation(x, y, z);
-            vb.pos(bb.minX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.maxX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.maxX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(size.yCoord)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.minX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.yCoord)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.minX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.maxX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.maxX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(size.yCoord)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.minX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.yCoord)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.minX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.maxX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.maxX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.minX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.minX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.maxX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.maxX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.xCoord), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.minX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.minX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.minX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.yCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.minX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.yCoord), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.minX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.maxX, bb.minY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.maxX, bb.maxY, bb.minZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.yCoord), sprite.getInterpolatedV(0/*      */)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.maxX, bb.maxY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(size.yCoord), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
-            vb.pos(bb.maxX, bb.minY, bb.maxZ).color(c, c, c, 1).tex(sprite.getInterpolatedU(0/*      */), sprite.getInterpolatedV(size.zCoord)).lightmap(light1, light2).endVertex();
-            Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        };
-        pipe.getWireManager().parts.forEach((part, color) -> renderAABB.accept(Pair.of(part.boundingBox, part), color));
-        pipe.getWireManager().betweens.forEach((between, color) -> renderAABB.accept(Pair.of(between.boundingBox, between.parts[0]), color));
+        int light1 = combinedLight >> 16 & 65535;
+        int light2 = combinedLight & 65535;
+        vb.setTranslation(x, y, z);
+        pipe.getWireManager().parts.forEach((part, color) -> renderWire(pipe, vb, light1, light2, part.boundingBox, part.renderingScale, part, color));
+        pipe.getWireManager().betweens.forEach((between, color) -> renderWire(pipe, vb, light1, light2, between.boundingBox, between.renderingScale, between.parts[0], color));
         vb.setTranslation(0, 0, 0);
     }
 

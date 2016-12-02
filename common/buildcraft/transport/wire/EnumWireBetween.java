@@ -9,6 +9,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 
 /** Holds all of the possible boxes that a wire can occupy - excluding the ones in EnumWirePart. */
 public enum EnumWireBetween {
@@ -69,6 +70,7 @@ public enum EnumWireBetween {
     public final boolean yz;
     public final AxisAlignedBB boundingBox;
     public final EnumWirePart[] parts;
+    public final Vec3d renderingScale;
 
     EnumWireBetween(Axis mainAxis, boolean xy, boolean yz) {
         this.mainAxis = mainAxis;
@@ -83,6 +85,7 @@ public enum EnumWireBetween {
         int z2 = z1 + (mainAxis == Axis.Z ? 8 : 1);
         boundingBox = new AxisAlignedBB(x1 / 16.0, y1 / 16.0, z1 / 16.0, x2 / 16.0, y2 / 16.0, z2 / 16.0);
         parts = getParts();
+        renderingScale = new Vec3d(boundingBox.maxX - boundingBox.minX, boundingBox.maxY - boundingBox.minY, boundingBox.maxZ - boundingBox.minZ).scale(32);
     }
 
     EnumWireBetween(EnumFacing to, boolean xy, boolean yz) {
@@ -99,6 +102,7 @@ public enum EnumWireBetween {
         int z2 = z1 + (mainAxis == Axis.Z ? 3 : 1);
         boundingBox = new AxisAlignedBB(x1 / 16.0, y1 / 16.0, z1 / 16.0, x2 / 16.0, y2 / 16.0, z2 / 16.0);
         parts = getParts();
+        renderingScale = new Vec3d(boundingBox.maxX - boundingBox.minX, boundingBox.maxY - boundingBox.minY, boundingBox.maxZ - boundingBox.minZ).scale(32);
     }
 
     private EnumWirePart[] getParts() {
