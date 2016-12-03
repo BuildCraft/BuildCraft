@@ -68,6 +68,22 @@ public class WireManager implements IWireManager {
         }
     }
 
+    public void removeParts(Collection<EnumWirePart> parts) {
+        parts.forEach(this.parts::remove);
+        if(!holder.getPipeWorld().isRemote) {
+            parts.stream()
+                    .map(part -> new WireSystem.Element(holder.getPipePos(), part))
+                    .flatMap(element -> WireSystem.getConnectedElementsOfElement(holder, element).stream())
+                    .distinct()
+                    .forEach(getWireSystems()::buildAndAddWireSystem);
+            parts.stream()
+                    .map(part -> new WireSystem.Element(holder.getPipePos(), part))
+                    .flatMap(element -> getWireSystems().getWireSystemsWithElement(element).stream())
+                    .forEach(getWireSystems()::removeWireSystem);
+        }
+        updateBetweens(false);
+    }
+
     @Override
     public void updateBetweens(boolean recursive) {
         betweens.clear();

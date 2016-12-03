@@ -2,6 +2,7 @@ package buildcraft.transport.block;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -475,9 +476,10 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             return false;
         } else if (between != null) {
             toDrop.add(new ItemStack(BCTransportItems.wire, between.to == null ? 1 : 2, tile.wireManager.getColorOfPart(between.parts[0]).getMetadata()));
-            tile.wireManager.removePart(between.parts[0]);
             if(between.to == null) {
-                tile.wireManager.removePart(between.parts[1]);
+                tile.wireManager.removeParts(Arrays.asList(between.parts));
+            } else {
+                tile.wireManager.removePart(between.parts[0]);
             }
             if (!player.capabilities.isCreativeMode) {
                 InventoryUtil.dropAll(world, pos, toDrop);

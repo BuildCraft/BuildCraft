@@ -151,7 +151,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     @Override
     public void invalidate() {
         super.invalidate();
-        wireManager.parts.keySet().forEach(wireManager::removePart);
+        wireManager.removeParts(new ArrayList<>(wireManager.parts.keySet()));
         pluggables.keySet().forEach(side -> BlockPipeHolder.removePluggable(side, this, new ArrayList<>()));
     }
 
