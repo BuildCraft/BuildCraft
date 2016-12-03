@@ -77,20 +77,7 @@ public class BCTransport {
 
         BCTransportProxy.getProxy().fmlPreInit();
 
-        MinecraftForge.EVENT_BUS.register(new Object() {
-            @SubscribeEvent
-            public void onWorldTick(TickEvent.WorldTickEvent event) {
-                if(!event.world.isRemote && event.world.getMinecraftServer() != null) {
-                    WorldSavedDataWireSystems.get(event.world).tick();
-                }
-            }
-
-            @SubscribeEvent
-            public void onChunkWatch(ChunkWatchEvent event) {
-                WorldSavedDataWireSystems.get(event.getPlayer().worldObj).changedPlayers.add(event.getPlayer());
-            }
-
-        });
+        MinecraftForge.EVENT_BUS.register(BCTransportEventDist.INSTANCE);
         BCMessageHandler.addMessageType(MessageWireSystems.class, MessageWireSystems.Handler.INSTANCE, Side.CLIENT);
         BCMessageHandler.addMessageType(MessageWireSystemsPowered.class, MessageWireSystemsPowered.Handler.INSTANCE, Side.CLIENT);
     }

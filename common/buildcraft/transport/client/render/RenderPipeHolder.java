@@ -30,7 +30,7 @@ import java.util.Map;
 
 public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
     private static Map<EnumDyeColor, SpriteHolderRegistry.SpriteHolder> wireSprites = new EnumMap<>(EnumDyeColor.class);
-    private static Map<Triple<AxisAlignedBB, EnumDyeColor, Boolean>, Integer> wiresRenderingCache = new HashMap<>();
+    public static Map<Triple<AxisAlignedBB, EnumDyeColor, Boolean>, Integer> wiresRenderingCache = new HashMap<>();
 
     static {
         for(EnumDyeColor color : EnumDyeColor.values()) {
