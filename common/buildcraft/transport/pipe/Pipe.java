@@ -77,7 +77,7 @@ public final class Pipe implements IPipe, IDebuggable {
     public Pipe(IPipeHolder holder, PacketBufferBC buffer, MessageContext ctx) throws IOException {
         this.holder = holder;
         try {
-            this.definition = PipeRegistry.INSTANCE.loadDefinition(buffer.readStringFromBuffer(256));
+            this.definition = PipeRegistry.INSTANCE.loadDefinition(buffer.readString(256));
         } catch (LoadingException e) {
             throw new IOException(e);
         }

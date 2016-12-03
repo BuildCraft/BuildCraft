@@ -1,6 +1,6 @@
 package buildcraft.lib.misc;
 
-import java.util.ArrayList;
+import javax.annotation.Nonnull;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -25,7 +25,7 @@ public class EntityUtil {
     }
 
     public static NonNullList<ItemStack> collectItems(World world, Vec3d around, double radius) {
-        NonNullList<ItemStack> stacks = new ArrayList<>();
+        NonNullList<ItemStack> stacks = NonNullList.create();
 
         AxisAlignedBB aabb = BoundingBoxUtil.makeAround(around, radius);
         for (EntityItem ent : world.getEntitiesWithinAABB(EntityItem.class, aabb)) {
@@ -67,6 +67,7 @@ public class EntityUtil {
         }
     }
 
+    @Nonnull
     public static ItemStack getArrowStack(EntityArrow arrow) {
         // FIXME: Replace this with an invocation of arrow.getArrowStack
         // (but its protected so we can't)

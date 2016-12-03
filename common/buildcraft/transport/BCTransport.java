@@ -26,7 +26,12 @@ import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.pipe.flow.PipeFlowStructure;
 import buildcraft.transport.plug.PluggableRegistry;
 
-@Mod(modid = BCTransport.MODID, name = "BuildCraft Transport", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
+//@formatter:off
+@Mod(modid = BCTransport.MODID,
+name = "BuildCraft Transport",
+version = BCLib.VERSION,
+dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+//@formatter:on
 public class BCTransport {
     public static final String MODID = "buildcrafttransport";
 

@@ -49,7 +49,7 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_ITEMS) {
             if (facing != getCurrentDirection()) return (T) itemHandler;
             return null;
         }
@@ -58,7 +58,7 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_ITEMS) {
             return facing != getCurrentDirection();
         }
         return super.hasCapability(capability, facing);

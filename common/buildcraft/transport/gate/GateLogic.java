@@ -427,7 +427,6 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
         if (getPipeHolder().getPipeWorld().isRemote) {
             return;
         }
-        // TEMP -- this is waaay to often, but is just for testing purposes.
         resolveActions();
     }
 

@@ -20,7 +20,12 @@ import buildcraft.energy.generation.OilPopulate;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.RegistryHelper;
 
-@Mod(modid = BCEnergy.MODID, name = "BuildCraft Energy", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
+//@formatter:off
+@Mod(modid = BCEnergy.MODID,
+ name = "BuildCraft Energy",
+ version = BCLib.VERSION,
+ dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+//@formatter:on
 public class BCEnergy {
     public static final String MODID = "buildcraftenergy";
     static {

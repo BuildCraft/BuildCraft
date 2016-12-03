@@ -33,7 +33,7 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_FLUIDS) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -41,7 +41,7 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_FLUIDS) {
             if (facing == null) {
                 return (T) tankManager;
             } else if (facing.getAxisDirection() == AxisDirection.POSITIVE) {
@@ -86,9 +86,9 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
         @Override
         public CraftingSlot getBoundVersion() {
             ItemStack stack = get();
-            if (stack != null && stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
+            if (stack != null && stack.hasCapability(CapUtil.CAP_FLUIDS, null)) {
                 ItemStack copied = stack.copy();
-                IFluidHandler handler = copied.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+                IFluidHandler handler = copied.getCapability(CapUtil.CAP_FLUIDS, null);
                 FluidStack fluid = handler.drain(8000, true);
                 if (fluid != null) {
                     if (copied.getCount() == stack.getCount()) {

@@ -403,7 +403,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_ITEMS) {
             return this instanceof IInventory;
         } else {
             return super.hasCapability(capability, facing);
@@ -412,7 +412,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_ITEMS) {
             if (this instanceof IInventory) {
                 if (invWrapper == null) {
                     if (this instanceof ISidedInventory) {

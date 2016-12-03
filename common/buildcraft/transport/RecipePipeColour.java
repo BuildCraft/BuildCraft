@@ -2,6 +2,7 @@ package buildcraft.transport;
 
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
 import buildcraft.lib.client.guide.parts.ChangingItemStack;
@@ -24,21 +25,18 @@ public class RecipePipeColour implements IRecipeViewable {
     public boolean matches(InventoryCrafting inv, World worldIn) {
         // TODO Auto-generated method stub
         throw new AbstractMethodError("Implement this!");
-        return false;
     }
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
         // TODO Auto-generated method stub
         throw new AbstractMethodError("Implement this!");
-        return null;
     }
 
     @Override
     public int getRecipeSize() {
         // TODO Auto-generated method stub
         throw new AbstractMethodError("Implement this!");
-        return 0;
     }
 
     @Override
@@ -47,10 +45,9 @@ public class RecipePipeColour implements IRecipeViewable {
     }
 
     @Override
-    public ItemStack[] getRemainingItems(InventoryCrafting inv) {
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
         // TODO Auto-generated method stub
         throw new AbstractMethodError("Implement this!");
-        return null;
     }
 
     @Override

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -37,6 +38,7 @@ import buildcraft.api.transport.neptune.PipeFlow;
 
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.DelayedList;
 import buildcraft.transport.pipe.flow.TravellingItem.EnumTravelState;
 
@@ -91,7 +93,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
                 short readColour = buffer.readUnsignedByte();
                 EnumDyeColor colour = readColour == 16 ? null : EnumDyeColor.byMetadata(readColour);
                 int delay = buffer.readInt();
-                ItemStack stack = buffer.readItemStackFromBuffer();
+                ItemStack stack = StackUtil.asNonNull(buffer.readItemStack());
                 TravellingItem item = new TravellingItem(stack);
                 item.from = from;
                 item.to = to;
@@ -118,7 +120,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         ItemStack possible = trans.extract(filter, 1, count, true);
 
-        if (possible == null || possible.getCount() == 0) {
+        if (possible.isEmpty()) {
             return 0;
         }
 
@@ -131,8 +133,8 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         ItemStack stack = trans.extract(filter, tryInsert.accepted, tryInsert.accepted, false);
 
-        if (stack == null) {
-            throw new IllegalStateException("The transactor " + trans + " returned a null itemstack from a known good request!");
+        if (stack.isEmpty()) {
+            throw new IllegalStateException("The transactor " + trans + " returned an empty itemstack from a known good request!");
         }
 
         insertItemEvents(stack, null, EXTRACT_SPEED, from);
@@ -276,7 +278,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
                 leftOver = trans.insert(item.stack, false, false);
             }
 
-            if (leftOver != null) {
+            if (!leftOver.isEmpty()) {
                 if (item.toTryOrder == null || item.toTryOrder.isEmpty()) {
                     // Really drop it
                     dropItem(item, leftOver);
@@ -322,7 +324,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         ent.motionY = to.getFrontOffsetY() * 0.04;
         ent.motionZ = to.getFrontOffsetZ() * 0.04;
 
-        world.spawnEntityInWorld(ent);
+        world.spawnEntity(ent);
     }
 
     @Override
@@ -346,7 +348,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
      * 
      * (This text was copied from buildcraft.api.transport.PipeEventItem) */
     @Override
-    public ItemStack injectItem(ItemStack stack, boolean doAdd, EnumFacing from, EnumDyeColor colour, double speed) {
+    public ItemStack injectItem(@Nonnull ItemStack stack, boolean doAdd, EnumFacing from, EnumDyeColor colour, double speed) {
         if (!canInjectItems(from)) {
             return stack;
         }
@@ -369,15 +371,15 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
             insertItemEvents(toInsert, colour, speed, from);
         }
 
-        if (toSplit.getCount() == 0) {
-            toSplit = null;
+        if (toSplit.isEmpty()) {
+            toSplit = StackUtil.EMPTY;
         }
 
         return toSplit;
     }
 
     /** Used internally to split up manual insertions from controlled extractions. */
-    private void insertItemEvents(ItemStack toInsert, EnumDyeColor colour, double speed, EnumFacing from) {
+    private void insertItemEvents(@Nonnull ItemStack toInsert, EnumDyeColor colour, double speed, EnumFacing from) {
         IPipeHolder holder = pipe.getHolder();
 
         // Side Check
@@ -453,7 +455,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         }
     }
 
-    private void insertItemImpl(ItemStack stack, EnumDyeColor colour, double speed, EnumFacing from, List<EnumFacing> to, List<EnumFacing> tried) {
+    private void insertItemImpl(@Nonnull ItemStack stack, EnumDyeColor colour, double speed, EnumFacing from, List<EnumFacing> to, List<EnumFacing> tried) {
         TravellingItem item = new TravellingItem(stack);
 
         World world = pipe.getHolder().getPipeWorld();
@@ -482,7 +484,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
             buffer.writeByte(colour == null ? 16 : colour.getMetadata());
             buffer.writeInt(delay);
             // Specifically here - writing out the full stack each packet isn't good
-            buffer.writeItemStackToBuffer(stack);
+            buffer.writeItemStack(stack);
         });
     }
 

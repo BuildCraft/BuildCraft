@@ -19,6 +19,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.IntegrationRecipe;
 
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 import buildcraft.silicon.client.render.RenderLaser;
@@ -78,7 +79,7 @@ public abstract class BCSiliconProxy implements IGuiHandler {
         AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10000000, ImmutableSet.of(new ItemStack(Items.BAKED_POTATO)), new ItemStack(Items.APPLE)));
         AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10000000, ImmutableSet.of(new ItemStack(Items.BAKED_POTATO)), new ItemStack(Items.GOLDEN_APPLE)));
         AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10000000, ImmutableSet.of(new ItemStack(Items.BAKED_POTATO)), new ItemStack(Items.GOLDEN_APPLE, 1, 1)));
-        IntegrationRecipeRegistry.INSTANCE.addRecipe(new IntegrationRecipe(10000000, new ItemStack(Items.BAKED_POTATO), ImmutableList.of(new ItemStack(Items.REDSTONE)), new ItemStack(Items.FIRE_CHARGE)));
+        IntegrationRecipeRegistry.INSTANCE.addRecipe(new IntegrationRecipe(10000000, new ItemStack(Items.BAKED_POTATO), StackUtil.listOf(new ItemStack(Items.REDSTONE)), new ItemStack(Items.FIRE_CHARGE)));
     }
 
     public void fmlPostInit() {}

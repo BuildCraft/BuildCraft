@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.util.FakePlayerFactory;
 
 import buildcraft.api.lists.ListMatchHandler;
 
@@ -16,7 +17,7 @@ public class ListMatchHandlerArmor extends ListMatchHandler {
     private static int getArmorTypeID(ItemStack stack) {
         EntityPlayer player = BCLibProxy.getProxy().getClientPlayer();
         if (player == null) {
-            player = FakePlayerUtil.INSTANCE.getBuildCraftPlayer(DimensionManager.getWorld(0), BlockPos.ORIGIN).get();
+            player = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
         }
         int atID = 0;
 

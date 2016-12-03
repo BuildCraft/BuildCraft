@@ -140,7 +140,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                     continue;
                 }
             }
-            TileEntity tile = worldObj.getTileEntity(getPos().offset(face));
+            TileEntity tile = world.getTileEntity(getPos().offset(face));
             if (tile != null) {
                 neighbourTiles.put(face, new WeakReference<>(tile));
             }
@@ -320,7 +320,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     @Override
     public TileEntity getNeighbouringTile(EnumFacing side) {
         if (side == null) return null;
-        return worldObj.getTileEntity(getPos().offset(side));
+        return world.getTileEntity(getPos().offset(side));
         // TODO: Make caching work!
         // WeakReference<TileEntity> weakRef = neighbourTiles.get(side);
         // if (weakRef == null) {

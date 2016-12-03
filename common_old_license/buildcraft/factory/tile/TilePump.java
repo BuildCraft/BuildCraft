@@ -246,7 +246,7 @@ public class TilePump extends TileMiner {
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_FLUIDS) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -254,7 +254,7 @@ public class TilePump extends TileMiner {
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_FLUIDS) {
             return (T) tank;
         }
         return super.getCapability(capability, facing);

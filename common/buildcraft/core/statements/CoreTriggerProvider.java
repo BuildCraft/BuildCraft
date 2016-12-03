@@ -9,10 +9,8 @@ import java.util.Collection;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.api.statements.*;
@@ -20,6 +18,7 @@ import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.tiles.IHasWork;
 
 import buildcraft.core.BCCoreStatements;
+import buildcraft.lib.misc.CapUtil;
 
 public enum CoreTriggerProvider implements ITriggerProvider {
     INSTANCE;
@@ -58,7 +57,7 @@ public enum CoreTriggerProvider implements ITriggerProvider {
         }
 
         if (!blockInventoryTriggers) {
-            IItemHandler itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
+            IItemHandler itemHandler = tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite());
             if (itemHandler != null) {
                 res.add(BCCoreStatements.TRIGGER_INVENTORY_EMPTY);
                 res.add(BCCoreStatements.TRIGGER_INVENTORY_SPACE);
@@ -71,7 +70,7 @@ public enum CoreTriggerProvider implements ITriggerProvider {
         }
 
         if (!blockFluidHandlerTriggers) {
-            IFluidHandler fluidHandler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
+            IFluidHandler fluidHandler = tile.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite());
             if (fluidHandler != null) {
 
                 IFluidTankProperties[] liquids = fluidHandler.getTankProperties();

@@ -4,9 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.lib.misc;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nonnull;
+
+import com.mojang.authlib.GameProfile;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -31,6 +33,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.fluids.*;
@@ -42,19 +45,18 @@ import buildcraft.lib.BCLibConfig;
 
 public final class BlockUtil {
 
-    public static NonNullList<ItemStack> getItemStackFromBlock(WorldServer world, BlockPos pos, BlockPos owner) {
+    public static NonNullList<ItemStack> getItemStackFromBlock(WorldServer world, BlockPos pos, GameProfile owner) {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         if (block == null || block.isAir(state, world, pos)) {
             return null;
         }
 
-        NonNullList<ItemStack> dropsList = block.getDrops(world, pos, state, 0);
-        // FIXME: Use the player owner
-        EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getBuildCraftPlayer(world, pos).get();
+        List<ItemStack> dropsList = block.getDrops(world, pos, state, 0);
+        EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer(world, pos, owner);
         float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, pos, state, 0, 1.0F, false, fakePlayer);
 
-        NonNullList<ItemStack> returnList = new ArrayList<>();
+        NonNullList<ItemStack> returnList = NonNullList.create();
         for (ItemStack s : dropsList) {
             if (world.rand.nextFloat() <= dropChance) {
                 returnList.add(s);
@@ -64,14 +66,14 @@ public final class BlockUtil {
         return returnList;
     }
 
-    public static boolean breakBlock(WorldServer world, BlockPos pos, BlockPos owner) {
-        return breakBlock(world, pos, BCLibConfig.itemLifespan * 20, owner);
+    public static boolean breakBlock(WorldServer world, BlockPos pos, BlockPos ownerPos, GameProfile owner) {
+        return breakBlock(world, pos, BCLibConfig.itemLifespan * 20, ownerPos, owner);
     }
 
-    public static boolean breakBlock(WorldServer world, BlockPos pos, int forcedLifespan, BlockPos owner) {
-        NonNullList<ItemStack> items = new ArrayList<>();
+    public static boolean breakBlock(WorldServer world, BlockPos pos, int forcedLifespan, BlockPos ownerPos, GameProfile owner) {
+        NonNullList<ItemStack> items = NonNullList.create();
 
-        if (breakBlock(world, pos, items, owner)) {
+        if (breakBlock(world, pos, items, ownerPos, owner)) {
             for (ItemStack item : items) {
                 dropItem(world, pos, forcedLifespan, item);
             }
@@ -80,9 +82,9 @@ public final class BlockUtil {
         return false;
     }
 
-    public static boolean harvestBlock(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, BlockPos owner) {
-        // FIXME: Use the player owner
-        BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), FakePlayerUtil.INSTANCE.getBuildCraftPlayer(world, owner).get());
+    public static boolean harvestBlock(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, BlockPos ownerPos, GameProfile owner) {
+        FakePlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer(world, ownerPos, owner);
+        BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), fakePlayer);
         MinecraftForge.EVENT_BUS.post(breakEvent);
 
         if (breakEvent.isCanceled()) {
@@ -91,23 +93,19 @@ public final class BlockUtil {
 
         IBlockState state = world.getBlockState(pos);
 
-        // FIXME: Use the player owner
-        EntityPlayer player = FakePlayerUtil.INSTANCE.getBuildCraftPlayer(world, pos).get();
-
-        if (!state.getBlock().canHarvestBlock(world, pos, player)) {
+        if (!state.getBlock().canHarvestBlock(world, pos, fakePlayer)) {
             return false;
         }
 
-        state.getBlock().onBlockHarvested(world, pos, state, player);
-        state.getBlock().harvestBlock(world, player, pos, state, world.getTileEntity(pos), tool);
+        state.getBlock().onBlockHarvested(world, pos, state, fakePlayer);
+        state.getBlock().harvestBlock(world, fakePlayer, pos, state, world.getTileEntity(pos), tool);
         world.setBlockToAir(pos);
 
         return true;
     }
 
-    public static EntityPlayer getFakePlayerWithTool(WorldServer world, BlockPos pos, @Nonnull ItemStack tool) {
-        // FIXME: Use the player owner
-        EntityPlayer player = FakePlayerUtil.INSTANCE.getBuildCraftPlayer(world, pos).get();
+    public static FakePlayer getFakePlayerWithTool(WorldServer world, @Nonnull ItemStack tool, GameProfile owner) {
+        FakePlayer player = FakePlayerUtil.INSTANCE.getFakePlayer(world, owner);
         int i = 0;
 
         while (player.getHeldItemMainhand() != tool && i < 9) {
@@ -122,9 +120,9 @@ public final class BlockUtil {
         return player;
     }
 
-    public static boolean breakBlock(WorldServer world, BlockPos pos, NonNullList<ItemStack> drops, BlockPos owner) {
-        // FIXME: Use the player owner
-        BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), FakePlayerUtil.INSTANCE.getBuildCraftPlayer(world, owner).get());
+    public static boolean breakBlock(WorldServer world, BlockPos pos, NonNullList<ItemStack> drops, BlockPos ownerPos, GameProfile owner) {
+        FakePlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer(world, ownerPos, owner);
+        BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), fakePlayer);
         MinecraftForge.EVENT_BUS.post(breakEvent);
 
         if (breakEvent.isCanceled()) {
@@ -152,11 +150,11 @@ public final class BlockUtil {
         world.spawnEntity(entityitem);
     }
 
-    public static boolean canChangeBlock(World world, BlockPos pos) {
-        return canChangeBlock(world.getBlockState(pos), world, pos);
+    public static boolean canChangeBlock(World world, BlockPos pos, GameProfile owner) {
+        return canChangeBlock(world.getBlockState(pos), world, pos, owner);
     }
 
-    public static boolean canChangeBlock(IBlockState state, World world, BlockPos pos) {
+    public static boolean canChangeBlock(IBlockState state, World world, BlockPos pos, GameProfile owner) {
         if (state == null) return true;
 
         Block block = state.getBlock();
@@ -164,7 +162,7 @@ public final class BlockUtil {
             return true;
         }
 
-        if (isUnbreakableBlock(world, pos, state)) {
+        if (isUnbreakableBlock(world, pos, state, owner)) {
             return false;
         }
 
@@ -180,9 +178,9 @@ public final class BlockUtil {
         return true;
     }
 
-    public static float getBlockHardnessMining(World world, BlockPos pos, IBlockState state) {
-        if (world instanceof WorldServer /* && !BuildCraftCore.miningAllowPlayerProtectedBlocks */) {
-            EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getBuildCraftPlayer((WorldServer) world, pos).get();
+    public static float getBlockHardnessMining(World world, BlockPos pos, IBlockState state, GameProfile owner) {
+        if (world instanceof WorldServer) {
+            EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, owner);
             float relativeHardness = state.getPlayerRelativeBlockHardness(fakePlayer, world, pos);
             if (relativeHardness <= 0.0F) {
                 // Forge's getPlayerRelativeBlockHardness hook returns 0.0F if the hardness is < 0.0F.
@@ -192,12 +190,12 @@ public final class BlockUtil {
         return state.getBlockHardness(world, pos);
     }
 
-    public static boolean isUnbreakableBlock(World world, BlockPos pos, IBlockState state) {
-        return getBlockHardnessMining(world, pos, state) < 0;
+    public static boolean isUnbreakableBlock(World world, BlockPos pos, IBlockState state, GameProfile owner) {
+        return getBlockHardnessMining(world, pos, state, owner) < 0;
     }
 
-    public static boolean isUnbreakableBlock(World world, BlockPos pos) {
-        return isUnbreakableBlock(world, pos, world.getBlockState(pos));
+    public static boolean isUnbreakableBlock(World world, BlockPos pos, GameProfile owner) {
+        return isUnbreakableBlock(world, pos, world.getBlockState(pos), owner);
     }
 
     /** Returns true if a block cannot be harvested without a tool. */
@@ -256,6 +254,7 @@ public final class BlockUtil {
                 }
                 return fluidBlock.drain(world, pos, doDrain);
             } else {
+                // FIXME: this should probably check the level...
                 int level = state.getValue(BlockLiquid.LEVEL);
                 // if (level != 0) {
                 // return null;

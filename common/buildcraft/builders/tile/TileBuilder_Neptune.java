@@ -354,7 +354,7 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_FLUIDS) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -362,7 +362,7 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_FLUIDS) {
             return (T) tankManager;
         }
         return super.getCapability(capability, facing);

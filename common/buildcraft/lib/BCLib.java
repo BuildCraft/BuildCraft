@@ -32,11 +32,11 @@ import buildcraft.lib.recipe.IntegrationRecipeRegistry;
      name = "BuildCraft Lib",
      version = BCLib.VERSION,
      acceptedMinecraftVersions = "[1.11]",
-     dependencies = "required-after:Forge@[13.19.0.2176,)")
+     dependencies = "required-after:forge@[13.19.0.2176,)")
 //@formatter:on
 public class BCLib {
     public static final String MODID = "buildcraftlib";
-    public static final String VERSION = "@VERSION@";
+    public static final String VERSION = "{$version}";
 
     @Instance(MODID)
     public static BCLib INSTANCE;

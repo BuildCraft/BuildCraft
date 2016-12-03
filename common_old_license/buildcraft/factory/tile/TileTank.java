@@ -177,7 +177,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_FLUIDS) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -185,7 +185,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_FLUIDS) {
             return (T) this;// Nothing we can do about this warning provided that "this" always implements IFluidHandler
         }
         return super.getCapability(capability, facing);

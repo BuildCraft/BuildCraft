@@ -230,12 +230,12 @@ public final class InvUtils {
     }
 
     public static IItemHandler getItemHandler(Object object, EnumFacing orientation) {
-        if (object instanceof TileEntity && ((TileEntity) object).hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, orientation)) {
-            return ((TileEntity) object).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, orientation);
-        } else if (object instanceof Entity && ((Entity) object).hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, orientation)) {
-            return ((Entity) object).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, orientation);
-        } else if (object instanceof ItemStack && ((ItemStack) object).hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, orientation)) {
-            return ((ItemStack) object).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, orientation);
+        if (object instanceof TileEntity && ((TileEntity) object).hasCapability(CapUtil.CAP_ITEMS, orientation)) {
+            return ((TileEntity) object).getCapability(CapUtil.CAP_ITEMS, orientation);
+        } else if (object instanceof Entity && ((Entity) object).hasCapability(CapUtil.CAP_ITEMS, orientation)) {
+            return ((Entity) object).getCapability(CapUtil.CAP_ITEMS, orientation);
+        } else if (object instanceof ItemStack && ((ItemStack) object).hasCapability(CapUtil.CAP_ITEMS, orientation)) {
+            return ((ItemStack) object).getCapability(CapUtil.CAP_ITEMS, orientation);
         } else if (!DISABLE_INVENTORY_WRAPPERS) {
             if (object instanceof ISidedInventory) {
                 // TODO: Remove in 1.9

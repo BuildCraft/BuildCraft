@@ -5,12 +5,11 @@ import javax.annotation.Nonnull;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
-import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.data.NonNullMatrix;
 
 public class GuideCrafting extends GuidePartItem {
     public static final GuiIcon CRAFTING_GRID = new GuiIcon(GuiGuide.ICONS_2, 119, 0, 116, 54);
@@ -30,13 +29,12 @@ public class GuideCrafting extends GuidePartItem {
     private final ChangingItemStack[][] input;
     private final ChangingItemStack output;
 
-    GuideCrafting(GuiGuide gui, ItemStack[][] input, @Nonnull ItemStack output) {
+    GuideCrafting(GuiGuide gui, NonNullMatrix<ItemStack> input, @Nonnull ItemStack output) {
         super(gui);
-        this.input = new ChangingItemStack[input.length][];
-        for (int x = 0; x < input.length; x++) {
-            this.input[x] = new ChangingItemStack[input[x].length];
-            for (int y = 0; y < input[x].length; y++) {
-                this.input[x][y] = new ChangingItemStack(StackUtil.asNonNull(input[x][y]));
+        this.input = new ChangingItemStack[input.getWidth()][input.getHeight()];
+        for (int x = 0; x < input.getWidth(); x++) {
+            for (int y = 0; y < input.getHeight(); y++) {
+                this.input[x][y] = new ChangingItemStack(input.get(x, y));
             }
         }
         this.output = new ChangingItemStack(output);

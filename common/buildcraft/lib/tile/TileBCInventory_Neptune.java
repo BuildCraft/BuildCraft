@@ -54,7 +54,7 @@ public abstract class TileBCInventory_Neptune extends TileBC_Neptune {
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_ITEMS) {
             return itemManager.hasCapability(capability, facing);
         }
         return super.hasCapability(capability, facing);
@@ -62,7 +62,7 @@ public abstract class TileBCInventory_Neptune extends TileBC_Neptune {
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_ITEMS) {
             return itemManager.getCapability(capability, facing);
         }
         return super.getCapability(capability, facing);

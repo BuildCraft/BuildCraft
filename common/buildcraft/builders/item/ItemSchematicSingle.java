@@ -28,6 +28,7 @@ import buildcraft.api.bpt.SchematicFactoryWorldBlock;
 import buildcraft.builders.bpt.player.BuilderPlayer;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
@@ -59,7 +60,8 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = StackUtil.asNonNull(player.getHeldItem(hand));
         if (world.isRemote) {
             return new ActionResult<>(EnumActionResult.PASS, stack);
         }
@@ -76,12 +78,13 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         if (world.isRemote) {
             return EnumActionResult.PASS;
         }
+        ItemStack stack = player.getHeldItem(hand);
         if (player.isSneaking()) {
-            NBTTagCompound itemData = NBTUtilBC.getItemData(stack);
+            NBTTagCompound itemData = NBTUtilBC.getItemData(StackUtil.asNonNull(stack));
             itemData.removeTag(NBT_KEY_SCHEMATIC);
             if (itemData.hasNoTags()) {
                 stack.setTagCompound(null);

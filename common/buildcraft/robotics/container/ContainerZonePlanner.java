@@ -6,6 +6,7 @@ package buildcraft.robotics.container;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.core.item.ItemMapLocation;
 import buildcraft.core.item.ItemPaintbrush_BC8;
@@ -41,7 +42,8 @@ public class ContainerZonePlanner extends ContainerBCTile<TileZonePlanner> {
         addSlotToContainer(new SlotBase(tile.invInputMapLocation, 0, 26, 125) {
             @Override
             public boolean isItemValid(ItemStack stack) {
-                return stack.getItem() instanceof ItemMapLocation && stack.getTagCompound() != null && stack.getTagCompound().hasKey("chunkMapping") && stack.getCount() == 1;
+                NBTTagCompound stackTag = stack.getTagCompound();
+                return stack.getItem() instanceof ItemMapLocation && stackTag != null && stackTag.hasKey("chunkMapping") && stack.getCount() == 1;
             }
         });
         addSlotToContainer(new SlotOutput(tile.invInputResult, 0, 74, 125));

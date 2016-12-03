@@ -1,7 +1,5 @@
 package buildcraft.lib.tile.item;
 
-import java.util.Arrays;
-
 import javax.annotation.Nonnull;
 
 import net.minecraft.crash.CrashReport;
@@ -40,8 +38,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     }
 
     public ItemHandlerSimple(int size, StackInsertionChecker checker, StackInsertionFunction insertionFunction, StackChangeCallback callback) {
-        stacks = new ItemStack[size];
-        Arrays.fill(stacks, StackUtil.EMPTY);
+        stacks = NonNullList.withSize(size, StackUtil.EMPTY);
         this.checker = checker;
         this.insertor = insertionFunction;
         this.callback = callback;
@@ -79,24 +76,24 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
 
     @Override
     public int getSlots() {
-        return stacks.length;
+        return stacks.size();
     }
 
     private boolean badSlotIndex(int slot) {
-        return slot < 0 || slot >= stacks.length;
+        return slot < 0 || slot >= stacks.size();
     }
 
     @Override
     protected boolean isEmpty(int slot) {
         if (badSlotIndex(slot)) return true;
-        return stacks[slot] == null;
+        return stacks.get(slot).isEmpty();
     }
 
     @Override
     @Nonnull
     public ItemStack getStackInSlot(int slot) {
         if (badSlotIndex(slot)) return StackUtil.EMPTY;
-        return asValid(stacks[slot]);
+        return asValid(stacks.get(slot));
     }
 
     @Override
@@ -105,7 +102,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
             return stack;
         }
         if (canSet(slot, stack)) {
-            ItemStack current = stacks[slot];
+            ItemStack current = stacks.get(slot);
             InsertionResult result = insertor.modifyForInsertion(slot, asValid(current), asValid(stack));
             if (!canSet(slot, result.toSet)) {
                 // We have a bad inserter or checker, as they should not be conflicting
@@ -137,8 +134,8 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (badSlotIndex(slot)) return StackUtil.EMPTY;
         // You can ALWAYS extract. if you couldn't then you could never take out items from anywhere
-        ItemStack current = stacks[slot];
-        if (current == null) return StackUtil.EMPTY;
+        ItemStack current = stacks.get(slot);
+        if (current.isEmpty()) return StackUtil.EMPTY;
         if (current.getCount() < amount) {
             if (simulate) {
                 return asValid(current);
@@ -163,7 +160,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
         if (badSlotIndex(slot)) return StackUtil.EMPTY;
         if (min <= 0) min = 1;
         if (max < min) return StackUtil.EMPTY;
-        ItemStack current = stacks[slot];
+        ItemStack current = stacks.get(slot);
         if (current == null || current.getCount() < min) return StackUtil.EMPTY;
         if (filter.matches(asValid(current))) {
             if (simulate) {
@@ -172,7 +169,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
             }
             ItemStack split = current.splitStack(max);
             if (current.getCount() <= 0) {
-                stacks[slot] = StackUtil.EMPTY;
+                stacks.set(slot, StackUtil.EMPTY);
             }
             return split;
         }
@@ -203,13 +200,13 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     }
 
     private void setStackInternal(int slot, @Nonnull ItemStack stack) {
-        ItemStack before = stacks[slot];
+        ItemStack before = stacks.get(slot);
         if (!ItemStack.areItemStacksEqual(before, stack)) {
-            stacks[slot] = asValid(stack);
+            stacks.set(slot, asValid(stack));
             // Transactor calc
             if (stack.isEmpty() && firstUsed == slot) {
                 for (int s = firstUsed; s < getSlots(); s++) {
-                    if (!stacks[s].isEmpty()) {
+                    if (!stacks.get(s).isEmpty()) {
                         firstUsed = s;
                         break;
                     }

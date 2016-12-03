@@ -51,7 +51,7 @@ public class EntityQuarry extends Entity {
     }
 
     public TileQuarry getTile() {
-        TileEntity tile = worldObj.getTileEntity(getTilePos());
+        TileEntity tile = world.getTileEntity(getTilePos());
         return tile instanceof TileQuarry ? (TileQuarry) tile : null;
     }
 

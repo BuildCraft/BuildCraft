@@ -25,6 +25,7 @@ import buildcraft.core.BCCoreGuis;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
@@ -49,13 +50,13 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList {
 
     @Override
     public int getMetadata(ItemStack stack) {
-        return ListHandler.hasItems(stack) ? 1 : 0;
+        return ListHandler.hasItems(StackUtil.asNonNull(stack)) ? 1 : 0;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-        String name = getName(stack);
+        String name = getName(StackUtil.asNonNull(stack));
         if (StringUtils.isNullOrEmpty(name)) return;
         tooltip.add(TextFormatting.ITALIC + name);
     }

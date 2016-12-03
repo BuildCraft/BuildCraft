@@ -3,6 +3,8 @@ package buildcraft.transport.pipe.flow;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,7 +16,7 @@ import buildcraft.lib.misc.VecUtil;
 
 public class TravellingItem {
     // Public for rendering
-    public ItemStack stack;
+    public @Nonnull ItemStack stack;
     public EnumDyeColor colour;
 
     int id = 0;
@@ -52,11 +54,8 @@ public class TravellingItem {
         CLIENT_INVALID;
     }
 
-    public TravellingItem(ItemStack stack) {
+    public TravellingItem(@Nonnull ItemStack stack) {
         this.stack = stack;
-        if (stack == null || stack.getItem() == null) {
-            throw new NullPointerException("stack");
-        }
     }
 
     // List<EnumFacing> tried = null;

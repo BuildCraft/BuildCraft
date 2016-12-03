@@ -13,6 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.tiles.IDebuggable;
 
@@ -22,6 +23,7 @@ import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
@@ -58,9 +60,10 @@ public class TileZonePlanner extends TileBCInventory_Neptune implements ITickabl
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public int getLevel() {
-        BlockPos blockPos = Minecraft.getMinecraft().thePlayer.getPosition();
-        while (!Minecraft.getMinecraft().theWorld.getBlockState(blockPos).getBlock().isBlockSolid(Minecraft.getMinecraft().theWorld, blockPos, EnumFacing.DOWN) && blockPos.getY() < 255) {
+        BlockPos blockPos = Minecraft.getMinecraft().player.getPosition();
+        while (!Minecraft.getMinecraft().world.getBlockState(blockPos).getBlock().isBlockSolid(Minecraft.getMinecraft().world, blockPos, EnumFacing.DOWN) && blockPos.getY() < 255) {
             blockPos = new BlockPos(blockPos.getX(), blockPos.getY() + 1, blockPos.getZ());
         }
         return (int) Math.floor((double) blockPos.getY() / ZonePlannerMapChunkKey.LEVEL_HEIGHT);
@@ -157,7 +160,7 @@ public class TileZonePlanner extends TileBCInventory_Neptune implements ITickabl
                 }
 
                 layers[BCCoreItems.paintbrush.getBrushFromStack(paintbrushStack).colour.getMetadata()].readFromNBT(mapLocationStack.getTagCompound());
-                invInputMapLocation.setStackInSlot(0, null);
+                invInputMapLocation.setStackInSlot(0, StackUtil.EMPTY);
                 invInputResult.setStackInSlot(0, new ItemStack(BCCoreItems.mapLocation));
                 this.markDirty();
                 this.sendNetworkUpdate(NET_RENDER_DATA);
@@ -182,7 +185,7 @@ public class TileZonePlanner extends TileBCInventory_Neptune implements ITickabl
                 }
 
                 ItemMapLocation.setZone(mapLocationStack, layers[BCCoreItems.paintbrush.getBrushFromStack(paintbrushStack).colour.getMetadata()]);
-                invOutputMapLocation.setStackInSlot(0, null);
+                invOutputMapLocation.setStackInSlot(0, StackUtil.EMPTY);
                 invOutputResult.setStackInSlot(0, mapLocationStack);
                 progressOutput = 0;
             } else if (progressOutput != -1) {

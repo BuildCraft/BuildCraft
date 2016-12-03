@@ -52,7 +52,7 @@ public abstract class TileEngineWithInventory extends TileEngineBase implements 
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_ITEMS) {
             if (facing == orientation) return super.getCapability(capability, facing);
             return (T) getItemHandler();
         }

@@ -93,7 +93,7 @@ public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnect
         if (heldItem == null || tile == null) {
             return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
         }
-        if (FluidUtil.interactWithFluidHandler(heldItem, tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null), player)) {
+        if (FluidUtil.interactWithFluidHandler(heldItem, tile.getCapability(CapUtil.CAP_FLUIDS, null), player)) {
             tile.sendNetworkUpdate(TileBC_Neptune.NET_RENDER_DATA);
             player.inventoryContainer.detectAndSendChanges();
             return true;

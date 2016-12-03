@@ -19,6 +19,7 @@ import buildcraft.api.statements.*;
 import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
 
@@ -64,7 +65,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
             searchedStack = parameters[0].getItemStack();
         }
 
-        IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
+        IItemHandler handler = tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite());
 
         if (handler != null) {
             boolean hasSlots = false;

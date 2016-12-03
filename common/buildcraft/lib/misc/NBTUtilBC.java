@@ -186,6 +186,8 @@ public final class NBTUtilBC {
         }
     }
 
+    /** Please tell me this was never used :/ */
+    @Deprecated
     public static NBTBase writeObject(Object obj) {
         if (obj == null) throw new NullPointerException("obj");
         if (obj instanceof Byte) return new NBTTagByte((Byte) obj);
@@ -214,6 +216,11 @@ public final class NBTUtilBC {
         throw new IllegalArgumentException("Cannot write class " + obj.getClass() + " directly to NBT!");
     }
 
+    /** This is never used right? RIGHT?
+     * 
+     * @param nbt
+     * @return */
+    @Deprecated
     public static Object readObject(NBTBase nbt) {
         if (nbt == null) return null;
         if (nbt instanceof NBTPrimitive) {

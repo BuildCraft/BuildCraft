@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.gate.GateVariant;
 import buildcraft.transport.item.ItemPluggableGate;
 
@@ -15,7 +16,7 @@ public enum GateMeshDefinition implements ItemMeshDefinition {
 
     @Override
     public ModelResourceLocation getModelLocation(ItemStack stack) {
-        GateVariant var = ItemPluggableGate.getVariant(stack);
+        GateVariant var = ItemPluggableGate.getVariant(StackUtil.asNonNull(stack));
         ResourceLocation loc = LOCATION_BASE;
         String variant = var.getVariantName();
         return new ModelResourceLocation(loc, variant);

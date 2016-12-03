@@ -109,7 +109,7 @@ public enum ZonePlannerMapRenderer {
     }
 
     private void genChunk(ZonePlannerMapChunkKey key) {
-        ZonePlannerMapDataClient.INSTANCE.getChunk(Minecraft.getMinecraft().theWorld, key, chunk -> {
+        ZonePlannerMapDataClient.INSTANCE.getChunk(Minecraft.getMinecraft().world, key, chunk -> {
             VertexBuffer builder = Tessellator.getInstance().getBuffer();
             builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);// TODO: normals
             for (int x = 0; x < 16; x++) {

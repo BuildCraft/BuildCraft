@@ -31,8 +31,7 @@ import buildcraft.lib.registry.RegistryHelper;
 @Mod(modid = BCCore.MODID,
      name = "BuildCraft Core",
      version = BCLib.VERSION,
-     acceptedMinecraftVersions = "[1.10.2]",
-     dependencies = "required-after:buildcraftlib",
+     dependencies = "required-after:buildcraftlib@[" + BCLib.VERSION + "]",
      guiFactory = "buildcraft.core.config.ConfigManager")
 //@formatter:on
 public class BCCore {

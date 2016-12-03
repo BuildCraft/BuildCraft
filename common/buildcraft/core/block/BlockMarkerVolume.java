@@ -30,7 +30,7 @@ public class BlockMarkerVolume extends BlockMarkerBase {
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block) {
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
         checkSignalState(world, pos);
     }
 

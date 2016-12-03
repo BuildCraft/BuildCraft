@@ -22,30 +22,26 @@ import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.data.NonNullMatrix;
 
 public class GuideCraftingFactory implements GuidePartFactory {
     private static final Field SHAPED_ORE_RECIPE___WIDTH;
     private static final Field SHAPED_ORE_RECIPE___HEIGHT;
 
-    private final ItemStack[][] input;
-    @Nonnull
-    private final ItemStack output;
+    private final NonNullMatrix<ItemStack> input;
+    private final @Nonnull ItemStack output;
     private final int hash;
 
     public GuideCraftingFactory(ItemStack[][] input, ItemStack output) {
-        this.input = input;
+        this.input = new NonNullMatrix<>(input, StackUtil.EMPTY);
         this.output = StackUtil.asNonNull(output);
         NBTTagCompound hashNbt = new NBTTagCompound();
         hashNbt.setTag("output", output.serializeNBT());
-        if (input != null) {
-            for (int i = 0; i < input.length; i++) {
-                if (input[i] != null) {
-                    for (int j = 0; j < input[i].length; j++) {
-                        ItemStack stack = StackUtil.asNonNull(input[i][j]);
-                        if (!stack.isEmpty()) {
-                            hashNbt.setTag("in[" + i + "," + j + "]", stack.serializeNBT());
-                        }
-                    }
+        for (int i = 0; i < input.length; i++) {
+            for (int j = 0; j < input[i].length; j++) {
+                ItemStack stack = StackUtil.asNonNull(input[i][j]);
+                if (!stack.isEmpty()) {
+                    hashNbt.setTag("in[" + i + "," + j + "]", stack.serializeNBT());
                 }
             }
         }
@@ -149,9 +145,10 @@ public class GuideCraftingFactory implements GuidePartFactory {
         return new ItemStack[3][3];
     }
 
+    @Nonnull
     private static ItemStack oreConvert(Object object) {
         if (object == null) {
-            return null;
+            return StackUtil.EMPTY;
         }
         if (object instanceof ItemStack) {
             return ((ItemStack) object).copy();
@@ -164,18 +161,18 @@ public class GuideCraftingFactory implements GuidePartFactory {
         if (object instanceof List<?>) {
             List<?> list = (List<?>) object;
             if (list.isEmpty()) {
-                return null;
+                return StackUtil.EMPTY;
             }
             Object first = list.get(0);
             if (first == null) {
-                return null;
+                return StackUtil.EMPTY;
             }
             if (first instanceof ItemStack) {
                 // Technically a safe cast as the first one WAS an Item Stack and we never add to the list
                 @SuppressWarnings("unchecked")
                 NonNullList<ItemStack> stacks = (NonNullList<ItemStack>) list;
                 if (stacks.size() == 0) {
-                    return null;
+                    return StackUtil.EMPTY;
                 }
                 ItemStack best = stacks.get(0);
                 for (ItemStack stack : stacks) {
@@ -189,7 +186,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
             BCLog.logger.warn("Found a list with unknown contents! " + first.getClass());
         }
         BCLog.logger.warn("Found an ore with an unknown " + object.getClass());
-        return null;
+        return StackUtil.EMPTY;
     }
 
     public static GuideCraftingFactory create(Item output) {
@@ -214,16 +211,12 @@ public class GuideCraftingFactory implements GuidePartFactory {
         GuideCraftingFactory other = (GuideCraftingFactory) obj;
         // Shortcut out of this full itemstack comparison as its really expensive
         if (hash != other.hash) return false;
-
-        if (input.length != other.input.length) return false;
-        for (int i = 0; i < input.length; i++) {
-            ItemStack[] compA = input[i];
-            ItemStack[] compB = other.input[i];
-            if (compA.length != compB.length) return false;
-            for (int j = 0; j < input.length; j++) {
-                if (!ItemStack.areItemStacksEqual(compA[j], compB[j])) {
-                    return false;
-                }
+        if (input.getWidth() != other.input.getWidth() || input.getHeight() != other.input.getHeight()) return false;
+        for (int i = 0; i < input.size(); i++) {
+            ItemStack stackThis = input.get(i);
+            ItemStack stackOther = other.input.get(i);
+            if (!ItemStack.areItemStacksEqual(stackThis, stackOther)) {
+                return false;
             }
         }
         return ItemStack.areItemStacksEqual(output, other.output);

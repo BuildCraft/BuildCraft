@@ -14,7 +14,12 @@ import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.robotics.zone.MessageZoneMapRequest;
 import buildcraft.robotics.zone.MessageZoneMapResponse;
 
-@Mod(modid = BCRobotics.MODID, name = "BuildCraft Robotics", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
+//@formatter:off
+@Mod(modid = BCRobotics.MODID,
+name = "BuildCraft Robotics",
+version = BCLib.VERSION,
+dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+//@formatter:on
 public class BCRobotics {
     public static final String MODID = "buildcraftrobotics";
 

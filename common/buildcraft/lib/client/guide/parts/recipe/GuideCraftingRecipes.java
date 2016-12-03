@@ -34,7 +34,6 @@ public enum GuideCraftingRecipes implements IStackRecipes {
                 }
             }
         }
-
         return list;
     }
 

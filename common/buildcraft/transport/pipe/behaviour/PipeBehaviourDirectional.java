@@ -63,7 +63,7 @@ public abstract class PipeBehaviourDirectional extends PipeBehaviour {
                         setCurrentDir(part.face);
                     }
                 }
-                if (!player.worldObj.isRemote) {
+                if (!player.world.isRemote) {
                     pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
                 }
             }

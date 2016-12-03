@@ -26,6 +26,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.StackUtil;
 
 /** Directions *might* be replaced with indervidual triggers and actions per direction. Not sure yet. */
 @Deprecated
@@ -63,7 +64,7 @@ public class StatementParameterDirection implements IStatementParameter {
 
     @Override
     public ItemStack getItemStack() {
-        return null;
+        return StackUtil.EMPTY;
     }
 
     @Override

@@ -83,7 +83,7 @@ public class PipeBehaviourDaizuli extends PipeBehaviourDirectional {
             // And so does clicking on the current facing side
             return super.onPipeActivate(player, trace, hitX, hitY, hitZ, part);
         }
-        if (player.worldObj.isRemote) {
+        if (player.world.isRemote) {
             return EntityUtil.getWrenchHand(player) != null;
         }
         if (EntityUtil.getWrenchHand(player) != null) {

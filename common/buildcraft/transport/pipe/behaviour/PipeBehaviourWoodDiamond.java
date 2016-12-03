@@ -61,7 +61,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
         filters.deserializeNBT(nbt.getCompoundTag("filters"));
         filterMode = FilterMode.get(nbt.getByte("mode"));
         currentFilter = nbt.getByte("currentFilter") % filters.getSlots();
-        filterValid = filters.extract(StackFilter.ALL, 1, 1, true) != null;
+        filterValid = !filters.extract(StackFilter.ALL, 1, 1, true).isEmpty();
     }
 
     @Override
@@ -104,7 +104,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
                 return false;
             }
         }
-        if (!player.worldObj.isRemote) {
+        if (!player.world.isRemote) {
             BCTransportGuis.PIPE_DIAMOND_WOOD.openGui(player, pipe.getHolder().getPipePos());
         }
         return true;
@@ -138,7 +138,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
 
     @Override
     protected int extractItems(IFlowItems flow, EnumFacing dir, int count) {
-        if (filters.getStackInSlot(currentFilter) == null) {
+        if (filters.getStackInSlot(currentFilter).isEmpty()) {
             advanceFilter();
         }
         int extracted = flow.tryExtractItems(1, getCurrentDir(), getStackFilter());
@@ -150,7 +150,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
 
     @Override
     protected FluidStack extractFluid(IFlowFluid flow, EnumFacing dir, int millibuckets) {
-        if (filters.getStackInSlot(currentFilter) == null) {
+        if (filters.getStackInSlot(currentFilter).isEmpty()) {
             advanceFilter();
         }
 
@@ -161,7 +161,8 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
                 FluidStack extracted = flow.tryExtractFluidAdv(millibuckets, dir, new ArrayFluidFilter(filters.stacks));
 
                 if (extracted == null || extracted.amount <= 0) {
-                    for (ItemStack stack : filters.stacks) {
+                    for (int i = 0; i < filters.getSlots(); i++) {
+                        ItemStack stack = filters.getStackInSlot(i);
                         extracted = flow.tryExtractFluid(millibuckets, dir, FluidUtil.getFluidContained(stack));
                         if (extracted != null && extracted.amount > 0) {
                             return extracted;
@@ -186,7 +187,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
             if (currentFilter >= filters.getSlots()) {
                 currentFilter = 0;
             }
-            if (filters.getStackInSlot(currentFilter) != null) {
+            if (!filters.getStackInSlot(currentFilter).isEmpty()) {
                 filterValid = true;
                 break;
             }

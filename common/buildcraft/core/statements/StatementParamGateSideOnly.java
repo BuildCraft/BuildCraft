@@ -15,6 +15,7 @@ import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.core.BCCoreSprites;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.StackUtil;
 
 public class StatementParamGateSideOnly implements IStatementParameter {
 
@@ -33,7 +34,7 @@ public class StatementParamGateSideOnly implements IStatementParameter {
 
     @Override
     public ItemStack getItemStack() {
-        return null;
+        return StackUtil.EMPTY;
     }
 
     @Override

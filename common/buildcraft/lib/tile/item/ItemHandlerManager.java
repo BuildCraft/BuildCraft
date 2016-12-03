@@ -69,7 +69,7 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_ITEMS) {
             Wrapper wrapper = wrappers.get(EnumPipePart.fromFacing(facing));
             return wrapper.combined != null;
         }
@@ -79,7 +79,7 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
     @Override
     @SuppressWarnings("unchecked")// lots of (T) instance -- but we know its safe
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_ITEMS) {
             Wrapper wrapper = wrappers.get(EnumPipePart.fromFacing(facing));
             return (T) wrapper.combined;
         }

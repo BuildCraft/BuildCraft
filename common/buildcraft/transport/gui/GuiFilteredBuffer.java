@@ -41,7 +41,7 @@ public class GuiFilteredBuffer extends GuiBC8<ContainerFilteredBuffer> {
             // GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             // GL11.glColor4f(1, 1, 1, 0.5F);
             if (stack != null) {
-                this.itemRender.renderItemAndEffectIntoGUI(this.mc.thePlayer, stack, currentX, currentY);
+                this.itemRender.renderItemAndEffectIntoGUI(this.mc.player, stack, currentX, currentY);
             } else {
                 this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                 this.drawTexturedModalRect(currentX, currentY, BCTransportSprites.NOTHING_FILTERED_BUFFER_SLOT.getSprite(), 16, 16);

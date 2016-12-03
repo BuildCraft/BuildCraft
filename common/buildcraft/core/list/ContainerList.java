@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.list;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -20,6 +22,7 @@ import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.widget.WidgetPhantomSlot;
 import buildcraft.lib.list.ListHandler;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.MessageContainer;
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -70,6 +73,7 @@ public class ContainerList extends ContainerBC_Neptune {
         return true;
     }
 
+    @Nonnull
     public ItemStack getListItemStack() {
         ItemStack toTry = player.getHeldItemMainhand();
         if (toTry != null && toTry.getItem() instanceof ItemList_BC8) {
@@ -80,10 +84,10 @@ public class ContainerList extends ContainerBC_Neptune {
         if (toTry != null && toTry.getItem() instanceof ItemList_BC8) {
             return toTry;
         }
-        return null;
+        return StackUtil.EMPTY;
     }
 
-    private void setStack(final int lineIndex, final int slotIndex, final ItemStack stack) {
+    private void setStack(final int lineIndex, final int slotIndex, @Nonnull final ItemStack stack) {
         lines[lineIndex].setStack(slotIndex, stack);
         ListHandler.saveLines(getListItemStack(), lines);
     }
@@ -102,7 +106,7 @@ public class ContainerList extends ContainerBC_Neptune {
             if (type == Type.MATERIAL || type == Type.TYPE) {
                 WidgetListSlot[] widgetSlots = slots[lineIndex];
                 for (int i = 1; i < widgetSlots.length; i++) {
-                    widgetSlots[i].setStack(null, true);
+                    widgetSlots[i].setStack(StackUtil.EMPTY, true);
                 }
             }
         }

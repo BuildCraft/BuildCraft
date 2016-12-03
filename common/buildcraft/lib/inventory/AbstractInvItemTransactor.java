@@ -15,7 +15,7 @@ import gnu.trove.list.array.TIntArrayList;
 
 /** Designates an {@link IItemTransactor} that is backed by a simple, static, array based inventory. */
 public abstract class AbstractInvItemTransactor implements IItemTransactor {
-    /** Safely copies the input item stack, returning null if the stack size is less than or equal to zero. */
+    /** Returns a valid version of the given stack, or {@link ItemStack#EMPTY} if it was invalid */
     @Nonnull
     public static ItemStack asValid(ItemStack stack) {
         if (stack.isEmpty()) {

@@ -552,8 +552,8 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
             }
         }
 
-        if (tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite())) {
-            return tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()).getSlots() > 0;
+        if (tile.hasCapability(CapUtil.CAP_ITEMS, side.getOpposite())) {
+            return tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite()).getSlots() > 0;
         }
 
         // TODO: Remove IInv/ISidedInv in 1.9

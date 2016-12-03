@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -12,18 +14,20 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import buildcraft.api.core.BCLog;
 
+import buildcraft.lib.misc.StackUtil;
+
 import gnu.trove.map.hash.TCharObjectHashMap;
 
 public class RecipeBuilderShaped {
-    private final ItemStack result;
+    private final @Nonnull ItemStack result;
     private final List<String> shape = new ArrayList<>();
     private final TCharObjectHashMap<Object> objects = new TCharObjectHashMap<>();
 
     public RecipeBuilderShaped() {
-        this(null);
+        this(StackUtil.EMPTY);
     }
 
-    public RecipeBuilderShaped(ItemStack result) {
+    public RecipeBuilderShaped(@Nonnull ItemStack result) {
         this.result = result;
     }
 
@@ -91,9 +95,9 @@ public class RecipeBuilderShaped {
         return buildNbtAware(result);
     }
 
-    public NBTAwareShapedOreRecipe buildNbtAware(ItemStack resultStack) {
-        if (resultStack == null) {
-            throw new NullPointerException("result");
+    public NBTAwareShapedOreRecipe buildNbtAware(@Nonnull ItemStack resultStack) {
+        if (resultStack.isEmpty()) {
+            throw new IllegalArgumentException("Provided an empty resultStack!");
         }
         return new NBTAwareShapedOreRecipe(resultStack, createRecipeObjectArray());
     }

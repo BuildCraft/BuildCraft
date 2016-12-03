@@ -30,6 +30,7 @@ import buildcraft.api.transport.neptune.PipeAPI;
 import buildcraft.api.transport.neptune.PipeAPI.FluidTransferInfo;
 import buildcraft.api.transport.neptune.PipeFlow;
 
+import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.VecUtil;
 
@@ -116,12 +117,12 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
     @Override
     public boolean canConnect(EnumFacing face, TileEntity oTile) {
-        return oTile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite());
+        return oTile.hasCapability(CapUtil.CAP_FLUIDS, face.getOpposite());
     }
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_FLUIDS) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -129,7 +130,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_FLUIDS) {
             return (T) sections.get(EnumPipePart.fromFacing(facing));
         }
         return super.getCapability(capability, facing);
@@ -147,7 +148,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         if (connected == null) {
             return null;
         }
-        IFluidHandler fluidHandler = connected.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, from.getOpposite());
+        IFluidHandler fluidHandler = connected.getCapability(CapUtil.CAP_FLUIDS, from.getOpposite());
         if (fluidHandler == null) {
             return null;
         }
@@ -196,7 +197,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         if (connected == null) {
             return null;
         }
-        IFluidHandler fluidHandler = connected.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, from.getOpposite());
+        IFluidHandler fluidHandler = connected.getCapability(CapUtil.CAP_FLUIDS, from.getOpposite());
         if (!(fluidHandler instanceof IFluidHandlerAdv)) {
             return null;
         }
@@ -382,7 +383,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                     TileEntity target = pipe.getConnectedTile(part.face);
                     if (target == null) continue;
                     EnumFacing opposite = part.face.getOpposite();
-                    IFluidHandler cap = target.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, opposite);
+                    IFluidHandler cap = target.getCapability(CapUtil.CAP_FLUIDS, opposite);
                     if (cap == null) continue;
 
                     FluidStack fluidToPush = new FluidStack(currentFluid, section.drainInternal(fluidTransferInfo.transferPerTick, false));

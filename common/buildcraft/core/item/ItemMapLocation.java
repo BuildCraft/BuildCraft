@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -33,6 +35,7 @@ import buildcraft.api.items.IMapLocation;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.robotics.zone.ZonePlan;
 
@@ -48,7 +51,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
 
     @Override
     public int getItemStackLimit(ItemStack stack) {
-        return MapLocationType.getFromStack(stack) == MapLocationType.CLEAN ? 16 : 1;
+        return MapLocationType.getFromStack(StackUtil.asNonNull(stack)) == MapLocationType.CLEAN ? 16 : 1;
     }
 
     @Override
@@ -61,6 +64,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
 
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> strings, boolean advanced) {
+        stack = StackUtil.asNonNull(stack);
         NBTTagCompound cpt = NBTUtilBC.getItemData(stack);
 
         if (cpt.hasKey("name")) {
@@ -129,12 +133,12 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
             return new ActionResult<>(EnumActionResult.PASS, stack);
         }
         if (player.isSneaking()) {
-            return clearMarkerData(stack);
+            return clearMarkerData(StackUtil.asNonNull(stack));
         }
         return new ActionResult<>(EnumActionResult.PASS, stack);
     }
 
-    private static ActionResult<ItemStack> clearMarkerData(ItemStack stack) {
+    private static ActionResult<ItemStack> clearMarkerData(@Nonnull ItemStack stack) {
         if (MapLocationType.getFromStack(stack) == MapLocationType.CLEAN) {
             return new ActionResult<>(EnumActionResult.PASS, stack);
         }
@@ -155,7 +159,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
             return EnumActionResult.PASS;
         }
 
-        ItemStack stack = player.getHeldItem(hand);
+        ItemStack stack = StackUtil.asNonNull(player.getHeldItem(hand));
         if (MapLocationType.getFromStack(stack) != MapLocationType.CLEAN) {
             return EnumActionResult.FAIL;
         }
@@ -211,7 +215,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
         return EnumActionResult.SUCCESS;
     }
 
-    public static IBox getAreaBox(ItemStack item) {
+    public static IBox getAreaBox(@Nonnull ItemStack item) {
         NBTTagCompound cpt = NBTUtilBC.getItemData(item);
         int xMin = cpt.getInteger("xMin");
         int yMin = cpt.getInteger("yMin");
@@ -226,7 +230,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
         return new Box(min, max);
     }
 
-    public static IBox getPointBox(ItemStack item) {
+    public static IBox getPointBox(@Nonnull ItemStack item) {
         NBTTagCompound cpt = NBTUtilBC.getItemData(item);
         MapLocationType type = MapLocationType.getFromStack(item);
 
@@ -246,7 +250,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
         }
     }
 
-    public static EnumFacing getPointFace(ItemStack stack) {
+    public static EnumFacing getPointFace(@Nonnull ItemStack stack) {
         NBTTagCompound cpt = NBTUtilBC.getItemData(stack);
         return EnumFacing.VALUES[cpt.getByte("side")];
     }
@@ -340,7 +344,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
         }
     }
 
-    public static void setZone(ItemStack item, ZonePlan plan) {
+    public static void setZone(@Nonnull ItemStack item, ZonePlan plan) {
         NBTTagCompound cpt = NBTUtilBC.getItemData(item);
         MapLocationType.ZONE.setToStack(item);
         plan.writeToNBT(cpt);

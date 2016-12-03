@@ -307,18 +307,28 @@ public class StackUtil {
         return list;
     }
 
-    /** Takes a {@link Nullable} {@link ItemStack} and checks to make sure that it is really {@link Nonnull}, like it is
+    /** Takes a {@link Nullable} {@link Object} and checks to make sure that it is really {@link Nonnull}, like it is
      * everywhere else in the codebase. This is only required if some classes do not use the {@link Nonnull} annotation
-     * on return values, or if you have a multi-dimensional array of {@link ItemStack}.
+     * on return values.
      * 
-     * @param stack The (potentially) null stack.
-     * @return A Nonnull stack, whish will be the input stack
-     * @throws NullPointerException if the input stack was actually null (Although this should never happen) */
+     * @param obj The (potentially) null object.
+     * @return A {@link Nonnull} object, which will be the input object
+     * @throws NullPointerException if the input object was actually null (Although this should never happen, this is
+     *             more to catch bugs in dev.) */
     @Nonnull
-    public static <T> T asNonNull(@Nullable T stack) {
-        if (stack == null) {
+    public static <T> T asNonNull(@Nullable T obj) {
+        if (obj == null) {
             throw new NullPointerException("Object was null!");
         }
-        return stack;
+        return obj;
+    }
+
+    /** Computes a hash code for the given {@link ItemStack}. This is based off of {@link ItemStack#serializeNBT()},
+     * except if {@link ItemStack#isEmpty()} returns true, in which case the hash will be 0. */
+    public static int hash(@Nonnull ItemStack stack) {
+        if (stack.isEmpty()) {
+            return 0;
+        }
+        return stack.serializeNBT().hashCode();
     }
 }

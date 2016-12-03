@@ -11,12 +11,14 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
+import buildcraft.lib.misc.StackUtil;
+
 public class StatementParameterItemStackExact implements IStatementParameter {
     protected ItemStack stack;
 
     @Override
     public ItemStack getItemStack() {
-        return stack;
+        return StackUtil.EMPTY;
     }
 
     @Override

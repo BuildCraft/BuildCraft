@@ -56,7 +56,7 @@ public class ElementStatementParam extends ElementGuiSlot<IStatementParameter> {
         if (contains(gui.mouse)) {
             IStatementParameter value = reference.get();
             if (value == null) return;
-            if (value.onClick(gui.container.gate, parent.reference.get(), gui.mc.thePlayer.inventory.getItemStack(), new StatementMouseClick(button, GuiScreen.isShiftKeyDown()))) {
+            if (value.onClick(gui.container.gate, parent.reference.get(), gui.mc.player.inventory.getItemStack(), new StatementMouseClick(button, GuiScreen.isShiftKeyDown()))) {
                 // update the server with the click
                 reference.set(value);
                 return;

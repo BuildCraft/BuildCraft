@@ -208,10 +208,11 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
 
         if (!exampleList.containsKey(type)) {
             NonNullList<ItemStack> examples = container.lines[lineId].getExamples();
-            ItemStack input = container.lines[lineId].stacks[0];
-            if (input != null) {
-                NonNullList<ItemStack> repetitions = new ArrayList<>();
-                for (ItemStack is : examples) {
+            ItemStack input = container.lines[lineId].stacks.get(0);
+            if (!input.isEmpty()) {
+                NonNullList<ItemStack> repetitions = NonNullList.create();
+                for (int i = 0; i < examples.size(); i++) {
+                    ItemStack is = examples.get(i);
                     if (StackUtil.isMatchingItem(input, is, true, false)) {
                         repetitions.add(is);
                     }

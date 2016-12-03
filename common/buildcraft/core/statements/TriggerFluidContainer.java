@@ -11,7 +11,6 @@ import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
@@ -22,6 +21,7 @@ import buildcraft.api.statements.*;
 import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.LocaleUtil;
 
 public class TriggerFluidContainer extends BCStatement implements ITriggerExternal {
@@ -61,12 +61,12 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 
     @Override
     public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer statementContainer, IStatementParameter[] parameters) {
-        IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
+        IFluidHandler handler = tile.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite());
 
         if (handler != null) {
             FluidStack searchedFluid = null;
 
-            if (parameters != null && parameters.length >= 1 && parameters[0] != null && parameters[0].getItemStack() != null) {
+            if (parameters != null && parameters.length >= 1 && parameters[0] != null && !parameters[0].getItemStack().isEmpty()) {
                 searchedFluid = FluidUtil.getFluidContained(parameters[0].getItemStack());
             }
 

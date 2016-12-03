@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
@@ -50,6 +51,7 @@ import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.MatrixUtil;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
@@ -90,7 +92,7 @@ public enum RenderTickListener {
     }
 
     @SubscribeEvent
-    public void renderOverlay(RenderGameOverlayEvent.Text event) {
+    public static void renderOverlay(RenderGameOverlayEvent.Text event) {
         Minecraft mc = Minecraft.getMinecraft();
         if (!mc.gameSettings.showDebugInfo) return;
         if (mc.player.hasReducedDebug() || mc.gameSettings.reducedDebugInfo || !mc.player.capabilities.isCreativeMode) {
@@ -103,8 +105,6 @@ public enum RenderTickListener {
         if (mouseOver == null) {
             return;
         }
-        Type type = mouseOver.typeOfHit;
-
         boolean both = BCCoreConfig.useLocalServerOnClient;
 
         IDebuggable client = getDebuggableObject(mouseOver);
@@ -185,7 +185,7 @@ public enum RenderTickListener {
     }
 
     @SubscribeEvent
-    public void tick(RenderWorldLastEvent event) {
+    public static void tick(RenderWorldLastEvent event) {
         float partialTicks = event.getPartialTicks();
         renderHeldItemInWorld(partialTicks);
     }
@@ -194,8 +194,8 @@ public enum RenderTickListener {
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (player == null) return;
-        ItemStack mainHand = player.getHeldItemMainhand();
-        ItemStack offHand = player.getHeldItemOffhand();
+        ItemStack mainHand = StackUtil.asNonNull(player.getHeldItemMainhand());
+        ItemStack offHand = StackUtil.asNonNull(player.getHeldItemOffhand());
         WorldClient world = mc.world;
 
         mc.mcProfiler.startSection("bc");
@@ -203,13 +203,13 @@ public enum RenderTickListener {
 
         DetatchedRenderer.fromWorldOriginPre(player, partialTicks);
 
-        Item mainHandItem = mainHand == null ? null : mainHand.getItem();
-        Item offHandItem = offHand == null ? null : offHand.getItem();
+        Item mainHandItem = mainHand.getItem();
+        Item offHandItem = offHand.getItem();
 
         if (mainHandItem == BCCoreItems.mapLocation) {
-            renderMapLocation(world, mainHand);
+            renderMapLocation(mainHand);
         } else if (mainHandItem == BCCoreItems.markerConnector || offHandItem == BCCoreItems.markerConnector) {
-            renderMarkerConnector(world, player, partialTicks);
+            renderMarkerConnector(world, player);
         }
 
         DetatchedRenderer.fromWorldOriginPost();
@@ -218,7 +218,7 @@ public enum RenderTickListener {
         mc.mcProfiler.endSection();
     }
 
-    private static void renderMapLocation(WorldClient world, ItemStack stack) {
+    private static void renderMapLocation(@Nonnull ItemStack stack) {
         MapLocationType type = MapLocationType.getFromStack(stack);
         if (type == MapLocationType.SPOT) {
             EnumFacing face = ItemMapLocation.getPointFace(stack);
@@ -244,8 +244,6 @@ public enum RenderTickListener {
                 for (BlockPos p : path) {
                     if (last == null) {
                         last = p;
-                    } else {
-
                     }
                 }
             }
@@ -256,7 +254,7 @@ public enum RenderTickListener {
         }
     }
 
-    private static void renderMarkerConnector(WorldClient world, EntityPlayer player, float partialTicks) {
+    private static void renderMarkerConnector(WorldClient world, EntityPlayer player) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("marker");
         for (MarkerCache<?> cache : MarkerCache.CACHES) {

@@ -160,7 +160,7 @@ public class PluggableGate extends PipePluggable {
 
     @Override
     public boolean onPluggableActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ) {
-        if (!player.worldObj.isRemote) {
+        if (!player.world.isRemote) {
             BlockPos pos = holder.getPipePos();
             int x = pos.getX();
             int y = pos.getY() << 3 | side.ordinal();

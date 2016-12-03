@@ -1,12 +1,10 @@
 package buildcraft.transport.block;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
@@ -312,7 +310,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block) {
+    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
         TilePipeHolder pipe = getPipe(world, pos, true);
         if (pipe != null) {
             pipe.refreshNeighbours();
@@ -352,7 +350,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack held, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         TilePipeHolder tile = getPipe(world, pos, false);
         if (tile == null) {
             return false;
@@ -374,7 +372,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
 
         EnumPipePart part = trace.subHit == 0 ? EnumPipePart.CENTER : EnumPipePart.fromFacing(realSide);
 
-        Item item = held == null ? null : held.getItem();
+        ItemStack held = player.getHeldItem(hand);
+        Item item = held.isEmpty() ? null : held.getItem();
         PipePluggable existing = tile.getPluggable(realSide);
         if (item instanceof IItemPluggable && existing == null) {
             IItemPluggable itemPlug = (IItemPluggable) item;
@@ -409,7 +408,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             return super.removedByPlayer(state, world, pos, player, willHarvest);
         }
 
-        NonNullList<ItemStack> toDrop = new ArrayList<>();
+        NonNullList<ItemStack> toDrop = NonNullList.create();
         RayTraceResult trace = rayTrace(world, pos, player);
         EnumFacing side = null;
 
@@ -515,7 +514,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         IExtendedBlockState extended = (IExtendedBlockState) state;
         TilePipeHolder tile = getPipe(world, pos, false);
         if (tile != null) {
-            extended = extended.withProperty(PROP_TILE, new WeakReference<>((TilePipeHolder) tile));
+            extended = extended.withProperty(PROP_TILE, new WeakReference<>(tile));
         }
         return extended;
     }

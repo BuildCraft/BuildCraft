@@ -13,7 +13,12 @@ import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.RegistryHelper;
 
-@Mod(modid = BCBuilders.MODID, name = "BuildCraft Builders", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
+//@formatter:off
+@Mod(modid = BCBuilders.MODID,
+   name = "BuildCraft Builders",
+   version = BCLib.VERSION,
+   dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+//@formatter:on
 public class BCBuilders {
     public static final String MODID = "buildcraftbuilders";
 

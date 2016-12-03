@@ -4,7 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.lib.misc;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.inventory.InventoryCrafting;
@@ -12,7 +11,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapelessRecipes;
-import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
 public final class CraftingUtil {
@@ -53,11 +51,7 @@ public final class CraftingUtil {
                 newDamage = 0;
             }
 
-            NonNullList<ItemStack> ingredients = new ArrayList<>(2);
-            ingredients.add(item1);
-            ingredients.add(item2);
-
-            return new ShapelessRecipes(new ItemStack(item1.getItem(), 1, newDamage), ingredients);
+            return new ShapelessRecipes(new ItemStack(item1.getItem(), 1, newDamage), StackUtil.listOf(item1, item2));
         } else if (itemNum > 0) {
             // End repair recipe handler
 

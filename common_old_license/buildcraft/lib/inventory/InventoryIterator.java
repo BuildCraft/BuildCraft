@@ -26,7 +26,7 @@ public final class InventoryIterator {
     }
 
     public static Iterable<IInvSlot> getIterable(ICapabilityProvider provider, EnumFacing side) {
-        IItemHandler itemHandler = provider.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
+        IItemHandler itemHandler = provider.getCapability(CapUtil.CAP_ITEMS, side);
         if (itemHandler != null) {
             return new InventoryIteratorHandler(itemHandler);
         } else if (provider instanceof IInventory) {

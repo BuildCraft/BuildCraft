@@ -64,7 +64,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     }
 
     private ItemStack getCurrentStack() {
-        return mc.thePlayer.inventory.getItemStack();
+        return mc.player.inventory.getItemStack();
     }
 
     private ItemStack getPaintbrush() {
@@ -163,7 +163,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         scaleSpeed *= 0.7F;
         int posX = (int) positionX;
         int posZ = (int) positionZ;
-        int dimension = Minecraft.getMinecraft().theWorld.provider.getDimension();
+        int dimension = Minecraft.getMinecraft().world.provider.getDimension();
         {
             ChunkPos chunkPos = new ChunkPos(posX >> 4, posZ >> 4);
             ZonePlannerMapChunkKey key = new ZonePlannerMapChunkKey(chunkPos, dimension, container.tile.getLevel());
