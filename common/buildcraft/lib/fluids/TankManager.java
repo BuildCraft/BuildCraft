@@ -27,8 +27,8 @@ import buildcraft.api.core.IFluidHandlerAdv;
 import io.netty.buffer.ByteBuf;
 
 /** Provides a simple way to save+load and send+receive data for any number of tanks. This also attempts to fill all of
- * the tanks one by one via the {@link #fill(EnumFacing, FluidStack, boolean)} and
- * {@link #drain(EnumFacing, FluidStack, boolean)} methods. */
+ * the tanks one by one via the {@link #fill(FluidStack, boolean)} and
+ * {@link #drain(FluidStack, boolean)} methods. */
 public class TankManager<T extends Tank> extends ForwardingList<T> implements IFluidHandlerAdv, INBTSerializable<NBTTagCompound> {
 
     private List<T> tanks = new ArrayList<>();

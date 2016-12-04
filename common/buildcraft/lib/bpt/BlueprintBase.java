@@ -17,7 +17,7 @@ import buildcraft.lib.misc.data.Box;
 
 public abstract class BlueprintBase {
     public BlockPos size;
-    /** The offset of the builder/architect relative to the origin of this blueprint (so, this is a vector min ->
+    /** The offset of the builder/architect relative to the origin of this blueprint (so, this is a vector min to
      * builder) */
     public BlockPos offset;
     public EnumFacing facing = EnumFacing.EAST;

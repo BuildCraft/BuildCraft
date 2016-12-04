@@ -7,7 +7,7 @@ import net.minecraft.util.EnumFacing;
 /** Represents a task that a builder can do to build part of its schematic. This should cache its
  * {@link IBuilderAccessor}.
  * 
- * @date Created on 10 Apr 2016 by AlexIIL */
+ * since 10 April 2016 */
 @Deprecated
 public interface IBptTask extends IBptWriter {
     Set<EnumFacing> getRequiredSolidFaces(IBuilderAccessor builder);
@@ -15,7 +15,7 @@ public interface IBptTask extends IBptWriter {
     /** Checks to see if this task part has already been done, or has just completed. */
     boolean isDone(IBuilderAccessor builder);
 
-    /** @param milliJoules The number of milli joules to receive
+    /** @param microJoules The number of micro joules to receive
      * @return The number of milliJoules left over */
     long receivePower(IBuilderAccessor builder, long microJoules);
 

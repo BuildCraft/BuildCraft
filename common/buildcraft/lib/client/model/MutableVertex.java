@@ -166,10 +166,10 @@ public class MutableVertex {
         return new Point3f(position_x, position_y, position_z);
     }
 
-    /** Sets the current normal for this vertex based off the given vector.
+    /** Sets the current normal for this vertex based off the given vector.<br>
+     * Note: This calls {@link #normalf(float, float, float)} internally, so refer to that for more warnings.
      * 
-     * @see #normalf(float, float, float)
-     * @implNote This calls {@link #normalf(float, float, float)} internally, so refer to that for more warnings. */
+     * @see #normalf(float, float, float) */
     public MutableVertex normalv(Tuple3f vec) {
         return normalf(vec.x, vec.y, vec.z);
     }

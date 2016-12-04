@@ -245,7 +245,7 @@ public class MutableQuad {
 
     /* A lot of delegate functions here. The actual documentation should be per-vertex. */
     // @formatter:off
-    /** @see MutableVertex#normalv(Vector3f) */ public MutableQuad normalv(Vector3f vec) {for (MutableVertex v : verticies) v.normalv(vec); return this;}
+    public MutableQuad normalv(Vector3f vec) {for (MutableVertex v : verticies) v.normalv(vec); return this;}
     public MutableQuad normalf(float x, float y, float z) {for (MutableVertex v : verticies) v.normalf(x, y, z); return this;}
 
     public MutableQuad colourv(Tuple4f vec) {for (MutableVertex v : verticies) v.colourv(vec); return this;};

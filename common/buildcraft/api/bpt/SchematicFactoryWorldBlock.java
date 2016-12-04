@@ -5,7 +5,7 @@ import net.minecraft.world.World;
 
 /** Defines a way to read a block as a schematic from the world
  * 
- * @date Created on 10 Apr 2016 by AlexIIL */
+ * @since 10 Apr 2016 */
 public interface SchematicFactoryWorldBlock {
     /** Create a schematic from the world
      * 

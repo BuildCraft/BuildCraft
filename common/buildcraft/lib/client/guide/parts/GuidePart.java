@@ -102,7 +102,6 @@ public abstract class GuidePart {
      * @param y The y position the page rendering started from
      * @param width The width of rendering space available
      * @param height The height of rendering space available
-     * @param simulate If true, this will just calculate the positions and return without rendering.
      * @return The position for the next line to render at. Will automatically be the next page or line if necessary. */
     protected PagePosition renderLine(PagePosition current, PageLine line, int x, int y, int width, int height, int pageRenderIndex) {
         wasHovered = false;

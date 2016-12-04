@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
  * {@link IModelKeyMultipleSameMapper}
  * 
  * @author AlexIIL
- * @creation-date 14 Mar 2016
+ * @since 14 Mar 2016
  *
  * @param <K> The from type. This is the input key type.
  * @param <T> The "to" type. This is the output key type. */

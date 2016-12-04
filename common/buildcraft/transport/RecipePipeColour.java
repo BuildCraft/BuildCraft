@@ -24,21 +24,18 @@ public class RecipePipeColour implements IRecipeViewable {
     public boolean matches(InventoryCrafting inv, World worldIn) {
         // TODO Auto-generated method stub
         throw new AbstractMethodError("Implement this!");
-        return false;
     }
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
         // TODO Auto-generated method stub
         throw new AbstractMethodError("Implement this!");
-        return null;
     }
 
     @Override
     public int getRecipeSize() {
         // TODO Auto-generated method stub
         throw new AbstractMethodError("Implement this!");
-        return 0;
     }
 
     @Override
@@ -50,7 +47,6 @@ public class RecipePipeColour implements IRecipeViewable {
     public ItemStack[] getRemainingItems(InventoryCrafting inv) {
         // TODO Auto-generated method stub
         throw new AbstractMethodError("Implement this!");
-        return null;
     }
 
     @Override

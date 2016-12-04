@@ -63,7 +63,7 @@ public class FluidRenderer {
         }
     }
 
-    /** Render's a fluid cuboid to the given vertex buffer. The cube shouldn't cross over any 0->1 boundary (so the cube
+    /** Render's a fluid cuboid to the given vertex buffer. The cube shouldn't cross over any {@literal 0->1} boundary (so the cube
      * must be contained within a block).
      * 
      * @param type The type of sprite to use. See {@link FluidSpriteType} for more details.
@@ -79,7 +79,7 @@ public class FluidRenderer {
         renderFluid(type, tank.getFluid(), tank.getCapacity(), min, max, vbIn, sideRender);
     }
 
-    /** Render's a fluid cuboid to the given vertex buffer. The cube shouldn't cross over any 0->1 boundary (so the cube
+    /** Render's a fluid cuboid to the given vertex buffer. The cube shouldn't cross over any {@literal 0->1} boundary (so the cube
      * must be contained within a block).
      * 
      * @param type The type of sprite to use. See {@link FluidSpriteType} for more details.
@@ -94,7 +94,7 @@ public class FluidRenderer {
         renderFluid(type, fluid, fluid == null ? 0 : fluid.amount, cap, min, max, vbIn, sideRender);
     }
 
-    /** Render's a fluid cuboid to the given vertex buffer. The cube shouldn't cross over any 0->1 boundary (so the cube
+    /** Render's a fluid cuboid to the given vertex buffer. The cube shouldn't cross over any {@literal 0->1} boundary (so the cube
      * must be contained within a block).
      * 
      * @param type The type of sprite to use. See {@link FluidSpriteType} for more details.
