@@ -103,6 +103,7 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         }
         GlStateManager.popMatrix();
         GlStateManager.enableLighting();
+        GlStateManager.color(1, 1, 1, 1);
     }
 
     private static void renderPluggables(TilePipeHolder pipe, double x, double y, double z, float partialTicks, VertexBuffer vb) {
