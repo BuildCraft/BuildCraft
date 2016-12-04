@@ -43,6 +43,7 @@ public class WireManager implements IWireManager {
             parts.put(part, colour);
             if(!holder.getPipeWorld().isRemote) {
                 getWireSystems().buildAndAddWireSystem(new WireSystem.Element(holder.getPipePos(), part));
+                holder.getPipeTile().markDirty();
             }
             updateBetweens(false);
             return true;
@@ -62,6 +63,7 @@ public class WireManager implements IWireManager {
                 WireSystem.Element element = new WireSystem.Element(holder.getPipePos(), part);
                 WireSystem.getConnectedElementsOfElement(holder, element).forEach(getWireSystems()::buildAndAddWireSystem);
                 getWireSystems().getWireSystemsWithElement(element).forEach(getWireSystems()::removeWireSystem);
+                holder.getPipeTile().markDirty();
             }
             updateBetweens(false);
             return color;
@@ -80,6 +82,7 @@ public class WireManager implements IWireManager {
                     .map(part -> new WireSystem.Element(holder.getPipePos(), part))
                     .flatMap(element -> getWireSystems().getWireSystemsWithElement(element).stream())
                     .forEach(getWireSystems()::removeWireSystem);
+            holder.getPipeTile().markDirty();
         }
         updateBetweens(false);
     }
