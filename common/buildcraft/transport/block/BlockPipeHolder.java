@@ -318,8 +318,11 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             EnumWireBetween wireBetween = EnumWireBetween.VALUES[part - 1 - 6 - 6 - 8];
             aabb = wireBetween.boundingBox;
         }
-//        return aabb == null ? null : aabb.expandXyz(1 / 32.0).offset(pos);
-        return aabb == null ? null : aabb.offset(pos);
+        if (part >= 1 + 6 + 6) {
+            return aabb == null ? null : aabb.offset(pos);
+        } else {
+            return aabb == null ? null : aabb.expandXyz(1 / 32.0).offset(pos);
+        }
     }
 
     @Override
