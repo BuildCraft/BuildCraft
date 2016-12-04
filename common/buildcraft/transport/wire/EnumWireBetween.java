@@ -1,11 +1,15 @@
 package buildcraft.transport.wire;
 
 import java.util.Arrays;
+import java.util.Random;
+import java.util.function.Function;
 
+import buildcraft.api.transport.neptune.EnumWirePart;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 
 /** Holds all of the possible boxes that a wire can occupy - excluding the ones in EnumWirePart. */
 public enum EnumWireBetween {
@@ -61,10 +65,20 @@ public enum EnumWireBetween {
     public static final EnumWireBetween[] CONNECTIONS = Arrays.copyOfRange(VALUES, 12, 36, EnumWireBetween[].class);
 
     public final Axis mainAxis;
+    public final EnumFacing to;
+    public final boolean xy;
+    public final boolean yz;
     public final AxisAlignedBB boundingBox;
+    public final EnumWirePart[] parts;
+
+    public final double[][] poses;
+    public final double[][] texes;
 
     EnumWireBetween(Axis mainAxis, boolean xy, boolean yz) {
         this.mainAxis = mainAxis;
+        this.to = null;
+        this.xy = xy;
+        this.yz = yz;
         int x1 = mainAxis == Axis.X ? 4 : (xy ? 12 : 3);
         int y1 = mainAxis == Axis.Y ? 4 : ((mainAxis == Axis.X ? xy : yz) ? 12 : 3);
         int z1 = mainAxis == Axis.Z ? 4 : (yz ? 12 : 3);
@@ -72,17 +86,51 @@ public enum EnumWireBetween {
         int y2 = y1 + (mainAxis == Axis.Y ? 8 : 1);
         int z2 = z1 + (mainAxis == Axis.Z ? 8 : 1);
         boundingBox = new AxisAlignedBB(x1 / 16.0, y1 / 16.0, z1 / 16.0, x2 / 16.0, y2 / 16.0, z2 / 16.0);
+        parts = getParts();
+        poses = EnumWirePart.getPoses(boundingBox);
+        texes = EnumWirePart.getTexes(boundingBox);
     }
 
     EnumWireBetween(EnumFacing to, boolean xy, boolean yz) {
         this.mainAxis = to.getAxis();
-        int start = to.getAxisDirection() == AxisDirection.POSITIVE ? 12 : 0;
+        this.to = to;
+        this.xy = xy;
+        this.yz = yz;
+        int start = to.getAxisDirection() == AxisDirection.POSITIVE ? 13 : 0;
         int x1 = mainAxis == Axis.X ? start : (xy ? 12 : 3);
         int y1 = mainAxis == Axis.Y ? start : ((mainAxis == Axis.X ? xy : yz) ? 12 : 3);
         int z1 = mainAxis == Axis.Z ? start : (yz ? 12 : 3);
-        int x2 = x1 + (mainAxis == Axis.X ? 4 : 1);
-        int y2 = y1 + (mainAxis == Axis.Y ? 4 : 1);
-        int z2 = z1 + (mainAxis == Axis.Z ? 4 : 1);
+        int x2 = x1 + (mainAxis == Axis.X ? 3 : 1);
+        int y2 = y1 + (mainAxis == Axis.Y ? 3 : 1);
+        int z2 = z1 + (mainAxis == Axis.Z ? 3 : 1);
         boundingBox = new AxisAlignedBB(x1 / 16.0, y1 / 16.0, z1 / 16.0, x2 / 16.0, y2 / 16.0, z2 / 16.0);
+        parts = getParts();
+        poses = EnumWirePart.getPoses(boundingBox);
+        texes = EnumWirePart.getTexes(boundingBox);
+    }
+
+    private EnumWirePart[] getParts() {
+        Function<AxisDirection[], EnumWirePart> getPartFromDirections = directions -> Arrays.stream(EnumWirePart.VALUES).filter(part -> part.x == directions[0] && part.y == directions[1] && part.z == directions[2]).findFirst().orElse(null);
+        EnumWirePart[] parts = new EnumWirePart[2];
+        for(int i = 0; i < parts.length; i++) {
+            AxisDirection[] directions = new AxisDirection[3];
+            boolean found = false;
+            for(int j = 0; j < directions.length; j++) {
+                if(mainAxis.ordinal() == j) {
+                    if(to == null) {
+                        directions[j] = i == 0 ? AxisDirection.NEGATIVE : AxisDirection.POSITIVE;
+                    } else {
+                        directions[j] = i == 0 ? to.getAxisDirection() : to.getOpposite().getAxisDirection();
+                    }
+                } else if(!found) {
+                    directions[j] = xy ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE;
+                    found = true;
+                } else {
+                    directions[j] = yz ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE;
+                }
+            }
+            parts[i] = getPartFromDirections.apply(directions);
+        }
+        return parts;
     }
 }

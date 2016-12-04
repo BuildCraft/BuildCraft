@@ -1,21 +1,12 @@
 package buildcraft.transport;
 
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-
 import buildcraft.api.transport.ICustomPipeConnection;
 import buildcraft.api.transport.PipeConnectionAPI;
 import buildcraft.api.transport.neptune.PipeAPI;
 import buildcraft.api.transport.neptune.PipeFlowType;
-
 import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
+import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.RegistryHelper;
@@ -25,6 +16,21 @@ import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.pipe.flow.PipeFlowStructure;
 import buildcraft.transport.plug.PluggableRegistry;
+import buildcraft.transport.wire.MessageWireSystems;
+import buildcraft.transport.wire.MessageWireSystemsPowered;
+import buildcraft.transport.wire.WorldSavedDataWireSystems;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.ChunkWatchEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = BCTransport.MODID, name = "BuildCraft Transport", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
 public class BCTransport {
@@ -70,6 +76,14 @@ public class BCTransport {
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCTransportProxy.getProxy());
 
         BCTransportProxy.getProxy().fmlPreInit();
+
+        MinecraftForge.EVENT_BUS.register(BCTransportEventDist.INSTANCE);
+        BCMessageHandler.addMessageType(MessageWireSystems.class, MessageWireSystems.Handler.INSTANCE, Side.CLIENT);
+        BCMessageHandler.addMessageType(MessageWireSystemsPowered.class, MessageWireSystemsPowered.Handler.INSTANCE, Side.CLIENT);
+    }
+
+    @SubscribeEvent
+    public void onChunkWatch(ChunkWatchEvent.Watch event) {
     }
 
     @Mod.EventHandler

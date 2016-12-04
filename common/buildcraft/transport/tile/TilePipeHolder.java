@@ -1,9 +1,16 @@
 package buildcraft.transport.tile;
 
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.util.*;
-
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.transport.PipeEvent;
+import buildcraft.api.transport.neptune.*;
+import buildcraft.lib.misc.data.LoadingException;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.transport.block.BlockPipeHolder;
+import buildcraft.transport.pipe.Pipe;
+import buildcraft.transport.pipe.PipeEventBus;
+import buildcraft.transport.pipe.PluggableHolder;
+import buildcraft.transport.wire.WireManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -14,23 +21,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.PipeEvent;
-import buildcraft.api.transport.neptune.*;
-
-import buildcraft.lib.misc.data.LoadingException;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.transport.pipe.Pipe;
-import buildcraft.transport.pipe.PipeEventBus;
-import buildcraft.transport.pipe.PluggableHolder;
-import buildcraft.transport.wire.WireManager;
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.*;
 
 public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITickable, IDebuggable {
     public static final int NET_UPDATE_MULTI = 10;
@@ -44,6 +42,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     public static final int NET_UPDATE_PLUG_SOUTH = getReceiverId(PipeMessageReceiver.PLUGGABLE_SOUTH);
     public static final int NET_UPDATE_PLUG_WEST = getReceiverId(PipeMessageReceiver.PLUGGABLE_WEST);
     public static final int NET_UPDATE_PLUG_EAST = getReceiverId(PipeMessageReceiver.PLUGGABLE_EAST);
+    public static final int NET_UPDATE_WIRES = getReceiverId(PipeMessageReceiver.WIRES);
 
     public static final int[] NET_UPDATE_PLUGS = {//
         NET_UPDATE_PLUG_DOWN, NET_UPDATE_PLUG_UP,//
@@ -88,6 +87,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         if (!plugs.hasNoTags()) {
             nbt.setTag("plugs", plugs);
         }
+        nbt.setTag("wireManager", wireManager.writeToNbt());
         return nbt;
     }
 
@@ -108,6 +108,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         for (EnumFacing face : EnumFacing.VALUES) {
             pluggables.get(face).readFromNbt(plugs.getCompoundTag(face.getName()));
         }
+        wireManager.readFromNbt(nbt.getCompoundTag("wireManager"));
     }
 
     // Misc
@@ -147,6 +148,13 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         }
     }
 
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        wireManager.removeParts(new ArrayList<>(wireManager.parts.keySet()));
+        pluggables.keySet().forEach(side -> BlockPipeHolder.removePluggable(side, this, new ArrayList<>()));
+    }
+
     // ITickable
 
     @Override
@@ -184,6 +192,11 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             scheduleRenderUpdate = false;
             redrawBlock();
         }
+
+        if(!wireManager.inited) {
+            wireManager.updateBetweens(false);
+            wireManager.inited = true;
+        }
     }
 
     // Network
@@ -202,6 +215,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                 for (EnumFacing face : EnumFacing.VALUES) {
                     pluggables.get(face).writeCreationPayload(buffer);
                 }
+                wireManager.writePayload(buffer, side);
             } else if (id == NET_UPDATE_PIPE_BEHAVIOUR) {
                 if (pipe == null) {
                     buffer.writeBoolean(false);
@@ -222,6 +236,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             else if (id == NET_UPDATE_PLUG_SOUTH) pluggables.get(EnumFacing.SOUTH).writePayload(buffer, side);
             else if (id == NET_UPDATE_PLUG_WEST) pluggables.get(EnumFacing.WEST).writePayload(buffer, side);
             else if (id == NET_UPDATE_PLUG_EAST) pluggables.get(EnumFacing.EAST).writePayload(buffer, side);
+            else if (id == NET_UPDATE_WIRES) wireManager.writePayload(buffer, side);
         }
     }
 
@@ -242,6 +257,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                 for (EnumFacing face : EnumFacing.VALUES) {
                     pluggables.get(face).readCreationPayload(buffer);
                 }
+                wireManager.readPayload(buffer, side, ctx);
             } else if (id == NET_UPDATE_MULTI) {
                 int total = buffer.readUnsignedByte();
                 for (PipeMessageReceiver type : PipeMessageReceiver.VALUES) {
@@ -272,6 +288,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             else if (id == NET_UPDATE_PLUG_SOUTH) pluggables.get(EnumFacing.SOUTH).readPayload(buffer, side, ctx);
             else if (id == NET_UPDATE_PLUG_WEST) pluggables.get(EnumFacing.WEST).readPayload(buffer, side, ctx);
             else if (id == NET_UPDATE_PLUG_EAST) pluggables.get(EnumFacing.EAST).readPayload(buffer, side, ctx);
+            else if (id == NET_UPDATE_WIRES) wireManager.readPayload(buffer, side, ctx);
         }
     }
 
@@ -311,7 +328,12 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         eventBus.unregisterHandler(old);
         eventBus.registerHandler(with);
 
-        pipe.markForUpdate();
+        if(pipe != null) {
+            pipe.markForUpdate();
+        }
+        if(!worldObj.isRemote && old != with) {
+            wireManager.getWireSystems().rebuildWireSystemsAround(this);
+        }
         scheduleNetworkUpdate(PipeMessageReceiver.PLUGGABLES[side.getIndex()]);
         scheduleRenderUpdate();
         return old;
@@ -363,12 +385,12 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
 
     @Override
     public void sendMessage(PipeMessageReceiver to, IWriter writer) {
-        createAndSendMessage(getReceiverId(to), (buffer) -> writer.write(buffer));
+        createAndSendMessage(getReceiverId(to), writer::write);
     }
 
     @Override
     public void sendGuiMessage(PipeMessageReceiver to, IWriter writer) {
-        createAndSendGuiMessage(getReceiverId(to), (buffer) -> writer.write(buffer));
+        createAndSendGuiMessage(getReceiverId(to), writer::write);
     }
 
     @Override
@@ -383,7 +405,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
 
     @Override
     public int getRedstoneInput(EnumFacing side) {
-        return 0;// TODO!
+        return worldObj.isBlockPowered(pos) ? 15 : 0;
     }
 
     @Override
@@ -421,6 +443,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             left.add("Pipe:");
             pipe.getDebugInfo(left, right, side);
         }
+        left.add("Parts:");
+        wireManager.parts.forEach((part, color) -> left.add(" - " + part + " = " + color + " = " + wireManager.isPowered(part)));
+        left.add("All wire systems in world count = " + (worldObj.isRemote ? 0 : wireManager.getWireSystems().wireSystems.size()));
     }
 
     @Override
