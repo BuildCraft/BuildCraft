@@ -14,21 +14,20 @@ public enum BCTransportEventDist {
     INSTANCE;
 
     @SubscribeEvent
-    public static void onWorldTick(TickEvent.WorldTickEvent event) {
+    public void onWorldTick(TickEvent.WorldTickEvent event) {
         if(!event.world.isRemote && event.world.getMinecraftServer() != null) {
             WorldSavedDataWireSystems.get(event.world).tick();
         }
     }
 
     @SubscribeEvent
-    public static void onChunkWatch(ChunkWatchEvent event) {
+    public void onChunkWatch(ChunkWatchEvent event) {
         WorldSavedDataWireSystems.get(event.getPlayer().worldObj).changedPlayers.add(event.getPlayer());
     }
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public static void onTextureStitch(TextureStitchEvent.Post event) {
+    public void onTextureStitch(TextureStitchEvent.Post event) {
         RenderPipeHolder.wiresRenderingCache.clear();
-        throw new Error("lol");
     }
 }
