@@ -1,16 +1,9 @@
 package buildcraft.transport.tile;
 
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.PipeEvent;
-import buildcraft.api.transport.neptune.*;
-import buildcraft.lib.misc.data.LoadingException;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.transport.block.BlockPipeHolder;
-import buildcraft.transport.pipe.Pipe;
-import buildcraft.transport.pipe.PipeEventBus;
-import buildcraft.transport.pipe.PluggableHolder;
-import buildcraft.transport.wire.WireManager;
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.*;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -21,14 +14,24 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.util.*;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.transport.PipeEvent;
+import buildcraft.api.transport.neptune.*;
+
+import buildcraft.lib.misc.data.LoadingException;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.transport.block.BlockPipeHolder;
+import buildcraft.transport.pipe.Pipe;
+import buildcraft.transport.pipe.PipeEventBus;
+import buildcraft.transport.pipe.PluggableHolder;
+import buildcraft.transport.wire.WireManager;
 
 public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITickable, IDebuggable {
     public static final int NET_UPDATE_MULTI = 10;
@@ -100,8 +103,8 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                 eventBus.registerHandler(pipe.behaviour);
                 eventBus.registerHandler(pipe.flow);
             } catch (LoadingException e) {
-                // For now quit immediately so we can debug the cause
-                throw new Error(e);
+                // Unfortunately we can't throw an exception because then this tile won't persist :/
+                e.printStackTrace();
             }
         }
         NBTTagCompound plugs = nbt.getCompoundTag("plugs");
@@ -193,7 +196,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             redrawBlock();
         }
 
-        if(!wireManager.inited) {
+        if (!wireManager.inited) {
             wireManager.updateBetweens(false);
             wireManager.inited = true;
         }
@@ -328,10 +331,10 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         eventBus.unregisterHandler(old);
         eventBus.registerHandler(with);
 
-        if(pipe != null) {
+        if (pipe != null) {
             pipe.markForUpdate();
         }
-        if(!worldObj.isRemote && old != with) {
+        if (!worldObj.isRemote && old != with) {
             wireManager.getWireSystems().rebuildWireSystemsAround(this);
         }
         scheduleNetworkUpdate(PipeMessageReceiver.PLUGGABLES[side.getIndex()]);
