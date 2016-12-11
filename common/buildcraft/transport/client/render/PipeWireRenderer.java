@@ -9,10 +9,7 @@ import javax.vecmath.Tuple3f;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
@@ -73,8 +70,10 @@ public class PipeWireRenderer {
         Tuple3f radius = new Point3f(1 / 32f, 1 / 32f, 1 / 32f);
         UvFaceData uvs = new UvFaceData();
         int off = func(part.x) * 4 + func(part.y) * 2 + func(part.z);
-        uvs.uMin = uvs.vMin = off / 16f;
-        uvs.uMax = uvs.vMax = (off + 1) / 16f;
+        uvs.uMin = off / 16f;
+        uvs.uMax = (off + 1) / 16f;
+        uvs.vMin = 0;
+        uvs.vMax = 1 / 16f;
         for (EnumFacing face : EnumFacing.VALUES) {
             quads[face.ordinal()] = ModelUtil.createFace(face, center, radius, uvs);
         }
@@ -117,22 +116,22 @@ public class PipeWireRenderer {
             double cL = (8 - 4.51) / 16;
             double cU = (8 + 4.51) / 16;
             radius = new Vec3d(//
-                    ax ? 2.98 / 32 : 1 / 32.0,//
-                    ay ? 2.98 / 32 : 1 / 32.0,//
-                    az ? 2.98 / 32 : 1 / 32.0 //
+                    ax ? 2.99 / 32 : 1 / 32.0,//
+                    ay ? 2.99 / 32 : 1 / 32.0,//
+                    az ? 2.99 / 32 : 1 / 32.0 //
             );
             center = new Vec3d(//
-                    ax ? (0.5 + 6.51 / 16 * between.to.getFrontOffsetX()) : (between.xy ? cU : cL),//
-                    ay ? (0.5 + 6.51 / 16 * between.to.getFrontOffsetY()) : ((ax ? between.xy : between.yz) ? cU : cL),//
-                    az ? (0.5 + 6.51 / 16 * between.to.getFrontOffsetZ()) : (between.yz ? cU : cL) //
+                    ax ? (0.5 + 6.505 / 16 * between.to.getFrontOffsetX()) : (between.xy ? cU : cL),//
+                    ay ? (0.5 + 6.505 / 16 * between.to.getFrontOffsetY()) : ((ax ? between.xy : between.yz) ? cU : cL),//
+                    az ? (0.5 + 6.505 / 16 * between.to.getFrontOffsetZ()) : (between.yz ? cU : cL) //
             );
         }
 
         UvFaceData uvBase = new UvFaceData();
         uvBase.uMin = (float) VecUtil.getValue(center.subtract(radius), between.mainAxis);
         uvBase.uMax = (float) VecUtil.getValue(center.add(radius), between.mainAxis);
-        uvBase.vMin = (between.xy ? 1 / 16f : 0) + (between.yz ? 2 / 16f : 0);
-        uvBase.vMax = uvBase.vMin + 1 / 16f;
+        uvBase.vMin = 0;
+        uvBase.vMax = 1 / 16f;
 
         Tuple3f centerFloat = VecUtil.convertFloat(center);
         Tuple3f radiusFloat = VecUtil.convertFloat(radius);
@@ -145,89 +144,55 @@ public class PipeWireRenderer {
 
             Axis aAxis = between.mainAxis;
             Axis fAxis = face.getAxis();
-            
-            // FIXME: Fix these texture positions being wrong. Idk how.
+            boolean fPositive = face.getAxisDirection() == AxisDirection.POSITIVE;
 
-            boolean rotate = false;
+            int rotations = 0;
+            boolean swapU = false;
+            boolean swapV = false;
+
             if (aAxis == Axis.X) {
-                // NO-OP -- its already correct
-                // if (fAxis == Axis.Y) {
-                //
-                // } else {// fAxis == Axis.Z
-                //
-                // }
+                swapV = fPositive;
             } else if (aAxis == Axis.Y) {
-                uvs.uMin = uvBase.vMin;
-                uvs.uMax = uvBase.vMax;
-                uvs.vMin = uvBase.uMin;
-                uvs.vMax = uvBase.uMax;
-                //
-                // if (fAxis == Axis.X) {
-                //
-                // } else {// fAxis == Axis.Z
-                //
-                // }
+                rotations = 1;
+                swapU = fAxis == Axis.X ? !fPositive : fPositive;
+                swapV = fAxis == Axis.Z;
             } else {// aAxis == Axis.Z
-                if (fAxis == Axis.X) {
-                    uvs.uMin = uvBase.uMax;
-                    uvs.uMax = uvBase.uMin;
-                    uvs.vMin = uvBase.vMax;
-                    uvs.vMax = uvBase.vMin;
-                } else {// fAxis == Axis.Y
-                    uvs.uMin = uvBase.uMin;
-                    uvs.uMax = uvBase.uMax;
-                    uvs.vMin = 1 - uvBase.vMax;
-                    uvs.vMax = 1 - uvBase.vMin;
-                    rotate = true;
+                if (fAxis == Axis.Y) {
+                    rotations = 1;
                 }
+                swapU = face == EnumFacing.DOWN;
+                swapV = face != EnumFacing.EAST;
+            }
+
+            if (swapU) {
+                float t = uvs.uMin;
+                uvs.uMin = uvs.uMax;
+                uvs.uMax = t;
+            }
+            if (swapV) {
+                float t = uvs.vMin;
+                uvs.vMin = uvs.vMax;
+                uvs.vMax = t;
             }
 
             MutableQuad quad = ModelUtil.createFace(face, centerFloat, radiusFloat, uvs);
-            if (rotate) quad.rotateTextureUp(1);
-            // setTexFromPos(quad, between.mainAxis, texOffset);
+            if (rotations > 0) quad.rotateTextureUp(rotations);
             quads[i++] = quad;
         }
         return quads;
-        // return betweenQuads.get(between);
     }
 
-    private static void setTexFromPos(MutableQuad quad, Axis axis, float texOffset) {
-        setTexFromPos(quad.getVertex(0), axis, texOffset);
-        setTexFromPos(quad.getVertex(1), axis, texOffset + 1 / 16f);
-        setTexFromPos(quad.getVertex(2), axis, texOffset + 1 / 16f);
-        setTexFromPos(quad.getVertex(3), axis, texOffset);
-    }
-
-    private static void setTexFromPos(MutableVertex vertex, Axis axis, float texOffset) {
-        float x = vertex.position_x;
-        float y = vertex.position_y;
-        float z = vertex.position_z;
-        switch (axis) {
-            default:
-            case X:
-                vertex.texf(x, texOffset);
-                break;
-            case Y:
-                vertex.texf(y, texOffset);
-                break;
-            case Z:
-                vertex.texf(z, texOffset);
-                break;
-        }
-    }
-
-    private static void renderQuads(MutableQuad[] quads, ISprite sprite, boolean isOn) {
+    private static void renderQuads(MutableQuad[] quads, ISprite sprite, int level) {
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer vb = tessellator.getBuffer();
-        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
-        int c = isOn ? 255 : 127;
+        float texOffset = (level & 0xF) / 16f;
         for (MutableQuad q : quads) {
             for (int i = 0; i < 4; i++) {
                 MutableVertex v = q.getVertex(i);
                 v.renderPosition(vb);
-                v.renderTex(vb, sprite);
-                vb.color(c, c, c, 255);
+                vb.tex(sprite.getInterpU(v.tex_u), sprite.getInterpV(v.tex_v + texOffset));
                 vb.endVertex();
             }
         }
@@ -240,7 +205,10 @@ public class PipeWireRenderer {
         GlStateManager.glNewList(index, GL11.GL_COMPILE);
 
         ISprite sprite = wireSprites.get(colour);
-        renderQuads(quads, sprite, isOn);
+        /* Currently pipe wire only supports two states - on or off. However all the textures supply 16 different
+         * states, which could (possibly) be used for making pipe wire use all 16 states that normal redstone does. This
+         * just opens up the possibility in the future. */
+        renderQuads(quads, sprite, isOn ? 15 : 0);
 
         GL11.glEndList();
         return index;
@@ -264,9 +232,9 @@ public class PipeWireRenderer {
 
     public static void renderWires(TilePipeHolder pipe, double x, double y, double z, VertexBuffer vb) {
         int combinedLight = pipe.getWorld().getCombinedLight(pipe.getPipePos(), 0);
-        int skyLight = combinedLight >> 16 & 65535;
-        int blockLight = combinedLight & 65535;
-        GlStateManager.disableLighting();
+        int skyLight = combinedLight >> 16 & 0xFFFF;
+        int blockLight = combinedLight & 0xFFFF;
+        RenderHelper.disableStandardItemLighting();
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, z);
         for (Map.Entry<EnumWirePart, EnumDyeColor> partColor : pipe.getWireManager().parts.entrySet()) {
@@ -274,10 +242,10 @@ public class PipeWireRenderer {
             EnumDyeColor color = partColor.getValue();
             boolean isOn = pipe.wireManager.isPowered(part);
             int idx = getIndex(part, color, isOn);
-            if (wireRenderingCache[idx] == -1 ) {
+            if (wireRenderingCache[idx] == -1) {
                 wireRenderingCache[idx] = compileWire(part, color, isOn);
             }
-            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, skyLight, isOn ? 240 : blockLight);
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, isOn ? 240 : blockLight, skyLight);
             GlStateManager.callList(wireRenderingCache[idx]);
         }
         for (Map.Entry<EnumWireBetween, EnumDyeColor> betweenColor : pipe.getWireManager().betweens.entrySet()) {
@@ -285,10 +253,10 @@ public class PipeWireRenderer {
             EnumDyeColor color = betweenColor.getValue();
             boolean isOn = pipe.wireManager.isPowered(between.parts[0]);
             int idx = getIndex(between, color, isOn);
-            if (wireRenderingCache[idx] == -1 ) {
+            if (wireRenderingCache[idx] == -1) {
                 wireRenderingCache[idx] = compileWire(between, color, isOn);
             }
-            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, skyLight, isOn ? 240 : blockLight);
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, isOn ? 240 : blockLight, skyLight);
             GlStateManager.callList(wireRenderingCache[idx]);
         }
         GlStateManager.popMatrix();
