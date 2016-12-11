@@ -13,7 +13,7 @@ public class NetworkedFluidStackCache extends NetworkedObjectCache<FluidStack> {
 
     public NetworkedFluidStackCache() {
         // Use water for our base stack as it might not be too bad of an assumption
-        super(new FluidStack(FluidRegistry.WATER, 1));
+        super(new FluidStack(FluidRegistry.WATER, FLUID_AMOUNT));
     }
 
     @Override
@@ -45,4 +45,8 @@ public class NetworkedFluidStackCache extends NetworkedObjectCache<FluidStack> {
         return stack;
     }
 
+    @Override
+    protected String getCacheName() {
+        return "FluidStack";
+    }
 }

@@ -50,9 +50,9 @@ public class MessageWireSystemsPowered implements IMessage {
                     .map(hashPowered -> Pair.of(ClientWireSystems.INSTANCE.wireSystems.get(hashPowered.getKey()), hashPowered.getValue()))
                     .flatMap(systemPowered -> systemPowered.getLeft().elements.stream().map(element -> Pair.of(element, systemPowered.getRight())))
                     .forEach(elementPowred -> {
-                        WireSystem.Element element = elementPowred.getLeft();
+                        WireSystem.WireElement element = elementPowred.getLeft();
                         boolean powered = elementPowred.getRight();
-                        if(element.type == WireSystem.Element.Type.WIRE_PART) {
+                        if(element.type == WireSystem.WireElement.Type.WIRE_PART) {
                             TileEntity tile = Minecraft.getMinecraft().theWorld.getTileEntity(element.blockPos);
                             if(tile instanceof IPipeHolder) {
                                 IPipeHolder holder = (IPipeHolder) tile;

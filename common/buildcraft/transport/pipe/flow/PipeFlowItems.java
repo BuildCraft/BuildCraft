@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
@@ -29,14 +30,18 @@ import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.PipeEventItem;
 import buildcraft.api.transport.PipeEventItem.ItemEntry;
-import buildcraft.api.transport.neptune.*;
+import buildcraft.api.transport.neptune.IFlowItems;
+import buildcraft.api.transport.neptune.IPipe;
 import buildcraft.api.transport.neptune.IPipe.ConnectedType;
+import buildcraft.api.transport.neptune.IPipeHolder;
+import buildcraft.api.transport.neptune.PipeFlow;
 
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.DelayedList;
-import buildcraft.transport.client.render.PipeFlowRendererItems;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.transport.pipe.flow.TravellingItem.EnumTravelState;
 
 public class PipeFlowItems extends PipeFlow implements IFlowItems {
@@ -81,17 +86,20 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
     // Network
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
+    public void readPayload(int id, PacketBuffer bufIn, Side side) throws IOException {
+        PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(bufIn);
         if (side == Side.CLIENT) {
             if (id == NET_CREATE_ITEM) {
-                EnumFacing from = EnumFacing.getFront(buffer.readUnsignedByte());
-                short readTo = buffer.readUnsignedByte();
-                EnumFacing to = readTo == 7 ? null : EnumFacing.getFront(readTo);
-                short readColour = buffer.readUnsignedByte();
-                EnumDyeColor colour = readColour == 16 ? null : EnumDyeColor.byMetadata(readColour);
+                EnumFacing from = buffer.readEnumValue(EnumFacing.class);
+                EnumFacing to = buffer.readEnumValue(EnumFacing.class);
+                EnumDyeColor colour = buffer.readEnumValue(EnumDyeColor.class);
                 int delay = buffer.readInt();
-                ItemStack stack = buffer.readItemStackFromBuffer();
-                TravellingItem item = new TravellingItem(stack);
+
+                int stackId = buffer.readInt();
+                int stackSize = buffer.readShort();
+
+                Supplier<ItemStack> link = BuildCraftObjectCaches.retrieveItemStack(stackId);
+                TravellingItem item = new TravellingItem(link, stackSize);
                 item.from = from;
                 item.to = to;
                 item.colour = colour;
@@ -474,14 +482,15 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         item.state = EnumTravelState.SERVER_TO_CENTER;
         items.add(item.timeToCenter, item);
 
-        // TODO: Optimise!
+        final int stackId = BuildCraftObjectCaches.storeItemStack(stack);
         sendCustomPayload(NET_CREATE_ITEM, (buffer) -> {
-            buffer.writeByte(from.ordinal());
-            buffer.writeByte(item.to == null ? 7 : item.to.ordinal());
-            buffer.writeByte(colour == null ? 16 : colour.getMetadata());
-            buffer.writeInt(delay);
-            // Specifically here - writing out the full stack each packet isn't good
-            buffer.writeItemStackToBuffer(stack);
+            PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
+            buf.writeEnumValue(from);
+            buf.writeEnumValue(item.to);
+            buf.writeEnumValue(colour);
+            buf.writeInt(delay);
+            buf.writeInt(stackId);
+            buf.writeShort(stack.stackSize);
         });
     }
 
@@ -506,7 +515,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
             return 0.25;
         }
     }
-    
+
     @SideOnly(Side.CLIENT)
     public List<TravellingItem> getAllItemsForRender() {
         List<TravellingItem> all = new ArrayList<>();

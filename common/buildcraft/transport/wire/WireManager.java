@@ -42,7 +42,7 @@ public class WireManager implements IWireManager {
         if(getColorOfPart(part) == null) {
             parts.put(part, colour);
             if(!holder.getPipeWorld().isRemote) {
-                getWireSystems().buildAndAddWireSystem(new WireSystem.Element(holder.getPipePos(), part));
+                getWireSystems().buildAndAddWireSystem(new WireSystem.WireElement(holder.getPipePos(), part));
                 holder.getPipeTile().markDirty();
             }
             updateBetweens(false);
@@ -60,7 +60,7 @@ public class WireManager implements IWireManager {
         } else {
             parts.remove(part);
             if(!holder.getPipeWorld().isRemote) {
-                WireSystem.Element element = new WireSystem.Element(holder.getPipePos(), part);
+                WireSystem.WireElement element = new WireSystem.WireElement(holder.getPipePos(), part);
                 WireSystem.getConnectedElementsOfElement(holder, element).forEach(getWireSystems()::buildAndAddWireSystem);
                 getWireSystems().getWireSystemsWithElement(element).forEach(getWireSystems()::removeWireSystem);
                 holder.getPipeTile().markDirty();
@@ -74,12 +74,12 @@ public class WireManager implements IWireManager {
         parts.forEach(this.parts::remove);
         if(!holder.getPipeWorld().isRemote) {
             parts.stream()
-                    .map(part -> new WireSystem.Element(holder.getPipePos(), part))
+                    .map(part -> new WireSystem.WireElement(holder.getPipePos(), part))
                     .flatMap(element -> WireSystem.getConnectedElementsOfElement(holder, element).stream())
                     .distinct()
                     .forEach(getWireSystems()::buildAndAddWireSystem);
             parts.stream()
-                    .map(part -> new WireSystem.Element(holder.getPipePos(), part))
+                    .map(part -> new WireSystem.WireElement(holder.getPipePos(), part))
                     .flatMap(element -> getWireSystems().getWireSystemsWithElement(element).stream())
                     .forEach(getWireSystems()::removeWireSystem);
             holder.getPipeTile().markDirty();
@@ -137,7 +137,7 @@ public class WireManager implements IWireManager {
         if(holder.getPipeWorld().isRemote) {
             return poweredClient.contains(part);
         } else {
-            return getWireSystems().getWireSystemsWithElement(new WireSystem.Element(holder.getPipePos(), part))
+            return getWireSystems().getWireSystemsWithElement(new WireSystem.WireElement(holder.getPipePos(), part))
                     .stream()
                     .map(wireSystem -> getWireSystems().wireSystems.get(wireSystem))
                     .filter(Objects::nonNull)

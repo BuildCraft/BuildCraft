@@ -20,7 +20,7 @@ public class ContainerQuarry extends ContainerBCTile<TileQuarry> {
             addSlotToContainer(new SlotBase(tile.invFrames, i, 8 + i * 18, 18) {
                 @Override
                 public boolean isItemValid(ItemStack stack) {
-                    return stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockFrame;
+                    return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockFrame;
                 }
             });
         }

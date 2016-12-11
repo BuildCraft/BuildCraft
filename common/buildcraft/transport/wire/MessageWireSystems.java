@@ -25,8 +25,8 @@ public class MessageWireSystems implements IMessage {
         buf.writeInt(wireSystems.size());
         wireSystems.forEach((wiresHashCode, wireSystem) -> {
             buf.writeInt(wiresHashCode);
-            List<WireSystem.Element> elements = wireSystem.elements.stream()
-                    .filter(element -> element.type == WireSystem.Element.Type.WIRE_PART)
+            List<WireSystem.WireElement> elements = wireSystem.elements.stream()
+                    .filter(element -> element.type == WireSystem.WireElement.Type.WIRE_PART)
                     .collect(Collectors.toList());
             buf.writeInt(elements.size());
             elements.forEach(element -> element.toBytes(buf));
@@ -42,7 +42,7 @@ public class MessageWireSystems implements IMessage {
             int wiresHashCode = buf.readInt();
             int localCount = buf.readInt();
             for(int j = 0; j < localCount; j++) {
-                wireSystem.elements.add(new WireSystem.Element(buf));
+                wireSystem.elements.add(new WireSystem.WireElement(buf));
             }
             wireSystems.put(wiresHashCode, wireSystem);
         }

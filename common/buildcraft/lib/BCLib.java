@@ -24,6 +24,7 @@ import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.FakePlayerUtil;
+import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 
@@ -52,6 +53,7 @@ public class BCLib {
 
         BCLibItems.preInit();
 
+        BuildCraftObjectCaches.fmlPreInit();
         BCMessageHandler.fmlPreInit();
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCLibProxy.getProxy());
 
@@ -77,6 +79,7 @@ public class BCLib {
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
         BCLibProxy.getProxy().fmlPostInit();
+        BuildCraftObjectCaches.fmlPostInit();
         BCMessageHandler.fmlPostInit();
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();

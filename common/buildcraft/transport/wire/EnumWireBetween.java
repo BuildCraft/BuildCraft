@@ -71,9 +71,6 @@ public enum EnumWireBetween {
     public final AxisAlignedBB boundingBox;
     public final EnumWirePart[] parts;
 
-    public final double[][] poses;
-    public final double[][] texes;
-
     EnumWireBetween(Axis mainAxis, boolean xy, boolean yz) {
         this.mainAxis = mainAxis;
         this.to = null;
@@ -87,8 +84,6 @@ public enum EnumWireBetween {
         int z2 = z1 + (mainAxis == Axis.Z ? 8 : 1);
         boundingBox = new AxisAlignedBB(x1 / 16.0, y1 / 16.0, z1 / 16.0, x2 / 16.0, y2 / 16.0, z2 / 16.0);
         parts = getParts();
-        poses = EnumWirePart.getPoses(boundingBox);
-        texes = EnumWirePart.getTexes(boundingBox);
     }
 
     EnumWireBetween(EnumFacing to, boolean xy, boolean yz) {
@@ -105,8 +100,6 @@ public enum EnumWireBetween {
         int z2 = z1 + (mainAxis == Axis.Z ? 3 : 1);
         boundingBox = new AxisAlignedBB(x1 / 16.0, y1 / 16.0, z1 / 16.0, x2 / 16.0, y2 / 16.0, z2 / 16.0);
         parts = getParts();
-        poses = EnumWirePart.getPoses(boundingBox);
-        texes = EnumWirePart.getTexes(boundingBox);
     }
 
     private EnumWirePart[] getParts() {

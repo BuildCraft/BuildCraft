@@ -29,7 +29,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
     public boolean structureChanged = true;
     public final List<WireSystem> changedSystems = new ArrayList<>();
     public final List<EntityPlayerMP> changedPlayers = new ArrayList<>();
-    public final Map<WireSystem.Element, IWireEmitter> emittersCache = new HashMap<>();
+    public final Map<WireSystem.WireElement, IWireEmitter> emittersCache = new HashMap<>();
 
     public WorldSavedDataWireSystems() {
         super(DATA_NAME);
@@ -45,7 +45,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
         emittersCache.clear();
     }
 
-    public List<WireSystem> getWireSystemsWithElement(WireSystem.Element element) {
+    public List<WireSystem> getWireSystemsWithElement(WireSystem.WireElement element) {
         return wireSystems.keySet().stream().filter(wireSystem -> wireSystem.hasElement(element)).collect(Collectors.toList());
     }
 
@@ -54,7 +54,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
         markStructureChanged();
     }
 
-    public void buildAndAddWireSystem(WireSystem.Element element) {
+    public void buildAndAddWireSystem(WireSystem.WireElement element) {
         WireSystem wireSystem = new WireSystem().build(this, element);
         if(!wireSystem.isEmpty()) {
             wireSystems.put(wireSystem, false);
@@ -65,13 +65,13 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
 
     public void rebuildWireSystemsAround(IPipeHolder holder) {
         Arrays.stream(EnumWirePart.values())
-                .flatMap(part -> WireSystem.getConnectedElementsOfElement(world, new WireSystem.Element(holder.getPipePos(), part)).stream())
+                .flatMap(part -> WireSystem.getConnectedElementsOfElement(world, new WireSystem.WireElement(holder.getPipePos(), part)).stream())
                 .distinct()
                 .forEach(this::buildAndAddWireSystem);
     }
 
-    public IWireEmitter getEmitter(WireSystem.Element element) {
-        if(element.type == WireSystem.Element.Type.EMITTER_SIDE) {
+    public IWireEmitter getEmitter(WireSystem.WireElement element) {
+        if(element.type == WireSystem.WireElement.Type.EMITTER_SIDE) {
             if(!emittersCache.containsKey(element)) {
                 TileEntity tile = world.getTileEntity(element.blockPos);
                 if(tile instanceof IPipeHolder) {
@@ -101,7 +101,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
         return null;
     }
 
-    public boolean isEmitterEmitting(WireSystem.Element element, EnumDyeColor color) {
+    public boolean isEmitterEmitting(WireSystem.WireElement element, EnumDyeColor color) {
         TileEntity tile = world.getTileEntity(element.blockPos);
         if(tile instanceof IPipeHolder) {
             IPipeHolder holder = (IPipeHolder) tile;

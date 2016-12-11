@@ -10,12 +10,19 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
+import buildcraft.lib.client.sprite.ISprite;
+
 public class MutableVertex {
-    private float position_x, position_y, position_z;
-    private float normal_x, normal_y, normal_z;
-    private short colour_r, colour_g, colour_b, colour_a;
-    private float tex_u, tex_v;
-    private byte light_block, light_sky;
+    /** The position of this vertex. */
+    public float position_x, position_y, position_z;
+    /** The normal of this vertex. Might not be normalised. */
+    public float normal_x, normal_y, normal_z;
+    /** The colour of this vertex, where each one is a number in the range 0-255 */
+    public short colour_r, colour_g, colour_b, colour_a;
+    /** The texture co-ord of this vertex. Should usually be between 0-1 */
+    public float tex_u, tex_v;
+    /** The light of this vertex. Should be in the range 0-15. */
+    public byte light_block, light_sky;
 
     public MutableVertex() {
         normal_x = 0;
@@ -139,6 +146,10 @@ public class MutableVertex {
 
     public void renderTex(VertexBuffer vb) {
         vb.tex(tex_u, tex_v);
+    }
+
+    public void renderTex(VertexBuffer vb, ISprite sprite) {
+        vb.tex(sprite.getInterpU(tex_u), sprite.getInterpV(tex_v));
     }
 
     public void renderLightMap(VertexBuffer vb) {

@@ -17,6 +17,9 @@ public class NetworkedItemStackCache extends NetworkedObjectCache<ItemStackKey> 
 
     @Override
     protected ItemStackKey getCanonical(ItemStackKey obj) {
+        if (StackUtil.isInvalid(obj.baseStack)) {
+            return ItemStackKey.INVALID_STACK;
+        }
         ItemStack stack = obj.baseStack.copy();
         stack.stackSize = 1;
         if (stack.hasTagCompound()) {
@@ -27,11 +30,25 @@ public class NetworkedItemStackCache extends NetworkedObjectCache<ItemStackKey> 
 
     @Override
     protected void writeObject(ItemStackKey obj, PacketBufferBC buffer) {
-        buffer.writeItemStackToBuffer(obj.baseStack);
+        if (StackUtil.isInvalid(obj.baseStack)) {
+            buffer.writeBoolean(false);
+        } else {
+            buffer.writeBoolean(true);
+            buffer.writeItemStackToBuffer(obj.baseStack);
+        }
     }
 
     @Override
     protected ItemStackKey readObject(PacketBufferBC buffer) throws IOException {
-        return new ItemStackKey(buffer.readItemStackFromBuffer());
+        if (buffer.readBoolean()) {
+            return new ItemStackKey(buffer.readItemStackFromBuffer());
+        } else {
+            return ItemStackKey.INVALID_STACK;
+        }
+    }
+
+    @Override
+    protected String getCacheName() {
+        return "ItemStack";
     }
 }

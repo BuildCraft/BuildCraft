@@ -1,5 +1,6 @@
 package buildcraft.transport.pipe.flow;
 
+import java.io.IOException;
 import java.util.*;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,10 +19,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.IFluidFilter;
-import buildcraft.api.core.IFluidHandlerAdv;
+import buildcraft.api.core.*;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.PipeEventFluid;
 import buildcraft.api.transport.neptune.IFlowFluid;
@@ -30,14 +28,21 @@ import buildcraft.api.transport.neptune.PipeAPI;
 import buildcraft.api.transport.neptune.PipeAPI.FluidTransferInfo;
 import buildcraft.api.transport.neptune.PipeFlow;
 
+import buildcraft.core.BCCoreConfig;
+import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.net.cache.BuildCraftObjectCaches;
+import buildcraft.lib.net.cache.NetworkedObjectCache;
 
 public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable {
 
     private static final int DIRECTION_COOLDOWN = 60;
     private static final int COOLDOWN_INPUT = -DIRECTION_COOLDOWN;
     private static final int COOLDOWN_OUTPUT = DIRECTION_COOLDOWN;
+
+    public static final int NET_FLUID_AMOUNTS = 2;
 
     /** The number of pixels the fluid moves by per millisecond */
     public static final double FLOW_MULTIPLIER = 0.016;
@@ -51,6 +56,11 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     private final Map<EnumPipePart, Section> sections = new EnumMap<>(EnumPipePart.class);
     private FluidStack currentFluid;
     private int currentDelay;
+    private final SafeTimeTracker tracker = new SafeTimeTracker(BCCoreConfig.networkUpdateRate, 4);
+
+    // Client fields for interpolating amounts
+    private long lastMessage, lastMessageMinus1;
+    private NetworkedObjectCache<FluidStack>.Link clientFluid = null;
 
     public PipeFlowFluids(IPipe pipe) {
         super(pipe);
@@ -235,7 +245,10 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     @Override
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add(" - FluidType = " + (currentFluid == null ? "empty" : currentFluid.getLocalizedName()));
+        boolean isRemote = pipe.getHolder().getPipeWorld().isRemote;
+
+        FluidStack fluid = isRemote ? getFluidStackForRender() : currentFluid;
+        left.add(" - FluidType = " + (fluid == null ? "empty" : fluid.getLocalizedName()));
 
         for (EnumPipePart part : EnumPipePart.VALUES) {
             Section section = sections.get(part);
@@ -243,8 +256,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 continue;
             }
             String line = " - " + StringUtilBC.getLocalized(part.face) + " = ";
-            line += (section.amount > 0 ? TextFormatting.GREEN : "");
-            line += section.amount + "" + TextFormatting.RESET + "mB";
+            int amount = isRemote ? section.target : section.amount;
+            line += (amount > 0 ? TextFormatting.GREEN : "");
+            line += amount + "" + TextFormatting.RESET + "mB";
             line += " " + section.getCurrentDirection() + " (" + section.ticksInDirection + ")";
 
             line += " [";
@@ -277,7 +291,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
     @SideOnly(Side.CLIENT)
     public FluidStack getFluidStackForRender() {
-        return currentFluid;
+        return clientFluid == null ? null : clientFluid.get();
     }
 
     @SideOnly(Side.CLIENT)
@@ -285,7 +299,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         double[] arr = new double[7];
         for (EnumPipePart part : EnumPipePart.VALUES) {
             Section s = sections.get(part);
-            arr[part.getIndex()] = s.clientAmountLast * (partialTicks) + s.clientAmountThis * (1 - partialTicks);
+            arr[part.getIndex()] = s.clientAmountLast * (1 - partialTicks) + s.clientAmountThis * (partialTicks);
         }
         return arr;
     }
@@ -296,7 +310,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         for (EnumPipePart part : EnumPipePart.VALUES) {
             Section s = sections.get(part);
             if (s.offsetLast != null & s.offsetThis != null) {
-                arr[part.getIndex()] = s.offsetLast.scale(partialTicks).add(s.offsetThis.scale(1 - partialTicks));
+                arr[part.getIndex()] = s.offsetLast.scale(1 - partialTicks).add(s.offsetThis.scale(partialTicks));
             }
         }
         return arr;
@@ -321,53 +335,95 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
     @Override
     public void onTick() {
-        if (currentFluid == null) {
-            return;
-        }
         World world = pipe.getHolder().getPipeWorld();
-        for (EnumPipePart part : EnumPipePart.VALUES) {
-            sections.get(part).tickClient();
-        }
         if (world.isRemote) {
+            for (EnumPipePart part : EnumPipePart.VALUES) {
+                sections.get(part).tickClient();
+            }
             return;
         }
 
-        // int timeSlot = (int) (world.getTotalWorldTime() % currentDelay);
-        int totalFluid = 0;
-        boolean canOutput = false;
+        if (currentFluid != null) {
+            // int timeSlot = (int) (world.getTotalWorldTime() % currentDelay);
+            int totalFluid = 0;
+            boolean canOutput = false;
+
+            for (EnumPipePart part : EnumPipePart.VALUES) {
+                Section section = sections.get(part);
+                section.currentTime = (section.currentTime + 1) % currentDelay;
+                section.advanceForMovement();
+                totalFluid += section.amount;
+                if (section.getCurrentDirection().canOutput()) {
+                    canOutput = true;
+                }
+            }
+            if (totalFluid == 0) {
+                setFluid(null);
+            } else {
+                // Fluid movement is split into 3 parts
+                // - move from pipe (to other tiles)
+                // - move from center (to sides)
+                // - move into center (from sides)
+
+                if (canOutput) {
+                    moveFromPipe();
+                }
+                moveFromCenter();
+                moveToCenter();
+            }
+
+            // tick cooldowns
+            for (EnumPipePart part : EnumPipePart.VALUES) {
+                Section section = sections.get(part);
+                if (section.ticksInDirection > 0) {
+                    section.ticksInDirection--;
+                } else if (section.ticksInDirection < 0) {
+                    section.ticksInDirection++;
+                }
+            }
+        }
+
+        boolean send = false;
 
         for (EnumPipePart part : EnumPipePart.VALUES) {
             Section section = sections.get(part);
-            section.currentTime = (section.currentTime + 1) % currentDelay;
-            section.advanceForMovement();
-            totalFluid += section.amount;
-            if (section.getCurrentDirection().canOutput()) {
-                canOutput = true;
+            if (section.amount != section.lastSentAmount) {
+                send = true;
+                break;
+            } else {
+                Dir should = Dir.get(section.ticksInDirection);
+                if (section.lastSentDirection != should) {
+                    send = true;
+                    break;
+                }
             }
         }
-        if (totalFluid == 0) {
-            setFluid(null);
-        } else {
-            // Fluid movement is split into 3 parts
-            // - move from pipe (to other tiles)
-            // - move from center (to sides)
-            // - move into center (from sides)
 
-            if (canOutput) {
-                moveFromPipe();
-            }
-            moveFromCenter();
-            moveToCenter();
-        }
-
-        // tick cooldowns
-        for (EnumPipePart part : EnumPipePart.VALUES) {
-            Section section = sections.get(part);
-            if (section.ticksInDirection > 0) {
-                section.ticksInDirection--;
-            } else if (section.ticksInDirection < 0) {
-                section.ticksInDirection++;
-            }
+        if (send && tracker.markTimeIfDelay(world)) {
+            // send a net update
+            sendCustomPayload(NET_FLUID_AMOUNTS, (b) -> {
+                PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(b);
+                if (currentFluid == null) {
+                    buffer.writeBoolean(false);
+                } else {
+                    buffer.writeBoolean(true);
+                    buffer.writeInt(BuildCraftObjectCaches.CACHE_FLUIDS.server().store(currentFluid));
+                }
+                for (EnumPipePart part : EnumPipePart.VALUES) {
+                    Section section = sections.get(part);
+                    if (section.amount == section.lastSentAmount) {
+                        buffer.writeBoolean(false);
+                    } else {
+                        buffer.writeBoolean(true);
+                        buffer.writeShort(section.amount);
+                        section.lastSentAmount = section.amount;
+                    }
+                    Dir should = Dir.get(section.ticksInDirection);
+                    buffer.writeEnumValue(should); // This writes out 2 bits so don't bother with a boolean flag
+                    // TODO: Add fixed-bits writing to PacketBufferBC!
+                    section.lastSentDirection = should;
+                }
+            });
         }
     }
 
@@ -493,11 +549,39 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         }
     }
 
+    @Override
+    public void readPayload(int id, PacketBuffer buf, Side side) throws IOException {
+        PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(buf);
+        if (side == Side.CLIENT) {
+            if (id == NET_FLUID_AMOUNTS) {
+                if (buffer.readBoolean()) {
+                    int fluidId = buffer.readInt();
+                    clientFluid = BuildCraftObjectCaches.CACHE_FLUIDS.client().retrieve(fluidId);
+                }
+                for (EnumPipePart part : EnumPipePart.VALUES) {
+                    Section section = sections.get(part);
+                    if (buffer.readBoolean()) {
+                        section.target = buffer.readShort();
+                    }
+
+                    Dir dir = buffer.readEnumValue(Dir.class);
+                    section.ticksInDirection = dir == Dir.NONE ? 0 : dir == Dir.IN ? COOLDOWN_INPUT : COOLDOWN_OUTPUT;
+                }
+                lastMessageMinus1 = lastMessage;
+                lastMessage = pipe.getHolder().getPipeWorld().getTotalWorldTime();
+            }
+        }
+    }
+
     /** Holds data about a single section of this pipe. */
     class Section implements IFluidHandler {
         final EnumPipePart part;
 
         int amount;
+
+        int lastSentAmount;
+
+        Dir lastSentDirection;
 
         int currentTime;
 
@@ -516,13 +600,10 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         // Client side fields
 
         /** Used to interpolate between {@link #clientAmountThis} and {@link #clientAmountLast} for rendering. */
-        double clientAmountThis, clientAmountLast;
+        int clientAmountThis, clientAmountLast;
 
         /** Holds the amount of fluid was last sent to us from the sever */
         int target;
-
-        /** The world-times of when the last message was received. */
-        long targetTime = -1;
 
         Vec3d offsetLast, offsetThis;
 
@@ -603,28 +684,22 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             return dir;
         }
 
-        void writeClientMessage(PacketBuffer buffer) {
-            buffer.writeShort(amount);
-        }
-
-        void handleClientMessage(PacketBuffer buffer) {
-            targetTime = pipe.getHolder().getPipeWorld().getTotalWorldTime();
-            target = buffer.readShort();
-        }
-
         /** @return True if this still contains fluid, false if not. */
         boolean tickClient() {
             clientAmountLast = clientAmountThis;
 
-            target = amount; // temp until networking is added
-
             if (target != clientAmountThis) {
-                double diff = target - clientAmountThis;
-                diff = Math.min(diff, fluidTransferInfo.transferPerTick);
-                clientAmountThis += diff;
+                int delta = target - clientAmountThis;
+                long msgDelta = lastMessage - lastMessageMinus1;
+                msgDelta = MathUtil.clamp((int) msgDelta, 1, 60);
+                if (Math.abs(delta) < msgDelta) {
+                    clientAmountThis += delta;
+                } else {
+                    clientAmountThis += delta / (int) msgDelta;
+                }
             }
 
-            if (offsetThis == null) {
+            if (offsetThis == null || (clientAmountThis == 0 && clientAmountLast == 0)) {
                 offsetThis = Vec3d.ZERO;
             }
             offsetLast = offsetThis;
@@ -723,6 +798,16 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
         public boolean canOutput() {
             return this != IN;
+        }
+
+        public static Dir get(int dir) {
+            if (dir == 0) {
+                return Dir.NONE;
+            } else if (dir < 0) {
+                return IN;
+            } else {
+                return OUT;
+            }
         }
     }
 }

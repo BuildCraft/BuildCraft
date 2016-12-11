@@ -3,6 +3,8 @@ package buildcraft.lib.misc;
 import net.minecraft.item.ItemStack;
 
 public class ItemStackKey {
+    public static final ItemStackKey INVALID_STACK = new ItemStackKey(StackUtil.INVALID_STACK);
+
     public final ItemStack baseStack;
     private final int hash;
 

@@ -37,7 +37,7 @@ public class MessageUtil {
         DELAYED_TASKS.add(delay, task);
     }
 
-    public static void preTick() {
+    public static void postTick() {
         for (Runnable runnable : DELAYED_TASKS.advance()) {
             runnable.run();
         }

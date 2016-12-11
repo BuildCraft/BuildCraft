@@ -7,6 +7,12 @@ import java.util.function.Supplier;
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.LoaderState;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+
+import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.misc.ItemStackKey;
 
@@ -22,6 +28,13 @@ public class BuildCraftObjectCaches {
 
     static final List<NetworkedObjectCache<?>> CACHES = new ArrayList<>();
 
+    public static void registerCache(NetworkedObjectCache<?> cache) {
+        if (Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION)) {
+            throw new IllegalStateException("May only construct a cache BEFORE post-init!");
+        }
+        BuildCraftObjectCaches.CACHES.add(cache);
+    }
+
     /** @see NetworkedObjectCache.ServerView#store(Object) */
     public static int storeItemStack(ItemStack stack) {
         return CACHE_ITEMS.server().store(new ItemStackKey(stack));
@@ -36,5 +49,33 @@ public class BuildCraftObjectCaches {
     public static Supplier<ItemStack> retrieveItemStack(int id) {
         NetworkedObjectCache<ItemStackKey>.Link link = CACHE_ITEMS.client().retrieve(id);
         return () -> link.get().baseStack;
+    }
+
+    /** Called by BuildCraftLib in the {@link FMLPreInitializationEvent} */
+    public static void fmlPreInit() {
+        registerCache(CACHE_ITEMS);
+        registerCache(CACHE_FLUIDS);
+    }
+
+    /** Called by BuildCraftLib in the {@link FMLPostInitializationEvent} */
+    public static void fmlPostInit() {
+        CACHES.sort((a, b) -> {
+            return a.getClass().getSimpleName().compareTo(b.getClass().getSimpleName());
+        });
+        if (NetworkedObjectCache.DEBUG_LOG) {
+            BCLog.logger.info("[lib.net.cache] Sorted list of networked object caches:");
+            for (int i = 0; i < CACHES.size(); i++) {
+                final NetworkedObjectCache<?> cache = CACHES.get(i);
+                BCLog.logger.info("  " + i + " = " + cache.getCacheName());
+            }
+            BCLog.logger.info("[lib.net.cache] Total of " + CACHES.size() + " caches");
+        }
+    }
+
+    /** Called by BuildCraftLib on every client tick. */
+    public static void onClientTick() {
+        for (NetworkedObjectCache<?> cache : CACHES) {
+            cache.onClientWorldTick();
+        }
     }
 }

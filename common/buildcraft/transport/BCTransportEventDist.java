@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.transport.client.render.RenderPipeHolder;
+import buildcraft.transport.client.render.PipeWireRenderer;
 import buildcraft.transport.wire.WorldSavedDataWireSystems;
 
 public enum BCTransportEventDist {
@@ -15,7 +15,7 @@ public enum BCTransportEventDist {
 
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event) {
-        if(!event.world.isRemote && event.world.getMinecraftServer() != null) {
+        if (!event.world.isRemote && event.world.getMinecraftServer() != null) {
             WorldSavedDataWireSystems.get(event.world).tick();
         }
     }
@@ -28,6 +28,6 @@ public enum BCTransportEventDist {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void onTextureStitch(TextureStitchEvent.Post event) {
-        RenderPipeHolder.wiresRenderingCache.clear();
+        PipeWireRenderer.clearWireCache();
     }
 }

@@ -74,4 +74,26 @@ public class PacketBufferBC extends PacketBuffer {
         int offset = 1 << readFlagOffset++;
         return (readFlagCache & offset) == offset;
     }
+
+    // TODO: Fixed bits!
+
+    @Override
+    public PacketBufferBC writeEnumValue(Enum<?> value) {
+        if (value == null) {
+            writeBoolean(false);
+        } else {
+            writeBoolean(true);
+            super.writeEnumValue(value);
+        }
+        return this;
+    }
+
+    @Override
+    public <T extends Enum<T>> T readEnumValue(Class<T> enumClass) {
+        if (readBoolean()) {
+            return super.readEnumValue(enumClass);
+        } else {
+            return null;
+        }
+    }
 }
