@@ -14,7 +14,7 @@ public class ZonePlannerMapChunk {
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 // Scan down from the max height value of a chunk until we find a block
-                for (int y = chunk.getHeightValue(x, z); y > 0; y--) {
+                for (int y = key.level * ZonePlannerMapChunkKey.LEVEL_HEIGHT; y > 0; y--) {
                     int colour = chunk.getBlockState(x, y, z).getMapColor().colorValue;
                     if (colour != 0) {
                         data[x][z] = new MapColourData(y, colour);

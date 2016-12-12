@@ -59,7 +59,7 @@ public class TileZonePlanner extends TileBCInventory_Neptune implements ITickabl
     }
 
     public int getLevel() {
-        BlockPos blockPos = Minecraft.getMinecraft().thePlayer.getPosition();
+        BlockPos blockPos = pos;
         while (!Minecraft.getMinecraft().theWorld.getBlockState(blockPos).getBlock().isBlockSolid(Minecraft.getMinecraft().theWorld, blockPos, EnumFacing.DOWN) && blockPos.getY() < 255) {
             blockPos = new BlockPos(blockPos.getX(), blockPos.getY() + 1, blockPos.getZ());
         }

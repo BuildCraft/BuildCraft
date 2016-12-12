@@ -1,15 +1,18 @@
 package buildcraft.transport.block;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import buildcraft.transport.BCTransport;
+import buildcraft.api.blocks.ICustomPaintHandler;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.transport.neptune.*;
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.InventoryUtil;
+import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.prop.UnlistedNonNullProperty;
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.item.ItemWire;
+import buildcraft.transport.pipe.Pipe;
+import buildcraft.transport.tile.TilePipeHolder;
+import buildcraft.transport.wire.EnumWireBetween;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -36,26 +39,17 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.blocks.ICustomPaintHandler;
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.transport.neptune.*;
-
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.InventoryUtil;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.prop.UnlistedNonNullProperty;
-import buildcraft.transport.pipe.Pipe;
-import buildcraft.transport.tile.TilePipeHolder;
-import buildcraft.transport.wire.EnumWireBetween;
-import buildcraft.transport.wire.WireManager;
+import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaintHandler {
     public static final IUnlistedProperty<WeakReference<TilePipeHolder>> PROP_TILE = new UnlistedNonNullProperty<>("tile");
@@ -416,17 +410,38 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             }
         }
         if(item instanceof ItemWire) {
-            Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
-            double reachDistance = 5;
-            if (player instanceof EntityPlayerMP) {
-                reachDistance = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
+            EnumWirePart wirePartHit = getWirePartHit(trace);
+            EnumWirePart wirePart;
+            TilePipeHolder holder;
+            if(wirePartHit != null) {
+                wirePart = Arrays.stream(EnumWirePart.VALUES)
+                        .filter(wirePartLocal -> Arrays.stream(EnumFacing.Axis.values())
+                                .allMatch(axis ->
+                                        axis == trace.sideHit.getAxis()
+                                                ? wirePartLocal.getDirection(axis) != wirePartHit.getDirection(axis)
+                                                : wirePartLocal.getDirection(axis) == wirePartHit.getDirection(axis)
+                                )
+                        ).findAny().orElse(null);
+                assert wirePart != null;
+                if(wirePart.getDirection(trace.sideHit.getAxis()) == trace.sideHit.getAxisDirection()) {
+                    holder = tile;
+                } else {
+                    holder = getPipe(world, pos.offset(trace.sideHit), false);
+                }
+            } else {
+                Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
+                double reachDistance = 5;
+                if(player instanceof EntityPlayerMP) {
+                    reachDistance = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
+                }
+                Vec3d end = start.add(player.getLookVec().normalize().scale(reachDistance));
+                wirePart = BlockPipeHolder.rayTraceWire(pos, start, end);
+                holder = tile;
             }
-            Vec3d end = start.add(player.getLookVec().normalize().scale(reachDistance));
-            EnumWirePart wirePart = BlockPipeHolder.rayTraceWire(pos, start, end);
-            if(wirePart != null) {
-                tile.getWireManager().addPart(wirePart, EnumDyeColor.byMetadata(held.getMetadata()));
-                tile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
-                if (!player.capabilities.isCreativeMode) {
+            if(wirePart != null && holder != null) {
+                holder.getWireManager().addPart(wirePart, EnumDyeColor.byMetadata(held.getMetadata()));
+                holder.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
+                if(!player.capabilities.isCreativeMode) {
                     held.stackSize--;
                 }
             }

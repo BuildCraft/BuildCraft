@@ -83,8 +83,8 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         buffer.setTranslation(x, y, z);
 
-        Vec3d min = new Vec3d(0, 0, 0);
-        Vec3d max = new Vec3d(1, 1, 1);
+        Vec3d min;
+        Vec3d max;
 
         float minU = 0;
         float maxU = texture.getMaxU();
@@ -131,9 +131,7 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
 
     @Nonnull
     private static DynamicTextureBC getTexture(final TileZonePlanner tile, final EnumFacing side) {
-        Callable<DynamicTextureBC> textureGetter = () -> {
-            return createTexture(tile, side);
-        };
+        Callable<DynamicTextureBC> textureGetter = () -> createTexture(tile, side);
         try {
             DynamicTextureBC texture = TEXTURES.get(new WorldPos(tile), textureGetter);
             if (texture == null) {
@@ -150,8 +148,8 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         DynamicTextureBC texture = new DynamicTextureBC(TEXTURE_WIDTH, TEXTURE_HEIGHT);
         for (int textureX = 0; textureX < TEXTURE_WIDTH; textureX++) {
             for (int textureY = 0; textureY < TEXTURE_HEIGHT; textureY++) {
-                int posX = -1;
-                int posZ = -1;
+                int posX;
+                int posZ;
                 int scale = 4;
                 int offset1 = (textureX - TEXTURE_WIDTH / 2) * scale;
                 int offset2 = (textureY - TEXTURE_HEIGHT / 2) * scale;
