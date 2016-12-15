@@ -32,7 +32,7 @@ import buildcraft.lib.registry.CreativeTabManager;
      version = BCLib.VERSION,
      acceptedMinecraftVersions = "[1.10.2]",
      dependencies = "required-after:buildcraftlib",
-     guiFactory = "buildcraft.core.client.ConfigManager")
+     guiFactory = "buildcraft.core.client.ConficGuiFactoryBC")
 //@formatter:on
 public class BCCore {
     public static final String MODID = "buildcraftcore";
