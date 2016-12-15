@@ -74,10 +74,10 @@ import buildcraft.core.blueprints.SchematicHelper;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.patterns.*;
 import buildcraft.core.builders.schematics.SchematicIgnore;
+import buildcraft.core.client.ConfigManager;
 import buildcraft.core.client.CoreIconProvider;
 import buildcraft.core.command.SubCommandDeop;
 import buildcraft.core.command.SubCommandOp;
-import buildcraft.core.config.ConfigManager;
 import buildcraft.core.crops.CropHandlerPlantable;
 import buildcraft.core.crops.CropHandlerReeds;
 import buildcraft.core.gen.SpringPopulate;
@@ -109,6 +109,7 @@ import buildcraft.core.tablet.TabletProgramMenuFactory;
 import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletManagerServer;
 import buildcraft.lib.config.FileConfigManager;
+import buildcraft.lib.config.RestartRequirement;
 import buildcraft.lib.list.*;
 import buildcraft.lib.misc.DebuggingTools;
 import buildcraft.lib.misc.data.XorShift128Random;
@@ -246,43 +247,43 @@ public class BuildCraftCore extends BuildCraftMod {
 
         ConfigManager.register("general.useServerDataOnClient", BuildCraftCore.useServerDataOnClient,
                 "Allows BuildCraft to use the integrated server's data on the client on singleplayer worlds. Disable if you're getting the odd crash caused by it.",
-                ConfigManager.RestartRequirement.NONE);
+                RestartRequirement.NONE);
         ConfigManager.register("general.builderMaxIterationsPerItemFactor", BuildCraftCore.builderMaxPerItemFactor,
                 "Lower this number if BuildCraft builders/fillers are causing TPS lag. Raise it if you think they are being too slow.",
-                ConfigManager.RestartRequirement.NONE);
+                RestartRequirement.NONE);
 
         ConfigManager.register("general.miningBreaksPlayerProtectedBlocks", false,
-                "Should BuildCraft miners be allowed to break blocks using player-specific protection?", ConfigManager.RestartRequirement.NONE);
+                "Should BuildCraft miners be allowed to break blocks using player-specific protection?", RestartRequirement.NONE);
         ConfigManager.register("general.updateCheck", true, "Should I check the BuildCraft version on startup?",
-                ConfigManager.RestartRequirement.NONE);
+                RestartRequirement.NONE);
         ConfigManager.register("display.hidePowerValues", false, "Should all power values (RF, RF/t) be hidden?",
-                ConfigManager.RestartRequirement.NONE);
+                RestartRequirement.NONE);
         ConfigManager.register("display.hideFluidValues", false, "Should all fluid values (mB, mB/t) be hidden?",
-                ConfigManager.RestartRequirement.NONE);
+                RestartRequirement.NONE);
         ConfigManager.register("general.itemLifespan", 60, "How long, in seconds, should items stay on the ground? (Vanilla = 300, default = 60)",
-                ConfigManager.RestartRequirement.NONE).setMinValue(5);
+                RestartRequirement.NONE).setMinValue(5);
         ConfigManager.register("network.updateFactor", 10,
                 "How often, in ticks, should network update packets be sent? Increasing this might help network performance.",
-                ConfigManager.RestartRequirement.GAME).setMinValue(1);
+                RestartRequirement.GAME).setMinValue(1);
         ConfigManager.register("network.longUpdateFactor", 40,
                 "How often, in ticks, should full network sync packets be sent? Increasing this might help network performance.",
-                ConfigManager.RestartRequirement.GAME).setMinValue(1);
+                RestartRequirement.GAME).setMinValue(1);
         ConfigManager.register("general.canEnginesExplode", false, "Should engines explode upon overheat?",
-                ConfigManager.RestartRequirement.NONE);
+                RestartRequirement.NONE);
         ConfigManager.register("worldgen.enable", true, "Should BuildCraft generate anything in the world?",
-                ConfigManager.RestartRequirement.GAME);
+                RestartRequirement.GAME);
         ConfigManager.register("general.pumpsConsumeWater", false, "Should pumps consume water? Enabling this might cause performance issues!",
-                ConfigManager.RestartRequirement.NONE);
+                RestartRequirement.NONE);
         ConfigManager.register("power.miningUsageMultiplier", 1.0D, "What should the multiplier of all mining-related power usage be?",
-                ConfigManager.RestartRequirement.NONE);
-        ConfigManager.register("display.colorBlindMode", false, "Should I enable colorblind mode?", ConfigManager.RestartRequirement.GAME);
+                RestartRequirement.NONE);
+        ConfigManager.register("display.colorBlindMode", false, "Should I enable colorblind mode?", RestartRequirement.GAME);
         ConfigManager.register("worldgen.generateWaterSprings", true, "Should BuildCraft generate water springs?",
-                ConfigManager.RestartRequirement.GAME);
+                RestartRequirement.GAME);
 
         ConfigManager.register("debug.network.stats", false, "Should all network packets be tracked for statistical purposes?",
-                ConfigManager.RestartRequirement.NONE);
+                RestartRequirement.NONE);
 
-        reloadConfig(ConfigManager.RestartRequirement.GAME);
+        reloadConfig(RestartRequirement.GAME);
 
         wrenchItem = (new ItemWrench()).setTextureLocation("buildcraftcore:wrench").setUnlocalizedName("wrenchItem");
         BCRegistry.INSTANCE.registerItem(wrenchItem, false);
@@ -562,16 +563,16 @@ public class BuildCraftCore extends BuildCraftMod {
         TabletManagerServer.INSTANCE.onServerStopping();
     }
 
-    public void reloadConfig(ConfigManager.RestartRequirement restartType) {
-        if (restartType == ConfigManager.RestartRequirement.GAME) {
+    public void reloadConfig(RestartRequirement restartType) {
+        if (restartType == RestartRequirement.GAME) {
             modifyWorld = ConfigManager.get("worldgen.enable").getBoolean();
             updateFactor = ConfigManager.get("network.updateFactor").getInt();
             longUpdateFactor = ConfigManager.get("network.longUpdateFactor").getInt();
             colorBlindMode = ConfigManager.get("display.colorBlindMode").getBoolean();
 
-            reloadConfig(ConfigManager.RestartRequirement.WORLD);
-        } else if (restartType == ConfigManager.RestartRequirement.WORLD) {
-            reloadConfig(ConfigManager.RestartRequirement.NONE);
+            reloadConfig(RestartRequirement.WORLD);
+        } else if (restartType == RestartRequirement.WORLD) {
+            reloadConfig(RestartRequirement.NONE);
         } else {
             useServerDataOnClient = ConfigManager.get("general.useServerDataOnClient").getBoolean(true);
             builderMaxPerItemFactor = ConfigManager.get("general.builderMaxIterationsPerItemFactor").getInt();
@@ -596,7 +597,7 @@ public class BuildCraftCore extends BuildCraftMod {
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
         if ("BuildCraft|Core".equals(event.modID)) {
-            reloadConfig(event.isWorldRunning ? ConfigManager.RestartRequirement.NONE : ConfigManager.RestartRequirement.WORLD);
+            reloadConfig(event.isWorldRunning ? RestartRequirement.NONE : RestartRequirement.WORLD);
         }
     }
 

@@ -25,7 +25,6 @@ import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.registry.CreativeTabManager;
-import buildcraft.lib.registry.RegistryHelper;
 
 //@formatter:off
 @Mod(modid = BCCore.MODID,
@@ -33,7 +32,7 @@ import buildcraft.lib.registry.RegistryHelper;
      version = BCLib.VERSION,
      acceptedMinecraftVersions = "[1.10.2]",
      dependencies = "required-after:buildcraftlib",
-     guiFactory = "buildcraft.core.config.ConfigManager")
+     guiFactory = "buildcraft.core.client.ConfigManager")
 //@formatter:on
 public class BCCore {
     public static final String MODID = "buildcraftcore";
@@ -88,5 +87,6 @@ public class BCCore {
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
         BCCoreProxy.getProxy().fmlPostInit();
+        BCCoreConfig.postInit();
     }
 }

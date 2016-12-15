@@ -19,6 +19,7 @@ import buildcraft.api.BCModules;
 import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.config.FileConfigManager;
+import buildcraft.lib.misc.ConfigUtil;
 import buildcraft.lib.registry.RegistryHelper;
 
 public class BCCoreConfig {
@@ -60,7 +61,7 @@ public class BCCoreConfig {
 
         detailedConfigManager = new FileConfigManager(" The buildcraft detailed configuration file. This contains a lot of miscelaneous options that have no "
             + "affect on gameplay.\n You should refer to the BC source code for a detailed description of what these do. (https://github.com/BuildCraft/BuildCraft)\n"
-            + " This file will be overwritten every time that buildcraft starts, so there is no point in adding comments");
+            + " This file will be overwritten every time that buildcraft starts, so don't change anything other than the values.");
         detailedConfigManager.setConfigFile(new File(cfgFolder, "detailed.properties"));
 
         // Variables to make
@@ -144,6 +145,7 @@ public class BCCoreConfig {
     }
 
     public static void postInit() {
+        ConfigUtil.setLang(config);
         if (config.hasChanged()) {
             config.save();
         }

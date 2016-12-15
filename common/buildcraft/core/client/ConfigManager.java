@@ -1,4 +1,4 @@
-package buildcraft.core.config;
+package buildcraft.core.client;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -14,6 +14,8 @@ import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.IConfigElement;
 
 import buildcraft.core.BCCoreConfig;
+import buildcraft.core.config.BCConfigElement;
+import buildcraft.lib.config.EnumRestartRequirement;
 
 public class ConfigManager implements IModGuiFactory {
     public static class GuiConfigManager extends GuiConfig {
@@ -32,12 +34,6 @@ public class ConfigManager implements IModGuiFactory {
                 }
             }
         }
-    }
-
-    public enum RestartRequirement {
-        NONE,
-        WORLD,
-        GAME;
     }
 
     /** Needed for forge IModGuiFactory */
@@ -75,7 +71,7 @@ public class ConfigManager implements IModGuiFactory {
         return p;
     }
 
-    public static Property register(String catName, String propName, Object property, String comment, RestartRequirement restartRequirement) {
+    public static Property register(String catName, String propName, Object property, String comment, EnumRestartRequirement restartRequirement) {
         ConfigCategory c = BCCoreConfig.config.getCategory(catName);
         ConfigCategory parent = c;
         while (parent != null) {
@@ -90,14 +86,12 @@ public class ConfigManager implements IModGuiFactory {
             c.put(propName, p);
         }
         p.setComment(comment);
-        RestartRequirement r = restartRequirement;
         p.setLanguageKey("config." + catName + "." + propName);
-        p.setRequiresWorldRestart(r == RestartRequirement.WORLD);
-        p.setRequiresMcRestart(r == RestartRequirement.GAME);
+        restartRequirement.setTo(p);
         return p;
     }
 
-    public static Property register(String name, Object property, String comment, RestartRequirement restartRequirement) {
+    public static Property register(String name, Object property, String comment, EnumRestartRequirement restartRequirement) {
         String prefix = name.substring(0, name.lastIndexOf("."));
         String suffix = name.substring(name.lastIndexOf(".") + 1);
 

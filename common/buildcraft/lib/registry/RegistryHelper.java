@@ -60,7 +60,7 @@ public class RegistryHelper {
     }
 
     public static boolean registerItem(Item item, boolean forced) {
-        if (forced || isEnabled(getActiveMod(), "items", item.getRegistryName().getResourcePath())) {
+        if (forced || isEnabled(getActiveMod(), "items", item.getRegistryName().getResourcePath(), item.getUnlocalizedName())) {
             GameRegistry.register(item);
             if (item instanceof IItemBuildCraft) {
                 IItemBuildCraft itemBc = (IItemBuildCraft) item;
@@ -76,7 +76,7 @@ public class RegistryHelper {
     }
 
     public static boolean registerBlock(Block block, boolean forced) {
-        if (forced || isEnabled(getActiveMod(), "blocks", block.getRegistryName().getResourcePath())) {
+        if (forced || isEnabled(getActiveMod(), "blocks", block.getRegistryName().getResourcePath(), block.getUnlocalizedName())) {
             GameRegistry.register(block);
             if (block instanceof BlockBCBase_Neptune) {
                 BlockBCBase_Neptune blockBc = (BlockBCBase_Neptune) block;
@@ -93,10 +93,13 @@ public class RegistryHelper {
     //
     // #######################
 
-    private static boolean isEnabled(ModContainer activeMod, String category, String resourcePath) {
+    private static boolean isEnabled(ModContainer activeMod, String category, String resourcePath, String langKey) {
         Configuration config = modObjectConfigs.get(activeMod);
         if (config == null) throw new RuntimeException("No config exists for the mod " + activeMod.getModId());
         Property prop = config.get(category, resourcePath, true);
+        /* This is a bit hacky (as it might not work for all items + blocks) but append ".name" to the
+         * item.getUnlocalisedName() as that's what all BC items do. */
+        prop.setLanguageKey(langKey + ".name");
         prop.setRequiresMcRestart(true);
         prop.setRequiresWorldRestart(true);
         return prop.getBoolean(true);
