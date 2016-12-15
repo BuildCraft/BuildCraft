@@ -19,6 +19,7 @@ public enum FakePlayerUtil implements IBCFakePlayer {
     public final GameProfile gameProfile = new GameProfile(UUID.nameUUIDFromBytes("buildcraft.core".getBytes()), "[BuildCraft]");
 
     @Override
+    @Deprecated
     public FakePlayer getBuildCraftPlayer(WorldServer world) {
         return getFakePlayer(world, BlockPos.ORIGIN, gameProfile);
     }

@@ -2,6 +2,7 @@ package buildcraft.transport.pipe.flow;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
@@ -16,9 +17,12 @@ import buildcraft.lib.misc.VecUtil;
 
 public class TravellingItem {
     // Public for rendering
-    public @Nonnull ItemStack stack;
+    public Supplier<ItemStack> clientItemLink;
+    public int stackSize;
     public EnumDyeColor colour;
 
+    /** The server itemstack */
+    ItemStack stack;
     int id = 0;
     EnumTravelState state = EnumTravelState.SERVER_TO_CENTER;
     double speed = 0.05;
@@ -56,6 +60,11 @@ public class TravellingItem {
 
     public TravellingItem(@Nonnull ItemStack stack) {
         this.stack = stack;
+    }
+
+    public TravellingItem(Supplier<ItemStack> clientStackLink, int count) {
+        this.clientItemLink = clientStackLink;
+        this.stackSize = count;
     }
 
     // List<EnumFacing> tried = null;

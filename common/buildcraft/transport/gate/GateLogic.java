@@ -2,6 +2,7 @@ package buildcraft.transport.gate;
 
 import java.util.*;
 
+import buildcraft.transport.wire.WorldSavedDataWireSystems;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -416,6 +417,10 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
             EnumSet<EnumDyeColor> turnedOn = EnumSet.copyOf(wireBroadcasts);
             turnedOn.removeAll(previousBroadcasts);
             // FIXME: add call to "wires.emittingColour(turnedOff)"
+
+            if(!getPipeHolder().getPipeWorld().isRemote) {
+                WorldSavedDataWireSystems.get(getPipeHolder().getPipeWorld()).gatesChanged = true;
+            }
         }
 
         if (!Arrays.equals(prevTriggers, triggerOn) || !Arrays.equals(prevActions, actionOn)) {

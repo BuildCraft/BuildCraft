@@ -104,7 +104,7 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
                 // animation.reset();
             }
         }
-        markDirty();
+        super.onSlotChange(itemHandler, slot, before, after);
     }
 
     @Override

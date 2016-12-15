@@ -64,7 +64,7 @@ public class PacketBufferBC extends PacketBuffer {
     }
 
     /** Writes a single boolean out to some position in this buffer. The boolean flag might be written to a new byte
-     * (increasing the reader index) or it might be added to an existing byte that was written with a previous call to
+     * (increasing the writerIndex) or it might be added to an existing byte that was written with a previous call to
      * this method. */
     @Override
     public PacketBufferBC writeBoolean(boolean flag) {
@@ -76,7 +76,7 @@ public class PacketBufferBC extends PacketBuffer {
     }
 
     /** Reads a single boolean from some position in this buffer. The boolean flag might be read from a new byte
-     * (increasing the writerIndex) or it might be read from a previous byte that was read with a previous call to this
+     * (increasing the readerIndex) or it might be read from a previous byte that was read with a previous call to this
      * method. */
     @Override
     public boolean readBoolean() {
@@ -224,4 +224,6 @@ public class PacketBufferBC extends PacketBuffer {
         int index = readFixedBits(length);
         return enums[index];
     }
+
+    // TODO: Fixed bits!
 }

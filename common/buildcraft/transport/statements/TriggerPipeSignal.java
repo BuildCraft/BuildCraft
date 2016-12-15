@@ -1,11 +1,14 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.transport.statements;
 
 import java.util.Locale;
 
+import buildcraft.transport.wire.WireManager;
 import net.minecraft.item.EnumDyeColor;
 
 import buildcraft.api.gates.IGate;
@@ -37,7 +40,7 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 
     public static boolean doesGateHaveColour(IGate gate, EnumDyeColor c) {
         // FIXME: replace with a check to wires.hasWire(colour)!
-        return c.ordinal() % 3 == 1;
+        return gate.getPipeHolder().getWireManager().hasPartOfColor(c);
     }
 
     @Override
@@ -52,32 +55,30 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 
     @Override
     public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
-        if (!(container instanceof IGate)) {
+        if(!(container instanceof IGate)) {
             return false;
         }
 
         IGate gate = (IGate) container;
         IWireManager wires = gate.getPipeHolder().getWireManager();
 
-        if (active) {
-            // FIXME: replace these calls with the correct ones in IWireManager!
-            // if (!wireManager.isWireOn(colour)) {
-            // return false;
-            // }
-            // } else if (wireManager.isWireOn(colour)) {
-            // return false;
+        if(active) {
+            if(!wires.isAnyPowered(colour)) {
+                return false;
+            }
+        } else if(wires.isAnyPowered(colour)) {
+            return false;
         }
 
-        for (IStatementParameter param : parameters) {
-            if (param != null && param instanceof TriggerParameterSignal) {
+        for(IStatementParameter param : parameters) {
+            if(param != null && param instanceof TriggerParameterSignal) {
                 TriggerParameterSignal signal = (TriggerParameterSignal) param;
-                if (signal.colour != null) {
-                    // FIXME: replace these calls with the correct ones in IWireManager!
-                    // if (!wireManager.isWireOn(signal.colour)) {
-                    // return false;
-                    // }
-                    // } else if (wireManager.isWireOn(signal.colour)) {
-                    // return false;
+                if(signal.colour != null) {
+                    if(!wires.isAnyPowered(signal.colour)) {
+                        return false;
+                    }
+                } else if(wires.isAnyPowered(signal.colour)) {
+                    return false;
                 }
             }
         }

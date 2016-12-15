@@ -14,7 +14,6 @@ import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
 public class Template extends BlueprintBase {
-    /** Stores all of the blocks, using {@link BlueprintBase#min} as the origin. */
     private boolean[][][] contentBlocks;
 
     private Template(BlockPos size, BlockPos offset) {

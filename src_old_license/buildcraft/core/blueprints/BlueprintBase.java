@@ -24,9 +24,14 @@ import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.Utils;
+<<<<<<< HEAD
 import buildcraft.lib.misc.Matrix4i;
 import buildcraft.lib.misc.NBTUtilBC;
+=======
+import buildcraft.lib.misc.NBTUtils;
+>>>>>>> 4c6b9beacc58bd9c05649db40ea24df03d21fc98
 import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.misc.data.Matrix4i;
 
 public abstract class BlueprintBase {
 

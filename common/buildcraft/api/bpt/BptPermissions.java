@@ -12,7 +12,7 @@ public enum BptPermissions {
     /** Fluids can be inserted into machines/tiles/entities/etc */
     INSERT_FLUID,
     /** Custom resources (perhaps essentia from thaumcraft or something else from a different mod. Either way something
-     * that requires a special {@link IBuilder} instance that is capable of providing those materials.) */
+     * that requires a special {@link IBuilderAccessor} instance that is capable of providing those materials.) */
     INSERT_CUSTOM;
 
     public static final ImmutableSet<BptPermissions> SET_NORMAL_SURVIVAL;

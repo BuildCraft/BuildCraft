@@ -353,4 +353,12 @@ public class StackUtil {
         }
         return stack.serializeNBT().hashCode();
     }
+
+    /**
+     * Should be inlined EVERYWHERE that this is called.
+     */
+    @Deprecated
+    public static boolean isInvalid(@Nonnull ItemStack stack) {
+        return stack.isEmpty();
+    }
 }

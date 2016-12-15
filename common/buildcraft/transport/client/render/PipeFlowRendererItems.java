@@ -7,6 +7,7 @@ import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
 import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -20,6 +21,7 @@ import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.render.ItemRenderUtil;
 import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.pipe.flow.TravellingItem;
@@ -58,9 +60,15 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
         for (TravellingItem item : toRender) {
             Vec3d pos = item.getRenderPosition(BlockPos.ORIGIN, now, partialTicks);
 
-            ItemRenderUtil.renderItemStack(x + pos.xCoord, y + pos.yCoord, z + pos.zCoord,//
-                    item.stack, item.getRenderDirection(now, partialTicks), vb);
-
+            ItemStack stack = item.clientItemLink.get();
+            if (stack != null && !StackUtil.isInvalid(stack)) {
+                if (item.stackSize > 1) {
+                    stack = stack.copy();
+                    stack.stackSize = item.stackSize;
+                }
+                ItemRenderUtil.renderItemStack(x + pos.xCoord, y + pos.yCoord, z + pos.zCoord,//
+                        stack, item.getRenderDirection(now, partialTicks), vb);
+            }
             if (item.colour != null) {
                 vb.setTranslation(x + pos.xCoord, y + pos.yCoord, z + pos.zCoord);
                 int col = ColourUtil.getLightHex(item.colour);

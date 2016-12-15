@@ -74,10 +74,10 @@ import buildcraft.core.blueprints.SchematicHelper;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.patterns.*;
 import buildcraft.core.builders.schematics.SchematicIgnore;
+import buildcraft.core.client.ConficGuiFactoryBC;
 import buildcraft.core.client.CoreIconProvider;
 import buildcraft.core.command.SubCommandDeop;
 import buildcraft.core.command.SubCommandOp;
-import buildcraft.core.config.ConfigManager;
 import buildcraft.core.crops.CropHandlerPlantable;
 import buildcraft.core.crops.CropHandlerReeds;
 import buildcraft.core.gen.SpringPopulate;
@@ -109,6 +109,7 @@ import buildcraft.core.tablet.TabletProgramMenuFactory;
 import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletManagerServer;
 import buildcraft.lib.config.FileConfigManager;
+import buildcraft.lib.config.RestartRequirement;
 import buildcraft.lib.list.*;
 import buildcraft.lib.misc.DebuggingTools;
 import buildcraft.lib.misc.data.XorShift128Random;
@@ -144,7 +145,7 @@ public class BuildCraftCore extends BuildCraftMod {
     public static int builderMaxPerItemFactor = 1024;
     public static int longUpdateFactor = 40;
     public static Configuration mainConfiguration;
-    public static ConfigManager mainConfigManager;
+    public static ConficGuiFactoryBC mainConfigManager;
     public static FileConfigManager detailedConfigManager;
 
     public static BlockEngine engineBlock;
@@ -238,51 +239,51 @@ public class BuildCraftCore extends BuildCraftMod {
                     + " This file will be overwritten every time that buildcraft starts, so there is no point in adding comments");
         detailedConfigManager.setConfigFile(new File(cfgBase, "detailed.properties"));
 
-        ConfigManager.setConfig(mainConfiguration);
+        ConficGuiFactoryBC.setConfig(mainConfiguration);
         mainConfiguration.load();
 
-        ConfigManager.getCat("debug").setShowInGui(false);
-        ConfigManager.getCat("vars").setShowInGui(false);
+        ConficGuiFactoryBC.getCat("debug").setShowInGui(false);
+        ConficGuiFactoryBC.getCat("vars").setShowInGui(false);
 
-        ConfigManager.register("general.useServerDataOnClient", BuildCraftCore.useServerDataOnClient,
+        ConficGuiFactoryBC.register("general.useServerDataOnClient", BuildCraftCore.useServerDataOnClient,
                 "Allows BuildCraft to use the integrated server's data on the client on singleplayer worlds. Disable if you're getting the odd crash caused by it.",
-                ConfigManager.RestartRequirement.NONE);
-        ConfigManager.register("general.builderMaxIterationsPerItemFactor", BuildCraftCore.builderMaxPerItemFactor,
+                RestartRequirement.NONE);
+        ConficGuiFactoryBC.register("general.builderMaxIterationsPerItemFactor", BuildCraftCore.builderMaxPerItemFactor,
                 "Lower this number if BuildCraft builders/fillers are causing TPS lag. Raise it if you think they are being too slow.",
-                ConfigManager.RestartRequirement.NONE);
+                RestartRequirement.NONE);
 
-        ConfigManager.register("general.miningBreaksPlayerProtectedBlocks", false,
-                "Should BuildCraft miners be allowed to break blocks using player-specific protection?", ConfigManager.RestartRequirement.NONE);
-        ConfigManager.register("general.updateCheck", true, "Should I check the BuildCraft version on startup?",
-                ConfigManager.RestartRequirement.NONE);
-        ConfigManager.register("display.hidePowerValues", false, "Should all power values (RF, RF/t) be hidden?",
-                ConfigManager.RestartRequirement.NONE);
-        ConfigManager.register("display.hideFluidValues", false, "Should all fluid values (mB, mB/t) be hidden?",
-                ConfigManager.RestartRequirement.NONE);
-        ConfigManager.register("general.itemLifespan", 60, "How long, in seconds, should items stay on the ground? (Vanilla = 300, default = 60)",
-                ConfigManager.RestartRequirement.NONE).setMinValue(5);
-        ConfigManager.register("network.updateFactor", 10,
+        ConficGuiFactoryBC.register("general.miningBreaksPlayerProtectedBlocks", false,
+                "Should BuildCraft miners be allowed to break blocks using player-specific protection?", RestartRequirement.NONE);
+        ConficGuiFactoryBC.register("general.updateCheck", true, "Should I check the BuildCraft version on startup?",
+                RestartRequirement.NONE);
+        ConficGuiFactoryBC.register("display.hidePowerValues", false, "Should all power values (RF, RF/t) be hidden?",
+                RestartRequirement.NONE);
+        ConficGuiFactoryBC.register("display.hideFluidValues", false, "Should all fluid values (mB, mB/t) be hidden?",
+                RestartRequirement.NONE);
+        ConficGuiFactoryBC.register("general.itemLifespan", 60, "How long, in seconds, should items stay on the ground? (Vanilla = 300, default = 60)",
+                RestartRequirement.NONE).setMinValue(5);
+        ConficGuiFactoryBC.register("network.updateFactor", 10,
                 "How often, in ticks, should network update packets be sent? Increasing this might help network performance.",
-                ConfigManager.RestartRequirement.GAME).setMinValue(1);
-        ConfigManager.register("network.longUpdateFactor", 40,
+                RestartRequirement.GAME).setMinValue(1);
+        ConficGuiFactoryBC.register("network.longUpdateFactor", 40,
                 "How often, in ticks, should full network sync packets be sent? Increasing this might help network performance.",
-                ConfigManager.RestartRequirement.GAME).setMinValue(1);
-        ConfigManager.register("general.canEnginesExplode", false, "Should engines explode upon overheat?",
-                ConfigManager.RestartRequirement.NONE);
-        ConfigManager.register("worldgen.enable", true, "Should BuildCraft generate anything in the world?",
-                ConfigManager.RestartRequirement.GAME);
-        ConfigManager.register("general.pumpsConsumeWater", false, "Should pumps consume water? Enabling this might cause performance issues!",
-                ConfigManager.RestartRequirement.NONE);
-        ConfigManager.register("power.miningUsageMultiplier", 1.0D, "What should the multiplier of all mining-related power usage be?",
-                ConfigManager.RestartRequirement.NONE);
-        ConfigManager.register("display.colorBlindMode", false, "Should I enable colorblind mode?", ConfigManager.RestartRequirement.GAME);
-        ConfigManager.register("worldgen.generateWaterSprings", true, "Should BuildCraft generate water springs?",
-                ConfigManager.RestartRequirement.GAME);
+                RestartRequirement.GAME).setMinValue(1);
+        ConficGuiFactoryBC.register("general.canEnginesExplode", false, "Should engines explode upon overheat?",
+                RestartRequirement.NONE);
+        ConficGuiFactoryBC.register("worldgen.enable", true, "Should BuildCraft generate anything in the world?",
+                RestartRequirement.GAME);
+        ConficGuiFactoryBC.register("general.pumpsConsumeWater", false, "Should pumps consume water? Enabling this might cause performance issues!",
+                RestartRequirement.NONE);
+        ConficGuiFactoryBC.register("power.miningUsageMultiplier", 1.0D, "What should the multiplier of all mining-related power usage be?",
+                RestartRequirement.NONE);
+        ConficGuiFactoryBC.register("display.colorBlindMode", false, "Should I enable colorblind mode?", RestartRequirement.GAME);
+        ConficGuiFactoryBC.register("worldgen.generateWaterSprings", true, "Should BuildCraft generate water springs?",
+                RestartRequirement.GAME);
 
-        ConfigManager.register("debug.network.stats", false, "Should all network packets be tracked for statistical purposes?",
-                ConfigManager.RestartRequirement.NONE);
+        ConficGuiFactoryBC.register("debug.network.stats", false, "Should all network packets be tracked for statistical purposes?",
+                RestartRequirement.NONE);
 
-        reloadConfig(ConfigManager.RestartRequirement.GAME);
+        reloadConfig(RestartRequirement.GAME);
 
         wrenchItem = (new ItemWrench()).setTextureLocation("buildcraftcore:wrench").setUnlocalizedName("wrenchItem");
         BCRegistry.INSTANCE.registerItem(wrenchItem, false);
@@ -297,7 +298,7 @@ public class BuildCraftCore extends BuildCraftMod {
         BCRegistry.INSTANCE.registerItem(debuggerItem, false);
 
         if (BuildCraftCore.modifyWorld) {
-            EnumSpring.WATER.canGen = ConfigManager.get("worldgen.generateWaterSprings").getBoolean();
+            EnumSpring.WATER.canGen = ConficGuiFactoryBC.get("worldgen.generateWaterSprings").getBoolean();
             springBlock = new BlockSpring();
             springBlock.setUnlocalizedName("eternalSpring");
             BCRegistry.INSTANCE.registerBlock(springBlock, ItemSpring.class, false);
@@ -562,30 +563,30 @@ public class BuildCraftCore extends BuildCraftMod {
         TabletManagerServer.INSTANCE.onServerStopping();
     }
 
-    public void reloadConfig(ConfigManager.RestartRequirement restartType) {
-        if (restartType == ConfigManager.RestartRequirement.GAME) {
-            modifyWorld = ConfigManager.get("worldgen.enable").getBoolean();
-            updateFactor = ConfigManager.get("network.updateFactor").getInt();
-            longUpdateFactor = ConfigManager.get("network.longUpdateFactor").getInt();
-            colorBlindMode = ConfigManager.get("display.colorBlindMode").getBoolean();
+    public void reloadConfig(RestartRequirement restartType) {
+        if (restartType == RestartRequirement.GAME) {
+            modifyWorld = ConficGuiFactoryBC.get("worldgen.enable").getBoolean();
+            updateFactor = ConficGuiFactoryBC.get("network.updateFactor").getInt();
+            longUpdateFactor = ConficGuiFactoryBC.get("network.longUpdateFactor").getInt();
+            colorBlindMode = ConficGuiFactoryBC.get("display.colorBlindMode").getBoolean();
 
-            reloadConfig(ConfigManager.RestartRequirement.WORLD);
-        } else if (restartType == ConfigManager.RestartRequirement.WORLD) {
-            reloadConfig(ConfigManager.RestartRequirement.NONE);
+            reloadConfig(RestartRequirement.WORLD);
+        } else if (restartType == RestartRequirement.WORLD) {
+            reloadConfig(RestartRequirement.NONE);
         } else {
-            useServerDataOnClient = ConfigManager.get("general.useServerDataOnClient").getBoolean(true);
-            builderMaxPerItemFactor = ConfigManager.get("general.builderMaxIterationsPerItemFactor").getInt();
-            hideFluidNumbers = ConfigManager.get("display.hideFluidValues").getBoolean();
-            hidePowerNumbers = ConfigManager.get("display.hidePowerValues").getBoolean();
-            itemLifespan = ConfigManager.get("general.itemLifespan").getInt();
-            canEnginesExplode = ConfigManager.get("general.canEnginesExplode").getBoolean();
-            consumeWaterSources = ConfigManager.get("general.pumpsConsumeWater").getBoolean();
-            miningMultiplier = (float) ConfigManager.get("power.miningUsageMultiplier").getDouble();
-            miningAllowPlayerProtectedBlocks = ConfigManager.get("general.miningBreaksPlayerProtectedBlocks").getBoolean();
+            useServerDataOnClient = ConficGuiFactoryBC.get("general.useServerDataOnClient").getBoolean(true);
+            builderMaxPerItemFactor = ConficGuiFactoryBC.get("general.builderMaxIterationsPerItemFactor").getInt();
+            hideFluidNumbers = ConficGuiFactoryBC.get("display.hideFluidValues").getBoolean();
+            hidePowerNumbers = ConficGuiFactoryBC.get("display.hidePowerValues").getBoolean();
+            itemLifespan = ConficGuiFactoryBC.get("general.itemLifespan").getInt();
+            canEnginesExplode = ConficGuiFactoryBC.get("general.canEnginesExplode").getBoolean();
+            consumeWaterSources = ConficGuiFactoryBC.get("general.pumpsConsumeWater").getBoolean();
+            miningMultiplier = (float) ConficGuiFactoryBC.get("power.miningUsageMultiplier").getDouble();
+            miningAllowPlayerProtectedBlocks = ConficGuiFactoryBC.get("general.miningBreaksPlayerProtectedBlocks").getBoolean();
 
             BuildingSlotMapIterator.MAX_PER_ITEM = builderMaxPerItemFactor;
 
-            ChannelHandler.setRecordStats(ConfigManager.get("debug.network.stats").getBoolean());
+            ChannelHandler.setRecordStats(ConficGuiFactoryBC.get("debug.network.stats").getBoolean());
 
             if (mainConfiguration.hasChanged()) {
                 mainConfiguration.save();
@@ -596,7 +597,7 @@ public class BuildCraftCore extends BuildCraftMod {
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
         if ("BuildCraft|Core".equals(event.modID)) {
-            reloadConfig(event.isWorldRunning ? ConfigManager.RestartRequirement.NONE : ConfigManager.RestartRequirement.WORLD);
+            reloadConfig(event.isWorldRunning ? RestartRequirement.NONE : RestartRequirement.WORLD);
         }
     }
 

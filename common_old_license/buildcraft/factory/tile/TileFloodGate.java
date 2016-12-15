@@ -14,7 +14,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -24,6 +23,7 @@ import buildcraft.factory.block.BlockFloodGate;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankUtils;
 import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -40,7 +40,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     private TreeMap<Integer, Deque<BlockPos>> layerQueues = new TreeMap<>();
 
     public static int getIndexFromSide(EnumFacing side) {
-        return Arrays.binarySearch(SIDE_INDEXES, side);
+        return Arrays.binarySearch(SIDE_INDEXES, side);//wat?
     }
 
     public boolean isSideBlocked(EnumFacing side) {
@@ -97,16 +97,16 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                         return;
                     }
 
-                    IBlockState blockState = worldObj.getBlockState(currentPos);
+                    IBlockState blockState = world.getBlockState(currentPos);
 
                     Block block = blockState.getBlock();
                     Fluid fluid = BlockUtil.getFluidWithFlowing(block);
 
                     boolean isCurrentFluid = this.tank.getFluidType() != null && this.tank.getFluidType() == fluid;
 
-                    if (worldObj.isAirBlock(currentPos) || block instanceof BlockFloodGate || isCurrentFluid) {
+                    if (world.isAirBlock(currentPos) || block instanceof BlockFloodGate || isCurrentFluid) {
                         blocksFound.add(currentPos);
-                        if (worldObj.isAirBlock(currentPos) || (isCurrentFluid && blockState.getValue(BlockLiquid.LEVEL) != 0)) {
+                        if (world.isAirBlock(currentPos) || (isCurrentFluid && blockState.getValue(BlockLiquid.LEVEL) != 0)) {
                             getLayerQueue(currentPos.getY()).addLast(currentPos);
                         }
                     }
@@ -136,11 +136,11 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
     @Override
     public void update() {
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             return;
         }
 
-        TankUtils.pullFluidAround(worldObj, pos);
+        TankUtils.pullFluidAround(world, pos);
 
         tick++;
         if (tick % 16 == 0) {
@@ -148,7 +148,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             if (fluid != null && fluid.amount == 1000) {
                 BlockPos current = getNext();
                 if (current != null) {
-                    worldObj.setBlockState(current, fluid.getFluid().getBlock().getDefaultState());
+                    world.setBlockState(current, fluid.getFluid().getBlock().getDefaultState());
                     tank.drain(1000, true);
                     delayIndex = 0;
                 }
@@ -173,7 +173,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
         for (int i = 0; i < sidesBlocked.length; i++) {
             sides[i] = SIDE_INDEXES[i].toString().toLowerCase() + "(" + sidesBlocked[i] + ")";
         }
-        left.add("sides = " + String.join(" ", (CharSequence[]) sides));
+        left.add("sides = " + String.join(" ", sides));
         left.add("delay = " + getCurrentDelay());
     }
 

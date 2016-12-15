@@ -25,14 +25,14 @@ import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.registry.CreativeTabManager;
-import buildcraft.lib.registry.RegistryHelper;
 
 //@formatter:off
 @Mod(modid = BCCore.MODID,
      name = "BuildCraft Core",
      version = BCLib.VERSION,
      dependencies = "required-after:buildcraftlib@[" + BCLib.VERSION + "]",
-     guiFactory = "buildcraft.core.config.ConfigManager")
+     acceptedMinecraftVersions = "[1.11]",
+     guiFactory = "buildcraft.core.client.ConficGuiFactoryBC")
 //@formatter:on
 public class BCCore {
     public static final String MODID = "buildcraftcore";
@@ -55,8 +55,6 @@ public class BCCore {
 
         File cfgFolder = evt.getModConfigurationDirectory();
         cfgFolder = new File(cfgFolder, "buildcraft");
-        RegistryHelper.setRegistryConfig(MODID, new File(cfgFolder, "objects.cfg"));
-
         BCCoreConfig.preInit(cfgFolder);
         BCCoreProxy.getProxy().fmlPreInit();
 
@@ -89,5 +87,6 @@ public class BCCore {
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
         BCCoreProxy.getProxy().fmlPostInit();
+        BCCoreConfig.postInit();
     }
 }

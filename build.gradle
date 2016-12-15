@@ -312,7 +312,7 @@ jar {
 }
 
 // make sure all of these happen when we run build
-build.dependsOn sourceJar, apiJar, deobfJar
+build.dependsOn sourceJar, apiJar, deobfJar, javadocJar
 
 // --------------------
 // maven section
@@ -338,6 +338,7 @@ clean{
 artifacts {
     // the default jar is already here by default
     archives sourceJar
+    archives javadocJar
 
     // Modules
     archives apiJar

@@ -17,9 +17,7 @@ public interface IMaterialProvider {
 
     IRequestedFluid requestFluid(FluidStack fluid);
 
-    /** Designates *something* that can be requested. Use a child interface rather than this directly.
-     *
-     * @param <T> */
+    /** Designates *something* that can be requested. Use a child interface rather than this directly. */
     public interface IRequested {
 
         /** Attempts to fully reserve the object, but without actually using it.

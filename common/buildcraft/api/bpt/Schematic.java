@@ -16,7 +16,7 @@ public abstract class Schematic {
     /** Attempts to mirror this schematic in the given axis. (So given Axis.Y you should invert top-to-bottom)
      * 
      * @param axis The axis to mirror in.
-     * @throws SchematicException if your current state cannot be rotated in the given axis, but other states could be.
+     * @see SchematicException if your current state cannot be rotated in the given axis, but other states could be.
      *             (So don't throw if you are a fence and you were asked to mirror in the Y axis) */
     public abstract void mirror(Axis axis);
 
@@ -25,7 +25,7 @@ public abstract class Schematic {
      * 
      * @param axis The axis to rotate in.
      * @param rotation The rotation to apply.
-     * @throws SchematicException if your current state cannot be rotated in the given axis, but other states could be.
+     * @see SchematicException if your current state cannot be rotated in the given axis, but other states could be.
      *             (So don't throw if you are rail block and you were asked to rotate in the X axis, but DO throw if you
      *             are a torch and you have been asked to rotate to be placed upside down. */
     public abstract void rotate(Axis axis, Rotation rotation);

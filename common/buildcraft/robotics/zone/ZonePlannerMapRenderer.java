@@ -36,7 +36,7 @@ public enum ZonePlannerMapRenderer {
     private static void onRemove(RemovalNotification<ZonePlannerMapChunkKey, Integer> notification) {
         Integer val = notification.getValue();
         if (val != null) {
-            GL11.glDeleteLists(val.intValue(), 1);
+            GL11.glDeleteLists(val, 1);
         }
     }
 
@@ -104,8 +104,12 @@ public enum ZonePlannerMapRenderer {
             return -1;
         } else {
             GENERATING.remove(key);
-            return val.intValue();
+            return val;
         }
+    }
+
+    public void setColor(int color) {
+        vertex.colouri(color >> 16, color >> 8, color, color >> 24);
     }
 
     private void genChunk(ZonePlannerMapChunkKey key) {
@@ -116,7 +120,7 @@ public enum ZonePlannerMapRenderer {
                 for (int z = 0; z < 16; z++) {
                     MapColourData data = chunk.getData(x, z);
                     if (data != null) {
-                        vertex.colouri(data.colour >> 16, data.colour >> 8, data.colour, data.colour >> 24);
+                        setColor(data.colour);
                         drawBlockCuboid(builder, key.chunkPos.getXStart() + x, data.posY, key.chunkPos.getZStart() + z, data.posY);
                     }
                 }

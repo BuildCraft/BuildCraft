@@ -28,6 +28,8 @@ import buildcraft.lib.net.MessageContainer;
 import buildcraft.lib.net.MessageMarker;
 import buildcraft.lib.net.MessageUpdateTile;
 import buildcraft.lib.net.MessageWidget;
+import buildcraft.lib.net.cache.MessageObjectCacheReply;
+import buildcraft.lib.net.cache.MessageObjectCacheReq;
 import buildcraft.lib.particle.MessageParticleVanilla;
 
 public enum BCMessageHandler {
@@ -52,6 +54,8 @@ public enum BCMessageHandler {
         addMessageType(MessageLibraryRequest.class, MessageLibraryRequest.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageLibraryDBIndex.class, MessageLibraryDBIndex.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageParticleVanilla.class, MessageParticleVanilla.Handler.INSTANCE, Side.CLIENT);
+        addMessageType(MessageObjectCacheReq.class, MessageObjectCacheReq.Handler.INSTANCE, Side.SERVER);
+        addMessageType(MessageObjectCacheReply.class, MessageObjectCacheReply.Handler.INSTANCE, Side.CLIENT);
     }
 
     public static void fmlPostInit() {

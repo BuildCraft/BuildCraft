@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -84,10 +85,10 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
                 }
             }
         }
-        BlockPos first = pos.offset(worldObj.getBlockState(pos).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite());
+        BlockPos first = pos.offset(world.getBlockState(pos).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite());
         placingMap.put(first, true);
         framePoses.add(first); // "place" frame near quarry
-        BlockPos second = pos.offset(worldObj.getBlockState(pos).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite(), 2);
+        BlockPos second = pos.offset(world.getBlockState(pos).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite(), 2);
         placingMap.put(second, true);
         framePoses.add(second); // "place" frame in 2 block
         while (placingMap.size() != framePoses.size()) {
@@ -103,12 +104,12 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
-        if (placer.worldObj.isRemote) {
+        if (placer.world.isRemote) {
             return;
         }
-        EnumFacing facing = worldObj.getBlockState(getPos()).getValue(BlockBCBase_Neptune.PROP_FACING);
+        EnumFacing facing = world.getBlockState(getPos()).getValue(BlockBCBase_Neptune.PROP_FACING);
         BlockPos areaPos = getPos().offset(facing.getOpposite());
-        TileEntity tile = worldObj.getTileEntity(areaPos);
+        TileEntity tile = world.getTileEntity(areaPos);
         if (tile instanceof IAreaProvider) {
             IAreaProvider provider = (IAreaProvider) tile;
             box.reset();
@@ -122,7 +123,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
     @Override
     public void update() {
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             prevClientDrillPos = clientDrillPos;
             clientDrillPos = drillPos;
             return;
@@ -141,21 +142,21 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             for (int x = min.getX(); x < max.getX(); x++) {
                 BlockPos currentPos = new BlockPos(x, min.getY(), drillPos.zCoord);
                 if (hasEntityOfType(currentPos, EntityQuarry.Type.X)) {
-                    worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.X));
+                    world.spawnEntity(new EntityQuarry(world, pos, currentPos, EntityQuarry.Type.X));
                 }
             }
 
             for (int y = (int) drillPos.yCoord; y < min.getY(); y++) {
                 BlockPos currentPos = new BlockPos(drillPos.xCoord, y, drillPos.zCoord);
                 if (hasEntityOfType(currentPos, EntityQuarry.Type.Y)) {
-                    worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.Y));
+                    world.spawnEntity(new EntityQuarry(world, pos, currentPos, EntityQuarry.Type.Y));
                 }
             }
 
             for (int z = min.getZ(); z < max.getZ(); z++) {
                 BlockPos currentPos = new BlockPos(drillPos.xCoord, min.getY(), z);
                 if (hasEntityOfType(currentPos, EntityQuarry.Type.Z)) {
-                    worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.Z));
+                    world.spawnEntity(new EntityQuarry(world, pos, currentPos, EntityQuarry.Type.Z));
                 }
             }
         }
@@ -174,7 +175,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             for (int z = min.getZ(); z <= max.getZ(); z++) {
                 BlockPos pos = new BlockPos(x, min.getY(), z);
                 boolean shouldBeFrame = x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ();
-                Block block = worldObj.getBlockState(pos).getBlock();
+                Block block = world.getBlockState(pos).getBlock();
                 if ((block != Blocks.AIR && !shouldBeFrame) || (block != BCBuildersBlocks.frame && block != Blocks.AIR && shouldBeFrame)) {
                     breakPoses.add(pos);
                 }
@@ -201,7 +202,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
 
         for (BlockPos pos : getFramePoses()) {
-            Block block = worldObj.getBlockState(pos).getBlock();
+            Block block = world.getBlockState(pos).getBlock();
             if (block == Blocks.AIR) {
                 drillPos = null;
                 if (IntStream.range(0, invFrames.getSlots()).anyMatch(slot -> invFrames.getStackInSlot(slot) != null)) {
@@ -214,14 +215,14 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
         if (boxIterator == null || drillPos == null) {
             boxIterator = new BoxIterator(box, AxisOrder.getFor(EnumAxisOrder.XZY, AxisOrder.Inversion.NNN), true);
-            while (worldObj.isAirBlock(boxIterator.getCurrent())) {
+            while (world.isAirBlock(boxIterator.getCurrent())) {
                 boxIterator.advance();
             }
             drillPos = new Vec3d(boxIterator.getCurrent());
         }
 
         if (boxIterator.getMin() != null && boxIterator.getMax() != null) {
-            if (!worldObj.isAirBlock(boxIterator.getCurrent())) {
+            if (!world.isAirBlock(boxIterator.getCurrent())) {
                 currentTask = new TaskBreakBlock(boxIterator.getCurrent());
             } else {
                 currentTask = new TaskMoveDrill(drillPos, new Vec3d(boxIterator.advance()));
@@ -232,7 +233,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     }
 
     private boolean hasEntityOfType(BlockPos currentPos, EntityQuarry.Type type) {
-        return worldObj.getEntities(EntityQuarry.class, entityQuarry -> entityQuarry != null && entityQuarry.getType() == type && entityQuarry.getTilePos().equals(pos) && entityQuarry.getPosition().equals(currentPos)).size() < 1;
+        return world.getEntities(EntityQuarry.class, entityQuarry -> entityQuarry != null && entityQuarry.getType() == type && entityQuarry.getTilePos().equals(pos) && entityQuarry.getPosition().equals(currentPos)).size() < 1;
     }
 
     @Override
@@ -479,13 +480,13 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
         @Override
         public long getTarget() {
-            return BlockUtil.computeBlockBreakPower(worldObj, pos);
+            return BlockUtil.computeBlockBreakPower(world, pos);
         }
 
         @Override
         protected boolean energyReceived() {
-            if (!worldObj.isAirBlock(pos)) {
-                worldObj.sendBlockBreakProgress(pos.hashCode(), pos, (int) (energy * 9 / getTarget()));
+            if (!world.isAirBlock(pos)) {
+                world.sendBlockBreakProgress(pos.hashCode(), pos, (int) (energy * 9 / getTarget()));
                 return false;
             } else {
                 return true;
@@ -494,21 +495,22 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
         @Override
         protected void finish() {
-            BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(worldObj, pos, worldObj.getBlockState(pos), FakePlayerUtil.INSTANCE.getBuildCraftPlayer((WorldServer) worldObj).get());
+            EntityPlayer fake = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, TileQuarry.this.pos, TileQuarry.this.getOwner().getOwner());
+
+            BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, world.getBlockState(pos), fake);
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if (!breakEvent.isCanceled()) {
                 boolean put = TileQuarry.this.drillPos != null;
                 if (put) {
-                    NonNullList<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) worldObj, pos, TileQuarry.this.pos);
-                    // noinspection Duplicates
+                    NonNullList<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) world, pos, TileQuarry.this.getOwner().getOwner());
                     if (stacks != null) {
-                        for (ItemStack stack : stacks) {
-                            InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, stack);
+                        for (int i = 0; i < stacks.size(); i++) {
+                            InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, stacks.get(i));
                         }
                     }
                 }
-                worldObj.sendBlockBreakProgress(pos.hashCode(), pos, -1);
-                worldObj.destroyBlock(pos, !put);
+                world.sendBlockBreakProgress(pos.hashCode(), pos, -1);
+                world.destroyBlock(pos, !put);
             }
         }
 
@@ -558,16 +560,16 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
         @Override
         protected boolean energyReceived() {
-            return !worldObj.isAirBlock(pos);
+            return !world.isAirBlock(pos);
         }
 
         @Override
         protected void finish() {
-            if (worldObj.isAirBlock(pos)) {
+            if (world.isAirBlock(pos)) {
                 for (int slot = invFrames.getSlots(); slot >= 0; slot--) {
                     ItemStack stackInSlot = invFrames.getStackInSlot(slot);
                     if (stackInSlot != null) {
-                        worldObj.setBlockState(pos, BCBuildersBlocks.frame.getDefaultState());
+                        world.setBlockState(pos, BCBuildersBlocks.frame.getDefaultState());
                         invFrames.setStackInSlot(slot, stackInSlot.getCount() > 0 ? new ItemStack(stackInSlot.getItem(), stackInSlot.getCount() - 1) : null);
                         return;
                     }

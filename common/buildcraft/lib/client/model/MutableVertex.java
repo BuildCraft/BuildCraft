@@ -10,12 +10,19 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
+import buildcraft.lib.client.sprite.ISprite;
+
 public class MutableVertex {
-    private float position_x, position_y, position_z;
-    private float normal_x, normal_y, normal_z;
-    private short colour_r, colour_g, colour_b, colour_a;
-    private float tex_u, tex_v;
-    private byte light_block, light_sky;
+    /** The position of this vertex. */
+    public float position_x, position_y, position_z;
+    /** The normal of this vertex. Might not be normalised. */
+    public float normal_x, normal_y, normal_z;
+    /** The colour of this vertex, where each one is a number in the range 0-255 */
+    public short colour_r, colour_g, colour_b, colour_a;
+    /** The texture co-ord of this vertex. Should usually be between 0-1 */
+    public float tex_u, tex_v;
+    /** The light of this vertex. Should be in the range 0-15. */
+    public byte light_block, light_sky;
 
     public MutableVertex() {
         normal_x = 0;
@@ -141,6 +148,10 @@ public class MutableVertex {
         vb.tex(tex_u, tex_v);
     }
 
+    public void renderTex(VertexBuffer vb, ISprite sprite) {
+        vb.tex(sprite.getInterpU(tex_u), sprite.getInterpV(tex_v));
+    }
+
     public void renderLightMap(VertexBuffer vb) {
         vb.lightmap(light_sky << 4, light_block << 4);
     }
@@ -166,10 +177,10 @@ public class MutableVertex {
         return new Point3f(position_x, position_y, position_z);
     }
 
-    /** Sets the current normal for this vertex based off the given vector.
+    /** Sets the current normal for this vertex based off the given vector.<br>
+     * Note: This calls {@link #normalf(float, float, float)} internally, so refer to that for more warnings.
      * 
-     * @see #normalf(float, float, float)
-     * @implNote This calls {@link #normalf(float, float, float)} internally, so refer to that for more warnings. */
+     * @see #normalf(float, float, float) */
     public MutableVertex normalv(Tuple3f vec) {
         return normalf(vec.x, vec.y, vec.z);
     }

@@ -11,10 +11,11 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.api.core.IInvSlot;
+
+import buildcraft.lib.misc.CapUtil;
 
 public final class InventoryIterator {
 

@@ -9,6 +9,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
+import buildcraft.lib.misc.CapUtil;
+
 public class TankUtils {
     public static void pushFluidAround(IBlockAccess world, BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);

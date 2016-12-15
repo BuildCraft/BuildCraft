@@ -3,11 +3,13 @@ package buildcraft.transport;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.transport.ICustomPipeConnection;
 import buildcraft.api.transport.PipeConnectionAPI;
@@ -16,6 +18,7 @@ import buildcraft.api.transport.neptune.PipeFlowType;
 
 import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
+import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.RegistryHelper;
@@ -25,6 +28,8 @@ import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.pipe.flow.PipeFlowStructure;
 import buildcraft.transport.plug.PluggableRegistry;
+import buildcraft.transport.wire.MessageWireSystems;
+import buildcraft.transport.wire.MessageWireSystemsPowered;
 
 //@formatter:off
 @Mod(modid = BCTransport.MODID,
@@ -71,10 +76,14 @@ public class BCTransport {
         CreativeTabManager.setItem("buildcraft.pipe", BCTransportItems.pipeItemGold);
         CreativeTabManager.setItem("buildcraft.gate", BCTransportItems.plugGate);
 
-        // CreativeTabManager.setItem("buildcraft.pipe", BCCoreItems.wrench);
+        CreativeTabManager.setItem("buildcraft.pipe", BCTransportItems.pipeItemDiamond);
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCTransportProxy.getProxy());
 
         BCTransportProxy.getProxy().fmlPreInit();
+
+        MinecraftForge.EVENT_BUS.register(BCTransportEventDist.INSTANCE);
+        BCMessageHandler.addMessageType(MessageWireSystems.class, MessageWireSystems.Handler.INSTANCE, Side.CLIENT);
+        BCMessageHandler.addMessageType(MessageWireSystemsPowered.class, MessageWireSystemsPowered.Handler.INSTANCE, Side.CLIENT);
     }
 
     @Mod.EventHandler

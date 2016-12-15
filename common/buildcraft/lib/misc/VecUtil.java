@@ -1,5 +1,8 @@
 package buildcraft.lib.misc;
 
+import javax.vecmath.Tuple3f;
+import javax.vecmath.Vector3f;
+
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
@@ -72,6 +75,10 @@ public class VecUtil {
 
     public static BlockPos convertCeiling(Vec3d vec) {
         return new BlockPos(Math.ceil(vec.xCoord), Math.ceil(vec.yCoord), Math.ceil(vec.zCoord));
+    }
+
+    public static Tuple3f convertFloat(Vec3d vec) {
+        return new Vector3f((float) vec.xCoord, (float) vec.yCoord, (float) vec.zCoord);
     }
 
     // Min/Max
