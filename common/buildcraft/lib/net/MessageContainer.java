@@ -17,7 +17,6 @@ import buildcraft.lib.net.command.IPayloadWriter;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-/** Specialised version of {@link MessageCommand} that deals only with containers for gui's. */
 public class MessageContainer implements IMessage {
 
     private int windowId;

@@ -29,7 +29,6 @@ import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
 public class Blueprint extends BlueprintBase {
-    /** Stores all of the blocks, using {@link BlueprintBase#min} as the origin. */
     private SchematicBlock[][][] contentBlocks;
     private List<SchematicEntityOffset> contentEntities;
 

@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -23,16 +24,29 @@ import buildcraft.lib.item.IItemBuildCraft;
 public class RegistryHelper {
     private static final Map<ModContainer, Configuration> modObjectConfigs = new IdentityHashMap<>();
 
-    public static void setRegistryConfig(String modid, File file) {
-        setRegistryConfig(modid, new Configuration(file));
+    // #######################
+    //
+    // Setup
+    //
+    // #######################
+
+    public static Configuration setRegistryConfig(String modid, File file) {
+        Configuration cfg = new Configuration(file);
+        return setRegistryConfig(modid, cfg);
     }
 
-    public static void setRegistryConfig(String modid, Configuration config) {
+    public static Configuration setRegistryConfig(String modid, Configuration config) {
         modObjectConfigs.put(getMod(modid), config);
+        return config;
     }
 
-    public static void useOtherModConfigFor(String from, String to) {
-        modObjectConfigs.put(getMod(from), modObjectConfigs.get(getMod(to)));
+    public static Configuration useOtherModConfigFor(String from, String to) {
+        Configuration config = modObjectConfigs.get(getMod(to));
+        if (config == null) {
+            throw new IllegalStateException("Didn't find a config for " + to);
+        }
+        modObjectConfigs.put(getMod(from), config);
+        return config;
     }
 
     // #######################
@@ -82,7 +96,10 @@ public class RegistryHelper {
     private static boolean isEnabled(ModContainer activeMod, String category, String resourcePath) {
         Configuration config = modObjectConfigs.get(activeMod);
         if (config == null) throw new RuntimeException("No config exists for the mod " + activeMod.getModId());
-        return config.get(category, resourcePath, true).getBoolean(true);
+        Property prop = config.get(category, resourcePath, true);
+        prop.setRequiresMcRestart(true);
+        prop.setRequiresWorldRestart(true);
+        return prop.getBoolean(true);
     }
 
     private static ModContainer getMod(String modid) {

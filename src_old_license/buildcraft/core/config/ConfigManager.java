@@ -25,6 +25,12 @@ public class ConfigManager implements IModGuiFactory {
                     configElements.add(new BCConfigElement(BCCoreConfig.config.getCategory(s)));
                 }
             }
+
+            for (String s : BCCoreConfig.objConfig.getCategoryNames()) {
+                if (!s.contains(".")) {
+                    configElements.add(new BCConfigElement(BCCoreConfig.objConfig.getCategory(s)));
+                }
+            }
         }
     }
 

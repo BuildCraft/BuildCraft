@@ -45,7 +45,7 @@ public class BuildCraftObjectCaches {
         return CACHE_ITEMS.server().getId(new ItemStackKey(stack));
     }
 
-    /** @see NetworkedObjectCache.ClientView#retrieve(Object) */
+    /** @see NetworkedObjectCache.ClientView#retrieve(int) */
     public static Supplier<ItemStack> retrieveItemStack(int id) {
         NetworkedObjectCache<ItemStackKey>.Link link = CACHE_ITEMS.client().retrieve(id);
         return () -> link.get().baseStack;

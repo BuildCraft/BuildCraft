@@ -56,8 +56,6 @@ public class BCCore {
 
         File cfgFolder = evt.getModConfigurationDirectory();
         cfgFolder = new File(cfgFolder, "buildcraft");
-        RegistryHelper.setRegistryConfig(MODID, new File(cfgFolder, "objects.cfg"));
-
         BCCoreConfig.preInit(cfgFolder);
         BCCoreProxy.getProxy().fmlPreInit();
 

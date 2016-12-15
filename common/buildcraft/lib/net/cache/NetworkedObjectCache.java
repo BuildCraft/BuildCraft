@@ -78,7 +78,7 @@ public abstract class NetworkedObjectCache<T> {
 
         /** Stores the given object in this cache, returning its ID.
          * 
-         * @param object The object to store
+         * @param value The object to store
          * @return The id that maps back to the canonicalised version of the value. */
         public int store(T value) {
             return serverStore(value);
@@ -87,7 +87,7 @@ public abstract class NetworkedObjectCache<T> {
         /** Gets the ID for the given object, or -1 if this was not stored in the cache. {@link #store(Object)} is
          * preferred to this, as most uses (such as network sending) want the value to be stored and get a valid ID.
          * 
-         * @param object
+         * @param value The value to get an id for
          * @return */
         public int getId(T value) {
             return serverGetId(value);

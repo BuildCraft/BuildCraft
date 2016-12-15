@@ -19,9 +19,11 @@ import buildcraft.api.BCModules;
 import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.config.FileConfigManager;
+import buildcraft.lib.registry.RegistryHelper;
 
 public class BCCoreConfig {
     public static Configuration config;
+    public static Configuration objConfig;
     public static FileConfigManager detailedConfigManager;
 
     public static boolean colourBlindMode;
@@ -54,6 +56,7 @@ public class BCCoreConfig {
 
     public static void preInit(File cfgFolder) {
         config = new Configuration(new File(cfgFolder, "main.cfg"));
+        objConfig = RegistryHelper.setRegistryConfig(BCCore.MODID, new File(cfgFolder, "objects.cfg"));
 
         detailedConfigManager = new FileConfigManager(" The buildcraft detailed configuration file. This contains a lot of miscelaneous options that have no "
             + "affect on gameplay.\n You should refer to the BC source code for a detailed description of what these do. (https://github.com/BuildCraft/BuildCraft)\n"
@@ -144,6 +147,9 @@ public class BCCoreConfig {
         if (config.hasChanged()) {
             config.save();
         }
+        if (objConfig.hasChanged()) {
+            objConfig.save();
+        }
     }
 
     public static void reloadConfig(EnumRestartRequirement restarted) {
@@ -166,6 +172,9 @@ public class BCCoreConfig {
         }
         if (config.hasChanged()) {
             config.save();
+        }
+        if (objConfig.hasChanged()) {
+            objConfig.save();
         }
     }
 }
