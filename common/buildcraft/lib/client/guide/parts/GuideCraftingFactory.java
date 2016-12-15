@@ -11,7 +11,7 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.oredict.OreDictionary;
@@ -35,15 +35,9 @@ public class GuideCraftingFactory implements GuidePartFactory {
     public GuideCraftingFactory(ItemStack[][] input, ItemStack output) {
         this.input = new NonNullMatrix<>(input, StackUtil.EMPTY);
         this.output = StackUtil.asNonNull(output);
-        NBTTagCompound hashNbt = new NBTTagCompound();
-        hashNbt.setTag("output", output.serializeNBT());
-        for (int i = 0; i < input.length; i++) {
-            for (int j = 0; j < input[i].length; j++) {
-                ItemStack stack = StackUtil.asNonNull(input[i][j]);
-                if (!stack.isEmpty()) {
-                    hashNbt.setTag("in[" + i + "," + j + "]", stack.serializeNBT());
-                }
-            }
+        NBTTagList hashNbt = new NBTTagList();
+        for (ItemStack stack : this.input) {
+            hashNbt.appendTag(stack.serializeNBT());
         }
         this.hash = hashNbt.hashCode();
     }

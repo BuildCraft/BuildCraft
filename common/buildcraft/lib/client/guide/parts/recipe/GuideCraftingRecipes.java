@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -55,14 +56,14 @@ public enum GuideCraftingRecipes implements IStackRecipes {
         } else if (recipe instanceof ShapedOreRecipe) {
             ShapedOreRecipe ore = (ShapedOreRecipe) recipe;
             for (Object in : ore.getInput()) {
-                if (matches(target, StackUtil.asNonNull(in))) {
+                if (matches(target, in)) {
                     return true;
                 }
             }
         } else if (recipe instanceof ShapelessOreRecipe) {
             ShapelessOreRecipe ore = (ShapelessOreRecipe) recipe;
             for (Object in : ore.getInput()) {
-                if (matches(target, StackUtil.asNonNull(in))) {
+                if (matches(target, in)) {
                     return true;
                 }
             }
@@ -70,7 +71,7 @@ public enum GuideCraftingRecipes implements IStackRecipes {
         return false;
     }
 
-    private static boolean matches(@Nonnull ItemStack target, @Nonnull Object in) {
+    private static boolean matches(@Nonnull ItemStack target, @Nullable Object in) {
         if (in instanceof ItemStack) {
             return StackUtil.doesEitherStackMatch((ItemStack) in, target);
         } else if (in instanceof List) {

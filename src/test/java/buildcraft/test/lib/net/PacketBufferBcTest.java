@@ -69,4 +69,14 @@ public class PacketBufferBcTest {
 
         Assert.assertEquals(3, buffer.readerIndex());
     }
+
+    @Test
+    public void testFixedBits() {
+        PacketBufferBC buffer = new PacketBufferBC(new PrintingByteBuf(Unpooled.buffer()));
+        int value = 0xA4;
+        buffer.writeFixedBits(value, 10);
+
+        int read = buffer.readFixedBits(10);
+        Assert.assertEquals(value, read);
+    }
 }

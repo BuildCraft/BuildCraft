@@ -323,6 +323,28 @@ public class StackUtil {
         return obj;
     }
 
+    /** @param obj
+     * @param fallback
+     * @return */
+    @Nonnull
+    public static <T> T asNonNullSoft(@Nullable T obj, @Nonnull T fallback) {
+        if (obj == null) {
+            return fallback;
+        } else {
+            return obj;
+        }
+    }
+
+    @Nonnull
+    public static ItemStack asNonNullStack(@Nullable ItemStack stack) {
+        return asNonNull(stack);
+    }
+
+    @Nonnull
+    public static ItemStack asNonNullStackSoft(@Nullable ItemStack stack) {
+        return asNonNullSoft(stack, EMPTY);
+    }
+
     /** Computes a hash code for the given {@link ItemStack}. This is based off of {@link ItemStack#serializeNBT()},
      * except if {@link ItemStack#isEmpty()} returns true, in which case the hash will be 0. */
     public static int hash(@Nonnull ItemStack stack) {

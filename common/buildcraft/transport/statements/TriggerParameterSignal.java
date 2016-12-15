@@ -23,6 +23,7 @@ import buildcraft.api.statements.StatementMouseClick;
 
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.BCTransportSprites;
 
 public class TriggerParameterSignal implements IStatementParameter {
@@ -39,7 +40,7 @@ public class TriggerParameterSignal implements IStatementParameter {
 
     @Override
     public ItemStack getItemStack() {
-        return null;
+        return StackUtil.EMPTY;
     }
 
     @Override

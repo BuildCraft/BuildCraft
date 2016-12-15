@@ -34,7 +34,8 @@ public final class PrintingByteBuf extends PacketBuffer {
 
     @Override
     public ByteBuf writeBytes(ByteBuf src) {
-        return writeBytes(src, src.readableBytes());
+        writeBytes(src, src.readableBytes());
+        return this;
     }
 
     @Override
@@ -100,5 +101,13 @@ public final class PrintingByteBuf extends PacketBuffer {
             chars[i + diff + 1] = s.charAt(i);
         }
         return chars;
+    }
+
+    @Override
+    public ByteBuf setByte(int index, int value) {
+        System.out.println("\n  Set " + index + " (" + new String(padLength(2, getByte(index)))//
+            + " ) to" + new String(padLength(2, value)));
+        super.setByte(index, value);
+        return this;
     }
 }

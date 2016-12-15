@@ -15,7 +15,6 @@ import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -29,6 +28,7 @@ import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.fluids.Tank;
+import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -52,7 +52,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
 
     @Override
     public void update() {
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             amountLast = amount;
             if (amount != target) {
                 int delta = target - amount;
@@ -68,13 +68,13 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         }
 
         if (lastSentFluid != (tank.getFluid() != null)) {
-            if (tracker.markTimeIfDelay(worldObj)) {
+            if (tracker.markTimeIfDelay(world)) {
                 lastSentFluid = tank.getFluid() != null;
                 lastSentAmount = tank.getFluidAmount();
                 sendNetworkUpdate(NET_RENDER_DATA);
             }
         } else if (lastSentAmount != tank.getFluidAmount()) {
-            if (tracker.markTimeIfDelay(worldObj)) {
+            if (tracker.markTimeIfDelay(world)) {
                 lastSentAmount = tank.getFluidAmount();
                 sendNetworkUpdate(NET_FLUID_DELTA);
             }
@@ -84,11 +84,11 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
-        if (!placer.worldObj.isRemote) {
+        if (!placer.world.isRemote) {
             BlockPos p = pos.up();
             TileTank moveTo = this;
             while (true) {
-                TileEntity tileUp = worldObj.getTileEntity(p);
+                TileEntity tileUp = world.getTileEntity(p);
                 if (tileUp instanceof TileTank) {
                     TileTank tankUp = (TileTank) tileUp;
 
@@ -142,11 +142,11 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
             if (id == NET_RENDER_DATA) {
                 tank.readFromBuffer(buffer);
                 target = tank.getFluidAmount();
-                lastMessageMinus1 = lastMessage = worldObj.getTotalWorldTime();
+                lastMessageMinus1 = lastMessage = world.getTotalWorldTime();
             } else if (id == NET_FLUID_DELTA) {
                 target = buffer.readInt();
                 lastMessageMinus1 = lastMessage;
-                lastMessage = worldObj.getTotalWorldTime();
+                lastMessage = world.getTotalWorldTime();
             }
         }
     }
@@ -157,7 +157,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("fluid = " + tank.getDebugString());
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             left.add("shown = " + amount + ", target = " + target);
             left.add("lastMsg = " + lastMessage + ", lastMsg-1 = " + lastMessageMinus1 + ", diff = " + (lastMessage - lastMessageMinus1));
         } else {
@@ -194,7 +194,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     // Tank helper methods
 
     private Tank getTank(BlockPos at) {
-        TileEntity tile = worldObj.getTileEntity(at);
+        TileEntity tile = world.getTileEntity(at);
         if (tile instanceof TileTank) {
             TileTank tileTank = (TileTank) tile;
             return tileTank.tank;

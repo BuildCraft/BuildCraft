@@ -1,7 +1,6 @@
 package buildcraft.lib.misc.data;
 
 import java.util.AbstractList;
-import java.util.Arrays;
 
 import javax.annotation.Nonnull;
 
@@ -19,29 +18,12 @@ public class NonNullMatrix<T> extends AbstractList<T> {
         internalList = NonNullList.withSize(width * height, fill);
     }
 
-    /** Creates a {@link NonNullMatrix} from the given 2-dim array, throwing a {@link NullPointerException} if any of
-     * the elements are null. */
-    public NonNullMatrix(T[][] from) {
-        this.width = from.length;
-        this.height = width == 0 ? 0 : from[0].length;
-        internalList = NonNullList.withSize(width * height, null);
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                T val = from[x][y];
-                if (val == null) {
-                    throw new NullPointerException("Null value @" + x + ", " + y + " in " + Arrays.deepToString(from));
-                }
-                set(x, y, val);
-            }
-        }
-    }
-
     /** Creates a {@link NonNullMatrix} from the given 2-dim array, replacing all null values with the given nonnull
      * replacement. */
     public NonNullMatrix(T[][] from, @Nonnull T nullReplacor) {
         this.width = from.length;
         this.height = width == 0 ? 0 : from[0].length;
-        internalList = NonNullList.withSize(width * height, null);
+        internalList = NonNullList.withSize(width * height, nullReplacor);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 T val = from[x][y];
