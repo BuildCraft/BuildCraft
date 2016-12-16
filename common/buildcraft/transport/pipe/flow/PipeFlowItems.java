@@ -93,7 +93,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         if (side == Side.CLIENT) {
             if (id == NET_CREATE_ITEM) {
                 EnumFacing from = buffer.readEnumValue(EnumFacing.class);
-                EnumFacing to = buffer.readEnumValue(EnumFacing.class);
+                EnumFacing to = MessageUtil.readEnumOrNull(buffer, EnumFacing.class);
                 EnumDyeColor colour = MessageUtil.readEnumOrNull(buffer, EnumDyeColor.class);
                 int delay = buffer.readInt();
 
@@ -488,7 +488,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         sendCustomPayload(NET_CREATE_ITEM, (buffer) -> {
             PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
             buf.writeEnumValue(from);
-            buf.writeEnumValue(item.to);
+            MessageUtil.writeEnumOrNull(buf, item.to);
             MessageUtil.writeEnumOrNull(buf, colour);
             buf.writeInt(delay);
             buf.writeInt(stackId);
