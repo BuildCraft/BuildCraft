@@ -19,6 +19,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.misc.data.DelayedList;
+import buildcraft.lib.net.PacketBufferBC;
 
 import io.netty.buffer.ByteBuf;
 
@@ -143,6 +144,29 @@ public class MessageUtil {
 
     public static Vec3d readVec3d(PacketBuffer buffer) {
         return new Vec3d(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
+    }
+
+    /** {@link PacketBuffer#writeEnumValue(Enum)} can only write *actual* enum values - so not null. This method allows
+     * for writing an enum value, or null. */
+    public static void writeEnumOrNull(ByteBuf buffer, Enum<?> value) {
+        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
+        if (value == null) {
+            buf.writeBoolean(false);
+        } else {
+            buf.writeBoolean(true);
+            buf.writeEnumValue(value);
+        }
+    }
+
+    /** {@link PacketBuffer#readEnumValue(Class)} can only read *actual* enum values - so not null. This method allows
+     * for reading an enum value, or null. */
+    public static <E extends Enum<E>> E readEnumOrNull(ByteBuf buffer, Class<E> clazz) {
+        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
+        if (buf.readBoolean()) {
+            return buf.readEnumValue(clazz);
+        } else {
+            return null;
+        }
     }
 
     public static void sendReturnMessage(MessageContext context, IMessage reply) {

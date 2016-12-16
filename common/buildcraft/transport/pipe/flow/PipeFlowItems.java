@@ -38,6 +38,7 @@ import buildcraft.api.transport.neptune.PipeFlow;
 
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.DelayedList;
 import buildcraft.lib.net.PacketBufferBC;
@@ -92,7 +93,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
             if (id == NET_CREATE_ITEM) {
                 EnumFacing from = buffer.readEnumValue(EnumFacing.class);
                 EnumFacing to = buffer.readEnumValue(EnumFacing.class);
-                EnumDyeColor colour = buffer.readEnumValue(EnumDyeColor.class);
+                EnumDyeColor colour = MessageUtil.readEnumOrNull(buffer, EnumDyeColor.class);
                 int delay = buffer.readInt();
 
                 int stackId = buffer.readInt();
@@ -487,7 +488,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
             PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
             buf.writeEnumValue(from);
             buf.writeEnumValue(item.to);
-            buf.writeEnumValue(colour);
+            MessageUtil.writeEnumOrNull(buf, colour);
             buf.writeInt(delay);
             buf.writeInt(stackId);
             buf.writeShort(stack.stackSize);
