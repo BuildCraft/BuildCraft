@@ -64,7 +64,7 @@ public class BCLib {
     public static void init(FMLInitializationEvent evt) {
         BCLibProxy.getProxy().fmlInit();
 
-        VanillaSchematics.fmlInit();
+//        VanillaSchematics.fmlInit();
         VanillaListHandlers.fmlInit();
         VanillaPaintHandlers.fmlInit();
         VanillaRotationHandlers.fmlInit();

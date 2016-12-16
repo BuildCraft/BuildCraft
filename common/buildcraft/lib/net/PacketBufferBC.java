@@ -69,7 +69,8 @@ public class PacketBufferBC extends PacketBuffer {
     @Override
     public PacketBufferBC writeBoolean(boolean flag) {
         writePartialBitsBegin();
-        writePartialCache |= (flag ? 1 : 0) << writePartialOffset;
+        int toWrite = (flag ? 1 : 0) << writePartialOffset;
+        writePartialCache |= toWrite;
         writePartialOffset++;
         setByte(writePartialIndex, writePartialCache);
         return this;
@@ -98,6 +99,7 @@ public class PacketBufferBC extends PacketBuffer {
         if (length > 32) {
             throw new IllegalArgumentException("Tried to write more bits than are in an integer! (" + length + ")");
         }
+
         writePartialBitsBegin();
 
         // - length = 10
@@ -116,6 +118,7 @@ public class PacketBufferBC extends PacketBuffer {
 
         // first stage: take the toppermost bits and append them to the cache (if the cache contains bits)
         if (writePartialOffset > 0) {
+
             // top length = 8 - (num bits in cache) or length, whichever is SMALLER
             int availbleBits = 8 - writePartialOffset;
 
@@ -129,7 +132,6 @@ public class PacketBufferBC extends PacketBuffer {
                 // we just wrote out the entire length, no need to do anything else.
                 return this;
             } else { // topLength < length -- we will still need to be writing out more bits after this
-
                 // length = 10
                 // topLength = 1
                 // value = __01 2345 6789
@@ -139,9 +141,9 @@ public class PacketBufferBC extends PacketBuffer {
 
                 int mask = (1 << availbleBits) - 1;
 
-                int shiftBack = length - availbleBits;
+                int shift = length - availbleBits;
 
-                int bitsToWrite = (value >>> shiftBack) & mask;
+                int bitsToWrite = (value >>> shift) & mask;
 
                 writePartialCache |= bitsToWrite << writePartialOffset;
                 setByte(writePartialIndex, writePartialCache);
@@ -151,8 +153,7 @@ public class PacketBufferBC extends PacketBuffer {
                 writePartialOffset = 8;
 
                 // now shift the value down ready for the next iteration
-                value >>>= shiftBack;
-                length -= shiftBack;
+                length -= availbleBits;
             }
         }
 
@@ -160,7 +161,7 @@ public class PacketBufferBC extends PacketBuffer {
             // write out full 8 bit chunks of the length until we reach 0
             writePartialBitsBegin();
 
-            int byteToWrite = (value >>> (length - 8)) & 0xFFFF;
+            int byteToWrite = (value >>> (length - 8)) & 0xFF;
 
             setByte(writePartialIndex, byteToWrite);
 
@@ -168,7 +169,6 @@ public class PacketBufferBC extends PacketBuffer {
             writePartialCache = 0;
             writePartialOffset = 8;
 
-            value >>>= 8;
             length -= 8;
         }
 
@@ -197,33 +197,65 @@ public class PacketBufferBC extends PacketBuffer {
         }
         readPartialBitsBegin();
 
-        throw new AbstractMethodError("// TODO: Implement this!");
+        int value = 0;
+
+        if (readPartialOffset > 0) {
+            // If we have bits left at the top of the buffer...
+            int avalibleBits = 8 - readPartialOffset;
+            if (avalibleBits >= length) {
+                // If the wanted bits are completely contained within the cache
+                int mask = (1 << length) - 1;
+                value = (readPartialCache >>> readPartialOffset) & mask;
+                readPartialOffset += length;
+                return value;
+            } else {
+                // If we need to read more bits than are available in the cache
+                int bitsRead = readPartialCache >>> readPartialOffset;
+
+                value = bitsRead;
+
+                // We finished reading a byte, reset values so the next step will read them properly
+
+                readPartialCache = 0;
+                readPartialOffset = 8;
+
+                length -= avalibleBits;
+            }
+        }
+
+        while (length >= 8) {
+            readPartialBitsBegin();
+            length -= 8;
+            value <<= 8;
+            value |= readPartialCache;
+            readPartialOffset = 8;
+        }
+
+        if (length > 0) {
+            readPartialBitsBegin();
+
+            int mask = (1 << length) - 1;
+
+            value <<= length;
+            value |= readPartialCache & mask;
+            readPartialOffset = length;
+        }
+
+        return value;
     }
 
     @Override
     public PacketBufferBC writeEnumValue(Enum<?> value) {
-        if (value == null) {
-            writeBoolean(false);
-        } else {
-            writeBoolean(true);
-            Enum<?>[] possible = value.getClass().getEnumConstants();
-            writeFixedBits(value.ordinal(), MathHelper.smallestEncompassingPowerOfTwo(possible.length));
-        }
+        Enum<?>[] possible = value.getClass().getEnumConstants();
+        writeFixedBits(value.ordinal(), MathHelper.log2DeBruijn(possible.length));
         return this;
     }
 
     @Override
     public <T extends Enum<T>> T readEnumValue(Class<T> enumClass) {
-        boolean exists = readBoolean();
-        if (!exists) {
-            return null;
-        }
-
         T[] enums = enumClass.getEnumConstants();
-        int length = MathHelper.smallestEncompassingPowerOfTwo(enums.length);
+        int length = MathHelper.log2DeBruijn(enums.length);
         int index = readFixedBits(length);
         return enums[index];
     }
-
-    // TODO: Fixed bits!
 }

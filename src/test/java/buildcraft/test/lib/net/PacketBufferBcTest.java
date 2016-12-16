@@ -3,6 +3,9 @@ package buildcraft.test.lib.net;
 import org.junit.Assert;
 import org.junit.Test;
 
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumFacing;
+
 import buildcraft.lib.nbt.PrintingByteBuf;
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -74,9 +77,51 @@ public class PacketBufferBcTest {
     public void testFixedBits() {
         PacketBufferBC buffer = new PacketBufferBC(new PrintingByteBuf(Unpooled.buffer()));
         int value = 0xA4;
+        int value2 = 1;
+        int value3 = 0xF_81_67;
+        int value4 = 0x7E_DC_A9_87;
+
         buffer.writeFixedBits(value, 10);
+        buffer.writeFixedBits(value2, 2);
+        buffer.writeBoolean(true);
+        buffer.writeFixedBits(value3, 20);
+        buffer.writeFixedBits(value4, 31);
 
         int read = buffer.readFixedBits(10);
         Assert.assertEquals(value, read);
+
+        int read2 = buffer.readFixedBits(2);
+        Assert.assertEquals(value2, read2);
+
+        Assert.assertTrue(buffer.readBoolean());
+
+        int read3 = buffer.readFixedBits(20);
+        Assert.assertEquals(value3, read3);
+
+        int read4 = buffer.readFixedBits(31);
+        Assert.assertEquals(value4, read4);
+
+        Assert.assertEquals(8, buffer.readerIndex());
+        Assert.assertEquals(8, buffer.writerIndex());
+    }
+
+    @Test
+    public void testEnums() {
+        PacketBufferBC buffer = new PacketBufferBC(new PrintingByteBuf(Unpooled.buffer()));
+
+        buffer.writeBoolean(true);
+        buffer.writeEnumValue(EnumFacing.DOWN);
+        buffer.writeEnumValue(EnumFacing.SOUTH);
+        buffer.writeEnumValue(EnumDyeColor.BROWN);
+        buffer.writeEnumValue(EnumDyeColor.CYAN);
+
+        Assert.assertTrue(buffer.readBoolean());
+        Assert.assertEquals(EnumFacing.DOWN, buffer.readEnumValue(EnumFacing.class));
+        Assert.assertEquals(EnumFacing.SOUTH, buffer.readEnumValue(EnumFacing.class));
+        Assert.assertEquals(EnumDyeColor.BROWN, buffer.readEnumValue(EnumDyeColor.class));
+        Assert.assertEquals(EnumDyeColor.CYAN, buffer.readEnumValue(EnumDyeColor.class));
+
+        Assert.assertEquals(2, buffer.readerIndex());
+        Assert.assertEquals(2, buffer.writerIndex());
     }
 }

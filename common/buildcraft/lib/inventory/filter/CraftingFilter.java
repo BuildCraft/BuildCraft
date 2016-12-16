@@ -17,16 +17,16 @@ public class CraftingFilter implements IStackFilter {
     private final NonNullList<ItemStack> stacks;
 
     public CraftingFilter(ItemStack... stacks) {
-        this.stacks = stacks;
+        this.stacks = StackUtil.listOf(stacks);
     }
 
     @Override
     public boolean matches(ItemStack stack) {
-        if (stacks.length == 0 || !hasFilter()) {
+        if (stacks.size() == 0 || !hasFilter()) {
             return true;
         }
-        for (ItemStack s : stacks) {
-            if (StackUtil.isCraftingEquivalent(s, stack, true)) {
+        for (int i = 0; i < stacks.size(); i++) {
+            if (StackUtil.isCraftingEquivalent(stacks.get(i), stack, true)) {
                 return true;
             }
         }

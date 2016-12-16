@@ -17,12 +17,12 @@ public class ArrayStackFilter implements IStackFilter {
     protected NonNullList<ItemStack> stacks;
 
     public ArrayStackFilter(ItemStack... stacks) {
-        this.stacks = stacks;
+        this.stacks = StackUtil.listOf(stacks);
     }
 
     @Override
     public boolean matches(ItemStack stack) {
-        if (stacks.length == 0 || !hasFilter()) {
+        if (stacks.size() == 0 || !hasFilter()) {
             return true;
         }
         for (ItemStack s : stacks) {

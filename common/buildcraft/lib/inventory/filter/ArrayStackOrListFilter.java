@@ -17,7 +17,7 @@ public class ArrayStackOrListFilter extends ArrayStackFilter {
 
     @Override
     public boolean matches(ItemStack stack) {
-        if (stacks.length == 0 || !hasFilter()) {
+        if (stacks.size() == 0 || !hasFilter()) {
             return true;
         }
 

@@ -52,7 +52,7 @@ public class TileChute extends TileBCInventory_Neptune implements ITickable, IDe
                 return;
             }
 
-            TileEntity tile = worldObj.getTileEntity(pos.offset(side));
+            TileEntity tile = world.getTileEntity(pos.offset(side));
             IItemTransactor transactor = ItemTransactorHelper.getTransactor(tile, side.getOpposite());
 
             if (transactor == NoSpaceTransactor.INSTANCE) {
@@ -60,11 +60,11 @@ public class TileChute extends TileBCInventory_Neptune implements ITickable, IDe
             }
 
             IStackFilter filter = (stack) -> {
-                if (stack == null) {
+                if (stack.isEmpty()) {
                     return false;
                 }
                 ItemStack leftOver = transactor.insert(stack.copy(), false, true);
-                if (leftOver == null) {
+                if (leftOver.isEmpty()) {
                     return true;
                 }
                 return leftOver.getCount() < stack.getCount();
@@ -81,12 +81,12 @@ public class TileChute extends TileBCInventory_Neptune implements ITickable, IDe
         BlockPos offset = new BlockPos(currentSide.getDirectionVec());
         offset = new BlockPos(offset.getX() * radius, offset.getY() * radius, offset.getZ() * radius);
         AxisAlignedBB aabb = new AxisAlignedBB(this.pos, this.pos).expandXyz(radius).offset(offset);
-        List<EntityItem> entityItems = worldObj.getEntitiesWithinAABB(EntityItem.class, aabb);
+        List<EntityItem> entityItems = world.getEntitiesWithinAABB(EntityItem.class, aabb);
         int index = 0, max = 3;
         for (EntityItem entityItem : entityItems) {
             ItemStack stack = entityItem.getEntityItem();
             stack = inv.insert(stack, false, false);
-            if (stack == null) {
+            if (stack.isEmpty()) {
                 entityItem.setDead();
             } else {
                 entityItem.setEntityItemStack(stack);
@@ -116,11 +116,11 @@ public class TileChute extends TileBCInventory_Neptune implements ITickable, IDe
 
     @Override
     public void update() {
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             return;
         }
 
-        if (!(worldObj.getBlockState(pos).getBlock() instanceof BlockChute)) {
+        if (!(world.getBlockState(pos).getBlock() instanceof BlockChute)) {
             return;
         }
 
@@ -129,7 +129,7 @@ public class TileChute extends TileBCInventory_Neptune implements ITickable, IDe
         // test with the output of a stone engine
         battery.addPower(1000); // remove this
 
-        EnumFacing currentSide = worldObj.getBlockState(pos).getValue(BlockBCBase_Neptune.BLOCK_FACING_6);
+        EnumFacing currentSide = world.getBlockState(pos).getValue(BlockBCBase_Neptune.BLOCK_FACING_6);
 
         int target = 100000;
         if (currentSide == EnumFacing.UP.getOpposite()) {

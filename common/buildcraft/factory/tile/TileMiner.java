@@ -63,7 +63,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     public void update() {
         deltaManager.tick();
 
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             return;
         }
 
@@ -148,7 +148,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
 
     protected void setComplete(boolean isComplete) {
         this.isComplete = isComplete;
-        if (!worldObj.isRemote) {
+        if (!world.isRemote) {
             sendNetworkUpdate(NET_LED_STATUS);
         }
     }

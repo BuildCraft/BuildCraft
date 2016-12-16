@@ -32,7 +32,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.energy.BCEnergyFluids;
 
-@SuppressWarnings("Duplicates")
 public final class OilPopulate {
     public static final OilPopulate INSTANCE = new OilPopulate();
     public static final EventType EVENT_TYPE = EnumHelper.addEnum(EventType.class, "BUILDCRAFT_OIL", new Class[0]);
