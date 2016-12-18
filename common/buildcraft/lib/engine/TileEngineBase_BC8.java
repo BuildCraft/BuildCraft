@@ -202,7 +202,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
             return;
         }
         MjAPI.EFFECT_MANAGER.createPowerLossEffect(getWorld(), new Vec3d(getPos()), currentDirection, excess);
-        ParticleUtil.showTempPower(getWorld(), getPos(), getCurrentDirection(), excess);
+//        ParticleUtil.showTempPower(getWorld(), getPos(), getCurrentDirection(), excess);
         // This is horrible!
         addHeatFromPower(excess);
     }
