@@ -103,7 +103,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                 if (tile.drillPos == null) {
                     LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(LASER, VecUtil.convertCenter(tile.getPos()), VecUtil.convertCenter(pos), 1 / 16D), buffer);
                 } else {
-                    yOffset = (double) currentTask1.getEnergy() / currentTask1.getTarget();
+                    yOffset = (double) currentTask1.getPower() / currentTask1.getTarget();
                     if (yOffset < 0.9) {
                         yOffset = 1 - yOffset / 0.9;
                     } else {
@@ -155,7 +155,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
             TileQuarry.TaskAddFrame currentTask = (TileQuarry.TaskAddFrame) tile.currentTask;
             int index = tile.getFramePoses().indexOf(currentTask.pos);
             if (index > 1) {
-                double progress = (double) currentTask.getEnergy() / currentTask.getTarget() * (index - 1) / tile.getFramePoses().size();
+                double progress = (double) currentTask.getPower() / currentTask.getTarget() * (index - 1) / tile.getFramePoses().size();
                 double progress1 = (progress >= 0 && progress <= 0.25) ? progress * 4 ://
                     (progress >= 0.25 && progress <= 0.5) ? 1 ://
                         (progress >= 0.5 && progress <= 0.75) ? 1 - (progress - 0.5) * 4 ://

@@ -14,14 +14,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import buildcraft.api.blocks.ICustomRotationHandler;
-import buildcraft.api.enums.EnumEnergyStage;
-import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
@@ -31,11 +29,6 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile
 
     public BlockEngineBase_BC8(Material material, String id) {
         super(material, id);
-        IBlockState defaultState = getDefaultState();
-        defaultState = defaultState.withProperty(BuildCraftProperties.ENGINE_TYPE, EnumEngineType.WOOD);
-        defaultState = defaultState.withProperty(BuildCraftProperties.ENERGY_STAGE, EnumEnergyStage.BLUE);
-        defaultState = defaultState.withProperty(BuildCraftProperties.BLOCK_FACING_6, EnumFacing.UP);
-        setDefaultState(defaultState);
     }
 
     // Engine directly related methods
@@ -69,17 +62,6 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile
         return getDefaultState().withProperty(getEngineProperty(), engineType);
     }
 
-    @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileEngineBase_BC8) {
-            TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
-            state = state.withProperty(BuildCraftProperties.ENERGY_STAGE, engine.getEnergyStage());
-            state = state.withProperty(BuildCraftProperties.BLOCK_FACING_6, engine.getCurrentDirection());
-        }
-        return state;
-    }
-
     // Misc Block Overrides
 
     @Override
@@ -95,6 +77,11 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile
     @Override
     public boolean isFullCube(IBlockState state) {
         return false;
+    }
+
+    @Override
+    public EnumBlockRenderType getRenderType(IBlockState state) {
+        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
     @Override

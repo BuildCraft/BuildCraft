@@ -129,7 +129,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
         if (!battery.isFull()) {
             // test with the output of a stone engine
-            battery.addPower(MjAPI.MJ); // remove this
+//            battery.addPower(MjAPI.MJ); // remove this
         }
 
         if (min == null || max == null || box == null) {
@@ -160,7 +160,8 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
 
         if (currentTask != null) {
-            if (currentTask.addEnergy(battery.extractPower(0, Math.min(currentTask.getTarget() - currentTask.getEnergy(), 1000000)))) {
+            long max = MjAPI.MJ * 2 /*recentPowerAverage */;
+            if (currentTask.addEnergy(battery.extractPower(0, Math.min(currentTask.getTarget() - currentTask.getPower(), max)))) {
                 currentTask = null;
             }
             sendNetworkUpdate(NET_RENDER_DATA);
@@ -362,8 +363,8 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         if (currentTask != null) {
             left.add("task:");
             left.add(" - class = " + currentTask.getClass().getName());
-            left.add(" - energy = " + currentTask.getEnergy());
-            left.add(" - target = " + currentTask.getTarget());
+            left.add(" - power = " + MjAPI.formatMjShort(currentTask.getPower()));
+            left.add(" - target = " + MjAPI.formatMjShort(currentTask.getTarget()));
         } else {
             left.add("task = null");
         }
@@ -417,7 +418,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
         protected abstract void finish();
 
-        public final long getEnergy() {
+        public final long getPower() {
             return energy;
         }
 
@@ -497,6 +498,8 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if (!breakEvent.isCanceled()) {
                 boolean put = TileQuarry.this.drillPos != null;
+                // The drill pos will be null if we are making the frame: this is when we want to destroy the block, not
+                // drop its contents
                 if (put) {
                     List<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) worldObj, pos, TileQuarry.this.pos);
                     // noinspection Duplicates
@@ -507,7 +510,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
                     }
                 }
                 worldObj.sendBlockBreakProgress(pos.hashCode(), pos, -1);
-                worldObj.destroyBlock(pos, !put);
+                worldObj.destroyBlock(pos, false);
             }
         }
 

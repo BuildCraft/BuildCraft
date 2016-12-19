@@ -10,11 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-
-import buildcraft.api.enums.EnumEnergyStage;
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
 
@@ -22,18 +18,29 @@ import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
 import buildcraft.lib.engine.EngineConnector;
 import buildcraft.lib.engine.TileEngineBase_BC8;
+import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.lib.tile.item.StackInsertionFunction;
 
 public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
-    public static final long MJ_PER_TICK = 1 * MjAPI.MJ;
+    private static final long MAX_OUTPUT = MjAPI.MJ;
+    private static final long MIN_OUTPUT = MAX_OUTPUT / 3;
+    // private static final long TARGET_OUTPUT = 0.375f;
+    private static final float kp = 1f;
+    private static final float ki = 0.05f;
+    private static final long eLimit = (MAX_OUTPUT - MIN_OUTPUT) * 20;
+
+    int burnTime = 0;
+    int totalBurnTime = 0;
+    long esum = 0;
 
     public final DeltaInt deltaFuelLeft = deltaManager.addDelta("fuel_left", EnumNetworkVisibility.GUI_ONLY);
-    private final ItemHandlerSimple itemHandler = new ItemHandlerSimple(1, this::canInsert, StackInsertionFunction.getDefaultInserter(), this::onChange);
-    private ItemStack currentFuel;
-    private int ticksLeft = 0;
+    private final ItemHandlerSimple invFuel;
 
-    public TileEngineStone_BC8() {}
+    public TileEngineStone_BC8() {
+        invFuel = new ItemHandlerSimple(1, this::canInsert, StackInsertionFunction.getDefaultInserter(), this::onSlotChange);
+        itemManager.addInvHandler("fuel", invFuel, EnumAccess.BOTH, EnumPipePart.VALUES);
+    }
 
     // Item handler listeners
 
@@ -41,67 +48,7 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
         return slot == 0 && TileEntityFurnace.getItemBurnTime(stack) > 0;
     }
 
-    private void onChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
-        markDirty();
-    }
-
-    // Capability
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            if (facing != getCurrentDirection()) return (T) itemHandler;
-            return null;
-        }
-        return super.getCapability(capability, facing);
-    }
-
-    @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return facing != getCurrentDirection();
-        }
-        return super.hasCapability(capability, facing);
-    }
-
     // Engine overrides
-
-    @Override
-    public EnumEnergyStage getEnergyStage() {
-        return EnumEnergyStage.BLUE;
-    }
-
-    @Override
-    protected boolean canCarryOver(TileEngineBase_BC8 engine) {
-        return engine instanceof TileEngineStone_BC8;
-    }
-
-    @Override
-    public int getMaxEngineCarryDist() {
-        return 2;
-    }
-
-    @Override
-    public void update() {
-        super.update();
-        if (cannotUpdate() || worldObj.isRemote) return;
-        if (ticksLeft > 0) {
-            ticksLeft--;
-            addPower(MJ_PER_TICK);
-            changeHeat(TEMP_ENGINE_ENERGY, TEMP_CHANGE_HEAT);
-        }
-        if (ticksLeft <= 0 && isActive()) {
-            ItemStack potentialFuel = itemHandler.extractItem(0, 1, true);
-            int value = TileEntityFurnace.getItemBurnTime(potentialFuel);
-            if (value > 0) {
-                currentFuel = itemHandler.extractItem(0, 1, false);
-                int burnTime = TileEntityFurnace.getItemBurnTime(currentFuel);
-                ticksLeft += burnTime;
-                deltaFuelLeft.addDelta(0, burnTime, 100);
-                deltaFuelLeft.addDelta(burnTime, burnTime + 10, -100);
-            }
-        }
-    }
 
     @Override
     protected IMjConnector createConnector() {
@@ -109,15 +56,77 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     }
 
     @Override
-    protected boolean hasFuelToBurn() {
-        return ticksLeft > 0 || itemHandler.getStackInSlot(0) != null;
+    public boolean isBurning() {
+        return burnTime > 0;
+    }
+
+    @Override
+    public void burn() {
+        if (burnTime > 0) {
+            burnTime--;
+
+            long output = getCurrentOutput();
+            currentOutput = output; // Comment out for constant power
+            addPower(output);
+        }
+
+        if (burnTime == 0 && isRedstonePowered) {
+            burnTime = totalBurnTime = getItemBurnTime(invFuel.getStackInSlot(0));
+
+            if (burnTime > 0) {
+                invFuel.extractItem(0, 1, false);
+            }
+        }
+    }
+
+    @Override
+    public int getScaledBurnTime(int i) {
+        return (int) (((float) burnTime / (float) totalBurnTime) * i);
+    }
+
+    private static int getItemBurnTime(ItemStack itemstack) {
+        if (itemstack == null) return 0;
+
+        return TileEntityFurnace.getItemBurnTime(itemstack);
+    }
+
+    @Override
+    public long maxPowerReceived() {
+        return 200 * MjAPI.MJ;
+    }
+
+    @Override
+    public long maxPowerExtracted() {
+        return 100 * MjAPI.MJ;
+    }
+
+    @Override
+    public long getMaxPower() {
+        return 1000 * MjAPI.MJ;
+    }
+
+    @Override
+    public float explosionRange() {
+        return 2;
+    }
+
+    @Override
+    public long getCurrentOutput() {
+        // val * 3 / 8 = val * 0.375 (TARGET_OUTPUT)
+        long e = 3 * getMaxPower() / 8 - power;
+        esum = clamp(esum + e, -eLimit, eLimit);
+        return clamp(e + esum / 20, MIN_OUTPUT, MAX_OUTPUT);
+    }
+
+    private static long clamp(long val, long min, long max) {
+        return Math.max(min, Math.min(max, val));
     }
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         super.getDebugInfo(left, right, side);
-
-        left.add("");
-        left.add("  - " + itemHandler.getStackInSlot(0));
+        left.add("esum = " + MjAPI.formatMj(esum) + " M");
+        long e = 3 * getMaxPower() / 8 - power;
+        left.add("output = " + MjAPI.formatMj(clamp(e + esum / 20, MIN_OUTPUT, MAX_OUTPUT)) + " Mj");
     }
 }

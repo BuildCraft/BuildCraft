@@ -30,6 +30,11 @@ import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import buildcraft.api.enums.EnumSpring;
+import buildcraft.api.properties.BuildCraftProperties;
+
+import buildcraft.core.BCCoreBlocks;
+import buildcraft.core.BCCoreConfig;
 import buildcraft.energy.BCEnergyFluids;
 
 @SuppressWarnings("Duplicates")
@@ -154,16 +159,16 @@ public final class OilPopulate {
             int lakeRadius;
             if (type == GenType.LARGE) {
                 lakeRadius = 25 + rand.nextInt(20);
-                // if (BuildCraftCore.debugMode) {
-                // lakeRadius += 40;
-                // }
+                 if (/*BCCoreConfig.debugWorldGen*/false) {
+                 lakeRadius += 40;
+                 }
             } else {
                 lakeRadius = 5 + rand.nextInt(10);
             }
             generateSurfaceDeposit(world, rand, biome, wellX, groundLevel, wellZ, lakeRadius);
 
-            boolean makeSpring = type == GenType.LARGE /*&& BuildCraftEnergy.spawnOilSprings && BuildCraftCore.springBlock != null
-                && (BuildCraftCore.debugWorldgen || rand.nextDouble() <= 0.25)*/; // TODO: replace with not deprecated
+            boolean makeSpring = type == GenType.LARGE;// && BCEnergyConfig.spawnOilSprings && BCCoreBlocks.spring != null
+//                && (BCCoreConfig.debugWorldGen || rand.nextDouble() <= 0.25); // TODO: replace with not deprecated
 
             // Generate Spout
             int baseY;
@@ -175,11 +180,11 @@ public final class OilPopulate {
 
             BlockPos well = new BlockPos(wellX, baseY, wellZ);
 
-//            if (makeSpring && world.getBlockState(well).getBlock() == Blocks.BEDROCK) {
-//                IBlockState state = BuildCraftCore.springBlock.getDefaultState();
-//                state = state.withProperty(BuildCraftProperties.SPRING_TYPE, EnumSpring.OIL);
-//                world.setBlockState(well, state, 3);
-//            } // TODO: reanimate
+            if (makeSpring && world.getBlockState(well).getBlock() == Blocks.BEDROCK) {
+                IBlockState state = BCCoreBlocks.spring.getDefaultState();
+                state = state.withProperty(BuildCraftProperties.SPRING_TYPE, EnumSpring.OIL);
+                world.setBlockState(well, state, 3);
+            } // TODO: reanimate
             IBlockState oil = BCEnergyFluids.oil.getBlock().getDefaultState();
             for (int y = 1; y <= maxHeight - baseY; ++y) {
                 world.setBlockState(well.up(y), oil, 3);
