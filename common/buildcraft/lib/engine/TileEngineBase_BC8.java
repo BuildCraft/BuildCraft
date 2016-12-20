@@ -4,9 +4,11 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 
 import net.minecraftforge.common.capabilities.Capability;
@@ -34,6 +36,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     protected double heat = MIN_HEAT;
     protected long power = 0;
+    private long lastPower = 0;
     /** Increments from 0 to 1. Above 0.5 all of the held power is emitted. */
     private float progress;
     private int progressPart = 0;
@@ -63,6 +66,10 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
             }
         }
         return EnumActionResult.FAIL;
+    }
+
+    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        return false;
     }
 
     public double getPowerLevel() {
@@ -132,6 +139,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     @Override
     public void update() {
+        deltaManager.tick();
         if (cannotUpdate()) return;
 
         if (worldObj.isRemote) {
@@ -139,6 +147,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
             return;
         }
 
+        lastPower = 0;
         isRedstonePowered = worldObj.isBlockIndirectlyGettingPowered(getPos()) > 0;
 
         if (!isRedstonePowered) {
@@ -310,6 +319,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     public void addPower(long microJoules) {
         power += microJoules;
+        lastPower += microJoules;
 
         if (getEnergyStage() == EnumPowerStage.OVERHEAT) {
             // TODO: turn engine off
@@ -423,5 +433,6 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         left.add("heat = " + heat);
         left.add("power = " + MjAPI.formatMjShort(power));
         left.add("progress = " + progress);
+        left.add("last = +" + MjAPI.formatMjShort(lastPower));
     }
 }

@@ -24,7 +24,7 @@ import buildcraft.builders.container.ContainerArchitect;
 import buildcraft.builders.container.ContainerBlueprintLibrary;
 import buildcraft.builders.container.ContainerBuilder_Neptune;
 import buildcraft.builders.container.ContainerQuarry;
-import buildcraft.builders.entity.EntityQuarry;
+import buildcraft.builders.entity.EntityQuarryFrame;
 import buildcraft.builders.gui.*;
 import buildcraft.builders.tile.TileArchitect_Neptune;
 import buildcraft.builders.tile.TileBuilder_Neptune;
@@ -76,7 +76,7 @@ public abstract class BCBuildersProxy implements IGuiHandler {
     }
 
     public void fmlInit() {
-        EntityRegistry.registerModEntity(EntityQuarry.class, "quarry", 0, BCBuilders.INSTANCE, 50, 1, true);
+        EntityRegistry.registerModEntity(EntityQuarryFrame.class, "quarry", 0, BCBuilders.INSTANCE, 50, 1, true);
     }
 
     @SideOnly(Side.SERVER)

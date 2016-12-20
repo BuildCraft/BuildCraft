@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -17,6 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -32,6 +34,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.mj.MjAPI;
@@ -41,13 +44,10 @@ import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.builders.BCBuildersBlocks;
-import buildcraft.builders.entity.EntityQuarry;
+import buildcraft.builders.entity.EntityQuarryFrame;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.*;
-import buildcraft.lib.misc.data.AxisOrder;
-import buildcraft.lib.misc.data.Box;
-import buildcraft.lib.misc.data.BoxIterator;
-import buildcraft.lib.misc.data.EnumAxisOrder;
+import buildcraft.lib.misc.data.*;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
@@ -65,10 +65,24 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     public Vec3d drillPos;
     public Vec3d clientDrillPos;
     public Vec3d prevClientDrillPos;
+    /** Recent power input, in MJ (not micro) */
+    private final AverageInt recentPowerAverage = new AverageInt(200);
+    private final List<EntityQuarryFrame> xArm = new ArrayList<>();
+    private final List<EntityQuarryFrame> yArm = new ArrayList<>();
+    private final List<EntityQuarryFrame> zArm = new ArrayList<>();
 
     public TileQuarry() {
         battery = new MjBattery(1600L * MjAPI.MJ);
-        mjCapHelper = new MjCapabilityHelper(new MjBatteryReciver(battery));
+        mjCapHelper = new MjCapabilityHelper(new MjBatteryReciver(battery) {
+            @Override
+            public long receivePower(long microJoules, boolean simulate) {
+                long excess = super.receivePower(microJoules, simulate);
+                if (!simulate) {
+                    recentPowerAverage.push((int) ((microJoules - excess) / MjAPI.MJ));
+                }
+                return excess;
+            }
+        });
     }
 
     public List<BlockPos> getFramePoses() {
@@ -124,43 +138,73 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         if (worldObj.isRemote) {
             prevClientDrillPos = clientDrillPos;
             clientDrillPos = drillPos;
+
+            if (min != null && max != null && drillPos != null) {
+                int xSize = max.getX() - min.getX();
+                resizeTo(xArm, xSize);
+
+                int zSize = max.getZ() - min.getZ();
+                resizeTo(zArm, zSize);
+
+                int ySize = max.getY() - (int) Math.ceil(drillPos.yCoord);
+                resizeTo(yArm, ySize + 10);// it will probably expand on the server at some point, so expand it early
+            }
+
             return;
         }
 
-        if (!battery.isFull()) {
-            // test with the output of a stone engine
-//            battery.addPower(MjAPI.MJ); // remove this
-        }
+        recentPowerAverage.tick();
 
         if (min == null || max == null || box == null) {
             return;
         }
 
         if (drillPos != null) {
-            for (int x = min.getX(); x < max.getX(); x++) {
-                BlockPos currentPos = new BlockPos(x, min.getY(), drillPos.zCoord);
-                if (hasEntityOfType(currentPos, EntityQuarry.Type.X)) {
-                    worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.X));
+            int xSize = max.getX() - min.getX();
+            resizeTo(xArm, xSize);
+            for (int x = 0; x < xSize; x++) {
+                EntityQuarryFrame current = xArm.get(x);
+                BlockPos currentPos = new BlockPos(x + min.getX(), max.getY(), drillPos.zCoord);
+                if (current == null || current.isDead) {
+                    current = new EntityQuarryFrame(worldObj, this, currentPos, Axis.X, x);
+                    BCLog.logger.info("[quarry.frame] Didn't have a frame entity for " + currentPos);
+                    worldObj.spawnEntityInWorld(current);
+                    xArm.set(x, current);
                 }
+                current.setPosition(currentPos.getX(), currentPos.getY(), currentPos.getZ());
             }
 
-            for (int y = (int) drillPos.yCoord; y < min.getY(); y++) {
-                BlockPos currentPos = new BlockPos(drillPos.xCoord, y, drillPos.zCoord);
-                if (hasEntityOfType(currentPos, EntityQuarry.Type.Y)) {
-                    worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.Y));
+            int zSize = max.getZ() - min.getZ();
+            resizeTo(zArm, zSize);
+            for (int z = 0; z < zSize; z++) {
+                EntityQuarryFrame current = zArm.get(z);
+                BlockPos currentPos = new BlockPos(drillPos.xCoord, max.getY(), z + min.getZ());
+                if (current == null || current.isDead) {
+                    current = new EntityQuarryFrame(worldObj, this, currentPos, Axis.Z, z);
+                    BCLog.logger.info("[quarry.frame] Didn't have a frame entity for " + currentPos);
+                    worldObj.spawnEntityInWorld(current);
+                    zArm.set(z, current);
                 }
+                current.setPosition(currentPos.getX(), currentPos.getY(), currentPos.getZ());
             }
 
-            for (int z = min.getZ(); z < max.getZ(); z++) {
-                BlockPos currentPos = new BlockPos(drillPos.xCoord, min.getY(), z);
-                if (hasEntityOfType(currentPos, EntityQuarry.Type.Z)) {
-                    worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.Z));
+            int ySize = max.getY() - (int) Math.ceil(drillPos.yCoord);
+            resizeTo(yArm, ySize);
+            for (int y = 0; y < ySize; y++) {
+                EntityQuarryFrame current = yArm.get(y);
+                BlockPos currentPos = new BlockPos(drillPos.xCoord, max.getY() - y, drillPos.zCoord);
+                if (current == null || current.isDead) {
+                    current = new EntityQuarryFrame(worldObj, this, currentPos, Axis.Y, y);
+                    BCLog.logger.info("[quarry.frame] Didn't have a frame entity for " + currentPos);
+                    worldObj.spawnEntityInWorld(current);
+                    yArm.set(y, current);
                 }
+                current.setPosition(currentPos.getX(), currentPos.getY(), currentPos.getZ());
             }
         }
 
         if (currentTask != null) {
-            long max = MjAPI.MJ * 2 /*recentPowerAverage */;
+            long max = MjAPI.MJ * 4;
             if (currentTask.addEnergy(battery.extractPower(0, Math.min(currentTask.getTarget() - currentTask.getPower(), max)))) {
                 currentTask = null;
             }
@@ -231,8 +275,59 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
     }
 
-    private boolean hasEntityOfType(BlockPos currentPos, EntityQuarry.Type type) {
-        return worldObj.getEntities(EntityQuarry.class, entityQuarry -> entityQuarry != null && entityQuarry.getType() == type && entityQuarry.getTilePos().equals(pos) && entityQuarry.getPosition().equals(currentPos)).size() < 1;
+    private static void resizeTo(List<?> list, int newSize) {
+        while (list.size() > newSize) {
+            list.remove(list.size() - 1);
+        }
+        while (list.size() < newSize) {
+            list.add(null);
+        }
+    }
+
+    private List<EntityQuarryFrame> getArmList(Axis axis) {
+        switch (axis) {
+            default:
+            case X:
+                return xArm;
+            case Y:
+                return yArm;
+            case Z:
+                return zArm;
+        }
+    }
+
+    public boolean tryPairEntity(EntityQuarryFrame frame, Axis axis, int listIndex) {
+        List<EntityQuarryFrame> entities = getArmList(axis);
+        if (worldObj.isRemote && entities.size() == 0) {
+            int xSize = max.getX() - min.getX();
+            resizeTo(xArm, xSize);
+
+            int zSize = max.getZ() - min.getZ();
+            resizeTo(zArm, zSize);
+
+            int ySize = max.getY() - (int) Math.ceil(drillPos.yCoord);
+            resizeTo(yArm, ySize + 10);// it will probably expand on the server at some point, so expand it early
+        }
+        if (listIndex < 0 || listIndex >= entities.size()) {
+            return false;
+        }
+        EntityQuarryFrame current = entities.get(listIndex);
+        if (current == null || current.isDead || !current.isConnected(this)) {
+            if (current != null) {
+                current.setDead();
+            }
+            entities.set(listIndex, frame);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isPaired(EntityQuarryFrame frame, Axis axis, int listIndex) {
+        List<EntityQuarryFrame> entities = getArmList(axis);
+        if (listIndex < 0 || listIndex >= entities.size()) {
+            return false;
+        }
+        return entities.get(listIndex) == frame;
     }
 
     @Override
@@ -281,6 +376,17 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             currentTask = null;
         }
         drillPos = NBTUtils.readVec3d(nbt.getTag("drill_pos"));
+
+        if (min != null && max != null && drillPos != null) {
+            int xSize = max.getX() - min.getX();
+            resizeTo(xArm, xSize);
+
+            int zSize = max.getZ() - min.getZ();
+            resizeTo(zArm, zSize);
+
+            int ySize = max.getY() - (int) Math.ceil(drillPos.yCoord);
+            resizeTo(yArm, ySize + 10);// it will probably expand on the server at some point, so expand it early
+        }
     }
 
     @Override
@@ -347,6 +453,16 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             } else {
                 box = null;
             }
+            if (min != null && max != null && drillPos != null) {
+                int xSize = max.getX() - min.getX();
+                resizeTo(xArm, xSize);
+
+                int zSize = max.getZ() - min.getZ();
+                resizeTo(zArm, zSize);
+
+                int ySize = max.getY() - (int) Math.ceil(drillPos.yCoord);
+                resizeTo(yArm, ySize + 10);// it will probably expand on the server at some point, so expand it early
+            }
         }
     }
 
@@ -354,6 +470,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
         left.add("battery = " + battery.getDebugString());
+        left.add("recent power = " + (int) recentPowerAverage.getAverage());
         left.add("box:");
         left.add(" - min = " + box.min());
         left.add(" - max = " + box.max());
@@ -555,7 +672,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
         @Override
         public long getTarget() {
-            return Math.max(getFramePoses().indexOf(pos) * 3000000, 1000000);
+            return Math.max(getFramePoses().indexOf(pos) * 3 * MjAPI.MJ, MjAPI.MJ);
         }
 
         @Override
@@ -620,7 +737,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
         @Override
         public long getTarget() {
-            return 10000000;
+            return 10 * MjAPI.MJ;
         }
 
         @Override

@@ -6,14 +6,17 @@ package buildcraft.energy.tile;
 
 import java.util.List;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
 
+import buildcraft.energy.BCEnergyGuis;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
 import buildcraft.lib.engine.EngineConnector;
@@ -35,7 +38,7 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     long esum = 0;
 
     public final DeltaInt deltaFuelLeft = deltaManager.addDelta("fuel_left", EnumNetworkVisibility.GUI_ONLY);
-    private final ItemHandlerSimple invFuel;
+    public final ItemHandlerSimple invFuel;
 
     public TileEngineStone_BC8() {
         invFuel = new ItemHandlerSimple(1, this::canInsert, StackInsertionFunction.getDefaultInserter(), this::onSlotChange);
@@ -49,6 +52,12 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     }
 
     // Engine overrides
+    
+    @Override
+    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        BCEnergyGuis.ENGINE_STONE.openGUI(player, getPos());
+        return true;
+    }
 
     @Override
     protected IMjConnector createConnector() {
@@ -74,6 +83,9 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
             burnTime = totalBurnTime = getItemBurnTime(invFuel.getStackInSlot(0));
 
             if (burnTime > 0) {
+                deltaFuelLeft.setValue(100);
+                deltaFuelLeft.addDelta(0, totalBurnTime, -100);
+
                 invFuel.extractItem(0, 1, false);
             }
         }
@@ -128,5 +140,7 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
         left.add("esum = " + MjAPI.formatMj(esum) + " M");
         long e = 3 * getMaxPower() / 8 - power;
         left.add("output = " + MjAPI.formatMj(clamp(e + esum / 20, MIN_OUTPUT, MAX_OUTPUT)) + " Mj");
+        left.add("burnTime = " + burnTime);
+        left.add("delta = " + deltaFuelLeft.getDynamic(0));
     }
 }
