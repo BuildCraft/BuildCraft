@@ -1,6 +1,7 @@
 package buildcraft.api.inventory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -26,11 +27,11 @@ public interface IItemTransactor {
 
     /** Extracts a number of items that match the given filter
      * 
-     * @param filter The filter that MUST be met by the extracted stack.
+     * @param filter The filter that MUST be met by the extracted stack. Null means no filter - it can be any item.
      * @param min The minimum number of items to extract, or 0 if not enough items can be extracted
      * @param max The maximum number of items to extract.
      * @param simulate If true then the in-world state of this will not be changed.
      * @return The stack that was extracted, or null if it could not be. */
     @Nonnull
-    ItemStack extract(IStackFilter filter, int min, int max, boolean simulate);
+    ItemStack extract(@Nullable IStackFilter filter, int min, int max, boolean simulate);
 }

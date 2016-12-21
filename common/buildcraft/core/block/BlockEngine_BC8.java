@@ -6,11 +6,20 @@ package buildcraft.core.block;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.lib.engine.BlockEngineBase_BC8;
+import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 

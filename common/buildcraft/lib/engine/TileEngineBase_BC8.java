@@ -1,31 +1,26 @@
 package buildcraft.lib.engine;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
 
-import buildcraft.api.enums.EnumEnergyStage;
-import buildcraft.api.mj.IMjConnector;
-import buildcraft.api.mj.IMjReceiver;
-import buildcraft.api.mj.MjAPI;
+import buildcraft.api.enums.EnumPowerStage;
+import buildcraft.api.mj.*;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.VanillaRotationHandlers;
-import buildcraft.lib.misc.ParticleUtil;
-import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
-// FIXME: This needs reverting to (close to) earlier engine code -- this is all horrible.
 public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITickable, IDebuggable {
 
     /** Heat per {@link MjAPI#MJ}. */
@@ -36,43 +31,25 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     public static final double MAX_HEAT = 250;
 
     @Nonnull
-    public final IMjConnector conductor = createConnector();
+    public final IMjConnector mjConnector = createConnector();
+    private final MjCapabilityHelper mjCaps = new MjCapabilityHelper(mjConnector);
 
     protected double heat = MIN_HEAT;
+    protected long power = 0;
+    private long lastPower = 0;
+    /** Increments from 0 to 1. Above 0.5 all of the held power is emitted. */
+    private float progress;
+    private int progressPart = 0;
 
-    private EnumFacing currentDirection = EnumFacing.UP;
-    // Keep a buffer of what tiles are infront of us.
-    // protected final BlockTileCache[] infrontBuffer = new BlockTileCache[Math.abs(getMaxEngineCarryDist()) + 1];
-    // refreshed from above, but is guaranteed to be non-null and contain non-null.
-    protected TileEngineBase_BC8[] enginesInFront = new TileEngineBase_BC8[0];
-    protected IMjReceiver receiverBuffer = null;
+    protected EnumPowerStage powerStage = EnumPowerStage.BLUE;
+    protected EnumFacing currentDirection = EnumFacing.UP;
 
-    // Various fields for keeping the engine running properly
-    private long microJoulesHeld;
-    private long milliTemp = TEMP_START * 1000;
-    private double pulseStage = 0;
+    public long currentOutput;
+    public boolean isRedstonePowered = false;
     private boolean isOn = false;
-    private int meltdownTicks = 0;
-    private boolean reachedMeltdown = false;
+    private boolean isPumping = false;
 
     public TileEngineBase_BC8() {}
-
-    //
-    // @Override
-    // public void readFromNBT(NBTTagCompound nbt) {
-    // currentDirection = NBTUtils.readEnum(nbt.getTag("direction"), EnumFacing.class);
-    // milliJoulesHeld = nbt.getInteger("milliJoulesHeld");
-    // pulseStage = nbt.getFloat("pulseStage");
-    // }
-    //
-    // @Override
-    // public NBTTagCompound writeToNBT(int stage) {
-    // NBTTagCompound nbt = new NBTTagCompound();
-    // nbt.setTag("direction", NBTUtils.writeEnum(currentDirection));
-    // nbt.setInteger("milliJoulesHeld", milliJoulesHeld);
-    // nbt.setFloat("pulseStage", pulseStage);
-    // return nbt;
-    // }
 
     public EnumActionResult attemptRotation() {
         EnumFacing[] possible = VanillaRotationHandlers.getAllSidesArray();
@@ -83,7 +60,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
             EnumFacing toTry = possible[next];
             if (true) {// TODO: replace with sided check
                 currentDirection = toTry;
-                makeTileCache();
+                // makeTileCache();
                 redrawBlock();
                 return EnumActionResult.SUCCESS;
             }
@@ -91,207 +68,372 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         return EnumActionResult.FAIL;
     }
 
-    @Override
-    public void update() {
-        if (cannotUpdate() || world.isRemote) return;
+    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        return false;
+    }
 
-        // Check to see if we are still active
-        isOn = world.isBlockIndirectlyGettingPowered(getPos()) > 0 && hasFuelToBurn();
+    public double getPowerLevel() {
+        return power / (double) getMaxPower();
+    }
 
-        // Apply air cooling
-        // TODO: biome-based
-        changeHeat(TEMP_START, TEMP_CHANGE_AIR);
+    protected EnumPowerStage computeEnergyStage() {// TODO: RENAME
+        double powerLevel = getHeatLevel();
+        if (powerLevel < 0.25f) return EnumPowerStage.BLUE;
+        else if (powerLevel < 0.5f) return EnumPowerStage.GREEN;
+        else if (powerLevel < 0.75f) return EnumPowerStage.YELLOW;
+        else if (powerLevel < 1f) return EnumPowerStage.RED;
+        else return EnumPowerStage.OVERHEAT;
+    }
 
-        if (reachedMeltdown) {
-            meltdownTicks--;
-            if (meltdownTicks == 0) {
-                reachedMeltdown = false;
+    public final EnumPowerStage getEnergyStage() {// TODO: RENAME
+        if (!world.isRemote) {
+            if (powerStage == EnumPowerStage.OVERHEAT) return powerStage;
+            EnumPowerStage newStage = computeEnergyStage();
+
+            if (powerStage != newStage) {
+                powerStage = newStage;
+                sendNetworkUpdate(NET_RENDER_DATA);
             }
         }
 
-        if (isActive()) {
-            // Check to see if we have reached meltdown stage -- we are too hot
+        return powerStage;
+    }
 
-            if (getEnergyStage() == EnumEnergyStage.OVERHEAT) {
-                meltdownTicks++;
-                if (meltdownTicks >= 100) {
-                    reachedMeltdown = true;
-                    meltdownTicks = 100;
-                }
+    public void updateHeatLevel() {
+        heat = ((MAX_HEAT - MIN_HEAT) * getPowerLevel()) + MIN_HEAT;
+    }
+
+    public double getHeatLevel() {
+        return (heat - MIN_HEAT) / (MAX_HEAT - MIN_HEAT);
+    }
+
+    public double getIdealHeatLevel() {
+        return heat / IDEAL_HEAT;
+    }
+
+    public double getHeat() {
+        return heat;
+    }
+
+    public double getPistonSpeed() {
+        if (!world.isRemote) {
+            return Math.max(0.16 * getHeatLevel(), 0.01);
+        }
+
+        switch (getEnergyStage()) {
+            case BLUE:
+                return 0.02;
+            case GREEN:
+                return 0.04;
+            case YELLOW:
+                return 0.08;
+            case RED:
+                return 0.16;
+            default:
+                return 0;
+        }
+    }
+
+    @Nonnull
+    protected abstract IMjConnector createConnector();
+
+    @Override
+    public void update() {
+        deltaManager.tick();
+        if (cannotUpdate()) return;
+
+        if (world.isRemote) {
+            // TODO!
+            return;
+        }
+
+        lastPower = 0;
+        isRedstonePowered = world.isBlockIndirectlyGettingPowered(getPos()) > 0;
+
+        if (!isRedstonePowered) {
+            if (power > MjAPI.MJ) {
+                power -= MjAPI.MJ;
+            } else if (power > 0) {
+                power = 0;
             }
+        }
 
-            makeTileCacheIfNeeded();
+        updateHeatLevel();
+        getEnergyStage();
+        engineUpdate();
 
-            // Refresh our engine and receiver cache. Every tick for some reason.
-            // Except that this is really cheap to do, and we don't want to try
-            // and inject power to a non-existent tile
-            int num = 0;
-            // TileEngineBase_BC8[] engines = new TileEngineBase_BC8[infrontBuffer.length];
-            // for (BlockTileCache cache : infrontBuffer) {
-            // if (cache == null) break;
-            // // if the cache is not loaded then don't even bother checking.
-            // if (!cache.exists()) break;
-            // TileEntity tile = cache.getTile();
-            // if (tile instanceof TileEngineBase_BC8) {
-            // TileEngineBase_BC8 forwardEngine = (TileEngineBase_BC8) tile;
-            // // No corners
-            // if (forwardEngine.getCurrentDirection() != currentDirection) break;
-            // // Just make sure we can carry over- we don't want to carry power over a redstone engine.
-            // if (canCarryOver(forwardEngine) && forwardEngine.canCarryOver(this)) {
-            // engines[num++] = forwardEngine;
-            // } else break;
-            // } else if (tile != null) {
-            // IMjReceiver c = tile.getCapability(MjAPI.CAP_RECEIVER, currentDirection.getOpposite());
-            // if (c != null && c.canConnect(conductor) && conductor.canConnect(c)) {
-            // receiverBuffer = c;
-            // }
-            // break;
-            // }
-            // }
-            // enginesInFront = Arrays.copyOf(engines, num);
+        TileEntity tile = getTileBuffer(currentDirection).getTile();
 
-            // Move onto the next stage of our pulse.
-            pulseStage += 1 / (double) getPulseFrequency();
-            if (pulseStage >= 1) {
-                pulseStage--;
+        if (progressPart != 0) {
+            progress += getPistonSpeed();
+
+            if (progress > 0.5 && progressPart == 1) {
+                progressPart = 2;
+                sendPower(); // Comment out for constant power
+            } else if (progress >= 1) {
+                progress = 0;
+                progressPart = 0;
             }
-            if (pulseStage > 0.4 && pulseStage < 0.6) {
-                double multiplier = pulseStage * 1.8;// Get a number close to, or above 1
-                long power = MathHelper.lfloor(multiplier * microJoulesHeld);
-                if (power > microJoulesHeld) {
-                    power = microJoulesHeld;
+        } else if (isRedstonePowered && isActive()) {
+            if (isPoweredTile(tile, currentDirection)) {
+                if (getPowerToExtract() > 0) {
+                    progressPart = 1;
+                    setPumping(true);
+                } else {
+                    setPumping(false);
                 }
-                microJoulesHeld -= power;
-                sendPower(power);
+            } else {
+                setPumping(false);
             }
         } else {
+            setPumping(false);
+        }
 
+        // Uncomment for constant power
+        // if (isRedstonePowered && isActive()) {
+        // sendPower();
+        // } else currentOutput = 0;
+
+        burn();
+    }
+
+    private long getPowerToExtract() {
+        TileEntity tile = getTileBuffer(currentDirection).getTile();
+
+        if (tile == null) return 0;
+
+        if (tile.getClass() == getClass()) {
+            TileEngineBase_BC8 other = (TileEngineBase_BC8) tile;
+            return other.getMaxPower() - power;
+        }
+
+        IMjReceiver receiver = getReceiverToPower(tile, currentDirection);
+        if (receiver == null) {
+            return 0;
+        }
+
+        // Pulsed power
+        return extractPower(0, receiver.getPowerRequested(), true);
+        // TODO: Use this:
+        // return extractPower(receiver.getMinPowerReceived(), receiver.getMaxPowerReceived(), false);
+
+        // Constant power
+        // return extractEnergy(0, getActualOutput(), false); // Uncomment for constant power
+    }
+
+    private void sendPower() {
+        TileEntity tile = getTileBuffer(currentDirection).getTile();
+        if (tile == null) {
+            return;
+        }
+        if (getClass() == tile.getClass()) {
+            TileEngineBase_BC8 other = (TileEngineBase_BC8) tile;
+            if (currentDirection == other.currentDirection) {
+                other.power += extractPower(0, power, true);
+            }
+            return;
+        }
+        IMjReceiver receiver = getReceiverToPower(tile, currentDirection);
+        if (receiver != null) {
+            long extracted = getPowerToExtract();
+            if (extracted > 0) {
+                long excess = receiver.receivePower(extracted, false);
+                extractPower(extracted - excess, extracted - excess, true); // Comment out for constant power
+                // currentOutput = extractEnergy(0, needed, true); // Uncomment for constant power
+            }
+        }
+    }
+
+    // Uncomment out for constant power
+    // public float getActualOutput() {
+    // float heatLevel = getIdealHeatLevel();
+    // return getCurrentOutput() * heatLevel;
+    // }
+    protected void burn() {}
+
+    protected void engineUpdate() {
+        if (!isRedstonePowered) {
+            if (power >= 1) {
+                power -= 1;
+            } else if (power < 1) {
+                power = 0;
+            }
         }
     }
 
     public boolean isActive() {
-        return isOn && !reachedMeltdown;
+        return true;
     }
 
-    private void makeTileCacheIfNeeded() {
-        // if (cannotUpdate() || infrontBuffer[0] != null) {
-        // return;
-        // }
-        makeTileCache();
-    }
-
-    private void makeTileCache() {
-        if (cannotUpdate()) {
+    protected final void setPumping(boolean isActive) {
+        if (this.isPumping == isActive) {
             return;
         }
-        // for (int i = 0; i < infrontBuffer.length; i++) {
-        // infrontBuffer[i] = new BlockTileCache(getWorld(), getPos().offset(currentDirection, i + 1), false);
-        // }
+
+        this.isPumping = isActive;
+        sendNetworkUpdate(NET_RENDER_DATA);
     }
 
-    protected void sendPower(long power) {
-        long excess = power;
-        if (receiverBuffer != null) {
-            excess = receiverBuffer.receivePower(power, false);
+    // TEMP
+    @FunctionalInterface
+    public interface ITileBuffer {
+        TileEntity getTile();
+    }
+
+    /** Temp! This should be replaced with a tile buffer! */
+    public ITileBuffer getTileBuffer(EnumFacing side) {
+        TileEntity tile = world.getTileEntity(getPos().offset(side));
+        return () -> tile;
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        // tileCache = null;
+        // checkOrienation = true;
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        // tileCache = null;
+        // checkOrienation = true;
+    }
+
+    /* STATE INFORMATION */
+    public abstract boolean isBurning();
+
+    // IPowerReceptor stuffs -- move!
+    // @Override
+    // public PowerReceiver getPowerReceiver(ForgeDirection side) {
+    // return powerHandler.getPowerReceiver();
+    // }
+    //
+    // @Override
+    // public void doWork(PowerHandler workProvider) {
+    // if (worldObj.isRemote) {
+    // return;
+    // }
+    //
+    // addEnergy(powerHandler.useEnergy(1, maxEnergyReceived(), true) * 0.95F);
+    // }
+
+    public void addPower(long microJoules) {
+        power += microJoules;
+        lastPower += microJoules;
+
+        if (getEnergyStage() == EnumPowerStage.OVERHEAT) {
+            // TODO: turn engine off
+            // worldObj.createExplosion(null, xCoord, yCoord, zCoord, explosionRange(), true);
+            // worldObj.setBlockToAir(xCoord, yCoord, zCoord);
         }
-        if (excess <= 0) {
-            return;
-        }
-        MjAPI.EFFECT_MANAGER.createPowerLossEffect(getWorld(), new Vec3d(getPos()), currentDirection, excess);
-        ParticleUtil.showTempPower(getWorld(), getPos(), getCurrentDirection(), excess);
-        // This is horrible!
-        addHeatFromPower(excess);
-    }
 
-    public EnumFacing getCurrentDirection() {
-        return currentDirection;
-    }
-
-    public boolean hasRedstoneSignal() {
-        return world.isBlockPowered(getPos());
-    }
-
-    protected void addPower(long microJoules) {
-        microJoulesHeld += microJoules;
-    }
-
-    protected void addHeatFromPower(long microJoules) {
-        int jouledHeatTarget = (int) (microJoules / 1000);
-        jouledHeatTarget = jouledHeatTarget * TEMP_LOST_POWER;
-        if (jouledHeatTarget > getTemperature()) {
-            changeHeat(jouledHeatTarget, TEMP_CHANGE_HEAT);
+        if (power > getMaxPower()) {
+            power = getMaxPower();
         }
     }
 
-    /** @param to The "ideal" heat value - generally the temperature of the object changing the temperature.
-     * @param multiplier How quickly this change should happen over. A good value for air cooling is 0.002, and a good
-     *            value for fluid cooling is 0.05. If this is 1 then this is effectively a setter for the
-     *            temperature. */
-    protected void changeHeat(int to, double multiplier) {
-        int diff = to - getTemperature();
-        if (diff != 0) {
-            milliTemp += diff * multiplier * 1000;
+    public long extractPower(long min, long max, boolean doExtract) {
+        if (power < min) {
+            return 0;
+        }
+
+        long actualMax;
+
+        if (max > maxPowerExtracted()) {
+            actualMax = maxPowerExtracted();
+        } else {
+            actualMax = max;
+        }
+
+        if (actualMax < min) {
+            return 0;
+        }
+
+        long extracted;
+
+        if (power >= actualMax) {
+            extracted = actualMax;
+
+            if (doExtract) {
+                power -= actualMax;
+            }
+        } else {
+            extracted = power;
+
+            if (doExtract) {
+                power = 0;
+            }
+        }
+
+        return extracted;
+    }
+
+    public final boolean isPoweredTile(TileEntity tile, EnumFacing side) {
+        if (tile == null) return false;
+        if (tile.getClass() == getClass()) {
+            TileEngineBase_BC8 other = (TileEngineBase_BC8) tile;
+            return other.currentDirection == currentDirection;
+        }
+        return getReceiverToPower(tile, side) != null;
+    }
+
+    /** Redstone engines override this to get an {@link IMjRedstoneReceiver} instance */
+    public IMjReceiver getReceiverToPower(TileEntity tile, EnumFacing side) {
+        if (tile == null) return null;
+        IMjReceiver rec = tile.getCapability(MjAPI.CAP_RECEIVER, side.getOpposite());
+        if (rec != null && rec.canConnect(mjConnector)) {
+            return rec;
+        } else {
+            return null;
         }
     }
 
-    public int getTemperature() {
-        return (int) (milliTemp / 1000);
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == currentDirection) {
+            return false;
+        }
+        return mjCaps.hasCapability(capability, facing) || super.hasCapability(capability, facing);
     }
 
-    // Overridable engine functions
-
-    /** Creates a connector that uses this engine. You are encouraged to use {@link EngineConnector} */
-    @Nonnull
-    protected abstract IMjConnector createConnector();
-
-    /** Checks to see if this engine can burn more fuel. This is only called if this is receiving a redstone signal. */
-    protected abstract boolean hasFuelToBurn();
-
-    public abstract EnumEnergyStage getEnergyStage();
-
-    /** @return The frequency of the power pulse, in ticks. */
-    public int getPulseFrequency() {
-        return PULSE_FREQUENCIES[getEnergyStage().ordinal()];
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == currentDirection) {
+            return null;
+        }
+        T cap = mjCaps.getCapability(capability, facing);
+        if (cap != null) {
+            return cap;
+        }
+        return super.getCapability(capability, facing);
     }
 
-    /** @return How many engines this engine can carry its power output over. This only carries over engines infront
-     *         that are facing the same direction. If this is a negative number then this WILL crash, or be ignored. */
-    public abstract int getMaxEngineCarryDist();
+    public abstract long getMaxPower();
 
-    /** Checks to see if this can carry power through the given engine, or can carry power from the given engine. */
-    protected abstract boolean canCarryOver(TileEngineBase_BC8 engine);
+    public long minPowerReceived() {
+        return 2 * MjAPI.MJ;
+    }
 
-    // Debugging
+    public abstract long maxPowerReceived();
+
+    public abstract long maxPowerExtracted();
+
+    public abstract float explosionRange();
+
+    public long getEnergyStored() {
+        return power;
+    }
+
+    public abstract long getCurrentOutput();
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
-        left.add("Stage = " + pulseStage);
-        left.add("Held = " + MjAPI.formatMjShort(microJoulesHeld));
-        left.add("Temp = " + milliTemp / 1000 + "°C");
-    }
-
-    // TODO: Adv debugging
-
-    // Networking
-
-    @Override
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
-        super.writePayload(id, buffer, side);
-        if (side == Side.SERVER) {
-            if (id == NET_RENDER_DATA) {
-                buffer.writeByte(currentDirection.getIndex());
-            }
-        }
-    }
-
-    @Override
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
-        super.readPayload(id, buffer, side, ctx);
-        if (side == Side.CLIENT) {
-            if (id == NET_RENDER_DATA) {
-                currentDirection = EnumFacing.getFront(buffer.readUnsignedByte());
-            }
-        }
+        left.add("facing = " + currentDirection);
+        left.add("heat = " + heat);
+        left.add("power = " + MjAPI.formatMjShort(power));
+        left.add("progress = " + progress);
+        left.add("last = +" + MjAPI.formatMjShort(lastPower));
     }
 }

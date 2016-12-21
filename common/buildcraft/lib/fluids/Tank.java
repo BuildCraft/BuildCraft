@@ -12,6 +12,8 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
@@ -20,16 +22,16 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
 
+import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StringUtilBC;
-
-import io.netty.buffer.ByteBuf;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.net.cache.BuildCraftObjectCaches;
+import buildcraft.lib.net.cache.NetworkedFluidStackCache;
 
 /** Provides a useful implementation of a fluid tank that can save + load, and has a few helper funtions.
  * 
@@ -49,6 +51,9 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
 
     @Nonnull
     private final Predicate<FluidStack> filter;
+
+    private NetworkedFluidStackCache.Link clientFluid = null;
+    private int clientAmount = 0;
 
     protected static Map<Fluid, Integer> fluidColors = new HashMap<>();
 
@@ -136,18 +141,24 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
 
     protected void refreshTooltip() {
         toolTip.clear();
-        int amount = 0;
-        FluidStack fluidStack = getFluid();
-        if (fluidStack != null && fluidStack.amount > 0) {
+        int amount = clientAmount;
+        FluidStack fluidStack = clientFluid.get();
+        if (fluidStack != null && amount > 0) {
             toolTip.add(TextFormatting.WHITE + fluidStack.getFluid().getLocalizedName(fluidStack));
-            amount = fluidStack.amount;
         }
         toolTip.add(String.format(Locale.ENGLISH, "%,d / %,d", amount, getCapacity()));
     }
 
     @Override
+    public boolean canFillFluidType(FluidStack fluid) {
+        return filter.test(fluid);
+    }
+
+    @Override
     public int fill(FluidStack resource, boolean doFill) {
-        if (filter.test(resource)) return super.fill(resource, doFill);
+        if (canFillFluidType(resource)) {
+            return super.fill(resource, doFill);
+        }
         return 0;
     }
 
@@ -164,7 +175,9 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
 
     @Override
     public void setFluid(FluidStack fluid) {
-        if (fluid == null || filter.test(fluid)) super.setFluid(fluid);
+        if (fluid == null || canFillFluidType(fluid)) {
+            super.setFluid(fluid);
+        }
     }
 
     @Override
@@ -176,19 +189,40 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
         return LocaleUtil.localizeFluidStatic(fluid, capacity);
     }
 
-    public void writeToBuffer(ByteBuf buffer) {
-        NBTTagCompound tankData = new NBTTagCompound();
-        super.writeToNBT(tankData);
-        ByteBufUtils.writeTag(buffer, tankData);
+    public void writeToBuffer(PacketBufferBC buffer) {
+        if (fluid == null) {
+            buffer.writeBoolean(false);
+        } else {
+            buffer.writeBoolean(true);
+            buffer.writeInt(BuildCraftObjectCaches.CACHE_FLUIDS.server().store(fluid));
+        }
+        buffer.writeInt(getFluidAmount());
     }
 
-    public void readFromBuffer(ByteBuf buffer) {
-        NBTTagCompound tankData = ByteBufUtils.readTag(buffer);
-        super.readFromNBT(tankData);
+    public void readFromBuffer(PacketBufferBC buffer) {
+        if (buffer.readBoolean()) {
+            clientFluid = BuildCraftObjectCaches.CACHE_FLUIDS.client().retrieve(buffer.readInt());
+        } else {
+            clientFluid = null;
+        }
+        clientAmount = buffer.readInt();
     }
 
     public String getDebugString() {
         FluidStack f = getFluid();
         return getFluidAmount() + " / " + capacity + " mB of " + (f != null ? f.getFluid().getName() : "n/a");
+    }
+
+    /** Called whenever a player right-clicks on this tank in a gui.
+     * 
+     * @param container The container that the tank was right clicked in. */
+    public void onGuiClicked(ContainerBC_Neptune container) {
+        EntityPlayer player = container.player;
+        ItemStack held = player.inventory.getItemStack();
+        if (held.isEmpty()) {
+            return;
+        }
+        // TODO: Tank handling
+        // Really need 1.11 for this
     }
 }

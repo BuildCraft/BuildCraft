@@ -5,6 +5,14 @@ public interface IPositionedElement extends IGuiPosition {
 
     int getHeight();
 
+    default int getCenterX() {
+        return getX() + getWidth() / 2;
+    }
+
+    default int getCenterY() {
+        return getY() + getHeight() / 2;
+    }
+
     default boolean contains(int x, int y) {
         if (x < getX() || x >= getX() + getWidth()) return false;
         if (y < getY() || y >= getY() + getHeight()) return false;

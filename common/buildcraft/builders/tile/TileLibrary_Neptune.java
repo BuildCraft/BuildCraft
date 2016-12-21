@@ -16,6 +16,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import buildcraft.api.core.EnumPipePart;
+
 import buildcraft.builders.gui.GuiBlueprintLibrary;
 import buildcraft.lib.BCLibDatabase;
 import buildcraft.lib.library.ILibraryEntryData;
@@ -23,10 +25,10 @@ import buildcraft.lib.library.LibraryEntry;
 import buildcraft.lib.library.LibraryEntryHeader;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBCInventory_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 
-public class TileLibrary_Neptune extends TileBCInventory_Neptune implements ITickable {
+public class TileLibrary_Neptune extends TileBC_Neptune implements ITickable {
     public static final int NET_SELECTED = 20;
 
     public enum LibSlot {
@@ -45,7 +47,7 @@ public class TileLibrary_Neptune extends TileBCInventory_Neptune implements ITic
     public LibraryEntryHeader selected = null;
 
     public TileLibrary_Neptune() {
-        inv = addInventory("inv", 4, EnumAccess.NONE);
+        inv = itemManager.addInvHandler("inv", 4, EnumAccess.NONE);
     }
 
     @Override

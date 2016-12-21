@@ -3,8 +3,6 @@ package buildcraft.factory.block;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -50,27 +48,34 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileFloodGate tile = (TileFloodGate) world.getTileEntity(pos);
-        for (EnumFacing side : EnumFacing.values()) {
-            if (side != EnumFacing.UP) {
-                state = state.withProperty(CONNECTED_MAP.get(side), !tile.isSideBlocked(side));
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileFloodGate) {
+            TileFloodGate gate = (TileFloodGate) tile;
+            for (EnumFacing side : EnumFacing.values()) {
+                if (side != EnumFacing.UP) {
+                    state = state.withProperty(CONNECTED_MAP.get(side), !gate.isSideBlocked(side));
+                }
             }
         }
         return state;
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        ItemStack heldItem = player.getHeldItem(hand);
         if (heldItem != null && heldItem.getItem() instanceof IToolWrench) {
-            TileFloodGate tile = (TileFloodGate) world.getTileEntity(pos);
-            if (side != EnumFacing.UP) {
-                tile.setSideBlocked(side, !tile.isSideBlocked(side));
-                tile.sendNetworkUpdate(TileFloodGate.NET_FLOOD_GATE);
-                world.markBlockRangeForRenderUpdate(pos, pos);
-                return true;
+            TileEntity tile = world.getTileEntity(pos);
+            if (tile instanceof TileFloodGate) {
+                TileFloodGate gate = (TileFloodGate) tile;
+                if (side != EnumFacing.UP) {
+                    gate.setSideBlocked(side, !gate.isSideBlocked(side));
+                    gate.sendNetworkUpdate(TileFloodGate.NET_FLOOD_GATE);
+                    world.markBlockRangeForRenderUpdate(pos, pos);
+                    return true;
+                }
             }
             return false;
         }
-        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
+        return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
     }
 }

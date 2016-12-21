@@ -26,14 +26,14 @@ import buildcraft.lib.BCLibItems;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.registry.CreativeTabManager;
 
-//@formatter:off
-@Mod(modid = BCCore.MODID,
-     name = "BuildCraft Core",
-     version = BCLib.VERSION,
-     dependencies = "required-after:buildcraftlib@[" + BCLib.VERSION + "]",
-     acceptedMinecraftVersions = "[1.11]",
-     guiFactory = "buildcraft.core.client.ConficGuiFactoryBC")
-//@formatter:on
+@Mod(//
+        modid = BCCore.MODID,//
+        name = "BuildCraft Core",//
+        version = BCLib.VERSION,//
+        dependencies = "required-after:buildcraftlib@[" + BCLib.VERSION + "]",//
+        acceptedMinecraftVersions = "[1.11]",//
+        guiFactory = "buildcraft.core.client.ConfigGuiFactoryBC"//
+)
 public class BCCore {
     public static final String MODID = "buildcraftcore";
 
@@ -46,14 +46,14 @@ public class BCCore {
     }
 
     @Mod.EventHandler
-    public static void preInit(FMLPreInitializationEvent evt) {
+    public static void preInit(FMLPreInitializationEvent event) {
         BCLog.logger.info("");
         BCLog.logger.info("Starting BuildCraft " + BCLib.VERSION);
         BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2016");
         BCLog.logger.info("http://www.mod-buildcraft.com");
         BCLog.logger.info("");
 
-        File cfgFolder = evt.getModConfigurationDirectory();
+        File cfgFolder = event.getModConfigurationDirectory();
         cfgFolder = new File(cfgFolder, "buildcraft");
         BCCoreConfig.preInit(cfgFolder);
         BCCoreProxy.getProxy().fmlPreInit();
@@ -74,7 +74,7 @@ public class BCCore {
     }
 
     @Mod.EventHandler
-    public static void init(FMLInitializationEvent evt) {
+    public static void init(FMLInitializationEvent event) {
         BCCoreProxy.getProxy().fmlInit();
 
         BCCoreRecipes.init();
@@ -85,7 +85,7 @@ public class BCCore {
     }
 
     @Mod.EventHandler
-    public static void postInit(FMLPostInitializationEvent evt) {
+    public static void postInit(FMLPostInitializationEvent event) {
         BCCoreProxy.getProxy().fmlPostInit();
         BCCoreConfig.postInit();
     }

@@ -7,6 +7,8 @@ package buildcraft.lib.tile;
 import java.io.IOException;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
@@ -169,7 +171,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     // Item caps
-    protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
+    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
         if (world.isBlockLoaded(getPos())) {
             markDirty();
         }

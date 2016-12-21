@@ -1,6 +1,7 @@
 package buildcraft.lib.engine;
 
 import buildcraft.api.mj.IMjConnector;
+import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 
 public class EngineConnector implements IMjConnector {
@@ -12,8 +13,11 @@ public class EngineConnector implements IMjConnector {
 
     @Override
     public boolean canConnect(IMjConnector other) {
-        if (redstoneOnly) {
-            return other instanceof IMjRedstoneReceiver;
+        if (other instanceof IMjReceiver) {
+            if (redstoneOnly) {
+                return other instanceof IMjRedstoneReceiver;
+            }
+            return true;
         }
         return true;
     }

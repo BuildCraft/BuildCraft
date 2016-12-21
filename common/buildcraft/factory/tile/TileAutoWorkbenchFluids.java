@@ -16,6 +16,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
+import buildcraft.lib.misc.CapUtil;
 
 public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
     private final Tank tank1 = new Tank("tank1", Fluid.BUCKET_VOLUME * 6, this);

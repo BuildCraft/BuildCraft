@@ -25,17 +25,17 @@ import buildcraft.factory.block.BlockChute;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
-import buildcraft.lib.tile.TileBCInventory_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
-public class TileChute extends TileBCInventory_Neptune implements ITickable, IDebuggable {
+public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable {
     public final ItemHandlerSimple inv;
     protected final MjBattery battery = new MjBattery(1000_000);
     protected int progress = 0;
 
     public TileChute() {
-        inv = addInventory("inv", 4, ItemHandlerManager.EnumAccess.INSERT, EnumPipePart.VALUES);
+        inv = itemManager.addInvHandler("inv", 4, ItemHandlerManager.EnumAccess.INSERT, EnumPipePart.VALUES);
     }
 
     public static boolean hasInventoryAtPosition(IBlockAccess world, BlockPos pos, EnumFacing side) {

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fluids.FluidStack;
@@ -36,12 +38,12 @@ public class BuildCraftObjectCaches {
     }
 
     /** @see NetworkedObjectCache.ServerView#store(Object) */
-    public static int storeItemStack(ItemStack stack) {
+    public static int storeItemStack(@Nonnull ItemStack stack) {
         return CACHE_ITEMS.server().store(new ItemStackKey(stack));
     }
 
     /** @see NetworkedObjectCache.ServerView#getId(Object) */
-    public static int getItemStackId(ItemStack stack) {
+    public static int getItemStackId(@Nonnull ItemStack stack) {
         return CACHE_ITEMS.server().getId(new ItemStackKey(stack));
     }
 

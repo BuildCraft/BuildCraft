@@ -98,12 +98,12 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
 
             if (tile.currentTask != null && tile.currentTask instanceof TileQuarry.TaskBreakBlock) {
                 TileQuarry.TaskBreakBlock currentTask1 = (TileQuarry.TaskBreakBlock) tile.currentTask;
-                BlockPos pos = currentTask1.pos;
+                BlockPos pos = currentTask1.breakPos;
 
                 if (tile.drillPos == null) {
                     LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(LASER, VecUtil.convertCenter(tile.getPos()), VecUtil.convertCenter(pos), 1 / 16D), buffer);
                 } else {
-                    yOffset = (double) currentTask1.getEnergy() / currentTask1.getTarget();
+                    yOffset = (double) currentTask1.getPower() / currentTask1.getTarget();
                     if (yOffset < 0.9) {
                         yOffset = 1 - yOffset / 0.9;
                     } else {
@@ -153,9 +153,9 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
 
         if (tile.min != null && tile.max != null && tile.currentTask != null && tile.currentTask instanceof TileQuarry.TaskAddFrame) {
             TileQuarry.TaskAddFrame currentTask = (TileQuarry.TaskAddFrame) tile.currentTask;
-            int index = tile.getFramePoses().indexOf(currentTask.pos);
+            int index = tile.getFramePositions().indexOf(currentTask.framePos);
             if (index > 1) {
-                double progress = (double) currentTask.getEnergy() / currentTask.getTarget() * (index - 1) / tile.getFramePoses().size();
+                double progress = (double) currentTask.getPower() / currentTask.getTarget() * (index - 1) / tile.getFramePositions().size();
                 double progress1 = (progress >= 0 && progress <= 0.25) ? progress * 4 ://
                     (progress >= 0.25 && progress <= 0.5) ? 1 ://
                         (progress >= 0.5 && progress <= 0.75) ? 1 - (progress - 0.5) * 4 ://

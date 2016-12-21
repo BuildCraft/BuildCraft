@@ -80,7 +80,6 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
                 list.appendTag(item.writeToNbt(tickNow));
             }
         }
-
         nbt.setTag("items", list);
         return nbt;
     }

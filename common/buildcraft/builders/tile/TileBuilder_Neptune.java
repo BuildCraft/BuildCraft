@@ -25,7 +25,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -47,16 +46,17 @@ import buildcraft.lib.bpt.Blueprint;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
 import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.EnumAxisOrder;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBCInventory_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 
-public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITickable, IDebuggable {
+public class TileBuilder_Neptune extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final int NET_BOX = 10;
     public static final int NET_PATH = 11;
     public static final int NET_CLEAR = 12;
@@ -67,8 +67,8 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
     public static final int NET_ANIM_POWER = 17;
     public static final int NET_ANIM_STATE = 18;
 
-    public final IItemHandlerModifiable invBlueprint = addInventory("blueprint", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
-    public final IItemHandlerModifiable invResources = addInventory("resources", 27, EnumAccess.NONE, EnumPipePart.VALUES);
+    public final IItemHandlerModifiable invBlueprint = itemManager.addInvHandler("blueprint", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
+    public final IItemHandlerModifiable invResources = itemManager.addInvHandler("resources", 27, EnumAccess.NONE, EnumPipePart.VALUES);
 
     private final Tank[] tanks = new Tank[] {//
         new Tank("fluid1", Fluid.BUCKET_VOLUME * 8, this),//
@@ -99,10 +99,6 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
     protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, ItemStack before, ItemStack after) {
         if (itemHandler == invBlueprint) {
             // Update bpt + builder
-            if (after == null) {
-                // builder.releaseAll();
-                // animation.reset();
-            }
         }
         super.onSlotChange(itemHandler, slot, before, after);
     }

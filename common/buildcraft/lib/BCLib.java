@@ -15,11 +15,14 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.bpt.vanilla.VanillaSchematics;
+import buildcraft.lib.fluids.CoolantRegistry;
+import buildcraft.lib.fluids.FuelRegistry;
 import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
@@ -49,6 +52,8 @@ public class BCLib {
 
         BCModules.fmlPreInit();
         BuildCraftAPI.fakePlayerProvider = FakePlayerUtil.INSTANCE;
+        BuildcraftFuelRegistry.fuel = FuelRegistry.INSTANCE;
+        BuildcraftFuelRegistry.coolant = CoolantRegistry.INSTANCE;
         BCLibProxy.getProxy().fmlPreInit();
 
         BCLibItems.preInit();

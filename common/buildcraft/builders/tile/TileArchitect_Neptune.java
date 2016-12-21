@@ -46,17 +46,17 @@ import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.BoxIterator;
 import buildcraft.lib.misc.data.EnumAxisOrder;
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBCInventory_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 
-public class TileArchitect_Neptune extends TileBCInventory_Neptune implements ITickable, IDebuggable {
+public class TileArchitect_Neptune extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final int NET_BOX = 20;
     public static final int NET_SCAN = 21;
 
     private static final int BLOCKS_PER_TICK = 3;
 
-    public final IItemHandlerModifiable invBptIn = addInventory("bptIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
-    public final IItemHandlerModifiable invBptOut = addInventory("bptOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
+    public final IItemHandlerModifiable invBptIn = itemManager.addInvHandler("bptIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
+    public final IItemHandlerModifiable invBptOut = itemManager.addInvHandler("bptOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
 
     public boolean shouldScanEntities = false;
     /** Details- if true then this will create a blueprint, otherwise it will be a template. */

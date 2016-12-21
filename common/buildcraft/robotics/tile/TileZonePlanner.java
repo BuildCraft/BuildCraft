@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.core.BCCoreItems;
@@ -25,13 +26,13 @@ import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBCInventory_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.robotics.zone.ZonePlan;
 import buildcraft.robotics.zone.ZonePlannerMapChunkKey;
 
-public class TileZonePlanner extends TileBCInventory_Neptune implements ITickable, IDebuggable {
+public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final int NET_PLAN_CHANGE = 10;
 
     public final ItemHandlerSimple invPaintbrushes;
@@ -48,13 +49,13 @@ public class TileZonePlanner extends TileBCInventory_Neptune implements ITickabl
     public ZonePlan[] layers = new ZonePlan[16];
 
     public TileZonePlanner() {
-        invPaintbrushes = addInventory("paintbrushes", 16, ItemHandlerManager.EnumAccess.NONE);
-        invInputPaintbrush = addInventory("inputPaintbrush", 1, ItemHandlerManager.EnumAccess.NONE);
-        invInputMapLocation = addInventory("inputMapLocation", 1, ItemHandlerManager.EnumAccess.NONE);
-        invInputResult = addInventory("inputResult", 1, ItemHandlerManager.EnumAccess.NONE);
-        invOutputPaintbrush = addInventory("outputPaintbrush", 1, ItemHandlerManager.EnumAccess.NONE);
-        invOutputMapLocation = addInventory("outputMapLocation", 1, ItemHandlerManager.EnumAccess.NONE);
-        invOutputResult = addInventory("outputResult", 1, ItemHandlerManager.EnumAccess.NONE);
+        invPaintbrushes = itemManager.addInvHandler("paintbrushes", 16, ItemHandlerManager.EnumAccess.NONE);
+        invInputPaintbrush = itemManager.addInvHandler("inputPaintbrush", 1, ItemHandlerManager.EnumAccess.NONE);
+        invInputMapLocation = itemManager.addInvHandler("inputMapLocation", 1, ItemHandlerManager.EnumAccess.NONE);
+        invInputResult = itemManager.addInvHandler("inputResult", 1, ItemHandlerManager.EnumAccess.NONE);
+        invOutputPaintbrush = itemManager.addInvHandler("outputPaintbrush", 1, ItemHandlerManager.EnumAccess.NONE);
+        invOutputMapLocation = itemManager.addInvHandler("outputMapLocation", 1, ItemHandlerManager.EnumAccess.NONE);
+        invOutputResult = itemManager.addInvHandler("outputResult", 1, ItemHandlerManager.EnumAccess.NONE);
         for (int i = 0; i < layers.length; i++) {
             layers[i] = new ZonePlan();
         }

@@ -12,9 +12,8 @@ import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.IConfigElement;
 
 import buildcraft.core.BCCoreConfig;
-import buildcraft.core.config.BCConfigElement;
 
-public class ConficGuiFactoryBC implements IModGuiFactory {
+public class ConfigGuiFactoryBC implements IModGuiFactory {
     public static class GuiConfigManager extends GuiConfig {
         public GuiConfigManager(GuiScreen parentScreen) {
             super(parentScreen, new ArrayList<IConfigElement>(), "buildcraftcore", "config", false, false, I18n.format("config.buildcraft"));
@@ -34,7 +33,7 @@ public class ConficGuiFactoryBC implements IModGuiFactory {
     }
 
     /** Needed for forge IModGuiFactory */
-    public ConficGuiFactoryBC() {}
+    public ConfigGuiFactoryBC() {}
 
     @Override
     public void initialize(Minecraft minecraftInstance) {
