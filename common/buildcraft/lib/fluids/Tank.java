@@ -22,7 +22,6 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
@@ -30,8 +29,9 @@ import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.misc.StackUtil;
-
-import io.netty.buffer.ByteBuf;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.net.cache.BuildCraftObjectCaches;
+import buildcraft.lib.net.cache.NetworkedFluidStackCache;
 
 /** Provides a useful implementation of a fluid tank that can save + load, and has a few helper funtions.
  * 
@@ -51,6 +51,9 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
 
     @Nonnull
     private final Predicate<FluidStack> filter;
+
+    private NetworkedFluidStackCache.Link clientFluid = null;
+    private int clientAmount = 0;
 
     protected static Map<Fluid, Integer> fluidColors = new HashMap<>();
 
@@ -138,11 +141,10 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
 
     protected void refreshTooltip() {
         toolTip.clear();
-        int amount = 0;
-        FluidStack fluidStack = getFluid();
-        if (fluidStack != null && fluidStack.amount > 0) {
+        int amount = clientAmount;
+        FluidStack fluidStack = clientFluid.get();
+        if (fluidStack != null && amount > 0) {
             toolTip.add(TextFormatting.WHITE + fluidStack.getFluid().getLocalizedName(fluidStack));
-            amount = fluidStack.amount;
         }
         toolTip.add(String.format(Locale.ENGLISH, "%,d / %,d", amount, getCapacity()));
     }
@@ -191,15 +193,23 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
         return (fluidStack.amount / 1000.0) + "B of " + fluidStack.getLocalizedName();
     }
 
-    public void writeToBuffer(ByteBuf buffer) {
-        NBTTagCompound tankData = new NBTTagCompound();
-        super.writeToNBT(tankData);
-        ByteBufUtils.writeTag(buffer, tankData);
+    public void writeToBuffer(PacketBufferBC buffer) {
+        if (fluid == null) {
+            buffer.writeBoolean(false);
+        } else {
+            buffer.writeBoolean(true);
+            buffer.writeInt(BuildCraftObjectCaches.CACHE_FLUIDS.server().store(fluid));
+        }
+        buffer.writeInt(getFluidAmount());
     }
 
-    public void readFromBuffer(ByteBuf buffer) {
-        NBTTagCompound tankData = ByteBufUtils.readTag(buffer);
-        super.readFromNBT(tankData);
+    public void readFromBuffer(PacketBufferBC buffer) {
+        if (buffer.readBoolean()) {
+            clientFluid = BuildCraftObjectCaches.CACHE_FLUIDS.client().retrieve(buffer.readInt());
+        } else {
+            clientFluid = null;
+        }
+        clientAmount = buffer.readInt();
     }
 
     public String getDebugString() {
