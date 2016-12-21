@@ -52,7 +52,7 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     }
 
     // Engine overrides
-    
+
     @Override
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         BCEnergyGuis.ENGINE_STONE.openGUI(player, getPos());
@@ -73,7 +73,7 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     public void burn() {
         if (burnTime > 0) {
             burnTime--;
-
+            // this seems wrong...
             long output = getCurrentOutput();
             currentOutput = output; // Comment out for constant power
             addPower(output);
@@ -89,11 +89,6 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
                 invFuel.extractItem(0, 1, false);
             }
         }
-    }
-
-    @Override
-    public int getScaledBurnTime(int i) {
-        return (int) (((float) burnTime / (float) totalBurnTime) * i);
     }
 
     private static int getItemBurnTime(ItemStack itemstack) {
@@ -124,7 +119,10 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
 
     @Override
     public long getCurrentOutput() {
-        // val * 3 / 8 = val * 0.375 (TARGET_OUTPUT)
+        // double e = 0.375 * getMaxEnergy() - energy;
+        // esum = MathUtils.clamp(esum + e, -eLimit, eLimit);
+        // return MathUtils.clamp(e * 1 + esum * 0.05, MIN_OUTPUT, MAX_OUTPUT);
+
         long e = 3 * getMaxPower() / 8 - power;
         esum = clamp(esum + e, -eLimit, eLimit);
         return clamp(e + esum / 20, MIN_OUTPUT, MAX_OUTPUT);

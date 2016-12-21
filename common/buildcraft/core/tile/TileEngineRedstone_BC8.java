@@ -41,11 +41,6 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
     }
 
     @Override
-    public int getScaledBurnTime(int scale) {
-        return scale;
-    }
-
-    @Override
     public long getMaxPower() {
         return MjAPI.MJ;
     }

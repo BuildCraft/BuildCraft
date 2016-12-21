@@ -152,7 +152,6 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
             return;
         }
-
         recentPowerAverage.tick();
 
         if (min == null || max == null || box == null) {

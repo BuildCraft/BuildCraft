@@ -73,10 +73,10 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     public double getPowerLevel() {
-        return power / getMaxPower();
+        return power / (double) getMaxPower();
     }
 
-    protected EnumPowerStage computeEnergyStage() {
+    protected EnumPowerStage computeEnergyStage() {// TODO: RENAME
         double powerLevel = getHeatLevel();
         if (powerLevel < 0.25f) return EnumPowerStage.BLUE;
         else if (powerLevel < 0.5f) return EnumPowerStage.GREEN;
@@ -85,7 +85,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         else return EnumPowerStage.OVERHEAT;
     }
 
-    public final EnumPowerStage getEnergyStage() {
+    public final EnumPowerStage getEnergyStage() {// TODO: RENAME
         if (!worldObj.isRemote) {
             if (powerStage == EnumPowerStage.OVERHEAT) return powerStage;
             EnumPowerStage newStage = computeEnergyStage();
@@ -214,8 +214,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
         // Pulsed power
         return extractPower(0, receiver.getPowerRequested(), true);
-        // return extractPower(receiver.getMinPowerReceived(), receiver.getMaxPowerReceived(), false); -- TODO: Use
-        // that!
+        // TODO: Use this:
+        // return extractPower(receiver.getMinPowerReceived(), receiver.getMaxPowerReceived(), false);
+
         // Constant power
         // return extractEnergy(0, getActualOutput(), false); // Uncomment for constant power
     }
@@ -251,10 +252,12 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     protected void burn() {}
 
     protected void engineUpdate() {
-        if (!isRedstonePowered) if (power >= 1) {
-            power -= 1;
-        } else if (power < 1) {
-            power = 0;
+        if (!isRedstonePowered) {
+            if (power >= 1) {
+                power -= 1;
+            } else if (power < 1) {
+                power = 0;
+            }
         }
     }
 
@@ -299,8 +302,6 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     /* STATE INFORMATION */
     public abstract boolean isBurning();
-
-    public abstract int getScaledBurnTime(int scale);
 
     // IPowerReceptor stuffs -- move!
     // @Override

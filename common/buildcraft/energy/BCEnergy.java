@@ -47,7 +47,7 @@ public class BCEnergy {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
-
+        BCEnergyRecipes.init();
     }
 
     @Mod.EventHandler

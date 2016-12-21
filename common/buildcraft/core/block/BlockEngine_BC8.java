@@ -42,14 +42,4 @@ public class BlockEngine_BC8 extends BlockEngineBase_BC8<EnumEngineType> {
     public String getUnlocalizedName(EnumEngineType engine) {
         return TagManager.getTag("block.engine.bc." + engine.unlocalizedTag, EnumTagType.UNLOCALIZED_NAME);
     }
-
-    @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack held, EnumFacing side, float hitX, float hitY, float hitZ) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileEngineBase_BC8) {
-            TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
-            return engine.onActivated(player, hand, side, hitX, hitY, hitZ);
-        }
-        return false;
-    }
 }

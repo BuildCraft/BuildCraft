@@ -10,8 +10,11 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.energy.client.gui.GuiEngineIron_BC8;
 import buildcraft.energy.client.gui.GuiEngineStone_BC8;
+import buildcraft.energy.container.ContainerEngineIron_BC8;
 import buildcraft.energy.container.ContainerEngineStone_BC8;
+import buildcraft.energy.tile.TileEngineIron_BC8;
 import buildcraft.energy.tile.TileEngineStone_BC8;
 
 public abstract class BCEnergyProxy implements IGuiHandler {
@@ -40,6 +43,9 @@ public abstract class BCEnergyProxy implements IGuiHandler {
                 }
                 return null;
             case ENGINE_IRON:
+                if (tile instanceof TileEngineIron_BC8) {
+                    return new ContainerEngineIron_BC8(player, (TileEngineIron_BC8) tile);
+                }
 
                 return null;
             default:
@@ -67,7 +73,9 @@ public abstract class BCEnergyProxy implements IGuiHandler {
                     }
                     return null;
                 case ENGINE_IRON:
-
+                    if (tile instanceof TileEngineIron_BC8) {
+                        return new GuiEngineIron_BC8(new ContainerEngineIron_BC8(player, (TileEngineIron_BC8) tile));
+                    }
                     return null;
                 default:
                     return null;

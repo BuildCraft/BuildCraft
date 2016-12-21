@@ -278,6 +278,7 @@ public class TagManager {
         // BC Energy Blocks
         // BC Energy Tiles
         registerTag("tile.engine.stone").reg("engine.stone");
+        registerTag("tile.engine.iron").reg("engine.iron");
 
         endBatch(prependTags("energy:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 

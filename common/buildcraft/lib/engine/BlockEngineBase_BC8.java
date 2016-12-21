@@ -10,12 +10,14 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -23,6 +25,7 @@ import buildcraft.api.blocks.ICustomRotationHandler;
 import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.misc.EntityUtil;
 
 public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile_Neptune implements ICustomRotationHandler {
     private final Map<E, Supplier<? extends TileEngineBase_BC8>> engineTileConstructors = new EnumMap<>(getEngineProperty().getValueClass());
@@ -104,6 +107,19 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile
                 list.add(new ItemStack(item, 1, engine.ordinal()));
             }
         }
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack held, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (EntityUtil.getWrenchHand(player) != null) {
+            return false;
+        }
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileEngineBase_BC8) {
+            TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
+            return engine.onActivated(player, hand, side, hitX, hitY, hitZ);
+        }
+        return false;
     }
 
     // ICustomRotationHandler

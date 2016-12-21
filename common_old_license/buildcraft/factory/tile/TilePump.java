@@ -242,11 +242,6 @@ public class TilePump extends TileMiner {
         return val < 0 ? 0 : val > 1 ? 1 : val;
     }
 
-    @SideOnly(Side.CLIENT)
-    public int getFluidColorForRender() {
-        return tank.getFluidColor();
-    }
-
     // Capabilities
 
     @Override

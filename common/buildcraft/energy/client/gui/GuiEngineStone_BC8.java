@@ -7,6 +7,7 @@ import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.pos.IPositionedElement;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftenergy:textures/gui/steam_engine_gui.png");
@@ -29,8 +30,20 @@ public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
         double amount = container.tile.deltaFuelLeft.getDynamic(partialTicks) / 100;
 
         if (amount > 0) {
-            int flameHeight = (int) (amount * flameRect.getHeight());
-            ICON_FLAME.drawCutInside(flameRect.getX(), flameRect.getY() + flameHeight - flameRect.getHeight(), flameRect.getWidth(), flameHeight);
+            int flameHeight = (int) Math.ceil(amount * flameRect.getHeight());
+
+            drawTexturedModalRect(//
+                    flameRect.getX(),//
+                    flameRect.getY() + flameRect.getHeight() - flameHeight,//
+                    176, 12 - flameHeight, 14, flameHeight + 2);
         }
+    }
+
+    @Override
+    protected void drawForegroundLayer() {
+        String str = StringUtilBC.localize("tile.engineStone.name");
+        int strWidth = fontRendererObj.getStringWidth(str);
+        fontRendererObj.drawString(str, rootElement.getCenterX() - strWidth / 2, rootElement.getY() + 6, 0x404040);
+        fontRendererObj.drawString(StringUtilBC.localize("gui.inventory"), rootElement.getX() + 8, rootElement.getY() + SIZE_Y - 96, 0x404040);
     }
 }

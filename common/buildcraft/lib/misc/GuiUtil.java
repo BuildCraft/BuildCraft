@@ -10,11 +10,15 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
+import buildcraft.lib.client.render.fluid.FluidRenderer;
+import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import buildcraft.lib.gui.pos.IPositionedElement;
 
 public class GuiUtil {
     public static ToolTip createToolTip(GuiBC8<?> gui, Supplier<ItemStack> stackRef) {
@@ -173,5 +177,34 @@ public class GuiUtil {
             return tooltipHeight + 5;
         }
         return 0;
+    }
+
+    public static void drawFluid(IPositionedElement position, Tank tank) {
+        drawFluid(position, tank.getFluid(), tank.getFluidAmount(), tank.getCapacity());
+    }
+
+    public static void drawFluid(IPositionedElement position, FluidStack fluid, int capacity) {
+        if (fluid == null || fluid.amount <= 0) return;
+        drawFluid(position, fluid, fluid.amount, capacity);
+    }
+
+    public static void drawFluid(IPositionedElement position, FluidStack fluid, int amount, int capacity) {
+        if (fluid == null || amount <= 0) return;
+
+        double filled = amount / (double) capacity;
+        filled = Math.min(1, filled);
+        int height = (int) Math.ceil(position.getHeight() * filled);
+
+        int startX = position.getX();
+        int startY = position.getY();
+        int endX = startX + position.getWidth();
+        int endY = startY + height;
+
+        if (!fluid.getFluid().isGaseous(fluid)) {
+            startY = position.getY() + position.getHeight();
+            endY = startY - height;
+        }
+
+        FluidRenderer.drawFluidForGui(fluid, startX, startY, endX, endY);
     }
 }
