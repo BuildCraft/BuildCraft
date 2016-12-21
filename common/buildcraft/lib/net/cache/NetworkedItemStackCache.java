@@ -18,7 +18,7 @@ public class NetworkedItemStackCache extends NetworkedObjectCache<ItemStackKey> 
     @Override
     protected ItemStackKey getCanonical(ItemStackKey obj) {
         if (obj.baseStack.isEmpty()) {
-            return ItemStackKey.INVALID_STACK;
+            return ItemStackKey.EMPTY;
         }
         ItemStack stack = obj.baseStack.copy();
         stack.setCount(1);
@@ -43,7 +43,7 @@ public class NetworkedItemStackCache extends NetworkedObjectCache<ItemStackKey> 
         if (buffer.readBoolean()) {
             return new ItemStackKey(buffer.readItemStack());
         } else {
-            return ItemStackKey.INVALID_STACK;
+            return ItemStackKey.EMPTY;
         }
     }
 

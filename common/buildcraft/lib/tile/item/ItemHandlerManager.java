@@ -9,11 +9,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import buildcraft.api.core.EnumPipePart;
+
+import buildcraft.lib.misc.CapUtil;
 
 public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
     public enum EnumAccess {

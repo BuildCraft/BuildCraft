@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 
 public class ItemStackKey {
-    public static final ItemStackKey INVALID_STACK = new ItemStackKey(StackUtil.EMPTY);
+    public static final ItemStackKey EMPTY = new ItemStackKey(StackUtil.EMPTY);
 
     public final @Nonnull ItemStack baseStack;
     private final int hash;

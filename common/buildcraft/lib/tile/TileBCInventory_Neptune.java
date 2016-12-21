@@ -9,11 +9,11 @@ import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
 
+import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.lib.tile.item.StackChangeCallback;

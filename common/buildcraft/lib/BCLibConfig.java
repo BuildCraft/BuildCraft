@@ -1,10 +1,13 @@
 package buildcraft.lib;
 
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.text.TextFormatting;
 
+import buildcraft.lib.chunkload.IChunkLoadingTile;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 
@@ -35,6 +38,10 @@ public class BCLibConfig {
     /** If true then ItemRenderUtil.renderItemStack will use the facing parameter to rotate the item */
     public static RenderRotation rotateTravelingItems = RenderRotation.ENABLED;
 
+    public static ChunkLoaderType chunkLoadingType = ChunkLoaderType.AUTO;
+
+    public static ChunkLoaderLevel chunkLoadingLevel = ChunkLoaderLevel.SELF_TILES;
+
     /** Resets cached values across various BCLib classes that rely on these config options. */
     public static void refreshConfigs() {
         LocaleUtil.onConfigChanged();
@@ -61,5 +68,31 @@ public class BCLibConfig {
         };
 
         public abstract EnumFacing changeFacing(EnumFacing dir);
+    }
+
+    public enum ChunkLoaderType {
+        /** Automatic chunkloading is ENABLED. */
+        ON,
+        /** Automatic chunkloading is ENABLED when using the integrated server (singleplayer + LAN), and DISABLED when
+         * using a dedicated server. */
+        AUTO,
+        /** Automatic chunkloading is DISABLED. Even for strict tiles (like the quarry) */
+        OFF;
+    }
+
+    public enum ChunkLoaderLevel {
+        /** No automatic chunkloading is done. */
+        NONE,
+
+        /** {@link TileEntity}'s that implement the {@link IChunkLoadingTile} interface will be loaded, provided they
+         * return {@link buildcraft.lib.chunkload.IChunkLoadingTile.LoadType#HARD} */
+        STRICT_TILES,
+
+        /** {@link TileEntity}'s that implement the {@link IChunkLoadingTile} interface will be loaded, provided they
+         * DON'T return null. */
+        SELF_TILES,
+
+        /** {@link TileEntity}'s that implement {@link ITickable} will be loaded (so a LOT of tiles) */
+        ALL_TICKABLE,
     }
 }

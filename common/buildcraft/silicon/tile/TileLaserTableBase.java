@@ -37,7 +37,7 @@ abstract class TileLaserTableBase extends TileBCInventory_Neptune implements ILa
 
     @Override
     public void update() {
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             return;
         }
 

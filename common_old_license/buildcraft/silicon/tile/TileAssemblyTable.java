@@ -36,7 +36,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
         : assemblyRecipe.output.getTagCompound().hashCode()) + assemblyRecipe.output.getMetadata() * assemblyRecipe.output.getMaxStackSize() + assemblyRecipe.output.getCount()));
 
     private boolean extract(ImmutableSet<ItemStack> items, boolean simulate) {
-        NonNullList<ItemStack> itemsNeeded = items.stream().map(ItemStack::copy).collect(Collectors.toList());
+        NonNullList<ItemStack> itemsNeeded = items.stream().map(ItemStack::copy).collect(StackUtil.nonNullListCollector());
         for (int i = 0; i < inv.getSlots(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
             for (Iterator<ItemStack> iterator = itemsNeeded.iterator(); iterator.hasNext();) {
@@ -157,7 +157,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
     public void update() {
         super.update();
 
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             return;
         }
 

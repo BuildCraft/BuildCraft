@@ -38,7 +38,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
         } else {
             return false;
         }
-        NonNullList<ItemStack> itemsNeeded = items.stream().map(ItemStack::copy).collect(Collectors.toList());
+        NonNullList<ItemStack> itemsNeeded = items.stream().map(ItemStack::copy).collect(StackUtil.nonNullListCollector());
         for (int i = 0; i < invToIntegrate.getSlots(); i++) {
             ItemStack stack = invToIntegrate.getStackInSlot(i);
             boolean found = false;
@@ -100,7 +100,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
     public void update() {
         super.update();
 
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             return;
         }
 

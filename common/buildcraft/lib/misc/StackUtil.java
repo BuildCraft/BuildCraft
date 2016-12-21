@@ -1,6 +1,7 @@
 package buildcraft.lib.misc;
 
 import java.util.Collection;
+import java.util.stream.Collector;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -20,6 +21,7 @@ public class StackUtil {
 
     /** A non-null version of {@link ItemStack#EMPTY}. When the original field adds an @Nonnull annotation this should
      * be inlined. */
+    // Actually the entire MC 
     @Nonnull
     public static final ItemStack EMPTY;
 
@@ -323,9 +325,6 @@ public class StackUtil {
         return obj;
     }
 
-    /** @param obj
-     * @param fallback
-     * @return */
     @Nonnull
     public static <T> T asNonNullSoft(@Nullable T obj, @Nonnull T fallback) {
         if (obj == null) {
@@ -345,6 +344,18 @@ public class StackUtil {
         return asNonNullSoft(stack, EMPTY);
     }
 
+    /** @return A {@link Collector} that will collect the input elements into a {@link NonNullList} */
+    public static <E> Collector<E, NonNullList<E>, NonNullList<E>> nonNullListCollector() {
+        return Collector.of(//
+                NonNullList::create,//
+                NonNullList::add,//
+                (a, b) -> {
+                    a.addAll(b);
+                    return a;
+                }//
+        );
+    }
+
     /** Computes a hash code for the given {@link ItemStack}. This is based off of {@link ItemStack#serializeNBT()},
      * except if {@link ItemStack#isEmpty()} returns true, in which case the hash will be 0. */
     public static int hash(@Nonnull ItemStack stack) {
@@ -354,9 +365,7 @@ public class StackUtil {
         return stack.serializeNBT().hashCode();
     }
 
-    /**
-     * Should be inlined EVERYWHERE that this is called.
-     */
+    /** Should be inlined EVERYWHERE that this is called. */
     @Deprecated
     public static boolean isInvalid(@Nonnull ItemStack stack) {
         return stack.isEmpty();

@@ -27,22 +27,18 @@ import buildcraft.lib.tile.TileBC_Neptune;
 
 // FIXME: This needs reverting to (close to) earlier engine code -- this is all horrible.
 public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITickable, IDebuggable {
-    /** The starting temperature of all engines */
-    public static final int TEMP_START = 19;
-    /** The temperature of all (normal) burning fuel. */
-    public static final int TEMP_ENGINE_ENERGY = 500;
-    /** The temperature of lost power, per milli MJ */
-    public static final int TEMP_LOST_POWER = 12;
 
-    public static final double TEMP_CHANGE_HEAT = 0.00125;
-    public static final double TEMP_CHANGE_AIR = 0.0125;
-    public static final double TEMP_CHANGE_WATER = 0.025;
+    /** Heat per {@link MjAPI#MJ}. */
+    public static final double HEAT_PER_MJ = 0.0023;
 
-    /* BLUE, GREEN, YELLOW, RED, OVERHEAT, BLACK */
-    private static final int[] PULSE_FREQUENCIES = { 80, 60, 45, 30, 25, 1000000 };
+    public static final double MIN_HEAT = 20;
+    public static final double IDEAL_HEAT = 100;
+    public static final double MAX_HEAT = 250;
 
     @Nonnull
     public final IMjConnector conductor = createConnector();
+
+    protected double heat = MIN_HEAT;
 
     private EnumFacing currentDirection = EnumFacing.UP;
     // Keep a buffer of what tiles are infront of us.

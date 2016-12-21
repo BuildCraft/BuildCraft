@@ -28,7 +28,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase {
     public void update() {
         super.update();
 
-        if(worldObj.isRemote) {
+        if(world.isRemote) {
             return;
         }
 

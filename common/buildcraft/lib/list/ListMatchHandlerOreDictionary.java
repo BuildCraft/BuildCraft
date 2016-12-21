@@ -1,6 +1,5 @@
 package buildcraft.lib.list;
 
-import java.util.ArrayList;
 import java.util.Set;
 
 import net.minecraft.creativetab.CreativeTabs;
@@ -100,7 +99,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
     @Override
     public NonNullList<ItemStack> getClientExamples(Type type, ItemStack stack) {
         int[] oreIds = OreDictionary.getOreIDs(stack);
-        NonNullList<ItemStack> stacks = new ArrayList<>();
+        NonNullList<ItemStack> stacks = NonNullList.create();
 
         if (oreIds.length == 0) {
             // No ore IDs? Time for the best effort plan of METADATA!
@@ -137,7 +136,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
             }
         }
 
-        NonNullList<ItemStack> wildcard = new ArrayList<>();
+        NonNullList<ItemStack> wildcard = NonNullList.create();
 
         for (ItemStack is : stacks) {
             if (is != null && is.getItemDamage() == OreDictionary.WILDCARD_VALUE && is.getHasSubtypes()) {
