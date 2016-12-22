@@ -18,18 +18,20 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 
+import buildcraft.BuildCraftFactory;
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
-import buildcraft.lib.bpt.vanilla.VanillaSchematics;
 import buildcraft.lib.fluids.CoolantRegistry;
 import buildcraft.lib.fluids.FuelRegistry;
 import buildcraft.lib.item.ItemManager;
+import buildcraft.lib.list.ListMatchHandlerFluid;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.IntegrationRecipeRegistry;
+import buildcraft.test.lib.list.ListTester;
 
 //@formatter:off
 @Mod(modid = BCLib.MODID,
@@ -69,7 +71,6 @@ public class BCLib {
     public static void init(FMLInitializationEvent evt) {
         BCLibProxy.getProxy().fmlInit();
 
-//        VanillaSchematics.fmlInit();
         VanillaListHandlers.fmlInit();
         VanillaPaintHandlers.fmlInit();
         VanillaRotationHandlers.fmlInit();
@@ -88,6 +89,7 @@ public class BCLib {
         BCMessageHandler.fmlPostInit();
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();
+        ListMatchHandlerFluid.fmlPostInit();
     }
 
     @Mod.EventHandler

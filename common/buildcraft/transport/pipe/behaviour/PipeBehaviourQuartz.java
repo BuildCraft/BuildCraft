@@ -19,7 +19,7 @@ public class PipeBehaviourQuartz extends PipeBehaviourSeparate {
     }
 
     @PipeEventHandler
-    public void modifySpeed(PipeEventItem.ModifySpeed event) {
+    public static void modifySpeed(PipeEventItem.ModifySpeed event) {
         event.modifyTo(SPEED_TARGET, SPEED_DELTA);
     }
 }

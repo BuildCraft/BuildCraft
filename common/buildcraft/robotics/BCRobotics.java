@@ -33,7 +33,7 @@ public class BCRobotics {
         BCRoboticsItems.preInit();
         BCRoboticsBlocks.preInit();
 
-        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, RoboticsProxy_BC8.getProxy());
+        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCRoboticsProxy.getProxy());
 
         BCMessageHandler.addMessageType(MessageZoneMapRequest.class, MessageZoneMapRequest.Handler.INSTANCE, Side.SERVER);
         BCMessageHandler.addMessageType(MessageZoneMapResponse.class, MessageZoneMapResponse.Handler.INSTANCE, Side.CLIENT);
@@ -41,7 +41,7 @@ public class BCRobotics {
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent evt) {
-        RoboticsProxy_BC8.getProxy().fmlInit();
+        BCRoboticsProxy.getProxy().fmlInit();
         BCRoboticsRecipes.init();
     }
 

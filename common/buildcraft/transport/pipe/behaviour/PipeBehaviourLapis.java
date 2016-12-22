@@ -90,7 +90,7 @@ public class PipeBehaviourLapis extends PipeBehaviour {
     }
 
     @PipeEventHandler
-    public void addActions(PipeEventStatement.AddActionInternal event) {
+    public static void addActions(PipeEventStatement.AddActionInternal event) {
         Collections.addAll(event.actions, BCTransportStatements.ACTION_PIPE_COLOUR);
     }
 

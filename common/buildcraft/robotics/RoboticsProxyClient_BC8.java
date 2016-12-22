@@ -1,5 +1,5 @@
 package buildcraft.robotics;
 
-public class RoboticsProxyClient_BC8 extends RoboticsProxy_BC8 {
+public class RoboticsProxyClient_BC8 extends BCRoboticsProxy {
 
 }

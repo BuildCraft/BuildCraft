@@ -27,7 +27,7 @@ public class GuiUtil {
             public void refresh() {
                 delegate().clear();
                 ItemStack stack = stackRef.get();
-                if (stack != null) {
+                if (!stack.isEmpty()) {
                     EntityPlayer player = gui.container.player;
                     boolean advanced = gui.mc.gameSettings.advancedItemTooltips;
                     delegate().addAll(stack.getTooltip(player, advanced));

@@ -3,25 +3,44 @@ package buildcraft.lib.list;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import buildcraft.api.lists.ListMatchHandler;
 
 import buildcraft.lib.misc.StackUtil;
 
 public class ListMatchHandlerFluid extends ListMatchHandler {
+    private static final List<ItemStack> fluidHoldingItems = new ArrayList<>();
+
+    public static void fmlPostInit() {
+        for (Item item : Item.REGISTRY) {
+            ItemStack toTry = new ItemStack(item);
+            IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(toTry);
+            if (fluidHandler != null && fluidHandler.drain(1, false) == null) {
+                fluidHoldingItems.add(toTry);
+            }
+        }
+    }
+
     @Override
     public boolean matches(Type type, ItemStack stack, ItemStack target, boolean precise) {
         if (type == Type.TYPE) {
-            if (FluidContainerRegistry.isContainer(stack) && FluidContainerRegistry.isContainer(target)) {
-                ItemStack emptyContainerStack = FluidContainerRegistry.drainFluidContainer(stack);
-                ItemStack emptyContainerTarget = FluidContainerRegistry.drainFluidContainer(target);
-                if (StackUtil.isMatchingItem(emptyContainerStack, emptyContainerTarget, true, true)) {
+            IFluidHandlerItem fluidHandlerStack = FluidUtil.getFluidHandler(stack.copy());
+            IFluidHandlerItem fluidHandlerTarget = FluidUtil.getFluidHandler(target.copy());
+
+            if (fluidHandlerStack != null && fluidHandlerTarget != null) {
+                // check to make sure that both of the stacks can contain fluid
+                fluidHandlerStack.drain(Integer.MAX_VALUE, true);
+                fluidHandlerTarget.drain(Integer.MAX_VALUE, true);
+                ItemStack emptyStack = fluidHandlerStack.getContainer();
+                ItemStack emptyTarget = fluidHandlerTarget.getContainer();
+                if (StackUtil.isMatchingItem(emptyStack, emptyTarget, true, true)) {
                     return true;
                 }
             }
@@ -38,7 +57,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
     @Override
     public boolean isValidSource(Type type, ItemStack stack) {
         if (type == Type.TYPE) {
-            return FluidContainerRegistry.isContainer(stack);
+            return FluidUtil.getFluidHandler(stack) != null;
         } else if (type == Type.MATERIAL) {
             return FluidUtil.getFluidContained(stack) != null;
         }
@@ -51,25 +70,32 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
             FluidStack fStack = FluidUtil.getFluidContained(stack);
             if (fStack != null) {
                 NonNullList<ItemStack> examples = NonNullList.create();
-                for (FluidContainerRegistry.FluidContainerData data : FluidContainerRegistry.getRegisteredFluidContainerData()) {
-                    if (fStack.isFluidEqual(data.fluid)) {
-                        examples.add(data.filledContainer);
+
+                for (ItemStack potentialHolder : fluidHoldingItems) {
+                    potentialHolder = potentialHolder.copy();
+                    IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(potentialHolder);
+                    if (fluidHandler != null && (fluidHandler.fill(fStack, true) > 0 || fluidHandler.drain(fStack, false) != null)) {
+                        examples.add(fluidHandler.getContainer());
                     }
                 }
                 return examples;
             }
         } else if (type == Type.TYPE) {
-            if (FluidContainerRegistry.isContainer(stack)) {
+            IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(stack.copy());
+
+            if (fluidHandler != null) {
                 NonNullList<ItemStack> examples = NonNullList.create();
-                ItemStack emptyContainerStack = FluidContainerRegistry.drainFluidContainer(stack);
                 examples.add(stack);
-                examples.add(emptyContainerStack);
-                for (FluidContainerRegistry.FluidContainerData data : FluidContainerRegistry.getRegisteredFluidContainerData()) {
-                    if (StackUtil.isMatchingItem(data.emptyContainer, emptyContainerStack, true, true)) {
-                        examples.add(data.filledContainer);
+                FluidStack contained = fluidHandler.drain(Integer.MAX_VALUE, true);
+                if (contained != null) {
+                    examples.add(fluidHandler.getContainer());
+                    for (ItemStack potential : fluidHoldingItems) {
+                        IFluidHandlerItem potentialHolder = FluidUtil.getFluidHandler(potential);
+                        if (potentialHolder.fill(contained, true) > 0) {
+                            examples.add(potentialHolder.getContainer());
+                        }
                     }
                 }
-                return examples;
             }
         }
         return null;

@@ -29,7 +29,7 @@ public class LocaleUtil {
     private static final NumberFormat FORMAT_FLUID = NumberFormat.getNumberInstance();
 
     private static String localeKeyFluidStatic, localeKeyFluidFlow;
-    private static String localeKeyFluidStaticCap;
+    private static String localeKeyFluidStaticCap, localeKeyFluidStaticEmpty, localeKeyFluidStaticFull;
 
     static {
         onConfigChanged();
@@ -40,10 +40,12 @@ public class LocaleUtil {
     public static void onConfigChanged() {
         boolean bucketStatic = BCLibConfig.useBucketsStatic;
         boolean bucketFlow = BCLibConfig.useBucketsFlow;
-        boolean longName = BCLibConfig.useLocalizedLongName;
+        boolean longName = BCLibConfig.useLongLocalizedName;
         localeKeyFluidStatic = "buildcraft.fluid.static." + (bucketStatic ? "bucket." : "milli.") + (longName ? "long" : "short");
         localeKeyFluidFlow = "buildcraft.fluid.flow." + (bucketFlow ? "bucket." : "milli.") + (longName ? "long" : "short");
         localeKeyFluidStaticCap = "buildcraft.fluid.static.cap." + (bucketStatic ? "bucket." : "milli.") + (longName ? "long" : "short");
+        localeKeyFluidStaticEmpty = "buildcraft.fluid.empty." + (bucketFlow ? "bucket." : "milli.") + (longName ? "long" : "short");
+        localeKeyFluidStaticFull = "buildcraft.fluid.full." + (bucketFlow ? "bucket." : "milli.") + (longName ? "long" : "short");
     }
 
     /** Localizes the give key to the current locale.
@@ -113,17 +115,29 @@ public class LocaleUtil {
      * @return */
     public static String localizeFluidStatic(FluidStack fluidStack, int capacity) {
         if (fluidStack == null || fluidStack.amount <= 0) {
+            if (capacity > 0) {
+                String cap;
+                if (BCLibConfig.useBucketsStatic) {
+                    cap = FORMAT_FLUID.format(capacity / 1000.0);
+                } else {
+                    cap = FORMAT_FLUID.format(capacity);
+                }
+                return localize(localeKeyFluidStaticEmpty, cap);
+            }
             return localize("buildcraft.fluid.empty");
         } else {
             String fluid = fluidStack.getLocalizedName();
             String amount;
             String cap;
             if (BCLibConfig.useBucketsStatic) {
-                amount = FORMAT_FLUID.format(fluidStack.amount);
-                cap = FORMAT_FLUID.format(capacity);
-            } else {
                 amount = FORMAT_FLUID.format(fluidStack.amount / 1000.0);
                 cap = FORMAT_FLUID.format(capacity / 1000.0);
+            } else {
+                amount = FORMAT_FLUID.format(fluidStack.amount);
+                cap = FORMAT_FLUID.format(capacity);
+            }
+            if (capacity == fluidStack.amount) {
+                return localize(localeKeyFluidStaticFull, amount, fluid);
             }
             return localize(capacity > 0 ? localeKeyFluidStaticCap : localeKeyFluidStatic, amount, fluid, cap);
         }
@@ -144,7 +158,7 @@ public class LocaleUtil {
     }
 
     public static String localizeMj(long mj) {
-        if (BCLibConfig.useLocalizedLongName) {
+        if (BCLibConfig.useLongLocalizedName) {
             return localize("buildcraft.mj.long", MjAPI.formatMj(mj));
         } else {
             return MjAPI.formatMjShort(mj);

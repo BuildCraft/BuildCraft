@@ -163,6 +163,27 @@ direction.center.6=South-West
 direction.center.7=South
 direction.center.8=South-East
 
+buildcraft.fluid.empty=Empty
+buildcraft.fluid.static.milli.short=%s mB of %s
+buildcraft.fluid.static.bucket.short=%s B of %s
+buildcraft.fluid.static.milli.long=%s milli buckets of %s
+buildcraft.fluid.static.bucket.long=%s buckets of %s
+
+buildcraft.fluid.empty.milli.short=0 / %s mB
+buildcraft.fluid.empty.bucket.short=0 / %s B
+buildcraft.fluid.empty.milli.long=Empty %s milli bucket tank
+buildcraft.fluid.empty.bucket.long=Empty %s bucket tank
+
+buildcraft.fluid.full.milli.short=%1$s / %1$s mB of %2$s
+buildcraft.fluid.full.bucket.short=%1$s / %1$s B of %2$s
+buildcraft.fluid.full.milli.long=Full %s milli bucket tank of %s
+buildcraft.fluid.full.bucket.long=Full %s bucket tank of %s
+
+buildcraft.fluid.static.cap.milli.short=%s / %3$s mB of %2$s
+buildcraft.fluid.static.cap.bucket.short=%s / %3$s B of %2$s
+buildcraft.fluid.static.cap.milli.long=%s milli buckets of %s in a %s milli bucket tank
+buildcraft.fluid.static.cap.bucket.long=%s buckets of %s in a %s bucket tank
+
 fillerpattern.clear=Clear
 fillerpattern.fill=Fill
 fillerpattern.flatten=Flatten

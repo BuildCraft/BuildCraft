@@ -5,7 +5,6 @@
 package buildcraft.core.list;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,7 +83,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
                             if (data.size() >= listSlot.slotIndex) {
                                 return data.get(listSlot.slotIndex - 1);
                             } else {
-                                return null;
+                                return StackUtil.EMPTY;
                             }
                         }
                     }
@@ -159,7 +158,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
     }
 
     private boolean hasListEquipped() {
-        return container.getListItemStack() != null;
+        return !container.getListItemStack().isEmpty();
     }
 
     @Override

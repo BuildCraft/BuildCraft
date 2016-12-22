@@ -37,6 +37,7 @@ public class BCCoreConfig {
     public static boolean hideFluid;
     public static boolean useBucketsStatic;
     public static boolean useBucketsFlow;
+    public static boolean useLongLocalizedName;
     public static int itemLifespan;
     public static int markerMaxDistance;
     public static int networkUpdateRate = 10;
@@ -51,6 +52,7 @@ public class BCCoreConfig {
     private static Property propHideFluid;
     private static Property propUseBucketsStatic;
     private static Property propUseBucketsFlow;
+    private static Property propUseLongLocalizedName;
     private static Property propItemLifespan;
     private static Property propMarkerMaxDistance;
     private static Property propNetworkUpdateRate;
@@ -112,6 +114,10 @@ public class BCCoreConfig {
         propUseBucketsFlow.setComment("Should flowing fluid values be displayed in terms of buckets per second rather than thousandths of a bucket per tick? (B/s vs mB/t)");
         none.setTo(propUseBucketsFlow);
 
+        propUseLongLocalizedName = config.get(display, "propUseLongLocalizedName", false);
+        propUseLongLocalizedName.setComment("Should localised strings be displayed in long or short form (10 mB / t vs 10 milli buckets per tick");
+        none.setTo(propUseLongLocalizedName);
+
         propItemLifespan = config.get(general, "itemLifespan", 60);
         propItemLifespan.setMinValue(5).setMaxValue(600);
         propItemLifespan.setComment("How long, in seconds, should items stay on the ground? (Vanilla = 300, default = 60)");
@@ -163,6 +169,7 @@ public class BCCoreConfig {
         hideFluid = propHideFluid.getBoolean();
         BCLibConfig.useBucketsStatic = useBucketsStatic = propUseBucketsStatic.getBoolean();
         BCLibConfig.useBucketsFlow = useBucketsFlow = propUseBucketsFlow.getBoolean();
+        BCLibConfig.useLongLocalizedName = useLongLocalizedName = propUseLongLocalizedName.getBoolean();
         itemLifespan = propItemLifespan.getInt();
         BCLibConfig.itemLifespan = itemLifespan;
         markerMaxDistance = propMarkerMaxDistance.getInt();

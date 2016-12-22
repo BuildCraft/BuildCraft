@@ -33,7 +33,7 @@ public class BCLibConfig {
 
     /** If true then fluidstacks and Mj will be localized with longer names (for example "1.2 Buckets per second" rather
      * than "60mB/t") */
-    public static boolean useLocalizedLongName = false;
+    public static boolean useLongLocalizedName = false;
 
     /** If true then ItemRenderUtil.renderItemStack will use the facing parameter to rotate the item */
     public static RenderRotation rotateTravelingItems = RenderRotation.ENABLED;

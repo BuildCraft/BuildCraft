@@ -37,7 +37,7 @@ import buildcraft.silicon.tile.TileLaser;
 import buildcraft.silicon.tile.TileProgrammingTable;
 
 public abstract class BCSiliconProxy implements IGuiHandler {
-    @SidedProxy
+    @SidedProxy(modId = BCSilicon.MODID)
     private static BCSiliconProxy proxy;
 
     public static BCSiliconProxy getProxy() {

@@ -33,11 +33,10 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
     private static final byte CLICK_FLAG_CLONE = 4;
 
     @Nonnull
-    private ItemStack stack;
+    private ItemStack stack = StackUtil.EMPTY;
 
     public WidgetPhantomSlot(ContainerBC_Neptune container) {
         super(container);
-        stack = StackUtil.EMPTY;
     }
 
     @Override
@@ -96,7 +95,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
     }
 
     public final void setStack(@Nonnull ItemStack stack, boolean tellClient) {
-        this.stack = stack;
+        this.stack = StackUtil.asNonNull(stack);
         int max = getMaxStackSize(stack);
         if (stack.getCount() > max) {
             this.stack.setCount(max);
@@ -134,6 +133,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
             return true;
         }
 
+        @Nonnull
         public ItemStack getStack() {
             return WidgetPhantomSlot.this.getStack();
         }

@@ -29,7 +29,6 @@ import buildcraft.builders.bpt.TickingBlueprintBuilder;
 import buildcraft.builders.bpt.TickingBlueprintBuilder.EnumBuilderMessage;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.bpt.Template;
-import buildcraft.lib.bpt.vanilla.SchematicAir;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.EnumAxisOrder;
@@ -103,7 +102,7 @@ public class TileFiller_Neptune extends TileBC_Neptune implements ITickable, IDe
 
     private SchematicBlock getSchematic(BlockPos bptPos) {
         // TODO: use the current template for a schematic
-        return SchematicAir.INSTANCE;
+        return null;//SchematicAir.INSTANCE;
     }
 
     // Networking

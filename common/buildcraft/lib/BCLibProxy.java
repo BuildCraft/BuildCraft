@@ -41,7 +41,7 @@ import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.item.ItemManager;
 
 public abstract class BCLibProxy implements IGuiHandler {
-    @SidedProxy
+    @SidedProxy(modId = BCLib.MODID)
     private static BCLibProxy proxy;
 
     public static BCLibProxy getProxy() {

@@ -38,7 +38,6 @@ import buildcraft.builders.block.BlockArchitect_Neptune;
 import buildcraft.builders.item.ItemBlueprint.BptStorage;
 import buildcraft.lib.bpt.Blueprint;
 import buildcraft.lib.bpt.builder.SchematicEntityOffset;
-import buildcraft.lib.bpt.vanilla.SchematicAir;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.misc.BoundingBoxUtil;
@@ -191,13 +190,13 @@ public class TileArchitect_Neptune extends TileBC_Neptune implements ITickable, 
         IBlockState state = world.getBlockState(worldScanPos);
         SchematicFactoryWorldBlock factory = BlueprintAPI.getWorldBlockSchematic(state.getBlock());
         if (factory == null) {
-            return SchematicAir.INSTANCE;
+            return null;// SchematicAir.INSTANCE;
         } else {
             try {
                 return factory.createFromWorld(getWorld(), worldScanPos);
             } catch (SchematicException e) {
                 e.printStackTrace();// TEMP!
-                return SchematicAir.INSTANCE;
+                return null;//SchematicAir.INSTANCE;
             }
         }
     }

@@ -1,5 +1,7 @@
 package buildcraft.energy.tile;
 
+import java.io.IOException;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,6 +14,8 @@ import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
@@ -30,6 +34,7 @@ import buildcraft.lib.fluids.TankManager;
 import buildcraft.lib.fluids.TankProperties;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.EntityUtil;
+import buildcraft.lib.net.PacketBufferBC;
 
 public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     public static final int MAX_FLUID = 10_000;
@@ -84,6 +89,26 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
         return super.getCapability(capability, facing);
     }
 
+    @Override
+    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+        super.readPayload(id, buffer, side, ctx);
+        if (side == Side.CLIENT) {
+            if (id == NET_GUI_DATA) {
+                tankManager.readData(buffer);
+            }
+        }
+    }
+
+    @Override
+    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+        super.writePayload(id, buffer, side);
+        if (side == Side.SERVER) {
+            if (id == NET_GUI_DATA) {
+                tankManager.writeData(buffer);
+            }
+        }
+    }
+
     // TileEngineBase overrrides
 
     @Override
@@ -96,7 +121,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
             if (current.getItem() instanceof IPipeItem) {
                 return false;
             }
-            FluidActionResult result =  FluidUtil.interactWithFluidHandler(current, fluidHandler, player);
+            FluidActionResult result = FluidUtil.interactWithFluidHandler(current, fluidHandler, player);
             if (result.isSuccess()) {
                 player.setHeldItem(hand, result.result);
                 return true;

@@ -16,11 +16,11 @@ import buildcraft.robotics.container.ContainerZonePlanner;
 import buildcraft.robotics.gui.GuiZonePlanner;
 import buildcraft.robotics.tile.TileZonePlanner;
 
-public abstract class RoboticsProxy_BC8 implements IGuiHandler {
-    @SidedProxy
-    private static RoboticsProxy_BC8 proxy;
+public abstract class BCRoboticsProxy implements IGuiHandler {
+    @SidedProxy(modId = BCRobotics.MODID)
+    private static BCRoboticsProxy proxy;
 
-    public static RoboticsProxy_BC8 getProxy() {
+    public static BCRoboticsProxy getProxy() {
         return proxy;
     }
 
@@ -44,12 +44,12 @@ public abstract class RoboticsProxy_BC8 implements IGuiHandler {
     public void fmlInit() {}
 
     @SideOnly(Side.SERVER)
-    public static class ServerProxy extends RoboticsProxy_BC8 {
+    public static class ServerProxy extends BCRoboticsProxy {
 
     }
 
     @SideOnly(Side.CLIENT)
-    public static class ClientProxy extends RoboticsProxy_BC8 {
+    public static class ClientProxy extends BCRoboticsProxy {
         @Override
         public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
             TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));

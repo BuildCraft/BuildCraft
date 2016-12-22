@@ -53,7 +53,7 @@ public class BlockFiller_Neptune extends BlockBCTile_Neptune implements IBlockWi
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             BCBuildersGuis.FILLER.openGUI(player, pos);
         }

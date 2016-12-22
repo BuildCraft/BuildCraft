@@ -5,7 +5,6 @@
 package buildcraft.lib.fluids;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -22,6 +21,8 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
@@ -142,16 +143,18 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
     protected void refreshTooltip() {
         toolTip.clear();
         int amount = clientAmount;
-        FluidStack fluidStack = clientFluid.get();
+        FluidStack fluidStack = clientFluid == null ? null : clientFluid.get().copy();
         if (fluidStack != null && amount > 0) {
-            toolTip.add(TextFormatting.WHITE + fluidStack.getFluid().getLocalizedName(fluidStack));
+//            toolTip.add(TextFormatting.WHITE + fluidStack.getFluid().getLocalizedName(fluidStack));
+            toolTip.add(LocaleUtil.localizeFluidStatic(new FluidStack(fluidStack, amount), getCapacity()));
+        } else {
+            toolTip.add(LocaleUtil.localizeFluidStatic(null, getCapacity()));
         }
-        toolTip.add(String.format(Locale.ENGLISH, "%,d / %,d", amount, getCapacity()));
     }
 
     @Override
     public boolean canFillFluidType(FluidStack fluid) {
-        return filter.test(fluid);
+        return fluid != null && filter.test(fluid);
     }
 
     @Override
@@ -222,7 +225,21 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
         if (held.isEmpty()) {
             return;
         }
-        // TODO: Tank handling
-        // Really need 1.11 for this
+        boolean isCreative = player.capabilities.isCreativeMode;
+        IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(held);
+        if (fluidHandler != null) {
+            FluidStack drained = fluidHandler.drain(getCapacity() - getFluidAmount(), false);
+            int filled = fill(drained, true);
+            if (filled > 0) {
+                FluidStack reallyDrained = fluidHandler.drain(filled, !isCreative);
+                if (reallyDrained == null || reallyDrained.amount != filled) {
+                    throw new IllegalStateException("Found a bugged implementation of IFluidHandlerItem! (first = "//
+                        + filled + ", second = " + reallyDrained + ", impl = = " + fluidHandler.getClass() + ")");
+                }
+                if (!isCreative) {
+                    player.inventory.setItemStack(fluidHandler.getContainer());
+                }
+            }
+        }
     }
 }

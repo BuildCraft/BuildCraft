@@ -57,7 +57,7 @@ public class BlockBuilder_Neptune extends BlockBCTile_Neptune implements IBlockW
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             BCBuildersGuis.BUILDER.openGUI(player, pos);
         }
