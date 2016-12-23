@@ -22,6 +22,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -39,6 +40,7 @@ import buildcraft.api.transport.neptune.PipeFlow;
 
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
+import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.DelayedList;
@@ -149,6 +151,17 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
     }
 
     // PipeFlow
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == CapUtil.CAP_ITEM_INJECTABLE) {
+            return (T) this;
+        } else if (capability == CapUtil.CAP_ITEM_TRANSACTOR) {
+            return (T) ItemTransactorHelper.wrapInjectable(this, facing);
+        } else {
+            return super.getCapability(capability, facing);
+        }
+    }
 
     @Override
     public boolean canConnect(EnumFacing face, PipeFlow other) {

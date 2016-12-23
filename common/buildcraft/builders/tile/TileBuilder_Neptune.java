@@ -349,14 +349,6 @@ public class TileBuilder_Neptune extends TileBC_Neptune implements ITickable, ID
     // Capability
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapUtil.CAP_FLUIDS) {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (capability == CapUtil.CAP_FLUIDS) {
             return (T) tankManager;

@@ -8,7 +8,7 @@ import buildcraft.api.core.EnumPipePart;
 
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiPosition;
-import buildcraft.lib.gui.pos.IPositionedElement;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.data.IReference;
@@ -18,7 +18,7 @@ import buildcraft.transport.gate.TriggerWrapper;
 
 public abstract class ElementStatement<T extends StatementWrapper> extends ElementGuiSlot<T> {
 
-    public ElementStatement(GuiGate gui, IPositionedElement element, IReference<T> reference) {
+    public ElementStatement(GuiGate gui, IGuiArea element, IReference<T> reference) {
         super(gui, element, reference);
     }
 

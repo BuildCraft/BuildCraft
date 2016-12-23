@@ -5,6 +5,7 @@
 package buildcraft.api.bpt;
 
 import com.google.common.collect.ImmutableSet;
+import com.mojang.authlib.GameProfile;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -14,7 +15,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.lib.bpt.task.TaskUsable;
-import buildcraft.lib.permission.PlayerOwner;
 
 // TODO: What does this encompass? Is this just a context, or is it everything?
 // Should implementations delegate to something else for item/fluid getting?
@@ -25,7 +25,7 @@ public interface IBuilderAccessor extends IMaterialProvider {
 
     ImmutableSet<BptPermissions> getPermissions();
 
-    PlayerOwner getOwner();
+    GameProfile getOwner();
 
     /** @return The number of ticks the animation will take */
     int startItemStackAnimation(Vec3d target, ItemStack display, int delay);

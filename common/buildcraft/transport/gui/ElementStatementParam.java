@@ -7,14 +7,14 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
 import buildcraft.lib.gui.pos.IGuiPosition;
-import buildcraft.lib.gui.pos.IPositionedElement;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.data.IReference;
 
 public class ElementStatementParam extends ElementGuiSlot<IStatementParameter> {
     public final int paramIndex;
     public final ElementStatement<?> parent;
 
-    public ElementStatementParam(GuiGate gui, IPositionedElement element, IReference<IStatementParameter> reference, int paramIndex, ElementStatement<?> elemParent) {
+    public ElementStatementParam(GuiGate gui, IGuiArea element, IReference<IStatementParameter> reference, int paramIndex, ElementStatement<?> elemParent) {
         super(gui, element, reference);
         this.paramIndex = paramIndex;
         this.parent = elemParent;

@@ -62,7 +62,7 @@ import buildcraft.lib.config.RestartRequirement;
 @Deprecated
 public class BuildCraftBuilders extends BuildCraftMod {
 
-    @Mod.Instance("BuildCraft|Builders")
+//    @Mod.Instance("BuildCraft|Builders")
     public static BuildCraftBuilders instance;
 
     public static BlockConstructionMarker constructionMarkerBlock;

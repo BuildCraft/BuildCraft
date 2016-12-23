@@ -21,7 +21,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.transport.IInjectable;
 
-import buildcraft.lib.inventory.ItemInjectableHelper;
 import buildcraft.lib.inventory.ItemTransactorHelper;
 
 public class InventoryUtil {
@@ -98,12 +97,10 @@ public class InventoryUtil {
         for (EnumFacing face : toTry) {
             if (face == ignore) continue;
             TileEntity tile = world.getTileEntity(pos.offset(face));
-            IInjectable injectable = ItemInjectableHelper.getIjectable(tile, face.getOpposite());
-            if (injectable != null) {
-                stack = injectable.injectItem(stack, true, face.getOpposite(), null, 0);
-                if (stack.isEmpty()) {
-                    return StackUtil.EMPTY;
-                }
+            IInjectable injectable = ItemTransactorHelper.getInjectable(tile, face.getOpposite());
+            stack = injectable.injectItem(stack, true, face.getOpposite(), null, 0);
+            if (stack.isEmpty()) {
+                return StackUtil.EMPTY;
             }
         }
         return stack;
@@ -112,8 +109,8 @@ public class InventoryUtil {
     /** Attempts to add the given stack to the best acceptor, in this order: {@link IItemHandler} instances,
      * {@link IInjectable} instances, and finally dropping it down on the ground. */
     public static void addToBestAcceptor(World world, BlockPos pos, EnumFacing ignore, @Nonnull ItemStack stack) {
-        stack = addToRandomInventory(world, pos, stack);
         stack = addToRandomInjectable(world, pos, ignore, stack);
+        stack = addToRandomInventory(world, pos, stack);
         drop(world, pos, stack);
     }
 

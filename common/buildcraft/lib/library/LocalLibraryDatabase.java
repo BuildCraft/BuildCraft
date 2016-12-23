@@ -55,7 +55,7 @@ public class LocalLibraryDatabase extends LibraryDatabase_Neptune {
             /* If we started BEFORE the server was initialised then the owner lookup would have failed.
              * 
              * This makes sure that it is always right. */
-            header.author.fillOwner();
+//            header.author.fillOwner();
         }
     }
 

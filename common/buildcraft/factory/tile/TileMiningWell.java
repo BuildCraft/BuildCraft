@@ -21,7 +21,7 @@ public class TileMiningWell extends TileMiner {
     @Override
     protected void mine() {
         IBlockState state = world.getBlockState(currentPos);
-        if (BlockUtil.isUnbreakableBlock(getWorld(), currentPos, getOwner().getOwner()) || state.getBlock() == Blocks.BEDROCK) {
+        if (BlockUtil.isUnbreakableBlock(getWorld(), currentPos, getOwner()) || state.getBlock() == Blocks.BEDROCK) {
             setComplete(true);
             return;
         }
@@ -32,14 +32,14 @@ public class TileMiningWell extends TileMiner {
         if (progress >= target) {
             progress = 0;
             if (!world.isAirBlock(currentPos)) {
-                EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, getPos(), getOwner().getOwner());
+                EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, getPos(), getOwner());
                 BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, currentPos, state, fakePlayer);
                 MinecraftForge.EVENT_BUS.post(breakEvent);
                 if (breakEvent.isCanceled()) {
                     setComplete(true);
                     return;
                 }
-                NonNullList<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) world, currentPos, getOwner().getOwner());
+                NonNullList<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) world, currentPos, getOwner());
                 if (stacks != null) {
                     for (ItemStack stack : stacks) {
                         InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, stack);

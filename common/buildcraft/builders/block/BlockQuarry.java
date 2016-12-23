@@ -30,9 +30,7 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
     @Override
     protected void addProperties(List<IProperty<?>> properties) {
         super.addProperties(properties);
-        for (IProperty<Boolean> prop : BuildCraftProperties.CONNECTED_MAP.values()) {
-            properties.add(prop);
-        }
+        properties.addAll(BuildCraftProperties.CONNECTED_MAP.values());
     }
 
     private static boolean isConnected(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {

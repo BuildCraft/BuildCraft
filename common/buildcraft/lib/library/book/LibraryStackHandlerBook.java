@@ -5,10 +5,13 @@ import java.time.LocalDateTime;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemWrittenBook;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 
 import buildcraft.api.core.BCLog;
 
@@ -17,7 +20,6 @@ import buildcraft.lib.library.ILibraryStackHandler;
 import buildcraft.lib.library.LibraryEntry;
 import buildcraft.lib.library.LibraryEntryHeader;
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.permission.PlayerOwner;
 
 public enum LibraryStackHandlerBook implements ILibraryStackHandler {
     INSTANCE;
@@ -32,7 +34,7 @@ public enum LibraryStackHandlerBook implements ILibraryStackHandler {
             LibraryEntryBook data = LibraryEntryBook.create(from);
             NBTTagCompound nbt = NBTUtilBC.getItemData(from);
             if (data != null && nbt != null) {
-                PlayerOwner author = PlayerOwner.lookup(nbt.getString("author"));
+                GameProfile author = NBTUtil.readGameProfileFromNBT(nbt.getCompoundTag("author"));
                 String title = nbt.getString("title");
 
                 LocalDateTime dateTime = null;
@@ -61,12 +63,12 @@ public enum LibraryStackHandlerBook implements ILibraryStackHandler {
             ItemStack newStack = book.saveToStack();
             NBTTagCompound nbt = NBTUtilBC.getItemData(newStack);
             nbt.setTag(NBT_DATE, NBTUtilBC.writeLocalDateTime(header.creation));
-            String auth = header.author.getOwnerName();
-            if (auth == null) {
+            GameProfile author = header.author;
+            if (author == null || !author.isComplete()) {
                 BCLog.logger.warn("Unknown author! (" + header + ")");
                 return null;
             }
-            nbt.setString("author", auth);
+            nbt.setTag("author", NBTUtil.writeGameProfile(new NBTTagCompound(), header.author));
             nbt.setString("title", header.name);
 
             if (ItemWrittenBook.validBookTagContents(nbt)) {

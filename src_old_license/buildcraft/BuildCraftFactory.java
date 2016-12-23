@@ -86,7 +86,7 @@ import buildcraft.lib.config.RestartRequirement;
 @Deprecated
 public class BuildCraftFactory extends BuildCraftMod {
 
-    @Mod.Instance("BuildCraft|Factory")
+//    @Mod.Instance("BuildCraft|Factory")
     public static BuildCraftFactory instance;
 
     public static BlockMiningWell miningWellBlock;

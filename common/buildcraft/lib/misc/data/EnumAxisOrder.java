@@ -18,6 +18,8 @@ public enum EnumAxisOrder {
     ZXY(Z, X, Y),
     ZYX(Z, Y, X);
 
+    public static final EnumAxisOrder[] VALUES = values();
+
     private static final Map<String, EnumAxisOrder> orderMap;
 
     static {
@@ -37,7 +39,11 @@ public enum EnumAxisOrder {
     }
 
     public static EnumAxisOrder getOrder(String name) {
-        return orderMap.get(name);
+        EnumAxisOrder order = orderMap.get(name);
+        if (order == null) {
+            order = XZY;
+        }
+        return order;
     }
 
     public static EnumAxisOrder getOrder(Axis first, Axis b) {

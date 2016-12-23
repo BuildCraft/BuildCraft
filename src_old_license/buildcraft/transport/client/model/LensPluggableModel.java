@@ -23,7 +23,7 @@ import buildcraft.api.transport.pluggable.IPluggableModelBaker;
 
 import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.PerspAwareModelBase;
-import buildcraft.core.lib.client.sprite.SubSprite;
+import buildcraft.core.lib.client.sprite.SubAtlasSprite;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.MutableQuad;
@@ -87,9 +87,9 @@ public final class LensPluggableModel extends BakedModelHolder implements IPlugg
     public void textureGetter(TextureStitchEvent.Post event) {
         spriteWaterFlow = event.map.getAtlasSprite("minecraft:blocks/water_flow");
         // The water sprite is too big normally, so get 1/2 of each axis
-        spriteWaterFlow = new SubSprite(spriteWaterFlow, 8, 8);
+        spriteWaterFlow = new SubAtlasSprite(spriteWaterFlow, 8, 8);
         // The water sprite flows upwards if we don't flip the V
-        spriteWaterFlow = new SubSprite.FlippedV(spriteWaterFlow);
+        spriteWaterFlow = new SubAtlasSprite.FlippedV(spriteWaterFlow);
     }
 
     @Override

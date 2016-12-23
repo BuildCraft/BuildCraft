@@ -47,7 +47,7 @@ import buildcraft.silicon.TileProgrammingTable;
 //        dependencies = DefaultProps.DEPENDENCY_CORE)
 @Deprecated
 public class BuildCraftSilicon extends BuildCraftMod {
-    @Mod.Instance("BuildCraft|Silicon")
+//    @Mod.Instance("BuildCraft|Silicon")
     public static BuildCraftSilicon instance;
 
     public static ItemRedstoneChipset redstoneChipset;

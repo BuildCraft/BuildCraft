@@ -6,7 +6,7 @@ import buildcraft.energy.container.ContainerEngineStone_BC8;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
-import buildcraft.lib.gui.pos.IPositionedElement;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.LocaleUtil;
 
 public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
@@ -14,7 +14,7 @@ public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
     private static final int SIZE_X = 176, SIZE_Y = 166;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
 
-    private final IPositionedElement flameRect = new GuiRectangle(81, 25, 14, 14).offset(rootElement);
+    private final IGuiArea flameRect = new GuiRectangle(81, 25, 14, 14).offset(rootElement);
 
     public GuiEngineStone_BC8(ContainerEngineStone_BC8 container) {
         super(container);

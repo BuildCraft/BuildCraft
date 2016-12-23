@@ -153,7 +153,7 @@ import buildcraft.silicon.ItemRedstoneChipset;
 //        dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
 @Deprecated
 public class BuildCraftRobotics extends BuildCraftMod {
-    @Mod.Instance("BuildCraft|Robotics")
+//    @Mod.Instance("BuildCraft|Robotics")
     public static BuildCraftRobotics instance;
 
     public static BlockZonePlan zonePlanBlock;

@@ -224,17 +224,10 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     // Capability
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (mjCapHelper.hasCapability(capability, facing)) {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (mjCapHelper.hasCapability(capability, facing)) {
-            return mjCapHelper.getCapability(capability, facing);
+        T cap = mjCapHelper.getCapability(capability, facing);
+        if (cap != null) {
+            return cap;
         }
         return super.getCapability(capability, facing);
     }

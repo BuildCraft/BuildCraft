@@ -23,6 +23,9 @@ public class BoxIterator implements Iterator<BlockPos> {
     }
 
     public BoxIterator(BlockPos min, BlockPos max, AxisOrder order, boolean invert) {
+        if (min == null) throw new NullPointerException("min");
+        if (max == null) throw new NullPointerException("max");
+        if (order == null) throw new NullPointerException("order");
         this.min = min;
         this.max = max;
         this.invert = invert;

@@ -1,6 +1,6 @@
 package buildcraft.lib.gui.pos;
 
-public interface IPositionedElement extends IGuiPosition {
+public interface IGuiArea extends IGuiPosition {
     int getWidth();
 
     int getHeight();
@@ -13,9 +13,17 @@ public interface IPositionedElement extends IGuiPosition {
         return getY() + getHeight() / 2;
     }
 
+    default int getEndX() {
+        return getX() + getWidth();
+    }
+
+    default int getEndY() {
+        return getY() + getHeight();
+    }
+
     default boolean contains(int x, int y) {
-        if (x < getX() || x >= getX() + getWidth()) return false;
-        if (y < getY() || y >= getY() + getHeight()) return false;
+        if (x < getX() || x >= getEndX()) return false;
+        if (y < getY() || y >= getEndY()) return false;
         return true;
     }
 
@@ -23,9 +31,9 @@ public interface IPositionedElement extends IGuiPosition {
         return contains(position.getX(), position.getY());
     }
 
-    default boolean contains(IPositionedElement element) {
-        if (element.getX() < getX() || element.getX() + element.getWidth() >= getX() + getWidth()) return false;
-        if (element.getY() < getY() || element.getY() + element.getHeight() >= getY() + getHeight()) return false;
+    default boolean contains(IGuiArea element) {
+        if (element.getX() < getX() || element.getEndX() >= getEndX()) return false;
+        if (element.getY() < getY() || element.getEndY() >= getEndY()) return false;
         return true;
     }
 
@@ -34,9 +42,9 @@ public interface IPositionedElement extends IGuiPosition {
     }
 
     @Override
-    default IPositionedElement offset(IGuiPosition by) {
-        IPositionedElement containing = this;
-        return new IPositionedElement() {
+    default IGuiArea offset(IGuiPosition by) {
+        IGuiArea containing = this;
+        return new IGuiArea() {
             @Override
             public int getX() {
                 return by.getX() + containing.getX();
@@ -60,9 +68,9 @@ public interface IPositionedElement extends IGuiPosition {
     }
 
     @Override
-    default IPositionedElement offset(int x, int y) {
-        IPositionedElement containing = this;
-        return new IPositionedElement() {
+    default IGuiArea offset(int x, int y) {
+        IGuiArea containing = this;
+        return new IGuiArea() {
             @Override
             public int getX() {
                 return x + containing.getX();
@@ -85,9 +93,9 @@ public interface IPositionedElement extends IGuiPosition {
         };
     }
 
-    default IPositionedElement resize(int newWidth, int newHeight) {
-        IPositionedElement containing = this;
-        return new IPositionedElement() {
+    default IGuiArea resize(int newWidth, int newHeight) {
+        IGuiArea containing = this;
+        return new IGuiArea() {
             @Override
             public int getX() {
                 return containing.getX();
@@ -106,6 +114,35 @@ public interface IPositionedElement extends IGuiPosition {
             @Override
             public int getHeight() {
                 return newHeight;
+            }
+        };
+    }
+
+    default IGuiArea expand(int by) {
+        return expand(by, by);
+    }
+
+    default IGuiArea expand(int dX, int dY) {
+        IGuiArea containing = this;
+        return new IGuiArea() {
+            @Override
+            public int getX() {
+                return containing.getX() - dX;
+            }
+
+            @Override
+            public int getY() {
+                return containing.getY() - dY;
+            }
+
+            @Override
+            public int getWidth() {
+                return containing.getWidth() + dX * 2;
+            }
+
+            @Override
+            public int getHeight() {
+                return containing.getHeight() + dY * 2;
             }
         };
     }

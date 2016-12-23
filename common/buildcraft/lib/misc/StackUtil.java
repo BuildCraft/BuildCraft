@@ -2,6 +2,7 @@ package buildcraft.lib.misc;
 
 import java.util.Collection;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -345,15 +346,8 @@ public class StackUtil {
     }
 
     /** @return A {@link Collector} that will collect the input elements into a {@link NonNullList} */
-    public static <E> Collector<E, NonNullList<E>, NonNullList<E>> nonNullListCollector() {
-        return Collector.of(//
-                NonNullList::create,//
-                NonNullList::add,//
-                (a, b) -> {
-                    a.addAll(b);
-                    return a;
-                }//
-        );
+    public static <E> Collector<E, ?, NonNullList<E>> nonNullListCollector() {
+        return Collectors.toCollection(NonNullList::create);
     }
 
     /** Computes a hash code for the given {@link ItemStack}. This is based off of {@link ItemStack#serializeNBT()},

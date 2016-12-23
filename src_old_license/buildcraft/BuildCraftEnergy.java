@@ -76,7 +76,7 @@ import buildcraft.lib.config.RestartRequirement;
 @Deprecated
 public class BuildCraftEnergy extends BuildCraftMod {
 
-    @Mod.Instance("BuildCraft|Energy")
+//    @Mod.Instance("BuildCraft|Energy")
     public static BuildCraftEnergy instance;
 
     public static boolean spawnOilSprings = true;

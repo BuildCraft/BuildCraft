@@ -6,6 +6,7 @@ import buildcraft.energy.container.ContainerEngineIron_BC8;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.ledger.LedgerEngine;
 import buildcraft.lib.misc.LocaleUtil;
 
 public class GuiEngineIron_BC8 extends GuiBC8<ContainerEngineIron_BC8> {
@@ -18,6 +19,7 @@ public class GuiEngineIron_BC8 extends GuiBC8<ContainerEngineIron_BC8> {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
+        ledgersRight.ledgers.add(new LedgerEngine(ledgersRight, this));
     }
 
     @Override

@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,8 +21,8 @@ import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
-import buildcraft.lib.gui.pos.IPositionedElement;
 
 public class GuiUtil {
     public static ToolTip createToolTip(GuiBC8<?> gui, Supplier<ItemStack> stackRef) {
@@ -179,16 +183,16 @@ public class GuiUtil {
         return 0;
     }
 
-    public static void drawFluid(IPositionedElement position, Tank tank) {
+    public static void drawFluid(IGuiArea position, Tank tank) {
         drawFluid(position, tank.getFluid(), tank.getFluidAmount(), tank.getCapacity());
     }
 
-    public static void drawFluid(IPositionedElement position, FluidStack fluid, int capacity) {
+    public static void drawFluid(IGuiArea position, FluidStack fluid, int capacity) {
         if (fluid == null || fluid.amount <= 0) return;
         drawFluid(position, fluid, fluid.amount, capacity);
     }
 
-    public static void drawFluid(IPositionedElement position, FluidStack fluid, int amount, int capacity) {
+    public static void drawFluid(IGuiArea position, FluidStack fluid, int amount, int capacity) {
         if (fluid == null || amount <= 0) return;
 
         double filled = amount / (double) capacity;
@@ -206,5 +210,15 @@ public class GuiUtil {
         }
 
         FluidRenderer.drawFluidForGui(fluid, startX, startY, endX, endY);
+    }
+
+    public static void scissor(int x, int y, int width, int height) {
+        Minecraft mc = Minecraft.getMinecraft();
+        ScaledResolution res = new ScaledResolution(mc);
+        double scaleW = mc.displayWidth / res.getScaledWidth_double();
+        double scaleH = mc.displayHeight / res.getScaledHeight_double();
+        int rx = (int) (x * scaleW);
+        int ry = (int) (mc.displayHeight - (y + height) * scaleH);
+        GL11.glScissor(rx, ry, (int) (width * scaleW), (int) (height * scaleH));
     }
 }

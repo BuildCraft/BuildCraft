@@ -3,7 +3,6 @@ package buildcraft.lib.gui.widget;
 import java.io.IOException;
 import java.util.List;
 
-import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -12,6 +11,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.help.ElementHelpInfo;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.net.PacketBufferBC;
@@ -42,10 +42,12 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
 
     private final class GuiElementFluidTank extends GuiElementSimple<GuiBC8<?>> {
         private final GuiIcon overlay;
+        private final ElementHelpInfo helpInfo;
 
         public GuiElementFluidTank(GuiBC8<?> gui, IGuiPosition parent, GuiRectangle position, GuiIcon overlay) {
             super(gui, parent, position);
             this.overlay = overlay;
+            helpInfo = tank.getHelpInfo(this.expand(4));
         }
 
         @Override
@@ -72,6 +74,11 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
                 tooltip.refresh();
                 tooltips.add(tooltip);
             }
+        }
+
+        @Override
+        public ElementHelpInfo getHelpInfo() {
+            return helpInfo;
         }
     }
 }

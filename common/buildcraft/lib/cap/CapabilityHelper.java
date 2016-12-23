@@ -50,14 +50,7 @@ public class CapabilityHelper implements ICapabilityProvider {
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == null) {
-            return false;
-        }
-        if (getCapMap(facing).containsKey(capability)) return true;
-        for (ICapabilityProvider provider : additional) {
-            if (provider.hasCapability(capability, facing)) return true;
-        }
-        return false;
+        return getCapability(capability, facing) != null;
     }
 
     @Override

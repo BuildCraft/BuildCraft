@@ -1,5 +1,9 @@
 package buildcraft.lib.misc;
 
+import java.util.UUID;
+
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
@@ -144,6 +148,28 @@ public class MessageUtil {
 
     public static Vec3d readVec3d(PacketBuffer buffer) {
         return new Vec3d(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
+    }
+
+    public static void writeGameProfile(PacketBuffer buffer, GameProfile profile) {
+        if (profile != null && profile.isComplete()) {
+            buffer.writeBoolean(true);
+            buffer.writeUniqueId(profile.getId());
+            buffer.writeString(profile.getName());
+        } else {
+            buffer.writeBoolean(false);
+        }
+    }
+
+    public static GameProfile readGameProfile(PacketBuffer buffer) {
+        if (buffer.readBoolean()) {
+            UUID uuid = buffer.readUniqueId();
+            String name = buffer.readString(256);
+            GameProfile profile = new GameProfile(uuid, name);
+            if (profile.isComplete()) {
+                return profile;
+            }
+        }
+        return null;
     }
 
     /** {@link PacketBuffer#writeEnumValue(Enum)} can only write *actual* enum values - so not null. This method allows

@@ -388,7 +388,7 @@ public class TagManager {
         // BC Silicon Item Blocks
         registerTag("item.block.laser").reg("laser").locale("laserBlock").model("laser");
         registerTag("item.block.assembly_table").reg("assembly_table").locale("assemblyTableBlock").model("assembly_table");
-        registerTag("item.block.advanced_crafting_table").reg("advanced_crafting_table").locale("advancedCraftingTableBlock").model("advanced_crafting_table");
+        registerTag("item.block.advanced_crafting_table").reg("advanced_crafting_table").locale("assemblyWorkbenchBlock").model("advanced_crafting_table");
         registerTag("item.block.integration_table").reg("integration_table").locale("integrationTableBlock").model("integration_table");
         registerTag("item.block.charging_table").reg("charging_table").locale("chargingTableBlock").model("charging_table");
         registerTag("item.block.programming_table").reg("programming_table").locale("programmingTableBlock").model("programming_table");

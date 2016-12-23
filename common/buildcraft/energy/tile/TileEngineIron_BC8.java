@@ -74,14 +74,6 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapUtil.CAP_FLUIDS) {
-            return facing != currentDirection;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (capability == CapUtil.CAP_FLUIDS) {
             return facing != currentDirection ? (T) fluidHandler : null;

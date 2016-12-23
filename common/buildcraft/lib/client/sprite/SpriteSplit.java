@@ -6,6 +6,8 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
+import buildcraft.lib.gui.pos.IGuiArea;
+
 /** Defines and draws a 9-sliced sprite. */
 public class SpriteSplit {
     public final ISprite sprite;
@@ -28,6 +30,10 @@ public class SpriteSplit {
         this.xMax = xMax;
         this.yMax = yMax;
         this.scale = scale;
+    }
+
+    public void draw(IGuiArea element) {
+        draw(element.getX(), element.getY(), element.getWidth(), element.getHeight());
     }
 
     public void draw(int x, int y, int width, int height) {

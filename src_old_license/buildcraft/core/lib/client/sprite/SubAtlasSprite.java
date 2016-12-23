@@ -9,18 +9,18 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 
-public class SubSprite extends TextureAtlasSprite {
+public class SubAtlasSprite extends TextureAtlasSprite {
     private final TextureAtlasSprite icon;
     private float u, v;
     private final int w, h;
     private float uScale, vScale;
     private int iw, ih;
 
-    public SubSprite(TextureAtlasSprite icon, int u, int v) {
+    public SubAtlasSprite(TextureAtlasSprite icon, int u, int v) {
         this(icon, u, v, 16, 16);
     }
 
-    public SubSprite(TextureAtlasSprite icon, int u, int v, int w, int h) {
+    public SubAtlasSprite(TextureAtlasSprite icon, int u, int v, int w, int h) {
         super(icon.getIconName() + "_SubIcon");
         iw = icon.getIconWidth();
         ih = icon.getIconHeight();

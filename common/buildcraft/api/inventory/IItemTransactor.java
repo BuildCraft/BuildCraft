@@ -23,6 +23,7 @@ public interface IItemTransactor {
      * @param stacks The stacks to insert. Must not be null!
      * @param simulate If true then the in-world state of this will not be changed.
      * @return The overflow stacks. Will be an empty list if all of it was accepted. */
+    // TODO (Java 8) replace this with a default method that is ItemTransactorHelper.insertAllBypass
     NonNullList<ItemStack> insert(NonNullList<ItemStack> stacks, boolean simulate);
 
     /** Extracts a number of items that match the given filter

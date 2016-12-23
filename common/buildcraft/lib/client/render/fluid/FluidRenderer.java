@@ -7,6 +7,7 @@ import java.util.Map;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -247,11 +248,11 @@ public class FluidRenderer {
             sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
         }
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        vertex.colouri(fluid.getFluid().getColor(fluid));
+        RenderUtil.setGLColorFromInt(fluid.getFluid().getColor(fluid));
 
         Tessellator tess = Tessellator.getInstance();
         vb = tess.getBuffer();
-        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
         // draw all the full sprites
 
@@ -295,8 +296,8 @@ public class FluidRenderer {
                 guiVertex(x + 16, y + 16, 16, 16);
             }
         }
-
         tess.draw();
+        GlStateManager.color(1, 1, 1);
         sprite = null;
         vb = null;
     }
@@ -306,7 +307,6 @@ public class FluidRenderer {
         float rv = sprite.getInterpolatedV(v);
         vb.pos(x, y, 0);
         vb.tex(ru, rv);
-        vertex.renderColour(vb);
         vb.endVertex();
     }
 

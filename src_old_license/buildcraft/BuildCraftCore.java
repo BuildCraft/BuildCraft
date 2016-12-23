@@ -120,7 +120,7 @@ import buildcraft.lib.registry.AchievementPageManager;
 //        updateJSON = DefaultProps.UPDATE_JSON)
 @Deprecated
 public class BuildCraftCore extends BuildCraftMod {
-    @Mod.Instance("BuildCraft|Core")
+//    @Mod.Instance("BuildCraft|Core")
     public static BuildCraftCore instance;
 
     public static final boolean DEVELOPER_MODE = DefaultProps.VERSION.contains("@");

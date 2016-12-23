@@ -84,7 +84,7 @@ public class BuildCraftTransport extends BuildCraftMod {
     // changed from "@VERSION@" to a real version string at build time)
     public static final boolean NEPTUNE_TESTING = DefaultProps.VERSION.contains("@");
 
-    @Mod.Instance("BuildCraft|Transport")
+//    @Mod.Instance("BuildCraft|Transport")
     public static BuildCraftTransport instance;
 
     public static float pipeDurability;

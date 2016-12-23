@@ -3,8 +3,11 @@ package buildcraft.lib.gui.ledger;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.math.MathHelper;
 
 import buildcraft.lib.client.sprite.LibSprites;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
@@ -15,6 +18,7 @@ import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.PositionCallable;
+import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.RenderUtil;
 
 public abstract class Ledger_Neptune implements ITooltipElement {
@@ -42,6 +46,8 @@ public abstract class Ledger_Neptune implements ITooltipElement {
     protected int currentHeight = CLOSED_HEIGHT;
     protected int lastWidth = currentWidth;
     protected int lastHeight = currentHeight;
+    protected int interpWidth = lastWidth;
+    protected int interpHeight = lastHeight;
 
     protected final List<IGuiElement> closedElements = new ArrayList<>();
     protected final List<IGuiElement> openElements = new ArrayList<>();
@@ -72,9 +78,11 @@ public abstract class Ledger_Neptune implements ITooltipElement {
         int h = CLOSED_HEIGHT;
 
         for (IGuiElement element : openElements) {
-            w = Math.max(w, element.getX() + element.getWidth());
-            h = Math.max(h, element.getY() + element.getHeight());
+            w = Math.max(w, element.getEndX());
+            h = Math.max(h, element.getEndY());
         }
+        w -= getX();
+        h -= getY();
 
         maxWidth = w + LEDGER_GAP * 2;
         maxHeight = h + LEDGER_GAP * 2;
@@ -84,24 +92,52 @@ public abstract class Ledger_Neptune implements ITooltipElement {
         lastWidth = currentWidth;
         lastHeight = currentHeight;
 
-        if (currentDifference != 0) {
-            int diff = currentDifference * LEDGER_CHANGE_DIFF;
-            currentWidth = cap(currentWidth + diff, CLOSED_WIDTH, maxWidth);
-            currentHeight = cap(currentHeight + diff, CLOSED_HEIGHT, maxHeight);
-        }
+        int targetWidth = currentWidth;
+        int targetHeight = currentHeight;
         if (currentDifference == 1) {
-            if (isFullyOpen()) {
-                currentDifference = 0;
-            }
+            targetWidth = maxWidth;
+            targetHeight = maxHeight;
         } else if (currentDifference == -1) {
-            if (currentWidth <= CLOSED_WIDTH && currentHeight <= CLOSED_HEIGHT) {
-                currentDifference = 0;
+            targetWidth = CLOSED_WIDTH;
+            targetHeight = CLOSED_HEIGHT;
+        } else {
+            return;
+        }
+
+        int maxDiff = Math.max(maxWidth - CLOSED_WIDTH, maxHeight - CLOSED_HEIGHT);
+        int ldgDiff = MathHelper.clamp(maxDiff / 5, 1, 15);
+
+        // TODO: extract a method
+        if (currentWidth < targetWidth) {
+            currentWidth += ldgDiff;
+            if (currentWidth > targetWidth) {
+                currentWidth = targetWidth;
+            }
+        } else if (currentWidth > targetWidth) {
+            currentWidth -= ldgDiff;
+            if (currentWidth < targetWidth) {
+                currentWidth = targetWidth;
             }
         }
+
+        // TODO: extract a method
+        if (currentHeight < targetHeight) {
+            currentHeight += ldgDiff;
+            if (currentHeight > targetHeight) {
+                currentHeight = targetHeight;
+            }
+        } else if (currentHeight > targetHeight) {
+            currentHeight -= ldgDiff;
+            if (currentHeight < targetHeight) {
+                currentHeight = targetHeight;
+            }
+        }
+
+        return;
     }
 
-    private static int cap(int toCap, int min, int max) {
-        return Math.min(max, Math.max(toCap, min));
+    private static int clamp(int val, int min, int max) {
+        return MathHelper.clamp(val, min, max);
     }
 
     private static int interp(int past, int current, float partialTicks) {
@@ -121,53 +157,61 @@ public abstract class Ledger_Neptune implements ITooltipElement {
         return new GuiRectangle(startX, startY, currentWidth, currentHeight);
     }
 
-    public final boolean isFullyOpen() {
-        return currentWidth >= maxWidth && currentHeight >= maxHeight;
+    public final boolean shouldDrawOpen() {
+        return currentWidth > CLOSED_WIDTH || currentHeight > CLOSED_HEIGHT;
     }
 
-    public final void drawBackground(int x, int y, float partialTicks) {
+    public void drawBackground(int x, int y, float partialTicks) {
         startY = y;
         final SpriteSplit split;
-        int actualWidth = cap(interp(lastWidth, currentWidth, partialTicks), CLOSED_WIDTH, maxWidth);
-        int actualHeight = cap(interp(lastHeight, currentHeight, partialTicks), CLOSED_HEIGHT, maxHeight);
+
+        interpWidth = clamp(interp(lastWidth, currentWidth, partialTicks), CLOSED_WIDTH, maxWidth);
+        interpHeight = clamp(interp(lastHeight, currentHeight, partialTicks), CLOSED_HEIGHT, maxHeight);
 
         if (manager.expandPositive) {
             startX = x;
             split = SPRITE_SPLIT_POS;
         } else {
-            startX = x - actualWidth;
+            startX = x - interpWidth;
             split = SPRITE_SPLIT_NEG;
         }
         RenderUtil.setGLColorFromIntPlusAlpha(getColour());
-        split.draw(startX, startY, actualWidth, actualHeight);
+        split.draw(startX, startY, interpWidth, interpHeight);
         GlStateManager.color(1, 1, 1, 1);
+
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GuiUtil.scissor(positionLedgerIconStart.getX(), positionLedgerIconStart.getY(), interpWidth - 8, interpHeight - 8);
 
         for (IGuiElement element : closedElements) {
             element.drawBackground(partialTicks);
         }
-        if (isFullyOpen()) {
+        if (shouldDrawOpen()) {
             for (IGuiElement element : openElements) {
                 element.drawBackground(partialTicks);
             }
         }
+
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
-    public final void drawForeground(int x, int y, float partialTicks) {
+    public void drawForeground(int x, int y, float partialTicks) {
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GuiUtil.scissor(positionLedgerIconStart.getX(), positionLedgerIconStart.getY(), interpWidth - 8, interpHeight - 8);
+
         for (IGuiElement element : closedElements) {
             element.drawForeground(partialTicks);
         }
-        if (isFullyOpen()) {
+        if (shouldDrawOpen()) {
             for (IGuiElement element : openElements) {
                 element.drawForeground(partialTicks);
             }
         }
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
     public void onMouseClicked(int button) {
         if (getEnclosingRectangle().contains(manager.gui.mouse)) {
-            if (isFullyOpen()) {
-                currentDifference = -1;
-            } else if (currentDifference == 1) {
+            if (currentDifference == 1) {
                 currentDifference = -1;
             } else {
                 currentDifference = 1;
@@ -215,12 +259,15 @@ public abstract class Ledger_Neptune implements ITooltipElement {
         for (IGuiElement element : closedElements) {
             element.addToolTips(tooltips);
         }
-        if (isFullyOpen()) {
+        if (shouldDrawOpen()) {
             for (IGuiElement element : openElements) {
                 element.addToolTips(tooltips);
             }
-        } else if (getEnclosingRectangle().contains(manager.gui.mouse)) {
-            tooltips.add(new ToolTip(getTitle()));
+        }
+        if (currentWidth != maxWidth || currentHeight != maxHeight) {
+            if (getEnclosingRectangle().contains(manager.gui.mouse)) {
+                tooltips.add(new ToolTip(getTitle()));
+            }
         }
     }
 }

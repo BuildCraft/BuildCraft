@@ -23,7 +23,7 @@ import buildcraft.lib.client.guide.parts.GuidePageBase;
 import buildcraft.lib.client.guide.parts.GuidePageContents;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
-import buildcraft.lib.gui.pos.IPositionedElement;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.MousePosition;
 
 public class GuiGuide extends GuiScreen {
@@ -368,7 +368,7 @@ public class GuiGuide extends GuiScreen {
         // Draw the back button if there are any pages on the stack
         if (!pages.isEmpty()) {
             GuiIcon icon = BACK;
-            IPositionedElement position = BACK_POSITION.offset(minX, minY);
+            IGuiArea position = BACK_POSITION.offset(minX, minY);
             if (position.contains(mouse)) {
                 icon = BACK_HOVERED;
             }

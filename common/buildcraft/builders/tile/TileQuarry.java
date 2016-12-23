@@ -43,6 +43,7 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.entity.EntityQuarryFrame;
 import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.inventory.AutomaticProvidingTransactor;
 import buildcraft.lib.misc.*;
 import buildcraft.lib.misc.data.*;
 import buildcraft.lib.mj.MjBatteryReciver;
@@ -463,14 +464,12 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        return mjCapHelper.hasCapability(capability, facing) || super.hasCapability(capability, facing);
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (mjCapHelper.hasCapability(capability, facing)) {
             return mjCapHelper.getCapability(capability, facing);
+        }
+        if (capability == CapUtil.CAP_ITEM_TRANSACTOR) {
+            return (T) AutomaticProvidingTransactor.INSTANCE;
         }
         return super.getCapability(capability, facing);
     }
@@ -598,7 +597,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
         @Override
         protected void finish() {
-            EntityPlayer fake = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, TileQuarry.this.pos, TileQuarry.this.getOwner().getOwner());
+            EntityPlayer fake = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, TileQuarry.this.pos, TileQuarry.this.getOwner());
 
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, breakPos, world.getBlockState(breakPos), fake);
             MinecraftForge.EVENT_BUS.post(breakEvent);
@@ -607,7 +606,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 // The drill pos will be null if we are making the frame: this is when we want to destroy the block, not
                 // drop its contents
                 if (put) {
-                    NonNullList<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) world, breakPos, TileQuarry.this.getOwner().getOwner());
+                    NonNullList<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) world, breakPos, TileQuarry.this.getOwner());
                     if (stacks != null) {
                         for (int i = 0; i < stacks.size(); i++) {
                             InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, stacks.get(i));

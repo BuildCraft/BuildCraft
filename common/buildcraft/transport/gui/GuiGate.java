@@ -13,7 +13,7 @@ import buildcraft.lib.client.sprite.RawSprite;
 import buildcraft.lib.client.sprite.SpriteSplit;
 import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.ToolTip;
-import buildcraft.lib.gui.pos.IPositionedElement;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
@@ -55,7 +55,7 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
 
     public ElementGuiSlot<?> currentHover = null;
 
-    private final IPositionedElement[] positionSlotPair, positionConnect;
+    private final IGuiArea[] positionSlotPair, positionConnect;
 
     public boolean isDraggingStatement;
     public TriggerWrapper draggingTrigger;
@@ -76,8 +76,8 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
         int columnStartSecond = columnStartFirst + columWidth + 18;
 
         int numSlots = variant.numSlots;
-        positionSlotPair = new IPositionedElement[numSlots];
-        positionConnect = new IPositionedElement[numSlots];
+        positionSlotPair = new IGuiArea[numSlots];
+        positionConnect = new IGuiArea[numSlots];
 
         for (int i = 0; i < numSlots; i++) {
             boolean otherColumn = split && i >= container.slotHeight;
@@ -106,17 +106,17 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
         int numSlots = variant.numSlots;
 
         for (int i = 0; i < numSlots; i++) {
-            IPositionedElement actionPos = positionSlotPair[i].offset(18 * (2 + variant.numTriggerArgs), 0);
+            IGuiArea actionPos = positionSlotPair[i].offset(18 * (2 + variant.numTriggerArgs), 0);
             ElementTrigger trigger = new ElementTrigger(this, positionSlotPair[i].resize(18, 18), container.pairs[i].trigger);
             ElementAction action = new ElementAction(this, actionPos.resize(18, 18), container.pairs[i].action);
             guiElements.add(trigger);
             guiElements.add(action);
             for (int p = 0; p < variant.numTriggerArgs; p++) {
-                IPositionedElement pos = positionSlotPair[i].offset(18 * (p + 1), 0).resize(18, 18);
+                IGuiArea pos = positionSlotPair[i].offset(18 * (p + 1), 0).resize(18, 18);
                 guiElements.add(new ElementStatementParam(this, pos, container.pairs[i].triggerParams[p], p, trigger));
             }
             for (int p = 0; p < variant.numActionArgs; p++) {
-                IPositionedElement pos = actionPos.offset(18 * (p + 1), 0).resize(18, 18);
+                IGuiArea pos = actionPos.offset(18 * (p + 1), 0).resize(18, 18);
                 guiElements.add(new ElementStatementParam(this, pos, container.pairs[i].actionParams[p], p, action));
             }
         }
@@ -139,9 +139,9 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
 
         for (int i = 0; i < positionSlotPair.length; i++) {
             int xOff = 18 * (triggerArgs + 1);
-            IPositionedElement elemSlots = positionSlotPair[i];
+            IGuiArea elemSlots = positionSlotPair[i];
 
-            IPositionedElement offsetConnect = elemSlots.offset(xOff, 0);
+            IGuiArea offsetConnect = elemSlots.offset(xOff, 0);
 
             boolean triggerOn = gate.triggerOn[i];
             boolean actionOn = gate.actionOn[i];
@@ -160,7 +160,7 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
                 CONNECT_HORIZ_OFF.drawAt(offsetConnect);
             }
 
-            IPositionedElement elemConnect = positionConnect[i];
+            IGuiArea elemConnect = positionConnect[i];
             if (elemConnect != null) {
                 boolean twoConnected = gate.connections[i];
                 boolean bottomOn = gate.actionOn[i + 1];
@@ -224,7 +224,7 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
     }
 
     private interface OnStatement {
-        void iterate(StatementWrapper wrapper, IPositionedElement pos);
+        void iterate(StatementWrapper wrapper, IGuiArea pos);
     }
 
     private void iteratePossible(OnStatement onStatemenet) {
@@ -265,7 +265,7 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
 
         // Test for connection changes
         for (int i = 0; i < positionConnect.length; i++) {
-            IPositionedElement pos = positionConnect[i];
+            IGuiArea pos = positionConnect[i];
             if (pos != null && pos.contains(mouse)) {
                 container.setConnected(i, !container.gate.connections[i]);
                 return;

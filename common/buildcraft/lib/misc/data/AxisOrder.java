@@ -15,7 +15,7 @@ public class AxisOrder {
 
     static {
         ImmutableTable.Builder<EnumAxisOrder, Inversion, AxisOrder> builder = ImmutableTable.builder();
-        for (EnumAxisOrder order : EnumAxisOrder.values()) {
+        for (EnumAxisOrder order : EnumAxisOrder.VALUES) {
             for (Inversion inv : Inversion.VALUES) {
                 builder.put(order, inv, new AxisOrder(order, inv));
             }
@@ -47,14 +47,19 @@ public class AxisOrder {
 
     public NBTTagCompound writeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-        NBTUtilBC.writeEnum(order);
         nbt.setString("order", order.name());
         nbt.setString("inversion", inversion.name());
         return nbt;
     }
 
     public static AxisOrder getFor(EnumAxisOrder order, Inversion inv) {
-        return allOrders.get(order, inv);
+        if (order == null) throw new NullPointerException("order");
+        if (inv == null) throw new NullPointerException("inv");
+        AxisOrder axisOrder = allOrders.get(order, inv);
+        if (axisOrder == null) {
+            throw new IllegalStateException("Tried to lookup " + order + ", " + inv + " but failed!");
+        }
+        return axisOrder;
     }
 
     @Override

@@ -64,7 +64,7 @@ public enum RenderTickListener {
     private static final Box lastRenderedMapLoc = new Box();
 
     static {
-        double[][][] upFace = {// Comments for formatting :)
+        double[][][] upFace = {// Comments for formatting
             { { 0.5, 0.9, 0.5 }, { 0.5, 1.6, 0.5 } },// Main line
             { { 0.5, 0.9, 0.5 }, { 0.8, 1.2, 0.5 } }, // First arrow part (+X)
             { { 0.5, 0.9, 0.5 }, { 0.2, 1.2, 0.5 } }, // Second arrow part (-X)

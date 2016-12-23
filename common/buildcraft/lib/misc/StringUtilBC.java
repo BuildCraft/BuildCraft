@@ -15,8 +15,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.TextFormatting;
 
-import buildcraft.lib.BCLibConfig;
-
 public final class StringUtilBC {
 
     public static final Splitter newLineSplitter = Splitter.on("\\n");
@@ -110,5 +108,4 @@ public final class StringUtilBC {
         builder.append(vec.getZ());
         return builder.toString();
     }
-
 }

@@ -5,15 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 
+import buildcraft.lib.gui.ledger.LedgerHelp;
 import buildcraft.lib.gui.ledger.LedgerManager_Neptune;
 import buildcraft.lib.gui.ledger.LedgerOwnership;
-import buildcraft.lib.gui.pos.IPositionedElement;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.MousePosition;
 import buildcraft.lib.gui.pos.PositionCallable;
 
@@ -22,8 +24,9 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
     public final MousePosition mouse = new MousePosition();
     public final RootPosition rootElement = new RootPosition(this);
 
-    protected final List<IGuiElement> guiElements = new ArrayList<>();
-    protected final LedgerManager_Neptune ledgersLeft, ledgersRight;
+    public final List<IGuiElement> guiElements = new ArrayList<>();
+    public final LedgerManager_Neptune ledgersLeft, ledgersRight;
+    protected final LedgerHelp ledgerHelp;
     private final GuiElementToolTips tooltips = new GuiElementToolTips(this);
     private float lastPartialTicks;
 
@@ -31,12 +34,13 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         super(container);
         this.container = container;
         ledgersLeft = new LedgerManager_Neptune(this, rootElement.offset(0, 5), false);
-        IPositionedElement rightPos = rootElement.offset(new PositionCallable(rootElement::getWidth, 5));
+        IGuiArea rightPos = rootElement.offset(new PositionCallable(rootElement::getWidth, 5));
         ledgersRight = new LedgerManager_Neptune(this, rightPos, true);
 
         if (container instanceof ContainerBCTile<?>) {
             ledgersRight.ledgers.add(new LedgerOwnership(ledgersRight, (ContainerBCTile<?>) container));
         }
+        ledgersLeft.ledgers.add(ledgerHelp = new LedgerHelp(ledgersLeft));
     }
 
     @Override
@@ -54,6 +58,10 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     public List<GuiButton> getButtonList() {
         return buttonList;
+    }
+
+    public FontRenderer getFontRenderer() {
+        return fontRendererObj;
     }
 
     // Other
@@ -84,12 +92,12 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
         drawBackgroundLayer(partialTicks);
 
-        ledgersLeft.drawBackground(partialTicks);
-        ledgersRight.drawBackground(partialTicks);
-
         for (IGuiElement element : guiElements) {
             element.drawBackground(partialTicks);
         }
+
+        ledgersLeft.drawBackground(partialTicks);
+        ledgersRight.drawBackground(partialTicks);
     }
 
     @Override
@@ -99,12 +107,12 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
         drawForegroundLayer();
 
-        ledgersLeft.drawForeground(lastPartialTicks);
-        ledgersRight.drawForeground(lastPartialTicks);
-
         for (IGuiElement element : guiElements) {
             element.drawForeground(lastPartialTicks);
         }
+
+        ledgersLeft.drawForeground(lastPartialTicks);
+        ledgersRight.drawForeground(lastPartialTicks);
 
         tooltips.drawForeground(lastPartialTicks);
 
@@ -157,7 +165,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     protected void drawForegroundLayer() {}
 
-    public static final class RootPosition implements IPositionedElement {
+    public static final class RootPosition implements IGuiArea {
         public final GuiBC8<?> gui;
 
         public RootPosition(GuiBC8<?> gui) {

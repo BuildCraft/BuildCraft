@@ -19,6 +19,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.api.inventory.IItemTransactor;
+import buildcraft.api.transport.IInjectable;
 
 /** Provides various @Nonnull static final fields storing various capabilities. */
 public class CapUtil {
@@ -29,7 +30,10 @@ public class CapUtil {
     public static final Capability<IFluidHandler> CAP_FLUIDS;
 
     @Nonnull
-    public static final Capability<IItemTransactor> CAP_ITEM_TRANS;
+    public static final Capability<IItemTransactor> CAP_ITEM_TRANSACTOR;
+
+    @Nonnull
+    public static final Capability<IInjectable> CAP_ITEM_INJECTABLE;
 
     // Whenever forge makes "registerCapability" return a non-null capability then we can remove this
     private static final Map<String, Capability<?>> INTERNAL_CAP_MAP;
@@ -52,7 +56,8 @@ public class CapUtil {
         CAP_ITEMS = getCapNonNull(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, IItemHandler.class);
         CAP_FLUIDS = getCapNonNull(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, IFluidHandler.class);
 
-        CAP_ITEM_TRANS = registerCapability(IItemTransactor.class);
+        CAP_ITEM_TRANSACTOR = registerCapability(IItemTransactor.class);
+        CAP_ITEM_INJECTABLE = registerCapability(IInjectable.class);
     }
 
     @Nonnull
@@ -85,10 +90,12 @@ public class CapUtil {
         if (cap == null) {
             throw new IllegalStateException("The capability " + clazz.getName() + " was not found in the capability map " + INTERNAL_CAP_MAP);
         }
+        /* check to make sure that the storage implementations are the same: this guarantees that the generic type of
+         * the returned capability is of type T. */
         IStorage<?> store = cap.getStorage();
         if (store != ourStorage) {
-            String error = "The capability gotton used a different storage impl than what we had!"//
-                + " (Gotton = " + cap + ", expected " + clazz + ")";
+            String error = "The capability got used a different storage implementation than what we had!"//
+                + " (Got = " + cap.getName() + ", expected " + clazz + ")";
             throw new IllegalStateException(error);
         }
         // at this point we know its ours

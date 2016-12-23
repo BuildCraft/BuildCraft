@@ -15,7 +15,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.Fluid;
@@ -23,12 +22,16 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
 
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.help.ElementHelpInfo;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
@@ -56,6 +59,9 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
     private NetworkedFluidStackCache.Link clientFluid = null;
     private int clientAmount = 0;
 
+    /** The overlay colour when the help ledger is opened. */
+    public int clientHelpColour;
+
     protected static Map<Fluid, Integer> fluidColors = new HashMap<>();
 
     /** Creates a tank with the given name and capacity (in milli buckets) with no filter set (so any fluid can go into
@@ -72,6 +78,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
         this.name = name;
         this.tile = tile;
         this.filter = filter == null ? ((f) -> true) : filter;
+        clientHelpColour = 0xFF_00_00_00 | name.hashCode();
     }
 
     @Nonnull
@@ -145,7 +152,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
         int amount = clientAmount;
         FluidStack fluidStack = clientFluid == null ? null : clientFluid.get().copy();
         if (fluidStack != null && amount > 0) {
-//            toolTip.add(TextFormatting.WHITE + fluidStack.getFluid().getLocalizedName(fluidStack));
+            // toolTip.add(TextFormatting.WHITE + fluidStack.getFluid().getLocalizedName(fluidStack));
             toolTip.add(LocaleUtil.localizeFluidStatic(new FluidStack(fluidStack, amount), getCapacity()));
         } else {
             toolTip.add(LocaleUtil.localizeFluidStatic(null, getCapacity()));
@@ -241,5 +248,10 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
                 }
             }
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public ElementHelpInfo getHelpInfo(IGuiArea area) {
+        return new ElementHelpInfo("tank." + getTankName(), area, clientHelpColour, "buildcraft.help.tank.generic");
     }
 }

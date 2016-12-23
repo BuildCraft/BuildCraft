@@ -27,7 +27,6 @@ import buildcraft.api.transport.neptune.*;
 import buildcraft.lib.misc.data.LoadingException;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.transport.block.BlockPipeHolder;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.PipeEventBus;
 import buildcraft.transport.pipe.PluggableHolder;
@@ -418,16 +417,13 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     // Caps
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        return getCapability(capability, facing) != null;
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (facing != null) {
             PipePluggable plug = getPluggable(facing);
-            if (plug != null && plug.isBlocking()) {
-                return plug.getCapability(capability);
+            if (plug != null) {
+                T cap = plug.getCapability(capability);
+                if (cap != null) return cap;
+                if (plug.isBlocking()) return null;
             }
         }
         return pipe == null ? null : pipe.getCapability(capability, facing);

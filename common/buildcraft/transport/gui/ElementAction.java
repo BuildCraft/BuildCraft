@@ -3,13 +3,13 @@ package buildcraft.transport.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import buildcraft.lib.gui.pos.IPositionedElement;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.data.IReference;
 import buildcraft.transport.gate.ActionWrapper;
 
 public class ElementAction extends ElementStatement<ActionWrapper> {
 
-    public ElementAction(GuiGate gui, IPositionedElement element, IReference<ActionWrapper> reference) {
+    public ElementAction(GuiGate gui, IGuiArea element, IReference<ActionWrapper> reference) {
         super(gui, element, reference);
     }
 
