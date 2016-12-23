@@ -30,7 +30,6 @@ public class GuiElementContainer implements IGuiElement {
             w = Math.max(w, element.getEndX());
             h = Math.max(h, element.getEndY());
         }
-        System.out.println("[" + w + ", " + h + "]");
         width = w;
         height = h;
         calc = false;

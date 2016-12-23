@@ -33,7 +33,9 @@ Improvements:
     * This owner is displayed in a ledger in the gui, alongside the face of the owner.
 
 * Builders:
-  * Quarries now have a mining animation (afdw)
+  * Quarry:
+    * The drill bit has an animation while it is mining (afdw)
+    * The frame has a collision box (so you can walk on top of it) (afdw)
 
 * Transport:
   * The wooden-diamond pipe (formally known as the emerald pipe) shows the current index of what is being extracted, when in round-robin mode.

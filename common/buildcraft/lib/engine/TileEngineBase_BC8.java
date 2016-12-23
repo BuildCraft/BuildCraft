@@ -74,6 +74,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         currentDirection = NBTUtilBC.readEnum(nbt.getTag("currentDirection"), EnumFacing.class);
+        if (currentDirection == null) {
+            currentDirection = EnumFacing.UP;
+        }
         heat = nbt.getDouble("heat");
         power = nbt.getLong("power");
         progress = nbt.getFloat("progress");

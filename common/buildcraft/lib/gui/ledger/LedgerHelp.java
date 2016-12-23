@@ -2,8 +2,8 @@ package buildcraft.lib.gui.ledger;
 
 import net.minecraft.client.renderer.GlStateManager;
 
+import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.client.sprite.LibSprites;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.client.sprite.SpriteSplit;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
@@ -15,18 +15,17 @@ import buildcraft.lib.misc.RenderUtil;
 
 public class LedgerHelp extends Ledger_Neptune {
 
-    public static final SpriteHolder ICON_HELP = LibSprites.HELP;
-    public static final SpriteHolder HELP_SPLIT = LibSprites.HELP_SPLIT;
     private static final SpriteSplit[][] SPRITE_HELP_SPLIT = new SpriteSplit[2][2];
 
     static {
-        SPRITE_HELP_SPLIT[0][0] = HELP_SPLIT.subRelative(0, 0, 8, 8, 16).split(2, 2, 6, 6, 8);
-        SPRITE_HELP_SPLIT[0][1] = HELP_SPLIT.subRelative(0, 8, 8, 8, 16).split(2, 2, 6, 6, 8);
-        SPRITE_HELP_SPLIT[1][0] = HELP_SPLIT.subRelative(8, 0, 8, 8, 16).split(2, 2, 6, 6, 8);
-        SPRITE_HELP_SPLIT[1][1] = HELP_SPLIT.subRelative(8, 8, 8, 8, 16).split(2, 2, 6, 6, 8);
+        SPRITE_HELP_SPLIT[0][0] = LibSprites.HELP_SPLIT.subRelative(0, 0, 8, 8, 16).split(2, 2, 6, 6, 8);
+        SPRITE_HELP_SPLIT[0][1] = LibSprites.HELP_SPLIT.subRelative(0, 8, 8, 8, 16).split(2, 2, 6, 6, 8);
+        SPRITE_HELP_SPLIT[1][0] = LibSprites.HELP_SPLIT.subRelative(8, 0, 8, 8, 16).split(2, 2, 6, 6, 8);
+        SPRITE_HELP_SPLIT[1][1] = LibSprites.HELP_SPLIT.subRelative(8, 8, 8, 8, 16).split(2, 2, 6, 6, 8);
     }
 
     private IGuiElement selected = null;
+    private boolean foundAny = false, init = false;
 
     public LedgerHelp(LedgerManager_Neptune manager) {
         super(manager);
@@ -41,18 +40,30 @@ public class LedgerHelp extends Ledger_Neptune {
             selected = null;
             if (openElements.size() == 2) {
                 openElements.remove(1);
+                title = LocaleUtil.localize("gui.ledger.help");
+                calculateMaxSize();
             }
         }
     }
 
     @Override
     public int getColour() {
-        return 0xFF_55_99_FF;// light blue -- temp
+        return 0xFF_CC_99_FF;// light blue -- temp
     }
 
     @Override
     protected void drawIcon(int x, int y) {
-        GuiIcon.draw(ICON_HELP, x, y, x + 16, y + 16);
+        if (!init) {
+            init = true;
+            for (IGuiElement element : manager.gui.guiElements) {
+                ElementHelpInfo info = element.getHelpInfo();
+                if (info == null) continue;
+                foundAny = true;
+                break;
+            }
+        }
+        ISprite sprite = foundAny ? LibSprites.HELP : LibSprites.WARNING_MINOR;
+        GuiIcon.draw(sprite, x, y, x + 16, y + 16);
     }
 
     @Override
@@ -65,6 +76,7 @@ public class LedgerHelp extends Ledger_Neptune {
         for (IGuiElement element : manager.gui.guiElements) {
             ElementHelpInfo info = element.getHelpInfo();
             if (info == null) continue;
+            foundAny = true;
             IGuiArea rect = info.position;
             boolean isHovered = rect.contains(manager.gui.mouse);
             if (isHovered) {
@@ -76,6 +88,7 @@ public class LedgerHelp extends Ledger_Neptune {
                         openElements.remove(1);
                     }
                     openElements.add(container);
+                    title = LocaleUtil.localize("gui.ledger.help") + ": " + LocaleUtil.localize(info.title);
                     calculateMaxSize();
                     set = true;
                 }

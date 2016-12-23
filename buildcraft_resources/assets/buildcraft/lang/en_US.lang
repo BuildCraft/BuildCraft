@@ -360,6 +360,7 @@ gui.pipes.emzuli.title=Extraction Presets
 gui.pipes.emzuli.paint=Paint Items %s
 gui.pipes.emzuli.nopaint=Don't Paint Items
 gui.ledger.ownership=Owner
+gui.ledger.help=Help
 
 item.bucketFuel.name=Fuel Bucket
 item.bucketOil.name=Oil Bucket
@@ -692,6 +693,14 @@ buildcraft.guide.chapter.submod.core=Core
 buildcraft.guide.chapter.submod.transport=Transport
 
 buildcraft.guide.chapter.title.gate_base=Gates
+
+buildcraft.help.tank.generic=Clicking this with an empty bucket will\nempty this tank into the bucket, or\nusing a full bucket will fill this tank\nfrom the bucket.
+buildcraft.help.tank.title.tankFuel=Fuel Tank
+buildcraft.help.tank.fuel=This tank can accept any kind of fuel.
+buildcraft.help.tank.title.tankCoolant=Coolant Tank
+buildcraft.help.tank.coolant=This tank can accept any kind of fluid\ncoolant, or ice blocks.
+buildcraft.help.tank.title.tankResidue=Residue Tank
+buildcraft.help.tank.residue=This tank will output residue if the\nfuel hasn't been processed\n(for example oil).
 
 command.buildcraft.buildcraft.op.desc=- %s : Op FakePlayer
 command.buildcraft.buildcraft.op.help=Gives OP rights to the BC FakePlayer (acts in the name of quarries, robots, etc.)

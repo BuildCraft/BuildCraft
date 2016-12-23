@@ -41,6 +41,8 @@ import buildcraft.lib.net.cache.NetworkedFluidStackCache;
  * 
  * Can optionally specify a filter to only allow a limited types of fluids in the tank. */
 public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializable<NBTTagCompound> {
+    public static final String DEFAULT_HELP_KEY = "buildcraft.help.tank.generic";
+
     public int colorRenderCache = 0xFFFFFF;
 
     protected final ToolTip toolTip = new ToolTip() {
@@ -61,6 +63,8 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
 
     /** The overlay colour when the help ledger is opened. */
     public int clientHelpColour;
+    public String clientHelpTitle;
+    public String[] clientHelpKeys = { DEFAULT_HELP_KEY };
 
     protected static Map<Fluid, Integer> fluidColors = new HashMap<>();
 
@@ -78,6 +82,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
         this.name = name;
         this.tile = tile;
         this.filter = filter == null ? ((f) -> true) : filter;
+        clientHelpTitle = "buildcraft.help.tank.title." + name;
         clientHelpColour = 0xFF_00_00_00 | name.hashCode();
     }
 
@@ -252,6 +257,6 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
 
     @SideOnly(Side.CLIENT)
     public ElementHelpInfo getHelpInfo(IGuiArea area) {
-        return new ElementHelpInfo("tank." + getTankName(), area, clientHelpColour, "buildcraft.help.tank.generic");
+        return new ElementHelpInfo(clientHelpTitle, area, clientHelpColour, clientHelpKeys);
     }
 }

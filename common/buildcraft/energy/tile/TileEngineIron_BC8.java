@@ -54,6 +54,17 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     private double residueAmount = 0;
     private IFuel currentFuel;
 
+    public TileEngineIron_BC8() {
+        tankFuel.clientHelpKeys = new String[] { Tank.DEFAULT_HELP_KEY, null, "buildcraft.help.tank.fuel" };
+        tankFuel.clientHelpColour = 0xFF_FF_33_33;
+
+        tankCoolant.clientHelpKeys = new String[] { Tank.DEFAULT_HELP_KEY, null, "buildcraft.help.tank.coolant" };
+        tankCoolant.clientHelpColour = 0xFF_55_55_FF;
+
+        tankResidue.clientHelpKeys = new String[] { Tank.DEFAULT_HELP_KEY, null, "buildcraft.help.tank.residue" };
+        tankResidue.clientHelpColour = 0xFF_AA_33_AA;
+    }
+
     // TileEntity overrides
 
     @Override

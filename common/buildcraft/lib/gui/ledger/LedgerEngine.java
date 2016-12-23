@@ -5,6 +5,7 @@ import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.GuiIcon;
 
 public class LedgerEngine extends Ledger_Neptune {
     public static final SpriteHolder SPRITE_POWER = LibSprites.LOCK;// temp!
@@ -20,6 +21,8 @@ public class LedgerEngine extends Ledger_Neptune {
 
     @Override
     protected void drawIcon(int x, int y) {
-
+        boolean isOverheat = false;
+        boolean isWarm = false;
+        GuiIcon.draw(isOverheat ? LibSprites.WARNING_MAJOR : isWarm ? LibSprites.WARNING_MINOR : SPRITE_POWER, x, y, x + 16, y + 16);
     }
 }
