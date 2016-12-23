@@ -645,7 +645,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
         @Override
         public long getTarget() {
-            return Math.max(getFramePositions().indexOf(framePos) * 3 * MjAPI.MJ, MjAPI.MJ);
+            return 24 * MjAPI.MJ;
         }
 
         @Override

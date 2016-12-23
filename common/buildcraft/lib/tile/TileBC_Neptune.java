@@ -159,6 +159,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     public void onPlayerOpen(EntityPlayer player) {
+        if (owner == null) {
+            owner = player.getGameProfile();
+            if (!owner.isComplete()) {
+                owner = null;
+            }
+        }
         usingPlayers.add(player);
         sendNetworkUpdate(NET_GUI_DATA, player);
     }

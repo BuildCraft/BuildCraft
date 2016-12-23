@@ -3,17 +3,40 @@ Breaking Changes:
 * Transport:
   * Actions and triggers on gates are based upon the side that they act on, rather than being generic and deciding which tile to use by themselves.
   * Gate expansions have been moved to seperate pluggables.
+    * The "Autarchic gate" expansion is now the "Pipe Pulsar" pluggable, and requires a redstone engine to craft.
+
+* Silicon:
+  * Added the remaining 12 colours of pipe wire. Pipe wire is now placed manually on the 8 corners of a pipe.
+  * Removed the emerald chipset and the pulsating chipset
+    * All recipes using those chipsets now use a different item.
 
 Additions:
 
-* 
+* Lib:
+  * Moved "buildcraft.core.lib" into its own module, which is contained within the "core" jar file, or can be downloaded seperatly.
+  * This allows developers to use all of the BC library code, without forcing players to also have buildcraft itself.
 
 Improvements:
 
 * General:
+  * All coloured items (pipes, paintbrushes, pipe wire) is displayed with an appropriate text colour infront.
+    * This behaviour can be toggled in the config, or in game.
+  * Tanks in gui's now display their contents.
+  * Tanks in gui's can be added to or removed from by clicking on them with a bucket or other fluid container in hand.
+    * This removes most of the slots found in various fluid holding blocks, such as the combustion engine.
+  * Displayed fluid values can be displayed in buckets or millibuckets, and in long or short form
+    * This behaviour can be toggled in the config, or in game.
   * You can now clone items from phantom slots if you are in creative mode
+  * Gui ledgers now render their contents even if they are not fully open
+  * Most gui's now have a "help" ledger, which describes whatever gui element you are hovering over.
+  * Tiles save the first valid player as their owner, which is used as the fake player UUID.
+    * This owner is displayed in a ledger in the gui, alongside the face of the owner.
+
+* Builders:
+  * Quarries now have a mining animation (afdw)
+
 * Transport:
   * The wooden-diamond pipe (formally known as the emerald pipe) shows the current index of what is being extracted, when in round-robin mode.
   * Gates:
     * Added a small selection area for changing between different triggers, actions and paramaters. Complex params still require the existing mechanism (for example with itemstack params)
-    * Dragging a trigger or action with the secondary mouse button will copy that statement, and can be placed in a simalir way to dragging from the side selections.
+    * Dragging a trigger or action with the secondary mouse button will copy that statement, and can be placed in a similar way to dragging from the side selections.

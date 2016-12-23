@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -19,6 +20,7 @@ import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITickable, IDebuggable {
@@ -66,6 +68,27 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
             }
         }
         return EnumActionResult.FAIL;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        currentDirection = NBTUtilBC.readEnum(nbt.getTag("currentDirection"), EnumFacing.class);
+        heat = nbt.getDouble("heat");
+        power = nbt.getLong("power");
+        progress = nbt.getFloat("progress");
+        progressPart = nbt.getInteger("progressPart");
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+        nbt.setTag("currentDirection", NBTUtilBC.writeEnum(currentDirection));
+        nbt.setDouble("heat", heat);
+        nbt.setLong("power", power);
+        nbt.setFloat("progress", progress);
+        nbt.setInteger("progressPart", progressPart);
+        return nbt;
     }
 
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {

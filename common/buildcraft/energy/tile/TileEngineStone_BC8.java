@@ -8,6 +8,7 @@ import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -51,11 +52,32 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
         return slot == 0 && TileEntityFurnace.getItemBurnTime(stack) > 0;
     }
 
+    // TileEntity overrides
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        burnTime = nbt.getInteger("burnTime");
+        totalBurnTime = nbt.getInteger("totalBurnTime");
+        esum = nbt.getLong("esum");
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+        nbt.setInteger("burnTime", burnTime);
+        nbt.setInteger("totalBurnTime", totalBurnTime);
+        nbt.setLong("esum", esum);
+        return nbt;
+    }
+
     // Engine overrides
 
     @Override
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        BCEnergyGuis.ENGINE_STONE.openGUI(player, getPos());
+        if (!world.isRemote) {
+            BCEnergyGuis.ENGINE_STONE.openGUI(player, getPos());
+        }
         return true;
     }
 
