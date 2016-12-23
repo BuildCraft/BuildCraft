@@ -33,6 +33,7 @@ public class BCBuilders {
         BCBuildersBlocks.preInit();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCBuildersProxy.getProxy());
+        BCBuildersProxy.getProxy().fmlPreInit();
     }
 
     @Mod.EventHandler

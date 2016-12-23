@@ -21,8 +21,8 @@ public class LedgerEngine extends Ledger_Neptune {
 
     @Override
     protected void drawIcon(int x, int y) {
-        boolean isOverheat = false;
-        boolean isWarm = false;
+        boolean isOverheat = currentWidth == maxWidth;
+        boolean isWarm = currentWidth != CLOSED_WIDTH;
         GuiIcon.draw(isOverheat ? LibSprites.WARNING_MAJOR : isWarm ? LibSprites.WARNING_MINOR : SPRITE_POWER, x, y, x + 16, y + 16);
     }
 }

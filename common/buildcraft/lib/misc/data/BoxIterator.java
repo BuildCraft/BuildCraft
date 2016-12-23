@@ -2,6 +2,8 @@ package buildcraft.lib.misc.data;
 
 import java.util.Iterator;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
@@ -13,6 +15,7 @@ import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.VecUtil;
 
 public class BoxIterator implements Iterator<BlockPos> {
+    @Nonnull
     private final BlockPos min, max;
     private final boolean invert, repeat;// TODO: remove repeat if its not used in the future
     private AxisOrder order;
@@ -23,27 +26,35 @@ public class BoxIterator implements Iterator<BlockPos> {
     }
 
     public BoxIterator(BlockPos min, BlockPos max, AxisOrder order, boolean invert) {
+        this(min, max, invert, false, order, null);
+    }
+
+    private BoxIterator(BlockPos min, BlockPos max, boolean invert, boolean repeat, AxisOrder order, BlockPos current) {
         if (min == null) throw new NullPointerException("min");
         if (max == null) throw new NullPointerException("max");
         if (order == null) throw new NullPointerException("order");
         this.min = min;
         this.max = max;
         this.invert = invert;
-        this.repeat = false;
+        this.repeat = repeat;
         this.order = order;
-        this.current = getStart();
+        this.current = current == null ? getStart() : current;
     }
 
-    public BoxIterator(NBTTagCompound nbt) {
-        min = NBTUtilBC.readBlockPos(nbt.getTag("min"));
-        max = NBTUtilBC.readBlockPos(nbt.getTag("max"));
-        invert = nbt.getBoolean("invert");
-        repeat = false;
-        order = AxisOrder.readNbt(nbt.getCompoundTag("order"));
-        current = NBTUtilBC.readBlockPos(nbt.getTag("current"));
+    public static BoxIterator readFromNbt(NBTTagCompound nbt) {
+        BlockPos min = NBTUtilBC.readBlockPos(nbt.getTag("min"));
+        BlockPos max = NBTUtilBC.readBlockPos(nbt.getTag("max"));
+        boolean invert = nbt.getBoolean("invert");
+        boolean repeat = false;
+        AxisOrder order = AxisOrder.readNbt(nbt.getCompoundTag("order"));
+        BlockPos current = NBTUtilBC.readBlockPos(nbt.getTag("current"));
+        if (min == null || max == null || order == null) {
+            return null;
+        }
+        return new BoxIterator(min, max, invert, repeat, order, current);
     }
 
-    public NBTTagCompound writeToNBT() {
+    public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag("min", NBTUtilBC.writeBlockPos(min));
         nbt.setTag("max", NBTUtilBC.writeBlockPos(max));
@@ -70,10 +81,12 @@ public class BoxIterator implements Iterator<BlockPos> {
         return current;
     }
 
+    @Nonnull
     public BlockPos getMin() {
         return min;
     }
 
+    @Nonnull
     public BlockPos getMax() {
         return max;
     }

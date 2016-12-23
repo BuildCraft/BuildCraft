@@ -29,11 +29,11 @@ public interface ISprite {
         return new SubSprite(this, uMin, vMin, uMax, vMax);
     }
 
-    default SpriteSplit split(int uMin, int vMin, int uMax, int vMax, int textureSize) {
-        return new SpriteSplit(this, uMin, vMin, uMax, vMax, textureSize);
+    default SpriteNineSliced slice(int uMin, int vMin, int uMax, int vMax, int textureSize) {
+        return new SpriteNineSliced(this, uMin, vMin, uMax, vMax, textureSize);
     }
 
-    default SpriteSplit split(double uMin, double vMin, double uMax, double vMax, double scale) {
-        return new SpriteSplit(this, uMin, vMin, uMax, vMax, scale);
+    default SpriteNineSliced slice(double uMin, double vMin, double uMax, double vMax, double scale) {
+        return new SpriteNineSliced(this, uMin, vMin, uMax, vMax, scale);
     }
 }

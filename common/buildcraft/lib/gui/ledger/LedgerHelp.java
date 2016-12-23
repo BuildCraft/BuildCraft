@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.GlStateManager;
 
 import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.client.sprite.LibSprites;
-import buildcraft.lib.client.sprite.SpriteSplit;
+import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.elem.GuiElementContainer;
@@ -15,13 +15,13 @@ import buildcraft.lib.misc.RenderUtil;
 
 public class LedgerHelp extends Ledger_Neptune {
 
-    private static final SpriteSplit[][] SPRITE_HELP_SPLIT = new SpriteSplit[2][2];
+    private static final SpriteNineSliced[][] SPRITE_HELP_SPLIT = new SpriteNineSliced[2][2];
 
     static {
-        SPRITE_HELP_SPLIT[0][0] = LibSprites.HELP_SPLIT.subRelative(0, 0, 8, 8, 16).split(2, 2, 6, 6, 8);
-        SPRITE_HELP_SPLIT[0][1] = LibSprites.HELP_SPLIT.subRelative(0, 8, 8, 8, 16).split(2, 2, 6, 6, 8);
-        SPRITE_HELP_SPLIT[1][0] = LibSprites.HELP_SPLIT.subRelative(8, 0, 8, 8, 16).split(2, 2, 6, 6, 8);
-        SPRITE_HELP_SPLIT[1][1] = LibSprites.HELP_SPLIT.subRelative(8, 8, 8, 8, 16).split(2, 2, 6, 6, 8);
+        SPRITE_HELP_SPLIT[0][0] = LibSprites.HELP_SPLIT.subRelative(0, 0, 8, 8, 16).slice(2, 2, 6, 6, 8);
+        SPRITE_HELP_SPLIT[0][1] = LibSprites.HELP_SPLIT.subRelative(0, 8, 8, 8, 16).slice(2, 2, 6, 6, 8);
+        SPRITE_HELP_SPLIT[1][0] = LibSprites.HELP_SPLIT.subRelative(8, 0, 8, 8, 16).slice(2, 2, 6, 6, 8);
+        SPRITE_HELP_SPLIT[1][1] = LibSprites.HELP_SPLIT.subRelative(8, 8, 8, 8, 16).slice(2, 2, 6, 6, 8);
     }
 
     private IGuiElement selected = null;
@@ -94,7 +94,7 @@ public class LedgerHelp extends Ledger_Neptune {
                 }
             }
             boolean isSelected = selected == element;
-            SpriteSplit split = SPRITE_HELP_SPLIT[isHovered ? 1 : 0][isSelected ? 1 : 0];
+            SpriteNineSliced split = SPRITE_HELP_SPLIT[isHovered ? 1 : 0][isSelected ? 1 : 0];
             RenderUtil.setGLColorFromInt(info.colour);
             split.draw(rect);
         }

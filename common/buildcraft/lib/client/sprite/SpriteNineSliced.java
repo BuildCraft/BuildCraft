@@ -9,12 +9,12 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import buildcraft.lib.gui.pos.IGuiArea;
 
 /** Defines and draws a 9-sliced sprite. */
-public class SpriteSplit {
+public class SpriteNineSliced {
     public final ISprite sprite;
     public final double xMin, yMin, xMax, yMax;
     public final double scale;
 
-    public SpriteSplit(ISprite sprite, int xMin, int yMin, int xMax, int yMax, int textureSize) {
+    public SpriteNineSliced(ISprite sprite, int xMin, int yMin, int xMax, int yMax, int textureSize) {
         this.sprite = sprite;
         this.xMin = xMin / (double) textureSize;
         this.yMin = yMin / (double) textureSize;
@@ -23,7 +23,7 @@ public class SpriteSplit {
         this.scale = textureSize;
     }
 
-    public SpriteSplit(ISprite sprite, double xMin, double yMin, double xMax, double yMax, double scale) {
+    public SpriteNineSliced(ISprite sprite, double xMin, double yMin, double xMax, double yMax, double scale) {
         this.sprite = sprite;
         this.xMin = xMin;
         this.yMin = yMin;

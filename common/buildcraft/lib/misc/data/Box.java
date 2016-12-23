@@ -230,7 +230,7 @@ public class Box implements IBox {
     }
 
     public BlockPos closestInsideTo(BlockPos toTest) {
-        return VecUtil.max(min(), max(), toTest);
+        return VecUtil.max(min, VecUtil.min(max, toTest));
     }
 
     @Override

@@ -11,7 +11,7 @@ import net.minecraft.util.math.MathHelper;
 
 import buildcraft.lib.client.sprite.LibSprites;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.client.sprite.SpriteSplit;
+import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.GuiElementDrawable;
 import buildcraft.lib.gui.elem.GuiElementText;
@@ -25,8 +25,8 @@ public abstract class Ledger_Neptune implements ITooltipElement {
     public static final SpriteHolder SPRITE_EXP_NEG = LibSprites.LEDGER_LEFT;
     public static final SpriteHolder SPRITE_EXP_POS = LibSprites.LEDGER_RIGHT;
 
-    public static final SpriteSplit SPRITE_SPLIT_NEG = new SpriteSplit(SPRITE_EXP_NEG, 4, 4, 12, 12, 16);
-    public static final SpriteSplit SPRITE_SPLIT_POS = new SpriteSplit(SPRITE_EXP_POS, 4, 4, 12, 12, 16);
+    public static final SpriteNineSliced SPRITE_SPLIT_NEG = new SpriteNineSliced(SPRITE_EXP_NEG, 4, 4, 12, 12, 16);
+    public static final SpriteNineSliced SPRITE_SPLIT_POS = new SpriteNineSliced(SPRITE_EXP_POS, 4, 4, 12, 12, 16);
 
     public static final int LEDGER_CHANGE_DIFF = 20;
     public static final int LEDGER_GAP = 4;
@@ -163,7 +163,7 @@ public abstract class Ledger_Neptune implements ITooltipElement {
 
     public void drawBackground(int x, int y, float partialTicks) {
         startY = y;
-        final SpriteSplit split;
+        final SpriteNineSliced split;
 
         interpWidth = clamp(interp(lastWidth, currentWidth, partialTicks), CLOSED_WIDTH, maxWidth);
         interpHeight = clamp(interp(lastHeight, currentHeight, partialTicks), CLOSED_HEIGHT, maxHeight);

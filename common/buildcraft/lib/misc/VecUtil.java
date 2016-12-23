@@ -1,5 +1,6 @@
 package buildcraft.lib.misc;
 
+import javax.annotation.Nonnull;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
@@ -49,6 +50,7 @@ public class VecUtil {
         );
     }
 
+    @Nonnull
     public static BlockPos replaceValue(Vec3i old, Axis axis, int with) {
         return new BlockPos(//
                 axis == Axis.X ? with : old.getX(),//

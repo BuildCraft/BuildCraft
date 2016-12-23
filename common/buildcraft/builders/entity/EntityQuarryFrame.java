@@ -112,14 +112,28 @@ public class EntityQuarryFrame extends Entity {
     @Override
     public AxisAlignedBB getEntityBoundingBox() {
         TileQuarry tile = getTile();
-        if (tile != null && tile.min != null && tile.max != null && tile.drillPos != null) {
+        if (tile != null && tile.frameBox.isInitialized() && tile.drillPos != null) {
+            final BlockPos min = tile.frameBox.min();
+            final BlockPos max = tile.frameBox.max();
             switch (getAxis()) {
                 case X:
-                    return BoundingBoxUtil.makeFrom(new Vec3d(tile.drillPos.xCoord + 0.5, tile.min.getY() + 0.5, tile.min.getZ() + 1), new Vec3d(tile.drillPos.xCoord + 0.5, tile.min.getY() + 0.5, tile.max.getZ()), 4 / 16D);
+                    return BoundingBoxUtil.makeFrom(//
+                            new Vec3d(tile.drillPos.xCoord + 0.5, max.getY() + 0.5, min.getZ() + 1),//
+                            new Vec3d(tile.drillPos.xCoord + 0.5, max.getY() + 0.5, max.getZ()),//
+                            4 / 16D//
+                    );
                 case Y:
-                    return BoundingBoxUtil.makeFrom(new Vec3d(tile.drillPos.xCoord + 0.5, tile.min.getY() + 0.5, tile.drillPos.zCoord + 0.5), new Vec3d(tile.drillPos.xCoord + 0.5, tile.drillPos.yCoord + 1 + 0.5, tile.drillPos.zCoord + 0.5), 4 / 16D);
+                    return BoundingBoxUtil.makeFrom(//
+                            new Vec3d(tile.drillPos.xCoord + 0.5, max.getY() + 0.5, tile.drillPos.zCoord + 0.5),//
+                            new Vec3d(tile.drillPos.xCoord + 0.5, tile.drillPos.yCoord + 1 + 0.5, tile.drillPos.zCoord + 0.5),//
+                            4 / 16D//
+                    );
                 case Z:
-                    return BoundingBoxUtil.makeFrom(new Vec3d(tile.min.getX() + 1, tile.min.getY() + 0.5, tile.drillPos.zCoord + 0.5), new Vec3d(tile.max.getX(), tile.min.getY() + 0.5, tile.drillPos.zCoord + 0.5), 4 / 16D);
+                    return BoundingBoxUtil.makeFrom(//
+                            new Vec3d(min.getX() + 1, max.getY() + 0.5, tile.drillPos.zCoord + 0.5),//
+                            new Vec3d(max.getX(), max.getY() + 0.5, tile.drillPos.zCoord + 0.5),//
+                            4 / 16D//
+                    );
             }
         }
         return new AxisAlignedBB(0, 0, 0, 0, 0, 0);

@@ -17,6 +17,8 @@ import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.tile.TileQuarry;
+import buildcraft.core.client.BuildCraftLaserManager;
+import buildcraft.lib.client.render.laser.LaserBoxRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
@@ -93,7 +95,10 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
 
         buffer.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
 
-        if (tile.min != null && tile.max != null) {
+        final BlockPos min = tile.frameBox.min();
+        final BlockPos max = tile.frameBox.max();
+
+        if (tile.frameBox.isInitialized()) {
             double yOffset = 1;
 
             if (tile.currentTask != null && tile.currentTask instanceof TileQuarry.TaskBreakBlock) {
@@ -118,40 +123,39 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                 Vec3d interpolatedPos = tile.prevClientDrillPos.add(tile.clientDrillPos.subtract(tile.prevClientDrillPos).scale(partialTicks));
 
                 LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME,//
-                        new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, interpolatedPos.zCoord),//
-                        new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, tile.max.getZ() + 12 / 16D),//
+                        new Vec3d(interpolatedPos.xCoord + 0.5, max.getY() + 0.5, interpolatedPos.zCoord),//
+                        new Vec3d(interpolatedPos.xCoord + 0.5, max.getY() + 0.5, max.getZ() + 12 / 16D),//
                         1 / 16D, true, true, 0), buffer);
                 LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME,//
-                        new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, interpolatedPos.zCoord),//
-                        new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, tile.min.getZ() + 4 / 16D),//
+                        new Vec3d(interpolatedPos.xCoord + 0.5, max.getY() + 0.5, interpolatedPos.zCoord),//
+                        new Vec3d(interpolatedPos.xCoord + 0.5, max.getY() + 0.5, min.getZ() + 4 / 16D),//
                         1 / 16D, true, true, 0), buffer);
                 LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME,//
-                        new Vec3d(interpolatedPos.xCoord, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5),//
-                        new Vec3d(tile.max.getX() + 12 / 16D, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5),//
+                        new Vec3d(interpolatedPos.xCoord, max.getY() + 0.5, interpolatedPos.zCoord + 0.5),//
+                        new Vec3d(max.getX() + 12 / 16D, max.getY() + 0.5, interpolatedPos.zCoord + 0.5),//
                         1 / 16D, true, true, 0), buffer);
                 LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME,//
-                        new Vec3d(interpolatedPos.xCoord, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5),//
-                        new Vec3d(tile.min.getX() + 4 / 16D, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5),//
+                        new Vec3d(interpolatedPos.xCoord, max.getY() + 0.5, interpolatedPos.zCoord + 0.5),//
+                        new Vec3d(min.getX() + 4 / 16D, max.getY() + 0.5, interpolatedPos.zCoord + 0.5),//
                         1 / 16D, true, true, 0), buffer);
                 LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME_BOTTOM,//
-                        new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5),//
                         new Vec3d(interpolatedPos.xCoord + 0.5, interpolatedPos.yCoord + 1 + 4 / 16D, interpolatedPos.zCoord + 0.5),//
+                        new Vec3d(interpolatedPos.xCoord + 0.5, max.getY() + 0.5, interpolatedPos.zCoord + 0.5),//
                         1 / 16D, true, true, 0), buffer);
                 LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(DRILL,//
                         new Vec3d(interpolatedPos.xCoord + 0.5, interpolatedPos.yCoord + 1 + yOffset, interpolatedPos.zCoord + 0.5),//
                         new Vec3d(interpolatedPos.xCoord + 0.5, interpolatedPos.yCoord + yOffset, interpolatedPos.zCoord + 0.5),//
                         1 / 16D, true, true, 0), buffer);
+            } else {
+                LaserBoxRenderer.renderLaserBoxVb(tile.frameBox, BuildCraftLaserManager.STRIPES_WRITE, buffer);
             }
         }
 
         buffer.setTranslation(0, 0, 0);
-        buffer.setTranslation(0, 0, 0);
 
         tessellator.draw();
 
-        RenderHelper.enableStandardItemLighting();
-
-        if (tile.min != null && tile.max != null && tile.currentTask != null && tile.currentTask instanceof TileQuarry.TaskAddFrame) {
+        if (tile.frameBox.isInitialized() && false) {
             TileQuarry.TaskAddFrame currentTask = (TileQuarry.TaskAddFrame) tile.currentTask;
             int index = tile.getFramePositions().indexOf(currentTask.framePos);
             if (index > 1) {
@@ -168,7 +172,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                 BlockPos firstPos = tile.getPos().offset(side);
                 switch (side) {
                     case SOUTH:
-                        if (firstPos.getX() == tile.min.getX()) {
+                        if (firstPos.getX() == min.getX()) {
                             xProgress = 1 - progress2;
                             zProgress = progress1;
                         } else {
@@ -177,7 +181,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                         }
                         break;
                     case WEST:
-                        if (firstPos.getZ() == tile.min.getZ()) {
+                        if (firstPos.getZ() == min.getZ()) {
                             xProgress = 1 - progress1;
                             zProgress = 1 - progress2;
                         } else {
@@ -186,7 +190,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                         }
                         break;
                     case NORTH:
-                        if (firstPos.getX() == tile.min.getX()) {
+                        if (firstPos.getX() == min.getX()) {
                             xProgress = 1 - progress2;
                             zProgress = 1 - progress1;
                         } else {
@@ -195,7 +199,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                         }
                         break;
                     case EAST:
-                        if (firstPos.getZ() == tile.min.getZ()) {
+                        if (firstPos.getZ() == min.getZ()) {
                             xProgress = progress1;
                             zProgress = 1 - progress2;
                         } else {
@@ -204,8 +208,8 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                         }
                         break;
                 }
-                double xResult = tile.min.getX() + (tile.max.getX() - tile.min.getX()) * xProgress;
-                double zResult = tile.min.getZ() + (tile.max.getZ() - tile.min.getZ()) * zProgress;
+                double xResult = min.getX() + (max.getX() - min.getX()) * xProgress;
+                double zResult = min.getZ() + (max.getZ() - min.getZ()) * zProgress;
                 ItemStack stack = new ItemStack(BCBuildersBlocks.frame);
 
                 RenderHelper.disableStandardItemLighting();
@@ -222,6 +226,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                 GlStateManager.popMatrix();
             }
         }
+        RenderHelper.enableStandardItemLighting();
 
         Minecraft.getMinecraft().mcProfiler.endSection();
         Minecraft.getMinecraft().mcProfiler.endSection();

@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.core.EnumPipePart;
 
 import buildcraft.lib.client.sprite.RawSprite;
-import buildcraft.lib.client.sprite.SpriteSplit;
+import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiArea;
@@ -49,7 +49,7 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
     public static final GuiIcon CONNECT_VERT_ON = CONNECT_VERT_OFF.offset(18, 0);
 
     public static final RawSprite ICON_SELECT_HOVER = new RawSprite(TEXTURE_GATE, 212, 0, 16, 16, 256);
-    public static final SpriteSplit SELECTION_HOVER = new SpriteSplit(ICON_SELECT_HOVER, 3, 3, 13, 13, 16);
+    public static final SpriteNineSliced SELECTION_HOVER = new SpriteNineSliced(ICON_SELECT_HOVER, 3, 3, 13, 13, 16);
 
     public static final GuiIcon SLOT_COLOUR = new GuiIcon(TEXTURE_GATE, 176, 72, 18, 18);
 
