@@ -13,20 +13,29 @@ import buildcraft.lib.gui.pos.IGuiPosition;
 
 public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {
     public boolean dropShadow = false;
+    public boolean foreground = true;
 
     private final Supplier<String> text;
     private final IntSupplier colour;
-    private final boolean foreground;
 
-    public GuiElementText(GuiBC8<?> gui, IGuiPosition parent, GuiRectangle rectangle, Supplier<String> text, IntSupplier colour, boolean foreground) {
-        super(gui, parent, rectangle == null ? GuiRectangle.ZERO : rectangle);
+    public GuiElementText(GuiBC8<?> gui, IGuiPosition parent, Supplier<String> text, IntSupplier colour) {
+        super(gui, parent, GuiRectangle.ZERO);
         this.text = text;
         this.colour = colour;
-        this.foreground = foreground;
     }
 
-    public GuiElementText(GuiBC8<?> gui, IGuiPosition parent, GuiRectangle rectangle, String text, int colour, boolean foreground) {
-        this(gui, parent, rectangle, () -> text, () -> colour, foreground);
+    public GuiElementText(GuiBC8<?> gui, IGuiPosition parent, String text, int colour) {
+        this(gui, parent, () -> text, () -> colour);
+    }
+
+    public GuiElementText setDropShadow(boolean value) {
+        dropShadow = value;
+        return this;
+    }
+
+    public GuiElementText setForeground(boolean value) {
+        foreground = value;
+        return this;
     }
 
     @Override

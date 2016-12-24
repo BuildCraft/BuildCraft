@@ -1,5 +1,6 @@
 package buildcraft.lib.engine;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -13,6 +14,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.mj.*;
@@ -21,6 +24,7 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITickable, IDebuggable {
@@ -36,6 +40,10 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     public final IMjConnector mjConnector = createConnector();
     private final MjCapabilityHelper mjCaps = new MjCapabilityHelper(mjConnector);
 
+    /* TODO: GuiDataValue<T> (new class) -- should automate sending values in TileBC_Neptune.NET_GUI_TICK it MUST be
+     * nice to use! otherwise fallback to having private "last sent" values. Look at Container.detectAndSendChanges for
+     * more desc */
+
     protected double heat = MIN_HEAT;
     protected long power = 0;
     private long lastPower = 0;
@@ -48,7 +56,6 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     public long currentOutput;
     public boolean isRedstonePowered = false;
-    private boolean isOn = false;
     private boolean isPumping = false;
 
     public TileEngineBase_BC8() {}
@@ -94,6 +101,30 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         return nbt;
     }
 
+    @Override
+    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+        super.readPayload(id, buffer, side, ctx);
+        if (side == Side.CLIENT) {
+            if (id == NET_RENDER_DATA) {
+                isPumping = buffer.readBoolean();
+                currentDirection = buffer.readEnumValue(EnumFacing.class);
+                powerStage = buffer.readEnumValue(EnumPowerStage.class);
+            }
+        }
+    }
+
+    @Override
+    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+        super.writePayload(id, buffer, side);
+        if (side == Side.SERVER) {
+            if (id == NET_RENDER_DATA) {
+                buffer.writeBoolean(isPumping);
+                buffer.writeEnumValue(currentDirection);
+                buffer.writeEnumValue(powerStage);
+            }
+        }
+    }
+
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         return false;
     }
@@ -102,7 +133,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         return power / (double) getMaxPower();
     }
 
-    protected EnumPowerStage computeEnergyStage() {// TODO: RENAME
+    protected EnumPowerStage computePowerStage() {
         double powerLevel = getHeatLevel();
         if (powerLevel < 0.25f) return EnumPowerStage.BLUE;
         else if (powerLevel < 0.5f) return EnumPowerStage.GREEN;
@@ -111,10 +142,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         else return EnumPowerStage.OVERHEAT;
     }
 
-    public final EnumPowerStage getEnergyStage() {// TODO: RENAME
+    public final EnumPowerStage getPowerStage() {
         if (!world.isRemote) {
-            if (powerStage == EnumPowerStage.OVERHEAT) return powerStage;
-            EnumPowerStage newStage = computeEnergyStage();
+            EnumPowerStage newStage = computePowerStage();
 
             if (powerStage != newStage) {
                 powerStage = newStage;
@@ -146,7 +176,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
             return Math.max(0.16 * getHeatLevel(), 0.01);
         }
 
-        switch (getEnergyStage()) {
+        switch (getPowerStage()) {
             case BLUE:
                 return 0.02;
             case GREEN:
@@ -185,7 +215,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         }
 
         updateHeatLevel();
-        getEnergyStage();
+        getPowerStage();
         engineUpdate();
 
         TileEntity tile = getTileBuffer(currentDirection).getTile();
@@ -348,7 +378,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         power += microJoules;
         lastPower += microJoules;
 
-        if (getEnergyStage() == EnumPowerStage.OVERHEAT) {
+        if (getPowerStage() == EnumPowerStage.OVERHEAT) {
             // TODO: turn engine off
             // worldObj.createExplosion(null, xCoord, yCoord, zCoord, explosionRange(), true);
             // worldObj.setBlockToAir(xCoord, yCoord, zCoord);
@@ -444,6 +474,10 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     public abstract long getCurrentOutput();
+
+    public boolean isEngineOn() {
+        return isPumping;
+    }
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {

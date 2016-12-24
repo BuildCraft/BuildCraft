@@ -6,6 +6,9 @@ import buildcraft.energy.container.ContainerEngineStone_BC8;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.help.DummyHelpElement;
+import buildcraft.lib.gui.help.ElementHelpInfo;
+import buildcraft.lib.gui.ledger.LedgerEngine;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.LocaleUtil;
 
@@ -15,11 +18,24 @@ public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
 
     private final IGuiArea flameRect = new GuiRectangle(81, 25, 14, 14).offset(rootElement);
+    private final IGuiArea fuelSlotRect = new GuiRectangle(78, 39, 20, 20).offset(rootElement);
+    private final ElementHelpInfo helpFlame, helpFuel;
 
     public GuiEngineStone_BC8(ContainerEngineStone_BC8 container) {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
+        ledgersRight.ledgers.add(new LedgerEngine(ledgersRight, container.tile));
+        helpFlame = new ElementHelpInfo("buildcraft.help.stone_engine.flame.title", 0xFF_FF_FF_1F, "buildcraft.help.stone_engine.flame");
+        // TODO: Auto list of example fuels!
+        helpFuel = new ElementHelpInfo("buildcraft.help.stone_engine.fuel.title", 0xFF_AA_33_33, "buildcraft.help.stone_engine.fuel");
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+        guiElements.add(new DummyHelpElement(flameRect.expand(2), helpFlame));
+        guiElements.add(new DummyHelpElement(fuelSlotRect, helpFuel));
     }
 
     @Override
@@ -34,7 +50,7 @@ public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
             drawTexturedModalRect(//
                     flameRect.getX(),//
                     flameRect.getY() + flameRect.getHeight() - flameHeight,//
-                    176, 12 - flameHeight, 14, flameHeight + 2);
+                    176, 14 - flameHeight, 14, flameHeight + 2);
         }
     }
 

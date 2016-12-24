@@ -8,7 +8,7 @@ import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.elem.GuiElementContainer;
-import buildcraft.lib.gui.help.ElementHelpInfo;
+import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.RenderUtil;
@@ -56,7 +56,7 @@ public class LedgerHelp extends Ledger_Neptune {
         if (!init) {
             init = true;
             for (IGuiElement element : manager.gui.guiElements) {
-                ElementHelpInfo info = element.getHelpInfo();
+                HelpPosition info = element.getHelpInfo();
                 if (info == null) continue;
                 foundAny = true;
                 break;
@@ -74,28 +74,28 @@ public class LedgerHelp extends Ledger_Neptune {
         }
         boolean set = false;
         for (IGuiElement element : manager.gui.guiElements) {
-            ElementHelpInfo info = element.getHelpInfo();
+            HelpPosition info = element.getHelpInfo();
             if (info == null) continue;
             foundAny = true;
-            IGuiArea rect = info.position;
+            IGuiArea rect = info.target;
             boolean isHovered = rect.contains(manager.gui.mouse);
             if (isHovered) {
                 if (selected != element && !set) {
                     selected = element;
                     GuiElementContainer container = new GuiElementContainer(manager.gui, positionLedgerInnerStart);
-                    info.addGuiElements(container);
+                    info.info.addGuiElements(container);
                     if (openElements.size() == 2) {
                         openElements.remove(1);
                     }
                     openElements.add(container);
-                    title = LocaleUtil.localize("gui.ledger.help") + ": " + LocaleUtil.localize(info.title);
+                    title = LocaleUtil.localize("gui.ledger.help") + ": " + LocaleUtil.localize(info.info.title);
                     calculateMaxSize();
                     set = true;
                 }
             }
             boolean isSelected = selected == element;
             SpriteNineSliced split = SPRITE_HELP_SPLIT[isHovered ? 1 : 0][isSelected ? 1 : 0];
-            RenderUtil.setGLColorFromInt(info.colour);
+            RenderUtil.setGLColorFromInt(info.info.colour);
             split.draw(rect);
         }
         GlStateManager.color(1, 1, 1);

@@ -119,7 +119,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
         if (!worldObj.isRemote) {
             return Math.max(0.07f * getHeatLevel(), 0.01f);
         }
-        switch (getEnergyStage()) {
+        switch (getPowerStage()) {
             case BLUE:
                 return 0.04F;
             case GREEN:
@@ -173,7 +173,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
     @Override
     public boolean isBurning() {
-        if (getEnergyStage() == EnumEnergyStage.OVERHEAT) {
+        if (getPowerStage() == EnumEnergyStage.OVERHEAT) {
             return false;
         }
 
@@ -281,7 +281,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
         if (heat > MIN_HEAT && (penaltyCooling > 0 || !isRedstonePowered)) {
             heat -= COOLDOWN_RATE;
             coolEngine(MIN_HEAT);
-            getEnergyStage();
+            getPowerStage();
         } else if (heat > IDEAL_HEAT) {
             coolEngine(IDEAL_HEAT);
         }

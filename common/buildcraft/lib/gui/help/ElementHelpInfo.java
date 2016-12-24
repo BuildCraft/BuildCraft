@@ -3,7 +3,6 @@ package buildcraft.lib.gui.help;
 import java.util.List;
 
 import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.elem.GuiElementContainer;
 import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.pos.IGuiArea;
@@ -12,15 +11,17 @@ import buildcraft.lib.misc.StringUtilBC;
 
 public class ElementHelpInfo {
     public final String title;
-    public final IGuiArea position;
     public final int colour;
     public final String[] localeKeys;
 
-    public ElementHelpInfo(String identifier, IGuiArea position, int colour, String... localeKeys) {
-        this.title = identifier;
-        this.position = position;
+    public ElementHelpInfo(String title, int colour, String... localeKeys) {
+        this.title = title;
         this.colour = colour;
         this.localeKeys = localeKeys;
+    }
+
+    public final HelpPosition target(IGuiArea target) {
+        return new HelpPosition(this, target);
     }
 
     public void addGuiElements(GuiElementContainer container) {
@@ -35,10 +36,20 @@ public class ElementHelpInfo {
             List<String> lines = StringUtilBC.splitIntoLines(localized);
 
             for (String line : lines) {
-                GuiElementText elemText = new GuiElementText(gui, container, new GuiRectangle(0, y, 0, 0), line, 0, true);
+                GuiElementText elemText = new GuiElementText(gui, container.offset(0, y), line, 0);
                 container.add(elemText);
                 y += elemText.getHeight() + 5;
             }
+        }
+    }
+
+    public static final class HelpPosition {
+        public final ElementHelpInfo info;
+        public final IGuiArea target;
+
+        private HelpPosition(ElementHelpInfo info, IGuiArea target) {
+            this.info = info;
+            this.target = target;
         }
     }
 }

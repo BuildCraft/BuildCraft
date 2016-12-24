@@ -1,7 +1,6 @@
 package buildcraft.lib.gui;
 
 import buildcraft.lib.gui.pos.IGuiPosition;
-import buildcraft.lib.gui.pos.IGuiArea;
 
 @FunctionalInterface
 public interface ISimpleDrawable {

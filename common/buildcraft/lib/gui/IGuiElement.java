@@ -3,7 +3,7 @@ package buildcraft.lib.gui;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.gui.help.ElementHelpInfo;
+import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
 
 @SideOnly(Side.CLIENT)
@@ -21,7 +21,7 @@ public interface IGuiElement extends IGuiArea, ITooltipElement {
     /** This is called EVEN IF the mouse is not inside your width and height! */
     default void onMouseReleased(int button) {}
 
-    default ElementHelpInfo getHelpInfo() {
+    default HelpPosition getHelpInfo() {
         return null;
     }
 }

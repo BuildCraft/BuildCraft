@@ -81,7 +81,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
     public List<BlockPos> getFramePositions() {
         List<BlockPos> framePositions = new ArrayList<>();
-        // Map<BlockPos, Boolean> placingMap = new HashMap<>();
 
         BlockPos min = frameBox.min();
         BlockPos max = frameBox.max();
@@ -105,34 +104,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             framePositions.add(new BlockPos(min.getX(), y, max.getZ()));
             framePositions.add(new BlockPos(max.getX(), y, max.getZ()));
         }
-
-        //
-        // for (int x = min.getX(); x <= max.getX(); x++) {
-        // for (int z = min.getZ(); z <= max.getZ(); z++) {
-        // BlockPos framePos = new BlockPos(x, min.getY(), z);
-        // boolean shouldBeFrame = x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ();
-        // if (shouldBeFrame) {
-        // placingMap.put(framePos, false);
-        // }
-        // }
-        // }
-        // BlockPos first =
-        // pos.offset(world.getBlockState(pos).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite());
-        // placingMap.put(first, true);
-        // framePositions.add(first); // "place" frame near quarry
-        // BlockPos second =
-        // pos.offset(world.getBlockState(pos).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite(), 2);
-        // placingMap.put(second, true);
-        // framePositions.add(second); // "place" frame in 2 block
-        // while (placingMap.size() != framePositions.size()) {
-        // BlockPos lastPlaced = framePositions.get(framePositions.size() - 1);
-        // placingMap.keySet().stream().filter(blockPos -> !placingMap.get(blockPos)).filter(blockPos ->
-        // Stream.of(EnumFacing.values()).anyMatch(side -> lastPlaced.offset(side).equals(blockPos))).forEach(blockPos
-        // -> {
-        // placingMap.put(blockPos, true);
-        // framePositions.add(blockPos);
-        // });
-        // }
         return framePositions;
     }
 

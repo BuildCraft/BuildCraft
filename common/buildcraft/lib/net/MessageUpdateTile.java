@@ -16,7 +16,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import buildcraft.lib.BCLibProxy;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 public class MessageUpdateTile implements IMessage {
     private BlockPos pos;
@@ -26,10 +25,13 @@ public class MessageUpdateTile implements IMessage {
     @Deprecated
     public MessageUpdateTile() {}
 
-    public MessageUpdateTile(BlockPos pos, IPayloadWriter writer) {
+    public MessageUpdateTile(BlockPos pos, PacketBufferBC payload) {
         this.pos = pos;
-        payload = new PacketBufferBC(Unpooled.buffer());
-        writer.write(payload);
+        this.payload = payload;
+    }
+
+    public int getPayloadSize() {
+        return payload == null ? 0 : payload.readableBytes();
     }
 
     @Override

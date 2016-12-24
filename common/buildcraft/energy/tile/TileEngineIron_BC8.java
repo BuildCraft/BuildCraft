@@ -32,6 +32,7 @@ import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
 import buildcraft.lib.fluids.TankProperties;
+import buildcraft.lib.gui.help.ElementHelpInfo;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.net.PacketBufferBC;
@@ -55,14 +56,13 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     private IFuel currentFuel;
 
     public TileEngineIron_BC8() {
-        tankFuel.clientHelpKeys = new String[] { Tank.DEFAULT_HELP_KEY, null, "buildcraft.help.tank.fuel" };
-        tankFuel.clientHelpColour = 0xFF_FF_33_33;
+        // TODO: Auto list of example fuels!
+        tankFuel.helpInfo = new ElementHelpInfo(tankFuel.helpInfo.title, 0xFF_FF_33_33, Tank.DEFAULT_HELP_KEY, null, "buildcraft.help.tank.fuel");
 
-        tankCoolant.clientHelpKeys = new String[] { Tank.DEFAULT_HELP_KEY, null, "buildcraft.help.tank.coolant" };
-        tankCoolant.clientHelpColour = 0xFF_55_55_FF;
+        // TODO: Auto list of example coolants!
+        tankCoolant.helpInfo = new ElementHelpInfo(tankCoolant.helpInfo.title, 0xFF_55_55_FF, Tank.DEFAULT_HELP_KEY, null, "buildcraft.help.tank.coolant");
 
-        tankResidue.clientHelpKeys = new String[] { Tank.DEFAULT_HELP_KEY, null, "buildcraft.help.tank.residue" };
-        tankResidue.clientHelpColour = 0xFF_AA_33_AA;
+        tankResidue.helpInfo = new ElementHelpInfo(tankResidue.helpInfo.title, 0xFF_AA_33_AA, Tank.DEFAULT_HELP_KEY, null, "buildcraft.help.tank.residue");
     }
 
     // TileEntity overrides
@@ -85,14 +85,6 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapUtil.CAP_FLUIDS) {
-            return facing != currentDirection ? (T) fluidHandler : null;
-        }
-        return super.getCapability(capability, facing);
-    }
-
-    @Override
     public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT) {
@@ -110,6 +102,14 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
                 tankManager.writeData(buffer);
             }
         }
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == CapUtil.CAP_FLUIDS) {
+            return facing != currentDirection ? (T) fluidHandler : null;
+        }
+        return super.getCapability(capability, facing);
     }
 
     // TileEngineBase overrrides
@@ -136,7 +136,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
 
     @Override
     public double getPistonSpeed() {
-        switch (getEnergyStage()) {
+        switch (getPowerStage()) {
             case BLUE:
                 return 0.04;
             case GREEN:

@@ -23,4 +23,9 @@ public abstract class ContainerBCTile<T extends TileBC_Neptune> extends Containe
     public boolean canInteractWith(EntityPlayer player) {
         return tile.canInteractWith(player);
     }
+
+    @Override
+    public void detectAndSendChanges() {
+        tile.sendNetworkGuiTick();
+    }
 }

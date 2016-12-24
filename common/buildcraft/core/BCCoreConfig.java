@@ -114,7 +114,7 @@ public class BCCoreConfig {
         propUseBucketsFlow.setComment("Should flowing fluid values be displayed in terms of buckets per second rather than thousandths of a bucket per tick? (B/s vs mB/t)");
         none.setTo(propUseBucketsFlow);
 
-        propUseLongLocalizedName = config.get(display, "propUseLongLocalizedName", false);
+        propUseLongLocalizedName = config.get(display, "useLongLocalizedName", false);
         propUseLongLocalizedName.setComment("Should localised strings be displayed in long or short form (10 mB / t vs 10 milli buckets per tick");
         none.setTo(propUseLongLocalizedName);
 

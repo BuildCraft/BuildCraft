@@ -4,11 +4,7 @@ import com.mojang.authlib.GameProfile;
 
 import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.gui.ContainerBCTile;
-import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.GuiRectangle;
-import buildcraft.lib.gui.elem.GuiElementText;
-import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.SpriteUtil;
 
 public class LedgerOwnership extends Ledger_Neptune {
@@ -19,12 +15,7 @@ public class LedgerOwnership extends Ledger_Neptune {
         this.container = container;
         this.title = "gui.ledger.ownership";
 
-        GuiBC8<?> gui = manager.gui;
-        GuiRectangle rectangle = new GuiRectangle(0, 0, 0, 0);
-
-        IGuiPosition position = positionLedgerInnerStart.offset(0, 15);
-        GuiElementText text = new GuiElementText(gui, position, rectangle, this::getOwnerName, () -> 0, false);
-        openElements.add(text);
+        appendText(this::getOwnerName, 0);
 
         calculateMaxSize();
     }

@@ -2,6 +2,8 @@ package buildcraft.lib.gui.ledger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 import org.lwjgl.opengl.GL11;
 
@@ -52,6 +54,7 @@ public abstract class Ledger_Neptune implements ITooltipElement {
     protected final List<IGuiElement> closedElements = new ArrayList<>();
     protected final List<IGuiElement> openElements = new ArrayList<>();
 
+    protected IGuiPosition positionAppending = positionLedgerInnerStart.offset(0, 3);
     protected String title = "unknown";
 
     /** -1 means shrinking, 0 no change, 1 expanding */
@@ -65,11 +68,26 @@ public abstract class Ledger_Neptune implements ITooltipElement {
         ISimpleDrawable drawable = this::drawIcon;
         GuiBC8<?> gui = manager.gui;
         closedElements.add(new GuiElementDrawable(gui, positionLedgerIconStart, iconRect, drawable, false));
-        IGuiPosition pos = positionLedgerIconStart.offset(20, 3);
-        GuiElementText elementTitle = new GuiElementText(gui, pos, iconRect, this::getTitle, this::getTitleColour, false);
-        elementTitle.dropShadow = true;
-        openElements.add(elementTitle);
+        appendText(this::getTitle, this::getTitleColour).setDropShadow(true);
         calculateMaxSize();
+    }
+
+    protected GuiElementText appendText(String text, int colour) {
+        return appendText(() -> text, colour);
+    }
+
+    protected GuiElementText appendText(Supplier<String> text, int colour) {
+        return appendText(text, () -> colour);
+    }
+
+    protected GuiElementText appendText(Supplier<String> text, IntSupplier colour) {
+        return append(new GuiElementText(manager.gui, positionAppending, text, colour));
+    }
+
+    protected <T extends IGuiElement> T append(T element) {
+        openElements.add(element);
+        positionAppending = positionAppending.offset(() -> 0, () -> 5 + element.getHeight());
+        return element;
     }
 
     /** The default implementation only works if all the elements are based around {@link #positionLedgerStart} */
@@ -165,8 +183,8 @@ public abstract class Ledger_Neptune implements ITooltipElement {
         startY = y;
         final SpriteNineSliced split;
 
-        interpWidth = clamp(interp(lastWidth, currentWidth, partialTicks), CLOSED_WIDTH, maxWidth);
-        interpHeight = clamp(interp(lastHeight, currentHeight, partialTicks), CLOSED_HEIGHT, maxHeight);
+        interpWidth = interp(lastWidth, currentWidth, partialTicks);
+        interpHeight = interp(lastHeight, currentHeight, partialTicks);
 
         if (manager.expandPositive) {
             startX = x;
@@ -179,8 +197,16 @@ public abstract class Ledger_Neptune implements ITooltipElement {
         split.draw(startX, startY, interpWidth, interpHeight);
         GlStateManager.color(1, 1, 1, 1);
 
+        IGuiPosition pos2;
+
+        if (manager.expandPositive) {
+            pos2 = positionLedgerIconStart;
+        } else {
+            pos2 = positionLedgerIconStart;
+        }
+
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GuiUtil.scissor(positionLedgerIconStart.getX(), positionLedgerIconStart.getY(), interpWidth - 8, interpHeight - 8);
+        GuiUtil.scissor(pos2.getX(), pos2.getY(), interpWidth - 8, interpHeight - 8);
 
         for (IGuiElement element : closedElements) {
             element.drawBackground(partialTicks);
@@ -190,7 +216,6 @@ public abstract class Ledger_Neptune implements ITooltipElement {
                 element.drawBackground(partialTicks);
             }
         }
-
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 

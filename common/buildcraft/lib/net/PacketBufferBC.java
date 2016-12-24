@@ -4,6 +4,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 /** Special {@link PacketBuffer} class that provides methods specific to "offset" reading and writing - like writing a
  * single bit to the stream, and auto-compacting it with simalir bits into a single byte. */
@@ -252,8 +253,8 @@ public class PacketBufferBC extends PacketBuffer {
     }
 
     @Override
-    public <T extends Enum<T>> T readEnumValue(Class<T> enumClass) {
-        T[] enums = enumClass.getEnumConstants();
+    public <E extends Enum<E>> E readEnumValue(Class<E> enumClass) {
+        E[] enums = enumClass.getEnumConstants();
         int length = MathHelper.log2DeBruijn(enums.length);
         int index = readFixedBits(length);
         return enums[index];

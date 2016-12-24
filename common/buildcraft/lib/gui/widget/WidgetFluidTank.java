@@ -11,7 +11,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.ToolTip;
-import buildcraft.lib.gui.help.ElementHelpInfo;
+import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.net.PacketBufferBC;
@@ -42,12 +42,10 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
 
     private final class GuiElementFluidTank extends GuiElementSimple<GuiBC8<?>> {
         private final GuiIcon overlay;
-        private final ElementHelpInfo helpInfo;
 
         public GuiElementFluidTank(GuiBC8<?> gui, IGuiPosition parent, GuiRectangle position, GuiIcon overlay) {
             super(gui, parent, position);
             this.overlay = overlay;
-            helpInfo = tank.getHelpInfo(this.expand(4));
         }
 
         @Override
@@ -77,8 +75,8 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
         }
 
         @Override
-        public ElementHelpInfo getHelpInfo() {
-            return helpInfo;
+        public HelpPosition getHelpInfo() {
+            return tank.helpInfo.target(this.expand(4));
         }
     }
 }

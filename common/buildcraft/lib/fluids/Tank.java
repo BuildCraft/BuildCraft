@@ -31,6 +31,7 @@ import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo;
+import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.net.PacketBufferBC;
@@ -61,10 +62,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
     private NetworkedFluidStackCache.Link clientFluid = null;
     private int clientAmount = 0;
 
-    /** The overlay colour when the help ledger is opened. */
-    public int clientHelpColour;
-    public String clientHelpTitle;
-    public String[] clientHelpKeys = { DEFAULT_HELP_KEY };
+    public ElementHelpInfo helpInfo;
 
     protected static Map<Fluid, Integer> fluidColors = new HashMap<>();
 
@@ -82,8 +80,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
         this.name = name;
         this.tile = tile;
         this.filter = filter == null ? ((f) -> true) : filter;
-        clientHelpTitle = "buildcraft.help.tank.title." + name;
-        clientHelpColour = 0xFF_00_00_00 | name.hashCode();
+        helpInfo = new ElementHelpInfo("buildcraft.help.tank.title." + name, 0xFF_00_00_00 | name.hashCode(), DEFAULT_HELP_KEY);
     }
 
     @Nonnull
@@ -253,10 +250,5 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
                 }
             }
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public ElementHelpInfo getHelpInfo(IGuiArea area) {
-        return new ElementHelpInfo(clientHelpTitle, area, clientHelpColour, clientHelpKeys);
     }
 }

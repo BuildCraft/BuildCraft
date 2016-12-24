@@ -17,6 +17,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -73,19 +74,24 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     /** Used for sending all data in the GUI. Basically what has been omitted from {@link #NET_RENDER_DATA} that is
      * shown in the GUI. */
     public static final int NET_GUI_DATA = 1;
+    /** Used for sending the data that would normally be sent with {@link Container#detectAndSendChanges()}. Note that
+     * if no bytes are written then the update message won't be sent. You should detect if any changes have been made to
+     * the gui since the last tick, so you don't resend duplicate information if nothing has changed by the next
+     * tick. */
+    public static final int NET_GUI_TICK = 2;
 
-    public static final int NET_REN_DELTA_SINGLE = 2;
-    public static final int NET_REN_DELTA_CLEAR = 3;
-    public static final int NET_GUI_DELTA_SINGLE = 4;
-    public static final int NET_GUI_DELTA_CLEAR = 5;
+    public static final int NET_REN_DELTA_SINGLE = 3;
+    public static final int NET_REN_DELTA_CLEAR = 4;
+    public static final int NET_GUI_DELTA_SINGLE = 5;
+    public static final int NET_GUI_DELTA_CLEAR = 6;
 
     /** Used for detailed debugging for inspecting every part of the current tile. For example, tanks use this to
      * display which other tanks makeup the whole structure. */
-    public static final int NET_ADV_DEBUG = 6;
-    public static final int NET_ADV_DEBUG_DISABLE = 7;
+    public static final int NET_ADV_DEBUG = 7;
+    public static final int NET_ADV_DEBUG_DISABLE = 8;
 
     /** Used to tell the client to redraw the block. */
-    public static final int NET_REDRAW = 8;
+    public static final int NET_REDRAW = 9;
 
     protected final CapabilityHelper caps = new CapabilityHelper();
     protected final ItemHandlerManager itemManager = caps.addProvider(new ItemHandlerManager(this::onSlotChange));
@@ -257,6 +263,20 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         }
     }
 
+    /** Sends {@link #NET_GUI_TICK}. */
+    public final void sendNetworkGuiTick() {
+        if (hasWorld() && !world.isRemote) {
+            MessageUpdateTile message = createNetworkUpdate(NET_GUI_TICK);
+            if (message.getPayloadSize() <= Short.BYTES) {
+                BCLog.logger.info("Dropping message " + message + " as it's size was " + message.getPayloadSize());
+                return;
+            }
+            for (EntityPlayer player : usingPlayers) {
+                MessageUtil.getWrapper().sendTo(message, (EntityPlayerMP) player);
+            }
+        }
+    }
+
     public final void sendNetworkGuiUpdate(int id) {
         if (hasWorld()) {
             for (EntityPlayer player : usingPlayers) {
@@ -275,10 +295,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public final MessageUpdateTile createNetworkUpdate(final int id) {
         if (hasWorld()) {
             final Side side = world.isRemote ? Side.CLIENT : Side.SERVER;
-            return new MessageUpdateTile(getPos(), buffer -> {
-                buffer.writeShort(id);
-                this.writePayload(id, buffer, side);
-            });
+            return createMessage(id, (buffer) -> writePayload(id, buffer, side));
         } else {
             BCLog.logger.warn("Did not have a world at " + getPos() + "!");
         }
@@ -299,11 +316,11 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         }
     }
 
-    public final IMessage createMessage(int id, IPayloadWriter writer) {
-        return new MessageUpdateTile(getPos(), buffer -> {
-            buffer.writeShort(id);
-            writer.write(buffer);
-        });
+    public final MessageUpdateTile createMessage(int id, IPayloadWriter writer) {
+        PacketBufferBC buffer = new PacketBufferBC(Unpooled.buffer());
+        buffer.writeShort(id);
+        writer.write(buffer);
+        return new MessageUpdateTile(getPos(), buffer);
     }
 
     @Override

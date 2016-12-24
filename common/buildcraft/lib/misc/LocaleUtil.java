@@ -144,24 +144,36 @@ public class LocaleUtil {
     }
 
     public static String localizeFluidFlow(int milliBucketsPerTick) {
-        if (milliBucketsPerTick == 0) {
-            return localize("buildcraft.fluid.noflow");
+        String amount;
+        if (BCLibConfig.useBucketsFlow) {
+            amount = FORMAT_FLUID.format(milliBucketsPerTick / 50.0);
         } else {
-            String amount;
-            if (BCLibConfig.useBucketsFlow) {
-                amount = FORMAT_FLUID.format(milliBucketsPerTick / 50.0);
-            } else {
-                amount = FORMAT_FLUID.format(milliBucketsPerTick);
-            }
-            return localize(localeKeyFluidFlow, amount);
+            amount = FORMAT_FLUID.format(milliBucketsPerTick);
         }
+        return localize(localeKeyFluidFlow, amount);
     }
 
     public static String localizeMj(long mj) {
         if (BCLibConfig.useLongLocalizedName) {
-            return localize("buildcraft.mj.long", MjAPI.formatMj(mj));
+            return localize("buildcraft.mj.static.long", MjAPI.formatMj(mj));
         } else {
             return MjAPI.formatMjShort(mj);
         }
+    }
+
+    public static String localizeMjFlow(long mj) {
+        if (BCLibConfig.useLongLocalizedName) {
+            return localize("buildcraft.mj.flow.long", MjAPI.formatMj(mj));
+        } else {
+            return MjAPI.formatMjShort(mj) + "/t";
+        }
+    }
+
+    public static String localizeHeat(double heat) {
+        // if (BCLibConfig.useLongLocalizedName) {
+        // return localize("buildcraft.heat.long", heat);
+        // } else {
+        return String.format("%.2f \u00B0C", heat);
+        // }
     }
 }

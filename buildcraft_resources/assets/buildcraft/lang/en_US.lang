@@ -184,6 +184,14 @@ buildcraft.fluid.static.cap.bucket.short=%s / %3$s B of %2$s
 buildcraft.fluid.static.cap.milli.long=%s milli buckets of %s in a %s milli bucket tank
 buildcraft.fluid.static.cap.bucket.long=%s buckets of %s in a %s bucket tank
 
+buildcraft.fluid.flow.milli.short=%s mB/t
+buildcraft.fluid.flow.bucket.short=%s B/s
+buildcraft.fluid.flow.milli.long=%s milli buckets per tick
+buildcraft.fluid.flow.bucket.long=%s buckets per second
+
+buildcraft.mj.static.long=%s Minecraft Joules
+buildcraft.mj.flow.long=%s Minecraft Joules per tick
+
 fillerpattern.clear=Clear
 fillerpattern.fill=Fill
 fillerpattern.flatten=Flatten
@@ -341,7 +349,7 @@ gui.inventory=Inventory
 gui.lock=Lock
 gui.needed=Needed
 gui.unlock=Unlock
-gui.energy=Energy
+gui.power=Power
 gui.currentOutput=Current Output
 gui.stored=Stored
 gui.heat=Heat
@@ -696,11 +704,16 @@ buildcraft.guide.chapter.title.gate_base=Gates
 
 buildcraft.help.tank.generic=Clicking this with an empty bucket will\nempty this tank into the bucket, or\nusing a full bucket will fill this tank\nfrom the bucket.
 buildcraft.help.tank.title.tankFuel=Fuel Tank
-buildcraft.help.tank.fuel=This tank can accept any kind of fuel.
 buildcraft.help.tank.title.tankCoolant=Coolant Tank
-buildcraft.help.tank.coolant=This tank can accept any kind of fluid\ncoolant, or ice blocks.
 buildcraft.help.tank.title.tankResidue=Residue Tank
+buildcraft.help.tank.fuel=This tank can accept any kind of fuel.
+buildcraft.help.tank.coolant=This tank can accept any kind of fluid\ncoolant, or ice blocks.
 buildcraft.help.tank.residue=This tank will output residue if the\nfuel hasn't been processed\n(for example oil).
+
+buildcraft.help.stone_engine.flame.title=Fuel left
+buildcraft.help.stone_engine.fuel.title=Fuel input
+buildcraft.help.stone_engine.flame=THIS BURNS AND THIS HELP ISN'T DONE YET.
+buildcraft.help.stone_engine.fuel=Accepts any fuel that a furnace does.
 
 command.buildcraft.buildcraft.op.desc=- %s : Op FakePlayer
 command.buildcraft.buildcraft.op.help=Gives OP rights to the BC FakePlayer (acts in the name of quarries, robots, etc.)
