@@ -25,6 +25,7 @@ import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
@@ -33,7 +34,8 @@ import buildcraft.robotics.zone.ZonePlan;
 import buildcraft.robotics.zone.ZonePlannerMapChunkKey;
 
 public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebuggable {
-    public static final int NET_PLAN_CHANGE = 10;
+    protected static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("zone_planner");
+    public static final int NET_PLAN_CHANGE = IDS.allocId("PLAN_CHANGE");
 
     public final ItemHandlerSimple invPaintbrushes;
     public final ItemHandlerSimple invInputPaintbrush;

@@ -184,7 +184,7 @@ public class GuiUtil {
     }
 
     public static void drawFluid(IGuiArea position, Tank tank) {
-        drawFluid(position, tank.getFluid(), tank.getFluidAmount(), tank.getCapacity());
+        drawFluid(position, tank.getFluidForRender(), tank.getCapacity());
     }
 
     public static void drawFluid(IGuiArea position, FluidStack fluid, int capacity) {
@@ -195,18 +195,19 @@ public class GuiUtil {
     public static void drawFluid(IGuiArea position, FluidStack fluid, int amount, int capacity) {
         if (fluid == null || amount <= 0) return;
 
-        double filled = amount / (double) capacity;
-        filled = Math.min(1, filled);
-        int height = (int) Math.ceil(position.getHeight() * filled);
+        int height = amount * position.getHeight() / capacity;
 
         int startX = position.getX();
-        int startY = position.getY();
+        int startY;
         int endX = startX + position.getWidth();
-        int endY = startY + height;
+        int endY;
 
         if (!fluid.getFluid().isGaseous(fluid)) {
-            startY = position.getY() + position.getHeight();
+            startY = position.getEndY();
             endY = startY - height;
+        } else {
+            endY = position.getEndY();
+            startY = endY - height;
         }
 
         FluidRenderer.drawFluidForGui(fluid, startX, startY, endX, endY);

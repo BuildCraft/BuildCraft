@@ -268,32 +268,34 @@ public class FluidRenderer {
         // This is broken atm!
         for (int x = startX; x != loopEndX; x += stepX) {
             for (int y = startY; y != loopEndY; y += stepY) {
-                guiVertex(x + 16, y + 00, 16, 00);
-                guiVertex(x + 00, y + 00, 00, 00);
-                guiVertex(x + 00, y + 16, 00, 16);
-                guiVertex(x + 16, y + 16, 16, 16);
+                guiVertex(x, y, 0, 0);
+                guiVertex(x + stepX, y, 16, 0);
+                guiVertex(x + stepX, y + stepY, 16, 16);
+                guiVertex(x, y + stepY, 0, 16);
             }
         }
 
         if (diffX % 16 != 0) {
-            int additionalWidth = diffX / 16;
+            int additionalWidth = diffX % 16;
             int x = endX - additionalWidth;
+            int xTex = additionalWidth < 0 ? -additionalWidth : additionalWidth;
             for (int y = startY; y != loopEndY; y += stepY) {
-                guiVertex(x + 16, y + 00, 16, 00);
-                guiVertex(x + 00, y + 00, 00, 00);
-                guiVertex(x + 00, y + 16, 00, 16);
-                guiVertex(x + 16, y + 16, 16, 16);
+                guiVertex(x, y, 0, 0);
+                guiVertex(endX, y, xTex, 0);
+                guiVertex(endX, y + stepY, xTex, 16);
+                guiVertex(x, y + stepY, 0, 16);
             }
         }
 
         if (diffY % 16 != 0) {
-            int additionalHeight = diffY / 16;
+            int additionalHeight = diffY % 16;
             int y = endY - additionalHeight;
+            int yTex = additionalHeight < 0 ? -additionalHeight : additionalHeight;
             for (int x = startX; x != loopEndX; x += stepX) {
-                guiVertex(x + 16, y + 00, 16, 00);
-                guiVertex(x + 00, y + 00, 00, 00);
-                guiVertex(x + 00, y + 16, 00, 16);
-                guiVertex(x + 16, y + 16, 16, 16);
+                guiVertex(x, y, 0, 0);
+                guiVertex(x + stepX, y, 16, 0);
+                guiVertex(x + stepX, endY, 16, yTex);
+                guiVertex(x, endY, 0, yTex);
             }
         }
         tess.draw();

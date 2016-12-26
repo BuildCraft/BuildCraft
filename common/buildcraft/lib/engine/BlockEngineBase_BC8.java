@@ -13,12 +13,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
 import buildcraft.api.blocks.ICustomRotationHandler;
@@ -120,6 +117,11 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile
             return engine.onActivated(player, hand, side, hitX, hitY, hitZ);
         }
         return false;
+    }
+
+    @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        return new ItemStack(this, 1, state.getValue(getEngineProperty()).ordinal());
     }
 
     // ICustomRotationHandler

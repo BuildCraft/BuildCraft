@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.list;
 
+import java.io.IOException;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,25 +14,24 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.api.lists.ListMatchHandler.Type;
 
 import buildcraft.core.BCCoreItems;
 import buildcraft.core.item.ItemList_BC8;
-import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.widget.WidgetPhantomSlot;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.net.MessageContainer;
+import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 
 public class ContainerList extends ContainerBC_Neptune {
     private static final int PLAYER_INV_START = 103;
 
-    private static final int NET_ID_LABEL = 0;
-    private static final int NET_ID_BUTTON = 1;
+    protected static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("list");
+    private static final int ID_LABEL = IDS.allocId("LABEL");
+    private static final int ID_BUTTON = IDS.allocId("BUTTON");
 
     public ListHandler.Line[] lines;
 
@@ -96,11 +97,10 @@ public class ContainerList extends ContainerBC_Neptune {
         lines[lineIndex].toggleOption(button);
 
         if (player.world.isRemote) {
-            BCMessageHandler.netWrapper.sendToServer(new MessageContainer(this, (buffer) -> {
-                buffer.writeByte(NET_ID_BUTTON);
+            sendMessage(ID_BUTTON, (buffer) -> {
                 buffer.writeByte(lineIndex);
                 buffer.writeByte(button);
-            }));
+            });
         } else if (button == 1 || button == 2) {
             ListMatchHandler.Type type = lines[lineIndex].getSortingType();
             if (type == Type.MATERIAL || type == Type.TYPE) {
@@ -118,31 +118,22 @@ public class ContainerList extends ContainerBC_Neptune {
         BCCoreItems.list.setName(getListItemStack(), text);
 
         if (player.world.isRemote) {
-            BCMessageHandler.netWrapper.sendToServer(new MessageContainer(this, (buffer) -> {
-                buffer.writeByte(NET_ID_LABEL);
+            sendMessage(ID_LABEL, (buffer) -> {
                 buffer.writeString(text);
-            }));
+            });
         }
     }
 
     @Override
-    public void handleMessage(MessageContext ctx, PacketBufferBC payload, Side side) {
+    public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+        super.readMessage(id, buffer, side, ctx);
         if (side == Side.SERVER) {
-            int id = payload.readUnsignedByte();
-            switch (id) {
-                case NET_ID_LABEL: {
-                    setLabel(payload.readString(1024));
-                    return;
-                }
-                case NET_ID_BUTTON: {
-                    int lineIndex = payload.readUnsignedByte();
-                    int button = payload.readUnsignedByte();
-                    switchButton(lineIndex, button);
-                    return;
-                }
-                default: {
-                    BCLog.logger.warn("[core.gui.list] Unknown message id " + id);
-                }
+            if (id == ID_BUTTON) {
+                int lineIndex = buffer.readUnsignedByte();
+                int button = buffer.readUnsignedByte();
+                switchButton(lineIndex, button);
+            } else if (id == ID_LABEL) {
+                setLabel(buffer.readString(1024));
             }
         }
     }

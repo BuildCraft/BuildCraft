@@ -22,8 +22,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
@@ -31,8 +29,6 @@ import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo;
-import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
-import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
@@ -218,6 +214,15 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
             clientFluid = null;
         }
         clientAmount = buffer.readInt();
+    }
+
+    public FluidStack getFluidForRender() {
+        if (clientFluid == null) {
+            return null;
+        } else {
+            FluidStack stackBase = clientFluid.get();
+            return new FluidStack(stackBase, clientAmount);
+        }
     }
 
     public String getDebugString() {

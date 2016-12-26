@@ -24,6 +24,7 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.PipeEvent;
 import buildcraft.api.transport.neptune.*;
 
+import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.misc.data.LoadingException;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -33,9 +34,11 @@ import buildcraft.transport.pipe.PluggableHolder;
 import buildcraft.transport.wire.WireManager;
 
 public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITickable, IDebuggable {
-    public static final int NET_UPDATE_MULTI = 10;
-    // 11 -> 19 left for future ID's
-    public static final int NET_UPDATE_SINGLE_START = 20;
+
+    protected static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("pipe");
+
+    public static final int NET_UPDATE_MULTI = IDS.allocId("UPDATE_MULTI");
+    public static final int NET_UPDATE_SINGLE_START = IDS.allocId("UPDATE_SINGLE_BEHAVIOUR");
     public static final int NET_UPDATE_PIPE_BEHAVIOUR = getReceiverId(PipeMessageReceiver.BEHAVIOUR);
     public static final int NET_UPDATE_PIPE_FLOW = getReceiverId(PipeMessageReceiver.FLOW);
     public static final int NET_UPDATE_PLUG_DOWN = getReceiverId(PipeMessageReceiver.PLUGGABLE_DOWN);
@@ -45,6 +48,12 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     public static final int NET_UPDATE_PLUG_WEST = getReceiverId(PipeMessageReceiver.PLUGGABLE_WEST);
     public static final int NET_UPDATE_PLUG_EAST = getReceiverId(PipeMessageReceiver.PLUGGABLE_EAST);
     public static final int NET_UPDATE_WIRES = getReceiverId(PipeMessageReceiver.WIRES);
+
+    static {
+        for (PipeMessageReceiver rec : PipeMessageReceiver.VALUES) {
+            IDS.allocId("UPDATE_" + rec);
+        }
+    }
 
     public static final int[] NET_UPDATE_PLUGS = {//
         NET_UPDATE_PLUG_DOWN, NET_UPDATE_PLUG_UP,//

@@ -451,6 +451,16 @@ public class GuiGuide extends GuiScreen {
     }
 
     @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        super.keyTyped(typedChar, keyCode);
+        if (keyCode == mc.gameSettings.keyBindLeft.getKeyCode()) {
+            currentPage.lastPage();
+        } else if (keyCode == mc.gameSettings.keyBindRight.getKeyCode()) {
+            currentPage.nextPage();
+        }
+    }
+
+    @Override
     public boolean doesGuiPauseGame() {
         return false;
     }

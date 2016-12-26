@@ -37,6 +37,12 @@ public class PacketBufferBC extends PacketBuffer {
         }
     }
 
+    public static PacketBufferBC write(IPayloadWriter writer) {
+        PacketBufferBC buffer = new PacketBufferBC(Unpooled.buffer());
+        writer.write(buffer);
+        return buffer;
+    }
+
     @Override
     public PacketBufferBC clear() {
         super.clear();

@@ -19,13 +19,13 @@ public abstract class GuidePageBase extends GuidePart {
         return index;
     }
 
-    protected final void nextPage() {
-        if (index + 1 < numPages) {
+    public final void nextPage() {
+        if (index + 2 < numPages) {
             index += 2;
         }
     }
 
-    protected final void backPage() {
+    public final void lastPage() {
         index -= 2;
         if (index < 0) {
             index = 0;
@@ -134,7 +134,7 @@ public abstract class GuidePageBase extends GuidePart {
                 GuiIcon icon = GuiGuide.TURN_BACK;
                 GuiRectangle turnBox = new GuiRectangle(x, y + height, icon.width, icon.height);
                 if (turnBox.contains(gui.mouse)) {
-                    backPage();
+                    lastPage();
                 }
             }
         }

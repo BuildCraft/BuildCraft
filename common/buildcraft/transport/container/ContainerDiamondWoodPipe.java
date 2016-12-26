@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.container;
 
+import java.io.IOException;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 
@@ -56,16 +58,16 @@ public class ContainerDiamondWoodPipe extends ContainerBC_Neptune {
     }
 
     public void sendNewFilterMode(FilterMode newFilterMode) {
-        this.sendMessage((buffer) -> {
-            buffer.writeByte(newFilterMode.ordinal());
+        this.sendMessage(NET_DATA, (buffer) -> {
+            buffer.writeEnumValue(newFilterMode);
         });
     }
 
     @Override
-    public void handleMessage(MessageContext ctx, PacketBufferBC payload, Side side) {
+    public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+        super.readMessage(id, buffer, side, ctx);
         if (side == Side.SERVER) {
-            FilterMode mode = FilterMode.get(payload.readUnsignedByte());
-            behaviour.filterMode = mode;
+            behaviour.filterMode = buffer.readEnumValue(FilterMode.class);
             behaviour.pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
         }
     }

@@ -16,7 +16,6 @@ import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.MessageUtil;
 import buildcraft.transport.container.ContainerGate;
 import buildcraft.transport.gate.*;
 
@@ -90,12 +89,6 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
                 positionConnect[i] = new GuiRectangle(x + triggerWidth, y + 9, 18, 18).offset(rootElement);
             }
         }
-
-        // Ask the server for all the valid statements
-        MessageUtil.doDelayed(() -> {
-            container.sendMessage((buffer) -> buffer.writeByte(ContainerGate.ID_VALID_STATEMENTS));
-            container.sendMessage((buffer) -> buffer.writeByte(ContainerGate.ID_CURRENT_SET));
-        });
     }
 
     @Override

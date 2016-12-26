@@ -31,7 +31,6 @@ import buildcraft.lib.tile.TileBC_Neptune;
 public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final EnumFacing[] SIDE_INDEXES = new EnumFacing[] { EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST };
     public static final int[] REBUILD_DELAYS = new int[] { 128, 256, 512, 1024, 2048, 4096, 8192, 16384 };
-    public static final int NET_FLOOD_GATE = 10;
 
     private boolean[] sidesBlocked = new boolean[5];
     private final Tank tank = new Tank("tank", 2000, this);
@@ -40,7 +39,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     private TreeMap<Integer, Deque<BlockPos>> layerQueues = new TreeMap<>();
 
     public static int getIndexFromSide(EnumFacing side) {
-        return Arrays.binarySearch(SIDE_INDEXES, side);//wat?
+        return Arrays.binarySearch(SIDE_INDEXES, side);// wat?
     }
 
     public boolean isSideBlocked(EnumFacing side) {
@@ -49,6 +48,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
     public void setSideBlocked(EnumFacing side, boolean blocked) {
         sidesBlocked[getIndexFromSide(side)] = blocked;
+        sendNetworkUpdate(NET_RENDER_DATA);
     }
 
     public int getCurrentDelay() {
@@ -159,8 +159,6 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             delayIndex = Math.min(delayIndex + 1, REBUILD_DELAYS.length - 1);
             rebuildQueue();
         }
-
-        sendNetworkUpdate(NET_FLOOD_GATE); // TODO: optimize
     }
 
     // IDebuggable
@@ -203,18 +201,26 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     @Override
     public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
-        if (side == Side.SERVER && id == NET_FLOOD_GATE) {
-            tank.writeToBuffer(buffer);
-            MessageUtil.writeBooleanArray(buffer, sidesBlocked);
+        if (side == Side.SERVER) {
+            if (id == NET_RENDER_DATA) {
+                // tank.writeToBuffer(buffer);
+                MessageUtil.writeBooleanArray(buffer, sidesBlocked);
+            }
         }
     }
 
     @Override
     public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == Side.CLIENT && id == NET_FLOOD_GATE) {
-            tank.readFromBuffer(buffer);
-            sidesBlocked = MessageUtil.readBooleanArray(buffer, sidesBlocked.length);
+        if (side == Side.CLIENT) {
+            if (id == NET_RENDER_DATA) {
+                // tank.readFromBuffer(buffer);
+                boolean[] read = MessageUtil.readBooleanArray(buffer, sidesBlocked.length);
+                if (!Arrays.equals(read, sidesBlocked)) {
+                    sidesBlocked = read;
+                    redrawBlock();
+                }
+            }
         }
     }
 

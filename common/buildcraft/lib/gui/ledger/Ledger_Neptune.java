@@ -268,7 +268,10 @@ public abstract class Ledger_Neptune implements ITooltipElement {
     }
 
     public int getHeight(float partialTicks) {
-        return (int) (lastHeight * (1 - partialTicks) + currentHeight * partialTicks);
+        if (lastHeight == currentHeight) return currentHeight;
+        else if (partialTicks <= 0) return lastHeight;
+        else if (partialTicks >= 1) return currentHeight;
+        else return (int) (lastHeight * (1 - partialTicks) + currentHeight * partialTicks);
     }
 
     public String getTitle() {

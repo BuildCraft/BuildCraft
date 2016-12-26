@@ -88,7 +88,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT) {
-            if (id == NET_GUI_DATA) {
+            if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
                 tankManager.readData(buffer);
             }
         }
@@ -98,7 +98,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
         if (side == Side.SERVER) {
-            if (id == NET_GUI_DATA) {
+            if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
                 tankManager.writeData(buffer);
             }
         }

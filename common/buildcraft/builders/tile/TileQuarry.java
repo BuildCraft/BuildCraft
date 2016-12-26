@@ -228,7 +228,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
 
         if (currentTask != null) {
-            long maxToExtract = MjAPI.MJ * 4;
+            long maxToExtract = MjAPI.MJ * 10;
             if (currentTask.addPower(battery.extractPower(0, Math.min(currentTask.getTarget() - currentTask.getPower(), maxToExtract)))) {
                 currentTask = null;
             }
@@ -239,12 +239,14 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         List<BlockPos> breakPoses = new ArrayList<>();
 
         for (int x = min.getX(); x <= max.getX(); x++) {
-            for (int z = min.getZ(); z <= max.getZ(); z++) {
-                BlockPos framePos = new BlockPos(x, min.getY(), z);
-                boolean shouldBeFrame = x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ();
-                Block block = world.getBlockState(framePos).getBlock();
-                if ((block != Blocks.AIR && !shouldBeFrame) || (block != BCBuildersBlocks.frame && block != Blocks.AIR && shouldBeFrame)) {
-                    breakPoses.add(framePos);
+            for (int y = min.getY(); y <= max.getY(); y++) {
+                for (int z = min.getZ(); z <= max.getZ(); z++) {
+                    BlockPos framePos = new BlockPos(x, y, z);
+                    boolean shouldBeFrame = x == min.getX() || x == max.getX() || y == min.getY() || y == max.getY() || z == min.getZ() || z == max.getZ();
+                    Block block = world.getBlockState(framePos).getBlock();
+                    if ((block != Blocks.AIR && !shouldBeFrame) || (block != BCBuildersBlocks.frame && block != Blocks.AIR && shouldBeFrame)) {
+                        breakPoses.add(framePos);
+                    }
                 }
             }
         }
@@ -439,7 +441,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
         left.add("battery = " + battery.getDebugString());
-        left.add("recent power = " + (int) recentPowerAverage.getAverage());
+        left.add("recent power = " + recentPowerAverage.getAverage());
         left.add("frameBox");
         left.add(" - min = " + frameBox.min());
         left.add(" - max = " + frameBox.max());
@@ -538,9 +540,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
         /** @return True if this task has been completed, or cancelled. */
         public final boolean addPower(long microJoules) {
-            if (microJoules <= 0) {
-                return false;
-            }
             power += microJoules;
             if (power >= getTarget()) {
                 finish();

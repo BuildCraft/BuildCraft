@@ -23,13 +23,19 @@ import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.gui.slot.IPhantomSlot;
+import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.MessageContainer;
-import buildcraft.lib.net.MessageWidget;
 import buildcraft.lib.net.PacketBufferBC;
 
 public abstract class ContainerBC_Neptune extends Container {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.container");
+
+    protected static final IdAllocator IDS = new IdAllocator("container");
+    /** Generic "data" id. Used by all containers which only have 1 id to write out (no point in making EVERY container
+     * have an {@link IdAllocator} if they only allocate one. */
+    public static final int NET_DATA = IDS.allocId("DATA");
+    public static final int NET_WDIGET = IDS.allocId("WIDGET");
 
     public final EntityPlayer player;
     private final List<Widget_Neptune<?>> widgets = new ArrayList<>();
@@ -54,6 +60,10 @@ public abstract class ContainerBC_Neptune extends Container {
         addFullPlayerInventory(8, startY);
     }
 
+    public String getIdName(int id) {
+        return IDS.getNameFor(id);
+    }
+
     protected <W extends Widget_Neptune<?>> W addWidget(W widget) {
         if (widget == null) throw new NullPointerException("widget");
         widgets.add(widget);
@@ -62,28 +72,6 @@ public abstract class ContainerBC_Neptune extends Container {
 
     public ImmutableList<Widget_Neptune<?>> getWidgets() {
         return ImmutableList.copyOf(widgets);
-    }
-
-    // Package-private so that the widget itself can send this
-    void sendWidgetData(Widget_Neptune<?> widget, IPayloadWriter writer) {
-        int widgetId = widgets.indexOf(widget);
-        if (widgetId == -1) {
-            if (DEBUG) {
-                throw new IllegalArgumentException("Invalid Widget Request! (" + (widget == null ? "null" : widget.getClass()) + ")");
-            } else {
-                BCLog.logger.warn("[lib.container] Received an invalid widget sending request!");
-                BCLog.logger.warn("[lib.container]   Widget {id = " + widgetId + ", class = " + widget.getClass() + "}");
-                BCLog.logger.warn("[lib.container]   Container {class = " + getClass() + "}");
-                BCLog.logger.warn("[lib.container]   Player {class = " + player.getClass() + ", name = " + player.getName() + "}");
-            }
-        } else {
-            MessageWidget message = new MessageWidget(windowId, widgetId, writer);
-            if (player.world.isRemote) {
-                BCMessageHandler.netWrapper.sendToServer(message);
-            } else {
-                BCMessageHandler.netWrapper.sendTo(message, (EntityPlayerMP) player);
-            }
-        }
     }
 
     @Nullable
@@ -117,8 +105,34 @@ public abstract class ContainerBC_Neptune extends Container {
         return in == null ? null : in.copy();
     }
 
-    public final void sendMessage(IPayloadWriter writer) {
-        MessageContainer message = new MessageContainer(windowId, writer);
+    // Package-private so that the widget itself can send this
+    void sendWidgetData(Widget_Neptune<?> widget, IPayloadWriter writer) {
+        int widgetId = widgets.indexOf(widget);
+        if (widgetId == -1) {
+            if (DEBUG) {
+                throw new IllegalArgumentException("Invalid Widget Request! (" + (widget == null ? "null" : widget.getClass()) + ")");
+            } else {
+                BCLog.logger.warn("[lib.container] Received an invalid widget sending request!");
+                BCLog.logger.warn("[lib.container]   Widget {id = " + widgetId + ", class = " + widget.getClass() + "}");
+                BCLog.logger.warn("[lib.container]   Container {class = " + getClass() + "}");
+                BCLog.logger.warn("[lib.container]   Player {class = " + player.getClass() + ", name = " + player.getName() + "}");
+            }
+        } else {
+            sendMessage(NET_WDIGET, (buffer) -> {
+                buffer.writeShort(widgetId);
+                writer.write(buffer);
+            });
+        }
+    }
+
+    public final void sendMessage(int id) {
+        Side side = player.world.isRemote ? Side.CLIENT : Side.SERVER;
+        sendMessage(id, (buffer) -> writeMessage(id, buffer, side));
+    }
+
+    public final void sendMessage(int id, IPayloadWriter writer) {
+        PacketBufferBC payload = PacketBufferBC.write(writer);
+        MessageContainer message = new MessageContainer(windowId, id, payload);
         if (player.world.isRemote) {
             BCMessageHandler.netWrapper.sendToServer(message);
         } else {
@@ -126,34 +140,26 @@ public abstract class ContainerBC_Neptune extends Container {
         }
     }
 
-    public void handleMessage(MessageContext ctx, PacketBufferBC payload, Side side) throws IOException {}
+    public void writeMessage(int id, PacketBufferBC buffer, Side side) {}
 
-    public final void handleWidgetMessage(MessageContext ctx, int widgetId, PacketBufferBC payload, Side side) {
-        if (widgetId < 0 || widgetId >= widgets.size()) {
-            if (DEBUG) {
-                String string = "Received unknown or invalid widget ID " + widgetId + " on side " + side;
-                if (side == Side.SERVER) {
-                    string += " (for player " + player.getName() + ")";
+    public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+        if (id == NET_WDIGET) {
+            int widgetId = buffer.readUnsignedShort();
+            if (widgetId < 0 || widgetId >= widgets.size()) {
+                if (DEBUG) {
+                    String string = "Received unknown or invalid widget ID " + widgetId + " on side " + side;
+                    if (side == Side.SERVER) {
+                        string += " (for player " + player.getName() + ")";
+                    }
+                    BCLog.logger.warn(string);
                 }
-                BCLog.logger.warn(string);
-            }
-            return;
-        }
-        Widget_Neptune<?> widget = widgets.get(widgetId);
-        try {
-            if (side == Side.SERVER) {
-                widget.handleWidgetDataServer(ctx, payload);
-            } else if (side == Side.CLIENT) {
-                widget.handleWidgetDataClient(ctx, payload);
-            }
-        } catch (IOException io) {
-            if (DEBUG) {
-                // ALL THE DATA
-                BCLog.logger.warn("[lib.container] Failed to handle some widget data!");
-                BCLog.logger.warn("[lib.container]   On the " + side);
-                BCLog.logger.warn("[lib.container]   Widget {id = " + widgetId + ", class = " + widget.getClass() + "}");
-                BCLog.logger.warn("[lib.container]   Container {class = " + getClass() + "}");
-                BCLog.logger.warn("[lib.container]   Exception: ", io);
+            } else {
+                Widget_Neptune<?> widget = widgets.get(widgetId);
+                if (side == Side.SERVER) {
+                    widget.handleWidgetDataServer(ctx, buffer);
+                } else if (side == Side.CLIENT) {
+                    widget.handleWidgetDataClient(ctx, buffer);
+                }
             }
         }
     }

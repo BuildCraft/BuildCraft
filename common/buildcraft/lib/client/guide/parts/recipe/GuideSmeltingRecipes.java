@@ -34,7 +34,7 @@ public enum GuideSmeltingRecipes implements IStackRecipes {
 
         ItemStack result = FurnaceRecipes.instance().getSmeltingResult(stack);
 
-        if (result != null) {
+        if (!result.isEmpty()) {
             return ImmutableList.of(new GuideSmeltingFactory(stack, result));
         }
 

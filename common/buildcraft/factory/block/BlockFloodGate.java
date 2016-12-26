@@ -69,8 +69,6 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
                 TileFloodGate gate = (TileFloodGate) tile;
                 if (side != EnumFacing.UP) {
                     gate.setSideBlocked(side, !gate.isSideBlocked(side));
-                    gate.sendNetworkUpdate(TileFloodGate.NET_FLOOD_GATE);
-                    world.markBlockRangeForRenderUpdate(pos, pos);
                     return true;
                 }
             }

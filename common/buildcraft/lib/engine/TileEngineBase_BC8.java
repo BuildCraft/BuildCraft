@@ -12,6 +12,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
+import net.minecraft.world.biome.Biome;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -40,12 +41,8 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     public final IMjConnector mjConnector = createConnector();
     private final MjCapabilityHelper mjCaps = new MjCapabilityHelper(mjConnector);
 
-    /* TODO: GuiDataValue<T> (new class) -- should automate sending values in TileBC_Neptune.NET_GUI_TICK it MUST be
-     * nice to use! otherwise fallback to having private "last sent" values. Look at Container.detectAndSendChanges for
-     * more desc */
-
-    protected double heat = MIN_HEAT;
-    protected long power = 0;
+    protected double heat = MIN_HEAT;// TODO: sync gui data
+    protected long power = 0;// TODO: sync gui data
     private long lastPower = 0;
     /** Increments from 0 to 1. Above 0.5 all of the held power is emitted. */
     private float progress;
@@ -54,9 +51,15 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     protected EnumPowerStage powerStage = EnumPowerStage.BLUE;
     protected EnumFacing currentDirection = EnumFacing.UP;
 
-    public long currentOutput;
+    public long currentOutput;// TODO: sync gui data
     public boolean isRedstonePowered = false;
     private boolean isPumping = false;
+
+    // Needed: Power stored
+
+    /* TODO: GuiDataValue<T> (new class) -- should automate sending values in TileBC_Neptune.NET_GUI_TICK it MUST be
+     * nice to use! otherwise fallback to having private "last sent" values. Look at Container.detectAndSendChanges for
+     * more desc */
 
     public TileEngineBase_BC8() {}
 
@@ -109,6 +112,17 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
                 isPumping = buffer.readBoolean();
                 currentDirection = buffer.readEnumValue(EnumFacing.class);
                 powerStage = buffer.readEnumValue(EnumPowerStage.class);
+            } else if (id == NET_GUI_DATA) {
+                heat = buffer.readFloat();
+                currentOutput = buffer.readLong();
+                power = buffer.readLong();
+
+            } else if (id == NET_GUI_TICK) {
+                heat = buffer.readFloat();
+                currentOutput = buffer.readLong();
+                power = buffer.readLong();
+                
+
             }
         }
     }
@@ -121,12 +135,34 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
                 buffer.writeBoolean(isPumping);
                 buffer.writeEnumValue(currentDirection);
                 buffer.writeEnumValue(powerStage);
+            } else if (id == NET_GUI_DATA) {
+                buffer.writeFloat((float) heat);
+                buffer.writeLong(currentOutput);
+                buffer.writeLong(power);
+
+            } else if (id == NET_GUI_TICK) {
+                buffer.writeFloat((float) heat);
+                buffer.writeLong(currentOutput);
+                buffer.writeLong(power);
+
             }
         }
     }
 
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         return false;
+    }
+
+    protected Biome getBiome() {
+        // TODO: Cache this!
+        return world.getBiome(getPos());
+    }
+
+    /** @return The heat of the current biome, in celsius. */
+    protected float getBiomeHeat() {
+        Biome biome = getBiome();
+        float temp = biome.getFloatTemperature(getPos());
+        return Math.max(0, Math.min(30, temp * 15f));
     }
 
     public double getPowerLevel() {
@@ -218,8 +254,6 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         getPowerStage();
         engineUpdate();
 
-        TileEntity tile = getTileBuffer(currentDirection).getTile();
-
         if (progressPart != 0) {
             progress += getPistonSpeed();
 
@@ -231,13 +265,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
                 progressPart = 0;
             }
         } else if (isRedstonePowered && isActive()) {
-            if (isPoweredTile(tile, currentDirection)) {
-                if (getPowerToExtract() > 0) {
-                    progressPart = 1;
-                    setPumping(true);
-                } else {
-                    setPumping(false);
-                }
+            if (getPowerToExtract(false) > 0) {
+                progressPart = 1;
+                setPumping(true);
             } else {
                 setPumping(false);
             }
@@ -253,7 +283,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         burn();
     }
 
-    private long getPowerToExtract() {
+    private long getPowerToExtract(boolean doExtract) {
         TileEntity tile = getTileBuffer(currentDirection).getTile();
 
         if (tile == null) return 0;
@@ -269,7 +299,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         }
 
         // Pulsed power
-        return extractPower(0, receiver.getPowerRequested(), true);
+        return extractPower(0, receiver.getPowerRequested(), doExtract);
         // TODO: Use this:
         // return extractPower(receiver.getMinPowerReceived(), receiver.getMaxPowerReceived(), false);
 
@@ -291,7 +321,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         }
         IMjReceiver receiver = getReceiverToPower(tile, currentDirection);
         if (receiver != null) {
-            long extracted = getPowerToExtract();
+            long extracted = getPowerToExtract(true);
             if (extracted > 0) {
                 long excess = receiver.receivePower(extracted, false);
                 extractPower(extracted - excess, extracted - excess, true); // Comment out for constant power

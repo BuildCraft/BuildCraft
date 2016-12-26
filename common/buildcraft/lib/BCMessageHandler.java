@@ -27,7 +27,6 @@ import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.MessageContainer;
 import buildcraft.lib.net.MessageMarker;
 import buildcraft.lib.net.MessageUpdateTile;
-import buildcraft.lib.net.MessageWidget;
 import buildcraft.lib.net.cache.MessageObjectCacheReply;
 import buildcraft.lib.net.cache.MessageObjectCacheReq;
 import buildcraft.lib.particle.MessageParticleVanilla;
@@ -48,7 +47,6 @@ public enum BCMessageHandler {
     public static void fmlPreInit() {
         addMessageType(MessageUpdateTile.class, MessageUpdateTile.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageContainer.class, MessageContainer.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
-        addMessageType(MessageWidget.class, MessageWidget.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageMarker.class, MessageMarker.Handler.INSTANCE, Side.CLIENT);
         addMessageType(MessageLibraryTransferEntry.class, MessageLibraryTransferEntry.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageLibraryRequest.class, MessageLibraryRequest.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
