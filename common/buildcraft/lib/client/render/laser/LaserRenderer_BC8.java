@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumType;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
@@ -24,20 +25,20 @@ import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 
 public class LaserRenderer_BC8 {
     private static final Map<LaserType, CompiledLaserType> COMPILED_LASER_TYPES = new HashMap<>();
-    private static final LoadingCache<LaserData_BC8, LaserCompiledList> COMPILED_GL_LASERS;
-    private static final LoadingCache<LaserData_BC8, LaserCompiledBuffer> COMPILED_VB_LASERS;
+    private static final LoadingCache<LaserData_BC8, LaserCompiledList> COMPILED_STATIC_LASERS;
+    private static final LoadingCache<LaserData_BC8, LaserCompiledBuffer> COMPILED_DYNAMIC_LASERS;
 
     public static final VertexFormat FORMAT_LESS, FORMAT_ALL;
 
     static {
-        COMPILED_GL_LASERS = CacheBuilder.newBuilder()//
+        COMPILED_STATIC_LASERS = CacheBuilder.newBuilder()//
                 .expireAfterWrite(5, TimeUnit.SECONDS)//
                 .removalListener(LaserRenderer_BC8::removeCompiledLaser)//
-                .build(CacheLoader.from(LaserRenderer_BC8::makeGlLaser));
+                .build(CacheLoader.from(LaserRenderer_BC8::makeStaticLaser));
 
-        COMPILED_VB_LASERS = CacheBuilder.newBuilder()//
+        COMPILED_DYNAMIC_LASERS = CacheBuilder.newBuilder()//
                 .expireAfterWrite(5, TimeUnit.SECONDS)//
-                .build(CacheLoader.from(LaserRenderer_BC8::makeVbLaser));
+                .build(CacheLoader.from(LaserRenderer_BC8::makeDynamicLaser));
 
         FORMAT_LESS = new VertexFormat();
         FORMAT_LESS.addElement(DefaultVertexFormats.POSITION_3F);
@@ -49,7 +50,6 @@ public class LaserRenderer_BC8 {
         FORMAT_ALL.addElement(DefaultVertexFormats.TEX_2F);
         FORMAT_ALL.addElement(DefaultVertexFormats.TEX_2S);
         FORMAT_ALL.addElement(DefaultVertexFormats.COLOR_4UB);
-        FORMAT_ALL.addElement(new VertexFormatElement(0, EnumType.FLOAT, EnumUsage.NORMAL, 3));
     }
 
     public static void clearModels() {
@@ -63,13 +63,13 @@ public class LaserRenderer_BC8 {
         return COMPILED_LASER_TYPES.get(laserType);
     }
 
-    private static LaserCompiledList makeGlLaser(LaserData_BC8 data) {
+    private static LaserCompiledList makeStaticLaser(LaserData_BC8 data) {
         LaserCompiledList.Builder renderer = new LaserCompiledList.Builder(data.enableDiffuse);
         makeLaser(data, renderer);
         return renderer.build();
     }
 
-    private static LaserCompiledBuffer makeVbLaser(LaserData_BC8 data) {
+    private static LaserCompiledBuffer makeDynamicLaser(LaserData_BC8 data) {
         LaserCompiledBuffer.Builder renderer = new LaserCompiledBuffer.Builder(data.enableDiffuse);
         makeLaser(data, renderer);
         return renderer.build();
@@ -137,14 +137,22 @@ public class LaserRenderer_BC8 {
         }
     }
 
-    public static void renderLaserGlList(LaserData_BC8 data) {
-        LaserCompiledList compiled = COMPILED_GL_LASERS.getUnchecked(data);
+    public static void renderLaserStatic(LaserData_BC8 data) {
+        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        profiler.startSection("compute");
+        LaserCompiledList compiled = COMPILED_STATIC_LASERS.getUnchecked(data);
+        profiler.endStartSection("render");
         compiled.render();
+        profiler.endSection();
     }
 
     /** Assumes the buffer uses {@link DefaultVertexFormats#BLOCK} */
-    public static void renderLaserBuffer(LaserData_BC8 data, VertexBuffer buffer) {
-        LaserCompiledBuffer compiled = COMPILED_VB_LASERS.getUnchecked(data);
+    public static void renderLaserDynamic(LaserData_BC8 data, VertexBuffer buffer) {
+        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        profiler.startSection("compute");
+        LaserCompiledBuffer compiled = COMPILED_DYNAMIC_LASERS.getUnchecked(data);
+        profiler.endStartSection("render");
         compiled.render(buffer);
+        profiler.endSection();
     }
 }

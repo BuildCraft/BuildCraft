@@ -30,7 +30,7 @@ public class RenderBuilder extends FastTESR<TileBuilder_Neptune> {
 
         Minecraft.getMinecraft().mcProfiler.startSection("box");
         Box box = te.getBox();
-        LaserBoxRenderer.renderLaserBoxVb(box, BuildCraftLaserManager.STRIPES_WRITE, vb);
+        LaserBoxRenderer.renderLaserBoxDynamic(box, BuildCraftLaserManager.STRIPES_WRITE, vb);
 
         Minecraft.getMinecraft().mcProfiler.endStartSection("path");
 
@@ -44,7 +44,7 @@ public class RenderBuilder extends FastTESR<TileBuilder_Neptune> {
                     Vec3d one = offset(from, to);
                     Vec3d two = offset(to, from);
                     LaserData_BC8 data = new LaserData_BC8(BuildCraftLaserManager.STRIPES_WRITE_DIRECTION, one, two, 1 / 16.1);
-                    LaserRenderer_BC8.renderLaserBuffer(data, vb);
+                    LaserRenderer_BC8.renderLaserDynamic(data, vb);
                 }
                 last = p;
             }

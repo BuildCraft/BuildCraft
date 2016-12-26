@@ -227,7 +227,7 @@ public enum RenderTickListener {
             GL11.glTranslated(box.min().getX(), box.min().getY(), box.min().getZ());
             for (Vec3d[] vec : vectors) {
                 LaserData_BC8 laser = new LaserData_BC8(BuildCraftLaserManager.STRIPES_WRITE, vec[0], vec[1], 1 / 16.0);
-                LaserRenderer_BC8.renderLaserGlList(laser);
+                LaserRenderer_BC8.renderLaserStatic(laser);
             }
 
         } else if (type == MapLocationType.AREA) {
@@ -235,7 +235,7 @@ public enum RenderTickListener {
             IBox box = ItemMapLocation.getAreaBox(stack);
             lastRenderedMapLoc.reset();
             lastRenderedMapLoc.initialize(box);
-            LaserBoxRenderer.renderLaserBoxGl(lastRenderedMapLoc, BuildCraftLaserManager.STRIPES_WRITE);
+            LaserBoxRenderer.renderLaserBoxStatic(lastRenderedMapLoc, BuildCraftLaserManager.STRIPES_WRITE);
 
         } else if (type == MapLocationType.PATH) {
             List<BlockPos> path = BCCoreItems.mapLocation.getPath(stack);
@@ -295,7 +295,7 @@ public enum RenderTickListener {
         }
         profiler.endStartSection("render");
         for (LaserData_BC8 laser : toRender) {
-            LaserRenderer_BC8.renderLaserGlList(laser);
+            LaserRenderer_BC8.renderLaserStatic(laser);
         }
         profiler.endSection();
     }

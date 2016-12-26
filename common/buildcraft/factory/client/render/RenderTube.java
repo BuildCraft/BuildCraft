@@ -29,7 +29,7 @@ public class RenderTube extends FastTESR<TileMiner> {
         Vec3d end = start.addVector(0, -length, 0);
 
         LaserData_BC8 data = new LaserData_BC8(laserType, start, end, 1 / 16.0);
-        LaserRenderer_BC8.renderLaserBuffer(data, buffer);
+        LaserRenderer_BC8.renderLaserDynamic(data, buffer);
 
         buffer.setTranslation(0, 0, 0);
     }

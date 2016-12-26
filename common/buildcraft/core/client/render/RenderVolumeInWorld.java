@@ -58,7 +58,7 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
         makeLaserBox(box.box, BuildCraftLaserManager.MARKER_VOLUME_CONNECTED, RENDER_SCALE);
 
         for (LaserData_BC8 data : box.box.laserData) {
-            LaserRenderer_BC8.renderLaserBuffer(data, vb);
+            LaserRenderer_BC8.renderLaserDynamic(data, vb);
         }
         // TODO: Render corners!
     }
@@ -75,7 +75,7 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
         makeLaserBox(mk.renderCache, BuildCraftLaserManager.MARKER_VOLUME_SIGNAL, RENDER_SCALE_HIGHLIGHT);
 
         for (LaserData_BC8 data : mk.renderCache.laserData) {
-            LaserRenderer_BC8.renderLaserBuffer(data, vb);
+            LaserRenderer_BC8.renderLaserDynamic(data, vb);
         }
         // TODO: Render corners!
     }

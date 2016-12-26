@@ -265,7 +265,6 @@ public class FluidRenderer {
         int loopEndX = startX + 16 * (diffX / 16);
         int loopEndY = startY + 16 * (diffY / 16);
 
-        // This is broken atm!
         for (int x = startX; x != loopEndX; x += stepX) {
             for (int y = startY; y != loopEndY; y += stepY) {
                 guiVertex(x, y, 0, 0);
@@ -298,6 +297,20 @@ public class FluidRenderer {
                 guiVertex(x, endY, 0, yTex);
             }
         }
+
+        if (diffX % 16 != 0 && diffY % 16 != 0) {
+            int w = diffX % 16;
+            int h = diffY % 16;
+            int x = endX - w;
+            int y = endY - h;
+            int tx = w < 0 ? -w : w;
+            int ty = h < 0 ? -h : h;
+            guiVertex(x, y, 0, 0);
+            guiVertex(endX, y, tx, 0);
+            guiVertex(endX, endY, tx, ty);
+            guiVertex(x, endY, 0, ty);
+        }
+
         tess.draw();
         GlStateManager.color(1, 1, 1);
         sprite = null;

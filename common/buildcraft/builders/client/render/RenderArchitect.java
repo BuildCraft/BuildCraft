@@ -19,7 +19,7 @@ public class RenderArchitect extends FastTESR<TileArchitect_Neptune> {
         vb.setTranslation(x - te.getPos().getX(), y - te.getPos().getY(), z - te.getPos().getZ());
 
         Box box = te.getScanningBox();
-        LaserBoxRenderer.renderLaserBoxVb(box, BuildCraftLaserManager.STRIPES_READ, vb);
+        LaserBoxRenderer.renderLaserBoxDynamic(box, BuildCraftLaserManager.STRIPES_READ, vb);
 
         vb.setTranslation(0, 0, 0);
 

@@ -22,7 +22,7 @@ public class RenderFiller extends FastTESR<TileFiller_Neptune> {
         vb.setTranslation(x - te.getPos().getX(), y - te.getPos().getY(), z - te.getPos().getZ());
 
         Box box = te.getBox();
-        LaserBoxRenderer.renderLaserBoxVb(box, BuildCraftLaserManager.STRIPES_WRITE, vb);
+        LaserBoxRenderer.renderLaserBoxDynamic(box, BuildCraftLaserManager.STRIPES_WRITE, vb);
 
         vb.setTranslation(0, 0, 0);
 
