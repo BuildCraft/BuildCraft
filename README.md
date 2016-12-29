@@ -5,6 +5,7 @@ If you wish to submit a pull request to fix bugs or broken behaivor feel free to
 features or change existing behaivour or balance, please discuss it with Sengir or Krapht before submiting the pull request.
 
 ### Compiling and packaging Buildcraft
+1. **Ensure you're using Java version 6 or 7!**
 1. Ensure that `Apache Ant` (found [here](http://ant.apache.org/)) is installed correctly on your system.
  * Linux users will need the latest version of astyle installed as well.
 1. Create a base directory for the build
