@@ -54,11 +54,6 @@ public class CommandBuildCraft extends CommandBase {
 
 		sender.sendChatToPlayer(String.format(colour + "BuildCraft %s for Minecraft %s (Latest: %s).", Version.getVersion(),
 				CoreProxy.proxy.getMinecraftVersion(), Version.getRecommendedVersion()));
-		if (Version.isOutdated()) {
-			for (String updateLine : Version.getChangelog()) {
-				sender.sendChatToPlayer("\u00A79" + updateLine);
-			}
-		}
 	}
 
 }

@@ -20,8 +20,7 @@ public class Version implements Runnable {
 
 	public static final String VERSION = "@VERSION@";
 	public static final String BUILD_NUMBER = "@BUILD_NUMBER@";
-	private static final String REMOTE_VERSION_FILE = "http://bit.ly/buildcraftver";
-	private static final String REMOTE_CHANGELOG_ROOT = "https://dl.dropbox.com/u/44760587/buildcraft/changelog/";
+	private static final String REMOTE_VERSION_FILE = "http://mod-buildcraft.com/version/versions.txt";
 
 	public static EnumUpdateState currentVersion = EnumUpdateState.CURRENT;
 
@@ -30,7 +29,6 @@ public class Version implements Runnable {
 	public static final int FORGE_VERSION_PATCH = 0;
 
 	private static String recommendedVersion;
-	private static String[] cachedChangelog;
 
 	public static String getVersion() {
 		return VERSION + " (:" + BUILD_NUMBER + ")";
@@ -75,6 +73,7 @@ public class Version implements Runnable {
 				conn.setRequestProperty("User-Agent",
 						"Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.0.11) Gecko/2009060215 Firefox/3.0.11 (.NET CLR 3.5.30729)");
 				conn.connect();
+
 				location = conn.getHeaderField("Location");
 			}
 			
@@ -82,7 +81,6 @@ public class Version implements Runnable {
 				throw new NullPointerException();
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			conn.disconnect();
 
 			String line = null;
 			String mcVersion = CoreProxy.proxy.getMinecraftVersion();
@@ -102,6 +100,8 @@ public class Version implements Runnable {
 				}
 			}
 
+			conn.disconnect();
+
 			BuildCraftCore.bcLog.warning("Using outdated version [" + VERSION + " (build:" + BUILD_NUMBER + ")] for Minecraft " + mcVersion
 					+ ". Consider updating.");
 			currentVersion = EnumUpdateState.OUTDATED;
@@ -111,62 +111,6 @@ public class Version implements Runnable {
 			BuildCraftCore.bcLog.warning(e.toString());
 			currentVersion = EnumUpdateState.CONNECTION_ERROR;
 		}
-	}
-
-	public static String[] getChangelog() {
-		if (cachedChangelog == null) {
-			cachedChangelog = grabChangelog(recommendedVersion);
-		}
-
-		return cachedChangelog;
-	}
-
-	public static String[] grabChangelog(String version) {
-
-		try {
-
-			String location = REMOTE_CHANGELOG_ROOT + version;
-			HttpURLConnection conn = null;
-			while (location != null && !location.isEmpty()) {
-				URL url = new URL(location);
-								
-				if(conn != null)
-					conn.disconnect();
-				
-				conn = (HttpURLConnection) url.openConnection();
-				conn.setRequestProperty("User-Agent",
-						"Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.0.11) Gecko/2009060215 Firefox/3.0.11 (.NET CLR 3.5.30729)");
-				conn.connect();
-				location = conn.getHeaderField("Location");
-			}
-			
-			if(conn == null)
-				throw new NullPointerException();
-			
-			BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			conn.disconnect();
-
-			String line;
-			ArrayList<String> changelog = new ArrayList<String>();
-			while ((line = reader.readLine()) != null) {
-				if (line.startsWith("#")) {
-					continue;
-				}
-				if (line.isEmpty()) {
-					continue;
-				}
-
-				changelog.add(line);
-			}
-
-			return changelog.toArray(new String[0]);
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			BuildCraftCore.bcLog.warning("Unable to read changelog from remote site.");
-		}
-
-		return new String[] { String.format("Unable to retrieve changelog for %s %s", DefaultProps.MOD, version) };
 	}
 
     @Override
