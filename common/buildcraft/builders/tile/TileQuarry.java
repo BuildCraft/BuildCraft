@@ -56,7 +56,10 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     private final Box miningBox = new Box();
     private BoxIterator boxIterator;
     public Task currentTask = null;
-    public final ItemHandlerSimple invFrames = itemManager.addInvHandler("frames", 9, ItemHandlerManager.EnumAccess.NONE, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invFrames = itemManager.addInvHandler("frames",
+                                                                         9,
+                                                                         ItemHandlerManager.EnumAccess.NONE,
+                                                                         EnumPipePart.VALUES);
     public Vec3d drillPos;
     public Vec3d clientDrillPos;
     public Vec3d prevClientDrillPos;
@@ -230,7 +233,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
         if (currentTask != null) {
             long maxToExtract = MjAPI.MJ * 10;
-            if (currentTask.addPower(battery.extractPower(0, Math.min(currentTask.getTarget() - currentTask.getPower(), maxToExtract)))) {
+            if (currentTask.addPower(battery.extractPower(0,
+                                                          Math.min(currentTask.getTarget() - currentTask.getPower(),
+                                                                   maxToExtract)))) {
                 currentTask = null;
             }
             sendNetworkUpdate(NET_RENDER_DATA);
@@ -243,9 +248,14 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             for (int y = min.getY(); y <= max.getY(); y++) {
                 for (int z = min.getZ(); z <= max.getZ(); z++) {
                     BlockPos framePos = new BlockPos(x, y, z);
-                    boolean shouldBeFrame = x == min.getX() || x == max.getX() || y == min.getY() || y == max.getY() || z == min.getZ() || z == max.getZ();
+                    boolean shouldBeFrame = x == min.getX() || x == max.getX()
+                        || y == min.getY()
+                        || y == max.getY()
+                        || z == min.getZ()
+                        || z == max.getZ();
                     Block block = world.getBlockState(framePos).getBlock();
-                    if ((block != Blocks.AIR && !shouldBeFrame) || (block != BCBuildersBlocks.frame && block != Blocks.AIR && shouldBeFrame)) {
+                    if ((block != Blocks.AIR && !shouldBeFrame) || (block != BCBuildersBlocks.frame
+                        && block != Blocks.AIR && shouldBeFrame)) {
                         breakPoses.add(framePos);
                     }
                 }
@@ -284,7 +294,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
 
         if ((boxIterator == null || drillPos == null) && miningBox.isInitialized()) {
-            boxIterator = new BoxIterator(miningBox, AxisOrder.getFor(EnumAxisOrder.XZY, AxisOrder.Inversion.NNN), true);
+            boxIterator = new BoxIterator(miningBox,
+                                          AxisOrder.getFor(EnumAxisOrder.XZY, AxisOrder.Inversion.NNN),
+                                          true);
             while (world.isAirBlock(boxIterator.getCurrent())) {
                 boxIterator.advance();
             }
@@ -326,6 +338,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     }
 
     public boolean tryPairEntity(EntityQuarryFrame frame, Axis axis, int listIndex) {
+        if (!frameBox.isInitialized()) {
+            return false;
+        }
         List<EntityQuarryFrame> entities = getArmList(axis);
         if (world.isRemote && entities.size() == 0) {
             BlockPos size = frameBox.size();
@@ -592,13 +607,15 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
         @Override
         protected void finish() {
-            EntityPlayer fake = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, TileQuarry.this.pos, TileQuarry.this.getOwner());
-            
+            EntityPlayer fake = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world,
+                                                                      TileQuarry.this.pos,
+                                                                      TileQuarry.this.getOwner());
+
             IBlockState state = world.getBlockState(breakPos);
             if (state.getBlockHardness(getWorld(), breakPos) < 0) {
                 return;
             }
-            
+
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, breakPos, state, fake);
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if (!breakEvent.isCanceled()) {
@@ -606,7 +623,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 // The drill pos will be null if we are making the frame: this is when we want to destroy the block, not
                 // drop its contents
                 if (put) {
-                    NonNullList<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) world, breakPos, TileQuarry.this.getOwner());
+                    NonNullList<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) world,
+                                                                                    breakPos,
+                                                                                    TileQuarry.this.getOwner());
                     if (stacks != null) {
                         for (int i = 0; i < stacks.size(); i++) {
                             InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, stacks.get(i));
