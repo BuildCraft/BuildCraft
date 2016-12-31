@@ -7,6 +7,8 @@ package buildcraft.builders.bpt.player;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -68,9 +70,9 @@ public class BuilderPlayer implements IMaterialProvider {
     private class RequestedItemStack implements IRequestedItem {
         private final ItemStack requested, copy;
         private boolean locked = false, used = false;
-        private ItemStack held;
+        private @Nonnull ItemStack held = StackUtil.EMPTY;
 
-        public RequestedItemStack(ItemStack requested) {
+        public RequestedItemStack(@Nonnull ItemStack requested) {
             this.requested = requested;
             this.copy = requested.copy();
         }
@@ -82,11 +84,11 @@ public class BuilderPlayer implements IMaterialProvider {
             } else {
                 IItemTransactor trans = ItemTransactorHelper.getTransactor(player.inventory);
                 IStackFilter filter = (stack) -> {
-                    copy.stackSize = stack.stackSize;
+                    copy.setCount(stack.getCount());
                     return ItemStack.areItemsEqual(stack, copy);
                 };
-                held = trans.extract(filter, requested.stackSize, requested.stackSize, false);
-                if (held != null) {
+                held = trans.extract(filter, requested.getCount(), requested.getCount(), false);
+                if (!held.isEmpty()) {
                     locked = true;
                     return true;
                 }
@@ -116,10 +118,10 @@ public class BuilderPlayer implements IMaterialProvider {
             if (locked) {
                 IItemTransactor trans = ItemTransactorHelper.getTransactor(player.inventory);
                 ItemStack leftOver = trans.insert(held, false, false);
-                if (leftOver != null) {
-                    InventoryUtil.drop(player.worldObj, player.posX, player.posY, player.posZ, leftOver);
+                if (!leftOver.isEmpty()) {
+                    InventoryUtil.drop(player.world, player.posX, player.posY, player.posZ, leftOver);
                 }
-                held = null;
+                held = StackUtil.EMPTY;
                 locked = false;
             }
             used = true;

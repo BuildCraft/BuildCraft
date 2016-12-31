@@ -9,13 +9,15 @@ import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.StackUtil;
 
 public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
     private final Tank tank1 = new Tank("tank1", Fluid.BUCKET_VOLUME * 6, this);
@@ -32,16 +34,8 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_FLUIDS) {
             if (facing == null) {
                 return (T) tankManager;
             } else if (facing.getAxisDirection() == AxisDirection.POSITIVE) {
@@ -86,13 +80,20 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
         @Override
         public CraftingSlot getBoundVersion() {
             ItemStack stack = get();
-            if (stack != null && stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
-                ItemStack copied = stack.copy();
-                IFluidHandler handler = copied.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
-                FluidStack fluid = handler.drain(8000, true);
+            if (stack.isEmpty()) {
+                return super.getBoundVersion();
+            }
+            ItemStack copied = stack.copy();
+            if (copied.getCount() != 1) {
+                copied.setCount(1);
+            }
+            IFluidHandlerItem fluidHandlerItem = FluidUtil.getFluidHandler(stack.copy());
+            if (fluidHandlerItem != null) {
+                FluidStack fluid = fluidHandlerItem.drain(Integer.MAX_VALUE, true);
                 if (fluid != null) {
-                    if (copied.stackSize == stack.stackSize) {
-                        // This was NOT used up, so we can just ignore the stack altogether and return a fluid version
+                    if (fluidHandlerItem.getContainer().isEmpty()) {
+                        /* We removed an itemstack -- perhaps the container itself was used up in crafting */
+                    } else {
                         return new CraftSlotFluidBound(this, fluid);
                     }
                 }
@@ -117,7 +118,7 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
             if (drained != null && drained.amount == fluidUsed.amount) {
                 return nonBound.get().copy();
             }
-            return null;
+            return StackUtil.EMPTY;
         }
 
         @Override

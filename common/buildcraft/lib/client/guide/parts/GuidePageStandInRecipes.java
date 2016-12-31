@@ -16,7 +16,7 @@ public class GuidePageStandInRecipes extends GuidePage {
     }
 
     @Nonnull
-    public static GuidePageFactory createFactory(ItemStack stack) {
+    public static GuidePageFactory createFactory(@Nonnull ItemStack stack) {
         List<GuidePartFactory> factories = MarkdownPageLoader.loadAllCrafting(stack);
         return (gui) -> {
             List<GuidePart> parts = new ArrayList<>();

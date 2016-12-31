@@ -17,7 +17,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class AIRobotUseToolOnBlock extends AIRobot {
 
@@ -90,7 +90,7 @@ public class AIRobotUseToolOnBlock extends AIRobot {
         super.writeSelfToNBT(nbt);
 
         if (useToBlock != null) {
-            nbt.setTag("blockFound", NBTUtils.writeBlockPos(useToBlock));
+            nbt.setTag("blockFound", NBTUtilBC.writeBlockPos(useToBlock));
         }
     }
 
@@ -99,7 +99,7 @@ public class AIRobotUseToolOnBlock extends AIRobot {
         super.loadSelfFromNBT(nbt);
 
         if (nbt.hasKey("blockFound")) {
-            useToBlock = NBTUtils.readBlockPos(nbt.getTag("blockFound"));
+            useToBlock = NBTUtilBC.readBlockPos(nbt.getTag("blockFound"));
         }
     }
 }

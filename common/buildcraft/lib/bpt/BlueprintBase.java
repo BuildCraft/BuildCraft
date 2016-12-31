@@ -10,7 +10,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
@@ -28,15 +28,15 @@ public abstract class BlueprintBase {
     }
 
     public BlueprintBase(NBTTagCompound nbt) {
-        size = NBTUtils.readBlockPos(nbt.getTag("size"));
+        size = NBTUtilBC.readBlockPos(nbt.getTag("size"));
         if (size == null) {
             size = new BlockPos(0, 0, 0);
         }
-        offset = NBTUtils.readBlockPos(nbt.getTag("offset"));
+        offset = NBTUtilBC.readBlockPos(nbt.getTag("offset"));
         if (offset == null) {
             offset = BlockPos.ORIGIN;
         }
-        facing = NBTUtils.readEnum(nbt.getTag("facing"), EnumFacing.class);
+        facing = NBTUtilBC.readEnum(nbt.getTag("facing"), EnumFacing.class);
         if (facing == null) {
             facing = EnumFacing.EAST;
         }
@@ -44,9 +44,9 @@ public abstract class BlueprintBase {
 
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag("size", NBTUtils.writeBlockPos(size));
-        nbt.setTag("offset", NBTUtils.writeBlockPos(offset));
-        nbt.setTag("facing", NBTUtils.writeEnum(facing));
+        nbt.setTag("size", NBTUtilBC.writeBlockPos(size));
+        nbt.setTag("offset", NBTUtilBC.writeBlockPos(offset));
+        nbt.setTag("facing", NBTUtilBC.writeEnum(facing));
         return nbt;
     }
 

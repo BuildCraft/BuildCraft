@@ -11,7 +11,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
 public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
@@ -28,13 +30,13 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
     public IMessage handleWidgetDataServer(MessageContext ctx, PacketBufferBC buffer) throws IOException {
         byte id = buffer.readByte();
         if (id == NET_CLICK) {
-            // TODO: Item interaction
+            tank.onGuiClicked(container);
         }
         return null;
     }
 
     @SideOnly(Side.CLIENT)
-    public IGuiElement createGuiElement(GuiBC8<ContainerBC_Neptune> gui, IGuiPosition parent, GuiRectangle position, GuiIcon overlay) {
+    public IGuiElement createGuiElement(GuiBC8<?> gui, IGuiPosition parent, GuiRectangle position, GuiIcon overlay) {
         return new GuiElementFluidTank(gui, parent, position, overlay);
     }
 
@@ -48,7 +50,10 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
 
         @Override
         public void drawBackground(float partialTicks) {
-            // TODO!
+            GuiUtil.drawFluid(this, tank);
+            if (overlay != null) {
+                overlay.drawCutInside(this);
+            }
         }
 
         @Override
@@ -67,6 +72,11 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
                 tooltip.refresh();
                 tooltips.add(tooltip);
             }
+        }
+
+        @Override
+        public HelpPosition getHelpInfo() {
+            return tank.helpInfo.target(this.expand(4));
         }
     }
 }

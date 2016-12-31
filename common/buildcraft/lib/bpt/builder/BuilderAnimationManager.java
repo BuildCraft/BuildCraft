@@ -11,7 +11,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.net.command.IPayloadWriter;
+import buildcraft.lib.net.IPayloadWriter;
 
 public class BuilderAnimationManager implements INBTSerializable<NBTTagCompound> {
     public enum EnumBuilderAnimMessage {

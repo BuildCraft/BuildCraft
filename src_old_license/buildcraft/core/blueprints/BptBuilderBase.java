@@ -35,7 +35,7 @@ import buildcraft.core.builders.*;
 import buildcraft.core.lib.utils.*;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.AxisOrder;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.EnumAxisOrder;
@@ -241,7 +241,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
             for (int i = 0; i < clearList.tagCount(); ++i) {
                 NBTBase cpt = clearList.get(i);
-                BlockPos o = NBTUtils.readBlockPos(cpt);
+                BlockPos o = NBTUtilBC.readBlockPos(cpt);
                 markLocationUsed(o);
             }
         }
@@ -251,7 +251,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
             for (int i = 0; i < builtList.tagCount(); ++i) {
                 NBTBase cpt = builtList.get(i);
-                BlockPos o = NBTUtils.readBlockPos(cpt);
+                BlockPos o = NBTUtilBC.readBlockPos(cpt);
                 markLocationUsed(o);
             }
         }

@@ -24,7 +24,8 @@ import buildcraft.api.items.IList;
 import buildcraft.core.BCCoreGuis;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.list.ListHandler;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
@@ -35,9 +36,9 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         BCCoreGuis.LIST.openGUI(player);
-        return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
+        return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
     }
 
     @Override
@@ -49,13 +50,13 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList {
 
     @Override
     public int getMetadata(ItemStack stack) {
-        return ListHandler.hasItems(stack) ? 1 : 0;
+        return ListHandler.hasItems(StackUtil.asNonNull(stack)) ? 1 : 0;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-        String name = getName(stack);
+        String name = getName(StackUtil.asNonNull(stack));
         if (StringUtils.isNullOrEmpty(name)) return;
         tooltip.add(TextFormatting.ITALIC + name);
     }
@@ -64,12 +65,12 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList {
 
     @Override
     public String getName(ItemStack stack) {
-        return NBTUtils.getItemData(stack).getString("label");
+        return NBTUtilBC.getItemData(stack).getString("label");
     }
 
     @Override
     public boolean setName(ItemStack stack, String name) {
-        NBTUtils.getItemData(stack).setString("label", name);
+        NBTUtilBC.getItemData(stack).setString("label", name);
         return true;
     }
 

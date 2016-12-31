@@ -24,9 +24,14 @@ import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.Utils;
+<<<<<<< HEAD
 import buildcraft.lib.misc.Matrix4i;
+import buildcraft.lib.misc.NBTUtilBC;
+=======
 import buildcraft.lib.misc.NBTUtils;
+>>>>>>> 4c6b9beacc58bd9c05649db40ea24df03d21fc98
 import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.misc.data.Matrix4i;
 
 public abstract class BlueprintBase {
 
@@ -140,8 +145,8 @@ public abstract class BlueprintBase {
         nbt.setBoolean("rotate", rotate);
         nbt.setBoolean("excavate", excavate);
 
-        nbt.setTag("size", NBTUtils.writeBlockPos(size));
-        nbt.setTag("anchor", NBTUtils.writeBlockPos(anchor));
+        nbt.setTag("size", NBTUtilBC.writeBlockPos(size));
+        nbt.setTag("anchor", NBTUtilBC.writeBlockPos(anchor));
 
         if (author != null) {
             nbt.setString("author", author);
@@ -177,11 +182,11 @@ public abstract class BlueprintBase {
     public void readFromNBT(NBTTagCompound nbt) {
         if (nbt.hasKey("sizeX")) {
             size = new BlockPos(nbt.getInteger("sizeX"), nbt.getInteger("sizeY"), nbt.getInteger("sizeZ"));
-        } else size = NBTUtils.readBlockPos(nbt.getTag("size"));
+        } else size = NBTUtilBC.readBlockPos(nbt.getTag("size"));
 
         if (nbt.hasKey("anchorX")) {
             anchor = new BlockPos(nbt.getInteger("anchorX"), nbt.getInteger("anchorY"), nbt.getInteger("anchorZ"));
-        } else anchor = NBTUtils.readBlockPos(nbt.getTag("anchor"));
+        } else anchor = NBTUtilBC.readBlockPos(nbt.getTag("anchor"));
 
         author = nbt.getString("author");
 

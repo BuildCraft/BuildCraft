@@ -238,7 +238,7 @@ public class PathConnection extends MarkerConnection<PathConnection> {
         Vec3d one = offset(from, to);
         Vec3d two = offset(to, from);
         LaserData_BC8 data = new LaserData_BC8(BuildCraftLaserManager.MARKER_PATH_CONNECTED, one, two, RENDER_SCALE);
-        LaserRenderer_BC8.renderLaserGlList(data);
+        LaserRenderer_BC8.renderLaserStatic(data);
     }
 
     @SideOnly(Side.CLIENT)

@@ -30,7 +30,7 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
                 boolean foundItem = false;
                 for (int i = 0; i < FILTERS_PER_SIDE; i++) {
                     ItemStack compareTo = filters.getStackInSlot(offset + i);
-                    if (compareTo == null) continue;
+                    if (compareTo.isEmpty()) continue;
                     foundItem = true;
                     if (StackUtil.isMatchingItemOrList(compareTo, toCompare)) {
                         sideAllowed = true;

@@ -25,7 +25,7 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.core.client.CoreIconProvider;
 import buildcraft.lib.config.DetailedConfigOption;
 import buildcraft.lib.config.OverridableConfigOption;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.gui.StatementParameterSlot;
@@ -229,7 +229,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
         String name = container.getGateName();
 
         fontRendererObj.drawString(name, getCenteredOffset(name), 10, 0x404040);
-        fontRendererObj.drawString(StringUtilBC.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+        fontRendererObj.drawString(LocaleUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
         if (index == -1) drawTooltipForSlotAt(mouseX, mouseY);
         if (tooltip != null) drawTooltip(tooltip, mouseX, mouseY);

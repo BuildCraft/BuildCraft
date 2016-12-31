@@ -25,8 +25,7 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 
 import buildcraft.lib.client.render.laser.LaserData_BC8;
-import buildcraft.lib.misc.Matrix4i;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;
 
@@ -97,15 +96,15 @@ public class Box implements IBox {
             min = new BlockPos(nbt.getInteger("xMin"), nbt.getInteger("yMin"), nbt.getInteger("zMin"));
             max = new BlockPos(nbt.getInteger("xMax"), nbt.getInteger("yMax"), nbt.getInteger("zMax"));
         } else {
-            min = NBTUtils.readBlockPos(nbt.getTag("min"));
-            max = NBTUtils.readBlockPos(nbt.getTag("max"));
+            min = NBTUtilBC.readBlockPos(nbt.getTag("min"));
+            max = NBTUtilBC.readBlockPos(nbt.getTag("max"));
         }
         extendToEncompassBoth(min, max);
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
-        if (min != null) nbt.setTag("min", NBTUtils.writeBlockPos(min));
-        if (max != null) nbt.setTag("max", NBTUtils.writeBlockPos(max));
+        if (min != null) nbt.setTag("min", NBTUtilBC.writeBlockPos(min));
+        if (max != null) nbt.setTag("max", NBTUtilBC.writeBlockPos(max));
     }
 
     public NBTTagCompound writeToNBT() {
@@ -231,7 +230,7 @@ public class Box implements IBox {
     }
 
     public BlockPos closestInsideTo(BlockPos toTest) {
-        return VecUtil.max(min(), max(), toTest);
+        return VecUtil.max(min, VecUtil.min(max, toTest));
     }
 
     @Override

@@ -23,7 +23,7 @@ import buildcraft.api.robots.ResourceIdBlock;
 
 import buildcraft.core.lib.utils.IBlockFilter;
 import buildcraft.lib.inventory.filter.PassThroughFluidFilter;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotGotoStationAndUnloadFluids;
 import buildcraft.robotics.ai.AIRobotPumpBlock;
@@ -125,7 +125,7 @@ public class BoardRobotPump extends RedstoneBoardRobot {
     public void writeSelfToNBT(NBTTagCompound nbt) {
         super.writeSelfToNBT(nbt);
         if (blockFound != null) {
-            nbt.setTag("blockFound", NBTUtils.writeBlockPos(blockFound));
+            nbt.setTag("blockFound", NBTUtilBC.writeBlockPos(blockFound));
         }
     }
 
@@ -134,7 +134,7 @@ public class BoardRobotPump extends RedstoneBoardRobot {
         super.loadSelfFromNBT(nbt);
 
         if (nbt.hasKey("blockFound")) {
-            blockFound = NBTUtils.readBlockPos(nbt.getTag("blockFound"));
+            blockFound = NBTUtilBC.readBlockPos(nbt.getTag("blockFound"));
         }
     }
 }

@@ -1,15 +1,25 @@
 package buildcraft.lib.net.cache;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.function.Supplier;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
 
+import buildcraft.lib.BCLibProxy;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -22,7 +32,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
  * be used the server thread. */
 public abstract class NetworkedObjectCache<T> {
 
-    static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.net.cache");
+    static final boolean DEBUG_LOG = BCDebugging.shouldDebugLog("lib.net.cache");
+    static final boolean DEBUG_CPLX = BCDebugging.shouldDebugComplex("lib.net.cache");
 
     /* Implementation notes -- this currently is a simple, never expiring object<->id cache.
      * 
@@ -41,6 +52,8 @@ public abstract class NetworkedObjectCache<T> {
 
     /** The list of cached client-side objects. */
     private final Int2ObjectMap<Link> clientObjects = new Int2ObjectOpenHashMap<>();
+    /** The list of all links that are currently unknown. */
+    private final Queue<Link> clientUnknowns = new LinkedList<>();
 
     /** A server view of this cache. Contains methods specific to */
     private final ServerView serverView = new ServerView();
@@ -48,7 +61,6 @@ public abstract class NetworkedObjectCache<T> {
 
     public NetworkedObjectCache(T defaultObject) {
         this.defaultObject = defaultObject;
-        BuildCraftObjectCaches.CACHES.add(this);
     }
 
     // Public API
@@ -56,12 +68,23 @@ public abstract class NetworkedObjectCache<T> {
     /** @return The server view of this cache. If the debug option "lib.net.cache" is enabled then this will check to
      *         make sure that this really is the server thread. */
     public ServerView server() {
+        if (DEBUG_LOG) {
+            MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+            if (!server.isCallingFromMinecraftThread()) {
+                throw new IllegalStateException("");
+            }
+        }
         return serverView;
     }
 
     /** @return The server view of this cache. If the debug option "lib.net.cache" is enabled then this will check to
      *         make sure that this really is the client thread. */
     public ClientView client() {
+        if (DEBUG_LOG) {
+            if (!Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+                throw new IllegalStateException("");
+            }
+        }
         return clientView;
     }
 
@@ -71,7 +94,7 @@ public abstract class NetworkedObjectCache<T> {
 
         /** Stores the given object in this cache, returning its ID.
          * 
-         * @param object The object to store
+         * @param value The object to store
          * @return The id that maps back to the canonicalised version of the value. */
         public int store(T value) {
             return serverStore(value);
@@ -80,7 +103,7 @@ public abstract class NetworkedObjectCache<T> {
         /** Gets the ID for the given object, or -1 if this was not stored in the cache. {@link #store(Object)} is
          * preferred to this, as most uses (such as network sending) want the value to be stored and get a valid ID.
          * 
-         * @param object
+         * @param value The value to get an id for
          * @return */
         public int getId(T value) {
             return serverGetId(value);
@@ -106,6 +129,13 @@ public abstract class NetworkedObjectCache<T> {
         /** The stored, cached value. */
         private T actual;
 
+        /** The id of this value. */
+        private final int id;
+
+        Link(int id) {
+            this.id = id;
+        }
+
         @Override
         public T get() {
             return actual == null ? defaultObject : actual;
@@ -116,10 +146,10 @@ public abstract class NetworkedObjectCache<T> {
         }
     }
 
-    // Abstract overidable methods
+    // Abstract overridable methods
 
     /** Takes a specific object and turns it into its most basic form. For example for {@link ItemStack}'s this will
-     * should set the stack size to 0, and remove all non-rendered NBT tag components.
+     * should set the stack size to 1, and remove all non-rendered NBT tag components.
      * 
      * @param obj The object to canonicalised.
      * @return A canonical version of the input */
@@ -138,6 +168,11 @@ public abstract class NetworkedObjectCache<T> {
      * @return */
     protected abstract T readObject(PacketBufferBC buffer) throws IOException;
 
+    /** @return The name of this cache to be used in debug messages. */
+    protected String getCacheName() {
+        return getClass().getSimpleName();
+    }
+
     // Internal logic
 
     /** Stores the given object in this cache, returning its ID. SERVER SIDE.
@@ -151,6 +186,9 @@ public abstract class NetworkedObjectCache<T> {
             // new entry
             int id = serverCurrentId++;
             serverObjectToId.put(canonical, Integer.valueOf(id));
+            if (DEBUG_CPLX) {
+                BCLog.logger.info("[lib.net.cache] The cache " + getNameAndId() + " stored #" + id + " as " + canonical);
+            }
             return id;
         } else {
             // existing entry
@@ -182,7 +220,11 @@ public abstract class NetworkedObjectCache<T> {
     private Link clientRetrieve(int id) {
         Link current = clientObjects.get(id);
         if (current == null) {
-            current = new Link();
+            if (DEBUG_CPLX) {
+                BCLog.logger.info("[lib.net.cache] The cache " + getNameAndId() + " tried to retrieve #" + id + " for the first time");
+            }
+            current = new Link(id);
+            clientUnknowns.add(current);
             clientObjects.put(id, current);
         }
         return current;
@@ -194,7 +236,7 @@ public abstract class NetworkedObjectCache<T> {
         writeObject(obj, buffer);
     }
 
-    /** Used by {@link MessageObjectCacheReply.}
+    /** Used by {@link MessageObjectCacheReply.Handler} to read an object in.
      * 
      * @param id
      * @param buffer
@@ -202,5 +244,22 @@ public abstract class NetworkedObjectCache<T> {
     void readObjectClient(int id, PacketBufferBC buffer) throws IOException {
         Link link = clientRetrieve(id);
         link.actual = readObject(buffer);
+    }
+
+    final String getNameAndId() {
+        return "(" + BuildCraftObjectCaches.CACHES.indexOf(this) + " = " + getCacheName() + ")";
+    }
+
+    void onClientWorldTick() {
+        int[] ids = new int[clientUnknowns.size()];
+        for (int i = 0; i < ids.length; i++) {
+            ids[i] = clientUnknowns.remove().id;
+        }
+        if (ids.length > 0) {
+            if (DEBUG_CPLX) {
+                BCLog.logger.info("[lib.net.cache] The cache " + getNameAndId() + " requests ID's " + Arrays.toString(ids));
+            }
+            MessageUtil.getWrapper().sendToServer(new MessageObjectCacheReq(this, ids));
+        }
     }
 }

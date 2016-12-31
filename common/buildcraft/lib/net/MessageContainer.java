@@ -12,29 +12,27 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.net.command.IPayloadWriter;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
-/** Specialised version of {@link MessageCommand} that deals only with containers for gui's. */
 public class MessageContainer implements IMessage {
 
     private int windowId;
+    private int msgId;
     private PacketBufferBC payload;
 
     /** Used by forge to construct this upon receive. Do not use! */
     @Deprecated
     public MessageContainer() {}
 
-    public MessageContainer(ContainerBC_Neptune container, IPayloadWriter writer) {
-        this(container.windowId, writer);
+    public MessageContainer(ContainerBC_Neptune container, int msgId, PacketBufferBC payload) {
+        this(container.windowId, msgId, payload);
     }
 
-    public MessageContainer(int windowId, IPayloadWriter writer) {
+    public MessageContainer(int windowId, int msgId, PacketBufferBC payload) {
         this.windowId = windowId;
-        this.payload = new PacketBufferBC(Unpooled.buffer());
-        writer.write(payload);
+        this.msgId = msgId;
+        this.payload = payload;
     }
 
     // Packet breakdown:
@@ -45,6 +43,7 @@ public class MessageContainer implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
         windowId = buf.readInt();
+        msgId = buf.readUnsignedShort();
         int payloadSize = buf.readUnsignedShort();
         ByteBuf read = buf.readBytes(payloadSize);
         payload = new PacketBufferBC(read);
@@ -53,6 +52,7 @@ public class MessageContainer implements IMessage {
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(windowId);
+        buf.writeShort(msgId);
         int length = payload.readableBytes();
         buf.writeShort(length);
         buf.writeBytes(payload, 0, length);
@@ -68,8 +68,11 @@ public class MessageContainer implements IMessage {
                 EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
                 if (player != null && player.openContainer instanceof ContainerBC_Neptune && player.openContainer.windowId == windowId) {
                     ContainerBC_Neptune container = (ContainerBC_Neptune) player.openContainer;
-                    container.handleMessage(ctx, message.payload, ctx.side);
-                    MessageUtil.ensureEmpty(message.payload, ctx.side == Side.CLIENT, getClass().getSimpleName());
+                    container.readMessage(message.msgId, message.payload, ctx.side, ctx);
+
+                    // error checking
+                    String extra = container.getClass() + ", id = " + container.getIdName(message.msgId);
+                    MessageUtil.ensureEmpty(message.payload, ctx.side == Side.CLIENT, extra);
                 }
                 return null;
             } catch (IOException e) {

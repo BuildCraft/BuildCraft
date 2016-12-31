@@ -23,7 +23,7 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.ModelHelper;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
     public ItemLens() {
@@ -45,10 +45,10 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
     @Override
     public String getItemStackDisplayName(ItemStack itemstack) {
         if (itemstack.getItemDamage() >= 32) {
-            return StringUtilBC.localize(itemstack.getItemDamage() == 33 ? "item.Filter.name" : "item.Lens.name") + " (" + StringUtilBC.localize(
+            return LocaleUtil.localize(itemstack.getItemDamage() == 33 ? "item.Filter.name" : "item.Lens.name") + " (" + LocaleUtil.localize(
                     "color.clear") + ")";
         } else {
-            return StringUtilBC.localize(itemstack.getItemDamage() >= 16 ? "item.Filter.name" : "item.Lens.name") + " (" + StringUtilBC.localize(
+            return LocaleUtil.localize(itemstack.getItemDamage() >= 16 ? "item.Filter.name" : "item.Lens.name") + " (" + LocaleUtil.localize(
                     "color." + ColorUtils.getName(getDye(itemstack))) + ")";
         }
     }

@@ -63,7 +63,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     public void update() {
         deltaManager.tick();
 
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             return;
         }
 
@@ -148,7 +148,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
 
     protected void setComplete(boolean isComplete) {
         this.isComplete = isComplete;
-        if (!worldObj.isRemote) {
+        if (!world.isRemote) {
             sendNetworkUpdate(NET_LED_STATUS);
         }
     }
@@ -224,17 +224,10 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     // Capability
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (mjCapHelper.hasCapability(capability, facing)) {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (mjCapHelper.hasCapability(capability, facing)) {
-            return mjCapHelper.getCapability(capability, facing);
+        T cap = mjCapHelper.getCapability(capability, facing);
+        if (cap != null) {
+            return cap;
         }
         return super.getCapability(capability, facing);
     }

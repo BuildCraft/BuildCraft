@@ -16,7 +16,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.core.lib.utils.IBlockFilter;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.robotics.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotSearchAndGotoBlock;
@@ -91,7 +91,7 @@ public class BoardRobotStripes extends RedstoneBoardRobot {
         super.writeSelfToNBT(nbt);
 
         if (blockFound != null) {
-            nbt.setTag("blockFound", NBTUtils.writeBlockPos(blockFound));
+            nbt.setTag("blockFound", NBTUtilBC.writeBlockPos(blockFound));
         }
     }
 
@@ -100,7 +100,7 @@ public class BoardRobotStripes extends RedstoneBoardRobot {
         super.loadSelfFromNBT(nbt);
 
         if (nbt.hasKey("blockFound")) {
-            blockFound = NBTUtils.readBlockPos(nbt.getTag("blockFound"));
+            blockFound = NBTUtilBC.readBlockPos(nbt.getTag("blockFound"));
         }
     }
 }

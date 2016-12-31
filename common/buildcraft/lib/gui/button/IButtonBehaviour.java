@@ -9,7 +9,7 @@ public interface IButtonBehaviour {
         @Override
         public void mousePressed(GuiAbstractButton button) {
             button.active = true;
-            button.notifyButtonEnable();
+            button.notifyButtonStateChange();
         }
 
         @Override
@@ -23,9 +23,10 @@ public interface IButtonBehaviour {
         public void mousePressed(GuiAbstractButton button) {
             if (button.active) {
                 button.active = false;
+                button.notifyButtonStateChange();
             } else {
                 button.active = true;
-                button.notifyButtonEnable();
+                button.notifyButtonStateChange();
             }
         }
 
@@ -55,7 +56,7 @@ public interface IButtonBehaviour {
                 if (toDisable == button) {
                     if (!button.active) {
                         button.active = true;
-                        button.notifyButtonEnable();
+                        button.notifyButtonStateChange();
                     }
                 } else {
                     toDisable.active = false;

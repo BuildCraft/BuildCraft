@@ -22,7 +22,7 @@ import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
@@ -47,7 +47,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         BlockPos min = getPos().add(new BlockPos(-5, -5, -5));
         BlockPos max = getPos().add(new BlockPos(5, 5, 5));
 
-        EnumFacing face = worldObj.getBlockState(pos).getValue(BuildCraftProperties.BLOCK_FACING_6);
+        EnumFacing face = world.getBlockState(pos).getValue(BuildCraftProperties.BLOCK_FACING_6);
         if (face.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE) {
             max = max.offset(face, 5);
         } else {
@@ -56,8 +56,8 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
 
         List<BlockPos> targetPoses = new LinkedList<>();
         for (BlockPos pos : BlockPos.getAllInBox(min, max)) {
-            if (worldObj.getBlockState(pos).getBlock() instanceof ILaserTargetBlock) {
-                TileEntity tile = worldObj.getTileEntity(pos);
+            if (world.getBlockState(pos).getBlock() instanceof ILaserTargetBlock) {
+                TileEntity tile = world.getTileEntity(pos);
                 if (tile instanceof ILaserTarget) {
                     ILaserTarget target = (ILaserTarget) tile;
 
@@ -72,12 +72,12 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             return;
         }
 
-        targetPos = targetPoses.get(worldObj.rand.nextInt(targetPoses.size()));
+        targetPos = targetPoses.get(world.rand.nextInt(targetPoses.size()));
     }
 
     private ILaserTarget getTarget() {
         if (targetPos != null) {
-            TileEntity tile = worldObj.getTileEntity(targetPos);
+            TileEntity tile = world.getTileEntity(targetPos);
             if (tile instanceof ILaserTarget) {
                 ILaserTarget target = (ILaserTarget) tile;
                 return !target.isInvalidTarget() && target.requiresLaserPower() ? target : null;
@@ -91,7 +91,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
 
     private void updateLaser() {
         if (getTarget() != null) {
-            laserPos = new Vec3d(targetPos).addVector((5 + worldObj.rand.nextInt(6) + 0.5) / 16D, 9 / 16D, (5 + worldObj.rand.nextInt(6) + 0.5) / 16D);
+            laserPos = new Vec3d(targetPos).addVector((5 + world.rand.nextInt(6) + 0.5) / 16D, 9 / 16D, (5 + world.rand.nextInt(6) + 0.5) / 16D);
         } else {
             laserPos = null;
         }
@@ -112,7 +112,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
 
     @Override
     public void update() {
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             return;
         }
 
@@ -127,11 +127,11 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             targetPos = null;
         }
 
-        if (ticks % (10 + worldObj.rand.nextInt(20)) == 0 || getTarget() == null) {
+        if (ticks % (10 + world.rand.nextInt(20)) == 0 || getTarget() == null) {
             findTarget();
         }
 
-        if (ticks % (5 + worldObj.rand.nextInt(10)) == 0 || getTarget() == null) {
+        if (ticks % (5 + world.rand.nextInt(10)) == 0 || getTarget() == null) {
             updateLaser();
         }
 
@@ -152,10 +152,10 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         super.writeToNBT(nbt);
         nbt.setTag("mj_battery", battery.serializeNBT());
         if (laserPos != null) {
-            nbt.setTag("laser_pos", NBTUtils.writeVec3d(laserPos));
+            nbt.setTag("laser_pos", NBTUtilBC.writeVec3d(laserPos));
         }
         if (targetPos != null) {
-            nbt.setTag("target_pos", NBTUtils.writeBlockPos(targetPos));
+            nbt.setTag("target_pos", NBTUtilBC.writeBlockPos(targetPos));
         }
         for (int i = 0; i < averageValues.length; i++) {
             nbt.setLong("average_value_" + i, averageValues[i]);
@@ -167,8 +167,8 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
-        targetPos = NBTUtils.readBlockPos(nbt.getTag("target_pos"));
-        laserPos = NBTUtils.readVec3d(nbt.getTag("laser_pos"));
+        targetPos = NBTUtilBC.readBlockPos(nbt.getTag("target_pos"));
+        laserPos = NBTUtilBC.readVec3d(nbt.getTag("laser_pos"));
         for (int i = 0; i < averageValues.length; i++) {
             averageValues[i] = nbt.getLong("average_value_" + i);
         }
@@ -220,14 +220,10 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        return mjCapHelper.hasCapability(capability, facing) || super.hasCapability(capability, facing);
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (mjCapHelper.hasCapability(capability, facing)) {
-            return mjCapHelper.getCapability(capability, facing);
+        T cap = mjCapHelper.getCapability(capability, facing);
+        if (cap != null) {
+            return cap;
         }
         return super.getCapability(capability, facing);
     }

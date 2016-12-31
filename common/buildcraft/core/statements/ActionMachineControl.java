@@ -22,7 +22,7 @@ import buildcraft.api.tiles.IControllable.Mode;
 import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class ActionMachineControl extends BCStatement implements IActionExternal {
     public final Mode mode;
@@ -34,7 +34,7 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("gate.action.machine." + mode.name().toLowerCase(Locale.ROOT));
+        return LocaleUtil.localize("gate.action.machine." + mode.name().toLowerCase(Locale.ROOT));
     }
 
     @Override

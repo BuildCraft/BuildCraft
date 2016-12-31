@@ -12,7 +12,7 @@ import java.util.Map;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
-import buildcraft.lib.net.command.IPayloadWriter;
+import buildcraft.lib.net.IPayloadWriter;
 
 public class DeltaManager {
     public enum EnumDeltaMessage {

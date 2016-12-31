@@ -65,7 +65,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     }
 
     private ItemStack getCurrentStack() {
-        return mc.thePlayer.inventory.getItemStack();
+        return mc.player.inventory.getItemStack();
     }
 
     private ItemStack getPaintbrush() {
@@ -164,7 +164,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         scaleSpeed *= 0.7F;
         int posX = (int) positionX;
         int posZ = (int) positionZ;
-        int dimension = Minecraft.getMinecraft().theWorld.provider.getDimension();
+        int dimension = Minecraft.getMinecraft().world.provider.getDimension();
         {
             ChunkPos chunkPos = new ChunkPos(posX >> 4, posZ >> 4);
             ZonePlannerMapChunkKey key = new ZonePlannerMapChunkKey(chunkPos, dimension, container.tile.getLevel());
@@ -259,7 +259,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             for(int i = 0; i < 100; i++) {
                 int chunkX = (int) Math.round(rayPosition.getX()) >> 4;
                 int chunkZ = (int) Math.round(rayPosition.getZ()) >> 4;
-                ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getLoadedChunk(new ZonePlannerMapChunkKey(new ChunkPos(chunkX, chunkZ), Minecraft.getMinecraft().theWorld.provider.getDimension(), container.tile.getLevel()));
+                ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getLoadedChunk(new ZonePlannerMapChunkKey(new ChunkPos(chunkX, chunkZ), Minecraft.getMinecraft().world.provider.getDimension(), container.tile.getLevel()));
                 if(zonePlannerMapChunk != null) {
                     BlockPos pos = new BlockPos(Math.round(rayPosition.getX()) - chunkX * 16, Math.round(rayPosition.getY()), Math.round(rayPosition.getZ()) - chunkZ * 16);
                     MapColourData data = zonePlannerMapChunk.getData(pos.getX(), pos.getZ());

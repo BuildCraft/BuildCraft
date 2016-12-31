@@ -27,7 +27,7 @@ import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.blueprints.Template;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.data.Box;
 
 public abstract class FillerPattern implements IFillerPattern {
@@ -49,7 +49,7 @@ public abstract class FillerPattern implements IFillerPattern {
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("fillerpattern." + tag);
+        return LocaleUtil.localize("fillerpattern." + tag);
     }
 
     @Override

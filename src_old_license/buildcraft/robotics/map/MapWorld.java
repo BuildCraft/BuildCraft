@@ -14,7 +14,7 @@ import net.minecraft.util.LongHashMap;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 import gnu.trove.map.hash.TLongLongHashMap;
 import gnu.trove.set.hash.TLongHashSet;
@@ -57,7 +57,7 @@ public class MapWorld {
                     f.read(data);
                     f.close();
 
-                    NBTTagCompound nbt = NBTUtils.load(data);
+                    NBTTagCompound nbt = NBTUtilBC.load(data);
                     if (nbt != null) {
                         region.readFromNBT(nbt);
                     }
@@ -96,7 +96,7 @@ public class MapWorld {
 
             NBTTagCompound output = new NBTTagCompound();
             region.writeToNBT(output);
-            byte[] data = NBTUtils.save(output);
+            byte[] data = NBTUtilBC.save(output);
             File file = new File(location, "r" + MapUtils.getXFromID(id) + "," + MapUtils.getZFromID(id) + ".nbt");
 
             try (FileOutputStream f = new FileOutputStream(file)) {

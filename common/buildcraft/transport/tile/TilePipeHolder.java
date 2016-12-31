@@ -24,19 +24,21 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.PipeEvent;
 import buildcraft.api.transport.neptune.*;
 
+import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.misc.data.LoadingException;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.transport.block.BlockPipeHolder;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.PipeEventBus;
 import buildcraft.transport.pipe.PluggableHolder;
 import buildcraft.transport.wire.WireManager;
 
 public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITickable, IDebuggable {
-    public static final int NET_UPDATE_MULTI = 10;
-    // 11 -> 19 left for future ID's
-    public static final int NET_UPDATE_SINGLE_START = 20;
+
+    protected static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("pipe");
+
+    public static final int NET_UPDATE_MULTI = IDS.allocId("UPDATE_MULTI");
+    public static final int NET_UPDATE_SINGLE_START = IDS.allocId("UPDATE_SINGLE_BEHAVIOUR");
     public static final int NET_UPDATE_PIPE_BEHAVIOUR = getReceiverId(PipeMessageReceiver.BEHAVIOUR);
     public static final int NET_UPDATE_PIPE_FLOW = getReceiverId(PipeMessageReceiver.FLOW);
     public static final int NET_UPDATE_PLUG_DOWN = getReceiverId(PipeMessageReceiver.PLUGGABLE_DOWN);
@@ -46,6 +48,12 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     public static final int NET_UPDATE_PLUG_WEST = getReceiverId(PipeMessageReceiver.PLUGGABLE_WEST);
     public static final int NET_UPDATE_PLUG_EAST = getReceiverId(PipeMessageReceiver.PLUGGABLE_EAST);
     public static final int NET_UPDATE_WIRES = getReceiverId(PipeMessageReceiver.WIRES);
+
+    static {
+        for (PipeMessageReceiver rec : PipeMessageReceiver.VALUES) {
+            IDS.allocId("UPDATE_" + rec);
+        }
+    }
 
     public static final int[] NET_UPDATE_PLUGS = {//
         NET_UPDATE_PLUG_DOWN, NET_UPDATE_PLUG_UP,//
@@ -144,7 +152,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                     continue;
                 }
             }
-            TileEntity tile = worldObj.getTileEntity(getPos().offset(face));
+            TileEntity tile = world.getTileEntity(getPos().offset(face));
             if (tile != null) {
                 neighbourTiles.put(face, new WeakReference<>(tile));
             }
@@ -155,7 +163,6 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     public void invalidate() {
         super.invalidate();
         wireManager.removeParts(new ArrayList<>(wireManager.parts.keySet()));
-        pluggables.keySet().forEach(side -> BlockPipeHolder.removePluggable(side, this, new ArrayList<>()));
     }
 
     // ITickable
@@ -334,7 +341,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         if (pipe != null) {
             pipe.markForUpdate();
         }
-        if (!worldObj.isRemote && old != with) {
+        if (!world.isRemote && old != with) {
             wireManager.getWireSystems().rebuildWireSystemsAround(this);
         }
         scheduleNetworkUpdate(PipeMessageReceiver.PLUGGABLES[side.getIndex()]);
@@ -345,7 +352,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     @Override
     public TileEntity getNeighbouringTile(EnumFacing side) {
         if (side == null) return null;
-        return worldObj.getTileEntity(getPos().offset(side));
+        return world.getTileEntity(getPos().offset(side));
         // TODO: Make caching work!
         // WeakReference<TileEntity> weakRef = neighbourTiles.get(side);
         // if (weakRef == null) {
@@ -408,7 +415,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
 
     @Override
     public int getRedstoneInput(EnumFacing side) {
-        return worldObj.isBlockPowered(pos) ? 15 : 0;
+        return world.isBlockPowered(pos) ? 15 : 0;
     }
 
     @Override
@@ -419,16 +426,13 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     // Caps
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        return getCapability(capability, facing) != null;
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (facing != null) {
             PipePluggable plug = getPluggable(facing);
-            if (plug != null && plug.isBlocking()) {
-                return plug.getCapability(capability);
+            if (plug != null) {
+                T cap = plug.getCapability(capability);
+                if (cap != null) return cap;
+                if (plug.isBlocking()) return null;
             }
         }
         return pipe == null ? null : pipe.getCapability(capability, facing);
@@ -448,7 +452,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         }
         left.add("Parts:");
         wireManager.parts.forEach((part, color) -> left.add(" - " + part + " = " + color + " = " + wireManager.isPowered(part)));
-        left.add("All wire systems in world count = " + (worldObj.isRemote ? 0 : wireManager.getWireSystems().wireSystems.size()));
+        left.add("All wire systems in world count = " + (world.isRemote ? 0 : wireManager.getWireSystems().wireSystems.size()));
     }
 
     @Override

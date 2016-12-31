@@ -10,5 +10,7 @@ public interface IButtonClickEventTrigger {
 
     void removeListener(IButtonClickEventListener listener);
 
-    void notifyButtonEnable();
+    void notifyButtonStateChange();
+
+    boolean isButtonActive();
 }

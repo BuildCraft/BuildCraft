@@ -12,7 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.library.LibraryAPI;
 import buildcraft.core.blueprints.LibraryId;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class LibraryDatabase {
     protected Set<LibraryId> blueprintIds = new TreeSet<>();
@@ -91,7 +91,7 @@ public class LibraryDatabase {
     }
 
     private void save(LibraryId base, NBTTagCompound compound) {
-        byte[] data = NBTUtils.save(compound);
+        byte[] data = NBTUtilBC.save(compound);
         base.generateUniqueId(data);
         File blueprintFile = getBlueprintOutputFile(base);
 
@@ -173,7 +173,7 @@ public class LibraryDatabase {
             try (FileInputStream f = new FileInputStream(blueprintFile)) {
                 byte[] data = new byte[(int) blueprintFile.length()];
                 f.read(data);
-                return NBTUtils.load(data);
+                return NBTUtilBC.load(data);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {

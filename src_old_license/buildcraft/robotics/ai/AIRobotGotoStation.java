@@ -14,7 +14,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class AIRobotGotoStation extends AIRobot {
 
@@ -82,13 +82,13 @@ public class AIRobotGotoStation extends AIRobot {
 
     @Override
     public void writeSelfToNBT(NBTTagCompound nbt) {
-        nbt.setTag("stationIndex", NBTUtils.writeBlockPos(stationIndex));
+        nbt.setTag("stationIndex", NBTUtilBC.writeBlockPos(stationIndex));
         nbt.setByte("stationSide", (byte) stationSide.ordinal());
     }
 
     @Override
     public void loadSelfFromNBT(NBTTagCompound nbt) {
-        stationIndex = NBTUtils.readBlockPos(nbt.getTag("stationIndex"));
+        stationIndex = NBTUtilBC.readBlockPos(nbt.getTag("stationIndex"));
         stationSide = EnumFacing.values()[nbt.getByte("stationSide")];
     }
 }

@@ -16,7 +16,7 @@ import buildcraft.api.robots.IRobotRegistry;
 import buildcraft.api.robots.ResourceId;
 import buildcraft.api.robots.ResourceIdRequest;
 import buildcraft.api.robots.RobotManager;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class StackRequest {
     private IRequestProvider requester;
@@ -85,7 +85,7 @@ public class StackRequest {
         nbt.setTag("stack", stackNBT);
 
         if (station != null) {
-            nbt.setTag("stationIndex", NBTUtils.writeBlockPos(stationIndex));
+            nbt.setTag("stationIndex", NBTUtilBC.writeBlockPos(stationIndex));
             nbt.setByte("stationSide", (byte) station.side().ordinal());
         }
     }
@@ -96,7 +96,7 @@ public class StackRequest {
 
             ItemStack stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("stack"));
 
-            BlockPos stationIndex = NBTUtils.readBlockPos(nbt.getTag("stationIndex"));
+            BlockPos stationIndex = NBTUtilBC.readBlockPos(nbt.getTag("stationIndex"));
             EnumFacing stationSide = EnumFacing.values()[nbt.getByte("stationSide")];
 
             return new StackRequest(slot, stack, stationIndex, stationSide);

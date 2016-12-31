@@ -21,6 +21,7 @@ import buildcraft.api.mj.IMjReceiver;
 import buildcraft.lib.fluids.SingleUseTank;
 import buildcraft.lib.fluids.TankUtils;
 import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -37,7 +38,7 @@ public class TilePump extends TileMiner {
     private void rebuildQueue() {
         pumpLayerQueues.clear();
         BlockPos pumpPos = new BlockPos(pos.getX(), currentPos.getY(), pos.getZ());
-        Fluid pumpingFluid = BlockUtil.getFluid(worldObj.getBlockState(pumpPos).getBlock());
+        Fluid pumpingFluid = BlockUtil.getFluid(world.getBlockState(pumpPos).getBlock());
 
         if (pumpingFluid == null) {
             return;
@@ -67,7 +68,7 @@ public class TilePump extends TileMiner {
             if ((pumpPos.getX() - pos.getX()) * (pumpPos.getX() - pos.getX()) + (pumpPos.getZ() - pos.getZ()) * (pumpPos.getZ() - pos.getZ()) > 64 * 64) {
                 return;
             }
-            IBlockState state = worldObj.getBlockState(pumpPos);
+            IBlockState state = world.getBlockState(pumpPos);
             if (BlockUtil.getFluid(state.getBlock()) == pumpingFluid && canDrainBlock(state, pumpPos, pumpingFluid)) {
                 fluidsFound.add(index);
                 getLayerQueue(pumpPos.getY()).add(index);
@@ -99,7 +100,7 @@ public class TilePump extends TileMiner {
     }
 
     private boolean canDrainBlock(IBlockState state, BlockPos pos, Fluid fluid) {
-        FluidStack fluidStack = BlockUtil.drainBlock(state, worldObj, pos, false);
+        FluidStack fluidStack = BlockUtil.drainBlock(state, world, pos, false);
         if (fluidStack == null || fluidStack.amount <= 0) {
             return false;
         } else {
@@ -131,7 +132,7 @@ public class TilePump extends TileMiner {
     public void update() {
         super.update();
 
-        TankUtils.pushFluidAround(worldObj, pos);
+        TankUtils.pushFluidAround(world, pos);
     }
 
     @Override
@@ -142,10 +143,10 @@ public class TilePump extends TileMiner {
         }
         int target = 1000; // TODO: add 2 zeroes
         BlockPos pumpPos = new BlockPos(pos.getX(), currentPos.getY(), pos.getZ());
-        Fluid pumpingFluid = BlockUtil.getFluidWithFlowing(worldObj.getBlockState(pumpPos).getBlock());
+        Fluid pumpingFluid = BlockUtil.getFluidWithFlowing(world.getBlockState(pumpPos).getBlock());
 
         if (timeWithoutFluid >= 30) {
-            if (worldObj.isAirBlock(pumpPos.down()) || BlockUtil.getFluid(worldObj.getBlockState(pumpPos.down()).getBlock()) != null) {
+            if (world.isAirBlock(pumpPos.down()) || BlockUtil.getFluid(world.getBlockState(pumpPos.down()).getBlock()) != null) {
                 timeWithoutFluid = 0;
                 currentPos = pumpPos.down();
                 this.goToYLevel(currentPos.getY());
@@ -168,9 +169,9 @@ public class TilePump extends TileMiner {
         if (progress >= target) {
             progress = 0;
             if (!pumpLayerQueues.isEmpty()) {
-                FluidStack drain = BlockUtil.drainBlock(worldObj, currentPos, false);
-                if (drain != null && canDrainBlock(worldObj.getBlockState(currentPos), currentPos, drain.getFluid())) {
-                    worldObj.setBlockToAir(currentPos);
+                FluidStack drain = BlockUtil.drainBlock(world, currentPos, false);
+                if (drain != null && canDrainBlock(world.getBlockState(currentPos), currentPos, drain.getFluid())) {
+                    world.setBlockToAir(currentPos);
                     tank.fill(drain, true);
                     for (Deque<BlockPos> layer : pumpLayerQueues.values()) {
                         for (Iterator<BlockPos> iterator = layer.iterator(); iterator.hasNext();) {
@@ -242,24 +243,11 @@ public class TilePump extends TileMiner {
         return val < 0 ? 0 : val > 1 ? 1 : val;
     }
 
-    @SideOnly(Side.CLIENT)
-    public int getFluidColorForRender() {
-        return tank.getFluidColor();
-    }
-
     // Capabilities
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_FLUIDS) {
             return (T) tank;
         }
         return super.getCapability(capability, facing);

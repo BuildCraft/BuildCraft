@@ -5,20 +5,23 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Objects;
 
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 
 import buildcraft.lib.BCLibDatabase;
-import buildcraft.lib.misc.NBTUtils;
-import buildcraft.lib.permission.PlayerOwner;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public final class LibraryEntryHeader implements Comparable<LibraryEntryHeader> {
     public final String name, kind;
     public final LocalDateTime creation;
-    public final PlayerOwner author;
+    public final GameProfile author;
     private final int hash;
 
-    public LibraryEntryHeader(String name, String kind, LocalDateTime creation, PlayerOwner author) {
+    public LibraryEntryHeader(String name, String kind, LocalDateTime creation, GameProfile author) {
         this.name = name;
         this.kind = kind;
         this.creation = creation;
@@ -27,8 +30,8 @@ public final class LibraryEntryHeader implements Comparable<LibraryEntryHeader> 
     }
 
     public LibraryEntryHeader(PacketBuffer buffer) {
-        this.name = buffer.readStringFromBuffer(256);
-        this.kind = buffer.readStringFromBuffer(30);
+        this.name = buffer.readString(256);
+        this.kind = buffer.readString(30);
         int year = buffer.readInt();
         int month = buffer.readByte();
         int dayOfMonth = buffer.readByte();
@@ -38,7 +41,7 @@ public final class LibraryEntryHeader implements Comparable<LibraryEntryHeader> 
         int second = buffer.readByte();
         LocalTime time = LocalTime.of(hour, minute, second);
         this.creation = LocalDateTime.of(date, time);
-        this.author = PlayerOwner.read(buffer);
+        this.author = MessageUtil.readGameProfile(buffer);
         this.hash = computeHash();
     }
 
@@ -51,14 +54,14 @@ public final class LibraryEntryHeader implements Comparable<LibraryEntryHeader> 
         buffer.writeByte(creation.getHour());
         buffer.writeByte(creation.getMinute());
         buffer.writeByte(creation.getSecond());
-        author.writeToByteBuf(buffer);
+        MessageUtil.writeGameProfile(buffer, author);
     }
 
     public LibraryEntryHeader(NBTTagCompound nbt) {
         this.name = nbt.getString("name");
         this.kind = nbt.getString("kind");
-        this.creation = NBTUtils.readLocalDateTime(nbt.getCompoundTag("creation"));
-        this.author = PlayerOwner.read(nbt.getCompoundTag("author"));
+        this.creation = NBTUtilBC.readLocalDateTime(nbt.getCompoundTag("creation"));
+        this.author = NBTUtil.readGameProfileFromNBT(nbt.getCompoundTag("author"));
         this.hash = computeHash();
     }
 
@@ -66,13 +69,13 @@ public final class LibraryEntryHeader implements Comparable<LibraryEntryHeader> 
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setString("name", name);
         nbt.setString("kind", kind);
-        nbt.setTag("creation", NBTUtils.writeLocalDateTime(creation));
-        nbt.setTag("author", author.writeToNBT());
+        nbt.setTag("creation", NBTUtilBC.writeLocalDateTime(creation));
+        nbt.setTag("author", NBTUtil.writeGameProfile(new NBTTagCompound(), author));
         return nbt;
     }
 
     private int computeHash() {
-        return Objects.hash(name, kind, creation, author.getOwner().getId());
+        return Objects.hash(name, kind, creation, author);
     }
 
     @Override

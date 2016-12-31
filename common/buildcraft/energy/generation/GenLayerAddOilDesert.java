@@ -4,8 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.energy.generation;
 
-import java.util.Objects;
-
+import net.minecraft.init.Biomes;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.layer.GenLayer;
 
@@ -20,6 +19,6 @@ public class GenLayerAddOilDesert extends GenLayerBiomeReplacer {
 
     @Override
     protected boolean canReplaceBiome(int biomeId) {
-        return Objects.equals(Biome.getBiomeForId(biomeId).getBiomeName(), "Desert");
+        return Biome.getBiomeForId(biomeId) == Biomes.DESERT;
     }
 }

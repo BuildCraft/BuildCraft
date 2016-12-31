@@ -113,9 +113,9 @@ public class ColourUtil {
     public static String getTextFullTooltip(EnumDyeColor colour) {
         if (BCLibConfig.useColouredLabels) {
             TextFormatting formatColour = convertColourToTextFormat(colour);
-            return formatColour.toString() + getTextFormatForBlack(formatColour) + StringUtilBC.getLocalized(colour) + TextFormatting.RESET;
+            return formatColour.toString() + getTextFormatForBlack(formatColour) + LocaleUtil.localizeColour(colour) + TextFormatting.RESET;
         } else {
-            return StringUtilBC.getLocalized(colour);
+            return LocaleUtil.localizeColour(colour);
         }
     }
 
@@ -125,9 +125,9 @@ public class ColourUtil {
     public static String getTextFullTooltip(EnumFacing face) {
         if (BCLibConfig.useColouredLabels) {
             TextFormatting formatColour = convertFaceToTextFormat(face);
-            return formatColour.toString() + getTextFormatForBlack(formatColour) + StringUtilBC.getLocalized(face) + TextFormatting.RESET;
+            return formatColour.toString() + getTextFormatForBlack(formatColour) + LocaleUtil.localizeFacing(face) + TextFormatting.RESET;
         } else {
-            return StringUtilBC.getLocalized(face);
+            return LocaleUtil.localizeFacing(face);
         }
     }
 

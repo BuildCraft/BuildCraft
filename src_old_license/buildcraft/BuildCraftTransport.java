@@ -52,12 +52,12 @@ import buildcraft.api.transport.PipeConnectionAPI;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.*;
-import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.ModelHelper;
+import buildcraft.lib.config.RestartRequirement;
 import buildcraft.transport.*;
 import buildcraft.transport.block.BlockPipe;
 import buildcraft.transport.client.model.*;
@@ -84,7 +84,7 @@ public class BuildCraftTransport extends BuildCraftMod {
     // changed from "@VERSION@" to a real version string at build time)
     public static final boolean NEPTUNE_TESTING = DefaultProps.VERSION.contains("@");
 
-    @Mod.Instance("BuildCraft|Transport")
+//    @Mod.Instance("BuildCraft|Transport")
     public static BuildCraftTransport instance;
 
     public static float pipeDurability;
@@ -190,22 +190,22 @@ public class BuildCraftTransport extends BuildCraftMod {
 
         try {
             BuildCraftCore.mainConfigManager.register("experimental.kinesisLossMode", "lossless",
-                    "Allowed values: lossless, absolute, percentage. Defaults to lossless.", ConfigManager.RestartRequirement.WORLD);
+                    "Allowed values: lossless, absolute, percentage. Defaults to lossless.", RestartRequirement.WORLD);
             BuildCraftCore.mainConfigManager.register("experimental.kinesisCanExplode", false,
-                    "Can kinesis pipes explode when over their RF/t rating?", ConfigManager.RestartRequirement.NONE);
+                    "Can kinesis pipes explode when over their RF/t rating?", RestartRequirement.NONE);
 
             BuildCraftCore.mainConfigManager.register("general.pipes.hardness", DefaultProps.PIPES_DURABILITY, "How hard to break should a pipe be?",
-                    ConfigManager.RestartRequirement.NONE);
+                    RestartRequirement.NONE);
             BuildCraftCore.mainConfigManager.register("general.pipes.baseFluidRate", DefaultProps.PIPES_FLUIDS_BASE_FLOW_RATE,
-                    "What should the base flow rate of a fluid pipe be?", ConfigManager.RestartRequirement.GAME).setMinValue(1).setMaxValue(40);
+                    "What should the base flow rate of a fluid pipe be?", RestartRequirement.GAME).setMinValue(1).setMaxValue(40);
             BuildCraftCore.mainConfigManager.register("debug.printFacadeList", false, "Print a list of all registered facades.",
-                    ConfigManager.RestartRequirement.GAME);
+                    RestartRequirement.GAME);
             BuildCraftCore.mainConfigManager.register("general.pipes.facadeShowAllInCreative", true,
-                    "Should all BC facades be shown in Creative/NEI, or just a few carefully chosen ones?", ConfigManager.RestartRequirement.GAME);
+                    "Should all BC facades be shown in Creative/NEI, or just a few carefully chosen ones?", RestartRequirement.GAME);
             BuildCraftCore.mainConfigManager.register("general.pipes.slimeballWaterproofRecipe", false,
-                    "Should I enable an alternate Waterproof recipe, based on slimeballs?", ConfigManager.RestartRequirement.GAME);
+                    "Should I enable an alternate Waterproof recipe, based on slimeballs?", RestartRequirement.GAME);
             BuildCraftCore.mainConfigManager.register("power.gateCostMultiplier", 1.0D, "What should be the multiplier of all gate power costs?",
-                    ConfigManager.RestartRequirement.GAME);
+                    RestartRequirement.GAME);
             BuildCraftCore.mainConfigManager.register("general.pipes.facadeBlacklist", new String[] {
                 //@formatter:off
                     Block.blockRegistry.getNameForObject(Blocks.end_portal_frame).toString(),
@@ -221,11 +221,11 @@ public class BuildCraftTransport extends BuildCraftMod {
                     Block.blockRegistry.getNameForObject(Blocks.double_wooden_slab).toString(),
                     Block.blockRegistry.getNameForObject(Blocks.sponge).toString()
                     //@formatter:on
-            }, "What block types should be blacklisted from being a facade?", ConfigManager.RestartRequirement.GAME);
+            }, "What block types should be blacklisted from being a facade?", RestartRequirement.GAME);
             BuildCraftCore.mainConfigManager.register("general.pipes.facadeNoLaserRecipe", false,
-                    "Should non-laser (crafting table) facade recipes be forced?", ConfigManager.RestartRequirement.GAME);
+                    "Should non-laser (crafting table) facade recipes be forced?", RestartRequirement.GAME);
 
-            reloadConfig(ConfigManager.RestartRequirement.GAME);
+            reloadConfig(RestartRequirement.GAME);
 
             if (showAllFacadesCreative) {
                 new BCCreativeTab("facades");
@@ -509,8 +509,8 @@ public class BuildCraftTransport extends BuildCraftMod {
         StatementManager.registerActionProvider(new PipeActionProvider());
     }
 
-    public void reloadConfig(ConfigManager.RestartRequirement restartType) {
-        if (restartType == ConfigManager.RestartRequirement.GAME) {
+    public void reloadConfig(RestartRequirement restartType) {
+        if (restartType == RestartRequirement.GAME) {
             facadeBlacklist = BuildCraftCore.mainConfigManager.get("general.pipes.facadeBlacklist").getStringList();
             gateCostMultiplier = (float) BuildCraftCore.mainConfigManager.get("power.gateCostMultiplier").getDouble();
             additionalWaterproofingRecipe = BuildCraftCore.mainConfigManager.get("general.pipes.slimeballWaterproofRecipe").getBoolean();
@@ -519,8 +519,8 @@ public class BuildCraftTransport extends BuildCraftMod {
             facadeForceNonLaserRecipe = BuildCraftCore.mainConfigManager.get("general.pipes.facadeNoLaserRecipe").getBoolean();
             showAllFacadesCreative = BuildCraftCore.mainConfigManager.get("general.pipes.facadeShowAllInCreative").getBoolean();
 
-            reloadConfig(ConfigManager.RestartRequirement.WORLD);
-        } else if (restartType == ConfigManager.RestartRequirement.WORLD) {
+            reloadConfig(RestartRequirement.WORLD);
+        } else if (restartType == RestartRequirement.WORLD) {
             PipeTransportPower.lossMode = PipeTransportPower.LossMode.LOSSLESS;
             String lossMode = BuildCraftCore.mainConfigManager.get("experimental.kinesisLossMode").getString();
 
@@ -533,7 +533,7 @@ public class BuildCraftTransport extends BuildCraftMod {
                 }
             }
 
-            reloadConfig(ConfigManager.RestartRequirement.NONE);
+            reloadConfig(RestartRequirement.NONE);
         } else {
             PipeTransportPower.canExplode = BuildCraftCore.mainConfigManager.get("experimental.kinesisCanExplode").getBoolean();
             pipeDurability = (float) BuildCraftCore.mainConfigManager.get("general.pipes.hardness").getDouble();
@@ -547,7 +547,7 @@ public class BuildCraftTransport extends BuildCraftMod {
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
         if ("BuildCraft|Core".equals(event.modID)) {
-            reloadConfig(event.isWorldRunning ? ConfigManager.RestartRequirement.NONE : ConfigManager.RestartRequirement.WORLD);
+            reloadConfig(event.isWorldRunning ? RestartRequirement.NONE : RestartRequirement.WORLD);
         }
     }
 

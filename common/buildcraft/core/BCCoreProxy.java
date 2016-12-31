@@ -25,7 +25,7 @@ import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
 
 public abstract class BCCoreProxy implements IGuiHandler {
-    @SidedProxy
+    @SidedProxy(modId = BCCore.MODID)
     private static BCCoreProxy proxy = null;
 
     public static BCCoreProxy getProxy() {
@@ -78,7 +78,7 @@ public abstract class BCCoreProxy implements IGuiHandler {
         public void fmlInit() {
             ClientRegistry.bindTileEntitySpecialRenderer(TileMarkerVolume.class, RenderMarkerVolume.INSTANCE);
 
-            MinecraftForge.EVENT_BUS.register(RenderTickListener.INSTANCE);
+            MinecraftForge.EVENT_BUS.register(RenderTickListener.class);
         }
     }
 }

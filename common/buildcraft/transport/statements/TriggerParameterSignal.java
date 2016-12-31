@@ -22,7 +22,8 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
 import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.BCTransportSprites;
 
 public class TriggerParameterSignal implements IStatementParameter {
@@ -39,7 +40,7 @@ public class TriggerParameterSignal implements IStatementParameter {
 
     @Override
     public ItemStack getItemStack() {
-        return null;
+        return StackUtil.EMPTY;
     }
 
     @Override
@@ -80,7 +81,7 @@ public class TriggerParameterSignal implements IStatementParameter {
         if (colour == null) {
             return null;
         }
-        return String.format(StringUtilBC.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), ColourUtil.getTextFullTooltip(colour));
+        return String.format(LocaleUtil.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), ColourUtil.getTextFullTooltip(colour));
     }
 
     @Override

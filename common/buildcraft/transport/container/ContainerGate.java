@@ -22,17 +22,21 @@ import buildcraft.api.statements.StatementManager;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.misc.data.ForwardingReference;
 import buildcraft.lib.misc.data.IReference;
+import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.gate.*;
 
 public class ContainerGate extends ContainerBC_Neptune {
-    public static final int ID_CONNECTION = 0;
-    public static final int ID_TRIGGER = 1;
-    public static final int ID_TRIGGER_PARAM = 2;
-    public static final int ID_ACTION = 3;
-    public static final int ID_ACTION_PARAM = 4;
-    public static final int ID_VALID_STATEMENTS = 5;
-    public static final int ID_CURRENT_SET = 6;
+
+    protected static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("gate");
+
+    public static final int ID_CONNECTION = IDS.allocId("CONNECTION");
+    public static final int ID_TRIGGER = IDS.allocId("TRIGGER");
+    public static final int ID_TRIGGER_PARAM = IDS.allocId("TRIGGER_PARAM");
+    public static final int ID_ACTION = IDS.allocId("ACTION");
+    public static final int ID_ACTION_PARAM = IDS.allocId("ACTION_PARAM");
+    public static final int ID_VALID_STATEMENTS = IDS.allocId("VALID_STATEMENTS");
+    public static final int ID_CURRENT_SET = IDS.allocId("CURRENT_SET");
 
     public final GateLogic gate;
 
@@ -71,6 +75,11 @@ public class ContainerGate extends ContainerBC_Neptune {
     }
 
     @Override
+    public String getIdName(int id) {
+        return IDS.getNameFor(id);
+    }
+
+    @Override
     public void onContainerClosed(EntityPlayer player) {
         super.onContainerClosed(player);
         gate.getPipeHolder().onPlayerClose(player);
@@ -82,8 +91,7 @@ public class ContainerGate extends ContainerBC_Neptune {
     }
 
     @Override
-    public void handleMessage(MessageContext ctx, PacketBufferBC buffer, Side side) throws IOException {
-        int id = buffer.readUnsignedByte();
+    public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         if (side == Side.SERVER) {
             if (id == ID_CONNECTION) {
                 int index = buffer.readUnsignedByte();
@@ -94,7 +102,7 @@ public class ContainerGate extends ContainerBC_Neptune {
                 }
             } else if (id == ID_TRIGGER || id == ID_ACTION) {
                 int index = buffer.readUnsignedByte();
-                String tag = buffer.readStringFromBuffer(64);
+                String tag = buffer.readString(64);
                 EnumFacing face = EnumPipePart.fromMeta(buffer.readUnsignedByte()).face;
                 IStatement statement = StatementManager.statements.get(tag);
                 if (id == ID_TRIGGER) {
@@ -107,7 +115,7 @@ public class ContainerGate extends ContainerBC_Neptune {
                 int paramIndex = buffer.readUnsignedByte();
 
                 if (buffer.readBoolean()) {
-                    NBTTagCompound nbt = buffer.readNBTTagCompoundFromBuffer();
+                    NBTTagCompound nbt = buffer.readCompoundTag();
 
                     IStatementParameter param;
                     if (id == ID_TRIGGER_PARAM) {
@@ -127,27 +135,9 @@ public class ContainerGate extends ContainerBC_Neptune {
                     }
                 }
             } else if (id == ID_VALID_STATEMENTS) {
-                this.sendMessage((buf) -> {
-                    buf.writeByte(ID_VALID_STATEMENTS);
-                    buf.writeInt(possibleTriggers.size());
-                    buf.writeInt(possibleActions.size());
-                    for (TriggerWrapper wrapper : possibleTriggers) {
-                        buf.writeString(wrapper.getUniqueTag());
-                        buf.writeByte(wrapper.sourcePart.getIndex());
-                    }
-
-                    for (ActionWrapper wrapper : possibleActions) {
-                        buf.writeString(wrapper.getUniqueTag());
-                        buf.writeByte(wrapper.sourcePart.getIndex());
-                    }
-                });
+                sendMessage(ID_VALID_STATEMENTS);
             } else if (id == ID_CURRENT_SET) {
-                this.sendMessage((buf) -> {
-                    buf.writeByte(ID_CURRENT_SET);
-                    for (SlotPair pair : pairs) {
-                        pair.writeToBuffer(buf);
-                    }
-                });
+                sendMessage(ID_CURRENT_SET);
             }
         } else if (side == Side.CLIENT) {
             if (id == ID_VALID_STATEMENTS) {
@@ -156,16 +146,16 @@ public class ContainerGate extends ContainerBC_Neptune {
                 int numTriggers = buffer.readInt();
                 int numActions = buffer.readInt();
                 for (int i = 0; i < numTriggers; i++) {
-                    String tag = buffer.readStringFromBuffer(256);
-                    EnumPipePart part = EnumPipePart.fromMeta(buffer.readUnsignedByte());
+                    String tag = buffer.readString(256);
+                    EnumPipePart part = buffer.readEnumValue(EnumPipePart.class);
                     TriggerWrapper wrapper = TriggerWrapper.wrap(StatementManager.statements.get(tag), part.face);
                     if (gate.isValidTrigger(wrapper)) {
                         possibleTriggers.add(wrapper);
                     }
                 }
                 for (int i = 0; i < numActions; i++) {
-                    String tag = buffer.readStringFromBuffer(256);
-                    EnumPipePart part = EnumPipePart.fromMeta(buffer.readUnsignedByte());
+                    String tag = buffer.readString(256);
+                    EnumPipePart part = buffer.readEnumValue(EnumPipePart.class);
                     ActionWrapper wrapper = ActionWrapper.wrap(StatementManager.statements.get(tag), part.face);
                     if (gate.isValidAction(wrapper)) {
                         possibleActions.add(wrapper);
@@ -179,17 +169,39 @@ public class ContainerGate extends ContainerBC_Neptune {
         }
     }
 
+    @Override
+    public void writeMessage(int id, PacketBufferBC buffer, Side side) {
+        super.writeMessage(id, buffer, side);
+        if (side == Side.SERVER) {
+            if (id == ID_VALID_STATEMENTS) {
+                buffer.writeInt(possibleTriggers.size());
+                buffer.writeInt(possibleActions.size());
+                for (TriggerWrapper wrapper : possibleTriggers) {
+                    buffer.writeString(wrapper.getUniqueTag());
+                    buffer.writeEnumValue(wrapper.sourcePart);
+                }
+
+                for (ActionWrapper wrapper : possibleActions) {
+                    buffer.writeString(wrapper.getUniqueTag());
+                    buffer.writeEnumValue(wrapper.sourcePart);
+                }
+            } else if (id == ID_CURRENT_SET) {
+                for (SlotPair pair : pairs) {
+                    pair.writeToBuffer(buffer);
+                }
+            }
+        }
+    }
+
     public void setConnected(int index, boolean to) {
-        sendMessage((buffer) -> {
-            buffer.writeByte(ID_CONNECTION);
+        sendMessage(ID_CONNECTION, (buffer) -> {
             buffer.writeByte(index);
             buffer.writeBoolean(to);
         });
     }
 
     private void setFirst(int id, int index, StatementWrapper to) {
-        sendMessage((buffer) -> {
-            buffer.writeByte(id);
+        sendMessage(id, (buffer) -> {
             buffer.writeByte(index);
             if (to == null) {
                 buffer.writeString("");
@@ -202,8 +214,7 @@ public class ContainerGate extends ContainerBC_Neptune {
     }
 
     private void setParam(int id, int index, int paramIndex, IStatementParameter to) {
-        sendMessage((buffer) -> {
-            buffer.writeByte(id);
+        sendMessage(id, (buffer) -> {
             buffer.writeByte(index);
             buffer.writeByte(paramIndex);
             if (to == null) {
@@ -212,7 +223,7 @@ public class ContainerGate extends ContainerBC_Neptune {
                 buffer.writeBoolean(true);
                 NBTTagCompound nbt = new NBTTagCompound();
                 to.writeToNBT(nbt);
-                buffer.writeNBTTagCompoundToBuffer(nbt);
+                buffer.writeCompoundTag(nbt);
             }
         });
     }
@@ -295,7 +306,7 @@ public class ContainerGate extends ContainerBC_Neptune {
 
         public void readFromBuffer(PacketBuffer buffer) throws IOException {
             {
-                String tag = buffer.readStringFromBuffer(256);
+                String tag = buffer.readString(256);
                 EnumPipePart part = EnumPipePart.fromMeta(buffer.readUnsignedByte());
                 TriggerWrapper wrapper = TriggerWrapper.wrap(StatementManager.statements.get(tag), part.face);
                 if (gate.isValidTrigger(wrapper)) {
@@ -303,7 +314,7 @@ public class ContainerGate extends ContainerBC_Neptune {
                 }
             }
             {
-                String tag = buffer.readStringFromBuffer(256);
+                String tag = buffer.readString(256);
                 EnumPipePart part = EnumPipePart.fromMeta(buffer.readUnsignedByte());
                 ActionWrapper wrapper = ActionWrapper.wrap(StatementManager.statements.get(tag), part.face);
                 if (gate.isValidAction(wrapper)) {
@@ -336,13 +347,13 @@ public class ContainerGate extends ContainerBC_Neptune {
                 buffer.writeBoolean(true);
                 NBTTagCompound nbt = new NBTTagCompound();
                 current.writeToNBT(nbt);
-                buffer.writeNBTTagCompoundToBuffer(nbt);
+                buffer.writeCompoundTag(nbt);
             }
         }
 
         public void readFromBuffer(PacketBuffer buffer) throws IOException {
             if (buffer.readBoolean()) {
-                NBTTagCompound nbt = buffer.readNBTTagCompoundFromBuffer();
+                NBTTagCompound nbt = buffer.readCompoundTag();
                 IStatementParameter param = get();
                 if (param != null) {
                     param.readFromNBT(nbt);

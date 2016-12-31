@@ -14,7 +14,12 @@ import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.robotics.zone.MessageZoneMapRequest;
 import buildcraft.robotics.zone.MessageZoneMapResponse;
 
-@Mod(modid = BCRobotics.MODID, name = "BuildCraft Robotics", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
+//@formatter:off
+@Mod(modid = BCRobotics.MODID,
+name = "BuildCraft Robotics",
+version = BCLib.VERSION,
+dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+//@formatter:on
 public class BCRobotics {
     public static final String MODID = "buildcraftrobotics";
 
@@ -28,7 +33,7 @@ public class BCRobotics {
         BCRoboticsItems.preInit();
         BCRoboticsBlocks.preInit();
 
-        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, RoboticsProxy_BC8.getProxy());
+        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCRoboticsProxy.getProxy());
 
         BCMessageHandler.addMessageType(MessageZoneMapRequest.class, MessageZoneMapRequest.Handler.INSTANCE, Side.SERVER);
         BCMessageHandler.addMessageType(MessageZoneMapResponse.class, MessageZoneMapResponse.Handler.INSTANCE, Side.CLIENT);
@@ -36,7 +41,7 @@ public class BCRobotics {
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent evt) {
-        RoboticsProxy_BC8.getProxy().fmlInit();
+        BCRoboticsProxy.getProxy().fmlInit();
         BCRoboticsRecipes.init();
     }
 

@@ -1,7 +1,6 @@
 package buildcraft.lib.engine;
 
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -10,32 +9,26 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
 import buildcraft.api.blocks.ICustomRotationHandler;
-import buildcraft.api.enums.EnumEnergyStage;
-import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.misc.EntityUtil;
 
 public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile_Neptune implements ICustomRotationHandler {
     private final Map<E, Supplier<? extends TileEngineBase_BC8>> engineTileConstructors = new EnumMap<>(getEngineProperty().getValueClass());
 
     public BlockEngineBase_BC8(Material material, String id) {
         super(material, id);
-        IBlockState defaultState = getDefaultState();
-        defaultState = defaultState.withProperty(BuildCraftProperties.ENGINE_TYPE, EnumEngineType.WOOD);
-        defaultState = defaultState.withProperty(BuildCraftProperties.ENERGY_STAGE, EnumEnergyStage.BLUE);
-        defaultState = defaultState.withProperty(BuildCraftProperties.BLOCK_FACING_6, EnumFacing.UP);
-        setDefaultState(defaultState);
     }
 
     // Engine directly related methods
@@ -69,17 +62,6 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile
         return getDefaultState().withProperty(getEngineProperty(), engineType);
     }
 
-    @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileEngineBase_BC8) {
-            TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
-            state = state.withProperty(BuildCraftProperties.ENERGY_STAGE, engine.getEnergyStage());
-            state = state.withProperty(BuildCraftProperties.BLOCK_FACING_6, engine.getCurrentDirection());
-        }
-        return state;
-    }
-
     // Misc Block Overrides
 
     @Override
@@ -98,6 +80,11 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile
     }
 
     @Override
+    public EnumBlockRenderType getRenderType(IBlockState state) {
+        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+    }
+
+    @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         IBlockState state = getStateFromMeta(meta);
         E engineType = state.getValue(getEngineProperty());
@@ -106,17 +93,35 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile
             return null;
         }
         TileEngineBase_BC8 tile = constructor.get();
-        tile.setWorldObj(world);
+        tile.setWorld(world);
         return tile;
     }
 
     @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
+    public void getSubBlocks(Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
         for (E engine : getEngineProperty().getAllowedValues()) {
             if (engineTileConstructors.containsKey(engine)) {
                 list.add(new ItemStack(item, 1, engine.ordinal()));
             }
         }
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (EntityUtil.getWrenchHand(player) != null) {
+            return false;
+        }
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileEngineBase_BC8) {
+            TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
+            return engine.onActivated(player, hand, side, hitX, hitY, hitZ);
+        }
+        return false;
+    }
+
+    @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        return new ItemStack(this, 1, state.getValue(getEngineProperty()).ordinal());
     }
 
     // ICustomRotationHandler

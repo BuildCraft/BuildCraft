@@ -44,8 +44,8 @@ public class NbtSquisher {
         DataOutputStream output = new DataOutputStream(baos);
         try {
             CompressedStreamTools.writeCompressed(nbt, output);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to write a safe NBTTagCompound!");
+        } catch (IOException io) {
+            throw new RuntimeException("Failed to write a safe NBTTagCompound!", io);
         }
         return baos.toByteArray();
     }
@@ -56,8 +56,8 @@ public class NbtSquisher {
         DataOutputStream output = new DataOutputStream(baos);
         try {
             CompressedStreamTools.write(nbt, output);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to write a safe NBTTagCompound!");
+        } catch (IOException io) {
+            throw new RuntimeException("Failed to write a safe NBTTagCompound!", io);
         }
         return baos.toByteArray();
     }

@@ -4,10 +4,15 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.MathHelper;
@@ -19,6 +24,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
 import buildcraft.lib.client.model.MutableVertex;
+import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.RenderUtil;
 import buildcraft.lib.misc.VecUtil;
@@ -63,8 +69,8 @@ public class FluidRenderer {
         }
     }
 
-    /** Render's a fluid cuboid to the given vertex buffer. The cube shouldn't cross over any {@literal 0->1} boundary (so the cube
-     * must be contained within a block).
+    /** Render's a fluid cuboid to the given vertex buffer. The cube shouldn't cross over any {@literal 0->1} boundary
+     * (so the cube must be contained within a block).
      * 
      * @param type The type of sprite to use. See {@link FluidSpriteType} for more details.
      * @param tank The fluid tank that should be rendered.
@@ -79,8 +85,8 @@ public class FluidRenderer {
         renderFluid(type, tank.getFluid(), tank.getCapacity(), min, max, vbIn, sideRender);
     }
 
-    /** Render's a fluid cuboid to the given vertex buffer. The cube shouldn't cross over any {@literal 0->1} boundary (so the cube
-     * must be contained within a block).
+    /** Render's a fluid cuboid to the given vertex buffer. The cube shouldn't cross over any {@literal 0->1} boundary
+     * (so the cube must be contained within a block).
      * 
      * @param type The type of sprite to use. See {@link FluidSpriteType} for more details.
      * @param fluid The stack that represents the fluid to render
@@ -94,8 +100,8 @@ public class FluidRenderer {
         renderFluid(type, fluid, fluid == null ? 0 : fluid.amount, cap, min, max, vbIn, sideRender);
     }
 
-    /** Render's a fluid cuboid to the given vertex buffer. The cube shouldn't cross over any {@literal 0->1} boundary (so the cube
-     * must be contained within a block).
+    /** Render's a fluid cuboid to the given vertex buffer. The cube shouldn't cross over any {@literal 0->1} boundary
+     * (so the cube must be contained within a block).
      * 
      * @param type The type of sprite to use. See {@link FluidSpriteType} for more details.
      * @param fluid The stack that represents the fluid to render. Note that the amount from the stack is NOT used.
@@ -115,7 +121,7 @@ public class FluidRenderer {
             sideRender = DEFAULT_FACES;
         }
 
-        double height = MathHelper.clamp_double(amount / cap, 0, 1);
+        double height = MathHelper.clamp(amount / cap, 0, 1);
         final Vec3d realMin, realMax;
         if (fluid.getFluid().isGaseous(fluid)) {
             realMin = VecUtil.replaceValue(min, Axis.Y, MathUtil.interp(1 - height, min.yCoord, max.yCoord));
@@ -231,6 +237,92 @@ public class FluidRenderer {
         vertex.positiond(x, y, z);
         texmap.apply(x - xTexDiff, y - yTexDiff, z - zTexDiff);
         vertex.render(vb);
+    }
+
+    /** Fills up the given region with the fluids texture, repeated. Ignores the value of {@link FluidStack#amount}. Use
+     * {@link GuiUtil}'s fluid drawing methods in preference to this. */
+    public static void drawFluidForGui(FluidStack fluid, int startX, int startY, int endX, int endY) {
+
+        sprite = FluidRenderer.fluidSprites.get(FluidSpriteType.STILL).get(fluid.getFluid());
+        if (sprite == null) {
+            sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+        }
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        RenderUtil.setGLColorFromInt(fluid.getFluid().getColor(fluid));
+
+        Tessellator tess = Tessellator.getInstance();
+        vb = tess.getBuffer();
+        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+
+        // draw all the full sprites
+
+        int diffX = endX - startX;
+        int diffY = endY - startY;
+
+        int stepX = diffX > 0 ? 16 : -16;
+        int stepY = diffY > 0 ? 16 : -16;
+
+        int loopEndX = startX + 16 * (diffX / 16);
+        int loopEndY = startY + 16 * (diffY / 16);
+
+        for (int x = startX; x != loopEndX; x += stepX) {
+            for (int y = startY; y != loopEndY; y += stepY) {
+                guiVertex(x, y, 0, 0);
+                guiVertex(x + stepX, y, 16, 0);
+                guiVertex(x + stepX, y + stepY, 16, 16);
+                guiVertex(x, y + stepY, 0, 16);
+            }
+        }
+
+        if (diffX % 16 != 0) {
+            int additionalWidth = diffX % 16;
+            int x = endX - additionalWidth;
+            int xTex = additionalWidth < 0 ? -additionalWidth : additionalWidth;
+            for (int y = startY; y != loopEndY; y += stepY) {
+                guiVertex(x, y, 0, 0);
+                guiVertex(endX, y, xTex, 0);
+                guiVertex(endX, y + stepY, xTex, 16);
+                guiVertex(x, y + stepY, 0, 16);
+            }
+        }
+
+        if (diffY % 16 != 0) {
+            int additionalHeight = diffY % 16;
+            int y = endY - additionalHeight;
+            int yTex = additionalHeight < 0 ? -additionalHeight : additionalHeight;
+            for (int x = startX; x != loopEndX; x += stepX) {
+                guiVertex(x, y, 0, 0);
+                guiVertex(x + stepX, y, 16, 0);
+                guiVertex(x + stepX, endY, 16, yTex);
+                guiVertex(x, endY, 0, yTex);
+            }
+        }
+
+        if (diffX % 16 != 0 && diffY % 16 != 0) {
+            int w = diffX % 16;
+            int h = diffY % 16;
+            int x = endX - w;
+            int y = endY - h;
+            int tx = w < 0 ? -w : w;
+            int ty = h < 0 ? -h : h;
+            guiVertex(x, y, 0, 0);
+            guiVertex(endX, y, tx, 0);
+            guiVertex(endX, endY, tx, ty);
+            guiVertex(x, endY, 0, ty);
+        }
+
+        tess.draw();
+        GlStateManager.color(1, 1, 1);
+        sprite = null;
+        vb = null;
+    }
+
+    private static void guiVertex(int x, int y, int u, int v) {
+        float ru = sprite.getInterpolatedU(u);
+        float rv = sprite.getInterpolatedV(v);
+        vb.pos(x, y, 0);
+        vb.tex(ru, rv);
+        vb.endVertex();
     }
 
     /** Used to keep track of what position maps to what texture co-ord.

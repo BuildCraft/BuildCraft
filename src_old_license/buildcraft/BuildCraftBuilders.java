@@ -53,8 +53,8 @@ import buildcraft.core.*;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.schematics.*;
 import buildcraft.core.builders.schematics.SchematicBlockCreative;
-import buildcraft.core.config.ConfigManager;
 import buildcraft.core.network.EntityIds;
+import buildcraft.lib.config.RestartRequirement;
 
 // @Mod(name = "BuildCraft Builders", version = DefaultProps.VERSION, useMetadata = false, modid =
 // "BuildCraft|Builders",
@@ -62,7 +62,7 @@ import buildcraft.core.network.EntityIds;
 @Deprecated
 public class BuildCraftBuilders extends BuildCraftMod {
 
-    @Mod.Instance("BuildCraft|Builders")
+//    @Mod.Instance("BuildCraft|Builders")
     public static BuildCraftBuilders instance;
 
     public static BlockConstructionMarker constructionMarkerBlock;
@@ -131,15 +131,15 @@ public class BuildCraftBuilders extends BuildCraftMod {
     @Mod.EventHandler
     public void loadConfiguration(FMLPreInitializationEvent evt) {
         BuildCraftCore.mainConfigManager.register("blueprints.serverDatabaseDirectory", "\"$MINECRAFT" + File.separator + "config" + File.separator + "buildcraft" + File.separator + "blueprints" + File.separator + "server\"",
-                "DEPRECATED - USED ONLY FOR COMPATIBILITY", ConfigManager.RestartRequirement.GAME);
+                "DEPRECATED - USED ONLY FOR COMPATIBILITY", RestartRequirement.GAME);
         BuildCraftCore.mainConfigManager.register("blueprints.clientDatabaseDirectory", "\"$MINECRAFT" + File.separator + "blueprints\"", "Location for the client blueprint database (used by the Electronic Library).",
-                ConfigManager.RestartRequirement.NONE);
+                RestartRequirement.NONE);
 
-        BuildCraftCore.mainConfigManager.register("general.markerRange", 64, "Set the maximum marker range.", ConfigManager.RestartRequirement.NONE);
-        BuildCraftCore.mainConfigManager.register("general.quarry.oneTimeUse", false, "Should the quarry only be usable once after placing?", ConfigManager.RestartRequirement.NONE);
-        BuildCraftCore.mainConfigManager.register("general.quarry.doChunkLoading", true, "Should the quarry keep the chunks it is working on loaded?", ConfigManager.RestartRequirement.NONE);
+        BuildCraftCore.mainConfigManager.register("general.markerRange", 64, "Set the maximum marker range.", RestartRequirement.NONE);
+        BuildCraftCore.mainConfigManager.register("general.quarry.oneTimeUse", false, "Should the quarry only be usable once after placing?", RestartRequirement.NONE);
+        BuildCraftCore.mainConfigManager.register("general.quarry.doChunkLoading", true, "Should the quarry keep the chunks it is working on loaded?", RestartRequirement.NONE);
 
-        BuildCraftCore.mainConfigManager.register("builders.dropBrokenBlocks", false, "Should the builder and filler drop the cleared blocks?", ConfigManager.RestartRequirement.NONE);
+        BuildCraftCore.mainConfigManager.register("builders.dropBrokenBlocks", false, "Should the builder and filler drop the cleared blocks?", RestartRequirement.NONE);
 
         BuildCraftCore.mainConfigManager.get("blueprints.serverDatabaseDirectory").setShowInGui(false);
         BuildCraftCore.mainConfigManager.get("general.markerRange").setMinValue(8).setMaxValue(64);
@@ -147,20 +147,20 @@ public class BuildCraftBuilders extends BuildCraftMod {
         serverDB = new BlueprintServerDatabase();
         clientDB = new LibraryDatabase();
 
-        reloadConfig(ConfigManager.RestartRequirement.GAME);
+        reloadConfig(RestartRequirement.GAME);
 
         Property printSchematicList = BuildCraftCore.mainConfiguration.get("debug", "printBlueprintSchematicList", false);
         debugPrintSchematicList = printSchematicList.getBoolean();
     }
 
-    public void reloadConfig(ConfigManager.RestartRequirement restartType) {
-        if (restartType == ConfigManager.RestartRequirement.GAME) {
-            reloadConfig(ConfigManager.RestartRequirement.WORLD);
-        } else if (restartType == ConfigManager.RestartRequirement.WORLD) {
+    public void reloadConfig(RestartRequirement restartType) {
+        if (restartType == RestartRequirement.GAME) {
+            reloadConfig(RestartRequirement.WORLD);
+        } else if (restartType == RestartRequirement.WORLD) {
             oldBlueprintServerDir = BuildCraftCore.mainConfigManager.get("blueprints.serverDatabaseDirectory").getString();
             oldBlueprintServerDir = JavaTools.stripSurroundingQuotes(replacePathVariables(oldBlueprintServerDir));
 
-            reloadConfig(ConfigManager.RestartRequirement.NONE);
+            reloadConfig(RestartRequirement.NONE);
         } else {
             quarryOneTimeUse = BuildCraftCore.mainConfigManager.get("general.quarry.oneTimeUse").getBoolean();
             quarryLoadsChunks = BuildCraftCore.mainConfigManager.get("general.quarry.doChunkLoading").getBoolean();
@@ -182,7 +182,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.PostConfigChangedEvent event) {
         if ("BuildCraftCore".equals(event.getModID())) {
-            reloadConfig(event.isWorldRunning() ? ConfigManager.RestartRequirement.NONE : ConfigManager.RestartRequirement.WORLD);
+            reloadConfig(event.isWorldRunning() ? RestartRequirement.NONE : RestartRequirement.WORLD);
         }
     }
 

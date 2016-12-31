@@ -32,6 +32,7 @@ import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.debug.BCAdvDebugging;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 
 public enum BCLibEventDist {
     INSTANCE;
@@ -85,7 +86,7 @@ public enum BCLibEventDist {
     @SideOnly(Side.CLIENT)
     public void renderWorldLast(RenderWorldLastEvent event) {
         Minecraft mc = Minecraft.getMinecraft();
-        EntityPlayer player = mc.thePlayer;
+        EntityPlayer player = mc.player;
         if (player == null) return;
         float partialTicks = event.getPartialTicks();
 
@@ -94,17 +95,17 @@ public enum BCLibEventDist {
 
     @SubscribeEvent
     public void serverTick(ServerTickEvent event) {
-        if (event.phase == Phase.START) {
-            MessageUtil.preTick();
-        } else {
+        if (event.phase == Phase.END) {
             BCAdvDebugging.INSTANCE.onServerPostTick();
+            MessageUtil.postTick();
         }
     }
 
     @SubscribeEvent
     public void clientTick(ClientTickEvent event) {
-        if (event.phase == Phase.START) {
-            MessageUtil.preTick();
+        if (event.phase == Phase.END) {
+            BuildCraftObjectCaches.onClientTick();
+            MessageUtil.postTick();
         }
     }
 

@@ -20,10 +20,10 @@ import buildcraft.lib.net.MessageMarker;
 public class PathSubCache extends MarkerSubCache<PathConnection> {
     public PathSubCache(World world) {
         super(world, PathCache.CACHES.indexOf(PathCache.INSTANCE));
-        PathSavedData data = (PathSavedData) world.loadItemData(PathSavedData.class, PathSavedData.NAME);
+        PathSavedData data = (PathSavedData) world.loadData(PathSavedData.class, PathSavedData.NAME);
         if (data == null) {
             data = new PathSavedData();
-            world.setItemData(PathSavedData.NAME, data);
+            world.setData(PathSavedData.NAME, data);
         }
         data.loadInto(this);
     }

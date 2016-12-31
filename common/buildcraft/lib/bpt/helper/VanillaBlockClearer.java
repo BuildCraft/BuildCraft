@@ -17,7 +17,7 @@ import buildcraft.lib.bpt.task.TaskUsable;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.EntityUtil;
 
-/** Provides an implementation of {@link DefaultBptActions#REQUIRE_AIR} */
+@Deprecated
 public enum VanillaBlockClearer implements PreBuildAction {
     DESTORY_ITEMS(false),
     COLLECT_ITEMS(true);

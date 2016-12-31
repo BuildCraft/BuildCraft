@@ -4,19 +4,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.api.lists.ListRegistry;
 
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
 
 public final class ListHandler {
@@ -24,11 +26,11 @@ public final class ListHandler {
     public static final int HEIGHT = 2;
 
     public static class Line {
-        public final ItemStack[] stacks;
+        public final NonNullList<ItemStack> stacks;
         public boolean precise, byType, byMaterial;
 
         public Line() {
-            stacks = new ItemStack[WIDTH];
+            stacks = NonNullList.withSize(WIDTH, StackUtil.EMPTY);
         }
 
         /** Checks to see if this line is completely blank, and no data would be lost if this line was not saved. */
@@ -40,7 +42,7 @@ public final class ListHandler {
         /** Checks to see if this line has any items */
         public boolean hasItems() {
             for (ItemStack stack : stacks) {
-                if (stack != null) return true;
+                if (!stack.isEmpty()) return true;
             }
             return false;
         }
@@ -55,8 +57,8 @@ public final class ListHandler {
 
         public void toggleOption(int id) {
             if (byType == false && byMaterial == false && (id == 1 || id == 2)) {
-                for (int i = 1; i < stacks.length; i++) {
-                    stacks[i] = null;
+                for (int i = 1; i < stacks.size(); i++) {
+                    stacks.set(i, StackUtil.EMPTY);
                 }
             }
             switch (id) {
@@ -72,16 +74,16 @@ public final class ListHandler {
             }
         }
 
-        public boolean matches(ItemStack target) {
+        public boolean matches(@Nonnull ItemStack target) {
             if (byType || byMaterial) {
-                if (stacks[0] == null) {
+                if (stacks.get(0).isEmpty()) {
                     return false;
                 }
 
                 List<ListMatchHandler> handlers = ListRegistry.getHandlers();
                 ListMatchHandler.Type type = getSortingType();
                 for (ListMatchHandler h : handlers) {
-                    if (h.matches(type, stacks[0], target, precise)) {
+                    if (h.matches(type, stacks.get(0), target, precise)) {
                         return true;
                     }
                 }
@@ -108,7 +110,7 @@ public final class ListHandler {
             if (data != null && data.hasKey("st")) {
                 NBTTagList l = data.getTagList("st", 10);
                 for (int i = 0; i < l.tagCount(); i++) {
-                    line.stacks[i] = ItemStack.loadItemStackFromNBT(l.getCompoundTagAt(i));
+                    line.stacks.set(i, new ItemStack(l.getCompoundTagAt(i)));
                 }
 
                 line.precise = data.getBoolean("Fp");
@@ -136,54 +138,61 @@ public final class ListHandler {
             return data;
         }
 
-        public void setStack(int slotIndex, ItemStack stack) {
+        public void setStack(int slotIndex, @Nonnull ItemStack stack) {
             if (slotIndex == 0 || (!byType && !byMaterial)) {
-                if (stack != null && stack.getItem() != null) {
-                    stacks[slotIndex] = stack.copy();
-                    stacks[slotIndex].stackSize = 1;
+                if (stack.isEmpty()) {
+                    stacks.set(slotIndex, StackUtil.EMPTY);
                 } else {
-                    stacks[slotIndex] = null;
+                    stack = stack.copy();
+                    stack.setCount(1);
+                    stacks.set(slotIndex, stack);
                 }
             }
         }
 
+        @Nonnull
         public ItemStack getStack(int i) {
-            return i >= 0 && i < stacks.length ? stacks[i] : null;
+            if (i < 0 || i >= stacks.size()) {
+                return StackUtil.EMPTY;
+            } else {
+                return stacks.get(i);
+            }
         }
 
-        public List<ItemStack> getExamples() {
-            List<ItemStack> stackList = new ArrayList<>();
-            if (stacks[0] != null) {
-                List<ListMatchHandler> handlers = ListRegistry.getHandlers();
-                List<ListMatchHandler> handlersCustom = new ArrayList<>();
-                ListMatchHandler.Type type = getSortingType();
-                for (ListMatchHandler h : handlers) {
-                    if (h.isValidSource(type, stacks[0])) {
-                        List<ItemStack> examples = h.getClientExamples(type, stacks[0]);
-                        if (examples != null) {
-                            stackList.addAll(examples);
-                        } else {
-                            handlersCustom.add(h);
-                        }
+        public NonNullList<ItemStack> getExamples() {
+            ItemStack firstStack = stacks.get(0);
+            if (firstStack.isEmpty()) {
+                return NonNullList.withSize(0, StackUtil.EMPTY);
+            }
+            NonNullList<ItemStack> stackList = NonNullList.create();
+            List<ListMatchHandler> handlers = ListRegistry.getHandlers();
+            List<ListMatchHandler> handlersCustom = new ArrayList<>();
+            ListMatchHandler.Type type = getSortingType();
+            for (ListMatchHandler h : handlers) {
+                if (h.isValidSource(type, firstStack)) {
+                    NonNullList<ItemStack> examples = h.getClientExamples(type, firstStack);
+                    if (examples != null) {
+                        stackList.addAll(examples);
+                    } else {
+                        handlersCustom.add(h);
                     }
                 }
-                if (handlersCustom.size() > 0) {
-                    for (Item i : ForgeRegistries.ITEMS) {
-                        List<ItemStack> examples = new ArrayList<>();
-                        i.getSubItems(i, CreativeTabs.MISC, examples);
-                        for (ItemStack s : examples) {
-                            for (ListMatchHandler mh : handlersCustom) {
-                                if (mh.matches(type, stacks[0], s, false)) {
-                                    stackList.add(s);
-                                    break;
-                                }
+            }
+            if (handlersCustom.size() > 0) {
+                for (Item i : ForgeRegistries.ITEMS) {
+                    NonNullList<ItemStack> examples = NonNullList.create();
+                    i.getSubItems(i, CreativeTabs.MISC, examples);
+                    for (ItemStack s : examples) {
+                        for (ListMatchHandler mh : handlersCustom) {
+                            if (mh.matches(type, firstStack, s, false)) {
+                                stackList.add(s);
+                                break;
                             }
                         }
                     }
                 }
-
-                Collections.shuffle(stackList);
             }
+            Collections.shuffle(stackList);
             return stackList;
         }
     }
@@ -192,7 +201,7 @@ public final class ListHandler {
 
     }
 
-    public static boolean hasItems(ItemStack stack) {
+    public static boolean hasItems(@Nonnull ItemStack stack) {
         if (!stack.hasTagCompound()) return false;
         for (Line l : getLines(stack)) {
             if (l.hasItems()) return true;
@@ -200,7 +209,7 @@ public final class ListHandler {
         return false;
     }
 
-    public static boolean isDefault(ItemStack stack) {
+    public static boolean isDefault(@Nonnull ItemStack stack) {
         if (!stack.hasTagCompound()) return true;
         for (Line l : getLines(stack)) {
             if (!l.isDefault()) return false;
@@ -208,8 +217,8 @@ public final class ListHandler {
         return true;
     }
 
-    public static Line[] getLines(ItemStack item) {
-        NBTTagCompound data = NBTUtils.getItemData(item);
+    public static Line[] getLines(@Nonnull ItemStack item) {
+        NBTTagCompound data = NBTUtilBC.getItemData(item);
         if (data.hasKey("written") && data.hasKey("lines")) {
             NBTTagList list = data.getTagList("lines", 10);
             Line[] lines = new Line[list.tagCount()];
@@ -226,11 +235,7 @@ public final class ListHandler {
         }
     }
 
-    public static void saveLines(ItemStack stackList, Line[] lines) {
-        if (stackList == null) {
-            BCLog.logger.warn("Null ItemStack!", new Throwable("Wut?"));
-            return;
-        }
+    public static void saveLines(@Nonnull ItemStack stackList, Line[] lines) {
         boolean hasLine = false;
 
         for (Line l : lines) {
@@ -241,7 +246,7 @@ public final class ListHandler {
         }
 
         if (hasLine) {
-            NBTTagCompound data = NBTUtils.getItemData(stackList);
+            NBTTagCompound data = NBTUtilBC.getItemData(stackList);
             data.setBoolean("written", true);
             NBTTagList lineList = new NBTTagList();
             for (Line saving : lines) {
@@ -249,7 +254,7 @@ public final class ListHandler {
             }
             data.setTag("lines", lineList);
         } else if (stackList.hasTagCompound()) {
-            NBTTagCompound data = NBTUtils.getItemData(stackList);
+            NBTTagCompound data = NBTUtilBC.getItemData(stackList);
             // No non-default lines, we can remove the old NBT data
             data.removeTag("written");
             data.removeTag("lines");
@@ -260,8 +265,8 @@ public final class ListHandler {
         }
     }
 
-    public static boolean matches(ItemStack stackList, ItemStack item) {
-        NBTTagCompound data = NBTUtils.getItemData(stackList);
+    public static boolean matches(@Nonnull ItemStack stackList, @Nonnull ItemStack item) {
+        NBTTagCompound data = NBTUtilBC.getItemData(stackList);
         if (data.hasKey("written") && data.hasKey("lines")) {
             NBTTagList list = data.getTagList("lines", 10);
             for (int i = 0; i < list.tagCount(); i++) {

@@ -17,7 +17,7 @@ import buildcraft.api.statements.*;
 import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class TriggerPower extends BCStatement implements ITriggerInternal, ITriggerExternal {
     public static class Neighbor {
@@ -44,7 +44,7 @@ public class TriggerPower extends BCStatement implements ITriggerInternal, ITrig
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("gate.trigger.machine.energyStored." + (high ? "high" : "low"));
+        return LocaleUtil.localize("gate.trigger.machine.energyStored." + (high ? "high" : "low"));
     }
 
     public boolean isTriggeredMjConnector(IMjReadable readable) {

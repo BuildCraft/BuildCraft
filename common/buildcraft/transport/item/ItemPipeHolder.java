@@ -19,9 +19,9 @@ import buildcraft.api.transport.neptune.IPipeItem;
 import buildcraft.api.transport.neptune.PipeAPI;
 import buildcraft.api.transport.neptune.PipeDefinition;
 
-import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.transport.BCTransportBlocks;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -116,11 +116,7 @@ public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IPipeI
         }
         if (definition.flowType == PipeAPI.flowFluids) {
             PipeAPI.FluidTransferInfo fti = PipeAPI.getFluidTransferInfo(definition);
-            if (BCCoreConfig.useBucketsFlow) {
-                tooltip.add((fti.transferPerTick / 50.0) + "B/s");
-            } else {
-                tooltip.add(fti.transferPerTick + "mB/t");
-            }
+            tooltip.add(LocaleUtil.localizeFluidFlow(fti.transferPerTick));
         } else if (definition.flowType == PipeAPI.flowPower) {
             // TODO!
         }

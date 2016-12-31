@@ -1,5 +1,9 @@
 package buildcraft.lib.misc;
 
+import java.util.UUID;
+
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
@@ -19,6 +23,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.misc.data.DelayedList;
+import buildcraft.lib.net.PacketBufferBC;
 
 import io.netty.buffer.ByteBuf;
 
@@ -37,7 +42,7 @@ public class MessageUtil {
         DELAYED_TASKS.add(delay, task);
     }
 
-    public static void preTick() {
+    public static void postTick() {
         for (Runnable runnable : DELAYED_TASKS.advance()) {
             runnable.run();
         }
@@ -72,7 +77,7 @@ public class MessageUtil {
     }
 
     public static void writeBooleanArray(PacketBuffer buf, boolean[] bool) {
-        int byteLength = MathHelper.ceiling_double_int(bool.length / 8.0);
+        int byteLength = MathHelper.ceil(bool.length / 8.0);
         for (int b = 0; b < byteLength; b++) {
             short total = 0;
             for (int i = 0; i < 8 && i + b * 8 < bool.length; i++) {
@@ -91,7 +96,7 @@ public class MessageUtil {
     }
 
     public static void readBooleanArray(PacketBuffer buf, boolean[] into) {
-        int bytes = MathHelper.ceiling_double_int(into.length / 8.0);
+        int bytes = MathHelper.ceil(into.length / 8.0);
         for (int b = 0; b < bytes; b++) {
             short packed = buf.readUnsignedByte();
             for (int i = 0; i < 8 && i + b * 8 < into.length; i++) {
@@ -143,6 +148,51 @@ public class MessageUtil {
 
     public static Vec3d readVec3d(PacketBuffer buffer) {
         return new Vec3d(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
+    }
+
+    public static void writeGameProfile(PacketBuffer buffer, GameProfile profile) {
+        if (profile != null && profile.isComplete()) {
+            buffer.writeBoolean(true);
+            buffer.writeUniqueId(profile.getId());
+            buffer.writeString(profile.getName());
+        } else {
+            buffer.writeBoolean(false);
+        }
+    }
+
+    public static GameProfile readGameProfile(PacketBuffer buffer) {
+        if (buffer.readBoolean()) {
+            UUID uuid = buffer.readUniqueId();
+            String name = buffer.readString(256);
+            GameProfile profile = new GameProfile(uuid, name);
+            if (profile.isComplete()) {
+                return profile;
+            }
+        }
+        return null;
+    }
+
+    /** {@link PacketBuffer#writeEnumValue(Enum)} can only write *actual* enum values - so not null. This method allows
+     * for writing an enum value, or null. */
+    public static void writeEnumOrNull(ByteBuf buffer, Enum<?> value) {
+        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
+        if (value == null) {
+            buf.writeBoolean(false);
+        } else {
+            buf.writeBoolean(true);
+            buf.writeEnumValue(value);
+        }
+    }
+
+    /** {@link PacketBuffer#readEnumValue(Class)} can only read *actual* enum values - so not null. This method allows
+     * for reading an enum value, or null. */
+    public static <E extends Enum<E>> E readEnumOrNull(ByteBuf buffer, Class<E> clazz) {
+        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
+        if (buf.readBoolean()) {
+            return buf.readEnumValue(clazz);
+        } else {
+            return null;
+        }
     }
 
     public static void sendReturnMessage(MessageContext context, IMessage reply) {

@@ -9,11 +9,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import buildcraft.api.core.EnumPipePart;
+
+import buildcraft.lib.misc.CapUtil;
 
 public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
     public enum EnumAccess {
@@ -69,7 +70,7 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_ITEMS) {
             Wrapper wrapper = wrappers.get(EnumPipePart.fromFacing(facing));
             return wrapper.combined != null;
         }
@@ -77,8 +78,9 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
     }
 
     @Override
+    @SuppressWarnings("unchecked")// lots of (T) instance -- but we know its safe
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_ITEMS) {
             Wrapper wrapper = wrappers.get(EnumPipePart.fromFacing(facing));
             return (T) wrapper.combined;
         }

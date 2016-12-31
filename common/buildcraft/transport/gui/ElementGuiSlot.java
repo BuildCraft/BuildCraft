@@ -11,7 +11,7 @@ import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiPosition;
-import buildcraft.lib.gui.pos.IPositionedElement;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.SpriteUtil;
 import buildcraft.lib.misc.data.IReference;
 
@@ -29,11 +29,11 @@ public abstract class ElementGuiSlot<T extends IGuiSlot> extends GuiElementSimpl
     };
 
     private T[] possible = null;
-    private IPositionedElement[] posPossible = null;
+    private IGuiArea[] posPossible = null;
 
     public final IReference<T> reference;
 
-    public ElementGuiSlot(GuiGate gui, IPositionedElement element, IReference<T> reference) {
+    public ElementGuiSlot(GuiGate gui, IGuiArea element, IReference<T> reference) {
         super(gui, element);
         this.reference = reference;
     }
@@ -117,7 +117,7 @@ public abstract class ElementGuiSlot<T extends IGuiSlot> extends GuiElementSimpl
         possible = getPossible();
         if (possible != null) {
             gui.currentHover = this;
-            posPossible = new IPositionedElement[possible.length];
+            posPossible = new IGuiArea[possible.length];
             for (int i = 0; i < possible.length; i++) {
                 if (i < OFFSET_HOVER.length) {
                     posPossible[i] = offset(OFFSET_HOVER[i][0] * 18, OFFSET_HOVER[i][1] * 18);

@@ -17,7 +17,7 @@ public class ListMatchHandlerArmor extends ListMatchHandler {
     private static EnumSet<EntityEquipmentSlot> getArmorTypes(ItemStack stack) {
         EntityPlayer player = BCLibProxy.getProxy().getClientPlayer();
         if (player == null) {
-            player = FakePlayerUtil.INSTANCE.getBuildCraftPlayer(DimensionManager.getWorld(0)).get();
+            player = FakePlayerUtil.INSTANCE.getBuildCraftPlayer(DimensionManager.getWorld(0));
         }
         EnumSet<EntityEquipmentSlot> types = EnumSet.noneOf(EntityEquipmentSlot.class);
 

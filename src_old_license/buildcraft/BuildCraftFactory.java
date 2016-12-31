@@ -44,7 +44,6 @@ import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.builders.schematics.SchematicFree;
-import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
@@ -80,13 +79,14 @@ import buildcraft.factory.schematics.SchematicTileIgnoreState;
 import buildcraft.factory.tile.TileDistiller;
 import buildcraft.factory.tile.TileEnergyHeater;
 import buildcraft.factory.tile.TileHeatExchange;
+import buildcraft.lib.config.RestartRequirement;
 
 //@Mod(name = "BuildCraft Factory", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Factory",
 //        dependencies = DefaultProps.DEPENDENCY_CORE + ";after:BuildCraft|Energy")
 @Deprecated
 public class BuildCraftFactory extends BuildCraftMod {
 
-    @Mod.Instance("BuildCraft|Factory")
+//    @Mod.Instance("BuildCraft|Factory")
     public static BuildCraftFactory instance;
 
     public static BlockMiningWell miningWellBlock;
@@ -125,15 +125,15 @@ public class BuildCraftFactory extends BuildCraftMod {
             + "Default is \"+/*/*,+/-1/Lava\" - the second redundant entry (\"+/-1/lava\") is there to show the format.";
 
         BuildCraftCore.mainConfigManager.register("general.miningDepth", 256, "Should the mining well only be usable once after placing?",
-                ConfigManager.RestartRequirement.NONE);
+                RestartRequirement.NONE);
 
         BuildCraftCore.mainConfigManager.get("general.miningDepth").setMinValue(2).setMaxValue(256);
         BuildCraftCore.mainConfigManager.register("general.pumpDimensionControl", DefaultProps.PUMP_DIMENSION_LIST, plc,
-                ConfigManager.RestartRequirement.NONE);
+                RestartRequirement.NONE);
         BuildCraftCore.mainConfigManager.register("general.pumpsNeedRealPower", false, "Do pumps need real (non-redstone) power?",
-                ConfigManager.RestartRequirement.WORLD);
+                RestartRequirement.WORLD);
 
-        reloadConfig(ConfigManager.RestartRequirement.GAME);
+        reloadConfig(RestartRequirement.GAME);
 
         miningWellBlock = (BlockMiningWell) CompatHooks.INSTANCE.getBlock(BlockMiningWell.class);
         if (BCRegistry.INSTANCE.registerBlock(miningWellBlock.setUnlocalizedName("miningWellBlock"), false)) {
@@ -304,11 +304,11 @@ public class BuildCraftFactory extends BuildCraftMod {
         }
     }
 
-    public void reloadConfig(ConfigManager.RestartRequirement restartType) {
-        if (restartType == ConfigManager.RestartRequirement.GAME) {
-            reloadConfig(ConfigManager.RestartRequirement.WORLD);
-        } else if (restartType == ConfigManager.RestartRequirement.WORLD) {
-            reloadConfig(ConfigManager.RestartRequirement.NONE);
+    public void reloadConfig(RestartRequirement restartType) {
+        if (restartType == RestartRequirement.GAME) {
+            reloadConfig(RestartRequirement.WORLD);
+        } else if (restartType == RestartRequirement.WORLD) {
+            reloadConfig(RestartRequirement.NONE);
         } else {
             miningDepth = BuildCraftCore.mainConfigManager.get("general.miningDepth").getInt();
             pumpsNeedRealPower = BuildCraftCore.mainConfigManager.get("general.pumpsNeedRealPower").getBoolean();
@@ -323,7 +323,7 @@ public class BuildCraftFactory extends BuildCraftMod {
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
         if ("BuildCraft|Core".equals(event.modID)) {
-            reloadConfig(event.isWorldRunning ? ConfigManager.RestartRequirement.NONE : ConfigManager.RestartRequirement.WORLD);
+            reloadConfig(event.isWorldRunning ? RestartRequirement.NONE : RestartRequirement.WORLD);
         }
     }
 

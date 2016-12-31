@@ -9,7 +9,7 @@ import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 import io.netty.buffer.ByteBuf;
 
@@ -56,14 +56,14 @@ public class LaserData implements ISerializable {
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
-        nbt.setTag("head", NBTUtils.writeVec3d(head));
-        nbt.setTag("tail", NBTUtils.writeVec3d(tail));
+        nbt.setTag("head", NBTUtilBC.writeVec3d(head));
+        nbt.setTag("tail", NBTUtilBC.writeVec3d(tail));
         nbt.setBoolean("isVisible", isVisible);
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
-        head = NBTUtils.readVec3d(nbt, "head");
-        tail = NBTUtils.readVec3d(nbt, "tail");
+        head = NBTUtilBC.readVec3d(nbt, "head");
+        tail = NBTUtilBC.readVec3d(nbt, "tail");
         isVisible = nbt.getBoolean("isVisible");
     }
 

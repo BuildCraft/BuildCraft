@@ -17,23 +17,23 @@ public class LaserBoxRenderer {
     private static final double RENDER_SCALE = 1 / 16.05;
     private static final Vec3d VEC_HALF = new Vec3d(0.5, 0.5, 0.5);
 
-    public static void renderLaserBoxGl(Box box, LaserType type) {
+    public static void renderLaserBoxStatic(Box box, LaserType type) {
         if (box == null || box.min() == null || box.max() == null) return;
 
         makeLaserBox(box, type);
 
         for (LaserData_BC8 data : box.laserData) {
-            LaserRenderer_BC8.renderLaserGlList(data);
+            LaserRenderer_BC8.renderLaserStatic(data);
         }
     }
 
-    public static void renderLaserBoxVb(Box box, LaserType type, VertexBuffer vb) {
+    public static void renderLaserBoxDynamic(Box box, LaserType type, VertexBuffer vb) {
         if (box == null || box.min() == null || box.max() == null) return;
 
         makeLaserBox(box, type);
 
         for (LaserData_BC8 data : box.laserData) {
-            LaserRenderer_BC8.renderLaserBuffer(data, vb);
+            LaserRenderer_BC8.renderLaserDynamic(data, vb);
         }
     }
 

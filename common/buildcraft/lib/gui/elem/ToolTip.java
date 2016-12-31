@@ -11,6 +11,7 @@ import java.util.RandomAccess;
 
 import com.google.common.collect.ForwardingList;
 
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StringUtilBC;
 
 public class ToolTip extends ForwardingList<String> implements RandomAccess {
@@ -25,7 +26,7 @@ public class ToolTip extends ForwardingList<String> implements RandomAccess {
     public static ToolTip createLocalized(String... localeKeys) {
         List<String> allLines = new ArrayList<>();
         for (String key : localeKeys) {
-            String localized = StringUtilBC.localize(key);
+            String localized = LocaleUtil.localize(key);
             allLines.addAll(StringUtilBC.splitIntoLines(localized));
         }
         return new ToolTip(allLines);

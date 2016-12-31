@@ -21,7 +21,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 
 import buildcraft.core.statements.BCStatement;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.robotics.EntityRobot;
 import buildcraft.robotics.RobotUtils;
 import buildcraft.robotics.ai.AIRobotGoAndLinkToDock;
@@ -35,7 +35,7 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("gate.action.robot.goto_station");
+        return LocaleUtil.localize("gate.action.robot.goto_station");
     }
 
     @Override

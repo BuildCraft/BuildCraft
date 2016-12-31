@@ -13,7 +13,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.core.BCCoreItems;
@@ -22,15 +24,18 @@ import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBCInventory_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.robotics.zone.ZonePlan;
 import buildcraft.robotics.zone.ZonePlannerMapChunkKey;
 
-public class TileZonePlanner extends TileBCInventory_Neptune implements ITickable, IDebuggable {
-    public static final int NET_PLAN_CHANGE = 10;
+public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebuggable {
+    protected static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("zone_planner");
+    public static final int NET_PLAN_CHANGE = IDS.allocId("PLAN_CHANGE");
 
     public final ItemHandlerSimple invPaintbrushes;
     public final ItemHandlerSimple invInputPaintbrush;
@@ -46,21 +51,22 @@ public class TileZonePlanner extends TileBCInventory_Neptune implements ITickabl
     public ZonePlan[] layers = new ZonePlan[16];
 
     public TileZonePlanner() {
-        invPaintbrushes = addInventory("paintbrushes", 16, ItemHandlerManager.EnumAccess.NONE);
-        invInputPaintbrush = addInventory("inputPaintbrush", 1, ItemHandlerManager.EnumAccess.NONE);
-        invInputMapLocation = addInventory("inputMapLocation", 1, ItemHandlerManager.EnumAccess.NONE);
-        invInputResult = addInventory("inputResult", 1, ItemHandlerManager.EnumAccess.NONE);
-        invOutputPaintbrush = addInventory("outputPaintbrush", 1, ItemHandlerManager.EnumAccess.NONE);
-        invOutputMapLocation = addInventory("outputMapLocation", 1, ItemHandlerManager.EnumAccess.NONE);
-        invOutputResult = addInventory("outputResult", 1, ItemHandlerManager.EnumAccess.NONE);
+        invPaintbrushes = itemManager.addInvHandler("paintbrushes", 16, ItemHandlerManager.EnumAccess.NONE);
+        invInputPaintbrush = itemManager.addInvHandler("inputPaintbrush", 1, ItemHandlerManager.EnumAccess.NONE);
+        invInputMapLocation = itemManager.addInvHandler("inputMapLocation", 1, ItemHandlerManager.EnumAccess.NONE);
+        invInputResult = itemManager.addInvHandler("inputResult", 1, ItemHandlerManager.EnumAccess.NONE);
+        invOutputPaintbrush = itemManager.addInvHandler("outputPaintbrush", 1, ItemHandlerManager.EnumAccess.NONE);
+        invOutputMapLocation = itemManager.addInvHandler("outputMapLocation", 1, ItemHandlerManager.EnumAccess.NONE);
+        invOutputResult = itemManager.addInvHandler("outputResult", 1, ItemHandlerManager.EnumAccess.NONE);
         for (int i = 0; i < layers.length; i++) {
             layers[i] = new ZonePlan();
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public int getLevel() {
-        BlockPos blockPos = pos;
-        while (!Minecraft.getMinecraft().theWorld.getBlockState(blockPos).getBlock().isBlockSolid(Minecraft.getMinecraft().theWorld, blockPos, EnumFacing.DOWN) && blockPos.getY() < 255) {
+        BlockPos blockPos = Minecraft.getMinecraft().player.getPosition();
+        while (!Minecraft.getMinecraft().world.getBlockState(blockPos).getBlock().isBlockSolid(Minecraft.getMinecraft().world, blockPos, EnumFacing.DOWN) && blockPos.getY() < 255) {
             blockPos = new BlockPos(blockPos.getX(), blockPos.getY() + 1, blockPos.getZ());
         }
         return (int) Math.floor((double) blockPos.getY() / ZonePlannerMapChunkKey.LEVEL_HEIGHT);
@@ -157,7 +163,7 @@ public class TileZonePlanner extends TileBCInventory_Neptune implements ITickabl
                 }
 
                 layers[BCCoreItems.paintbrush.getBrushFromStack(paintbrushStack).colour.getMetadata()].readFromNBT(mapLocationStack.getTagCompound());
-                invInputMapLocation.setStackInSlot(0, null);
+                invInputMapLocation.setStackInSlot(0, StackUtil.EMPTY);
                 invInputResult.setStackInSlot(0, new ItemStack(BCCoreItems.mapLocation));
                 this.markDirty();
                 this.sendNetworkUpdate(NET_RENDER_DATA);
@@ -182,7 +188,7 @@ public class TileZonePlanner extends TileBCInventory_Neptune implements ITickabl
                 }
 
                 ItemMapLocation.setZone(mapLocationStack, layers[BCCoreItems.paintbrush.getBrushFromStack(paintbrushStack).colour.getMetadata()]);
-                invOutputMapLocation.setStackInSlot(0, null);
+                invOutputMapLocation.setStackInSlot(0, StackUtil.EMPTY);
                 invOutputResult.setStackInSlot(0, mapLocationStack);
                 progressOutput = 0;
             } else if (progressOutput != -1) {

@@ -13,7 +13,7 @@ import buildcraft.api.transport.neptune.PipePluggable;
 
 import buildcraft.core.statements.BCStatement;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.plug.PluggablePulsar;
@@ -29,7 +29,7 @@ public class ActionPowerPulsar extends BCStatement implements IActionInternalSid
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize(constant ? "gate.action.pulsar.constant" : "gate.action.pulsar.single");
+        return LocaleUtil.localize(constant ? "gate.action.pulsar.constant" : "gate.action.pulsar.single");
     }
 
     @Override

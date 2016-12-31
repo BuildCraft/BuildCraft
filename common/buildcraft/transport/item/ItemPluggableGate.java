@@ -2,13 +2,15 @@ package buildcraft.transport.item;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.text.translation.I18n;
+import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -19,8 +21,10 @@ import buildcraft.api.transport.neptune.PipePluggable;
 import buildcraft.api.transport.neptune.PluggableDefinition;
 
 import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.SoundUtil;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.BCTransportPlugs;
 import buildcraft.transport.gate.EnumGateLogic;
 import buildcraft.transport.gate.EnumGateMaterial;
@@ -35,13 +39,14 @@ public class ItemPluggableGate extends ItemBC_Neptune implements IItemPluggable 
         super(id);
     }
 
-    public static GateVariant getVariant(ItemStack stack) {
-        return new GateVariant(NBTUtils.getItemData(stack).getCompoundTag("gate"));
+    public static GateVariant getVariant(@Nonnull ItemStack stack) {
+        return new GateVariant(NBTUtilBC.getItemData(stack).getCompoundTag("gate"));
     }
 
+    @Nonnull
     public ItemStack getStack(GateVariant variant) {
         ItemStack stack = new ItemStack(this);
-        NBTUtils.getItemData(stack).setTag("gate", variant.writeToNbt());
+        NBTUtilBC.getItemData(stack).setTag("gate", variant.writeToNbt());
         return stack;
     }
 
@@ -55,25 +60,33 @@ public class ItemPluggableGate extends ItemBC_Neptune implements IItemPluggable 
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        return getVariant(stack).getLocalizedName();
+        return getVariant(StackUtil.asNonNull(stack)).getLocalizedName();
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
-        GateVariant variant = getVariant(stack);
-        if (variant.modifier != EnumGateModifier.NO_MODIFIER && variant.material.canBeModified) {
-            tooltip.add(I18n.translateToLocal("gate.modifier." + variant.modifier.tag));
-            tooltip.add(I18n.translateToLocal("gate.modifier.desc." + variant.modifier.tag));
-            if (variant.modifier.slotDivisor != 1) {
-                tooltip.add(I18n.translateToLocal("gate.modifier.divisor"));
+        GateVariant variant = getVariant(StackUtil.asNonNull(stack));
+
+        tooltip.add(LocaleUtil.localize("gate.slots", variant.numSlots));
+
+        if (variant.numTriggerArgs == variant.numActionArgs) {
+            if (variant.numTriggerArgs > 0) {
+                tooltip.add(LocaleUtil.localize("gate.params", variant.numTriggerArgs));
+            }
+        } else {
+            if (variant.numTriggerArgs > 0) {
+                tooltip.add(LocaleUtil.localize("gate.params.trigger", variant.numTriggerArgs));
+            }
+            if (variant.numActionArgs > 0) {
+                tooltip.add(LocaleUtil.localize("gate.params.action", variant.numTriggerArgs));
             }
         }
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> subItems) {
+    public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> subItems) {
         subItems.add(new ItemStack(this));
         for (EnumGateMaterial material : EnumGateMaterial.VALUES) {
             if (!material.canBeModified) {

@@ -3,6 +3,9 @@ package buildcraft.lib.client.guide.parts.recipe;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
@@ -32,22 +35,21 @@ public enum GuideCraftingRecipes implements IStackRecipes {
                 }
             }
         }
-
         return list;
     }
 
-    private static boolean checkRecipeUses(IRecipe recipe, ItemStack target) {
+    private static boolean checkRecipeUses(IRecipe recipe, @Nonnull ItemStack target) {
         if (recipe instanceof ShapedRecipes) {
             ShapedRecipes shaped = (ShapedRecipes) recipe;
             for (ItemStack in : shaped.recipeItems) {
-                if (StackUtil.doesEitherStackMatch(in, target)) {
+                if (StackUtil.doesEitherStackMatch(StackUtil.asNonNull(in), target)) {
                     return true;
                 }
             }
         } else if (recipe instanceof ShapelessRecipes) {
             ShapelessRecipes shapeless = (ShapelessRecipes) recipe;
             for (ItemStack in : shapeless.recipeItems) {
-                if (StackUtil.doesEitherStackMatch(in, target)) {
+                if (StackUtil.doesEitherStackMatch(StackUtil.asNonNull(in), target)) {
                     return true;
                 }
             }
@@ -69,7 +71,7 @@ public enum GuideCraftingRecipes implements IStackRecipes {
         return false;
     }
 
-    private static boolean matches(ItemStack target, Object in) {
+    private static boolean matches(@Nonnull ItemStack target, @Nullable Object in) {
         if (in instanceof ItemStack) {
             return StackUtil.doesEitherStackMatch((ItemStack) in, target);
         } else if (in instanceof List) {
@@ -85,11 +87,11 @@ public enum GuideCraftingRecipes implements IStackRecipes {
     }
 
     @Override
-    public List<GuidePartFactory> getRecipes(ItemStack target) {
+    public List<GuidePartFactory> getRecipes(@Nonnull ItemStack target) {
         List<GuidePartFactory> list = new ArrayList<>();
 
         for (IRecipe recipe : CraftingManager.getInstance().getRecipeList()) {
-            ItemStack out = recipe.getRecipeOutput();
+            ItemStack out = StackUtil.asNonNull(recipe.getRecipeOutput());
             if (OreDictionary.itemMatches(target, out, false) || OreDictionary.itemMatches(out, target, false)) {
                 GuideCraftingFactory factory = GuideCraftingFactory.getFactory(recipe);
                 if (factory != null) {

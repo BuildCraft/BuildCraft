@@ -24,6 +24,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
 
+import buildcraft.lib.net.PacketBufferBC;
+
 import io.netty.buffer.ByteBuf;
 
 /** Provides a simple way to save+load and send+receive data for any number of tanks. This also attempts to fill all of
@@ -139,32 +141,16 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
         }
     }
 
-    public void writeData(ByteBuf data) {
-        PacketBuffer packet = new PacketBuffer(data);
+    public void writeData(PacketBufferBC buffer) {
         for (Tank tank : tanks) {
-            FluidStack fluidStack = tank.getFluid();
-            if (fluidStack != null && fluidStack.getFluid() != null) {
-                packet.writeString(fluidStack.getFluid().getName());
-                packet.writeInt(fluidStack.amount);
-                packet.writeInt(fluidStack.getFluid().getColor(fluidStack));
-            } else {
-                packet.writeString("~");
-            }
+            tank.writeToBuffer(buffer);
         }
     }
 
     @SideOnly(Side.CLIENT)
-    public void readData(ByteBuf data) {
-        PacketBuffer packet = new PacketBuffer(data);
+    public void readData(PacketBufferBC buffer) {
         for (Tank tank : tanks) {
-            String fluidId = packet.readStringFromBuffer(40);
-            if (FluidRegistry.getFluid(fluidId) != null) {
-                tank.setFluid(new FluidStack(FluidRegistry.getFluid(fluidId), data.readInt()));
-                tank.colorRenderCache = data.readInt();
-            } else {
-                tank.setFluid(null);
-                tank.colorRenderCache = 0xFFFFFF;
-            }
+            tank.readFromBuffer(buffer);
         }
     }
 }

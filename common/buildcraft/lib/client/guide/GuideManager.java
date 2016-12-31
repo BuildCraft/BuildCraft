@@ -89,7 +89,7 @@ public enum GuideManager {
         return pages.get(entry.page);
     }
 
-    public PageEntry getEntryFor(ItemStack stack) {
+    public PageEntry getEntryFor(@Nonnull ItemStack stack) {
         for (PageEntry entry : entries.keySet()) {
             if (entry.stackMatches(stack)) {
                 return entry;
@@ -99,7 +99,7 @@ public enum GuideManager {
     }
 
     @Nonnull
-    public GuidePageFactory getPageFor(ItemStack stack) {
+    public GuidePageFactory getPageFor(@Nonnull ItemStack stack) {
         PageEntry entry = getEntryFor(stack);
         if (entry != null) {
             GuidePageFactory factory = getFactoryFor(entry);

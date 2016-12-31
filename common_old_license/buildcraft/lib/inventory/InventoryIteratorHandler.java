@@ -9,8 +9,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.IInvSlot;
 
-import buildcraft.lib.misc.StackUtil;
-
 // Ok, this class is HORRID. IInvSlot needs to be redone to be based off of IItemHandler rather than IInventory
 class InventoryIteratorHandler implements Iterable<IInvSlot> {
 
@@ -66,17 +64,17 @@ class InventoryIteratorHandler implements Iterable<IInvSlot> {
 
         @Override
         public boolean canPutStackInSlot(ItemStack stack) {
-            return StackUtil.isInvalid(inv.insertItem(slot, stack, true));
+            return inv.insertItem(slot, stack, true).isEmpty();
         }
 
         @Override
         public boolean canTakeStackFromSlot(ItemStack stack) {
-            return StackUtil.isValid(inv.extractItem(slot, 1, true));
+            return !inv.extractItem(slot, 1, true).isEmpty();
         }
 
         @Override
         public boolean isItemValidForSlot(ItemStack stack) {
-            return StackUtil.isInvalid(inv.insertItem(slot, stack, true));
+            return inv.insertItem(slot, stack, true).isEmpty();
         }
 
         @Override

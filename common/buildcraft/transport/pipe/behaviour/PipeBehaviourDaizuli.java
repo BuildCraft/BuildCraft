@@ -21,7 +21,7 @@ import buildcraft.api.transport.neptune.IPipe;
 import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 
 import buildcraft.lib.misc.EntityUtil;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.statements.ActionPipeColor;
 
@@ -34,7 +34,7 @@ public class PipeBehaviourDaizuli extends PipeBehaviourDirectional {
 
     public PipeBehaviourDaizuli(IPipe pipe, NBTTagCompound nbt) {
         super(pipe, nbt);
-        colour = NBTUtils.readEnum(nbt.getTag("colour"), EnumDyeColor.class);
+        colour = NBTUtilBC.readEnum(nbt.getTag("colour"), EnumDyeColor.class);
         if (colour == null) {
             colour = EnumDyeColor.WHITE;
         }
@@ -43,7 +43,7 @@ public class PipeBehaviourDaizuli extends PipeBehaviourDirectional {
     @Override
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = super.writeToNbt();
-        nbt.setTag("colour", NBTUtils.writeEnum(colour));
+        nbt.setTag("colour", NBTUtilBC.writeEnum(colour));
         return nbt;
     }
 
@@ -83,7 +83,7 @@ public class PipeBehaviourDaizuli extends PipeBehaviourDirectional {
             // And so does clicking on the current facing side
             return super.onPipeActivate(player, trace, hitX, hitY, hitZ, part);
         }
-        if (player.worldObj.isRemote) {
+        if (player.world.isRemote) {
             return EntityUtil.getWrenchHand(player) != null;
         }
         if (EntityUtil.getWrenchHand(player) != null) {
@@ -106,7 +106,7 @@ public class PipeBehaviourDaizuli extends PipeBehaviourDirectional {
     }
 
     @PipeEventHandler
-    public void addActions(PipeEventStatement.AddActionInternal event) {
+    public static void addActions(PipeEventStatement.AddActionInternal event) {
         Collections.addAll(event.actions, BCTransportStatements.ACTION_PIPE_COLOUR);
     }
 

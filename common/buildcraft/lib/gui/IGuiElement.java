@@ -3,10 +3,11 @@ package buildcraft.lib.gui;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.gui.pos.IPositionedElement;
+import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
+import buildcraft.lib.gui.pos.IGuiArea;
 
 @SideOnly(Side.CLIENT)
-public interface IGuiElement extends IPositionedElement, ITooltipElement {
+public interface IGuiElement extends IGuiArea, ITooltipElement {
     default void drawBackground(float partialTicks) {}
 
     default void drawForeground(float partialTicks) {}
@@ -19,4 +20,8 @@ public interface IGuiElement extends IPositionedElement, ITooltipElement {
 
     /** This is called EVEN IF the mouse is not inside your width and height! */
     default void onMouseReleased(int button) {}
+
+    default HelpPosition getHelpInfo() {
+        return null;
+    }
 }

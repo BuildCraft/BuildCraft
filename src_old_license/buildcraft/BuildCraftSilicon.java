@@ -25,10 +25,10 @@ import buildcraft.core.BCRegistry;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
-import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
+import buildcraft.lib.config.RestartRequirement;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.BlockLaserTable;
 import buildcraft.silicon.ItemLaserTable;
@@ -47,7 +47,7 @@ import buildcraft.silicon.TileProgrammingTable;
 //        dependencies = DefaultProps.DEPENDENCY_CORE)
 @Deprecated
 public class BuildCraftSilicon extends BuildCraftMod {
-    @Mod.Instance("BuildCraft|Silicon")
+//    @Mod.Instance("BuildCraft|Silicon")
     public static BuildCraftSilicon instance;
 
     public static ItemRedstoneChipset redstoneChipset;
@@ -63,7 +63,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
         BuildCraftCore.mainConfigManager.register("power.chipsetCostMultiplier", 1.0D, "The cost multiplier for Chipsets",
-                ConfigManager.RestartRequirement.GAME);
+                RestartRequirement.GAME);
         BuildCraftCore.mainConfiguration.save();
         chipsetCostMultiplier = (float) BuildCraftCore.mainConfigManager.get("power.chipsetCostMultiplier").getDouble();
 

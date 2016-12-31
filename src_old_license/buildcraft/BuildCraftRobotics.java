@@ -47,9 +47,9 @@ import buildcraft.core.BCRegistry;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
-import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.core.network.EntityIds;
+import buildcraft.lib.config.RestartRequirement;
 import buildcraft.robotics.BlockRequester;
 import buildcraft.robotics.BlockZonePlan;
 import buildcraft.robotics.BoardProgrammingRecipe;
@@ -153,7 +153,7 @@ import buildcraft.silicon.ItemRedstoneChipset;
 //        dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
 @Deprecated
 public class BuildCraftRobotics extends BuildCraftMod {
-    @Mod.Instance("BuildCraft|Robotics")
+//    @Mod.Instance("BuildCraft|Robotics")
     public static BuildCraftRobotics instance;
 
     public static BlockZonePlan zonePlanBlock;
@@ -197,9 +197,9 @@ public class BuildCraftRobotics extends BuildCraftMod {
         RedstoneBoardRegistry.instance.setEmptyRobotBoard(RedstoneBoardRobotEmptyNBT.instance);
 
         BuildCraftCore.mainConfigManager.register("general", "boards.blacklist", new String[] {}, "Blacklisted robots boards",
-                ConfigManager.RestartRequirement.GAME);
+                RestartRequirement.GAME);
 
-        reloadConfig(ConfigManager.RestartRequirement.GAME);
+        reloadConfig(RestartRequirement.GAME);
 
         robotItem = new ItemRobot().setUnlocalizedName("robot");
         BCRegistry.INSTANCE.registerItem(robotItem, false);
@@ -443,14 +443,14 @@ public class BuildCraftRobotics extends BuildCraftMod {
         InterModComms.processIMC(event);
     }
 
-    public void reloadConfig(ConfigManager.RestartRequirement restartType) {
-        if (restartType == ConfigManager.RestartRequirement.GAME) {
+    public void reloadConfig(RestartRequirement restartType) {
+        if (restartType == RestartRequirement.GAME) {
 
             blacklistedRobots = new ArrayList<>();
             blacklistedRobots.addAll(Arrays.asList(BuildCraftCore.mainConfigManager.get("general", "boards.blacklist").getStringList()));
-            reloadConfig(ConfigManager.RestartRequirement.WORLD);
-        } else if (restartType == ConfigManager.RestartRequirement.WORLD) {
-            reloadConfig(ConfigManager.RestartRequirement.NONE);
+            reloadConfig(RestartRequirement.WORLD);
+        } else if (restartType == RestartRequirement.WORLD) {
+            reloadConfig(RestartRequirement.NONE);
         } else {
             if (BuildCraftCore.mainConfiguration.hasChanged()) {
                 BuildCraftCore.mainConfiguration.save();
@@ -461,7 +461,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
         if ("BuildCraft|Core".equals(event.modID)) {
-            reloadConfig(event.isWorldRunning ? ConfigManager.RestartRequirement.NONE : ConfigManager.RestartRequirement.WORLD);
+            reloadConfig(event.isWorldRunning ? RestartRequirement.NONE : RestartRequirement.WORLD);
         }
     }
 

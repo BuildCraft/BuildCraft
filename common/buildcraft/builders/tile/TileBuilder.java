@@ -25,7 +25,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -47,16 +46,17 @@ import buildcraft.lib.bpt.Blueprint;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
 import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.EnumAxisOrder;
+import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.net.command.IPayloadWriter;
-import buildcraft.lib.tile.TileBCInventory_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 
-public class TileBuilder extends TileBCInventory_Neptune implements ITickable, IDebuggable {
+public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final int NET_BOX = 10;
     public static final int NET_PATH = 11;
     public static final int NET_CLEAR = 12;
@@ -67,8 +67,8 @@ public class TileBuilder extends TileBCInventory_Neptune implements ITickable, I
     public static final int NET_ANIM_POWER = 17;
     public static final int NET_ANIM_STATE = 18;
 
-    public final IItemHandlerModifiable invBlueprint = addInventory("blueprint", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
-    public final IItemHandlerModifiable invResources = addInventory("resources", 27, EnumAccess.NONE, EnumPipePart.VALUES);
+    public final IItemHandlerModifiable invBlueprint = itemManager.addInvHandler("blueprint", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
+    public final IItemHandlerModifiable invResources = itemManager.addInvHandler("resources", 27, EnumAccess.NONE, EnumPipePart.VALUES);
 
     private final Tank[] tanks = new Tank[] {//
         new Tank("fluid1", Fluid.BUCKET_VOLUME * 8, this),//
@@ -99,10 +99,6 @@ public class TileBuilder extends TileBCInventory_Neptune implements ITickable, I
     protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, ItemStack before, ItemStack after) {
         if (itemHandler == invBlueprint) {
             // Update bpt + builder
-            if (after == null) {
-                // builder.releaseAll();
-                // animation.reset();
-            }
         }
         super.onSlotChange(itemHandler, slot, before, after);
     }
@@ -128,7 +124,7 @@ public class TileBuilder extends TileBCInventory_Neptune implements ITickable, I
     @Override
     public void update() {
         battery.tick(getWorld(), getPos());
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             tickingBuilder.tick(Side.CLIENT);
             // client stuffs
         } else {
@@ -306,7 +302,7 @@ public class TileBuilder extends TileBCInventory_Neptune implements ITickable, I
                 double y = changeAt.getY() + 0.5;
                 double z = changeAt.getZ() + 0.5;
                 EnumParticleTypes type = id == NET_CLEAR ? EnumParticleTypes.SMOKE_NORMAL : EnumParticleTypes.CLOUD;
-                worldObj.spawnParticle(type, x, y, z, 0, 0, 0);
+                world.spawnParticle(type, x, y, z, 0, 0, 0);
             }
             // All animation types
             else if (id == NET_ANIM_ITEM) tickingBuilder.readPayload(EnumBuilderMessage.ANIMATION_ITEM, buffer, side);
@@ -329,7 +325,7 @@ public class TileBuilder extends TileBCInventory_Neptune implements ITickable, I
         } else {
             ImmutableList.Builder<BlockPos> builder = ImmutableList.builder();
             for (int i = 0; i < list.tagCount(); i++) {
-                builder.add(NBTUtils.readBlockPos(list.get(i)));
+                builder.add(NBTUtilBC.readBlockPos(list.get(i)));
             }
             setPath(builder.build());
         }
@@ -342,7 +338,7 @@ public class TileBuilder extends TileBCInventory_Neptune implements ITickable, I
         if (getPath() != null) {
             NBTTagList list = new NBTTagList();
             for (BlockPos p : getPath()) {
-                list.appendTag(NBTUtils.writeBlockPos(p));
+                list.appendTag(NBTUtilBC.writeBlockPos(p));
             }
             nbt.setTag("path", list);
         }
@@ -353,16 +349,8 @@ public class TileBuilder extends TileBCInventory_Neptune implements ITickable, I
     // Capability
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_FLUIDS) {
             return (T) tankManager;
         }
         return super.getCapability(capability, facing);

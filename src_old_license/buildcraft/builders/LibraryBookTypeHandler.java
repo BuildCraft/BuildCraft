@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.library.LibraryTypeHandlerNBT;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class LibraryBookTypeHandler extends LibraryTypeHandlerNBT {
     public LibraryBookTypeHandler() {
@@ -28,7 +28,7 @@ public class LibraryBookTypeHandler extends LibraryTypeHandlerNBT {
 
     @Override
     public String getName(ItemStack stack) {
-        String s = NBTUtils.getItemData(stack).getString("title");
+        String s = NBTUtilBC.getItemData(stack).getString("title");
         return s != null ? s : "";
     }
 
@@ -45,7 +45,7 @@ public class LibraryBookTypeHandler extends LibraryTypeHandlerNBT {
 
     @Override
     public boolean store(ItemStack stack, NBTTagCompound compound) {
-        NBTTagCompound inNBT = NBTUtils.getItemData(stack);
+        NBTTagCompound inNBT = NBTUtilBC.getItemData(stack);
         compound.setString("title", inNBT.getString("title"));
         compound.setString("author", inNBT.getString("author"));
         compound.setTag("pages", inNBT.getTagList("pages", 8));

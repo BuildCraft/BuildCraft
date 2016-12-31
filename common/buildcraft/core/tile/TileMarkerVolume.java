@@ -65,7 +65,7 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     }
 
     public void switchSignals() {
-        if (!worldObj.isRemote) {
+        if (!world.isRemote) {
             showSignals = !showSignals;
             markDirty();
             sendNetworkUpdate(showSignals ? NET_SIGNALS_ON : NET_SIGNALS_OFF);
@@ -154,7 +154,7 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
 
     @Override
     public void removeFromWorld() {
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             return;
         }
         VolumeConnection connection = getCurrentConnection();
@@ -162,7 +162,7 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
             // Copy the list over because the iterator doesn't like it if you change the connection while using it
             List<BlockPos> allPositions = ImmutableList.copyOf(connection.getMarkerPositions());
             for (BlockPos p : allPositions) {
-                worldObj.destroyBlock(p, true);
+                world.destroyBlock(p, true);
             }
         }
     }

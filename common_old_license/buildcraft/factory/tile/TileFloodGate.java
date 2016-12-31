@@ -14,7 +14,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -24,6 +23,7 @@ import buildcraft.factory.block.BlockFloodGate;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankUtils;
 import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -31,7 +31,6 @@ import buildcraft.lib.tile.TileBC_Neptune;
 public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final EnumFacing[] SIDE_INDEXES = new EnumFacing[] { EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST };
     public static final int[] REBUILD_DELAYS = new int[] { 128, 256, 512, 1024, 2048, 4096, 8192, 16384 };
-    public static final int NET_FLOOD_GATE = 10;
 
     private boolean[] sidesBlocked = new boolean[5];
     private final Tank tank = new Tank("tank", 2000, this);
@@ -40,7 +39,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     private TreeMap<Integer, Deque<BlockPos>> layerQueues = new TreeMap<>();
 
     public static int getIndexFromSide(EnumFacing side) {
-        return Arrays.binarySearch(SIDE_INDEXES, side);
+        return Arrays.binarySearch(SIDE_INDEXES, side);// wat?
     }
 
     public boolean isSideBlocked(EnumFacing side) {
@@ -49,6 +48,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
     public void setSideBlocked(EnumFacing side, boolean blocked) {
         sidesBlocked[getIndexFromSide(side)] = blocked;
+        sendNetworkUpdate(NET_RENDER_DATA);
     }
 
     public int getCurrentDelay() {
@@ -97,16 +97,16 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                         return;
                     }
 
-                    IBlockState blockState = worldObj.getBlockState(currentPos);
+                    IBlockState blockState = world.getBlockState(currentPos);
 
                     Block block = blockState.getBlock();
                     Fluid fluid = BlockUtil.getFluidWithFlowing(block);
 
                     boolean isCurrentFluid = this.tank.getFluidType() != null && this.tank.getFluidType() == fluid;
 
-                    if (worldObj.isAirBlock(currentPos) || block instanceof BlockFloodGate || isCurrentFluid) {
+                    if (world.isAirBlock(currentPos) || block instanceof BlockFloodGate || isCurrentFluid) {
                         blocksFound.add(currentPos);
-                        if (worldObj.isAirBlock(currentPos) || (isCurrentFluid && blockState.getValue(BlockLiquid.LEVEL) != 0)) {
+                        if (world.isAirBlock(currentPos) || (isCurrentFluid && blockState.getValue(BlockLiquid.LEVEL) != 0)) {
                             getLayerQueue(currentPos.getY()).addLast(currentPos);
                         }
                     }
@@ -136,11 +136,11 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
     @Override
     public void update() {
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             return;
         }
 
-        TankUtils.pullFluidAround(worldObj, pos);
+        TankUtils.pullFluidAround(world, pos);
 
         tick++;
         if (tick % 16 == 0) {
@@ -148,7 +148,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             if (fluid != null && fluid.amount == 1000) {
                 BlockPos current = getNext();
                 if (current != null) {
-                    worldObj.setBlockState(current, fluid.getFluid().getBlock().getDefaultState());
+                    world.setBlockState(current, fluid.getFluid().getBlock().getDefaultState());
                     tank.drain(1000, true);
                     delayIndex = 0;
                 }
@@ -159,8 +159,6 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             delayIndex = Math.min(delayIndex + 1, REBUILD_DELAYS.length - 1);
             rebuildQueue();
         }
-
-        sendNetworkUpdate(NET_FLOOD_GATE); // TODO: optimize
     }
 
     // IDebuggable
@@ -173,7 +171,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
         for (int i = 0; i < sidesBlocked.length; i++) {
             sides[i] = SIDE_INDEXES[i].toString().toLowerCase() + "(" + sidesBlocked[i] + ")";
         }
-        left.add("sides = " + String.join(" ", (CharSequence[]) sides));
+        left.add("sides = " + String.join(" ", sides));
         left.add("delay = " + getCurrentDelay());
     }
 
@@ -203,34 +201,34 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     @Override
     public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
-        if (side == Side.SERVER && id == NET_FLOOD_GATE) {
-            tank.writeToBuffer(buffer);
-            MessageUtil.writeBooleanArray(buffer, sidesBlocked);
+        if (side == Side.SERVER) {
+            if (id == NET_RENDER_DATA) {
+                // tank.writeToBuffer(buffer);
+                MessageUtil.writeBooleanArray(buffer, sidesBlocked);
+            }
         }
     }
 
     @Override
     public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == Side.CLIENT && id == NET_FLOOD_GATE) {
-            tank.readFromBuffer(buffer);
-            sidesBlocked = MessageUtil.readBooleanArray(buffer, sidesBlocked.length);
+        if (side == Side.CLIENT) {
+            if (id == NET_RENDER_DATA) {
+                // tank.readFromBuffer(buffer);
+                boolean[] read = MessageUtil.readBooleanArray(buffer, sidesBlocked.length);
+                if (!Arrays.equals(read, sidesBlocked)) {
+                    sidesBlocked = read;
+                    redrawBlock();
+                }
+            }
         }
     }
 
     // Capabilities
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapUtil.CAP_FLUIDS) {
             return (T) tank;
         }
         return super.getCapability(capability, facing);

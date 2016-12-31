@@ -25,7 +25,7 @@ import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class ItemRedstoneBoard extends ItemBuildCraft {
     public ItemRedstoneBoard() {
@@ -61,7 +61,7 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 
     public static ItemStack createStack(RedstoneBoardNBT<?> boardNBT) {
         ItemStack stack = new ItemStack(BuildCraftRobotics.redstoneBoard);
-        NBTTagCompound nbtData = NBTUtils.getItemData(stack);
+        NBTTagCompound nbtData = NBTUtilBC.getItemData(stack);
         boardNBT.createBoard(nbtData);
         return stack;
     }
@@ -71,7 +71,7 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
     }
 
     private static NBTTagCompound getNBT(ItemStack stack) {
-        NBTTagCompound cpt = NBTUtils.getItemData(stack);
+        NBTTagCompound cpt = NBTUtilBC.getItemData(stack);
         if (!cpt.hasKey("id")) {
             RedstoneBoardRegistry.instance.getEmptyRobotBoard().createBoard(cpt);
         }

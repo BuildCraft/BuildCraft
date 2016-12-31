@@ -103,7 +103,7 @@ public abstract class GuiAbstractButton extends GuiButton implements ITooltipEle
     // Click Notification
 
     @Override
-    public void notifyButtonEnable() {
+    public void notifyButtonStateChange() {
         for (IButtonClickEventListener listener : listeners) {
             listener.handleButtonClick(this, id);
         }
@@ -117,6 +117,11 @@ public abstract class GuiAbstractButton extends GuiButton implements ITooltipEle
     @Override
     public void removeListener(IButtonClickEventListener listener) {
         listeners.remove(listener);
+    }
+
+    @Override
+    public boolean isButtonActive() {
+        return this.active;
     }
 
     // Misc

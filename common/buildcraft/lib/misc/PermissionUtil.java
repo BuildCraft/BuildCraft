@@ -1,13 +1,13 @@
 package buildcraft.lib.misc;
 
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.permission.IPlayerOwned;
-
-import buildcraft.lib.permission.PlayerOwner;
 
 /** Future class for checking to see if a given player can actually do something. */
 public class PermissionUtil {
@@ -27,7 +27,7 @@ public class PermissionUtil {
         return true;
     }
 
-    public static boolean hasPermission(Object type, PlayerOwner attempting, PermissionBlock target) {
+    public static boolean hasPermission(Object type, GameProfile attempting, PermissionBlock target) {
         // TODO: fire a forge block-break event if its a break event
         if (type == PERM_DESTROY || type == PERM_EDIT) {
             // TODO check "area" -- the player must be an OP if its within spawn radius

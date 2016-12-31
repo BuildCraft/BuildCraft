@@ -47,7 +47,7 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
         Minecraft.getMinecraft().mcProfiler.startSection("marker");
         Minecraft.getMinecraft().mcProfiler.startSection("volume");
 
-        DetatchedRenderer.fromWorldOriginPre(Minecraft.getMinecraft().thePlayer, partialTicks);
+        DetatchedRenderer.fromWorldOriginPre(Minecraft.getMinecraft().player, partialTicks);
         RenderHelper.disableStandardItemLighting();
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
@@ -77,7 +77,7 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
         Vec3d one = offset(min, faceForMin);
         Vec3d two = offset(max, faceForMax);
         LaserData_BC8 data = new LaserData_BC8(LASER_TYPE, one, two, SCALE);
-        LaserRenderer_BC8.renderLaserGlList(data);
+        LaserRenderer_BC8.renderLaserStatic(data);
     }
 
     private static Vec3d offset(Vec3d vec, EnumFacing face) {

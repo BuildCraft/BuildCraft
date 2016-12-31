@@ -3,6 +3,8 @@ package buildcraft.lib.client.guide.parts.recipe;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
@@ -15,7 +17,7 @@ public class RecipeLookupHelper {
         allHandlers.add(GuideCraftingRecipes.INSTANCE);
     }
 
-    public static List<GuidePartFactory> getAllUsages(ItemStack stack) {
+    public static List<GuidePartFactory> getAllUsages(@Nonnull ItemStack stack) {
         List<GuidePartFactory> list = new ArrayList<>();
         for (IStackRecipes handler : allHandlers) {
             List<GuidePartFactory> recipes = handler.getUsages(stack);
@@ -26,7 +28,7 @@ public class RecipeLookupHelper {
         return list;
     }
 
-    public static List<GuidePartFactory> getAllRecipes(ItemStack stack) {
+    public static List<GuidePartFactory> getAllRecipes(@Nonnull ItemStack stack) {
         List<GuidePartFactory> list = new ArrayList<>();
         for (IStackRecipes handler : allHandlers) {
             List<GuidePartFactory> recipes = handler.getRecipes(stack);

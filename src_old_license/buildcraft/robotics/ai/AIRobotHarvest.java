@@ -15,7 +15,7 @@ import buildcraft.api.robots.EntityRobotBase;
 
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class AIRobotHarvest extends AIRobot {
 
@@ -67,7 +67,7 @@ public class AIRobotHarvest extends AIRobot {
         super.writeSelfToNBT(nbt);
 
         if (blockFound != null) {
-            nbt.setTag("blockFound", NBTUtils.writeBlockPos(blockFound));
+            nbt.setTag("blockFound", NBTUtilBC.writeBlockPos(blockFound));
         }
     }
 
@@ -76,7 +76,7 @@ public class AIRobotHarvest extends AIRobot {
         super.loadSelfFromNBT(nbt);
 
         if (nbt.hasKey("blockFound")) {
-            blockFound = NBTUtils.readBlockPos(nbt.getTag("blockFound"));
+            blockFound = NBTUtilBC.readBlockPos(nbt.getTag("blockFound"));
         }
     }
 }

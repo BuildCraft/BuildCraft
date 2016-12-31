@@ -26,8 +26,8 @@ public class ItemWaterGel extends ItemBC_Neptune {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
-
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
         Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
         Vec3d look = player.getLookVec();
         Vec3d end = start.add(look.scale(7));
@@ -43,7 +43,7 @@ public class ItemWaterGel extends ItemBC_Neptune {
         }
 
         if (!player.capabilities.isCreativeMode) {
-            --stack.stackSize;
+            stack.setCount(stack.getCount() - 1);
         }
 
         // Same as ItemSnowball

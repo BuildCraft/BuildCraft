@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "buildcraftcore:items/stoneGearItem"
+        "layer0": "buildcraftcore:items/gear_stone"
     }
 }

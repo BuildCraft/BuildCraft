@@ -1,7 +1,6 @@
 package buildcraft.transport.plug;
 
 import java.io.IOException;
-import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -9,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 
@@ -24,6 +24,7 @@ import buildcraft.api.transport.neptune.PipePluggable;
 import buildcraft.api.transport.neptune.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugPulsar;
 import buildcraft.transport.client.render.PlugPulsarRenderer;
@@ -34,11 +35,15 @@ public class PluggablePulsar extends PipePluggable {
 
     private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
 
-    private boolean isPulsing = false;
-    /** Increments from 0 to 20 to decide when it should pulse some power into the pipe behaviour */
+    private boolean manuallyEnabled = false;
+    /** Increments from 0 to {@link #PULSE_STAGE} to decide when it should pulse some power into the pipe behaviour */
     private int pulseStage = 0;
     private int gateEnabledTicks;
     private int gateSinglePulses;
+    private boolean lastPulsing = false;
+
+    /** Used on the client to determine if this should render pulsing */
+    private boolean isPulsing = false;
 
     static {
         double ll = 2 / 16.0;
@@ -65,7 +70,7 @@ public class PluggablePulsar extends PipePluggable {
 
     public PluggablePulsar(PluggableDefinition definition, IPipeHolder holder, EnumFacing side, NBTTagCompound nbt) {
         super(definition, holder, side);
-        this.isPulsing = nbt.getBoolean("isPulsing");
+        this.manuallyEnabled = nbt.getBoolean("manuallyEnabled");
         gateEnabledTicks = nbt.getInteger("gateEnabledTicks");
         gateSinglePulses = nbt.getInteger("gateSinglePulses");
     }
@@ -73,7 +78,7 @@ public class PluggablePulsar extends PipePluggable {
     @Override
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = super.writeToNbt();
-        nbt.setBoolean("isPulsing", isPulsing);
+        nbt.setBoolean("manuallyEnabled", manuallyEnabled);
         nbt.setInteger("gateEnabledTicks", gateEnabledTicks);
         nbt.setInteger("gateSinglePulses", gateSinglePulses);
         return nbt;
@@ -83,36 +88,34 @@ public class PluggablePulsar extends PipePluggable {
 
     public PluggablePulsar(PluggableDefinition definition, IPipeHolder holder, EnumFacing side, PacketBuffer buffer) {
         super(definition, holder, side);
-        this.isPulsing = buffer.readBoolean();
-        gateEnabledTicks = buffer.readInt();
-        gateSinglePulses = buffer.readInt();
+        isPulsing = buffer.readBoolean();
+        manuallyEnabled = buffer.readBoolean();
     }
 
     @Override
     public void writeCreationPayload(PacketBuffer buffer) {
         super.writeCreationPayload(buffer);
-        buffer.writeBoolean(isPulsing);
-        buffer.writeInt(gateEnabledTicks);
-        buffer.writeInt(gateSinglePulses);
+        buffer.writeBoolean(isPulsing());
+        buffer.writeBoolean(manuallyEnabled);
     }
 
     @Override
-    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
-        super.readPayload(buffer, side, ctx);
+    public void readPayload(PacketBuffer b, Side side, MessageContext ctx) throws IOException {
+        super.readPayload(b, side, ctx);
+        PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(b);
         if (side == Side.CLIENT) {
-            this.isPulsing = buffer.readBoolean();
-            gateEnabledTicks = buffer.readInt();
-            gateSinglePulses = buffer.readInt();
+            isPulsing = buffer.readBoolean();
+            manuallyEnabled = buffer.readBoolean();
         }
     }
 
     @Override
-    public void writePayload(PacketBuffer buffer, Side side) {
-        super.writePayload(buffer, side);
+    public void writePayload(PacketBuffer b, Side side) {
+        super.writePayload(b, side);
+        PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(b);
         if (side == Side.SERVER) {
-            buffer.writeBoolean(isPulsing);
-            buffer.writeInt(gateEnabledTicks);
-            buffer.writeInt(gateSinglePulses);
+            buffer.writeBoolean(isPulsing());
+            buffer.writeBoolean(manuallyEnabled);
         }
     }
 
@@ -129,7 +132,7 @@ public class PluggablePulsar extends PipePluggable {
     }
 
     @Override
-    public void onRemove(List<ItemStack> toDrop) {
+    public void onRemove(NonNullList<ItemStack> toDrop) {
         toDrop.add(new ItemStack(BCTransportItems.plugPulsar));
     }
 
@@ -140,7 +143,23 @@ public class PluggablePulsar extends PipePluggable {
 
     @Override
     public void onTick() {
-        if (isPulsing()) {
+        if (holder.getPipeWorld().isRemote) {
+            if (isPulsingClient()) {
+                pulseStage++;
+                if (pulseStage == PULSE_STAGE) {
+                    pulseStage = 0;
+                }
+            } else {
+                pulseStage--;
+                if (pulseStage < 0) {
+                    pulseStage = 0;
+                }
+            }
+            return;
+        }
+        boolean isOn = isPulsing();
+
+        if (isOn) {
             pulseStage++;
         } else {
             pulseStage--;
@@ -151,15 +170,6 @@ public class PluggablePulsar extends PipePluggable {
         if (gateEnabledTicks > 0) {
             gateEnabledTicks--;
         }
-        if (holder.getPipeWorld().isRemote) {
-            if (pulseStage == PULSE_STAGE) {
-                pulseStage = 0;
-                if (gateSinglePulses > 0) {
-                    gateSinglePulses--;
-                }
-            }
-            return;
-        }
         if (pulseStage == PULSE_STAGE) {
             pulseStage = 0;
             IMjRedstoneReceiver rsRec = (IMjRedstoneReceiver) holder.getPipe().getBehaviour();
@@ -168,12 +178,16 @@ public class PluggablePulsar extends PipePluggable {
                 gateSinglePulses--;
             }
         }
+        if (isOn != lastPulsing) {
+            lastPulsing = isOn;
+            scheduleNetworkUpdate();
+        }
     }
 
     @Override
     public boolean onPluggableActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ) {
         if (!holder.getPipeWorld().isRemote) {
-            this.isPulsing = !isPulsing;
+            manuallyEnabled = !manuallyEnabled;
             scheduleNetworkUpdate();
         }
         return true;
@@ -181,11 +195,16 @@ public class PluggablePulsar extends PipePluggable {
 
     @SideOnly(Side.CLIENT)
     public double getStage(float partialTicks) {
-        if (isPulsing()) {
+        if (isPulsingClient()) {
             return (pulseStage + partialTicks) / 20 % 1;
         } else {
             return 0;
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean isPulsingClient() {
+        return isPulsing;
     }
 
     @Override
@@ -203,15 +222,13 @@ public class PluggablePulsar extends PipePluggable {
 
     public void enablePulsar() {
         gateEnabledTicks = 10;
-        scheduleNetworkUpdate();
     }
 
     public void addSinglePulse() {
         gateSinglePulses++;
-        scheduleNetworkUpdate();
     }
 
-    public boolean isPulsing() {
-        return isPulsing || gateEnabledTicks > 0 || gateSinglePulses > 0;
+    private boolean isPulsing() {
+        return manuallyEnabled || gateEnabledTicks > 0 || gateSinglePulses > 0;
     }
 }

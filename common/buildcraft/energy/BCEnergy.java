@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.core.BCCore;
@@ -20,7 +21,12 @@ import buildcraft.energy.generation.OilPopulate;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.RegistryHelper;
 
-@Mod(modid = BCEnergy.MODID, name = "BuildCraft Energy", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
+//@formatter:off
+@Mod(modid = BCEnergy.MODID,
+ name = "BuildCraft Energy",
+ version = BCLib.VERSION,
+ dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+//@formatter:on
 public class BCEnergy {
     public static final String MODID = "buildcraftenergy";
     static {
@@ -38,6 +44,7 @@ public class BCEnergy {
         BCEnergyBlocks.preInit();
         BCEnergyEntities.preInit();
 
+        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCEnergyProxy.getProxy());
         GameRegistry.register(BiomeOilOcean.INSTANCE);
         GameRegistry.register(BiomeOilDesert.INSTANCE);
         MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
@@ -45,7 +52,7 @@ public class BCEnergy {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
-
+        BCEnergyRecipes.init();
     }
 
     @Mod.EventHandler

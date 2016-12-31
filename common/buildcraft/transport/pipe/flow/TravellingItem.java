@@ -2,6 +2,9 @@ package buildcraft.transport.pipe.flow;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -14,9 +17,12 @@ import buildcraft.lib.misc.VecUtil;
 
 public class TravellingItem {
     // Public for rendering
-    public ItemStack stack;
+    public Supplier<ItemStack> clientItemLink;
+    public int stackSize;
     public EnumDyeColor colour;
 
+    /** The server itemstack */
+    ItemStack stack;
     int id = 0;
     EnumTravelState state = EnumTravelState.SERVER_TO_CENTER;
     double speed = 0.05;
@@ -52,17 +58,19 @@ public class TravellingItem {
         CLIENT_INVALID;
     }
 
-    public TravellingItem(ItemStack stack) {
+    public TravellingItem(@Nonnull ItemStack stack) {
         this.stack = stack;
-        if (stack == null || stack.getItem() == null) {
-            throw new NullPointerException("stack");
-        }
+    }
+
+    public TravellingItem(Supplier<ItemStack> clientStackLink, int count) {
+        this.clientItemLink = clientStackLink;
+        this.stackSize = count;
     }
 
     // List<EnumFacing> tried = null;
 
     public TravellingItem(NBTTagCompound nbt, long tickNow) {
-        stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("stack"));
+        stack = new ItemStack(nbt.getCompoundTag("stack"));
         int c = nbt.getByte("colour");
         this.colour = c == 0 ? null : EnumDyeColor.byMetadata(c - 1);
         this.state = nbt.getBoolean("toCenter") ? EnumTravelState.SERVER_TO_CENTER : EnumTravelState.SERVER_TO_EXIT;

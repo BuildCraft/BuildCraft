@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.IAssemblyRecipeProvider;
@@ -18,7 +19,7 @@ public enum AssemblyRecipeRegistry implements IAssemblyRecipeRegistry {
     private final List<IAssemblyRecipeProvider> providers = new ArrayList<>();
 
     @Override
-    public List<AssemblyRecipe> getRecipesFor(List<ItemStack> possibleIn) {
+    public List<AssemblyRecipe> getRecipesFor(NonNullList<ItemStack> possibleIn) {
         List<AssemblyRecipe> all = new ArrayList<>();
         for (AssemblyRecipe ar : recipes) {
             if (StackUtil.containsAll(ar.requiredStacks, possibleIn)) {

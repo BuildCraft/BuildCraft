@@ -32,7 +32,7 @@ public class MessageZoneMapRequest implements IMessage {
 
         @Override
         public IMessage onMessage(MessageZoneMapRequest message, MessageContext ctx) {
-            ZonePlannerMapDataServer.INSTANCE.getChunk(ctx.getServerHandler().playerEntity.worldObj, message.key, data -> {
+            ZonePlannerMapDataServer.INSTANCE.getChunk(ctx.getServerHandler().playerEntity.world, message.key, data -> {
                 MessageUtil.sendReturnMessage(ctx, new MessageZoneMapResponse(message.key, data));
             });
             return null;

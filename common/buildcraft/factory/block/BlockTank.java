@@ -2,8 +2,6 @@ package buildcraft.factory.block;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -19,8 +17,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -30,6 +28,7 @@ import buildcraft.api.transport.ICustomPipeConnection;
 
 import buildcraft.factory.tile.TileTank;
 import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnection {
@@ -78,7 +77,7 @@ public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnect
         if (side.getAxis() == EnumFacing.Axis.Y) {
             return !(world.getBlockState(pos.offset(side)).getBlock() instanceof BlockTank);
         } else {
-            return super.shouldSideBeRendered(blockState, world, pos, side);
+            return true;
         }
     }
 
@@ -88,15 +87,21 @@ public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnect
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        TileTank tile = (TileTank) world.getTileEntity(pos);
-        if (heldItem == null || tile == null) {
-            return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        ItemStack heldItem = player.getHeldItem(hand);
+        if (heldItem == null) {
+            return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
         }
-        if (FluidUtil.interactWithFluidHandler(heldItem, tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null), player)) {
-            tile.sendNetworkUpdate(TileBC_Neptune.NET_RENDER_DATA);
-            player.inventoryContainer.detectAndSendChanges();
-            return true;
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileTank) {
+            TileTank tank = (TileTank) tile;
+            FluidActionResult result = FluidUtil.interactWithFluidHandler(heldItem, tank.getCapability(CapUtil.CAP_FLUIDS, null), player);
+            if (result.success) {
+                tank.sendNetworkUpdate(TileBC_Neptune.NET_RENDER_DATA);
+                player.setHeldItem(hand, result.result);
+                player.inventoryContainer.detectAndSendChanges();
+                return true;
+            }
         }
         return false;
     }

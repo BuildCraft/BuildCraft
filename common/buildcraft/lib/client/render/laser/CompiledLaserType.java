@@ -46,7 +46,7 @@ public class CompiledLaserType {
         endCap.bakeEndCap(context);
 
         double lengthForMiddle = Math.max(0, context.length - startWidth - endWidth);
-        int numMiddle = MathHelper.floor_double(lengthForMiddle / middleWidth);
+        int numMiddle = MathHelper.floor(lengthForMiddle / middleWidth);
         double leftOverFromMiddle = lengthForMiddle - middleWidth * numMiddle;
         if (leftOverFromMiddle > 0) {
             numMiddle++;

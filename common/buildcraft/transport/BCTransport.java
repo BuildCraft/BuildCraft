@@ -31,7 +31,12 @@ import buildcraft.transport.plug.PluggableRegistry;
 import buildcraft.transport.wire.MessageWireSystems;
 import buildcraft.transport.wire.MessageWireSystemsPowered;
 
-@Mod(modid = BCTransport.MODID, name = "BuildCraft Transport", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
+//@formatter:off
+@Mod(modid = BCTransport.MODID,
+name = "BuildCraft Transport",
+version = BCLib.VERSION,
+dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+//@formatter:on
 public class BCTransport {
     public static final String MODID = "buildcrafttransport";
 

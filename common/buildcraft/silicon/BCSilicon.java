@@ -10,7 +10,12 @@ import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.RegistryHelper;
 
-@Mod(modid = BCSilicon.MODID, name = "BuildCraft Silicon", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
+//@formatter:off
+@Mod(modid = BCSilicon.MODID,
+name = "BuildCraft Silicon",
+version = BCLib.VERSION,
+dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+//@formatter:on
 public class BCSilicon {
     public static final String MODID = "buildcraftsilicon";
 

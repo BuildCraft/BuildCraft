@@ -22,7 +22,7 @@ import buildcraft.api.transport.neptune.IPipeHolder;
 import buildcraft.api.transport.neptune.IWireManager;
 
 import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.net.command.IPayloadWriter;
+import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.transport.gate.ActionWrapper.ActionWrapperExternal;
 import buildcraft.transport.gate.ActionWrapper.ActionWrapperInternal;
 import buildcraft.transport.gate.ActionWrapper.ActionWrapperInternalSided;
@@ -432,7 +432,6 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
         if (getPipeHolder().getPipeWorld().isRemote) {
             return;
         }
-        // TEMP -- this is waaay to often, but is just for testing purposes.
         resolveActions();
     }
 

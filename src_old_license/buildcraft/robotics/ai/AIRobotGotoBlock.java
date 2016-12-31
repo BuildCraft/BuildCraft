@@ -16,7 +16,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.IterableAlgorithmRunner;
 import buildcraft.core.lib.utils.PathFinding;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class AIRobotGotoBlock extends AIRobotGoto {
 
@@ -171,7 +171,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
     public void writeSelfToNBT(NBTTagCompound nbt) {
         super.writeSelfToNBT(nbt);
 
-        nbt.setTag("finalPos", NBTUtils.writeBlockPos(finalPos));
+        nbt.setTag("finalPos", NBTUtilBC.writeBlockPos(finalPos));
         nbt.setDouble("maxDistance", maxDistance);
         nbt.setBoolean("skipLastIfNotSoft", skipLastIfNotSoft);
         
@@ -179,7 +179,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
             NBTTagList pathList = new NBTTagList();
 
             for (BlockPos i : path) {
-                pathList.appendTag(NBTUtils.writeBlockPos(i));
+                pathList.appendTag(NBTUtilBC.writeBlockPos(i));
             }
 
             nbt.setTag("path", pathList);
@@ -190,7 +190,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
     public void loadSelfFromNBT(NBTTagCompound nbt) {
         super.loadSelfFromNBT(nbt);
 
-        finalPos = NBTUtils.readBlockPos(nbt.getTag("finalPos"));
+        finalPos = NBTUtilBC.readBlockPos(nbt.getTag("finalPos"));
         maxDistance = nbt.getDouble("maxDistance");
         skipLastIfNotSoft = nbt.getBoolean("skipLastIfNotSoft");
         
@@ -200,7 +200,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
             path = new LinkedList<>();
 
             for (int i = 0; i < pathList.tagCount(); ++i) {
-                path.add(NBTUtils.readBlockPos(pathList.get(i)));
+                path.add(NBTUtilBC.readBlockPos(pathList.get(i)));
             }
         }
 

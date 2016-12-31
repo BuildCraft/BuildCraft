@@ -17,7 +17,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.lib.utils.IBlockFilter;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotSearchAndGotoBlock;
 import buildcraft.robotics.statements.ActionRobotFilter;
@@ -124,7 +124,7 @@ public abstract class BoardRobotGenericSearchBlock extends RedstoneBoardRobot {
         super.writeSelfToNBT(nbt);
 
         if (blockFound != null) {
-            nbt.setTag("indexStored", NBTUtils.writeBlockPos(blockFound));
+            nbt.setTag("indexStored", NBTUtilBC.writeBlockPos(blockFound));
         }
     }
 
@@ -133,7 +133,7 @@ public abstract class BoardRobotGenericSearchBlock extends RedstoneBoardRobot {
         super.loadSelfFromNBT(nbt);
 
         if (nbt.hasKey("indexStored")) {
-            blockFound = NBTUtils.readBlockPos(nbt.getTag("indexStored"));
+            blockFound = NBTUtilBC.readBlockPos(nbt.getTag("indexStored"));
         }
     }
 

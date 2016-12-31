@@ -3,19 +3,23 @@ package buildcraft.lib.client.guide.parts;
 import java.util.Arrays;
 import java.util.Map.Entry;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 
 import buildcraft.lib.client.guide.GuiGuide;
+import buildcraft.lib.misc.StackUtil;
 
 public class GuideSmeltingFactory implements GuidePartFactory {
+    @Nonnull
     private final ItemStack input, output;
     private final int hash;
 
     public GuideSmeltingFactory(ItemStack input, ItemStack output) {
-        this.input = input;
-        this.output = output;
+        this.input = StackUtil.asNonNull(input);
+        this.output = StackUtil.asNonNull(output);
         this.hash = Arrays.hashCode(new int[] { input.serializeNBT().hashCode(), output.serializeNBT().hashCode() });
     }
 

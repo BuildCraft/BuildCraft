@@ -85,7 +85,7 @@
   ]
 },
 {
-  "modid": "buildcraftfactory",
+  "modid": "buildcraftsilicon",
   "name": "BC Silicon",
   "version": "${version}",
   "mcversion": "${mcversion}",

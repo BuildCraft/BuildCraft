@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
@@ -50,6 +51,7 @@ import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.MatrixUtil;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
@@ -62,7 +64,7 @@ public enum RenderTickListener {
     private static final Box lastRenderedMapLoc = new Box();
 
     static {
-        double[][][] upFace = {// Comments for formatting :)
+        double[][][] upFace = {// Comments for formatting
             { { 0.5, 0.9, 0.5 }, { 0.5, 1.6, 0.5 } },// Main line
             { { 0.5, 0.9, 0.5 }, { 0.8, 1.2, 0.5 } }, // First arrow part (+X)
             { { 0.5, 0.9, 0.5 }, { 0.2, 1.2, 0.5 } }, // Second arrow part (-X)
@@ -90,10 +92,10 @@ public enum RenderTickListener {
     }
 
     @SubscribeEvent
-    public void renderOverlay(RenderGameOverlayEvent.Text event) {
+    public static void renderOverlay(RenderGameOverlayEvent.Text event) {
         Minecraft mc = Minecraft.getMinecraft();
         if (!mc.gameSettings.showDebugInfo) return;
-        if (mc.thePlayer.hasReducedDebug() || mc.gameSettings.reducedDebugInfo || !mc.thePlayer.capabilities.isCreativeMode) {
+        if (mc.player.hasReducedDebug() || mc.gameSettings.reducedDebugInfo || !mc.player.capabilities.isCreativeMode) {
             return;
         }
         List<String> left = event.getLeft();
@@ -103,8 +105,6 @@ public enum RenderTickListener {
         if (mouseOver == null) {
             return;
         }
-        Type type = mouseOver.typeOfHit;
-
         boolean both = BCCoreConfig.useLocalServerOnClient;
 
         IDebuggable client = getDebuggableObject(mouseOver);
@@ -134,7 +134,7 @@ public enum RenderTickListener {
 
     private static IDebuggable getDebuggableObject(RayTraceResult mouseOver) {
         Type type = mouseOver.typeOfHit;
-        WorldClient world = Minecraft.getMinecraft().theWorld;
+        WorldClient world = Minecraft.getMinecraft().world;
         if (type == Type.BLOCK) {
             BlockPos pos = mouseOver.getBlockPos();
             TileEntity tile = world.getTileEntity(pos);
@@ -158,7 +158,6 @@ public enum RenderTickListener {
     }
 
     private static void appendDiff(List<String> dest, List<String> first, List<String> second, String headerFirst, String headerSecond) {
-        if (first.isEmpty()) return;
         dest.add("");
         dest.add(headerFirst);
         dest.addAll(first);
@@ -185,31 +184,31 @@ public enum RenderTickListener {
     }
 
     @SubscribeEvent
-    public void tick(RenderWorldLastEvent event) {
+    public static void tick(RenderWorldLastEvent event) {
         float partialTicks = event.getPartialTicks();
         renderHeldItemInWorld(partialTicks);
     }
 
     private static void renderHeldItemInWorld(float partialTicks) {
         Minecraft mc = Minecraft.getMinecraft();
-        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        EntityPlayer player = Minecraft.getMinecraft().player;
         if (player == null) return;
-        ItemStack mainHand = player.getHeldItemMainhand();
-        ItemStack offHand = player.getHeldItemOffhand();
-        WorldClient world = mc.theWorld;
+        ItemStack mainHand = StackUtil.asNonNull(player.getHeldItemMainhand());
+        ItemStack offHand = StackUtil.asNonNull(player.getHeldItemOffhand());
+        WorldClient world = mc.world;
 
         mc.mcProfiler.startSection("bc");
         mc.mcProfiler.startSection("renderWorld");
 
         DetatchedRenderer.fromWorldOriginPre(player, partialTicks);
 
-        Item mainHandItem = mainHand == null ? null : mainHand.getItem();
-        Item offHandItem = offHand == null ? null : offHand.getItem();
+        Item mainHandItem = mainHand.getItem();
+        Item offHandItem = offHand.getItem();
 
         if (mainHandItem == BCCoreItems.mapLocation) {
-            renderMapLocation(world, mainHand);
+            renderMapLocation(mainHand);
         } else if (mainHandItem == BCCoreItems.markerConnector || offHandItem == BCCoreItems.markerConnector) {
-            renderMarkerConnector(world, player, partialTicks);
+            renderMarkerConnector(world, player);
         }
 
         DetatchedRenderer.fromWorldOriginPost();
@@ -218,7 +217,7 @@ public enum RenderTickListener {
         mc.mcProfiler.endSection();
     }
 
-    private static void renderMapLocation(WorldClient world, ItemStack stack) {
+    private static void renderMapLocation(@Nonnull ItemStack stack) {
         MapLocationType type = MapLocationType.getFromStack(stack);
         if (type == MapLocationType.SPOT) {
             EnumFacing face = ItemMapLocation.getPointFace(stack);
@@ -227,7 +226,7 @@ public enum RenderTickListener {
             GL11.glTranslated(box.min().getX(), box.min().getY(), box.min().getZ());
             for (Vec3d[] vec : vectors) {
                 LaserData_BC8 laser = new LaserData_BC8(BuildCraftLaserManager.STRIPES_WRITE, vec[0], vec[1], 1 / 16.0);
-                LaserRenderer_BC8.renderLaserGlList(laser);
+                LaserRenderer_BC8.renderLaserStatic(laser);
             }
 
         } else if (type == MapLocationType.AREA) {
@@ -235,7 +234,7 @@ public enum RenderTickListener {
             IBox box = ItemMapLocation.getAreaBox(stack);
             lastRenderedMapLoc.reset();
             lastRenderedMapLoc.initialize(box);
-            LaserBoxRenderer.renderLaserBoxGl(lastRenderedMapLoc, BuildCraftLaserManager.STRIPES_WRITE);
+            LaserBoxRenderer.renderLaserBoxStatic(lastRenderedMapLoc, BuildCraftLaserManager.STRIPES_WRITE);
 
         } else if (type == MapLocationType.PATH) {
             List<BlockPos> path = BCCoreItems.mapLocation.getPath(stack);
@@ -244,8 +243,6 @@ public enum RenderTickListener {
                 for (BlockPos p : path) {
                     if (last == null) {
                         last = p;
-                    } else {
-
                     }
                 }
             }
@@ -256,7 +253,7 @@ public enum RenderTickListener {
         }
     }
 
-    private static void renderMarkerConnector(WorldClient world, EntityPlayer player, float partialTicks) {
+    private static void renderMarkerConnector(WorldClient world, EntityPlayer player) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("marker");
         for (MarkerCache<?> cache : MarkerCache.CACHES) {
@@ -297,7 +294,7 @@ public enum RenderTickListener {
         }
         profiler.endStartSection("render");
         for (LaserData_BC8 laser : toRender) {
-            LaserRenderer_BC8.renderLaserGlList(laser);
+            LaserRenderer_BC8.renderLaserStatic(laser);
         }
         profiler.endSection();
     }

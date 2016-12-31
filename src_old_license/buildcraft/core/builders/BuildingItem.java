@@ -30,7 +30,7 @@ import buildcraft.core.block.BlockDecoration;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 import io.netty.buffer.ByteBuf;
 
@@ -206,8 +206,8 @@ public class BuildingItem implements IBuildingItem, ISerializable {
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
-        nbt.setTag("origin", NBTUtils.writeVec3d(origin));
-        nbt.setTag("destination", NBTUtils.writeVec3d(destination));
+        nbt.setTag("origin", NBTUtilBC.writeVec3d(origin));
+        nbt.setTag("destination", NBTUtilBC.writeVec3d(destination));
         nbt.setFloat("lifetime", lifetime);
 
         NBTTagList items = new NBTTagList();
@@ -240,8 +240,8 @@ public class BuildingItem implements IBuildingItem, ISerializable {
     }
 
     public void readFromNBT(NBTTagCompound nbt) throws MappingNotFoundException {
-        origin = NBTUtils.readVec3d(nbt, "origin");
-        destination = NBTUtils.readVec3d(nbt, "destination");
+        origin = NBTUtilBC.readVec3d(nbt, "origin");
+        destination = NBTUtilBC.readVec3d(nbt, "destination");
         lifetime = nbt.getFloat("lifetime");
 
         NBTTagList items = nbt.getTagList("items", Constants.NBT.TAG_COMPOUND);

@@ -32,7 +32,7 @@ import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.BCLog;
 
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StringUtilBC;
 
 public class Blueprint extends BlueprintBase {
@@ -320,7 +320,7 @@ public class Blueprint extends BlueprintBase {
         Item item = Item.REGISTRY.getObject(new ResourceLocation("BuildCraft|Builders:blueprintItem"));
         if (item == null) throw new Error("Could not find the blueprint item! Did you attempt to use this without buildcraft builders installed?");
         ItemStack stack = new ItemStack(item, 1, 1);
-        NBTTagCompound nbt = NBTUtils.getItemData(stack);
+        NBTTagCompound nbt = NBTUtilBC.getItemData(stack);
         id.write(nbt);
         nbt.setString("author", author);
         nbt.setString("name", id.name);

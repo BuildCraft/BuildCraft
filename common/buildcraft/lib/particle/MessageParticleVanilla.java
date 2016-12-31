@@ -77,7 +77,7 @@ public class MessageParticleVanilla implements IMessage {
 
         @SideOnly(Side.CLIENT)
         private void handleClient(MessageParticleVanilla message, MessageContext ctx) {
-            World world = Minecraft.getMinecraft().theWorld;
+            World world = Minecraft.getMinecraft().world;
             if (world == null) {
                 if (DEBUG) {
                     BCLog.logger.warn("[lib.messages][particle.vanilla] The world was null for a message!");

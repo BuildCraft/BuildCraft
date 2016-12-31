@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.client.sprite.RawSprite;
-import buildcraft.lib.gui.pos.IPositionedElement;
+import buildcraft.lib.gui.pos.IGuiArea;
 
 public class GuiIcon implements ISimpleDrawable {
     public final ISprite sprite;
@@ -48,7 +48,7 @@ public class GuiIcon implements ISimpleDrawable {
         this.drawScaledInside(x, y, this.width, this.height);
     }
 
-    public void drawScaledInside(IPositionedElement element) {
+    public void drawScaledInside(IGuiArea element) {
         drawScaledInside(element.getX(), element.getY(), element.getWidth(), element.getHeight());
     }
 
@@ -117,7 +117,7 @@ public class GuiIcon implements ISimpleDrawable {
         GL11.glVertex2d(x, y);
     }
 
-    public void drawCutInside(IPositionedElement element) {
+    public void drawCutInside(IGuiArea element) {
         drawCutInside(element.getX(), element.getY(), element.getWidth(), element.getHeight());
     }
 

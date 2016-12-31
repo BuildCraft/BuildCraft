@@ -11,7 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.transport.TileFilteredBuffer;
 
 public class GuiFilteredBufferOld extends GuiContainer {
@@ -48,7 +48,7 @@ public class GuiFilteredBufferOld extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-        String title = StringUtilBC.localize("tile.filteredBufferBlock.name");
+        String title = LocaleUtil.localize("tile.filteredBufferBlock.name");
         int xPos = (xSize - fontRendererObj.getStringWidth(title)) / 2;
         fontRendererObj.drawString(title, xPos, 10, 0x404040);
     }

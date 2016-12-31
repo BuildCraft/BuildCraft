@@ -35,7 +35,7 @@ import buildcraft.transport.tile.TileFilteredBuffer;
 import buildcraft.transport.tile.TilePipeHolder;
 
 public abstract class BCTransportProxy implements IGuiHandler {
-    @SidedProxy
+    @SidedProxy(modId = BCTransport.MODID)
     private static BCTransportProxy proxy;
 
     public static BCTransportProxy getProxy() {

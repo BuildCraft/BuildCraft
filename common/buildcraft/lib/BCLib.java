@@ -14,16 +14,21 @@ import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.BCModules;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
-import buildcraft.lib.bpt.vanilla.VanillaSchematics;
+import buildcraft.lib.fluids.CoolantRegistry;
+import buildcraft.lib.fluids.FuelRegistry;
 import buildcraft.lib.item.ItemManager;
+import buildcraft.lib.list.ListMatchHandlerFluid;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.FakePlayerUtil;
+import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 
@@ -31,27 +36,36 @@ import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 @Mod(modid = BCLib.MODID,
      name = "BuildCraft Lib",
      version = BCLib.VERSION,
-     acceptedMinecraftVersions = "[1.10.2]",
-     dependencies = "required-after:Forge@[12.17.0.1909,)")
+     acceptedMinecraftVersions = "[1.11]",
+     dependencies = "required-after:forge@[13.19.0.2176,)")
 //@formatter:on
 public class BCLib {
     public static final String MODID = "buildcraftlib";
-    public static final String VERSION = "@VERSION@";
+    public static final String VERSION = "{$version}";
 
     @Instance(MODID)
     public static BCLib INSTANCE;
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent evt) {
+        BCLog.logger.info("");
+        BCLog.logger.info("Starting BuildCraft " + BCLib.VERSION);
+        BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2016");
+        BCLog.logger.info("http://www.mod-buildcraft.com");
+        BCLog.logger.info("");
+        BCModules.fmlPreInit();
+
         BuildcraftRecipeRegistry.assemblyRecipes = AssemblyRecipeRegistry.INSTANCE;
         BuildcraftRecipeRegistry.integrationRecipes = IntegrationRecipeRegistry.INSTANCE;
-
-        BCModules.fmlPreInit();
+        BuildcraftFuelRegistry.fuel = FuelRegistry.INSTANCE;
+        BuildcraftFuelRegistry.coolant = CoolantRegistry.INSTANCE;
         BuildCraftAPI.fakePlayerProvider = FakePlayerUtil.INSTANCE;
+
         BCLibProxy.getProxy().fmlPreInit();
 
         BCLibItems.preInit();
 
+        BuildCraftObjectCaches.fmlPreInit();
         BCMessageHandler.fmlPreInit();
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCLibProxy.getProxy());
 
@@ -62,7 +76,6 @@ public class BCLib {
     public static void init(FMLInitializationEvent evt) {
         BCLibProxy.getProxy().fmlInit();
 
-        VanillaSchematics.fmlInit();
         VanillaListHandlers.fmlInit();
         VanillaPaintHandlers.fmlInit();
         VanillaRotationHandlers.fmlInit();
@@ -77,9 +90,11 @@ public class BCLib {
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
         BCLibProxy.getProxy().fmlPostInit();
+        BuildCraftObjectCaches.fmlPostInit();
         BCMessageHandler.fmlPostInit();
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();
+        ListMatchHandlerFluid.fmlPostInit();
     }
 
     @Mod.EventHandler

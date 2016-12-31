@@ -54,7 +54,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     @Override
     public void update() {
         battery.tick(getWorld(), getPos());
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             return;
         }
     }

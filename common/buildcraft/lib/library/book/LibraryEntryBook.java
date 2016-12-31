@@ -21,7 +21,7 @@ import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.library.ILibraryEntryData;
 import buildcraft.lib.library.LibraryDatabase_Neptune;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.ZipFileHelper;
 
 public class LibraryEntryBook implements ILibraryEntryData {
@@ -102,7 +102,7 @@ public class LibraryEntryBook implements ILibraryEntryData {
 
     public ItemStack saveToStack() {
         ItemStack stack = new ItemStack(Items.WRITTEN_BOOK);
-        NBTTagCompound nbt = NBTUtils.getItemData(stack);
+        NBTTagCompound nbt = NBTUtilBC.getItemData(stack);
         NBTTagList pages = new NBTTagList();
         for (String rawText : this.pages) {
             TextComponentString text = new TextComponentString(rawText);

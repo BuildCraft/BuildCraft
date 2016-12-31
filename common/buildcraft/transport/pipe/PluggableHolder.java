@@ -15,6 +15,7 @@ import buildcraft.api.transport.neptune.PipeAPI;
 import buildcraft.api.transport.neptune.PipePluggable;
 import buildcraft.api.transport.neptune.PluggableDefinition;
 
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.tile.TilePipeHolder;
 
 public final class PluggableHolder {
@@ -25,7 +26,7 @@ public final class PluggableHolder {
     public final TilePipeHolder holder;
     public final EnumFacing side;
     public PipePluggable pluggable;
-    /** Used to determine if a full "create" message should be sent when {@link #writePayload(PacketBuffer, Side)} is
+    /** Used to determine if a full "create" message should be sent when {@link #writePayload(PacketBufferBC, Side)} is
      * called. If this is false it means that last time it was null, and a create message should. */
     private boolean lastGeneralExisted = false;
 
@@ -87,7 +88,7 @@ public final class PluggableHolder {
     }
 
     private void readCreateInternal(PacketBuffer buffer) {
-        ResourceLocation identifer = new ResourceLocation(buffer.readStringFromBuffer(256));
+        ResourceLocation identifer = new ResourceLocation(buffer.readString(256));
         PluggableDefinition def = PipeAPI.pluggableRegistry.getDefinition(identifer);
         if (def == null) {
             throw new IllegalStateException("Unknown remote pluggable \"" + identifer + "\"");
@@ -96,7 +97,7 @@ public final class PluggableHolder {
         holder.eventBus.registerHandler(pluggable);
     }
 
-    public void writePayload(PacketBuffer buffer, Side netSide) {
+    public void writePayload(PacketBufferBC buffer, Side netSide) {
         if (pluggable == null) {
             lastGeneralExisted = false;
             buffer.writeByte(ID_REMOVE_PLUG);
@@ -110,7 +111,7 @@ public final class PluggableHolder {
         }
     }
 
-    public void readPayload(PacketBuffer buffer, Side netSide, MessageContext ctx) throws IOException {
+    public void readPayload(PacketBufferBC buffer, Side netSide, MessageContext ctx) throws IOException {
         int id = buffer.readUnsignedByte();
         if (id == ID_REMOVE_PLUG) {
             holder.eventBus.unregisterHandler(pluggable);

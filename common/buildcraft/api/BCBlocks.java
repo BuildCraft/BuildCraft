@@ -1,7 +1,11 @@
 package buildcraft.api;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fml.common.Loader;
@@ -36,6 +40,9 @@ public class BCBlocks {
 
     // BC Transport
 
+    // Set of items scanned
+    private static final Set<String> SCANNED = DEBUG ? new HashSet<String>() : null;
+
     static {
         if (!Loader.instance().hasReachedState(LoaderState.INITIALIZATION)) {
             throw new RuntimeException("Accessed BC blocks too early! You can only use them from init onwards!");
@@ -50,6 +57,17 @@ public class BCBlocks {
         energyEngineStirling = getRegisteredBlock(energy, "engine_stirling");
         energyEngineCombustion = getRegisteredBlock(energy, "engine_combustion");
         energyEngineCreative = getRegisteredBlock(energy, "engine_creative");
+
+        if (DEBUG) {
+            for (Block block : Block.REGISTRY) {
+                ResourceLocation id = block.getRegistryName();
+                if (id.getResourceDomain().startsWith("buildcraft")) {
+                    if (!SCANNED.contains(id.toString())) {
+                        BCLog.logger.warn("[api.blocks] Found a block " + id.toString() + " that was not registered with the API! Is this a bug?");
+                    }
+                }
+            }
+        }
     }
 
     private static Block getRegisteredBlock(String module, String regName) {
@@ -59,6 +77,7 @@ public class BCBlocks {
         if (block != Blocks.AIR) {
             if (DEBUG) {
                 BCLog.logger.info("[api.blocks] Found the block " + regName + " from the module " + module);
+                SCANNED.add(modid + ":" + regName);
             }
             return block;
         }

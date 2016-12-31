@@ -20,6 +20,7 @@ import net.minecraft.world.World;
 
 import buildcraft.lib.client.model.ModelItemSimple;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.BCTransportModels;
 import buildcraft.transport.gate.GateVariant;
 import buildcraft.transport.item.ItemPluggableGate;
@@ -93,7 +94,7 @@ public enum ModelGateItem implements IBakedModel {
 
         @Override
         public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
-            GateVariant variant = ItemPluggableGate.getVariant(stack);
+            GateVariant variant = ItemPluggableGate.getVariant(StackUtil.asNonNull(stack));
             return new ModelItemSimple(getQuads(variant), ModelItemSimple.TRANSFORM_PLUG_AS_ITEM_BIGGER);
         }
     }

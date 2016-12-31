@@ -42,7 +42,7 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
                     player.getName().equals(box.player) ? RENDER_SCALE_HIGHLIGHT : RENDER_SCALE
             );
 
-            Arrays.stream(box.box.laserData).forEach(data -> LaserRenderer_BC8.renderLaserBuffer(data, vb));
+            Arrays.stream(box.box.laserData).forEach(data -> LaserRenderer_BC8.renderLaserDynamic(data, vb));
         });
 
         Tessellator.getInstance().draw();

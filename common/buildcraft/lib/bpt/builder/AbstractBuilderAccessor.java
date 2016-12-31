@@ -4,6 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.bpt.builder;
 
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,18 +17,17 @@ import buildcraft.api.bpt.BptPermissions;
 import buildcraft.api.bpt.IBuilderAccessor;
 
 import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.permission.PlayerOwner;
 
 public abstract class AbstractBuilderAccessor implements IBuilderAccessor {
-    private final PlayerOwner owner;
+    private final GameProfile owner;
     private final BuilderAnimationManager animationManager;
 
-    public AbstractBuilderAccessor(PlayerOwner owner, BuilderAnimationManager animationManager) {
+    public AbstractBuilderAccessor(GameProfile owner, BuilderAnimationManager animationManager) {
         this.owner = owner;
         this.animationManager = animationManager;
     }
 
-    public AbstractBuilderAccessor(PlayerOwner owner, BuilderAnimationManager animation, NBTTagCompound nbt) {
+    public AbstractBuilderAccessor(GameProfile owner, BuilderAnimationManager animation, NBTTagCompound nbt) {
         this(owner, animation);
     }
 
@@ -41,7 +42,7 @@ public abstract class AbstractBuilderAccessor implements IBuilderAccessor {
     }
 
     @Override
-    public PlayerOwner getOwner() {
+    public GameProfile getOwner() {
         return owner;
     }
 

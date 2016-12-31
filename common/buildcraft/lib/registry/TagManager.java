@@ -278,6 +278,7 @@ public class TagManager {
         // BC Energy Blocks
         // BC Energy Tiles
         registerTag("tile.engine.stone").reg("engine.stone");
+        registerTag("tile.engine.iron").reg("engine.iron");
 
         endBatch(prependTags("energy:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 
@@ -319,7 +320,7 @@ public class TagManager {
         registerTag("item.plug.blocker").reg("plug_blocker").locale("PipePlug").model("plug_blocker");
         registerTag("item.plug.gate").reg("plug_gate").locale("gate").model("pluggable/gate").tab("buildcraft.gate");
         registerTag("item.plug.pulsar").reg("plug_pulsar").locale("pulsar").model("plug_pulsar");
-        registerTag("item.wire").reg("wire").locale("wire").model("wire/");
+        registerTag("item.wire").reg("wire").locale("pipeWire").model("wire/");
         // BC Transport Pipes
         startBatch();// Pipes
         registerTag("item.pipe.buildcrafttransport.structure").reg("pipe_structure").locale("PipeStructureCobblestone");
@@ -387,7 +388,7 @@ public class TagManager {
         // BC Silicon Item Blocks
         registerTag("item.block.laser").reg("laser").locale("laserBlock").model("laser");
         registerTag("item.block.assembly_table").reg("assembly_table").locale("assemblyTableBlock").model("assembly_table");
-        registerTag("item.block.advanced_crafting_table").reg("advanced_crafting_table").locale("advancedCraftingTableBlock").model("advanced_crafting_table");
+        registerTag("item.block.advanced_crafting_table").reg("advanced_crafting_table").locale("assemblyWorkbenchBlock").model("advanced_crafting_table");
         registerTag("item.block.integration_table").reg("integration_table").locale("integrationTableBlock").model("integration_table");
         registerTag("item.block.charging_table").reg("charging_table").locale("chargingTableBlock").model("charging_table");
         registerTag("item.block.programming_table").reg("programming_table").locale("programmingTableBlock").model("programming_table");

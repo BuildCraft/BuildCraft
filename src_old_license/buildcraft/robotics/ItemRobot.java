@@ -32,8 +32,8 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.lib.misc.NBTUtils;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
 
@@ -96,11 +96,11 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 
             int energy = getEnergy(cpt);
             int pct = energy * 100 / EntityRobotBase.MAX_ENERGY;
-            String enInfo = pct + "% " + StringUtilBC.localize("tip.gate.charged");
+            String enInfo = pct + "% " + LocaleUtil.localize("tip.gate.charged");
             if (energy == EntityRobotBase.MAX_ENERGY) {
-                enInfo = StringUtilBC.localize("tip.gate.fullcharge");
+                enInfo = LocaleUtil.localize("tip.gate.fullcharge");
             } else if (energy == 0) {
-                enInfo = StringUtilBC.localize("tip.gate.nocharge");
+                enInfo = LocaleUtil.localize("tip.gate.nocharge");
             }
             enInfo = (pct >= 80 ? EnumChatFormatting.GREEN : (pct >= 50 ? EnumChatFormatting.YELLOW : (pct >= 30 ? EnumChatFormatting.GOLD
                 : (pct >= 20 ? EnumChatFormatting.RED : EnumChatFormatting.DARK_RED)))) + enInfo;
@@ -112,8 +112,8 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
         ItemStack robot = new ItemStack(BuildCraftRobotics.robotItem);
         NBTTagCompound boardCpt = new NBTTagCompound();
         board.createBoard(boardCpt);
-        NBTUtils.getItemData(robot).setTag("board", boardCpt);
-        NBTUtils.getItemData(robot).setInteger("energy", energy);
+        NBTUtilBC.getItemData(robot).setTag("board", boardCpt);
+        NBTUtilBC.getItemData(robot).setInteger("energy", energy);
         return robot;
     }
 
@@ -235,7 +235,7 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
     }
 
     private static NBTTagCompound getNBT(ItemStack stack) {
-        NBTTagCompound cpt = NBTUtils.getItemData(stack);
+        NBTTagCompound cpt = NBTUtilBC.getItemData(stack);
         if (!cpt.hasKey("board")) {
             RedstoneBoardRegistry.instance.getEmptyRobotBoard().createBoard(cpt);
         }

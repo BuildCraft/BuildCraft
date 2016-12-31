@@ -17,6 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.transport.pipes.PipePowerWood;
 
@@ -68,8 +69,8 @@ public final class PipeToolTipManager {
     private PipeToolTipManager() {}
 
     private static void addTipToList(String tipTag, List<String> tips) {
-        if (StringUtilBC.canLocalize(tipTag)) {
-            String localized = StringUtilBC.localize(tipTag);
+        if (LocaleUtil.canLocalize(tipTag)) {
+            String localized = LocaleUtil.localize(tipTag);
             if (localized != null) {
                 List<String> lines = StringUtilBC.newLineSplitter.splitToList(localized);
                 tips.addAll(lines);

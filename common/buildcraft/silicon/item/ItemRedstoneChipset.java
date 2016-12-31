@@ -1,6 +1,5 @@
 package buildcraft.silicon.item;
 
-import java.util.List;
 import java.util.Locale;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -8,6 +7,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -31,7 +31,7 @@ public class ItemRedstoneChipset extends ItemBC_Neptune {
     }
 
     @Override
-    public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> subItems) {
+    public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> subItems) {
         for (Type type : Type.values()) {
             subItems.add(new ItemStack(item, 1, type.ordinal()));
         }

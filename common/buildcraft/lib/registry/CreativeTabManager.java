@@ -10,6 +10,7 @@ import java.util.Map;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class CreativeTabManager {
     private static final Map<String, CreativeTabBC> tabMap = new HashMap<>();
@@ -31,25 +32,49 @@ public class CreativeTabManager {
         }
     }
 
-    public static void createTab(String name) {
-        tabMap.put(name, new CreativeTabBC(name));
+    public static CreativeTabBC createTab(String name) {
+        CreativeTabBC tab = tabMap.get(name);
+        if (tab != null) {
+            return tab;
+        }
+        tab = new CreativeTabBC(name);
+        tabMap.put(name, tab);
+        return tab;
     }
 
     public static void setItem(String name, Item item) {
         if (item != null) {
-            tabMap.get(name).item = item;
+            setItemStack(name, new ItemStack(item));
         }
     }
 
-    private static class CreativeTabBC extends CreativeTabs {
-        private Item item = Items.COMPARATOR; // Temp.
+    public static void setItemStack(String name, ItemStack item) {
+        CreativeTabBC tab = tabMap.get(name);
+        if (tab != null) {
+            tab.setItem(item);
+        }
+    }
+
+    public static class CreativeTabBC extends CreativeTabs {
+        private ItemStack item = new ItemStack(Items.COMPARATOR); // Temp.
 
         public CreativeTabBC(String name) {
             super(name);
         }
 
+        public void setItem(Item item) {
+            if (item != null) {
+                this.item = new ItemStack(item);
+            }
+        }
+
+        public void setItem(ItemStack stack) {
+            if (stack == null || stack.isEmpty()) return;
+            item = stack;
+        }
+
         @Override
-        public Item getTabIconItem() {
+        public ItemStack getTabIconItem() {
             return item;
         }
     }

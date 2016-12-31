@@ -1,8 +1,7 @@
 package buildcraft.lib.inventory;
 
-import java.util.List;
-
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
 import buildcraft.api.inventory.IItemTransactor;
 
@@ -13,7 +12,7 @@ public interface IItemExtractable extends IItemTransactor {
     }
 
     @Override
-    default List<ItemStack> insert(List<ItemStack> stacks, boolean simulate) {
+    default NonNullList<ItemStack> insert(NonNullList<ItemStack> stacks, boolean simulate) {
         return stacks;
     }
 }

@@ -7,9 +7,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.lib.net.IPayloadReceiver;
+import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.net.command.IPayloadReceiver;
-import buildcraft.lib.net.command.IPayloadWriter;
 
 /** Defines some sort of separate element that exists on both the server and client. Doesn't draw directly. */
 public abstract class Widget_Neptune<C extends ContainerBC_Neptune> implements IPayloadReceiver {
@@ -20,7 +20,7 @@ public abstract class Widget_Neptune<C extends ContainerBC_Neptune> implements I
     }
 
     public boolean isRemote() {
-        return container.player.worldObj.isRemote;
+        return container.player.world.isRemote;
     }
 
     // Net updating

@@ -4,16 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
+import buildcraft.lib.client.render.fluid.FluidRenderer;
+import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
 public class GuiUtil {
@@ -23,7 +31,7 @@ public class GuiUtil {
             public void refresh() {
                 delegate().clear();
                 ItemStack stack = stackRef.get();
-                if (stack != null) {
+                if (!stack.isEmpty()) {
                     EntityPlayer player = gui.container.player;
                     boolean advanced = gui.mc.gameSettings.advancedItemTooltips;
                     delegate().addAll(stack.getTooltip(player, advanced));
@@ -173,5 +181,45 @@ public class GuiUtil {
             return tooltipHeight + 5;
         }
         return 0;
+    }
+
+    public static void drawFluid(IGuiArea position, Tank tank) {
+        drawFluid(position, tank.getFluidForRender(), tank.getCapacity());
+    }
+
+    public static void drawFluid(IGuiArea position, FluidStack fluid, int capacity) {
+        if (fluid == null || fluid.amount <= 0) return;
+        drawFluid(position, fluid, fluid.amount, capacity);
+    }
+
+    public static void drawFluid(IGuiArea position, FluidStack fluid, int amount, int capacity) {
+        if (fluid == null || amount <= 0) return;
+
+        int height = amount * position.getHeight() / capacity;
+
+        int startX = position.getX();
+        int startY;
+        int endX = startX + position.getWidth();
+        int endY;
+
+        if (!fluid.getFluid().isGaseous(fluid)) {
+            startY = position.getEndY();
+            endY = startY - height;
+        } else {
+            endY = position.getEndY();
+            startY = endY - height;
+        }
+
+        FluidRenderer.drawFluidForGui(fluid, startX, startY, endX, endY);
+    }
+
+    public static void scissor(int x, int y, int width, int height) {
+        Minecraft mc = Minecraft.getMinecraft();
+        ScaledResolution res = new ScaledResolution(mc);
+        double scaleW = mc.displayWidth / res.getScaledWidth_double();
+        double scaleH = mc.displayHeight / res.getScaledHeight_double();
+        int rx = (int) (x * scaleW);
+        int ry = (int) (mc.displayHeight - (y + height) * scaleH);
+        GL11.glScissor(rx, ry, (int) (width * scaleW), (int) (height * scaleH));
     }
 }

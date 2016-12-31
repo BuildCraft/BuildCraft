@@ -47,7 +47,7 @@ public class PositionOffset implements IGuiPosition {
         if (by instanceof PositionOffset) {
             return offset(by.getX(), by.getY());
         } else {
-            return parent.offset(by).offset(this);
+            return IGuiPosition.super.offset(by);
         }
     }
 }

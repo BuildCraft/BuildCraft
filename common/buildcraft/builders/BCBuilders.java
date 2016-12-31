@@ -17,7 +17,12 @@ import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.RegistryHelper;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = BCBuilders.MODID, name = "BuildCraft Builders", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
+//@formatter:off
+@Mod(modid = BCBuilders.MODID,
+   name = "BuildCraft Builders",
+   version = BCLib.VERSION,
+   dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+//@formatter:on
 public class BCBuilders {
     public static final String MODID = "buildcraftbuilders";
 
@@ -32,6 +37,7 @@ public class BCBuilders {
         BCBuildersBlocks.preInit();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCBuildersProxy.getProxy());
+        BCBuildersProxy.getProxy().fmlPreInit();
     }
 
     @Mod.EventHandler

@@ -4,7 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.lib.misc;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.inventory.InventoryCrafting;
@@ -22,14 +21,14 @@ public final class CraftingUtil {
     public static IRecipe findMatchingRecipe(InventoryCrafting par1InventoryCrafting, World par2World) {
         // Begin repair recipe handler
         int itemNum = 0;
-        ItemStack item1 = StackUtil.INVALID_STACK;
-        ItemStack item2 = StackUtil.INVALID_STACK;
+        ItemStack item1 = ItemStack.EMPTY;
+        ItemStack item2 = ItemStack.EMPTY;
         int slot;
 
         for (slot = 0; slot < par1InventoryCrafting.getSizeInventory(); ++slot) {
             ItemStack itemInSlot = par1InventoryCrafting.getStackInSlot(slot);
 
-            if (StackUtil.isValid(itemInSlot)) {
+            if (!itemInSlot.isEmpty()) {
                 if (itemNum == 0) {
                     item1 = itemInSlot;
                 }
@@ -42,7 +41,7 @@ public final class CraftingUtil {
             }
         }
 
-        if (itemNum == 2 && item1.getItem() == item2.getItem() && item1.stackSize == 1 && item2.stackSize == 1 && item1.getItem().isRepairable()) {
+        if (itemNum == 2 && item1.getItem() == item2.getItem() && item1.getCount() == 1 && item2.getCount() == 1 && item1.getItem().isRepairable()) {
             int item1Durability = item1.getMaxDamage() - item1.getItemDamage();
             int item2Durability = item2.getMaxDamage() - item2.getItemDamage();
             int repairAmt = item1Durability + item2Durability + item1.getMaxDamage() * 5 / 100;
@@ -52,11 +51,7 @@ public final class CraftingUtil {
                 newDamage = 0;
             }
 
-            List<ItemStack> ingredients = new ArrayList<>(2);
-            ingredients.add(item1);
-            ingredients.add(item2);
-
-            return new ShapelessRecipes(new ItemStack(item1.getItem(), 1, newDamage), ingredients);
+            return new ShapelessRecipes(new ItemStack(item1.getItem(), 1, newDamage), StackUtil.listOf(item1, item2));
         } else if (itemNum > 0) {
             // End repair recipe handler
 

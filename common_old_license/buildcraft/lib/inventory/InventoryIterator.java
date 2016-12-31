@@ -11,10 +11,11 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.api.core.IInvSlot;
+
+import buildcraft.lib.misc.CapUtil;
 
 public final class InventoryIterator {
 
@@ -26,7 +27,7 @@ public final class InventoryIterator {
     }
 
     public static Iterable<IInvSlot> getIterable(ICapabilityProvider provider, EnumFacing side) {
-        IItemHandler itemHandler = provider.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
+        IItemHandler itemHandler = provider.getCapability(CapUtil.CAP_ITEMS, side);
         if (itemHandler != null) {
             return new InventoryIteratorHandler(itemHandler);
         } else if (provider instanceof IInventory) {

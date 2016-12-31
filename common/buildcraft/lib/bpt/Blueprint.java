@@ -23,13 +23,11 @@ import buildcraft.api.bpt.SchematicException;
 import buildcraft.api.bpt.SchematicFactoryWorldBlock;
 
 import buildcraft.lib.bpt.builder.SchematicEntityOffset;
-import buildcraft.lib.bpt.vanilla.SchematicAir;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
 public class Blueprint extends BlueprintBase {
-    /** Stores all of the blocks, using {@link BlueprintBase#min} as the origin. */
     private SchematicBlock[][][] contentBlocks;
     private List<SchematicEntityOffset> contentEntities;
 
@@ -65,7 +63,7 @@ public class Blueprint extends BlueprintBase {
                     if (schema != null) {
                         contentBlocks[x][y][z] = schema;
                     } else {
-                        contentBlocks[x][y][z] = SchematicAir.INSTANCE;
+                        contentBlocks[x][y][z] = null;//SchematicAir.INSTANCE;
                     }
                 }
             }

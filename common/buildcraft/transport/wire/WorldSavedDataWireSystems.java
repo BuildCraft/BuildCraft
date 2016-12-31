@@ -1,11 +1,13 @@
 package buildcraft.transport.wire;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.api.transport.neptune.EnumWirePart;
-import buildcraft.api.transport.neptune.IPipeHolder;
-import buildcraft.lib.BCMessageHandler;
-import buildcraft.transport.plug.PluggableGate;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import com.google.common.base.Predicates;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,12 +16,15 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
-import net.minecraftforge.common.util.Constants;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import net.minecraftforge.common.util.Constants;
+
+import buildcraft.api.core.BCLog;
+import buildcraft.api.transport.neptune.EnumWirePart;
+import buildcraft.api.transport.neptune.IPipeHolder;
+
+import buildcraft.lib.BCMessageHandler;
+import buildcraft.transport.plug.PluggableGate;
 
 public class WorldSavedDataWireSystems extends WorldSavedData {
     public static final String DATA_NAME = "buildcraft_wire_systems";
@@ -29,7 +34,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
     public boolean structureChanged = true;
     public final List<WireSystem> changedSystems = new ArrayList<>();
     public final List<EntityPlayerMP> changedPlayers = new ArrayList<>();
-    public final Map<WireSystem.Element, IWireEmitter> emittersCache = new HashMap<>();
+    public final Map<WireSystem.WireElement, IWireEmitter> emittersCache = new HashMap<>();
 
     public WorldSavedDataWireSystems() {
         super(DATA_NAME);
@@ -45,7 +50,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
         emittersCache.clear();
     }
 
-    public List<WireSystem> getWireSystemsWithElement(WireSystem.Element element) {
+    public List<WireSystem> getWireSystemsWithElement(WireSystem.WireElement element) {
         return wireSystems.keySet().stream().filter(wireSystem -> wireSystem.hasElement(element)).collect(Collectors.toList());
     }
 
@@ -54,7 +59,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
         markStructureChanged();
     }
 
-    public void buildAndAddWireSystem(WireSystem.Element element) {
+    public void buildAndAddWireSystem(WireSystem.WireElement element) {
         WireSystem wireSystem = new WireSystem().build(this, element);
         if(!wireSystem.isEmpty()) {
             wireSystems.put(wireSystem, false);
@@ -65,13 +70,13 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
 
     public void rebuildWireSystemsAround(IPipeHolder holder) {
         Arrays.stream(EnumWirePart.values())
-                .flatMap(part -> WireSystem.getConnectedElementsOfElement(world, new WireSystem.Element(holder.getPipePos(), part)).stream())
+                .flatMap(part -> WireSystem.getConnectedElementsOfElement(world, new WireSystem.WireElement(holder.getPipePos(), part)).stream())
                 .distinct()
                 .forEach(this::buildAndAddWireSystem);
     }
 
-    public IWireEmitter getEmitter(WireSystem.Element element) {
-        if(element.type == WireSystem.Element.Type.EMITTER_SIDE) {
+    public IWireEmitter getEmitter(WireSystem.WireElement element) {
+        if(element.type == WireSystem.WireElement.Type.EMITTER_SIDE) {
             if(!emittersCache.containsKey(element)) {
                 TileEntity tile = world.getTileEntity(element.blockPos);
                 if(tile instanceof IPipeHolder) {
@@ -82,18 +87,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
                     }
                 }
                 if(!emittersCache.containsKey(element)) {
-                    emittersCache.put(element, new IWireEmitter() {
-                        @Override
-                        public boolean isEmitting(EnumDyeColor colour) {
-                            BCLog.logger.warn("Trying to get not existed emitter, this is a bug: " + element);
-                            return false;
-                        }
-
-                        @Override
-                        public void emitWire(EnumDyeColor colour) {
-
-                        }
-                    });
+                    throw new IllegalStateException("Tried to get a wire element when none existed! THIS IS A BUG "+element  );
                 }
             }
             return emittersCache.get(element);
@@ -101,7 +95,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
         return null;
     }
 
-    public boolean isEmitterEmitting(WireSystem.Element element, EnumDyeColor color) {
+    public boolean isEmitterEmitting(WireSystem.WireElement element, EnumDyeColor color) {
         TileEntity tile = world.getTileEntity(element.blockPos);
         if(tile instanceof IPipeHolder) {
             IPipeHolder holder = (IPipeHolder) tile;
@@ -121,7 +115,6 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
                     })
                     .forEach(changedSystems::add);
         }
-        // noinspection Guava
         world.getPlayers(EntityPlayerMP.class, Predicates.alwaysTrue()).forEach(player -> {
             Map<Integer, WireSystem> wireSystems = this.wireSystems.keySet().stream()
                     .filter(wireSystem -> wireSystem.isPlayerWatching(player) && (structureChanged || changedPlayers.contains(player)))
@@ -177,7 +170,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
         }
         MapStorage storage = world.getPerWorldStorage();
         WorldSavedDataWireSystems instance = (WorldSavedDataWireSystems) storage.getOrLoadData(WorldSavedDataWireSystems.class, DATA_NAME);
-        if(instance == null) {
+        if (instance == null) {
             instance = new WorldSavedDataWireSystems();
             storage.setData(DATA_NAME, instance);
         }

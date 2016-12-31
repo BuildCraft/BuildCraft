@@ -19,7 +19,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class ItemConstructionMarker extends ItemBlock {
 
@@ -34,11 +34,11 @@ public class ItemConstructionMarker extends ItemBlock {
     }
 
     public static boolean linkStarted(ItemStack marker) {
-        return NBTUtils.getItemData(marker).hasKey("x");
+        return NBTUtilBC.getItemData(marker).hasKey("x");
     }
 
     public static void link(ItemStack marker, World world, BlockPos pos) {
-        NBTTagCompound nbt = NBTUtils.getItemData(marker);
+        NBTTagCompound nbt = NBTUtilBC.getItemData(marker);
 
         if (nbt.hasKey("x")) {
             int ox = nbt.getInteger("x");
@@ -80,7 +80,7 @@ public class ItemConstructionMarker extends ItemBlock {
             float par10) {
 
         TileEntity tile = world.getTileEntity(pos);
-        NBTTagCompound nbt = NBTUtils.getItemData(marker);
+        NBTTagCompound nbt = NBTUtilBC.getItemData(marker);
 
         if (nbt.hasKey("x") && !(tile instanceof TileBuilder || tile instanceof TileArchitect || tile instanceof TileConstructionMarker)) {
 

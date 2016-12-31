@@ -10,9 +10,18 @@ import net.minecraft.util.EnumFacing.AxisDirection;
 
 public class ModelUtil {
     public static class UvFaceData {
+        private static final UvFaceData DEFAULT = new UvFaceData();
+
         public float uMin, uMax, vMin, vMax;
 
         public UvFaceData() {}
+
+        public UvFaceData(UvFaceData from) {
+            this.uMin = from.uMin;
+            this.uMax = from.uMax;
+            this.vMin = from.vMin;
+            this.vMax = from.vMax;
+        }
 
         public UvFaceData(float uMin, float uMax, float vMin, float vMax) {
             this.uMin = uMin;
@@ -24,6 +33,9 @@ public class ModelUtil {
 
     public static MutableQuad createFace(EnumFacing face, Tuple3f a, Tuple3f b, Tuple3f c, Tuple3f d, UvFaceData uvs) {
         MutableQuad mutable = new MutableQuad(-1, face);
+        if (uvs == null) {
+            uvs = UvFaceData.DEFAULT;
+        }
         if (face == null || shouldInvertForRender(face)) {
             mutable.getVertex(0).positionv(a).texf(uvs.uMin, uvs.vMin);
             mutable.getVertex(1).positionv(b).texf(uvs.uMin, uvs.vMax);
@@ -43,7 +55,7 @@ public class ModelUtil {
     }
 
     public static MutableQuad createFace(EnumFacing face, Tuple3f center, Tuple3f radius, UvFaceData uvs) {
-        Point3f[] points = ModelUtil.getPointsForFace(face, center, radius);
+        Point3f[] points = getPointsForFace(face, center, radius);
         return createFace(face, points, uvs).normalf(face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ());
     }
 

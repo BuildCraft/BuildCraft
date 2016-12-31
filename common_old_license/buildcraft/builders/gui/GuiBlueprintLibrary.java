@@ -26,9 +26,9 @@ import buildcraft.lib.library.ILibraryEntryData;
 import buildcraft.lib.library.LibraryEntryHeader;
 import buildcraft.lib.library.RemoteLibraryDatabase;
 import buildcraft.lib.library.network.MessageLibraryTransferEntry;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.RenderUtil;
-import buildcraft.lib.misc.StringUtilBC;
 
 public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/library_rw.png");
@@ -65,7 +65,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
     public void initGui() {
         super.initGui();
 
-        deleteButton = new GuiButton(2, guiLeft + 174, guiTop + 109, 25, 20, StringUtilBC.localize("gui.del"));
+        deleteButton = new GuiButton(2, guiLeft + 174, guiTop + 109, 25, 20, LocaleUtil.localize("gui.del"));
         buttonList.add(deleteButton);
 
         guiElements.add(scrollbar);
@@ -75,7 +75,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
 
     @Override
     protected void drawForegroundLayer() {
-        String title = StringUtilBC.localize("tile.libraryBlock.name");
+        String title = LocaleUtil.localize("tile.libraryBlock.name");
         int x = guiLeft;
         int y = guiTop;
         fontRendererObj.drawString(title, x + getCenteredOffset(title), y + 6, 0x404040);

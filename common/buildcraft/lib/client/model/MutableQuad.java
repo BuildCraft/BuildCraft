@@ -66,6 +66,16 @@ public class MutableQuad {
         this.sprite = from.sprite;
     }
 
+    public MutableQuad copyFrom(MutableQuad from) {
+        tintIndex = from.tintIndex;
+        face = from.face;
+        sprite = from.sprite;
+        for (int i = 0; i < 4; i++) {
+            verticies[i].copyFrom(from.verticies[i]);
+        }
+        return this;
+    }
+
     public MutableQuad setTint(int tint) {
         tintIndex = tint;
         return this;

@@ -10,7 +10,7 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.transport.pipe_bc8.EnumContentsJourneyPart;
 import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditableItem;
 import buildcraft.api.transport.pipe_bc8.IPipePropertyProvider.IPipePropertyProviderEditable;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class PipeContentsEditableItem implements IPipeContentsEditableItem {
     private final IPipePropertyProviderEditable propertyProvider;
@@ -100,8 +100,8 @@ public class PipeContentsEditableItem implements IPipeContentsEditableItem {
     public IPipeContentsEditableItem readFromNBT(NBTBase nbt) {
         NBTTagCompound tag = (NBTTagCompound) nbt;
         ItemStack stack = ItemStack.loadItemStackFromNBT(tag.getCompoundTag("stack"));
-        EnumContentsJourneyPart journeyPart = NBTUtils.readEnum(tag.getTag("journeyPart"), EnumContentsJourneyPart.class);
-        EnumFacing direction = NBTUtils.readEnum(tag.getTag("direction"), EnumFacing.class);
+        EnumContentsJourneyPart journeyPart = NBTUtilBC.readEnum(tag.getTag("journeyPart"), EnumContentsJourneyPart.class);
+        EnumFacing direction = NBTUtilBC.readEnum(tag.getTag("direction"), EnumFacing.class);
         double speed = tag.getDouble("speed");
         IPipePropertyProviderEditable provider = propertyProvider.readFromNBT(tag.getTag("properties"));
         return new PipeContentsEditableItem(provider, stack, journeyPart, direction, speed);
@@ -111,8 +111,8 @@ public class PipeContentsEditableItem implements IPipeContentsEditableItem {
     public NBTBase writeToNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         if (stack != null) nbt.setTag("stack", stack.writeToNBT(new NBTTagCompound()));
-        nbt.setTag("journeyPart", NBTUtils.writeEnum(journeyPart));
-        nbt.setTag("direction", NBTUtils.writeEnum(direction));
+        nbt.setTag("journeyPart", NBTUtilBC.writeEnum(journeyPart));
+        nbt.setTag("direction", NBTUtilBC.writeEnum(direction));
         nbt.setDouble("speed", speed);
         nbt.setTag("properties", propertyProvider.writeToNBT());
         return nbt;

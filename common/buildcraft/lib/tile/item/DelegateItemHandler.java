@@ -35,4 +35,9 @@ public class DelegateItemHandler implements IItemHandlerModifiable {
     public void setStackInSlot(int slot, ItemStack stack) {
         delegate.setStackInSlot(slot, stack);
     }
+
+    @Override
+    public int getSlotLimit(int slot) {
+        return delegate.getSlotLimit(slot);
+    }
 }

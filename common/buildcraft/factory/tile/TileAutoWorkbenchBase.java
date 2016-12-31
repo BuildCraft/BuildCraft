@@ -18,6 +18,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -33,13 +34,13 @@ import buildcraft.lib.misc.CraftingUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.tile.TileBCInventory_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 import gnu.trove.set.hash.TIntHashSet;
 
-public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune implements ITickable, IDebuggable, IHasWork {
+public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements ITickable, IDebuggable, IHasWork {
     protected WorkbenchCrafting crafting = createCrafting();
     public final ItemHandlerSimple invBlueprint;
     public final ItemHandlerSimple invMaterials;
@@ -53,10 +54,10 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
     public final DeltaInt deltaProgress = deltaManager.addDelta("progress", EnumNetworkVisibility.GUI_ONLY);
 
     public TileAutoWorkbenchBase(int slots) {
-        invBlueprint = addInventory("blueprint", slots, EnumAccess.NONE);
-        invMaterials = addInventory("materials", slots, EnumAccess.INSERT, EnumPipePart.VALUES);
-        invResult = addInventory("result", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
-        invOverflow = addInventory("overflow", slots, EnumAccess.EXTRACT, EnumPipePart.VALUES);
+        invBlueprint = itemManager.addInvHandler("blueprint", slots, EnumAccess.NONE);
+        invMaterials = itemManager.addInvHandler("materials", slots, EnumAccess.INSERT, EnumPipePart.VALUES);
+        invResult = itemManager.addInvHandler("result", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
+        invOverflow = itemManager.addInvHandler("overflow", slots, EnumAccess.EXTRACT, EnumPipePart.VALUES);
         itemStackCache = new HashMap<>();
     }
 
@@ -100,7 +101,7 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
                 progress++;
                 return;
             }
-            if (invOverflow.getStackInSlot(1) == null) {
+            if (invOverflow.getStackInSlot(1).isEmpty()) {
                 ItemStack out = crafting.craft();
                 ItemStack leftOver = invResult.insertItem(0, out, false);
                 InventoryUtil.drop(getWorld(), getPos(), leftOver);
@@ -166,7 +167,7 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
                 }
             }
 
-            if (after != null) {
+            if (!after.isEmpty()) {
                 if (!itemStackCache.containsKey(keyAfter)) {
                     // Use a different _no_entry_value as 0 is a valid slot
                     itemStackCache.put(keyAfter, new TIntHashSet(10, 0.5f, -1));
@@ -180,7 +181,7 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
     }
 
     public void updateRecipe() {
-        this.currentRecipe = CraftingUtil.findMatchingRecipe(this.crafting, worldObj);
+        this.currentRecipe = CraftingUtil.findMatchingRecipe(this.crafting, world);
     }
 
     @Override
@@ -209,17 +210,18 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
             this.craftingSlots = new CraftingSlot[width * height];
         }
 
+        @Nonnull
         public ItemStack craft() {
             enableBindings();
-            ItemStack out = currentRecipe.getCraftingResult(crafting);
-            if (out != null) {
-                ItemStack[] leftOvers = currentRecipe.getRemainingItems(crafting);
-                for (int i = 0; i < leftOvers.length; i++) {
+            ItemStack out = StackUtil.asNonNullStack(currentRecipe.getCraftingResult(crafting));
+            if (! out.isEmpty()) {
+                NonNullList<ItemStack> leftOvers = currentRecipe.getRemainingItems(crafting);
+                for (int i = 0; i < leftOvers.size(); i++) {
                     CraftingSlot slot = craftingSlots[i];
                     ItemStack before = slot.get();
-                    ItemStack leftOver = leftOvers[i];
-                    if (leftOver == null) {
-                        if (before != null) {
+                    ItemStack leftOver = leftOvers.get(i);
+                    if (leftOver.isEmpty()) {
+                        if (!before.isEmpty()) {
                             slot.use(1);
                         }
                     } else {
@@ -278,16 +280,17 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
         public ItemStack useAndAdd(@Nonnull ItemStack leftOver) {
             ItemStack current = get();
             if (StackUtil.canMerge(current, leftOver)) {
-                if (leftOver.stackSize == 1) {
+                if (leftOver.getCount() == 1) {
                     return null;
                 }
             }
-            if (current != null) {
+            if (!current.isEmpty()) {
                 use(1);
             }
             return leftOver;
         }
 
+        @Nonnull
         public abstract ItemStack get();
 
         /** Removes up to the specified count from the inventory */
@@ -346,17 +349,17 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
         @Override
         public ItemStack get() {
             if (boundTo == null) {
-                return null;
+                return StackUtil.EMPTY;
             }
             for (int s : boundTo.toArray()) {
-                if (invMaterials.getStackInSlot(s) != null) {
+                if (!invMaterials.getStackInSlot(s).isEmpty()) {
                     ItemStack inSlot = invMaterials.extractItem(s, 1, true);
-                    if (inSlot != null) {
+                    if (!inSlot.isEmpty()) {
                         return inSlot;
                     }
                 }
             }
-            return null;
+            return StackUtil.EMPTY;
         }
 
         @Override
@@ -366,9 +369,9 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
                 throw new IllegalStateException("Attempted to use an item from a slot with nothing in it!");
             } else {
                 for (int s : boundTo.toArray()) {
-                    if (invMaterials.getStackInSlot(s) != null) {
+                    if (!invMaterials.getStackInSlot(s).isEmpty()) {
                         ItemStack extracted = invMaterials.extractItem(s, 1, false);
-                        if (extracted != null) {
+                        if (!extracted.isEmpty()) {
                             return;
                         }
                     }

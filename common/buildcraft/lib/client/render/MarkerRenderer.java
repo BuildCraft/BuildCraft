@@ -13,7 +13,7 @@ public enum MarkerRenderer implements IDetachedRenderer {
     @Override
     public void render(EntityPlayer player, float partialTicks) {
         for (MarkerCache<? extends MarkerSubCache<?>> cache : MarkerCache.CACHES) {
-            renderCache(cache.getSubCache(player.worldObj));
+            renderCache(cache.getSubCache(player.world));
         }
     }
 

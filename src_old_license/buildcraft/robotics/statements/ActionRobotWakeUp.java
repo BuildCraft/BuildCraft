@@ -9,7 +9,7 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 
 import buildcraft.core.statements.BCStatement;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class ActionRobotWakeUp extends BCStatement implements IActionInternal {
 
@@ -20,7 +20,7 @@ public class ActionRobotWakeUp extends BCStatement implements IActionInternal {
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("gate.action.robot.wakeup");
+        return LocaleUtil.localize("gate.action.robot.wakeup");
     }
 
     @Override

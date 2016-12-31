@@ -24,7 +24,11 @@ import buildcraft.lib.library.network.MessageLibraryDBIndex;
 import buildcraft.lib.library.network.MessageLibraryRequest;
 import buildcraft.lib.library.network.MessageLibraryTransferEntry;
 import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.net.*;
+import buildcraft.lib.net.MessageContainer;
+import buildcraft.lib.net.MessageMarker;
+import buildcraft.lib.net.MessageUpdateTile;
+import buildcraft.lib.net.cache.MessageObjectCacheReply;
+import buildcraft.lib.net.cache.MessageObjectCacheReq;
 import buildcraft.lib.particle.MessageParticleVanilla;
 
 public enum BCMessageHandler {
@@ -43,13 +47,13 @@ public enum BCMessageHandler {
     public static void fmlPreInit() {
         addMessageType(MessageUpdateTile.class, MessageUpdateTile.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageContainer.class, MessageContainer.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
-        addMessageType(MessageWidget.class, MessageWidget.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
-        addMessageType(MessageCommand.class, MessageCommand.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageMarker.class, MessageMarker.Handler.INSTANCE, Side.CLIENT);
         addMessageType(MessageLibraryTransferEntry.class, MessageLibraryTransferEntry.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageLibraryRequest.class, MessageLibraryRequest.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageLibraryDBIndex.class, MessageLibraryDBIndex.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageParticleVanilla.class, MessageParticleVanilla.Handler.INSTANCE, Side.CLIENT);
+        addMessageType(MessageObjectCacheReq.class, MessageObjectCacheReq.Handler.INSTANCE, Side.SERVER);
+        addMessageType(MessageObjectCacheReply.class, MessageObjectCacheReply.Handler.INSTANCE, Side.CLIENT);
     }
 
     public static void fmlPostInit() {
@@ -78,8 +82,8 @@ public enum BCMessageHandler {
     private static <I extends IMessage> IMessageHandler<I, IMessage> wrapHandler(IMessageHandler<I, ?> from) {
         return (message, context) -> {
             EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(context);
-            if (player == null || player.worldObj == null) return null;
-            BCLibProxy.getProxy().addScheduledTask(player.worldObj, () -> {
+            if (player == null || player.world == null) return null;
+            BCLibProxy.getProxy().addScheduledTask(player.world, () -> {
                 IMessage reply = from.onMessage(message, context);
                 if (reply != null) {
                     MessageUtil.sendReturnMessage(context, reply);

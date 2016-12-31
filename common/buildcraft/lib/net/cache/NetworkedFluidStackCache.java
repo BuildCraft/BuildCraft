@@ -13,7 +13,7 @@ public class NetworkedFluidStackCache extends NetworkedObjectCache<FluidStack> {
 
     public NetworkedFluidStackCache() {
         // Use water for our base stack as it might not be too bad of an assumption
-        super(new FluidStack(FluidRegistry.WATER, 1));
+        super(new FluidStack(FluidRegistry.WATER, FLUID_AMOUNT));
     }
 
     @Override
@@ -31,18 +31,22 @@ public class NetworkedFluidStackCache extends NetworkedObjectCache<FluidStack> {
             buffer.writeBoolean(false);
         } else {
             buffer.writeBoolean(true);
-            buffer.writeNBTTagCompoundToBuffer(obj.tag);
+            buffer.writeCompoundTag(obj.tag);
         }
     }
 
     @Override
     protected FluidStack readObject(PacketBufferBC buffer) throws IOException {
-        Fluid fluid = FluidRegistry.getFluid(buffer.readStringFromBuffer(255));
+        Fluid fluid = FluidRegistry.getFluid(buffer.readString(255));
         FluidStack stack = new FluidStack(fluid, FLUID_AMOUNT);
         if (buffer.readBoolean()) {
-            stack.tag = buffer.readNBTTagCompoundFromBuffer();
+            stack.tag = buffer.readCompoundTag();
         }
         return stack;
     }
 
+    @Override
+    protected String getCacheName() {
+        return "FluidStack";
+    }
 }

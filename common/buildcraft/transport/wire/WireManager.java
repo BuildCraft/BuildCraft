@@ -1,20 +1,24 @@
 package buildcraft.transport.wire;
 
-import buildcraft.api.transport.neptune.EnumWirePart;
-import buildcraft.api.transport.neptune.IPipe;
-import buildcraft.api.transport.neptune.IPipeHolder;
-import buildcraft.api.transport.neptune.IWireManager;
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.io.IOException;
-import java.util.*;
+import buildcraft.api.transport.neptune.EnumWirePart;
+import buildcraft.api.transport.neptune.IPipe;
+import buildcraft.api.transport.neptune.IPipeHolder;
+import buildcraft.api.transport.neptune.IWireManager;
+
+import buildcraft.lib.net.PacketBufferBC;
 
 public class WireManager implements IWireManager {
     private final IPipeHolder holder;
@@ -39,10 +43,10 @@ public class WireManager implements IWireManager {
 
     @Override
     public boolean addPart(EnumWirePart part, EnumDyeColor colour) {
-        if(getColorOfPart(part) == null) {
+        if (getColorOfPart(part) == null) {
             parts.put(part, colour);
-            if(!holder.getPipeWorld().isRemote) {
-                getWireSystems().buildAndAddWireSystem(new WireSystem.Element(holder.getPipePos(), part));
+            if (!holder.getPipeWorld().isRemote) {
+                getWireSystems().buildAndAddWireSystem(new WireSystem.WireElement(holder.getPipePos(), part));
                 holder.getPipeTile().markDirty();
             }
             updateBetweens(false);
@@ -55,12 +59,12 @@ public class WireManager implements IWireManager {
     @Override
     public EnumDyeColor removePart(EnumWirePart part) {
         EnumDyeColor color = getColorOfPart(part);
-        if(color == null) {
+        if (color == null) {
             return null;
         } else {
             parts.remove(part);
-            if(!holder.getPipeWorld().isRemote) {
-                WireSystem.Element element = new WireSystem.Element(holder.getPipePos(), part);
+            if (!holder.getPipeWorld().isRemote) {
+                WireSystem.WireElement element = new WireSystem.WireElement(holder.getPipePos(), part);
                 WireSystem.getConnectedElementsOfElement(holder, element).forEach(getWireSystems()::buildAndAddWireSystem);
                 getWireSystems().getWireSystemsWithElement(element).forEach(getWireSystems()::removeWireSystem);
                 holder.getPipeTile().markDirty();
@@ -72,16 +76,9 @@ public class WireManager implements IWireManager {
 
     public void removeParts(Collection<EnumWirePart> parts) {
         parts.forEach(this.parts::remove);
-        if(!holder.getPipeWorld().isRemote) {
-            parts.stream()
-                    .map(part -> new WireSystem.Element(holder.getPipePos(), part))
-                    .flatMap(element -> WireSystem.getConnectedElementsOfElement(holder, element).stream())
-                    .distinct()
-                    .forEach(getWireSystems()::buildAndAddWireSystem);
-            parts.stream()
-                    .map(part -> new WireSystem.Element(holder.getPipePos(), part))
-                    .flatMap(element -> getWireSystems().getWireSystemsWithElement(element).stream())
-                    .forEach(getWireSystems()::removeWireSystem);
+        if (!holder.getPipeWorld().isRemote) {
+            parts.stream().map(part -> new WireSystem.WireElement(holder.getPipePos(), part)).flatMap(element -> WireSystem.getConnectedElementsOfElement(holder, element).stream()).distinct().forEach(getWireSystems()::buildAndAddWireSystem);
+            parts.stream().map(part -> new WireSystem.WireElement(holder.getPipePos(), part)).flatMap(element -> getWireSystems().getWireSystemsWithElement(element).stream()).forEach(getWireSystems()::removeWireSystem);
             holder.getPipeTile().markDirty();
         }
         updateBetweens(false);
@@ -91,19 +88,18 @@ public class WireManager implements IWireManager {
     public void updateBetweens(boolean recursive) {
         betweens.clear();
         parts.forEach((part, color) -> {
-            for(EnumWireBetween between : EnumWireBetween.VALUES) {
+            for (EnumWireBetween between : EnumWireBetween.VALUES) {
                 EnumWirePart[] betweenParts = between.parts;
-                if(between.to == null) {
-                    if((betweenParts[0] == part && getColorOfPart(betweenParts[1]) == color) ||
-                            (betweenParts[1] == part && getColorOfPart(betweenParts[0]) == color)) {
+                if (between.to == null) {
+                    if ((betweenParts[0] == part && getColorOfPart(betweenParts[1]) == color) || (betweenParts[1] == part && getColorOfPart(betweenParts[0]) == color)) {
                         betweens.put(between, color);
                     }
-                } else if(WireSystem.canWireConnect(holder, between.to)) {
+                } else if (WireSystem.canWireConnect(holder, between.to)) {
                     IPipe pipe = holder.getNeighbouringPipe(between.to);
-                    if(pipe != null) {
+                    if (pipe != null) {
                         IPipeHolder holder = pipe.getHolder();
                         IWireManager wireManager = holder.getWireManager();
-                        if(betweenParts[0] == part && wireManager.getColorOfPart(betweenParts[1]) == color) {
+                        if (betweenParts[0] == part && wireManager.getColorOfPart(betweenParts[1]) == color) {
                             betweens.put(between, color);
                         }
                     }
@@ -111,10 +107,10 @@ public class WireManager implements IWireManager {
             }
         });
 
-        if(!recursive) {
-            for(EnumFacing side : EnumFacing.values()) {
+        if (!recursive) {
+            for (EnumFacing side : EnumFacing.values()) {
                 TileEntity tile = holder.getPipeWorld().getTileEntity(holder.getPipePos().offset(side));
-                if(tile instanceof IPipeHolder) {
+                if (tile instanceof IPipeHolder) {
                     IPipeHolder holder = (IPipeHolder) tile;
                     holder.getWireManager().updateBetweens(true);
                 }
@@ -134,15 +130,11 @@ public class WireManager implements IWireManager {
 
     @Override
     public boolean isPowered(EnumWirePart part) {
-        if(holder.getPipeWorld().isRemote) {
+        if (holder.getPipeWorld().isRemote) {
             return poweredClient.contains(part);
         } else {
-            return getWireSystems().getWireSystemsWithElement(new WireSystem.Element(holder.getPipePos(), part))
-                    .stream()
-                    .map(wireSystem -> getWireSystems().wireSystems.get(wireSystem))
-                    .filter(Objects::nonNull)
-                    .reduce(Boolean::logicalOr)
-                    .orElse(false);
+            return getWireSystems().getWireSystemsWithElement(new WireSystem.WireElement(holder.getPipePos(), part)).stream().map(wireSystem -> getWireSystems().wireSystems.get(wireSystem)).filter(Objects::nonNull).reduce(Boolean::logicalOr).orElse(
+                    false);
         }
     }
 
@@ -154,7 +146,7 @@ public class WireManager implements IWireManager {
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = new NBTTagCompound();
         int[] wiresArray = new int[parts.size() * 2];
-        int[] i = {0};
+        int[] i = { 0 };
         parts.forEach((part, color) -> {
             wiresArray[i[0]] = part.ordinal();
             wiresArray[i[0] + 1] = color.getMetadata();
@@ -167,28 +159,30 @@ public class WireManager implements IWireManager {
     public void readFromNbt(NBTTagCompound nbt) {
         parts.clear();
         int[] wiresArray = nbt.getIntArray("parts");
-        for(int i = 0; i < wiresArray.length; i += 2) {
+        for (int i = 0; i < wiresArray.length; i += 2) {
             parts.put(EnumWirePart.VALUES[wiresArray[i]], EnumDyeColor.byMetadata(wiresArray[i + 1]));
         }
     }
 
-    public void writePayload(PacketBuffer buffer, Side side) {
+    public void writePayload(PacketBufferBC buffer, Side side) {
         if (side == Side.SERVER) {
             buffer.writeInt(parts.size());
-            parts.forEach((part, color) -> {
-                buffer.writeInt(part.ordinal());
-                buffer.writeInt(color.getMetadata());
-            });
+            for (Entry<EnumWirePart, EnumDyeColor> entry : parts.entrySet()) {
+                buffer.writeEnumValue(entry.getKey());
+                buffer.writeEnumValue(entry.getValue());
+            }
         }
     }
 
     @SideOnly(Side.CLIENT)
-    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         if (side == Side.CLIENT) {
             parts.clear();
             int count = buffer.readInt();
-            for(int i = 0; i < count; i++) {
-                parts.put(EnumWirePart.VALUES[buffer.readInt()], EnumDyeColor.byMetadata(buffer.readInt()));
+            for (int i = 0; i < count; i++) {
+                EnumWirePart part = buffer.readEnumValue(EnumWirePart.class);
+                EnumDyeColor colour = buffer.readEnumValue(EnumDyeColor.class);
+                parts.put(part, colour);
             }
             updateBetweens(false);
         }

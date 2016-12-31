@@ -1,23 +1,22 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import java.util.function.BiFunction;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -25,142 +24,213 @@ import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
-import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.builders.BCBuildersBlocks;
-import buildcraft.builders.entity.EntityQuarry;
+import buildcraft.builders.entity.EntityQuarryFrame;
 import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.inventory.AutomaticProvidingTransactor;
 import buildcraft.lib.misc.*;
-import buildcraft.lib.misc.data.AxisOrder;
-import buildcraft.lib.misc.data.Box;
-import buildcraft.lib.misc.data.BoxIterator;
-import buildcraft.lib.misc.data.EnumAxisOrder;
+import buildcraft.lib.misc.data.*;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBCInventory_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
 
-public class TileQuarry extends TileBCInventory_Neptune implements ITickable, IDebuggable {
+public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable {
     private final MjBattery battery;
     private final MjCapabilityHelper mjCapHelper;
-    private Box box = new Box();
-    public BlockPos min;
-    public BlockPos max;
+    public final Box frameBox = new Box();
+    private final Box miningBox = new Box();
     private BoxIterator boxIterator;
     public Task currentTask = null;
-    public final IItemHandlerModifiable invFrames = addInventory("frames", 9, ItemHandlerManager.EnumAccess.NONE, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invFrames = itemManager.addInvHandler("frames", 9, ItemHandlerManager.EnumAccess.NONE, EnumPipePart.VALUES);
     public Vec3d drillPos;
     public Vec3d clientDrillPos;
     public Vec3d prevClientDrillPos;
+    /** Recent power input, in MJ (not micro) */
+    private final AverageInt recentPowerAverage = new AverageInt(200);
+    private final List<EntityQuarryFrame> xArm = new ArrayList<>();
+    private final List<EntityQuarryFrame> yArm = new ArrayList<>();
+    private final List<EntityQuarryFrame> zArm = new ArrayList<>();
 
     public TileQuarry() {
         battery = new MjBattery(1600L * MjAPI.MJ);
-        mjCapHelper = new MjCapabilityHelper(new MjBatteryReciver(battery));
+        mjCapHelper = new MjCapabilityHelper(new MjBatteryReciver(battery) {
+            @Override
+            public long receivePower(long microJoules, boolean simulate) {
+                long excess = super.receivePower(microJoules, simulate);
+                if (!simulate) {
+                    recentPowerAverage.push((int) ((microJoules - excess) / MjAPI.MJ));
+                }
+                return excess;
+            }
+        });
     }
 
-    public List<BlockPos> getFramePoses() {
-        List<BlockPos> framePoses = new ArrayList<>();
-        Map<BlockPos, Boolean> placingMap = new HashMap<>();
+    public List<BlockPos> getFramePositions() {
+        List<BlockPos> framePositions = new ArrayList<>();
+
+        BlockPos min = frameBox.min();
+        BlockPos max = frameBox.max();
         for (int x = min.getX(); x <= max.getX(); x++) {
-            for (int z = min.getZ(); z <= max.getZ(); z++) {
-                BlockPos pos = new BlockPos(x, min.getY(), z);
-                boolean shouldBeFrame = x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ();
-                if (shouldBeFrame) {
-                    placingMap.put(pos, false);
-                }
-            }
+            framePositions.add(new BlockPos(x, min.getY(), min.getZ()));
+            framePositions.add(new BlockPos(x, max.getY(), min.getZ()));
+            framePositions.add(new BlockPos(x, min.getY(), max.getZ()));
+            framePositions.add(new BlockPos(x, max.getY(), max.getZ()));
         }
-        BlockPos first = pos.offset(worldObj.getBlockState(pos).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite());
-        placingMap.put(first, true);
-        framePoses.add(first); // "place" frame near quarry
-        BlockPos second = pos.offset(worldObj.getBlockState(pos).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite(), 2);
-        placingMap.put(second, true);
-        framePoses.add(second); // "place" frame in 2 block
-        while (placingMap.size() != framePoses.size()) {
-            BlockPos lastPlaced = framePoses.get(framePoses.size() - 1);
-            placingMap.keySet().stream().filter(blockPos -> !placingMap.get(blockPos)).filter(blockPos -> Stream.of(EnumFacing.values()).anyMatch(side -> lastPlaced.offset(side).equals(blockPos))).forEach(blockPos -> {
-                placingMap.put(blockPos, true);
-                framePoses.add(blockPos);
-            });
+
+        for (int z = min.getZ(); z <= max.getZ(); z++) {
+            framePositions.add(new BlockPos(min.getX(), min.getY(), z));
+            framePositions.add(new BlockPos(max.getX(), min.getY(), z));
+            framePositions.add(new BlockPos(min.getX(), max.getY(), z));
+            framePositions.add(new BlockPos(max.getX(), max.getY(), z));
         }
-        return framePoses;
+
+        for (int y = min.getY(); y <= max.getY(); y++) {
+            framePositions.add(new BlockPos(min.getX(), y, min.getZ()));
+            framePositions.add(new BlockPos(max.getX(), y, min.getZ()));
+            framePositions.add(new BlockPos(min.getX(), y, max.getZ()));
+            framePositions.add(new BlockPos(max.getX(), y, max.getZ()));
+        }
+        return framePositions;
     }
 
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
-        if (placer.worldObj.isRemote) {
+        if (placer.world.isRemote) {
             return;
         }
-        EnumFacing facing = worldObj.getBlockState(getPos()).getValue(BlockBCBase_Neptune.PROP_FACING);
+        EnumFacing facing = world.getBlockState(getPos()).getValue(BlockBCBase_Neptune.PROP_FACING);
         BlockPos areaPos = getPos().offset(facing.getOpposite());
-        TileEntity tile = worldObj.getTileEntity(areaPos);
+        TileEntity tile = world.getTileEntity(areaPos);
+        BlockPos min, max;
         if (tile instanceof IAreaProvider) {
             IAreaProvider provider = (IAreaProvider) tile;
-            box.reset();
             min = provider.min();
             max = provider.max();
-            box.setMin(new BlockPos(min.getX() + 1, 0, min.getZ() + 1));
-            box.setMax(new BlockPos(max.getX() - 1, min.getY() - 1, max.getZ() - 1));
             provider.removeFromWorld();
+        } else {
+            miningBox.reset();
+            frameBox.reset();
+            switch (facing.getOpposite()) {
+                case DOWN:
+                case UP:
+                default:
+                case EAST: // +X
+                    min = getPos().add(1, 0, -5);
+                    max = getPos().add(11, 4, 5);
+                    break;
+                case WEST: // -X
+                    min = getPos().add(-11, 0, -5);
+                    max = getPos().add(-1, 4, 5);
+                    break;
+                case SOUTH: // +Z
+                    min = getPos().add(-5, 0, 1);
+                    max = getPos().add(5, 4, 11);
+                    break;
+                case NORTH: // -Z
+                    min = getPos().add(-5, 0, -11);
+                    max = getPos().add(5, 4, -1);
+                    break;
+            }
         }
+        if (max.getY() - min.getY() < 4) {
+            max = new BlockPos(max.getX(), min.getY() + 4, max.getZ());
+        }
+        frameBox.reset();
+        frameBox.setMin(min);
+        frameBox.setMax(max);
+        miningBox.reset();
+        miningBox.setMin(new BlockPos(min.getX() + 1, 0, min.getZ() + 1));
+        miningBox.setMax(new BlockPos(max.getX() - 1, max.getY() - 1, max.getZ() - 1));
     }
 
     @Override
     public void update() {
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             prevClientDrillPos = clientDrillPos;
             clientDrillPos = drillPos;
+
+            if (frameBox.isInitialized() && drillPos != null) {
+                BlockPos size = frameBox.size();
+                resizeTo(xArm, size.getX());
+                resizeTo(zArm, size.getZ());
+
+                int ySize = frameBox.max().getY() - (int) Math.ceil(drillPos.yCoord);
+                resizeTo(yArm, ySize + 10);// it will probably expand on the server at some point, so expand it early
+            }
+
             return;
         }
+        recentPowerAverage.tick();
 
-        if (!battery.isFull()) {
-            // test with the output of a stone engine
-            battery.addPower(MjAPI.MJ); // remove this
-        }
-
-        if (min == null || max == null || box == null) {
+        if (!frameBox.isInitialized() || !miningBox.isInitialized()) {
             return;
         }
+        final BlockPos min = frameBox.min();
+        final BlockPos max = frameBox.max();
 
         if (drillPos != null) {
-            for (int x = min.getX(); x < max.getX(); x++) {
-                BlockPos currentPos = new BlockPos(x, min.getY(), drillPos.zCoord);
-                if (hasEntityOfType(currentPos, EntityQuarry.Type.X)) {
-                    worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.X));
+            int xSize = frameBox.size().getX();
+            resizeTo(xArm, xSize);
+            for (int x = 0; x < xSize; x++) {
+                EntityQuarryFrame current = xArm.get(x);
+                BlockPos currentPos = new BlockPos(x + min.getX(), max.getY(), drillPos.zCoord);
+                if (current == null || current.isDead) {
+                    current = new EntityQuarryFrame(world, this, currentPos, Axis.X, x);
+                    BCLog.logger.info("[quarry.frame] Didn't have a frame entity for " + currentPos);
+                    world.spawnEntity(current);
+                    xArm.set(x, current);
                 }
+                current.setPosition(currentPos.getX(), currentPos.getY(), currentPos.getZ());
             }
 
-            for (int y = (int) drillPos.yCoord; y < min.getY(); y++) {
-                BlockPos currentPos = new BlockPos(drillPos.xCoord, y, drillPos.zCoord);
-                if (hasEntityOfType(currentPos, EntityQuarry.Type.Y)) {
-                    worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.Y));
+            int zSize = max.getZ() - min.getZ();
+            resizeTo(zArm, zSize);
+            for (int z = 0; z < zSize; z++) {
+                EntityQuarryFrame current = zArm.get(z);
+                BlockPos currentPos = new BlockPos(drillPos.xCoord, max.getY(), z + min.getZ());
+                if (current == null || current.isDead) {
+                    current = new EntityQuarryFrame(world, this, currentPos, Axis.Z, z);
+                    BCLog.logger.info("[quarry.frame] Didn't have a frame entity for " + currentPos);
+                    world.spawnEntity(current);
+                    zArm.set(z, current);
                 }
+                current.setPosition(currentPos.getX(), currentPos.getY(), currentPos.getZ());
             }
 
-            for (int z = min.getZ(); z < max.getZ(); z++) {
-                BlockPos currentPos = new BlockPos(drillPos.xCoord, min.getY(), z);
-                if (hasEntityOfType(currentPos, EntityQuarry.Type.Z)) {
-                    worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.Z));
+            int ySize = max.getY() - (int) Math.ceil(drillPos.yCoord);
+            resizeTo(yArm, ySize);
+            for (int y = 0; y < ySize; y++) {
+                EntityQuarryFrame current = yArm.get(y);
+                BlockPos currentPos = new BlockPos(drillPos.xCoord, max.getY() - y, drillPos.zCoord);
+                if (current == null || current.isDead) {
+                    current = new EntityQuarryFrame(world, this, currentPos, Axis.Y, y);
+                    BCLog.logger.info("[quarry.frame] Didn't have a frame entity for " + currentPos);
+                    world.spawnEntity(current);
+                    yArm.set(y, current);
                 }
+                current.setPosition(currentPos.getX(), currentPos.getY(), currentPos.getZ());
             }
         }
 
         if (currentTask != null) {
-            if (currentTask.addEnergy(battery.extractPower(0, Math.min(currentTask.getTarget() - currentTask.getEnergy(), 1000000)))) {
+            long maxToExtract = MjAPI.MJ * 10;
+            if (currentTask.addPower(battery.extractPower(0, Math.min(currentTask.getTarget() - currentTask.getPower(), maxToExtract)))) {
                 currentTask = null;
             }
             sendNetworkUpdate(NET_RENDER_DATA);
@@ -170,12 +240,14 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         List<BlockPos> breakPoses = new ArrayList<>();
 
         for (int x = min.getX(); x <= max.getX(); x++) {
-            for (int z = min.getZ(); z <= max.getZ(); z++) {
-                BlockPos pos = new BlockPos(x, min.getY(), z);
-                boolean shouldBeFrame = x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ();
-                Block block = worldObj.getBlockState(pos).getBlock();
-                if ((block != Blocks.AIR && !shouldBeFrame) || (block != BCBuildersBlocks.frame && block != Blocks.AIR && shouldBeFrame)) {
-                    breakPoses.add(pos);
+            for (int y = min.getY(); y <= max.getY(); y++) {
+                for (int z = min.getZ(); z <= max.getZ(); z++) {
+                    BlockPos framePos = new BlockPos(x, y, z);
+                    boolean shouldBeFrame = x == min.getX() || x == max.getX() || y == min.getY() || y == max.getY() || z == min.getZ() || z == max.getZ();
+                    Block block = world.getBlockState(framePos).getBlock();
+                    if ((block != Blocks.AIR && !shouldBeFrame) || (block != BCBuildersBlocks.frame && block != Blocks.AIR && shouldBeFrame)) {
+                        breakPoses.add(framePos);
+                    }
                 }
             }
         }
@@ -199,28 +271,30 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             return;
         }
 
-        for (BlockPos pos : getFramePoses()) {
-            Block block = worldObj.getBlockState(pos).getBlock();
+        for (BlockPos framePos : getFramePositions()) {
+            Block block = world.getBlockState(framePos).getBlock();
             if (block == Blocks.AIR) {
                 drillPos = null;
-                if (IntStream.range(0, invFrames.getSlots()).anyMatch(slot -> invFrames.getStackInSlot(slot) != null)) {
-                    currentTask = new TaskAddFrame(pos);
+                if (!invFrames.extract(null, 1, 1, true).isEmpty()) {
+                    currentTask = new TaskAddFrame(framePos);
                     sendNetworkUpdate(NET_RENDER_DATA);
                 }
                 return;
             }
         }
 
-        if (boxIterator == null || drillPos == null) {
-            boxIterator = new BoxIterator(box, AxisOrder.getFor(EnumAxisOrder.XZY, AxisOrder.Inversion.NNN), true);
-            while (worldObj.isAirBlock(boxIterator.getCurrent())) {
+        if ((boxIterator == null || drillPos == null) && miningBox.isInitialized()) {
+            boxIterator = new BoxIterator(miningBox, AxisOrder.getFor(EnumAxisOrder.XZY, AxisOrder.Inversion.NNN), true);
+            while (world.isAirBlock(boxIterator.getCurrent())) {
                 boxIterator.advance();
             }
-            drillPos = new Vec3d(boxIterator.getCurrent());
+            drillPos = new Vec3d(miningBox.closestInsideTo(getPos()));
         }
 
-        if (boxIterator.getMin() != null && boxIterator.getMax() != null) {
-            if (!worldObj.isAirBlock(boxIterator.getCurrent())) {
+        if (boxIterator != null && boxIterator.hasNext()) {
+            if (drillPos.squareDistanceTo(new Vec3d(boxIterator.getCurrent())) > 2) {
+                currentTask = new TaskMoveDrill(drillPos, new Vec3d(boxIterator.getCurrent()));
+            } else if (!world.isAirBlock(boxIterator.getCurrent())) {
                 currentTask = new TaskBreakBlock(boxIterator.getCurrent());
             } else {
                 currentTask = new TaskMoveDrill(drillPos, new Vec3d(boxIterator.advance()));
@@ -230,30 +304,73 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
     }
 
-    private boolean hasEntityOfType(BlockPos currentPos, EntityQuarry.Type type) {
-        return worldObj.getEntities(EntityQuarry.class, entityQuarry -> entityQuarry != null && entityQuarry.getType() == type && entityQuarry.getTilePos().equals(pos) && entityQuarry.getPosition().equals(currentPos)).size() < 1;
+    private static void resizeTo(List<?> list, int newSize) {
+        while (list.size() > newSize) {
+            list.remove(list.size() - 1);
+        }
+        while (list.size() < newSize) {
+            list.add(null);
+        }
+    }
+
+    private List<EntityQuarryFrame> getArmList(Axis axis) {
+        switch (axis) {
+            default:
+            case X:
+                return xArm;
+            case Y:
+                return yArm;
+            case Z:
+                return zArm;
+        }
+    }
+
+    public boolean tryPairEntity(EntityQuarryFrame frame, Axis axis, int listIndex) {
+        List<EntityQuarryFrame> entities = getArmList(axis);
+        if (world.isRemote && entities.size() == 0) {
+            BlockPos size = frameBox.size();
+            resizeTo(xArm, size.getX());
+            resizeTo(zArm, size.getZ());
+
+            int ySize = frameBox.max().getY() - (int) Math.ceil(drillPos.yCoord);
+            resizeTo(yArm, ySize + 10);// it will probably expand on the server at some point, so expand it early
+        }
+        if (listIndex < 0 || listIndex >= entities.size()) {
+            return false;
+        }
+        EntityQuarryFrame current = entities.get(listIndex);
+        if (current == null || current.isDead || !current.isConnected(this)) {
+            if (current != null) {
+                current.setDead();
+            }
+            entities.set(listIndex, frame);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isPaired(EntityQuarryFrame frame, Axis axis, int listIndex) {
+        List<EntityQuarryFrame> entities = getArmList(axis);
+        if (listIndex < 0 || listIndex >= entities.size()) {
+            return false;
+        }
+        return entities.get(listIndex) == frame;
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
-        nbt.setTag("box", box.writeToNBT());
-        if (min != null) {
-            nbt.setTag("min", NBTUtils.writeBlockPos(min));
-        }
-        if (max != null) {
-            nbt.setTag("max", NBTUtils.writeBlockPos(max));
-        }
+        nbt.setTag("box", miningBox.writeToNBT());
+        nbt.setTag("frame", frameBox.writeToNBT());
         if (boxIterator != null) {
-            nbt.setTag("box_iterator", boxIterator.writeToNBT());
+            nbt.setTag("box_iterator", boxIterator.writeToNbt());
         }
         nbt.setTag("mj_battery", battery.serializeNBT());
         if (currentTask != null) {
-            nbt.setInteger("current_task_type", currentTask.getType().ordinal());
-            nbt.setTag("current_task_data", currentTask.serializeNBT());
+            nbt.setTag("currentTask", EnumTaskType.writeToNbt(currentTask));
         }
         if (drillPos != null) {
-            nbt.setTag("drill_pos", NBTUtils.writeVec3d(drillPos));
+            nbt.setTag("drill_pos", NBTUtilBC.writeVec3d(drillPos));
         }
         return nbt;
     }
@@ -261,51 +378,39 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        box.initialize(nbt.getCompoundTag("box"));
-        min = NBTUtils.readBlockPos(nbt.getTag("min"));
-        max = NBTUtils.readBlockPos(nbt.getTag("max"));
-        boxIterator = new BoxIterator(nbt.getCompoundTag("box_iterator"));
+        miningBox.initialize(nbt.getCompoundTag("box"));
+        frameBox.initialize(nbt.getCompoundTag("frame"));
+        boxIterator = BoxIterator.readFromNbt(nbt.getCompoundTag("box_iterator"));
         battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
-        if (nbt.hasKey("current_task_type")) {
-            try {
-                // noinspection unchecked
-                currentTask = (Task) EnumTaskType.values()[nbt.getInteger("current_task_type")].clazz.getDeclaredConstructor(TileQuarry.class).newInstance(this);
-                if (nbt.hasKey("current_task_data")) {
-                    currentTask.deserializeNBT(nbt.getCompoundTag("current_task_data"));
-                }
-            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
+
+        if (nbt.hasKey("currentTask")) {
+            NBTTagCompound nbtTask = nbt.getCompoundTag("currentTask");
+            currentTask = EnumTaskType.readFromNbt(this, nbtTask);
         } else {
             currentTask = null;
         }
-        drillPos = NBTUtils.readVec3d(nbt.getTag("drill_pos"));
+        drillPos = NBTUtilBC.readVec3d(nbt.getTag("drill_pos"));
+
+        if (frameBox.isInitialized() && drillPos != null) {
+            BlockPos size = frameBox.size();
+            resizeTo(xArm, size.getX());
+            resizeTo(zArm, size.getZ());
+
+            int ySize = frameBox.max().getY() - (int) Math.ceil(drillPos.yCoord);
+            resizeTo(yArm, ySize + 10);// it will probably expand on the server at some point, so expand it early
+        }
     }
 
     @Override
     public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
         if (id == NET_RENDER_DATA) {
-            buffer.writeBoolean(min != null);
-            if (min != null) {
-                buffer.writeBlockPos(min);
-            }
-            buffer.writeBoolean(max != null);
-            if (max != null) {
-                buffer.writeBlockPos(max);
-            }
-            buffer.writeBoolean(currentTask != null);
-            if (currentTask != null) {
-                buffer.writeInt(currentTask.getType().ordinal());
-                currentTask.writeToByteBuf(buffer);
-            }
+            frameBox.writeData(buffer);
+            miningBox.writeData(buffer);
+
             buffer.writeBoolean(drillPos != null);
             if (drillPos != null) {
                 MessageUtil.writeVec3d(buffer, drillPos);
-            }
-            buffer.writeBoolean(box != null);
-            if (box != null) {
-                box.writeData(buffer);
             }
         }
     }
@@ -314,37 +419,21 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (id == NET_RENDER_DATA) {
-            if (buffer.readBoolean()) {
-                min = buffer.readBlockPos();
-            } else {
-                min = null;
-            }
-            if (buffer.readBoolean()) {
-                max = buffer.readBlockPos();
-            } else {
-                max = null;
-            }
-            if (buffer.readBoolean()) {
-                try {
-                    // noinspection unchecked
-                    currentTask = (Task) EnumTaskType.values()[buffer.readInt()].clazz.getDeclaredConstructor(TileQuarry.class).newInstance(this);
-                    currentTask.readFromByteBuf(buffer);
-                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                currentTask = null;
-            }
+            frameBox.readData(buffer);
+            miningBox.readData(buffer);
+
             if (buffer.readBoolean()) {
                 drillPos = MessageUtil.readVec3d(buffer);
             } else {
                 drillPos = null;
             }
-            if (buffer.readBoolean()) {
-                box = new Box();
-                box.readData(buffer);
-            } else {
-                box = null;
+            if (frameBox.isInitialized() && drillPos != null) {
+                BlockPos size = frameBox.size();
+                resizeTo(xArm, size.getX());
+                resizeTo(zArm, size.getZ());
+
+                int ySize = frameBox.max().getY() - (int) Math.ceil(drillPos.yCoord);
+                resizeTo(yArm, ySize + 10);// it will probably expand on the server at some point, so expand it early
             }
         }
     }
@@ -353,17 +442,19 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
         left.add("battery = " + battery.getDebugString());
-        left.add("box:");
-        left.add(" - min = " + box.min());
-        left.add(" - max = " + box.max());
-        left.add("min = " + min);
-        left.add("max = " + max);
-        left.add("current = " + (boxIterator == null ? null : boxIterator.getCurrent()));
+        left.add("recent power = " + recentPowerAverage.getAverage());
+        left.add("frameBox");
+        left.add(" - min = " + frameBox.min());
+        left.add(" - max = " + frameBox.max());
+        left.add("miningBox:");
+        left.add(" - min = " + miningBox.min());
+        left.add(" - max = " + miningBox.max());
+        left.add("current = " + (boxIterator == null ? "null" : boxIterator.getCurrent()));
         if (currentTask != null) {
             left.add("task:");
             left.add(" - class = " + currentTask.getClass().getName());
-            left.add(" - energy = " + currentTask.getEnergy());
-            left.add(" - target = " + currentTask.getTarget());
+            left.add(" - power = " + MjAPI.formatMjShort(currentTask.getPower()));
+            left.add(" - target = " + MjAPI.formatMjShort(currentTask.getTarget()));
         } else {
             left.add("task = null");
         }
@@ -371,14 +462,12 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        return mjCapHelper.hasCapability(capability, facing) || super.hasCapability(capability, facing);
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (mjCapHelper.hasCapability(capability, facing)) {
             return mjCapHelper.getCapability(capability, facing);
+        }
+        if (capability == CapUtil.CAP_ITEM_TRANSACTOR) {
+            return (T) AutomaticProvidingTransactor.INSTANCE;
         }
         return super.getCapability(capability, facing);
     }
@@ -386,7 +475,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        return BoundingBoxUtil.makeFrom(getPos(), box);
+        return BoundingBoxUtil.makeFrom(getPos(), miningBox);
     }
 
     @Override
@@ -396,95 +485,105 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     }
 
     private enum EnumTaskType {
-        BREAK_BLOCK(TaskBreakBlock.class),
-        ADD_FRAME(TaskAddFrame.class),
-        MOVE_DRILL(TaskMoveDrill.class);
+        BREAK_BLOCK((quarry, nbt) -> quarry.new TaskBreakBlock(nbt)),
+        ADD_FRAME((quarry, nbt) -> quarry.new TaskAddFrame(nbt)),
+        MOVE_DRILL((quarry, nbt) -> quarry.new TaskMoveDrill(nbt));
 
-        public Class clazz;
+        public static final EnumTaskType[] VALUES = values();
 
-        EnumTaskType(Class clazz) {
-            this.clazz = clazz;
+        public final BiFunction<TileQuarry, NBTTagCompound, Task> constructor;
+
+        EnumTaskType(BiFunction<TileQuarry, NBTTagCompound, Task> constructor) {
+            this.constructor = constructor;
+        }
+
+        public static Task readFromNbt(TileQuarry quarry, NBTTagCompound nbt) {
+            int idx = nbt.getByte("task_idx");
+            return VALUES[idx].constructor.apply(quarry, nbt.getCompoundTag("task"));
+        }
+
+        public static NBTTagCompound writeToNbt(Task task) {
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setByte("task_idx", (byte) task.getType().ordinal());
+            nbt.setTag("task", task.serializeNBT());
+            return nbt;
         }
     }
 
-    private abstract class Task implements INBTSerializable<NBTTagCompound> {
-        protected long energy = 0;
+    private abstract class Task {
 
-        public abstract long getTarget();
+        protected long power;
 
-        /** @return true means that task is canceled */
-        protected abstract boolean energyReceived();
+        public Task() {}
 
-        protected abstract void finish();
-
-        public final long getEnergy() {
-            return energy;
+        public Task(NBTTagCompound nbt) {
+            power = nbt.getLong("power");
         }
 
-        /** @return true means that task is canceled */
-        public final boolean addEnergy(long count) {
-            if (count == 0) {
-                return false;
-            }
-            energy += count;
-            if (energy >= getTarget()) {
-                finish();
-                return true;
-            } else {
-                return energyReceived();
-            }
-        }
-
-        @Override
         public NBTTagCompound serializeNBT() {
             NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setLong("energy", energy);
+            nbt.setLong("power", power);
             return nbt;
         }
 
-        @Override
-        public void deserializeNBT(NBTTagCompound nbt) {
-            energy = nbt.getLong("energy");
+        public abstract EnumTaskType getType();
+
+        public abstract long getTarget();
+
+        /** @return True if this task has been completed, or cancelled. */
+        protected abstract boolean onReceivePower();
+
+        protected abstract void finish();
+
+        public final long getPower() {
+            return power;
         }
 
-        public void writeToByteBuf(PacketBuffer buf) {
-            buf.writeLong(energy);
-        }
-
-        public Task readFromByteBuf(PacketBuffer buf) {
-            energy = buf.readLong();
-            return this;
-        }
-
-        public EnumTaskType getType() {
-            for (EnumTaskType taskType : EnumTaskType.values()) {
-                if (taskType.clazz.isInstance(this)) {
-                    return taskType;
-                }
+        /** @return True if this task has been completed, or cancelled. */
+        public final boolean addPower(long microJoules) {
+            power += microJoules;
+            if (power >= getTarget()) {
+                finish();
+                return true;
+            } else {
+                return onReceivePower();
             }
-            return null;
         }
     }
 
     public class TaskBreakBlock extends Task {
-        public BlockPos pos;
-
-        @SuppressWarnings("unused")
-        TaskBreakBlock() {}
+        public final BlockPos breakPos;
 
         TaskBreakBlock(BlockPos pos) {
-            this.pos = pos;
+            this.breakPos = pos;
+        }
+
+        public TaskBreakBlock(NBTTagCompound nbt) {
+            super(nbt);
+            breakPos = NBTUtilBC.readBlockPos(nbt.getTag("pos"));
+        }
+
+        @Override
+        public NBTTagCompound serializeNBT() {
+            NBTTagCompound nbt = super.serializeNBT();
+            nbt.setTag("pos", NBTUtilBC.writeBlockPos(breakPos));
+            return nbt;
+        }
+
+        @Override
+        public EnumTaskType getType() {
+            return EnumTaskType.BREAK_BLOCK;
         }
 
         @Override
         public long getTarget() {
-            return BlockUtil.computeBlockBreakPower(worldObj, pos);
+            return BlockUtil.computeBlockBreakPower(world, breakPos);
         }
 
         @Override
-        protected boolean energyReceived() {
-            if (!worldObj.isAirBlock(pos)) {
-                worldObj.sendBlockBreakProgress(pos.hashCode(), pos, (int) (energy * 9 / getTarget()));
+        protected boolean onReceivePower() {
+            if (!world.isAirBlock(breakPos)) {
+                world.sendBlockBreakProgress(breakPos.hashCode(), breakPos, (int) (power * 9 / getTarget()));
                 return false;
             } else {
                 return true;
@@ -493,176 +592,121 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
         @Override
         protected void finish() {
-            BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(worldObj, pos, worldObj.getBlockState(pos), FakePlayerUtil.INSTANCE.getBuildCraftPlayer((WorldServer) worldObj).get());
+            EntityPlayer fake = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, TileQuarry.this.pos, TileQuarry.this.getOwner());
+            
+            IBlockState state = world.getBlockState(breakPos);
+            if (state.getBlockHardness(getWorld(), breakPos) < 0) {
+                return;
+            }
+            
+            BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, breakPos, state, fake);
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if (!breakEvent.isCanceled()) {
                 boolean put = TileQuarry.this.drillPos != null;
+                // The drill pos will be null if we are making the frame: this is when we want to destroy the block, not
+                // drop its contents
                 if (put) {
-                    List<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) worldObj, pos, TileQuarry.this.pos);
-                    // noinspection Duplicates
+                    NonNullList<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) world, breakPos, TileQuarry.this.getOwner());
                     if (stacks != null) {
-                        for (ItemStack stack : stacks) {
-                            InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, stack);
+                        for (int i = 0; i < stacks.size(); i++) {
+                            InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, stacks.get(i));
                         }
                     }
                 }
-                worldObj.sendBlockBreakProgress(pos.hashCode(), pos, -1);
-                worldObj.destroyBlock(pos, !put);
+                world.sendBlockBreakProgress(breakPos.hashCode(), breakPos, -1);
+                world.destroyBlock(breakPos, false);
             }
-        }
-
-        @Override
-        public NBTTagCompound serializeNBT() {
-            NBTTagCompound nbt = super.serializeNBT();
-            nbt.setTag("pos", NBTUtils.writeBlockPos(pos));
-            return nbt;
-        }
-
-        @Override
-        public void deserializeNBT(NBTTagCompound nbt) {
-            super.deserializeNBT(nbt);
-            pos = NBTUtils.readBlockPos(nbt.getTag("pos"));
-        }
-
-        @Override
-        public void writeToByteBuf(PacketBuffer buf) {
-            super.writeToByteBuf(buf);
-            buf.writeInt(pos.getX());
-            buf.writeInt(pos.getY());
-            buf.writeInt(pos.getZ());
-        }
-
-        @Override
-        public Task readFromByteBuf(PacketBuffer buf) {
-            super.readFromByteBuf(buf);
-            pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
-            return this;
         }
     }
 
     public class TaskAddFrame extends Task {
-        public BlockPos pos;
-
-        @SuppressWarnings("unused")
-        TaskAddFrame() {}
+        public final BlockPos framePos;
 
         TaskAddFrame(BlockPos pos) {
-            this.pos = pos;
+            this.framePos = pos;
         }
 
-        @Override
-        public long getTarget() {
-            return Math.max(getFramePoses().indexOf(pos) * 3000000, 1000000);
-        }
-
-        @Override
-        protected boolean energyReceived() {
-            return !worldObj.isAirBlock(pos);
-        }
-
-        @Override
-        protected void finish() {
-            if (worldObj.isAirBlock(pos)) {
-                for (int slot = invFrames.getSlots(); slot >= 0; slot--) {
-                    ItemStack stackInSlot = invFrames.getStackInSlot(slot);
-                    if (stackInSlot != null) {
-                        worldObj.setBlockState(pos, BCBuildersBlocks.frame.getDefaultState());
-                        invFrames.setStackInSlot(slot, stackInSlot.stackSize > 0 ? new ItemStack(stackInSlot.getItem(), stackInSlot.stackSize - 1) : null);
-                        return;
-                    }
-                }
-            }
+        public TaskAddFrame(NBTTagCompound nbt) {
+            super(nbt);
+            framePos = NBTUtilBC.readBlockPos(nbt.getTag("pos"));
         }
 
         @Override
         public NBTTagCompound serializeNBT() {
             NBTTagCompound nbt = super.serializeNBT();
-            nbt.setTag("pos", NBTUtils.writeBlockPos(pos));
+            nbt.setTag("pos", NBTUtilBC.writeBlockPos(framePos));
             return nbt;
         }
 
         @Override
-        public void deserializeNBT(NBTTagCompound nbt) {
-            super.deserializeNBT(nbt);
-            pos = NBTUtils.readBlockPos(nbt.getTag("pos"));
+        public EnumTaskType getType() {
+            return EnumTaskType.ADD_FRAME;
         }
 
         @Override
-        public void writeToByteBuf(PacketBuffer buf) {
-            super.writeToByteBuf(buf);
-            buf.writeInt(pos.getX());
-            buf.writeInt(pos.getY());
-            buf.writeInt(pos.getZ());
+        public long getTarget() {
+            return 24 * MjAPI.MJ;
         }
 
         @Override
-        public Task readFromByteBuf(PacketBuffer buf) {
-            super.readFromByteBuf(buf);
-            pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
-            return this;
+        protected boolean onReceivePower() {
+            return !world.isAirBlock(framePos);
+        }
+
+        @Override
+        protected void finish() {
+            if (world.isAirBlock(framePos)) {
+                ItemStack extracted = invFrames.extract(null, 1, 1, false);
+                if (!extracted.isEmpty()) {
+                    world.setBlockState(framePos, BCBuildersBlocks.frame.getDefaultState());
+                    return;
+                }
+            }
         }
     }
 
     private class TaskMoveDrill extends Task {
-        Vec3d from;
-        Vec3d to;
-
-        @SuppressWarnings("unused")
-        TaskMoveDrill() {}
+        final Vec3d from;
+        final Vec3d to;
 
         TaskMoveDrill(Vec3d from, Vec3d to) {
             this.from = from;
             this.to = to;
         }
 
-        @Override
-        public long getTarget() {
-            return 10000000;
+        public TaskMoveDrill(NBTTagCompound nbt) {
+            super(nbt);
+            from = NBTUtilBC.readVec3d(nbt.getTag("from"));
+            to = NBTUtilBC.readVec3d(nbt.getTag("to"));
         }
 
         @Override
-        protected boolean energyReceived() {
-            drillPos = from.scale(1 - (double) energy / getTarget()).add(to.scale((double) energy / getTarget()));
+        public NBTTagCompound serializeNBT() {
+            NBTTagCompound nbt = super.serializeNBT();
+            nbt.setTag("from", NBTUtilBC.writeVec3d(from));
+            nbt.setTag("to", NBTUtilBC.writeVec3d(to));
+            return nbt;
+        }
+
+        @Override
+        public EnumTaskType getType() {
+            return EnumTaskType.MOVE_DRILL;
+        }
+
+        @Override
+        public long getTarget() {
+            return (long) (from.distanceTo(to) * 20 * MjAPI.MJ);
+        }
+
+        @Override
+        protected boolean onReceivePower() {
+            drillPos = from.scale(1 - power / (double) getTarget()).add(to.scale(power / (double) getTarget()));
             return false;
         }
 
         @Override
         protected void finish() {
             drillPos = to;
-        }
-
-        @Override
-        public NBTTagCompound serializeNBT() {
-            NBTTagCompound nbt = super.serializeNBT();
-            nbt.setTag("from", NBTUtils.writeVec3d(from));
-            nbt.setTag("to", NBTUtils.writeVec3d(to));
-            return nbt;
-        }
-
-        @Override
-        public void deserializeNBT(NBTTagCompound nbt) {
-            super.deserializeNBT(nbt);
-            from = NBTUtils.readVec3d(nbt.getTag("from"));
-            to = NBTUtils.readVec3d(nbt.getTag("to"));
-        }
-
-        @Override
-        public void writeToByteBuf(PacketBuffer buf) {
-            super.writeToByteBuf(buf);
-            buf.writeDouble(from.xCoord);
-            buf.writeDouble(from.yCoord);
-            buf.writeDouble(from.zCoord);
-            buf.writeDouble(to.xCoord);
-            buf.writeDouble(to.yCoord);
-            buf.writeDouble(to.zCoord);
-        }
-
-        @Override
-        public Task readFromByteBuf(PacketBuffer buf) {
-            super.readFromByteBuf(buf);
-            from = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
-            to = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
-            return this;
         }
     }
 }

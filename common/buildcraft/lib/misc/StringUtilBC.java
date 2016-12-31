@@ -10,13 +10,10 @@ import java.util.function.Function;
 
 import com.google.common.base.Splitter;
 
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
 
 public final class StringUtilBC {
 
@@ -26,28 +23,6 @@ public final class StringUtilBC {
 
     /** Deactivate constructor */
     private StringUtilBC() {}
-
-    public static String localize(String key) {
-        return I18n.translateToLocal(key);
-    }
-
-    public static String localize(String key, Object... args) {
-        return String.format(localize(key), args);
-    }
-
-    public static boolean canLocalize(String key) {
-        return I18n.canTranslate(key);
-    }
-
-    /** Returns a localised name for the given colour. */
-    public static String getLocalized(EnumDyeColor colour) {
-        return localize("item.fireworksCharge." + colour.getUnlocalizedName());
-    }
-
-    /** Returns a localised name for the given face. */
-    public static String getLocalized(EnumFacing face) {
-        return localize("direction." + (face == null ? "center" : face.getName()));
-    }
 
     public static List<String> splitIntoLines(String string) {
         return newLineSplitter.splitToList(string.replaceAll("\\n", "\n"));

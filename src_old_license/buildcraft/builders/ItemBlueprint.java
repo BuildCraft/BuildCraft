@@ -23,8 +23,8 @@ import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.blueprints.Template;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.ModelHelper;
-import buildcraft.lib.misc.NBTUtils;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprintItem {
     public ItemBlueprint() {
@@ -33,12 +33,12 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
 
     @Override
     public String getName(ItemStack stack) {
-        return NBTUtils.getItemData(stack).getString("name");
+        return NBTUtilBC.getItemData(stack).getString("name");
     }
 
     @Override
     public boolean setName(ItemStack stack, String name) {
-        NBTUtils.getItemData(stack).setString("name", name);
+        NBTUtilBC.getItemData(stack).setString("name", name);
         return true;
     }
 
@@ -59,42 +59,42 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
 
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean advanced) {
-        if (NBTUtils.getItemData(stack).hasKey("name")) {
-            String name = NBTUtils.getItemData(stack).getString("name");
+        if (NBTUtilBC.getItemData(stack).hasKey("name")) {
+            String name = NBTUtilBC.getItemData(stack).getString("name");
 
             if ("".equals(name)) {
-                list.add(StringUtilBC.localize("item.blueprint.unnamed"));
+                list.add(LocaleUtil.localize("item.blueprint.unnamed"));
             } else {
                 list.add(name);
             }
 
-            list.add(StringUtilBC.localize("item.blueprint.author") + " " + NBTUtils.getItemData(stack).getString("author"));
+            list.add(LocaleUtil.localize("item.blueprint.author") + " " + NBTUtilBC.getItemData(stack).getString("author"));
         } else {
-            list.add(StringUtilBC.localize("item.blueprint.blank"));
+            list.add(LocaleUtil.localize("item.blueprint.blank"));
         }
 
-        if (NBTUtils.getItemData(stack).hasKey("permission")) {
-            BuildingPermission p = BuildingPermission.values()[NBTUtils.getItemData(stack).getByte("permission")];
+        if (NBTUtilBC.getItemData(stack).hasKey("permission")) {
+            BuildingPermission p = BuildingPermission.values()[NBTUtilBC.getItemData(stack).getByte("permission")];
 
             if (p == BuildingPermission.CREATIVE_ONLY) {
-                list.add(StringUtilBC.localize("item.blueprint.creative_only"));
+                list.add(LocaleUtil.localize("item.blueprint.creative_only"));
             } else if (p == BuildingPermission.NONE) {
-                list.add(StringUtilBC.localize("item.blueprint.no_build"));
+                list.add(LocaleUtil.localize("item.blueprint.no_build"));
             }
         }
 
-        if (NBTUtils.getItemData(stack).hasKey("isComplete")) {
-            boolean isComplete = NBTUtils.getItemData(stack).getBoolean("isComplete");
+        if (NBTUtilBC.getItemData(stack).hasKey("isComplete")) {
+            boolean isComplete = NBTUtilBC.getItemData(stack).getBoolean("isComplete");
 
             if (!isComplete) {
-                list.add(StringUtilBC.localize("item.blueprint.incomplete"));
+                list.add(LocaleUtil.localize("item.blueprint.incomplete"));
             }
         }
     }
 
     @Override
     public int getItemStackLimit(ItemStack stack) {
-        return NBTUtils.getItemData(stack).hasKey("name") ? 1 : 16;
+        return NBTUtilBC.getItemData(stack).hasKey("name") ? 1 : 16;
     }
 
     public static boolean isContentReadable(ItemStack stack) {
@@ -102,7 +102,7 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
     }
 
     public static LibraryId getId(ItemStack stack) {
-        NBTTagCompound nbt = NBTUtils.getItemData(stack);
+        NBTTagCompound nbt = NBTUtilBC.getItemData(stack);
         if (nbt == null) {
             return null;
         }

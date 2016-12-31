@@ -57,7 +57,7 @@ public class PlugPulsarRenderer implements IPluggableDynamicRenderer {
     @Override
     public void render(double x, double y, double z, float partialTicks, VertexBuffer vb) {
         vb.setTranslation(x, y, z);
-        for (MutableQuad q : getFromCache(toRender.side, toRender.isPulsing(), toRender.getStage(partialTicks))) {
+        for (MutableQuad q : getFromCache(toRender.side, toRender.isPulsingClient(), toRender.getStage(partialTicks))) {
             q.render(vb);
         }
         vb.setTranslation(0, 0, 0);

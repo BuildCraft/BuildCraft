@@ -42,7 +42,7 @@ public class BoundingBoxUtil {
     }
 
     public static AxisAlignedBB makeFrom(Vec3d from, Vec3d to) {
-        return new AxisAlignedBB(from, to);
+        return new AxisAlignedBB(from.xCoord, from.yCoord, from.zCoord, to.xCoord, to.yCoord, to.zCoord);
     }
 
     public static AxisAlignedBB makeFrom(Vec3d from, Vec3d to, double radius) {

@@ -12,7 +12,7 @@ import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.core.statements.StatementParamGateSideOnly;
 import buildcraft.core.statements.StatementParameterRedstoneLevel;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.transport.TileGenericPipe;
 
 public class TriggerRedstoneFaderInput extends BCStatement implements ITriggerInternal {
@@ -42,7 +42,7 @@ public class TriggerRedstoneFaderInput extends BCStatement implements ITriggerIn
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("gate.trigger.redstone.input." + mode.key());
+        return LocaleUtil.localize("gate.trigger.redstone.input." + mode.key());
     }
 
     @Override

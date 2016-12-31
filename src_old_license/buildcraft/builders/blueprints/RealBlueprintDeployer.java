@@ -19,7 +19,7 @@ import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 
 public class RealBlueprintDeployer extends BlueprintDeployer {
     public static final RealBlueprintDeployer realInstance = new RealBlueprintDeployer();
@@ -31,7 +31,7 @@ public class RealBlueprintDeployer extends BlueprintDeployer {
 
     @Override
     public void deployBlueprintFromFileStream(World world, BlockPos pos, EnumFacing dir, byte[] data) {
-        deployBlueprint(world, pos, dir, (Blueprint) BlueprintBase.loadBluePrint(NBTUtils.load(data)));
+        deployBlueprint(world, pos, dir, (Blueprint) BlueprintBase.loadBluePrint(NBTUtilBC.load(data)));
     }
 
     public void deployBlueprint(World world, BlockPos pos, EnumFacing dir, Blueprint bpt) {

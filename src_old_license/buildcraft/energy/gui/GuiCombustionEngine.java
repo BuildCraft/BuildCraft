@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.energy.TileEngineIron;
-import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class GuiCombustionEngine extends GuiEngine {
 
@@ -26,8 +26,8 @@ public class GuiCombustionEngine extends GuiEngine {
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
         super.drawGuiContainerForegroundLayer(par1, par2);
-        String title = StringUtilBC.localize("tile.engineIron.name");
+        String title = LocaleUtil.localize("tile.engineIron.name");
         fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
-        fontRendererObj.drawString(StringUtilBC.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
+        fontRendererObj.drawString(LocaleUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
     }
 }

@@ -15,9 +15,9 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
 
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBCInventory_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune;
 
-abstract class TileLaserTableBase extends TileBCInventory_Neptune implements ILaserTarget, IHasWork, ITickable, IDebuggable {
+abstract class TileLaserTableBase extends TileBC_Neptune implements ILaserTarget, IHasWork, ITickable, IDebuggable {
     public long power;
 
     @Override
@@ -37,7 +37,7 @@ abstract class TileLaserTableBase extends TileBCInventory_Neptune implements ILa
 
     @Override
     public void update() {
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             return;
         }
 

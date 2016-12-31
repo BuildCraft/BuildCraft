@@ -7,6 +7,7 @@ package buildcraft.energy;
 import buildcraft.api.enums.EnumEngineType;
 
 import buildcraft.core.BCCoreBlocks;
+import buildcraft.energy.tile.TileEngineIron_BC8;
 import buildcraft.energy.tile.TileEngineStone_BC8;
 import buildcraft.lib.tile.TileBC_Neptune;
 
@@ -15,6 +16,9 @@ public class BCEnergyBlocks {
         if (BCCoreBlocks.engine != null) {
             TileBC_Neptune.registerTile(TileEngineStone_BC8.class, "tile.engine.stone");
             BCCoreBlocks.engine.registerEngine(EnumEngineType.STONE, TileEngineStone_BC8::new);
+
+            TileBC_Neptune.registerTile(TileEngineIron_BC8.class, "tile.engine.iron");
+            BCCoreBlocks.engine.registerEngine(EnumEngineType.IRON, TileEngineIron_BC8::new);
         }
     }
 }

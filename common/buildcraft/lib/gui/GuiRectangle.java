@@ -2,9 +2,11 @@ package buildcraft.lib.gui;
 
 import net.minecraft.util.math.MathHelper;
 
-import buildcraft.lib.gui.pos.IPositionedElement;
+import buildcraft.lib.gui.pos.IGuiArea;
 
-public class GuiRectangle implements IPositionedElement {
+public class GuiRectangle implements IGuiArea {
+    public static final GuiRectangle ZERO = new GuiRectangle(0, 0, 0, 0);
+
     public final int x, y, width, height;
 
     public GuiRectangle(int x, int y, int width, int height) {
@@ -40,8 +42,8 @@ public class GuiRectangle implements IPositionedElement {
     }
 
     public GuiRectangle createProgress(double widthPercent, double heightPercent) {
-        int nWidth = MathHelper.ceiling_double_int(width * widthPercent);
-        int nHeight = MathHelper.ceiling_double_int(height * heightPercent);
+        int nWidth = MathHelper.ceil(width * widthPercent);
+        int nHeight = MathHelper.ceil(height * heightPercent);
         return new GuiRectangle(x, y, nWidth, nHeight);
     }
 }

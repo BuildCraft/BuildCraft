@@ -39,7 +39,7 @@ public class MessageVolumeMarkers implements IMessage {
         IntStream.range(0, buf.readInt()).mapToObj(i -> {
             Box box = new Box();
             box.readData(new PacketBuffer(buf));
-            return new VolumeBox(box, buf.readBoolean() ? new PacketBuffer(buf).readStringFromBuffer(1024) : null);
+            return new VolumeBox(box, buf.readBoolean() ? new PacketBuffer(buf).readString(1024) : null);
         }).forEach(boxes::add);
     }
 

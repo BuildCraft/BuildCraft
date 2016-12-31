@@ -4,13 +4,23 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.tile;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.schematic.SchematicBlock;
 import buildcraft.api.schematic.SchematicBlockContext;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.builders.BCBuildersBlocks;
+import buildcraft.builders.block.BlockArchitect;
 import buildcraft.builders.schematic.SchematicsLoader;
+import buildcraft.lib.delta.DeltaInt;
+import buildcraft.lib.delta.DeltaManager;
+import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.misc.data.BoxIterator;
+import buildcraft.lib.misc.data.EnumAxisOrder;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -22,38 +32,22 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.tiles.IDebuggable;
+import java.io.IOException;
+import java.util.List;
 
-import buildcraft.builders.BCBuildersBlocks;
-import buildcraft.builders.BCBuildersItems;
-import buildcraft.builders.block.BlockArchitect;
-import buildcraft.builders.item.ItemBlueprint.BptStorage;
-import buildcraft.lib.delta.DeltaInt;
-import buildcraft.lib.delta.DeltaManager;
-import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.data.Box;
-import buildcraft.lib.misc.data.BoxIterator;
-import buildcraft.lib.misc.data.EnumAxisOrder;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBCInventory_Neptune;
-import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
-
-public class TileArchitect extends TileBCInventory_Neptune implements ITickable, IDebuggable {
+public class TileArchitect extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final int NET_BOX = 20;
     public static final int NET_SCAN = 21;
 
     private static final int BLOCKS_PER_TICK = 3;
 
-    public final IItemHandlerModifiable invBptIn = addInventory("bptIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
-    public final IItemHandlerModifiable invBptOut = addInventory("bptOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
+    public final IItemHandlerModifiable invBptIn = itemManager.addInvHandler("bptIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
+    public final IItemHandlerModifiable invBptOut = itemManager.addInvHandler("bptOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
 
     public boolean shouldScanEntities = false;
     /** Details- if true then this will create a blueprint, otherwise it will be a template. */
@@ -90,12 +84,12 @@ public class TileArchitect extends TileBCInventory_Neptune implements ITickable,
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
-        if (placer.worldObj.isRemote) {
+        if (placer.world.isRemote) {
             return;
         }
-        EnumFacing facing = worldObj.getBlockState(getPos()).getValue(BlockArchitect.PROP_FACING);
+        EnumFacing facing = world.getBlockState(getPos()).getValue(BlockArchitect.PROP_FACING);
         BlockPos areaPos = getPos().offset(facing.getOpposite());
-        TileEntity tile = worldObj.getTileEntity(areaPos);
+        TileEntity tile = world.getTileEntity(areaPos);
         if (tile instanceof IAreaProvider) {
             IAreaProvider provider = (IAreaProvider) tile;
             box.reset();
@@ -106,9 +100,9 @@ public class TileArchitect extends TileBCInventory_Neptune implements ITickable,
             sendNetworkUpdate(NET_BOX);
         } else {
             isValid = false;
-            IBlockState state = worldObj.getBlockState(getPos());
+            IBlockState state = world.getBlockState(getPos());
             state = state.withProperty(BlockArchitect.PROP_VALID, Boolean.FALSE);
-            worldObj.setBlockState(getPos(), state);
+            world.setBlockState(getPos(), state);
         }
     }
 
@@ -116,7 +110,7 @@ public class TileArchitect extends TileBCInventory_Neptune implements ITickable,
     public void update() {
         deltaProgress.tick();
 
-        if (worldObj.isRemote) {
+        if (world.isRemote) {
             return;
         }
 
@@ -165,7 +159,7 @@ public class TileArchitect extends TileBCInventory_Neptune implements ITickable,
 
             blueprintScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = schematic;
         } else {
-            boolean solid = !worldObj.isAirBlock(worldScanPos);
+            boolean solid = !world.isAirBlock(worldScanPos);
             templateScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = solid;
         }
 
@@ -197,8 +191,8 @@ public class TileArchitect extends TileBCInventory_Neptune implements ITickable,
 //                return SchematicAir.INSTANCE;
 //            }
 //        }
-        Block block = worldObj.getBlockState(worldScanPos).getBlock();
-        SchematicBlockContext schematicBlockContext = new SchematicBlockContext(worldObj, worldScanPos, pos);
+        Block block = world.getBlockState(worldScanPos).getBlock();
+        SchematicBlockContext schematicBlockContext = new SchematicBlockContext(world, worldScanPos, pos);
         return SchematicsLoader.INSTANCE.schematicFactories.get(block).apply(schematicBlockContext);
     }
 
@@ -209,7 +203,7 @@ public class TileArchitect extends TileBCInventory_Neptune implements ITickable,
 
     private void finishScanning() {
         EnumFacing direction = EnumFacing.NORTH;
-        IBlockState state = worldObj.getBlockState(getPos());
+        IBlockState state = world.getBlockState(getPos());
         if (state.getBlock() == BCBuildersBlocks.architect) {
             direction = state.getValue(BlockArchitect.PROP_FACING);
         }
@@ -263,7 +257,7 @@ public class TileArchitect extends TileBCInventory_Neptune implements ITickable,
                 double x = pos.getX() + 0.5;
                 double y = pos.getY() + 0.5;
                 double z = pos.getZ() + 0.5;
-                worldObj.spawnParticle(EnumParticleTypes.CLOUD, x, y, z, 0, 0, 0);
+                world.spawnParticle(EnumParticleTypes.CLOUD, x, y, z, 0, 0, 0);
             }
         }
     }
@@ -273,7 +267,7 @@ public class TileArchitect extends TileBCInventory_Neptune implements ITickable,
         super.writeToNBT(nbt);
         nbt.setTag("box", box.writeToNBT());
         if (boxIterator != null) {
-            nbt.setTag("iter", boxIterator.writeToNBT());
+            nbt.setTag("iter", boxIterator.writeToNbt());
         }
         nbt.setBoolean("shouldStartScanning", shouldStartScanning);
         nbt.setBoolean("scanning", scanning);
@@ -289,7 +283,7 @@ public class TileArchitect extends TileBCInventory_Neptune implements ITickable,
         super.readFromNBT(nbt);
         box.initialize(nbt.getCompoundTag("box"));
         if (nbt.hasKey("iter")) {
-            boxIterator = new BoxIterator(nbt.getCompoundTag("iter"));
+            boxIterator = BoxIterator.readFromNbt(nbt.getCompoundTag("iter"));
         }
         shouldStartScanning = nbt.getBoolean("shouldStartScanning");
         scanning = nbt.getBoolean("scanning");

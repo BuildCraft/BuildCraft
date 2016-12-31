@@ -16,7 +16,7 @@ public class RenderFiller extends FastTESR<TileFiller> {
 
         vb.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
 
-        LaserBoxRenderer.renderLaserBoxVb(tile.box, BuildCraftLaserManager.STRIPES_WRITE, vb);
+        LaserBoxRenderer.renderLaserBoxDynamic(tile.box, BuildCraftLaserManager.STRIPES_WRITE, vb);
 
         vb.setTranslation(0, 0, 0);
 

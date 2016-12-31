@@ -10,7 +10,7 @@ import buildcraft.api.bpt.BlueprintAPI;
 import buildcraft.api.bpt.SchematicEntity;
 import buildcraft.api.bpt.SchematicException;
 
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;
 
@@ -25,13 +25,13 @@ public class SchematicEntityOffset {
 
     public SchematicEntityOffset(NBTTagCompound nbt) throws SchematicException {
         this.schematic = BlueprintAPI.deserializeSchematicEntity(nbt.getCompoundTag("sch"));
-        this.vec = NBTUtils.readVec3d(nbt.getTag("vec"));
+        this.vec = NBTUtilBC.readVec3d(nbt.getTag("vec"));
     }
 
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag("sch", schematic.serializeNBT());
-        nbt.setTag("vec", NBTUtils.writeVec3d(vec));
+        nbt.setTag("vec", NBTUtilBC.writeVec3d(vec));
         return nbt;
     }
 

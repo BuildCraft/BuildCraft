@@ -3,13 +3,13 @@ package buildcraft.transport.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import buildcraft.lib.gui.pos.IPositionedElement;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.data.IReference;
 import buildcraft.transport.gate.TriggerWrapper;
 
 public class ElementTrigger extends ElementStatement<TriggerWrapper> {
 
-    public ElementTrigger(GuiGate gui, IPositionedElement element, IReference<TriggerWrapper> reference) {
+    public ElementTrigger(GuiGate gui, IGuiArea element, IReference<TriggerWrapper> reference) {
         super(gui, element, reference);
     }
 

@@ -22,7 +22,7 @@ import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 import buildcraft.api.transport.neptune.PipeBehaviour;
 
 import buildcraft.lib.misc.EntityUtil;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.statements.ActionPipeColor;
 
@@ -35,7 +35,7 @@ public class PipeBehaviourLapis extends PipeBehaviour {
 
     public PipeBehaviourLapis(IPipe pipe, NBTTagCompound nbt) {
         super(pipe, nbt);
-        colour = NBTUtils.readEnum(nbt.getTag("colour"), EnumDyeColor.class);
+        colour = NBTUtilBC.readEnum(nbt.getTag("colour"), EnumDyeColor.class);
         if (colour == null) {
             colour = EnumDyeColor.WHITE;
         }
@@ -44,7 +44,7 @@ public class PipeBehaviourLapis extends PipeBehaviour {
     @Override
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = super.writeToNbt();
-        nbt.setTag("colour", NBTUtils.writeEnum(colour));
+        nbt.setTag("colour", NBTUtilBC.writeEnum(colour));
         return nbt;
     }
 
@@ -71,7 +71,7 @@ public class PipeBehaviourLapis extends PipeBehaviour {
 
     @Override
     public boolean onPipeActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ, EnumPipePart part) {
-        if (player.worldObj.isRemote) {
+        if (player.world.isRemote) {
             return EntityUtil.getWrenchHand(player) != null;
         }
         if (EntityUtil.getWrenchHand(player) != null) {
@@ -90,7 +90,7 @@ public class PipeBehaviourLapis extends PipeBehaviour {
     }
 
     @PipeEventHandler
-    public void addActions(PipeEventStatement.AddActionInternal event) {
+    public static void addActions(PipeEventStatement.AddActionInternal event) {
         Collections.addAll(event.actions, BCTransportStatements.ACTION_PIPE_COLOUR);
     }
 

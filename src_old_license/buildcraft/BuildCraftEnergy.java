@@ -52,8 +52,6 @@ import buildcraft.api.statements.StatementManager;
 import buildcraft.core.BCRegistry;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
-import buildcraft.core.config.ConfigManager;
-import buildcraft.core.config.ConfigManager.RestartRequirement;
 import buildcraft.core.lib.client.sprite.SpriteColourMapper;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.fluids.FluidDefinition;
@@ -71,13 +69,14 @@ import buildcraft.energy.worldgen.BiomeGenOilDesertOld;
 import buildcraft.energy.worldgen.BiomeGenOilOceanOld;
 import buildcraft.energy.worldgen.BiomeInitializerOld;
 import buildcraft.energy.worldgen.OilPopulateOld;
+import buildcraft.lib.config.RestartRequirement;
 
 //@Mod(name = "BuildCraft Energy", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Energy",
 //        dependencies = DefaultProps.DEPENDENCY_CORE)
 @Deprecated
 public class BuildCraftEnergy extends BuildCraftMod {
 
-    @Mod.Instance("BuildCraft|Energy")
+//    @Mod.Instance("BuildCraft|Energy")
     public static BuildCraftEnergy instance;
 
     public static boolean spawnOilSprings = true;
@@ -119,8 +118,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
         int oilDesertBiomeId = BuildCraftCore.mainConfigManager.register("worldgen.biomes", "biomeOilDesert", DefaultProps.BIOME_OIL_DESERT, "The id for the Oil Desert biome", RestartRequirement.GAME).getInt();
         int oilOceanBiomeId = BuildCraftCore.mainConfigManager.register("worldgen.biomes", "biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN, "The id for the Oil Ocean biome", RestartRequirement.GAME).getInt();
 
-        BuildCraftCore.mainConfigManager.register("worldgen.spawnOilSprings", true, "Should I spawn oil springs?", ConfigManager.RestartRequirement.GAME);
-        BuildCraftCore.mainConfigManager.register("worldgen.oilWellGenerationRate", 1.0D, "How high should be the probability of an oil well generating?", ConfigManager.RestartRequirement.NONE);
+        BuildCraftCore.mainConfigManager.register("worldgen.spawnOilSprings", true, "Should I spawn oil springs?", RestartRequirement.GAME);
+        BuildCraftCore.mainConfigManager.register("worldgen.oilWellGenerationRate", 1.0D, "How high should be the probability of an oil well generating?", RestartRequirement.NONE);
 
         setBiomeList(OilPopulateOld.INSTANCE.surfaceDepositBiomes, BuildCraftCore.mainConfigManager.register("worldgen.biomes", "increasedOilIDs", new String[] { BiomeDictionary.Type.SANDY.toString(), BiomeGenBase.taiga.biomeName },
                 "IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have increased oil generation rates.", RestartRequirement.GAME));
@@ -167,8 +166,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
             oil.block.setLightOpacity(8);
             oil.fluid.setColour(0x50_50_50, 0x05_05_05);
             oil.block.setFlammability(0);
-            BuildCraftCore.mainConfigManager.register("general.oilCanBurn", true, "Should oil burn when lit on fire?", ConfigManager.RestartRequirement.NONE);
-            BuildCraftCore.mainConfigManager.register("general.oilIsDense", false, "Should oil be dense and push enties up?", ConfigManager.RestartRequirement.NONE);
+            BuildCraftCore.mainConfigManager.register("general.oilCanBurn", true, "Should oil burn when lit on fire?", RestartRequirement.NONE);
+            BuildCraftCore.mainConfigManager.register("general.oilIsDense", false, "Should oil be dense and push enties up?", RestartRequirement.NONE);
 
             fuel = new FluidDefinition("fuel", 1000, 1000);
             fuel.block.setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
@@ -195,11 +194,11 @@ public class BuildCraftEnergy extends BuildCraftMod {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    public void reloadConfig(ConfigManager.RestartRequirement restartType) {
-        if (restartType == ConfigManager.RestartRequirement.GAME) {
-            reloadConfig(ConfigManager.RestartRequirement.WORLD);
-        } else if (restartType == ConfigManager.RestartRequirement.WORLD) {
-            reloadConfig(ConfigManager.RestartRequirement.NONE);
+    public void reloadConfig(RestartRequirement restartType) {
+        if (restartType == RestartRequirement.GAME) {
+            reloadConfig(RestartRequirement.WORLD);
+        } else if (restartType == RestartRequirement.WORLD) {
+            reloadConfig(RestartRequirement.NONE);
         } else {
             oilWellScalar = BuildCraftCore.mainConfigManager.get("worldgen.oilWellGenerationRate").getDouble();
 
@@ -218,7 +217,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.PostConfigChangedEvent event) {
         if ("BuildCraft|Core".equals(event.modID)) {
-            reloadConfig(event.isWorldRunning ? ConfigManager.RestartRequirement.NONE : ConfigManager.RestartRequirement.WORLD);
+            reloadConfig(event.isWorldRunning ? RestartRequirement.NONE : RestartRequirement.WORLD);
         }
     }
 
@@ -268,7 +267,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
             loadRecipes();
         }
 
-        reloadConfig(ConfigManager.RestartRequirement.GAME);
+        reloadConfig(RestartRequirement.GAME);
 
         BuildcraftRecipeRegistry.refinery.addRecipe("buildcraft:fuel", new FluidStack(oil.fluid, 1), new FluidStack(fuel.fluid, 1), 120, 1);
 
