@@ -12,9 +12,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.Fluid;
@@ -30,6 +33,7 @@ import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo;
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.net.cache.NetworkedFluidStackCache;
@@ -225,35 +229,123 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
         }
     }
 
-    public String getDebugString() {
-        FluidStack f = getFluid();
-        return getFluidAmount() + " / " + capacity + " mB of " + (f != null ? f.getFluid().getName() : "n/a");
+    public int getClientAmount() {
+        return clientAmount;
     }
 
-    /** Called whenever a player right-clicks on this tank in a gui.
-     * 
-     * @param container The container that the tank was right clicked in. */
+    public String getDebugString() {
+        FluidStack f = getFluidForRender();
+        if (f == null) f = getFluid();
+        return (f == null ? 0 : f.amount) + " / " + capacity + " mB of " + (f != null ? f.getFluid().getName() : "n/a");
+    }
+
     public void onGuiClicked(ContainerBC_Neptune container) {
         EntityPlayer player = container.player;
         ItemStack held = player.inventory.getItemStack();
         if (held.isEmpty()) {
             return;
         }
+
+        // first try to fill this tank from the item
+
+        boolean hasFilled = false;
+
+        ItemStack copy = held.copy();
+        copy.setCount(1);
+        int space = capacity - getFluidAmount();
+
         boolean isCreative = player.capabilities.isCreativeMode;
-        IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(held);
-        if (fluidHandler != null) {
-            FluidStack drained = fluidHandler.drain(getCapacity() - getFluidAmount(), false);
-            int filled = fill(drained, true);
-            if (filled > 0) {
-                FluidStack reallyDrained = fluidHandler.drain(filled, !isCreative);
-                if (reallyDrained == null || reallyDrained.amount != filled) {
-                    throw new IllegalStateException("Found a bugged implementation of IFluidHandlerItem! (first = "//
-                        + filled + ", second = " + reallyDrained + ", impl = = " + fluidHandler.getClass() + ")");
-                }
-                if (!isCreative) {
-                    player.inventory.setItemStack(fluidHandler.getContainer());
+        boolean isSurvival = !isCreative;
+
+        FluidGetResult result = map(copy, space);
+        if (result != null && result.fluidStack != null && result.fluidStack.amount > 0) {
+            if (isCreative) {
+                held = copy;// so we don't change the stack held by the player.
+            }
+            int potential = held.getCount();
+            // Insert a single item until a fluid was not accepted.
+            for (int p = 0; p < potential; p++) {
+                int accepted = fill(result.fluidStack, false);
+                if (isCreative ? (accepted > 0) : (accepted == result.fluidStack.amount)) {
+                    hasFilled = true;
+                    int reallyAccepted = fill(result.fluidStack, true);
+                    if (reallyAccepted != accepted) {
+                        throw new IllegalStateException("We seem to be buggy! (accepted = " + accepted + ", reallyAccepted = " + reallyAccepted + ")");
+                    }
+                    held.shrink(1);
+                    if (isSurvival) {
+                        if (held.isEmpty()) {
+                            held = result.itemStack;
+                            break;
+                        } else if (!result.itemStack.isEmpty()) {
+                            player.inventory.addItemStackToInventory(result.itemStack);
+                            player.inventoryContainer.detectAndSendChanges();
+                        } else {
+                            continue;
+                        }
+                    } else if (held.isEmpty()) {
+                        break;
+                    }
+                } else {
+                    break;
                 }
             }
+            if (isSurvival) {
+                player.inventory.setItemStack(held.isEmpty() ? StackUtil.EMPTY : held);
+                ((EntityPlayerMP) player).updateHeldItem();
+            }
+            if (hasFilled) {
+                FluidStack fl = getFluid();
+                if (fl != null) {
+                    SoundEvent sound = fl.getFluid().getEmptySound(container.player.world, container.player.getPosition());
+                    container.player.world.playSound(null, player.getPosition(), sound, SoundCategory.BLOCKS, 1, 1);
+                }
+                return;
+            }
+        }
+        // Now try to drain the fluid into the item
+        IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(held.copy());
+        if (fluidHandler == null) return;
+        FluidStack drained = drain(capacity, false);
+        if (drained == null || drained.amount <= 0) return;
+        int filled = fluidHandler.fill(drained, true);
+        if (filled > 0) {
+            FluidStack reallyDrained = drain(filled, true);
+            if ((reallyDrained == null || reallyDrained.amount != filled)) {
+                throw new IllegalStateException("Somehow drained differently than expected! ( drained = "//
+                    + drained + ", filled = " + filled + ", reallyDrained = " + reallyDrained + " )");
+            }
+            if (isSurvival) {
+                ItemStack filledContainer = fluidHandler.getContainer();
+                player.inventory.setItemStack(filledContainer);
+                ((EntityPlayerMP) player).updateHeldItem();
+            }
+            SoundEvent sound = reallyDrained.getFluid().getFillSound(container.player.world, container.player.getPosition());
+            container.player.world.playSound(null, player.getPosition(), sound, SoundCategory.BLOCKS, 1, 1);
+        }
+    }
+
+    /** Maps the given stack to a fluid result.
+     * 
+     * @param stack The stack to map. This will ALWAYS have an {@link ItemStack#getCount()} of 1.
+     * @param space The maximum amount of fluid that can be accepted by this tank. */
+    protected FluidGetResult map(ItemStack stack, int space) {
+        IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(stack.copy());
+        if (fluidHandler == null) return null;
+        FluidStack drained = fluidHandler.drain(space, true);
+        if (drained == null || drained.amount <= 0) return null;
+        ItemStack leftOverStack = fluidHandler.getContainer();
+        if (leftOverStack.isEmpty()) leftOverStack = StackUtil.EMPTY;
+        return new FluidGetResult(leftOverStack, drained);
+    }
+
+    public static class FluidGetResult {
+        public final ItemStack itemStack;
+        public final FluidStack fluidStack;
+
+        public FluidGetResult(ItemStack itemStack, FluidStack fluidStack) {
+            this.itemStack = itemStack;
+            this.fluidStack = fluidStack;
         }
     }
 }

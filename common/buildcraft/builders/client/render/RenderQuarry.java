@@ -61,13 +61,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
             DRILL = new LaserData_BC8.LaserType(capStart, start, middle, end, capEnd);
         }
         {
-            SpriteHolderRegistry.SpriteHolder sprite = SpriteHolderRegistry.getHolder("buildcraftbuilders:blocks/quarry/laser");
-            LaserData_BC8.LaserRow capStart = new LaserData_BC8.LaserRow(sprite, 4, 4, 12, 12);
-            LaserData_BC8.LaserRow start = null;
-            LaserData_BC8.LaserRow[] middle = { new LaserData_BC8.LaserRow(sprite, 0, 4, 16, 12) };
-            LaserData_BC8.LaserRow end = new LaserData_BC8.LaserRow(sprite, 0, 4, 16, 12);
-            LaserData_BC8.LaserRow capEnd = new LaserData_BC8.LaserRow(sprite, 4, 4, 12, 12);
-            LASER = new LaserData_BC8.LaserType(capStart, start, middle, end, capEnd);
+            LASER = BuildCraftLaserManager.POWER_LOW;
         }
     }
 

@@ -3,13 +3,12 @@ package buildcraft.lib.misc;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.ResourceLocation;
@@ -59,5 +58,9 @@ public class SpriteUtil {
             return new RawSprite(loc, 8, 8, 8, 8, 64);
         }
         return LibSprites.LOADING;
+    }
+
+    public static TextureAtlasSprite missingSprite() {
+        return Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
     }
 }

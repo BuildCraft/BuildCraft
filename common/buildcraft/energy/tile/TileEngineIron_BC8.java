@@ -20,8 +20,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
+import buildcraft.api.fuels.ICoolant;
 import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.IFuelManager.IDirtyFuel;
+import buildcraft.api.fuels.ISolidCoolant;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.neptune.IPipeItem;
@@ -35,6 +37,7 @@ import buildcraft.lib.fluids.TankProperties;
 import buildcraft.lib.gui.help.ElementHelpInfo;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.EntityUtil;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
 public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
@@ -44,7 +47,20 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     public static final int MAX_COOLANT_PER_TICK = 40;
 
     public final Tank tankFuel = new Tank("tankFuel", MAX_FLUID, this, this::isValidFuel);
-    public final Tank tankCoolant = new Tank("tankCoolant", MAX_FLUID, this, this::isValidCoolant);
+    public final Tank tankCoolant = new Tank("tankCoolant", MAX_FLUID, this, this::isValidCoolant) {
+        @Override
+        protected FluidGetResult map(ItemStack stack, int space) {
+            ISolidCoolant coolant = BuildcraftFuelRegistry.coolant.getSolidCoolant(stack);
+            if (coolant == null) {
+                return super.map(stack, space);
+            }
+            FluidStack fluidCoolant = coolant.getFluidFromSolidCoolant(stack);
+            if (fluidCoolant == null || fluidCoolant.amount <= 0 || fluidCoolant.amount > space) {
+                return super.map(stack, space);
+            }
+            return new FluidGetResult(StackUtil.EMPTY, fluidCoolant);
+        }
+    };
     public final Tank tankResidue = new Tank("tankResidue", MAX_FLUID, this, this::isResidue);
     private final TankManager<Tank> tankManager = new TankManager<>(tankFuel, tankCoolant, tankResidue);
     private final IFluidHandlerAdv fluidHandler = new InternalFluidHandler();
@@ -176,44 +192,43 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
             return;
         }
 
-        if (penaltyCooling <= 0 && isRedstonePowered) {
+        if (penaltyCooling <= 0) {
+            if (isRedstonePowered) {
+                lastPowered = true;
 
-            lastPowered = true;
-
-            if (burnTime > 0 || (fuel != null && fuel.amount > 0)) {
-                if (burnTime > 0) {
-                    burnTime--;
-                }
-                if (burnTime <= 0) {
-                    if (fuel != null) {
-                        if (--fuel.amount <= 0) {
-                            tankFuel.setFluid(null);
-                        }
-                        burnTime += currentFuel.getTotalBurningTime() / 1000.0;
-
-                        // If we also produce residue then put it out too
-                        if (currentFuel instanceof IDirtyFuel) {
-                            IDirtyFuel dirtyFuel = (IDirtyFuel) currentFuel;
-                            residueAmount += dirtyFuel.getResidue().amount / 1000.0;
-                            if (residueAmount >= 1) {
-                                int residue = MathHelper.floor(residueAmount);
-                                FluidStack residueFluid = dirtyFuel.getResidue().copy();
-                                residueFluid.amount = residue;
-                                residueAmount -= tankResidue.fill(residueFluid, true);
-                            }
-                        }
-                    } else {
-                        currentFuel = null;
-                        residueAmount = 0;
-                        return;
+                if (burnTime > 0 || (fuel != null && fuel.amount > 0)) {
+                    if (burnTime > 0) {
+                        burnTime--;
                     }
+                    if (burnTime <= 0) {
+                        if (fuel != null) {
+                            if (--fuel.amount <= 0) {
+                                tankFuel.setFluid(null);
+                            }
+                            burnTime += currentFuel.getTotalBurningTime() / 1000.0;
+
+                            // If we also produce residue then put it out too
+                            if (currentFuel instanceof IDirtyFuel) {
+                                IDirtyFuel dirtyFuel = (IDirtyFuel) currentFuel;
+                                residueAmount += dirtyFuel.getResidue().amount / 1000.0;
+                                if (residueAmount >= 1) {
+                                    int residue = MathHelper.floor(residueAmount);
+                                    FluidStack residueFluid = dirtyFuel.getResidue().copy();
+                                    residueFluid.amount = residue;
+                                    residueAmount -= tankResidue.fill(residueFluid, true);
+                                }
+                            }
+                        } else {
+                            currentFuel = null;
+                            residueAmount = 0;
+                            return;
+                        }
+                    }
+                    currentOutput = currentFuel.getPowerPerCycle(); // Comment out for constant power
+                    addPower(currentFuel.getPowerPerCycle());
+                    heat += currentFuel.getPowerPerCycle() * HEAT_PER_MJ / MjAPI.MJ;// * getBiomeTempScalar();
                 }
-                currentOutput = currentFuel.getPowerPerCycle(); // Comment out for constant power
-                addPower(currentFuel.getPowerPerCycle());
-                heat += currentFuel.getPowerPerCycle() * HEAT_PER_MJ / MjAPI.MJ;// * getBiomeTempScalar();
-            }
-        } else if (penaltyCooling <= 0) {
-            if (lastPowered) {
+            } else if (lastPowered) {
                 lastPowered = false;
                 penaltyCooling = 10;
                 // 10 tick of penalty on top of the cooling
@@ -223,7 +238,61 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
 
     @Override
     public void updateHeatLevel() {
-        // We update heat ourselves
+        double target;
+        if (heat > MIN_HEAT && (penaltyCooling > 0 || !isRedstonePowered)) {
+            heat -= COOLDOWN_RATE;
+            target = MIN_HEAT;
+        } else if (heat > IDEAL_HEAT) {
+            target = IDEAL_HEAT;
+        } else {
+            target = heat;
+        }
+
+        if (target != heat) {
+            // coolEngine(target)
+            {
+                double coolingBuffer = 0;
+                double extraHeat = heat - target;
+
+                if (extraHeat > 0) {
+                    // fillCoolingBuffer();
+                    {
+                        if (tankCoolant.getFluidAmount() > 0) {
+                            ICoolant coolant = BuildcraftFuelRegistry.coolant.getCoolant(tankCoolant.getFluidType());
+                            if (coolant != null) {
+                                float coolPerMb = coolant.getDegreesCoolingPerMB((float) heat);
+
+                                int coolantAmount = Math.min(MAX_COOLANT_PER_TICK, tankCoolant.getFluidAmount());
+                                float cooling = coolPerMb;
+                                // cooling /= getBiomeTempScalar();
+                                coolingBuffer += coolantAmount * cooling;
+                                tankCoolant.drain(coolantAmount, true);
+                            }
+                        }
+                    }
+                    // end
+                }
+
+                // if (coolingBuffer >= extraHeat) {
+                // coolingBuffer -= extraHeat;
+                // heat -= extraHeat;
+                // return;
+                // }
+
+                heat -= coolingBuffer;
+                coolingBuffer = 0.0f;
+            }
+            // end
+            getPowerStage();
+        }
+
+        if (heat <= MIN_HEAT && penaltyCooling > 0) {
+            penaltyCooling--;
+        }
+
+        if (heat <= MIN_HEAT) {
+            heat = MIN_HEAT;
+        }
     }
 
     @Override

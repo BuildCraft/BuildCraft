@@ -408,7 +408,6 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             writePayload(NET_RENDER_DATA, buffer, side);
 
             if (side == Side.SERVER) {
-                BCLog.logger.info("write owner as " + owner);
                 MessageUtil.writeGameProfile(buffer, owner);
             }
         }
@@ -460,7 +459,6 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (nbt.hasKey("owner")) {
             owner = NBTUtil.readGameProfileFromNBT(nbt.getCompoundTag("owner"));
             if (owner != null && !owner.isComplete()) {
-                BCLog.logger.warn("[lib.tile] Read game profile was not complete! ( tag = " + nbt.getCompoundTag("owner") + ", profile = " + owner + " )");
                 owner = null;
             }
         }

@@ -34,7 +34,7 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
 
     @Override
     public void renderTileEntityAt(TileTank te, double x, double y, double z, float partialTicks, int destroyStage) {
-        FluidStack forRender = te.tank.getFluid();
+        FluidStack forRender = te.tank.getFluidForRender();
         if (forRender == null) {
             return;
         }

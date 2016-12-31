@@ -72,11 +72,6 @@ public class ContainerGate extends ContainerBC_Neptune {
         }
 
         addFullPlayerInventory(33 + slotHeight * 18);
-
-        if (!player.world.isRemote) {
-            sendMessage(ID_VALID_STATEMENTS);
-            sendMessage(ID_CURRENT_SET);
-        }
     }
 
     @Override

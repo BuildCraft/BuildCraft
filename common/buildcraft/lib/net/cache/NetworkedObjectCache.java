@@ -9,11 +9,16 @@ import java.util.function.Supplier;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
+import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -63,12 +68,23 @@ public abstract class NetworkedObjectCache<T> {
     /** @return The server view of this cache. If the debug option "lib.net.cache" is enabled then this will check to
      *         make sure that this really is the server thread. */
     public ServerView server() {
+        if (DEBUG_LOG) {
+            MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+            if (!server.isCallingFromMinecraftThread()) {
+                throw new IllegalStateException("");
+            }
+        }
         return serverView;
     }
 
     /** @return The server view of this cache. If the debug option "lib.net.cache" is enabled then this will check to
      *         make sure that this really is the client thread. */
     public ClientView client() {
+        if (DEBUG_LOG) {
+            if (!Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+                throw new IllegalStateException("");
+            }
+        }
         return clientView;
     }
 
@@ -130,7 +146,7 @@ public abstract class NetworkedObjectCache<T> {
         }
     }
 
-    // Abstract overidable methods
+    // Abstract overridable methods
 
     /** Takes a specific object and turns it into its most basic form. For example for {@link ItemStack}'s this will
      * should set the stack size to 1, and remove all non-rendered NBT tag components.

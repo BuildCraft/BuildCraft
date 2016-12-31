@@ -158,7 +158,6 @@ public enum RenderTickListener {
     }
 
     private static void appendDiff(List<String> dest, List<String> first, List<String> second, String headerFirst, String headerSecond) {
-        if (first.isEmpty()) return;
         dest.add("");
         dest.add(headerFirst);
         dest.addAll(first);

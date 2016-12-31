@@ -141,7 +141,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 tank.readFromBuffer(buffer);
-                target = tank.getFluidAmount();
+                target = tank.getClientAmount();
                 lastMessageMinus1 = lastMessage = world.getTotalWorldTime();
             } else if (id == NET_FLUID_DELTA) {
                 target = buffer.readInt();

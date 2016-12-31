@@ -8,10 +8,7 @@ import javax.annotation.Nonnull;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.*;
 import net.minecraft.world.biome.Biome;
 
 import net.minecraftforge.common.capabilities.Capability;
@@ -24,6 +21,7 @@ import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -121,7 +119,6 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
                 heat = buffer.readFloat();
                 currentOutput = buffer.readLong();
                 power = buffer.readLong();
-                
 
             }
         }
@@ -170,11 +167,11 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     protected EnumPowerStage computePowerStage() {
-        double powerLevel = getHeatLevel();
-        if (powerLevel < 0.25f) return EnumPowerStage.BLUE;
-        else if (powerLevel < 0.5f) return EnumPowerStage.GREEN;
-        else if (powerLevel < 0.75f) return EnumPowerStage.YELLOW;
-        else if (powerLevel < 1f) return EnumPowerStage.RED;
+        double heatLevel = getHeatLevel();
+        if (heatLevel < 0.25f) return EnumPowerStage.BLUE;
+        else if (heatLevel < 0.5f) return EnumPowerStage.GREEN;
+        else if (heatLevel < 0.75f) return EnumPowerStage.YELLOW;
+        else if (heatLevel < 0.85f) return EnumPowerStage.RED;
         else return EnumPowerStage.OVERHEAT;
     }
 
@@ -234,8 +231,45 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         deltaManager.tick();
         if (cannotUpdate()) return;
 
+        boolean overheat = getPowerStage() == EnumPowerStage.OVERHEAT;
+
         if (world.isRemote) {
-            // TODO!
+            // idk if these will stay (at all) or in a more refined form
+            double particleCount = 0;
+            double flameRand = 0;
+            if (powerStage == EnumPowerStage.BLUE) {
+                particleCount = isPumping ? 0.125 : 0;
+            } else if (powerStage == EnumPowerStage.GREEN) {
+                particleCount = isPumping ? 0.25 : 0.125;
+            } else if (powerStage == EnumPowerStage.YELLOW) {
+                particleCount = isPumping ? 1 : 0.25;
+                flameRand = 0.125;
+            } else if (powerStage == EnumPowerStage.RED) {
+                particleCount = isPumping ? 3 : 1.25;
+                flameRand = 0.25;
+            } else if (powerStage == EnumPowerStage.OVERHEAT) {
+                particleCount = isPumping ? 5 : 4;
+                flameRand = 0.5;
+            }
+
+            int realCount = (int) (Math.floor(particleCount)) + (world.rand.nextDouble() < (particleCount % 1) ? 1 : 0);
+
+            if (realCount > 0) {
+                double x = getPos().getX() + 0.5;
+                double y = getPos().getY() + 0.5;
+                double z = getPos().getZ() + 0.5;
+
+                for (int i = realCount; i > 0; i--) {
+                    double dx = (world.rand.nextDouble() - 0.5) * 0.5;
+                    double dy = (world.rand.nextDouble() - 0.3) * 0.4;
+                    double dz = (world.rand.nextDouble() - 0.5) * 0.5;
+
+                    EnumParticleTypes type = world.rand.nextDouble() < flameRand ? EnumParticleTypes.FLAME : EnumParticleTypes.CLOUD;
+
+                    world.spawnParticle(type, x, y, z, dx, dy, dz);
+                }
+                // world.playSound(x, y, z, SoundEvent, volume, pitch, distanceDelay);
+            }
             return;
         }
 
@@ -280,7 +314,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         // sendPower();
         // } else currentOutput = 0;
 
-        burn();
+        if (!overheat) {
+            burn();
+        }
     }
 
     private long getPowerToExtract(boolean doExtract) {
@@ -513,8 +549,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
         left.add("facing = " + currentDirection);
-        left.add("heat = " + heat);
+        left.add("heat = " + LocaleUtil.localizeHeat(heat) + " -- " + String.format("%.2f %%", getHeatLevel()));
         left.add("power = " + MjAPI.formatMjShort(power));
+        left.add("stage = " + powerStage);
         left.add("progress = " + progress);
         left.add("last = +" + MjAPI.formatMjShort(lastPower));
     }

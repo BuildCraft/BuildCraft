@@ -272,7 +272,7 @@ public class TileArchitect_Neptune extends TileBC_Neptune implements ITickable, 
         super.writeToNBT(nbt);
         nbt.setTag("box", box.writeToNBT());
         if (boxIterator != null) {
-            nbt.setTag("iter", boxIterator.writeToNBT());
+            nbt.setTag("iter", boxIterator.writeToNbt());
         }
         nbt.setBoolean("shouldStartScanning", shouldStartScanning);
         nbt.setBoolean("scanning", scanning);
@@ -288,7 +288,7 @@ public class TileArchitect_Neptune extends TileBC_Neptune implements ITickable, 
         super.readFromNBT(nbt);
         box.initialize(nbt.getCompoundTag("box"));
         if (nbt.hasKey("iter")) {
-            boxIterator = new BoxIterator(nbt.getCompoundTag("iter"));
+            boxIterator = BoxIterator.readFromNbt(nbt.getCompoundTag("iter"));
         }
         shouldStartScanning = nbt.getBoolean("shouldStartScanning");
         scanning = nbt.getBoolean("scanning");

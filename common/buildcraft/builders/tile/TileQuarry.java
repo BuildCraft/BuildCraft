@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -290,7 +291,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             drillPos = new Vec3d(miningBox.closestInsideTo(getPos()));
         }
 
-        if (boxIterator != null) {
+        if (boxIterator != null && boxIterator.hasNext()) {
             if (drillPos.squareDistanceTo(new Vec3d(boxIterator.getCurrent())) > 2) {
                 currentTask = new TaskMoveDrill(drillPos, new Vec3d(boxIterator.getCurrent()));
             } else if (!world.isAirBlock(boxIterator.getCurrent())) {
@@ -592,8 +593,13 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         @Override
         protected void finish() {
             EntityPlayer fake = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, TileQuarry.this.pos, TileQuarry.this.getOwner());
-
-            BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, breakPos, world.getBlockState(breakPos), fake);
+            
+            IBlockState state = world.getBlockState(breakPos);
+            if (state.getBlockHardness(getWorld(), breakPos) < 0) {
+                return;
+            }
+            
+            BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, breakPos, state, fake);
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if (!breakEvent.isCanceled()) {
                 boolean put = TileQuarry.this.drillPos != null;

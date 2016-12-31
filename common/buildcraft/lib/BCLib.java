@@ -14,11 +14,11 @@ import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.BCModules;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 
-import buildcraft.BuildCraftFactory;
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.fluids.CoolantRegistry;
@@ -31,7 +31,6 @@ import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.IntegrationRecipeRegistry;
-import buildcraft.test.lib.list.ListTester;
 
 //@formatter:off
 @Mod(modid = BCLib.MODID,
@@ -49,13 +48,19 @@ public class BCLib {
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent evt) {
+        BCLog.logger.info("");
+        BCLog.logger.info("Starting BuildCraft " + BCLib.VERSION);
+        BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2016");
+        BCLog.logger.info("http://www.mod-buildcraft.com");
+        BCLog.logger.info("");
+        BCModules.fmlPreInit();
+
         BuildcraftRecipeRegistry.assemblyRecipes = AssemblyRecipeRegistry.INSTANCE;
         BuildcraftRecipeRegistry.integrationRecipes = IntegrationRecipeRegistry.INSTANCE;
-
-        BCModules.fmlPreInit();
-        BuildCraftAPI.fakePlayerProvider = FakePlayerUtil.INSTANCE;
         BuildcraftFuelRegistry.fuel = FuelRegistry.INSTANCE;
         BuildcraftFuelRegistry.coolant = CoolantRegistry.INSTANCE;
+        BuildCraftAPI.fakePlayerProvider = FakePlayerUtil.INSTANCE;
+
         BCLibProxy.getProxy().fmlPreInit();
 
         BCLibItems.preInit();

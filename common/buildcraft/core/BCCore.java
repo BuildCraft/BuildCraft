@@ -16,8 +16,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
-import buildcraft.api.core.BCLog;
-
 import buildcraft.core.list.ListTooltipHandler;
 import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.VolumeCache;
@@ -25,6 +23,7 @@ import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.registry.CreativeTabManager;
+import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
 
 @Mod(//
         modid = BCCore.MODID,//
@@ -47,24 +46,18 @@ public class BCCore {
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event) {
-        BCLog.logger.info("");
-        BCLog.logger.info("Starting BuildCraft " + BCLib.VERSION);
-        BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2016");
-        BCLog.logger.info("http://www.mod-buildcraft.com");
-        BCLog.logger.info("");
-
         File cfgFolder = event.getModConfigurationDirectory();
         cfgFolder = new File(cfgFolder, "buildcraft");
         BCCoreConfig.preInit(cfgFolder);
         BCCoreProxy.getProxy().fmlPreInit();
 
-        CreativeTabManager.createTab("buildcraft.main");
+       CreativeTabBC  tab= CreativeTabManager.createTab("buildcraft.main");
 
         BCCoreItems.preInit();
         BCCoreBlocks.preInit();
         BCCoreStatements.preInit();
 
-        CreativeTabManager.setItem("buildcraft.main", BCCoreItems.wrench);
+        tab.setItem(BCCoreItems.wrench);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCCoreProxy.getProxy());
 

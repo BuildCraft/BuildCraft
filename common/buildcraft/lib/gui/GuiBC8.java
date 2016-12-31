@@ -40,7 +40,18 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         if (container instanceof ContainerBCTile<?>) {
             ledgersRight.ledgers.add(new LedgerOwnership(ledgersRight, (ContainerBCTile<?>) container));
         }
-        ledgersLeft.ledgers.add(ledgerHelp = new LedgerHelp(ledgersLeft));
+        if (shouldAddHelpLedger()) {
+            ledgersLeft.ledgers.add(ledgerHelp = new LedgerHelp(ledgersLeft));
+        } else {
+            ledgerHelp = null;
+        }
+    }
+
+    /**
+     * Checks to see if the main 
+     */
+    protected boolean shouldAddHelpLedger() {
+        return true;
     }
 
     @Override
