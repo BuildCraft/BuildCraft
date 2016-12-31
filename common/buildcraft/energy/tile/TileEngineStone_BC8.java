@@ -159,7 +159,7 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
         super.getDebugInfo(left, right, side);
         left.add("esum = " + MjAPI.formatMj(esum) + " M");
         long e = 3 * getMaxPower() / 8 - power;
-        left.add("output = " + MjAPI.formatMj(clamp(e + esum / 20, MIN_OUTPUT, MAX_OUTPUT)) + " Mj");
+        left.add("output = " + MjAPI.formatMj(clamp(e + esum / 20, MIN_OUTPUT, MAX_OUTPUT)) + " MJ");
         left.add("burnTime = " + burnTime);
         left.add("delta = " + deltaFuelLeft.getDynamic(0));
     }
