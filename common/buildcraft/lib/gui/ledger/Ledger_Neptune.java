@@ -31,7 +31,7 @@ public abstract class Ledger_Neptune implements ITooltipElement {
     public static final SpriteNineSliced SPRITE_SPLIT_POS = new SpriteNineSliced(SPRITE_EXP_POS, 4, 4, 12, 12, 16);
 
     public static final int LEDGER_CHANGE_DIFF = 20;
-    public static final int LEDGER_GAP = 4;
+    public static final int LEDGER_GAP = 2;
 
     public static final int CLOSED_WIDTH = LEDGER_GAP + 16 + LEDGER_GAP;
     public static final int CLOSED_HEIGHT = LEDGER_GAP + 16 + LEDGER_GAP;
