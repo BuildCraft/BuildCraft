@@ -56,7 +56,7 @@ import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 
-public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITickable, IDebuggable {
+public class TileBuilder extends TileBCInventory_Neptune implements ITickable, IDebuggable {
     public static final int NET_BOX = 10;
     public static final int NET_PATH = 11;
     public static final int NET_CLEAR = 12;

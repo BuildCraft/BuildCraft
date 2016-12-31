@@ -1,6 +1,0 @@
-{
-    "parent":"buildcraftbuilders:block/led_active",
-    "textures": {
-        "led":"buildcraftbuilders:blocks/led_green_on"
-    }
-}

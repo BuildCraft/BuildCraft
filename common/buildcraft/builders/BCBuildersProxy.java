@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
+import buildcraft.builders.container.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -20,16 +21,12 @@ import buildcraft.builders.client.render.RenderArchitect;
 import buildcraft.builders.client.render.RenderBuilder;
 import buildcraft.builders.client.render.RenderFiller;
 import buildcraft.builders.client.render.RenderQuarry;
-import buildcraft.builders.container.ContainerArchitect;
-import buildcraft.builders.container.ContainerBlueprintLibrary;
-import buildcraft.builders.container.ContainerBuilder_Neptune;
-import buildcraft.builders.container.ContainerQuarry;
 import buildcraft.builders.entity.EntityQuarry;
 import buildcraft.builders.gui.*;
-import buildcraft.builders.tile.TileArchitect_Neptune;
-import buildcraft.builders.tile.TileBuilder_Neptune;
-import buildcraft.builders.tile.TileFiller_Neptune;
-import buildcraft.builders.tile.TileLibrary_Neptune;
+import buildcraft.builders.tile.TileArchitect;
+import buildcraft.builders.tile.TileBuilder;
+import buildcraft.builders.tile.TileFiller;
+import buildcraft.builders.tile.TileLibrary;
 import buildcraft.builders.tile.TileQuarry;
 
 public abstract class BCBuildersProxy implements IGuiHandler {
@@ -44,20 +41,26 @@ public abstract class BCBuildersProxy implements IGuiHandler {
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
         if (id == BCBuildersGuis.LIBRARY.ordinal()) {
-            if (tile instanceof TileLibrary_Neptune) {
-                TileLibrary_Neptune library = (TileLibrary_Neptune) tile;
+            if (tile instanceof TileLibrary) {
+                TileLibrary library = (TileLibrary) tile;
                 return new ContainerBlueprintLibrary(player, library);
             }
         }
         if (id == BCBuildersGuis.BUILDER.ordinal()) {
-            if (tile instanceof TileBuilder_Neptune) {
-                TileBuilder_Neptune builder = (TileBuilder_Neptune) tile;
-                return new ContainerBuilder_Neptune(player, builder);
+            if (tile instanceof TileBuilder) {
+                TileBuilder builder = (TileBuilder) tile;
+                return new ContainerBuilder(player, builder);
+            }
+        }
+        if (id == BCBuildersGuis.FILLER.ordinal()) {
+            if (tile instanceof TileFiller) {
+                TileFiller filler = (TileFiller) tile;
+                return new ContainerFiller(player, filler);
             }
         }
         if (id == BCBuildersGuis.ARCHITECT.ordinal()) {
-            if (tile instanceof TileArchitect_Neptune) {
-                TileArchitect_Neptune library = (TileArchitect_Neptune) tile;
+            if (tile instanceof TileArchitect) {
+                TileArchitect library = (TileArchitect) tile;
                 return new ContainerArchitect(player, library);
             }
         }
@@ -90,20 +93,26 @@ public abstract class BCBuildersProxy implements IGuiHandler {
         public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
             TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
             if (id == BCBuildersGuis.LIBRARY.ordinal()) {
-                if (tile instanceof TileLibrary_Neptune) {
-                    TileLibrary_Neptune library = (TileLibrary_Neptune) tile;
+                if (tile instanceof TileLibrary) {
+                    TileLibrary library = (TileLibrary) tile;
                     return new GuiBlueprintLibrary(player, library);
                 }
             }
             if (id == BCBuildersGuis.BUILDER.ordinal()) {
-                if (tile instanceof TileBuilder_Neptune) {
-                    TileBuilder_Neptune builder = (TileBuilder_Neptune) tile;
-                    return new GuiBuilder_Neptune(new ContainerBuilder_Neptune(player, builder));
+                if (tile instanceof TileBuilder) {
+                    TileBuilder builder = (TileBuilder) tile;
+                    return new GuiBuilder(new ContainerBuilder(player, builder));
+                }
+            }
+            if (id == BCBuildersGuis.FILLER.ordinal()) {
+                if (tile instanceof TileFiller) {
+                    TileFiller filler = (TileFiller) tile;
+                    return new GuiFiller(new ContainerFiller(player, filler));
                 }
             }
             if (id == BCBuildersGuis.ARCHITECT.ordinal()) {
-                if (tile instanceof TileArchitect_Neptune) {
-                    TileArchitect_Neptune library = (TileArchitect_Neptune) tile;
+                if (tile instanceof TileArchitect) {
+                    TileArchitect library = (TileArchitect) tile;
                     return new GuiArchitect(new ContainerArchitect(player, library));
                 }
             }
@@ -119,9 +128,9 @@ public abstract class BCBuildersProxy implements IGuiHandler {
         @Override
         public void fmlInit() {
             super.fmlInit();
-            ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect_Neptune.class, new RenderArchitect());
-            ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder_Neptune.class, new RenderBuilder());
-            ClientRegistry.bindTileEntitySpecialRenderer(TileFiller_Neptune.class, new RenderFiller());
+            ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new RenderArchitect());
+            ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilder());
+            ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderFiller());
             ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderQuarry());
         }
     }

@@ -26,7 +26,7 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 
-public class TileLibrary_Neptune extends TileBCInventory_Neptune implements ITickable {
+public class TileLibrary extends TileBCInventory_Neptune implements ITickable {
     public static final int NET_SELECTED = 20;
 
     public enum LibSlot {
@@ -44,7 +44,7 @@ public class TileLibrary_Neptune extends TileBCInventory_Neptune implements ITic
     public final IItemHandlerModifiable inv;
     public LibraryEntryHeader selected = null;
 
-    public TileLibrary_Neptune() {
+    public TileLibrary() {
         inv = addInventory("inv", 4, EnumAccess.NONE);
     }
 

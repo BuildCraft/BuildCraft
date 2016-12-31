@@ -9,7 +9,7 @@ import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.client.model.animation.FastTESR;
 
-import buildcraft.builders.tile.TileBuilder_Neptune;
+import buildcraft.builders.tile.TileBuilder;
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
@@ -17,11 +17,11 @@ import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
-public class RenderBuilder extends FastTESR<TileBuilder_Neptune> {
+public class RenderBuilder extends FastTESR<TileBuilder> {
     private static final double OFFSET = 0.1;
 
     @Override
-    public void renderTileEntityFast(TileBuilder_Neptune te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
+    public void renderTileEntityFast(TileBuilder te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
 
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("builder");
@@ -64,7 +64,7 @@ public class RenderBuilder extends FastTESR<TileBuilder_Neptune> {
     }
 
     @Override
-    public boolean isGlobalRenderer(TileBuilder_Neptune te) {
+    public boolean isGlobalRenderer(TileBuilder te) {
         return true;
     }
 }

@@ -4,6 +4,9 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
+import buildcraft.api.schematic.GlobalSavedDataSnapshots;
+import buildcraft.builders.schematic.RulesLoader;
+import buildcraft.builders.schematic.SchematicsLoader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -12,6 +15,7 @@ import buildcraft.builders.bpt.PerSaveBptStorage;
 import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.RegistryHelper;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = BCBuilders.MODID, name = "BuildCraft Builders", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
 public class BCBuilders {
@@ -38,12 +42,15 @@ public class BCBuilders {
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
-
+        RulesLoader.INSTANCE.loadAll();
+        SchematicsLoader.INSTANCE.loadAll();
     }
 
     @Mod.EventHandler
     public static void onServerStarting(FMLServerStartingEvent event) {
         PerSaveBptStorage.onServerStart(event);
+        GlobalSavedDataSnapshots.get(Side.SERVER);
+        GlobalSavedDataSnapshots.get(Side.CLIENT); // FIXME
     }
 
     @Mod.EventHandler

@@ -5,14 +5,14 @@ import net.minecraft.client.renderer.VertexBuffer;
 
 import net.minecraftforge.client.model.animation.FastTESR;
 
-import buildcraft.builders.tile.TileArchitect_Neptune;
+import buildcraft.builders.tile.TileArchitect;
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
 import buildcraft.lib.misc.data.Box;
 
-public class RenderArchitect extends FastTESR<TileArchitect_Neptune> {
+public class RenderArchitect extends FastTESR<TileArchitect> {
     @Override
-    public void renderTileEntityFast(TileArchitect_Neptune te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
+    public void renderTileEntityFast(TileArchitect te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("architect");
 
@@ -28,7 +28,7 @@ public class RenderArchitect extends FastTESR<TileArchitect_Neptune> {
     }
 
     @Override
-    public boolean isGlobalRenderer(TileArchitect_Neptune te) {
+    public boolean isGlobalRenderer(TileArchitect te) {
         return true;
     }
 }

@@ -15,7 +15,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import buildcraft.builders.container.ContainerBlueprintLibrary;
-import buildcraft.builders.tile.TileLibrary_Neptune;
+import buildcraft.builders.tile.TileLibrary;
 import buildcraft.lib.BCLibDatabase;
 import buildcraft.lib.BCLibDatabase.EntryStatus;
 import buildcraft.lib.gui.GuiBC8;
@@ -41,7 +41,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
     private final ScrollbarElement<GuiBlueprintLibrary> scrollbar;
     public LibraryEntryHeader selected = null;
 
-    public GuiBlueprintLibrary(EntityPlayer player, TileLibrary_Neptune library) {
+    public GuiBlueprintLibrary(EntityPlayer player, TileLibrary library) {
         super(new ContainerBlueprintLibrary(player, library));
 
         // Always re-request the index, just to refresh it
@@ -170,7 +170,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
 
     private void sendSelected() {
         container.tile.selected = selected;
-        IMessage message = container.tile.createNetworkUpdate(TileLibrary_Neptune.NET_SELECTED);
+        IMessage message = container.tile.createNetworkUpdate(TileLibrary.NET_SELECTED);
         MessageUtil.getWrapper().sendToServer(message);
     }
 

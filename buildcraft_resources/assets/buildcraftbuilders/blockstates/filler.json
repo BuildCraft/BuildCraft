@@ -1,0 +1,26 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "buildcraftbuilders:filler/main"
+    },
+    "variants": {
+        "facing": {
+            "east": {"y": 90},
+            "south": {"y": 180},
+            "west": {"y": 270},
+            "north": {"y": 0}
+        },
+        "pattern": {
+            "none": {"submodel": "buildcraftbuilders:filler/pattern_none"},
+            "box": {"submodel": "buildcraftbuilders:filler/pattern_box"},
+            "clear": {"submodel": "buildcraftbuilders:filler/pattern_clear"},
+            "cylinder": {"submodel": "buildcraftbuilders:filler/pattern_cylinder"},
+            "fill": {"submodel": "buildcraftbuilders:filler/pattern_fill"},
+            "flatten": {"submodel": "buildcraftbuilders:filler/pattern_flatten"},
+            "frame": {"submodel": "buildcraftbuilders:filler/pattern_frame"},
+            "horizon": {"submodel": "buildcraftbuilders:filler/pattern_horizon"},
+            "pyramid": {"submodel": "buildcraftbuilders:filler/pattern_pyramid"},
+            "stairs": {"submodel": "buildcraftbuilders:filler/pattern_stairs"}
+        }
+    }
+}

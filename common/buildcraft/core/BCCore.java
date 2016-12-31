@@ -4,28 +4,34 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core;
 
-import java.io.File;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.core.list.ListTooltipHandler;
+import buildcraft.core.marker.PathCache;
+import buildcraft.core.marker.VolumeCache;
+import buildcraft.core.marker.volume.MessageVolumeMarkers;
+import buildcraft.core.marker.volume.VolumeBox;
+import buildcraft.core.marker.volume.WorldSavedDataVolumeMarkers;
+import buildcraft.lib.BCLib;
+import buildcraft.lib.BCLibItems;
+import buildcraft.lib.BCMessageHandler;
+import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.registry.CreativeTabManager;
+import buildcraft.lib.registry.RegistryHelper;
 import net.minecraft.init.Blocks;
-
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 
-import buildcraft.api.core.BCLog;
-
-import buildcraft.core.list.ListTooltipHandler;
-import buildcraft.core.marker.PathCache;
-import buildcraft.core.marker.VolumeCache;
-import buildcraft.lib.BCLib;
-import buildcraft.lib.BCLibItems;
-import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.registry.CreativeTabManager;
-import buildcraft.lib.registry.RegistryHelper;
+import java.io.File;
+import java.util.Arrays;
 
 //@formatter:off
 @Mod(modid = BCCore.MODID,
@@ -74,6 +80,9 @@ public class BCCore {
         MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
 
         OreDictionary.registerOre("craftingTableWood", Blocks.CRAFTING_TABLE);
+
+        MinecraftForge.EVENT_BUS.register(BCCoreEventDist.INSTANCE);
+        BCMessageHandler.addMessageType(MessageVolumeMarkers.class, MessageVolumeMarkers.Handler.INSTANCE, Side.CLIENT);
     }
 
     @Mod.EventHandler
@@ -91,4 +100,19 @@ public class BCCore {
     public static void postInit(FMLPostInitializationEvent evt) {
         BCCoreProxy.getProxy().fmlPostInit();
     }
+//
+//    @Mod.EventHandler
+//    public void onServerStarted(FMLServerStartedEvent event) {
+//        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+//        Arrays.stream(server.worldServers)
+//                .map(WorldSavedDataVolumeMarkers::get)
+//                .forEach(volumeMarkers -> volumeMarkers.boxes.stream()
+//                        .filter(VolumeBox::isEditing)
+//                        .filter(box -> server.getPlayerList().getPlayerByUsername(box.player) == null)
+//                        .forEach(box -> {
+//                            box.player = null;
+//                            box.resetEditing();
+//                            volumeMarkers.markDirty();
+//                        }));
+//    }
 }

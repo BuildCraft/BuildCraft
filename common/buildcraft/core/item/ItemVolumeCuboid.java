@@ -1,5 +1,8 @@
 package buildcraft.core.item;
 
+import buildcraft.core.marker.volume.VolumeBox;
+import buildcraft.core.marker.volume.WorldSavedDataVolumeMarkers;
+import buildcraft.lib.item.ItemBC_Neptune;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
@@ -7,10 +10,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import buildcraft.core.marker.volume.VolumeMarkerCache;
-import buildcraft.core.marker.volume.VolumeMarkerCache.VolumeBox;
-import buildcraft.lib.item.ItemBC_Neptune;
 
 public class ItemVolumeCuboid extends ItemBC_Neptune {
     public ItemVolumeCuboid(String id) {
@@ -25,10 +24,12 @@ public class ItemVolumeCuboid extends ItemBC_Neptune {
 
         BlockPos offset = pos.offset(facing);
 
-        VolumeBox current = VolumeMarkerCache.SERVER_INSTANCE.getBoxAt(offset);
+        WorldSavedDataVolumeMarkers volumeMarkers = WorldSavedDataVolumeMarkers.get(world);
+        VolumeBox current = volumeMarkers.getBoxAt(offset);
 
         if (current == null) {
-            VolumeMarkerCache.SERVER_INSTANCE.addBox(offset);
+            volumeMarkers.addBox(offset);
+            volumeMarkers.markDirty();
             return EnumActionResult.SUCCESS;
         }
 

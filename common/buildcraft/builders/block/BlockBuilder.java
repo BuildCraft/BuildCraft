@@ -22,14 +22,14 @@ import buildcraft.api.enums.EnumBlueprintType;
 import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.builders.BCBuildersGuis;
-import buildcraft.builders.tile.TileBuilder_Neptune;
+import buildcraft.builders.tile.TileBuilder;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
 
-public class BlockBuilder_Neptune extends BlockBCTile_Neptune implements IBlockWithFacing {
+public class BlockBuilder extends BlockBCTile_Neptune implements IBlockWithFacing {
     public static final IProperty<EnumBlueprintType> BLUEPRINT_TYPE = BuildCraftProperties.BLUEPRINT_TYPE;
 
-    public BlockBuilder_Neptune(Material material, String id) {
+    public BlockBuilder(Material material, String id) {
         super(material, id);
         setDefaultState(getDefaultState().withProperty(BLUEPRINT_TYPE, EnumBlueprintType.NONE));
     }
@@ -53,7 +53,7 @@ public class BlockBuilder_Neptune extends BlockBCTile_Neptune implements IBlockW
 
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileBuilder_Neptune();
+        return new TileBuilder();
     }
 
     @Override
