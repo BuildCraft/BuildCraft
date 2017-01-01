@@ -80,7 +80,7 @@ public class RenderPump extends FastTESR<TilePump> {
         }
 
         SpriteHolder spriteTubeMiddle = SpriteHolderRegistry.getHolder("buildcraftfactory:blocks/pump/tube");
-        LaserRow cap = new LaserRow(spriteTubeMiddle, 0, 8, 8, 8);
+        LaserRow cap = new LaserRow(spriteTubeMiddle, 0, 8, 8, 16);
         LaserRow middle = new LaserRow(spriteTubeMiddle, 0, 0, 16, 8);
 
         LaserRow[] middles = { middle };
