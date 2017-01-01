@@ -7,7 +7,8 @@ import net.minecraft.util.math.Vec3d;
 import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
-/** Holds information on what a laser is, its width, length, texture, etc. */
+/** Holds information on what a single laser in the world: its {@link LaserType}, is position, its size, and some other
+ * misc rendering info. */
 public class LaserData_BC8 {
     public final LaserType laserType;
     public final Vec3d start, end;
@@ -52,7 +53,9 @@ public class LaserData_BC8 {
         return true;
     }
 
+    /** Holds information about a specific type of laser: what textures should be used for different parts. */
     public static class LaserType {
+        /** The caps of the laser. These will never be shrunk or */
         public final LaserRow capStart, capEnd;
         public final LaserRow start, end;
         public final LaserRow[] variations;

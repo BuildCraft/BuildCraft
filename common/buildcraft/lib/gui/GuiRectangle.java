@@ -4,7 +4,9 @@ import net.minecraft.util.math.MathHelper;
 
 import buildcraft.lib.gui.pos.IGuiArea;
 
+/** An immutable {@link IGuiArea}. */
 public class GuiRectangle implements IGuiArea {
+    /** A rectangle where all of the fields are set to 0. */
     public static final GuiRectangle ZERO = new GuiRectangle(0, 0, 0, 0);
 
     public final int x, y, width, height;

@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 
+import buildcraft.lib.client.sprite.LibSprites;
 import buildcraft.lib.gui.ledger.LedgerHelp;
 import buildcraft.lib.gui.ledger.LedgerManager_Neptune;
 import buildcraft.lib.gui.ledger.LedgerOwnership;
@@ -20,6 +21,11 @@ import buildcraft.lib.gui.pos.MousePosition;
 import buildcraft.lib.gui.pos.PositionCallable;
 
 public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer {
+    /** Used to control if this gui should show debugging lines, and other oddities that help development. */
+    public static boolean debugging = false;
+
+    public static final GuiSpriteScaled SPRITE_DEBUG = new GuiSpriteScaled(LibSprites.DEBUG, 16, 16);
+
     public final C container;
     public final MousePosition mouse = new MousePosition();
     public final RootPosition rootElement = new RootPosition(this);
@@ -47,9 +53,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         }
     }
 
-    /**
-     * Checks to see if the main 
-     */
+    /** Checks to see if the main */
     protected boolean shouldAddHelpLedger() {
         return true;
     }
@@ -97,6 +101,28 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     @Override
     protected final void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        SPRITE_DEBUG.drawAt(0, 0);
+        if (debugging) {
+            drawRect(0, 0, 16, 16, 0x33_FF_FF_FF);
+
+            // draw the outer resizing edges
+            int w = 320;
+            int h = 240;
+
+            int sx = (width - w) / 2;
+            int sy = (height - h) / 2;
+            int ex = sx + w + 1;
+            int ey = sy + h + 1;
+            sx--;
+            sy--;
+
+            drawRect(sx, sy, ex + 1, sy + 1, -1);
+            drawRect(sx, ey, ex + 1, ey + 1, -1);
+
+            drawRect(sx, sy, sx + 1, ey + 1, -1);
+            drawRect(ex, sy, ex + 1, ey + 1, -1);
+        }
+
         RenderHelper.disableStandardItemLighting();
         this.lastPartialTicks = partialTicks;
         mouse.setMousePosition(mouseX, mouseY);
@@ -135,6 +161,11 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
         mouse.setMousePosition(mouseX, mouseY);
+
+        GuiRectangle debugRect = new GuiRectangle(0, 0, 16, 16);
+        if (debugRect.contains(mouse)) {
+            debugging = !debugging;
+        }
 
         for (IGuiElement element : guiElements) {
             element.onMouseClicked(mouseButton);

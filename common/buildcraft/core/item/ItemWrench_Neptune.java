@@ -25,6 +25,7 @@ import buildcraft.lib.misc.SoundUtil;
 public class ItemWrench_Neptune extends ItemBC_Neptune implements IToolWrench {
     public ItemWrench_Neptune(String id) {
         super(id);
+        setMaxStackSize(1);
     }
 
     @Override

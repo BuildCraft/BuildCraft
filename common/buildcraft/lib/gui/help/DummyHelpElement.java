@@ -4,6 +4,7 @@ import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
 
+/** A simple, non-drawing, gui element that holds an {@link ElementHelpInfo}. */
 public class DummyHelpElement implements IGuiElement {
     public final IGuiArea area;
     public final ElementHelpInfo help;

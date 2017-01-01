@@ -7,6 +7,8 @@ import java.util.function.Supplier;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.MathHelper;
@@ -31,16 +33,16 @@ public abstract class Ledger_Neptune implements ITooltipElement {
     public static final SpriteNineSliced SPRITE_SPLIT_POS = new SpriteNineSliced(SPRITE_EXP_POS, 4, 4, 12, 12, 16);
 
     public static final int LEDGER_CHANGE_DIFF = 20;
-    public static final int LEDGER_GAP = 2;
+    public static final int LEDGER_GAP = 4;
 
-    public static final int CLOSED_WIDTH = LEDGER_GAP + 16 + LEDGER_GAP;
+    public static final int CLOSED_WIDTH = 2 + 16 + LEDGER_GAP;
     public static final int CLOSED_HEIGHT = LEDGER_GAP + 16 + LEDGER_GAP;
 
     public final LedgerManager_Neptune manager;
 
     public final IGuiPosition positionLedgerStart = new PositionCallable(this::getX, this::getY);
-    public final IGuiPosition positionLedgerIconStart = positionLedgerStart.offset(LEDGER_GAP, LEDGER_GAP);
-    public final IGuiPosition positionLedgerInnerStart = positionLedgerIconStart.offset(20, 0);
+    public final IGuiPosition positionLedgerIconStart = positionLedgerStart.offset(2, LEDGER_GAP);
+    public final IGuiPosition positionLedgerInnerStart = positionLedgerIconStart.offset(16 + LEDGER_GAP, 0);
 
     protected int maxWidth = 96, maxHeight = 48;
 
@@ -86,7 +88,7 @@ public abstract class Ledger_Neptune implements ITooltipElement {
 
     protected <T extends IGuiElement> T append(T element) {
         openElements.add(element);
-        positionAppending = positionAppending.offset(() -> 0, () -> 5 + element.getHeight());
+        positionAppending = positionAppending.offset(() -> 0, () -> 3 + element.getHeight());
         return element;
     }
 
@@ -193,6 +195,7 @@ public abstract class Ledger_Neptune implements ITooltipElement {
             startX = x - interpWidth;
             split = SPRITE_SPLIT_NEG;
         }
+
         RenderUtil.setGLColorFromIntPlusAlpha(getColour());
         split.draw(startX, startY, interpWidth, interpHeight);
         GlStateManager.color(1, 1, 1, 1);
@@ -206,7 +209,7 @@ public abstract class Ledger_Neptune implements ITooltipElement {
         }
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GuiUtil.scissor(pos2.getX(), pos2.getY(), interpWidth - 8, interpHeight - 8);
+        GuiUtil.scissor(pos2.getX(), pos2.getY(), interpWidth - 4, interpHeight - 8);
 
         for (IGuiElement element : closedElements) {
             element.drawBackground(partialTicks);
@@ -221,7 +224,10 @@ public abstract class Ledger_Neptune implements ITooltipElement {
 
     public void drawForeground(int x, int y, float partialTicks) {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GuiUtil.scissor(positionLedgerIconStart.getX(), positionLedgerIconStart.getY(), interpWidth - 8, interpHeight - 8);
+        GuiUtil.scissor(positionLedgerIconStart.getX(),
+                        positionLedgerIconStart.getY(),
+                        interpWidth - 8,
+                        interpHeight - 8);
 
         for (IGuiElement element : closedElements) {
             element.drawForeground(partialTicks);

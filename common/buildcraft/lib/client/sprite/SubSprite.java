@@ -1,5 +1,6 @@
 package buildcraft.lib.client.sprite;
 
+/** Defines a sprite which is part of a larger sprite. */
 public class SubSprite implements ISprite {
 
     private final ISprite delegate;
