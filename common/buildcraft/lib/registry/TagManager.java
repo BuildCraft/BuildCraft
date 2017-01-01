@@ -241,6 +241,7 @@ public class TagManager {
         registerTag("tile.marker.volume").reg("marker.volume").oldReg("buildcraft.builders.Marker", "Marker");
         registerTag("tile.marker.path").reg("marker.path");
         registerTag("tile.engine.wood").reg("engine.wood");
+        registerTag("tile.engine.creative").reg("engine.creative");
 
         endBatch(prependTags("core:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 

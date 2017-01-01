@@ -63,7 +63,7 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         ItemStack heldItem = player.getHeldItem(hand);
-        if (heldItem != null && heldItem.getItem() instanceof IToolWrench) {
+        if (heldItem.getItem() instanceof IToolWrench) {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileFloodGate) {
                 TileFloodGate gate = (TileFloodGate) tile;

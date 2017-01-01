@@ -89,7 +89,7 @@ public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnect
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         ItemStack heldItem = player.getHeldItem(hand);
-        if (heldItem == null) {
+        if (heldItem.isEmpty()) {
             return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
         }
         TileEntity tile = world.getTileEntity(pos);
