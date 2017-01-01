@@ -1,6 +1,11 @@
 package buildcraft.lib.client.sprite;
 
+/** Holds information on some sort of sprite. These might not be part of the main texture atlas (they might be from a
+ * GUI texture), in which case {@link #bindTexture()} should be called before using the results from
+ * {@link #getInterpU(double)} or {@link #getInterpV(double)} */
 public interface ISprite {
+    /** Binds this sprites backing texture so that this sprite will be referenced when you use the results of
+     * {@link #getInterpU(double)} and {@link #getInterpV(double)} */
     void bindTexture();
 
     /** @param u A value between 0 and 1

@@ -20,6 +20,7 @@ import buildcraft.lib.client.model.json.JsonModel;
 import buildcraft.lib.client.model.json.JsonModelPart;
 import buildcraft.lib.client.model.json.JsonQuad;
 
+/** Holds a model that will never change except if the json file it is defined from is changed. */
 public class ModelHolderStatic extends ModelHolder {
     private final ImmutableMap<String, String> textureLookup;
     private final boolean allowTextureFallthrough;

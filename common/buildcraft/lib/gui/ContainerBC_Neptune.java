@@ -23,6 +23,7 @@ import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.gui.slot.IPhantomSlot;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.MessageContainer;
@@ -93,7 +94,7 @@ public abstract class ContainerBC_Neptune extends Container {
                 }
                 slot.putStack(copy);
             } else {
-                slot.putStack(null);
+                slot.putStack(StackUtil.EMPTY);
             }
             itemStack = playerStack;
             return itemStack;

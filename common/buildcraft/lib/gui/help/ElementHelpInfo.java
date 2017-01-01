@@ -3,12 +3,16 @@ package buildcraft.lib.gui.help;
 import java.util.List;
 
 import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.elem.GuiElementContainer;
 import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StringUtilBC;
 
+/** Defines some information used when displaying help text about a specific {@link IGuiElement}. If you want to display
+ * help at a particular position, but the target is not an {@link IGuiElement} then you should use
+ * {@link DummyHelpElement}. */
 public class ElementHelpInfo {
     public final String title;
     public final int colour;
@@ -43,6 +47,7 @@ public class ElementHelpInfo {
         }
     }
 
+    /** Stores an {@link ElementHelpInfo} information, as well as the target area which the help element relates to. */
     public static final class HelpPosition {
         public final ElementHelpInfo info;
         public final IGuiArea target;

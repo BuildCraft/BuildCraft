@@ -3,6 +3,7 @@ package buildcraft.lib.client.model;
 import javax.vecmath.*;
 
 import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
@@ -12,12 +13,21 @@ import net.minecraft.util.math.Vec3i;
 
 import buildcraft.lib.client.sprite.ISprite;
 
+/** Holds all of the information necessary to make one of the verticies in a {@link BakedQuad}. This provides a variety
+ * of methods to quickly set or get different elements. This should be used with {@link MutableQuad} to make a face, or
+ * by itself if you only need to define a single vertex. <br>
+ * This currently holds the 3D position, normal, colour, 2D texture, skylight and blocklight. Note that you don't have
+ * to use all of the elements for this to work - the extra elements come with sensible defaults. <br>
+ * All of the mutating methods are in the form {@literal <element><type>}, where {@literal <element>} is the element to
+ * set/get, and {@literal <type>} is the type that they should be set as. So {@link #positiond(double, double, double)}
+ * will take in 3 doubles and set them to the position element, and {@link #colouri(int, int, int, int)} will take in 4
+ * int's and set them to the colour elements. */
 public class MutableVertex {
     /** The position of this vertex. */
     public float position_x, position_y, position_z;
-    /** The normal of this vertex. Might not be normalised. */
+    /** The normal of this vertex. Might not be normalised. Default value is [0, 1, 0]. */
     public float normal_x, normal_y, normal_z;
-    /** The colour of this vertex, where each one is a number in the range 0-255 */
+    /** The colour of this vertex, where each one is a number in the range 0-255. Default value is 255. */
     public short colour_r, colour_g, colour_b, colour_a;
     /** The texture co-ord of this vertex. Should usually be between 0-1 */
     public float tex_u, tex_v;
@@ -264,10 +274,10 @@ public class MutableVertex {
 
     public MutableVertex multColourd(double r, double g, double b, double a) {
         return colouri(//
-                (int) (colour_r * r),//
-                (int) (colour_g * g),//
-                (int) (colour_b * b),//
-                (int) (colour_a * a) //
+                       (int) (colour_r * r),//
+                       (int) (colour_g * g),//
+                       (int) (colour_b * b),//
+                       (int) (colour_a * a) //
         );
     }
 
@@ -277,10 +287,10 @@ public class MutableVertex {
 
     public MutableVertex multColouri(int r, int g, int b, int a) {
         return multColourd(//
-                (r & 255) / 255f,//
-                (g & 255) / 255f,//
-                (b & 255) / 255f,//
-                (a & 255) / 255f //
+                           (r & 255) / 255f,//
+                           (g & 255) / 255f,//
+                           (b & 255) / 255f,//
+                           (a & 255) / 255f //
         );
     }
 

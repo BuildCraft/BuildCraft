@@ -17,7 +17,7 @@ import gnu.trove.list.array.TIntArrayList;
 public abstract class AbstractInvItemTransactor implements IItemTransactor {
     /** Returns a valid version of the given stack, or {@link ItemStack#EMPTY} if it was invalid */
     @Nonnull
-    public static ItemStack asValid(ItemStack stack) {
+    public static ItemStack asValid(@Nonnull ItemStack stack) {
         if (stack.isEmpty()) {
             return StackUtil.EMPTY;
         } else {
@@ -93,7 +93,8 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
         if (!before.isEmpty()) {
             // We have a bad implemtation that doesn't respect simulation properly- we are in an invalid state at this
             // point with no chance of recovery
-            throw new IllegalStateException("Somehow inserting a lot of items at once failed when we thought it shouldn't! (" + getClass() + ")");
+            throw new IllegalStateException("Somehow inserting a lot of items at once failed when we thought it shouldn't! ("
+                + getClass() + ")");
         }
         return StackUtil.EMPTY;
     }

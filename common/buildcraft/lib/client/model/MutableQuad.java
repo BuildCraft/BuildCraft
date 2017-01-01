@@ -6,37 +6,16 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumType;
-import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
+/** Holds all of the information necessary to make a {@link BakedQuad}. This provides a variety of methods to quickly
+ * set or get different elements.
+ * 
+ * This currently holds 4 {@link MutableVertex}. */
 public class MutableQuad {
-    public static final VertexFormat ITEM_LMAP = new VertexFormat(DefaultVertexFormats.ITEM);
-    public static final VertexFormat ITEM_BLOCK_PADDING = new VertexFormat();
     public static final MutableQuad[] EMPTY_ARRAY = new MutableQuad[0];
-
-    // Baked Quad array indices
-    public static final int X = 0;
-    public static final int Y = 1;
-    public static final int Z = 2;
-    public static final int COLOUR = 3;
-    public static final int U = 4;
-    public static final int V = 5;
-    /** Represents either the normal (for items) or lightmap (for blocks) */
-    public static final int UNUSED = 6;
-
-    static {
-        ITEM_LMAP.addElement(DefaultVertexFormats.TEX_2S);
-
-        ITEM_BLOCK_PADDING.addElement(DefaultVertexFormats.POSITION_3F);
-        ITEM_BLOCK_PADDING.addElement(DefaultVertexFormats.COLOR_4UB);
-        ITEM_BLOCK_PADDING.addElement(DefaultVertexFormats.TEX_2F);
-        ITEM_BLOCK_PADDING.addElement(new VertexFormatElement(0, EnumType.INT, EnumUsage.PADDING, 1));
-    }
 
     private final MutableVertex[] verticies = new MutableVertex[4];
     private int tintIndex = -1;

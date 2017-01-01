@@ -8,7 +8,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 
+/** Provides various utilities for creating {@link MutableQuad} out of various position information, such as a single
+ * face of a cuboid. */
 public class ModelUtil {
+    /** Mutable class for holding the current {@link #uMin}, {@link #uMax}, {@link #vMin} and {@link #vMax} of a
+     * face. */
     public static class UvFaceData {
         private static final UvFaceData DEFAULT = new UvFaceData();
 

@@ -238,7 +238,7 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
         onStatemenet.iterate(null, rootElement.offset(-18, 8).resize(18, 18));
         for (TriggerWrapper wrapper : container.possibleTriggers) {
             tx++;
-            if (tx > 5 || (last != null && last != wrapper.sourcePart)) {
+            if (tx > 3 || (last != null && last != wrapper.sourcePart)) {
                 tx = 0;
                 ty++;
             }
@@ -252,7 +252,7 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
         onStatemenet.iterate(null, rootElement.offset(GUI_WIDTH, 8).resize(18, 18));
         for (ActionWrapper wrapper : container.possibleActions) {
             tx++;
-            if (tx > 5 || (last != null && last != wrapper.sourcePart)) {
+            if (tx > 3 || (last != null && last != wrapper.sourcePart)) {
                 tx = 0;
                 ty++;
             }

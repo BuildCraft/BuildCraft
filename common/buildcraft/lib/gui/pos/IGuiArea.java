@@ -1,5 +1,8 @@
 package buildcraft.lib.gui.pos;
 
+import java.util.function.IntSupplier;
+
+/** Defines an area somewhere on the screen. */
 public interface IGuiArea extends IGuiPosition {
     int getWidth();
 
@@ -43,16 +46,31 @@ public interface IGuiArea extends IGuiPosition {
 
     @Override
     default IGuiArea offset(IGuiPosition by) {
+        return offset(by::getX, by::getY);
+    }
+
+    @Override
+    default IGuiArea offset(int x, IntSupplier y) {
+        return offset(() -> x, y);
+    }
+
+    @Override
+    default IGuiArea offset(IntSupplier x, int y) {
+        return offset(x, () -> y);
+    }
+
+    @Override
+    default IGuiArea offset(IntSupplier x, IntSupplier y) {
         IGuiArea containing = this;
         return new IGuiArea() {
             @Override
             public int getX() {
-                return by.getX() + containing.getX();
+                return x.getAsInt() + containing.getX();
             }
 
             @Override
             public int getY() {
-                return by.getY() + containing.getY();
+                return y.getAsInt() + containing.getY();
             }
 
             @Override
