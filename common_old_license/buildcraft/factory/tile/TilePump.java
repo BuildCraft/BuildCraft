@@ -11,17 +11,17 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.mj.IMjReceiver;
+import buildcraft.api.mj.MjAPI;
 
 import buildcraft.lib.fluids.SingleUseTank;
-import buildcraft.lib.fluids.TankUtils;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.FluidUtilBC;
 import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -132,7 +132,7 @@ public class TilePump extends TileMiner {
     public void update() {
         super.update();
 
-        TankUtils.pushFluidAround(world, pos);
+        FluidUtilBC.pushFluidAround(world, pos, tank);
     }
 
     @Override

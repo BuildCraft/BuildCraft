@@ -146,7 +146,7 @@ public class ModelHolderVariable extends ModelHolder {
                 // But only if the model user is aware of this (so its not an error)
                 sprite = null;
             } else {
-                sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();;
+                sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
             }
         } else {
             sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
