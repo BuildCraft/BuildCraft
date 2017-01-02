@@ -13,8 +13,8 @@ import java.util.UUID;
 
 public class VolumeBox {
     public Box box;
-    private String player = null;
-    private String oldPlayer = null;
+    private UUID player = null;
+    private UUID oldPlayer = null;
     private BlockPos held = null;
     private double dist = 0;
     private BlockPos oldMin = null, oldMax = null;
@@ -26,8 +26,8 @@ public class VolumeBox {
     public VolumeBox(NBTTagCompound nbt) {
         box = new Box();
         box.initialize(nbt.getCompoundTag("box"));
-        player = nbt.hasKey("player") ? nbt.getString("player") : null;
-        oldPlayer = nbt.hasKey("oldPlayer") ? nbt.getString("oldPlayer") : null;
+        player = nbt.hasKey("player") ? NBTUtil.getUUIDFromTag(nbt.getCompoundTag("player")) : null;
+        oldPlayer = nbt.hasKey("oldPlayer") ? NBTUtil.getUUIDFromTag(nbt.getCompoundTag("oldPlayer")) : null;
         if (nbt.hasKey("held")) {
             held = NBTUtil.getPosFromTag(nbt.getCompoundTag("held"));
         }
@@ -43,7 +43,7 @@ public class VolumeBox {
     public VolumeBox(PacketBuffer buf) {
         box = new Box();
         box.readData(buf);
-        player = buf.readBoolean() ? buf.readString(1024) : null;
+        player = buf.readBoolean() ? buf.readUniqueId() : null;
     }
 
     public boolean isEditing() {
@@ -80,19 +80,19 @@ public class VolumeBox {
     }
 
     public void setPlayer(EntityPlayer player) {
-        this.player = player.getGameProfile().getId().toString();
+        this.player = player.getGameProfile().getId();
     }
 
     public boolean isEditingBy(EntityPlayer player) {
-        return this.player != null && Objects.equals(this.player, player.getGameProfile().getId().toString());
+        return this.player != null && Objects.equals(this.player, player.getGameProfile().getId());
     }
 
     public boolean isPausedEditingBy(EntityPlayer player) {
-        return this.oldPlayer != null && Objects.equals(this.oldPlayer, player.getGameProfile().getId().toString());
+        return this.oldPlayer != null && Objects.equals(this.oldPlayer, player.getGameProfile().getId());
     }
 
     public EntityPlayer getPlayer(World world) {
-        return world.getPlayerEntityByUUID(UUID.fromString(player));
+        return world.getPlayerEntityByUUID(player);
     }
 
     public void setHeldDistOldMinOldMax(BlockPos held, double dist, BlockPos oldMin, BlockPos oldMax) {
@@ -114,10 +114,10 @@ public class VolumeBox {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag("box", this.box.writeToNBT());
         if (player != null) {
-            nbt.setString("player", player);
+            nbt.setTag("player", NBTUtil.createUUIDTag(player));
         }
         if (oldPlayer != null) {
-            nbt.setString("oldPlayer", oldPlayer);
+            nbt.setTag("oldPlayer", NBTUtil.createUUIDTag(oldPlayer));
         }
         if (held != null) {
             nbt.setTag("held", NBTUtil.createPosTag(held));
@@ -136,7 +136,7 @@ public class VolumeBox {
         this.box.writeData(buf);
         buf.writeBoolean(player != null);
         if (player != null) {
-            buf.writeString(player);
+            buf.writeUniqueId(player);
         }
     }
 }
