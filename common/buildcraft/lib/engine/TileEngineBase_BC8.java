@@ -549,7 +549,11 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     @SideOnly(Side.CLIENT)
     public float getProgressClient(float partialTicks) {
-        return progress;
+        return lastProgress * (1 - partialTicks) + progress * partialTicks;
+    }
+
+    public EnumFacing getCurrentFacing() {
+        return currentDirection;
     }
 
     @Override
