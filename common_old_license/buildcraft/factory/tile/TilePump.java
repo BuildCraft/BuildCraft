@@ -1,135 +1,119 @@
 package buildcraft.factory.tile;
 
-import java.io.IOException;
-import java.util.*;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.mj.IMjReceiver;
-
 import buildcraft.lib.fluids.SingleUseTank;
 import buildcraft.lib.fluids.TankUtils;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.io.IOException;
+import java.util.*;
 
 public class TilePump extends TileMiner {
     private SingleUseTank tank = new SingleUseTank("tank", 16 * Fluid.BUCKET_VOLUME, this);
-    private TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<>();
-    private int timeWithoutFluid = 0;
+    public boolean queueBuilt = false;
+    public Queue<BlockPos> queue = new PriorityQueue<>(
+            Comparator.comparing(
+                    blockPos -> Math.pow(blockPos.getX() - pos.getX(), 2) +
+                            Math.pow(blockPos.getZ() - pos.getZ(), 2) +
+                            Math.abs(blockPos.getY() - pos.getY()) * 100_000
+            )
+    );
 
     @Override
     protected IMjReceiver createMjReceiver() {
         return new MjRedstoneBatteryReceiver(battery);
     }
 
-    private void rebuildQueue() {
-        pumpLayerQueues.clear();
-        BlockPos pumpPos = new BlockPos(pos.getX(), currentPos.getY(), pos.getZ());
-        Fluid pumpingFluid = BlockUtil.getFluid(world.getBlockState(pumpPos).getBlock());
-
-        if (pumpingFluid == null) {
-            return;
-        }
-
-        Set<BlockPos> visitedBlocks = new HashSet<>();
-        Deque<BlockPos> fluidsFound = new LinkedList<>();
-
-        tryAddToQueue(pumpPos, visitedBlocks, fluidsFound, pumpingFluid);
-
-        while (!fluidsFound.isEmpty()) {
-            Deque<BlockPos> fluidsToExpand = fluidsFound;
-            fluidsFound = new LinkedList<>();
-            for (BlockPos index : fluidsToExpand) {
-                tryAddToQueue(index.up(), visitedBlocks, fluidsFound, pumpingFluid);
-                tryAddToQueue(index.east(), visitedBlocks, fluidsFound, pumpingFluid);
-                tryAddToQueue(index.west(), visitedBlocks, fluidsFound, pumpingFluid);
-                tryAddToQueue(index.north(), visitedBlocks, fluidsFound, pumpingFluid);
-                tryAddToQueue(index.south(), visitedBlocks, fluidsFound, pumpingFluid);
+    public void buildQueue() {
+        queue.clear();
+        List<BlockPos> nextPosesToCheck = new ArrayList<>();
+        int y = pos.getY() - 1;
+        while (true) {
+            if (nextPosesToCheck.isEmpty()) {
+                for (; y >= 0; y--) {
+                    BlockPos posToCheck = new BlockPos(pos.getX(), y, pos.getZ());
+                    if (BlockUtil.getFluid(world, posToCheck) != null) {
+                        if (!queue.contains(posToCheck)) {
+                            nextPosesToCheck.add(posToCheck);
+                        }
+                        break;
+                    } else if(!world.isAirBlock(posToCheck)) {
+                        break;
+                    }
+                }
+                if (nextPosesToCheck.isEmpty()) {
+                    break;
+                }
+            }
+            List<BlockPos> nextPosesToCheckCopy = new ArrayList<>(nextPosesToCheck);
+            nextPosesToCheck.clear();
+            for (BlockPos posToCheck : nextPosesToCheckCopy) {
+                if (!queue.contains(posToCheck)) {
+                    queue.add(posToCheck);
+                }
+                for (EnumFacing side : EnumFacing.values()) {
+                    BlockPos offsetPos = posToCheck.offset(side);
+                    if(Math.pow(offsetPos.getX() - pos.getX(), 2) + Math.pow(offsetPos.getZ() - pos.getZ(), 2) > Math.pow(64, 2)) {
+                        continue;
+                    }
+                    if (BlockUtil.getFluid(world, posToCheck) != null && BlockUtil.getFluid(world, offsetPos) == BlockUtil.getFluid(world, posToCheck) && !queue.contains(offsetPos) && !nextPosesToCheck.contains(offsetPos) && !nextPosesToCheckCopy.contains(offsetPos)) {
+                        nextPosesToCheck.add(offsetPos);
+                    }
+                }
             }
         }
     }
 
-    private void tryAddToQueue(BlockPos pumpPos, Set<BlockPos> visitedBlocks, Deque<BlockPos> fluidsFound, Fluid pumpingFluid) {
-        BlockPos index = new BlockPos(pumpPos);
-        if (visitedBlocks.add(index)) {
-            if ((pumpPos.getX() - pos.getX()) * (pumpPos.getX() - pos.getX()) + (pumpPos.getZ() - pos.getZ()) * (pumpPos.getZ() - pos.getZ()) > 64 * 64) {
+    public boolean canDrain(BlockPos blockPos) {
+        Fluid fluid = BlockUtil.getFluid(world, blockPos);
+        return tank.isEmpty() ? fluid != null : fluid == tank.getAcceptedFluid();
+    }
+
+    public void nextPos() {
+        while (!queue.isEmpty()) {
+            currentPos = queue.poll();
+            if (canDrain(currentPos)) {
                 return;
             }
-            IBlockState state = world.getBlockState(pumpPos);
-            if (BlockUtil.getFluid(state.getBlock()) == pumpingFluid && canDrainBlock(state, pumpPos, pumpingFluid)) {
-                fluidsFound.add(index);
-                getLayerQueue(pumpPos.getY()).add(index);
-            }
         }
+        currentPos = null;
     }
 
-    private void updatePos() {
-        if (pumpLayerQueues.isEmpty()) {
-            rebuildQueue();
-        }
-        Deque<BlockPos> topLayer = null;
-        if (!pumpLayerQueues.isEmpty()) {
-            topLayer = pumpLayerQueues.lastEntry().getValue();
-        }
-        if (topLayer != null && !topLayer.isEmpty()) {
-            BlockPos index = null;
-            while (index == null || (index.getX() == pos.getX() && index.getY() == currentPos.getY() && index.getZ() == pos.getZ() && topLayer.size() > 1)) {
-                if (index != null) {
-                    topLayer.addFirst(index);
-                }
-                index = topLayer.pollLast();
-            }
-            currentPos = index;
-            goToYLevel(currentPos.getY());
+    public void updateYLevel() {
+        if (currentPos != null) {
+            goToYLevel(Math.min(currentPos.getY(), pos.getY()));
         } else {
-            rebuildQueue();
+            goToYLevel(pos.getY());
         }
-    }
-
-    private boolean canDrainBlock(IBlockState state, BlockPos pos, Fluid fluid) {
-        FluidStack fluidStack = BlockUtil.drainBlock(state, world, pos, false);
-        if (fluidStack == null || fluidStack.amount <= 0) {
-            return false;
-        } else {
-            return fluidStack.getFluid() == fluid;
-        }
-    }
-
-    private Deque<BlockPos> getLayerQueue(int layer) {
-        Deque<BlockPos> pumpQueue = pumpLayerQueues.get(layer);
-
-        if (pumpQueue == null) {
-            pumpQueue = new LinkedList<>();
-            pumpLayerQueues.put(layer, pumpQueue);
-        }
-
-        return pumpQueue;
     }
 
     @Override
     protected void initCurrentPos() {
         if (currentPos == null) {
-            currentPos = pos.down();
-            goToYLevel(currentPos.getY());
-            updatePos();
+            nextPos();
+            updateYLevel();
         }
     }
 
     @Override
     public void update() {
+        if (!queueBuilt && !world.isRemote) {
+            buildQueue();
+            queueBuilt = true;
+        }
+
         super.update();
 
         TankUtils.pushFluidAround(world, pos);
@@ -138,57 +122,31 @@ public class TilePump extends TileMiner {
     @Override
     public void mine() {
         if (tank.isFull()) {
-            setComplete(true);
-            return;
-        }
-        int target = 1000; // TODO: add 2 zeroes
-        BlockPos pumpPos = new BlockPos(pos.getX(), currentPos.getY(), pos.getZ());
-        Fluid pumpingFluid = BlockUtil.getFluidWithFlowing(world.getBlockState(pumpPos).getBlock());
-
-        if (timeWithoutFluid >= 30) {
-            if (world.isAirBlock(pumpPos.down()) || BlockUtil.getFluid(world.getBlockState(pumpPos.down()).getBlock()) != null) {
-                timeWithoutFluid = 0;
-                currentPos = pumpPos.down();
-                this.goToYLevel(currentPos.getY());
-            } else {
-                setComplete(true);
-            }
             return;
         }
 
-        if (pumpingFluid == null) {
-            timeWithoutFluid++;
-            return;
-        }
+        long target = 10000000;
 
-        if (tank.getAcceptedFluid() != pumpingFluid && !tank.isEmpty()) {
-            setComplete(true);
-            return;
-        }
-        progress += battery.extractPower(0, target - progress);
-        if (progress >= target) {
-            progress = 0;
-            if (!pumpLayerQueues.isEmpty()) {
+        if (currentPos != null) {
+            progress += battery.extractPower(0, target - progress);
+            if (progress >= target) {
                 FluidStack drain = BlockUtil.drainBlock(world, currentPos, false);
-                if (drain != null && canDrainBlock(world.getBlockState(currentPos), currentPos, drain.getFluid())) {
+                if (drain != null && canDrain(currentPos)) {
                     world.setBlockToAir(currentPos);
                     tank.fill(drain, true);
-                    for (Deque<BlockPos> layer : pumpLayerQueues.values()) {
-                        for (Iterator<BlockPos> iterator = layer.iterator(); iterator.hasNext();) {
-                            BlockPos pos = iterator.next();
-                            if (pos == currentPos) {
-                                iterator.remove();
-                            }
-                        }
-                    }
-                    updatePos();
+                    nextPos();
+                    updateYLevel();
+                    progress = 0;
+                } else {
+                    buildQueue();
+                    nextPos();
+                    updateYLevel();
                 }
-            } else {
-                updatePos();
             }
-            if (currentPos.getY() < 0) {
-                setComplete(true);
-            }
+        } else {
+            buildQueue();
+            nextPos();
+            updateYLevel();
         }
     }
 
@@ -235,6 +193,7 @@ public class TilePump extends TileMiner {
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         super.getDebugInfo(left, right, side);
         left.add("fluid = " + tank.getDebugString());
+        left.add("queue size = " + queue.size());
     }
 
     @SideOnly(Side.CLIENT)

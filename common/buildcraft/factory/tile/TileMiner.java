@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -67,10 +68,10 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
             return;
         }
 
-        // if (!battery.isFull()) {
-        // test with the output of a stone engine
-        // battery.addPower(MjAPI.MJ);// remove this
-        // }
+         if (!battery.isFull()) {
+//         test with the output of a stone engine
+            battery.addPower(MjAPI.MJ);// remove this
+         }
 
         battery.tick(getWorld(), getPos());
 
@@ -89,9 +90,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
 
         initCurrentPos();
 
-        if (hasTubeStopped()) {
-            mine();
-        }
+        mine();
     }
 
     protected int getCurrentYLevel() {
@@ -127,23 +126,25 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        currentPos = new BlockPos(nbt.getInteger("currentX"), nbt.getInteger("currentY"), nbt.getInteger("currentZ"));
-        progress = nbt.getInteger("progress");
-        battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
-    }
-
-    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         initCurrentPos();
-        nbt.setInteger("currentX", currentPos.getX());
-        nbt.setInteger("currentY", currentPos.getY());
-        nbt.setInteger("currentZ", currentPos.getZ());
+        if (currentPos != null) {
+            nbt.setTag("currentPos", NBTUtil.createPosTag(currentPos));
+        }
         nbt.setInteger("progress", progress);
         nbt.setTag("mj_battery", battery.serializeNBT());
         return nbt;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        if (nbt.hasKey("currentPos")) {
+            currentPos = NBTUtil.getPosFromTag(nbt.getCompoundTag("currentPos"));
+        }
+        progress = nbt.getInteger("progress");
+        battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
     }
 
     protected void setComplete(boolean isComplete) {
