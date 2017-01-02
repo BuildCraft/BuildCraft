@@ -1,5 +1,6 @@
 package buildcraft.factory.block;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,13 +24,12 @@ import buildcraft.factory.tile.TileFloodGate;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 
 public class BlockFloodGate extends BlockBCTile_Neptune {
-    public static final BuildCraftProperty<Boolean> CONNECTED_DOWN = BuildCraftProperties.CONNECTED_DOWN;
-    public static final BuildCraftProperty<Boolean> CONNECTED_EAST = BuildCraftProperties.CONNECTED_EAST;
-    public static final BuildCraftProperty<Boolean> CONNECTED_WEST = BuildCraftProperties.CONNECTED_WEST;
-    public static final BuildCraftProperty<Boolean> CONNECTED_NORTH = BuildCraftProperties.CONNECTED_NORTH;
-    public static final BuildCraftProperty<Boolean> CONNECTED_SOUTH = BuildCraftProperties.CONNECTED_SOUTH;
+    public static final Map<EnumFacing, BuildCraftProperty<Boolean>> CONNECTED_MAP;
 
-    public static final Map<EnumFacing, BuildCraftProperty<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;
+    static {
+        CONNECTED_MAP = new HashMap<>(BuildCraftProperties.CONNECTED_MAP);
+        CONNECTED_MAP.remove(EnumFacing.UP);
+    }
 
     public BlockFloodGate(Material material, String id) {
         super(material, id);
@@ -51,10 +51,8 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileFloodGate) {
             TileFloodGate gate = (TileFloodGate) tile;
-            for (EnumFacing side : EnumFacing.values()) {
-                if (side != EnumFacing.UP) {
-                    state = state.withProperty(CONNECTED_MAP.get(side), !gate.isSideBlocked(side));
-                }
+            for (EnumFacing side : CONNECTED_MAP.keySet()) {
+                state = state.withProperty(CONNECTED_MAP.get(side), !gate.isSideBlocked(side));
             }
         }
         return state;
@@ -67,7 +65,7 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileFloodGate) {
                 TileFloodGate gate = (TileFloodGate) tile;
-                if (side != EnumFacing.UP) {
+                if (CONNECTED_MAP.containsKey(side)) {
                     gate.setSideBlocked(side, !gate.isSideBlocked(side));
                     return true;
                 }
