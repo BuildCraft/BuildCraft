@@ -103,7 +103,7 @@ public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnect
                 return true;
             }
         }
-        return false;
+        return true;
     }
 
     @Override
