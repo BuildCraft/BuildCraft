@@ -12,6 +12,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -131,11 +132,23 @@ public class TilePump extends TileMiner {
             if (progress >= target) {
                 FluidStack drain = BlockUtil.drainBlock(world, currentPos, false);
                 if (drain != null && canDrain(currentPos)) {
-                    world.setBlockToAir(currentPos);
                     tank.fill(drain, true);
-                    nextPos();
-                    updateYLevel();
                     progress = 0;
+                    int count = 0;
+                    if (drain.getFluid() == FluidRegistry.WATER) {
+                        for (int x = -1; x <= 1; x++) {
+                            for (int z = -1; z <= 1; z++) {
+                                if (BlockUtil.getFluid(world, currentPos.add(new BlockPos(x, 0, z))) == FluidRegistry.WATER) {
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                    if (count < 4) {
+                        world.setBlockToAir(currentPos);
+                        nextPos();
+                        updateYLevel();
+                    }
                 } else {
                     buildQueue();
                     nextPos();
