@@ -1,31 +1,26 @@
 package buildcraft.factory.client.render;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.EnumSkyBlock;
-
-import net.minecraftforge.client.model.animation.FastTESR;
-
-import buildcraft.api.tiles.IControllable.Mode;
-
 import buildcraft.factory.tile.TilePump;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.tile.RenderPartCube;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumSkyBlock;
+import net.minecraftforge.client.model.animation.FastTESR;
 
 public class RenderPump extends FastTESR<TilePump> {
     private static final int[] COLOUR_POWER = new int[16];
     private static final int COLOUR_STATUS_ON = 0xFF_77_DD_77; // a light green
-    private static final int COLOUR_STATUS_PAUSED = 0xFF_47_B3_FF; // a light orange
-    private static final int COLOUR_STATUS_DONE = 0xFF_1f_10_1b; // black-ish
+    private static final int COLOUR_STATUS_OFF = 0xFF_1f_10_1b; // black-ish
 
+    private static final int BLOCK_LIGHT_STATUS_ON = 0xF;
     private static final int BLOCK_LIGHT_STATUS_OFF = 0x0;
-    private static final int BLOCK_LIGHT_STATUS_TODO = 0xC;
 
     private static final double POWER = 1.5 / 16.0;
     private static final double STATUS = 3.5 / 16.0;
@@ -102,7 +97,6 @@ public class RenderPump extends FastTESR<TilePump> {
 
     @Override
     public void renderTileEntityFast(TilePump tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
-
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("pump");
 
@@ -111,10 +105,9 @@ public class RenderPump extends FastTESR<TilePump> {
         float percentFilled = tile.getFluidPercentFilledForRender();
         int powerColour = COLOUR_POWER[(int) (percentFilled * (COLOUR_POWER.length - 1))];
 
-        boolean more = tile.hasWork();
-        boolean paused = tile.getControlMode() == Mode.Off;
-        int statusColour = more ? (paused ? COLOUR_STATUS_PAUSED : COLOUR_STATUS_ON) : COLOUR_STATUS_DONE;
-        int statusLight = more ? BLOCK_LIGHT_STATUS_TODO : BLOCK_LIGHT_STATUS_OFF;
+        boolean complete = tile.isComplete();
+        int statusColour = complete ? COLOUR_STATUS_OFF : COLOUR_STATUS_ON;
+        int statusLight = complete ? BLOCK_LIGHT_STATUS_OFF : BLOCK_LIGHT_STATUS_ON;
 
         for (int i = 0; i < 4; i++) {
             // Get the light level of a direction

@@ -2,6 +2,7 @@ package buildcraft.builders.tile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -88,6 +89,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
         BlockPos min = frameBox.min();
         BlockPos max = frameBox.max();
+
         for (int x = min.getX(); x <= max.getX(); x++) {
             framePositions.add(new BlockPos(x, min.getY(), min.getZ()));
             framePositions.add(new BlockPos(x, max.getY(), min.getZ()));
@@ -108,6 +110,11 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             framePositions.add(new BlockPos(min.getX(), y, max.getZ()));
             framePositions.add(new BlockPos(max.getX(), y, max.getZ()));
         }
+
+        framePositions.sort(Comparator.comparing(blockPos ->
+                Math.pow(blockPos.getX() - pos.getX(), 2) + Math.pow(blockPos.getX() - pos.getX(), 2) + Math.pow(blockPos.getZ() - pos.getZ(), 2)
+        ));
+
         return framePositions;
     }
 

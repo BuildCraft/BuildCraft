@@ -25,8 +25,7 @@ public class TilePump extends TileMiner {
     public boolean queueBuilt = false;
     public Queue<BlockPos> queue = new PriorityQueue<>(
             Comparator.comparing(
-                    blockPos -> Math.pow(blockPos.getX() - pos.getX(), 2) +
-                            Math.pow(blockPos.getZ() - pos.getZ(), 2) +
+                    blockPos -> 100_000 - (Math.pow(blockPos.getX() - pos.getX(), 2) + Math.pow(blockPos.getZ() - pos.getZ(), 2)) +
                             Math.abs(blockPos.getY() - pos.getY()) * 100_000
             )
     );

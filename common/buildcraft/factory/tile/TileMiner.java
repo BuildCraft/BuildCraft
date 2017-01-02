@@ -1,36 +1,32 @@
 package buildcraft.factory.tile;
 
-import java.io.IOException;
-import java.util.List;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.math.BlockPos;
-
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.BCLog;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
-import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
-
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
 import buildcraft.lib.migrate.BCVersion;
-import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHasWork, IControllable, IDebuggable {
+import java.io.IOException;
+import java.util.List;
+
+public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHasWork, IDebuggable {
     public static final int NET_LED_STATUS = 10;
 
     protected int progress = 0;
@@ -39,7 +35,6 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     public final DeltaInt deltaTubeLength = deltaManager.addDelta("tubeY", EnumNetworkVisibility.RENDER);
 
     protected boolean isComplete = false;
-    protected Mode mode = Mode.On;
     protected final MjBattery battery = new MjBattery(MjAPI.MJ * 500);
     protected final IMjReceiver mjReceiver = createMjReceiver();
     protected final MjCapabilityHelper mjCapHelper = new MjCapabilityHelper(mjReceiver);
@@ -56,10 +51,6 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
 
     protected abstract IMjReceiver createMjReceiver();
 
-    public double getTubeOffset() {
-        return 0;
-    }
-
     @Override
     public void update() {
         deltaManager.tick();
@@ -75,34 +66,14 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
 
         battery.tick(getWorld(), getPos());
 
-        if (mode != Mode.On) {
-            return;
-        }
-
         // if (worldObj.rand.nextDouble() > 0.9) { // is this correct?
         if (true) {
             sendNetworkUpdate(NET_LED_STATUS);
         }
 
-        if (isComplete) {
-            return;
-        }
-
         initCurrentPos();
 
         mine();
-    }
-
-    protected int getCurrentYLevel() {
-        return getPos().getY() - 1 - deltaTubeLength.getStatic(false);
-    }
-
-    protected boolean isAtYlevel(int wanted) {
-        return wanted == getCurrentYLevel();
-    }
-
-    protected boolean hasTubeStopped() {
-        return deltaTubeLength.changingEntries.isEmpty();
     }
 
     protected void goToYLevel(int wanted) {
@@ -113,6 +84,10 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
             deltaTubeLength.addDelta(0, 50 * diff, diff);
             BCLog.logger.info("Adding a delta " + diff);
         }
+    }
+
+    public boolean isComplete() {
+        return world.isRemote ? isComplete : currentPos == null;
     }
 
     @Override
@@ -128,7 +103,6 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
-        initCurrentPos();
         if (currentPos != null) {
             nbt.setTag("currentPos", NBTUtil.createPosTag(currentPos));
         }
@@ -147,13 +121,6 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
     }
 
-    protected void setComplete(boolean isComplete) {
-        this.isComplete = isComplete;
-        if (!world.isRemote) {
-            sendNetworkUpdate(NET_LED_STATUS);
-        }
-    }
-
     // Networking
 
     @Override
@@ -163,8 +130,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
             if (id == NET_RENDER_DATA) {
                 writePayload(NET_LED_STATUS, buffer, side);
             } else if (id == NET_LED_STATUS) {
-                boolean[] flags = { isComplete, mode == Mode.On };
-                MessageUtil.writeBooleanArray(buffer, flags);
+                buffer.writeBoolean(isComplete());
                 battery.writeToBuffer(buffer);
             }
         }
@@ -177,9 +143,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
             if (id == NET_RENDER_DATA) {
                 readPayload(NET_LED_STATUS, buffer, side, ctx);
             } else if (id == NET_LED_STATUS) {
-                boolean[] flags = MessageUtil.readBooleanArray(buffer, 2);
-                isComplete = flags[0];
-                mode = flags[1] ? Mode.On : Mode.Off;
+                isComplete = buffer.readBoolean();
                 battery.readFromBuffer(buffer);
             }
         }
@@ -191,9 +155,14 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         left.add("battery = " + battery.getDebugString());
         left.add("current = " + currentPos);
         left.add("tube = " + deltaTubeLength.getStatic(false));
-        left.add("isComplete = " + isComplete);
-        left.add("mode = " + mode);
+        left.add("isComplete = " + isComplete());
         left.add("progress = " + progress);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public AxisAlignedBB getRenderBoundingBox() {
+        return new AxisAlignedBB(new BlockPos(pos.getX(), 0, pos.getZ()), new BlockPos(pos.getX(),  world.getHeight(), pos.getZ()));
     }
 
     // IHasWork
@@ -201,25 +170,6 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     @Override
     public boolean hasWork() {
         return !isComplete;
-    }
-
-    // IControllable
-
-    @Override
-    public Mode getControlMode() {
-        return mode;
-    }
-
-    @Override
-    public void setControlMode(Mode mode) {
-        if (acceptsControlMode(mode)) {
-            this.mode = mode;
-        }
-    }
-
-    @Override
-    public boolean acceptsControlMode(Mode mode) {
-        return mode == Mode.Off || mode == Mode.On;
     }
 
     // Capability
