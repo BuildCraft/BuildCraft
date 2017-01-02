@@ -121,7 +121,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
 
         WorldSavedDataVolumeMarkers volumeMarkers = WorldSavedDataVolumeMarkers.get(world);
 
-        VolumeBox currentEditing = volumeMarkers.getCurrentEditing(player.getName());
+        VolumeBox currentEditing = volumeMarkers.getCurrentEditing(player);
 
         Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
         Vec3d end = start.add(player.getLookVec().scale(4));
@@ -137,11 +137,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                     }
                 }
             } else {
-                currentEditing.player = null;
-                currentEditing.box.reset();
-                currentEditing.box.extendToEncompass(currentEditing.oldMin);
-                currentEditing.box.extendToEncompass(currentEditing.oldMax);
-                currentEditing.resetEditing();
+                currentEditing.cancelEditing();
                 volumeMarkers.markDirty();
                 return new ActionResult<>(EnumActionResult.SUCCESS, stack);
             }
@@ -170,7 +166,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                 }
 
                 if (bestBox != null) {
-                    bestBox.player = player.getName();
+                    bestBox.setPlayer(player);
 
                     BlockPos min = bestBox.box.min();
                     BlockPos max = bestBox.box.max();
@@ -185,16 +181,12 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                     if (editing.getZ() == min.getZ()) {
                         held = VecUtil.replaceValue(held, EnumFacing.Axis.Z, max.getZ());
                     }
-                    bestBox.held = held;
-                    bestBox.dist = Math.max(1.5, bestDist + 0.5);
-                    bestBox.oldMin = bestBox.box.min();
-                    bestBox.oldMax = bestBox.box.max();
+                    bestBox.setHeldDistOldMinOldMax(held, Math.max(1.5, bestDist + 0.5), bestBox.box.min(), bestBox.box.max());
                     volumeMarkers.markDirty();
                     return new ActionResult<>(EnumActionResult.SUCCESS, stack);
                 }
             } else {
-                currentEditing.player = null;
-                currentEditing.resetEditing();
+                currentEditing.confirmEditing();
                 volumeMarkers.markDirty();
                 return new ActionResult<>(EnumActionResult.SUCCESS, stack);
             }

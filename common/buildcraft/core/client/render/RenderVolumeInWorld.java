@@ -38,8 +38,8 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
         ClientVolumeMarkers.INSTANCE.boxes.forEach(box -> {
             makeLaserBox(
                     box.box,
-                    player.getName().equals(box.player) ? BuildCraftLaserManager.MARKER_VOLUME_SIGNAL : BuildCraftLaserManager.MARKER_VOLUME_CONNECTED,
-                    player.getName().equals(box.player) ? RENDER_SCALE_HIGHLIGHT : RENDER_SCALE
+                    box.isEditingBy(player) ? BuildCraftLaserManager.MARKER_VOLUME_SIGNAL : BuildCraftLaserManager.MARKER_VOLUME_CONNECTED,
+                    box.isEditingBy(player) ? RENDER_SCALE_HIGHLIGHT : RENDER_SCALE
             );
 
             Arrays.stream(box.box.laserData).forEach(data -> LaserRenderer_BC8.renderLaserDynamic(data, vb));

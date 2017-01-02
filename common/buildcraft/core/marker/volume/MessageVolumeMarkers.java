@@ -1,6 +1,5 @@
 package buildcraft.core.marker.volume;
 
-import buildcraft.lib.misc.data.Box;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -24,23 +23,13 @@ public class MessageVolumeMarkers implements IMessage {
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(boxes.size());
-        boxes.forEach(box -> {
-            box.box.writeData(new PacketBuffer(buf));
-            buf.writeBoolean(box.player != null);
-            if (box.player != null) {
-                new PacketBuffer(buf).writeString(box.player);
-            }
-        });
+        boxes.forEach(box -> box.toBytes(new PacketBuffer(buf)));
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         boxes.clear();
-        IntStream.range(0, buf.readInt()).mapToObj(i -> {
-            Box box = new Box();
-            box.readData(new PacketBuffer(buf));
-            return new VolumeBox(box, buf.readBoolean() ? new PacketBuffer(buf).readString(1024) : null);
-        }).forEach(boxes::add);
+        IntStream.range(0, buf.readInt()).mapToObj(i -> new VolumeBox(new PacketBuffer(buf))).forEach(boxes::add);
     }
 
     public enum Handler implements IMessageHandler<MessageVolumeMarkers, IMessage> {

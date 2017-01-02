@@ -1,10 +1,9 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -111,11 +110,29 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             framePositions.add(new BlockPos(max.getX(), y, max.getZ()));
         }
 
+        framePositions = new ArrayList<>(new HashSet<>(framePositions));
+
         framePositions.sort(Comparator.comparing(blockPos ->
-                Math.pow(blockPos.getX() - pos.getX(), 2) + Math.pow(blockPos.getX() - pos.getX(), 2) + Math.pow(blockPos.getZ() - pos.getZ(), 2)
+                Math.pow(blockPos.getX() - pos.getX(), 2) + Math.pow(blockPos.getY() - pos.getY(), 2) + Math.pow(blockPos.getZ() - pos.getZ(), 2)
         ));
 
-        return framePositions;
+        List<BlockPos> framePositionsSorted = new ArrayList<>();
+        EnumFacing facing = world.getBlockState(getPos()).getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite();
+        framePositionsSorted.add(pos.offset(facing));
+        while (framePositions.size() != framePositionsSorted.size()) {
+            for (BlockPos blockPos : framePositions) {
+                if (!framePositionsSorted.contains(blockPos)) {
+                    if (framePositionsSorted.stream()
+                            .flatMap(blockPosLocal -> Arrays.stream(EnumFacing.values()).map(blockPosLocal::offset))
+                            .anyMatch(Predicate.isEqual(blockPos))) {
+                        framePositionsSorted.add(blockPos);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return framePositionsSorted;
     }
 
     @Override

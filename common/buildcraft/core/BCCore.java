@@ -52,7 +52,7 @@ public class BCCore {
         BCCoreConfig.preInit(cfgFolder);
         BCCoreProxy.getProxy().fmlPreInit();
 
-       CreativeTabBC  tab= CreativeTabManager.createTab("buildcraft.main");
+        CreativeTabBC  tab= CreativeTabManager.createTab("buildcraft.main");
 
         BCCoreItems.preInit();
         BCCoreBlocks.preInit();
@@ -86,19 +86,4 @@ public class BCCore {
         BCCoreProxy.getProxy().fmlPostInit();
         BCCoreConfig.postInit();
     }
-//
-//    @Mod.EventHandler
-//    public void onServerStarted(FMLServerStartedEvent event) {
-//        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-//        Arrays.stream(server.worldServers)
-//                .map(WorldSavedDataVolumeMarkers::get)
-//                .forEach(volumeMarkers -> volumeMarkers.boxes.stream()
-//                        .filter(VolumeBox::isEditing)
-//                        .filter(box -> server.getPlayerList().getPlayerByUsername(box.player) == null)
-//                        .forEach(box -> {
-//                            box.player = null;
-//                            box.resetEditing();
-//                            volumeMarkers.markDirty();
-//                        }));
-//    }
 }
