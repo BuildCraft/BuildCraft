@@ -226,6 +226,11 @@ public final class BlockUtil {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
         Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
+        if (block instanceof IFluidBlock) {
+            if (!((IFluidBlock) block).canDrain(world, pos)) {
+                fluid = null;
+            }
+        }
         if (fluid == null) {
             if (block == Blocks.FLOWING_WATER && blockState.getValue(BlockLiquid.LEVEL) == 0) {
                 fluid = FluidRegistry.WATER;
