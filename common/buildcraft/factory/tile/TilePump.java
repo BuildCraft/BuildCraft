@@ -2,9 +2,9 @@ package buildcraft.factory.tile;
 
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.lib.fluids.SingleUseTank;
-import buildcraft.lib.fluids.TankUtils;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.FluidUtilBC;
 import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.nbt.NBTTagCompound;
@@ -115,7 +115,7 @@ public class TilePump extends TileMiner {
 
         super.update();
 
-        TankUtils.pushFluidAround(world, pos);
+        FluidUtilBC.pushFluidAround(world, pos, tank);
     }
 
     @Override

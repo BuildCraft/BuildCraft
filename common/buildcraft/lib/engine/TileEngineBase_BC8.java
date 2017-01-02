@@ -14,6 +14,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.mj.*;
@@ -43,7 +44,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     protected long power = 0;// TODO: sync gui data
     private long lastPower = 0;
     /** Increments from 0 to 1. Above 0.5 all of the held power is emitted. */
-    private float progress;
+    private float progress, lastProgress;
     private int progressPart = 0;
 
     protected EnumPowerStage powerStage = EnumPowerStage.BLUE;
@@ -234,6 +235,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         boolean overheat = getPowerStage() == EnumPowerStage.OVERHEAT;
 
         if (world.isRemote) {
+            lastProgress = progress;
             // idk if these will stay (at all) or in a more refined form
             double particleCount = 0;
             double flameRand = 0;
@@ -545,7 +547,13 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         return isPumping;
     }
 
+    @SideOnly(Side.CLIENT)
+    public float getProgressClient(float partialTicks) {
+        return progress;
+    }
+
     @Override
+    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
         left.add("facing = " + currentDirection);
@@ -554,5 +562,11 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         left.add("stage = " + powerStage);
         left.add("progress = " + progress);
         left.add("last = +" + MjAPI.formatMjShort(lastPower));
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean hasFastRenderer() {
+        return true;
     }
 }

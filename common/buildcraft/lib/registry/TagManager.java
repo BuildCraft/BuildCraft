@@ -319,7 +319,7 @@ public class TagManager {
         // BC Transport Items
         registerTag("item.waterproof").reg("waterproof").locale("pipeWaterproof").oldReg("pipeWaterproof").model("waterproof");
         registerTag("item.plug.blocker").reg("plug_blocker").locale("PipePlug").model("plug_blocker");
-        registerTag("item.plug.gate").reg("plug_gate").locale("gate").model("pluggable/gate").tab("buildcraft.gate");
+        registerTag("item.plug.gate").reg("plug_gate").locale("gate").model("pluggable/gate").tab("buildcraft.gates");
         registerTag("item.plug.pulsar").reg("plug_pulsar").locale("pulsar").model("plug_pulsar");
         registerTag("item.wire").reg("wire").locale("pipeWire").model("wire/");
         // BC Transport Pipes
@@ -360,7 +360,7 @@ public class TagManager {
         registerTag("item.pipe.buildcrafttransport.obsidian_fluid").reg("pipe_obsidian_fluid").locale("PipeFluidsObsidian");
         registerTag("item.pipe.buildcrafttransport.lapis_item").reg("pipe_lapis_fluid").locale("PipeItemsLapis");
         registerTag("item.pipe.buildcrafttransport.daizuli_item").reg("pipe_daizuli_fluid").locale("PipeItemsDaizuli");
-        endBatch(setTab("buildcraft.pipe"));
+        endBatch(setTab("buildcraft.pipes"));
         // BC Transport Item Blocks
         registerTag("item.block.filtered_buffer").reg("filtered_buffer").locale("filteredBufferBlock").model("filtered_buffer");
         // BC Transport Blocks

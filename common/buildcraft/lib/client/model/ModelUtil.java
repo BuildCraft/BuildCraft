@@ -14,7 +14,7 @@ public class ModelUtil {
     /** Mutable class for holding the current {@link #uMin}, {@link #uMax}, {@link #vMin} and {@link #vMax} of a
      * face. */
     public static class UvFaceData {
-        private static final UvFaceData DEFAULT = new UvFaceData();
+        private static final UvFaceData DEFAULT = new UvFaceData(0, 1, 0, 1);
 
         public float uMin, uMax, vMin, vMax;
 

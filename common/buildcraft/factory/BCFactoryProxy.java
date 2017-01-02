@@ -25,7 +25,6 @@ import buildcraft.factory.gui.GuiChute;
 import buildcraft.factory.tile.TileAutoWorkbenchItems;
 import buildcraft.factory.tile.TileChute;
 import buildcraft.factory.tile.TileMiningWell;
-import buildcraft.factory.tile.TilePump;
 import buildcraft.factory.tile.TileTank;
 
 public abstract class BCFactoryProxy implements IGuiHandler {

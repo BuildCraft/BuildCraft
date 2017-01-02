@@ -17,7 +17,6 @@ import buildcraft.factory.tile.TileAutoWorkbenchItems;
 import buildcraft.factory.tile.TileChute;
 import buildcraft.factory.tile.TileFloodGate;
 import buildcraft.factory.tile.TileMiningWell;
-import buildcraft.factory.tile.TilePump;
 import buildcraft.factory.tile.TileTank;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.tile.TileBC_Neptune;

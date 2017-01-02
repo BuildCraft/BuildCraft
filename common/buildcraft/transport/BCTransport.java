@@ -21,6 +21,7 @@ import buildcraft.lib.BCLib;
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.registry.CreativeTabManager;
+import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.transport.pipe.PipeRegistry;
 import buildcraft.transport.pipe.flow.PipeFlowFluids;
@@ -55,8 +56,8 @@ public class BCTransport {
         PipeAPI.flowPower = new PipeFlowType(PipeFlowPower::new, PipeFlowPower::new);
         PipeAPI.flowStructure = new PipeFlowType(PipeFlowStructure::new, PipeFlowStructure::new);
 
-        CreativeTabManager.createTab("buildcraft.pipe");
-        CreativeTabManager.createTab("buildcraft.gate");
+        CreativeTabBC tabPipes = CreativeTabManager.createTab("buildcraft.pipes");
+        CreativeTabBC tabGates = CreativeTabManager.createTab("buildcraft.gates");
 
         BCTransportConfig.preInit();
         BCTransportBlocks.preInit();
@@ -73,10 +74,9 @@ public class BCTransport {
         // Reload after all of the pipe defs have been created.
         BCTransportConfig.reloadConfig(EnumRestartRequirement.GAME);
 
-        CreativeTabManager.setItem("buildcraft.pipe", BCTransportItems.pipeItemGold);
-        CreativeTabManager.setItem("buildcraft.gate", BCTransportItems.plugGate);
+        tabPipes.setItem(BCTransportItems.pipeItemDiamond);
+        tabGates.setItem(BCTransportItems.plugGate);
 
-        CreativeTabManager.setItem("buildcraft.pipe", BCTransportItems.pipeItemDiamond);
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCTransportProxy.getProxy());
 
         BCTransportProxy.getProxy().fmlPreInit();

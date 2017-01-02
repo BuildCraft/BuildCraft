@@ -114,6 +114,9 @@ public class SpriteHolderRegistry {
         }
     }
 
+    /** Holds a reference to a {@link TextureAtlasSprite} that is automatically refreshed when the resource packs are
+     * reloaded. As such you should store this in a static final field in a client-side class, and make sure that the
+     * class is initialised before init. */
     @SideOnly(Side.CLIENT)
     public static class SpriteHolder implements ISprite {
         public final ResourceLocation spriteLocation;

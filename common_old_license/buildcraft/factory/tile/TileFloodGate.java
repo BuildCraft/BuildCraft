@@ -2,6 +2,7 @@ package buildcraft.factory.tile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -16,14 +17,19 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.factory.block.BlockFloodGate;
+import buildcraft.factory.client.render.AdvDebuggerFloodGate;
+import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
+import buildcraft.lib.debug.BCAdvDebugging;
+import buildcraft.lib.debug.IAdvDebugTarget;
 import buildcraft.lib.fluids.Tank;
-import buildcraft.lib.fluids.TankUtils;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.FluidUtilBC;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -36,10 +42,13 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     private final Tank tank = new Tank("tank", 2000, this);
     private int delayIndex = 0;
     private int tick = 120;
-    private TreeMap<Integer, Deque<BlockPos>> layerQueues = new TreeMap<>();
+    private final TreeMap<Integer, Deque<BlockPos>> layerQueues = new TreeMap<>();
+
+    /** Used for debugging on the client with {@link IAdvDebugTarget} */
+    public final TreeMap<Integer, Deque<BlockPos>> clientLayerQueues = new TreeMap<>();
 
     public static int getIndexFromSide(EnumFacing side) {
-        return Arrays.binarySearch(SIDE_INDEXES, side);// wat?
+        return Arrays.binarySearch(SIDE_INDEXES, side);
     }
 
     public boolean isSideBlocked(EnumFacing side) {
@@ -140,14 +149,14 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             return;
         }
 
-        TankUtils.pullFluidAround(world, pos);
+        FluidUtilBC.pullFluidAround(world, pos, tank);
 
         tick++;
         if (tick % 16 == 0) {
             FluidStack fluid = tank.drain(1000, false);
             if (fluid != null && fluid.amount == 1000) {
                 BlockPos current = getNext();
-                if (current != null) {
+                if (current != null && world.isAirBlock(current)) {
                     world.setBlockState(current, fluid.getFluid().getBlock().getDefaultState());
                     tank.drain(1000, true);
                     delayIndex = 0;
@@ -164,6 +173,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     // IDebuggable
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
         left.add("fluid = " + tank.getDebugString());
@@ -173,6 +183,12 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
         }
         left.add("sides = " + String.join(" ", sides));
         left.add("delay = " + getCurrentDelay());
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IDetachedRenderer getDebugRenderer() {
+        return new AdvDebuggerFloodGate(this);
     }
 
     // NBT
@@ -205,6 +221,19 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             if (id == NET_RENDER_DATA) {
                 // tank.writeToBuffer(buffer);
                 MessageUtil.writeBooleanArray(buffer, sidesBlocked);
+            } else if (id == NET_ADV_DEBUG) {
+                buffer.writeInt(layerQueues.size());
+                for (Entry<Integer, Deque<BlockPos>> entry : layerQueues.entrySet()) {
+                    Integer key = entry.getKey();
+                    Deque<BlockPos> positions = entry.getValue();
+                    buffer.writeInt(key);
+                    buffer.writeInt(positions.size());
+                    for (BlockPos p : positions) {
+                        BlockPos diff = p.subtract(getPos());
+                        buffer.writeByte(diff.getX());
+                        buffer.writeByte(diff.getZ());
+                    }
+                }
             }
         }
     }
@@ -220,6 +249,21 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                     sidesBlocked = read;
                     redrawBlock();
                 }
+            } else if (id == NET_ADV_DEBUG) {
+                clientLayerQueues.clear();
+                int count = buffer.readInt();
+                for (int i = 0; i < count; i++) {
+                    int key = buffer.readInt();
+                    int values = buffer.readInt();
+                    Deque<BlockPos> positions = new ArrayDeque<>(values);
+                    for (int j = 0; j < values; j++) {
+                        int x = getPos().getX() + buffer.readByte();
+                        int z = getPos().getZ() + buffer.readByte();
+                        positions.add(new BlockPos(x, key, z));
+                    }
+                    clientLayerQueues.put(key, positions);
+                }
+                BCAdvDebugging.setClientDebugTarget(this);
             }
         }
     }

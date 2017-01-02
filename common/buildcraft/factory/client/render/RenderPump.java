@@ -1,6 +1,5 @@
 package buildcraft.factory.client.render;
 
-import buildcraft.factory.tile.TilePump;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.tile.RenderPartCube;
