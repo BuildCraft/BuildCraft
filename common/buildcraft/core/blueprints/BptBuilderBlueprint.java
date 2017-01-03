@@ -526,6 +526,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			return !(builder.energyAvailable() < slot.getEnergyRequirement(stacksUsed));
 		}
 
+		IInventory invCopy = new InventoryCopy(builder);
+
 		for (ItemStack reqStk : tmpReq) {
 			boolean itemBlock = reqStk.getItem() instanceof ItemBlock;
 			Fluid fluid = itemBlock ? FluidRegistry.lookupFluidForBlock(((ItemBlock) reqStk.getItem()).field_150939_a) : null;
@@ -534,7 +536,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				continue;
 			}
 
-			for (IInvSlot slotInv : InventoryIterator.getIterable(new InventoryCopy(builder), ForgeDirection.UNKNOWN)) {
+			for (IInvSlot slotInv : InventoryIterator.getIterable(invCopy, ForgeDirection.UNKNOWN)) {
 				if (!builder.isBuildingMaterialSlot(slotInv.getIndex())) {
 					continue;
 				}

@@ -80,25 +80,13 @@ public abstract class Schematic {
 		ItemStack stack = slot.getStackInSlot();
 		ItemStack result = stack.copy();
 
-		if (stack.isItemStackDamageable()) {
-			if (req.getItemDamage() + stack.getItemDamage() <= stack.getMaxDamage()) {
-				stack.setItemDamage(req.getItemDamage() + stack.getItemDamage());
-				result.setItemDamage(req.getItemDamage());
-				req.stackSize = 0;
-			}
-
-			if (stack.getItemDamage() >= stack.getMaxDamage()) {
-				slot.decreaseStackInSlot(1);
-			}
+		if (stack.stackSize >= req.stackSize) {
+			result.stackSize = req.stackSize;
+			stack.stackSize -= req.stackSize;
+			req.stackSize = 0;
 		} else {
-			if (stack.stackSize >= req.stackSize) {
-				result.stackSize = req.stackSize;
-				stack.stackSize -= req.stackSize;
-				req.stackSize = 0;
-			} else {
-				req.stackSize -= stack.stackSize;
-				stack.stackSize = 0;
-			}
+			req.stackSize -= stack.stackSize;
+			stack.stackSize = 0;
 		}
 
 		if (stack.stackSize == 0) {
