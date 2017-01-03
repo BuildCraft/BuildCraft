@@ -1,0 +1,5 @@
+Bugs fixed:
+
+* [#3451] Potentially fix Planter Robot item filter handling (AlexIIL)
+* [#3316] Builder dupe bug (asie)
+
