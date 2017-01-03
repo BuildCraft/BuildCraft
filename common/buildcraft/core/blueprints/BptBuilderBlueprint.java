@@ -490,6 +490,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
             return !(builder.energyAvailable() < slot.getEnergyRequirement(stacksUsed));
         }
 
+		IInventory invCopy = new InventoryCopy(builder);
+
         for (ItemStack reqStk : tmpReq) {
             boolean itemBlock = reqStk.getItem() instanceof ItemBlock;
             Fluid fluid = itemBlock ? FluidRegistry.lookupFluidForBlock(((ItemBlock) reqStk.getItem()).block) : null;
@@ -498,7 +500,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
                 continue;
             }
 
-            for (IInvSlot slotInv : InventoryIterator.getIterable(new InventoryCopy(builder))) {
+            for (IInvSlot slotInv : InventoryIterator.getIterable(invCopy)) {
                 if (!builder.isBuildingMaterialSlot(slotInv.getIndex())) {
                     continue;
                 }
