@@ -137,7 +137,8 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                     addonBox.addons.remove(addonSlot);
                     volumeMarkers.markDirty();
                 } else {
-                    System.out.println("// TODO: open addon GUI here");
+                    addonBox.addons.get(addonSlot).onPlayerRightClick(player);
+                    volumeMarkers.markDirty();
                 }
             }
         } else if (player.isSneaking()) {

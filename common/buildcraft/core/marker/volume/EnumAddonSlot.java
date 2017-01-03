@@ -8,6 +8,7 @@ import net.minecraft.util.math.Vec3d;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 public enum EnumAddonSlot {
@@ -40,14 +41,14 @@ public enum EnumAddonSlot {
         return new AxisAlignedBB(boxOffset, boxOffset).expandXyz(1 / 16D);
     }
 
-    public static Pair<VolumeBox, EnumAddonSlot> getSelectingBoxAndSlot(EntityPlayer player, WorldSavedDataVolumeMarkers volumeMarkers) {
+    public static Pair<VolumeBox, EnumAddonSlot> getSelectingBoxAndSlot(EntityPlayer player, List<VolumeBox> boxes) {
         Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
         Vec3d end = start.add(player.getLookVec().scale(4));
         VolumeBox bestBox = null;
         EnumAddonSlot bestSlot = null;
         double bestDist = 10000;
 
-        for (VolumeBox box : volumeMarkers.boxes) {
+        for (VolumeBox box : boxes) {
             for (EnumAddonSlot slot : values()) {
                 RayTraceResult ray = slot.getBoundingBox(box).calculateIntercept(start, end);
                 if (ray != null) {
@@ -62,5 +63,13 @@ public enum EnumAddonSlot {
         }
 
         return Pair.of(bestBox, bestSlot);
+    }
+
+    public static Pair<VolumeBox, EnumAddonSlot> getSelectingBoxAndSlot(EntityPlayer player, WorldSavedDataVolumeMarkers volumeMarkers) {
+        return getSelectingBoxAndSlot(player, volumeMarkers.boxes);
+    }
+
+    public static Pair<VolumeBox, EnumAddonSlot> getSelectingBoxAndSlot(EntityPlayer player, ClientVolumeMarkers clientVolumeMarkers) {
+        return getSelectingBoxAndSlot(player, clientVolumeMarkers.boxes);
     }
 }

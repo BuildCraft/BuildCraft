@@ -1,6 +1,7 @@
 package buildcraft.core.marker.volume;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
@@ -18,6 +19,9 @@ public abstract class Addon {
 
     public AxisAlignedBB getBoundingBox() {
         return getSlot().getBoundingBox(box);
+    }
+
+    public void onPlayerRightClick(EntityPlayer player) {
     }
 
     public abstract NBTTagCompound writeToNBT(NBTTagCompound nbt);

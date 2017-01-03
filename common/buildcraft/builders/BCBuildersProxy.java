@@ -63,6 +63,9 @@ public abstract class BCBuildersProxy implements IGuiHandler {
                 return new ContainerQuarry(player, quarry);
             }
         }
+        if (id == BCBuildersGuis.FILLING_PLANNER.ordinal()) {
+            return new ContainerFillingPlanner(player);
+        }
         return null;
     }
 
@@ -120,6 +123,9 @@ public abstract class BCBuildersProxy implements IGuiHandler {
                     TileQuarry quarry = (TileQuarry) tile;
                     return new GuiQuarry(new ContainerQuarry(player, quarry));
                 }
+            }
+            if (id == BCBuildersGuis.FILLING_PLANNER.ordinal()) {
+                return new GuiFillingPlanner(new ContainerFillingPlanner(player));
             }
             return null;
         }
