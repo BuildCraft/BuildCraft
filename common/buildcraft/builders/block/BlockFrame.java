@@ -104,7 +104,7 @@ public class BlockFrame extends BlockBCBase_Neptune {
     }
 
     @Override
-    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity) {
+    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity, boolean isPistonMoving) {
         List<AxisAlignedBB> boxes = new ArrayList<>();
         boxes.add(BASE_AABB);
         for(EnumFacing facing : Stream.of(EnumFacing.values()).filter(side -> isConnected(world, pos, side)).toArray(EnumFacing[]::new)) {
