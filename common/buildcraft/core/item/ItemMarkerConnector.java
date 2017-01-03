@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.item;
 
+import buildcraft.core.marker.volume.EnumAddonSlot;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeMarkers;
 import buildcraft.lib.item.ItemBC_Neptune;
@@ -25,6 +26,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Iterator;
 
@@ -126,7 +128,19 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
         Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
         Vec3d end = start.add(player.getLookVec().scale(4));
 
-        if (player.isSneaking()) {
+        Pair<VolumeBox, EnumAddonSlot> selectingBoxAndSlot = EnumAddonSlot.getSelectingBoxAndSlot(player, volumeMarkers);
+        VolumeBox addonBox = selectingBoxAndSlot.getLeft();
+        EnumAddonSlot addonSlot = selectingBoxAndSlot.getRight();
+        if (addonBox != null && addonSlot != null) {
+            if (addonBox.addons.containsKey(addonSlot)) {
+                if (player.isSneaking()) {
+                    addonBox.addons.remove(addonSlot);
+                    volumeMarkers.markDirty();
+                } else {
+                    System.out.println("// TODO: open addon GUI here");
+                }
+            }
+        } else if (player.isSneaking()) {
             if (currentEditing == null) {
                 for (Iterator<VolumeBox> iterator = volumeMarkers.boxes.iterator(); iterator.hasNext(); ) {
                     VolumeBox box = iterator.next();
@@ -147,18 +161,14 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                 double bestDist = 10000;
                 BlockPos editing = null;
 
-                for (VolumeBox vbox : volumeMarkers.boxes) {
-
-                    for (BlockPos p : PositionUtil.getCorners(vbox.box.min(), vbox.box.max())) {
-                        AxisAlignedBB aabb = new AxisAlignedBB(p);
-
-                        RayTraceResult ray = aabb.calculateIntercept(start, end);
-
+                for (VolumeBox box : volumeMarkers.boxes) {
+                    for (BlockPos p : PositionUtil.getCorners(box.box.min(), box.box.max())) {
+                        RayTraceResult ray = new AxisAlignedBB(p).calculateIntercept(start, end);
                         if (ray != null) {
                             double dist = ray.hitVec.distanceTo(start);
                             if (bestDist > dist) {
                                 bestDist = dist;
-                                bestBox = vbox;
+                                bestBox = box;
                                 editing = p;
                             }
                         }

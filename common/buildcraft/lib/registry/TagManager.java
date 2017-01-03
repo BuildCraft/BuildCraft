@@ -249,6 +249,7 @@ public class TagManager {
         // BC Builders Items
         registerTag("item.schematic.single").reg("schematic_single").locale("schematicSingle").model("schematic_single/");
         registerTag("item.blueprint").reg("blueprint").locale("blueprintItem").model("blueprint/");
+        registerTag("item.filling_planner").reg("filling_planner").locale("fillingPlannerItem").model("filling_planner");
         // BC Builders Item Blocks
         registerTag("item.block.architect").reg("architect").locale("architectBlock").model("architect");
         registerTag("item.block.builder").reg("builder").locale("builderBlock").model("builder");

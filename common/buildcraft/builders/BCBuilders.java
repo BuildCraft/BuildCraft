@@ -5,8 +5,11 @@
 package buildcraft.builders;
 
 import buildcraft.api.schematic.GlobalSavedDataSnapshots;
+import buildcraft.builders.addon.AddonFillingPlanner;
 import buildcraft.builders.schematic.RulesLoader;
 import buildcraft.builders.schematic.SchematicsLoader;
+import buildcraft.core.marker.volume.AddonsRegistry;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -37,6 +40,7 @@ public class BCBuilders {
         BCBuildersBlocks.preInit();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCBuildersProxy.getProxy());
+        AddonsRegistry.INSTANCE.register(new ResourceLocation("buildcraftbuilders", "filling_planner"), AddonFillingPlanner.class);
         BCBuildersProxy.getProxy().fmlPreInit();
     }
 

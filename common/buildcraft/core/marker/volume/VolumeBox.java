@@ -1,15 +1,20 @@
 package buildcraft.core.marker.volume;
 
 import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 public class VolumeBox {
     public Box box;
@@ -18,6 +23,7 @@ public class VolumeBox {
     private BlockPos held = null;
     private double dist = 0;
     private BlockPos oldMin = null, oldMax = null;
+    public final Map<EnumAddonSlot, Addon> addons = new EnumMap<>(EnumAddonSlot.class);
 
     public VolumeBox(BlockPos at) {
         box = new Box(at, at);
@@ -44,6 +50,19 @@ public class VolumeBox {
         box = new Box();
         box.readData(buf);
         player = buf.readBoolean() ? buf.readUniqueId() : null;
+        IntStream.range(0, buf.readInt())
+                .forEach(i -> {
+                    EnumAddonSlot slot = new PacketBufferBC(buf).readEnumValue(EnumAddonSlot.class);
+                    Class<? extends Addon> addonClass = AddonsRegistry.INSTANCE.getClassByName(new ResourceLocation(buf.readString(1024)));
+                    try {
+                        Addon addon = addonClass.newInstance();
+                        addon.box = this;
+                        addon.fromBytes(buf);
+                        addons.put(slot, addon);
+                    } catch (InstantiationException | IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 
     public boolean isEditing() {
@@ -138,5 +157,11 @@ public class VolumeBox {
         if (player != null) {
             buf.writeUniqueId(player);
         }
+        buf.writeInt(addons.size());
+        addons.forEach((slot, addon) -> {
+            new PacketBufferBC(buf).writeEnumValue(slot);
+            buf.writeString(AddonsRegistry.INSTANCE.getNameByClass(addon.getClass()).toString());
+            addon.toBytes(buf);
+        });
     }
 }

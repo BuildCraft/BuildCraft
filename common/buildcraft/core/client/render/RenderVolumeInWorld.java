@@ -43,6 +43,8 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
             );
 
             Arrays.stream(box.box.laserData).forEach(data -> LaserRenderer_BC8.renderLaserDynamic(data, vb));
+
+            box.addons.values().forEach(addon -> addon.getRenderer().renderAddonFast(addon, player, partialTicks, vb));
         });
 
         Tessellator.getInstance().draw();
@@ -102,9 +104,9 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
             case X:
                 if (second) {
                     min = new Vec3d(min.xCoord - 1 / 16D, min.yCoord, min.zCoord);
-                    max = new Vec3d(max.xCoord + 3 / 16D, max.yCoord, max.zCoord);
+                    max = new Vec3d(max.xCoord + 1 / 16D, max.yCoord, max.zCoord);
                 } else {
-                    min = new Vec3d(min.xCoord - 3 / 16D, min.yCoord, min.zCoord);
+                    min = new Vec3d(min.xCoord - 1 / 16D, min.yCoord, min.zCoord);
                     max = new Vec3d(max.xCoord + 1 / 16D, max.yCoord, max.zCoord);
                 }
                 break;
@@ -114,11 +116,11 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
                 break;
             case Z:
                 if (second) {
-                    min = new Vec3d(min.xCoord, min.yCoord, min.zCoord - 3 / 16D);
+                    min = new Vec3d(min.xCoord, min.yCoord, min.zCoord - 1 / 16D);
                     max = new Vec3d(max.xCoord, max.yCoord, max.zCoord + 1 / 16D);
                 } else {
                     min = new Vec3d(min.xCoord, min.yCoord, min.zCoord - 1 / 16D);
-                    max = new Vec3d(max.xCoord, max.yCoord, max.zCoord + 3 / 16D);
+                    max = new Vec3d(max.xCoord, max.yCoord, max.zCoord + 1 / 16D);
                 }
                 break;
         }
