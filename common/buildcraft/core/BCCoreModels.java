@@ -4,27 +4,28 @@ import buildcraft.core.tile.TileEngineRedstone_BC8;
 import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.engine.TileEngineBase_BC8;
+import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
-import buildcraft.lib.expression.node.value.NodeMutableDouble;
-import buildcraft.lib.expression.node.value.NodeMutableString;
+import buildcraft.lib.expression.node.value.NodeVariableDouble;
+import buildcraft.lib.expression.node.value.NodeVariableString;
 
 public class BCCoreModels {
 
-    private static final NodeMutableDouble ENGINE_PROGRESS;
-    private static final NodeMutableString ENGINE_STAGE;
-    private static final NodeMutableString ENGINE_FACING;
+    private static final NodeVariableDouble ENGINE_PROGRESS;
+    private static final NodeVariableString ENGINE_STAGE;
+    private static final NodeVariableString ENGINE_FACING;
 
     private static final ModelHolderVariable ENGINE_REDSTONE;
     private static final ModelHolderVariable ENGINE_CREATIVE;
 
     static {
-        FunctionContext fnCtx = new FunctionContext();
-        ENGINE_PROGRESS = fnCtx.getOrAddDouble("progress");
-        ENGINE_STAGE = fnCtx.getOrAddString("stage");
-        ENGINE_FACING = fnCtx.getOrAddString("facing");
+        FunctionContext fnCtx = new FunctionContext(DefaultContexts.CONTEXT_DEFAULT);
+        ENGINE_PROGRESS = fnCtx.putVariableDouble("progress");
+        ENGINE_STAGE = fnCtx.putVariableString("stage");
+        ENGINE_FACING = fnCtx.putVariableString("facing");
 
-        ENGINE_REDSTONE = getModel("engine_redstone", fnCtx);
-        ENGINE_CREATIVE = getModel("engine_creative", fnCtx);
+        ENGINE_REDSTONE = getModel("block/engine/redstone.json", fnCtx);
+        ENGINE_CREATIVE = getModel("block/engine/creative.json", fnCtx);
     }
 
     private static ModelHolderVariable getModel(String loc, FunctionContext fnCtx) {

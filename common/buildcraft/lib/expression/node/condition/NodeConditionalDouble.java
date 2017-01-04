@@ -1,9 +1,8 @@
 package buildcraft.lib.expression.node.condition;
 
-import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
-import buildcraft.lib.expression.node.value.NodeImmutableBoolean;
-import buildcraft.lib.expression.node.value.NodeImmutableDouble;
+import buildcraft.lib.expression.node.value.NodeConstantBoolean;
+import buildcraft.lib.expression.node.value.NodeConstantDouble;
 
 public class NodeConditionalDouble implements INodeDouble {
     private final INodeBoolean condition;
@@ -21,12 +20,12 @@ public class NodeConditionalDouble implements INodeDouble {
     }
 
     @Override
-    public INodeDouble inline(Arguments args) {
-        INodeBoolean c = condition.inline(args);
-        INodeDouble t = ifTrue.inline(args);
-        INodeDouble f = ifFalse.inline(args);
-        if (c instanceof NodeImmutableBoolean && t instanceof NodeImmutableDouble && f instanceof NodeImmutableDouble) {
-            return new NodeImmutableDouble(((NodeImmutableBoolean) c).value ? ((NodeImmutableDouble) t).value : ((NodeImmutableDouble) f).value);
+    public INodeDouble inline() {
+        INodeBoolean c = condition.inline();
+        INodeDouble t = ifTrue.inline();
+        INodeDouble f = ifFalse.inline();
+        if (c instanceof NodeConstantBoolean && t instanceof NodeConstantDouble && f instanceof NodeConstantDouble) {
+            return new NodeConstantDouble(((NodeConstantBoolean) c).value ? ((NodeConstantDouble) t).value : ((NodeConstantDouble) f).value);
         } else if (c != condition || t != ifTrue || f != ifFalse) {
             return new NodeConditionalDouble(c, t, f);
         } else {

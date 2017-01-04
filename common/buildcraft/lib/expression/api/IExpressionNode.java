@@ -1,35 +1,35 @@
 package buildcraft.lib.expression.api;
 
-import javax.annotation.Nullable;
-
 public interface IExpressionNode {
-    IExpressionNode inline(@Nullable Arguments args);
+    IExpressionNode inline();
+
+    // common expression types
 
     public interface INodeDouble extends IExpressionNode {
         double evaluate();
 
         @Override
-        INodeDouble inline(@Nullable Arguments args);
+        INodeDouble inline();
     }
 
     public interface INodeLong extends IExpressionNode {
         long evaluate();
 
         @Override
-        INodeLong inline(@Nullable Arguments args);
+        INodeLong inline();
     }
 
     public interface INodeBoolean extends IExpressionNode {
         boolean evaluate();
 
         @Override
-        INodeBoolean inline(@Nullable Arguments args);
+        INodeBoolean inline();
     }
 
     public interface INodeString extends IExpressionNode {
         String evaluate();
 
         @Override
-        INodeString inline(@Nullable Arguments args);
+        INodeString inline();
     }
 }

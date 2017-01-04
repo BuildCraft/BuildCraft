@@ -3,6 +3,7 @@ package buildcraft.transport.pipe.behaviour;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.mj.IMjConnector;
@@ -119,5 +120,18 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
         } else {
             return mjBattery.addPowerChecking(microJoules);
         }
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        return getCapability(capability, facing) != null;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == MjAPI.CAP_REDSTONE_RECEIVER) return (T) this;
+        else if (capability == MjAPI.CAP_RECEIVER) return (T) this;
+        else if (capability == MjAPI.CAP_CONNECTOR) return (T) this;
+        return null;
     }
 }

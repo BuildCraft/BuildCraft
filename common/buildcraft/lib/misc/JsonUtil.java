@@ -11,13 +11,13 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
 public class JsonUtil {
-    public static <K, V> ImmutableMap<K, V> getSubAsImmutableMap(JsonObject obj, String sub, TypeToken<HashMap<K, V>> token, JsonDeserializationContext context) {
+    public static <K, V> ImmutableMap<K, V> getSubAsImmutableMap(JsonObject obj, String sub, TypeToken<HashMap<K, V>> token) {
         if (!obj.has(sub)) {
             return ImmutableMap.of();
         }
         try {
             JsonElement elem = obj.get(sub);
-            HashMap<K, V> map = context.deserialize(elem, token.getType());
+            HashMap<K, V> map = new Gson().fromJson(elem, token.getType());
             return ImmutableMap.copyOf(map);
 
         } catch (IllegalStateException ise) {
@@ -25,13 +25,13 @@ public class JsonUtil {
         }
     }
 
-    public static <T> ImmutableList<T> getSubAsImmutableList(JsonObject obj, String sub, TypeToken<ArrayList<T>> token, JsonDeserializationContext context) {
+    public static <T> ImmutableList<T> getSubAsImmutableList(JsonObject obj, String sub, TypeToken<ArrayList<T>> token) {
         if (!obj.has(sub)) {
             return ImmutableList.of();
         }
         try {
             JsonElement elem = obj.get(sub);
-            ArrayList<T> list = context.deserialize(elem, token.getType());
+            ArrayList<T> list = new Gson().fromJson(elem, token.getType());
             return ImmutableList.copyOf(list);
         } catch (IllegalStateException ise) {
             throw new JsonSyntaxException("Something was wrong with " + obj + " when deserialzing it as a " + token, ise);

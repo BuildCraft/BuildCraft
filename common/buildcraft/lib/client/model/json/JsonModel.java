@@ -1,47 +1,53 @@
 package buildcraft.lib.client.model.json;
 
-import java.io.Reader;
-import java.io.StringReader;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.util.JsonUtils;
+import net.minecraft.util.ResourceLocation;
 
+import buildcraft.lib.client.model.ResourceLoaderContext;
 import buildcraft.lib.misc.JsonUtil;
 
 /** {@link ModelBlock} but with different/additional features */
 public class JsonModel {
-    public static final Gson SERIALISER;
-
     public final boolean ambientOcclusion;
     public final Map<String, String> textures;
     public final JsonModelPart[] cutoutElements, translucentElements;
 
-    static {
-        SERIALISER = new GsonBuilder()//
-                .registerTypeAdapter(JsonModel.class, (JsonDeserializer<JsonModel>) JsonModel::new)//
-                .create();
+    public static JsonModel deserialize(ResourceLocation from) throws JsonParseException, IOException {
+        return deserialize(from, new ResourceLoaderContext());
     }
 
-    public static JsonModel deserialize(String jsonString) throws JsonSyntaxException {
-        return deserialize(new StringReader(jsonString));
+    public static JsonModel deserialize(ResourceLocation from, ResourceLoaderContext ctx) throws JsonParseException, IOException {
+        try (InputStreamReader isr = ctx.startLoading(from)) {
+            return new JsonModel(new Gson().fromJson(isr, JsonObject.class), ctx);
+        } finally {
+            ctx.finishLoading();
+        }
     }
 
-    public static JsonModel deserialize(Reader reader) throws JsonSyntaxException {
-        return SERIALISER.fromJson(reader, JsonModel.class);
+    public static void deserializePart(List<JsonModelPart> to, boolean translucent, JsonElement json, ResourceLoaderContext ctx) throws JsonParseException, IOException {
+        if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
+            String str = json.getAsString();
+            ResourceLocation parent = new ResourceLocation(str);
+            JsonModel model = deserialize(parent, ctx);
+            if (translucent) {
+                Collections.addAll(to, model.translucentElements);
+            } else {
+                Collections.addAll(to, model.cutoutElements);
+            }
+        } else {
+            to.add(new JsonModelPart(json, ctx));
+        }
     }
 
-    public static JsonModelPart deserializePart(JsonElement json, JsonDeserializationContext context) throws JsonParseException {
-        // TODO: add different classes based on type
-        return new JsonModelPart(json, context);
-    }
-
-    private static JsonModelPart[] deserializePartArray(JsonDeserializationContext context, JsonObject json, String member) {
+    private static JsonModelPart[] deserializePartArray(JsonObject json, String member, boolean translucent, ResourceLoaderContext ctx) throws JsonParseException, IOException {
         if (!json.has(member)) {
             throw new JsonSyntaxException("Did not have '" + member + "' in '" + json + "'");
         }
@@ -50,27 +56,22 @@ public class JsonModel {
             throw new JsonSyntaxException("Expected an array, got '" + elem + "'");
         }
         JsonArray array = elem.getAsJsonArray();
-        JsonModelPart[] to = new JsonModelPart[array.size()];
-        for (int i = 0; i < to.length; i++) {
-            to[i] = deserializePart(array.get(i), context);
+        List<JsonModelPart> to = new ArrayList<>(array.size());
+        for (int i = 0; i < array.size(); i++) {
+            deserializePart(to, translucent, array.get(i), ctx);
         }
-        return to;
+        return to.toArray(new JsonModelPart[to.size()]);
     }
 
-    public JsonModel(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        if (json.isJsonObject()) {
-            JsonObject obj = json.getAsJsonObject();
-            ambientOcclusion = JsonUtils.getBoolean(obj, "ambientocclusion", false);
-            textures = JsonUtil.getSubAsImmutableMap(obj, "textures", new TypeToken<HashMap<String, String>>() {}, context);
-            if (obj.has("elements")) {
-                cutoutElements = deserializePartArray(context, obj, "elements");
-                translucentElements = new JsonModelPart[0];
-            } else {
-                cutoutElements = deserializePartArray(context, obj, "cutout");
-                translucentElements = deserializePartArray(context, obj, "translucent");
-            }
+    public JsonModel(JsonObject obj, ResourceLoaderContext ctx) throws JsonParseException, IOException {
+        ambientOcclusion = JsonUtils.getBoolean(obj, "ambientocclusion", false);
+        textures = JsonUtil.getSubAsImmutableMap(obj, "textures", new TypeToken<HashMap<String, String>>() {});
+        if (obj.has("elements")) {
+            cutoutElements = deserializePartArray(obj, "elements", false, ctx);
+            translucentElements = new JsonModelPart[0];
         } else {
-            throw new JsonSyntaxException("Excepted an object, got " + json);
+            cutoutElements = deserializePartArray(obj, "cutout", false, ctx);
+            translucentElements = deserializePartArray(obj, "translucent", true, ctx);
         }
     }
 }

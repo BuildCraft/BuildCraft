@@ -189,9 +189,16 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         int reallyFilled = section.fill(extracted, true);
         section.ticksInDirection = COOLDOWN_INPUT;
         if (reallyFilled != extracted) {
-            BCLog.logger.warn("[tryExtractFluid] Filled " + reallyFilled + " != extracted " + extracted //
-                + " (maxExtract = " + millibuckets + ")" //
-                + " (handler = " + fluidHandler.getClass() + ") @" + pipe.getHolder().getPipePos());
+            BCLog.logger.warn("[tryExtractFluid] Filled " + reallyFilled
+                + " != extracted "
+                + extracted //
+                + " (maxExtract = "
+                + millibuckets
+                + ")" //
+                + " (handler = "
+                + fluidHandler.getClass()
+                + ") @"
+                + pipe.getHolder().getPipePos());
         }
         return toAdd;
     }
@@ -234,8 +241,13 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         int reallyFilled = section.fill(millibuckets, true);
         section.ticksInDirection = COOLDOWN_INPUT;
         if (reallyFilled != millibuckets) {
-            BCLog.logger.warn("[tryExtractFluidAdv] Filled " + reallyFilled + " != extracted " + millibuckets //
-                + " (handler = " + fluidHandler.getClass() + ") @" + pipe.getHolder().getPipePos());
+            BCLog.logger.warn("[tryExtractFluidAdv] Filled " + reallyFilled
+                + " != extracted "
+                + millibuckets //
+                + " (handler = "
+                + fluidHandler.getClass()
+                + ") @"
+                + pipe.getHolder().getPipePos());
         }
         return toAdd;
     }
@@ -401,29 +413,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
         if (send && tracker.markTimeIfDelay(world)) {
             // send a net update
-            sendCustomPayload(NET_FLUID_AMOUNTS, (b) -> {
-                PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(b);
-                if (currentFluid == null) {
-                    buffer.writeBoolean(false);
-                } else {
-                    buffer.writeBoolean(true);
-                    buffer.writeInt(BuildCraftObjectCaches.CACHE_FLUIDS.server().store(currentFluid));
-                }
-                for (EnumPipePart part : EnumPipePart.VALUES) {
-                    Section section = sections.get(part);
-                    if (section.amount == section.lastSentAmount) {
-                        buffer.writeBoolean(false);
-                    } else {
-                        buffer.writeBoolean(true);
-                        buffer.writeShort(section.amount);
-                        section.lastSentAmount = section.amount;
-                    }
-                    Dir should = Dir.get(section.ticksInDirection);
-                    buffer.writeEnumValue(should); // This writes out 2 bits so don't bother with a boolean flag
-                    // TODO: Add fixed-bits writing to PacketBufferBC!
-                    section.lastSentDirection = should;
-                }
-            });
+            sendPayload(NET_FLUID_AMOUNTS);
         }
     }
 
@@ -569,6 +559,35 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 }
                 lastMessageMinus1 = lastMessage;
                 lastMessage = pipe.getHolder().getPipeWorld().getTotalWorldTime();
+            }
+        }
+    }
+
+    @Override
+    public void writePayload(int id, PacketBuffer buf, Side side) {
+        PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(buf);
+        if (side == Side.SERVER) {
+            if (id == NET_FLUID_AMOUNTS) {
+                if (currentFluid == null) {
+                    buffer.writeBoolean(false);
+                } else {
+                    buffer.writeBoolean(true);
+                    buffer.writeInt(BuildCraftObjectCaches.CACHE_FLUIDS.server().store(currentFluid));
+                }
+                for (EnumPipePart part : EnumPipePart.VALUES) {
+                    Section section = sections.get(part);
+                    if (section.amount == section.lastSentAmount) {
+                        buffer.writeBoolean(false);
+                    } else {
+                        buffer.writeBoolean(true);
+                        buffer.writeShort(section.amount);
+                        section.lastSentAmount = section.amount;
+                    }
+                    Dir should = Dir.get(section.ticksInDirection);
+                    buffer.writeEnumValue(should); // This writes out 2 bits so don't bother with a boolean flag
+                    // TODO: Add fixed-bits writing to PacketBufferBC!
+                    section.lastSentDirection = should;
+                }
             }
         }
     }

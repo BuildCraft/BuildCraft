@@ -37,31 +37,48 @@ public class TokeniserDefaults {
     };
     public static final ITokenizerGobbler GOBBLER_NUMBER = (ctx) -> {
         int i = 0;
-        boolean dot = false;
-        boolean moreAfterDot = false;
+        int dot = -1;
         while (true) {
             char c = ctx.getCharAt(i);
             if (c == '.') {
-                if (dot) {
+                if (dot >= 0) {
                     break;
                 }
-                dot = true;
+                dot = i;
             } else {
                 if (!Character.isDigit(c)) break;
-                moreAfterDot = dot;
             }
             i++;
         }
-        if (i > 1 && dot && !moreAfterDot) {
-            return new ResultConsume(i - 1);
+        if (i == 0) return ResultSpecific.IGNORE;
+        boolean digitsBeforeDot = dot > 0;
+        boolean digitsAfterDot = i > dot + 1;
+
+        if (digitsBeforeDot) {
+            if (digitsAfterDot) {
+                return new ResultConsume(i);
+            } else {
+                return new ResultConsume(i - 1);
+            }
+        } else if (digitsAfterDot) {
+            return new ResultConsume(i);
+        } else {
+            return ResultSpecific.IGNORE;
         }
-        return i == 0 ? ResultSpecific.IGNORE : new ResultConsume(i);
     };
     public static final ITokenizerGobbler GOBBLER_WORD = (ctx) -> {
+        /* Allow words to start with ".", so that object method calling works. (for example "5.sub(6)", where ".sub" is
+         * treated as a single token) */
         int i = 0;
         while (true) {
             char c = ctx.getCharAt(i);
-            if (!Character.isAlphabetic(c)) break;
+            if (i == 0) {
+                if (c != '.' && !Character.isJavaIdentifierStart(c)) {
+                    break;
+                }
+            } else if (!Character.isJavaIdentifierPart(c)) {
+                break;
+            }
             i++;
         }
         return i == 0 ? ResultSpecific.IGNORE : new ResultConsume(i);

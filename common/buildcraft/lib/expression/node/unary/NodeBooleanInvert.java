@@ -1,9 +1,8 @@
 package buildcraft.lib.expression.node.unary;
 
 import buildcraft.lib.expression.NodeInliningHelper;
-import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
-import buildcraft.lib.expression.node.value.NodeImmutableBoolean;
+import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 
 public class NodeBooleanInvert implements INodeBoolean {
     private final INodeBoolean from;
@@ -18,8 +17,8 @@ public class NodeBooleanInvert implements INodeBoolean {
     }
 
     @Override
-    public INodeBoolean inline(Arguments args) {
-        return NodeInliningHelper.tryInline(this, args, from, (f) -> new NodeBooleanInvert(f), (f) -> NodeImmutableBoolean.get(!f.evaluate()));
+    public INodeBoolean inline() {
+        return NodeInliningHelper.tryInline(this, from, (f) -> new NodeBooleanInvert(f), (f) -> NodeConstantBoolean.get(!f.evaluate()));
     }
 
     @Override

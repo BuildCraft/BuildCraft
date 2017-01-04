@@ -236,6 +236,17 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
         if (world.isRemote) {
             lastProgress = progress;
+
+            if (isPumping) {
+                progress += getPistonSpeed();
+
+                if (progress >= 1) {
+                    progress = 0;
+                }
+            } else if (progress > 0) {
+                progress -= 0.01f;
+            }
+
             // idk if these will stay (at all) or in a more refined form
             double particleCount = 0;
             double flameRand = 0;
@@ -549,7 +560,14 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     @SideOnly(Side.CLIENT)
     public float getProgressClient(float partialTicks) {
-        return lastProgress * (1 - partialTicks) + progress * partialTicks;
+        float last = lastProgress;
+        float now = progress;
+        if (last > 0.5 && now < 0.5) {
+            // we just returned
+            now += 1;
+        }
+        float interp = last * (1 - partialTicks) + now * partialTicks;
+        return interp % 1;
     }
 
     public EnumFacing getCurrentFacing() {

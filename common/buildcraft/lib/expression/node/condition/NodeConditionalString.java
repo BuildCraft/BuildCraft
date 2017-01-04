@@ -1,10 +1,9 @@
 package buildcraft.lib.expression.node.condition;
 
-import buildcraft.lib.expression.GenericExpressionCompiler;
-import buildcraft.lib.expression.api.Arguments;
+import buildcraft.lib.expression.ExpressionDebugManager;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
-import buildcraft.lib.expression.node.value.NodeImmutableBoolean;
-import buildcraft.lib.expression.node.value.NodeImmutableString;
+import buildcraft.lib.expression.node.value.NodeConstantBoolean;
+import buildcraft.lib.expression.node.value.NodeConstantString;
 
 public class NodeConditionalString implements INodeString {
     private final INodeBoolean condition;
@@ -22,21 +21,21 @@ public class NodeConditionalString implements INodeString {
     }
 
     @Override
-    public INodeString inline(Arguments args) {
-        GenericExpressionCompiler.debugStart("Inlining " + this);
-        INodeBoolean c = condition.inline(args);
-        INodeString t = ifTrue.inline(args);
-        INodeString f = ifFalse.inline(args);
-        if (c instanceof NodeImmutableBoolean && t instanceof NodeImmutableString && f instanceof NodeImmutableString) {
-            NodeImmutableString val = new NodeImmutableString(((NodeImmutableBoolean) c).value ? ((NodeImmutableString) t).value : ((NodeImmutableString) f).value);
-            GenericExpressionCompiler.debugEnd("Fully inlined to " + val);
+    public INodeString inline() {
+        ExpressionDebugManager.debugStart("Inlining " + this);
+        INodeBoolean c = condition.inline();
+        INodeString t = ifTrue.inline();
+        INodeString f = ifFalse.inline();
+        if (c instanceof NodeConstantBoolean && t instanceof NodeConstantString && f instanceof NodeConstantString) {
+            NodeConstantString val = new NodeConstantString(((NodeConstantBoolean) c).value ? ((NodeConstantString) t).value : ((NodeConstantString) f).value);
+            ExpressionDebugManager.debugEnd("Fully inlined to " + val);
             return val;
         } else if (c != condition || t != ifTrue || f != ifFalse) {
             NodeConditionalString val = new NodeConditionalString(c, t, f);
-            GenericExpressionCompiler.debugEnd("Partially inlined to " + val);
+            ExpressionDebugManager.debugEnd("Partially inlined to " + val);
             return val;
         } else {
-            GenericExpressionCompiler.debugEnd("Unable to inline at all!");
+            ExpressionDebugManager.debugEnd("Unable to inline at all!");
             return this;
         }
     }

@@ -1,137 +1,110 @@
 package buildcraft.lib.expression;
 
-import org.apache.commons.lang3.tuple.Pair;
-
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderState;
-
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.expression.api.ArgumentCounts;
-import buildcraft.lib.expression.api.IExpression;
-import buildcraft.lib.expression.api.IExpression.IExpressionBoolean;
-import buildcraft.lib.expression.api.IExpression.IExpressionDouble;
-import buildcraft.lib.expression.api.IExpression.IExpressionLong;
-import buildcraft.lib.expression.api.IExpression.IExpressionString;
 import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.api.INodeFunc;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncString;
 import buildcraft.lib.expression.node.cast.NodeCasting;
-import buildcraft.lib.expression.node.func.ExpressionBoolean;
-import buildcraft.lib.expression.node.func.ExpressionDouble;
-import buildcraft.lib.expression.node.func.ExpressionLong;
-import buildcraft.lib.expression.node.func.ExpressionString;
 
 public class GenericExpressionCompiler {
-    public static final boolean DEBUG = BCDebugging.shouldDebugComplex("lib.expression");
-    /** Modifiable field to enable or disable debugging for testing. You should reset this to {@link #DEBUG} after you
-     * have finished testing. */
-    public static boolean debug = DEBUG;
-    private static String debugIndentCache = "";
 
-    public static IExpressionLong compileExpressionLong(String function) throws InvalidExpressionException {
-        return compileExpressionLong(function, null);
+    // Long support
+
+    public static INodeLong compileExpressionLong(String function) throws InvalidExpressionException {
+        return compileExpressionLong(function, DefaultContexts.CONTEXT_DEFAULT);
     }
 
-    public static IExpressionLong compileExpressionLong(String function, FunctionContext functions) throws InvalidExpressionException {
-        Pair<IExpressionNode, ArgumentCounts> exp = compileExpression(function, functions);
-
-        if (exp.getLeft() instanceof INodeLong) {
-            return new ExpressionLong((INodeLong) exp.getLeft(), exp.getRight());
-        }
-
-        throw new InvalidExpressionException("Not a long " + exp.getLeft());
-    }
-
-    public static IExpressionDouble compileExpressionDouble(String function) throws InvalidExpressionException {
-        return compileExpressionDouble(function, null);
-    }
-
-    public static IExpressionDouble compileExpressionDouble(String function, FunctionContext functions) throws InvalidExpressionException {
-        Pair<IExpressionNode, ArgumentCounts> exp = compileExpression(function, functions);
-        INodeDouble nodeDouble = NodeCasting.castToDouble(exp.getLeft());
-        return new ExpressionDouble(nodeDouble, exp.getRight());
-    }
-
-    public static IExpressionBoolean compileExpressionBoolean(String function) throws InvalidExpressionException {
-        return compileExpressionBoolean(function, null);
-    }
-
-    public static IExpressionBoolean compileExpressionBoolean(String function, FunctionContext functions) throws InvalidExpressionException {
-        Pair<IExpressionNode, ArgumentCounts> exp = compileExpression(function, functions);
-
-        if (exp.getLeft() instanceof INodeBoolean) {
-            return new ExpressionBoolean((INodeBoolean) exp.getLeft(), exp.getRight());
-        }
-
-        throw new InvalidExpressionException("Not a boolean " + exp.getLeft());
-    }
-
-    public static IExpressionString compileExpressionString(String function) throws InvalidExpressionException {
-        return compileExpressionString(function, null);
-    }
-
-    public static IExpressionString compileExpressionString(String function, FunctionContext functions) throws InvalidExpressionException {
-        Pair<IExpressionNode, ArgumentCounts> exp = compileExpression(function, functions);
-        INodeString nodeString = NodeCasting.castToString(exp.getLeft());
-        return new ExpressionString(nodeString, exp.getRight());
-    }
-
-    public static IExpression compileExpressionUnknown(String function) throws InvalidExpressionException {
-        return compileExpressionUnknown(function, null);
-    }
-
-    public static IExpression compileExpressionUnknown(String function, FunctionContext functions) throws InvalidExpressionException {
-        Pair<IExpressionNode, ArgumentCounts> exp = compileExpression(function, functions);
-        IExpressionNode node = exp.getLeft();
-        if (node instanceof INodeString) {
-            return new ExpressionString((INodeString) node, exp.getRight());
-        }
-        if (node instanceof INodeBoolean) {
-            return new ExpressionBoolean((INodeBoolean) node, exp.getRight());
-        }
+    public static INodeLong compileExpressionLong(String function, FunctionContext context) throws InvalidExpressionException {
+        IExpressionNode node = InternalCompiler.compileExpression(function, context);
         if (node instanceof INodeLong) {
-            return new ExpressionLong((INodeLong) node, exp.getRight());
-        }
-        if (node instanceof INodeDouble) {
-            return new ExpressionDouble((INodeDouble) node, exp.getRight());
-        }
-        throw new InvalidExpressionException("Unknown node type " + node);
-    }
-
-    private static Pair<IExpressionNode, ArgumentCounts> compileExpression(String function, FunctionContext context) throws InvalidExpressionException {
-        return InternalCompiler.compileExpression(function, context);
-    }
-
-    public static void debugStart(String text) {
-        if (debug) {
-            debugPrintln(text);
-            debugIndentCache += "  ";
+            return (INodeLong) node;
+        } else {
+            throw new InvalidExpressionException("Not a long " + node);
         }
     }
 
-    public static void debugEnd(String text) {
-        if (debug) {
-            if (debugIndentCache.length() > 1) {
-                debugIndentCache = debugIndentCache.substring(2);
-            } else if (debugIndentCache.length() > 0) {
-                debugIndentCache = "";
-            }
-            debugPrintln(text);
+    public static INodeFuncLong compileFunctionLong(String function, Argument... args) throws InvalidExpressionException {
+        return compileFunctionLong(function, DefaultContexts.CONTEXT_DEFAULT, args);
+    }
+
+    public static INodeFuncLong compileFunctionLong(String function, FunctionContext context, Argument... args) throws InvalidExpressionException {
+        INodeFunc func = InternalCompiler.compileFunction(function, context, args);
+
+        if (func instanceof INodeFuncLong) {
+            return (INodeFuncLong) func;
+        } else {
+            throw new InvalidExpressionException("Not a long " + func);
         }
     }
 
-    public static void debugPrintln(String text) {
-        if (debug) {
-            if (Loader.instance().hasReachedState(LoaderState.CONSTRUCTING)) {
-                BCLog.logger.info(debugIndentCache + text);
-            } else {
-                // When using a test
-                System.out.println(debugIndentCache + text);
-            }
+    // Double support
+
+    public static INodeDouble compileExpressionDouble(String function) throws InvalidExpressionException {
+        return compileExpressionDouble(function, DefaultContexts.CONTEXT_DEFAULT);
+    }
+
+    public static INodeDouble compileExpressionDouble(String function, FunctionContext context) throws InvalidExpressionException {
+        return NodeCasting.castToDouble(InternalCompiler.compileExpression(function, context)).inline();
+    }
+
+    public static INodeFuncDouble compileFunctionDouble(String function, Argument... args) throws InvalidExpressionException {
+        return compileFunctionDouble(function, DefaultContexts.CONTEXT_DEFAULT, args);
+    }
+
+    public static INodeFuncDouble compileFunctionDouble(String function, FunctionContext context, Argument... args) throws InvalidExpressionException {
+        return NodeCasting.castToDouble(InternalCompiler.compileFunction(function, context, args));
+    }
+
+    // Boolean support
+
+    public static INodeBoolean compileExpressionBoolean(String function) throws InvalidExpressionException {
+        return compileExpressionBoolean(function, DefaultContexts.CONTEXT_DEFAULT);
+    }
+
+    public static INodeBoolean compileExpressionBoolean(String function, FunctionContext context) throws InvalidExpressionException {
+        IExpressionNode node = InternalCompiler.compileExpression(function, context);
+        if (node instanceof INodeBoolean) {
+            return (INodeBoolean) node;
+        } else {
+            throw new InvalidExpressionException("Not a boolean " + node);
         }
+    }
+
+    public static INodeFuncBoolean compileFunctionBoolean(String function, Argument... args) throws InvalidExpressionException {
+        return compileFunctionBoolean(function, DefaultContexts.CONTEXT_DEFAULT, args);
+    }
+
+    public static INodeFuncBoolean compileFunctionBoolean(String function, FunctionContext context, Argument... args) throws InvalidExpressionException {
+        INodeFunc func = InternalCompiler.compileFunction(function, context, args);
+
+        if (func instanceof INodeFuncBoolean) {
+            return (INodeFuncBoolean) func;
+        } else {
+            throw new InvalidExpressionException("Not a boolean " + func);
+        }
+    }
+
+    // String support
+
+    public static INodeString compileExpressionString(String function) throws InvalidExpressionException {
+        return compileExpressionString(function, DefaultContexts.CONTEXT_DEFAULT);
+    }
+
+    public static INodeString compileExpressionString(String function, FunctionContext context) throws InvalidExpressionException {
+        return NodeCasting.castToString(InternalCompiler.compileExpression(function, context)).inline();
+    }
+
+    public static INodeFuncString compileFunctionString(String function, Argument... args) throws InvalidExpressionException {
+        return compileFunctionString(function, DefaultContexts.CONTEXT_DEFAULT, args);
+    }
+
+    public static INodeFuncString compileFunctionString(String function, FunctionContext context, Argument... args) throws InvalidExpressionException {
+        return NodeCasting.castToString(InternalCompiler.compileFunction(function, context, args));
     }
 }

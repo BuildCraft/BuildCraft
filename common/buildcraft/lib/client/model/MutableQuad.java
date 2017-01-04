@@ -48,6 +48,7 @@ public class MutableQuad {
     public MutableQuad copyFrom(MutableQuad from) {
         tintIndex = from.tintIndex;
         face = from.face;
+        shade = from.shade;
         sprite = from.sprite;
         for (int i = 0; i < 4; i++) {
             verticies[i].copyFrom(from.verticies[i]);

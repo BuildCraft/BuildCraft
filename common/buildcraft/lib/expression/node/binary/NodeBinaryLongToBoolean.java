@@ -1,9 +1,8 @@
 package buildcraft.lib.expression.node.binary;
 
 import buildcraft.lib.expression.NodeInliningHelper;
-import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
-import buildcraft.lib.expression.node.value.NodeImmutableBoolean;
+import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 
 public class NodeBinaryLongToBoolean implements INodeBoolean {
     public enum Type {
@@ -47,10 +46,9 @@ public class NodeBinaryLongToBoolean implements INodeBoolean {
     }
 
     @Override
-    public INodeBoolean inline(Arguments args) {
-        return NodeInliningHelper.tryInline(this, args, left, right, //
-                (l, r) -> new NodeBinaryLongToBoolean(l, r, type), //
-                (l, r) -> NodeImmutableBoolean.get(type.operator.apply(l.evaluate(), r.evaluate())));
+    public INodeBoolean inline() {
+        return NodeInliningHelper.tryInline(this, left, right, (l, r) -> new NodeBinaryLongToBoolean(l, r, type), //
+                (l, r) -> NodeConstantBoolean.get(type.operator.apply(l.evaluate(), r.evaluate())));
     }
 
     @Override

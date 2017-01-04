@@ -1,11 +1,10 @@
 package buildcraft.lib.expression.node.binary;
 
-import com.google.common.base.Objects;
+import java.util.Objects;
 
 import buildcraft.lib.expression.NodeInliningHelper;
-import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
-import buildcraft.lib.expression.node.value.NodeImmutableBoolean;
+import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 
 public class NodeEqualityString implements INodeBoolean {
     private final INodeString a, b;
@@ -19,14 +18,13 @@ public class NodeEqualityString implements INodeBoolean {
     public boolean evaluate() {
         String sa = a.evaluate();
         String sb = b.evaluate();
-        return Objects.equal(sa, sb);
+        return Objects.equals(sa, sb);
     }
 
     @Override
-    public INodeBoolean inline(Arguments args) {
-        return NodeInliningHelper.tryInline(this, args, a, b, //
-                (l, r) -> new NodeEqualityString(l, r), //
-                (l, r) -> NodeImmutableBoolean.get(Objects.equal(l.evaluate(), r.evaluate())));
+    public INodeBoolean inline() {
+        return NodeInliningHelper.tryInline(this, a, b, (l, r) -> new NodeEqualityString(l, r),//
+                (l, r) -> NodeConstantBoolean.get(Objects.equals(l.evaluate(), r.evaluate())));
     }
 
     @Override

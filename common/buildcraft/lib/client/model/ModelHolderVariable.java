@@ -1,17 +1,14 @@
 package buildcraft.lib.client.model;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.*;
 import java.util.Map.Entry;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.JsonParseException;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.BCLog;
@@ -76,19 +73,17 @@ public class ModelHolderVariable extends ModelHolder {
     protected void onTextureStitchPre(List<ResourceLocation> toRegisterSprites) {
         rawModel = null;
         failReason = null;
-        try (IResource res = Minecraft.getMinecraft().getResourceManager().getResource(modelLocation)) {
-            InputStream is = res.getInputStream();
-            try (InputStreamReader isr = new InputStreamReader(is)) {
-                rawModel = JsonVariableModel.deserialize(isr, context);
-            } catch (JsonSyntaxException jse) {
-                rawModel = null;
-                failReason = "The model had errors: " + jse.getMessage();
-                BCLog.logger.warn("[lib.model.holder] Failed to load the model " + modelLocation + " because " + jse.getMessage());
-            }
+
+        try {
+            rawModel = JsonVariableModel.deserialize(modelLocation, context);
+        } catch (JsonParseException jse) {
+            rawModel = null;
+            failReason = "The model had errors: " + jse.getMessage();
+            BCLog.logger.warn("[lib.model.holder] Failed to load the model " + modelLocation + " because ", jse);
         } catch (IOException io) {
-            BCLog.logger.warn("[lib.model.holder] Failed to load the model " + modelLocation + " because " + io.getMessage());
             rawModel = null;
             failReason = "The model did not exist in any resource pack: " + io.getMessage();
+            BCLog.logger.warn("[lib.model.holder] Failed to load the model " + modelLocation + " because ", io);
         }
         if (rawModel != null) {
             if (CustomModelLoader.DEBUG) {
@@ -124,6 +119,7 @@ public class ModelHolderVariable extends ModelHolder {
 
     private MutableQuad[] bakePart(JsonVariableModelPart[] a) {
         List<MutableQuad> list = new ArrayList<>();
+        rawModel.refreshLocalVariables();
         for (JsonVariableModelPart part : a) {
             part.addQuads(list, this::lookupTexture);
         }

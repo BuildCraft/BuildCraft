@@ -12,9 +12,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.BCLog;
 
 import buildcraft.core.BCCoreConfig;
-import buildcraft.lib.expression.GenericExpressionCompiler;
+import buildcraft.lib.expression.DefaultContexts;
+import buildcraft.lib.expression.InternalCompiler;
 import buildcraft.lib.expression.InvalidExpressionException;
-import buildcraft.lib.expression.api.IExpression;
+import buildcraft.lib.expression.api.IExpressionNode;
 
 public class DetailedConfigOption {
     private static final Set<DetailedConfigOption> allRegistered = new HashSet<>();
@@ -25,7 +26,7 @@ public class DetailedConfigOption {
     private boolean cacheBoolean;
     private long cacheLong;
     private double cacheDouble;
-    private IExpression cacheExpression;
+    private IExpressionNode cacheExpression;
 
     public DetailedConfigOption(String name, String defultVal) {
         this.id = name;
@@ -99,11 +100,11 @@ public class DetailedConfigOption {
         return cacheDouble;
     }
 
-    public IExpression getAsExpression() {
+    public IExpressionNode getAsExpression() {
         if (refresh()) {
             try {
                 String string = getAsString();
-                cacheExpression = GenericExpressionCompiler.compileExpressionUnknown(string);
+                cacheExpression = InternalCompiler.compileExpression(string, DefaultContexts.createWithAll());
             } catch (InvalidExpressionException iee) {
                 BCLog.logger.warn("Invalid expression for " + id + ":" + cache + ", wanted a valid expression!");
                 BCLog.logger.warn("Error: " + iee.getMessage());

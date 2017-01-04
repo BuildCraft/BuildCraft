@@ -1,17 +1,14 @@
 package buildcraft.lib.client.model;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.*;
 import java.util.Map.Entry;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.JsonParseException;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.BCLog;
@@ -70,19 +67,16 @@ public class ModelHolderStatic extends ModelHolder {
         rawModel = null;
         quads = null;
         failReason = null;
-        try (IResource res = Minecraft.getMinecraft().getResourceManager().getResource(modelLocation)) {
-            InputStream is = res.getInputStream();
-            try (InputStreamReader isr = new InputStreamReader(is)) {
-                rawModel = JsonModel.deserialize(isr);
-            } catch (JsonSyntaxException jse) {
-                rawModel = null;
-                failReason = "The model had errors: " + jse.getMessage();
-                BCLog.logger.warn("Failed to load the model " + modelLocation + " because " + jse.getMessage());
-            }
+        try {
+            rawModel = JsonModel.deserialize(modelLocation);
+        } catch (JsonParseException jse) {
+            rawModel = null;
+            failReason = "The model had errors: " + jse.getMessage();
+            BCLog.logger.warn("[lib.model.holder] Failed to load the model " + modelLocation + " because " + jse.getMessage());
         } catch (IOException io) {
-            BCLog.logger.warn("Failed to load the model " + modelLocation + " because " + io.getMessage());
             rawModel = null;
             failReason = "The model did not exist in any resource pack: " + io.getMessage();
+            BCLog.logger.warn("[lib.model.holder] Failed to load the model " + modelLocation + " because " + io.getMessage());
         }
         if (rawModel != null) {
             if (CustomModelLoader.DEBUG) {

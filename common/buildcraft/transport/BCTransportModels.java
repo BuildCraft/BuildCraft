@@ -12,10 +12,11 @@ import buildcraft.lib.client.model.ModelHolderStatic;
 import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.ModelPluggableItem;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
-import buildcraft.lib.expression.node.value.NodeMutableBoolean;
-import buildcraft.lib.expression.node.value.NodeMutableDouble;
-import buildcraft.lib.expression.node.value.NodeMutableString;
+import buildcraft.lib.expression.node.value.NodeVariableBoolean;
+import buildcraft.lib.expression.node.value.NodeVariableDouble;
+import buildcraft.lib.expression.node.value.NodeVariableString;
 import buildcraft.transport.client.model.ModelGateItem;
 import buildcraft.transport.client.model.ModelPipe;
 import buildcraft.transport.client.model.ModelPipeItem;
@@ -31,14 +32,14 @@ public class BCTransportModels {
 
     private static final ModelHolderVariable GATE_STATIC, GATE_DYNAMIC;
     /** Used in {@link #GATE_STATIC} */
-    private static final NodeMutableString GATE_MATERIAL, GATE_MODIFIER, GATE_LOGIC;
+    private static final NodeVariableString GATE_MATERIAL, GATE_MODIFIER, GATE_LOGIC;
     /** Used in {@link #GATE_DYNAMIC} */
-    private static final NodeMutableBoolean GATE_ON;
+    private static final NodeVariableBoolean GATE_ON;
 
     public static final ModelHolderStatic PULSAR_STATIC;
     private static final ModelHolderVariable PULSAR_DYNAMIC;
-    private static final NodeMutableDouble PULSAR_STAGE;
-    private static final NodeMutableBoolean PULSAR_ON;
+    private static final NodeVariableDouble PULSAR_STAGE;
+    private static final NodeVariableBoolean PULSAR_ON;
 
     static {
         BLOCKER = getModel("plugs/blocker.json");
@@ -46,19 +47,19 @@ public class BCTransportModels {
         LENS = getModel("plugs/lens.json");
         PULSAR_STATIC = getModel("plugs/pulsar_static.json");
 
-        FunctionContext fnCtx = new FunctionContext();
-        GATE_MATERIAL = fnCtx.getOrAddString("material");
-        GATE_MODIFIER = fnCtx.getOrAddString("modifier");
-        GATE_LOGIC = fnCtx.getOrAddString("logic");
+        FunctionContext fnCtx = new FunctionContext(DefaultContexts.CONTEXT_DEFAULT);
+        GATE_MATERIAL = fnCtx.putVariableString("material");
+        GATE_MODIFIER = fnCtx.putVariableString("modifier");
+        GATE_LOGIC = fnCtx.putVariableString("logic");
         GATE_STATIC = getModel("plugs/gate.json", fnCtx);
 
-        fnCtx = new FunctionContext();
-        GATE_ON = fnCtx.getOrAddBoolean("on");
+        fnCtx = new FunctionContext(DefaultContexts.CONTEXT_DEFAULT);
+        GATE_ON = fnCtx.putVariableBoolean("on");
         GATE_DYNAMIC = getModel("plugs/gate_dynamic.json", fnCtx);
 
-        fnCtx = new FunctionContext();
-        PULSAR_STAGE = fnCtx.getOrAddDouble("stage");
-        PULSAR_ON = fnCtx.getOrAddBoolean("on");
+        fnCtx = new FunctionContext(DefaultContexts.CONTEXT_DEFAULT);
+        PULSAR_STAGE = fnCtx.putVariableDouble("stage");
+        PULSAR_ON = fnCtx.putVariableBoolean("on");
         PULSAR_DYNAMIC = getModel("plugs/pulsar_dynamic.json", fnCtx);
     }
 

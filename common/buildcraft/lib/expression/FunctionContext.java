@@ -5,82 +5,202 @@ import java.util.Locale;
 import java.util.Map;
 
 import buildcraft.lib.expression.api.IExpressionNode;
-import buildcraft.lib.expression.api.IFunctionContext;
-import buildcraft.lib.expression.api.IFunctionMap;
-import buildcraft.lib.expression.node.value.NodeMutableBoolean;
-import buildcraft.lib.expression.node.value.NodeMutableDouble;
-import buildcraft.lib.expression.node.value.NodeMutableLong;
-import buildcraft.lib.expression.node.value.NodeMutableString;
+import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.expression.api.INodeFunc;
+import buildcraft.lib.expression.api.NodeType;
+import buildcraft.lib.expression.node.func.*;
+import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleToDouble.IFuncDoubleDoubleToDouble;
+import buildcraft.lib.expression.node.func.NodeFuncDoubleToDouble.IFuncDoubleToDouble;
+import buildcraft.lib.expression.node.func.NodeFuncDoubleToLong.IFuncDoubleToLong;
+import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong.IFuncLongLongToLong;
+import buildcraft.lib.expression.node.func.NodeFuncLongToLong.IFuncLongToLong;
+import buildcraft.lib.expression.node.value.*;
 
-/** Holds a set of function-local variables that can be called upon by the expression. */
-public class FunctionContext implements IFunctionContext {
-    private final IFunctionMap map;
-    private final Map<String, IExpressionNode> allNodes = new HashMap<>();
-    private final Map<String, NodeMutableBoolean> booleans = new HashMap<>();
-    private final Map<String, NodeMutableDouble> doubles = new HashMap<>();
-    private final Map<String, NodeMutableLong> longs = new HashMap<>();
-    private final Map<String, NodeMutableString> strings = new HashMap<>();
+public class FunctionContext {
+    public static final String FUNCTION_ARG_SEPERATOR = "^";
 
-    public FunctionContext(IFunctionMap map) {
-        this.map = map;
-    }
+    private final FunctionContext[] parents;
+    private final Map<String, IExpressionNode> variables = new HashMap<>();
+    private final Map<String, INodeFunc> functions = new HashMap<>();
 
+    /** Creates a function context with no parents. You probably DON'T want this, as it doesn't have any of the useful
+     * functions found in {@link DefaultContexts} */
     public FunctionContext() {
-        this(new FunctionMap());
+        this.parents = new FunctionContext[0];
     }
 
-    public IFunctionMap getFunctionMap() {
-        return map;
+    /** Constructs a function context that will delegate to the parent to find functions and variables if they don't
+     * exist in this context. */
+    public FunctionContext(FunctionContext parent) {
+        this.parents = new FunctionContext[] { parent };
     }
 
-    public NodeMutableBoolean getOrAddBoolean(String name) {
-        return getOrAdd(name, booleans, new NodeMutableBoolean());
+    /** Constructs a function context that will delegate to the parents, in order, to find functions and variables if
+     * they don't exist in this context. */
+    public FunctionContext(FunctionContext[] parents) {
+        this.parents = parents.clone();
     }
 
-    public NodeMutableBoolean getBoolean(String name) {
-        return booleans.get(name);
-    }
+    // Variable getter/setters
 
-    public NodeMutableDouble getOrAddDouble(String name) {
-        return getOrAdd(name, doubles, new NodeMutableDouble());
-    }
-
-    public NodeMutableBoolean getDouble(String name) {
-        return booleans.get(name);
-    }
-
-    public NodeMutableLong getOrAddLong(String name) {
-        return getOrAdd(name, longs, new NodeMutableLong());
-    }
-
-    public NodeMutableBoolean getLong(String name) {
-        return booleans.get(name);
-    }
-
-    public NodeMutableString getOrAddString(String name) {
-        return getOrAdd(name, strings, new NodeMutableString());
-    }
-
-    public NodeMutableBoolean getString(String name) {
-        return booleans.get(name);
-    }
-
-    private <N extends IExpressionNode> N getOrAdd(String name, Map<String, N> toAddTo, N instance) {
+    public IExpressionNode getVariable(String name) {
         name = name.toLowerCase(Locale.ROOT);
-        N existant = get(name);
-        if (existant != null) {
-            return existant;
+        IExpressionNode current = variables.get(name);
+        if (current != null) {
+            return current;
         }
-        toAddTo.put(name, instance);
-        allNodes.put(name, instance);
-        return instance;
+        for (FunctionContext parent : parents) {
+            IExpressionNode node = parent.getVariable(name);
+            if (node != null) return node;
+        }
+        return null;
     }
 
-    public IExpressionNode getAny(String name) {
-        return allNodes.get(name.toLowerCase(Locale.ROOT));
+    public boolean hasLocalVariable(String name) {
+        name = name.toLowerCase(Locale.ROOT);
+        return variables.containsKey(name);
     }
 
-    private <N extends IExpressionNode> N get(String name) {
-        return (N) getAny(name);
+    public <E extends IExpressionNode> E putVariable(String name, E node) {
+        name = name.toLowerCase(Locale.ROOT);
+        variables.put(name, node);
+        return node;
+    }
+
+    public IVariableNode putVariable(String name, NodeType type) {
+        switch (type) {
+            case BOOLEAN:
+                return putVariableBoolean(name);
+            case DOUBLE:
+                return putVariableDouble(name);
+            case LONG:
+                return putVariableLong(name);
+            case STRING:
+                return putVariableString(name);
+            default:
+                throw new IllegalArgumentException("Unknown node type " + type);
+        }
+    }
+
+    public NodeVariableLong putVariableLong(String name) {
+        NodeVariableLong node = new NodeVariableLong();
+        return putVariable(name, node);
+    }
+
+    public NodeVariableDouble putVariableDouble(String name) {
+        NodeVariableDouble node = new NodeVariableDouble();
+        return putVariable(name, node);
+    }
+
+    public NodeVariableBoolean putVariableBoolean(String name) {
+        NodeVariableBoolean node = new NodeVariableBoolean();
+        return putVariable(name, node);
+    }
+
+    public NodeVariableString putVariableString(String name) {
+        NodeVariableString node = new NodeVariableString();
+        return putVariable(name, node);
+    }
+
+    public void putConstantLong(String name, long value) {
+        putVariable(name, new NodeConstantLong(value) {
+            @Override
+            public String toString() {
+                return name;
+            }
+        });
+    }
+
+    public void putConstantDouble(String name, double value) {
+        putVariable(name, new NodeConstantDouble(value) {
+            @Override
+            public String toString() {
+                return name;
+            }
+        });
+    }
+
+    public void putConstantBoolean(String name, boolean value) {
+        putVariable(name, new INodeBoolean() {
+            @Override
+            public boolean evaluate() {
+                return value;
+            }
+
+            @Override
+            public INodeBoolean inline() {
+                return NodeConstantBoolean.get(value);
+            }
+
+            @Override
+            public String toString() {
+                return name;
+            }
+        });
+    }
+
+    public void putConstantString(String name, String value) {
+        putVariable(name, new NodeConstantString(value) {
+            @Override
+            public String toString() {
+                return name;
+            }
+        });
+    }
+
+    // Function getter/setters
+
+    public INodeFunc getFunction(String name, int args) {
+        name = name.toLowerCase(Locale.ROOT);
+        return getFunction0(name + FUNCTION_ARG_SEPERATOR + args);
+    }
+
+    private INodeFunc getFunction0(String fullName) {
+        INodeFunc current = functions.get(fullName);
+        if (current != null) {
+            return current;
+        }
+        for (FunctionContext parent : parents) {
+            INodeFunc func = parent.getFunction0(fullName);
+            if (func != null) return func;
+        }
+        return null;
+    }
+
+    private static int getArgCount(INodeFunc function) {
+        NodeStackRecording recorder = new NodeStackRecording();
+        try {
+            function.getNode(recorder);
+        } catch (InvalidExpressionException e) {
+            throw new IllegalStateException("This should never happen!", e);
+        }
+        return recorder.types.size();
+    }
+
+    public void putFunction(String name, INodeFunc function) {
+        name = name.toLowerCase(Locale.ROOT);
+        functions.put(name + FUNCTION_ARG_SEPERATOR + getArgCount(function), function);
+    }
+
+    // Various putFunction_in_out methods that make adding a function quicker
+
+    public void put_l_l(String name, IFuncLongToLong func) {
+        putFunction(name, new NodeFuncLongToLong(func, (a) -> name + "(" + a + ")"));
+    }
+
+    public void put_ll_l(String name, IFuncLongLongToLong func) {
+        putFunction(name, new NodeFuncLongLongToLong(func, (a, b) -> name + "(" + a + ", " + b + ")"));
+    }
+
+    public void put_d_l(String name, IFuncDoubleToLong func) {
+        putFunction(name, new NodeFuncDoubleToLong(func, (a) -> name + "(" + a + ")"));
+    }
+
+    public void put_d_d(String name, IFuncDoubleToDouble func) {
+        putFunction(name, new NodeFuncDoubleToDouble(func, (a) -> name + "(" + a + ")"));
+    }
+
+    public void put_dd_d(String name, IFuncDoubleDoubleToDouble func) {
+        putFunction(name, new NodeFuncDoubleDoubleToDouble(func, (a, b) -> name + "(" + a + ", " + b + ")"));
     }
 }

@@ -1,11 +1,17 @@
 package buildcraft.lib.expression.node.cast;
 
+import buildcraft.lib.expression.ExpressionDebugManager;
 import buildcraft.lib.expression.InvalidExpressionException;
 import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.api.INodeFunc;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncString;
 
 public class NodeCasting {
     public static INodeString castToString(IExpressionNode node) {
@@ -25,7 +31,9 @@ public class NodeCasting {
             return new NodeCastDoubleToString((INodeDouble) node);
         }
 
-        throw new IllegalStateException("Unknonw node type " + node.getClass());
+        // We have no idea what class this is, but it *must* be wrong
+        ExpressionDebugManager.debugNodeClass(node.getClass());
+        throw new IllegalStateException("Unknown node type " + node.getClass());
     }
 
     public static INodeDouble castToDouble(IExpressionNode node) throws InvalidExpressionException {
@@ -38,5 +46,43 @@ public class NodeCasting {
         }
 
         throw new InvalidExpressionException("Cannot cast " + node + " to a double!");
+    }
+
+    public static INodeFuncString castToString(INodeFunc func) {
+        if (func instanceof INodeFuncString) {
+            return (INodeFuncString) func;
+        }
+
+        if (func instanceof INodeFuncBoolean) {
+            final INodeFuncBoolean funcBool = (INodeFuncBoolean) func;
+            return (stack) -> new NodeCastBooleanToString(funcBool.getNode(stack));
+        }
+
+        if (func instanceof INodeFuncLong) {
+            final INodeFuncLong funcLong = (INodeFuncLong) func;
+            return (stack) -> new NodeCastLongToString(funcLong.getNode(stack));
+        }
+
+        if (func instanceof INodeFuncDouble) {
+            final INodeFuncDouble funcDouble = (INodeFuncDouble) func;
+            return (stack) -> new NodeCastDoubleToString(funcDouble.getNode(stack));
+        }
+
+        // We have no idea what class this is, but it *must* be wrong
+        ExpressionDebugManager.debugNodeClass(func.getClass());
+        throw new IllegalStateException("Unknown node type " + func.getClass());
+    }
+
+    public static INodeFuncDouble castToDouble(INodeFunc func) throws InvalidExpressionException {
+        if (func instanceof INodeFuncDouble) {
+            return (INodeFuncDouble) func;
+        }
+
+        if (func instanceof INodeFuncLong) {
+            final INodeFuncLong funcLong = (INodeFuncLong) func;
+            return (stack) -> new NodeCastLongToDouble(funcLong.getNode(stack));
+        }
+
+        throw new InvalidExpressionException("Cannot cast " + func + " to a double!");
     }
 }
