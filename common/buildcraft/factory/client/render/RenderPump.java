@@ -102,7 +102,7 @@ public class RenderPump extends FastTESR<TilePump> {
 
         buffer.setTranslation(x, y, z);
 
-        float percentFilled = tile.getFluidPercentFilledForRender();
+        float percentFilled = tile.getPercentFilledForRender();
         int powerColour = COLOUR_POWER[(int) (percentFilled * (COLOUR_POWER.length - 1))];
 
         boolean complete = tile.isComplete();

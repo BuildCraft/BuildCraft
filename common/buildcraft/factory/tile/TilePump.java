@@ -20,6 +20,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TilePump extends TileMiner {
     private SingleUseTank tank = new SingleUseTank("tank", 16 * Fluid.BUCKET_VOLUME, this);
@@ -30,6 +32,7 @@ public class TilePump extends TileMiner {
                             Math.abs(blockPos.getY() - pos.getY()) * 100_000
             )
     );
+    public Map<BlockPos, List<BlockPos>> paths = new HashMap<>();
 
     @Override
     protected IMjReceiver createMjReceiver() {
@@ -38,8 +41,10 @@ public class TilePump extends TileMiner {
 
     public void buildQueue() {
         queue.clear();
+        paths.clear();
         List<BlockPos> nextPosesToCheck = new ArrayList<>();
         int y = pos.getY() - 1;
+        List<List<BlockPos>> nextPaths = new ArrayList<>();
         while (true) {
             if (nextPosesToCheck.isEmpty()) {
                 for (; y >= 0; y--) {
@@ -47,8 +52,9 @@ public class TilePump extends TileMiner {
                     if (BlockUtil.getFluid(world, posToCheck) != null) {
                         if (!queue.contains(posToCheck)) {
                             nextPosesToCheck.add(posToCheck);
+                            nextPaths.add(new ArrayList<>(Collections.singletonList(posToCheck)));
+                            break;
                         }
-                        break;
                     } else if(!world.isAirBlock(posToCheck)) {
                         break;
                     }
@@ -59,19 +65,30 @@ public class TilePump extends TileMiner {
             }
             List<BlockPos> nextPosesToCheckCopy = new ArrayList<>(nextPosesToCheck);
             nextPosesToCheck.clear();
+            List<List<BlockPos>> nextPathsCopy = new ArrayList<>(nextPaths);
+            nextPaths.clear();
+            int i = 0;
             for (BlockPos posToCheck : nextPosesToCheckCopy) {
+                List<BlockPos> path = nextPathsCopy.get(i);
                 if (!queue.contains(posToCheck)) {
                     queue.add(posToCheck);
+                    paths.put(posToCheck, path);
                 }
                 for (EnumFacing side : EnumFacing.values()) {
                     BlockPos offsetPos = posToCheck.offset(side);
                     if(Math.pow(offsetPos.getX() - pos.getX(), 2) + Math.pow(offsetPos.getZ() - pos.getZ(), 2) > Math.pow(64, 2)) {
                         continue;
                     }
-                    if (BlockUtil.getFluid(world, posToCheck) != null && BlockUtil.getFluid(world, offsetPos) == BlockUtil.getFluid(world, posToCheck) && !queue.contains(offsetPos) && !nextPosesToCheck.contains(offsetPos) && !nextPosesToCheckCopy.contains(offsetPos)) {
+                    if (BlockUtil.getFluid(world, posToCheck) != null
+                            && BlockUtil.getFluid(world, offsetPos) == BlockUtil.getFluid(world, posToCheck)
+                            && !queue.contains(offsetPos)
+                            && !nextPosesToCheck.contains(offsetPos)
+                            && !nextPosesToCheckCopy.contains(offsetPos)) {
                         nextPosesToCheck.add(offsetPos);
+                        nextPaths.add(Stream.concat(path.stream(), Stream.of(offsetPos)).collect(Collectors.toList()));
                     }
                 }
+                i++;
             }
         }
     }
@@ -131,14 +148,15 @@ public class TilePump extends TileMiner {
             progress += battery.extractPower(0, target - progress);
             if (progress >= target) {
                 FluidStack drain = BlockUtil.drainBlock(world, currentPos, false);
-                if (drain != null && canDrain(currentPos)) {
+                if (drain != null && paths.get(currentPos).stream().allMatch(this::canDrain)) {
                     tank.fill(drain, true);
                     progress = 0;
                     int count = 0;
                     if (drain.getFluid() == FluidRegistry.WATER) {
                         for (int x = -1; x <= 1; x++) {
                             for (int z = -1; z <= 1; z++) {
-                                if (BlockUtil.getFluid(world, currentPos.add(new BlockPos(x, 0, z))) == FluidRegistry.WATER) {
+                                BlockPos waterPos = currentPos.add(new BlockPos(x, 0, z));
+                                if (BlockUtil.getFluid(world, waterPos) == FluidRegistry.WATER) {
                                     count++;
                                 }
                             }
@@ -206,12 +224,6 @@ public class TilePump extends TileMiner {
         super.getDebugInfo(left, right, side);
         left.add("fluid = " + tank.getDebugString());
         left.add("queue size = " + queue.size());
-    }
-
-    @SideOnly(Side.CLIENT)
-    public float getFluidPercentFilledForRender() {
-        float val = tank.getFluidAmount() / (float) tank.getCapacity();
-        return val < 0 ? 0 : val > 1 ? 1 : val;
     }
 
     // Capabilities
