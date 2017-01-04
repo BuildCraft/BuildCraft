@@ -1,14 +1,11 @@
 package buildcraft.factory.tile;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
-import buildcraft.lib.delta.DeltaInt;
-import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
 import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -28,24 +25,21 @@ import java.util.List;
 
 public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHasWork, IDebuggable {
     public static final int NET_LED_STATUS = 10;
+    public static final int NET_TUBE_LENGTH_WANTED = 11;
 
     protected int progress = 0;
     protected BlockPos currentPos = null;
 
-    public final DeltaInt deltaTubeLength = deltaManager.addDelta("tubeY", EnumNetworkVisibility.RENDER);
+    private int tubeLengthWanted = 0;
+    private double tubeLengthCurrent = 0;
+    private double tubeLengthLast = 0;
 
     protected boolean isComplete = false;
     protected final MjBattery battery = new MjBattery(MjAPI.MJ * 500);
     protected final IMjReceiver mjReceiver = createMjReceiver();
     protected final MjCapabilityHelper mjCapHelper = new MjCapabilityHelper(mjReceiver);
 
-    protected void initCurrentPos() {
-        if (currentPos == null) {
-            currentPos = getPos();
-            currentPos = currentPos.down();
-            goToYLevel(currentPos.getY());
-        }
-    }
+    protected abstract void initCurrentPos();
 
     protected abstract void mine();
 
@@ -53,16 +47,20 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
 
     @Override
     public void update() {
-        deltaManager.tick();
-
         if (world.isRemote) {
+            tubeLengthLast = tubeLengthCurrent;
+            if (Math.abs(tubeLengthWanted - tubeLengthCurrent) <= 0.1) {
+                tubeLengthCurrent = tubeLengthWanted;
+            } else {
+                tubeLengthCurrent = tubeLengthCurrent + Math.min(Math.abs((tubeLengthWanted - tubeLengthCurrent) / 10D), 0.1) * (tubeLengthWanted > tubeLengthCurrent ? 1 : -1);
+            }
             return;
         }
 
-         if (!battery.isFull()) {
-//         test with the output of a stone engine
-            battery.addPower(MjAPI.MJ);// remove this
-         }
+        if (!battery.isFull()) {
+            //  test with the output of a stone engine
+            battery.addPower(MjAPI.MJ); // remove this
+        }
 
         battery.tick(getWorld(), getPos());
 
@@ -76,13 +74,21 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         mine();
     }
 
-    protected void goToYLevel(int wanted) {
-        int length = getPos().getY() - wanted - 1;
-        int current = deltaTubeLength.getStatic(true);
-        int diff = length - current;
-        if (diff != 0) {
-            deltaTubeLength.addDelta(0, 50 * diff, diff);
-            BCLog.logger.info("Adding a delta " + diff);
+    protected void goToYLevel(int wantedY) {
+        int length = Math.max(0, getPos().getY() - wantedY - 1);
+        if (length != tubeLengthWanted) {
+            tubeLengthCurrent = tubeLengthWanted = length;
+            sendNetworkUpdate(NET_TUBE_LENGTH_WANTED);
+        }
+    }
+
+    public double getTubeLength(float partialTicks) {
+        if (partialTicks <= 0) {
+            return tubeLengthLast;
+        } else if (partialTicks >= 1) {
+            return tubeLengthCurrent;
+        } else {
+            return tubeLengthLast * (1 - partialTicks) + tubeLengthCurrent * partialTicks;
         }
     }
 
@@ -129,9 +135,12 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
                 writePayload(NET_LED_STATUS, buffer, side);
+                buffer.writeDouble(tubeLengthCurrent);
             } else if (id == NET_LED_STATUS) {
                 buffer.writeBoolean(isComplete());
                 battery.writeToBuffer(buffer);
+            } else if (id == NET_TUBE_LENGTH_WANTED) {
+                buffer.writeInt(tubeLengthWanted);
             }
         }
     }
@@ -142,9 +151,12 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 readPayload(NET_LED_STATUS, buffer, side, ctx);
+                tubeLengthCurrent = buffer.readDouble();
             } else if (id == NET_LED_STATUS) {
                 isComplete = buffer.readBoolean();
                 battery.readFromBuffer(buffer);
+            } else if (id == NET_TUBE_LENGTH_WANTED) {
+                tubeLengthWanted = buffer.readInt();
             }
         }
     }
@@ -154,7 +166,9 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         left.add("");
         left.add("battery = " + battery.getDebugString());
         left.add("current = " + currentPos);
-        left.add("tube = " + deltaTubeLength.getStatic(false));
+        left.add("tubeLengthWanted = " + tubeLengthWanted);
+        left.add("tubeLengthCurrent = " + tubeLengthCurrent);
+        left.add("tubeLengthLast = " + tubeLengthLast);
         left.add("isComplete = " + isComplete());
         left.add("progress = " + progress);
     }
