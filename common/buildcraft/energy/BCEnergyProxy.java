@@ -25,6 +25,12 @@ public abstract class BCEnergyProxy implements IGuiHandler {
         return proxy;
     }
 
+    public void fmlPreInit() {}
+
+    public void fmlInit() {}
+
+    public void fmlPostInit() {}
+
     @Override
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         return null;
@@ -60,6 +66,13 @@ public abstract class BCEnergyProxy implements IGuiHandler {
 
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends BCEnergyProxy {
+        @Override
+        public void fmlInit() {
+            super.fmlInit();
+            // ClientRegistry.bindTileEntitySpecialRenderer(TileEngineStone_BC8.class, RenderEngineStone.INSTANCE);
+            // ClientRegistry.bindTileEntitySpecialRenderer(TileEngineRedstone_BC8.class, RenderEngineWood.INSTANCE);
+        }
+
         @Override
         public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
             BCEnergyGuis gui = BCEnergyGuis.get(id);

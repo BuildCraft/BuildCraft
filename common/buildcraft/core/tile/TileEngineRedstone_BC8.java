@@ -30,7 +30,7 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
             this.addPower(MjAPI.MJ);
         }
     }
-    
+
     @Override
     public double getPistonSpeed() {
         return super.getPistonSpeed() / 2;
@@ -38,7 +38,7 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
 
     @Override
     public long getMaxPower() {
-        return MjAPI.MJ;
+        return MjAPI.MJ * 100;
     }
 
     @Override

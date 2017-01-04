@@ -20,20 +20,16 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.client.model.ResourceLoaderContext;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.InvalidExpressionException;
-import buildcraft.lib.expression.api.Arguments;
-import buildcraft.lib.expression.api.IExpression.IExpressionBoolean;
-import buildcraft.lib.expression.api.IExpression.IExpressionDouble;
-import buildcraft.lib.expression.api.IExpression.IExpressionLong;
-import buildcraft.lib.expression.api.IExpression.IExpressionString;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
-import buildcraft.lib.expression.node.value.NodeImmutableBoolean;
-import buildcraft.lib.expression.node.value.NodeImmutableLong;
+import buildcraft.lib.expression.node.value.NodeConstantBoolean;
+import buildcraft.lib.expression.node.value.NodeConstantLong;
 import buildcraft.lib.misc.JsonUtil;
 
 /** {@link JsonModelPart} but with can be animated */
@@ -41,7 +37,7 @@ public abstract class JsonVariableModelPart {
 
     public abstract void addQuads(List<MutableQuad> to, Function<String, TextureAtlasSprite> spriteLookup);
 
-    public static JsonVariableModelPart deserialiseModelPart(JsonElement json, FunctionContext fnCtx) {
+    public static JsonVariableModelPart deserialiseModelPart(JsonElement json, FunctionContext fnCtx, ResourceLoaderContext ctx) {
         if (!json.isJsonObject()) {
             throw new JsonSyntaxException("Expected an object, got " + json);
         }
@@ -65,8 +61,7 @@ public abstract class JsonVariableModelPart {
 
     public static INodeDouble convertStringToDoubleNode(String expression, FunctionContext context) {
         try {
-            IExpressionDouble exp = GenericExpressionCompiler.compileExpressionDouble(expression, context);
-            return exp.derive(Arguments.NO_ARGS);
+            return GenericExpressionCompiler.compileExpressionDouble(expression, context);
         } catch (InvalidExpressionException e) {
             throw new JsonSyntaxException("Invalid expression", e);
         }
@@ -74,8 +69,7 @@ public abstract class JsonVariableModelPart {
 
     public static INodeString convertStringToStringNode(String expression, FunctionContext context) {
         try {
-            IExpressionString exp = GenericExpressionCompiler.compileExpressionString(expression, context);
-            return exp.derive(Arguments.NO_ARGS);
+            return GenericExpressionCompiler.compileExpressionString(expression, context);
         } catch (InvalidExpressionException e) {
             throw new JsonSyntaxException("Invalid expression", e);
         }
@@ -83,8 +77,7 @@ public abstract class JsonVariableModelPart {
 
     public static INodeBoolean convertStringToBooleanNode(String expression, FunctionContext context) {
         try {
-            IExpressionBoolean exp = GenericExpressionCompiler.compileExpressionBoolean(expression, context);
-            return exp.derive(Arguments.NO_ARGS);
+            return GenericExpressionCompiler.compileExpressionBoolean(expression, context);
         } catch (InvalidExpressionException e) {
             throw new JsonSyntaxException("Invalid expression", e);
         }
@@ -92,8 +85,7 @@ public abstract class JsonVariableModelPart {
 
     private static INodeLong convertStringToLongNode(String expression, FunctionContext context) {
         try {
-            IExpressionLong exp = GenericExpressionCompiler.compileExpressionLong(expression, context);
-            return exp.derive(Arguments.NO_ARGS);
+            return GenericExpressionCompiler.compileExpressionLong(expression, context);
         } catch (InvalidExpressionException e) {
             throw new JsonSyntaxException("Invalid expression", e);
         }
@@ -149,9 +141,9 @@ public abstract class JsonVariableModelPart {
         private TypeCuboid(JsonObject obj, FunctionContext fnCtx) {
             from = readVariablePosition(obj, "from", fnCtx);
             to = readVariablePosition(obj, "to", fnCtx);
-            shade = obj.has("shade") ? readVariableBoolean(obj, "shade", fnCtx) : NodeImmutableBoolean.TRUE;
-            visible = obj.has("visible") ? readVariableBoolean(obj, "visible", fnCtx) : NodeImmutableBoolean.TRUE;
-            light = obj.has("light") ? readVariableLong(obj, "light", fnCtx) : new NodeImmutableLong(0);
+            shade = obj.has("shade") ? readVariableBoolean(obj, "shade", fnCtx) : NodeConstantBoolean.TRUE;
+            visible = obj.has("visible") ? readVariableBoolean(obj, "visible", fnCtx) : NodeConstantBoolean.TRUE;
+            light = obj.has("light") ? readVariableLong(obj, "light", fnCtx) : new NodeConstantLong(0);
 
             if (!obj.has("faces")) {
                 throw new JsonSyntaxException("Expected between 1 and 6 faces, got nothing");
@@ -189,8 +181,8 @@ public abstract class JsonVariableModelPart {
                         TextureAtlasSprite sprite = spriteLookup.apply(var.texture.evaluate());
                         UvFaceData uvs = new UvFaceData();
                         uvs.uMin = (float) var.uv[0].evaluate();
-                        uvs.uMax = (float) var.uv[2].evaluate();
-                        uvs.vMin = (float) var.uv[1].evaluate();
+                        uvs.uMax = (float) var.uv[1].evaluate();
+                        uvs.vMin = (float) var.uv[2].evaluate();
                         uvs.vMax = (float) var.uv[3].evaluate();
                         Vector3f radius = new Vector3f(t[0] - f[0], t[1] - f[1], t[2] - f[2]);
                         radius.scale(0.5f);

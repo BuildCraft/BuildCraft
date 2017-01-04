@@ -16,10 +16,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.client.RenderTickListener;
+import buildcraft.core.client.render.RenderEngineWood;
 import buildcraft.core.client.render.RenderMarkerVolume;
 import buildcraft.core.client.render.RenderVolumeInWorld;
 import buildcraft.core.list.ContainerList;
 import buildcraft.core.list.GuiList;
+import buildcraft.core.tile.TileEngineRedstone_BC8;
 import buildcraft.core.tile.TileMarkerVolume;
 import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
@@ -70,6 +72,7 @@ public abstract class BCCoreProxy implements IGuiHandler {
         public void fmlPreInit() {
             super.fmlPreInit();
             BCCoreSprites.fmlPreInit();
+            BCCoreModels.fmlPreInit();
             BuildCraftLaserManager.fmlPreInit();
             DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, RenderVolumeInWorld.INSTANCE);
         }
@@ -77,6 +80,7 @@ public abstract class BCCoreProxy implements IGuiHandler {
         @Override
         public void fmlInit() {
             ClientRegistry.bindTileEntitySpecialRenderer(TileMarkerVolume.class, RenderMarkerVolume.INSTANCE);
+            ClientRegistry.bindTileEntitySpecialRenderer(TileEngineRedstone_BC8.class, RenderEngineWood.INSTANCE);
 
             MinecraftForge.EVENT_BUS.register(RenderTickListener.class);
         }

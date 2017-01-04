@@ -1,9 +1,8 @@
 package buildcraft.lib.expression.node.cast;
 
 import buildcraft.lib.expression.NodeInliningHelper;
-import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
-import buildcraft.lib.expression.node.value.NodeImmutableString;
+import buildcraft.lib.expression.node.value.NodeConstantString;
 
 public class NodeCastLongToString implements INodeString {
     private final INodeLong from;
@@ -18,8 +17,8 @@ public class NodeCastLongToString implements INodeString {
     }
 
     @Override
-    public INodeString inline(Arguments args) {
-        return NodeInliningHelper.tryInline(this, args, from, (f) -> new NodeCastLongToString(f), (f) -> new NodeImmutableString(Long.toString(f.evaluate())));
+    public INodeString inline() {
+        return NodeInliningHelper.tryInline(this, from, (f) -> new NodeCastLongToString(f), (f) -> new NodeConstantString(Long.toString(f.evaluate())));
     }
 
     @Override

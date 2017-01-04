@@ -6,6 +6,8 @@ import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.render.tile.RenderEngine_BC8;
 
 public class RenderEngineWood extends RenderEngine_BC8<TileEngineRedstone_BC8> {
+    public static final RenderEngineWood INSTANCE = new RenderEngineWood();
+
     @Override
     protected MutableQuad[] getEngineModel(TileEngineRedstone_BC8 engine, float partialTicks) {
         return BCCoreModels.getRedstoneEngineQuads(engine, partialTicks);

@@ -1,9 +1,8 @@
 package buildcraft.lib.expression.node.condition;
 
-import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.node.value.NodeImmutableBoolean;
-import buildcraft.lib.expression.node.value.NodeImmutableLong;
+import buildcraft.lib.expression.node.value.NodeConstantBoolean;
+import buildcraft.lib.expression.node.value.NodeConstantLong;
 
 public class NodeConditionalLong implements INodeLong {
     private final INodeBoolean condition;
@@ -21,12 +20,12 @@ public class NodeConditionalLong implements INodeLong {
     }
 
     @Override
-    public INodeLong inline(Arguments args) {
-        INodeBoolean c = condition.inline(args);
-        INodeLong t = ifTrue.inline(args);
-        INodeLong f = ifFalse.inline(args);
-        if (c instanceof NodeImmutableBoolean && t instanceof NodeImmutableLong && f instanceof NodeImmutableLong) {
-            return new NodeImmutableLong(((NodeImmutableBoolean) c).value ? ((NodeImmutableLong) t).value : ((NodeImmutableLong) f).value);
+    public INodeLong inline() {
+        INodeBoolean c = condition.inline();
+        INodeLong t = ifTrue.inline();
+        INodeLong f = ifFalse.inline();
+        if (c instanceof NodeConstantBoolean && t instanceof NodeConstantLong && f instanceof NodeConstantLong) {
+            return new NodeConstantLong(((NodeConstantBoolean) c).value ? ((NodeConstantLong) t).value : ((NodeConstantLong) f).value);
         } else if (c != condition || t != ifTrue || f != ifFalse) {
             return new NodeConditionalLong(c, t, f);
         } else {

@@ -3,9 +3,8 @@ package buildcraft.lib.expression.node.binary;
 import java.util.function.DoubleBinaryOperator;
 
 import buildcraft.lib.expression.NodeInliningHelper;
-import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
-import buildcraft.lib.expression.node.value.NodeImmutableDouble;
+import buildcraft.lib.expression.node.value.NodeConstantDouble;
 
 public class NodeBinaryDouble implements INodeDouble {
     public enum Type {
@@ -44,10 +43,9 @@ public class NodeBinaryDouble implements INodeDouble {
     }
 
     @Override
-    public INodeDouble inline(Arguments args) {
-        return NodeInliningHelper.tryInline(this, args, left, right, //
-                (l, r) -> new NodeBinaryDouble(l, r, type), //
-                (l, r) -> new NodeImmutableDouble(type.operator.applyAsDouble(l.evaluate(), r.evaluate())));
+    public INodeDouble inline() {
+        return NodeInliningHelper.tryInline(this, left, right, (l, r) -> new NodeBinaryDouble(l, r, type), //
+                (l, r) -> new NodeConstantDouble(type.operator.applyAsDouble(l.evaluate(), r.evaluate())));
     }
 
     @Override

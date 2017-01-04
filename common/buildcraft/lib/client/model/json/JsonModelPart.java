@@ -7,16 +7,18 @@ import java.util.List;
 import com.google.gson.*;
 
 import net.minecraft.client.renderer.block.model.BlockPart;
+import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.JsonUtils;
 
+import buildcraft.lib.client.model.ResourceLoaderContext;
 import buildcraft.lib.misc.JsonUtil;
 
 /** {@link BlockPart} but with a few extra features */
 public class JsonModelPart {
     public final JsonQuad[] quads;
 
-    public JsonModelPart(JsonElement json, JsonDeserializationContext context) {
+    public JsonModelPart(JsonElement json, ResourceLoaderContext ctx) {
         if (!json.isJsonObject()) {
             throw new JsonSyntaxException("Expected an object, got " + json);
         }
@@ -32,13 +34,25 @@ public class JsonModelPart {
             }
         }
         if ("face".equals(type)) {
-            quads = readFace(obj, context);
+            quads = readFace(obj);
         } else {
-            quads = readCuboid(obj, context);
+            quads = readCuboid(obj);
         }
     }
+    
+    private JsonModelPart(JsonQuad[] quads) {
+        this.quads = quads;
+    }
+    
+    public JsonModelPart rotate(ModelRotation rot) {
+        JsonQuad[] nq = new JsonQuad[quads.length];
+        for (int i = 0; i < nq.length; i++) {
+            nq[i] = quads[i].rotate(rot);
+        }
+        return new JsonModelPart(nq);
+    }
 
-    private static JsonQuad[] readFace(JsonObject obj, JsonDeserializationContext context) {
+    private static JsonQuad[] readFace(JsonObject obj) {
         throw new AbstractMethodError("Implement this!");
     }
 
@@ -54,7 +68,7 @@ public class JsonModelPart {
         return got;
     }
 
-    private static JsonQuad[] readCuboid(JsonObject obj, JsonDeserializationContext context) {
+    private static JsonQuad[] readCuboid(JsonObject obj) {
         float[] from = readFloatPositionSmaller(obj, "from");
         float[] to = readFloatPositionSmaller(obj, "to");
         boolean shade = JsonUtils.getBoolean(obj, "shade", false);

@@ -3,9 +3,8 @@ package buildcraft.lib.expression.node.unary;
 import java.util.function.LongUnaryOperator;
 
 import buildcraft.lib.expression.NodeInliningHelper;
-import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.node.value.NodeImmutableLong;
+import buildcraft.lib.expression.node.value.NodeConstantLong;
 
 public class NodeUnaryLong implements INodeLong {
     public enum Type {
@@ -39,10 +38,9 @@ public class NodeUnaryLong implements INodeLong {
     }
 
     @Override
-    public INodeLong inline(Arguments args) {
-        return NodeInliningHelper.tryInline(this, args, from, //
-                (f) -> new NodeUnaryLong(f, type), //
-                (f) -> new NodeImmutableLong(type.operator.applyAsLong(f.evaluate())));
+    public INodeLong inline() {
+        return NodeInliningHelper.tryInline(this, from, (f) -> new NodeUnaryLong(f, type), //
+                (f) -> new NodeConstantLong(type.operator.applyAsLong(f.evaluate())));
     }
 
     @Override
