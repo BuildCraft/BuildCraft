@@ -11,16 +11,13 @@ import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.client.model.ResourceLoaderContext;
-import buildcraft.lib.expression.ExpressionDebugManager;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.InternalCompiler;
 import buildcraft.lib.expression.InvalidExpressionException;
 import buildcraft.lib.expression.api.IExpressionNode;
-import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
-import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
-import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.api.IExpressionNode.INodeString;
-import buildcraft.lib.expression.node.value.*;
+import buildcraft.lib.expression.api.NodeType;
+import buildcraft.lib.expression.node.value.IVariableNode;
+import buildcraft.lib.expression.node.value.NodeUpdatable;
 import buildcraft.lib.misc.JsonUtil;
 
 /** {@link JsonModel} but any element can change depening on variables. */
@@ -29,7 +26,8 @@ public class JsonVariableModel {
     public final boolean ambientOcclusion;
     public final Map<String, String> textures;
     public final Map<String, NodeUpdatable> variables;
-    private final NodeUpdatable[] variableFast;
+    public final JsonModelRule[] rules;
+    private final NodeUpdatable[] variablesArray;
     public final JsonVariableModelPart[] cutoutElements, translucentElements;
 
     public static JsonVariableModel deserialize(ResourceLocation from, FunctionContext fnCtx) throws JsonParseException, IOException {
@@ -42,11 +40,6 @@ public class JsonVariableModel {
         } finally {
             ctx.finishLoading();
         }
-    }
-
-    public static JsonVariableModelPart deserializePart(JsonElement json, FunctionContext fnCtx, ResourceLoaderContext ctx) throws JsonParseException {
-        // TODO: add different classes based on type
-        return JsonVariableModelPart.deserialiseModelPart(json, fnCtx, ctx);
     }
 
     private static JsonVariableModelPart[] deserializePartArray(JsonObject json, String member, FunctionContext fnCtx, ResourceLoaderContext ctx, boolean require) {
@@ -64,7 +57,7 @@ public class JsonVariableModel {
         JsonArray array = elem.getAsJsonArray();
         JsonVariableModelPart[] to = new JsonVariableModelPart[array.size()];
         for (int i = 0; i < to.length; i++) {
-            to[i] = deserializePart(array.get(i), fnCtx, ctx);
+            to[i] = JsonVariableModelPart.deserialiseModelPart(array.get(i), fnCtx, ctx);
         }
         return to;
     }
@@ -75,6 +68,7 @@ public class JsonVariableModel {
         variables = new HashMap<>();
         List<JsonVariableModelPart> cutout = new ArrayList<>();
         List<JsonVariableModelPart> translucent = new ArrayList<>();
+        List<JsonModelRule> rulesP = new ArrayList<>();
         if (obj.has("parent")) {
             String parentName = JsonUtils.getString(obj, "parent");
             parentName += ".json";
@@ -95,6 +89,9 @@ public class JsonVariableModel {
             }
             if (!JsonUtils.getBoolean(obj, "translucent_replace", false)) {
                 Collections.addAll(translucent, parent.translucentElements);
+            }
+            if (!JsonUtils.getBoolean(obj, "rules_replace", false)) {
+                Collections.addAll(rulesP, parent.rules);
             }
         }
 
@@ -123,19 +120,7 @@ public class JsonVariableModel {
                 } catch (InvalidExpressionException e) {
                     throw new JsonSyntaxException("Invalid expression", e);
                 }
-                IVariableNode varNode;
-                if (node instanceof INodeLong) {
-                    varNode = new NodeVariableLong();
-                } else if (node instanceof INodeBoolean) {
-                    varNode = new NodeVariableLong();
-                } else if (node instanceof INodeDouble) {
-                    varNode = new NodeVariableDouble();
-                } else if (node instanceof INodeString) {
-                    varNode = new NodeVariableString();
-                } else {
-                    ExpressionDebugManager.debugNodeClass(node.getClass());
-                    throw new IllegalStateException("Unknown node class detected! " + node.getClass());
-                }
+                IVariableNode varNode = NodeType.getType(node).makeVariableNode();
                 if (variables.containsKey(name)) {
                     NodeUpdatable existing = variables.get(name);
                     existing.setSource(varNode);
@@ -145,7 +130,7 @@ public class JsonVariableModel {
                 fnCtx.putVariable(name, varNode);
             }
         }
-        variableFast = variables.values().toArray(new NodeUpdatable[variables.size()]);
+        variablesArray = variables.values().toArray(new NodeUpdatable[variables.size()]);
 
         boolean require = cutout.isEmpty() && translucent.isEmpty();
         if (obj.has("elements")) {
@@ -156,10 +141,20 @@ public class JsonVariableModel {
         }
         cutoutElements = cutout.toArray(new JsonVariableModelPart[cutout.size()]);
         translucentElements = translucent.toArray(new JsonVariableModelPart[translucent.size()]);
+
+        if (obj.has("rules")) {
+            JsonElement elem = obj.get("rules");
+            if (!elem.isJsonArray()) throw new JsonSyntaxException("Expected an array, got " + elem + " for 'rules'");
+            JsonArray arr = elem.getAsJsonArray();
+            for (int i = 0; i < arr.size(); i++) {
+                rulesP.add(JsonModelRule.deserialize(arr.get(i), fnCtx, ctx));
+            }
+        }
+        rules = rulesP.toArray(new JsonModelRule[rulesP.size()]);
     }
 
     public void refreshLocalVariables() {
-        for (NodeUpdatable updatable : variables.values()) {
+        for (NodeUpdatable updatable : variablesArray) {
             updatable.refresh();
         }
     }

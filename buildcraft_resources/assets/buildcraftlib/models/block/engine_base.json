@@ -7,8 +7,8 @@
         "#trunk_overheat":"buildcraftlib:blocks/engine/trunk_overheat",
         "#chamber":"buildcraftlib:blocks/engine/chamber_base",
 
-        "#back":"_ABSTRACT_",
-        "#side":"_ABSTRACT_"
+        "#back":"_ABSTRACT_engine_base_back",
+        "#side":"_ABSTRACT_engine_base_side"
     },
     "shade":true,
     "variables": {
@@ -19,11 +19,9 @@
     "rules": [
         {
             "when": "facing != 'up'",
-            "do": {
-                "type": "builtin/rotate",
-                "from": "'up'",
-                "to": "facing"
-            }
+            "type": "builtin:rotate_facing",
+            "from": "'up'",
+            "to": "facing"
         }
     ],
     "elements": [
