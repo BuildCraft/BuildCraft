@@ -1,0 +1,11 @@
+{
+    "textures": {
+        "#back":"buildcraftcore:blocks/engine/creative/back",
+        "#side":"buildcraftcore:blocks/engine/creative/side"
+    },
+    "parent":"buildcraftlib:models/block/engine_base",
+    "variables": {
+        "trunk_tex": "#trunk_overheat",
+        "stage_light": 0
+    }
+}

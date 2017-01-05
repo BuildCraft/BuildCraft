@@ -2,12 +2,9 @@ package buildcraft.lib.client.model.json;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
-import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
 
 import net.minecraft.util.JsonUtils;
@@ -31,7 +28,8 @@ public class JsonVariableModel {
     // Never allow ao or textures to be variable - they need to be hardcoded so that we can stitch them
     public final boolean ambientOcclusion;
     public final Map<String, String> textures;
-    public final List<NodeUpdatable> variables;
+    public final Map<String, NodeUpdatable> variables;
+    private final NodeUpdatable[] variableFast;
     public final JsonVariableModelPart[] cutoutElements, translucentElements;
 
     public static JsonVariableModel deserialize(ResourceLocation from, FunctionContext fnCtx) throws JsonParseException, IOException {
@@ -51,9 +49,13 @@ public class JsonVariableModel {
         return JsonVariableModelPart.deserialiseModelPart(json, fnCtx, ctx);
     }
 
-    private static JsonVariableModelPart[] deserializePartArray(JsonObject json, String member, FunctionContext fnCtx, ResourceLoaderContext ctx) {
+    private static JsonVariableModelPart[] deserializePartArray(JsonObject json, String member, FunctionContext fnCtx, ResourceLoaderContext ctx, boolean require) {
         if (!json.has(member)) {
-            throw new JsonSyntaxException("Did not have '" + member + "' in '" + json + "'");
+            if (require) {
+                throw new JsonSyntaxException("Did not have '" + member + "' in '" + json + "'");
+            } else {
+                return new JsonVariableModelPart[0];
+            }
         }
         JsonElement elem = json.get(member);
         if (!elem.isJsonArray()) {
@@ -68,16 +70,45 @@ public class JsonVariableModel {
     }
 
     public JsonVariableModel(JsonObject obj, FunctionContext fnCtx, ResourceLoaderContext ctx) throws JsonParseException {
-        ambientOcclusion = JsonUtils.getBoolean(obj, "ambientocclusion", false);
-        textures = JsonUtil.deserializeStringMap(obj, "textures");
+        boolean ambf = false;
+        Map<String, String> texturesP = new HashMap<>();
+        variables = new HashMap<>();
+        List<JsonVariableModelPart> cutout = new ArrayList<>();
+        List<JsonVariableModelPart> translucent = new ArrayList<>();
+        if (obj.has("parent")) {
+            String parentName = JsonUtils.getString(obj, "parent");
+            parentName += ".json";
+            ResourceLocation from = new ResourceLocation(parentName);
+            JsonVariableModel parent;
+            try {
+                parent = deserialize(from, fnCtx, ctx);
+            } catch (IOException e) {
+                throw new JsonParseException("Didn't find the parent '" + parentName + "'!", e);
+            }
+            ambf = parent.ambientOcclusion;
+            if (!JsonUtils.getBoolean(obj, "textures_reset", false)) {
+                texturesP.putAll(parent.textures);
+            }
+            variables.putAll(parent.variables);
+            if (!JsonUtils.getBoolean(obj, "cutout_replace", false)) {
+                Collections.addAll(cutout, parent.cutoutElements);
+            }
+            if (!JsonUtils.getBoolean(obj, "translucent_replace", false)) {
+                Collections.addAll(translucent, parent.translucentElements);
+            }
+        }
+
+        ambientOcclusion = JsonUtils.getBoolean(obj, "ambientocclusion", ambf);
+        texturesP.putAll(JsonUtil.deserializeStringMap(obj, "textures"));
+        textures = texturesP;
         if (obj.has("variables")) {
             fnCtx = new FunctionContext(fnCtx);
             JsonElement var = obj.get("variables");
             if (!var.isJsonObject()) throw new JsonSyntaxException("Expected an object, got " + var + " for 'variables'");
             JsonObject vars = var.getAsJsonObject();
-            variables = new ArrayList<>(vars.entrySet().size());
             for (Entry<String, JsonElement> entry : vars.entrySet()) {
                 String name = entry.getKey();
+                name = name.toLowerCase(Locale.ROOT);
                 if (fnCtx.hasLocalVariable(name)) {
                     throw new JsonSyntaxException("Duplicate local variable '" + name + "'");
                 }
@@ -105,24 +136,30 @@ public class JsonVariableModel {
                     ExpressionDebugManager.debugNodeClass(node.getClass());
                     throw new IllegalStateException("Unknown node class detected! " + node.getClass());
                 }
-                variables.add(new NodeUpdatable(node, varNode));
+                if (variables.containsKey(name)) {
+                    NodeUpdatable existing = variables.get(name);
+                    existing.setSource(varNode);
+                } else {
+                    variables.put(name, new NodeUpdatable(node, varNode));
+                }
                 fnCtx.putVariable(name, varNode);
             }
-        } else {
-            variables = ImmutableList.of();
         }
+        variableFast = variables.values().toArray(new NodeUpdatable[variables.size()]);
 
+        boolean require = cutout.isEmpty() && translucent.isEmpty();
         if (obj.has("elements")) {
-            cutoutElements = deserializePartArray(obj, "elements", fnCtx, ctx);
-            translucentElements = new JsonVariableModelPart[0];
+            Collections.addAll(cutout, deserializePartArray(obj, "elements", fnCtx, ctx, require));
         } else {
-            cutoutElements = deserializePartArray(obj, "cutout", fnCtx, ctx);
-            translucentElements = deserializePartArray(obj, "translucent", fnCtx, ctx);
+            Collections.addAll(cutout, deserializePartArray(obj, "cutout", fnCtx, ctx, require));
+            Collections.addAll(translucent, deserializePartArray(obj, "translucent", fnCtx, ctx, require));
         }
+        cutoutElements = cutout.toArray(new JsonVariableModelPart[cutout.size()]);
+        translucentElements = translucent.toArray(new JsonVariableModelPart[translucent.size()]);
     }
 
     public void refreshLocalVariables() {
-        for (NodeUpdatable updatable : variables) {
+        for (NodeUpdatable updatable : variables.values()) {
             updatable.refresh();
         }
     }
