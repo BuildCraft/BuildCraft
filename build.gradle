@@ -23,7 +23,6 @@ buildscript {
 
 apply plugin: "net.minecraftforge.gradle.forge" // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
-apply plugin: 'maven-publish' // for uploading to a maven repo
 
 ext.configFile = file "build.properties"
 configFile.withReader {
@@ -79,12 +78,16 @@ sourceSets {
         java {
             srcDir "common"
             srcDir "common_old_license"
-            // srcDir "src_old_license"
+          //  srcDir "src_old_license"
+            // exclude 'some exclusion'
+            // include 'some inclusion'
         }
         resources {
             srcDir "buildcraft_resources"
             srcDir "BuildCraft-Localization"
             exclude "**/.md" // exclude readme from localization repo
+            // exclude 'some exclusion'
+            // include 'some inclusion'
         }
     }
     api {
@@ -180,7 +183,7 @@ task deobfJar(type: Jar) {
 
 task apiJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = file("modules")
-    appendix = "api"
+    classifier = 'api'
 
     doFirst {
         from(project.ext.jarFile) {
@@ -189,19 +192,9 @@ task apiJar(type: Jar, dependsOn: reobfJar) {
     }
 }
 
-task apiSrcJar(type: Jar, dependsOn: build) {
-    destinationDir = file("modules/src")
-    appendix = "api"
-    classifier = 'sources'
-
-    doFirst {
-        from sourceSets.api.allSource
-    }
-}
-
 task libJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = file("modules")
-    appendix = 'lib'
+    classifier = 'lib'
 
     doFirst {
         from(createMCModInfo(0, name).parentFile)
@@ -211,22 +204,9 @@ task libJar(type: Jar, dependsOn: reobfJar) {
     }
 }
 
-task libSrcJar(type: Jar, dependsOn: build) {
-    destinationDir = file("modules/src")
-    appendix = "lib"
-    classifier = "sources"
-
-    doFirst {
-        from sourceSets.api.allSource
-        from (sourceSets.main.allSource) {
-            includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "buildcraft/lib/**", "buildcraft/api/**", "LICENSE**"])
-        }
-    }
-}
-
 task coreJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = file("modules")
-    appendix = "core"
+    classifier = 'core'
 
     doFirst {
         from(createMCModInfo(1, name).parentFile)
@@ -239,7 +219,7 @@ task coreJar(type: Jar, dependsOn: reobfJar) {
 task buildersJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
-    appendix = "builders"
+    classifier = 'builders'
 
     doFirst {
         from(createMCModInfo(2, name).parentFile)
@@ -252,7 +232,7 @@ task buildersJar(type: Jar, dependsOn: reobfJar) {
 task energyJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
-    appendix = "energy"
+    classifier = 'energy'
 
     doFirst {
         from(createMCModInfo(3, name).parentFile)
@@ -265,7 +245,7 @@ task energyJar(type: Jar, dependsOn: reobfJar) {
 task factoryJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
-    appendix = "factory"
+    classifier = 'factory'
 
     doFirst {
         from(createMCModInfo(4, name).parentFile)
@@ -278,7 +258,7 @@ task factoryJar(type: Jar, dependsOn: reobfJar) {
 task siliconJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
-    appendix = "silicon"
+    classifier = 'silicon'
 
     doFirst {
         from(createMCModInfo(5, name).parentFile)
@@ -291,7 +271,7 @@ task siliconJar(type: Jar, dependsOn: reobfJar) {
 task transportJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
-    appendix = "transport"
+    classifier = 'transport'
 
     doFirst {
         from(createMCModInfo(6, name).parentFile)
@@ -304,7 +284,7 @@ task transportJar(type: Jar, dependsOn: reobfJar) {
 task roboticsJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
-    appendix = "robotics"
+    classifier = 'robotics'
 
     doFirst {
         from(createMCModInfo(7, name).parentFile)
@@ -315,6 +295,7 @@ task roboticsJar(type: Jar, dependsOn: reobfJar) {
 }
 
 task allJar(type: Jar, dependsOn:reobfJar) {
+
     destinationDir = file("modules")
 
     doFirst {
@@ -324,15 +305,6 @@ task allJar(type: Jar, dependsOn:reobfJar) {
     }
 }
 
-task allSrcJar(type: Jar, dependsOn:reobfJar) {
-    destinationDir = file("modules")
-    classifier = "sources"
-
-    doFirst {
-        from sourceSets.api.allSource
-        from sourceSets.main.allSource
-    }
-}
 
 // add api classes to main package
 jar {
@@ -396,58 +368,6 @@ def sftp(String subPath, Closure antFileset = {}) {
         delegate.scp(sftpArgs) {
             antFileset.delegate = delegate
             antFileset()
-        }
-    }
-}
-
-publishing {
-    repositories {
-        maven {
-            url "/home/ali/Documents/dev/maven_master/buildcraft_web"
-        }
-    }
-    publications {
-        pub_apiJar(MavenPublication) {
-            groupId "com.mod-buildcraft"
-            artifactId "buildcraft-api"
-            version "8.0"
-
-            artifact apiJar
-        }
-        pub_apiSrcJar(MavenPublication) {
-            groupId "com.mod-buildcraft"
-            artifactId "buildcraft-api"
-            version "8.0"
-
-            artifact apiSrcJar
-        }
-        pub_libJar(MavenPublication) {
-            groupId "com.mod-buildcraft"
-            artifactId "buildcraft-lib"
-            version project.version
-
-            artifact libJar
-        }
-        pub_libSrcJar(MavenPublication) {
-            groupId "com.mod-buildcraft"
-            artifactId "buildcraft-lib"
-            version project.version
-
-            artifact libSrcJar
-        }
-        pub_allJar(MavenPublication) {
-            groupId "com.mod-buildcraft"
-            artifactId "buildcraft"
-            version project.version
-
-            artifact allJar
-        }
-        pub_allSrcJar(MavenPublication) {
-            groupId "com.mod-buildcraft"
-            artifactId "buildcraft"
-            version project.version
-
-            artifact allSrcJar
         }
     }
 }
