@@ -1,13 +1,16 @@
 package buildcraft.core.client.render;
 
 import buildcraft.core.client.BuildCraftLaserManager;
+import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.ClientVolumeMarkers;
+import buildcraft.core.marker.volume.IFastAddonRenderer;
 import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -31,6 +34,8 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
 
     @Override
     public void render(EntityPlayer player, float partialTicks) {
+        GlStateManager.enableBlend();
+
         VertexBuffer vb = Tessellator.getInstance().getBuffer();
 
         vb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
@@ -44,10 +49,13 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
 
             Arrays.stream(box.box.laserData).forEach(data -> LaserRenderer_BC8.renderLaserDynamic(data, vb));
 
-            box.addons.values().forEach(addon -> addon.getRenderer().renderAddonFast(addon, player, partialTicks, vb));
+            // noinspection unchecked
+            box.addons.values().forEach(addon -> ((IFastAddonRenderer<Addon>) addon.getRenderer()).renderAddonFast(addon, player, partialTicks, vb));
         });
 
         Tessellator.getInstance().draw();
+
+        GlStateManager.disableBlend();
     }
 
     private static void makeLaserBox(Box box, LaserType type, double scale) {

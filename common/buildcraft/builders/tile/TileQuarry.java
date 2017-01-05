@@ -283,11 +283,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             for (int y = min.getY(); y <= max.getY(); y++) {
                 for (int z = min.getZ(); z <= max.getZ(); z++) {
                     BlockPos framePos = new BlockPos(x, y, z);
-                    boolean shouldBeFrame = x == min.getX() || x == max.getX()
-                        || y == min.getY()
-                        || y == max.getY()
-                        || z == min.getZ()
-                        || z == max.getZ();
+                    boolean shouldBeFrame = ((x == min.getX() || x == max.getX()) && (y == min.getY() || y == max.getY()))
+                        || ((y == min.getY() || y == max.getY()) && (z == min.getZ() || z == max.getZ()))
+                        || ((z == min.getZ() || z == max.getZ()) && (x == min.getX() || x == max.getX()));
                     Block block = world.getBlockState(framePos).getBlock();
                     if (((block != Blocks.AIR && !shouldBeFrame) || (block != BCBuildersBlocks.frame
                         && block != Blocks.AIR && shouldBeFrame)) && !canSkip(framePos)) {

@@ -2,6 +2,8 @@ package buildcraft.core.marker.volume;
 
 import buildcraft.lib.item.ItemBC_Neptune;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -17,9 +19,9 @@ public abstract class ItemAddon extends ItemBC_Neptune {
     public abstract Addon createAddon();
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         if (world.isRemote) {
-            return EnumActionResult.PASS;
+            return new ActionResult<>(EnumActionResult.PASS, player.getHeldItem(hand));
         }
 
         WorldSavedDataVolumeMarkers volumeMarkers = WorldSavedDataVolumeMarkers.get(world);
@@ -31,10 +33,10 @@ public abstract class ItemAddon extends ItemBC_Neptune {
                 box.addons.put(slot, createAddon());
                 box.addons.get(slot).onAdded();
                 volumeMarkers.markDirty();
-                return EnumActionResult.SUCCESS;
+                return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
             }
         }
 
-        return EnumActionResult.PASS;
+        return new ActionResult<>(EnumActionResult.PASS, player.getHeldItem(hand));
     }
 }

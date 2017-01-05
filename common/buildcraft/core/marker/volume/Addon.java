@@ -11,7 +11,7 @@ public abstract class Addon {
     public VolumeBox box;
 
     @SideOnly(Side.CLIENT)
-    public abstract IFastAddonRenderer getRenderer();
+    public abstract IFastAddonRenderer<? extends Addon> getRenderer();
 
     public EnumAddonSlot getSlot() {
         return box.addons.entrySet().stream().filter(slotAddon -> slotAddon.getValue() == this).findFirst().orElse(null).getKey();
