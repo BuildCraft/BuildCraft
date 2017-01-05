@@ -1,6 +1,6 @@
 package buildcraft.builders.filling;
 
-public enum EnumParameterPatterns implements IParameter {
+public enum EnumParameterPattern implements IParameter {
     FRAME,
     SQUARE,
     SPHERE,
@@ -10,6 +10,6 @@ public enum EnumParameterPatterns implements IParameter {
 
     @Override
     public String getParameterName() {
-        return "axis";
+        return "pattern";
     }
 }

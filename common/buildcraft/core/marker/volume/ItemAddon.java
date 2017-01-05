@@ -29,6 +29,7 @@ public abstract class ItemAddon extends ItemBC_Neptune {
         if (box != null && slot != null) {
             if (!box.addons.containsKey(slot)) {
                 box.addons.put(slot, createAddon());
+                box.addons.get(slot).onAdded();
                 volumeMarkers.markDirty();
                 return EnumActionResult.SUCCESS;
             }

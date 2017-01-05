@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.item;
 
+import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.EnumAddonSlot;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeMarkers;
@@ -134,6 +135,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
         if (addonBox != null && addonSlot != null) {
             if (addonBox.addons.containsKey(addonSlot)) {
                 if (player.isSneaking()) {
+                    addonBox.addons.get(addonSlot).onRemoved();
                     addonBox.addons.remove(addonSlot);
                     volumeMarkers.markDirty();
                 } else {
@@ -146,6 +148,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                 for (Iterator<VolumeBox> iterator = volumeMarkers.boxes.iterator(); iterator.hasNext(); ) {
                     VolumeBox box = iterator.next();
                     if (box.box.getBoundingBox().calculateIntercept(start, end) != null) {
+                        box.addons.values().forEach(Addon::onRemoved);
                         iterator.remove();
                         volumeMarkers.markDirty();
                         return new ActionResult<>(EnumActionResult.SUCCESS, stack);

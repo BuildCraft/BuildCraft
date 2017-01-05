@@ -21,6 +21,12 @@ public abstract class Addon {
         return getSlot().getBoundingBox(box);
     }
 
+    public void onAdded() {
+    }
+
+    public void onRemoved() {
+    }
+
     public void onPlayerRightClick(EntityPlayer player) {
     }
 
