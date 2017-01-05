@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.lib.client.sprite.LibSprites;
+import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.gui.ledger.LedgerHelp;
 import buildcraft.lib.gui.ledger.LedgerManager_Neptune;
 import buildcraft.lib.gui.ledger.LedgerOwnership;
@@ -24,7 +24,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
     /** Used to control if this gui should show debugging lines, and other oddities that help development. */
     public static boolean debugging = false;
 
-    public static final GuiSpriteScaled SPRITE_DEBUG = new GuiSpriteScaled(LibSprites.DEBUG, 16, 16);
+    public static final GuiSpriteScaled SPRITE_DEBUG = new GuiSpriteScaled(BCLibSprites.DEBUG, 16, 16);
 
     public final C container;
     public final MousePosition mouse = new MousePosition();

@@ -2,6 +2,7 @@ package buildcraft.lib.client.render.tile;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.profiler.Profiler;
 
 import net.minecraftforge.client.model.animation.FastTESR;
 
@@ -14,11 +15,14 @@ public abstract class RenderEngine_BC8<T extends TileEngineBase_BC8> extends Fas
 
     @Override
     public void renderTileEntityFast(T engine, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
-        Minecraft.getMinecraft().mcProfiler.startSection("bc");
-        Minecraft.getMinecraft().mcProfiler.startSection("engine");
+        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        profiler.startSection("bc");
+        profiler.startSection("engine");
 
+        profiler.startSection("compute");
         vb.setTranslation(x, y, z);
         MutableQuad[] quads = getEngineModel(engine, partialTicks);
+        profiler.endStartSection("render");
         MutableQuad copy = new MutableQuad(0, null);
         int lightc = engine.getWorld().getCombinedLight(engine.getPos(), 0);
         int light_block = (lightc >> 4) & 15;
@@ -32,14 +36,18 @@ public abstract class RenderEngine_BC8<T extends TileEngineBase_BC8> extends Fas
             }
             if (copy.isShade()) {
                 copy.setShade(false);
-                copy.multColourd(copy.getCalculatedDiffuse());
+                for (int i = 0; i < 4; i++) {
+                    MutableVertex v = copy.getVertex(i);
+                    v.multColourd(MutableQuad.diffuseLight(v.normal_x, v.normal_y, v.normal_z));
+                }
             }
             copy.render(vb);
         }
         vb.setTranslation(0, 0, 0);
 
-        Minecraft.getMinecraft().mcProfiler.endSection();
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        profiler.endSection();
+        profiler.endSection();
+        profiler.endSection();
     }
 
     protected abstract MutableQuad[] getEngineModel(T engine, float partialTicks);

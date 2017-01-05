@@ -13,6 +13,7 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.BCLog;
 
+import buildcraft.lib.client.model.json.JsonModelRule;
 import buildcraft.lib.client.model.json.JsonVariableModel;
 import buildcraft.lib.client.model.json.JsonVariableModelPart;
 import buildcraft.lib.expression.FunctionContext;
@@ -122,6 +123,11 @@ public class ModelHolderVariable extends ModelHolder {
         rawModel.refreshLocalVariables();
         for (JsonVariableModelPart part : a) {
             part.addQuads(list, this::lookupTexture);
+        }
+        for (JsonModelRule rule : rawModel.rules) {
+            if (rule.when.evaluate()) {
+                rule.apply(list);
+            }
         }
         return list.toArray(new MutableQuad[list.size()]);
     }

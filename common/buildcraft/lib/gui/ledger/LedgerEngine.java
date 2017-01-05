@@ -1,7 +1,7 @@
 package buildcraft.lib.gui.ledger;
 
+import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.ISprite;
-import buildcraft.lib.client.sprite.LibSprites;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.misc.LocaleUtil;
@@ -43,14 +43,14 @@ public class LedgerEngine extends Ledger_Neptune {
         ISprite sprite;
         switch (engine.getPowerStage()) {
             case OVERHEAT:
-                sprite = LibSprites.ENGINE_OVERHEAT;
+                sprite = BCLibSprites.ENGINE_OVERHEAT;
                 break;
             case RED:
             case YELLOW:
-                sprite = LibSprites.ENGINE_WARM;
+                sprite = BCLibSprites.ENGINE_WARM;
                 break;
             default:
-                sprite = engine.isEngineOn() ? LibSprites.ENGINE_ACTIVE : LibSprites.ENGINE_INACTIVE;
+                sprite = engine.isEngineOn() ? BCLibSprites.ENGINE_ACTIVE : BCLibSprites.ENGINE_INACTIVE;
         }
         GuiIcon.draw(sprite, x, y, x + 16, y + 16);
     }

@@ -246,43 +246,6 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
             } else if (progress > 0) {
                 progress -= 0.01f;
             }
-
-            // idk if these will stay (at all) or in a more refined form
-            double particleCount = 0;
-            double flameRand = 0;
-            if (powerStage == EnumPowerStage.BLUE) {
-                particleCount = isPumping ? 0.125 : 0;
-            } else if (powerStage == EnumPowerStage.GREEN) {
-                particleCount = isPumping ? 0.25 : 0.125;
-            } else if (powerStage == EnumPowerStage.YELLOW) {
-                particleCount = isPumping ? 1 : 0.25;
-                flameRand = 0.125;
-            } else if (powerStage == EnumPowerStage.RED) {
-                particleCount = isPumping ? 3 : 1.25;
-                flameRand = 0.25;
-            } else if (powerStage == EnumPowerStage.OVERHEAT) {
-                particleCount = isPumping ? 5 : 4;
-                flameRand = 0.5;
-            }
-
-            int realCount = (int) (Math.floor(particleCount)) + (world.rand.nextDouble() < (particleCount % 1) ? 1 : 0);
-
-            if (realCount > 0) {
-                double x = getPos().getX() + 0.5;
-                double y = getPos().getY() + 0.5;
-                double z = getPos().getZ() + 0.5;
-
-                for (int i = realCount; i > 0; i--) {
-                    double dx = (world.rand.nextDouble() - 0.5) * 0.5;
-                    double dy = (world.rand.nextDouble() - 0.3) * 0.4;
-                    double dz = (world.rand.nextDouble() - 0.5) * 0.5;
-
-                    EnumParticleTypes type = world.rand.nextDouble() < flameRand ? EnumParticleTypes.FLAME : EnumParticleTypes.CLOUD;
-
-                    world.spawnParticle(type, x, y, z, dx, dy, dz);
-                }
-                // world.playSound(x, y, z, SoundEvent, volume, pitch, distanceDelay);
-            }
             return;
         }
 

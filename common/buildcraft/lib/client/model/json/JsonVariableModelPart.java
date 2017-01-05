@@ -181,8 +181,8 @@ public abstract class JsonVariableModelPart {
                         TextureAtlasSprite sprite = spriteLookup.apply(var.texture.evaluate());
                         UvFaceData uvs = new UvFaceData();
                         uvs.uMin = (float) var.uv[0].evaluate();
-                        uvs.uMax = (float) var.uv[1].evaluate();
-                        uvs.vMin = (float) var.uv[2].evaluate();
+                        uvs.vMin = (float) var.uv[1].evaluate();
+                        uvs.uMax = (float) var.uv[2].evaluate();
                         uvs.vMax = (float) var.uv[3].evaluate();
                         Vector3f radius = new Vector3f(t[0] - f[0], t[1] - f[1], t[2] - f[2]);
                         radius.scale(0.5f);
