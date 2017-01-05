@@ -25,6 +25,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -186,6 +187,16 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         miningBox.setMax(new BlockPos(max.getX() - 1, max.getY() - 1, max.getZ() - 1));
     }
 
+    private boolean canNotMine(BlockPos blockPos) {
+        Fluid fluid = BlockUtil.getFluidWithFlowing(world, blockPos);
+        return fluid != null && fluid.getViscosity() > 1000;
+    }
+
+    private boolean canSkip(BlockPos blockPos) {
+        Fluid fluid = BlockUtil.getFluidWithFlowing(world, blockPos);
+        return fluid != null && fluid.getViscosity() <= 1000;
+    }
+
     @Override
     public void update() {
         if (world.isRemote) {
@@ -278,8 +289,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                         || z == min.getZ()
                         || z == max.getZ();
                     Block block = world.getBlockState(framePos).getBlock();
-                    if ((block != Blocks.AIR && !shouldBeFrame) || (block != BCBuildersBlocks.frame
-                        && block != Blocks.AIR && shouldBeFrame)) {
+                    if (((block != Blocks.AIR && !shouldBeFrame) || (block != BCBuildersBlocks.frame
+                        && block != Blocks.AIR && shouldBeFrame)) && !canSkip(framePos)) {
                         breakPoses.add(framePos);
                     }
                 }
@@ -299,9 +310,11 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 }
             }
 
-            drillPos = null;
-            currentTask = new TaskBreakBlock(closestPos);
-            sendNetworkUpdate(NET_RENDER_DATA);
+            if (!canNotMine(closestPos)) {
+                drillPos = null;
+                currentTask = new TaskBreakBlock(closestPos);
+                sendNetworkUpdate(NET_RENDER_DATA);
+            }
             return;
         }
 
@@ -321,22 +334,31 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             boxIterator = new BoxIterator(miningBox,
                                           AxisOrder.getFor(EnumAxisOrder.XZY, AxisOrder.Inversion.NNN),
                                           true);
-            while (world.isAirBlock(boxIterator.getCurrent())) {
+            while (world.isAirBlock(boxIterator.getCurrent()) || canSkip(boxIterator.getCurrent())) {
                 boxIterator.advance();
             }
             drillPos = new Vec3d(miningBox.closestInsideTo(getPos()));
         }
 
         if (boxIterator != null && boxIterator.hasNext()) {
+            boolean found = false;
+
             if (drillPos.squareDistanceTo(new Vec3d(boxIterator.getCurrent())) > 2) {
                 currentTask = new TaskMoveDrill(drillPos, new Vec3d(boxIterator.getCurrent()));
-            } else if (!world.isAirBlock(boxIterator.getCurrent())) {
-                currentTask = new TaskBreakBlock(boxIterator.getCurrent());
+                found = true;
+            } else if (!world.isAirBlock(boxIterator.getCurrent()) && !canSkip(boxIterator.getCurrent())) {
+                if (!canNotMine(boxIterator.getCurrent())) {
+                    currentTask = new TaskBreakBlock(boxIterator.getCurrent());
+                    found = true;
+                }
             } else {
+                found = true;
                 currentTask = new TaskMoveDrill(drillPos, new Vec3d(boxIterator.advance()));
             }
 
-            sendNetworkUpdate(NET_RENDER_DATA);
+            if (found) {
+                sendNetworkUpdate(NET_RENDER_DATA);
+            }
         }
     }
 
