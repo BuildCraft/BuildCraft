@@ -572,7 +572,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         /** @return True if this task has been completed, or cancelled. */
         protected abstract boolean onReceivePower();
 
-        protected abstract void finish();
+        protected abstract boolean finish();
 
         public final long getPower() {
             return power;
@@ -582,7 +582,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         public final boolean addPower(long microJoules) {
             power += microJoules;
             if (power >= getTarget()) {
-                finish();
+                if (!finish()) {
+                    battery.addPower(Math.min(power, battery.getCapacity() - battery.getStored()));
+                }
                 return true;
             } else {
                 return onReceivePower();
@@ -630,14 +632,14 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
 
         @Override
-        protected void finish() {
+        protected boolean finish() {
             EntityPlayer fake = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world,
                                                                       TileQuarry.this.pos,
                                                                       TileQuarry.this.getOwner());
 
             IBlockState state = world.getBlockState(breakPos);
             if (state.getBlockHardness(getWorld(), breakPos) < 0) {
-                return;
+                return true;
             }
 
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, breakPos, state, fake);
@@ -658,6 +660,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 }
                 world.sendBlockBreakProgress(breakPos.hashCode(), breakPos, -1);
                 world.destroyBlock(breakPos, false);
+                return true;
+            } else {
+                return false;
             }
         }
     }
@@ -697,14 +702,14 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
 
         @Override
-        protected void finish() {
+        protected boolean finish() {
             if (world.isAirBlock(framePos)) {
                 ItemStack extracted = invFrames.extract(null, 1, 1, false);
                 if (!extracted.isEmpty()) {
                     world.setBlockState(framePos, BCBuildersBlocks.frame.getDefaultState());
-                    return;
                 }
             }
+            return true;
         }
     }
 
@@ -748,8 +753,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
 
         @Override
-        protected void finish() {
+        protected boolean finish() {
             drillPos = to;
+            return true;
         }
     }
 }
