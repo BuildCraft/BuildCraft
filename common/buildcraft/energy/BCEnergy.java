@@ -48,15 +48,19 @@ public class BCEnergy {
         GameRegistry.register(BiomeOilOcean.INSTANCE);
         GameRegistry.register(BiomeOilDesert.INSTANCE);
         MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
+
+        BCEnergyProxy.getProxy().fmlPreInit();
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
         BCEnergyRecipes.init();
+        BCEnergyProxy.getProxy().fmlInit();
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent evt) {
         MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
+        BCEnergyProxy.getProxy().fmlPostInit();
     }
 }

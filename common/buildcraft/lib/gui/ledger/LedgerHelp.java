@@ -2,8 +2,8 @@ package buildcraft.lib.gui.ledger;
 
 import net.minecraft.client.renderer.GlStateManager;
 
+import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.ISprite;
-import buildcraft.lib.client.sprite.LibSprites;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
@@ -18,10 +18,10 @@ public class LedgerHelp extends Ledger_Neptune {
     private static final SpriteNineSliced[][] SPRITE_HELP_SPLIT = new SpriteNineSliced[2][2];
 
     static {
-        SPRITE_HELP_SPLIT[0][0] = LibSprites.HELP_SPLIT.subRelative(0, 0, 8, 8, 16).slice(2, 2, 6, 6, 8);
-        SPRITE_HELP_SPLIT[0][1] = LibSprites.HELP_SPLIT.subRelative(0, 8, 8, 8, 16).slice(2, 2, 6, 6, 8);
-        SPRITE_HELP_SPLIT[1][0] = LibSprites.HELP_SPLIT.subRelative(8, 0, 8, 8, 16).slice(2, 2, 6, 6, 8);
-        SPRITE_HELP_SPLIT[1][1] = LibSprites.HELP_SPLIT.subRelative(8, 8, 8, 8, 16).slice(2, 2, 6, 6, 8);
+        SPRITE_HELP_SPLIT[0][0] = BCLibSprites.HELP_SPLIT.subRelative(0, 0, 8, 8, 16).slice(2, 2, 6, 6, 8);
+        SPRITE_HELP_SPLIT[0][1] = BCLibSprites.HELP_SPLIT.subRelative(0, 8, 8, 8, 16).slice(2, 2, 6, 6, 8);
+        SPRITE_HELP_SPLIT[1][0] = BCLibSprites.HELP_SPLIT.subRelative(8, 0, 8, 8, 16).slice(2, 2, 6, 6, 8);
+        SPRITE_HELP_SPLIT[1][1] = BCLibSprites.HELP_SPLIT.subRelative(8, 8, 8, 8, 16).slice(2, 2, 6, 6, 8);
     }
 
     private IGuiElement selected = null;
@@ -62,7 +62,7 @@ public class LedgerHelp extends Ledger_Neptune {
                 break;
             }
         }
-        ISprite sprite = foundAny ? LibSprites.HELP : LibSprites.WARNING_MINOR;
+        ISprite sprite = foundAny ? BCLibSprites.HELP : BCLibSprites.WARNING_MINOR;
         GuiIcon.draw(sprite, x, y, x + 16, y + 16);
     }
 

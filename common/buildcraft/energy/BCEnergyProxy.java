@@ -5,6 +5,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -12,6 +13,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.energy.client.gui.GuiEngineIron_BC8;
 import buildcraft.energy.client.gui.GuiEngineStone_BC8;
+import buildcraft.energy.client.render.RenderEngineIron;
+import buildcraft.energy.client.render.RenderEngineStone;
 import buildcraft.energy.container.ContainerEngineIron_BC8;
 import buildcraft.energy.container.ContainerEngineStone_BC8;
 import buildcraft.energy.tile.TileEngineIron_BC8;
@@ -67,10 +70,15 @@ public abstract class BCEnergyProxy implements IGuiHandler {
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends BCEnergyProxy {
         @Override
+        public void fmlPreInit() {
+            BCEnergyModels.fmlPreInit();
+        }
+
+        @Override
         public void fmlInit() {
             super.fmlInit();
-            // ClientRegistry.bindTileEntitySpecialRenderer(TileEngineStone_BC8.class, RenderEngineStone.INSTANCE);
-            // ClientRegistry.bindTileEntitySpecialRenderer(TileEngineRedstone_BC8.class, RenderEngineWood.INSTANCE);
+            ClientRegistry.bindTileEntitySpecialRenderer(TileEngineStone_BC8.class, RenderEngineStone.INSTANCE);
+            ClientRegistry.bindTileEntitySpecialRenderer(TileEngineIron_BC8.class, RenderEngineIron.INSTANCE);
         }
 
         @Override

@@ -121,8 +121,8 @@ public abstract class JsonModelRule {
                     v.position_z -= oz;
                     Axis axis = faceTo.getAxis();
                     if (axis == Axis.X) {
-                        float ym = faceTo.getFrontOffsetX();
-                        float xm = -ym;
+                        float xm = faceTo.getFrontOffsetX();
+                        float ym = -xm;
 
                         // rotate around the Z-axis
                         float t = v.position_y * xm;

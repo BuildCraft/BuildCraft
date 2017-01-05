@@ -33,7 +33,6 @@ import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
 import buildcraft.lib.client.render.MarkerRenderer;
 import buildcraft.lib.client.resource.ResourceRegistry;
-import buildcraft.lib.client.sprite.LibSprites;
 import buildcraft.lib.debug.BCAdvDebugging;
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.fluid.FluidManager;
@@ -115,7 +114,7 @@ public abstract class BCLibProxy implements IGuiHandler {
             DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, MarkerRenderer.INSTANCE);
             DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, BCAdvDebugging.INSTANCE);
             // various sprite registers
-            LibSprites.fmlPreInitClient();
+            BCLibSprites.fmlPreInitClient();
         }
 
         @Override

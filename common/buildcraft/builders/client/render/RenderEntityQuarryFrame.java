@@ -1,5 +1,6 @@
 package buildcraft.builders.client.render;
 
+import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
@@ -18,7 +19,7 @@ public class RenderEntityQuarryFrame extends Render<EntityQuarryFrame> {
     }
 
     @Override
-    public void doRender(EntityQuarryFrame entity, double x, double y, double z, float entityYaw, float partialTicks) {
-        // NO-OP -- the quarry tile renders this
+    public boolean shouldRender(EntityQuarryFrame livingEntity, ICamera camera, double camX, double camY, double camZ) {
+        return false;
     }
 }

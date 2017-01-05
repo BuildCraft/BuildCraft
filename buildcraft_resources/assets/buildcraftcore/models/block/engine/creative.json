@@ -4,8 +4,10 @@
         "#side":"buildcraftcore:blocks/engine/creative/side"
     },
     "parent":"buildcraftlib:models/block/engine_base",
+    "values": {
+        "stage":"'overheat'"
+    },
     "variables": {
-        "trunk_tex": "#trunk_overheat",
         "stage_light": 0
     }
 }

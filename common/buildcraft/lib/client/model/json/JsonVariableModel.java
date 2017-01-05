@@ -69,6 +69,12 @@ public class JsonVariableModel {
         List<JsonVariableModelPart> cutout = new ArrayList<>();
         List<JsonVariableModelPart> translucent = new ArrayList<>();
         List<JsonModelRule> rulesP = new ArrayList<>();
+
+        if (obj.has("values")) {
+            fnCtx = new FunctionContext(fnCtx);
+            putVariables(JsonUtils.getJsonObject(obj, "values"), fnCtx);
+        }
+
         if (obj.has("parent")) {
             String parentName = JsonUtils.getString(obj, "parent");
             parentName += ".json";
@@ -100,35 +106,7 @@ public class JsonVariableModel {
         textures = texturesP;
         if (obj.has("variables")) {
             fnCtx = new FunctionContext(fnCtx);
-            JsonElement var = obj.get("variables");
-            if (!var.isJsonObject()) throw new JsonSyntaxException("Expected an object, got " + var + " for 'variables'");
-            JsonObject vars = var.getAsJsonObject();
-            for (Entry<String, JsonElement> entry : vars.entrySet()) {
-                String name = entry.getKey();
-                name = name.toLowerCase(Locale.ROOT);
-                if (fnCtx.hasLocalVariable(name)) {
-                    throw new JsonSyntaxException("Duplicate local variable '" + name + "'");
-                }
-                JsonElement value = entry.getValue();
-                if (!value.isJsonPrimitive() && value.getAsJsonPrimitive().isString()) {
-                    throw new JsonSyntaxException("Expected a string, got " + value + " for the variable '" + name + "'");
-                }
-                String expression = value.getAsString();
-                IExpressionNode node;
-                try {
-                    node = InternalCompiler.compileExpression(expression, fnCtx);
-                } catch (InvalidExpressionException e) {
-                    throw new JsonSyntaxException("Invalid expression", e);
-                }
-                IVariableNode varNode = NodeType.getType(node).makeVariableNode();
-                if (variables.containsKey(name)) {
-                    NodeUpdatable existing = variables.get(name);
-                    existing.setSource(varNode);
-                } else {
-                    variables.put(name, new NodeUpdatable(node, varNode));
-                }
-                fnCtx.putVariable(name, varNode);
-            }
+            putVariables(JsonUtils.getJsonObject(obj, "variables"), fnCtx);
         }
         variablesArray = variables.values().toArray(new NodeUpdatable[variables.size()]);
 
@@ -151,6 +129,35 @@ public class JsonVariableModel {
             }
         }
         rules = rulesP.toArray(new JsonModelRule[rulesP.size()]);
+    }
+
+    private void putVariables(JsonObject values, FunctionContext fnCtx) {
+        for (Entry<String, JsonElement> entry : values.entrySet()) {
+            String name = entry.getKey();
+            name = name.toLowerCase(Locale.ROOT);
+            if (fnCtx.hasLocalVariable(name)) {
+                throw new JsonSyntaxException("Duplicate local variable '" + name + "'");
+            }
+            JsonElement value = entry.getValue();
+            if (!value.isJsonPrimitive() && value.getAsJsonPrimitive().isString()) {
+                throw new JsonSyntaxException("Expected a string, got " + value + " for the variable '" + name + "'");
+            }
+            String expression = value.getAsString();
+            IExpressionNode node;
+            try {
+                node = InternalCompiler.compileExpression(expression, fnCtx);
+            } catch (InvalidExpressionException e) {
+                throw new JsonSyntaxException("Invalid expression", e);
+            }
+            IVariableNode varNode = NodeType.getType(node).makeVariableNode();
+            if (variables.containsKey(name)) {
+                NodeUpdatable existing = variables.get(name);
+                existing.setSource(varNode);
+            } else {
+                variables.put(name, new NodeUpdatable(node, varNode));
+            }
+            fnCtx.putVariable(name, varNode);
+        }
     }
 
     public void refreshLocalVariables() {

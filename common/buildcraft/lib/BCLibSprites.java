@@ -1,8 +1,9 @@
-package buildcraft.lib.client.sprite;
+package buildcraft.lib;
 
+import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
-public class LibSprites {
+public class BCLibSprites {
     public static final SpriteHolder LOCK;
     public static final SpriteHolder WARNING_MINOR;
     public static final SpriteHolder WARNING_MAJOR;

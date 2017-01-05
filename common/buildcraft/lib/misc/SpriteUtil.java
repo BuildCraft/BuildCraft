@@ -13,8 +13,8 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.ISprite;
-import buildcraft.lib.client.sprite.LibSprites;
 import buildcraft.lib.client.sprite.RawSprite;
 
 public class SpriteUtil {
@@ -35,7 +35,7 @@ public class SpriteUtil {
 
     public static ISprite getFaceSprite(GameProfile profile) {
         if (profile == null) {
-            return LibSprites.HELP;
+            return BCLibSprites.HELP;
         }
         Minecraft mc = Minecraft.getMinecraft();
 
@@ -48,7 +48,7 @@ public class SpriteUtil {
         }
         GameProfile p2 = CACHED.get(profile);
         if (p2 == null) {
-            return LibSprites.LOCK;
+            return BCLibSprites.LOCK;
         }
         profile = p2;
         Map<Type, MinecraftProfileTexture> map = mc.getSkinManager().loadSkinFromCache(profile);
@@ -57,7 +57,7 @@ public class SpriteUtil {
             ResourceLocation loc = mc.getSkinManager().loadSkin(tex, Type.SKIN);
             return new RawSprite(loc, 8, 8, 8, 8, 64);
         }
-        return LibSprites.LOADING;
+        return BCLibSprites.LOADING;
     }
 
     public static TextureAtlasSprite missingSprite() {
