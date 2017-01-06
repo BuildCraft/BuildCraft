@@ -436,7 +436,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                     attachTile = getPipe(world, node.pos, false);
                 }
             } else {
-                wirePart = EnumWirePart.get((int) (trace.hitVec.xCoord * 2), (int) (trace.hitVec.yCoord * 2), (int) (trace.hitVec.zCoord * 2));
+                System.out.println(trace.hitVec.xCoord);
+                wirePart = EnumWirePart.get((trace.hitVec.xCoord % 1 + 1) % 1 > 0.5, (trace.hitVec.yCoord % 1 + 1) % 1 > 0.5, (trace.hitVec.zCoord % 1 + 1) % 1 > 0.5);
             }
             if (wirePart != null && attachTile != null) {
                 attachTile.getWireManager().addPart(wirePart, EnumDyeColor.byMetadata(held.getMetadata()));
