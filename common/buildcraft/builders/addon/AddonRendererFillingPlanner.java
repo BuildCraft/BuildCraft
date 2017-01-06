@@ -8,12 +8,19 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.model.ModelLoader;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class AddonRendererFillingPlanner implements IFastAddonRenderer<AddonFillingPlanner> {
     @Override
     public void renderAddonFast(AddonFillingPlanner addon, EntityPlayer player, float partialTicks, VertexBuffer vb) {
-        List<BlockPos> blocksShouldBePlaced = addon.getBlocksShouldBePlaced();
+        List<BlockPos> blocksShouldBePlaced = new ArrayList<>(addon.getBlocksShouldBePlaced());
+        blocksShouldBePlaced.sort(Comparator.comparing((BlockPos blockPos) ->
+                Math.pow(player.posX - blockPos.getX(), 2) +
+                        Math.pow(player.posY - blockPos.getY(), 2) +
+                        Math.pow(player.posZ - blockPos.getZ(), 2)
+        ).reversed());
         for (BlockPos blockPos : blocksShouldBePlaced) {
             AxisAlignedBB bb = new AxisAlignedBB(blockPos, blockPos.add(1, 1, 1)).expandXyz(-0.1);
             TextureAtlasSprite s = ModelLoader.White.INSTANCE;
