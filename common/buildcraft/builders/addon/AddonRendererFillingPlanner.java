@@ -11,7 +11,6 @@ import net.minecraftforge.client.model.ModelLoader;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class AddonRendererFillingPlanner implements IFastAddonRenderer<AddonFillingPlanner> {
     @Override
@@ -22,7 +21,7 @@ public class AddonRendererFillingPlanner implements IFastAddonRenderer<AddonFill
                         Math.pow(player.posY - blockPos.getY(), 2) +
                         Math.pow(player.posZ - blockPos.getZ(), 2)
         ).reversed());
-        blocksShouldBePlaced = blocksShouldBePlaced.stream().filter(blockPos -> player.world.isAirBlock(blockPos)).collect(Collectors.toList());
+        blocksShouldBePlaced.removeIf(blockPos -> !player.world.isAirBlock(blockPos));
         for (BlockPos blockPos : blocksShouldBePlaced) {
             AxisAlignedBB bb = new AxisAlignedBB(blockPos, blockPos.add(1, 1, 1)).expandXyz(-0.1);
             TextureAtlasSprite s = ModelLoader.White.INSTANCE;
