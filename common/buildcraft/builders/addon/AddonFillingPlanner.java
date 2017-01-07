@@ -19,11 +19,11 @@ public class AddonFillingPlanner extends Addon {
     public List<IParameter> parameters = new ArrayList<>();
     public boolean inverted;
 
-    public List<BlockPos> getBlocksShouldBePlaced() {
+    public List<BlockPos> getBlocksShouldBe(boolean trueIfPlacedOrFalseIfBroken) {
         List<BlockPos> blockShouldBePlaced = new ArrayList<>();
         BlockPos size = box.box.size();
         boolean[][][] fillingPlan = Filling.INSTANCE.getFillingPlan(size, parameters);
-        if (inverted) {
+        if (inverted == trueIfPlacedOrFalseIfBroken) {
             fillingPlan = Filling.INSTANCE.invertFillingPlan(size, fillingPlan);
         }
         for (int z = 0; z < size.getZ(); z++) {
@@ -36,6 +36,14 @@ public class AddonFillingPlanner extends Addon {
             }
         }
         return blockShouldBePlaced;
+    }
+
+    public List<BlockPos> getBlocksShouldBePlaced() {
+        return getBlocksShouldBe(true);
+    }
+
+    public List<BlockPos> getBlocksShouldBeBroken() {
+        return getBlocksShouldBe(false);
     }
 
     @Override

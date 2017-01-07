@@ -35,7 +35,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     private double tubeLengthLast = 0;
 
     protected boolean isComplete = false;
-    protected final MjBattery battery = new MjBattery(MjAPI.MJ * 500);
+    protected final MjBattery battery = new MjBattery(500 * MjAPI.MJ);
     protected final IMjReceiver mjReceiver = createMjReceiver();
     protected final MjCapabilityHelper mjCapHelper = new MjCapabilityHelper(mjReceiver);
 
@@ -176,7 +176,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        return new AxisAlignedBB(new BlockPos(pos.getX(), 0, pos.getZ()), new BlockPos(pos.getX(),  world.getHeight(), pos.getZ()));
+        return INFINITE_EXTENT_AABB;
     }
 
     @Override

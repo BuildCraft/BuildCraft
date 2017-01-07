@@ -15,7 +15,7 @@ public class ContainerFiller extends ContainerBCTile<TileFiller> {
 
         for (int sy = 0; sy < 3; sy++) {
             for (int sx = 0; sx < 9; sx++) {
-                addSlotToContainer(new SlotBase(tile.invResources, sx + sy * 9 + 9, 8 + sx * 18, 8845 + sy * 18));
+                addSlotToContainer(new SlotBase(tile.invResources, sx + sy * 9, 8 + sx * 18, 85 + sy * 18));
             }
         }
     }

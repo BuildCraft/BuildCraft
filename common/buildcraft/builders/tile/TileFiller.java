@@ -1,37 +1,55 @@
 package buildcraft.builders.tile;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
+import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.addon.AddonFillingPlanner;
 import buildcraft.core.marker.volume.Lock;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.FakePlayerUtil;
+import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 
 public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable {
-    public final IItemHandlerModifiable invResources = itemManager.addInvHandler("resources", 27, EnumAccess.NONE, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invResources = itemManager.addInvHandler("resources", 27, EnumAccess.NONE, EnumPipePart.VALUES);
     public final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
+    private final IMjReceiver mjReceiver = new MjBatteryReciver(battery);
+    private final MjCapabilityHelper mjCapHelper = new MjCapabilityHelper(mjReceiver);
     public AddonFillingPlanner addon;
+    public EnumTaskType currentTaskType = null;
+    public BlockPos currentPos = null;
+    protected int progress = 0;
 
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
@@ -67,6 +85,76 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         battery.tick(getWorld(), getPos());
         if (world.isRemote) {
             return;
+        }
+
+        if (addon == null) {
+            return;
+        }
+
+        if (currentTaskType == null) {
+            List<BlockPos> blocksShouldBeBroken = addon.getBlocksShouldBeBroken();
+            blocksShouldBeBroken.sort(Comparator.comparing(blockPos ->
+                    Math.pow(blockPos.getX() - pos.getX(), 2) + Math.pow(blockPos.getY() - pos.getY(), 2) + Math.pow(blockPos.getZ() - pos.getZ(), 2)
+            ));
+            for (BlockPos blockPos : blocksShouldBeBroken) {
+                if (!world.isAirBlock(blockPos)) {
+                    currentTaskType = EnumTaskType.BREAK;
+                    currentPos = blockPos;
+                    break;
+                }
+            }
+        }
+
+        if (currentTaskType == null && invResources.extract(null, 1, 1, true).getItem() instanceof ItemBlock) {
+                List<BlockPos> blocksShouldBePlaced = addon.getBlocksShouldBePlaced();
+                blocksShouldBePlaced.sort(Comparator.comparing((BlockPos blockPos) ->
+                        Math.pow(blockPos.getX() - pos.getX(), 2) + Math.pow(blockPos.getY() - pos.getY(), 2) + Math.pow(blockPos.getZ() - pos.getZ(), 2)
+                ).reversed());
+                for (BlockPos blockPos : blocksShouldBePlaced) {
+                    if (world.isAirBlock(blockPos)) {
+                        currentTaskType = EnumTaskType.PLACE;
+                        currentPos = blockPos;
+                        break;
+                    }
+                }
+        }
+
+        if (currentTaskType != null) {
+            long target = 0;
+            if (currentTaskType == EnumTaskType.BREAK) {
+                target = BlockUtil.computeBlockBreakPower(world, currentPos);
+            }
+            progress += battery.extractPower(0, target - progress);
+            if (progress >= target) {
+                progress = 0;
+                if (currentTaskType == EnumTaskType.BREAK) {
+                    EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, getPos(), getOwner());
+                    BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, currentPos, world.getBlockState(currentPos), fakePlayer);
+                    MinecraftForge.EVENT_BUS.post(breakEvent);
+                    if (!breakEvent.isCanceled()) {
+                        world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
+                        world.destroyBlock(currentPos, false);
+                    } else {
+                        // TODO: return power
+                    }
+                }
+                if (currentTaskType == EnumTaskType.PLACE) {
+                    // FIXME: totally wrong
+                    ItemStack item = invResources.extract(null, 1, 1, false);
+                    if (item.getItem() instanceof ItemBlock) {
+                        ItemBlock itemBlock = (ItemBlock) item.getItem();
+                        world.setBlockState(currentPos, itemBlock.block.getDefaultState());
+                    }
+                }
+                currentTaskType = null;
+                currentPos = null;
+            } else {
+                if (currentTaskType == EnumTaskType.BREAK) {
+                    if (!world.isAirBlock(currentPos)) {
+                        world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, (int) ((progress * 9) / target));
+                    }
+                }
+            }
         }
     }
 
@@ -124,9 +212,27 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     }
 
     @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        T cap = mjCapHelper.getCapability(capability, facing);
+        if (cap != null) {
+            return cap;
+        }
+        return super.getCapability(capability, facing);
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
+        left.add("battery = " + battery.getDebugString());
         left.add("addon = " + addon);
+        left.add("task = " + currentTaskType);
+        left.add("current = " + currentPos);
+        left.add("progress = " + progress);
+    }
+
+    public enum EnumTaskType {
+        BREAK,
+        PLACE
     }
 }
