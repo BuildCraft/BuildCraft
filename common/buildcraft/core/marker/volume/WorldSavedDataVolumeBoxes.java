@@ -17,16 +17,16 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 
-public class WorldSavedDataVolumeMarkers extends WorldSavedData {
-    public static final String DATA_NAME = "buildcraft_volume_markers";
+public class WorldSavedDataVolumeBoxes extends WorldSavedData {
+    public static final String DATA_NAME = "buildcraft_volume_boxes";
     public World world;
     public final List<VolumeBox> boxes = new ArrayList<>();
 
-    public WorldSavedDataVolumeMarkers() {
+    public WorldSavedDataVolumeBoxes() {
         super(DATA_NAME);
     }
 
-    public WorldSavedDataVolumeMarkers(String name) {
+    public WorldSavedDataVolumeBoxes(String name) {
         super(name);
     }
 
@@ -70,7 +70,7 @@ public class WorldSavedDataVolumeMarkers extends WorldSavedData {
     @Override
     public void markDirty() {
         super.markDirty();
-        BCMessageHandler.netWrapper.sendToDimension(new MessageVolumeMarkers(boxes), world.provider.getDimension());
+        BCMessageHandler.netWrapper.sendToDimension(new MessageVolumeBoxes(boxes), world.provider.getDimension());
     }
 
     @Override
@@ -88,14 +88,14 @@ public class WorldSavedDataVolumeMarkers extends WorldSavedData {
         IntStream.range(0, boxesTag.tagCount()).mapToObj(boxesTag::getCompoundTagAt).map(VolumeBox::new).forEach(boxes::add);
     }
 
-    public static WorldSavedDataVolumeMarkers get(World world) {
+    public static WorldSavedDataVolumeBoxes get(World world) {
         if(world.isRemote) {
-            BCLog.logger.warn("Creating VolumeMarkers on client, this is a bug");
+            BCLog.logger.warn("Creating VolumeBoxes on client, this is a bug");
         }
         MapStorage storage = world.getPerWorldStorage();
-        WorldSavedDataVolumeMarkers instance = (WorldSavedDataVolumeMarkers) storage.getOrLoadData(WorldSavedDataVolumeMarkers.class, DATA_NAME);
+        WorldSavedDataVolumeBoxes instance = (WorldSavedDataVolumeBoxes) storage.getOrLoadData(WorldSavedDataVolumeBoxes.class, DATA_NAME);
         if(instance == null) {
-            instance = new WorldSavedDataVolumeMarkers();
+            instance = new WorldSavedDataVolumeBoxes();
             storage.setData(DATA_NAME, instance);
         }
         instance.world = world;

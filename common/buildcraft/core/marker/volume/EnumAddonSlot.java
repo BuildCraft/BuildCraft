@@ -65,11 +65,11 @@ public enum EnumAddonSlot {
         return Pair.of(bestBox, bestSlot);
     }
 
-    public static Pair<VolumeBox, EnumAddonSlot> getSelectingBoxAndSlot(EntityPlayer player, WorldSavedDataVolumeMarkers volumeMarkers) {
-        return getSelectingBoxAndSlot(player, volumeMarkers.boxes);
+    public static Pair<VolumeBox, EnumAddonSlot> getSelectingBoxAndSlot(EntityPlayer player, WorldSavedDataVolumeBoxes volumeBoxes) {
+        return getSelectingBoxAndSlot(player, volumeBoxes.boxes);
     }
 
-    public static Pair<VolumeBox, EnumAddonSlot> getSelectingBoxAndSlot(EntityPlayer player, ClientVolumeMarkers clientVolumeMarkers) {
-        return getSelectingBoxAndSlot(player, clientVolumeMarkers.boxes);
+    public static Pair<VolumeBox, EnumAddonSlot> getSelectingBoxAndSlot(EntityPlayer player, ClientVolumeBoxes clientVolumeBoxes) {
+        return getSelectingBoxAndSlot(player, clientVolumeBoxes.boxes);
     }
 }

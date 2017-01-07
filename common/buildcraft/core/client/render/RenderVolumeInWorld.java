@@ -2,7 +2,7 @@ package buildcraft.core.client.render;
 
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.marker.volume.Addon;
-import buildcraft.core.marker.volume.ClientVolumeMarkers;
+import buildcraft.core.marker.volume.ClientVolumeBoxes;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
 import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
@@ -40,7 +40,7 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
 
         vb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 
-        ClientVolumeMarkers.INSTANCE.boxes.forEach(box -> {
+        ClientVolumeBoxes.INSTANCE.boxes.forEach(box -> {
             makeLaserBox(
                     box.box,
                     box.isEditingBy(player) ? BuildCraftLaserManager.MARKER_VOLUME_SIGNAL : BuildCraftLaserManager.MARKER_VOLUME_CONNECTED,

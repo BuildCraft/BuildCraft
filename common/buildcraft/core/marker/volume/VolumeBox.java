@@ -2,6 +2,7 @@ package buildcraft.core.marker.volume;
 
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.net.PacketBufferBC;
+import io.netty.buffer.UnpooledByteBufAllocator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -17,6 +18,7 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 public class VolumeBox {
+    public UUID id;
     public Box box;
     private UUID player = null;
     private UUID oldPlayer = null;
@@ -26,10 +28,12 @@ public class VolumeBox {
     public final Map<EnumAddonSlot, Addon> addons = new EnumMap<>(EnumAddonSlot.class);
 
     public VolumeBox(BlockPos at) {
+        id = UUID.randomUUID();
         box = new Box(at, at);
     }
 
     public VolumeBox(NBTTagCompound nbt) {
+        id = nbt.getUniqueId("id");
         box = new Box();
         box.initialize(nbt.getCompoundTag("box"));
         player = nbt.hasKey("player") ? NBTUtil.getUUIDFromTag(nbt.getCompoundTag("player")) : null;
@@ -47,22 +51,7 @@ public class VolumeBox {
     }
 
     public VolumeBox(PacketBuffer buf) {
-        box = new Box();
-        box.readData(buf);
-        player = buf.readBoolean() ? buf.readUniqueId() : null;
-        IntStream.range(0, buf.readInt())
-                .forEach(i -> {
-                    EnumAddonSlot slot = new PacketBufferBC(buf).readEnumValue(EnumAddonSlot.class);
-                    Class<? extends Addon> addonClass = AddonsRegistry.INSTANCE.getClassByName(new ResourceLocation(buf.readString(1024)));
-                    try {
-                        Addon addon = addonClass.newInstance();
-                        addon.box = this;
-                        addon.fromBytes(buf);
-                        addons.put(slot, addon);
-                    } catch (InstantiationException | IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                });
+        fromBytes(buf);
     }
 
     public boolean isEditing() {
@@ -131,6 +120,7 @@ public class VolumeBox {
 
     public NBTTagCompound writeToNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setUniqueId("id", id);
         nbt.setTag("box", this.box.writeToNBT());
         if (player != null) {
             nbt.setTag("player", NBTUtil.createUUIDTag(player));
@@ -152,7 +142,8 @@ public class VolumeBox {
     }
 
     public void toBytes(PacketBuffer buf) {
-        this.box.writeData(buf);
+        buf.writeUniqueId(id);
+        box.writeData(buf);
         buf.writeBoolean(player != null);
         if (player != null) {
             buf.writeUniqueId(player);
@@ -163,5 +154,44 @@ public class VolumeBox {
             buf.writeString(AddonsRegistry.INSTANCE.getNameByClass(addon.getClass()).toString());
             addon.toBytes(buf);
         });
+    }
+
+    public void fromBytes(PacketBuffer buf) {
+        id = buf.readUniqueId();
+        box = new Box();
+        box.readData(buf);
+        player = buf.readBoolean() ? buf.readUniqueId() : null;
+        Map<EnumAddonSlot, Addon> newAddons = new EnumMap<>(EnumAddonSlot.class);
+        IntStream.range(0, buf.readInt())
+                .forEach(i -> {
+                    EnumAddonSlot slot = new PacketBufferBC(buf).readEnumValue(EnumAddonSlot.class);
+                    Class<? extends Addon> addonClass = AddonsRegistry.INSTANCE.getClassByName(new ResourceLocation(buf.readString(1024)));
+                    try {
+                        Addon addon = addonClass.newInstance();
+                        addon.box = this;
+                        addon.fromBytes(buf);
+                        newAddons.put(slot, addon);
+                    } catch (InstantiationException | IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                });
+        addons.keySet().removeIf(slot -> !newAddons.containsKey(slot));
+        newAddons.entrySet().stream().filter(slotAddon -> !addons.containsKey(slotAddon.getKey())).forEach(slotAddon -> addons.put(slotAddon.getKey(), slotAddon.getValue()));
+        for (Map.Entry<EnumAddonSlot, Addon> slotAddon : newAddons.entrySet()) {
+            PacketBuffer buffer = new PacketBuffer(UnpooledByteBufAllocator.DEFAULT.buffer());
+            slotAddon.getValue().toBytes(buffer);
+            addons.get(slotAddon.getKey()).fromBytes(buffer);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || !(o == null || getClass() != o.getClass()) && id.equals(((VolumeBox) o).id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }

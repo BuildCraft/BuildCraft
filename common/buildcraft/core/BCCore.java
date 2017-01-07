@@ -7,7 +7,7 @@ package buildcraft.core;
 import buildcraft.core.list.ListTooltipHandler;
 import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.VolumeCache;
-import buildcraft.core.marker.volume.MessageVolumeMarkers;
+import buildcraft.core.marker.volume.MessageVolumeBoxes;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
 import buildcraft.lib.BCMessageHandler;
@@ -67,7 +67,7 @@ public class BCCore {
         OreDictionary.registerOre("craftingTableWood", Blocks.CRAFTING_TABLE);
 
         MinecraftForge.EVENT_BUS.register(BCCoreEventDist.INSTANCE);
-        BCMessageHandler.addMessageType(MessageVolumeMarkers.class, MessageVolumeMarkers.Handler.INSTANCE, Side.CLIENT);
+        BCMessageHandler.addMessageType(MessageVolumeBoxes.class, MessageVolumeBoxes.Handler.INSTANCE, Side.CLIENT);
     }
 
     @Mod.EventHandler

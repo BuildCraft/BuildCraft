@@ -1,7 +1,7 @@
 package buildcraft.core.item;
 
 import buildcraft.core.marker.volume.VolumeBox;
-import buildcraft.core.marker.volume.WorldSavedDataVolumeMarkers;
+import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 import buildcraft.lib.item.ItemBC_Neptune;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumActionResult;
@@ -23,12 +23,12 @@ public class ItemVolumeCuboid extends ItemBC_Neptune {
 
         BlockPos offset = pos.offset(facing);
 
-        WorldSavedDataVolumeMarkers volumeMarkers = WorldSavedDataVolumeMarkers.get(world);
-        VolumeBox current = volumeMarkers.getBoxAt(offset);
+        WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
+        VolumeBox current = volumeBoxes.getBoxAt(offset);
 
         if (current == null) {
-            volumeMarkers.addBox(offset);
-            volumeMarkers.markDirty();
+            volumeBoxes.addBox(offset);
+            volumeBoxes.markDirty();
             return EnumActionResult.SUCCESS;
         }
 

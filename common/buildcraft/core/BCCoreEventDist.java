@@ -1,8 +1,8 @@
 package buildcraft.core;
 
-import buildcraft.core.marker.volume.MessageVolumeMarkers;
+import buildcraft.core.marker.volume.MessageVolumeBoxes;
 import buildcraft.core.marker.volume.VolumeBox;
-import buildcraft.core.marker.volume.WorldSavedDataVolumeMarkers;
+import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 import buildcraft.lib.BCMessageHandler;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -15,7 +15,7 @@ public enum BCCoreEventDist {
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event) {
         if(!event.world.isRemote && event.world.getMinecraftServer() != null) {
-            WorldSavedDataVolumeMarkers.get(event.world).tick();
+            WorldSavedDataVolumeBoxes.get(event.world).tick();
         }
     }
 
@@ -23,10 +23,10 @@ public enum BCCoreEventDist {
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.player instanceof EntityPlayerMP) {
             BCMessageHandler.netWrapper.sendTo(
-                    new MessageVolumeMarkers(WorldSavedDataVolumeMarkers.get(event.player.world).boxes),
+                    new MessageVolumeBoxes(WorldSavedDataVolumeBoxes.get(event.player.world).boxes),
                     (EntityPlayerMP) event.player
             );
-            WorldSavedDataVolumeMarkers.get(((EntityPlayerMP) event.player).world).boxes.stream()
+            WorldSavedDataVolumeBoxes.get(((EntityPlayerMP) event.player).world).boxes.stream()
                     .filter(box -> box.isPausedEditingBy(event.player))
                     .forEach(VolumeBox::resumeEditing);
         }

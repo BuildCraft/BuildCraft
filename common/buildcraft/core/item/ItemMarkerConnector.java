@@ -7,7 +7,7 @@ package buildcraft.core.item;
 import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.EnumAddonSlot;
 import buildcraft.core.marker.volume.VolumeBox;
-import buildcraft.core.marker.volume.WorldSavedDataVolumeMarkers;
+import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
@@ -122,14 +122,14 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
             return new ActionResult<>(EnumActionResult.PASS, stack);
         }
 
-        WorldSavedDataVolumeMarkers volumeMarkers = WorldSavedDataVolumeMarkers.get(world);
+        WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
 
-        VolumeBox currentEditing = volumeMarkers.getCurrentEditing(player);
+        VolumeBox currentEditing = volumeBoxes.getCurrentEditing(player);
 
         Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
         Vec3d end = start.add(player.getLookVec().scale(4));
 
-        Pair<VolumeBox, EnumAddonSlot> selectingBoxAndSlot = EnumAddonSlot.getSelectingBoxAndSlot(player, volumeMarkers);
+        Pair<VolumeBox, EnumAddonSlot> selectingBoxAndSlot = EnumAddonSlot.getSelectingBoxAndSlot(player, volumeBoxes);
         VolumeBox addonBox = selectingBoxAndSlot.getLeft();
         EnumAddonSlot addonSlot = selectingBoxAndSlot.getRight();
         if (addonBox != null && addonSlot != null) {
@@ -137,26 +137,26 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                 if (player.isSneaking()) {
                     addonBox.addons.get(addonSlot).onRemoved();
                     addonBox.addons.remove(addonSlot);
-                    volumeMarkers.markDirty();
+                    volumeBoxes.markDirty();
                 } else {
                     addonBox.addons.get(addonSlot).onPlayerRightClick(player);
-                    volumeMarkers.markDirty();
+                    volumeBoxes.markDirty();
                 }
             }
         } else if (player.isSneaking()) {
             if (currentEditing == null) {
-                for (Iterator<VolumeBox> iterator = volumeMarkers.boxes.iterator(); iterator.hasNext(); ) {
+                for (Iterator<VolumeBox> iterator = volumeBoxes.boxes.iterator(); iterator.hasNext(); ) {
                     VolumeBox box = iterator.next();
                     if (box.box.getBoundingBox().calculateIntercept(start, end) != null) {
                         box.addons.values().forEach(Addon::onRemoved);
                         iterator.remove();
-                        volumeMarkers.markDirty();
+                        volumeBoxes.markDirty();
                         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
                     }
                 }
             } else {
                 currentEditing.cancelEditing();
-                volumeMarkers.markDirty();
+                volumeBoxes.markDirty();
                 return new ActionResult<>(EnumActionResult.SUCCESS, stack);
             }
         } else {
@@ -165,7 +165,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                 double bestDist = 10000;
                 BlockPos editing = null;
 
-                for (VolumeBox box : volumeMarkers.boxes) {
+                for (VolumeBox box : volumeBoxes.boxes) {
                     for (BlockPos p : PositionUtil.getCorners(box.box.min(), box.box.max())) {
                         RayTraceResult ray = new AxisAlignedBB(p).calculateIntercept(start, end);
                         if (ray != null) {
@@ -196,12 +196,12 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                         held = VecUtil.replaceValue(held, EnumFacing.Axis.Z, max.getZ());
                     }
                     bestBox.setHeldDistOldMinOldMax(held, Math.max(1.5, bestDist + 0.5), bestBox.box.min(), bestBox.box.max());
-                    volumeMarkers.markDirty();
+                    volumeBoxes.markDirty();
                     return new ActionResult<>(EnumActionResult.SUCCESS, stack);
                 }
             } else {
                 currentEditing.confirmEditing();
-                volumeMarkers.markDirty();
+                volumeBoxes.markDirty();
                 return new ActionResult<>(EnumActionResult.SUCCESS, stack);
             }
         }
