@@ -21,10 +21,11 @@ import java.util.stream.IntStream;
 
 public class ContainerFillingPlanner extends ContainerBC_Neptune {
     private static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("filling_planner");
-    private static final int ID_PARAMETERS = IDS.allocId("PARAMETERS");
+    private static final int ID_DATA = IDS.allocId("DATA");
 
     public AddonFillingPlanner addon;
     public List<IParameter> parameters = new ArrayList<>();
+    public boolean inverted;
 
     public ContainerFillingPlanner(EntityPlayer player) {
         super(player);
@@ -33,12 +34,14 @@ public class ContainerFillingPlanner extends ContainerBC_Neptune {
                 EnumAddonSlot.getSelectingBoxAndSlot(player, WorldSavedDataVolumeBoxes.get(player.world));
         addon = (AddonFillingPlanner) selectingBoxAndSlot.getLeft().addons.get(selectingBoxAndSlot.getRight());
         parameters.addAll(addon.parameters);
+        inverted = addon.inverted;
     }
 
-    public void sendParametersToServer() {
-        sendMessage(ID_PARAMETERS, buffer -> {
+    public void sendDataToServer() {
+        sendMessage(ID_DATA, buffer -> {
             buffer.writeInt(parameters.size());
             parameters.forEach(parameter -> IParameter.toBytes(buffer, parameter));
+            buffer.writeBoolean(inverted);
         });
     }
 
@@ -46,10 +49,12 @@ public class ContainerFillingPlanner extends ContainerBC_Neptune {
     public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readMessage(id, buffer, side, ctx);
         if (side == Side.SERVER) {
-            if (id == ID_PARAMETERS) {
+            if (id == ID_DATA) {
                 parameters.clear();
                 IntStream.range(0, buffer.readInt()).mapToObj(i -> IParameter.fromBytes(buffer)).forEach(parameters::add);
+                inverted = buffer.readBoolean();
                 addon.parameters = parameters;
+                addon.inverted = inverted;
                 WorldSavedDataVolumeBoxes.get(player.world).markDirty();
             }
         }

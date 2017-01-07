@@ -17,11 +17,15 @@ import java.util.stream.IntStream;
 
 public class AddonFillingPlanner extends Addon {
     public List<IParameter> parameters = new ArrayList<>();
+    public boolean inverted;
 
     public List<BlockPos> getBlocksShouldBePlaced() {
         List<BlockPos> blockShouldBePlaced = new ArrayList<>();
         BlockPos size = box.box.size();
         boolean[][][] fillingPlan = Filling.INSTANCE.getFillingPlan(size, parameters);
+        if (inverted) {
+            fillingPlan = Filling.INSTANCE.invertFillingPlan(size, fillingPlan);
+        }
         for (int z = 0; z < size.getZ(); z++) {
             for (int y = 0; y < size.getY(); y++) {
                 for (int x = 0; x < size.getX(); x++) {
@@ -71,11 +75,13 @@ public class AddonFillingPlanner extends Addon {
     public void toBytes(ByteBuf buf) {
         buf.writeInt(parameters.size());
         parameters.forEach(parameter -> IParameter.toBytes(buf, parameter));
+        buf.writeBoolean(inverted);
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         parameters.clear();
         IntStream.range(0, buf.readInt()).mapToObj(i -> IParameter.fromBytes(buf)).forEach(parameters::add);
+        inverted = buf.readBoolean();
     }
 }

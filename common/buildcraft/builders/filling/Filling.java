@@ -110,4 +110,8 @@ public enum Filling {
         }
         return generateFillingPlanByFunction(size, pos -> false);
     }
+
+    public boolean[][][] invertFillingPlan(BlockPos size, boolean[][][] fillingPlan) {
+        return generateFillingPlanByFunction(size, pos -> !fillingPlan[pos.getX()][pos.getY()][pos.getZ()]);
+    }
 }

@@ -9,6 +9,8 @@ import buildcraft.builders.filling.Filling;
 import buildcraft.builders.filling.IParameter;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.button.*;
+import buildcraft.lib.gui.elem.ToolTip;
 import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
@@ -25,6 +27,19 @@ public class GuiFillingPlanner extends GuiBC8<ContainerFillingPlanner> {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+        buttonList.add(new GuiButtonSmall(this, 0, rootElement.getX() + 7, rootElement.getY() + 38, 100, "Inverted")
+                .setToolTip(ToolTip.createLocalized("gui.filling_planner.inverted"))
+                .setBehaviour(IButtonBehaviour.TOGGLE)
+                .setActive(container.inverted)
+                .registerListener((button, buttonId) -> {
+                    container.inverted = button.isButtonActive();
+                    container.sendDataToServer();
+                }));
     }
 
     private void iterateParameters(IParameterIterator iterator) {
@@ -87,7 +102,7 @@ public class GuiFillingPlanner extends GuiBC8<ContainerFillingPlanner> {
                         break;
                     }
                 }
-                container.sendParametersToServer();
+                container.sendDataToServer();
                 found.set(true);
             }
         });
