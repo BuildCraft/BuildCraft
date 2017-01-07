@@ -10,7 +10,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -41,7 +40,7 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
         TileEntity tile = world.getTileEntity(pos);
         if(tile instanceof TileFiller) {
             TileFiller filler = (TileFiller) tile;
-            return state.withProperty(PATTERN, filler.pattern);
+            return state.withProperty(PATTERN, EnumFillerPattern.NONE); // FIXME
         }
         return state;
     }

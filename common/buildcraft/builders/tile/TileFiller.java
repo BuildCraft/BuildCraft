@@ -1,25 +1,25 @@
 package buildcraft.builders.tile;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.tiles.IDebuggable;
+import buildcraft.builders.addon.AddonFillingPlanner;
+import buildcraft.core.marker.volume.Lock;
+import buildcraft.core.marker.volume.VolumeBox;
+import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -30,23 +30,34 @@ import java.util.List;
 
 public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable {
     public final IItemHandlerModifiable invResources = itemManager.addInvHandler("resources", 27, EnumAccess.NONE, EnumPipePart.VALUES);
-    public Box box = null;
     public final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
-    public EnumFillerPattern pattern = EnumFillerPattern.NONE;
+    public AddonFillingPlanner addon;
 
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
-        EnumFacing thisFacing = getWorld().getBlockState(getPos()).getValue(BlockBCBase_Neptune.PROP_FACING);
-        TileEntity inFront = getWorld().getTileEntity(getPos().offset(thisFacing.getOpposite()));
-        if (inFront instanceof IAreaProvider) {
-            IAreaProvider provider = (IAreaProvider) inFront;
-            BlockPos min = provider.min();
-            BlockPos max = provider.max();
-            if (min != null && max != null && !min.equals(max)) {
-                box = new Box(min, max);
-                provider.removeFromWorld();
-                sendNetworkUpdate(NET_RENDER_DATA);
+        if (world.isRemote) {
+            return;
+        }
+        IBlockState blockState = world.getBlockState(pos);
+        WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
+        VolumeBox box = volumeBoxes.getBoxAt(pos.offset(blockState.getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite()));
+        if (box != null) {
+            addon = (AddonFillingPlanner) box.addons
+                    .values()
+                    .stream()
+                    .filter(addon -> addon instanceof AddonFillingPlanner)
+                    .findFirst()
+                    .orElse(null);
+            if (addon != null) {
+                box.locks.add(
+                        new Lock(
+                                new Lock.LockCause.LockCauseBlock(pos, blockState.getBlock()),
+                                new Lock.LockTarget.LockTargetResize(),
+                                new Lock.LockTarget.LockTargetAddon(addon.getSlot())
+                        )
+                );
+                volumeBoxes.markDirty();
             }
         }
     }
@@ -82,20 +93,12 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        NBTTagCompound boxTag = nbt.getCompoundTag("box");
-        if (!boxTag.hasNoTags()) {
-            box = new Box();
-            box.initialize(boxTag);
-        }
         battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
-        if (box != null) {
-            nbt.setTag("box", box.writeToNBT());
-        }
         nbt.setTag("mj_battery", battery.serializeNBT());
         return nbt;
     }
@@ -111,7 +114,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        return BoundingBoxUtil.makeFrom(getPos(), box);
+        return addon == null ? super.getRenderBoundingBox() : BoundingBoxUtil.makeFrom(pos, addon.box.box);
     }
 
     @Override
@@ -124,6 +127,6 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
-        left.add("box = " + box);
+        left.add("addon = " + addon);
     }
 }

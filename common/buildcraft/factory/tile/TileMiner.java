@@ -179,6 +179,12 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         return new AxisAlignedBB(new BlockPos(pos.getX(), 0, pos.getZ()), new BlockPos(pos.getX(),  world.getHeight(), pos.getZ()));
     }
 
+    @Override
+    @SideOnly(Side.CLIENT)
+    public double getMaxRenderDistanceSquared() {
+        return Double.MAX_VALUE;
+    }
+
     // IHasWork
 
     @Override

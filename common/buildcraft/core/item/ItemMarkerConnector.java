@@ -4,10 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.item;
 
-import buildcraft.core.marker.volume.Addon;
-import buildcraft.core.marker.volume.EnumAddonSlot;
-import buildcraft.core.marker.volume.VolumeBox;
-import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
+import buildcraft.core.marker.volume.*;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
@@ -30,6 +27,7 @@ import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Iterator;
+import java.util.stream.Collectors;
 
 public class ItemMarkerConnector extends ItemBC_Neptune {
     public ItemMarkerConnector(String id) {
@@ -99,13 +97,21 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
         }
 
         public MarkerLineInteraction getBetter(MarkerLineInteraction other) {
-            if (other == null) return this;
+            if (other == null) {
+                return this;
+            }
             if (other.marker1 == marker2 && other.marker2 == marker1) {
                 return other;
             }
-            if (other.distToLine < distToLine) return other;
-            if (other.distToLine > distToLine) return this;
-            if (other.distToPoint < distToPoint) return other;
+            if (other.distToLine < distToLine) {
+                return other;
+            }
+            if (other.distToLine > distToLine) {
+                return this;
+            }
+            if (other.distToPoint < distToPoint) {
+                return other;
+            }
             return this;
         }
     }
@@ -133,7 +139,13 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
         VolumeBox addonBox = selectingBoxAndSlot.getLeft();
         EnumAddonSlot addonSlot = selectingBoxAndSlot.getRight();
         if (addonBox != null && addonSlot != null) {
-            if (addonBox.addons.containsKey(addonSlot)) {
+            if (
+                    addonBox.addons.containsKey(addonSlot) &&
+                            addonBox.getLocksStream()
+                                    .noneMatch(target ->
+                                            target instanceof Lock.LockTarget.LockTargetAddon &&
+                                                    ((Lock.LockTarget.LockTargetAddon) target).slot == addonSlot)
+                    ) {
                 if (player.isSneaking()) {
                     addonBox.addons.get(addonSlot).onRemoved();
                     addonBox.addons.remove(addonSlot);
@@ -165,7 +177,15 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                 double bestDist = 10000;
                 BlockPos editing = null;
 
-                for (VolumeBox box : volumeBoxes.boxes) {
+                for (
+                        VolumeBox box :
+                        volumeBoxes.boxes.stream()
+                                .filter(box ->
+                                        box.getLocksStream()
+                                                .noneMatch(target -> target instanceof Lock.LockTarget.LockTargetResize)
+                                )
+                                .collect(Collectors.toList())
+                        ) {
                     for (BlockPos p : PositionUtil.getCorners(box.box.min(), box.box.max())) {
                         RayTraceResult ray = new AxisAlignedBB(p).calculateIntercept(start, end);
                         if (ray != null) {

@@ -11,11 +11,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class VolumeBox {
     public UUID id;
@@ -26,6 +24,7 @@ public class VolumeBox {
     private double dist = 0;
     private BlockPos oldMin = null, oldMax = null;
     public final Map<EnumAddonSlot, Addon> addons = new EnumMap<>(EnumAddonSlot.class);
+    public final List<Lock> locks = new ArrayList<>();
 
     public VolumeBox(BlockPos at) {
         id = UUID.randomUUID();
@@ -116,6 +115,10 @@ public class VolumeBox {
 
     public double getDist() {
         return dist;
+    }
+
+    public Stream<Lock.LockTarget> getLocksStream() {
+        return locks.stream().flatMap(lock -> lock.targets.stream());
     }
 
     public NBTTagCompound writeToNBT() {

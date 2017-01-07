@@ -15,6 +15,7 @@ import net.minecraftforge.common.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class WorldSavedDataVolumeBoxes extends WorldSavedData {
@@ -62,6 +63,15 @@ public class WorldSavedDataVolumeBoxes extends WorldSavedData {
                 }
             }
         });
+        for (VolumeBox box : boxes) {
+            List<Lock> locksToRemove = new ArrayList<>(box.locks).stream()
+                    .filter(lock -> !lock.cause.stillWorks(world))
+                    .collect(Collectors.toList());
+            if (!locksToRemove.isEmpty()) {
+                box.locks.removeAll(locksToRemove);
+                dirty.set(true);
+            }
+        }
         if (dirty.get()) {
             markDirty();
         }

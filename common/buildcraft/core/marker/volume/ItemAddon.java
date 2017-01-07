@@ -28,7 +28,9 @@ public abstract class ItemAddon extends ItemBC_Neptune {
         EnumAddonSlot slot = selectingBoxAndSlot.getRight();
         if (box != null && slot != null) {
             if (!box.addons.containsKey(slot)) {
-                box.addons.put(slot, createAddon());
+                Addon addon = createAddon();
+                addon.box = box;
+                box.addons.put(slot, addon);
                 box.addons.get(slot).onAdded();
                 volumeBoxes.markDirty();
                 return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
