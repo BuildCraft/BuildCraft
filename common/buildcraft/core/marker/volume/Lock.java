@@ -1,10 +1,12 @@
 package buildcraft.core.marker.volume;
 
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -64,10 +66,44 @@ public class Lock {
         }).forEach(targets::add);
     }
 
+    public void toBytes(PacketBuffer buf) {
+        new PacketBufferBC(buf).writeEnumValue(LockCause.EnumLockCause.getForClass(cause.getClass()));
+        cause.toBytes(buf);
+        buf.writeInt(targets.size());
+        targets.forEach(target -> {
+            new PacketBuffer(buf).writeEnumValue(LockTarget.EnumLockTarget.getForClass(target.getClass()));
+            target.toBytes(buf);
+        });
+    }
+
+    public void fromBytes(PacketBuffer buf) {
+        try {
+            cause = new PacketBufferBC(buf).readEnumValue(LockCause.EnumLockCause.class).clazz.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        cause.fromBytes(buf);
+        targets.clear();
+        IntStream.range(0, buf.readInt()).mapToObj(i -> {
+            LockTarget target;
+            try {
+                target = new PacketBufferBC(buf).readEnumValue(LockTarget.EnumLockTarget.class).clazz.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            target.fromBytes(buf);
+            return target;
+        }).forEach(targets::add);
+    }
+
     public static abstract class LockCause {
         public abstract NBTTagCompound writeToNBT(NBTTagCompound nbt);
 
         public abstract void readFromNBT(NBTTagCompound nbt);
+
+        public abstract void toBytes(PacketBuffer buf);
+
+        public abstract void fromBytes(PacketBuffer buf);
 
         public abstract boolean stillWorks(World world);
 
@@ -97,8 +133,34 @@ public class Lock {
             }
 
             @Override
+            public void toBytes(PacketBuffer buf) {
+                buf.writeBlockPos(pos);
+                buf.writeString(Block.REGISTRY.getNameForObject(block).toString());
+            }
+
+            @Override
+            public void fromBytes(PacketBuffer buf) {
+                pos = buf.readBlockPos();
+                block = Block.REGISTRY.getObject(new ResourceLocation(buf.readString(1024)));
+            }
+
+            @Override
             public boolean stillWorks(World world) {
                 return world.getBlockState(pos).getBlock() == block;
+            }
+        }
+
+        enum EnumLockCause {
+            BLOCK(LockCauseBlock.class);
+
+            public final Class<? extends LockCause> clazz;
+
+            EnumLockCause(Class<? extends LockCause> clazz) {
+                this.clazz = clazz;
+            }
+
+            public static Enum<EnumLockCause> getForClass(Class<? extends LockCause> clazz) {
+                return Arrays.stream(values()).filter(enumCause -> enumCause.clazz == clazz).findFirst().orElse(null);
             }
         }
     }
@@ -108,6 +170,10 @@ public class Lock {
 
         public abstract void readFromNBT(NBTTagCompound nbt);
 
+        public abstract void toBytes(PacketBuffer buf);
+
+        public abstract void fromBytes(PacketBuffer buf);
+
         public static class LockTargetResize extends LockTarget {
             @Override
             public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
@@ -116,6 +182,14 @@ public class Lock {
 
             @Override
             public void readFromNBT(NBTTagCompound nbt) {
+            }
+
+            @Override
+            public void toBytes(PacketBuffer buf) {
+            }
+
+            @Override
+            public void fromBytes(PacketBuffer buf) {
             }
         }
 
@@ -138,6 +212,51 @@ public class Lock {
             @Override
             public void readFromNBT(NBTTagCompound nbt) {
                 slot = NBTUtilBC.readEnum(nbt.getTag("slot"), EnumAddonSlot.class);
+            }
+
+            @Override
+            public void toBytes(PacketBuffer buf) {
+                new PacketBufferBC(buf).writeEnumValue(slot);
+            }
+
+            @Override
+            public void fromBytes(PacketBuffer buf) {
+                slot = new PacketBufferBC(buf).readEnumValue(EnumAddonSlot.class);
+            }
+        }
+
+        public static class LockTargetUsedByMachine extends LockTarget {
+            @Override
+            public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+                return nbt;
+            }
+
+            @Override
+            public void readFromNBT(NBTTagCompound nbt) {
+            }
+
+            @Override
+            public void toBytes(PacketBuffer buf) {
+            }
+
+            @Override
+            public void fromBytes(PacketBuffer buf) {
+            }
+        }
+
+        enum EnumLockTarget {
+            RESIZE(LockTargetResize.class),
+            ADDON(LockTargetAddon.class),
+            USED_BY_MACHINE(LockTargetUsedByMachine.class);
+
+            public final Class<? extends LockTarget> clazz;
+
+            EnumLockTarget(Class<? extends LockTarget> clazz) {
+                this.clazz = clazz;
+            }
+
+            public static Enum<EnumLockTarget> getForClass(Class<? extends LockTarget> clazz) {
+                return Arrays.stream(values()).filter(enumTarget -> enumTarget.clazz == clazz).findFirst().orElse(null);
             }
         }
     }

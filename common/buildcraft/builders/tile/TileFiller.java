@@ -72,7 +72,8 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                         new Lock(
                                 new Lock.LockCause.LockCauseBlock(pos, blockState.getBlock()),
                                 new Lock.LockTarget.LockTargetResize(),
-                                new Lock.LockTarget.LockTargetAddon(addon.getSlot())
+                                new Lock.LockTarget.LockTargetAddon(addon.getSlot()),
+                                new Lock.LockTarget.LockTargetUsedByMachine()
                         )
                 );
                 volumeBoxes.markDirty();
@@ -123,6 +124,9 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
             long target = 0;
             if (currentTaskType == EnumTaskType.BREAK) {
                 target = BlockUtil.computeBlockBreakPower(world, currentPos);
+            }
+            if (currentTaskType == EnumTaskType.PLACE) {
+                target = 4 * MjAPI.MJ;
             }
             progress += battery.extractPower(0, target - progress);
             if (progress >= target) {

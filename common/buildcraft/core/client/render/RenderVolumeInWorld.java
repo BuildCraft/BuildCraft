@@ -4,6 +4,7 @@ import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.ClientVolumeBoxes;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
+import buildcraft.core.marker.volume.Lock;
 import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
@@ -43,7 +44,11 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
         ClientVolumeBoxes.INSTANCE.boxes.forEach(box -> {
             makeLaserBox(
                     box.box,
-                    box.isEditingBy(player) ? BuildCraftLaserManager.MARKER_VOLUME_SIGNAL : BuildCraftLaserManager.MARKER_VOLUME_CONNECTED,
+                    box.isEditingBy(player) ?
+                            BuildCraftLaserManager.MARKER_VOLUME_SIGNAL :
+                            box.getLockTargetsStream().anyMatch(target -> target instanceof Lock.LockTarget.LockTargetUsedByMachine) ?
+                                    BuildCraftLaserManager.STRIPES_WRITE :
+                                    BuildCraftLaserManager.MARKER_VOLUME_CONNECTED,
                     box.isEditingBy(player) ? RENDER_SCALE_HIGHLIGHT : RENDER_SCALE
             );
 
@@ -108,7 +113,7 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
     }
 
     private static LaserData_BC8 makeLaser(LaserType type, Vec3d min, Vec3d max, Axis axis, double scale, boolean second) {
-        switch(axis) {
+        switch (axis) {
             case X:
                 if (second) {
                     min = new Vec3d(min.xCoord - 1 / 16D, min.yCoord, min.zCoord);

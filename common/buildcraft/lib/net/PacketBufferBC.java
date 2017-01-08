@@ -254,15 +254,22 @@ public class PacketBufferBC extends PacketBuffer {
     @Override
     public PacketBufferBC writeEnumValue(Enum<?> value) {
         Enum<?>[] possible = value.getClass().getEnumConstants();
-        writeFixedBits(value.ordinal(), MathHelper.log2DeBruijn(possible.length));
+        if (possible.length > 1) {
+            writeFixedBits(value.ordinal(), MathHelper.log2DeBruijn(possible.length));
+        }
         return this;
     }
 
     @Override
     public <E extends Enum<E>> E readEnumValue(Class<E> enumClass) {
         E[] enums = enumClass.getEnumConstants();
-        int length = MathHelper.log2DeBruijn(enums.length);
-        int index = readFixedBits(length);
+        int index;
+        if (enums.length > 1) {
+            int length = MathHelper.log2DeBruijn(enums.length);
+            index = readFixedBits(length);
+        } else {
+            index = 0;
+        }
         return enums[index];
     }
 }

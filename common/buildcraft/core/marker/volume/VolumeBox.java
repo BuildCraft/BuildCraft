@@ -117,7 +117,7 @@ public class VolumeBox {
         return dist;
     }
 
-    public Stream<Lock.LockTarget> getLocksStream() {
+    public Stream<Lock.LockTarget> getLockTargetsStream() {
         return locks.stream().flatMap(lock -> lock.targets.stream());
     }
 
@@ -157,6 +157,8 @@ public class VolumeBox {
             buf.writeString(AddonsRegistry.INSTANCE.getNameByClass(addon.getClass()).toString());
             addon.toBytes(buf);
         });
+        buf.writeInt(locks.size());
+        locks.forEach(lock -> lock.toBytes(buf));
     }
 
     public void fromBytes(PacketBuffer buf) {
@@ -185,6 +187,12 @@ public class VolumeBox {
             slotAddon.getValue().toBytes(buffer);
             addons.get(slotAddon.getKey()).fromBytes(buffer);
         }
+        locks.clear();
+        IntStream.range(0, buf.readInt()).mapToObj(i -> {
+            Lock lock = new Lock();
+            lock.fromBytes(buf);
+            return lock;
+        }).forEach(locks::add);
     }
 
     @Override
