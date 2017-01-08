@@ -54,7 +54,7 @@ public class PacketBufferBC extends PacketBuffer {
         return this;
     }
 
-    private void writePartialBitsBegin() {
+    void writePartialBitsBegin() {
         if (writePartialIndex == -1 || writePartialOffset == 8) {
             writePartialIndex = writerIndex();
             writePartialOffset = 0;
@@ -63,7 +63,7 @@ public class PacketBufferBC extends PacketBuffer {
         }
     }
 
-    private void readPartialBitsBegin() {
+    void readPartialBitsBegin() {
         if (readPartialOffset == 8) {
             readPartialOffset = 0;
             readPartialCache = readUnsignedByte();
@@ -254,6 +254,9 @@ public class PacketBufferBC extends PacketBuffer {
     @Override
     public PacketBufferBC writeEnumValue(Enum<?> value) {
         Enum<?>[] possible = value.getClass().getEnumConstants();
+        if (possible == null) throw new IllegalArgumentException("Not an enum " + value.getClass());
+        if (possible.length == 0) throw new IllegalArgumentException("Tried to write an enum value without any values! How did you do this?");
+        if (possible.length == 1) throw new IllegalArgumentException("Tried to write an enum value with only 1 possibility: this is probably a bug!");
         writeFixedBits(value.ordinal(), MathHelper.log2DeBruijn(possible.length));
         return this;
     }
@@ -261,6 +264,8 @@ public class PacketBufferBC extends PacketBuffer {
     @Override
     public <E extends Enum<E>> E readEnumValue(Class<E> enumClass) {
         E[] enums = enumClass.getEnumConstants();
+        if (enums.length == 0) throw new IllegalArgumentException("Tried to read an enum value without any values! How did you do this?");
+        if (enums.length == 1) throw new IllegalArgumentException("Tried to read an enum value with only 1 possibility: this is probably a bug!");
         int length = MathHelper.log2DeBruijn(enums.length);
         int index = readFixedBits(length);
         return enums[index];
