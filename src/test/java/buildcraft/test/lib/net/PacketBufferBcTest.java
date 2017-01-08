@@ -14,7 +14,7 @@ import io.netty.buffer.Unpooled;
 public class PacketBufferBcTest {
     @Test
     public void testAmongst() {
-        PacketBufferBC buffer = new PacketBufferBC(Unpooled.buffer());
+        PacketBufferBC buffer = new PrintingByteBuf(Unpooled.buffer());
 
         buffer.writeInt(49);
         buffer.writeBoolean(true);
@@ -53,7 +53,7 @@ public class PacketBufferBcTest {
 
     @Test
     public void testMultiple() {
-        PacketBufferBC buffer = new PacketBufferBC(Unpooled.buffer());
+        PacketBufferBC buffer = new PrintingByteBuf(Unpooled.buffer());
 
         for (int i = 0; i < 17; i++) {
             boolean value = i % 2 == 0;
@@ -75,7 +75,7 @@ public class PacketBufferBcTest {
 
     @Test
     public void testFixedBits() {
-        PacketBufferBC buffer = new PacketBufferBC(new PrintingByteBuf(Unpooled.buffer()));
+        PacketBufferBC buffer = new PrintingByteBuf(Unpooled.buffer());
         int value = 0xA4;
         int value2 = 1;
         int value3 = 0xF_81_67;
@@ -107,7 +107,7 @@ public class PacketBufferBcTest {
 
     @Test
     public void testEnums() {
-        PacketBufferBC buffer = new PacketBufferBC(new PrintingByteBuf(Unpooled.buffer()));
+        PacketBufferBC buffer = new PrintingByteBuf(Unpooled.buffer());
 
         buffer.writeBoolean(true);
         buffer.writeEnumValue(EnumFacing.DOWN);
@@ -124,4 +124,70 @@ public class PacketBufferBcTest {
         Assert.assertEquals(2, buffer.readerIndex());
         Assert.assertEquals(2, buffer.writerIndex());
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidEnum_1_write() {
+        PacketBufferBC buffer = new PrintingByteBuf(Unpooled.buffer());
+        /* Attempting to write out an enum value that only has 1 possibility is almost certinatly a bug */
+        buffer.writeEnumValue(Enum_1.A);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidEnum_1_read() {
+        PacketBufferBC buffer = new PrintingByteBuf(Unpooled.buffer());
+        /* Attempting to write out an enum value that only has 1 possibility is almost certinatly a bug */
+        buffer.readEnumValue(Enum_1.class);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidEnum_0_read() {
+        PacketBufferBC buffer = new PrintingByteBuf(Unpooled.buffer());
+        /* Attempting to write out an enum value that doesn't have any values is definatly a bug */
+        buffer.readEnumValue(Enum_0.class);
+    }
+
+    @Test
+    public void testSizedEnums() {
+        PacketBufferBC buffer = new PrintingByteBuf(Unpooled.buffer());
+
+        buffer.writeEnumValue(Enum_2.A);
+        buffer.writeEnumValue(Enum_2.B);
+
+        //@formatter:off
+        for (Enum_3 e : Enum_3.values()) buffer.writeEnumValue(e);
+        for (Enum_4 e : Enum_4.values()) buffer.writeEnumValue(e);
+        for (Enum_5 e : Enum_5.values()) buffer.writeEnumValue(e);
+        for (Enum_6 e : Enum_6.values()) buffer.writeEnumValue(e);
+        for (Enum_7 e : Enum_7.values()) buffer.writeEnumValue(e);
+        for (Enum_8 e : Enum_8.values()) buffer.writeEnumValue(e);
+        for (Enum_9 e : Enum_9.values()) buffer.writeEnumValue(e);
+        //@formatter:on
+
+        Assert.assertEquals(Enum_2.A, buffer.readEnumValue(Enum_2.class));
+        Assert.assertEquals(Enum_2.B, buffer.readEnumValue(Enum_2.class));
+
+        //@formatter:off
+        for (Enum_3 e : Enum_3.values()) Assert.assertEquals(e, buffer.readEnumValue(Enum_3.class));
+        for (Enum_4 e : Enum_4.values()) Assert.assertEquals(e, buffer.readEnumValue(Enum_4.class));
+        for (Enum_5 e : Enum_5.values()) Assert.assertEquals(e, buffer.readEnumValue(Enum_5.class));
+        for (Enum_6 e : Enum_6.values()) Assert.assertEquals(e, buffer.readEnumValue(Enum_6.class));
+        for (Enum_7 e : Enum_7.values()) Assert.assertEquals(e, buffer.readEnumValue(Enum_7.class));
+        for (Enum_8 e : Enum_8.values()) Assert.assertEquals(e, buffer.readEnumValue(Enum_8.class));
+        for (Enum_9 e : Enum_9.values()) Assert.assertEquals(e, buffer.readEnumValue(Enum_9.class));
+        //@formatter:on
+    }
+
+    //@formatter:off
+    public enum Enum_0 {}
+    public enum Enum_1 {A}
+    public enum Enum_2 {A, B}
+    public enum Enum_3 {A, B, C}
+    public enum Enum_4 {A, B, C, D}
+    public enum Enum_5 {A, B, C, D, E}
+    public enum Enum_6 {A, B, C, D, E, F}
+    public enum Enum_7 {A, B, C, D, E, F, G}
+    public enum Enum_8 {A, B, C, D, E, F, G, H}
+    public enum Enum_9 {A, B, C, D, E, F, G, H, I}
+    //@formatter:on
 }

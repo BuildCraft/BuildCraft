@@ -1,10 +1,10 @@
 package buildcraft.lib.nbt;
 
-import net.minecraft.network.PacketBuffer;
+import buildcraft.lib.net.PacketBufferBC;
 
 import io.netty.buffer.ByteBuf;
 
-public final class PrintingByteBuf extends PacketBuffer {
+public final class PrintingByteBuf extends PacketBufferBC {
     public PrintingByteBuf(ByteBuf wrapped) {
         super(wrapped);
     }
@@ -89,6 +89,14 @@ public final class PrintingByteBuf extends PacketBuffer {
         return this;
     }
 
+    @Override
+    public ByteBuf setByte(int index, int value) {
+        System.out.println("\n  Set " + index + " (" + new String(padLength(2, getByte(index)))//
+            + " ) to" + new String(padLength(2, value)));
+        super.setByte(index, value);
+        return this;
+    }
+
     private static char[] padLength(int length, long val) {
         String s = Long.toHexString(val);
         char[] chars = new char[length + 1];
@@ -103,11 +111,19 @@ public final class PrintingByteBuf extends PacketBuffer {
         return chars;
     }
 
+    // PacketBufferBC overrides
+
     @Override
-    public ByteBuf setByte(int index, int value) {
-        System.out.println("\n  Set " + index + " (" + new String(padLength(2, getByte(index)))//
-            + " ) to" + new String(padLength(2, value)));
-        super.setByte(index, value);
+    public PacketBufferBC writeFixedBits(int value, int length) throws IllegalArgumentException {
+        System.out.println("Writing " + length + " fixed bits ( " + new String(padLength(length, value)) + " )");
+        super.writeFixedBits(value, length);
+        return this;
+    }
+
+    @Override
+    public PacketBufferBC writeEnumValue(Enum<?> value) {
+        System.out.println("Writing " + value + " from " + value.getClass());
+        super.writeEnumValue(value);
         return this;
     }
 }

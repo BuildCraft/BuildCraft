@@ -54,7 +54,7 @@ public class PacketBufferBC extends PacketBuffer {
         return this;
     }
 
-    private void writePartialBitsBegin() {
+    void writePartialBitsBegin() {
         if (writePartialIndex == -1 || writePartialOffset == 8) {
             writePartialIndex = writerIndex();
             writePartialOffset = 0;
@@ -63,7 +63,7 @@ public class PacketBufferBC extends PacketBuffer {
         }
     }
 
-    private void readPartialBitsBegin() {
+    void readPartialBitsBegin() {
         if (readPartialOffset == 8) {
             readPartialOffset = 0;
             readPartialCache = readUnsignedByte();
