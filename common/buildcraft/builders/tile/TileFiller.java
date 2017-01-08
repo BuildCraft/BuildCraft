@@ -7,6 +7,7 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.addon.AddonFillingPlanner;
+import buildcraft.core.marker.volume.EnumAddonSlot;
 import buildcraft.core.marker.volume.Lock;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
@@ -14,6 +15,7 @@ import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.FakePlayerUtil;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -183,16 +185,40 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     // Read-write
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+        nbt.setTag("battery", battery.serializeNBT());
+        if (addon != null) {
+            nbt.setUniqueId("addonBoxId", addon.box.id);
+            nbt.setTag("addonSlot", NBTUtilBC.writeEnum(addon.getSlot()));
+        }
+        if (currentTaskType != null) {
+            nbt.setTag("currentTaskType", NBTUtilBC.writeEnum(currentTaskType));
+        }
+        if (currentPos != null) {
+            nbt.setTag("currentPos", NBTUtilBC.writeBlockPos(currentPos));
+        }
+        nbt.setInteger("progress", progress);
+        return nbt;
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setTag("mj_battery", battery.serializeNBT());
-        return nbt;
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        battery.deserializeNBT(nbt.getCompoundTag("battery"));
+        if (nbt.hasKey("addonSlot")) {
+            addon = (AddonFillingPlanner) WorldSavedDataVolumeBoxes.get(world)
+                    .getBoxFromId(nbt.getUniqueId("addonBoxId"))
+                    .addons
+                    .get(NBTUtilBC.readEnum(nbt.getTag("addonSlot"), EnumAddonSlot.class));
+        }
+        if (nbt.hasKey("currentTaskType")) {
+            currentTaskType = NBTUtilBC.readEnum(nbt.getTag("currentTaskType"), EnumTaskType.class);
+        }
+        if (nbt.hasKey("currentPos")) {
+            currentPos = NBTUtilBC.readBlockPos(nbt.getTag("currentPos"));
+        }
+        progress = nbt.getInteger("progress");
     }
 
     // Rendering

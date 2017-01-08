@@ -14,6 +14,7 @@ import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -39,6 +40,10 @@ public class WorldSavedDataVolumeBoxes extends WorldSavedData {
         VolumeBox box = new VolumeBox(pos);
         boxes.add(box);
         return box;
+    }
+
+    public VolumeBox getBoxFromId(UUID id) {
+        return boxes.stream().filter(box -> box.id.equals(id)).findFirst().orElse(null);
     }
 
     public VolumeBox getCurrentEditing(EntityPlayer player) {

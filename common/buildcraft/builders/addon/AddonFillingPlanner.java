@@ -12,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,12 +76,13 @@ public class AddonFillingPlanner extends Addon {
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         NBTTagList parametersTag = new NBTTagList();
         parameters.stream().map(parameter -> IParameter.writeToNBT(new NBTTagCompound(), parameter)).forEach(parametersTag::appendTag);
+        nbt.setTag("parameters", parametersTag);
         return nbt;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-        NBTTagList parametersTag = new NBTTagList();
+        NBTTagList parametersTag = nbt.getTagList("parameters", Constants.NBT.TAG_COMPOUND);
         IntStream.range(0, parametersTag.tagCount()).mapToObj(parametersTag::getCompoundTagAt).map(IParameter::readFromNBT).forEach(parameters::add);
     }
 
