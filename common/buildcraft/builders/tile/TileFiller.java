@@ -137,6 +137,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
             if (progress >= target) {
                 progress = 0;
                 EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, getPos(), getOwner());
+                boolean revert = false;
                 if (currentTaskType == EnumTaskType.BREAK) {
                     BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, currentPos, world.getBlockState(currentPos), fakePlayer);
                     MinecraftForge.EVENT_BUS.post(breakEvent);
@@ -144,7 +145,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                         world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
                         world.destroyBlock(currentPos, false);
                     } else {
-                        // TODO: return power
+                        revert = true;
                     }
                 }
                 if (currentTaskType == EnumTaskType.PLACE) {
@@ -156,17 +157,21 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                             fakePlayer.getActiveHand(),
                             EnumFacing.UP,
                             0.5F,
-                            0.5F,
+                            0.0F,
                             0.5F
                     );
                     System.out.println(result);
                     if (result != EnumActionResult.SUCCESS) {
+                        revert = true;
                         invResources.insert(stackToPlace, false, false);
                     }
                     stackToPlace = null;
                 }
                 currentTaskType = null;
                 currentPos = null;
+                if (revert) {
+                    battery.addPower(Math.min(target, battery.getCapacity() - battery.getStored()));
+                }
             } else {
                 if (currentTaskType == EnumTaskType.BREAK) {
                     if (!world.isAirBlock(currentPos)) {
