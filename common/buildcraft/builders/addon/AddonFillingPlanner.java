@@ -6,9 +6,11 @@ import buildcraft.builders.filling.IParameter;
 import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.AddonDefaultRenderer;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
+import buildcraft.lib.misc.NBTUtilBC;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
@@ -71,12 +73,15 @@ public class AddonFillingPlanner extends Addon {
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+        NBTTagList parametersTag = new NBTTagList();
+        parameters.stream().map(parameter -> IParameter.writeToNBT(new NBTTagCompound(), parameter)).forEach(parametersTag::appendTag);
         return nbt;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-
+        NBTTagList parametersTag = new NBTTagList();
+        IntStream.range(0, parametersTag.tagCount()).mapToObj(parametersTag::getCompoundTagAt).map(IParameter::readFromNBT).forEach(parameters::add);
     }
 
     @Override
