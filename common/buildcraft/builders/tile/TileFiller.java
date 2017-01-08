@@ -24,9 +24,9 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -51,6 +51,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     public AddonFillingPlanner addon;
     public EnumTaskType currentTaskType = null;
     public BlockPos currentPos = null;
+    private ItemStack stackToPlace;
     protected int progress = 0;
 
     @Override
@@ -108,18 +109,20 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
             }
         }
 
-        if (currentTaskType == null && invResources.extract(null, 1, 1, true).getItem() instanceof ItemBlock) {
-                List<BlockPos> blocksShouldBePlaced = addon.getBlocksShouldBePlaced();
-                blocksShouldBePlaced.sort(Comparator.comparing((BlockPos blockPos) ->
-                        Math.pow(blockPos.getX() - pos.getX(), 2) + Math.pow(blockPos.getY() - pos.getY(), 2) + Math.pow(blockPos.getZ() - pos.getZ(), 2)
-                ).reversed());
-                for (BlockPos blockPos : blocksShouldBePlaced) {
-                    if (world.isAirBlock(blockPos)) {
-                        currentTaskType = EnumTaskType.PLACE;
-                        currentPos = blockPos;
-                        break;
-                    }
+        if (currentTaskType == null && !invResources.extract(null, 1, 1, true).isEmpty()) {
+            List<BlockPos> blocksShouldBePlaced = addon.getBlocksShouldBePlaced();
+            blocksShouldBePlaced.sort(Comparator.comparing(blockPos ->
+                    100_000 - (Math.pow(blockPos.getX() - pos.getX(), 2) + Math.pow(blockPos.getZ() - pos.getZ(), 2)) +
+                            Math.abs(blockPos.getY() - pos.getY()) * 100_000
+            ));
+            for (BlockPos blockPos : blocksShouldBePlaced) {
+                if (world.isAirBlock(blockPos)) {
+                    stackToPlace = invResources.extract(null, 1, 1, false);
+                    currentTaskType = EnumTaskType.PLACE;
+                    currentPos = blockPos;
+                    break;
                 }
+            }
         }
 
         if (currentTaskType != null) {
@@ -133,8 +136,8 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
             progress += battery.extractPower(0, target - progress);
             if (progress >= target) {
                 progress = 0;
+                EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, getPos(), getOwner());
                 if (currentTaskType == EnumTaskType.BREAK) {
-                    EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, getPos(), getOwner());
                     BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, currentPos, world.getBlockState(currentPos), fakePlayer);
                     MinecraftForge.EVENT_BUS.post(breakEvent);
                     if (!breakEvent.isCanceled()) {
@@ -145,12 +148,22 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                     }
                 }
                 if (currentTaskType == EnumTaskType.PLACE) {
-                    // FIXME: totally wrong
-                    ItemStack item = invResources.extract(null, 1, 1, false);
-                    if (item.getItem() instanceof ItemBlock) {
-                        ItemBlock itemBlock = (ItemBlock) item.getItem();
-                        world.setBlockState(currentPos, itemBlock.block.getDefaultState());
+                    fakePlayer.setHeldItem(fakePlayer.getActiveHand(), stackToPlace);
+                    EnumActionResult result = stackToPlace.onItemUse(
+                            fakePlayer,
+                            world,
+                            currentPos,
+                            fakePlayer.getActiveHand(),
+                            EnumFacing.UP,
+                            0.5F,
+                            0.5F,
+                            0.5F
+                    );
+                    System.out.println(result);
+                    if (result != EnumActionResult.SUCCESS) {
+                        invResources.insert(stackToPlace, false, false);
                     }
+                    stackToPlace = null;
                 }
                 currentTaskType = null;
                 currentPos = null;
@@ -198,6 +211,9 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         if (currentPos != null) {
             nbt.setTag("currentPos", NBTUtilBC.writeBlockPos(currentPos));
         }
+        if (stackToPlace != null) {
+            nbt.setTag("stackToPlace", stackToPlace.writeToNBT(new NBTTagCompound()));
+        }
         nbt.setInteger("progress", progress);
         return nbt;
     }
@@ -217,6 +233,9 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         }
         if (nbt.hasKey("currentPos")) {
             currentPos = NBTUtilBC.readBlockPos(nbt.getTag("currentPos"));
+        }
+        if (nbt.hasKey("stackToPlace")) {
+            stackToPlace = new ItemStack(nbt.getCompoundTag("stackToPlace"));
         }
         progress = nbt.getInteger("progress");
     }
