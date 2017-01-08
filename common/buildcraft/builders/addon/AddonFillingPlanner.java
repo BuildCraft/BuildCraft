@@ -6,7 +6,7 @@ import buildcraft.builders.filling.IParameter;
 import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.AddonDefaultRenderer;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
-import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.core.marker.volume.ISingleAddon;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class AddonFillingPlanner extends Addon {
+public class AddonFillingPlanner extends Addon implements ISingleAddon {
     public List<IParameter> parameters = new ArrayList<>();
     public boolean inverted;
 

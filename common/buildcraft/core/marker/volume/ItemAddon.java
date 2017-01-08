@@ -29,11 +29,13 @@ public abstract class ItemAddon extends ItemBC_Neptune {
         if (box != null && slot != null) {
             if (!box.addons.containsKey(slot)) {
                 Addon addon = createAddon();
-                addon.box = box;
-                box.addons.put(slot, addon);
-                box.addons.get(slot).onAdded();
-                volumeBoxes.markDirty();
-                return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+                if (addon.canBePlaceInto(box)) {
+                    addon.box = box;
+                    box.addons.put(slot, addon);
+                    box.addons.get(slot).onAdded();
+                    volumeBoxes.markDirty();
+                    return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+                }
             }
         }
 

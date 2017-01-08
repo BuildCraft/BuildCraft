@@ -21,6 +21,10 @@ public abstract class Addon {
         return getSlot().getBoundingBox(box);
     }
 
+    public boolean canBePlaceInto(VolumeBox box) {
+        return !(this instanceof ISingleAddon) || box.addons.values().stream().noneMatch(addon -> addon.getClass() == getClass());
+    }
+
     public void onAdded() {
     }
 
