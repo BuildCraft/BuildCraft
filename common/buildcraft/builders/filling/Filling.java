@@ -3,6 +3,7 @@ package buildcraft.builders.filling;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemBlockSpecial;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
@@ -20,7 +21,9 @@ public enum Filling {
     private List<Item> itemBlocks = new ArrayList<>();
 
     Filling() {
-        StreamSupport.stream(Item.REGISTRY.spliterator(), false).filter(item -> item instanceof ItemBlock).forEach(this::addItemBlock);
+        StreamSupport.stream(Item.REGISTRY.spliterator(), false)
+                .filter(item -> item instanceof ItemBlock || item instanceof ItemBlockSpecial)
+                .forEach(this::addItemBlock);
         addItemBlock(
                 Items.BED,
                 Items.OAK_DOOR,
@@ -30,7 +33,8 @@ public enum Filling {
                 Items.ACACIA_DOOR,
                 Items.DARK_OAK_DOOR,
                 Items.IRON_DOOR,
-                Items.SKULL
+                Items.SKULL,
+                Items.SIGN
         );
     }
 

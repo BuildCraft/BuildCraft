@@ -2,6 +2,7 @@ package buildcraft.lib.misc;
 
 import java.util.UUID;
 
+import buildcraft.lib.fake.FakePlayerFactoryBC;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.util.math.BlockPos;
@@ -30,7 +31,7 @@ public enum FakePlayerUtil implements IBCFakePlayer {
     }
 
     public FakePlayer getFakePlayer(WorldServer world, BlockPos pos, GameProfile profile) {
-        FakePlayer player = FakePlayerFactory.get(world, profile);
+        FakePlayer player = FakePlayerFactoryBC.get(world, profile);
         player.world = world;
         player.posX = pos.getX();
         player.posY = pos.getY();
