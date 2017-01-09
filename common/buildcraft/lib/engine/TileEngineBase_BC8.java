@@ -24,6 +24,7 @@ import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.collect.OrderedEnumMap;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
@@ -63,14 +64,12 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     public TileEngineBase_BC8() {}
 
     public EnumActionResult attemptRotation() {
-        EnumFacing[] possible = VanillaRotationHandlers.getAllSidesArray();
+        OrderedEnumMap<EnumFacing> possible = VanillaRotationHandlers.ROTATE_FACING;
         EnumFacing current = currentDirection;
-        int ord = VanillaRotationHandlers.getOrdinal(current, possible);
-        for (int i = 1; i < possible.length; i++) {
-            int next = (ord + i) % possible.length;
-            EnumFacing toTry = possible[next];
+        for (int i = 0; i < 6; i++) {
+            current = possible.next(current);
             if (true) {// TODO: replace with sided check
-                currentDirection = toTry;
+                currentDirection = current;
                 // makeTileCache();
                 redrawBlock();
                 return EnumActionResult.SUCCESS;

@@ -320,6 +320,7 @@ public class TagManager {
         registerTag("item.plug.blocker").reg("plug_blocker").locale("PipePlug").model("plug_blocker");
         registerTag("item.plug.gate").reg("plug_gate").locale("gate").model("pluggable/gate").tab("buildcraft.gates");
         registerTag("item.plug.pulsar").reg("plug_pulsar").locale("pulsar").model("plug_pulsar");
+        registerTag("item.plug.daylight_sensor").reg("plug_daylight_sensor").locale("daylight_sensor").model("plug_daylight_sensor");
         registerTag("item.wire").reg("wire").locale("pipeWire").model("wire/");
         // BC Transport Pipes
         startBatch();// Pipes

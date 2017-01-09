@@ -24,9 +24,9 @@ public class BCEnergyModels {
         ENGINE_PROGRESS = fnCtx.putVariableDouble("progress");
         ENGINE_STAGE = fnCtx.putVariableString("stage");
         ENGINE_FACING = fnCtx.putVariableString("facing");
-
-        ENGINE_STONE = getModel("block/engine/stone.json", fnCtx);
-        ENGINE_IRON = getModel("block/engine/iron.json", fnCtx);
+        // TODO: Item models from "item/engine_stone.json"
+        ENGINE_STONE = getModel("block/engine_stone.json", fnCtx);
+        ENGINE_IRON = getModel("block/engine_iron.json", fnCtx);
     }
 
     private static ModelHolderVariable getModel(String loc, FunctionContext fnCtx) {

@@ -543,15 +543,19 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     public void readPayload(int id, PacketBuffer buf, Side side) throws IOException {
         PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(buf);
         if (side == Side.CLIENT) {
-            if (id == NET_FLUID_AMOUNTS) {
+            if (id == NET_FLUID_AMOUNTS || id == NET_ID_FULL_STATE) {
+                boolean full = id == NET_ID_FULL_STATE;
                 if (buffer.readBoolean()) {
                     int fluidId = buffer.readInt();
                     clientFluid = BuildCraftObjectCaches.CACHE_FLUIDS.client().retrieve(fluidId);
                 }
                 for (EnumPipePart part : EnumPipePart.VALUES) {
                     Section section = sections.get(part);
-                    if (buffer.readBoolean()) {
+                    if (full || buffer.readBoolean()) {
                         section.target = buffer.readShort();
+                        if (full) {
+                            section.clientAmountLast = section.clientAmountThis = section.target;
+                        }
                     }
 
                     Dir dir = buffer.readEnumValue(Dir.class);
@@ -567,7 +571,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     public void writePayload(int id, PacketBuffer buf, Side side) {
         PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(buf);
         if (side == Side.SERVER) {
-            if (id == NET_FLUID_AMOUNTS) {
+            if (id == NET_FLUID_AMOUNTS || id == NET_ID_FULL_STATE) {
+                boolean full = id == NET_ID_FULL_STATE;
                 if (currentFluid == null) {
                     buffer.writeBoolean(false);
                 } else {
@@ -576,7 +581,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 }
                 for (EnumPipePart part : EnumPipePart.VALUES) {
                     Section section = sections.get(part);
-                    if (section.amount == section.lastSentAmount) {
+                    if (full) {
+                        buffer.writeShort(section.amount);
+                    } else if (section.amount == section.lastSentAmount) {
                         buffer.writeBoolean(false);
                     } else {
                         buffer.writeBoolean(true);
@@ -585,7 +592,6 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                     }
                     Dir should = Dir.get(section.ticksInDirection);
                     buffer.writeEnumValue(should); // This writes out 2 bits so don't bother with a boolean flag
-                    // TODO: Add fixed-bits writing to PacketBufferBC!
                     section.lastSentDirection = should;
                 }
             }

@@ -16,10 +16,14 @@ import buildcraft.api.transport.neptune.IPipe;
 import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 import buildcraft.api.transport.neptune.PipeBehaviour;
 
+import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.collect.OrderedEnumMap;
 
 public abstract class PipeBehaviourDirectional extends PipeBehaviour {
+    public static final OrderedEnumMap<EnumFacing> ROTATION_ORDER = VanillaRotationHandlers.ROTATE_FACING;
+
     protected EnumPipePart currentDir = EnumPipePart.CENTER;
 
     public PipeBehaviourDirectional(IPipe pipe) {
@@ -56,15 +60,14 @@ public abstract class PipeBehaviourDirectional extends PipeBehaviour {
             EntityUtil.activateWrench(player);
             if (part.face != getCurrentDir()) {
                 if (part == EnumPipePart.CENTER) {
-                    // TODO: Advance the currentDir
-                    return false;
+                    return advanceFacing();
                 } else {
                     if (canFaceDirection(part.face)) {
                         setCurrentDir(part.face);
+                        if (!player.world.isRemote) {
+                            pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
+                        }
                     }
-                }
-                if (!player.world.isRemote) {
-                    pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
                 }
             }
             return true;
@@ -73,6 +76,22 @@ public abstract class PipeBehaviourDirectional extends PipeBehaviour {
     }
 
     protected abstract boolean canFaceDirection(EnumFacing dir);
+
+    /** @return True if the facing direction changed. */
+    public boolean advanceFacing() {
+        EnumFacing current = currentDir.face;
+        for (int i = 0; i < 6; i++) {
+            current = ROTATION_ORDER.next(current);
+            if (canFaceDirection(current)) {
+                setCurrentDir(current);
+                if (!pipe.getHolder().getPipeWorld().isRemote) {
+                    pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
+                }
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Nullable
     protected EnumFacing getCurrentDir() {

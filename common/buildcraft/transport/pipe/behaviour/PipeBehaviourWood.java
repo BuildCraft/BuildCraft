@@ -6,6 +6,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
@@ -65,6 +66,11 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
 
     @Override
     public void onTick() {
+        // TODO: this probably shouldn't run every tick
+        if (currentDir == EnumPipePart.CENTER) {
+            
+        }
+
         mjBattery.tick(pipe.getHolder().getPipeWorld(), pipe.getHolder().getPipePos());
         long potential = mjBattery.getStored();
         if (potential > 0) {

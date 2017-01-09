@@ -33,7 +33,6 @@ import buildcraft.lib.tile.TileMarker;
 
 public abstract class BlockMarkerBase extends BlockBCTile_Neptune implements ICustomRotationHandler {
     private static final Map<EnumFacing, AxisAlignedBB> BOUNDING_BOXES = new EnumMap<>(EnumFacing.class);
-    private static final EnumFacing[] ALL_SIDES = VanillaRotationHandlers.getAllSidesArray();
 
     static {
         double halfWidth = 0.1;
@@ -137,7 +136,7 @@ public abstract class BlockMarkerBase extends BlockBCTile_Neptune implements ICu
     public EnumActionResult attemptRotation(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
         if (state.getBlock() instanceof BlockMarkerBase) {// Just check to make sure we have the right block...
             IProperty<EnumFacing> prop = BuildCraftProperties.BLOCK_FACING_6;
-            return VanillaRotationHandlers.rotateEnumFacing(world, pos, state, prop, ALL_SIDES);
+            return VanillaRotationHandlers.rotateEnumFacing(world, pos, state, prop, VanillaRotationHandlers.ROTATE_FACING);
         } else {
             return EnumActionResult.PASS;
         }

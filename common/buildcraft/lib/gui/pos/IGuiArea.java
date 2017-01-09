@@ -61,79 +61,16 @@ public interface IGuiArea extends IGuiPosition {
 
     @Override
     default IGuiArea offset(IntSupplier x, IntSupplier y) {
-        IGuiArea containing = this;
-        return new IGuiArea() {
-            @Override
-            public int getX() {
-                return x.getAsInt() + containing.getX();
-            }
-
-            @Override
-            public int getY() {
-                return y.getAsInt() + containing.getY();
-            }
-
-            @Override
-            public int getWidth() {
-                return containing.getWidth();
-            }
-
-            @Override
-            public int getHeight() {
-                return containing.getHeight();
-            }
-        };
+        return create(() -> getX() + x.getAsInt(), () -> getY() + y.getAsInt(), this::getWidth, this::getHeight);
     }
 
     @Override
     default IGuiArea offset(int x, int y) {
-        IGuiArea containing = this;
-        return new IGuiArea() {
-            @Override
-            public int getX() {
-                return x + containing.getX();
-            }
-
-            @Override
-            public int getY() {
-                return y + containing.getY();
-            }
-
-            @Override
-            public int getWidth() {
-                return containing.getWidth();
-            }
-
-            @Override
-            public int getHeight() {
-                return containing.getHeight();
-            }
-        };
+        return create(() -> getX() + x, () -> getY() + y, this::getWidth, this::getHeight);
     }
 
     default IGuiArea resize(int newWidth, int newHeight) {
-        IGuiArea containing = this;
-        return new IGuiArea() {
-            @Override
-            public int getX() {
-                return containing.getX();
-            }
-
-            @Override
-            public int getY() {
-                return containing.getY();
-            }
-
-            @Override
-            public int getWidth() {
-                return newWidth;
-            }
-
-            @Override
-            public int getHeight() {
-                return newHeight;
-            }
-        };
+        return create(this::getX, this::getY, () -> newWidth, () -> newHeight);
     }
 
     default IGuiArea expand(int by) {
@@ -141,26 +78,29 @@ public interface IGuiArea extends IGuiPosition {
     }
 
     default IGuiArea expand(int dX, int dY) {
-        IGuiArea containing = this;
+        return create(() -> getX() - dX, () -> getY() - dY, () -> getWidth() + dX * 2, () -> getHeight() + dY * 2);
+    }
+
+    public static IGuiArea create(IntSupplier x, IntSupplier y, IntSupplier width, IntSupplier height) {
         return new IGuiArea() {
             @Override
             public int getX() {
-                return containing.getX() - dX;
+                return x.getAsInt();
             }
 
             @Override
             public int getY() {
-                return containing.getY() - dY;
+                return y.getAsInt();
             }
 
             @Override
             public int getWidth() {
-                return containing.getWidth() + dX * 2;
+                return width.getAsInt();
             }
 
             @Override
             public int getHeight() {
-                return containing.getHeight() + dY * 2;
+                return height.getAsInt();
             }
         };
     }

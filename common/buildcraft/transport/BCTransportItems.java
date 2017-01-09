@@ -1,6 +1,7 @@
 package buildcraft.transport;
 
 import buildcraft.api.transport.neptune.PipeDefinition;
+
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemManager;
 import buildcraft.transport.item.*;
@@ -60,6 +61,7 @@ public class BCTransportItems {
     public static ItemPluggableSimple plugBlocker;
     public static ItemPluggableGate plugGate;
     public static ItemPluggablePulsar plugPulsar;
+    public static ItemPluggableSimple plugDaylightSensor;
 
     public static ItemWire wire;
 
@@ -108,6 +110,7 @@ public class BCTransportItems {
         plugBlocker = ItemManager.register(new ItemPluggableSimple("item.plug.blocker", BCTransportPlugs.blocker));
         plugGate = ItemManager.register(new ItemPluggableGate("item.plug.gate"));
         plugPulsar = ItemManager.register(new ItemPluggablePulsar("item.plug.pulsar"));
+        plugDaylightSensor = ItemManager.register(new ItemPluggableSimple("item.plug.daylight_sensor", BCTransportPlugs.daylightSensor));
 
         wire = ItemManager.register(new ItemWire("item.wire"));
     }

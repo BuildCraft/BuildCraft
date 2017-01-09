@@ -24,8 +24,8 @@ public class BCCoreModels {
         ENGINE_STAGE = fnCtx.putVariableString("stage");
         ENGINE_FACING = fnCtx.putVariableString("facing");
 
-        ENGINE_REDSTONE = getModel("block/engine/redstone.json", fnCtx);
-        ENGINE_CREATIVE = getModel("block/engine/creative.json", fnCtx);
+        ENGINE_REDSTONE = getModel("block/engine_redstone.json", fnCtx);
+        ENGINE_CREATIVE = getModel("block/engine_creative.json", fnCtx);
     }
 
     private static ModelHolderVariable getModel(String loc, FunctionContext fnCtx) {

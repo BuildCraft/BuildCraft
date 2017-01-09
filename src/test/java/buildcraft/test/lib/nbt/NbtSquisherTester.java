@@ -3,7 +3,6 @@ package buildcraft.test.lib.nbt;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +15,6 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagFloat;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumFacing;
 
 import buildcraft.lib.nbt.NBTSquishDebugging;
 import buildcraft.lib.nbt.NbtSquisher;
@@ -70,24 +68,18 @@ public class NbtSquisherTester {
 
         NBTTagCompound diorite = new NBTTagCompound();
         diorite.setString("block", "minecraft:stone");
-        NBTTagCompound stateCmp = new NBTTagCompound();
-        stateCmp.setString("variant", "diorite");
-        diorite.setTag("state", stateCmp);
+        diorite.setByte("meta", (byte) 4);
 
         NBTTagCompound andersite = new NBTTagCompound();
         andersite.setString("block", "minecraft:stone");
-        stateCmp = new NBTTagCompound();
-        stateCmp.setString("variant", "andersite");
-        andersite.setTag("state", stateCmp);
+        andersite.setByte("meta", (byte) 3);
 
         NBTTagCompound cobblestone = new NBTTagCompound();
         cobblestone.setString("block", "minecraft:cobblestone");
 
         NBTTagCompound torch = new NBTTagCompound();
         torch.setString("block", "minecraft:torch");
-        stateCmp = new NBTTagCompound();
-        stateCmp.setString("facing", "down");
-        torch.setTag("state", stateCmp);
+        torch.setByte("meta", (byte) 0);
 
         NBTTagCompound itemApple = new NBTTagCompound();
         itemApple.setString("id", "minecraft:apple");
@@ -96,9 +88,7 @@ public class NbtSquisherTester {
 
         NBTTagCompound chest = new NBTTagCompound();
         chest.setString("block", "minecraft:chest");
-        stateCmp = new NBTTagCompound();
-        stateCmp.setString("facing", "east");
-        chest.setTag("state", stateCmp);
+        chest.setByte("meta", (byte) 2);
         NBTTagList chestItems = new NBTTagList();
         chestItems.appendTag(itemApple);
 
@@ -106,7 +96,7 @@ public class NbtSquisherTester {
 
         NBTTagList bpt = new NBTTagList();
 
-        for (int i = 0; i < 10 * 6 * 10; i++) {
+        for (int i = 0; i < 64 * 64 * 64; i++) {
             double r = rand.nextDouble();
             final NBTTagCompound toUse;
             if (r < 0.8) toUse = air;
@@ -141,24 +131,20 @@ public class NbtSquisherTester {
         to = NbtSquisher.expand(bytes.clone());
         checkEquality(nbt, to);
 
-        watch.start();
-        bytes = NbtSquisher.squishBuildCraftV1Uncompressed(nbt);
+        return bytes;
+    }
+
+    private static void testBcOnly(NBTTagCompound nbt) {
+        Stopwatch watch = Stopwatch.createStarted();
+        byte[] bytes = NbtSquisher.squishBuildCraftV1Uncompressed(nbt);
         watch.stop();
         printBytesData("buildcraft[un] took " + padMilliseconds(watch.elapsed(TimeUnit.MILLISECONDS), 8), bytes);
         watch.reset();
-
-        to = NbtSquisher.expand(bytes.clone());
-        checkEquality(nbt, to);
 
         watch.start();
         bytes = NbtSquisher.squishBuildCraftV1(nbt);
         watch.stop();
         printBytesData("buildcraft[cp] took " + padMilliseconds(watch.elapsed(TimeUnit.MILLISECONDS), 8), bytes);
-
-        to = NbtSquisher.expand(bytes.clone());
-        checkEquality(nbt, to);
-
-        return bytes;
     }
 
     public static void checkEquality(NBTTagCompound from, NBTTagCompound to) {
@@ -226,10 +212,7 @@ public class NbtSquisherTester {
     private static NBTTagCompound genRandomChest(Random rand) {
         NBTTagCompound chest = new NBTTagCompound();
         chest.setString("block", "minecraft:chest");
-        NBTTagCompound stateCmp = new NBTTagCompound();
-        EnumFacing facing = EnumFacing.getHorizontal(rand.nextInt(4));
-        stateCmp.setString("facing", facing.getName().toLowerCase(Locale.ROOT));
-        chest.setTag("state", stateCmp);
+        chest.setByte("meta", (byte) rand.nextInt(4));
         NBTTagList chestItems = new NBTTagList();
 
         NBTTagCompound itemB = genRandomItem(rand);
@@ -292,6 +275,12 @@ public class NbtSquisherTester {
     }
 
     public static void main(String[] args) throws IOException {
-        new NbtSquisherTester().testSimpleNBT();
+        NbtSquisherTester tester = new NbtSquisherTester();
+        for (int i = 0; i < 100; i++) {
+            System.in.read();
+            System.out.println("Starting test " + (i + 1));
+            testBcOnly(tester.nbt);
+            System.out.println("Finished test " + (i + 1));
+        }
     }
 }

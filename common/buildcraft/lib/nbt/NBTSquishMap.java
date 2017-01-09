@@ -11,6 +11,7 @@ import net.minecraftforge.common.util.Constants;
 import gnu.trove.list.array.*;
 
 /** Defines a map of commonly used tags. */
+@Deprecated
 public class NBTSquishMap {
     // I'm not completely convinced that this one is necessary.
     // However it completes the set so, meh
