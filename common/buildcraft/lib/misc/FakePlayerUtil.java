@@ -41,6 +41,6 @@ public enum FakePlayerUtil implements IBCFakePlayer {
     }
 
     public void unloadWorld(WorldServer world) {
-        players.entrySet().removeIf(entry -> entry.getValue().world == world);
+        players.values().removeIf(entry -> entry.world == world);
     }
 }
