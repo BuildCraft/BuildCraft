@@ -126,21 +126,6 @@ public class PacketBufferBcTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testInvalidEnum_1_write() {
-        PacketBufferBC buffer = new PrintingByteBuf(Unpooled.buffer());
-        /* Attempting to write out an enum value that only has 1 possibility is almost certinatly a bug */
-        buffer.writeEnumValue(Enum_1.A);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testInvalidEnum_1_read() {
-        PacketBufferBC buffer = new PrintingByteBuf(Unpooled.buffer());
-        /* Attempting to write out an enum value that only has 1 possibility is almost certinatly a bug */
-        buffer.readEnumValue(Enum_1.class);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
     public void testInvalidEnum_0_read() {
         PacketBufferBC buffer = new PrintingByteBuf(Unpooled.buffer());
         /* Attempting to write out an enum value that doesn't have any values is definatly a bug */
@@ -150,6 +135,8 @@ public class PacketBufferBcTest {
     @Test
     public void testSizedEnums() {
         PacketBufferBC buffer = new PrintingByteBuf(Unpooled.buffer());
+
+        buffer.writeEnumValue(Enum_1.A);
 
         buffer.writeEnumValue(Enum_2.A);
         buffer.writeEnumValue(Enum_2.B);
@@ -163,6 +150,8 @@ public class PacketBufferBcTest {
         for (Enum_8 e : Enum_8.values()) buffer.writeEnumValue(e);
         for (Enum_9 e : Enum_9.values()) buffer.writeEnumValue(e);
         //@formatter:on
+
+        Assert.assertEquals(Enum_1.A, buffer.readEnumValue(Enum_1.class));
 
         Assert.assertEquals(Enum_2.A, buffer.readEnumValue(Enum_2.class));
         Assert.assertEquals(Enum_2.B, buffer.readEnumValue(Enum_2.class));
