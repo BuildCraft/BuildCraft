@@ -7,6 +7,7 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.addon.AddonFillingPlanner;
+import buildcraft.builders.filling.Filling;
 import buildcraft.core.marker.volume.EnumAddonSlot;
 import buildcraft.core.marker.volume.Lock;
 import buildcraft.core.marker.volume.VolumeBox;
@@ -21,6 +22,7 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.lib.tile.item.StackInsertionFunction;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,7 +46,18 @@ import java.util.Comparator;
 import java.util.List;
 
 public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable {
-    public final ItemHandlerSimple invResources = itemManager.addInvHandler("resources", 27, EnumAccess.NONE, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invResources =
+            itemManager.addInvHandler(
+                    "resources",
+                    new ItemHandlerSimple(
+                            27,
+                            (slot, stack) -> Filling.INSTANCE.getItemBlocks().contains(stack.getItem()),
+                            StackInsertionFunction.getDefaultInserter(),
+                            this::onSlotChange
+                    ),
+                    EnumAccess.NONE,
+                    EnumPipePart.VALUES
+            );
     public final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
     private final IMjReceiver mjReceiver = new MjBatteryReciver(battery);
     private final MjCapabilityHelper mjCapHelper = new MjCapabilityHelper(mjReceiver);
@@ -160,7 +173,6 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                             0.0F,
                             0.5F
                     );
-                    System.out.println(result);
                     if (result != EnumActionResult.SUCCESS) {
                         revert = true;
                         invResources.insert(stackToPlace, false, false);
