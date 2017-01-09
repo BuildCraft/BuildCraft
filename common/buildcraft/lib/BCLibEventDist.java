@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib;
 
-import buildcraft.lib.fake.FakePlayerFactoryBC;
+import buildcraft.lib.misc.FakePlayerUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
@@ -53,7 +53,7 @@ public enum BCLibEventDist {
     public void onWorldUnload(WorldEvent.Unload event) {
         MarkerCache.onWorldUnload(event.getWorld());
         if (event.getWorld() instanceof WorldServer) {
-            FakePlayerFactoryBC.unloadWorld((WorldServer) event.getWorld());
+            FakePlayerUtil.INSTANCE.unloadWorld((WorldServer) event.getWorld());
         }
     }
 
