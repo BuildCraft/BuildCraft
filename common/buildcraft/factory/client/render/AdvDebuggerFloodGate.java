@@ -14,7 +14,7 @@ import net.minecraft.util.math.BlockPos;
 
 import buildcraft.factory.tile.TileFloodGate;
 import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
-import buildcraft.lib.debug.BCAdvDebugging;
+import buildcraft.lib.debug.DebugRenderHelper;
 
 public class AdvDebuggerFloodGate implements IDetachedRenderer {
     public final TileFloodGate target;
@@ -37,7 +37,7 @@ public class AdvDebuggerFloodGate implements IDetachedRenderer {
             Deque<BlockPos> positions = entry.getValue();
             for (BlockPos p : positions) {
                 int colour = 0xFF_00_00_00 | (r << 16) | (g << 8) | b;
-                BCAdvDebugging.renderSmallCuboid(vb, p, colour);
+                DebugRenderHelper.renderSmallCuboid(vb, p, colour);
                 r -= 16;
                 if (r < 0) {
                     r = 256;
