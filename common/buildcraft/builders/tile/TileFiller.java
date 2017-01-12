@@ -13,6 +13,7 @@ import buildcraft.core.marker.volume.Lock;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.fake.FakePlayerBC;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.FakePlayerUtil;
@@ -25,7 +26,6 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.lib.tile.item.StackInsertionFunction;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumActionResult;
@@ -40,12 +40,15 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.MutableTriple;
 
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 
 public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable {
+    public static final int MAX_QUEUE_SIZE = 64;
     public final ItemHandlerSimple invResources =
             itemManager.addInvHandler(
                     "resources",
@@ -62,10 +65,8 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     private final IMjReceiver mjReceiver = new MjBatteryReciver(battery);
     private final MjCapabilityHelper mjCapHelper = new MjCapabilityHelper(mjReceiver);
     public AddonFillingPlanner addon;
-    public EnumTaskType currentTaskType = null;
-    public BlockPos currentPos = null;
-    private ItemStack stackToPlace;
-    protected int progress = 0;
+    public Queue<MutablePair<BlockPos, Long>> breakTasks = new ArrayDeque<>();
+    public Queue<MutableTriple<BlockPos, ItemStack, Long>> placeTasks = new ArrayDeque<>();
 
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
@@ -108,65 +109,93 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
             return;
         }
 
-        if (currentTaskType == null) {
+        breakTasks.removeIf(breakTask -> world.isAirBlock(breakTask.getLeft()));
+        placeTasks.removeIf(placeTask -> !world.isAirBlock(placeTask.getLeft()));
+
+        if (breakTasks.size() < MAX_QUEUE_SIZE) {
             List<BlockPos> blocksShouldBeBroken = addon.getBlocksShouldBeBroken();
             blocksShouldBeBroken.sort(Comparator.comparing(blockPos ->
                     Math.pow(blockPos.getX() - pos.getX(), 2) + Math.pow(blockPos.getY() - pos.getY(), 2) + Math.pow(blockPos.getZ() - pos.getZ(), 2)
             ));
-            for (BlockPos blockPos : blocksShouldBeBroken) {
-                if (!world.isAirBlock(blockPos)) {
-                    currentTaskType = EnumTaskType.BREAK;
-                    currentPos = blockPos;
-                    break;
-                }
+            blocksShouldBeBroken.stream()
+                    .filter(blockPos -> breakTasks.stream().map(MutablePair::getLeft).noneMatch(Predicate.isEqual(blockPos)))
+                    .filter(blockPos -> !world.isAirBlock(blockPos))
+                    .map(blockPos ->
+                            MutablePair.of(
+                                    blockPos,
+                                    0L
+                            )
+                    )
+                    .limit(MAX_QUEUE_SIZE - breakTasks.size())
+                    .forEach(breakTasks::add);
+        }
+
+        if (breakTasks.isEmpty() && placeTasks.size() < MAX_QUEUE_SIZE) {
+            if (!invResources.extract(null, 1, 1, true).isEmpty()) {
+                List<BlockPos> blocksShouldBePlaced = addon.getBlocksShouldBePlaced();
+                blocksShouldBePlaced.sort(Comparator.comparing(blockPos ->
+                        100_000 - (Math.pow(blockPos.getX() - pos.getX(), 2) + Math.pow(blockPos.getZ() - pos.getZ(), 2)) +
+                                Math.abs(blockPos.getY() - pos.getY()) * 100_000
+                ));
+                blocksShouldBePlaced.stream()
+                        .filter(blockPos -> placeTasks.stream().map(MutableTriple::getLeft).noneMatch(Predicate.isEqual(blockPos)))
+                        .filter(blockPos -> world.isAirBlock(blockPos))
+                        .map(blockPos ->
+                                MutableTriple.of(
+                                        blockPos,
+                                        invResources.extract(null, 1, 1, false),
+                                        0L
+                                )
+                        )
+                        .limit(MAX_QUEUE_SIZE - placeTasks.size())
+                        .forEach(placeTasks::add);
             }
         }
 
-        if (currentTaskType == null && !invResources.extract(null, 1, 1, true).isEmpty()) {
-            List<BlockPos> blocksShouldBePlaced = addon.getBlocksShouldBePlaced();
-            blocksShouldBePlaced.sort(Comparator.comparing(blockPos ->
-                    100_000 - (Math.pow(blockPos.getX() - pos.getX(), 2) + Math.pow(blockPos.getZ() - pos.getZ(), 2)) +
-                            Math.abs(blockPos.getY() - pos.getY()) * 100_000
-            ));
-            for (BlockPos blockPos : blocksShouldBePlaced) {
-                if (world.isAirBlock(blockPos)) {
-                    stackToPlace = invResources.extract(null, 1, 1, false);
-                    currentTaskType = EnumTaskType.PLACE;
-                    currentPos = blockPos;
-                    break;
-                }
-            }
-        }
-
-        if (currentTaskType != null) {
-            long target = 0;
-            if (currentTaskType == EnumTaskType.BREAK) {
-                target = BlockUtil.computeBlockBreakPower(world, currentPos);
-            }
-            if (currentTaskType == EnumTaskType.PLACE) {
-                target = 4 * MjAPI.MJ;
-            }
-            progress += battery.extractPower(0, target - progress);
-            if (progress >= target) {
-                progress = 0;
-                EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, getPos(), getOwner());
-                boolean revert = false;
-                if (currentTaskType == EnumTaskType.BREAK) {
-                    BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, currentPos, world.getBlockState(currentPos), fakePlayer);
+        if (!breakTasks.isEmpty()) {
+            for (Iterator<MutablePair<BlockPos, Long>> iterator = breakTasks.iterator(); iterator.hasNext(); ) {
+                MutablePair<BlockPos, Long> breakTask = iterator.next();
+                long target = BlockUtil.computeBlockBreakPower(world, breakTask.getLeft());
+                breakTask.setRight(
+                        breakTask.getRight() +
+                                battery.extractPower(0, Math.min(target - breakTask.getRight(), battery.getCapacity() / breakTasks.size()))
+                );
+                if (breakTask.getRight() >= target) {
+                    BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(
+                            world,
+                            breakTask.getLeft(),
+                            world.getBlockState(breakTask.getLeft()),
+                            FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, getPos(), getOwner())
+                    );
                     MinecraftForge.EVENT_BUS.post(breakEvent);
                     if (!breakEvent.isCanceled()) {
-                        world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
-                        world.destroyBlock(currentPos, false);
+                        world.sendBlockBreakProgress(breakTask.getLeft().hashCode(), breakTask.getLeft(), -1);
+                        world.destroyBlock(breakTask.getLeft(), false);
                     } else {
-                        revert = true;
+                        battery.addPower(Math.min(target, battery.getCapacity() - battery.getStored()));
                     }
+                    iterator.remove();
+                } else {
+                    world.sendBlockBreakProgress(breakTask.getLeft().hashCode(), breakTask.getLeft(), (int) ((breakTask.getRight() * 9) / target));
                 }
-                if (currentTaskType == EnumTaskType.PLACE) {
-                    fakePlayer.setHeldItem(fakePlayer.getActiveHand(), stackToPlace);
-                    EnumActionResult result = stackToPlace.onItemUse(
+            }
+        }
+
+        if (!placeTasks.isEmpty()) {
+            for (Iterator<MutableTriple<BlockPos, ItemStack, Long>> iterator = placeTasks.iterator(); iterator.hasNext(); ) {
+                MutableTriple<BlockPos, ItemStack, Long> placeTask = iterator.next();
+                long target = 4 * MjAPI.MJ;
+                placeTask.setRight(
+                        placeTask.getRight() +
+                                battery.extractPower(0, Math.min(target - placeTask.getRight(), battery.getCapacity() / placeTasks.size()))
+                );
+                if (placeTask.getRight() >= target) {
+                    FakePlayerBC fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, getPos(), getOwner());
+                    fakePlayer.setHeldItem(fakePlayer.getActiveHand(), placeTask.getMiddle());
+                    EnumActionResult result = placeTask.getMiddle().onItemUse(
                             fakePlayer,
                             world,
-                            currentPos,
+                            placeTask.getLeft(),
                             fakePlayer.getActiveHand(),
                             EnumFacing.UP,
                             0.5F,
@@ -174,21 +203,10 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                             0.5F
                     );
                     if (result != EnumActionResult.SUCCESS) {
-                        revert = true;
-                        invResources.insert(stackToPlace, false, false);
+                        battery.addPower(Math.min(target, battery.getCapacity() - battery.getStored()));
+                        invResources.insert(placeTask.getMiddle(), false, false);
                     }
-                    stackToPlace = null;
-                }
-                currentTaskType = null;
-                currentPos = null;
-                if (revert) {
-                    battery.addPower(Math.min(target, battery.getCapacity() - battery.getStored()));
-                }
-            } else {
-                if (currentTaskType == EnumTaskType.BREAK) {
-                    if (!world.isAirBlock(currentPos)) {
-                        world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, (int) ((progress * 9) / target));
-                    }
+                    iterator.remove();
                 }
             }
         }
@@ -222,16 +240,16 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
             nbt.setUniqueId("addonBoxId", addon.box.id);
             nbt.setTag("addonSlot", NBTUtilBC.writeEnum(addon.getSlot()));
         }
-        if (currentTaskType != null) {
-            nbt.setTag("currentTaskType", NBTUtilBC.writeEnum(currentTaskType));
-        }
-        if (currentPos != null) {
-            nbt.setTag("currentPos", NBTUtilBC.writeBlockPos(currentPos));
-        }
-        if (stackToPlace != null) {
-            nbt.setTag("stackToPlace", stackToPlace.writeToNBT(new NBTTagCompound()));
-        }
-        nbt.setInteger("progress", progress);
+//        if (currentTaskType != null) {
+//            nbt.setTag("currentTaskType", NBTUtilBC.writeEnum(currentTaskType));
+//        }
+//        if (currentPos != null) {
+//            nbt.setTag("currentPos", NBTUtilBC.writeBlockPos(currentPos));
+//        }
+//        if (stackToPlace != null) {
+//            nbt.setTag("stackToPlace", stackToPlace.writeToNBT(new NBTTagCompound()));
+//        }
+//        nbt.setInteger("progress", progress);
         return nbt;
     }
 
@@ -245,16 +263,16 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                     .addons
                     .get(NBTUtilBC.readEnum(nbt.getTag("addonSlot"), EnumAddonSlot.class));
         }
-        if (nbt.hasKey("currentTaskType")) {
-            currentTaskType = NBTUtilBC.readEnum(nbt.getTag("currentTaskType"), EnumTaskType.class);
-        }
-        if (nbt.hasKey("currentPos")) {
-            currentPos = NBTUtilBC.readBlockPos(nbt.getTag("currentPos"));
-        }
-        if (nbt.hasKey("stackToPlace")) {
-            stackToPlace = new ItemStack(nbt.getCompoundTag("stackToPlace"));
-        }
-        progress = nbt.getInteger("progress");
+//        if (nbt.hasKey("currentTaskType")) {
+//            currentTaskType = NBTUtilBC.readEnum(nbt.getTag("currentTaskType"), EnumTaskType.class);
+//        }
+//        if (nbt.hasKey("currentPos")) {
+//            currentPos = NBTUtilBC.readBlockPos(nbt.getTag("currentPos"));
+//        }
+//        if (nbt.hasKey("stackToPlace")) {
+//            stackToPlace = new ItemStack(nbt.getCompoundTag("stackToPlace"));
+//        }
+//        progress = nbt.getInteger("progress");
     }
 
     // Rendering
@@ -292,9 +310,8 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         left.add("");
         left.add("battery = " + battery.getDebugString());
         left.add("addon = " + addon);
-        left.add("task = " + currentTaskType);
-        left.add("current = " + currentPos);
-        left.add("progress = " + progress);
+        left.add("break tasks = " + breakTasks.size());
+        left.add("place tasks = " + placeTasks.size());
     }
 
     public enum EnumTaskType {

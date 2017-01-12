@@ -21,18 +21,18 @@ public enum FakePlayerUtil implements IBCFakePlayer {
 
     @Override
     @Deprecated
-    public FakePlayer getBuildCraftPlayer(WorldServer world) {
+    public FakePlayerBC getBuildCraftPlayer(WorldServer world) {
         return getFakePlayer(world, BlockPos.ORIGIN, gameProfile);
     }
 
     @Override
-    public FakePlayer getFakePlayer(WorldServer world, GameProfile profile) {
+    public FakePlayerBC getFakePlayer(WorldServer world, GameProfile profile) {
         return getFakePlayer(world, BlockPos.ORIGIN, profile);
     }
 
-    public FakePlayer getFakePlayer(WorldServer world, BlockPos pos, GameProfile profile) {
+    public FakePlayerBC getFakePlayer(WorldServer world, BlockPos pos, GameProfile profile) {
         players.computeIfAbsent(profile, p -> new FakePlayerBC(world, profile));
-        FakePlayer player = players.get(profile);
+        FakePlayerBC player = players.get(profile);
         player.world = world;
         player.posX = pos.getX();
         player.posY = pos.getY();
