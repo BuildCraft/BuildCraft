@@ -20,11 +20,15 @@ public class RenderTube extends FastTESR<TileMiner> {
 
     @Override
     public void renderTileEntityFast(TileMiner tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
+        double length = tile.getTubeLength(partialTicks);
+        if (length <= 0) {
+            return;
+        }
+
         BlockPos from = tile.getPos();
         buffer.setTranslation(x - from.getX(), y - from.getY(), z - from.getZ());
 
         Vec3d start = new Vec3d(from.getX() + 0.5, from.getY(), from.getZ() + 0.5);
-        double length = tile.deltaTubeLength.getDynamic(partialTicks) /* + tile.getTubeOffset() */;
 
         Vec3d end = start.addVector(0, -length, 0);
 

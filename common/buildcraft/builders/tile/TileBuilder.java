@@ -56,7 +56,7 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 
-public class TileBuilder_Neptune extends TileBC_Neptune implements ITickable, IDebuggable {
+public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final int NET_BOX = 10;
     public static final int NET_PATH = 11;
     public static final int NET_CLEAR = 12;

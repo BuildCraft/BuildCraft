@@ -4,10 +4,24 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.tile;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.schematic.SchematicBlock;
+import buildcraft.api.schematic.SchematicBlockContext;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.builders.BCBuildersBlocks;
+import buildcraft.builders.block.BlockArchitect;
+import buildcraft.builders.schematic.SchematicsLoader;
+import buildcraft.lib.delta.DeltaInt;
+import buildcraft.lib.delta.DeltaManager;
+import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.misc.data.BoxIterator;
+import buildcraft.lib.misc.data.EnumAxisOrder;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -18,37 +32,15 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.api.bpt.BlueprintAPI;
-import buildcraft.api.bpt.SchematicBlock;
-import buildcraft.api.bpt.SchematicException;
-import buildcraft.api.bpt.SchematicFactoryWorldBlock;
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.tiles.IDebuggable;
+import java.io.IOException;
+import java.util.List;
 
-import buildcraft.builders.BCBuildersBlocks;
-import buildcraft.builders.BCBuildersItems;
-import buildcraft.builders.block.BlockArchitect_Neptune;
-import buildcraft.builders.item.ItemBlueprint.BptStorage;
-import buildcraft.lib.bpt.Blueprint;
-import buildcraft.lib.bpt.builder.SchematicEntityOffset;
-import buildcraft.lib.delta.DeltaInt;
-import buildcraft.lib.delta.DeltaManager;
-import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.data.Box;
-import buildcraft.lib.misc.data.BoxIterator;
-import buildcraft.lib.misc.data.EnumAxisOrder;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
-
-public class TileArchitect_Neptune extends TileBC_Neptune implements ITickable, IDebuggable {
+public class TileArchitect extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final int NET_BOX = 20;
     public static final int NET_SCAN = 21;
 
@@ -61,7 +53,7 @@ public class TileArchitect_Neptune extends TileBC_Neptune implements ITickable, 
     /** Details- if true then this will create a blueprint, otherwise it will be a template. */
     private boolean shouldScanDetails = true;
     private final Box box = new Box();
-    private List<SchematicEntityOffset> blueprintScannedEntities;
+//    private List<SchematicEntityOffset> blueprintScannedEntities;
     private SchematicBlock[][][] blueprintScannedBlocks;
     private boolean[][][] templateScannedBlocks;
     private BoxIterator boxIterator;
@@ -71,7 +63,7 @@ public class TileArchitect_Neptune extends TileBC_Neptune implements ITickable, 
     public String name = "<unnamed>";
     public final DeltaInt deltaProgress = deltaManager.addDelta("progress", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
 
-    public TileArchitect_Neptune() {}
+    public TileArchitect() {}
 
     private int maxBlocksPerTick() {
         return shouldScanDetails ? BLOCKS_PER_TICK : BLOCKS_PER_TICK * 3;
@@ -95,7 +87,7 @@ public class TileArchitect_Neptune extends TileBC_Neptune implements ITickable, 
         if (placer.world.isRemote) {
             return;
         }
-        EnumFacing facing = world.getBlockState(getPos()).getValue(BlockArchitect_Neptune.PROP_FACING);
+        EnumFacing facing = world.getBlockState(getPos()).getValue(BlockArchitect.PROP_FACING);
         BlockPos areaPos = getPos().offset(facing.getOpposite());
         TileEntity tile = world.getTileEntity(areaPos);
         if (tile instanceof IAreaProvider) {
@@ -109,7 +101,7 @@ public class TileArchitect_Neptune extends TileBC_Neptune implements ITickable, 
         } else {
             isValid = false;
             IBlockState state = world.getBlockState(getPos());
-            state = state.withProperty(BlockArchitect_Neptune.PROP_VALID, Boolean.FALSE);
+            state = state.withProperty(BlockArchitect.PROP_VALID, Boolean.FALSE);
             world.setBlockState(getPos(), state);
         }
     }
@@ -187,22 +179,25 @@ public class TileArchitect_Neptune extends TileBC_Neptune implements ITickable, 
     }
 
     private SchematicBlock readSchematicForBlock(BlockPos worldScanPos) {
-        IBlockState state = world.getBlockState(worldScanPos);
-        SchematicFactoryWorldBlock factory = BlueprintAPI.getWorldBlockSchematic(state.getBlock());
-        if (factory == null) {
-            return null;// SchematicAir.INSTANCE;
-        } else {
-            try {
-                return factory.createFromWorld(getWorld(), worldScanPos);
-            } catch (SchematicException e) {
-                e.printStackTrace();// TEMP!
-                return null;//SchematicAir.INSTANCE;
-            }
-        }
+//        IBlockState state = worldObj.getBlockState(worldScanPos);
+//        SchematicFactoryWorldBlock factory = BlueprintAPI.getWorldBlockSchematic(state.getBlock());
+//        if (factory == null) {
+//            return SchematicAir.INSTANCE;
+//        } else {
+//            try {
+//                return factory.createFromWorld(getWorld(), worldScanPos);
+//            } catch (SchematicException e) {
+//                e.printStackTrace();// TEMP!
+//                return SchematicAir.INSTANCE;
+//            }
+//        }
+        Block block = world.getBlockState(worldScanPos).getBlock();
+        SchematicBlockContext schematicBlockContext = new SchematicBlockContext(world, worldScanPos, pos);
+        return SchematicsLoader.INSTANCE.schematicFactories.get(block).apply(schematicBlockContext);
     }
 
     private void scanEntities() {
-        blueprintScannedEntities = new ArrayList<>();
+//        blueprintScannedEntities = new ArrayList<>();
         // TODO: Scan all entities
     }
 
@@ -210,24 +205,24 @@ public class TileArchitect_Neptune extends TileBC_Neptune implements ITickable, 
         EnumFacing direction = EnumFacing.NORTH;
         IBlockState state = world.getBlockState(getPos());
         if (state.getBlock() == BCBuildersBlocks.architect) {
-            direction = state.getValue(BlockArchitect_Neptune.PROP_FACING);
+            direction = state.getValue(BlockArchitect.PROP_FACING);
         }
         if (shouldScanDetails) {
-            BlockPos bptPos = getPos().add(direction.getOpposite().getDirectionVec());
-
-            BlockPos diff = box.min().subtract(bptPos);
-            Blueprint bpt = new Blueprint(diff, blueprintScannedBlocks, blueprintScannedEntities);
-            blueprintScannedBlocks = null;
-            blueprintScannedEntities = null;
-            bpt.facing = direction;
-
-            NBTTagCompound tag = bpt.serializeNBT();
-            BptStorage storage = BCBuildersItems.blueprint.createStorage(tag);
-            ItemStack stack = storage.save();
-            BCBuildersItems.blueprint.setName(stack, name);
-
-            invBptIn.setStackInSlot(0, null);
-            invBptOut.setStackInSlot(0, stack);
+//            BlockPos bptPos = getPos().add(direction.getOpposite().getDirectionVec());
+//
+//            BlockPos diff = box.min().subtract(bptPos);
+//            Blueprint bpt = new Blueprint(diff, blueprintScannedBlocks, blueprintScannedEntities);
+//            blueprintScannedBlocks = null;
+//            blueprintScannedEntities = null;
+//            bpt.facing = direction;
+//
+//            NBTTagCompound tag = bpt.serializeNBT();
+//            BptStorage storage = BCBuildersItems.blueprint.createStorage(tag);
+//            ItemStack stack = storage.save();
+//            BCBuildersItems.blueprint.setName(stack, name);
+//
+//            invBptIn.setStackInSlot(0, null);
+//            invBptOut.setStackInSlot(0, stack);
         } else {
             // Template tpl = new Template();
             throw new IllegalStateException("// TODO: This :D");

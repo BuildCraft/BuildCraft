@@ -4,18 +4,20 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
+import buildcraft.builders.item.ItemBlueprint;
+import buildcraft.builders.item.ItemFillingPlanner;
 import buildcraft.builders.item.ItemSchematicSingle;
 import buildcraft.lib.item.ItemManager;
 
 public class BCBuildersItems {
 
     public static ItemSchematicSingle schematicSingle;
-    // FIXME: remove the old class so we don't have an import error
-    public static buildcraft.builders.item.ItemBlueprint blueprint;
+    public static ItemBlueprint blueprint;
+    public static ItemFillingPlanner fillingPlanner;
 
     public static void preInit() {
         schematicSingle = ItemManager.register(new ItemSchematicSingle("item.schematic.single"));
-        // FIXME: remove the old class so we don't have an import error
-        blueprint = ItemManager.register(new buildcraft.builders.item.ItemBlueprint("item.blueprint"));
+        blueprint = ItemManager.register(new ItemBlueprint("item.blueprint"));
+        fillingPlanner = ItemManager.register(new ItemFillingPlanner("item.filling_planner"));
     }
 }

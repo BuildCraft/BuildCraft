@@ -41,6 +41,11 @@ public abstract class GuiAbstractButton extends GuiButton implements ITooltipEle
         active = false;
     }
 
+    public GuiAbstractButton setActive(boolean active) {
+        this.active = active;
+        return this;
+    }
+
     @Override
     public boolean isMouseOver() {
         return getGuiRectangle().contains(gui.mouse);
@@ -110,13 +115,15 @@ public abstract class GuiAbstractButton extends GuiButton implements ITooltipEle
     }
 
     @Override
-    public void registerListener(IButtonClickEventListener listener) {
+    public GuiAbstractButton registerListener(IButtonClickEventListener listener) {
         listeners.add(listener);
+        return this;
     }
 
     @Override
-    public void removeListener(IButtonClickEventListener listener) {
+    public GuiAbstractButton removeListener(IButtonClickEventListener listener) {
         listeners.remove(listener);
+        return this;
     }
 
     @Override

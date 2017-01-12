@@ -108,25 +108,9 @@ public class LaserBoxRenderer {
     private static LaserData_BC8 makeLaser(LaserType type, Vec3d min, Vec3d max, Axis axis) {
         EnumFacing faceForMin = VecUtil.getFacing(axis, true);
         EnumFacing faceForMax = VecUtil.getFacing(axis, false);
-        Vec3d one = offset(min, faceForMin);
-        Vec3d two = offset(max, faceForMax);
+        Vec3d one = min.add(new Vec3d(faceForMin.getDirectionVec()).scale(1 / 16D));
+        Vec3d two = max.add(new Vec3d(faceForMax.getDirectionVec()).scale(1 / 16D));
         return new LaserData_BC8(type, one, two, RENDER_SCALE);
     }
 
-    private static Vec3d offset(Vec3d vec, EnumFacing face) {
-        double by = 1 / 16.0;
-        if (face == EnumFacing.DOWN) {
-            return vec.addVector(0, -by, 0);
-        } else if (face == EnumFacing.UP) {
-            return vec.addVector(0, by, 0);
-        } else if (face == EnumFacing.EAST) {
-            return vec.addVector(by, 0, 0);
-        } else if (face == EnumFacing.WEST) {
-            return vec.addVector(-by, 0, 0);
-        } else if (face == EnumFacing.SOUTH) {
-            return vec.addVector(0, 0, by);
-        } else {// North
-            return vec.addVector(0, 0, -by);
-        }
-    }
 }

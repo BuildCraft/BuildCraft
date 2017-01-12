@@ -4,12 +4,14 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib;
 
+import buildcraft.lib.misc.FakePlayerUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -50,6 +52,9 @@ public enum BCLibEventDist {
     @SubscribeEvent
     public void onWorldUnload(WorldEvent.Unload event) {
         MarkerCache.onWorldUnload(event.getWorld());
+        if (event.getWorld() instanceof WorldServer) {
+            FakePlayerUtil.INSTANCE.unloadWorld((WorldServer) event.getWorld());
+        }
     }
 
     @SubscribeEvent

@@ -12,7 +12,8 @@ public enum BCBuildersGuis {
     BUILDER,
     FILLER,
     LIBRARY,
-    QUARRY;
+    QUARRY,
+    FILLING_PLANNER;
 
     public void openGUI(EntityPlayer player) {
         player.openGui(BCBuilders.INSTANCE, ordinal(), player.getEntityWorld(), 0, 0, 0);

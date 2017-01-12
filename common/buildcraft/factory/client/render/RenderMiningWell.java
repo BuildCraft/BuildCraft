@@ -1,16 +1,6 @@
 package buildcraft.factory.client.render;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-
-import net.minecraftforge.client.model.animation.FastTESR;
-
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.api.tiles.IControllable.Mode;
-
 import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.tile.TileMiningWell;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
@@ -18,15 +8,20 @@ import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.tile.RenderPartCube;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
+import net.minecraftforge.client.model.animation.FastTESR;
 
 public class RenderMiningWell extends FastTESR<TileMiningWell> {
     private static final int[] COLOUR_POWER = new int[16];
     private static final int COLOUR_STATUS_ON = 0xFF_77_DD_77; // a light green
-    private static final int COLOUR_STATUS_PAUSED = 0xFF_47_B3_FF; // a light orange
-    private static final int COLOUR_STATUS_DONE = 0xFF_1f_10_1b; // black-ish
+    private static final int COLOUR_STATUS_OFF = 0xFF_1f_10_1b; // black-ish
 
+    private static final int BLOCK_LIGHT_STATUS_ON = 0xF;
     private static final int BLOCK_LIGHT_STATUS_OFF = 0x0;
-    private static final int BLOCK_LIGHT_STATUS_TODO = 0x1;
 
     private static final double POWER = 2.5 / 16.0;
     private static final double STATUS = 4.5 / 16.0;
@@ -66,7 +61,6 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
 
     @Override
     public void renderTileEntityFast(TileMiningWell tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
-
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("miner");
 
@@ -109,10 +103,9 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
         LED_POWER.render(buffer);
 
         LED_STATUS.center.positiond(ledX + dX * STATUS, Y, ledZ + dZ * STATUS);
-        boolean more = tile.hasWork();
-        boolean paused = tile.getControlMode() == Mode.Off;
-        LED_STATUS.center.colouri(more ? (paused ? COLOUR_STATUS_PAUSED : COLOUR_STATUS_ON) : COLOUR_STATUS_DONE);
-        LED_STATUS.center.lighti(more ? (BLOCK_LIGHT_STATUS_TODO) : BLOCK_LIGHT_STATUS_OFF, 0);
+        boolean complete = tile.isComplete();
+        LED_STATUS.center.colouri(complete ? COLOUR_STATUS_OFF : COLOUR_STATUS_ON);
+        LED_STATUS.center.lighti(complete ? BLOCK_LIGHT_STATUS_OFF : BLOCK_LIGHT_STATUS_ON, 0);
 
         LED_STATUS.render(buffer);
 

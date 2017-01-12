@@ -4,26 +4,27 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core;
 
-import java.io.File;
-
+import buildcraft.core.list.ListTooltipHandler;
+import buildcraft.core.marker.PathCache;
+import buildcraft.core.marker.VolumeCache;
+import buildcraft.core.marker.volume.MessageVolumeBoxes;
+import buildcraft.lib.BCLib;
+import buildcraft.lib.BCLibItems;
+import buildcraft.lib.BCMessageHandler;
+import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.registry.CreativeTabManager;
+import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
 import net.minecraft.init.Blocks;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 
-import buildcraft.core.list.ListTooltipHandler;
-import buildcraft.core.marker.PathCache;
-import buildcraft.core.marker.VolumeCache;
-import buildcraft.lib.BCLib;
-import buildcraft.lib.BCLibItems;
-import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.registry.CreativeTabManager;
-import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
+import java.io.File;
 
 @Mod(//
         modid = BCCore.MODID,//
@@ -51,7 +52,7 @@ public class BCCore {
         BCCoreConfig.preInit(cfgFolder);
         BCCoreProxy.getProxy().fmlPreInit();
 
-       CreativeTabBC  tab= CreativeTabManager.createTab("buildcraft.main");
+        CreativeTabBC  tab= CreativeTabManager.createTab("buildcraft.main");
 
         BCCoreItems.preInit();
         BCCoreBlocks.preInit();
@@ -64,6 +65,9 @@ public class BCCore {
         MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
 
         OreDictionary.registerOre("craftingTableWood", Blocks.CRAFTING_TABLE);
+
+        MinecraftForge.EVENT_BUS.register(BCCoreEventDist.INSTANCE);
+        BCMessageHandler.addMessageType(MessageVolumeBoxes.class, MessageVolumeBoxes.Handler.INSTANCE, Side.CLIENT);
     }
 
     @Mod.EventHandler

@@ -108,7 +108,10 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (EntityUtil.getWrenchHand(player) != null) {
+        if (world.isRemote) {
+            return false;
+        }
+        if (EntityUtil.getWrenchHand(player) != null && !player.isSneaking()) {
             return false;
         }
         TileEntity tile = world.getTileEntity(pos);

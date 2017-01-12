@@ -1,119 +1,99 @@
 package buildcraft.factory.tile;
 
-import java.io.IOException;
-import java.util.List;
-
+import buildcraft.api.mj.IMjReceiver;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjBattery;
+import buildcraft.api.mj.MjCapabilityHelper;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.tiles.IHasWork;
+import buildcraft.lib.migrate.BCVersion;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.api.mj.IMjReceiver;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjBattery;
-import buildcraft.api.mj.MjCapabilityHelper;
-import buildcraft.api.tiles.IControllable;
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.tiles.IHasWork;
+import java.io.IOException;
+import java.util.List;
 
-import buildcraft.lib.delta.DeltaInt;
-import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
-import buildcraft.lib.migrate.BCVersion;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBC_Neptune;
-
-public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHasWork, IControllable, IDebuggable {
+public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHasWork, IDebuggable {
     public static final int NET_LED_STATUS = 10;
+    public static final int NET_TUBE_LENGTH_WANTED = 11;
 
     protected int progress = 0;
     protected BlockPos currentPos = null;
 
-    public final DeltaInt deltaTubeLength = deltaManager.addDelta("tubeY", EnumNetworkVisibility.RENDER);
+    private int tubeLengthWanted = 0;
+    private double tubeLengthCurrent = 0;
+    private double tubeLengthLast = 0;
 
     protected boolean isComplete = false;
-    protected Mode mode = Mode.On;
-    protected final MjBattery battery = new MjBattery(MjAPI.MJ * 500);
+    protected final MjBattery battery = new MjBattery(500 * MjAPI.MJ);
     protected final IMjReceiver mjReceiver = createMjReceiver();
     protected final MjCapabilityHelper mjCapHelper = new MjCapabilityHelper(mjReceiver);
 
-    protected void initCurrentPos() {
-        if (currentPos == null) {
-            currentPos = getPos();
-            currentPos = currentPos.down();
-            goToYLevel(currentPos.getY());
-        }
-    }
+    protected abstract void initCurrentPos();
 
     protected abstract void mine();
 
     protected abstract IMjReceiver createMjReceiver();
 
-    public double getTubeOffset() {
-        return 0;
-    }
-
     @Override
     public void update() {
-        deltaManager.tick();
-
         if (world.isRemote) {
+            tubeLengthLast = tubeLengthCurrent;
+            if (Math.abs(tubeLengthWanted - tubeLengthCurrent) <= 0.1) {
+                tubeLengthCurrent = tubeLengthWanted;
+            } else {
+                tubeLengthCurrent = tubeLengthCurrent + Math.min(Math.abs((tubeLengthWanted - tubeLengthCurrent) / 10D), 0.1) * (tubeLengthWanted > tubeLengthCurrent ? 1 : -1);
+            }
             return;
         }
 
-        // if (!battery.isFull()) {
-        // test with the output of a stone engine
-        // battery.addPower(MjAPI.MJ);// remove this
-        // }
+        if (!battery.isFull()) {
+            //  test with the output of a stone engine
+            battery.addPower(MjAPI.MJ); // remove this
+        }
 
         battery.tick(getWorld(), getPos());
-
-        if (mode != Mode.On) {
-            return;
-        }
 
         // if (worldObj.rand.nextDouble() > 0.9) { // is this correct?
         if (true) {
             sendNetworkUpdate(NET_LED_STATUS);
         }
 
-        if (isComplete) {
-            return;
-        }
-
         initCurrentPos();
 
-        if (hasTubeStopped()) {
-            mine();
+        mine();
+    }
+
+    protected void goToYLevel(int wantedY) {
+        int length = Math.max(0, getPos().getY() - wantedY - 1);
+        if (length != tubeLengthWanted) {
+            tubeLengthCurrent = tubeLengthWanted = length;
+            sendNetworkUpdate(NET_TUBE_LENGTH_WANTED);
         }
     }
 
-    protected int getCurrentYLevel() {
-        return getPos().getY() - 1 - deltaTubeLength.getStatic(false);
-    }
-
-    protected boolean isAtYlevel(int wanted) {
-        return wanted == getCurrentYLevel();
-    }
-
-    protected boolean hasTubeStopped() {
-        return deltaTubeLength.changingEntries.isEmpty();
-    }
-
-    protected void goToYLevel(int wanted) {
-        int length = getPos().getY() - wanted - 1;
-        int current = deltaTubeLength.getStatic(true);
-        int diff = length - current;
-        if (diff != 0) {
-            deltaTubeLength.addDelta(0, 50 * diff, diff);
-            BCLog.logger.info("Adding a delta " + diff);
+    public double getTubeLength(float partialTicks) {
+        if (partialTicks <= 0) {
+            return tubeLengthLast;
+        } else if (partialTicks >= 1) {
+            return tubeLengthCurrent;
+        } else {
+            return tubeLengthLast * (1 - partialTicks) + tubeLengthCurrent * partialTicks;
         }
+    }
+
+    public boolean isComplete() {
+        return world.isRemote ? isComplete : currentPos == null;
     }
 
     @Override
@@ -127,30 +107,24 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        currentPos = new BlockPos(nbt.getInteger("currentX"), nbt.getInteger("currentY"), nbt.getInteger("currentZ"));
-        progress = nbt.getInteger("progress");
-        battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
-    }
-
-    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
-        initCurrentPos();
-        nbt.setInteger("currentX", currentPos.getX());
-        nbt.setInteger("currentY", currentPos.getY());
-        nbt.setInteger("currentZ", currentPos.getZ());
+        if (currentPos != null) {
+            nbt.setTag("currentPos", NBTUtil.createPosTag(currentPos));
+        }
         nbt.setInteger("progress", progress);
         nbt.setTag("mj_battery", battery.serializeNBT());
         return nbt;
     }
 
-    protected void setComplete(boolean isComplete) {
-        this.isComplete = isComplete;
-        if (!world.isRemote) {
-            sendNetworkUpdate(NET_LED_STATUS);
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        if (nbt.hasKey("currentPos")) {
+            currentPos = NBTUtil.getPosFromTag(nbt.getCompoundTag("currentPos"));
         }
+        progress = nbt.getInteger("progress");
+        battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
     }
 
     // Networking
@@ -161,10 +135,12 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
                 writePayload(NET_LED_STATUS, buffer, side);
+                buffer.writeDouble(tubeLengthCurrent);
             } else if (id == NET_LED_STATUS) {
-                boolean[] flags = { isComplete, mode == Mode.On };
-                MessageUtil.writeBooleanArray(buffer, flags);
+                buffer.writeBoolean(isComplete());
                 battery.writeToBuffer(buffer);
+            } else if (id == NET_TUBE_LENGTH_WANTED) {
+                buffer.writeInt(tubeLengthWanted);
             }
         }
     }
@@ -175,11 +151,12 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 readPayload(NET_LED_STATUS, buffer, side, ctx);
+                tubeLengthCurrent = buffer.readDouble();
             } else if (id == NET_LED_STATUS) {
-                boolean[] flags = MessageUtil.readBooleanArray(buffer, 2);
-                isComplete = flags[0];
-                mode = flags[1] ? Mode.On : Mode.Off;
+                isComplete = buffer.readBoolean();
                 battery.readFromBuffer(buffer);
+            } else if (id == NET_TUBE_LENGTH_WANTED) {
+                tubeLengthWanted = buffer.readInt();
             }
         }
     }
@@ -189,10 +166,23 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         left.add("");
         left.add("battery = " + battery.getDebugString());
         left.add("current = " + currentPos);
-        left.add("tube = " + deltaTubeLength.getStatic(false));
-        left.add("isComplete = " + isComplete);
-        left.add("mode = " + mode);
+        left.add("tubeLengthWanted = " + tubeLengthWanted);
+        left.add("tubeLengthCurrent = " + tubeLengthCurrent);
+        left.add("tubeLengthLast = " + tubeLengthLast);
+        left.add("isComplete = " + isComplete());
         left.add("progress = " + progress);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public AxisAlignedBB getRenderBoundingBox() {
+        return INFINITE_EXTENT_AABB;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public double getMaxRenderDistanceSquared() {
+        return Double.MAX_VALUE;
     }
 
     // IHasWork
@@ -200,25 +190,6 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     @Override
     public boolean hasWork() {
         return !isComplete;
-    }
-
-    // IControllable
-
-    @Override
-    public Mode getControlMode() {
-        return mode;
-    }
-
-    @Override
-    public void setControlMode(Mode mode) {
-        if (acceptsControlMode(mode)) {
-            this.mode = mode;
-        }
-    }
-
-    @Override
-    public boolean acceptsControlMode(Mode mode) {
-        return mode == Mode.Off || mode == Mode.On;
     }
 
     // Capability

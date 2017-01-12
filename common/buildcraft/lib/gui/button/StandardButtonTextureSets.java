@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation;
 
 public enum StandardButtonTextureSets implements IButtonTextureSet {
     LARGE_BUTTON(0, 0, 20, 200),
-    SMALL_BUTTON(0, 80, 15, 200),
+    SMALL_BUTTON(0, 100, 15, 200),
     LEFT_BUTTON(204, 0, 16, 10),
     RIGHT_BUTTON(214, 0, 16, 10);
     public static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("buildcraftcore:textures/gui/buttons.png");

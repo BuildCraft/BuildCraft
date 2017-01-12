@@ -8,17 +8,17 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
-import buildcraft.builders.tile.TileLibrary_Neptune;
+import buildcraft.builders.tile.TileLibrary;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.lib.gui.slot.SlotOutput;
 
-public class ContainerBlueprintLibrary extends ContainerBCTile<TileLibrary_Neptune> {
+public class ContainerBlueprintLibrary extends ContainerBCTile<TileLibrary> {
     protected IInventory playerInventory;
 
     // private int progressIn, progressOut;
 
-    public ContainerBlueprintLibrary(EntityPlayer player, TileLibrary_Neptune library) {
+    public ContainerBlueprintLibrary(EntityPlayer player, TileLibrary library) {
         super(player, library);
         this.playerInventory = player.inventory;
 

@@ -222,6 +222,41 @@ public final class BlockUtil {
         return false;
     }
 
+    public static Fluid getFluid(World world, BlockPos pos) {
+        IBlockState blockState = world.getBlockState(pos);
+        Block block = blockState.getBlock();
+        Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
+        if (block instanceof IFluidBlock) {
+            if (!((IFluidBlock) block).canDrain(world, pos)) {
+                fluid = null;
+            }
+        }
+        if (fluid == null) {
+            if (block == Blocks.FLOWING_WATER && blockState.getValue(BlockLiquid.LEVEL) == 0) {
+                fluid = FluidRegistry.WATER;
+            }
+            if (block == Blocks.FLOWING_LAVA && blockState.getValue(BlockLiquid.LEVEL) == 0) {
+                fluid = FluidRegistry.LAVA;
+            }
+        }
+        return fluid;
+    }
+
+    public static Fluid getFluidWithFlowing(World world, BlockPos pos) {
+        IBlockState blockState = world.getBlockState(pos);
+        Block block = blockState.getBlock();
+        Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
+        if (fluid == null) {
+            if (block == Blocks.FLOWING_WATER) {
+                fluid = FluidRegistry.WATER;
+            }
+            if (block == Blocks.FLOWING_LAVA) {
+                fluid = FluidRegistry.LAVA;
+            }
+        }
+        return fluid;
+    }
+
     public static Fluid getFluid(Block block) {
         return FluidRegistry.lookupFluidForBlock(block);
     }
