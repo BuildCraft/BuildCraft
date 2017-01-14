@@ -114,4 +114,9 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
         Minecraft.getMinecraft().mcProfiler.endSection();
         Minecraft.getMinecraft().mcProfiler.endSection();
     }
+
+    @Override
+    public boolean isGlobalRenderer(TileMiningWell tile) {
+        return true;
+    }
 }

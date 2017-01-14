@@ -33,6 +33,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -43,12 +44,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.MutableTriple;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.IntStream;
 
 public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable {
-    public static final int MAX_QUEUE_SIZE = 64;
+    private static final int MAX_QUEUE_SIZE = 64;
     public final ItemHandlerSimple invResources =
             itemManager.addInvHandler(
                     "resources",
@@ -67,6 +70,26 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     public AddonFillingPlanner addon;
     public Queue<MutablePair<BlockPos, Long>> breakTasks = new ArrayDeque<>();
     public Queue<MutableTriple<BlockPos, ItemStack, Long>> placeTasks = new ArrayDeque<>();
+    public Queue<MutableTriple<BlockPos, ItemStack, Long>> clientPlaceTasks = new ArrayDeque<>();
+    public Queue<MutableTriple<BlockPos, ItemStack, Long>> prevClientPlaceTasks = new ArrayDeque<>();
+
+    public long getTarget(MutablePair<BlockPos, Long> breakTask) {
+        return BlockUtil.computeBlockBreakPower(world, breakTask.getLeft());
+    }
+
+    @SuppressWarnings("unused")
+    public long getTarget(MutableTriple<BlockPos, ItemStack, Long> placeTask) {
+        return (long) (Math.sqrt(Math.pow(placeTask.getLeft().getX() - pos.getX(), 2) + Math.pow(placeTask.getLeft().getY() - pos.getY(), 2) + Math.pow(placeTask.getLeft().getZ() - pos.getZ(), 2)) * 30 * MjAPI.MJ);
+    }
+
+    public Vec3d getTaskPos(MutableTriple<BlockPos, ItemStack, Long> placeTask) {
+        return new Vec3d(getPos())
+                .add(
+                        new Vec3d(placeTask.getLeft().subtract(getPos()))
+                                .scale(placeTask.getRight() * 1D / getTarget(placeTask))
+                )
+                .add(new Vec3d(0.5, 1, 0.5));
+    }
 
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
@@ -102,12 +125,18 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     public void update() {
         battery.tick(getWorld(), getPos());
         if (world.isRemote) {
+            prevClientPlaceTasks.clear();
+            prevClientPlaceTasks.addAll(clientPlaceTasks);
+            clientPlaceTasks.clear();
+            clientPlaceTasks.addAll(placeTasks);
             return;
         }
 
         if (addon == null) {
             return;
         }
+
+        battery.addPowerChecking(256 * MjAPI.MJ);
 
         breakTasks.removeIf(breakTask -> world.isAirBlock(breakTask.getLeft()));
         placeTasks.removeIf(placeTask -> !world.isAirBlock(placeTask.getLeft()));
@@ -155,10 +184,10 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         if (!breakTasks.isEmpty()) {
             for (Iterator<MutablePair<BlockPos, Long>> iterator = breakTasks.iterator(); iterator.hasNext(); ) {
                 MutablePair<BlockPos, Long> breakTask = iterator.next();
-                long target = BlockUtil.computeBlockBreakPower(world, breakTask.getLeft());
+                long target = getTarget(breakTask);
                 breakTask.setRight(
                         breakTask.getRight() +
-                                battery.extractPower(0, Math.min(target - breakTask.getRight(), battery.getCapacity() / breakTasks.size()))
+                                battery.extractPower(0, Math.min(target - breakTask.getRight(), battery.getStored() / breakTasks.size()))
                 );
                 if (breakTask.getRight() >= target) {
                     BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(
@@ -184,10 +213,10 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         if (!placeTasks.isEmpty()) {
             for (Iterator<MutableTriple<BlockPos, ItemStack, Long>> iterator = placeTasks.iterator(); iterator.hasNext(); ) {
                 MutableTriple<BlockPos, ItemStack, Long> placeTask = iterator.next();
-                long target = 4 * MjAPI.MJ;
+                long target = getTarget(placeTask);
                 placeTask.setRight(
                         placeTask.getRight() +
-                                battery.extractPower(0, Math.min(target - placeTask.getRight(), battery.getCapacity() / placeTasks.size()))
+                                battery.extractPower(0, Math.min(target - placeTask.getRight(), battery.getStored() / placeTasks.size()))
                 );
                 if (placeTask.getRight() >= target) {
                     FakePlayerBC fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, getPos(), getOwner());
@@ -210,6 +239,8 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                 }
             }
         }
+
+        sendNetworkUpdate(NET_RENDER_DATA); // FIXME
     }
 
     @Override
@@ -217,6 +248,17 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         super.writePayload(id, buffer, side);
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
+                buffer.writeInt(breakTasks.size());
+                breakTasks.forEach(breakTask -> {
+                    buffer.writeBlockPos(breakTask.getLeft());
+                    buffer.writeLong(breakTask.getRight());
+                });
+                buffer.writeInt(placeTasks.size());
+                placeTasks.forEach(placeTask -> {
+                    buffer.writeBlockPos(placeTask.getLeft());
+                    buffer.writeItemStack(placeTask.getMiddle());
+                    buffer.writeLong(placeTask.getRight());
+                });
             }
         }
     }
@@ -226,6 +268,20 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
+                breakTasks.clear();
+                IntStream.range(0, buffer.readInt())
+                        .mapToObj(i -> MutablePair.of(buffer.readBlockPos(), buffer.readLong()))
+                        .forEach(breakTasks::add);
+                placeTasks.clear();
+                IntStream.range(0, buffer.readInt())
+                        .mapToObj(i -> {
+                            try {
+                                return MutableTriple.of(buffer.readBlockPos(), buffer.readItemStack(), buffer.readLong());
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        })
+                        .forEach(placeTasks::add);
             }
         }
     }
@@ -284,6 +340,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     }
 
     @Override
+    @Nonnull
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
         return addon == null ? super.getRenderBoundingBox() : BoundingBoxUtil.makeFrom(pos, addon.box.box);
@@ -312,10 +369,5 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         left.add("addon = " + addon);
         left.add("break tasks = " + breakTasks.size());
         left.add("place tasks = " + placeTasks.size());
-    }
-
-    public enum EnumTaskType {
-        BREAK,
-        PLACE
     }
 }

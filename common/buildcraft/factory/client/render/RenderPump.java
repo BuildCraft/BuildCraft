@@ -133,4 +133,9 @@ public class RenderPump extends FastTESR<TilePump> {
         Minecraft.getMinecraft().mcProfiler.endSection();
         Minecraft.getMinecraft().mcProfiler.endSection();
     }
+
+    @Override
+    public boolean isGlobalRenderer(TilePump tile) {
+        return true;
+    }
 }
