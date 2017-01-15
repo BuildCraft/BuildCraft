@@ -58,7 +58,7 @@ public class CreativeTabManager {
     public static class CreativeTabBC extends CreativeTabs {
         private ItemStack item = new ItemStack(Items.COMPARATOR); // Temp.
 
-        public CreativeTabBC(String name) {
+        private CreativeTabBC(String name) {
             super(name);
         }
 

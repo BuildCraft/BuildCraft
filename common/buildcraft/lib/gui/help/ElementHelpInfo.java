@@ -2,6 +2,9 @@ package buildcraft.lib.gui.help;
 
 import java.util.List;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.elem.GuiElementContainer;
@@ -24,10 +27,12 @@ public class ElementHelpInfo {
         this.localeKeys = localeKeys;
     }
 
+    @SideOnly(Side.CLIENT)
     public final HelpPosition target(IGuiArea target) {
         return new HelpPosition(this, target);
     }
 
+    @SideOnly(Side.CLIENT)
     public void addGuiElements(GuiElementContainer container) {
         GuiBC8<?> gui = container.gui;
         int y = 20;
@@ -48,6 +53,7 @@ public class ElementHelpInfo {
     }
 
     /** Stores an {@link ElementHelpInfo} information, as well as the target area which the help element relates to. */
+    @SideOnly(Side.CLIENT)
     public static final class HelpPosition {
         public final ElementHelpInfo info;
         public final IGuiArea target;

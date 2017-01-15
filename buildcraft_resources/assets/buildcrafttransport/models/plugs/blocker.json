@@ -3,11 +3,11 @@
         "#all":"buildcrafttransport:pipes/plug",
         "particle":"#all"
     },
-    "shade": true,
     "elements": [
         {
            "from": [ 2, 4, 4 ],
             "to": [ 4, 12, 12 ],
+            "shade": true,
             "faces": {
                 "down":  { "uv": [ 2, 4, 4, 12 ], "texture": "#all" },
                 "up":    { "uv": [ 2, 4, 4, 12 ], "texture": "#all" },

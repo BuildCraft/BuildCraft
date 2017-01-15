@@ -4,6 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib;
 
+import java.util.function.Consumer;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -31,6 +33,9 @@ import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.IntegrationRecipeRegistry;
+import buildcraft.lib.registry.TagManager;
+import buildcraft.lib.registry.TagManager.EnumTagType;
+import buildcraft.lib.registry.TagManager.TagEntry;
 
 //@formatter:off
 @Mod(modid = BCLib.MODID,
@@ -101,5 +106,24 @@ public class BCLib {
     @Mod.EventHandler
     public static void onServerStarted(FMLServerStartedEvent evt) {
         BCLibEventDist.onServerStarted(evt);
+    }
+
+    static {
+        startBatch();
+        registerTag("item.guide").reg("guide").locale("guide").model("guide").tab("vanilla.misc");
+        registerTag("item.debugger").reg("debugger").locale("debugger").model("debugger").tab("vanilla.misc");
+        endBatch(TagManager.prependTags("buildcraftlib:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
+    }
+
+    private static TagEntry registerTag(String id) {
+        return TagManager.registerTag(id);
+    }
+
+    private static void startBatch() {
+        TagManager.startBatch();
+    }
+
+    private static void endBatch(Consumer<TagEntry> consumer) {
+        TagManager.endBatch(consumer);
     }
 }

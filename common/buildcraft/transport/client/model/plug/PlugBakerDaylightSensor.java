@@ -28,16 +28,14 @@ public enum PlugBakerDaylightSensor implements IPluggableModelBaker<KeyPlugDayli
         MutableQuad[] quads = BCTransportModels.DAYLIGHT_SENSOR.getCutoutQuads();
         if (quads != lastSeen) {
             cached.clear();
-            MutableQuad copy = new MutableQuad(0, null);
+            MutableQuad copy = new MutableQuad();
             for (EnumFacing to : EnumFacing.VALUES) {
                 List<BakedQuad> list = new ArrayList<>();
                 Matrix4f transform = MatrixUtil.rotateTowardsFace(to);
                 for (MutableQuad q : quads) {
                     copy.copyFrom(q);
                     copy.transform(transform);
-                    if (copy.isShade()) {
-                        copy.setCalculatedDiffuse();
-                    }
+                    copy.multShade();
                     list.add(copy.toBakedBlock());
                 }
                 cached.put(to, list);

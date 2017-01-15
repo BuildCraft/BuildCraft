@@ -16,11 +16,13 @@ public class LaserContext {
     private final ILaserRenderer renderer;
     public final double length;
     private final boolean useNormalColour, drawBothSides;
+    private final int minBlockLight;
 
     public LaserContext(ILaserRenderer renderer, LaserData_BC8 data, boolean useNormalColour, boolean isCullEnabled) {
         this.renderer = renderer;
         this.useNormalColour = useNormalColour;
         this.drawBothSides = isCullEnabled;
+        this.minBlockLight = data.minBlockLight;
         Vec3d delta = data.start.subtract(data.end);
         double dx = delta.xCoord;
         double dy = delta.yCoord;
@@ -111,7 +113,7 @@ public class LaserContext {
         point.y = (float) yIn;
         point.z = (float) zIn;
         matrix.transform(point);
-        int lmap = LaserRenderer_BC8.computeLightmap(point.x, point.y, point.z);
+        int lmap = LaserRenderer_BC8.computeLightmap(point.x, point.y, point.z, minBlockLight);
         x[index] = point.x;
         y[index] = point.y;
         z[index] = point.z;

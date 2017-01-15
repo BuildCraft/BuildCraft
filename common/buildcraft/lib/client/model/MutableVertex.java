@@ -49,7 +49,16 @@ public class MutableVertex {
         copyFrom(from);
     }
 
-    public void copyFrom(MutableVertex from) {
+    @Override
+    public String toString() {
+        return "{ pos = [ " + position_x + ", " + position_y + ", " + position_z //
+            + " ], norm = [ " + normal_x + ", " + normal_y + ", " + normal_z//
+            + " ], colour = [ " + colour_r + ", " + colour_g + ", " + colour_b + ", " + colour_a//
+            + " ], tex = [ " + tex_u + ", " + tex_v //
+            + " ], light_block = " + light_block + ", light_sky = " + light_sky + " }";
+    }
+
+    public MutableVertex copyFrom(MutableVertex from) {
         position_x = from.position_x;
         position_y = from.position_y;
         position_z = from.position_z;
@@ -68,6 +77,7 @@ public class MutableVertex {
 
         light_block = from.light_block;
         light_sky = from.light_sky;
+        return this;
     }
 
     public void toBakedBlock(int[] data, int offset) {
@@ -255,43 +265,47 @@ public class MutableVertex {
     }
 
     public int colourRGBA() {
-        return (colour_r << 0)//
-            | (colour_g << 8)//
-            | (colour_b << 16)//
-            | (colour_a << 24);
+        int rgba = 0;
+        rgba |= (colour_r & 0xFF) << 0;
+        rgba |= (colour_g & 0xFF) << 8;
+        rgba |= (colour_b & 0xFF) << 16;
+        rgba |= (colour_a & 0xFF) << 24;
+        return rgba;
     }
 
     public int colourABGR() {
-        return (colour_r << 24)//
-            | (colour_g << 16)//
-            | (colour_b << 8)//
-            | (colour_a << 0);
+        int rgba = 0;
+        rgba |= (colour_r & 0xFF) << 24;
+        rgba |= (colour_g & 0xFF) << 16;
+        rgba |= (colour_b & 0xFF) << 8;
+        rgba |= (colour_a & 0xFF) << 0;
+        return rgba;
     }
 
     public MutableVertex multColourd(double d) {
-        return multColourd(d, d, d, 1);
+        int m = (int) (d * 255);
+        return multColouri(m);
     }
 
     public MutableVertex multColourd(double r, double g, double b, double a) {
-        return colouri(//
-                       (int) (colour_r * r),//
-                       (int) (colour_g * g),//
-                       (int) (colour_b * b),//
-                       (int) (colour_a * a) //
-        );
+        return multColouri((int) (r * 255), (int) (g * 255), (int) (b * 255), (int) (a * 255));
     }
 
-    public MutableVertex multColouri(int rgba) {
-        return multColouri(rgba, rgba >> 8, rgba >> 16, rgba >>> 24);
+    public MutableVertex multColouri(int by) {
+        return multColouri(by, by, by, 255);
     }
 
     public MutableVertex multColouri(int r, int g, int b, int a) {
-        return multColourd(//
-                           (r & 255) / 255f,//
-                           (g & 255) / 255f,//
-                           (b & 255) / 255f,//
-                           (a & 255) / 255f //
-        );
+        colour_r = (short) (colour_r * r / 255);
+        colour_g = (short) (colour_g * g / 255);
+        colour_b = (short) (colour_b * b / 255);
+        colour_a = (short) (colour_a * a / 255);
+        return this;
+    }
+
+    /** Multiplies the colour by {@link MutableQuad#diffuseLight(float, float, float)} for the normal. */
+    public MutableVertex multShade() {
+        return multColourd(MutableQuad.diffuseLight(normal_x, normal_y, normal_z));
     }
 
     public MutableVertex texFromSprite(TextureAtlasSprite sprite) {
@@ -330,6 +344,10 @@ public class MutableVertex {
         light_block = (byte) block;
         light_sky = (byte) sky;
         return this;
+    }
+
+    public MutableVertex maxLighti(int block, int sky) {
+        return lighti(Math.max(block, light_block), Math.max(sky, light_sky));
     }
 
     public Point2f lightvf() {
@@ -382,5 +400,109 @@ public class MutableVertex {
 
     public MutableVertex translatevd(Vec3d vec) {
         return translated(vec.xCoord, vec.yCoord, vec.zCoord);
+    }
+
+    public MutableVertex scalef(float scale) {
+        position_x *= scale;
+        position_y *= scale;
+        position_z *= scale;
+        return this;
+    }
+
+    public MutableVertex scaled(double scale) {
+        return scalef((float) scale);
+    }
+
+    public MutableVertex scalef(float x, float y, float z) {
+        position_x *= x;
+        position_y *= y;
+        position_z *= z;
+        // TODO: scale normals?
+        return this;
+    }
+
+    public MutableVertex scaled(double x, double y, double z) {
+        return scalef((float) x, (float) y, (float) z);
+    }
+
+    /** Rotates this vertex around the X axis 90 degrees.
+     * 
+     * @param scale The multiplier for scaling. Positive values will rotate clockwise, negative values rotate
+     *            anti-clockwise. */
+    public MutableVertex rotateX_90(float scale) {
+        float ym = scale;
+        float zm = -ym;
+
+        float t = position_y * ym;
+        position_y = position_z * zm;
+        position_z = t;
+
+        t = normal_y * ym;
+        normal_y = normal_z * zm;
+        normal_z = t;
+        return this;
+    }
+
+    /** Rotates this vertex around the Y axis 90 degrees.
+     * 
+     * @param scale The multiplier for scaling. Positive values will rotate clockwise, negative values rotate
+     *            anti-clockwise. */
+    public MutableVertex rotateY_90(float scale) {
+        float xm = scale;
+        float zm = -xm;
+
+        float t = position_x * xm;
+        position_x = position_z * zm;
+        position_z = t;
+
+        t = normal_x * xm;
+        normal_x = normal_z * zm;
+        normal_z = t;
+        return this;
+    }
+
+    /** Rotates this vertex around the Z axis 90 degrees.
+     * 
+     * @param scale The multiplier for scaling. Positive values will rotate clockwise, negative values rotate
+     *            anti-clockwise. */
+    public MutableVertex rotateZ_90(float scale) {
+        float ym = scale;
+        float xm = -ym;
+
+        float t = position_x * xm;
+        position_x = position_y * ym;
+        position_y = t;
+
+        t = normal_x * xm;
+        normal_x = normal_y * ym;
+        normal_y = t;
+        return this;
+    }
+
+    /** Rotates this vertex around the X axis by 180 degrees. */
+    public MutableVertex rotateX_180() {
+        position_y = -position_y;
+        position_z = -position_z;
+        normal_y = -normal_y;
+        normal_z = -normal_z;
+        return this;
+    }
+
+    /** Rotates this vertex around the Y axis by 180 degrees. */
+    public MutableVertex rotateY_180() {
+        position_x = -position_x;
+        position_z = -position_z;
+        normal_x = -normal_x;
+        normal_z = -normal_z;
+        return this;
+    }
+
+    /** Rotates this vertex around the Z axis by 180 degrees. */
+    public MutableVertex rotateZ_180() {
+        position_x = -position_x;
+        position_y = -position_y;
+        normal_x = -normal_x;
+        normal_y = -normal_y;
+        return this;
     }
 }

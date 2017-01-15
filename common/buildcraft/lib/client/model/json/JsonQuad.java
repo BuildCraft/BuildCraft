@@ -7,7 +7,6 @@ import javax.vecmath.Vector3f;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.JsonUtils;
@@ -44,38 +43,18 @@ public class JsonQuad {
         center.add(radius);
         MutableQuad quad = ModelUtil.createFace(face, center, radius, uvs);
         quad.rotateTextureUp(rotation);
-        vertices[0] = new JsonVertex(quad.getVertex(0));
-        vertices[1] = new JsonVertex(quad.getVertex(1));
-        vertices[2] = new JsonVertex(quad.getVertex(2));
-        vertices[3] = new JsonVertex(quad.getVertex(3));
-    }
-    
-    private JsonQuad(JsonQuad from, JsonVertex[] vs, EnumFacing face) {
-        this.shade = from.shade;
-        this.tint = from.tint;
-        this.texture = from.texture;
-        vertices[0] = vs[0];
-        vertices[1] = vs[1];
-        vertices[2] = vs[2];
-        vertices[3] = vs[3];
-        this.face = face;
-    }
-
-    public JsonQuad rotate(ModelRotation rot) {
-        JsonVertex[] vs = new JsonVertex[4];
-        for (int i = 0; i < 4; i++) {
-            vs[i] = vertices[i].rotate(rot);
-        }
-        EnumFacing f = rot.rotate(face);
-        return new JsonQuad(this, vs, f);
+        vertices[0] = new JsonVertex(quad.vertex_0);
+        vertices[1] = new JsonVertex(quad.vertex_1);
+        vertices[2] = new JsonVertex(quad.vertex_2);
+        vertices[3] = new JsonVertex(quad.vertex_3);
     }
 
     public MutableQuad toQuad(TextureAtlasSprite sprite) {
         MutableQuad quad = new MutableQuad(tint, face, shade);
-        vertices[0].loadInto(quad.getVertex(0));
-        vertices[1].loadInto(quad.getVertex(1));
-        vertices[2].loadInto(quad.getVertex(2));
-        vertices[3].loadInto(quad.getVertex(3));
+        vertices[0].loadInto(quad.vertex_0);
+        vertices[1].loadInto(quad.vertex_1);
+        vertices[2].loadInto(quad.vertex_2);
+        vertices[3].loadInto(quad.vertex_3);
         if (sprite != null) {
             quad.texFromSprite(sprite);
             quad.setSprite(sprite);

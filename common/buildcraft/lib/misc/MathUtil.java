@@ -16,4 +16,8 @@ public class MathUtil {
     public static double clamp(double toClamp, double min, double max) {
         return Math.max(Math.min(toClamp, max), min);
     }
+
+    public static long clamp(long toClamp, long min, long max) {
+        return Math.max(Math.min(toClamp, max), min);
+    }
 }

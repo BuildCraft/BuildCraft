@@ -63,9 +63,9 @@ public class PipeWireRenderer {
         MutableQuad[] quads = new MutableQuad[6];
 
         Tuple3f center = new Point3f(//
-                0.5f + (part.x.getOffset() * 4.51f / 16f),//
-                0.5f + (part.y.getOffset() * 4.51f / 16f),//
-                0.5f + (part.z.getOffset() * 4.51f / 16f) //
+            0.5f + (part.x.getOffset() * 4.51f / 16f),//
+            0.5f + (part.y.getOffset() * 4.51f / 16f),//
+            0.5f + (part.z.getOffset() * 4.51f / 16f) //
         );
         Tuple3f radius = new Point3f(1 / 32f, 1 / 32f, 1 / 32f);
         UvFaceData uvs = new UvFaceData();
@@ -101,29 +101,29 @@ public class PipeWireRenderer {
             double cL = 0.5f - 4.51f / 16f;
             double cU = 0.5f + 4.51f / 16f;
             center = new Vec3d(//
-                    ax ? 0.5f : (between.xy ? cU : cL),//
-                    ay ? 0.5f : ((ax ? between.xy : between.yz) ? cU : cL),//
-                    az ? 0.5f : (between.yz ? cU : cL) //
+                ax ? 0.5f : (between.xy ? cU : cL),//
+                ay ? 0.5f : ((ax ? between.xy : between.yz) ? cU : cL),//
+                az ? 0.5f : (between.yz ? cU : cL) //
             );
             double rC = 4.01f / 16f;
             double rN = 1f / 16f / 2;
             radius = new Vec3d(//
-                    ax ? rC : rN,//
-                    ay ? rC : rN,//
-                    az ? rC : rN //
+                ax ? rC : rN,//
+                ay ? rC : rN,//
+                az ? rC : rN //
             );
         } else {// we are a connection
             double cL = (8 - 4.51) / 16;
             double cU = (8 + 4.51) / 16;
             radius = new Vec3d(//
-                    ax ? 2.99 / 32 : 1 / 32.0,//
-                    ay ? 2.99 / 32 : 1 / 32.0,//
-                    az ? 2.99 / 32 : 1 / 32.0 //
+                ax ? 2.99 / 32 : 1 / 32.0,//
+                ay ? 2.99 / 32 : 1 / 32.0,//
+                az ? 2.99 / 32 : 1 / 32.0 //
             );
             center = new Vec3d(//
-                    ax ? (0.5 + 6.505 / 16 * between.to.getFrontOffsetX()) : (between.xy ? cU : cL),//
-                    ay ? (0.5 + 6.505 / 16 * between.to.getFrontOffsetY()) : ((ax ? between.xy : between.yz) ? cU : cL),//
-                    az ? (0.5 + 6.505 / 16 * between.to.getFrontOffsetZ()) : (between.yz ? cU : cL) //
+                ax ? (0.5 + 6.505 / 16 * between.to.getFrontOffsetX()) : (between.xy ? cU : cL),//
+                ay ? (0.5 + 6.505 / 16 * between.to.getFrontOffsetY()) : ((ax ? between.xy : between.yz) ? cU : cL),//
+                az ? (0.5 + 6.505 / 16 * between.to.getFrontOffsetZ()) : (between.yz ? cU : cL) //
             );
         }
 
@@ -187,17 +187,22 @@ public class PipeWireRenderer {
         VertexBuffer vb = tessellator.getBuffer();
         vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
-        float texOffset = (level & 0xF) / 16f;
+        float vOffset = (level & 0xF) / 16f;
         for (MutableQuad q : quads) {
-            for (int i = 0; i < 4; i++) {
-                MutableVertex v = q.getVertex(i);
-                v.renderPosition(vb);
-                vb.tex(sprite.getInterpU(v.tex_u), sprite.getInterpV(v.tex_v + texOffset));
-                vb.endVertex();
-            }
+            renderVertex(vb, q.vertex_0, sprite, vOffset);
+            renderVertex(vb, q.vertex_1, sprite, vOffset);
+            renderVertex(vb, q.vertex_2, sprite, vOffset);
+            renderVertex(vb, q.vertex_3, sprite, vOffset);
         }
-
         tessellator.draw();
+    }
+
+    private static void renderVertex(VertexBuffer vb, MutableVertex vertex, ISprite sprite, float vOffset) {
+        vertex.renderPosition(vb);
+        double u = sprite.getInterpU(vertex.tex_u);
+        double v = sprite.getInterpV(vertex.tex_v + vOffset);
+        vb.tex(u, v);
+        vb.endVertex();
     }
 
     private static int compileQuads(MutableQuad[] quads, EnumDyeColor colour, boolean isOn) {

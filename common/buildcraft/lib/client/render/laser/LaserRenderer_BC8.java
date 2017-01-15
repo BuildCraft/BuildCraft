@@ -88,10 +88,10 @@ public class LaserRenderer_BC8 {
         }
     }
 
-    public static int computeLightmap(double x, double y, double z) {
+    public static int computeLightmap(double x, double y, double z, int minBlockLight) {
         World world = Minecraft.getMinecraft().world;
         if (world == null) return 0;
-        int blockLight = getLightFor(world, EnumSkyBlock.BLOCK, x, y, z);
+        int blockLight = minBlockLight >= 15 ? 15 : Math.max(minBlockLight, getLightFor(world, EnumSkyBlock.BLOCK, x, y, z));
         int skyLight = getLightFor(world, EnumSkyBlock.SKY, x, y, z);
         return skyLight << 20 | blockLight << 4;
     }

@@ -411,18 +411,18 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
 
             if (flip ? out : in) {
                 MutableQuad mutable = new MutableQuad(-1, face);
-                bakePoint(mutable.getVertex(0), face, u, v, otherMoved, ri, true, false);
-                bakePoint(mutable.getVertex(1), face, u, v, otherMoved, ri, true, true);
-                bakePoint(mutable.getVertex(2), face, u, v, otherMoved, ri, false, true);
-                bakePoint(mutable.getVertex(3), face, u, v, otherMoved, ri, false, false);
+                bakePoint(mutable.vertex_0, face, u, v, otherMoved, ri, true, false);
+                bakePoint(mutable.vertex_1, face, u, v, otherMoved, ri, true, true);
+                bakePoint(mutable.vertex_2, face, u, v, otherMoved, ri, false, true);
+                bakePoint(mutable.vertex_3, face, u, v, otherMoved, ri, false, false);
                 quads.add(mutable);
             }
             if (flip ? in : out) {
                 MutableQuad mutable = new MutableQuad(-1, face);
-                bakePoint(mutable.getVertex(0), opposite, u, v, otherMoved, ri, false, false);
-                bakePoint(mutable.getVertex(1), opposite, u, v, otherMoved, ri, false, true);
-                bakePoint(mutable.getVertex(2), opposite, u, v, otherMoved, ri, true, true);
-                bakePoint(mutable.getVertex(3), opposite, u, v, otherMoved, ri, true, false);
+                bakePoint(mutable.vertex_0, opposite, u, v, otherMoved, ri, false, false);
+                bakePoint(mutable.vertex_1, opposite, u, v, otherMoved, ri, false, true);
+                bakePoint(mutable.vertex_2, opposite, u, v, otherMoved, ri, true, true);
+                bakePoint(mutable.vertex_3, opposite, u, v, otherMoved, ri, true, false);
                 quads.add(mutable);
             }
         }

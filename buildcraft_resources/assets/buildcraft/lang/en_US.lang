@@ -485,7 +485,7 @@ itemGroup.buildcraft.boards=BuildCraft Robots
 itemGroup.buildcraft.main=BuildCraft
 itemGroup.buildcraft.pipes=BuildCraft Pipes
 itemGroup.buildcraft.facades=BuildCraft Facades
-itemGroup.buildcraft.gates=BuildCraft Gates
+itemGroup.buildcraft.plugs=BuildCraft Pluggables
 
 tile.architectBlock.name=Architect Table
 tile.assemblyTableBlock.name=Assembly Table

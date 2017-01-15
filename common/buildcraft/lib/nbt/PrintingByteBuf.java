@@ -1,12 +1,17 @@
 package buildcraft.lib.nbt;
 
+import net.minecraft.network.PacketBuffer;
+
 import buildcraft.lib.net.PacketBufferBC;
 
 import io.netty.buffer.ByteBuf;
 
 public final class PrintingByteBuf extends PacketBufferBC {
+    private final PacketBufferBC wrapped;
+
     public PrintingByteBuf(ByteBuf wrapped) {
         super(wrapped);
+        this.wrapped = PacketBufferBC.asPacketBufferBc(wrapped);
     }
 
     @Override
@@ -51,6 +56,22 @@ public final class PrintingByteBuf extends PacketBufferBC {
         for (int i = 0; i < length; i++) {
             writeByte(src.getByte(i + srcIndex));
         }
+        return this;
+    }
+
+    @Override
+    public PacketBuffer writeVarInt(int value) {
+        System.out.print(" _var(");
+        super.writeVarInt(value);
+        System.out.print(" )");
+        return this;
+    }
+
+    @Override
+    public PacketBuffer writeVarLong(long value) {
+        System.out.print(" _var(");
+        super.writeVarLong(value);
+        System.out.print(" )");
         return this;
     }
 
