@@ -2,7 +2,6 @@ package buildcraft.lib.client.render;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
 import com.google.common.cache.CacheBuilder;
@@ -30,7 +29,6 @@ import buildcraft.api.core.EnumPipePart;
 
 import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.misc.ItemStackKey;
 
 public class ItemRenderUtil {
@@ -51,9 +49,9 @@ public class ItemRenderUtil {
     };
     static {
         glListCache = CacheBuilder.newBuilder()//
-                .expireAfterAccess(40, TimeUnit.SECONDS)//
-                .removalListener(ItemRenderUtil::onStackRemove)//
-                .build(CacheLoader.from(ItemRenderUtil::makeItemGlList));
+            .expireAfterAccess(40, TimeUnit.SECONDS)//
+            .removalListener(ItemRenderUtil::onStackRemove)//
+            .build(CacheLoader.from(ItemRenderUtil::makeItemGlList));
     }
 
     private static Integer makeItemGlList(ItemStackKey item) {
@@ -121,45 +119,36 @@ public class ItemRenderUtil {
             for (EnumPipePart part : EnumPipePart.VALUES) {
                 for (BakedQuad quad : model.getQuads(null, part.face, 0)) {
                     q.fromBakedItem(quad);
+                    q.translated(-0.5, -0.5, -0.5);
+                    q.scaled(scale);
 
-                    for (int i = 0; i < 4; i++) {
-                        MutableVertex v = q.getVertex(i);
-                        Point3f pos = v.positionvf();
-                        Point3f nPos = new Point3f(pos);
-                        switch (dir) {
-                            case EAST:
-                                nPos.x = (pos.z - 0.5f) * scale;
-                                nPos.y = (pos.y - 0.5f) * scale;
-                                nPos.z = (1 - pos.x - 0.5f) * scale;
-                                break;
-                            case WEST:
-                                nPos.x = (1 - pos.z - 0.5f) * scale;
-                                nPos.y = (pos.y - 0.5f) * scale;
-                                nPos.z = (pos.x - 0.5f) * scale;
-                                break;
-                            case DOWN:
-                                nPos.x = (pos.z - 0.5f) * scale;
-                                nPos.y = (pos.x - 0.5f) * scale;
-                                nPos.z = (pos.y - 0.5f) * scale;
-                                break;
-                            case UP:
-                                nPos.x = (pos.x - 0.5f) * scale;
-                                nPos.y = (pos.z - 0.5f) * scale;
-                                nPos.z = (1 - pos.y - 0.5f) * scale;
-                                break;
-                            case NORTH:
-                                nPos.x = (1 - pos.x - 0.5f) * scale;
-                                nPos.y = (pos.y - 0.5f) * scale;
-                                nPos.z = (1 - pos.z - 0.5f) * scale;
-                                break;
-                            default:
-                            case SOUTH:
-                                nPos.x = (pos.x - 0.5f) * scale;
-                                nPos.y = (pos.y - 0.5f) * scale;
-                                nPos.z = (pos.z - 0.5f) * scale;
-                                break;
+                    switch (dir) {
+                        case EAST: {
+                            q.rotateY_90(1);
+                            break;
                         }
-                        v.positionv(nPos);
+                        case WEST: {
+                            q.rotateY_90(-1);
+                            break;
+                        }
+                        case DOWN: {
+                            q.rotateX_90(1);
+                            break;
+                        }
+                        case UP: {
+                            q.rotateX_90(-1);
+                            break;
+                        }
+                        case NORTH: {
+                            q.rotateY_180();
+                            break;
+                        }
+                        case SOUTH: {
+                            break;
+                        }
+                        default: {
+                            throw new IllegalStateException("Unknown EnumFacing" + dir);
+                        }
                     }
                     if (quad.hasTintIndex()) {
                         int colour = Minecraft.getMinecraft().getItemColors().getColorFromItemstack(stack, quad.getTintIndex());
@@ -170,10 +159,8 @@ public class ItemRenderUtil {
                     }
                     q.lighti(15, 15);
                     Vector3f normal = q.getCalculatedNormal();
-                    q.normalv(normal);
-                    if (quad.shouldApplyDiffuseLighting()) {
-                        q.setDiffuse(normal);
-                    }
+                    q.normalvf(normal);
+                    q.multShade();
                     q.render(vb);
                 }
             }

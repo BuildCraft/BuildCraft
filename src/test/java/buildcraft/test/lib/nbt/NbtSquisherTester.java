@@ -3,6 +3,7 @@ package buildcraft.test.lib.nbt;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -15,22 +16,20 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagFloat;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.profiler.Profiler;
 
-import buildcraft.lib.nbt.NBTSquishDebugging;
 import buildcraft.lib.nbt.NbtSquisher;
 
 public class NbtSquisherTester {
-    private final NBTTagCompound nbt = genNbt();
+    private final NBTTagCompound nbt = genNbt(64 * 64 * 64);
+    private final NBTTagCompound nbtSmall = genNbt(10);
 
     @Test
     public void testSimpleNBT() throws IOException {
-        NBTSquishDebugging.debug = true;
-        test(nbt);
-        NBTSquishDebugging.debug = false;
-        test(nbt);
+        test(true, nbt);
     }
 
-    private static NBTTagCompound genNbt() {
+    private static NBTTagCompound genNbt(int bptSize) {
         Random rand = new Random(0x517123);
 
         NBTTagCompound nbt = new NBTTagCompound();
@@ -63,60 +62,64 @@ public class NbtSquisherTester {
 
         nbt.setTag("complex|compound", compound);
 
-        NBTTagCompound air = new NBTTagCompound();
-        air.setString("block", "minecraft:air");
+        String[] names = { "minecraft:air", "minecraft:log", "minecraft:torch", "minecraft:stone", "minecraft:fence" };
+        int[] metas = { 1, 16, 5, 7, 4 };
 
-        NBTTagCompound diorite = new NBTTagCompound();
-        diorite.setString("block", "minecraft:stone");
-        diorite.setByte("meta", (byte) 4);
+        NBTTagCompound[] blocks = new NBTTagCompound[sum(metas)];
 
-        NBTTagCompound andersite = new NBTTagCompound();
-        andersite.setString("block", "minecraft:stone");
-        andersite.setByte("meta", (byte) 3);
+        int block = 0;
+        for (int b = 0; b < names.length; b++) {
+            NBTTagCompound blockNbt = new NBTTagCompound();
+            blockNbt.setString("id", names[b]);
+            blocks[block++] = blockNbt.copy();
+            for (int m = 1; m < metas[b]; m++) {
+                blockNbt.setByte("meta", (byte) m);
+                blocks[block++] = blockNbt.copy();
+            }
+        }
 
-        NBTTagCompound cobblestone = new NBTTagCompound();
-        cobblestone.setString("block", "minecraft:cobblestone");
-
-        NBTTagCompound torch = new NBTTagCompound();
-        torch.setString("block", "minecraft:torch");
-        torch.setByte("meta", (byte) 0);
-
-        NBTTagCompound itemApple = new NBTTagCompound();
-        itemApple.setString("id", "minecraft:apple");
-        itemApple.setByte("Count", (byte) 12);
-        itemApple.setShort("Damage", (short) 0);
-
-        NBTTagCompound chest = new NBTTagCompound();
-        chest.setString("block", "minecraft:chest");
-        chest.setByte("meta", (byte) 2);
-        NBTTagList chestItems = new NBTTagList();
-        chestItems.appendTag(itemApple);
-
-        chest.setTag("items", chestItems);
+        NBTTagCompound air = blocks[0];
 
         NBTTagList bpt = new NBTTagList();
 
-        for (int i = 0; i < 64 * 64 * 64; i++) {
+        int chests = 0;
+        for (int i = 0; i < bptSize; i++) {
             double r = rand.nextDouble();
             final NBTTagCompound toUse;
-            if (r < 0.8) toUse = air;
-            else if (r < 0.875) toUse = andersite;
-            else if (r < 0.93) toUse = cobblestone;
-            else if (r < 0.9995) toUse = torch;
-            else if (r < 0.9999) toUse = chest;
-            else toUse = genRandomChest(rand);
+            if (r < 0.4) {
+                toUse = air;
+            } else if (r < 0.9999) {
+                toUse = blocks[rand.nextInt(blocks.length)];
+            } else {
+                toUse = genRandomChest(rand);
+                chests++;
+            }
             bpt.appendTag(toUse);
         }
+        System.out.println(chests + " random chests in a " + Math.cbrt(bptSize) + " bpt");
 
         nbt.setTag("bpt", bpt);
         return nbt;
     }
 
-    public static byte[] test(NBTTagCompound nbt) throws IOException {
+    private static int sum(int[] values) {
+        int total = 0;
+        for (int i : values) {
+            total += i;
+        }
+        return total;
+    }
+
+    public static long[] test(boolean print, NBTTagCompound nbt) throws IOException {
+        long[] times = new long[4];
+
         Stopwatch watch = Stopwatch.createStarted();
         byte[] bytes = NbtSquisher.squishVanillaUncompressed(nbt);
         watch.stop();
-        printBytesData("vanilla   [un] took " + padMilliseconds(watch.elapsed(TimeUnit.MILLISECONDS), 8), bytes);
+        if (print) {
+            times[0] = watch.elapsed(TimeUnit.MILLISECONDS);
+            printBytesData("vanilla   [un] took " + padMilliseconds(times[0], 8), bytes);
+        }
         watch.reset();
 
         NBTTagCompound to = NbtSquisher.expand(bytes.clone());
@@ -125,26 +128,41 @@ public class NbtSquisherTester {
         watch.start();
         bytes = NbtSquisher.squishVanilla(nbt);
         watch.stop();
-        printBytesData("vanilla   [cp] took " + padMilliseconds(watch.elapsed(TimeUnit.MILLISECONDS), 8), bytes);
+        if (print) {
+            times[1] = watch.elapsed(TimeUnit.MILLISECONDS);
+            printBytesData("vanilla   [cp] took " + padMilliseconds(times[1], 8), bytes);
+        }
         watch.reset();
 
         to = NbtSquisher.expand(bytes.clone());
         checkEquality(nbt, to);
 
-        return bytes;
-    }
-
-    private static void testBcOnly(NBTTagCompound nbt) {
-        Stopwatch watch = Stopwatch.createStarted();
-        byte[] bytes = NbtSquisher.squishBuildCraftV1Uncompressed(nbt);
+        watch.start();
+        bytes = NbtSquisher.squishBuildCraftV1Uncompressed(nbt);
         watch.stop();
-        printBytesData("buildcraft[un] took " + padMilliseconds(watch.elapsed(TimeUnit.MILLISECONDS), 8), bytes);
+        if (print) {
+            times[2] = watch.elapsed(TimeUnit.MILLISECONDS);
+            printBytesData("buildcraft[un] took " + padMilliseconds(times[2], 8), bytes);
+        }
         watch.reset();
+
+        NbtSquisher.debug = false;
+
+        to = NbtSquisher.expand(bytes.clone());
+        checkEquality(nbt, to);
 
         watch.start();
         bytes = NbtSquisher.squishBuildCraftV1(nbt);
         watch.stop();
-        printBytesData("buildcraft[cp] took " + padMilliseconds(watch.elapsed(TimeUnit.MILLISECONDS), 8), bytes);
+        if (print) {
+            times[3] = watch.elapsed(TimeUnit.MILLISECONDS);
+            printBytesData("buildcraft[cp] took " + padMilliseconds(times[3], 8), bytes);
+        }
+
+        to = NbtSquisher.expand(bytes.clone());
+        checkEquality(nbt, to);
+
+        return times;
     }
 
     public static void checkEquality(NBTTagCompound from, NBTTagCompound to) {
@@ -216,11 +234,9 @@ public class NbtSquisherTester {
         NBTTagList chestItems = new NBTTagList();
 
         NBTTagCompound itemB = genRandomItem(rand);
-        int num = rand.nextInt(3) + rand.nextInt(3) - 3;
-        num += 5;
-        num *= 6;
+        int num = rand.nextInt(3) + 2;
         for (int i = 0; i < num; i++) {
-            if (rand.nextInt(6) == 0) {
+            if (rand.nextInt(6) > 0) {
                 chestItems.appendTag(itemB);
             } else {
                 chestItems.appendTag(genRandomItem(rand));
@@ -275,12 +291,80 @@ public class NbtSquisherTester {
     }
 
     public static void main(String[] args) throws IOException {
+        System.in.read();
         NbtSquisherTester tester = new NbtSquisherTester();
+        Stopwatch watch = Stopwatch.createStarted();
+        for (int i = 1; i <= 100_000; i++) {
+            test(false, tester.nbtSmall);
+            if (i % 10_000 == 0) {
+                watch.stop();
+                System.out.println("Finished test " + i + " in " + watch.elapsed(TimeUnit.MILLISECONDS) + "ms");
+                watch.reset().start();
+            }
+        }
+        watch.reset();
+
+        NbtSquisher.profiler.profilingEnabled = true;
+        NbtSquisher.profiler.startSection("root");
+
+        final int times = 100;
+        long[][] all = new long[times][];
+
+        System.in.read();
+        NbtSquisher.debug = true;
         for (int i = 0; i < 100; i++) {
-            System.in.read();
             System.out.println("Starting test " + (i + 1));
-            testBcOnly(tester.nbt);
+            all[i] = test(true, tester.nbt);
             System.out.println("Finished test " + (i + 1));
+            NbtSquisher.debug = false;
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+        String[] types = { "vanilla   [un]", "vanilla   [cp]", "buildcraft[un]", "buildcraft[cp]" };
+        for (int i = 0; i < 4; i++) {
+            long total = 0;
+            for (int j = 20; j < times; j++)
+                total += all[j][i];
+            long average = total * 100 / (times - 20);
+            System.out.println(types[i] + " took (on average) " + (average / 100) + "." + (average % 100) + "ms");
+        }
+
+        NbtSquisher.profiler.endSection();
+        writeProfilerResults(0, "root.write", NbtSquisher.profiler);
+    }
+
+    private static void writeProfilerResults(int indent, String sectionName, Profiler profiler) {
+        List<Profiler.Result> list = profiler.getProfilingData(sectionName);
+
+        if (list != null && list.size() >= 3) {
+            for (int i = 1; i < list.size(); ++i) {
+                Profiler.Result profiler$result = list.get(i);
+                StringBuilder builder = new StringBuilder();
+                builder.append(String.format("[%02d] ", indent));
+
+                for (int j = 0; j < indent; ++j) {
+                    builder.append("|   ");
+                }
+
+                builder.append(profiler$result.profilerName);
+                builder.append(" - ");
+                builder.append(String.format("%.2f", profiler$result.usePercentage));
+                builder.append("%/");
+                builder.append(String.format("%.2f", profiler$result.totalUsePercentage));
+                System.out.println(builder.toString());
+
+                if (!"unspecified".equals(profiler$result.profilerName)) {
+                    try {
+                        writeProfilerResults(indent + 1, sectionName + "." + profiler$result.profilerName, profiler);
+                    } catch (Exception exception) {
+                        System.out.println("[[ EXCEPTION " + exception + " ]]");
+                    }
+                }
+            }
         }
     }
 }

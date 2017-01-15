@@ -9,13 +9,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.JsonUtils;
 
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.client.model.ResourceLoaderContext;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
@@ -95,7 +93,6 @@ public abstract class JsonModelRule {
             }
             // always rotate from "UP" - it simplifies the math a bit
             switch (faceFrom) {
-                default:
                 case UP:
                     break;
                 case DOWN:
@@ -105,7 +102,9 @@ public abstract class JsonModelRule {
                 case EAST:
                 case NORTH:
                 case SOUTH:
-
+                    throw new IllegalArgumentException("Not yet implemented - rotate from " + faceFrom);
+                default:
+                    throw new IllegalArgumentException("Unknown EnumFacing " + faceFrom);
             }
             faceFrom = EnumFacing.UP;
             if (faceTo == EnumFacing.UP) return;
@@ -113,50 +112,33 @@ public abstract class JsonModelRule {
             float oy = (float) origin[1].evaluate();
             float oz = (float) origin[2].evaluate();
 
-            for (MutableQuad q : quads) {
-                for (int i = 0; i < 4; i++) {
-                    MutableVertex v = q.getVertex(i);
-                    v.position_x -= ox;
-                    v.position_y -= oy;
-                    v.position_z -= oz;
-                    Axis axis = faceTo.getAxis();
-                    if (axis == Axis.X) {
-                        float xm = faceTo.getFrontOffsetX();
-                        float ym = -xm;
-
-                        // rotate around the Z-axis
-                        float t = v.position_y * xm;
-                        v.position_y = v.position_x * ym;
-                        v.position_x = t;
-
-                        t = v.normal_y * xm;
-                        v.normal_y = v.normal_x * ym;
-                        v.normal_x = t;
-                    } else if (axis == Axis.Z) {
-                        float zm = faceTo.getFrontOffsetZ();
-                        float ym = -zm;
-
-                        // rotate around the X-axis
-                        float t = v.position_y * zm;
-                        v.position_y = v.position_z * ym;
-                        v.position_z = t;
-
-                        t = v.normal_y * zm;
-                        v.normal_y = v.normal_z * ym;
-                        v.normal_z = t;
-                    } else {// axis == Axis.Y && faceTo == DOWN
-                        // Invert the entire model
-                        v.position_x = -v.position_x;
-                        v.position_y = -v.position_y;
-                        v.position_z = -v.position_z;
-
-                        v.normal_x = -v.normal_x;
-                        v.normal_y = -v.normal_y;
-                        v.normal_z = -v.normal_z;
+            switch (faceTo.getAxis()) {
+                case X: {
+                    for (MutableQuad q : quads) {
+                        q.translatef(-ox, -oy, -oz);
+                        q.rotateZ_90(faceTo.getFrontOffsetX());
+                        q.translatef(ox, oy, oz);
                     }
-                    v.position_x += ox;
-                    v.position_y += oy;
-                    v.position_z += oz;
+                    break;
+                }
+                case Z: {
+                    for (MutableQuad q : quads) {
+                        q.translatef(-ox, -oy, -oz);
+                        q.rotateX_90(faceTo.getFrontOffsetZ());
+                        q.translatef(ox, oy, oz);
+                    }
+                    break;
+                }
+                case Y: {
+                    for (MutableQuad q : quads) {
+                        q.translatef(-ox, -oy, -oz);
+                        q.rotateX_180();
+                        q.translatef(ox, oy, oz);
+                    }
+                    break;
+                }
+                default: {
+                    throw new IllegalStateException("Unknown axis " + faceTo.getAxis());
                 }
             }
         }

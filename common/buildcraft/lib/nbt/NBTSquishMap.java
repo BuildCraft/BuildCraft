@@ -11,8 +11,28 @@ import net.minecraftforge.common.util.Constants;
 import gnu.trove.list.array.*;
 
 /** Defines a map of commonly used tags. */
-@Deprecated
 public class NBTSquishMap {
+    // TODO: Try adding "ImmutableTagCompound" and "ImmutableTagList" to see if the equals() and hashCode() of compounds
+    // is a problem atm
+    // perhaps use "TCustomHashSet" with a simalir deduplicating functionality of FoamFix?
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
     // I'm not completely convinced that this one is necessary.
     // However it completes the set so, meh
     final TByteArrayList bytes = new TByteArrayList();
@@ -233,6 +253,22 @@ public class NBTSquishMap {
             throw new IOException("Cannot handle index " + index);
         }
         return value;
+    }
+
+    public NBTTagCompound getFullyReadComp(int index) throws IOException {
+        NBTBase tag = getTagForReading(index);
+        if (tag instanceof NBTTagCompound) {
+            return (NBTTagCompound) tag;
+        } else {
+            throw new IOException("The tag at " + index + " was not a compound tag! (was " + tag + ")");
+        }
+    }
+
+    public String getStringForReading(int index) throws IOException {
+        if (index < 0 || index >= strings.size()) {
+            throw new IOException("Cannot handle index " + index);
+        }
+        return strings.get(index);
     }
 
     public int sizeOf(int tagType) {

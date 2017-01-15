@@ -40,7 +40,7 @@ public class ItemWrench_Neptune extends ItemBC_Neptune implements IToolWrench {
 
     @Override
     public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
-        return true;
+        return false;
     }
 
     @Override

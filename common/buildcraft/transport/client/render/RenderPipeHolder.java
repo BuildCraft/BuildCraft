@@ -13,6 +13,7 @@ import buildcraft.api.transport.neptune.PipePluggable;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.flow.PipeFlowFluids;
 import buildcraft.transport.pipe.flow.PipeFlowItems;
+import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.tile.TilePipeHolder;
 
 public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
@@ -58,6 +59,8 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
                 PipeFlowRendererItems.INSTANCE.render((PipeFlowItems) p.flow, x, y, z, partialTicks, vb);
             } else if (p.flow instanceof PipeFlowFluids) {
                 PipeFlowRendererFluids.INSTANCE.render((PipeFlowFluids) p.flow, x, y, z, partialTicks, vb);
+            } else if (p.flow instanceof PipeFlowPower) {
+                PipeFlowRendererPower.INSTANCE.render((PipeFlowPower) p.flow, x, y, z, partialTicks, vb);
             }
         }
     }

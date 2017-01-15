@@ -29,6 +29,7 @@ run_server
 
 #Custom code to inject the the dev environment
 custom
+test-results
 
 #licnse_checker
 # Not in git because it contains names + emails.

@@ -11,6 +11,14 @@ public class CompactingBitSet {
         this.bits = bits;
     }
 
+    public void ensureCapacityValues(int values) {
+        ensureCapacityBits(values * bits);
+    }
+
+    public void ensureCapacityBits(int totalBits) {
+        bytes.ensureCapacity(totalBits / 8 + 1);
+    }
+
     private void appendBit(int bit) {
         if (bitIndex == 0) {
             bytes.add((byte) 0);

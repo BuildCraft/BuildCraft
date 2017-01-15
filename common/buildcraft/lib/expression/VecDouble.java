@@ -1,7 +1,11 @@
 package buildcraft.lib.expression;
 
-/** An immutable class the represents a 4 part vector of doubles. It is *highly* recommended that you have a way to
- * convert this to a more specific implementation (for example another library provided Vector3d class) */
+import javax.vecmath.Vector3f;
+import javax.vecmath.Vector4f;
+
+import net.minecraft.util.math.Vec3d;
+
+/** An immutable class the represents a 4 part vector of doubles. */
 public class VecDouble {
     public static final VecDouble ZERO = new VecDouble(0, 0, 0, 0);
 
@@ -92,5 +96,17 @@ public class VecDouble {
 
     public VecLong ceilToLong() {
         return new VecLong((long) Math.ceil(a), (long) Math.ceil(b), (long) Math.ceil(c), (long) Math.ceil(d));
+    }
+
+    public Vec3d toVec3d() {
+        return new Vec3d(a, b, c);
+    }
+
+    public Vector3f toVec3f() {
+        return new Vector3f((float) a, (float) b, (float) c);
+    }
+
+    public Vector4f toVec4f() {
+        return new Vector4f((float) a, (float) b, (float) c, (float) d);
     }
 }

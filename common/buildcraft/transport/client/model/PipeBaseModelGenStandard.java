@@ -77,7 +77,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         uvs.uMax = uvs.vMax = 12;
         for (EnumFacing face : EnumFacing.VALUES) {
             MutableQuad quad = ModelUtil.createFace(face, center, radius, uvs);
-            quad.setDiffuse(quad.getVertex(0).normal());
+            quad.setDiffuse(quad.normalvf());
             QUADS[0][face.ordinal()][0] = quad;
             dupDarker(QUADS[0][face.ordinal()]);
 
@@ -128,7 +128,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
 
                 MutableQuad col = new MutableQuad(quad);
 
-                quad.setDiffuse(quad.getVertex(0).normal());
+                quad.setDiffuse(quad.normalvf());
                 QUADS[1][side.ordinal()][i] = quad;
 
                 col.translatevd(faceOffset[face.ordinal()]);
@@ -146,8 +146,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
             int n = i + halfLength;
             MutableQuad from = quads[i];
             if (from != null) {
-                MutableQuad to = new MutableQuad(from);
-                to.invertNormal();
+                MutableQuad to = from.copyAndInvertNormal();
                 to.setCalculatedDiffuse();
                 to.multColourd(mult);
                 quads[n] = to;
@@ -161,9 +160,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
             int n = i + halfLength;
             MutableQuad from = quads[i];
             if (from != null) {
-                MutableQuad to = new MutableQuad(from);
-                to.invertNormal();
-                quads[n] = to;
+                quads[n] = from.copyAndInvertNormal();
             }
         }
     }
@@ -187,7 +184,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         for (MutableQuad q : quads) {
             bakedQuads.add(q.toBakedBlock());
         }
-        return bakedQuads;
+        return ImmutableList.of();//bakedQuads;
     }
 
     private static TextureAtlasSprite getSprite(TextureAtlasSprite[] array, int index) {

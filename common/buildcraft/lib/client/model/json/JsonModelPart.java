@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.client.renderer.block.model.BlockPart;
-import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.JsonUtils;
 
@@ -39,17 +41,9 @@ public class JsonModelPart {
             quads = readCuboid(obj);
         }
     }
-    
+
     private JsonModelPart(JsonQuad[] quads) {
         this.quads = quads;
-    }
-    
-    public JsonModelPart rotate(ModelRotation rot) {
-        JsonQuad[] nq = new JsonQuad[quads.length];
-        for (int i = 0; i < nq.length; i++) {
-            nq[i] = quads[i].rotate(rot);
-        }
-        return new JsonModelPart(nq);
     }
 
     private static JsonQuad[] readFace(JsonObject obj) {

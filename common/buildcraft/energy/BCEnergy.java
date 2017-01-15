@@ -4,6 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.energy;
 
+import java.util.function.Consumer;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -20,6 +22,9 @@ import buildcraft.energy.generation.BiomeOilOcean;
 import buildcraft.energy.generation.OilPopulate;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.RegistryHelper;
+import buildcraft.lib.registry.TagManager;
+import buildcraft.lib.registry.TagManager.EnumTagType;
+import buildcraft.lib.registry.TagManager.TagEntry;
 
 //@formatter:off
 @Mod(modid = BCEnergy.MODID,
@@ -62,5 +67,33 @@ public class BCEnergy {
     public void postInit(FMLPostInitializationEvent evt) {
         MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
         BCEnergyProxy.getProxy().fmlPostInit();
+    }
+
+    static {
+        startBatch();
+        // Items
+        registerTag("item.glob.oil").reg("glob_oil").locale("globOil").model("glob_oil");
+
+        // Item Blocks
+
+        // Blocks
+
+        // Tiles
+        registerTag("tile.engine.stone").reg("engine.stone");
+        registerTag("tile.engine.iron").reg("engine.iron");
+
+        endBatch(TagManager.prependTags("buildcraftenergy:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(TagManager.setTab("buildcraft.main")));
+    }
+
+    private static TagEntry registerTag(String id) {
+        return TagManager.registerTag(id);
+    }
+
+    private static void startBatch() {
+        TagManager.startBatch();
+    }
+
+    private static void endBatch(Consumer<TagEntry> consumer) {
+        TagManager.endBatch(consumer);
     }
 }

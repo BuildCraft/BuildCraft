@@ -78,7 +78,7 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
                 for (MutableQuad q : COLOURED_QUADS) {
                     MutableQuad q2 = new MutableQuad(q);
                     q2.lighti(lightc);
-                    q2.multColourd(r / 255.0, g / 255.0, b / 255.0, 1);
+                    q2.multColouri(r, g, b, 255);
                     q2.render(vb);
                 }
                 vb.setTranslation(0, 0, 0);

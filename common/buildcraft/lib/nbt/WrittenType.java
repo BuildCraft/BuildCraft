@@ -5,8 +5,8 @@ import java.io.IOException;
 import io.netty.buffer.ByteBuf;
 
 public enum WrittenType {
-    BYTE(1, Byte.MAX_VALUE),
-    SHORT(2, Short.MAX_VALUE),
+    BYTE(1, (1 << 8) - 1),
+    SHORT(2, (1 << 16) - 1),
     MEDIUM(3, (1 << 24) - 1),
     INT(4, Integer.MAX_VALUE);
 
@@ -44,6 +44,9 @@ public enum WrittenType {
     }
 
     public void writeIndex(ByteBuf bytes, int index) {
+        if (index > maxStorableValue) {
+            throw new IllegalArgumentException("Tried to write a value that was too large! (" + index + " > " + maxStorableValue + " for " + this + ")");
+        }
         switch (this) {
             case BYTE: {
                 bytes.writeByte(index);

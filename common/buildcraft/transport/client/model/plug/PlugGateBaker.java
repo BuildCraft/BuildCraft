@@ -34,7 +34,7 @@ public enum PlugGateBaker implements IPluggableModelBaker<KeyPlugGate> {
             for (MutableQuad q : quads) {
                 MutableQuad c = new MutableQuad(q);
                 c.transform(transform);
-                c.setCalculatedDiffuse();
+                c.multShade();
                 list.add(c.toBakedBlock());
             }
             cached.put(key, list);

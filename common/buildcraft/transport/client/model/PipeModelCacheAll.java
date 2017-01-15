@@ -36,8 +36,7 @@ public class PipeModelCacheAll {
     }
 
     public static List<BakedQuad> getTranslucentModel(TilePipeHolder tile) {
-        PipeAllTranslucentKey key = new PipeAllTranslucentKey(tile);
-        return cacheTranslucent.bake(key);
+        return cacheTranslucent.bake(new PipeAllTranslucentKey(tile));
     }
 
     public static void clearModels() {

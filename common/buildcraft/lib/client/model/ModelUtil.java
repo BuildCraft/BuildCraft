@@ -36,22 +36,22 @@ public class ModelUtil {
     }
 
     public static MutableQuad createFace(EnumFacing face, Tuple3f a, Tuple3f b, Tuple3f c, Tuple3f d, UvFaceData uvs) {
-        MutableQuad mutable = new MutableQuad(-1, face);
+        MutableQuad quad = new MutableQuad(-1, face);
         if (uvs == null) {
             uvs = UvFaceData.DEFAULT;
         }
         if (face == null || shouldInvertForRender(face)) {
-            mutable.getVertex(0).positionv(a).texf(uvs.uMin, uvs.vMin);
-            mutable.getVertex(1).positionv(b).texf(uvs.uMin, uvs.vMax);
-            mutable.getVertex(2).positionv(c).texf(uvs.uMax, uvs.vMax);
-            mutable.getVertex(3).positionv(d).texf(uvs.uMax, uvs.vMin);
+            quad.vertex_0.positionv(a).texf(uvs.uMin, uvs.vMin);
+            quad.vertex_1.positionv(b).texf(uvs.uMin, uvs.vMax);
+            quad.vertex_2.positionv(c).texf(uvs.uMax, uvs.vMax);
+            quad.vertex_3.positionv(d).texf(uvs.uMax, uvs.vMin);
         } else {
-            mutable.getVertex(3).positionv(a).texf(uvs.uMin, uvs.vMin);
-            mutable.getVertex(2).positionv(b).texf(uvs.uMin, uvs.vMax);
-            mutable.getVertex(1).positionv(c).texf(uvs.uMax, uvs.vMax);
-            mutable.getVertex(0).positionv(d).texf(uvs.uMax, uvs.vMin);
+            quad.vertex_3.positionv(a).texf(uvs.uMin, uvs.vMin);
+            quad.vertex_2.positionv(b).texf(uvs.uMin, uvs.vMax);
+            quad.vertex_1.positionv(c).texf(uvs.uMax, uvs.vMax);
+            quad.vertex_0.positionv(d).texf(uvs.uMax, uvs.vMin);
         }
-        return mutable;
+        return quad;
     }
 
     public static <T extends Tuple3f> MutableQuad createFace(EnumFacing face, T[] points, UvFaceData uvs) {
@@ -64,12 +64,12 @@ public class ModelUtil {
     }
 
     public static MutableQuad createInverseFace(EnumFacing face, Tuple3f center, Tuple3f radius, UvFaceData uvs) {
-        return createFace(face, center, radius, uvs).invertNormal();
+        return createFace(face, center, radius, uvs).copyAndInvertNormal();
     }
 
     public static MutableQuad[] createDoubleFace(EnumFacing face, Tuple3f center, Tuple3f radius, UvFaceData uvs) {
         MutableQuad norm = createFace(face, center, radius, uvs);
-        return new MutableQuad[] { norm, new MutableQuad(norm).invertNormal() };
+        return new MutableQuad[] { norm, norm.copyAndInvertNormal() };
     }
 
     public static Point3f[] getPointsForFace(EnumFacing face, Tuple3f center, Tuple3f radius) {
