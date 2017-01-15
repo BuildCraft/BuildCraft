@@ -2,7 +2,6 @@ language: java
 jdk:
   - oraclejdk8
 
-before_install: git clone https://github.com/BuildCraft/BuildCraft-Localization.git ../BuildCraft-Localization
 install: ./gradlew setupCiWorkspace -S
 script: ./gradlew build
 
