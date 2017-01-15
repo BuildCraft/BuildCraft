@@ -68,10 +68,15 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     private final IMjReceiver mjReceiver = new MjBatteryReciver(battery);
     private final MjCapabilityHelper mjCapHelper = new MjCapabilityHelper(mjReceiver);
     public AddonFillingPlanner addon;
-    public Queue<MutablePair<BlockPos, Long>> breakTasks = new ArrayDeque<>();
-    public Queue<MutableTriple<BlockPos, ItemStack, Long>> placeTasks = new ArrayDeque<>();
+    private Queue<MutablePair<BlockPos, Long>> breakTasks = new ArrayDeque<>();
+    public Queue<MutablePair<BlockPos, Long>> clientBreakTasks = new ArrayDeque<>();
+    @SuppressWarnings("WeakerAccess")
+    public Queue<MutablePair<BlockPos, Long>> prevClientBreakTasks = new ArrayDeque<>();
+    private Queue<MutableTriple<BlockPos, ItemStack, Long>> placeTasks = new ArrayDeque<>();
     public Queue<MutableTriple<BlockPos, ItemStack, Long>> clientPlaceTasks = new ArrayDeque<>();
     public Queue<MutableTriple<BlockPos, ItemStack, Long>> prevClientPlaceTasks = new ArrayDeque<>();
+    public Vec3d robotPos = null;
+    public Vec3d prevRobotPos = null;
 
     public long getTarget(MutablePair<BlockPos, Long> breakTask) {
         return BlockUtil.computeBlockBreakPower(world, breakTask.getLeft());
@@ -79,15 +84,20 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
 
     @SuppressWarnings("unused")
     public long getTarget(MutableTriple<BlockPos, ItemStack, Long> placeTask) {
-        return (long) (Math.sqrt(Math.pow(placeTask.getLeft().getX() - pos.getX(), 2) + Math.pow(placeTask.getLeft().getY() - pos.getY(), 2) + Math.pow(placeTask.getLeft().getZ() - pos.getZ(), 2)) * 30 * MjAPI.MJ);
+        return (long) (
+                Math.sqrt(Math.pow(placeTask.getLeft().getX() - pos.getX(), 2) +
+                        Math.pow(placeTask.getLeft().getY() - pos.getY(), 2) +
+                        Math.pow(placeTask.getLeft().getZ() - pos.getZ(), 2)
+                ) * 10 * MjAPI.MJ
+        );
     }
 
     public Vec3d getTaskPos(MutableTriple<BlockPos, ItemStack, Long> placeTask) {
+        Vec3d height = new Vec3d(placeTask.getLeft().subtract(getPos()));
+        double progress = placeTask.getRight() * 1D / getTarget(placeTask);
         return new Vec3d(getPos())
-                .add(
-                        new Vec3d(placeTask.getLeft().subtract(getPos()))
-                                .scale(placeTask.getRight() * 1D / getTarget(placeTask))
-                )
+                .add(height.scale(progress))
+                .add(new Vec3d(0, Math.sin(progress * Math.PI) * (height.yCoord + 1), 0))
                 .add(new Vec3d(0.5, 1, 0.5));
     }
 
@@ -125,10 +135,35 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     public void update() {
         battery.tick(getWorld(), getPos());
         if (world.isRemote) {
+            prevClientBreakTasks.clear();
+            prevClientBreakTasks.addAll(clientBreakTasks);
+            clientBreakTasks.clear();
+            clientBreakTasks.addAll(breakTasks);
             prevClientPlaceTasks.clear();
             prevClientPlaceTasks.addAll(clientPlaceTasks);
             clientPlaceTasks.clear();
             clientPlaceTasks.addAll(placeTasks);
+            prevRobotPos = robotPos;
+            if (!breakTasks.isEmpty()) {
+                Vec3d newRobotPos = breakTasks.stream()
+                        .map(MutablePair::getLeft)
+                        .map(Vec3d::new)
+                        .reduce(Vec3d.ZERO, Vec3d::add)
+                        .scale(1D / breakTasks.size());
+                newRobotPos = new Vec3d(
+                        newRobotPos.xCoord,
+                        breakTasks.stream().map(MutablePair::getLeft).mapToDouble(BlockPos::getY).max().orElse(newRobotPos.yCoord),
+                        newRobotPos.zCoord
+                );
+                newRobotPos = newRobotPos.add(new Vec3d(0, 3, 0));
+                Vec3d oldRobotPos = robotPos;
+                robotPos = newRobotPos;
+                if (oldRobotPos != null) {
+                    robotPos = oldRobotPos.add(newRobotPos.subtract(oldRobotPos).scale(1 / 4D));
+                }
+            } else {
+                robotPos = null;
+            }
             return;
         }
 
@@ -136,7 +171,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
             return;
         }
 
-        battery.addPowerChecking(256 * MjAPI.MJ);
+        battery.addPowerChecking(64 * MjAPI.MJ);
 
         breakTasks.removeIf(breakTask -> world.isAirBlock(breakTask.getLeft()));
         placeTasks.removeIf(placeTask -> !world.isAirBlock(placeTask.getLeft()));
@@ -144,7 +179,8 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         if (breakTasks.size() < MAX_QUEUE_SIZE) {
             List<BlockPos> blocksShouldBeBroken = addon.getBlocksShouldBeBroken();
             blocksShouldBeBroken.sort(Comparator.comparing(blockPos ->
-                    Math.pow(blockPos.getX() - pos.getX(), 2) + Math.pow(blockPos.getY() - pos.getY(), 2) + Math.pow(blockPos.getZ() - pos.getZ(), 2)
+                    Math.pow(blockPos.getX() - addon.box.box.center().getX(), 2) + Math.pow(blockPos.getZ() - addon.box.box.center().getZ(), 2) +
+                            100_000 - Math.abs(blockPos.getY() - pos.getY()) * 100_000
             ));
             blocksShouldBeBroken.stream()
                     .filter(blockPos -> breakTasks.stream().map(MutablePair::getLeft).noneMatch(Predicate.isEqual(blockPos)))
