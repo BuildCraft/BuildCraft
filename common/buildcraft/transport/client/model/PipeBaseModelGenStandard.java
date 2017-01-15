@@ -184,7 +184,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         for (MutableQuad q : quads) {
             bakedQuads.add(q.toBakedBlock());
         }
-        return ImmutableList.of();//bakedQuads;
+        return bakedQuads;
     }
 
     private static TextureAtlasSprite getSprite(TextureAtlasSprite[] array, int index) {
