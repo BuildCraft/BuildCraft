@@ -23,6 +23,7 @@ buildscript {
 
 apply plugin: "net.minecraftforge.gradle.forge" // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
+apply plugin: 'maven-publish' // for uploading to a maven repo
 
 ext.configFile = file "build.properties"
 configFile.withReader {
@@ -66,7 +67,6 @@ minecraft {
     mappings = config.mappings_version
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
-
     // replacing stuff in the source
     replace "@VERSION@", project.version
     replace "@MC_VERSION@", version
@@ -78,16 +78,12 @@ sourceSets {
         java {
             srcDir "common"
             srcDir "common_old_license"
-          //  srcDir "src_old_license"
-            // exclude 'some exclusion'
-            // include 'some inclusion'
+            // srcDir "src_old_license"
         }
         resources {
             srcDir "buildcraft_resources"
             srcDir "BuildCraft-Localization"
             exclude "**/.md" // exclude readme from localization repo
-            // exclude 'some exclusion'
-            // include 'some inclusion'
         }
     }
     api {
@@ -107,7 +103,7 @@ processResources
 {
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
+  //      include 'mcmod.info'
                 
         // replace version and mcversion
         // ${version}   and    ${mcversion}    are the exact strings being replaced
@@ -116,7 +112,7 @@ processResources
         
     // copy everything else, that's not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+ //       exclude 'mcmod.info'
     }
 }
 
@@ -139,8 +135,8 @@ def createMCModInfo(def id, def taskName)
         temp.delete()
     temp.createNewFile()
     String prettyPrinted = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson([ext.mcModInfo[id]]))
-    prettyPrinted = prettyPrinted.replace("\${version}", project.version)
-    prettyPrinted = prettyPrinted.replace("\${mcversion}", project.minecraft.version)
+    prettyPrinted = prettyPrinted.replace("${version}", project.version)
+    prettyPrinted = prettyPrinted.replace("${mcversion}", project.minecraft.version)
     temp.write(prettyPrinted)
     temp.deleteOnExit()
     return temp
@@ -183,7 +179,7 @@ task deobfJar(type: Jar) {
 
 task apiJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = file("modules")
-    classifier = 'api'
+    appendix = "api"
 
     doFirst {
         from(project.ext.jarFile) {
@@ -192,9 +188,19 @@ task apiJar(type: Jar, dependsOn: reobfJar) {
     }
 }
 
+task apiSrcJar(type: Jar, dependsOn: build) {
+    destinationDir = file("modules/src")
+    appendix = "api"
+    classifier = 'sources'
+
+    doFirst {
+        from sourceSets.api.allSource
+    }
+}
+
 task libJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = file("modules")
-    classifier = 'lib'
+    appendix = 'lib'
 
     doFirst {
         from(createMCModInfo(0, name).parentFile)
@@ -204,9 +210,22 @@ task libJar(type: Jar, dependsOn: reobfJar) {
     }
 }
 
+task libSrcJar(type: Jar, dependsOn: build) {
+    destinationDir = file("modules/src")
+    appendix = "lib"
+    classifier = "sources"
+
+    doFirst {
+        from sourceSets.api.allSource
+        from (sourceSets.main.allSource) {
+            includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "buildcraft/lib/**", "buildcraft/api/**", "LICENSE**"])
+        }
+    }
+}
+
 task coreJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = file("modules")
-    classifier = 'core'
+    appendix = "core"
 
     doFirst {
         from(createMCModInfo(1, name).parentFile)
@@ -219,7 +238,7 @@ task coreJar(type: Jar, dependsOn: reobfJar) {
 task buildersJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
-    classifier = 'builders'
+    appendix = "builders"
 
     doFirst {
         from(createMCModInfo(2, name).parentFile)
@@ -232,7 +251,7 @@ task buildersJar(type: Jar, dependsOn: reobfJar) {
 task energyJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
-    classifier = 'energy'
+    appendix = "energy"
 
     doFirst {
         from(createMCModInfo(3, name).parentFile)
@@ -245,7 +264,7 @@ task energyJar(type: Jar, dependsOn: reobfJar) {
 task factoryJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
-    classifier = 'factory'
+    appendix = "factory"
 
     doFirst {
         from(createMCModInfo(4, name).parentFile)
@@ -258,7 +277,7 @@ task factoryJar(type: Jar, dependsOn: reobfJar) {
 task siliconJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
-    classifier = 'silicon'
+    appendix = "silicon"
 
     doFirst {
         from(createMCModInfo(5, name).parentFile)
@@ -271,7 +290,7 @@ task siliconJar(type: Jar, dependsOn: reobfJar) {
 task transportJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
-    classifier = 'transport'
+    appendix = "transport"
 
     doFirst {
         from(createMCModInfo(6, name).parentFile)
@@ -284,7 +303,7 @@ task transportJar(type: Jar, dependsOn: reobfJar) {
 task roboticsJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
-    classifier = 'robotics'
+    appendix = "robotics"
 
     doFirst {
         from(createMCModInfo(7, name).parentFile)
@@ -295,7 +314,6 @@ task roboticsJar(type: Jar, dependsOn: reobfJar) {
 }
 
 task allJar(type: Jar, dependsOn:reobfJar) {
-
     destinationDir = file("modules")
 
     doFirst {
@@ -305,6 +323,15 @@ task allJar(type: Jar, dependsOn:reobfJar) {
     }
 }
 
+task allSrcJar(type: Jar, dependsOn:reobfJar) {
+    destinationDir = file("modules")
+    classifier = "sources"
+
+    doFirst {
+        from sourceSets.api.allSource
+        from sourceSets.main.allSource
+    }
+}
 
 // add api classes to main package
 jar {
@@ -368,6 +395,58 @@ def sftp(String subPath, Closure antFileset = {}) {
         delegate.scp(sftpArgs) {
             antFileset.delegate = delegate
             antFileset()
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            url "/home/ali/Documents/dev/maven_master/buildcraft_web"
+        }
+    }
+    publications {
+        pub_apiJar(MavenPublication) {
+            groupId "com.mod-buildcraft"
+            artifactId "buildcraft-api"
+            version "8.0"
+
+            artifact apiJar
+        }
+        pub_apiSrcJar(MavenPublication) {
+            groupId "com.mod-buildcraft"
+            artifactId "buildcraft-api"
+            version "8.0"
+
+            artifact apiSrcJar
+        }
+        pub_libJar(MavenPublication) {
+            groupId "com.mod-buildcraft"
+            artifactId "buildcraft-lib"
+            version project.version
+
+            artifact libJar
+        }
+        pub_libSrcJar(MavenPublication) {
+            groupId "com.mod-buildcraft"
+            artifactId "buildcraft-lib"
+            version project.version
+
+            artifact libSrcJar
+        }
+        pub_allJar(MavenPublication) {
+            groupId "com.mod-buildcraft"
+            artifactId "buildcraft"
+            version project.version
+
+            artifact allJar
+        }
+        pub_allSrcJar(MavenPublication) {
+            groupId "com.mod-buildcraft"
+            artifactId "buildcraft"
+            version project.version
+
+            artifact allSrcJar
         }
     }
 }

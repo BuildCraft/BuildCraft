@@ -23,6 +23,7 @@ import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
+import buildcraft.lib.expression.ExpressionDebugManager;
 import buildcraft.lib.fluids.CoolantRegistry;
 import buildcraft.lib.fluids.FuelRegistry;
 import buildcraft.lib.item.ItemManager;
@@ -59,6 +60,9 @@ public class BCLib {
         BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2016");
         BCLog.logger.info("http://www.mod-buildcraft.com");
         BCLog.logger.info("");
+
+        ExpressionDebugManager.logger = BCLog.logger::info;
+
         BCModules.fmlPreInit();
 
         BuildcraftRecipeRegistry.assemblyRecipes = AssemblyRecipeRegistry.INSTANCE;

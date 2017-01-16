@@ -80,6 +80,7 @@ public class MiniChunkGraph {
         }
 
         public void requestAllConnected(World world) {
+            // Request all first, and THEN wait for all of them.
             for (EnumFacing face : EnumFacing.VALUES) {
                 if (!neighbours.containsKey(face)) {
                     MiniChunkCache.requestGraph(world, min.offset(face, 16));

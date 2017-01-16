@@ -243,10 +243,10 @@ public class ComplexRefiningManager {
             int heat = def.fluid.getHeatValue();
             String from = "buildcraftenergy:blocks/fluids/heat_" + heat;
             SpriteColourMapper mapper = new SpriteColourMapper(def.fluid, from + "_still", true);
-            event.getMap().setTextureEntry(def.fluid.getStill().toString(), mapper);
+            event.getMap().setTextureEntry(mapper);
 
             mapper = new SpriteColourMapper(def.fluid, from + "_flow", false);
-            event.getMap().setTextureEntry(def.fluid.getFlowing().toString(), mapper);
+            event.getMap().setTextureEntry(mapper);
         }
     }
 }

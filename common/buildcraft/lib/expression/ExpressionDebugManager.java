@@ -2,18 +2,14 @@ package buildcraft.lib.expression;
 
 import java.util.function.Consumer;
 
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderState;
-
-import buildcraft.api.core.BCLog;
-
 /** Holds the debugging mechanisms for this */
 public class ExpressionDebugManager {
 
     /** Modifiable field to enable or disable debugging for testing. */
     public static boolean debug = false;
 
-    /** Customisable logger to use instead of {@link System#out} */
+    /** Customisable logger to use instead of {@link System#out}. Set by BCLib automatically to
+     * <code>BCLog.logger::info</code> */
     public static Consumer<String> logger = null;
 
     private static String debugIndentCache = "";
@@ -40,8 +36,6 @@ public class ExpressionDebugManager {
         if (debug) {
             if (logger != null) {
                 logger.accept(debugIndentCache + text);
-            } else if (Loader.instance().hasReachedState(LoaderState.CONSTRUCTING)) {
-                BCLog.logger.info(debugIndentCache + text);
             } else {
                 // When using a test
                 System.out.println(debugIndentCache + text);
