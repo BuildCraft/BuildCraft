@@ -13,6 +13,7 @@ import buildcraft.lib.client.sprite.RawSprite;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;

@@ -68,8 +68,10 @@ minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
     // replacing stuff in the source
-    replace "@VERSION@", project.version
-    replace "@MC_VERSION@", version
+    replace "\${version}", project.version
+    replace "\${mcversion}", version
+    // Replace @Mod.acceptedMinecraftVersions specially as it has to be a valid version in a dev environment :/
+    replace "(gradle_replace_mcversion,)", "[" + version + "]"
 }
 
 // configure  the source folders
@@ -103,16 +105,16 @@ processResources
 {
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
-  //      include 'mcmod.info'
+        include 'mcmod.info'
                 
         // replace version and mcversion
         // ${version}   and    ${mcversion}    are the exact strings being replaced
         expand "version":project.version, "mcversion":project.minecraft.version
     }
-        
+
     // copy everything else, that's not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
- //       exclude 'mcmod.info'
+        exclude 'mcmod.info'
     }
 }
 
@@ -135,8 +137,8 @@ def createMCModInfo(def id, def taskName)
         temp.delete()
     temp.createNewFile()
     String prettyPrinted = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson([ext.mcModInfo[id]]))
-    prettyPrinted = prettyPrinted.replace("${version}", project.version)
-    prettyPrinted = prettyPrinted.replace("${mcversion}", project.minecraft.version)
+    prettyPrinted = prettyPrinted.replace("\${version}", project.version)
+    prettyPrinted = prettyPrinted.replace("\${mcversion}", project.minecraft.version)
     temp.write(prettyPrinted)
     temp.deleteOnExit()
     return temp

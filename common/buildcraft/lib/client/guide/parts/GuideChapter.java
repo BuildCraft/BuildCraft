@@ -3,8 +3,8 @@ package buildcraft.lib.client.guide.parts;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.font.IFontRenderer;
-import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.ISimpleDrawable;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.RenderUtil;
 
 public abstract class GuideChapter extends GuidePart {

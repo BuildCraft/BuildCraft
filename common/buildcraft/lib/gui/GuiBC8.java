@@ -16,6 +16,7 @@ import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.gui.ledger.LedgerHelp;
 import buildcraft.lib.gui.ledger.LedgerManager_Neptune;
 import buildcraft.lib.gui.ledger.LedgerOwnership;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.MousePosition;
 import buildcraft.lib.gui.pos.PositionCallable;
@@ -77,6 +78,10 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     public FontRenderer getFontRenderer() {
         return fontRendererObj;
+    }
+
+    public float getLastPartialTicks() {
+        return lastPartialTicks;
     }
 
     // Other

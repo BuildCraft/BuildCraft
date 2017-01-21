@@ -15,9 +15,9 @@ import buildcraft.lib.client.guide.*;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.node.NodePageLine;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.GuiStack;
 import buildcraft.lib.gui.ISimpleDrawable;
+import buildcraft.lib.gui.pos.GuiRectangle;
 
 /** The base menu for showing all the locations. Should never be registered with and guide managers, this is special and
  * controls them all. */

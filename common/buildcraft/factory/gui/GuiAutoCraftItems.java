@@ -12,7 +12,7 @@ import buildcraft.factory.container.ContainerAutoCraftItems;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.pos.GuiRectangle;
 
 public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftfactory:textures/gui/autobench_item.png");

@@ -7,9 +7,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 
 import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.ITooltipElement;
 import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.pos.GuiRectangle;
 
 public abstract class GuiAbstractButton extends GuiButton implements ITooltipElement, IButtonClickEventTrigger {
     public final GuiBC8<?> gui;

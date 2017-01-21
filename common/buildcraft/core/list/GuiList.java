@@ -25,12 +25,12 @@ import buildcraft.core.item.ItemList_BC8;
 import buildcraft.core.list.ContainerList.WidgetListSlot;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.button.GuiImageButton;
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.button.IButtonClickEventListener;
 import buildcraft.lib.gui.button.IButtonClickEventTrigger;
 import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.StackUtil;
 

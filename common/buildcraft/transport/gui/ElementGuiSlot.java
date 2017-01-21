@@ -8,9 +8,9 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import buildcraft.api.statements.IGuiSlot;
 
 import buildcraft.lib.gui.GuiElementSimple;
-import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.SpriteUtil;
 import buildcraft.lib.misc.data.IReference;

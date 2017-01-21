@@ -44,6 +44,10 @@ public interface IGuiArea extends IGuiPosition {
         return "[x = " + getX() + ", y = " + getY() + ", w = " + getWidth() + ", h = " + getHeight() + "]";
     }
 
+    default GuiRectangle asImmutable() {
+        return new GuiRectangle(getX(), getY(), getWidth(), getHeight());
+    }
+
     @Override
     default IGuiArea offset(IGuiPosition by) {
         return offset(by::getX, by::getY);

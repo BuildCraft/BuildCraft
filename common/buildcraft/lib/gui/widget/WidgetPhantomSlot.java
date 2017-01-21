@@ -18,6 +18,7 @@ import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.StackUtil;

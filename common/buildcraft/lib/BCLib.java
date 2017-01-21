@@ -6,6 +6,8 @@ package buildcraft.lib;
 
 import java.util.function.Consumer;
 
+import net.minecraft.world.World;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -42,13 +44,13 @@ import buildcraft.lib.registry.TagManager.TagEntry;
 @Mod(modid = BCLib.MODID,
      name = "BuildCraft Lib",
      version = BCLib.VERSION,
-     acceptedMinecraftVersions = "[1.11.2]",
+     acceptedMinecraftVersions = "(gradle_replace_mcversion,)",
      dependencies = "required-after:forge@[13.19.0.2176,)")
 //@formatter:on
 public class BCLib {
     public static final String MODID = "buildcraftlib";
-    public static final String VERSION = "{$version}";
-    public static final String MC_VERSION = "{$mc_version}";
+    public static final String VERSION = "${version}";
+    public static final String MC_VERSION = "${mcversion}";
 
     @Instance(MODID)
     public static BCLib INSTANCE;

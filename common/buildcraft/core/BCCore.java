@@ -34,7 +34,6 @@ import buildcraft.lib.registry.TagManager.TagEntry;
     name = "BuildCraft Core",//
     version = BCLib.VERSION,//
     dependencies = "required-after:buildcraftlib@[" + BCLib.VERSION + "]",//
-    acceptedMinecraftVersions = "[1.11.2]",//
     guiFactory = "buildcraft.core.client.ConfigGuiFactoryBC"//
 )
 public class BCCore {

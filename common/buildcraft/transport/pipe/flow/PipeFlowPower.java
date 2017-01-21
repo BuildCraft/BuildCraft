@@ -31,9 +31,10 @@ import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.misc.MathUtil;
 
 public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
-    public static final long ABSOLUTE_MAX_POWER = MjAPI.MJ * 100;// TEMP!
 
-    long maxPower = ABSOLUTE_MAX_POWER;
+    private static final long DEFAULT_MAX_POWER = MjAPI.MJ * 10;
+
+    long maxPower = DEFAULT_MAX_POWER;
     boolean isReceiver = false;
     final EnumMap<EnumFacing, Section> sections = createSections();
 

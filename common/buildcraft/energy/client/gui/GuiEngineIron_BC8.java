@@ -5,8 +5,8 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.energy.container.ContainerEngineIron_BC8;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.ledger.LedgerEngine;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.LocaleUtil;
 
 public class GuiEngineIron_BC8 extends GuiBC8<ContainerEngineIron_BC8> {

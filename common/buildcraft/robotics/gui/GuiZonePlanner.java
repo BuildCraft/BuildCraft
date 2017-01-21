@@ -8,7 +8,7 @@ import buildcraft.core.BCCoreItems;
 import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.robotics.container.ContainerZonePlanner;
 import buildcraft.robotics.zone.*;
 import buildcraft.robotics.zone.ZonePlannerMapChunk.MapColourData;

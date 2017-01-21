@@ -8,7 +8,8 @@ import net.minecraftforge.fml.common.LoaderState;
 import buildcraft.api.core.BCLog;
 
 public enum BCModules {
-    // Base module for all BC. Includes LIB
+    LIB,
+    // Base module for all BC.
     CORE,
     // Potentially optional modules for adding more BC functionality
     BUILDERS,
@@ -57,7 +58,9 @@ public enum BCModules {
         }
         for (BCModules module : values()) {
             if (module.isLoaded()) {
-                BCLog.logger.info("[module-api] Module " + module.name().toLowerCase(Locale.ROOT) + " is loaded!");
+                BCLog.logger.info("[api.modules] Module " + module.name().toLowerCase(Locale.ROOT) + " is loaded!");
+            } else {
+                BCLog.logger.warn("[api.modules] Module " + module.name().toLowerCase(Locale.ROOT) + " is NOT loaded!");
             }
         }
     }
