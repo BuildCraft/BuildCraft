@@ -18,12 +18,6 @@ variables:
 before_script:
     - chmod +x gradlew
 
-setup:
-  stage: setup
-  script: 
-    - ./gradlew -g /cache/.gradle setupCiWorkspace
-  allow_failure: false
-
 # We redirect the gradle user home using -g so that it caches the
 # wrapper and dependencies.
 # https://docs.gradle.org/current/userguide/gradle_command_line.html
@@ -35,7 +29,7 @@ setup:
 build:
   stage: build
   script:
-    - ./gradlew -g /cache/.gradle clean build
+    - ./gradlew -g /cache/.gradle setupCiWorkspace clean build
   allow_failure: false
 
 # Use the generated build output to run the tests.
