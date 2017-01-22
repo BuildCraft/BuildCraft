@@ -7,12 +7,22 @@
 # https://github.com/gradle/gradle
 image: java:8
 
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+
 # Make the gradle wrapper executable. This essentially downloads a copy of
 # Gradle to build the project with.
 # https://docs.gradle.org/current/userguide/gradle_wrapper.html
 # It is expected that any modern gradle project has a wrapper
 before_script:
     - chmod +x gradlew
+
+setup:
+  stage: setup
+  script: 
+    - ./gradlew -g /cache/.gradle setupCiWorkspace
+  allow_failure: false
 
 # We redirect the gradle user home using -g so that it caches the
 # wrapper and dependencies.
@@ -25,7 +35,7 @@ before_script:
 build:
   stage: build
   script:
-    - ./gradlew -g /cache/.gradle setupCiWorkspace clean build
+    - ./gradlew -g /cache/.gradle clean build
   allow_failure: false
 
 # Use the generated build output to run the tests.
