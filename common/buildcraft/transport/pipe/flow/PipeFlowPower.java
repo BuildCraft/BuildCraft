@@ -28,7 +28,6 @@ import buildcraft.api.transport.neptune.IPipe.ConnectedType;
 import buildcraft.api.transport.neptune.PipeFlow;
 
 import buildcraft.lib.engine.TileEngineBase_BC8;
-import buildcraft.lib.misc.MathUtil;
 
 public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
@@ -93,7 +92,10 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         configure.setMaxPower(maxPower);
         configure.setReceiver(isReceiver);
         pipe.getHolder().fireEvent(configure);
-        maxPower = MathUtil.clamp(configure.getMaxPower(), MjAPI.MJ, ABSOLUTE_MAX_POWER);
+        maxPower = configure.getMaxPower();
+        if (maxPower <= 0) {
+            maxPower = DEFAULT_MAX_POWER;
+        }
         isReceiver = configure.isReceiver();
     }
 
