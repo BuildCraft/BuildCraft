@@ -17,6 +17,8 @@ variables:
 # It is expected that any modern gradle project has a wrapper
 before_script:
     - chmod +x gradlew
+    - git submodule init
+    - git submodule update
 
 # We redirect the gradle user home using -g so that it caches the
 # wrapper and dependencies.
