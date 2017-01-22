@@ -99,11 +99,12 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     @Override
     public void reconfigure() {
         PipeEventPower.Configure configure = new PipeEventPower.Configure(pipe.getHolder(), this);
+        configure.setReceiver(isReceiver);
         configure.setMaxPower(maxPower);
         configure.setPowerLoss(powerLoss);
         configure.setPowerResistance(powerResistance);
-        configure.setReceiver(isReceiver);
         pipe.getHolder().fireEvent(configure);
+        isReceiver = configure.isReceiver();
         maxPower = configure.getMaxPower();
         if (maxPower <= 0) {
             maxPower = DEFAULT_MAX_POWER;
@@ -120,8 +121,6 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         } else if (powerResistance < 0) {
             powerResistance = powerLoss * MjAPI.MJ / maxPower;
         }
-
-        isReceiver = configure.isReceiver();
     }
 
     @Override
