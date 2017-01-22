@@ -31,11 +31,5 @@ before_script:
 build:
   stage: build
   script:
-    - ./gradlew -g /cache/.gradle setupCiWorkspace clean build
+    - ./gradlew -g /cache/.gradle setupCiWorkspace clean build test
   allow_failure: false
-
-# Use the generated build output to run the tests.
-test:
-  stage: test
-  script:
-    - ./gradlew -g /cache/.gradle check
