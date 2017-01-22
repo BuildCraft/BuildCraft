@@ -10,12 +10,14 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjPassiveProvider;
 import buildcraft.api.mj.IMjReceiver;
@@ -24,18 +26,26 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.PipeEventPower;
 import buildcraft.api.transport.neptune.IFlowPower;
 import buildcraft.api.transport.neptune.IPipe;
-import buildcraft.api.transport.neptune.IPipe.ConnectedType;
 import buildcraft.api.transport.neptune.PipeFlow;
 
-import buildcraft.lib.engine.TileEngineBase_BC8;
+import buildcraft.core.BCCoreConfig;
+import buildcraft.lib.misc.MathUtil;
+import buildcraft.lib.misc.data.AverageInt;
 
 public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
     private static final long DEFAULT_MAX_POWER = MjAPI.MJ * 10;
 
+    public Vec3d clientFlowCenter;
+
     long maxPower = DEFAULT_MAX_POWER;
+    long powerLoss = -1;
+    long powerResistance = -1;
+
     boolean isReceiver = false;
     final EnumMap<EnumFacing, Section> sections = createSections();
+
+    final SafeTimeTracker tracker = new SafeTimeTracker(2 * BCCoreConfig.networkUpdateRate);
 
     private EnumMap<EnumFacing, Section> createSections() {
         EnumMap<EnumFacing, Section> map = new EnumMap<>(EnumFacing.class);
@@ -90,12 +100,27 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     public void reconfigure() {
         PipeEventPower.Configure configure = new PipeEventPower.Configure(pipe.getHolder(), this);
         configure.setMaxPower(maxPower);
+        configure.setPowerLoss(powerLoss);
+        configure.setPowerResistance(powerResistance);
         configure.setReceiver(isReceiver);
         pipe.getHolder().fireEvent(configure);
         maxPower = configure.getMaxPower();
         if (maxPower <= 0) {
             maxPower = DEFAULT_MAX_POWER;
         }
+        powerLoss = MathUtil.clamp(configure.getPowerLoss(), -1, maxPower);
+        powerResistance = MathUtil.clamp(configure.getPowerResistance(), -1, MjAPI.MJ);
+
+        if (powerLoss < 0) {
+            if (powerResistance < 0) {
+                // 1% resistance
+                powerResistance = MjAPI.MJ / 100;
+            }
+            powerLoss = maxPower * powerResistance / MjAPI.MJ;
+        } else if (powerResistance < 0) {
+            powerResistance = powerLoss * MjAPI.MJ / maxPower;
+        }
+
         isReceiver = configure.isReceiver();
     }
 
@@ -113,65 +138,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
     @Override
     public void onTick() {
-        for (EnumFacing side : EnumFacing.VALUES) {
-            Section s = sections.get(side);
-            if (!pipe.isConnected(side)) {
-                s.connection = PowerConnection.DEAD_END;
-                continue;
-            }
-            ConnectedType type = pipe.getConnectedType(side);
-            if (type == ConnectedType.PIPE) {
-                IPipe oPipe = pipe.getConnectedPipe(side);
-                if (oPipe != null && oPipe.getFlow() instanceof PipeFlowPower) {
-                    PipeFlowPower oPower = (PipeFlowPower) oPipe.getFlow();
-                    s.connection = oPower.getConnectionTypeExcluding(side.getOpposite(), getConnectionTypeExcluding(side, null));
-                } else {
-                    s.connection = PowerConnection.DEAD_END;
-                }
-            } else if (type == ConnectedType.TILE) {
-                TileEntity tile = pipe.getConnectedTile(side);
-                if (tile != null) {
-                    s.connection = (tile instanceof TileEngineBase_BC8) ? PowerConnection.SENDER : PowerConnection.REQUEST;// TEMP!
-                } else {
-                    s.connection = PowerConnection.DEAD_END;
-                }
-            } else {
-                s.connection = PowerConnection.DEAD_END;
-            }
-        }
-    }
 
-    private PowerConnection getConnectionTypeExcluding(EnumFacing ignore, PowerConnection from) {
-        PowerConnection current = PowerConnection.DEAD_END;
-        for (EnumFacing face : EnumFacing.VALUES) {
-            PowerConnection c = sections.get(face).connection;
-            if (face == ignore) continue;
-            switch (c) {
-                case UNKNOWN:
-                    return PowerConnection.UNKNOWN;
-                case SENDER:
-                case REQUEST: {
-                    PowerConnection other = c == PowerConnection.SENDER ? PowerConnection.REQUEST : PowerConnection.SENDER;
-                    if (current == other) {
-                        if (from == PowerConnection.REQUEST) {
-                            return PowerConnection.SENDER;
-                        } else if (from == PowerConnection.SENDER) {
-                            return PowerConnection.REQUEST;
-                        } else {
-                            return PowerConnection.UNKNOWN;
-                        }
-                    } else {
-                        current = c;
-                        break;
-                    }
-                }
-                case DEAD_END:
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unknown PowerConnection " + c);
-            }
-        }
-        return current;
     }
 
     @Override
@@ -190,41 +157,33 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     @Override
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("Connections:");
-        for (EnumFacing face : EnumFacing.VALUES) {
-            if (!pipe.isConnected(face)) continue;
-            Section section = sections.get(face);
-            left.add("  " + face + " = " + section.connection);
-        }
-    }
 
-    @SideOnly(Side.CLIENT)
-    public PowerConnection getConnectionType(EnumFacing face) {
-        return sections.get(face).connection;
     }
 
     public class Section implements IMjReceiver {
         public final EnumFacing side;
 
-        long actualMaxPower = 0;
-        long stored;
-        long maxThisTick = maxPower;
-        // long strength;
-        // long maxStrength;
-        PowerConnection connection = PowerConnection.UNKNOWN;
+        public final AverageInt clientDisplayAverage = new AverageInt(10);
+        public double clientDisplayFlow;
+
+        public long displayPower;
+        public EnumFlow displayFlow = EnumFlow.STATIONARY;
+        public long nextPowerQuery;
+        public long internalNextPower;
+        public final AverageInt powerAverage = new AverageInt(10);
+
+        long powerQuery;
+        long internalPower;
+
+        /** Debugging fields */
+        long debugPowerInput, debugPowerOutput, debugPowerOffered;
 
         public Section(EnumFacing side) {
             this.side = side;
         }
 
         void onTick() {
-            actualMaxPower = pipe.isConnected(side) ? maxPower : 0;
 
-            // maxStrength /= 2;
-            // maxStrength = Math.max(maxStrength, strength);
-            // strength = 0;
-
-            maxThisTick = actualMaxPower - stored;
         }
 
         @Override
@@ -234,7 +193,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
         @Override
         public long getPowerRequested() {
-            return maxThisTick;
+            return 0;
         }
 
         long receivePowerInternal(long sent) {
@@ -243,29 +202,13 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
         @Override
         public long receivePower(long microJoules, boolean simulate) {
-            // if (!isReceiver) {
             return microJoules;
-            // }
-            // long toAccept = Math.max(microJoules, maxThisTick);
-            // toAccept = Math.min(toAccept, actualMaxPower - stored);
-            // if (toAccept <= 0) {
-            // return microJoules;
-            // }
-
-            // if (!simulate) {
-            // strength += toAccept;
-            // maxThisTick -= toAccept;
-            // stored += toAccept;
-            // }
-
-            // return microJoules - toAccept;
         }
     }
 
-    public enum PowerConnection {
-        UNKNOWN,
-        DEAD_END,
-        REQUEST,
-        SENDER;
+    public enum EnumFlow {
+        IN,
+        OUT,
+        STATIONARY
     }
 }
