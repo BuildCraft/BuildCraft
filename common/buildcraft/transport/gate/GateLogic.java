@@ -324,15 +324,15 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
 
     /** Sets up the given trigger or action statements to the given ones. */
     private static void setStatementInternal(int index, StatementWrapper[] array, IStatementParameter[][] parameters, StatementWrapper statement) {
+        StatementWrapper old = array[index];
+        array[index] = statement;
         if (statement == null) {
             Arrays.fill(parameters[index], null);
         } else {
-            if (array[index] != null && array[index].delegate == statement.delegate) {
+            if (old != null && old.delegate == statement.delegate) {
                 // Don't clear out parameters if its the same statement with a different side.
-                array[index] = statement;
                 return;
             }
-            array[index] = statement;
             int max = parameters[index].length;
             int maxTrigger = statement.maxParameters();
             for (int i = 0; i < maxTrigger && i < max; i++) {
