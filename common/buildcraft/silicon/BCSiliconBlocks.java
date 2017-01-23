@@ -13,7 +13,7 @@ import buildcraft.silicon.tile.TileAssemblyTable;
 import buildcraft.silicon.tile.TileChargingTable;
 import buildcraft.silicon.tile.TileIntegrationTable;
 import buildcraft.silicon.tile.TileLaser;
-import buildcraft.silicon.tile.TileProgrammingTable;
+import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
 
 public class BCSiliconBlocks {
     public static BlockLaser laser;
@@ -36,6 +36,6 @@ public class BCSiliconBlocks {
         TileBC_Neptune.registerTile(TileAdvancedCraftingTable.class, "tile.advanced_crafting_table");
         TileBC_Neptune.registerTile(TileIntegrationTable.class, "tile.integration_table");
         TileBC_Neptune.registerTile(TileChargingTable.class, "tile.charging_table");
-        TileBC_Neptune.registerTile(TileProgrammingTable.class, "tile.programming_table");
+        TileBC_Neptune.registerTile(TileProgrammingTable_Neptune.class, "tile.programming_table");
     }
 }

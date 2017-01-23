@@ -38,7 +38,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
     public Vec3d clientFlowCenter;
 
-    long maxPower = DEFAULT_MAX_POWER;
+    long maxPower = -1;
     long powerLoss = -1;
     long powerResistance = -1;
 
@@ -137,7 +137,9 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
     @Override
     public void onTick() {
-
+        if (maxPower == -1) {
+            reconfigure();
+        }
     }
 
     @Override

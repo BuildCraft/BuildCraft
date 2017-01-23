@@ -39,7 +39,7 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
                 }
                 if (foundItem) {
                     if (sideAllowed) {
-                        sideCheck.increasePrecedence(face, 12);
+                        sideCheck.increasePriority(face, 12);
                     } else {
                         sideCheck.disallow(face);
                     }

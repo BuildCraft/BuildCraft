@@ -34,7 +34,7 @@ import buildcraft.silicon.tile.TileAdvancedCraftingTable;
 import buildcraft.silicon.tile.TileAssemblyTable;
 import buildcraft.silicon.tile.TileIntegrationTable;
 import buildcraft.silicon.tile.TileLaser;
-import buildcraft.silicon.tile.TileProgrammingTable;
+import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
 
 public abstract class BCSiliconProxy implements IGuiHandler {
     @SidedProxy(modId = BCSilicon.MODID)
@@ -119,7 +119,7 @@ public abstract class BCSiliconProxy implements IGuiHandler {
         public void fmlInit() {
             super.fmlInit();
             ClientRegistry.bindTileEntitySpecialRenderer(TileLaser.class, new RenderLaser());
-            ClientRegistry.bindTileEntitySpecialRenderer(TileProgrammingTable.class, new RenderProgrammingTable());
+            ClientRegistry.bindTileEntitySpecialRenderer(TileProgrammingTable_Neptune.class, new RenderProgrammingTable());
         }
     }
 }

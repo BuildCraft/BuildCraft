@@ -27,8 +27,7 @@ public class PipeBehaviourCobble extends PipeBehaviourSeparate {
 
     @PipeEventHandler
     public static void configurePower(PipeEventPower.Configure event) {
-        event.setMaxPower(MjAPI.MJ * 2);
+        event.setMaxPower(MjAPI.MJ * 4);
         event.setPowerResistance(MjAPI.MJ / 20);// 1/20th lost, or 0.05%
-        event.setPowerLoss(MjAPI.MJ / 10);
     }
 }

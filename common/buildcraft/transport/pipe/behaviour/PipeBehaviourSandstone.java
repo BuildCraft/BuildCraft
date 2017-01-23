@@ -4,6 +4,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.transport.PipeEventHandler;
+import buildcraft.api.transport.PipeEventPower;
 import buildcraft.api.transport.neptune.IPipe;
 import buildcraft.api.transport.neptune.PipeBehaviour;
 
@@ -25,5 +28,11 @@ public class PipeBehaviourSandstone extends PipeBehaviour {
     @Override
     public boolean canConnect(EnumFacing face, TileEntity oTile) {
         return false;
+    }
+
+    @PipeEventHandler
+    public static void configurePower(PipeEventPower.Configure event) {
+        event.setMaxPower(MjAPI.MJ * 8);
+        event.setPowerResistance(MjAPI.MJ / 40);// 1/40th lost, or 0.025%
     }
 }
