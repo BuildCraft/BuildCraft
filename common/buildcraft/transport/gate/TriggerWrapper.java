@@ -34,16 +34,25 @@ public abstract class TriggerWrapper extends StatementWrapper implements ITrigge
             }
             return new TriggerWrapperExternal((ITriggerExternal) statement, side);
         } else {
-            throw new IllegalArgumentException("Unknwon class or interface " + statement.getClass());
+            throw new IllegalArgumentException("Unknown class or interface " + statement.getClass());
         }
     }
 
     @Override
     public TriggerWrapper[] getPossible() {
         IStatement[] possible = delegate.getPossible();
-        TriggerWrapper[] real = new TriggerWrapper[possible.length];
+        boolean andSides = sourcePart != EnumPipePart.CENTER;
+        TriggerWrapper[] real = new TriggerWrapper[possible.length + (andSides ? 5 : 0)];
         for (int i = 0; i < possible.length; i++) {
             real[i] = wrap(possible[i], sourcePart.face);
+        }
+        if (andSides) {
+            EnumPipePart part = sourcePart;
+            for (int j = 0; j < 5; j++) {
+                int i = j + possible.length;
+                part = part.next();
+                real[i] = wrap(delegate, part.face);
+            }
         }
         return real;
     }
