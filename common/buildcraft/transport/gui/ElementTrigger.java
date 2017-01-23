@@ -20,8 +20,7 @@ public class ElementTrigger extends ElementStatement<TriggerWrapper> {
         TriggerWrapper[] possible = value.getPossible();
         if (possible == null) return null;
 
-        List<TriggerWrapper> list = new ArrayList<>();
-        list.add(null);
+        List<TriggerWrapper> list = new ArrayList<>(possible.length);
         for (TriggerWrapper poss : possible) {
             if (gui.container.possibleTriggers.contains(poss)) {
                 list.add(poss);

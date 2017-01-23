@@ -2,7 +2,6 @@ package buildcraft.transport.gate;
 
 import java.util.*;
 
-import buildcraft.transport.wire.WorldSavedDataWireSystems;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -31,6 +30,7 @@ import buildcraft.transport.gate.TriggerWrapper.TriggerWrapperInternal;
 import buildcraft.transport.gate.TriggerWrapper.TriggerWrapperInternalSided;
 import buildcraft.transport.plug.PluggableGate;
 import buildcraft.transport.wire.IWireEmitter;
+import buildcraft.transport.wire.WorldSavedDataWireSystems;
 
 public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContainer {
     public static final int NET_ID_RESOLVE = 3;
@@ -323,18 +323,23 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
     }
 
     /** Sets up the given trigger or action statements to the given ones. */
-    private static void setStatementInternal(int index, StatementWrapper[] array, IStatementParameter[][] paramters, StatementWrapper statement) {
-        array[index] = statement;
+    private static void setStatementInternal(int index, StatementWrapper[] array, IStatementParameter[][] parameters, StatementWrapper statement) {
         if (statement == null) {
-            Arrays.fill(paramters[index], null);
+            Arrays.fill(parameters[index], null);
         } else {
-            int max = paramters[index].length;
+            if (array[index] != null && array[index].delegate == statement.delegate) {
+                // Don't clear out parameters if its the same statement with a different side.
+                array[index] = statement;
+                return;
+            }
+            array[index] = statement;
+            int max = parameters[index].length;
             int maxTrigger = statement.maxParameters();
             for (int i = 0; i < maxTrigger && i < max; i++) {
-                paramters[index][i] = statement.createParameter(i);
+                parameters[index][i] = statement.createParameter(i);
             }
             for (int i = maxTrigger; i < max; i++) {
-                paramters[index][i] = null;
+                parameters[index][i] = null;
             }
         }
     }
@@ -418,7 +423,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
             turnedOn.removeAll(previousBroadcasts);
             // FIXME: add call to "wires.emittingColour(turnedOff)"
 
-            if(!getPipeHolder().getPipeWorld().isRemote) {
+            if (!getPipeHolder().getPipeWorld().isRemote) {
                 WorldSavedDataWireSystems.get(getPipeHolder().getPipeWorld()).gatesChanged = true;
             }
         }

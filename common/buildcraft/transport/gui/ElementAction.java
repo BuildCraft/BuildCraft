@@ -20,8 +20,7 @@ public class ElementAction extends ElementStatement<ActionWrapper> {
         ActionWrapper[] possible = value.getPossible();
         if (possible == null) return null;
 
-        List<ActionWrapper> list = new ArrayList<>();
-        list.add(null);
+        List<ActionWrapper> list = new ArrayList<>(possible.length);
         for (ActionWrapper poss : possible) {
             if (gui.container.possibleActions.contains(poss)) {
                 list.add(poss);
