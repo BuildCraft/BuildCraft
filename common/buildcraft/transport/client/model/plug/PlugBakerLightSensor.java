@@ -15,17 +15,17 @@ import buildcraft.api.transport.pluggable.IPluggableModelBaker;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.transport.BCTransportModels;
-import buildcraft.transport.client.model.key.KeyPlugDaylightSensor;
+import buildcraft.transport.client.model.key.KeyPlugLightSensor;
 
-public enum PlugBakerDaylightSensor implements IPluggableModelBaker<KeyPlugDaylightSensor> {
+public enum PlugBakerLightSensor implements IPluggableModelBaker<KeyPlugLightSensor> {
     INSTANCE;
 
     private static final Map<EnumFacing, List<BakedQuad>> cached = new EnumMap<>(EnumFacing.class);
     private static MutableQuad[] lastSeen = null;
 
     @Override
-    public List<BakedQuad> bake(KeyPlugDaylightSensor key) {
-        MutableQuad[] quads = BCTransportModels.DAYLIGHT_SENSOR.getCutoutQuads();
+    public List<BakedQuad> bake(KeyPlugLightSensor key) {
+        MutableQuad[] quads = BCTransportModels.LIGHT_SENSOR.getCutoutQuads();
         if (quads != lastSeen) {
             cached.clear();
             MutableQuad copy = new MutableQuad();

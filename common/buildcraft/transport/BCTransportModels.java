@@ -27,7 +27,7 @@ import buildcraft.transport.gate.GateVariant;
 
 public class BCTransportModels {
     public static final ModelHolderStatic BLOCKER;
-    public static final ModelHolderStatic DAYLIGHT_SENSOR;
+    public static final ModelHolderStatic LIGHT_SENSOR;
     public static final ModelHolderStatic POWER_ADAPTER;
     public static final ModelHolderStatic LENS;
 
@@ -44,7 +44,7 @@ public class BCTransportModels {
 
     static {
         BLOCKER = getModel("plugs/blocker.json");
-        DAYLIGHT_SENSOR = getModel("plugs/daylight_sensor.json");
+        LIGHT_SENSOR = getModel("plugs/light_sensor.json");
         POWER_ADAPTER = getModel("plugs/power_adapter.json");
         LENS = getModel("plugs/lens.json");
         PULSAR_STATIC = getModel("plugs/pulsar_static.json");
@@ -94,6 +94,7 @@ public class BCTransportModels {
         registerModel(modelRegistry, start + "gate_item#inventory", ModelGateItem.INSTANCE);
         registerModel(modelRegistry, start + "plug_blocker#inventory", new ModelPluggableItem(BLOCKER.getCutoutQuads()));
         registerModel(modelRegistry, start + "plug_pulsar#inventory", new ModelPluggableItem(PULSAR_STATIC.getCutoutQuads(), getPulsarDynQuads(true, 0.5)));
+        registerModel(modelRegistry, start + "plug_light_sensor#inventory", new ModelPluggableItem(LIGHT_SENSOR.getCutoutQuads()));
 
         PlugGateBaker.onModelBake();
         ModelGateItem.onModelBake();

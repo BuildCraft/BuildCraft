@@ -8,15 +8,18 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.transport.PipeEventHandler;
+import buildcraft.api.transport.PipeEventStatement;
 import buildcraft.api.transport.neptune.IPipeHolder;
 import buildcraft.api.transport.neptune.PipePluggable;
 import buildcraft.api.transport.neptune.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 import buildcraft.transport.BCTransportItems;
-import buildcraft.transport.client.model.key.KeyPlugDaylightSensor;
+import buildcraft.transport.BCTransportStatements;
+import buildcraft.transport.client.model.key.KeyPlugLightSensor;
 
-public class PluggableDaylightSensor extends PipePluggable {
+public class PluggableLightSensor extends PipePluggable {
 
     private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
 
@@ -37,7 +40,7 @@ public class PluggableDaylightSensor extends PipePluggable {
         BOXES[EnumFacing.EAST.ordinal()] = new AxisAlignedBB(ul, min, min, uu, max, max);
     }
 
-    public PluggableDaylightSensor(PluggableDefinition definition, IPipeHolder holder, EnumFacing side) {
+    public PluggableLightSensor(PluggableDefinition definition, IPipeHolder holder, EnumFacing side) {
         super(definition, holder, side);
     }
 
@@ -55,13 +58,21 @@ public class PluggableDaylightSensor extends PipePluggable {
 
     @Override
     public ItemStack getPickStack() {
-        return new ItemStack(BCTransportItems.plugDaylightSensor);
+        return new ItemStack(BCTransportItems.plugLightSensor);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public PluggableModelKey<?> getModelRenderKey(BlockRenderLayer layer) {
-        if (layer == BlockRenderLayer.CUTOUT) return new KeyPlugDaylightSensor(side);
+        if (layer == BlockRenderLayer.CUTOUT) return new KeyPlugLightSensor(side);
         return null;
+    }
+
+    @PipeEventHandler
+    public void addInternalTriggers(PipeEventStatement.AddTriggerInternalSided event) {
+        if (event.side == this.side) {
+            event.triggers.add(BCTransportStatements.TRIGGER_LIGHT_LOW);
+            event.triggers.add(BCTransportStatements.TRIGGER_LIGHT_HIGH);
+        }
     }
 }

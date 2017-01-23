@@ -22,6 +22,9 @@ public class BCTransportSprites {
     public static final SpriteHolder NOTHING_FILTERED_BUFFER_SLOT;
     public static final SpriteHolder PIPE_COLOUR, COLOUR_ITEM_BOX;
 
+    public static final SpriteHolder TRIGGER_LIGHT_LOW;
+    public static final SpriteHolder TRIGGER_LIGHT_HIGH;
+    
     public static final SpriteHolder ACTION_PULSAR_CONSTANT;
     public static final SpriteHolder ACTION_PULSAR_SINGLE;
     public static final SpriteHolder[] ACTION_PIPE_COLOUR;
@@ -34,6 +37,9 @@ public class BCTransportSprites {
         NOTHING_FILTERED_BUFFER_SLOT = getHolder("gui/nothing_filtered_buffer_slot");
         PIPE_COLOUR = getHolder("pipes/overlay_stained");
         COLOUR_ITEM_BOX = getHolder("pipes/colour_item_box");
+        
+        TRIGGER_LIGHT_LOW = getHolder("triggers/trigger_light_dark");
+        TRIGGER_LIGHT_HIGH = getHolder("triggers/trigger_light_bright");
 
         ACTION_PULSAR_CONSTANT = getHolder("triggers/action_pulsar_on");
         ACTION_PULSAR_SINGLE = getHolder("triggers/action_pulsar_single");
