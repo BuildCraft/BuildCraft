@@ -8,6 +8,8 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import buildcraft.api.transport.pluggable.IPluggableModelBaker;
+
 import buildcraft.lib.client.model.ModelHolderStatic;
 import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.ModelPluggableItem;
@@ -20,6 +22,10 @@ import buildcraft.lib.expression.node.value.NodeVariableString;
 import buildcraft.transport.client.model.ModelGateItem;
 import buildcraft.transport.client.model.ModelPipe;
 import buildcraft.transport.client.model.ModelPipeItem;
+import buildcraft.transport.client.model.key.KeyPlugBlocker;
+import buildcraft.transport.client.model.key.KeyPlugLightSensor;
+import buildcraft.transport.client.model.key.KeyPlugPulsar;
+import buildcraft.transport.client.model.plug.PlugBakerSimple;
 import buildcraft.transport.client.model.plug.PlugGateBaker;
 import buildcraft.transport.client.render.PlugGateRenderer;
 import buildcraft.transport.client.render.PlugPulsarRenderer;
@@ -42,6 +48,10 @@ public class BCTransportModels {
     private static final NodeVariableDouble PULSAR_STAGE;
     private static final NodeVariableBoolean PULSAR_ON;
 
+    public static final IPluggableModelBaker<KeyPlugPulsar> BAKER_PLUG_PULSAR;
+    public static final IPluggableModelBaker<KeyPlugBlocker> BAKER_PLUG_BLOCKER;
+    public static final IPluggableModelBaker<KeyPlugLightSensor> BAKER_PLUG_LIGHT_SENSOR;
+
     static {
         BLOCKER = getModel("plugs/blocker.json");
         LIGHT_SENSOR = getModel("plugs/light_sensor.json");
@@ -63,6 +73,10 @@ public class BCTransportModels {
         PULSAR_STAGE = fnCtx.putVariableDouble("stage");
         PULSAR_ON = fnCtx.putVariableBoolean("on");
         PULSAR_DYNAMIC = getModel("plugs/pulsar_dynamic.json", fnCtx);
+
+        BAKER_PLUG_PULSAR = new PlugBakerSimple<>(PULSAR_STATIC::getCutoutQuads);
+        BAKER_PLUG_BLOCKER = new PlugBakerSimple<>(BLOCKER::getCutoutQuads);
+        BAKER_PLUG_LIGHT_SENSOR = new PlugBakerSimple<>(LIGHT_SENSOR::getCutoutQuads);
     }
 
     private static ModelHolderStatic getModel(String loc) {

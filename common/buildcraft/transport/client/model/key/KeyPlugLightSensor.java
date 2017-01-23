@@ -5,10 +5,10 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
-import buildcraft.transport.client.model.plug.PlugBakerLightSensor;
+import buildcraft.transport.BCTransportModels;
 
 public class KeyPlugLightSensor extends PluggableModelKey<KeyPlugLightSensor> {
     public KeyPlugLightSensor(EnumFacing side) {
-        super(BlockRenderLayer.CUTOUT, PlugBakerLightSensor.INSTANCE, side);
+        super(BlockRenderLayer.CUTOUT, BCTransportModels.BAKER_PLUG_LIGHT_SENSOR, side);
     }
 }
