@@ -401,6 +401,10 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
     private void insertItemEvents(@Nonnull ItemStack toInsert, EnumDyeColor colour, double speed, EnumFacing from) {
         IPipeHolder holder = pipe.getHolder();
 
+        PipeEventItem.BeforeInsert beforeInsert = new PipeEventItem.BeforeInsert(holder, this, colour, from, toInsert);
+        holder.fireEvent(beforeInsert);
+        colour = beforeInsert.colour;
+
         // Side Check
 
         PipeEventItem.SideCheck sideCheck = new PipeEventItem.SideCheck(holder, this, colour, from, toInsert);

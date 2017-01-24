@@ -91,6 +91,9 @@ public class PipeEventBus {
         }
     }
 
+    /** Sends this event to all of the registered handlers.
+     * 
+     * @return True if at least 1 event handler was called, 0 if no handlers were called. */
     public boolean fireEvent(PipeEvent event) {
         boolean handled = false;
         for (LocalHandler handler : currentHandlers) {

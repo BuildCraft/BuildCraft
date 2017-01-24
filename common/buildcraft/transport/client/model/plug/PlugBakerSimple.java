@@ -35,6 +35,7 @@ public class PlugBakerSimple<K extends PluggableModelKey<K>> implements IPluggab
             MutableQuad copy = new MutableQuad();
             for (EnumFacing to : EnumFacing.VALUES) {
                 List<BakedQuad> list = new ArrayList<>();
+                // TODO: Replace with "MutableQuad.rotate(WEST, to)" as it will probably be faster
                 Matrix4f transform = MatrixUtil.rotateTowardsFace(to);
                 for (MutableQuad q : quads) {
                     copy.copyFrom(q);
