@@ -30,6 +30,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.apache.logging.log4j.Level;
 
 import java.util.*;
@@ -499,7 +500,12 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         }
 
         if (tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite())) {
-            return tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()).getSlots() > 0;
+            IItemHandler capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
+            if(capability != null) {
+                return capability.getSlots() > 0;
+            } else {
+                return false;
+            }
         }
 
         // TODO: Remove IInv/ISidedInv in 1.9
