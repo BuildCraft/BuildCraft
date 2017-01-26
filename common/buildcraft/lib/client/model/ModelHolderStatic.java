@@ -49,7 +49,6 @@ public class ModelHolderStatic extends ModelHolder {
             return ImmutableMap.of();
         }
         ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-        Map<String, String> map = new HashMap<>();
         for (String[] ar : textures) {
             if (ar.length != 2) {
                 throw new IllegalArgumentException("Must have 2 elements (key,value) but got " + Arrays.toString(ar));
@@ -57,7 +56,7 @@ public class ModelHolderStatic extends ModelHolder {
             if (!ar[0].startsWith("~")) {
                 throw new IllegalArgumentException("Key must start with '~' otherwise it will never be used!");
             }
-            map.put(ar[0], ar[1]);
+            builder.put(ar[0], ar[1]);
         }
         return builder.build();
     }

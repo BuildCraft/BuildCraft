@@ -14,6 +14,7 @@ import buildcraft.lib.expression.node.func.NodeFuncDoubleToDouble.IFuncDoubleToD
 import buildcraft.lib.expression.node.func.NodeFuncDoubleToLong.IFuncDoubleToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong.IFuncLongLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongToLong.IFuncLongToLong;
+import buildcraft.lib.expression.node.func.NodeFuncStringToLong.IFuncStringToLong;
 import buildcraft.lib.expression.node.value.*;
 
 public class FunctionContext {
@@ -202,5 +203,9 @@ public class FunctionContext {
 
     public void put_dd_d(String name, IFuncDoubleDoubleToDouble func) {
         putFunction(name, new NodeFuncDoubleDoubleToDouble(func, (a, b) -> name + "(" + a + ", " + b + ")"));
+    }
+
+    public void put_s_l(String name, IFuncStringToLong func) {
+        putFunction(name, new NodeFuncStringToLong(func, (a) -> name + "(" + a + ")"));
     }
 }

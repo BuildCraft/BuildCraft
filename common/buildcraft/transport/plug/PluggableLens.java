@@ -4,19 +4,25 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.PipeEventHandler;
 import buildcraft.api.transport.PipeEventItem;
 import buildcraft.api.transport.neptune.IPipeHolder;
 import buildcraft.api.transport.neptune.PipePluggable;
 import buildcraft.api.transport.neptune.PluggableDefinition;
+import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.BCTransportItems;
+import buildcraft.transport.client.model.key.KeyPlugLens;
 
 public class PluggableLens extends PipePluggable {
     private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
@@ -100,6 +106,18 @@ public class PluggableLens extends PipePluggable {
     @Override
     public boolean isBlocking() {
         return false;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public PluggableModelKey<?> getModelRenderKey(BlockRenderLayer layer) {
+        switch (layer) {
+            case CUTOUT:
+            case TRANSLUCENT:
+                return new KeyPlugLens(layer, side, colour, isFilter);
+            default:
+                return null;
+        }
     }
 
     @PipeEventHandler

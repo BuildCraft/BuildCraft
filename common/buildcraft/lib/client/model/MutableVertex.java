@@ -466,8 +466,8 @@ public class MutableVertex {
      * @param scale The multiplier for scaling. Positive values will rotate clockwise, negative values rotate
      *            anti-clockwise. */
     public MutableVertex rotateZ_90(float scale) {
-        float ym = scale;
-        float xm = -ym;
+        float xm = scale;
+        float ym = -xm;
 
         float t = position_x * xm;
         position_x = position_y * ym;

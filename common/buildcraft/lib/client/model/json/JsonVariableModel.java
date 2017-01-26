@@ -147,7 +147,7 @@ public class JsonVariableModel {
             try {
                 node = InternalCompiler.compileExpression(expression, fnCtx);
             } catch (InvalidExpressionException e) {
-                throw new JsonSyntaxException("Invalid expression", e);
+                throw new JsonSyntaxException("Invalid expression " + expression, e);
             }
             IVariableNode varNode = NodeType.getType(node).makeVariableNode();
             if (variables.containsKey(name)) {

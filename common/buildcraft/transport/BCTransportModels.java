@@ -2,6 +2,8 @@ package buildcraft.transport;
 
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.registry.IRegistry;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -25,6 +27,7 @@ import buildcraft.transport.client.model.ModelPipeItem;
 import buildcraft.transport.client.model.key.KeyPlugBlocker;
 import buildcraft.transport.client.model.key.KeyPlugLightSensor;
 import buildcraft.transport.client.model.key.KeyPlugPulsar;
+import buildcraft.transport.client.model.plug.PlugBakerLens;
 import buildcraft.transport.client.model.plug.PlugBakerSimple;
 import buildcraft.transport.client.model.plug.PlugGateBaker;
 import buildcraft.transport.client.render.PlugGateRenderer;
@@ -35,13 +38,13 @@ public class BCTransportModels {
     public static final ModelHolderStatic BLOCKER;
     public static final ModelHolderStatic LIGHT_SENSOR;
     public static final ModelHolderStatic POWER_ADAPTER;
-    public static final ModelHolderStatic LENS;
 
     private static final ModelHolderVariable GATE_STATIC, GATE_DYNAMIC;
-    /** Used in {@link #GATE_STATIC} */
     private static final NodeVariableString GATE_MATERIAL, GATE_MODIFIER, GATE_LOGIC;
-    /** Used in {@link #GATE_DYNAMIC} */
     private static final NodeVariableBoolean GATE_ON;
+
+    private static final ModelHolderVariable LENS, FILTER;
+    private static final NodeVariableString LENS_COLOUR, LENS_SIDE;
 
     public static final ModelHolderStatic PULSAR_STATIC;
     private static final ModelHolderVariable PULSAR_DYNAMIC;
@@ -56,7 +59,6 @@ public class BCTransportModels {
         BLOCKER = getModel("plugs/blocker.json");
         LIGHT_SENSOR = getModel("plugs/light_sensor.json");
         POWER_ADAPTER = getModel("plugs/power_adapter.json");
-        LENS = getModel("plugs/lens.json");
         PULSAR_STATIC = getModel("plugs/pulsar_static.json");
 
         FunctionContext fnCtx = new FunctionContext(DefaultContexts.CONTEXT_DEFAULT);
@@ -68,6 +70,12 @@ public class BCTransportModels {
         fnCtx = new FunctionContext(DefaultContexts.CONTEXT_DEFAULT);
         GATE_ON = fnCtx.putVariableBoolean("on");
         GATE_DYNAMIC = getModel("plugs/gate_dynamic.json", fnCtx);
+
+        fnCtx = new FunctionContext(DefaultContexts.CONTEXT_DEFAULT);
+        LENS_COLOUR = fnCtx.putVariableString("colour");
+        LENS_SIDE = fnCtx.putVariableString("side");
+        LENS = getModel("plugs/lens.json", fnCtx);
+        FILTER = getModel("plugs/filter.json", fnCtx);
 
         fnCtx = new FunctionContext(DefaultContexts.CONTEXT_DEFAULT);
         PULSAR_STAGE = fnCtx.putVariableDouble("stage");
@@ -110,6 +118,7 @@ public class BCTransportModels {
         registerModel(modelRegistry, start + "plug_pulsar#inventory", new ModelPluggableItem(PULSAR_STATIC.getCutoutQuads(), getPulsarDynQuads(true, 0.5)));
         registerModel(modelRegistry, start + "plug_light_sensor#inventory", new ModelPluggableItem(LIGHT_SENSOR.getCutoutQuads()));
 
+        PlugBakerLens.onModelBake();
         PlugGateBaker.onModelBake();
         ModelGateItem.onModelBake();
 
@@ -135,6 +144,31 @@ public class BCTransportModels {
     public static MutableQuad[] getGateDynQuads(boolean isOn) {
         GATE_ON.value = isOn;
         return GATE_DYNAMIC.getCutoutQuads();
+    }
+
+    private static void setupLensVariables(EnumFacing side, EnumDyeColor colour) {
+        LENS_COLOUR.value = colour == null ? "clear" : colour.getName();
+        LENS_SIDE.value = side.getName();
+    }
+
+    public static MutableQuad[] getLensCutoutQuads(EnumFacing side, EnumDyeColor colour) {
+        setupLensVariables(side, colour);
+        return LENS.getCutoutQuads();
+    }
+
+    public static MutableQuad[] getLensTranslucentQuads(EnumFacing side, EnumDyeColor colour) {
+        setupLensVariables(side, colour);
+        return LENS.getTranslucentQuads();
+    }
+
+    public static MutableQuad[] getFilterCutoutQuads(EnumFacing side, EnumDyeColor colour) {
+        setupLensVariables(side, colour);
+        return FILTER.getCutoutQuads();
+    }
+
+    public static MutableQuad[] getFilterTranslucentQuads(EnumFacing side, EnumDyeColor colour) {
+        setupLensVariables(side, colour);
+        return FILTER.getTranslucentQuads();
     }
 
     public static MutableQuad[] getPulsarDynQuads(boolean isPulsing, double stage) {

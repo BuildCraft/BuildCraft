@@ -278,6 +278,12 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
             // TODO: fire drop event
             dropItem(item);
         } else {
+
+            PipeEventItem.ReachEnd event = new PipeEventItem.ReachEnd(pipe.getHolder(), this, item.stack, item.from, to, item.colour);
+            pipe.getHolder().fireEvent(event);
+            item.stack = event.stack;
+            item.colour = event.colour;
+
             ConnectedType type = pipe.getConnectedType(to);
 
             ItemStack leftOver = item.stack;

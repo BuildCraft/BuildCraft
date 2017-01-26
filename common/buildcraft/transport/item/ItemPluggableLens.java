@@ -79,7 +79,11 @@ public class ItemPluggableLens extends ItemBC_Neptune implements IItemPluggable 
     @SideOnly(Side.CLIENT)
     public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
         for (int i = 0; i < 34; i++) {
-            variants.put(0, new ModelResourceLocation("buildcrafttransport:lens_item_" + i + "#inventory"));
+            LensData data = new LensData(new ItemStack(this, 1, i));
+            String colour = data.colour == null ? "clear" : data.colour.getName();
+            String part = data.isFilter ? "filter" : "lens";
+            // TODO: Write a custom model loader that accepts ".bcjson" files
+            variants.put(i, new ModelResourceLocation("buildcrafttransport:" + part + "_item.bcjson#colour='" + colour + "'"));
         }
     }
 

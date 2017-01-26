@@ -63,7 +63,7 @@ public abstract class JsonVariableModelPart {
         try {
             return GenericExpressionCompiler.compileExpressionDouble(expression, context);
         } catch (InvalidExpressionException e) {
-            throw new JsonSyntaxException("Invalid expression", e);
+            throw new JsonSyntaxException("Invalid expression " + expression, e);
         }
     }
 
@@ -71,7 +71,7 @@ public abstract class JsonVariableModelPart {
         try {
             return GenericExpressionCompiler.compileExpressionString(expression, context);
         } catch (InvalidExpressionException e) {
-            throw new JsonSyntaxException("Invalid expression", e);
+            throw new JsonSyntaxException("Invalid expression " + expression, e);
         }
     }
 
@@ -79,7 +79,7 @@ public abstract class JsonVariableModelPart {
         try {
             return GenericExpressionCompiler.compileExpressionBoolean(expression, context);
         } catch (InvalidExpressionException e) {
-            throw new JsonSyntaxException("Invalid expression", e);
+            throw new JsonSyntaxException("Invalid expression " + expression, e);
         }
     }
 
@@ -87,7 +87,7 @@ public abstract class JsonVariableModelPart {
         try {
             return GenericExpressionCompiler.compileExpressionLong(expression, context);
         } catch (InvalidExpressionException e) {
-            throw new JsonSyntaxException("Invalid expression", e);
+            throw new JsonSyntaxException("Invalid expression " + expression, e);
         }
     }
 
@@ -136,6 +136,7 @@ public abstract class JsonVariableModelPart {
         private final INodeDouble[] from, to;
         private final INodeBoolean visible, shade;
         private final INodeLong light;
+        private final INodeLong colour;
         private final Map<EnumFacing, JsonVariableFaceUV> faces = new HashMap<>();
 
         private TypeCuboid(JsonObject obj, FunctionContext fnCtx) {
@@ -144,6 +145,7 @@ public abstract class JsonVariableModelPart {
             shade = obj.has("shade") ? readVariableBoolean(obj, "shade", fnCtx) : NodeConstantBoolean.TRUE;
             visible = obj.has("visible") ? readVariableBoolean(obj, "visible", fnCtx) : NodeConstantBoolean.TRUE;
             light = obj.has("light") ? readVariableLong(obj, "light", fnCtx) : new NodeConstantLong(0);
+            colour = obj.has("colour") ? readVariableLong(obj, "colour", fnCtx) : new NodeConstantLong(-1);
 
             if (!obj.has("faces")) {
                 throw new JsonSyntaxException("Expected between 1 and 6 faces, got nothing");
@@ -174,6 +176,7 @@ public abstract class JsonVariableModelPart {
                 float[] t = bakePosition(to);
                 boolean s = shade.evaluate();
                 int l = (int) (light.evaluate() & 15);
+                int rgba = (int) (colour.evaluate() & 0xFF_FF_FF_FF);
                 for (Entry<EnumFacing, JsonVariableFaceUV> entry : faces.entrySet()) {
                     EnumFacing face = entry.getKey();
                     JsonVariableFaceUV var = entry.getValue();
@@ -190,6 +193,7 @@ public abstract class JsonVariableModelPart {
                         center.add(radius);
                         MutableQuad quad = ModelUtil.createFace(face, center, radius, uvs);
                         quad.lighti(l, 0);
+                        quad.colouri(rgba);
                         quad.texFromSprite(sprite);
                         quad.setSprite(sprite);
                         quad.setShade(s);
