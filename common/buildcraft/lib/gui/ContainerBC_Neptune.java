@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
@@ -100,6 +101,52 @@ public abstract class ContainerBC_Neptune extends Container {
             return itemStack;
         }
         return super.slotClick(slotId, dragType, clickType, player);
+    }
+
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+        ItemStack itemstack = ItemStack.EMPTY;
+        Slot slot = this.inventorySlots.get(index);
+        Slot firstSlot = this.inventorySlots.get(0);
+        int playerInventorySize = 36;
+        boolean playerInventoryFirst = firstSlot.inventory instanceof InventoryPlayer;
+
+        if (slot != null && slot.getHasStack())
+        {
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
+
+            if(inventorySlots.size() == playerInventorySize) return ItemStack.EMPTY;
+            if(playerInventoryFirst) {
+                if (index < playerInventorySize) {
+                    if (!this.mergeItemStack(itemstack1, playerInventorySize, this.inventorySlots.size(), false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (!this.mergeItemStack(itemstack1, 0, playerInventorySize, true)) {
+                    return ItemStack.EMPTY;
+                }
+            }
+            else {
+                if (index < this.inventorySlots.size()-playerInventorySize) {
+                    if (!this.mergeItemStack(itemstack1, this.inventorySlots.size()-playerInventorySize, this.inventorySlots.size(), false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (!this.mergeItemStack(itemstack1, 0, this.inventorySlots.size()-playerInventorySize, true)) {
+                    return ItemStack.EMPTY;
+                }
+            }
+
+            if (itemstack1.isEmpty())
+            {
+                slot.putStack(ItemStack.EMPTY);
+            }
+            else
+            {
+                slot.onSlotChanged();
+            }
+        }
+
+        return itemstack;
     }
 
     public static ItemStack safeCopy(ItemStack in) {
