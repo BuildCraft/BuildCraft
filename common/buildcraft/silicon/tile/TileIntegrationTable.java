@@ -21,11 +21,12 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 import buildcraft.lib.tile.item.ItemHandlerManager;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 public class TileIntegrationTable extends TileLaserTableBase {
-    public final IItemHandlerModifiable invTarget = itemManager.addInvHandler("target", 1, ItemHandlerManager.EnumAccess.BOTH, EnumPipePart.VALUES);
-    public final IItemHandlerModifiable invToIntegrate = itemManager.addInvHandler("toIntegrate", 3 * 3 - 1, ItemHandlerManager.EnumAccess.BOTH, EnumPipePart.VALUES);
-    public final IItemHandlerModifiable invResult = itemManager.addInvHandler("result", 1, ItemHandlerManager.EnumAccess.INSERT, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invTarget = itemManager.addInvHandler("target", 1, ItemHandlerManager.EnumAccess.BOTH, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invToIntegrate = itemManager.addInvHandler("toIntegrate", 3 * 3 - 1, ItemHandlerManager.EnumAccess.BOTH, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invResult = itemManager.addInvHandler("result", 1, ItemHandlerManager.EnumAccess.INSERT, EnumPipePart.VALUES);
     public IntegrationRecipe recipe;
 
     private boolean extract(ItemStack item, NonNullList<ItemStack> items, boolean simulate) {

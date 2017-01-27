@@ -5,7 +5,7 @@
         "particle":"#pulsing_false"
     },
     "variables": {
-        "mirrored_pos": "2 * (stage > 0.5 ? 1 - stage : stage)",
+        "mirrored_pos": "2 * (stage > 0.5 ? 1 - stage : stage) + 0.001",
         "pos": "2 - mirrored_pos * 2"
     },
     "elements": [

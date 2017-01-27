@@ -55,6 +55,7 @@ import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 public class TileBuilder_Neptune extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final int NET_BOX = 10;
@@ -67,8 +68,8 @@ public class TileBuilder_Neptune extends TileBC_Neptune implements ITickable, ID
     public static final int NET_ANIM_POWER = 17;
     public static final int NET_ANIM_STATE = 18;
 
-    public final IItemHandlerModifiable invBlueprint = itemManager.addInvHandler("blueprint", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
-    public final IItemHandlerModifiable invResources = itemManager.addInvHandler("resources", 27, EnumAccess.NONE, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invBlueprint = itemManager.addInvHandler("blueprint", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invResources = itemManager.addInvHandler("resources", 27, EnumAccess.NONE, EnumPipePart.VALUES);
 
     private final Tank[] tanks = new Tank[] {//
         new Tank("fluid1", Fluid.BUCKET_VOLUME * 8, this),//

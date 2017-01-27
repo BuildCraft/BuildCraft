@@ -27,11 +27,12 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.tile.item.ItemHandlerManager;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.silicon.EnumAssemblyRecipeState;
 
 public class TileAssemblyTable extends TileLaserTableBase {
     public static final int NET_RECIPE_STATE = 10;
-    public final IItemHandlerModifiable inv = itemManager.addInvHandler("", 3 * 4, ItemHandlerManager.EnumAccess.BOTH, EnumPipePart.VALUES);
+    public final ItemHandlerSimple inv = itemManager.addInvHandler("", 3 * 4, ItemHandlerManager.EnumAccess.BOTH, EnumPipePart.VALUES);
     public SortedMap<AssemblyRecipe, EnumAssemblyRecipeState> recipesStates = new TreeMap<>(Comparator.comparing(assemblyRecipe -> assemblyRecipe.output.getItem().hashCode() + (assemblyRecipe.output.getTagCompound() == null ? 0
         : assemblyRecipe.output.getTagCompound().hashCode()) + assemblyRecipe.output.getMetadata() * assemblyRecipe.output.getMaxStackSize() + assemblyRecipe.output.getCount()));
 

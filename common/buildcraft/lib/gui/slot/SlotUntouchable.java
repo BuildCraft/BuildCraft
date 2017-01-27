@@ -9,11 +9,12 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandler;
+
+import buildcraft.lib.tile.item.IItemHandlerAdv;
 
 public class SlotUntouchable extends SlotBase implements IPhantomSlot {
 
-    public SlotUntouchable(IItemHandler itemHandler, int slotIndex, int posX, int posY) {
+    public SlotUntouchable(IItemHandlerAdv itemHandler, int slotIndex, int posX, int posY) {
         super(itemHandler, slotIndex, posX, posY);
     }
 

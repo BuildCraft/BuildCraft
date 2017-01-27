@@ -21,7 +21,7 @@ import buildcraft.lib.inventory.AbstractInvItemTransactor;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.item.StackInsertionFunction.InsertionResult;
 
-public class ItemHandlerSimple extends AbstractInvItemTransactor implements IItemHandlerModifiable, INBTSerializable<NBTTagCompound> {
+public class ItemHandlerSimple extends AbstractInvItemTransactor implements IItemHandlerModifiable, IItemHandlerAdv, INBTSerializable<NBTTagCompound> {
     // Function-called stuff (helpers etc)
     private final StackInsertionChecker checker;
     private final StackInsertionFunction insertor;
@@ -191,6 +191,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
         }
     }
 
+    @Override
     public final boolean canSet(int slot, @Nonnull ItemStack stack) {
         ItemStack copied = asValid(stack);
         if (copied.isEmpty()) {

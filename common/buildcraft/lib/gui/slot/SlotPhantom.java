@@ -6,11 +6,11 @@ package buildcraft.lib.gui.slot;
 
 import net.minecraft.entity.player.EntityPlayer;
 
-import net.minecraftforge.items.IItemHandler;
+import buildcraft.lib.tile.item.IItemHandlerAdv;
 
 public class SlotPhantom extends SlotBase implements IPhantomSlot {
 
-    public SlotPhantom(IItemHandler itemHandler, int slotIndex, int posX, int posY) {
+    public SlotPhantom(IItemHandlerAdv itemHandler, int slotIndex, int posX, int posY) {
         super(itemHandler, slotIndex, posX, posY);
     }
 

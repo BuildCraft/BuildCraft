@@ -18,12 +18,13 @@ import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.slot.SlotPhantom;
 import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond.FilterMode;
 
 public class ContainerDiamondWoodPipe extends ContainerBC_Neptune {
     private final PipeBehaviourWoodDiamond behaviour;
-    private final IItemHandler filterInv;
+    private final ItemHandlerSimple filterInv;
 
     public ContainerDiamondWoodPipe(EntityPlayer player, PipeBehaviourWoodDiamond behaviour) {
         super(player);

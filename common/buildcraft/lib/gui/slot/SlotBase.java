@@ -6,15 +6,18 @@ package buildcraft.lib.gui.slot;
 
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
+
+import buildcraft.lib.tile.item.IItemHandlerAdv;
 
 public class SlotBase extends SlotItemHandler {
     public final int handlerIndex;
+    public final IItemHandlerAdv itemHandler;
 
-    public SlotBase(IItemHandler itemHandler, int slotIndex, int posX, int posY) {
+    public SlotBase(IItemHandlerAdv itemHandler, int slotIndex, int posX, int posY) {
         super(itemHandler, slotIndex, posX, posY);
         this.handlerIndex = slotIndex;
+        this.itemHandler = itemHandler;
     }
 
     public boolean canShift() {
@@ -23,7 +26,7 @@ public class SlotBase extends SlotItemHandler {
 
     @Override
     public boolean isItemValid(ItemStack stack) {
-        return true;
+        return itemHandler.canSet(handlerIndex, stack);
     }
 
     /** @param stack

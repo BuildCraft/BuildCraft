@@ -27,6 +27,7 @@ import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 public class TileLibrary_Neptune extends TileBC_Neptune implements ITickable {
     public static final int NET_SELECTED = 20;
@@ -43,7 +44,7 @@ public class TileLibrary_Neptune extends TileBC_Neptune implements ITickable {
     // -- load disk <-> db
     // -- read + writers
 
-    public final IItemHandlerModifiable inv;
+    public final ItemHandlerSimple inv;
     public LibraryEntryHeader selected = null;
 
     public TileLibrary_Neptune() {
