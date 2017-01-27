@@ -14,10 +14,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.transport.neptune.IItemPluggable;
-import buildcraft.api.transport.neptune.IPipeHolder;
-import buildcraft.api.transport.neptune.PipePluggable;
-import buildcraft.api.transport.neptune.PluggableDefinition;
+import buildcraft.api.transport.neptune.*;
 
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.ColourUtil;
@@ -53,6 +50,10 @@ public class ItemPluggableLens extends ItemBC_Neptune implements IItemPluggable 
 
     @Override
     public PipePluggable onPlace(ItemStack stack, IPipeHolder holder, EnumFacing side) {
+        IPipe pipe = holder.getPipe();
+        if (pipe == null || !(pipe.getFlow() instanceof IFlowItems)) {
+            return null;
+        }
         LensData data = getData(stack);
         SoundUtil.playBlockPlace(holder.getPipeWorld(), holder.getPipePos(), Blocks.STONE.getDefaultState());
         PluggableDefinition def = BCTransportPlugs.lens;
@@ -79,11 +80,7 @@ public class ItemPluggableLens extends ItemBC_Neptune implements IItemPluggable 
     @SideOnly(Side.CLIENT)
     public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
         for (int i = 0; i < 34; i++) {
-            LensData data = new LensData(new ItemStack(this, 1, i));
-            String colour = data.colour == null ? "clear" : data.colour.getName();
-            String part = data.isFilter ? "filter" : "lens";
-            // TODO: Write a custom model loader that accepts ".bcjson" files
-            variants.put(i, new ModelResourceLocation("buildcrafttransport:" + part + "_item.bcjson#colour='" + colour + "'"));
+            variants.put(i, new ModelResourceLocation("buildcrafttransport:lens_item#inventory"));
         }
     }
 
@@ -97,7 +94,10 @@ public class ItemPluggableLens extends ItemBC_Neptune implements IItemPluggable 
         }
 
         public LensData(ItemStack stack) {
-            int damage = stack.getItemDamage();
+            this(stack.getItemDamage());
+        }
+
+        public LensData(int damage) {
             if (damage >= 32) {
                 colour = null;
                 isFilter = damage == 33;
@@ -107,14 +107,16 @@ public class ItemPluggableLens extends ItemBC_Neptune implements IItemPluggable 
             }
         }
 
-        public ItemStack writeToStack(ItemStack stack) {
-            int damage;
+        public int getItemDamage() {
             if (colour == null) {
-                damage = isFilter ? 33 : 32;
+                return isFilter ? 33 : 32;
             } else {
-                damage = colour.getDyeDamage() + (isFilter ? 16 : 0);
+                return colour.getDyeDamage() + (isFilter ? 16 : 0);
             }
-            stack.setItemDamage(damage);
+        }
+
+        public ItemStack writeToStack(ItemStack stack) {
+            stack.setItemDamage(getItemDamage());
             return stack;
         }
     }

@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import com.google.gson.*;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 
@@ -137,6 +138,9 @@ public class JsonVariableModel {
             name = name.toLowerCase(Locale.ROOT);
             if (fnCtx.hasLocalVariable(name)) {
                 throw new JsonSyntaxException("Duplicate local variable '" + name + "'");
+            } else if (fnCtx.getVariable(name) != null) {
+                // Allow overriding of higher up variables
+                continue;
             }
             JsonElement value = entry.getValue();
             if (!value.isJsonPrimitive() && value.getAsJsonPrimitive().isString()) {
@@ -164,5 +168,9 @@ public class JsonVariableModel {
         for (NodeUpdatable updatable : variablesArray) {
             updatable.refresh();
         }
+    }
+
+    public interface ITextureGetter {
+        TextureAtlasSprite get(String location);
     }
 }

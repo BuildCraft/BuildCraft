@@ -121,7 +121,7 @@ public class ContainerGate extends ContainerBC_Neptune {
                     if (id == ID_TRIGGER_PARAM) {
                         param = gate.getTriggerParam(index, paramIndex);
                     } else {
-                        param = gate.getTriggerParam(index, paramIndex);
+                        param = gate.getActionParam(index, paramIndex);
                     }
 
                     if (param != null) {

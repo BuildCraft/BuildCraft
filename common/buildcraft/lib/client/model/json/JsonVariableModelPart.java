@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Function;
 
 import javax.vecmath.Vector3f;
 
@@ -21,6 +20,7 @@ import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.model.ResourceLoaderContext;
+import buildcraft.lib.client.model.json.JsonVariableModel.ITextureGetter;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.InvalidExpressionException;
@@ -35,7 +35,7 @@ import buildcraft.lib.misc.JsonUtil;
 /** {@link JsonModelPart} but with can be animated */
 public abstract class JsonVariableModelPart {
 
-    public abstract void addQuads(List<MutableQuad> to, Function<String, TextureAtlasSprite> spriteLookup);
+    public abstract void addQuads(List<MutableQuad> to, ITextureGetter spriteLookup);
 
     public static JsonVariableModelPart deserialiseModelPart(JsonElement json, FunctionContext fnCtx, ResourceLoaderContext ctx) {
         if (!json.isJsonObject()) {
@@ -170,7 +170,7 @@ public abstract class JsonVariableModelPart {
         }
 
         @Override
-        public void addQuads(List<MutableQuad> addTo, Function<String, TextureAtlasSprite> spriteLookup) {
+        public void addQuads(List<MutableQuad> addTo, ITextureGetter spriteLookup) {
             if (visible.evaluate()) {
                 float[] f = bakePosition(from);
                 float[] t = bakePosition(to);
@@ -181,7 +181,7 @@ public abstract class JsonVariableModelPart {
                     EnumFacing face = entry.getKey();
                     JsonVariableFaceUV var = entry.getValue();
                     if (var.visible.evaluate()) {
-                        TextureAtlasSprite sprite = spriteLookup.apply(var.texture.evaluate());
+                        TextureAtlasSprite sprite = spriteLookup.get(var.texture.evaluate());
                         UvFaceData uvs = new UvFaceData();
                         uvs.uMin = (float) var.uv[0].evaluate();
                         uvs.vMin = (float) var.uv[1].evaluate();
@@ -192,6 +192,7 @@ public abstract class JsonVariableModelPart {
                         Vector3f center = new Vector3f(f);
                         center.add(radius);
                         MutableQuad quad = ModelUtil.createFace(face, center, radius, uvs);
+                        quad.rotateTextureUp((int) var.textureRotation.evaluate());
                         quad.lighti(l, 0);
                         quad.colouri(rgba);
                         quad.texFromSprite(sprite);

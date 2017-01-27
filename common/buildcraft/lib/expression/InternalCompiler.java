@@ -249,17 +249,10 @@ public class InternalCompiler {
             else if (":".equals(op)) ; // NO-OP, all handled by "?"
             else if ("?".equals(op)) pushConditional(stack);
             else if (UNARY_NEGATION.equals(op)) pushNegation(stack);
-            else if (LONG_MATCHER.matcher(op).matches()) {
-                long val;
-                if (op.startsWith("0x")) {
-                    // its a hexidecimal number
-                    String v = op.substring(2).replace("_", "");
-                    val = Long.parseLong(v, 16);
-                } else {
-                    val = Long.parseLong(op);
-                }
+            else if (isValidLong(op)) {
+                long val = parseValidLong(op);
                 stack.push(new NodeConstantLong(val));
-            } else if (DOUBLE_MATCHER.matcher(op).matches()) {
+            } else if (isValidDouble(op)) {
                 stack.push(new NodeConstantDouble(Double.parseDouble(op)));
             } else if (BOOLEAN_MATCHER.matcher(op).matches()) {
                 stack.push(NodeConstantBoolean.get(Boolean.parseBoolean(op)));
@@ -284,6 +277,26 @@ public class InternalCompiler {
             throw new InvalidExpressionException("Tried to make an expression with too many nodes! (" + stack + ")");
         }
         return node;
+    }
+
+    public static boolean isValidDouble(String op) {
+        return DOUBLE_MATCHER.matcher(op).matches();
+    }
+
+    public static boolean isValidLong(String value) {
+        return LONG_MATCHER.matcher(value).matches();
+    }
+
+    public static long parseValidLong(String value) {
+        long val;
+        if (value.startsWith("0x")) {
+            // its a hexidecimal number
+            String v = value.substring(2).replace("_", "");
+            val = Long.parseLong(v, 16);
+        } else {
+            val = Long.parseLong(value);
+        }
+        return val;
     }
 
     private static void pushSubtraction(NodeStack stack) throws InvalidExpressionException {

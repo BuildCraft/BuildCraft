@@ -21,7 +21,7 @@ public enum PlugBakerLens implements IPluggableModelBaker<KeyPlugLens> {
 
     private static final Map<KeyPlugLens, List<BakedQuad>> cached = new HashMap<>();
 
-    private final IQuadGetter lens, filter;
+    public final IQuadGetter lens, filter;
 
     private PlugBakerLens(IQuadGetter lens, IQuadGetter filter) {
         this.lens = lens;

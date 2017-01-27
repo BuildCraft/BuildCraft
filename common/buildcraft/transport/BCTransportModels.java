@@ -27,6 +27,7 @@ import buildcraft.transport.client.model.ModelPipeItem;
 import buildcraft.transport.client.model.key.KeyPlugBlocker;
 import buildcraft.transport.client.model.key.KeyPlugLightSensor;
 import buildcraft.transport.client.model.key.KeyPlugPulsar;
+import buildcraft.transport.client.model.plug.ModelLensItem;
 import buildcraft.transport.client.model.plug.PlugBakerLens;
 import buildcraft.transport.client.model.plug.PlugBakerSimple;
 import buildcraft.transport.client.model.plug.PlugGateBaker;
@@ -114,13 +115,15 @@ public class BCTransportModels {
         registerModel(modelRegistry, start + "pipe_holder#normal", ModelPipe.INSTANCE);
         registerModel(modelRegistry, start + "pipe_item#inventory", ModelPipeItem.INSTANCE);
         registerModel(modelRegistry, start + "gate_item#inventory", ModelGateItem.INSTANCE);
+        registerModel(modelRegistry, start + "lens_item#inventory", ModelLensItem.INSTANCE);
         registerModel(modelRegistry, start + "plug_blocker#inventory", new ModelPluggableItem(BLOCKER.getCutoutQuads()));
         registerModel(modelRegistry, start + "plug_pulsar#inventory", new ModelPluggableItem(PULSAR_STATIC.getCutoutQuads(), getPulsarDynQuads(true, 0.5)));
         registerModel(modelRegistry, start + "plug_light_sensor#inventory", new ModelPluggableItem(LIGHT_SENSOR.getCutoutQuads()));
 
-        PlugBakerLens.onModelBake();
         PlugGateBaker.onModelBake();
+        PlugBakerLens.onModelBake();
         ModelGateItem.onModelBake();
+        ModelLensItem.onModelBake();
 
         PlugGateRenderer.onModelBake();
         PlugPulsarRenderer.onModelBake();

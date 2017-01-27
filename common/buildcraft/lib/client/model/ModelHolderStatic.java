@@ -78,7 +78,7 @@ public class ModelHolderStatic extends ModelHolder {
             BCLog.logger.warn("[lib.model.holder] Failed to load the model " + modelLocation + " because " + io.getMessage());
         }
         if (rawModel != null) {
-            if (CustomModelLoader.DEBUG) {
+            if (ModelHolderRegistry.DEBUG) {
                 BCLog.logger.info("[lib.model.holder] The model " + modelLocation + " requires these sprites:");
             }
             for (Entry<String, String> entry : rawModel.textures.entrySet()) {
@@ -99,7 +99,7 @@ public class ModelHolderStatic extends ModelHolder {
                 } else {
                     toRegisterSprites.add(new ResourceLocation(lookup));
                 }
-                if (CustomModelLoader.DEBUG) {
+                if (ModelHolderRegistry.DEBUG) {
                     BCLog.logger.info("[lib.model.holder]  - " + lookup);
                 }
             }
@@ -155,7 +155,7 @@ public class ModelHolderStatic extends ModelHolder {
             if (unseen) {
                 unseen = false;
                 String warnText = "[lib.model.holder] Tried to use the model " + modelLocation + " before it was baked!";
-                if (CustomModelLoader.DEBUG) {
+                if (ModelHolderRegistry.DEBUG) {
                     BCLog.logger.warn(warnText, new Throwable());
                 } else {
                     BCLog.logger.warn(warnText);

@@ -93,12 +93,17 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
             if (wrapper != null) {
                 for (int j = 0; j < triggerParameters[i].length; j++) {
                     NBTTagCompound cpt = nbt.getCompoundTag("triggerParameters[" + i + "][" + j + "]");
-                    if (cpt.hasNoTags()) continue;
+                    if (cpt.hasNoTags()) {
+                        triggerParameters[i][j] = wrapper.createParameter(j);
+                        continue;
+                    }
                     tag = cpt.getString("kind");
                     IStatementParameter param = StatementManager.createParameter(tag);
                     if (param != null) {
                         param.readFromNBT(cpt);
                         triggerParameters[i][j] = param;
+                    } else {
+                        BCLog.logger.warn("Didn't find an IStatementParamater for " + tag);
                     }
                 }
             }
@@ -113,12 +118,17 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
             if (wrapper != null) {
                 for (int j = 0; j < actionParameters[i].length; j++) {
                     NBTTagCompound cpt = nbt.getCompoundTag("actionParameters[" + i + "][" + j + "]");
-                    if (cpt.hasNoTags()) continue;
+                    if (cpt.hasNoTags()) {
+                        actionParameters[i][j] = wrapper.createParameter(j);
+                        continue;
+                    }
                     tag = cpt.getString("kind");
                     IStatementParameter param = StatementManager.createParameter(tag);
                     if (param != null) {
                         param.readFromNBT(cpt);
                         actionParameters[i][j] = param;
+                    } else {
+                        BCLog.logger.warn("Didn't find an IStatementParamater for " + tag);
                     }
                 }
             }
@@ -147,8 +157,8 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                     IStatementParameter param = triggerParameters[i][j];
                     if (param != null) {
                         NBTTagCompound cpt = new NBTTagCompound();
-                        cpt.setString("kind", param.getUniqueTag());
                         param.writeToNBT(cpt);
+                        cpt.setString("kind", param.getUniqueTag());
                         nbt.setTag("triggerParameters[" + i + "][" + j + "]", cpt);
                     }
                 }
@@ -166,8 +176,8 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                 IStatementParameter param = actionParameters[i][j];
                 if (param != null) {
                     NBTTagCompound cpt = new NBTTagCompound();
-                    cpt.setString("kind", param.getUniqueTag());
                     param.writeToNBT(cpt);
+                    cpt.setString("kind", param.getUniqueTag());
                     nbt.setTag("actionParameters[" + i + "][" + j + "]", cpt);
                 }
             }

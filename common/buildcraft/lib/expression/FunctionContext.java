@@ -149,6 +149,18 @@ public class FunctionContext {
         });
     }
 
+    public void putParsedConstant(String name, String value) {
+        if (InternalCompiler.isValidLong(value)) {
+            putConstantLong(name, InternalCompiler.parseValidLong(value));
+        } else if (InternalCompiler.isValidDouble(value)) {
+            putConstantDouble(name, Double.parseDouble(value));
+        } else if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
+            putConstantBoolean(name, "true".equalsIgnoreCase(value));
+        } else {
+            putConstantString(name, value);
+        }
+    }
+
     // Function getter/setters
 
     public INodeFunc getFunction(String name, int args) {
