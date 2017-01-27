@@ -140,6 +140,7 @@ public class JsonVariableModel {
                 throw new JsonSyntaxException("Duplicate local variable '" + name + "'");
             } else if (fnCtx.getVariable(name) != null) {
                 // Allow overriding of higher up variables
+                // ...what? Doesn't this disallow overriding existing variables?
                 continue;
             }
             JsonElement value = entry.getValue();
@@ -153,14 +154,14 @@ public class JsonVariableModel {
             } catch (InvalidExpressionException e) {
                 throw new JsonSyntaxException("Invalid expression " + expression, e);
             }
-            IVariableNode varNode = NodeType.getType(node).makeVariableNode();
             if (variables.containsKey(name)) {
                 NodeUpdatable existing = variables.get(name);
-                existing.setSource(varNode);
+                existing.setSource(node);
             } else {
+                IVariableNode varNode = NodeType.getType(node).makeVariableNode();
                 variables.put(name, new NodeUpdatable(node, varNode));
+                fnCtx.putVariable(name, varNode);
             }
-            fnCtx.putVariable(name, varNode);
         }
     }
 

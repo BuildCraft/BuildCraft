@@ -3,6 +3,7 @@ package buildcraft.transport.gui;
 import java.util.List;
 
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
 import buildcraft.api.statements.IGuiSlot;
@@ -70,6 +71,7 @@ public abstract class ElementGuiSlot<T extends IGuiSlot> extends GuiElementSimpl
     @Override
     public void drawForeground(float partialTicks) {
         if (possible != null) {
+            GlStateManager.disableDepth();
             int sub = 18 * (possible.length > 8 ? 2 : 1);
             int add = 18 * (possible.length > 8 ? 3 : 1);
             int x = getX() - sub - 4;
@@ -80,6 +82,7 @@ public abstract class ElementGuiSlot<T extends IGuiSlot> extends GuiElementSimpl
                 draw(possible[i], posPossible[i]);
             }
             draw(reference.get(), this);
+            GlStateManager.enableDepth();
         }
     }
 

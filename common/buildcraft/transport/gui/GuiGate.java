@@ -11,7 +11,10 @@ import buildcraft.api.core.EnumPipePart;
 
 import buildcraft.lib.client.sprite.RawSprite;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
-import buildcraft.lib.gui.*;
+import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.IGuiElement;
+import buildcraft.lib.gui.ITooltipElement;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
@@ -199,7 +202,9 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
         GlStateManager.color(1, 1, 1);
 
         if (currentHover != null) {
+            GlStateManager.disableDepth();
             drawGradientRect(rootElement.getX(), rootElement.getY(), rootElement.getX() + GUI_WIDTH, rootElement.getY() + ySize, 0x55_00_00_00, 0x55_00_00_00);
+            GlStateManager.enableDepth();
         }
 
         if (isDraggingStatement) {
