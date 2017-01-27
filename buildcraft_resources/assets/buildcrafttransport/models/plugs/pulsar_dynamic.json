@@ -4,10 +4,14 @@
         "#pulsing_false":"buildcrafttransport:plugs/pulsar_dynamic_off",
         "particle":"#pulsing_false"
     },
+    "variables": {
+        "mirrored_pos": "2 * (stage > 0.5 ? 1 - stage : stage)",
+        "pos": "2 - mirrored_pos * 2"
+    },
     "elements": [
         {
-            "from": [ "2 - stage * 2", 6, 6 ],
-            "to": [ 2, 10, 10 ],
+            "from": [ "pos", 6, 6 ],
+            "to": [ "pos + 2", 10, 10 ],
             "visible":"on",
             "shade": "false",
             "light":15,
