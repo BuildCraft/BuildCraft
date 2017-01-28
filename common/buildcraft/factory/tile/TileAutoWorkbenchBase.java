@@ -47,7 +47,6 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
     public final ItemHandlerSimple invResult;
     public final ItemHandlerSimple invOverflow;
     protected final Map<ItemStackKey, TIntHashSet> itemStackCache;
-    private ItemHandlerSimple invMaterialsCopy = null;
 
     public IRecipe currentRecipe;
     private int progress = 0;
@@ -94,7 +93,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
         // craft 1 item
         updateRecipe();
         if (hasMaterialsForRecipe()) {
-         /*   if (progress == 0) {
+            if (progress == 0) {
                 deltaProgress.addDelta(0, 200, 100);
                 deltaProgress.addDelta(200, 205, -100);
             }
@@ -107,7 +106,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
                 ItemStack leftOver = invResult.insertItem(0, out, false);
                 InventoryUtil.drop(getWorld(), getPos(), leftOver);
                 progress = 0;
-            }*/
+            }
         } else if (progress != -1) {
             progress = -1;
             deltaProgress.setValue(0);
@@ -118,22 +117,10 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
         if (currentRecipe == null) {
             return false;
         }
-        invMaterialsCopy = copyInvMaterials();
         crafting.enableBindings();
         boolean has = currentRecipe.matches(crafting, getWorld());
         crafting.disableBindings();
-        invMaterialsCopy = null;
         return has;
-    }
-
-    private ItemHandlerSimple copyInvMaterials() {
-        ItemHandlerSimple newItemHandler = itemManager.addInvHandler("materials", invMaterials.getSlots(), EnumAccess.INSERT, EnumPipePart.VALUES);
-
-        for(int i = 0; i < invMaterials.getSlots(); ++i) {
-            newItemHandler.setStackInSlot(i, invMaterials.getStackInSlot(i));
-        }
-
-        return newItemHandler;
     }
 
     @Override
@@ -165,8 +152,6 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
         // }
     }
 
-
-    // todo: itemStackCache doesn't always get updated properly
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
         super.onSlotChange(handler, slot, before, after);
@@ -367,8 +352,8 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
                 return StackUtil.EMPTY;
             }
             for (int s : boundTo.toArray()) {
-                if (!invMaterialsCopy.getStackInSlot(s).isEmpty()) {
-                    ItemStack inSlot = invMaterialsCopy.extractItem(s, 1, false);
+                if (!invMaterials.getStackInSlot(s).isEmpty()) {
+                    ItemStack inSlot = invMaterials.extractItem(s, 1, true);
                     if (!inSlot.isEmpty()) {
                         return inSlot;
                     }
