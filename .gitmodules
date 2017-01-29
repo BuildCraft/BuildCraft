@@ -1,6 +1,6 @@
 [submodule "BuildCraftAPI"]
 	path = BuildCraftAPI
-	url = ../BuildCraftAPI.git
+	url = https://github.com/BuildCraft/BuildCraftAPI.git
 [submodule "BuildCraft-Localization"]
 	path = BuildCraft-Localization
 	url = https://github.com/BuildCraft/BuildCraft-Localization.git
