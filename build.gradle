@@ -404,7 +404,7 @@ def sftp(String subPath, Closure antFileset = {}) {
 publishing {
     repositories {
         maven {
-            url "/home/ali/Documents/dev/maven_master/buildcraft_web"
+            url "build/maven"
         }
     }
     publications {

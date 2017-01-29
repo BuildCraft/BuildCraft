@@ -167,8 +167,9 @@ public class BCTransportRecipes {
                     GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(resultOr, "i", 'i', resultAnd));
                 }
             }
-            for(EnumDyeColor color : EnumDyeColor.values()) {
-                AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10000000000L, ImmutableSet.of(new ItemStack(Items.REDSTONE), new ItemStack(Items.DYE, 1, color.getMetadata())), new ItemStack(BCTransportItems.wire, 8, color.getMetadata())));
+            for (EnumDyeColor color : EnumDyeColor.values()) {
+                AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10000000000L, ImmutableSet.of(new ItemStack(Items.REDSTONE), new ItemStack(Items.DYE, 1, color.getMetadata())),
+                    new ItemStack(BCTransportItems.wire, 8, color.getMetadata())));
             }
         }
     }
@@ -210,7 +211,7 @@ public class BCTransportRecipes {
         if (additional == null) {
             throw new NullPointerException("additional");
         }
-        
+
         // TODO: Use RecipePipeColour instead!
 
         GameRegistry.addShapelessRecipe(new ItemStack(from), new ItemStack(to));
