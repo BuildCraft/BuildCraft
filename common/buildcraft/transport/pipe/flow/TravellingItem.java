@@ -110,7 +110,7 @@ public class TravellingItem {
     public NBTTagCompound writeToNbt(long tickNow) {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag("stack", stack.serializeNBT());
-        nbt.setByte("colour", (byte) (colour == null ? 0 : colour.getMetadata()));
+        nbt.setByte("colour", (byte) (colour == null ? 0 : colour.getMetadata() + 1));
         nbt.setBoolean("toCenter", state == EnumTravelState.SERVER_TO_CENTER);
         nbt.setDouble("speed", speed);
         nbt.setInteger("tickStarted", (int) (tickStarted - tickNow));
