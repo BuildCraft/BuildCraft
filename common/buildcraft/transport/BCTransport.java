@@ -148,8 +148,9 @@ public class BCTransport {
         registerTag("item.pipe.buildcrafttransport.void_fluid").reg("pipe_void_fluid").locale("PipeFluidsVoid");
         registerTag("item.pipe.buildcrafttransport.obsidian_item").reg("pipe_obsidian_item").locale("PipeItemsObsidian");
         registerTag("item.pipe.buildcrafttransport.obsidian_fluid").reg("pipe_obsidian_fluid").locale("PipeFluidsObsidian");
-        registerTag("item.pipe.buildcrafttransport.lapis_item").reg("pipe_lapis_fluid").locale("PipeItemsLapis");
-        registerTag("item.pipe.buildcrafttransport.daizuli_item").reg("pipe_daizuli_fluid").locale("PipeItemsDaizuli");
+        registerTag("item.pipe.buildcrafttransport.lapis_item").reg("pipe_lapis_item").locale("PipeItemsLapis");
+        registerTag("item.pipe.buildcrafttransport.daizuli_item").reg("pipe_daizuli_item").locale("PipeItemsDaizuli");
+        registerTag("item.pipe.buildcrafttransport.emzuli_item").reg("pipe_emzuli_item").locale("PipeItemsEmzuli");
         endBatch(TagManager.setTab("buildcraft.pipes"));
         // Item Blocks
         registerTag("item.block.filtered_buffer").reg("filtered_buffer").locale("filteredBufferBlock").model("filtered_buffer");

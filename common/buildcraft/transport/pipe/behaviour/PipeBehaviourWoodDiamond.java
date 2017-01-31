@@ -141,7 +141,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
         if (filters.getStackInSlot(currentFilter).isEmpty()) {
             advanceFilter();
         }
-        int extracted = flow.tryExtractItems(1, getCurrentDir(), getStackFilter());
+        int extracted = flow.tryExtractItems(1, getCurrentDir(), null, getStackFilter());
         if (extracted > 0 & filterMode == FilterMode.ROUND_ROBIN) {
             advanceFilter();
         }

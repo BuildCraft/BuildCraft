@@ -22,6 +22,9 @@ public class ElementAction extends ElementStatement<ActionWrapper> {
 
         List<ActionWrapper> list = new ArrayList<>(possible.length);
         for (ActionWrapper poss : possible) {
+            if (poss.delegate == value.delegate && poss.sourcePart == value.sourcePart) {
+                continue;
+            }
             if (gui.container.possibleActions.contains(poss)) {
                 list.add(poss);
             }

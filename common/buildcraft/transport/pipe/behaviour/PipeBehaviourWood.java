@@ -100,7 +100,7 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
     }
 
     protected int extractItems(IFlowItems flow, EnumFacing dir, int count) {
-        return flow.tryExtractItems(count, dir, StackFilter.ALL);
+        return flow.tryExtractItems(count, dir, null, StackFilter.ALL);
     }
 
     protected FluidStack extractFluid(IFlowFluid flow, EnumFacing dir, int millibuckets) {

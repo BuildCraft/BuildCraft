@@ -1,5 +1,7 @@
 package buildcraft.transport.gate;
 
+import java.util.Arrays;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.tileentity.TileEntity;
 
@@ -72,6 +74,28 @@ public abstract class StatementWrapper implements IStatement, Comparable<Stateme
     public int compareTo(StatementWrapper o) {
         if (sourcePart != o.sourcePart) {
             return Integer.compare(o.sourcePart.getIndex(), sourcePart.getIndex());
+        }
+        if (delegate == o.delegate) {
+            return 0;
+        }
+        if (delegate.getClass() == o.delegate.getClass()) {
+            IStatement[] poss = delegate.getPossible();
+            IStatement[] oPoss = o.delegate.getPossible();
+            if (Arrays.equals(poss, oPoss)) {
+                int idxThis = -1;
+                int idxThat = -1;
+                for (int i = 0; i < poss.length; i++) {
+                    if (poss[i] == delegate) {
+                        idxThis = i;
+                    }
+                    if (poss[i] == o.delegate) {
+                        idxThat = i;
+                    }
+                }
+                if (idxThis != idxThat && idxThis != -1 && idxThat != -1) {
+                    return Integer.compare(idxThis, idxThat);
+                }
+            }
         }
         return getUniqueTag().compareTo(o.getUniqueTag());
     }

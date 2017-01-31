@@ -14,6 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.gui.GuiBC8;
 
+/** An image button that draws its states downwards, starting at baseU. */
 @SideOnly(Side.CLIENT)
 public class GuiImageButton extends GuiAbstractButton {
     private final int size, u, v, baseU, baseV;
@@ -53,8 +54,6 @@ public class GuiImageButton extends GuiAbstractButton {
 
         drawTexturedModalRect(xPosition, yPosition, baseU + buttonState * size, baseV, size, size);
         drawTexturedModalRect(xPosition + 1, yPosition + 1, u, v, size - 2, size - 2);
-
-        mouseDragged(minecraft, x, y);
     }
 
     private int getButtonState() {

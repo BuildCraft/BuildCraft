@@ -15,10 +15,10 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.tile.TileFilteredBuffer;
 
-public class ContainerFilteredBuffer extends ContainerBCTile<TileFilteredBuffer> {
+public class ContainerFilteredBuffer_BC8 extends ContainerBCTile<TileFilteredBuffer> {
     private static final int PLAYER_INV_START = 86;
 
-    public ContainerFilteredBuffer(EntityPlayer player, TileFilteredBuffer tile) {
+    public ContainerFilteredBuffer_BC8(EntityPlayer player, TileFilteredBuffer tile) {
         super(player, tile);
         addFullPlayerInventory(PLAYER_INV_START);
 

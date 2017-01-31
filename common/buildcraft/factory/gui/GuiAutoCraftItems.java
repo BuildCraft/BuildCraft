@@ -49,7 +49,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> {
             int y = rootElement.getY() + 27;
             this.itemRender.renderItemAndEffectIntoGUI(this.mc.player, output, x, y);
             this.itemRender.renderItemOverlayIntoGUI(this.mc.fontRendererObj, output, x, y, null);
-            RenderHelper.enableStandardItemLighting();
+            RenderHelper.disableStandardItemLighting();
         }
     }
 }

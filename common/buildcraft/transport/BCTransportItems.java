@@ -57,6 +57,7 @@ public class BCTransportItems {
 
     public static ItemPipeHolder pipeItemLapis;
     public static ItemPipeHolder pipeItemDaizuli;
+    public static ItemPipeHolder pipeItemEmzuli;
 
     public static ItemPluggableSimple plugBlocker;
     public static ItemPluggableGate plugGate;
@@ -87,6 +88,7 @@ public class BCTransportItems {
         pipeItemDiaWood = makePipeItem(BCTransportPipes.diaWoodItem);
         pipeItemLapis = makePipeItem(BCTransportPipes.lapisItem);
         pipeItemDaizuli = makePipeItem(BCTransportPipes.daizuliItem);
+        pipeItemEmzuli = makePipeItem(BCTransportPipes.emzuliItem);
 
         pipeFluidWood = makePipeItem(BCTransportPipes.woodFluid);
         pipeFluidCobble = makePipeItem(BCTransportPipes.cobbleFluid);

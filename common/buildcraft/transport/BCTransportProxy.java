@@ -20,15 +20,10 @@ import buildcraft.api.transport.neptune.PipePluggable;
 
 import buildcraft.transport.client.model.GateMeshDefinition;
 import buildcraft.transport.client.render.RenderPipeHolder;
-import buildcraft.transport.container.ContainerDiamondPipe;
-import buildcraft.transport.container.ContainerDiamondWoodPipe;
-import buildcraft.transport.container.ContainerFilteredBuffer;
-import buildcraft.transport.container.ContainerGate;
-import buildcraft.transport.gui.GuiDiamondPipe;
-import buildcraft.transport.gui.GuiDiamondWoodPipe;
-import buildcraft.transport.gui.GuiFilteredBuffer;
-import buildcraft.transport.gui.GuiGate;
+import buildcraft.transport.container.*;
+import buildcraft.transport.gui.*;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
 import buildcraft.transport.plug.PluggableGate;
 import buildcraft.transport.tile.TileFilteredBuffer;
@@ -44,44 +39,69 @@ public abstract class BCTransportProxy implements IGuiHandler {
 
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        BCTransportGuis gui = BCTransportGuis.get(id);
+        if (gui == null) return null;
         TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
-        if (id == BCTransportGuis.FILTERED_BUFFER.ordinal()) {
-            if (tile instanceof TileFilteredBuffer) {
-                TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
-                return new ContainerFilteredBuffer(player, filteredBuffer);
-            }
-        } else if (id == BCTransportGuis.PIPE_DIAMOND.ordinal()) {
-            if (tile instanceof IPipeHolder) {
-                IPipeHolder holder = (IPipeHolder) tile;
-                IPipe pipe = holder.getPipe();
-                if (pipe == null) return null;
-                PipeBehaviour behaviour = pipe.getBehaviour();
-                if (behaviour instanceof PipeBehaviourDiamond) {
-                    PipeBehaviourDiamond diaPipe = (PipeBehaviourDiamond) behaviour;
-                    return new ContainerDiamondPipe(player, diaPipe);
+
+        switch (gui) {
+            case FILTERED_BUFFER: {
+                if (tile instanceof TileFilteredBuffer) {
+                    TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
+                    return new ContainerFilteredBuffer_BC8(player, filteredBuffer);
                 }
+                break;
             }
-        } else if (id == BCTransportGuis.PIPE_DIAMOND_WOOD.ordinal()) {
-            if (tile instanceof IPipeHolder) {
-                IPipeHolder holder = (IPipeHolder) tile;
-                IPipe pipe = holder.getPipe();
-                if (pipe == null) return null;
-                PipeBehaviour behaviour = pipe.getBehaviour();
-                if (behaviour instanceof PipeBehaviourWoodDiamond) {
-                    PipeBehaviourWoodDiamond diaPipe = (PipeBehaviourWoodDiamond) behaviour;
-                    return new ContainerDiamondWoodPipe(player, diaPipe);
+            case PIPE_DIAMOND: {
+                if (tile instanceof IPipeHolder) {
+                    IPipeHolder holder = (IPipeHolder) tile;
+                    IPipe pipe = holder.getPipe();
+                    if (pipe == null) return null;
+                    PipeBehaviour behaviour = pipe.getBehaviour();
+                    if (behaviour instanceof PipeBehaviourDiamond) {
+                        PipeBehaviourDiamond diaPipe = (PipeBehaviourDiamond) behaviour;
+                        return new ContainerDiamondPipe(player, diaPipe);
+                    }
                 }
+                break;
             }
-        } else if (id == BCTransportGuis.GATE.ordinal()) {
-            int ry = y >> 3;
-            EnumFacing gateSide = EnumFacing.getFront(y & 0x7);
-            tile = world.getTileEntity(new BlockPos(x, ry, z));
-            if (tile instanceof IPipeHolder) {
-                IPipeHolder holder = (IPipeHolder) tile;
-                PipePluggable plug = holder.getPluggable(gateSide);
-                if (plug instanceof PluggableGate) {
-                    return new ContainerGate(player, ((PluggableGate) plug).logic);
+            case PIPE_DIAMOND_WOOD: {
+                if (tile instanceof IPipeHolder) {
+                    IPipeHolder holder = (IPipeHolder) tile;
+                    IPipe pipe = holder.getPipe();
+                    if (pipe == null) return null;
+                    PipeBehaviour behaviour = pipe.getBehaviour();
+                    if (behaviour instanceof PipeBehaviourWoodDiamond) {
+                        PipeBehaviourWoodDiamond diaPipe = (PipeBehaviourWoodDiamond) behaviour;
+                        return new ContainerDiamondWoodPipe(player, diaPipe);
+                    }
                 }
+                break;
+            }
+            case PIPE_EMZULI: {
+                if (tile instanceof IPipeHolder) {
+                    IPipeHolder holder = (IPipeHolder) tile;
+                    IPipe pipe = holder.getPipe();
+                    if (pipe == null) return null;
+                    PipeBehaviour behaviour = pipe.getBehaviour();
+                    if (behaviour instanceof PipeBehaviourEmzuli) {
+                        PipeBehaviourEmzuli emPipe = (PipeBehaviourEmzuli) behaviour;
+                        return new ContainerEmzuliPipe_BC8(player, emPipe);
+                    }
+                }
+                break;
+            }
+            case GATE: {
+                int ry = y >> 3;
+                EnumFacing gateSide = EnumFacing.getFront(y & 0x7);
+                tile = world.getTileEntity(new BlockPos(x, ry, z));
+                if (tile instanceof IPipeHolder) {
+                    IPipeHolder holder = (IPipeHolder) tile;
+                    PipePluggable plug = holder.getPluggable(gateSide);
+                    if (plug instanceof PluggableGate) {
+                        return new ContainerGate(player, ((PluggableGate) plug).logic);
+                    }
+                }
+                break;
             }
         }
         return null;
@@ -119,44 +139,70 @@ public abstract class BCTransportProxy implements IGuiHandler {
 
         @Override
         public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+            BCTransportGuis gui = BCTransportGuis.get(id);
+            if (gui == null) {
+                return null;
+            }
             TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
-            if (id == BCTransportGuis.FILTERED_BUFFER.ordinal()) {
-                if (tile instanceof TileFilteredBuffer) {
-                    TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
-                    return new GuiFilteredBuffer(new ContainerFilteredBuffer(player, filteredBuffer));
-                }
-            } else if (id == BCTransportGuis.PIPE_DIAMOND.ordinal()) {
-                if (tile instanceof IPipeHolder) {
-                    IPipeHolder holder = (IPipeHolder) tile;
-                    IPipe pipe = holder.getPipe();
-                    if (pipe == null) return null;
-                    PipeBehaviour behaviour = pipe.getBehaviour();
-                    if (behaviour instanceof PipeBehaviourDiamond) {
-                        PipeBehaviourDiamond diaPipe = (PipeBehaviourDiamond) behaviour;
-                        return new GuiDiamondPipe(player, diaPipe);
+            switch (gui) {
+                case FILTERED_BUFFER: {
+                    if (tile instanceof TileFilteredBuffer) {
+                        TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
+                        return new GuiFilteredBuffer(new ContainerFilteredBuffer_BC8(player, filteredBuffer));
                     }
+                    break;
                 }
-            } else if (id == BCTransportGuis.PIPE_DIAMOND_WOOD.ordinal()) {
-                if (tile instanceof IPipeHolder) {
-                    IPipeHolder holder = (IPipeHolder) tile;
-                    IPipe pipe = holder.getPipe();
-                    if (pipe == null) return null;
-                    PipeBehaviour behaviour = pipe.getBehaviour();
-                    if (behaviour instanceof PipeBehaviourWoodDiamond) {
-                        PipeBehaviourWoodDiamond diaPipe = (PipeBehaviourWoodDiamond) behaviour;
-                        return new GuiDiamondWoodPipe(player, diaPipe);
+                case PIPE_DIAMOND: {
+                    if (tile instanceof IPipeHolder) {
+                        IPipeHolder holder = (IPipeHolder) tile;
+                        IPipe pipe = holder.getPipe();
+                        if (pipe == null) return null;
+                        PipeBehaviour behaviour = pipe.getBehaviour();
+                        if (behaviour instanceof PipeBehaviourDiamond) {
+                            PipeBehaviourDiamond diaPipe = (PipeBehaviourDiamond) behaviour;
+                            return new GuiDiamondPipe(player, diaPipe);
+                        }
                     }
+                    break;
                 }
-            } else if (id == BCTransportGuis.GATE.ordinal()) {
-                int ry = y >> 3;
-                EnumFacing gateSide = EnumFacing.getFront(y & 0x7);
-                tile = world.getTileEntity(new BlockPos(x, ry, z));
-                if (tile instanceof IPipeHolder) {
-                    IPipeHolder holder = (IPipeHolder) tile;
-                    PipePluggable plug = holder.getPluggable(gateSide);
-                    if (plug instanceof PluggableGate) {
-                        return new GuiGate(new ContainerGate(player, ((PluggableGate) plug).logic));
+                case PIPE_DIAMOND_WOOD: {
+                    if (tile instanceof IPipeHolder) {
+                        IPipeHolder holder = (IPipeHolder) tile;
+                        IPipe pipe = holder.getPipe();
+                        if (pipe == null) return null;
+                        PipeBehaviour behaviour = pipe.getBehaviour();
+                        if (behaviour instanceof PipeBehaviourWoodDiamond) {
+                            PipeBehaviourWoodDiamond diaPipe = (PipeBehaviourWoodDiamond) behaviour;
+                            return new GuiDiamondWoodPipe(player, diaPipe);
+                        }
                     }
+                    break;
+                }
+                case PIPE_EMZULI: {
+                    if (tile instanceof IPipeHolder) {
+                        IPipeHolder holder = (IPipeHolder) tile;
+                        IPipe pipe = holder.getPipe();
+                        if (pipe == null) return null;
+                        PipeBehaviour behaviour = pipe.getBehaviour();
+                        if (behaviour instanceof PipeBehaviourEmzuli) {
+                            PipeBehaviourEmzuli emzPipe = (PipeBehaviourEmzuli) behaviour;
+                            return new GuiEmzuliPipe_BC8(player, emzPipe);
+                        }
+                    }
+                    break;
+                }
+                case GATE: {
+                    int ry = y >> 3;
+                    EnumFacing gateSide = EnumFacing.getFront(y & 0x7);
+                    tile = world.getTileEntity(new BlockPos(x, ry, z));
+                    if (tile instanceof IPipeHolder) {
+                        IPipeHolder holder = (IPipeHolder) tile;
+                        PipePluggable plug = holder.getPluggable(gateSide);
+                        if (plug instanceof PluggableGate) {
+                            return new GuiGate(new ContainerGate(player, ((PluggableGate) plug).logic));
+                        }
+                    }
+                    break;
                 }
             }
             return null;

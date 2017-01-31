@@ -22,6 +22,9 @@ public class ElementTrigger extends ElementStatement<TriggerWrapper> {
 
         List<TriggerWrapper> list = new ArrayList<>(possible.length);
         for (TriggerWrapper poss : possible) {
+            if (poss.delegate == value.delegate && poss.sourcePart == value.sourcePart) {
+                continue;
+            }
             if (gui.container.possibleTriggers.contains(poss)) {
                 list.add(poss);
             }

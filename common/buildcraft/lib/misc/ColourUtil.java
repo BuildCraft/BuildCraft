@@ -177,4 +177,34 @@ public class ColourUtil {
         int b = (argb >> 0) & 0xFF;
         return (a << 24) | (b << 16) | (g << 8) | r;
     }
+
+    public static EnumDyeColor getNext(EnumDyeColor colour) {
+        int ord = colour.ordinal() + 1;
+        return COLOURS[ord & 15];
+    }
+
+    public static EnumDyeColor getNextOrNull(@Nullable EnumDyeColor colour) {
+        if (colour == null) {
+            return COLOURS[0];
+        } else if (colour == COLOURS[COLOURS.length - 1]) {
+            return null;
+        } else {
+            return getNext(colour);
+        }
+    }
+
+    public static EnumDyeColor getPrev(EnumDyeColor colour) {
+        int ord = colour.ordinal() + 16 - 1;
+        return COLOURS[ord & 15];
+    }
+
+    public static EnumDyeColor getPrevOrNull(@Nullable EnumDyeColor colour) {
+        if (colour == null) {
+            return COLOURS[COLOURS.length - 1];
+        } else if (colour == COLOURS[0]) {
+            return null;
+        } else {
+            return getPrev(colour);
+        }
+    }
 }

@@ -5,6 +5,7 @@ import net.minecraft.item.EnumDyeColor;
 import buildcraft.api.statements.StatementManager;
 
 import buildcraft.lib.misc.ColourUtil;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli.SlotIndex;
 import buildcraft.transport.statements.*;
 
 public class BCTransportStatements {
@@ -20,6 +21,7 @@ public class BCTransportStatements {
     public static final TriggerPipeSignal[] TRIGGER_PIPE_SIGNAL;
     public static final ActionPipeSignal[] ACTION_PIPE_SIGNAL;
     public static final ActionPipeColor[] ACTION_PIPE_COLOUR;
+    public static final ActionExtractionPreset[] ACTION_EXTRACTION_PRESET;
 
     static {
         TRIGGER_LIGHT_LOW = new TriggerLightSensor(false);
@@ -44,6 +46,11 @@ public class BCTransportStatements {
         ACTION_PIPE_COLOUR = new ActionPipeColor[ColourUtil.COLOURS.length];
         for (EnumDyeColor colour : ColourUtil.COLOURS) {
             ACTION_PIPE_COLOUR[colour.ordinal()] = new ActionPipeColor(colour);
+        }
+
+        ACTION_EXTRACTION_PRESET = new ActionExtractionPreset[SlotIndex.VALUES.length];
+        for (SlotIndex index : SlotIndex.VALUES) {
+            ACTION_EXTRACTION_PRESET[index.ordinal()] = new ActionExtractionPreset(index);
         }
 
         StatementManager.registerParameterClass(TriggerParameterSignal.class);

@@ -118,7 +118,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
     // IFlowItems
 
     @Override
-    public int tryExtractItems(int count, EnumFacing from, IStackFilter filter) {
+    public int tryExtractItems(int count, EnumFacing from, EnumDyeColor colour, IStackFilter filter) {
         if (from == null) {
             return 0;
         }
@@ -133,21 +133,23 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         }
 
         IPipeHolder holder = pipe.getHolder();
-        PipeEventItem.TryInsert tryInsert = new PipeEventItem.TryInsert(holder, this, null, from, possible);
+        PipeEventItem.TryInsert tryInsert = new PipeEventItem.TryInsert(holder, this, colour, from, possible);
         holder.fireEvent(tryInsert);
         if (tryInsert.isCanceled() || tryInsert.accepted <= 0) {
             return 0;
         }
 
-        ItemStack stack = trans.extract(filter, tryInsert.accepted, tryInsert.accepted, false);
+        count = Math.min(count, tryInsert.accepted);
+
+        ItemStack stack = trans.extract(filter, count, count, false);
 
         if (stack.isEmpty()) {
             throw new IllegalStateException("The transactor " + trans + " returned an empty itemstack from a known good request!");
         }
 
-        insertItemEvents(stack, null, EXTRACT_SPEED, from);
+        insertItemEvents(stack, colour, EXTRACT_SPEED, from);
 
-        return tryInsert.accepted;
+        return count;
     }
 
     // PipeFlow

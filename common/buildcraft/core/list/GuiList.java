@@ -183,7 +183,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
     }
 
     @Override
-    public void handleButtonClick(IButtonClickEventTrigger sender, int id) {
+    public void handleButtonClick(IButtonClickEventTrigger sender, int id, int buttonKey) {
         int buttonId = id % BUTTON_COUNT;
         int lineId = id / BUTTON_COUNT;
 

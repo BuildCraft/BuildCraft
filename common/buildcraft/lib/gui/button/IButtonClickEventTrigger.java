@@ -10,7 +10,7 @@ public interface IButtonClickEventTrigger {
 
     void removeListener(IButtonClickEventListener listener);
 
-    void notifyButtonStateChange();
+    void notifyButtonClicked(int bkey);
 
     boolean isButtonActive();
 }

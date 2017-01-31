@@ -92,10 +92,15 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
     }
 
     @Override
-    public void handleButtonClick(IButtonClickEventTrigger sender, int buttonId) {
+    public void handleButtonClick(IButtonClickEventTrigger sender, int buttonId, int buttonKey) {
         FilterMode newFilterMode = FilterMode.get(buttonId);
         this.pipe.filterMode = newFilterMode;
         container.sendNewFilterMode(newFilterMode);
+    }
+
+    @Override
+    protected void drawBackgroundLayer(float partialTicks) {
+        ICON_GUI.drawAt(rootElement);
     }
 
     @Override
@@ -109,10 +114,5 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
             int x = pipe.filterValid ? 18 * pipe.currentFilter : 0;
             icon.drawAt(rootElement.getX() + 6 + x, rootElement.getY() + 16);
         }
-    }
-
-    @Override
-    protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
     }
 }
