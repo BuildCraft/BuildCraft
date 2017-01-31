@@ -68,7 +68,9 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
     public void onTick() {
         // TODO: this probably shouldn't run every tick
         if (currentDir == EnumPipePart.CENTER) {
-            
+            advanceFacing();
+        } else if (!canFaceDirection(getCurrentDir())) {
+            currentDir = EnumPipePart.CENTER;
         }
 
         mjBattery.tick(pipe.getHolder().getPipeWorld(), pipe.getHolder().getPipePos());
