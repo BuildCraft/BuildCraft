@@ -77,7 +77,6 @@ public class ContainerEmzuliPipe_BC8 extends ContainerBC_Neptune {
         @Override
         public IMessage handleWidgetDataServer(MessageContext ctx, PacketBufferBC buffer) throws IOException {
             EnumDyeColor colour = MessageUtil.readEnumOrNull(buffer, EnumDyeColor.class);
-            System.out.println("colour = " + colour + ", index = " + index);
             if (colour == null) {
                 container.behaviour.slotColours.remove(index);
             } else {

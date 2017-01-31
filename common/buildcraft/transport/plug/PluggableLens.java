@@ -132,13 +132,19 @@ public class PluggableLens extends PipePluggable {
 
     @PipeEventHandler
     public void sideCheck(PipeEventItem.SideCheck event) {
+        sideCheckAnyPos(event, side);
+    }
+
+    /** Called from either *this* pipe, or the neighbouring pipe as given in compareSide. */
+    void sideCheckAnyPos(PipeEventItem.SideCheck event, EnumFacing compareSide) {
+        // Note that this should *never* use "this.side" as it may be wrong!
         if (isFilter) {
             if (event.colour == colour) {
-                event.increasePriority(side);
+                event.increasePriority(compareSide);
             } else if (event.colour != null) {
-                event.disallow(side);
+                event.disallow(compareSide);
             } else {
-                event.decreasePriority(side);
+                event.decreasePriority(compareSide);
             }
         }
     }

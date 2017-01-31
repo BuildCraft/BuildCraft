@@ -102,9 +102,7 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
     @Override
     protected int extractItems(IFlowItems flow, EnumFacing dir, int count) {
         if (currentSlot == null) return 0;
-        EnumDyeColor colour = slotColours.get(currentSlot);
-        System.out.println("slot = " + currentSlot + " -> " + colour);
-        return flow.tryExtractItems(count, dir, colour, filter);
+        return flow.tryExtractItems(count, dir, slotColours.get(currentSlot), filter);
     }
 
     private boolean filterMatches(@Nonnull ItemStack stack) {

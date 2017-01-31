@@ -31,6 +31,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.PipeEventBus;
 import buildcraft.transport.pipe.PluggableHolder;
+import buildcraft.transport.plug.FilterEventHandler;
 import buildcraft.transport.wire.WireManager;
 
 public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITickable, IDebuggable {
@@ -110,6 +111,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                 pipe = new Pipe(this, nbt.getCompoundTag("pipe"));
                 eventBus.registerHandler(pipe.behaviour);
                 eventBus.registerHandler(pipe.flow);
+                if (pipe.flow instanceof IFlowItems) {
+                    eventBus.registerHandler(FilterEventHandler.class);
+                }
             } catch (LoadingException e) {
                 // Unfortunately we can't throw an exception because then this tile won't persist :/
                 e.printStackTrace();
@@ -133,6 +137,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             this.pipe = new Pipe(this, definition);
             eventBus.registerHandler(pipe.behaviour);
             eventBus.registerHandler(pipe.flow);
+            if (pipe.flow instanceof IFlowItems) {
+                eventBus.registerHandler(FilterEventHandler.class);
+            }
             int meta = stack.getMetadata();
             if (meta > 0 && meta <= 16) {
                 pipe.setColour(EnumDyeColor.byMetadata(meta - 1));
@@ -259,6 +266,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                     pipe = new Pipe(this, buffer, ctx);
                     eventBus.registerHandler(pipe.behaviour);
                     eventBus.registerHandler(pipe.flow);
+                    if (pipe.flow instanceof IFlowItems) {
+                        eventBus.registerHandler(FilterEventHandler.class);
+                    }
                 } else if (pipe != null) {
                     eventBus.unregisterHandler(pipe.behaviour);
                     eventBus.unregisterHandler(pipe.flow);
