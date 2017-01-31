@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.core.BCCoreSprites;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.button.GuiSpriteButton;
@@ -43,9 +44,9 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> implement
         super.initGui();
         colourButtons.clear();
         addButton(SlotIndex.SQUARE, 49, 19);
-        addButton(SlotIndex.CIRCLE, 49, 19 + 28);
+        addButton(SlotIndex.CIRCLE, 49, 47);
         addButton(SlotIndex.TRIANGLE, 106, 19);
-        addButton(SlotIndex.CROSS, 106, 19 + 28);
+        addButton(SlotIndex.CROSS, 106, 47);
     }
 
     private void addButton(SlotIndex index, int x, int y) {
@@ -82,6 +83,11 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> implement
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(rootElement);
+
+        SlotIndex currentSlot = container.behaviour.getCurrentSlot();
+        int x = (currentSlot.ordinal() < 2 ? 4 : 155);
+        int y = (currentSlot.ordinal() % 2 == 0 ? 21 : 49);
+        GuiIcon.drawAt(BCCoreSprites.TRIGGER_TRUE, rootElement.getX() + x, rootElement.getY() + y, 16);
     }
 
     @Override

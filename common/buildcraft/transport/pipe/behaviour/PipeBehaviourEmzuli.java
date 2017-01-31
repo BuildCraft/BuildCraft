@@ -26,6 +26,7 @@ import buildcraft.api.transport.neptune.IPipe;
 
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.transport.BCTransportGuis;
@@ -63,12 +64,24 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
     public PipeBehaviourEmzuli(IPipe pipe, NBTTagCompound nbt) {
         super(pipe, nbt);
         invFilters.deserializeNBT(nbt.getCompoundTag("Filters"));
+        currentSlot = NBTUtilBC.readEnum(nbt.getTag("currentSlot"), SlotIndex.class);
+        for (SlotIndex index : SlotIndex.VALUES) {
+            byte c = nbt.getByte("slotColors[" + index.ordinal() + "]");
+            if (c > 0 && c <= 16) {
+                slotColours.put(index, EnumDyeColor.byMetadata(c - 1));
+            }
+        }
     }
 
     @Override
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = super.writeToNbt();
         nbt.setTag("Filters", invFilters.serializeNBT());
+        nbt.setTag("currentSlot", NBTUtilBC.writeEnum(currentSlot));
+        for (SlotIndex index : SlotIndex.VALUES) {
+            EnumDyeColor c = slotColours.get(index);
+            nbt.setByte("slotColors[" + index.ordinal() + "]", (byte) (c == null ? 0 : c.getMetadata() + 1));
+        }
         return nbt;
     }
 
@@ -112,6 +125,10 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
             return true;
         }
         return false;
+    }
+
+    public SlotIndex getCurrentSlot() {
+        return this.currentSlot;
     }
 
     @Override
