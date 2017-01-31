@@ -85,9 +85,11 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> implement
         ICON_GUI.drawAt(rootElement);
 
         SlotIndex currentSlot = container.behaviour.getCurrentSlot();
-        int x = (currentSlot.ordinal() < 2 ? 4 : 155);
-        int y = (currentSlot.ordinal() % 2 == 0 ? 21 : 49);
-        GuiIcon.drawAt(BCCoreSprites.TRIGGER_TRUE, rootElement.getX() + x, rootElement.getY() + y, 16);
+        if (currentSlot != null) {
+            int x = (currentSlot.ordinal() < 2 ? 4 : 155);
+            int y = (currentSlot.ordinal() % 2 == 0 ? 21 : 49);
+            GuiIcon.drawAt(BCCoreSprites.TRIGGER_TRUE, rootElement.getX() + x, rootElement.getY() + y, 16);
+        }
     }
 
     @Override
