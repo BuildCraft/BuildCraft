@@ -96,7 +96,7 @@ public class ItemRenderUtil {
 
     /** Used to render a lot of items in sequential order. Assumes that you don't change the glstate inbetween calls.
      * You must call {@link #endItemBatch()} after your have rendered all of the items. */
-    public static void renderItemStack(double x, double y, double z, ItemStack stack, EnumFacing dir, VertexBuffer vb) {
+    public static void renderItemStack(double x, double y, double z, ItemStack stack, int lightc, EnumFacing dir, VertexBuffer vb) {
         if (stack.isEmpty()) {
             return;
         }
@@ -157,7 +157,7 @@ public class ItemRenderUtil {
                         }
                         q.multColouri(colour, colour >> 8, colour >> 16, 0xFF);
                     }
-                    q.lighti(15, 15);
+                    q.lighti(lightc);
                     Vector3f normal = q.getCalculatedNormal();
                     q.normalvf(normal);
                     q.multShade();

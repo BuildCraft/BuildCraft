@@ -67,7 +67,7 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
                     stack.setCount(item.stackSize);
                 }
                 ItemRenderUtil.renderItemStack(x + pos.xCoord, y + pos.yCoord, z + pos.zCoord,//
-                        stack, item.getRenderDirection(now, partialTicks), vb);
+                        stack, lightc, item.getRenderDirection(now, partialTicks), vb);
             }
             if (item.colour != null) {
                 vb.setTranslation(x + pos.xCoord, y + pos.yCoord, z + pos.zCoord);
