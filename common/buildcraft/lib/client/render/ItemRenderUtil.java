@@ -121,35 +121,7 @@ public class ItemRenderUtil {
                     q.fromBakedItem(quad);
                     q.translated(-0.5, -0.5, -0.5);
                     q.scaled(scale);
-
-                    switch (dir) {
-                        case EAST: {
-                            q.rotateY_90(1);
-                            break;
-                        }
-                        case WEST: {
-                            q.rotateY_90(-1);
-                            break;
-                        }
-                        case DOWN: {
-                            q.rotateX_90(1);
-                            break;
-                        }
-                        case UP: {
-                            q.rotateX_90(-1);
-                            break;
-                        }
-                        case NORTH: {
-                            q.rotateY_180();
-                            break;
-                        }
-                        case SOUTH: {
-                            break;
-                        }
-                        default: {
-                            throw new IllegalStateException("Unknown EnumFacing" + dir);
-                        }
-                    }
+                    q.rotate(EnumFacing.SOUTH, dir, 0, 0, 0);
                     if (quad.hasTintIndex()) {
                         int colour = Minecraft.getMinecraft().getItemColors().getColorFromItemstack(stack, quad.getTintIndex());
                         if (EntityRenderer.anaglyphEnable) {

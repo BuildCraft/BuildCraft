@@ -15,7 +15,7 @@ public class SlotPhantom extends SlotBase implements IPhantomSlot {
     }
 
     @Override
-    public boolean canAdjust() {
+    public boolean canAdjustCount() {
         return true;
     }
 

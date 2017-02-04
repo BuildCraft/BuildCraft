@@ -86,19 +86,21 @@ public abstract class ContainerBC_Neptune extends Container {
 
         ItemStack playerStack = player.inventory.getItemStack();
         if (slot instanceof IPhantomSlot) {
-            ItemStack itemStack;
-            if (playerStack != null && (slot.getStack() == null || ((IPhantomSlot) slot).canAdjust())) {
+            IPhantomSlot phantom = (IPhantomSlot) slot;
+            if (playerStack.isEmpty()) {
+                slot.putStack(ItemStack.EMPTY);
+            } else if (!StackUtil.canMerge(playerStack, StackUtil.asNonNull(slot.getStack()))) {
                 ItemStack copy = playerStack.copy();
                 copy.setCount(1);
-                if (ItemStack.areItemsEqual(copy, slot.getStack()) && ItemStack.areItemStackTagsEqual(copy, slot.getStack())) {
-                    copy.setCount(copy.getCount() + slot.getStack().getCount());
-                }
                 slot.putStack(copy);
-            } else {
-                slot.putStack(StackUtil.EMPTY);
+            } else if (phantom.canAdjustCount()) {
+                ItemStack stack = slot.getStack();
+                if (stack.getCount() < stack.getMaxStackSize()) {
+                    stack.grow(1);
+                    slot.putStack(stack);
+                }
             }
-            itemStack = playerStack;
-            return itemStack;
+            return playerStack;
         }
         return super.slotClick(slotId, dragType, clickType, player);
     }
@@ -111,13 +113,12 @@ public abstract class ContainerBC_Neptune extends Container {
         int playerInventorySize = 36;
         boolean playerInventoryFirst = firstSlot.inventory instanceof InventoryPlayer;
 
-        if (slot != null && slot.getHasStack())
-        {
+        if (slot != null && slot.getHasStack()) {
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
 
-            if(inventorySlots.size() == playerInventorySize) return ItemStack.EMPTY;
-            if(playerInventoryFirst) {
+            if (inventorySlots.size() == playerInventorySize) return ItemStack.EMPTY;
+            if (playerInventoryFirst) {
                 if (index < playerInventorySize) {
                     if (!this.mergeItemStack(itemstack1, playerInventorySize, this.inventorySlots.size(), false)) {
                         return ItemStack.EMPTY;
@@ -125,23 +126,19 @@ public abstract class ContainerBC_Neptune extends Container {
                 } else if (!this.mergeItemStack(itemstack1, 0, playerInventorySize, true)) {
                     return ItemStack.EMPTY;
                 }
-            }
-            else {
-                if (index < this.inventorySlots.size()-playerInventorySize) {
-                    if (!this.mergeItemStack(itemstack1, this.inventorySlots.size()-playerInventorySize, this.inventorySlots.size(), false)) {
+            } else {
+                if (index < this.inventorySlots.size() - playerInventorySize) {
+                    if (!this.mergeItemStack(itemstack1, this.inventorySlots.size() - playerInventorySize, this.inventorySlots.size(), false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (!this.mergeItemStack(itemstack1, 0, this.inventorySlots.size()-playerInventorySize, true)) {
+                } else if (!this.mergeItemStack(itemstack1, 0, this.inventorySlots.size() - playerInventorySize, true)) {
                     return ItemStack.EMPTY;
                 }
             }
 
-            if (itemstack1.isEmpty())
-            {
+            if (itemstack1.isEmpty()) {
                 slot.putStack(ItemStack.EMPTY);
-            }
-            else
-            {
+            } else {
                 slot.onSlotChanged();
             }
         }

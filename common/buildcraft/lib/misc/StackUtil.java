@@ -336,12 +336,7 @@ public class StackUtil {
     }
 
     @Nonnull
-    public static ItemStack asNonNullStack(@Nullable ItemStack stack) {
-        return asNonNull(stack);
-    }
-
-    @Nonnull
-    public static ItemStack asNonNullStackSoft(@Nullable ItemStack stack) {
+    public static ItemStack asNonNullSoft(@Nullable ItemStack stack) {
         return asNonNullSoft(stack, EMPTY);
     }
 

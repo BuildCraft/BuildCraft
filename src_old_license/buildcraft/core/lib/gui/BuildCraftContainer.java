@@ -63,7 +63,7 @@ public abstract class BuildCraftContainer extends ContainerBC_Neptune {
     private ItemStack slotClickPhantom(Slot slot, int mouseButton, ClickType clickType, EntityPlayer player) {
         ItemStack stack = null;
         if (mouseButton == 2) {
-            if (((IPhantomSlot) slot).canAdjust()) {
+            if (((IPhantomSlot) slot).canAdjustCount()) {
                 slot.putStack(null);
             }
         } else if (mouseButton == 0 || mouseButton == 1) {
@@ -95,7 +95,7 @@ public abstract class BuildCraftContainer extends ContainerBC_Neptune {
     }
 
     protected void adjustPhantomSlot(Slot slot, int mouseButton, ClickType clickType) {
-        if (!((IPhantomSlot) slot).canAdjust()) {
+        if (!((IPhantomSlot) slot).canAdjustCount()) {
             return;
         }
         ItemStack stackSlot = slot.getStack();
@@ -118,7 +118,7 @@ public abstract class BuildCraftContainer extends ContainerBC_Neptune {
     }
 
     protected void fillPhantomSlot(Slot slot, ItemStack stackHeld, int mouseButton, ClickType clickType) {
-        if (!((IPhantomSlot) slot).canAdjust()) {
+        if (!((IPhantomSlot) slot).canAdjustCount()) {
             return;
         }
         int stackSize = mouseButton == 0 ? stackHeld.stackSize : 1;
