@@ -20,14 +20,18 @@ public class PlugPulsarRenderer implements IPluggableDynamicRenderer {
         this.toRender = toRender;
     }
 
-    private static MutableQuad[] getFromCache(EnumFacing side, boolean isPulsing, double stage) {
+    private static MutableQuad[] getFromCache(PluggablePulsar pulsar, double stage) {
+        EnumFacing side = pulsar.side;
+        boolean isPulsing = pulsar.isPulsingClient();
+        boolean isAuto = pulsar.isAutoEnabledClient();
+        boolean isManual = pulsar.isManuallyEnabledClient();
         if (isPulsing /* TODO: Use renderStyle == FULL_ANIMATION */) {
             // TODO: Return a different stage
         }
 
         int index = side.ordinal();
         if (isPulsing || cache[index] == null) {
-            MutableQuad[] quads = BCTransportModels.getPulsarDynQuads(isPulsing, stage);
+            MutableQuad[] quads = BCTransportModels.getPulsarDynQuads(isPulsing, stage, isAuto, isManual);
             for (MutableQuad q : quads) {
                 q.rotate(EnumFacing.WEST, side, 0.5f, 0.5f, 0.5f);
                 if (q.isShade()) {
@@ -50,8 +54,7 @@ public class PlugPulsarRenderer implements IPluggableDynamicRenderer {
     @Override
     public void render(double x, double y, double z, float partialTicks, VertexBuffer vb) {
         vb.setTranslation(x, y, z);
-        double stage = toRender.getStage(partialTicks);
-        for (MutableQuad q : getFromCache(toRender.side, toRender.isPulsingClient(), stage)) {
+        for (MutableQuad q : getFromCache(toRender, toRender.getStage(partialTicks))) {
             q.render(vb);
         }
         vb.setTranslation(0, 0, 0);

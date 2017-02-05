@@ -51,6 +51,8 @@ public class BCTransportModels {
     private static final ModelHolderVariable PULSAR_DYNAMIC;
     private static final NodeVariableDouble PULSAR_STAGE;
     private static final NodeVariableBoolean PULSAR_ON;
+    private static final NodeVariableBoolean PULSAR_AUTO;
+    private static final NodeVariableBoolean PULSAR_MANUAL;
 
     public static final IPluggableModelBaker<KeyPlugPulsar> BAKER_PLUG_PULSAR;
     public static final IPluggableModelBaker<KeyPlugBlocker> BAKER_PLUG_BLOCKER;
@@ -81,6 +83,8 @@ public class BCTransportModels {
         fnCtx = new FunctionContext(DefaultContexts.CONTEXT_DEFAULT);
         PULSAR_STAGE = fnCtx.putVariableDouble("stage");
         PULSAR_ON = fnCtx.putVariableBoolean("on");
+        PULSAR_AUTO = fnCtx.putVariableBoolean("auto");
+        PULSAR_MANUAL = fnCtx.putVariableBoolean("manual");
         PULSAR_DYNAMIC = getModel("plugs/pulsar_dynamic.json", fnCtx);
 
         BAKER_PLUG_PULSAR = new PlugBakerSimple<>(PULSAR_STATIC::getCutoutQuads);
@@ -117,7 +121,7 @@ public class BCTransportModels {
         registerModel(modelRegistry, start + "gate_item#inventory", ModelGateItem.INSTANCE);
         registerModel(modelRegistry, start + "lens_item#inventory", ModelLensItem.INSTANCE);
         registerModel(modelRegistry, start + "plug_blocker#inventory", new ModelPluggableItem(BLOCKER.getCutoutQuads()));
-        registerModel(modelRegistry, start + "plug_pulsar#inventory", new ModelPluggableItem(PULSAR_STATIC.getCutoutQuads(), getPulsarDynQuads(true, 0.5)));
+        registerModel(modelRegistry, start + "plug_pulsar#inventory", new ModelPluggableItem(PULSAR_STATIC.getCutoutQuads(), getPulsarDynQuads(true, 0.5, false, false)));
         registerModel(modelRegistry, start + "plug_light_sensor#inventory", new ModelPluggableItem(LIGHT_SENSOR.getCutoutQuads()));
 
         PlugGateBaker.onModelBake();
@@ -174,9 +178,11 @@ public class BCTransportModels {
         return FILTER.getTranslucentQuads();
     }
 
-    public static MutableQuad[] getPulsarDynQuads(boolean isPulsing, double stage) {
+    public static MutableQuad[] getPulsarDynQuads(boolean isPulsing, double stage, boolean isAuto, boolean isManual) {
         PULSAR_STAGE.value = stage;
         PULSAR_ON.value = isPulsing;
+        PULSAR_AUTO.value = isAuto;
+        PULSAR_MANUAL.value = isManual;
         return PULSAR_DYNAMIC.getCutoutQuads();
     }
 }

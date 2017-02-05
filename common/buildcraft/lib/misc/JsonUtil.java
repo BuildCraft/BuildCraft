@@ -124,4 +124,62 @@ public class JsonUtil {
         }
         return map;
     }
+
+    public static JsonObject inlineCustom(JsonObject obj) {
+        if (obj.has("inlines")) {
+            JsonElement inlineElems = obj.get("inlines");
+            if (!inlineElems.isJsonObject()) {
+                throw new JsonSyntaxException("Expected an object, but got '" + inlineElems + "'");
+            }
+            JsonObject inlines = inlineElems.getAsJsonObject();
+            Map<String, JsonObject> inlineMap = new HashMap<>();
+            for (Entry<String, JsonElement> entry : inlines.entrySet()) {
+                JsonElement elem = entry.getValue();
+                if (!elem.isJsonObject()) {
+                    throw new JsonSyntaxException("Expected an object, but got '" + elem + "'");
+                }
+                inlineMap.put(entry.getKey(), elem.getAsJsonObject());
+            }
+            obj.remove("inlines");
+            inline(obj, inlineMap);
+        }
+        return obj;
+    }
+
+    private static void inline(JsonElement element, Map<String, JsonObject> inlineMap) {
+        if (element instanceof JsonObject) {
+            inline((JsonObject) element, inlineMap);
+        } else if (element instanceof JsonArray) {
+            JsonArray arr = (JsonArray) element;
+            for (JsonElement elem : arr) {
+                inline(elem, inlineMap);
+            }
+        }
+    }
+
+    private static void inline(JsonObject obj, Map<String, JsonObject> inlineMap) {
+        if (obj.has("inline")) {
+            JsonElement in = obj.remove("inline");
+            if (!in.isJsonPrimitive() || !in.getAsJsonPrimitive().isString()) {
+                throw new JsonSyntaxException("Expected a string, but got '" + in + "'");
+            }
+            String target = in.getAsString();
+            JsonObject toInline = inlineMap.get(target);
+            if (toInline == null) {
+                throw new JsonSyntaxException("Didn't find the inline " + toInline);
+            }
+            for (Entry<String, JsonElement> entry : toInline.entrySet()) {
+                String name = entry.getKey();
+                if ("inline".equals(name)) continue;
+                if (!obj.has(name)) {
+                    /* FIXME: We really need to deep-copy the element, as then we protect against removing an element
+                     * from it and ruining it for everyone. */
+                    obj.add(name, entry.getValue());
+                }
+            }
+        }
+        for (Entry<String, JsonElement> entry : obj.entrySet()) {
+            inline(entry.getValue(), inlineMap);
+        }
+    }
 }

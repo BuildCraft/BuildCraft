@@ -37,7 +37,7 @@ public class JsonVariableModel {
 
     public static JsonVariableModel deserialize(ResourceLocation from, FunctionContext fnCtx, ResourceLoaderContext ctx) throws JsonParseException, IOException {
         try (InputStreamReader isr = ctx.startLoading(from)) {
-            return new JsonVariableModel(new Gson().fromJson(isr, JsonObject.class), fnCtx, ctx);
+            return new JsonVariableModel(JsonUtil.inlineCustom(new Gson().fromJson(isr, JsonObject.class)), fnCtx, ctx);
         } finally {
             ctx.finishLoading();
         }
