@@ -12,9 +12,7 @@ import com.google.common.cache.RemovalNotification;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.RenderEntityItem;
@@ -111,8 +109,6 @@ public class ItemRenderUtil {
 
         if (vb != null && !requireGl) {
             vb.setTranslation(x, y, z);
-
-            // TODO: gl translation
             float scale = 0.30f;
 
             MutableQuad q = new MutableQuad(-1, null);
@@ -144,15 +140,19 @@ public class ItemRenderUtil {
         if (!inBatch) {
             inBatch = true;
             Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-            // TODO: glstate changes
+            GL11.glPushMatrix();
+            GL11.glTranslated(x, y, z);
+            GL11.glScaled(0.3, 0.3, 0.3);
+            RenderHelper.disableStandardItemLighting();
         }
-        // TODO: render using opengl
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lightc % (float) 0x1_00_00, lightc / (float) 0x1_00_00);
+        Minecraft.getMinecraft().getRenderItem().renderItem(stack, model);
     }
 
     public static void endItemBatch() {
         if (inBatch) {
             inBatch = false;
-            // TODO: revert glstate changes
+            GL11.glPopMatrix();
         }
     }
 }

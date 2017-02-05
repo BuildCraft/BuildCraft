@@ -142,7 +142,9 @@ public class PluggableLens extends PipePluggable {
             if (event.colour == colour) {
                 event.increasePriority(compareSide);
             } else if (event.colour != null) {
-                event.disallow(compareSide);
+                if (compareSide == side) {
+                    event.disallow(compareSide);
+                }
             } else {
                 event.decreasePriority(compareSide);
             }
