@@ -1,5 +1,6 @@
 package buildcraft.lib.misc;
 
+import java.util.EnumSet;
 import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
@@ -193,6 +194,28 @@ public class MessageUtil {
         } else {
             return null;
         }
+    }
+
+    public static <E extends Enum<E>> void writeEnumSet(ByteBuf buffer, EnumSet<E> set, Class<E> clazz) {
+        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
+        E[] constants = clazz.getEnumConstants();
+        if (constants == null) throw new IllegalArgumentException("Not an enum type " + clazz);
+        for (E e : constants) {
+            buf.writeBoolean(set.contains(e));
+        }
+    }
+
+    public static <E extends Enum<E>> EnumSet<E> readEnumSet(ByteBuf buffer, Class<E> clazz) {
+        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
+        E[] constants = clazz.getEnumConstants();
+        if (constants == null) throw new IllegalArgumentException("Not an enum type " + clazz);
+        EnumSet<E> set = EnumSet.noneOf(clazz);
+        for (E e : constants) {
+            if (buf.readBoolean()) {
+                set.add(e);
+            }
+        }
+        return set;
     }
 
     public static void sendReturnMessage(MessageContext context, IMessage reply) {

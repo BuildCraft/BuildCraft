@@ -6,12 +6,12 @@
     },
     "variables": {
         "mirrored_pos": "2 * (stage > 0.5 ? 1 - stage : stage)",
-        "pos": "mirrored_pos * 2 + 0.001"
+        "pos": "(1 - mirrored_pos) * 2 - 0.001"
     },
     "elements": [
         {
             "from": [ "pos", 6, 6 ],
-            "to": [ "pos + 2", 10, 10 ],
+            "to": [ "pos+2", 10, 10 ],
             "visible":"on",
             "shade": "false",
             "light":15,
@@ -25,8 +25,8 @@
             }
         },
         {
-            "from": [ 1.8, 6, 6 ],
-            "to": [ 2, 10, 10 ],
+            "from": [ "pos", 6, 6 ],
+            "to": [ "pos + 2", 10, 10 ],
             "visible":"!on",
             "shade": "true",
             "faces": {

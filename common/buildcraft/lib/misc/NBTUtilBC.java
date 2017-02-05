@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.BitSet;
+import java.util.EnumSet;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -346,5 +348,49 @@ public final class NBTUtilBC {
         int second = nbt.getInteger("second");
         LocalTime time = LocalTime.of(hour, minute, second);
         return LocalDateTime.of(date, time);
+    }
+
+    /** Writes an {@link EnumSet} to an {@link NBTBase}. The returned type will either be {@link NBTTagByte} or
+     * {@link NBTTagByteArray}.
+     * 
+     * @param clazz The class that the {@link EnumSet} is of. This is required as we have no way of getting the class
+     *            from the set. */
+    public static <E extends Enum<E>> NBTBase writeEnumSet(EnumSet<E> set, Class<E> clazz) {
+        E[] constants = clazz.getEnumConstants();
+        if (constants == null) throw new IllegalArgumentException("Not an enum type " + clazz);
+        BitSet bitset = new BitSet();
+        for (E e : constants) {
+            if (set.contains(e)) {
+                bitset.set(e.ordinal());
+            }
+        }
+        byte[] bytes = bitset.toByteArray();
+        if (bytes.length == 1) {
+            return new NBTTagByte(bytes[0]);
+        } else {
+            return new NBTTagByteArray(bytes);
+        }
+    }
+
+    public static <E extends Enum<E>> EnumSet<E> readEnumSet(NBTBase tag, Class<E> clazz) {
+        E[] constants = clazz.getEnumConstants();
+        if (constants == null) throw new IllegalArgumentException("Not an enum type " + clazz);
+        byte[] bytes;
+        if (tag instanceof NBTTagByte) {
+            bytes = new byte[] { ((NBTTagByte) tag).getByte() };
+        } else if (tag instanceof NBTTagByteArray) {
+            bytes = ((NBTTagByteArray) tag).getByteArray();
+        } else {
+            bytes = new byte[] {};
+            BCLog.logger.warn("[lib.nbt] Tried to read an enum set from " + tag);
+        }
+        BitSet bitset = BitSet.valueOf(bytes);
+        EnumSet<E> set = EnumSet.noneOf(clazz);
+        for (E e : constants) {
+            if (bitset.get(e.ordinal())) {
+                set.add(e);
+            }
+        }
+        return set;
     }
 }

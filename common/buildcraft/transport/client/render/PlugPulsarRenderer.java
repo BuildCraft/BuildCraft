@@ -2,20 +2,17 @@ package buildcraft.transport.client.render;
 
 import java.util.Arrays;
 
-import javax.vecmath.Matrix4f;
-
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.neptune.IPluggableDynamicRenderer;
 
 import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.transport.BCTransportModels;
 import buildcraft.transport.plug.PluggablePulsar;
 
 public class PlugPulsarRenderer implements IPluggableDynamicRenderer {
-    private static final MutableQuad[][] cache = new MutableQuad[6 * 2][];
+    private static final MutableQuad[][] cache = new MutableQuad[6][];
 
     private final PluggablePulsar toRender;
 
@@ -28,15 +25,11 @@ public class PlugPulsarRenderer implements IPluggableDynamicRenderer {
             // TODO: Return a different stage
         }
 
-        int index = side.ordinal() + (isPulsing ? 6 : 0);
-        if (isPulsing) {
-            cache[index] = null;
-        }
-        if (cache[index] == null) {
+        int index = side.ordinal();
+        if (isPulsing || cache[index] == null) {
             MutableQuad[] quads = BCTransportModels.getPulsarDynQuads(isPulsing, stage);
-            Matrix4f transform = MatrixUtil.rotateTowardsFace(side);
             for (MutableQuad q : quads) {
-                q.transform(transform);
+                q.rotate(EnumFacing.WEST, side, 0.5f, 0.5f, 0.5f);
                 if (q.isShade()) {
                     q.setCalculatedDiffuse();
                     q.setShade(false);
@@ -57,7 +50,8 @@ public class PlugPulsarRenderer implements IPluggableDynamicRenderer {
     @Override
     public void render(double x, double y, double z, float partialTicks, VertexBuffer vb) {
         vb.setTranslation(x, y, z);
-        for (MutableQuad q : getFromCache(toRender.side, toRender.isPulsingClient(), toRender.getStage(partialTicks))) {
+        double stage = toRender.getStage(partialTicks);
+        for (MutableQuad q : getFromCache(toRender.side, toRender.isPulsingClient(), stage)) {
             q.render(vb);
         }
         vb.setTranslation(0, 0, 0);

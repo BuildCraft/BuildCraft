@@ -264,6 +264,7 @@ public class PacketBufferBC extends PacketBuffer {
     @Override
     public <E extends Enum<E>> E readEnumValue(Class<E> enumClass) {
         E[] enums = enumClass.getEnumConstants();
+        if (enums == null) throw new IllegalArgumentException("Not an enum " + enumClass);
         if (enums.length == 0) throw new IllegalArgumentException("Tried to read an enum value without any values! How did you do this?");
         if (enums.length == 1) return enums[0];
         int length = MathHelper.log2DeBruijn(enums.length);

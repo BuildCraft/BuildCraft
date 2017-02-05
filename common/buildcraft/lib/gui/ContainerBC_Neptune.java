@@ -46,6 +46,13 @@ public abstract class ContainerBC_Neptune extends Container {
         this.player = player;
     }
 
+    /** @return The {@link IdAllocator} that allocates all ID's for this class, and its parent classes. All subclasses
+     *         should override this if they allocate their own ids after calling
+     *         {@link IdAllocator#makeChild(String)} */
+    public IdAllocator getIdAllocator() {
+        return IDS;
+    }
+
     protected void addFullPlayerInventory(int startX, int startY) {
         for (int sy = 0; sy < 3; sy++) {
             for (int sx = 0; sx < 9; sx++) {
@@ -60,10 +67,6 @@ public abstract class ContainerBC_Neptune extends Container {
 
     protected void addFullPlayerInventory(int startY) {
         addFullPlayerInventory(8, startY);
-    }
-
-    public String getIdName(int id) {
-        return IDS.getNameFor(id);
     }
 
     protected <W extends Widget_Neptune<?>> W addWidget(W widget) {

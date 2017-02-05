@@ -39,7 +39,6 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     protected static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("pipe");
 
     public static final int NET_UPDATE_MULTI = IDS.allocId("UPDATE_MULTI");
-    public static final int NET_UPDATE_SINGLE_START = IDS.allocId("UPDATE_SINGLE_BEHAVIOUR");
     public static final int NET_UPDATE_PIPE_BEHAVIOUR = getReceiverId(PipeMessageReceiver.BEHAVIOUR);
     public static final int NET_UPDATE_PIPE_FLOW = getReceiverId(PipeMessageReceiver.FLOW);
     public static final int NET_UPDATE_PLUG_DOWN = getReceiverId(PipeMessageReceiver.PLUGGABLE_DOWN);
@@ -63,7 +62,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     };
 
     private static int getReceiverId(PipeMessageReceiver type) {
-        return NET_UPDATE_SINGLE_START + type.ordinal();
+        return NET_UPDATE_MULTI + 1 + type.ordinal();
     }
 
     public final WireManager wireManager = new WireManager(this);

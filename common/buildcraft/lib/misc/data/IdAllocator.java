@@ -32,10 +32,6 @@ public class IdAllocator {
         this(null, name);
     }
 
-    public IdAllocator makeChild() {
-        return makeChild("unknown");
-    }
-
     public IdAllocator makeChild(String childName) {
         hasChildren = true;
         return new IdAllocator(this, childName);
@@ -45,10 +41,6 @@ public class IdAllocator {
         if (id < 0) return "NEGATIVE ID " + id;
         if (id >= idNameMap.size()) return "UNKNOWN_CHILD " + id;
         return idNameMap.get(id);
-    }
-
-    public int allocId() {
-        return allocId("ID");
     }
 
     public int allocId(String allocName) {

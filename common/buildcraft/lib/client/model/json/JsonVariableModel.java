@@ -66,7 +66,7 @@ public class JsonVariableModel {
     public JsonVariableModel(JsonObject obj, FunctionContext fnCtx, ResourceLoaderContext ctx) throws JsonParseException {
         boolean ambf = false;
         Map<String, String> texturesP = new HashMap<>();
-        variables = new HashMap<>();
+        variables = new LinkedHashMap<>();
         List<JsonVariableModelPart> cutout = new ArrayList<>();
         List<JsonVariableModelPart> translucent = new ArrayList<>();
         List<JsonModelRule> rulesP = new ArrayList<>();

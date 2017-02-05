@@ -27,11 +27,18 @@ import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 
 public class ContainerList extends ContainerBC_Neptune {
-    private static final int PLAYER_INV_START = 103;
+    // Network ID's
 
     protected static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("list");
     private static final int ID_LABEL = IDS.allocId("LABEL");
     private static final int ID_BUTTON = IDS.allocId("BUTTON");
+
+    @Override
+    public IdAllocator getIdAllocator() {
+        return IDS;
+    }
+
+    // Main container list
 
     public ListHandler.Line[] lines;
 
@@ -66,7 +73,7 @@ public class ContainerList extends ContainerBC_Neptune {
             }
         }
 
-        addFullPlayerInventory(PLAYER_INV_START);
+        addFullPlayerInventory(103);
     }
 
     @Override
@@ -88,7 +95,7 @@ public class ContainerList extends ContainerBC_Neptune {
         return StackUtil.EMPTY;
     }
 
-    private void setStack(final int lineIndex, final int slotIndex, @Nonnull final ItemStack stack) {
+    void setStack(final int lineIndex, final int slotIndex, @Nonnull final ItemStack stack) {
         lines[lineIndex].setStack(slotIndex, stack);
         ListHandler.saveLines(getListItemStack(), lines);
     }

@@ -31,7 +31,7 @@ public class ContainerFilteredBuffer_BC8 extends ContainerBCTile<TileFilteredBuf
                 }
 
                 @Override
-                public boolean canAdjust() {
+                public boolean canAdjustCount() {
                     return false;
                 }
             };

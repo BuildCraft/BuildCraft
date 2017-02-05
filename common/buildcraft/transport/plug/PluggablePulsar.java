@@ -144,16 +144,16 @@ public class PluggablePulsar extends PipePluggable {
     @Override
     public void onTick() {
         if (holder.getPipeWorld().isRemote) {
-            if (isPulsingClient()) {
+            if (isPulsing) {
                 pulseStage++;
                 if (pulseStage == PULSE_STAGE) {
                     pulseStage = 0;
                 }
             } else {
-                pulseStage--;
-                if (pulseStage < 0) {
-                    pulseStage = 0;
-                }
+                // pulseStage--;
+                // if (pulseStage < 0) {
+                pulseStage = 0;
+                // }
             }
             return;
         }
@@ -162,10 +162,10 @@ public class PluggablePulsar extends PipePluggable {
         if (isOn) {
             pulseStage++;
         } else {
-            pulseStage--;
-            if (pulseStage < 0) {
-                pulseStage = 0;
-            }
+            // pulseStage--;
+            // if (pulseStage < 0) {
+            pulseStage = 0;
+            // }
         }
         if (gateEnabledTicks > 0) {
             gateEnabledTicks--;

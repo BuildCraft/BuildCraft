@@ -25,7 +25,7 @@ public class ContainerFilteredBuffer extends BuildCraftContainer {
         }
 
         @Override
-        public boolean canAdjust() {
+        public boolean canAdjustCount() {
             return locks.getStackInSlot(this.getSlotIndex()) == null;
         }
     }

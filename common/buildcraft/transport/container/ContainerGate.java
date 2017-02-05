@@ -75,8 +75,8 @@ public class ContainerGate extends ContainerBC_Neptune {
     }
 
     @Override
-    public String getIdName(int id) {
-        return IDS.getNameFor(id);
+    public IdAllocator getIdAllocator() {
+        return IDS;
     }
 
     @Override

@@ -213,7 +213,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
         @Nonnull
         public ItemStack craft() {
             enableBindings();
-            ItemStack out = StackUtil.asNonNullStack(currentRecipe.getCraftingResult(crafting));
+            ItemStack out = StackUtil.asNonNull(currentRecipe.getCraftingResult(crafting));
             if (! out.isEmpty()) {
                 NonNullList<ItemStack> leftOvers = currentRecipe.getRemainingItems(crafting);
                 for (int i = 0; i < leftOvers.size(); i++) {

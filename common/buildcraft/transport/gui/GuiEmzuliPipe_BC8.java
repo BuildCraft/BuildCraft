@@ -9,6 +9,8 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.BCCoreSprites;
+import buildcraft.lib.BCLibSprites;
+import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.button.GuiSpriteButton;
@@ -62,13 +64,13 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> implement
             GuiPaintButton paint = (GuiPaintButton) button;
             switch (buttonKey) {
                 case 0: {
-                    EnumDyeColor colour = paint.getCurrent();
+                    EnumDyeColor colour = paint.getCurrentColour();
                     colour = ColourUtil.getNextOrNull(colour);
                     container.paintWidgets.get(paint.index).setColour(colour);
                     break;
                 }
                 case 1: {
-                    EnumDyeColor colour = paint.getCurrent();
+                    EnumDyeColor colour = paint.getCurrentColour();
                     colour = ColourUtil.getPrevOrNull(colour);
                     container.paintWidgets.get(paint.index).setColour(colour);
                     break;
@@ -85,10 +87,12 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> implement
         ICON_GUI.drawAt(rootElement);
 
         SlotIndex currentSlot = container.behaviour.getCurrentSlot();
-        if (currentSlot != null) {
-            int x = (currentSlot.ordinal() < 2 ? 4 : 155);
-            int y = (currentSlot.ordinal() % 2 == 0 ? 21 : 49);
-            GuiIcon.drawAt(BCCoreSprites.TRIGGER_TRUE, rootElement.getX() + x, rootElement.getY() + y, 16);
+        for (SlotIndex index : container.behaviour.getActiveSlots()) {
+            boolean current = index == currentSlot;
+            int x = (index.ordinal() < 2 ? 4 : 155);
+            int y = (index.ordinal() % 2 == 0 ? 21 : 49);
+            ISprite sprite = current ? BCCoreSprites.TRIGGER_TRUE : BCLibSprites.LOCK;
+            GuiIcon.drawAt(sprite, rootElement.getX() + x, rootElement.getY() + y, 16);
         }
     }
 
@@ -110,14 +114,14 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> implement
             setBehaviour(IButtonBehaviour.DEFAULT);
         }
 
-        private EnumDyeColor getCurrent() {
+        private EnumDyeColor getCurrentColour() {
             return container.behaviour.slotColours.get(index);
         }
 
         @Override
         public void drawButton(Minecraft mc, int mouseX, int mouseY) {
             super.drawButton(mc, mouseX, mouseY);
-            EnumDyeColor colour = getCurrent();
+            EnumDyeColor colour = getCurrentColour();
             if (colour == null) {
                 ICON_NO_PAINT.drawAt(getX() + 2, getY() + 2);
             } else {
@@ -128,7 +132,7 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> implement
         @Override
         public void addToolTips(List<ToolTip> tooltips) {
             if (contains(gui.mouse)) {
-                EnumDyeColor color = getCurrent();
+                EnumDyeColor color = getCurrentColour();
                 if (color != null) {
                     tooltips.add(new ToolTip(String.format(LocaleUtil.localize("gui.pipes.emzuli.paint"), ColourUtil.getTextFullTooltip(color))));
                 } else {

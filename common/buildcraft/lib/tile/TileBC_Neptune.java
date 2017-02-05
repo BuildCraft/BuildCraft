@@ -135,6 +135,13 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     //
     // ##################
 
+    /** @return The {@link IdAllocator} that allocates all ID's for this class, and its parent classes. All subclasses
+     *         should override this if they allocate their own ids after calling
+     *         {@link IdAllocator#makeChild(String)} */
+    public IdAllocator getIdAllocator() {
+        return IDS;
+    }
+
     /** Checks to see if this tile can update. The base implementation only checks to see if it has a world. */
     public boolean cannotUpdate() {
         return !hasWorld();
