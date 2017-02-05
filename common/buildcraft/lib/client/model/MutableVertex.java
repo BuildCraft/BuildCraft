@@ -120,6 +120,7 @@ public class MutableVertex {
         tex_v = Float.intBitsToFloat(data[offset + 5]);
         // TEX_2S
         lighti(data[offset + 6]);
+        normalf(0, 1, 0);
     }
 
     public void fromBakedItem(int[] data, int offset) {
@@ -134,6 +135,7 @@ public class MutableVertex {
         tex_v = Float.intBitsToFloat(data[offset + 5]);
         // NROMAL_3B
         normali(data[offset + 6]);
+        lightf(1,1);
     }
 
     // Rendering

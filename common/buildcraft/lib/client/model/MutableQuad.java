@@ -362,6 +362,10 @@ public class MutableQuad {
     }
 
     public MutableQuad multColouri(int r, int g, int b, int a) {
+        r &= 0xFF;
+        g &= 0xFF;
+        b &= 0xFF;
+        a &= 0xFF;
         vertex_0.multColouri(r, g, b, a);
         vertex_1.multColouri(r, g, b, a);
         vertex_2.multColouri(r, g, b, a);
@@ -521,7 +525,7 @@ public class MutableQuad {
                 switch (to.getAxis()) {
                     case X: rotateY_90(mult * to.getFrontOffsetX()); break;
                     case Y: rotateX_90(mult * to.getFrontOffsetY()); break;
-                    case Z: rotateX_180(); break;
+                    case Z: rotateY_180(); break;
                 }
                 break;
             }
