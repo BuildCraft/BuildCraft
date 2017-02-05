@@ -6,7 +6,7 @@
     },
     "variables": {
         "translucent_tex":"colour == 'clear' ? '#water_flowing' : '#lens'",
-        "lens_colour":"convertColourToAbgr(colour)",
+        "lens_colour":"convertColourToArgb(colour)",
         "isFilter":"false"
     },
     "shade": true,
