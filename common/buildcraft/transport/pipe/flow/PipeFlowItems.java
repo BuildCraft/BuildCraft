@@ -281,6 +281,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
     private void onItemReachEnd(TravellingItem item) {
         IPipeHolder holder = pipe.getHolder();
         PipeEventItem.ReachEnd reachEnd = new PipeEventItem.ReachEnd(holder, this, item.colour, item.stack, item.side);
+        holder.fireEvent(reachEnd);
         item.colour = reachEnd.colour;
         item.stack = reachEnd.getStack();
         ItemStack excess = item.stack;
@@ -436,6 +437,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         item.colour = onInsert.colour;
         item.stack = onInsert.getStack();
         item.genTimings(now, getPipeLength(from));
+        item.tried.add(from);
         items.add(item.timeToDest, item);
         sendItemDataToClient(item);
     }
