@@ -31,7 +31,6 @@ import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.PipeEventItem;
-import buildcraft.api.transport.PipeEventItem.ItemEntry;
 import buildcraft.api.transport.neptune.IFlowItems;
 import buildcraft.api.transport.neptune.IPipe;
 import buildcraft.api.transport.neptune.IPipe.ConnectedType;
@@ -46,7 +45,6 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.DelayedList;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
-import buildcraft.transport.pipe.flow.TravellingItem.EnumTravelState;
 
 public class PipeFlowItems extends PipeFlow implements IFlowItems {
     private static final double EXTRACT_SPEED = 0.08;
@@ -89,30 +87,36 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
     // Network
 
     @Override
-    public void readPayload(int id, PacketBuffer bufIn, Side side) throws IOException {
+    public void readPayload(int id, PacketBuffer bufIn, Side msgSide) throws IOException {
         PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(bufIn);
-        if (side == Side.CLIENT) {
+        if (msgSide == Side.CLIENT) {
             if (id == NET_CREATE_ITEM) {
-                EnumFacing from = buffer.readEnumValue(EnumFacing.class);
-                EnumFacing to = MessageUtil.readEnumOrNull(buffer, EnumFacing.class);
-                EnumDyeColor colour = MessageUtil.readEnumOrNull(buffer, EnumDyeColor.class);
-                int delay = buffer.readInt();
-
                 int stackId = buffer.readInt();
-                int stackSize = buffer.readShort();
-
                 Supplier<ItemStack> link = BuildCraftObjectCaches.retrieveItemStack(stackId);
-                TravellingItem item = new TravellingItem(link, stackSize);
-                item.from = from;
-                item.to = to;
-                item.colour = colour;
-                long now = pipe.getHolder().getPipeWorld().getTotalWorldTime();
-                item.tickStarted = now;
-                item.tickFinished = now + delay;
-                item.state = EnumTravelState.CLIENT_RUNNING;
-                items.add(delay, item);
+                int count = buffer.readUnsignedShort();
+                TravellingItem item = new TravellingItem(link, count);
+                item.toCenter = buffer.readBoolean();
+                item.side = buffer.readEnumValue(EnumFacing.class);
+                item.colour = MessageUtil.readEnumOrNull(buffer, EnumDyeColor.class);
+                item.timeToDest = buffer.readUnsignedShort();
+                item.tickStarted = pipe.getHolder().getPipeWorld().getTotalWorldTime() + 1;
+                item.tickFinished = item.tickStarted + item.timeToDest;
+                items.add(item.timeToDest + 1, item);
             }
         }
+    }
+
+    void sendItemDataToClient(TravellingItem item) {
+        final int stackId = BuildCraftObjectCaches.storeItemStack(item.stack);
+        sendCustomPayload(NET_CREATE_ITEM, (buffer) -> {
+            PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
+            buf.writeInt(stackId);
+            buf.writeShort(item.stack.getCount());
+            buf.writeBoolean(item.toCenter);
+            buf.writeEnumValue(item.side);
+            MessageUtil.writeEnumOrNull(buf, item.colour);
+            buf.writeShort(item.timeToDest > Short.MAX_VALUE ? Short.MAX_VALUE : item.timeToDest);
+        });
     }
 
     // IFlowItems
@@ -181,33 +185,12 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         List<TravellingItem> toTick = items.advance();
         if (world.isRemote) {
-            // Note that we still needed to advance the items even if we are the client
-            for (TravellingItem item : toTick) {
-                if (item.state == EnumTravelState.CLIENT_RUNNING) {
-                    // If we have instructions then we should act on them
-                    if (item.motion != null) {
-                        runItemInstructions(item);
-                    } else {
-                        // if not then wait for them
-                        item.state = EnumTravelState.CLIENT_WAITING;
-                        items.add(2, item);
-                    }
-                } else if (item.state == EnumTravelState.CLIENT_WAITING) {
-                    if (item.motion != null) {
-                        runItemInstructions(item);
-                    } else {
-                        /* forget about it, if the item did anything then we will find out soon and have to spawn a new
-                         * item. */
-                    }
-                } else {
-                    // All other client possibilities forget the item
-                }
-            }
+            // TODO: Client item advancing/intelligent stuffs
             return;
         }
 
         for (TravellingItem item : toTick) {
-            if (item.state == EnumTravelState.SERVER_TO_CENTER) {
+            if (item.toCenter) {
                 onItemReachCenter(item);
             } else {
                 onItemReachEnd(item);
@@ -216,127 +199,147 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
     }
 
     private void onItemReachCenter(TravellingItem item) {
-        // fire centre event and then check to see if we need to redo the destinations
-        ItemStack oldStack = item.stack;
-        PipeEventItem.ReachCenter reachCenter = new PipeEventItem.ReachCenter(pipe.getHolder(), this, oldStack.copy(), item.from, item.colour);
-        if (pipe.getHolder().fireEvent(reachCenter)) {
-            /* If an event handled this then we *may* need to fire destination handling events */
+        IPipeHolder holder = pipe.getHolder();
+        PipeEventItem.ReachCenter reachCenter = new PipeEventItem.ReachCenter(holder, this, item.colour, item.stack, item.side);
+        holder.fireEvent(reachCenter);
+        if (reachCenter.getStack().isEmpty()) {
+            return;
+        }
 
-            ItemStack newStack = reachCenter.stack;
-            if (newStack.isEmpty()) {
-                // we must have voided or used up the item => do nothing
-                return;
-            } else if (item.colour == reachCenter.colour && ItemStack.areItemStacksEqual(oldStack, newStack)) {
-                // Everything is the same, just add it back into the list
-                item.state = EnumTravelState.SERVER_TO_EXIT;
-                item.colour = reachCenter.colour;
-                items.add(item.timeToExit, item);
-            } else {
-                // Someone changed the itemstack or colour, recheck the destinations
-                PipeEventItem.SideCheck sideCheck = new PipeEventItem.SideCheck(pipe.getHolder(), this, reachCenter.colour, item.from, newStack);
-                sideCheck.disallow(item.from);
-                if (item.tried != null) {
-                    sideCheck.disallowAll(item.tried);
-                }
-                for (EnumFacing face : EnumFacing.VALUES) {
-                    if (!pipe.isConnected(face)) {
-                        sideCheck.disallow(face);
-                    }
-                }
-                pipe.getHolder().fireEvent(sideCheck);
-
-                // Don't allow splitting now - you *have* to split at the entrance
-
-                ItemEntry entry = new ItemEntry(reachCenter.colour, newStack, item.from);
-                PipeEventItem.FindDest findDest = new PipeEventItem.FindDest(pipe.getHolder(), this, sideCheck.getOrder(), ImmutableList.of(entry));
-                pipe.getHolder().fireEvent(findDest);
-                if (entry.to == null) {
-                    entry.to = findDest.generateRandomOrder();
-                }
-
-                List<EnumFacing> to = entry.to;
-                item.to = (to.size() <= 0) ? null : to.get(0);
-                if (to.size() > 1) {
-                    item.toTryOrder = to.subList(1, to.size());
-                } else {
-                    item.toTryOrder = null;
-                }
-                item.colour = entry.colour;
-                item.stack = entry.stack;
-                item.state = EnumTravelState.SERVER_TO_EXIT;
-                items.add(item.timeToExit, item);
-                // TODO: inform the client about the new data
+        PipeEventItem.SideCheck sideCheck = new PipeEventItem.SideCheck(holder, this, reachCenter.colour, reachCenter.from, reachCenter.getStack());
+        sideCheck.disallow(reachCenter.from);
+        for (EnumFacing face : EnumFacing.VALUES) {
+            if (item.tried.contains(face) || !pipe.isConnected(face)) {
+                sideCheck.disallow(face);
             }
-        } else {
-            // No-one handled this, its very simple
-            item.state = EnumTravelState.SERVER_TO_EXIT;
-            items.add(item.timeToExit, item);
+        }
+        holder.fireEvent(sideCheck);
+
+        List<EnumSet<EnumFacing>> order = sideCheck.getOrder();
+        if (order.isEmpty()) {
+            PipeEventItem.TryBounce tryBounce = new PipeEventItem.TryBounce(holder, this, reachCenter.colour, reachCenter.from, reachCenter.getStack());
+            holder.fireEvent(tryBounce);
+            if (tryBounce.canBounce) {
+                order = ImmutableList.of(EnumSet.of(reachCenter.from));
+            } else {
+                dropItem(item.stack, null, item.side.getOpposite());
+                return;
+            }
+        }
+
+        PipeEventItem.ItemEntry entry = new PipeEventItem.ItemEntry(reachCenter.colour, reachCenter.getStack(), reachCenter.from);
+        PipeEventItem.Split split = new PipeEventItem.Split(holder, this, order, entry);
+        holder.fireEvent(split);
+        ImmutableList<PipeEventItem.ItemEntry> entries = ImmutableList.copyOf(split.items);
+
+        PipeEventItem.FindDest findDest = new PipeEventItem.FindDest(holder, this, order, entries);
+        holder.fireEvent(findDest);
+
+        World world = holder.getPipeWorld();
+        long now = world.getTotalWorldTime();
+        for (PipeEventItem.ItemEntry itemEntry : findDest.items) {
+            if (itemEntry.stack.isEmpty()) {
+                continue;
+            }
+            PipeEventItem.ModifySpeed modifySpeed = new PipeEventItem.ModifySpeed(holder, this, itemEntry, item.speed);
+            modifySpeed.modifyTo(0.04, 0.01);
+            holder.fireEvent(modifySpeed);
+
+            double target = modifySpeed.targetSpeed;
+            double maxDelta = modifySpeed.maxSpeedChange;
+            double nSpeed = item.speed;
+            if (nSpeed < target) {
+                nSpeed += maxDelta;
+                if (nSpeed > target) {
+                    nSpeed = target;
+                }
+            } else if (nSpeed > target) {
+                nSpeed -= maxDelta;
+                if (nSpeed < target) {
+                    nSpeed = target;
+                }
+            }
+
+            if (itemEntry.to == null || itemEntry.to.size() == 0) {
+                itemEntry.to = findDest.generateRandomOrder();
+            }
+            if (itemEntry.to.size() == 0) {
+                dropItem(itemEntry.stack, null, item.side.getOpposite());
+            } else {
+                item.toCenter = false;
+                item.stack = itemEntry.stack;
+                item.colour = itemEntry.colour;
+                item.side = itemEntry.to.get(0);
+                item.speed = nSpeed;
+                item.genTimings(now, getPipeLength(item.side));
+                items.add(item.timeToDest, item);
+                sendItemDataToClient(item);
+            }
         }
     }
 
     private void onItemReachEnd(TravellingItem item) {
-        EnumFacing to = item.to;
-        if (to == null) {
-            // TODO: fire drop event
-            dropItem(item);
-        } else {
-
-            PipeEventItem.ReachEnd event = new PipeEventItem.ReachEnd(pipe.getHolder(), this, item.stack, item.from, to, item.colour);
-            pipe.getHolder().fireEvent(event);
-            item.stack = event.stack;
-            item.colour = event.colour;
-
-            ConnectedType type = pipe.getConnectedType(to);
-
-            ItemStack leftOver = item.stack;
-
-            if (type == ConnectedType.PIPE) {
-                IPipe oPipe = pipe.getConnectedPipe(to);
-                PipeFlow flow = oPipe.getFlow();
-
-                // TODO: Replace with interface for inserting
-                if (flow instanceof IInjectable) {
-                    IInjectable oItemFlow = (IInjectable) flow;
-                    leftOver = oItemFlow.injectItem(item.stack, true, to.getOpposite(), item.colour, item.speed);
-                }
-            } else if (type == ConnectedType.TILE) {
-                TileEntity tile = pipe.getConnectedTile(to);
-                IItemTransactor trans = ItemTransactorHelper.getTransactor(tile, to.getOpposite());
-                leftOver = trans.insert(item.stack, false, false);
-            }
-
-            if (!leftOver.isEmpty()) {
-                if (item.toTryOrder == null || item.toTryOrder.isEmpty()) {
-                    // Really drop it
-                    dropItem(item, leftOver);
-                } else {
-                    if (item.tried == null) {
-                        item.tried = new ArrayList<>(6);
-                    }
-                    item.tried.add(to);
-                    insertItemImpl(leftOver, item.colour, item.speed, item.to, item.toTryOrder, item.tried);
-                }
-            }
-            // TODO: Inform client
+        IPipeHolder holder = pipe.getHolder();
+        PipeEventItem.ReachEnd reachEnd = new PipeEventItem.ReachEnd(holder, this, item.colour, item.stack, item.side);
+        item.colour = reachEnd.colour;
+        item.stack = reachEnd.getStack();
+        ItemStack excess = item.stack;
+        if (excess.isEmpty()) {
+            return;
         }
+        if (pipe.isConnected(item.side)) {
+            ConnectedType type = pipe.getConnectedType(item.side);
+            switch (type) {
+                case PIPE: {
+                    IPipe oPipe = pipe.getConnectedPipe(item.side);
+                    if (oPipe == null) {
+                        break;
+                    }
+                    PipeFlow flow = oPipe.getFlow();
+                    if (flow instanceof IFlowItems) {
+                        IFlowItems oFlow = (IFlowItems) flow;
+                        excess = oFlow.injectItem(excess, true, item.side.getOpposite(), item.colour, item.speed);
+                        if (excess.isEmpty()) {
+                            return;
+                        }
+                    }
+                    break;
+                }
+                case TILE: {
+                    TileEntity tile = pipe.getConnectedTile(item.side);
+                    IInjectable injectable = ItemTransactorHelper.getInjectable(tile, item.side.getOpposite());
+                    excess = injectable.injectItem(excess, true, item.side.getOpposite(), item.colour, item.speed);
+                    if (excess.isEmpty()) {
+                        return;
+                    }
+
+                    IItemTransactor transactor = ItemTransactorHelper.getTransactor(tile, item.side.getOpposite());
+                    excess = transactor.insert(excess, false, false);
+
+                    if (excess.isEmpty()) {
+                        return;
+                    }
+
+                    break;
+                }
+            }
+        }
+        if (excess.isEmpty()) {
+            return;
+        }
+        item.tried.add(item.side);
+        item.toCenter = true;
+        item.stack = excess;
+        item.genTimings(holder.getPipeWorld().getTotalWorldTime(), getPipeLength(item.side));
+        items.add(item.timeToDest, item);
+        sendItemDataToClient(item);
     }
 
-    /** Called on the client to use the motion field of the item to either move it to the next pipe or move it around
-     * etc */
-    private void runItemInstructions(TravellingItem item) {
-        // TODO!
-    }
-
-    private void dropItem(TravellingItem item) {
-        dropItem(item, item.stack);
-    }
-
-    private void dropItem(TravellingItem item, ItemStack stack) {
-        if (stack == null) {
+    private void dropItem(ItemStack stack, EnumFacing side, EnumFacing motion) {
+        if (stack == null || stack.isEmpty()) {
             return;
         }
 
-        EnumFacing to = item.from.getOpposite();
         IPipeHolder holder = pipe.getHolder();
         World world = holder.getPipeWorld();
         BlockPos pos = holder.getPipePos();
@@ -344,12 +347,19 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         double x = pos.getX() + 0.5;
         double y = pos.getY() + 0.5;
         double z = pos.getZ() + 0.5;
+        if (side != null) {
+            x += side.getFrontOffsetX() * 0.4;
+            y += side.getFrontOffsetY() * 0.4;
+            z += side.getFrontOffsetZ() * 0.4;
+        }
 
         EntityItem ent = new EntityItem(world, x, y, z, stack);
 
-        ent.motionX = to.getFrontOffsetX() * 0.04;
-        ent.motionY = to.getFrontOffsetY() * 0.04;
-        ent.motionZ = to.getFrontOffsetZ() * 0.04;
+        if (motion != null) {
+            ent.motionX = motion.getFrontOffsetX() * 0.04;
+            ent.motionY = motion.getFrontOffsetY() * 0.04;
+            ent.motionZ = motion.getFrontOffsetZ() * 0.04;
+        }
 
         world.spawnEntity(ent);
     }
@@ -409,115 +419,25 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
     private void insertItemEvents(@Nonnull ItemStack toInsert, EnumDyeColor colour, double speed, EnumFacing from) {
         IPipeHolder holder = pipe.getHolder();
 
-        PipeEventItem.BeforeInsert beforeInsert = new PipeEventItem.BeforeInsert(holder, this, colour, from, toInsert);
-        holder.fireEvent(beforeInsert);
-        colour = beforeInsert.colour;
+        PipeEventItem.OnInsert onInsert = new PipeEventItem.OnInsert(holder, this, colour, toInsert, from);
+        holder.fireEvent(onInsert);
 
-        // Side Check
-
-        PipeEventItem.SideCheck sideCheck = new PipeEventItem.SideCheck(holder, this, colour, from, toInsert);
-        sideCheck.disallow(from);
-        for (EnumFacing face : EnumFacing.VALUES) {
-            if (face == from) {
-                continue;
-            }
-            if (!pipe.isConnected(face)) {
-                sideCheck.disallow(face);
-            }
+        if (onInsert.getStack().isEmpty()) {
+            return;
         }
-        holder.fireEvent(sideCheck);
-
-        List<EnumSet<EnumFacing>> order = sideCheck.getOrder();
-
-        if (order.isEmpty()) {
-            // TryBounce
-
-            PipeEventItem.TryBounce bounce = new PipeEventItem.TryBounce(holder, this, colour, from, toInsert);
-            holder.fireEvent(bounce);
-            if (bounce.canBounce) {
-                order = ImmutableList.of(EnumSet.of(from));
-            } else {
-                /* We failed and will be dropping the item right in the centre of the pipe.
-                 * 
-                 * No need for any other events */
-                insertItemImpl(toInsert, colour, speed, from, null, null);
-                return;
-            }
-        }
-
-        // Split:
-
-        PipeEventItem.ItemEntry toSplit = new PipeEventItem.ItemEntry(colour, toInsert, from);
-        PipeEventItem.Split split = new PipeEventItem.Split(holder, this, order, toSplit);
-        holder.fireEvent(split);
-        ImmutableList<PipeEventItem.ItemEntry> splitList = ImmutableList.copyOf(split.items);
-
-        // FindDest:
-
-        PipeEventItem.FindDest findDest = new PipeEventItem.FindDest(holder, this, order, splitList);
-        holder.fireEvent(findDest);
-
-        // ModifySpeed:
-
-        for (PipeEventItem.ItemEntry item : findDest.items) {
-            PipeEventItem.ModifySpeed modifySpeed = new PipeEventItem.ModifySpeed(holder, this, item, speed);
-            modifySpeed.modifyTo(0.04, 0.01);
-            holder.fireEvent(modifySpeed);
-
-            double target = modifySpeed.targetSpeed;
-            double maxDelta = modifySpeed.maxSpeedChange;
-            double nSpeed = speed;
-            if (nSpeed < target) {
-                nSpeed += maxDelta;
-                if (nSpeed > target) {
-                    nSpeed = target;
-                }
-            } else if (nSpeed > target) {
-                nSpeed -= maxDelta;
-                if (nSpeed < target) {
-                    nSpeed = target;
-                }
-            }
-
-            if (item.to == null) {
-                item.to = findDest.generateRandomOrder();
-            }
-            insertItemImpl(item.stack, item.colour, nSpeed, from, item.to, null);
-        }
-    }
-
-    private void insertItemImpl(@Nonnull ItemStack stack, EnumDyeColor colour, double speed, EnumFacing from, List<EnumFacing> to, List<EnumFacing> tried) {
-        TravellingItem item = new TravellingItem(stack);
 
         World world = pipe.getHolder().getPipeWorld();
         long now = world.getTotalWorldTime();
 
-        item.from = from;
+        TravellingItem item = new TravellingItem(toInsert);
+        item.side = from;
+        item.toCenter = true;
         item.speed = speed;
-        item.colour = colour;
-        item.to = (to == null || to.size() <= 0) ? null : to.get(0);
-        if (to != null && to.size() > 1) {
-            item.toTryOrder = to.subList(1, to.size());
-        }
-        item.tried = tried;
-
-        double dist = getPipeLength(item.from) + getPipeLength(item.to);
-        item.genTimings(now, dist);
-
-        int delay = (int) (item.tickFinished - now);
-        item.state = EnumTravelState.SERVER_TO_CENTER;
-        items.add(item.timeToCenter, item);
-
-        final int stackId = BuildCraftObjectCaches.storeItemStack(stack);
-        sendCustomPayload(NET_CREATE_ITEM, (buffer) -> {
-            PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
-            buf.writeEnumValue(from);
-            MessageUtil.writeEnumOrNull(buf, item.to);
-            MessageUtil.writeEnumOrNull(buf, colour);
-            buf.writeInt(delay);
-            buf.writeInt(stackId);
-            buf.writeShort(stack.getCount());
-        });
+        item.colour = onInsert.colour;
+        item.stack = onInsert.getStack();
+        item.genTimings(now, getPipeLength(from));
+        items.add(item.timeToDest, item);
+        sendItemDataToClient(item);
     }
 
     @Nullable
@@ -530,11 +450,11 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         return null;
     }
 
-    private double getPipeLength(EnumFacing to) {
-        if (to == null) {
+    private double getPipeLength(EnumFacing side) {
+        if (side == null) {
             return 0;
         }
-        if (pipe.isConnected(to)) {
+        if (pipe.isConnected(side)) {
             // TODO: Check the length between this pipes centre and the next block along
             return 0.5;
         } else {

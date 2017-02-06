@@ -1,5 +1,6 @@
 package buildcraft.transport.plug;
 
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.PipeEventHandler;
@@ -18,10 +19,25 @@ public class FilterEventHandler {
             if (neighbour == null) {
                 continue;
             }
-            PipePluggable plug = neighbour.getHolder().getPluggable(side.getOpposite());
-            if (plug instanceof PluggableLens) {
-                PluggableLens lens = (PluggableLens) plug;
-                lens.sideCheckAnyPos(event, side);
+            PipePluggable neighbourPlug = neighbour.getHolder().getPluggable(side.getOpposite());
+            PipePluggable atPlug = event.holder.getPluggable(side);
+            if (neighbourPlug instanceof PluggableLens) {
+                EnumDyeColor colourAt = event.colour;
+                if (atPlug instanceof PluggableLens) {
+                    PluggableLens lens = (PluggableLens) atPlug;
+                    if (!lens.isFilter) {
+                        colourAt = lens.colour;
+                    }
+                }
+
+                PluggableLens lens = (PluggableLens) neighbourPlug;
+                if (lens.isFilter) {
+                    if (colourAt == lens.colour) {
+                        event.increasePriority(side);
+                    } else if (colourAt == null) {
+                        event.decreasePriority(side);
+                    }
+                }
             }
         }
     }
