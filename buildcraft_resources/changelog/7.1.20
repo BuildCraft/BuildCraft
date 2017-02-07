@@ -1,0 +1,6 @@
+Bugs fixed:
+
+* [#3492] Remove wasted space in packets (asie)
+* [#3488] Fix Zone Planner crash in fullscreen mode (asie)
+* [#3429] Fix robots sinking through bedrock if the docking station is broken (asie)
+* [#3341] Fix builder not handling flowing liquid correctly in survival mode (asie)

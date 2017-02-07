@@ -209,7 +209,8 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
 
 	@Override
 	public boolean isInitialized() {
-		IPipeTile pipe = getPipe();
+		getPipe();
+
 		if (pipe == null || pipe.getPipe() == null) {
 			return false;
 		}
@@ -218,9 +219,10 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
 
 	@Override
 	public boolean take(EntityRobotBase robot) {
-		IPipeTile pipe = getPipe();
-		if (pipe == null)
+		getPipe();
+		if (pipe == null) {
 			return false;
+		}
 
 		boolean result = super.take(robot);
 		if (result) {
@@ -231,9 +233,10 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
 
 	@Override
 	public boolean takeAsMain(EntityRobotBase robot) {
-		IPipeTile pipe = getPipe();
-		if (pipe == null)
+		getPipe();
+		if (pipe == null) {
 			return false;
+		}
 
 		boolean result = super.takeAsMain(robot);
 		if (result) {

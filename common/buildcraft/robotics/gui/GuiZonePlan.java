@@ -11,7 +11,6 @@ package buildcraft.robotics.gui;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.minecraft.inventory.Slot;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -20,6 +19,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
@@ -321,8 +321,9 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	}
 
 	private void toFullscreen() {
-		if (isFullscreen())
+		if (isFullscreen()) {
 			return;
+		}
 
 		if (blocksPerPixel > 4.0f) {
 			blocksPerPixel = 4.0f;
@@ -346,8 +347,9 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	}
 
 	private void toWindowed() {
-		if (!isFullscreen())
+		if (!isFullscreen()) {
 			return;
+		}
 
 		mapWidth = WINDOWED_MAP_WIDTH;
 		mapHeight = WINDOWED_MAP_HEIGHT;

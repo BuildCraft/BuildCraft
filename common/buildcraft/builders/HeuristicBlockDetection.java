@@ -2,23 +2,29 @@ package buildcraft.builders;
 
 import java.util.Iterator;
 
-import buildcraft.api.blueprints.Schematic;
-import buildcraft.core.builders.schematics.SchematicIgnore;
-import buildcraft.core.lib.utils.FluidUtils;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockBasePressurePlate;
+import net.minecraft.block.BlockBush;
+import net.minecraft.block.BlockButton;
+import net.minecraft.block.BlockDynamicLiquid;
+import net.minecraft.block.BlockLever;
+import net.minecraft.block.BlockStairs;
+import net.minecraft.block.BlockTorch;
+import net.minecraft.block.IGrowable;
 import net.minecraft.init.Blocks;
 
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidBlock;
 
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicFluid;
 import buildcraft.builders.schematics.SchematicStairs;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.schematics.SchematicBlockFloored;
+import buildcraft.core.builders.schematics.SchematicIgnore;
 import buildcraft.core.builders.schematics.SchematicTileCreative;
 import buildcraft.core.builders.schematics.SchematicWallSide;
+import buildcraft.core.lib.utils.FluidUtils;
 
 public final class HeuristicBlockDetection {
 	private HeuristicBlockDetection() {
