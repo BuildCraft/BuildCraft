@@ -209,26 +209,35 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
 
 	@Override
 	public boolean isInitialized() {
-		if (getPipe() == null || getPipe().getPipe() == null) {
+		IPipeTile pipe = getPipe();
+		if (pipe == null || pipe.getPipe() == null) {
 			return false;
 		}
-		return ((Pipe<?>) getPipe().getPipe()).isInitialized();
+		return ((Pipe<?>) pipe.getPipe()).isInitialized();
 	}
 
 	@Override
 	public boolean take(EntityRobotBase robot) {
+		IPipeTile pipe = getPipe();
+		if (pipe == null)
+			return false;
+
 		boolean result = super.take(robot);
 		if (result) {
-			getPipe().scheduleRenderUpdate();
+			pipe.scheduleRenderUpdate();
 		}
 		return result;
 	}
 
 	@Override
 	public boolean takeAsMain(EntityRobotBase robot) {
+		IPipeTile pipe = getPipe();
+		if (pipe == null)
+			return false;
+
 		boolean result = super.takeAsMain(robot);
 		if (result) {
-			getPipe().scheduleRenderUpdate();
+			pipe.scheduleRenderUpdate();
 		}
 		return result;
 	}
