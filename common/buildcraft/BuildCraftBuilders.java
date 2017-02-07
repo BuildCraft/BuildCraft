@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.List;
 
+import buildcraft.api.blueprints.*;
 import com.google.common.collect.Lists;
 
 import net.minecraft.block.Block;
@@ -54,14 +55,6 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
 
-import buildcraft.api.blueprints.BlueprintDeployer;
-import buildcraft.api.blueprints.BuilderAPI;
-import buildcraft.api.blueprints.ISchematicRegistry;
-import buildcraft.api.blueprints.SchematicBlock;
-import buildcraft.api.blueprints.SchematicEntity;
-import buildcraft.api.blueprints.SchematicFactory;
-import buildcraft.api.blueprints.SchematicMask;
-import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.library.LibraryAPI;
 import buildcraft.api.statements.StatementManager;
@@ -141,6 +134,8 @@ import buildcraft.core.builders.schematics.SchematicRotateMeta;
 import buildcraft.core.builders.schematics.SchematicRotateMetaSupported;
 import buildcraft.core.builders.schematics.SchematicTileCreative;
 import buildcraft.core.config.ConfigManager;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
