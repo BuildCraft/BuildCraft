@@ -11,6 +11,7 @@ package buildcraft.robotics.gui;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.minecraft.inventory.Slot;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -40,11 +41,13 @@ import buildcraft.robotics.TileZonePlan;
 import buildcraft.robotics.ZonePlan;
 
 public class GuiZonePlan extends GuiAdvancedInterface {
+	public static final int WINDOWED_MAP_WIDTH = 213;
+	public static final int WINDOWED_MAP_HEIGHT = 100;
 
 	private static final ResourceLocation TMP_TEXTURE = new ResourceLocation("buildcraftrobotics:textures/gui/zone_planner_gui.png");
 
-	private int mapWidth = 213;
-	private int mapHeight = 100;
+	private int mapWidth = WINDOWED_MAP_WIDTH;
+	private int mapHeight = WINDOWED_MAP_HEIGHT;
 
 	private TileZonePlan zonePlan;
 
@@ -71,7 +74,6 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 	private GuiBetterButton tool, fsButton;
 
-	private List inventorySlots;
 	private List<GuiBetterButton> savedButtonList;
 
 	private GuiTextField textField;
@@ -130,8 +132,6 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 		uploadMap();
 		getContainer().loadArea(colorSelected.color.ordinal());
-
-		inventorySlots = container.inventorySlots;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -167,21 +167,21 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	}
 
 	private boolean isFullscreen() {
-		return getContainer().mapTexture.height > 100;
+		return getContainer().mapTexture.height > WINDOWED_MAP_HEIGHT;
 	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		super.drawGuiContainerBackgroundLayer(f, x, y);
 
-		if (getContainer().mapTexture.width <= 213) {
-			mapXMin = guiLeft + 8 + ((213 - getContainer().mapTexture.width) / 2);
+		if (getContainer().mapTexture.width <= WINDOWED_MAP_WIDTH) {
+			mapXMin = guiLeft + 8 + ((WINDOWED_MAP_WIDTH - getContainer().mapTexture.width) / 2);
 		} else {
 			mapXMin = (width - getContainer().mapTexture.width) / 2;
 		}
 
-		if (getContainer().mapTexture.height <= 100) {
-			mapYMin = guiTop + 9 + ((100 - getContainer().mapTexture.height) / 2);
+		if (getContainer().mapTexture.height <= WINDOWED_MAP_HEIGHT) {
+			mapYMin = guiTop + 9 + ((WINDOWED_MAP_HEIGHT - getContainer().mapTexture.height) / 2);
 		} else {
 			mapYMin = (height - getContainer().mapTexture.height) / 2;
 		}
@@ -321,6 +321,9 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	}
 
 	private void toFullscreen() {
+		if (isFullscreen())
+			return;
+
 		if (blocksPerPixel > 4.0f) {
 			blocksPerPixel = 4.0f;
 		}
@@ -331,24 +334,35 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		getContainer().mapTexture = new DynamicTextureBC(mapWidth, mapHeight);
 		currentSelection = new DynamicTextureBC(mapWidth, mapHeight);
 
+		for (Slot s : (List<Slot>) container.inventorySlots) {
+			s.xDisplayPosition += 1048576;
+			s.yDisplayPosition += 1048576;
+		}
+
 		uploadMap();
 		refreshSelectedArea();
 
-		container.inventorySlots = new LinkedList<Object>();
 		buttonList = new LinkedList<GuiBetterButton>();
 	}
 
 	private void toWindowed() {
-		mapWidth = 213;
-		mapHeight = 100;
+		if (!isFullscreen())
+			return;
+
+		mapWidth = WINDOWED_MAP_WIDTH;
+		mapHeight = WINDOWED_MAP_HEIGHT;
 
 		getContainer().mapTexture = new DynamicTextureBC(mapWidth, mapHeight);
 		currentSelection = new DynamicTextureBC(mapWidth, mapHeight);
 
+		for (Slot s : (List<Slot>) container.inventorySlots) {
+			s.xDisplayPosition -= 1048576;
+			s.yDisplayPosition -= 1048576;
+		}
+
 		uploadMap();
 		refreshSelectedArea();
 
-		container.inventorySlots = inventorySlots;
 		buttonList = savedButtonList;
 	}
 
