@@ -370,21 +370,6 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         return pipe.isConnected(from);
     }
 
-    /* Insertion has the following events:
-     * 
-     * TryInsert: See if (and how much) of a given stack can be accepted
-     * 
-     * SideCheck: Remove invalid sides from a set of all connected sides Also can apply ordering to make items prefer
-     * some sides over some others
-     * 
-     * Split: Split up the items into different stacks to be sent to the destinations (only the highest priority list of
-     * SideCheck will be included in the output)
-     * 
-     * FindDest: Finds a destination for each of the split items
-     * 
-     * ModifySpeed: Changes the speed of the item
-     * 
-     * (This text was copied from buildcraft.api.transport.PipeEventItem) */
     @Override
     public ItemStack injectItem(@Nonnull ItemStack stack, boolean doAdd, EnumFacing from, EnumDyeColor colour, double speed) {
         if (!canInjectItems(from)) {
