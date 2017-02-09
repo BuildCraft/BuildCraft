@@ -28,10 +28,11 @@ public final class FluidUtils {
 				if (b != null) {
 					if (b instanceof IFluidBlock && ((IFluidBlock) b).getFluid() != null) {
 						return new FluidStack(((IFluidBlock) b).getFluid(), 1000);
-					} else if (b == Blocks.lava) {
-						return new FluidStack(FluidRegistry.getFluid("lava"), 1000);
-					} else if (b == Blocks.water) {
-						return new FluidStack(FluidRegistry.getFluid("water"), 1000);
+					} else {
+						Fluid f = FluidRegistry.lookupFluidForBlock(b);
+						if (f != null && FluidRegistry.isFluidRegistered(f)) {
+							return new FluidStack(f, 1000);
+						}
 					}
 				}
 			}

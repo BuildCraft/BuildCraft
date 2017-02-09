@@ -224,14 +224,20 @@ public final class BlockUtils {
 	}
 
 	public static boolean isFullFluidBlock(Block block, World world, int x, int y, int z) {
-		if (block instanceof IFluidBlock || block instanceof BlockStaticLiquid) {
+		if (block instanceof IFluidBlock) {
+			return ((IFluidBlock) block).getFilledPercentage(world, x, y, z) == 1.0f;
+		} else if (block instanceof BlockStaticLiquid) {
 			return world.getBlockMetadata(x, y, z) == 0;
 		}
 		return false;
 	}
 
 	public static Fluid getFluid(Block block) {
-		return FluidRegistry.lookupFluidForBlock(block);
+		if (block instanceof IFluidBlock) {
+			return ((IFluidBlock) block).getFluid();
+		} else {
+			return FluidRegistry.lookupFluidForBlock(block);
+		}
 	}
 
 	public static FluidStack drainBlock(World world, int x, int y, int z, boolean doDrain) {
@@ -239,18 +245,17 @@ public final class BlockUtils {
 	}
 
 	public static FluidStack drainBlock(Block block, World world, int x, int y, int z, boolean doDrain) {
-		Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
+		if (block instanceof IFluidBlock) {
+			IFluidBlock fluidBlock = (IFluidBlock) block;
+			if (!fluidBlock.canDrain(world, x, y, z)) {
+				return null;
+			}
+			return fluidBlock.drain(world, x, y, z, doDrain);
+		} else {
+			Fluid fluid = getFluid(block);
 
-		if (fluid != null && FluidRegistry.isFluidRegistered(fluid)) {
-			int meta = world.getBlockMetadata(x, y, z);
-
-			if (block instanceof IFluidBlock) {
-				IFluidBlock fluidBlock = (IFluidBlock) block;
-				if (!fluidBlock.canDrain(world, x, y, z)) {
-					return null;
-				}
-				return fluidBlock.drain(world, x, y, z, doDrain);
-			} else {
+			if (fluid != null && FluidRegistry.isFluidRegistered(fluid)) {
+				int meta = world.getBlockMetadata(x, y, z);
 				if (meta != 0) {
 					return null;
 				}
@@ -260,9 +265,9 @@ public final class BlockUtils {
 				}
 
 				return new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
+			} else {
+				return null;
 			}
-		} else {
-			return null;
 		}
 	}
 
