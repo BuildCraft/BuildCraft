@@ -70,6 +70,6 @@ public final class ThreadSafeUtils {
 			}
 		}
 		packet.writeData(data);
-		return new FMLProxyPacket(data, channel.attr(NetworkRegistry.FML_CHANNEL).get());
+		return new FMLProxyPacket(data.copy(), channel.attr(NetworkRegistry.FML_CHANNEL).get());
 	}
 }

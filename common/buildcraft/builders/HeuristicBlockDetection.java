@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockBasePressurePlate;
 import net.minecraft.block.BlockBush;
 import net.minecraft.block.BlockButton;
+import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLever;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.BlockTorch;
@@ -14,15 +15,16 @@ import net.minecraft.init.Blocks;
 
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidBlock;
 
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicFluid;
 import buildcraft.builders.schematics.SchematicStairs;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.schematics.SchematicBlockFloored;
+import buildcraft.core.builders.schematics.SchematicIgnore;
 import buildcraft.core.builders.schematics.SchematicTileCreative;
 import buildcraft.core.builders.schematics.SchematicWallSide;
+import buildcraft.core.lib.utils.FluidUtils;
 
 public final class HeuristicBlockDetection {
 	private HeuristicBlockDetection() {
@@ -41,18 +43,16 @@ public final class HeuristicBlockDetection {
 				if (!SchematicRegistry.INSTANCE.isSupported(block, meta)) {
 					try {
 						if (block.hasTileEntity(meta)) {
-							// All tiles are registered as creative only.
-							// This is helpful for example for server admins.
+							// All tiles not otherwise supported are registered
+							// as creative only to prevent exploitation.
 							SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicTileCreative.class);
 							continue;
 						}
 
 						try {
-							if (block instanceof IFluidBlock) {
-								IFluidBlock fblock = (IFluidBlock) block;
-								if (fblock.getFluid() != null) {
-									SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicFluid.class, new FluidStack(fblock.getFluid(), 1000));
-								}
+							if (block instanceof BlockDynamicLiquid) {
+								// Fixes #3341 - not recording flowing water
+								SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicIgnore.class);
 							} else {
 								if (block instanceof BlockBush || block instanceof IPlantable || block instanceof IGrowable || block instanceof BlockBasePressurePlate) {
 									SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlockFloored.class);
@@ -61,7 +61,12 @@ public final class HeuristicBlockDetection {
 								} else if (block instanceof BlockStairs) {
 									SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicStairs.class);
 								} else {
-									SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlock.class);
+									FluidStack fstack = FluidUtils.getFluidStackFromBlock(block);
+									if (fstack != null) {
+										SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicFluid.class, fstack);
+									} else {
+										SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlock.class);
+									}
 								}
 							}
 						} catch (Exception e) {

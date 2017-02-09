@@ -16,6 +16,21 @@ public final class FluidUtils {
 
 	}
 
+	public static FluidStack getFluidStackFromBlock(Block b) {
+		if (b != null) {
+			if (b instanceof IFluidBlock && ((IFluidBlock) b).getFluid() != null) {
+				return new FluidStack(((IFluidBlock) b).getFluid(), 1000);
+			} else {
+				Fluid f = FluidRegistry.lookupFluidForBlock(b);
+				if (f != null && FluidRegistry.isFluidRegistered(f)) {
+					return new FluidStack(f, 1000);
+				}
+			}
+		}
+
+		return null;
+	}
+
 	public static FluidStack getFluidStackFromItemStack(ItemStack stack) {
 		if (stack != null) {
 			if (stack.getItem() instanceof IFluidContainerItem) {
@@ -26,14 +41,7 @@ public final class FluidUtils {
 			} else if (stack.getItem() instanceof ItemBlock) {
 				Block b = Block.getBlockFromItem(stack.getItem());
 				if (b != null) {
-					if (b instanceof IFluidBlock && ((IFluidBlock) b).getFluid() != null) {
-						return new FluidStack(((IFluidBlock) b).getFluid(), 1000);
-					} else {
-						Fluid f = FluidRegistry.lookupFluidForBlock(b);
-						if (f != null && FluidRegistry.isFluidRegistered(f)) {
-							return new FluidStack(f, 1000);
-						}
-					}
+					return getFluidStackFromBlock(b);
 				}
 			}
 		}
