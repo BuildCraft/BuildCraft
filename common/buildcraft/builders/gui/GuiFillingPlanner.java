@@ -36,7 +36,7 @@ public class GuiFillingPlanner extends GuiBC8<ContainerFillingPlanner> {
                 .setToolTip(ToolTip.createLocalized("gui.filling_planner.inverted"))
                 .setBehaviour(IButtonBehaviour.TOGGLE)
                 .setActive(container.inverted)
-                .registerListener((button, buttonId) -> {
+                .registerListener((button, buttonId, buttonKey) -> {
                     container.inverted = button.isButtonActive();
                     container.sendDataToServer();
                 }));

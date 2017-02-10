@@ -39,6 +39,7 @@ public class RenderFiller extends FastTESR<TileFiller> {
                     y - tile.getPos().getY() + pos.yCoord,
                     z - tile.getPos().getZ() + pos.zCoord,
                     stack,
+                    tile.getWorld().getCombinedLight(tile.getPos(), 0),
                     EnumFacing.SOUTH,
                     vb
             );
