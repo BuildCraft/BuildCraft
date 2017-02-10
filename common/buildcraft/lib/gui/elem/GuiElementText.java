@@ -8,7 +8,7 @@ import net.minecraft.client.gui.FontRenderer;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiElementSimple;
-import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
 public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {

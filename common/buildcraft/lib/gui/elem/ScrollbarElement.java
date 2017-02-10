@@ -6,7 +6,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.MathUtil;
 

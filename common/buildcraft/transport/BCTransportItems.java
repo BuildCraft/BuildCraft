@@ -57,11 +57,13 @@ public class BCTransportItems {
 
     public static ItemPipeHolder pipeItemLapis;
     public static ItemPipeHolder pipeItemDaizuli;
+    public static ItemPipeHolder pipeItemEmzuli;
 
     public static ItemPluggableSimple plugBlocker;
     public static ItemPluggableGate plugGate;
+    public static ItemPluggableLens plugLens;
     public static ItemPluggablePulsar plugPulsar;
-    public static ItemPluggableSimple plugDaylightSensor;
+    public static ItemPluggableSimple plugLightSensor;
 
     public static ItemWire wire;
 
@@ -86,6 +88,7 @@ public class BCTransportItems {
         pipeItemDiaWood = makePipeItem(BCTransportPipes.diaWoodItem);
         pipeItemLapis = makePipeItem(BCTransportPipes.lapisItem);
         pipeItemDaizuli = makePipeItem(BCTransportPipes.daizuliItem);
+        pipeItemEmzuli = makePipeItem(BCTransportPipes.emzuliItem);
 
         pipeFluidWood = makePipeItem(BCTransportPipes.woodFluid);
         pipeFluidCobble = makePipeItem(BCTransportPipes.cobbleFluid);
@@ -109,8 +112,9 @@ public class BCTransportItems {
 
         plugBlocker = ItemManager.register(new ItemPluggableSimple("item.plug.blocker", BCTransportPlugs.blocker));
         plugGate = ItemManager.register(new ItemPluggableGate("item.plug.gate"));
+        plugLens = ItemManager.register(new ItemPluggableLens("item.plug.lens"));
         plugPulsar = ItemManager.register(new ItemPluggablePulsar("item.plug.pulsar"));
-        plugDaylightSensor = ItemManager.register(new ItemPluggableSimple("item.plug.daylight_sensor", BCTransportPlugs.daylightSensor));
+        plugLightSensor = ItemManager.register(new ItemPluggableSimple("item.plug.light_sensor", BCTransportPlugs.lightSensor));
 
         wire = ItemManager.register(new ItemWire("item.wire"));
     }

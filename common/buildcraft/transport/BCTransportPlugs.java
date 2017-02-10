@@ -8,23 +8,22 @@ import buildcraft.api.transport.neptune.PluggableDefinition.IPluggableCreator;
 import buildcraft.api.transport.neptune.PluggableDefinition.IPluggableNbtReader;
 import buildcraft.api.transport.neptune.PluggableDefinition.IPluggableNetLoader;
 
-import buildcraft.transport.plug.PluggableBlocker;
-import buildcraft.transport.plug.PluggableDaylightSensor;
-import buildcraft.transport.plug.PluggableGate;
-import buildcraft.transport.plug.PluggablePulsar;
+import buildcraft.transport.plug.*;
 
 public class BCTransportPlugs {
 
     public static PluggableDefinition blocker;
     public static PluggableDefinition gate;
+    public static PluggableDefinition lens;
     public static PluggableDefinition pulsar;
-    public static PluggableDefinition daylightSensor;
+    public static PluggableDefinition lightSensor;
 
     public static void preInit() {
         blocker = register("blocker", PluggableBlocker::new);
         gate = register("gate", PluggableGate::new, PluggableGate::new);
+        lens = register("lens", PluggableLens::new, PluggableLens::new);
         pulsar = register("pulsar", PluggablePulsar::new, PluggablePulsar::new);
-        daylightSensor = register("daylight_sensor", PluggableDaylightSensor::new);
+        lightSensor = register("daylight_sensor", PluggableLightSensor::new);
     }
 
     private static PluggableDefinition register(String name, IPluggableCreator creator) {

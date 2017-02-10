@@ -31,10 +31,7 @@ public class GuiBetterButton extends GuiAbstractButton {
         this.texture = texture;
     }
 
-    public int getWidth() {
-        return width;
-    }
-
+    @Override
     public int getHeight() {
         return texture.getHeight();
     }

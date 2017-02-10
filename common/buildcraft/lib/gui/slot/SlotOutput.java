@@ -6,11 +6,11 @@ package buildcraft.lib.gui.slot;
 
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.items.IItemHandler;
+import buildcraft.lib.tile.item.IItemHandlerAdv;
 
 public class SlotOutput extends SlotBase {
 
-    public SlotOutput(IItemHandler handler, int slotIndex, int posX, int posY) {
+    public SlotOutput(IItemHandlerAdv handler, int slotIndex, int posX, int posY) {
         super(handler, slotIndex, posX, posY);
     }
 

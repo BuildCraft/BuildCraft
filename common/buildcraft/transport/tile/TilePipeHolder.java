@@ -31,6 +31,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.PipeEventBus;
 import buildcraft.transport.pipe.PluggableHolder;
+import buildcraft.transport.plug.FilterEventHandler;
 import buildcraft.transport.wire.WireManager;
 
 public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITickable, IDebuggable {
@@ -38,7 +39,6 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     protected static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("pipe");
 
     public static final int NET_UPDATE_MULTI = IDS.allocId("UPDATE_MULTI");
-    public static final int NET_UPDATE_SINGLE_START = IDS.allocId("UPDATE_SINGLE_BEHAVIOUR");
     public static final int NET_UPDATE_PIPE_BEHAVIOUR = getReceiverId(PipeMessageReceiver.BEHAVIOUR);
     public static final int NET_UPDATE_PIPE_FLOW = getReceiverId(PipeMessageReceiver.FLOW);
     public static final int NET_UPDATE_PLUG_DOWN = getReceiverId(PipeMessageReceiver.PLUGGABLE_DOWN);
@@ -62,7 +62,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     };
 
     private static int getReceiverId(PipeMessageReceiver type) {
-        return NET_UPDATE_SINGLE_START + type.ordinal();
+        return NET_UPDATE_MULTI + 1 + type.ordinal();
     }
 
     public final WireManager wireManager = new WireManager(this);
@@ -110,6 +110,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                 pipe = new Pipe(this, nbt.getCompoundTag("pipe"));
                 eventBus.registerHandler(pipe.behaviour);
                 eventBus.registerHandler(pipe.flow);
+                if (pipe.flow instanceof IFlowItems) {
+                    eventBus.registerHandler(FilterEventHandler.class);
+                }
             } catch (LoadingException e) {
                 // Unfortunately we can't throw an exception because then this tile won't persist :/
                 e.printStackTrace();
@@ -133,6 +136,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             this.pipe = new Pipe(this, definition);
             eventBus.registerHandler(pipe.behaviour);
             eventBus.registerHandler(pipe.flow);
+            if (pipe.flow instanceof IFlowItems) {
+                eventBus.registerHandler(FilterEventHandler.class);
+            }
             int meta = stack.getMetadata();
             if (meta > 0 && meta <= 16) {
                 pipe.setColour(EnumDyeColor.byMetadata(meta - 1));
@@ -259,6 +265,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                     pipe = new Pipe(this, buffer, ctx);
                     eventBus.registerHandler(pipe.behaviour);
                     eventBus.registerHandler(pipe.flow);
+                    if (pipe.flow instanceof IFlowItems) {
+                        eventBus.registerHandler(FilterEventHandler.class);
+                    }
                 } else if (pipe != null) {
                     eventBus.unregisterHandler(pipe.behaviour);
                     eventBus.unregisterHandler(pipe.flow);
@@ -415,7 +424,11 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
 
     @Override
     public int getRedstoneInput(EnumFacing side) {
-        return world.isBlockPowered(pos) ? 15 : 0;
+        if (side == null) {
+            return world.isBlockPowered(pos) ? 15 : 0;
+        } else {
+            return world.getRedstonePower(pos.offset(side), side);
+        }
     }
 
     @Override

@@ -2,13 +2,16 @@ package buildcraft.robotics.map;
 
 import java.io.File;
 import java.util.Date;
+
 import com.google.common.collect.HashBiMap;
 
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
+
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ChunkEvent;
@@ -81,32 +84,36 @@ public class MapManager implements Runnable {
 
     @SubscribeEvent
     public void worldUnloaded(WorldEvent.Unload event) {
-        if (worldMap.containsKey(event.world)) {
-            worldMap.get(event.world).save();
+        World world = event.getWorld();
+        MapWorld map = worldMap.get(world);
+        if (map != null) {
+            map.save();
             synchronized (worldMap) {
-                worldMap.remove(event.world);
+                worldMap.remove(world);
             }
         }
     }
 
     @SubscribeEvent
     public void chunkLoaded(ChunkEvent.Load event) {
-        updateChunkDelayed(event.world, event.getChunk(), false, (byte) (40 + Utils.RANDOM.nextInt(20)));
+        updateChunkDelayed(event.getWorld(), event.getChunk(), false, (byte) (40 + Utils.RANDOM.nextInt(20)));
     }
 
     @SubscribeEvent
     public void chunkUnloaded(ChunkEvent.Unload event) {
-        updateChunk(event.world, event.getChunk(), false);
+        updateChunk(event.getWorld(), event.getChunk(), false);
     }
 
     @SubscribeEvent
     public void blockPlaced(BlockEvent.PlaceEvent placeEvent) {
-        Chunk chunk = placeEvent.world.getChunkFromBlockCoords(placeEvent.pos);
-        MapWorld world = getWorld(placeEvent.world);
-        if (world != null && doUpdate(world, chunk)) {
-            int hv = placeEvent.world.getHeight(placeEvent.pos).getY();
-            if (placeEvent.pos.getY() >= (hv - 3)) {
-                world.updateChunk(chunk);
+        World world = placeEvent.getWorld();
+        BlockPos pos = placeEvent.getPos();
+        Chunk chunk = world.getChunkFromBlockCoords(pos);
+        MapWorld map = getWorld(world);
+        if (map != null && doUpdate(map, chunk)) {
+            int hv = world.getHeight(pos).getY();
+            if (pos.getY() >= (hv - 3)) {
+                map.updateChunk(chunk);
             }
         }
     }
@@ -145,8 +152,8 @@ public class MapManager implements Runnable {
 
             try {
                 Thread.sleep(4000);
-            } catch (Exception e) {
-
+            } catch (InterruptedException ie) {
+               ie.printStackTrace();
             }
         }
     }
@@ -156,13 +163,10 @@ public class MapManager implements Runnable {
             MapWorld mw = getWorld(ws);
             IChunkProvider provider = ws.getChunkProvider();
             if (provider instanceof ChunkProviderServer) {
-                for (Object o : ((ChunkProviderServer) provider).func_152380_a()) {
-                    if (o != null && o instanceof Chunk) {
-                        Chunk c = (Chunk) o;
-                        if (!mw.hasChunk(c.xPosition, c.zPosition)) {
+                for (Chunk c : ((ChunkProviderServer) provider).getLoadedChunks()) {
+                    if (c != null && !mw.hasChunk(c.xPosition, c.zPosition)) {
                             mw.updateChunkDelayed(c, (byte) (40 + Utils.RANDOM.nextInt(20)));
                         }
-                    }
                 }
             }
         }

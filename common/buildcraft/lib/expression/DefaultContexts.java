@@ -1,11 +1,16 @@
 package buildcraft.lib.expression;
 
+import net.minecraft.item.EnumDyeColor;
+
+import buildcraft.lib.misc.ColourUtil;
+
 public class DefaultContexts {
     public static final FunctionContext STRINGS = new FunctionContext();
     public static final FunctionContext MATH_SCALAR = new FunctionContext();
     public static final FunctionContext MATH_VECTOR = new FunctionContext();
+    public static final FunctionContext RENDERING = new FunctionContext();
 
-    private static final FunctionContext[] CTX_ARRAY_ALL = { STRINGS, MATH_SCALAR, MATH_VECTOR };
+    private static final FunctionContext[] CTX_ARRAY_ALL = { STRINGS, MATH_SCALAR, MATH_VECTOR, RENDERING };
 
     public static final FunctionContext CONTEXT_DEFAULT = new FunctionContext(CTX_ARRAY_ALL);
 
@@ -14,7 +19,7 @@ public class DefaultContexts {
 
         // STRINGS.put_s_s("lowercase", (a) -> a.toLowerCase(Locale.ROOT));
         // STRINGS.put_s_s("uppercase", (a) -> a.toUpperCase(Locale.ROOT));
-        // STRINGS.put_s_l("length", (a) -> a.length());
+        STRINGS.put_s_l("length", (a) -> a.length());
         // STRINGS.put_sl_s("string_at", (a, b) -> Character.toString(a.charAt(b)));
         // STRINGS.put_sl_s("substring", (a, b) -> a.substring(b));
         // STRINGS.put_sll_s("substring", (a, b, c) -> a.substring(b, c));
@@ -141,6 +146,21 @@ public class DefaultContexts {
         // MATH_VECTOR.put_vddd_vd("div", (a, b, c) -> a.div(b, c, 0, 0));
         // MATH_VECTOR.put_vdddd_vd("div", (a, b, c, d) -> a.div(b, c, d, 0));
         // MATH_VECTOR.put_vddddd_vd("div", (a, b, c, d, e) -> a.div(b, c, d, e));
+
+        RENDERING.put_s_l("convertColourToAbgr", DefaultContexts::convertColourToAbgr);
+        RENDERING.put_s_l("convertColourToArgb", DefaultContexts::convertColourToArgb);
+    }
+
+    private static long convertColourToAbgr(String c) {
+        EnumDyeColor colour = ColourUtil.parseColourOrNull(c);
+        if (colour == null) return 0xFF_FF_FF_FF;
+        return 0xFF_00_00_00 | ColourUtil.swapArgbToAbgr(ColourUtil.getLightHex(colour));
+    }
+
+    private static long convertColourToArgb(String c) {
+        EnumDyeColor colour = ColourUtil.parseColourOrNull(c);
+        if (colour == null) return 0xFF_FF_FF_FF;
+        return 0xFF_00_00_00 | ColourUtil.getLightHex(colour);
     }
 
     public static FunctionContext createWithAll() {

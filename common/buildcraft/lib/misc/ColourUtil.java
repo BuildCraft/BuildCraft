@@ -1,7 +1,12 @@
 package buildcraft.lib.misc;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
+import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
@@ -34,6 +39,7 @@ public class ColourUtil {
         0x66AAFF, 0xD943C6, 0xEA7835, 0xe4e4e4 //
     };
     private static final String[] DYES = new String[16];
+    private static final Map<String, EnumDyeColor> nameToColourMap;
 
     private static final TextFormatting[] FORMATTING_VALUES = TextFormatting.values();
 
@@ -85,6 +91,17 @@ public class ColourUtil {
         FACE_TO_FORMAT[EnumFacing.SOUTH.ordinal()] = TextFormatting.BLUE;
         FACE_TO_FORMAT[EnumFacing.EAST.ordinal()] = TextFormatting.YELLOW;
         FACE_TO_FORMAT[EnumFacing.WEST.ordinal()] = TextFormatting.GREEN;
+
+        ImmutableMap.Builder<String, EnumDyeColor> builder = ImmutableMap.builder();
+        for (EnumDyeColor c : COLOURS) {
+            builder.put(c.getName(), c);
+        }
+        nameToColourMap = builder.build();
+    }
+
+    @Nullable
+    public static EnumDyeColor parseColourOrNull(String string) {
+        return nameToColourMap.get(string);
     }
 
     public static String getDyeName(EnumDyeColor colour) {
@@ -159,5 +176,35 @@ public class ColourUtil {
         int g = (argb >> 8) & 0xFF;
         int b = (argb >> 0) & 0xFF;
         return (a << 24) | (b << 16) | (g << 8) | r;
+    }
+
+    public static EnumDyeColor getNext(EnumDyeColor colour) {
+        int ord = colour.ordinal() + 1;
+        return COLOURS[ord & 15];
+    }
+
+    public static EnumDyeColor getNextOrNull(@Nullable EnumDyeColor colour) {
+        if (colour == null) {
+            return COLOURS[0];
+        } else if (colour == COLOURS[COLOURS.length - 1]) {
+            return null;
+        } else {
+            return getNext(colour);
+        }
+    }
+
+    public static EnumDyeColor getPrev(EnumDyeColor colour) {
+        int ord = colour.ordinal() + 16 - 1;
+        return COLOURS[ord & 15];
+    }
+
+    public static EnumDyeColor getPrevOrNull(@Nullable EnumDyeColor colour) {
+        if (colour == null) {
+            return COLOURS[COLOURS.length - 1];
+        } else if (colour == COLOURS[0]) {
+            return null;
+        } else {
+            return getPrev(colour);
+        }
     }
 }

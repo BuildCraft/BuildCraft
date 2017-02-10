@@ -20,7 +20,7 @@ Improvements:
 
 * General:
   * All coloured items (pipes, paintbrushes, pipe wire) is displayed with an appropriate text colour infront.
-    * This behaviour can be toggled in the config, or in game.
+    * This behaviour can be toggled in the config (gui or file).
   * Tanks in gui's now display their contents.
   * Tanks in gui's can be added to or removed from by clicking on them with a bucket or other fluid container in hand.
     * This removes most of the slots found in various fluid holding blocks, such as the combustion engine.

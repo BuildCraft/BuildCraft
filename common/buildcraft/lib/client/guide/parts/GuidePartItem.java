@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
-import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.pos.GuiRectangle;
 
 public abstract class GuidePartItem extends GuidePart {
     public static final GuiRectangle STACK_RECT = new GuiRectangle(0, 0, 16, 16);
@@ -17,7 +17,7 @@ public abstract class GuidePartItem extends GuidePart {
     }
 
     protected void drawItemStack(ItemStack stack, int x, int y) {
-        if (stack != null) {
+        if (stack != null && !stack.isEmpty()) {
             GlStateManager.color(1, 1, 1);
             FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
             gui.mc.getRenderItem().renderItemIntoGUI(stack, x, y);
@@ -30,7 +30,7 @@ public abstract class GuidePartItem extends GuidePart {
     }
 
     protected void testClickItemStack(ItemStack stack, int x, int y) {
-        if (stack != null && STACK_RECT.offset(x, y).contains(gui.mouse)) {
+        if (stack != null && !stack.isEmpty() && STACK_RECT.offset(x, y).contains(gui.mouse)) {
             gui.openPage(GuideManager.INSTANCE.getPageFor(stack).createNew(gui));
         }
     }

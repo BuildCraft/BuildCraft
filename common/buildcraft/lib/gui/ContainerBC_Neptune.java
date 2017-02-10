@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
@@ -45,6 +46,13 @@ public abstract class ContainerBC_Neptune extends Container {
         this.player = player;
     }
 
+    /** @return The {@link IdAllocator} that allocates all ID's for this class, and its parent classes. All subclasses
+     *         should override this if they allocate their own ids after calling
+     *         {@link IdAllocator#makeChild(String)} */
+    public IdAllocator getIdAllocator() {
+        return IDS;
+    }
+
     protected void addFullPlayerInventory(int startX, int startY) {
         for (int sy = 0; sy < 3; sy++) {
             for (int sx = 0; sx < 9; sx++) {
@@ -59,10 +67,6 @@ public abstract class ContainerBC_Neptune extends Container {
 
     protected void addFullPlayerInventory(int startY) {
         addFullPlayerInventory(8, startY);
-    }
-
-    public String getIdName(int id) {
-        return IDS.getNameFor(id);
     }
 
     protected <W extends Widget_Neptune<?>> W addWidget(W widget) {
@@ -85,21 +89,64 @@ public abstract class ContainerBC_Neptune extends Container {
 
         ItemStack playerStack = player.inventory.getItemStack();
         if (slot instanceof IPhantomSlot) {
-            ItemStack itemStack;
-            if (playerStack != null && (slot.getStack() == null || ((IPhantomSlot) slot).canAdjust())) {
+            IPhantomSlot phantom = (IPhantomSlot) slot;
+            if (playerStack.isEmpty()) {
+                slot.putStack(ItemStack.EMPTY);
+            } else if (!StackUtil.canMerge(playerStack, StackUtil.asNonNull(slot.getStack()))) {
                 ItemStack copy = playerStack.copy();
                 copy.setCount(1);
-                if (ItemStack.areItemsEqual(copy, slot.getStack()) && ItemStack.areItemStackTagsEqual(copy, slot.getStack())) {
-                    copy.setCount(copy.getCount() + slot.getStack().getCount());
-                }
                 slot.putStack(copy);
-            } else {
-                slot.putStack(StackUtil.EMPTY);
+            } else if (phantom.canAdjustCount()) {
+                ItemStack stack = slot.getStack();
+                if (stack.getCount() < stack.getMaxStackSize()) {
+                    stack.grow(1);
+                    slot.putStack(stack);
+                }
             }
-            itemStack = playerStack;
-            return itemStack;
+            return playerStack;
         }
         return super.slotClick(slotId, dragType, clickType, player);
+    }
+
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+        ItemStack itemstack = ItemStack.EMPTY;
+        Slot slot = this.inventorySlots.get(index);
+        Slot firstSlot = this.inventorySlots.get(0);
+        int playerInventorySize = 36;
+        boolean playerInventoryFirst = firstSlot.inventory instanceof InventoryPlayer;
+
+        if (slot != null && slot.getHasStack()) {
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
+
+            if (inventorySlots.size() == playerInventorySize) return ItemStack.EMPTY;
+            if (playerInventoryFirst) {
+                if (index < playerInventorySize) {
+                    if (!this.mergeItemStack(itemstack1, playerInventorySize, this.inventorySlots.size(), false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (!this.mergeItemStack(itemstack1, 0, playerInventorySize, true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else {
+                if (index < this.inventorySlots.size() - playerInventorySize) {
+                    if (!this.mergeItemStack(itemstack1, this.inventorySlots.size() - playerInventorySize, this.inventorySlots.size(), false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (!this.mergeItemStack(itemstack1, 0, this.inventorySlots.size() - playerInventorySize, true)) {
+                    return ItemStack.EMPTY;
+                }
+            }
+
+            if (itemstack1.isEmpty()) {
+                slot.putStack(ItemStack.EMPTY);
+            } else {
+                slot.onSlotChanged();
+            }
+        }
+
+        return itemstack;
     }
 
     public static ItemStack safeCopy(ItemStack in) {

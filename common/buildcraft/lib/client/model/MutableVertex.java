@@ -120,6 +120,7 @@ public class MutableVertex {
         tex_v = Float.intBitsToFloat(data[offset + 5]);
         // TEX_2S
         lighti(data[offset + 6]);
+        normalf(0, 1, 0);
     }
 
     public void fromBakedItem(int[] data, int offset) {
@@ -134,6 +135,7 @@ public class MutableVertex {
         tex_v = Float.intBitsToFloat(data[offset + 5]);
         // NROMAL_3B
         normali(data[offset + 6]);
+        lightf(1,1);
     }
 
     // Rendering
@@ -466,8 +468,8 @@ public class MutableVertex {
      * @param scale The multiplier for scaling. Positive values will rotate clockwise, negative values rotate
      *            anti-clockwise. */
     public MutableVertex rotateZ_90(float scale) {
-        float ym = scale;
-        float xm = -ym;
+        float xm = scale;
+        float ym = -xm;
 
         float t = position_x * xm;
         position_x = position_y * ym;

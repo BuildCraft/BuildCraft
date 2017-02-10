@@ -1,7 +1,9 @@
 package buildcraft.lib.client.model;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map.Entry;
 
 import com.google.common.collect.ImmutableMap;
@@ -52,7 +54,6 @@ public class ModelHolderVariable extends ModelHolder {
             return ImmutableMap.of();
         }
         ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-        Map<String, String> map = new HashMap<>();
         for (String[] ar : textures) {
             if (ar.length != 2) {
                 throw new IllegalArgumentException("Must have 2 elements (key,value) but got " + Arrays.toString(ar));
@@ -60,7 +61,7 @@ public class ModelHolderVariable extends ModelHolder {
             if (!ar[0].startsWith("~")) {
                 throw new IllegalArgumentException("Key must start with '~' otherwise it will never be used!");
             }
-            map.put(ar[0], ar[1]);
+            builder.put(ar[0], ar[1]);
         }
         return builder.build();
     }
@@ -87,7 +88,7 @@ public class ModelHolderVariable extends ModelHolder {
             BCLog.logger.warn("[lib.model.holder] Failed to load the model " + modelLocation + " because ", io);
         }
         if (rawModel != null) {
-            if (CustomModelLoader.DEBUG) {
+            if (ModelHolderRegistry.DEBUG) {
                 BCLog.logger.info("[lib.model.holder] The model " + modelLocation + " requires these sprites:");
             }
             for (Entry<String, String> entry : rawModel.textures.entrySet()) {
@@ -108,7 +109,7 @@ public class ModelHolderVariable extends ModelHolder {
                 } else {
                     toRegisterSprites.add(new ResourceLocation(lookup));
                 }
-                if (CustomModelLoader.DEBUG) {
+                if (ModelHolderRegistry.DEBUG) {
                     BCLog.logger.info("[lib.model.holder]  - " + lookup);
                 }
             }
@@ -116,7 +117,9 @@ public class ModelHolderVariable extends ModelHolder {
     }
 
     @Override
-    protected void onModelBake() {}
+    protected void onModelBake() {
+        // NO-OP: we bake every time get{Cutout/Translucent}Quads is called as this is a variable model
+    }
 
     private MutableQuad[] bakePart(JsonVariableModelPart[] a) {
         List<MutableQuad> list = new ArrayList<>();
@@ -160,7 +163,7 @@ public class ModelHolderVariable extends ModelHolder {
         if (unseen) {
             unseen = false;
             String warnText = "[lib.model.holder] Tried to use the model " + modelLocation + " before it was baked!";
-            if (CustomModelLoader.DEBUG) {
+            if (ModelHolderRegistry.DEBUG) {
                 BCLog.logger.warn(warnText, new Throwable());
             } else {
                 BCLog.logger.warn(warnText);

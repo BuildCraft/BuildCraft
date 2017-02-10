@@ -13,7 +13,7 @@ public interface IItemTransactor {
     /** @param stack The stack to insert. Must not be null!
      * @param allOrNone If true then either the entire stack will be used or none of it.
      * @param simulate If true then the in-world state of this will not be changed.
-     * @return The overflow stack. Will be null if all of it was accepted. */
+     * @return The overflow stack. Will be {@link ItemStack#EMPTY} if all of it was accepted. */
     @Nonnull
     ItemStack insert(@Nonnull ItemStack stack, boolean allOrNone, boolean simulate);
 

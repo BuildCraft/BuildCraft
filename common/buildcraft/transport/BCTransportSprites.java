@@ -16,16 +16,21 @@ import buildcraft.lib.misc.ColourUtil;
 import buildcraft.transport.client.model.PipeModelCacheAll;
 import buildcraft.transport.client.model.PipeModelCacheBase;
 import buildcraft.transport.client.render.PipeFlowRendererItems;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli.SlotIndex;
 
 public class BCTransportSprites {
     public static final SpriteHolder EMPTY_FILTERED_BUFFER_SLOT;
     public static final SpriteHolder NOTHING_FILTERED_BUFFER_SLOT;
     public static final SpriteHolder PIPE_COLOUR, COLOUR_ITEM_BOX;
 
+    public static final SpriteHolder TRIGGER_LIGHT_LOW;
+    public static final SpriteHolder TRIGGER_LIGHT_HIGH;
+
     public static final SpriteHolder ACTION_PULSAR_CONSTANT;
     public static final SpriteHolder ACTION_PULSAR_SINGLE;
     public static final SpriteHolder[] ACTION_PIPE_COLOUR;
 
+    public static final EnumMap<SlotIndex, SpriteHolder> ACTION_EXTRACTION_PRESET;
     private static final EnumMap<EnumDyeColor, SpriteHolder> PIPE_SIGNAL_ON;
     private static final EnumMap<EnumDyeColor, SpriteHolder> PIPE_SIGNAL_OFF;
 
@@ -34,6 +39,9 @@ public class BCTransportSprites {
         NOTHING_FILTERED_BUFFER_SLOT = getHolder("gui/nothing_filtered_buffer_slot");
         PIPE_COLOUR = getHolder("pipes/overlay_stained");
         COLOUR_ITEM_BOX = getHolder("pipes/colour_item_box");
+
+        TRIGGER_LIGHT_LOW = getHolder("triggers/trigger_light_dark");
+        TRIGGER_LIGHT_HIGH = getHolder("triggers/trigger_light_bright");
 
         ACTION_PULSAR_CONSTANT = getHolder("triggers/action_pulsar_on");
         ACTION_PULSAR_SINGLE = getHolder("triggers/action_pulsar_single");
@@ -49,6 +57,11 @@ public class BCTransportSprites {
             String pre = "triggers/trigger_pipesignal_" + colour.getName().toLowerCase(Locale.ROOT) + "_";
             PIPE_SIGNAL_OFF.put(colour, getHolder(pre + "inactive"));
             PIPE_SIGNAL_ON.put(colour, getHolder(pre + "active"));
+        }
+
+        ACTION_EXTRACTION_PRESET = new EnumMap<>(SlotIndex.class);
+        for (SlotIndex index : SlotIndex.VALUES) {
+            ACTION_EXTRACTION_PRESET.put(index, getHolder("triggers/extraction_preset_" + index.colour.getName()));
         }
     }
 

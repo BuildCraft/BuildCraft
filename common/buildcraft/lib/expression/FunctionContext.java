@@ -14,6 +14,7 @@ import buildcraft.lib.expression.node.func.NodeFuncDoubleToDouble.IFuncDoubleToD
 import buildcraft.lib.expression.node.func.NodeFuncDoubleToLong.IFuncDoubleToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong.IFuncLongLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongToLong.IFuncLongToLong;
+import buildcraft.lib.expression.node.func.NodeFuncStringToLong.IFuncStringToLong;
 import buildcraft.lib.expression.node.value.*;
 
 public class FunctionContext {
@@ -148,6 +149,18 @@ public class FunctionContext {
         });
     }
 
+    public void putParsedConstant(String name, String value) {
+        if (InternalCompiler.isValidLong(value)) {
+            putConstantLong(name, InternalCompiler.parseValidLong(value));
+        } else if (InternalCompiler.isValidDouble(value)) {
+            putConstantDouble(name, Double.parseDouble(value));
+        } else if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
+            putConstantBoolean(name, "true".equalsIgnoreCase(value));
+        } else {
+            putConstantString(name, value);
+        }
+    }
+
     // Function getter/setters
 
     public INodeFunc getFunction(String name, int args) {
@@ -202,5 +215,9 @@ public class FunctionContext {
 
     public void put_dd_d(String name, IFuncDoubleDoubleToDouble func) {
         putFunction(name, new NodeFuncDoubleDoubleToDouble(func, (a, b) -> name + "(" + a + ", " + b + ")"));
+    }
+
+    public void put_s_l(String name, IFuncStringToLong func) {
+        putFunction(name, new NodeFuncStringToLong(func, (a) -> name + "(" + a + ")"));
     }
 }

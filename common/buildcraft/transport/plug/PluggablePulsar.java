@@ -44,6 +44,8 @@ public class PluggablePulsar extends PipePluggable {
 
     /** Used on the client to determine if this should render pulsing */
     private boolean isPulsing = false;
+    /** Used on the client to determine if this is being activated by a gate */
+    private boolean autoEnabled = false;
 
     static {
         double ll = 2 / 16.0;
@@ -88,35 +90,43 @@ public class PluggablePulsar extends PipePluggable {
 
     public PluggablePulsar(PluggableDefinition definition, IPipeHolder holder, EnumFacing side, PacketBuffer buffer) {
         super(definition, holder, side);
-        isPulsing = buffer.readBoolean();
-        manuallyEnabled = buffer.readBoolean();
+        readData(buffer);
     }
 
     @Override
     public void writeCreationPayload(PacketBuffer buffer) {
         super.writeCreationPayload(buffer);
+        writeData(buffer);
+    }
+
+    @Override
+    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+        super.readPayload(buffer, side, ctx);
+        if (side == Side.CLIENT) {
+            readData(buffer);
+        }
+    }
+
+    @Override
+    public void writePayload(PacketBuffer buffer, Side side) {
+        super.writePayload(buffer, side);
+        if (side == Side.SERVER) {
+            writeData(buffer);
+        }
+    }
+
+    private void writeData(PacketBuffer b) {
+        PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(b);
         buffer.writeBoolean(isPulsing());
+        buffer.writeBoolean(gateEnabledTicks > 0 || gateSinglePulses > 0);
         buffer.writeBoolean(manuallyEnabled);
     }
 
-    @Override
-    public void readPayload(PacketBuffer b, Side side, MessageContext ctx) throws IOException {
-        super.readPayload(b, side, ctx);
+    private void readData(PacketBuffer b) {
         PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(b);
-        if (side == Side.CLIENT) {
-            isPulsing = buffer.readBoolean();
-            manuallyEnabled = buffer.readBoolean();
-        }
-    }
-
-    @Override
-    public void writePayload(PacketBuffer b, Side side) {
-        super.writePayload(b, side);
-        PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(b);
-        if (side == Side.SERVER) {
-            buffer.writeBoolean(isPulsing());
-            buffer.writeBoolean(manuallyEnabled);
-        }
+        isPulsing = buffer.readBoolean();
+        autoEnabled = buffer.readBoolean();
+        manuallyEnabled = buffer.readBoolean();
     }
 
     // PipePluggable
@@ -144,16 +154,16 @@ public class PluggablePulsar extends PipePluggable {
     @Override
     public void onTick() {
         if (holder.getPipeWorld().isRemote) {
-            if (isPulsingClient()) {
+            if (isPulsing) {
                 pulseStage++;
                 if (pulseStage == PULSE_STAGE) {
                     pulseStage = 0;
                 }
             } else {
-                pulseStage--;
-                if (pulseStage < 0) {
-                    pulseStage = 0;
-                }
+                // pulseStage--;
+                // if (pulseStage < 0) {
+                pulseStage = 0;
+                // }
             }
             return;
         }
@@ -162,10 +172,10 @@ public class PluggablePulsar extends PipePluggable {
         if (isOn) {
             pulseStage++;
         } else {
-            pulseStage--;
-            if (pulseStage < 0) {
-                pulseStage = 0;
-            }
+            // pulseStage--;
+            // if (pulseStage < 0) {
+            pulseStage = 0;
+            // }
         }
         if (gateEnabledTicks > 0) {
             gateEnabledTicks--;
@@ -205,6 +215,16 @@ public class PluggablePulsar extends PipePluggable {
     @SideOnly(Side.CLIENT)
     public boolean isPulsingClient() {
         return isPulsing;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean isAutoEnabledClient() {
+        return autoEnabled;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean isManuallyEnabledClient() {
+        return manuallyEnabled;
     }
 
     @Override

@@ -63,7 +63,7 @@ public class BlockLaserTable extends BlockBCTile_Neptune implements ILaserTarget
             case CHARGING_TABLE:
                 return new TileChargingTable();
             case PROGRAMMING_TABLE:
-                return new TileProgrammingTable();
+                return new TileProgrammingTable_Neptune();
         }
         return null;
     }

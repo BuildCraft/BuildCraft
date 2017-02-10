@@ -1,7 +1,6 @@
 package buildcraft.transport.pipe.flow;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.EnumSet;
 import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
@@ -13,50 +12,49 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.VecUtil;
 
 public class TravellingItem {
-    // Public for rendering
+    // Client fields - public for rendering
     public Supplier<ItemStack> clientItemLink;
     public int stackSize;
     public EnumDyeColor colour;
 
+    // Server fields
     /** The server itemstack */
+    @Nonnull
     ItemStack stack;
     int id = 0;
-    EnumTravelState state = EnumTravelState.SERVER_TO_CENTER;
+    boolean toCenter;
     double speed = 0.05;
     /** Absolute times (relative to world.getTotalWorldTime()) with when an item started to when it finishes. */
     long tickStarted, tickFinished;
     /** Relative times (from tickStarted) until an event needs to be fired or this item needs changing. */
-    int timeToCenter, timeToExit;
-    EnumFacing from, to;
-    /** A list of the next faces to try if the current "to" differs from "from" and "to" failed to insert. */
-    List<EnumFacing> toTryOrder = null;
-    List<EnumFacing> tried = null;
+    int timeToDest;
+    /** If {@link #toCenter} is true then this represents the side that the item is coming from, otherwise this
+     * represents the side that the item is going to. */
+    EnumFacing side;
+    /** A set of all the faces that this item has tried to go and failed. */
+    EnumSet<EnumFacing> tried = EnumSet.noneOf(EnumFacing.class);
 
-    /** Used to save where this item should go next. Only the client uses this field. */
-    Motion motion;
-
-    static class Motion {
-        EnumFacing to;
-        Motion nextPipe;
-    }
-
-    enum EnumTravelState {
-        SERVER_TO_CENTER,
-        SERVER_TO_EXIT,
-
-        /** Used on the client when an item is running normally, and has instructions on what it should be doing */
-        CLIENT_RUNNING,
-        /** Used on the client when an item is waiting for its next instructions. It never stays in this state for more
-         * than 2 ticks. */
-        CLIENT_WAITING,
-        /** Used on the client to determine that when this will just disappear when it reaches its next tick. */
-        CLIENT_WILL_DESTROY,
-        /** Used on the client if this item is not valid AT ALL and so will not be drawn. */
-        CLIENT_INVALID;
-    }
+    // @formatter:off
+    /* States (server side):
+      
+      - TO_CENTER:
+        - tickStarted is the tick that the item entered the pipe (or bounced back)
+        - tickFinished is the tick that the item will reach the center 
+        - side is the side that the item came from
+        - timeToDest is equal to timeFinished - timeStarted
+      
+      - TO_EXIT:
+       - tickStarted is the tick that the item reached the center
+       - tickFinished is the tick that the item will reach the end of a pipe 
+       - side is the side that the item is going to 
+       - timeToDest is equal to timeFinished - timeStarted. 
+     */
+    // @formatter:on
 
     public TravellingItem(@Nonnull ItemStack stack) {
         this.stack = stack;
@@ -65,6 +63,7 @@ public class TravellingItem {
     public TravellingItem(Supplier<ItemStack> clientStackLink, int count) {
         this.clientItemLink = clientStackLink;
         this.stackSize = count;
+        this.stack = StackUtil.EMPTY;
     }
 
     // List<EnumFacing> tried = null;
@@ -73,7 +72,7 @@ public class TravellingItem {
         stack = new ItemStack(nbt.getCompoundTag("stack"));
         int c = nbt.getByte("colour");
         this.colour = c == 0 ? null : EnumDyeColor.byMetadata(c - 1);
-        this.state = nbt.getBoolean("toCenter") ? EnumTravelState.SERVER_TO_CENTER : EnumTravelState.SERVER_TO_EXIT;
+        this.toCenter = nbt.getBoolean("toCenter");
         this.speed = nbt.getDouble("speed");
         if (speed < 0.001) {
             // Just to make sure that we don't have an invalid speed
@@ -81,58 +80,27 @@ public class TravellingItem {
         }
         tickStarted = nbt.getInteger("tickStarted") + tickNow;
         tickFinished = nbt.getInteger("tickFinished") + tickNow;
-        timeToCenter = nbt.getInteger("timeToCenter");
-        timeToExit = nbt.getInteger("timeToExit");
+        timeToDest = nbt.getInteger("timeToDest");
 
-        int f = nbt.getInteger("from");
-        from = f == 0 ? null : EnumFacing.getFront(f - 1);
-
-        int t = nbt.getInteger("to");
-        to = t == 0 ? null : EnumFacing.getFront(t - 1);
-
-        int[] toTry = nbt.getIntArray("toTryOrder");
-        if (toTry.length > 0) {
-            toTryOrder = new ArrayList<>(toTry.length);
-            for (int i : toTry) {
-                toTryOrder.add(EnumFacing.getFront(i));
-            }
+        side = NBTUtilBC.readEnum(nbt.getTag("side"), EnumFacing.class);
+        if (side == null || timeToDest == 0) {
+            // Older 8.0.x. version
+            toCenter = true;
         }
-
-        int[] triedArr = nbt.getIntArray("tried");
-        if (triedArr.length > 0) {
-            tried = new ArrayList<>(triedArr.length);
-            for (int i : toTry) {
-                tried.add(EnumFacing.getFront(i));
-            }
-        }
+        tried = NBTUtilBC.readEnumSet(nbt.getTag("tried"), EnumFacing.class);
     }
 
     public NBTTagCompound writeToNbt(long tickNow) {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag("stack", stack.serializeNBT());
-        nbt.setByte("colour", (byte) (colour == null ? 0 : colour.getMetadata()));
-        nbt.setBoolean("toCenter", state == EnumTravelState.SERVER_TO_CENTER);
+        nbt.setByte("colour", (byte) (colour == null ? 0 : colour.getMetadata() + 1));
+        nbt.setBoolean("toCenter", toCenter);
         nbt.setDouble("speed", speed);
         nbt.setInteger("tickStarted", (int) (tickStarted - tickNow));
         nbt.setInteger("tickFinished", (int) (tickFinished - tickNow));
-        nbt.setInteger("timeToCenter", timeToCenter);
-        nbt.setInteger("timeToExit", timeToExit);
-        nbt.setByte("from", (byte) (from == null ? 0 : from.ordinal() + 1));
-        nbt.setByte("to", (byte) (to == null ? 0 : to.ordinal() + 1));
-        if (toTryOrder != null) {
-            int[] order = new int[toTryOrder.size()];
-            for (int i = toTryOrder.size() - 1; i >= 0; i--) {
-                order[i] = toTryOrder.get(i).getIndex();
-            }
-            nbt.setIntArray("toTryOrder", order);
-        }
-        if (tried != null) {
-            int[] order = new int[tried.size()];
-            for (int i = tried.size() - 1; i >= 0; i--) {
-                order[i] = tried.get(i).getIndex();
-            }
-            nbt.setIntArray("tried", order);
-        }
+        nbt.setInteger("timeToDest", timeToDest);
+        nbt.setTag("side", NBTUtilBC.writeEnum(side));
+        nbt.setTag("tried", NBTUtilBC.writeEnumSet(tried, EnumFacing.class));
         return nbt;
     }
 
@@ -153,10 +121,8 @@ public class TravellingItem {
 
     public void genTimings(long now, double distance) {
         tickStarted = now;
-        int time = (int) Math.ceil(distance / speed);
-        tickFinished = now + (time);
-        timeToCenter = time / 2;
-        timeToExit = time - timeToCenter;
+        timeToDest = (int) Math.ceil(distance / speed);
+        tickFinished = now + timeToDest;
     }
 
     public Vec3d interpolatePosition(Vec3d start, Vec3d end, long tick, float partialTicks) {
@@ -182,22 +148,16 @@ public class TravellingItem {
         interp = Math.max(0, Math.min(1, interp));
 
         Vec3d center = new Vec3d(pos).addVector(0.5, 0.5, 0.5);
-        Vec3d start = VecUtil.offset(center, from, 0.5);
-        Vec3d end = center;
-        if (to != null) {
-            end = VecUtil.offset(center, to, 0.5);
-        }
+        Vec3d vecSide = side == null ? center : VecUtil.offset(center, side, 0.5);
 
         Vec3d vecFrom;
         Vec3d vecTo;
-        if (interp < 0.5) {
-            vecFrom = start;
+        if (toCenter) {
+            vecFrom = vecSide;
             vecTo = center;
-            interp *= 2;
         } else {
             vecFrom = center;
-            vecTo = end;
-            interp = (interp - 0.5f) * 2;
+            vecTo = vecSide;
         }
 
         return VecUtil.scale(vecFrom, 1 - interp).add(VecUtil.scale(vecTo, interp));
@@ -209,14 +169,14 @@ public class TravellingItem {
 
         float interp = (afterTick + partialTicks) / diff;
         interp = Math.max(0, Math.min(1, interp));
-        if (interp < 0.5) {
-            return from.getOpposite();
+        if (toCenter) {
+            return side == null ? null : side.getOpposite();
         } else {
-            return to;
+            return side;
         }
     }
 
     public boolean isVisible() {
-        return state != EnumTravelState.CLIENT_INVALID;
+        return true;
     }
 }

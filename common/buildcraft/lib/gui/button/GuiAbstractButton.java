@@ -7,11 +7,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 
 import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.GuiRectangle;
-import buildcraft.lib.gui.ITooltipElement;
+import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.pos.GuiRectangle;
 
-public abstract class GuiAbstractButton extends GuiButton implements ITooltipElement, IButtonClickEventTrigger {
+public abstract class GuiAbstractButton extends GuiButton implements IGuiElement, IButtonClickEventTrigger {
     public final GuiBC8<?> gui;
     private final List<IButtonClickEventListener> listeners = new ArrayList<>();
 
@@ -28,6 +28,8 @@ public abstract class GuiAbstractButton extends GuiButton implements ITooltipEle
         super(buttonId, x, y, widthIn, heightIn, buttonText);
         this.gui = gui;
     }
+
+    // Properties
 
     public boolean isActive() {
         return active;
@@ -76,7 +78,7 @@ public abstract class GuiAbstractButton extends GuiButton implements ITooltipEle
     @Override
     public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
         if (super.mousePressed(mc, mouseX, mouseY)) {
-            behaviour.mousePressed(this);
+            onMouseClicked(0);
             return true;
         } else {
             return false;
@@ -86,9 +88,7 @@ public abstract class GuiAbstractButton extends GuiButton implements ITooltipEle
     @Override
     public void mouseReleased(int mouseX, int mouseY) {
         super.mouseReleased(mouseX, mouseY);
-        if (isMouseOver()) {
-            behaviour.mouseReleased(this);
-        }
+        onMouseReleased(0);
     }
 
     // Tooltips
@@ -108,9 +108,9 @@ public abstract class GuiAbstractButton extends GuiButton implements ITooltipEle
     // Click Notification
 
     @Override
-    public void notifyButtonStateChange() {
+    public void notifyButtonClicked(int bkey) {
         for (IButtonClickEventListener listener : listeners) {
-            listener.handleButtonClick(this, id);
+            listener.handleButtonClick(this, id, bkey);
         }
     }
 
@@ -131,9 +131,53 @@ public abstract class GuiAbstractButton extends GuiButton implements ITooltipEle
         return this.active;
     }
 
-    // Misc
+    // IGuiArea
+
+    @Override
+    public int getX() {
+        return xPosition;
+    }
+
+    @Override
+    public int getY() {
+        return yPosition;
+    }
+
+    @Override
+    public int getWidth() {
+        return width;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
+    }
 
     public GuiRectangle getGuiRectangle() {
-        return new GuiRectangle(this.xPosition, this.yPosition, this.width, this.height);
+        return asImmutable();
+    }
+
+    // IGuiElement
+
+    @Override
+    public final void drawBackground(float partialTicks) {
+        drawButton(gui.mc, gui.mouse.getX(), gui.mouse.getY());
+    }
+
+    @Override
+    public final void drawForeground(float partialTicks) {
+        drawButtonForegroundLayer(gui.mouse.getX(), gui.mouse.getY());
+    }
+
+    @Override
+    public void onMouseClicked(int button) {
+        if (contains(gui.mouse)) {
+            behaviour.mousePressed(this, button);
+        }
+    }
+
+    @Override
+    public void onMouseReleased(int button) {
+        behaviour.mouseReleased(this, button);
     }
 }

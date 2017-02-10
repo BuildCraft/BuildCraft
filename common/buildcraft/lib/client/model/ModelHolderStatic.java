@@ -49,7 +49,6 @@ public class ModelHolderStatic extends ModelHolder {
             return ImmutableMap.of();
         }
         ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-        Map<String, String> map = new HashMap<>();
         for (String[] ar : textures) {
             if (ar.length != 2) {
                 throw new IllegalArgumentException("Must have 2 elements (key,value) but got " + Arrays.toString(ar));
@@ -57,7 +56,7 @@ public class ModelHolderStatic extends ModelHolder {
             if (!ar[0].startsWith("~")) {
                 throw new IllegalArgumentException("Key must start with '~' otherwise it will never be used!");
             }
-            map.put(ar[0], ar[1]);
+            builder.put(ar[0], ar[1]);
         }
         return builder.build();
     }
@@ -79,7 +78,7 @@ public class ModelHolderStatic extends ModelHolder {
             BCLog.logger.warn("[lib.model.holder] Failed to load the model " + modelLocation + " because " + io.getMessage());
         }
         if (rawModel != null) {
-            if (CustomModelLoader.DEBUG) {
+            if (ModelHolderRegistry.DEBUG) {
                 BCLog.logger.info("[lib.model.holder] The model " + modelLocation + " requires these sprites:");
             }
             for (Entry<String, String> entry : rawModel.textures.entrySet()) {
@@ -100,7 +99,7 @@ public class ModelHolderStatic extends ModelHolder {
                 } else {
                     toRegisterSprites.add(new ResourceLocation(lookup));
                 }
-                if (CustomModelLoader.DEBUG) {
+                if (ModelHolderRegistry.DEBUG) {
                     BCLog.logger.info("[lib.model.holder]  - " + lookup);
                 }
             }
@@ -156,7 +155,7 @@ public class ModelHolderStatic extends ModelHolder {
             if (unseen) {
                 unseen = false;
                 String warnText = "[lib.model.holder] Tried to use the model " + modelLocation + " before it was baked!";
-                if (CustomModelLoader.DEBUG) {
+                if (ModelHolderRegistry.DEBUG) {
                     BCLog.logger.warn(warnText, new Throwable());
                 } else {
                     BCLog.logger.warn(warnText);

@@ -9,12 +9,15 @@ import com.google.gson.JsonSyntaxException;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
+import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
+import buildcraft.lib.expression.node.value.NodeConstantLong;
 import buildcraft.lib.misc.JsonUtil;
 
 public class JsonVariableFaceUV {
     final INodeDouble[] uv;
+    final INodeLong textureRotation;
     final INodeBoolean visible;
     final INodeString texture;
 
@@ -26,6 +29,11 @@ public class JsonVariableFaceUV {
             visible = NodeConstantBoolean.TRUE;
         }
         texture = readVariableString(json, "texture", fnCtx);
+        if (json.has("rotation")) {
+            textureRotation = JsonVariableModelPart.readVariableLong(json, "rotation", fnCtx);
+        } else {
+            textureRotation = NodeConstantLong.ZERO;
+        }
     }
 
     private static INodeString readVariableString(JsonObject json, String memeber, FunctionContext fnCtx) {

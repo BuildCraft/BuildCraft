@@ -7,23 +7,22 @@ package buildcraft.transport.container;
 import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Slot;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.slot.SlotPhantom;
 import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond.FilterMode;
 
 public class ContainerDiamondWoodPipe extends ContainerBC_Neptune {
     private final PipeBehaviourWoodDiamond behaviour;
-    private final IItemHandler filterInv;
+    private final ItemHandlerSimple filterInv;
 
     public ContainerDiamondWoodPipe(EntityPlayer player, PipeBehaviourWoodDiamond behaviour) {
         super(player);
@@ -31,18 +30,10 @@ public class ContainerDiamondWoodPipe extends ContainerBC_Neptune {
         this.filterInv = behaviour.filters;
         behaviour.pipe.getHolder().onPlayerOpen(player);
 
+        addFullPlayerInventory(79);
+
         for (int i = 0; i < 9; i++) {
             addSlotToContainer(new SlotPhantom(filterInv, i, 8 + i * 18, 18));
-        }
-
-        for (int l = 0; l < 3; l++) {
-            for (int k1 = 0; k1 < 9; k1++) {
-                addSlotToContainer(new Slot(player.inventory, k1 + l * 9 + 9, 8 + k1 * 18, 79 + l * 18));
-            }
-        }
-
-        for (int i1 = 0; i1 < 9; i1++) {
-            addSlotToContainer(new Slot(player.inventory, i1, 8 + i1 * 18, 137));
         }
     }
 

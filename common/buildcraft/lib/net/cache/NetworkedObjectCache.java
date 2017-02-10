@@ -18,7 +18,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
-import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -127,10 +126,10 @@ public abstract class NetworkedObjectCache<T> {
     public class Link implements Supplier<T> {
 
         /** The stored, cached value. */
-        private T actual;
+        T actual;
 
         /** The id of this value. */
-        private final int id;
+        final int id;
 
         Link(int id) {
             this.id = id;
@@ -244,6 +243,9 @@ public abstract class NetworkedObjectCache<T> {
     void readObjectClient(int id, PacketBufferBC buffer) throws IOException {
         Link link = clientRetrieve(id);
         link.actual = readObject(buffer);
+        if (DEBUG_CPLX) {
+            BCLog.logger.info("[lib.net.cache] The cache " + getNameAndId() + " just received #" + id + " as " + link.actual);
+        }
     }
 
     final String getNameAndId() {

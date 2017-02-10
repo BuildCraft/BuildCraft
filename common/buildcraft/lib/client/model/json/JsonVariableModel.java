@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import com.google.gson.*;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 
@@ -36,7 +37,7 @@ public class JsonVariableModel {
 
     public static JsonVariableModel deserialize(ResourceLocation from, FunctionContext fnCtx, ResourceLoaderContext ctx) throws JsonParseException, IOException {
         try (InputStreamReader isr = ctx.startLoading(from)) {
-            return new JsonVariableModel(new Gson().fromJson(isr, JsonObject.class), fnCtx, ctx);
+            return new JsonVariableModel(JsonUtil.inlineCustom(new Gson().fromJson(isr, JsonObject.class)), fnCtx, ctx);
         } finally {
             ctx.finishLoading();
         }
@@ -65,7 +66,7 @@ public class JsonVariableModel {
     public JsonVariableModel(JsonObject obj, FunctionContext fnCtx, ResourceLoaderContext ctx) throws JsonParseException {
         boolean ambf = false;
         Map<String, String> texturesP = new HashMap<>();
-        variables = new HashMap<>();
+        variables = new LinkedHashMap<>();
         List<JsonVariableModelPart> cutout = new ArrayList<>();
         List<JsonVariableModelPart> translucent = new ArrayList<>();
         List<JsonModelRule> rulesP = new ArrayList<>();
@@ -137,6 +138,10 @@ public class JsonVariableModel {
             name = name.toLowerCase(Locale.ROOT);
             if (fnCtx.hasLocalVariable(name)) {
                 throw new JsonSyntaxException("Duplicate local variable '" + name + "'");
+            } else if (fnCtx.getVariable(name) != null) {
+                // Allow overriding of higher up variables
+                // ...what? Doesn't this disallow overriding existing variables?
+                continue;
             }
             JsonElement value = entry.getValue();
             if (!value.isJsonPrimitive() && value.getAsJsonPrimitive().isString()) {
@@ -147,16 +152,16 @@ public class JsonVariableModel {
             try {
                 node = InternalCompiler.compileExpression(expression, fnCtx);
             } catch (InvalidExpressionException e) {
-                throw new JsonSyntaxException("Invalid expression", e);
+                throw new JsonSyntaxException("Invalid expression " + expression, e);
             }
-            IVariableNode varNode = NodeType.getType(node).makeVariableNode();
             if (variables.containsKey(name)) {
                 NodeUpdatable existing = variables.get(name);
-                existing.setSource(varNode);
+                existing.setSource(node);
             } else {
+                IVariableNode varNode = NodeType.getType(node).makeVariableNode();
                 variables.put(name, new NodeUpdatable(node, varNode));
+                fnCtx.putVariable(name, varNode);
             }
-            fnCtx.putVariable(name, varNode);
         }
     }
 
@@ -164,5 +169,9 @@ public class JsonVariableModel {
         for (NodeUpdatable updatable : variablesArray) {
             updatable.refresh();
         }
+    }
+
+    public interface ITextureGetter {
+        TextureAtlasSprite get(String location);
     }
 }

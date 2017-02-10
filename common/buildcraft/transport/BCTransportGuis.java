@@ -11,7 +11,15 @@ public enum BCTransportGuis {
     FILTERED_BUFFER,
     PIPE_DIAMOND,
     PIPE_DIAMOND_WOOD,
+    PIPE_EMZULI,
     GATE;
+
+    public static final BCTransportGuis[] VALUES = values();
+
+    public static BCTransportGuis get(int id) {
+        if (id < 0 || id >= VALUES.length) return null;
+        return VALUES[id];
+    }
 
     public void openGui(EntityPlayer player) {
         openGui(player, 0, -1, 0);

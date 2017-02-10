@@ -4,12 +4,12 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import buildcraft.lib.expression.api.IExpressionNode;
-import buildcraft.lib.expression.api.INodeFunc;
-import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.INodeFunc;
+import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.node.binary.*;
 import buildcraft.lib.expression.node.cast.NodeCastBooleanToString;
 import buildcraft.lib.expression.node.cast.NodeCastDoubleToString;
@@ -37,7 +37,7 @@ public class InternalCompiler {
     private static final String rightAssosiative = "";
     private static final String[] precedence = { "(),", "?", "|| &&", "!= == <= >=", "&", "<< >>", "+-", "%", "*/", "^", "~¬" };
 
-    private static final String LONG_REGEX = "[-+]?[0-9]+";
+    private static final String LONG_REGEX = "[-+]?(0x[0-9a-fA-F_]+|[0-9]+)";
     private static final String DOUBLE_REGEX = "[-+]?[0-9]+(\\.[0-9]+)?";
     private static final String BOOLEAN_REGEX = "true|false";
     private static final String STRING_REGEX = "'.*'";
@@ -46,7 +46,7 @@ public class InternalCompiler {
     private static final Pattern DOUBLE_MATCHER = Pattern.compile(DOUBLE_REGEX);
     private static final Pattern BOOLEAN_MATCHER = Pattern.compile(BOOLEAN_REGEX);
     private static final Pattern STRING_MATCHER = Pattern.compile(STRING_REGEX);
-    
+
     public static IExpressionNode compileExpression(String expression, FunctionContext context) throws InvalidExpressionException {
         ExpressionDebugManager.debugPrintln("Compiling " + expression);
         String[] infix = tokenize(expression);
@@ -249,9 +249,10 @@ public class InternalCompiler {
             else if (":".equals(op)) ; // NO-OP, all handled by "?"
             else if ("?".equals(op)) pushConditional(stack);
             else if (UNARY_NEGATION.equals(op)) pushNegation(stack);
-            else if (LONG_MATCHER.matcher(op).matches()) {
-                stack.push(new NodeConstantLong(Long.parseLong(op)));
-            } else if (DOUBLE_MATCHER.matcher(op).matches()) {
+            else if (isValidLong(op)) {
+                long val = parseValidLong(op);
+                stack.push(new NodeConstantLong(val));
+            } else if (isValidDouble(op)) {
                 stack.push(new NodeConstantDouble(Double.parseDouble(op)));
             } else if (BOOLEAN_MATCHER.matcher(op).matches()) {
                 stack.push(NodeConstantBoolean.get(Boolean.parseBoolean(op)));
@@ -276,6 +277,26 @@ public class InternalCompiler {
             throw new InvalidExpressionException("Tried to make an expression with too many nodes! (" + stack + ")");
         }
         return node;
+    }
+
+    public static boolean isValidDouble(String op) {
+        return DOUBLE_MATCHER.matcher(op).matches();
+    }
+
+    public static boolean isValidLong(String value) {
+        return LONG_MATCHER.matcher(value).matches();
+    }
+
+    public static long parseValidLong(String value) {
+        long val;
+        if (value.startsWith("0x")) {
+            // its a hexidecimal number
+            String v = value.substring(2).replace("_", "");
+            val = Long.parseLong(v, 16);
+        } else {
+            val = Long.parseLong(value);
+        }
+        return val;
     }
 
     private static void pushSubtraction(NodeStack stack) throws InvalidExpressionException {

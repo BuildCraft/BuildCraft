@@ -41,7 +41,7 @@ public class MapChunk {
         for (int bz = 0; bz < 16; bz++) {
             for (int bx = 0; bx < 16; bx++) {
                 int y = chunk.getHeightValue(bx, bz);
-                int color = MapColor.airColor.colorIndex;
+                int color = MapColor.AIR.colorIndex;
 
                 if (y < 0) {
                     y = 255;
@@ -54,8 +54,8 @@ public class MapChunk {
                     state = chunk.getBlockState(new BlockPos(bx, y, bz));
                     b = state.getBlock();
 
-                    color = b.getMapColor(state) != null ? b.getMapColor(state).colorIndex : MapColor.airColor.colorIndex;
-                    if (color != MapColor.airColor.colorIndex) {
+                    color = state.getMapColor() != null ? state.getMapColor().colorIndex : MapColor.AIR.colorIndex;
+                    if (color != MapColor.AIR.colorIndex) {
                         break;
                     }
                     y--;

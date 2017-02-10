@@ -2,7 +2,6 @@ package buildcraft.transport.gate;
 
 import java.util.*;
 
-import buildcraft.transport.wire.WorldSavedDataWireSystems;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -31,6 +30,7 @@ import buildcraft.transport.gate.TriggerWrapper.TriggerWrapperInternal;
 import buildcraft.transport.gate.TriggerWrapper.TriggerWrapperInternalSided;
 import buildcraft.transport.plug.PluggableGate;
 import buildcraft.transport.wire.IWireEmitter;
+import buildcraft.transport.wire.WorldSavedDataWireSystems;
 
 public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContainer {
     public static final int NET_ID_RESOLVE = 3;
@@ -93,12 +93,17 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
             if (wrapper != null) {
                 for (int j = 0; j < triggerParameters[i].length; j++) {
                     NBTTagCompound cpt = nbt.getCompoundTag("triggerParameters[" + i + "][" + j + "]");
-                    if (cpt.hasNoTags()) continue;
+                    if (cpt.hasNoTags()) {
+                        triggerParameters[i][j] = wrapper.createParameter(j);
+                        continue;
+                    }
                     tag = cpt.getString("kind");
                     IStatementParameter param = StatementManager.createParameter(tag);
                     if (param != null) {
                         param.readFromNBT(cpt);
                         triggerParameters[i][j] = param;
+                    } else {
+                        BCLog.logger.warn("Didn't find an IStatementParamater for " + tag);
                     }
                 }
             }
@@ -113,12 +118,17 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
             if (wrapper != null) {
                 for (int j = 0; j < actionParameters[i].length; j++) {
                     NBTTagCompound cpt = nbt.getCompoundTag("actionParameters[" + i + "][" + j + "]");
-                    if (cpt.hasNoTags()) continue;
+                    if (cpt.hasNoTags()) {
+                        actionParameters[i][j] = wrapper.createParameter(j);
+                        continue;
+                    }
                     tag = cpt.getString("kind");
                     IStatementParameter param = StatementManager.createParameter(tag);
                     if (param != null) {
                         param.readFromNBT(cpt);
                         actionParameters[i][j] = param;
+                    } else {
+                        BCLog.logger.warn("Didn't find an IStatementParamater for " + tag);
                     }
                 }
             }
@@ -147,8 +157,8 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                     IStatementParameter param = triggerParameters[i][j];
                     if (param != null) {
                         NBTTagCompound cpt = new NBTTagCompound();
-                        cpt.setString("kind", param.getUniqueTag());
                         param.writeToNBT(cpt);
+                        cpt.setString("kind", param.getUniqueTag());
                         nbt.setTag("triggerParameters[" + i + "][" + j + "]", cpt);
                     }
                 }
@@ -166,8 +176,8 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                 IStatementParameter param = actionParameters[i][j];
                 if (param != null) {
                     NBTTagCompound cpt = new NBTTagCompound();
-                    cpt.setString("kind", param.getUniqueTag());
                     param.writeToNBT(cpt);
+                    cpt.setString("kind", param.getUniqueTag());
                     nbt.setTag("actionParameters[" + i + "][" + j + "]", cpt);
                 }
             }
@@ -323,18 +333,23 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
     }
 
     /** Sets up the given trigger or action statements to the given ones. */
-    private static void setStatementInternal(int index, StatementWrapper[] array, IStatementParameter[][] paramters, StatementWrapper statement) {
+    private static void setStatementInternal(int index, StatementWrapper[] array, IStatementParameter[][] parameters, StatementWrapper statement) {
+        StatementWrapper old = array[index];
         array[index] = statement;
         if (statement == null) {
-            Arrays.fill(paramters[index], null);
+            Arrays.fill(parameters[index], null);
         } else {
-            int max = paramters[index].length;
+            if (old != null && old.delegate == statement.delegate) {
+                // Don't clear out parameters if its the same statement with a different side.
+                return;
+            }
+            int max = parameters[index].length;
             int maxTrigger = statement.maxParameters();
             for (int i = 0; i < maxTrigger && i < max; i++) {
-                paramters[index][i] = statement.createParameter(i);
+                parameters[index][i] = statement.createParameter(i);
             }
             for (int i = maxTrigger; i < max; i++) {
-                paramters[index][i] = null;
+                parameters[index][i] = null;
             }
         }
     }
@@ -418,7 +433,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
             turnedOn.removeAll(previousBroadcasts);
             // FIXME: add call to "wires.emittingColour(turnedOff)"
 
-            if(!getPipeHolder().getPipeWorld().isRemote) {
+            if (!getPipeHolder().getPipeWorld().isRemote) {
                 WorldSavedDataWireSystems.get(getPipeHolder().getPipeWorld()).gatesChanged = true;
             }
         }

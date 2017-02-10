@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.silicon.container.ContainerIntegrationTable;
 
 public class GuiIntegrationTable extends GuiBC8<ContainerIntegrationTable> {

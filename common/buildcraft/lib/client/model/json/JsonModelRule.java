@@ -91,55 +91,11 @@ public abstract class JsonModelRule {
                 // don't bother rotating: there is nothing to rotate!
                 return;
             }
-            // always rotate from "UP" - it simplifies the math a bit
-            switch (faceFrom) {
-                case UP:
-                    break;
-                case DOWN:
-                    faceTo = faceTo.getOpposite();
-                    break;
-                case WEST:
-                case EAST:
-                case NORTH:
-                case SOUTH:
-                    throw new IllegalArgumentException("Not yet implemented - rotate from " + faceFrom);
-                default:
-                    throw new IllegalArgumentException("Unknown EnumFacing " + faceFrom);
-            }
-            faceFrom = EnumFacing.UP;
-            if (faceTo == EnumFacing.UP) return;
             float ox = (float) origin[0].evaluate();
             float oy = (float) origin[1].evaluate();
             float oz = (float) origin[2].evaluate();
-
-            switch (faceTo.getAxis()) {
-                case X: {
-                    for (MutableQuad q : quads) {
-                        q.translatef(-ox, -oy, -oz);
-                        q.rotateZ_90(faceTo.getFrontOffsetX());
-                        q.translatef(ox, oy, oz);
-                    }
-                    break;
-                }
-                case Z: {
-                    for (MutableQuad q : quads) {
-                        q.translatef(-ox, -oy, -oz);
-                        q.rotateX_90(faceTo.getFrontOffsetZ());
-                        q.translatef(ox, oy, oz);
-                    }
-                    break;
-                }
-                case Y: {
-                    for (MutableQuad q : quads) {
-                        q.translatef(-ox, -oy, -oz);
-                        q.rotateX_180();
-                        q.translatef(ox, oy, oz);
-                    }
-                    break;
-                }
-                default: {
-                    throw new IllegalStateException("Unknown axis " + faceTo.getAxis());
-                }
+            for (MutableQuad q : quads) {
+                q.rotate(faceFrom, faceTo, ox, oy, oz);
             }
         }
 

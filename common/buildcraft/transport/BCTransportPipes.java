@@ -65,7 +65,7 @@ public class BCTransportPipes {
 
     public static PipeDefinition lapisItem;
     public static PipeDefinition daizuliItem;
-    // public static PipeDefinition emzuliItem;
+    public static PipeDefinition emzuliItem;
 
     public static void preInit() {
         DefinitionBuilder builder = new DefinitionBuilder();
@@ -150,6 +150,9 @@ public class BCTransportPipes {
 
         builder.logic(PipeBehaviourDaizuli::new, PipeBehaviourDaizuli::new).texSuffixes(texSuffixPlus);
         daizuliItem = builder.idTexPrefix("daizuli_item").flowItem().define();
+
+        builder.logic(PipeBehaviourEmzuli::new, PipeBehaviourEmzuli::new).texSuffixes("_clear", "_filled");
+        emzuliItem = builder.idTexPrefix("emzuli_item").flowItem().define();
     }
 
     private static class DefinitionBuilder {

@@ -5,10 +5,10 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
-import buildcraft.transport.client.model.plug.PlugBakerBlocker;
+import buildcraft.transport.BCTransportModels;
 
 public final class KeyPlugBlocker extends PluggableModelKey<KeyPlugBlocker> {
     public KeyPlugBlocker(EnumFacing side) {
-        super(BlockRenderLayer.CUTOUT, PlugBakerBlocker.INSTANCE, side);
+        super(BlockRenderLayer.CUTOUT, BCTransportModels.BAKER_PLUG_BLOCKER, side);
     }
 }

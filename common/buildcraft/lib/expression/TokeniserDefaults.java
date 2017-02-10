@@ -35,6 +35,27 @@ public class TokeniserDefaults {
         }
         return ResultSpecific.IGNORE;
     };
+    public static final ITokenizerGobbler GOBBLER_HEXIDECIMAL = (ctx) -> {
+        if ("0x".equals(ctx.get(2))) {
+            int size = 2;
+            while (true) {
+                char c = ctx.getCharAt(size);
+                if ('_' == c || (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
+                    size++;
+                    continue;
+                } else {
+                    break;
+                }
+            }
+            if (size > 2) {
+                return new ResultConsume(size);
+            } else {
+                return ResultSpecific.IGNORE;
+            }
+        } else {
+            return ResultSpecific.IGNORE;
+        }
+    };
     public static final ITokenizerGobbler GOBBLER_NUMBER = (ctx) -> {
         int i = 0;
         int dot = -1;
@@ -100,6 +121,7 @@ public class TokeniserDefaults {
         List<ITokenizerGobbler> list = new ArrayList<>();
         list.add(GOBBLER_QUOTE);
         list.add(GOBBLER_MATH_OPERATOR);
+        list.add(GOBBLER_HEXIDECIMAL);
         list.add(GOBBLER_NUMBER);
         list.add(GOBBLER_WORD);
         list.add(GOBBLER_NON_WHITESPACE);

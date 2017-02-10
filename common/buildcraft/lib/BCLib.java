@@ -6,6 +6,8 @@ package buildcraft.lib;
 
 import java.util.function.Consumer;
 
+import net.minecraft.world.World;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -23,6 +25,7 @@ import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
+import buildcraft.lib.expression.ExpressionDebugManager;
 import buildcraft.lib.fluids.CoolantRegistry;
 import buildcraft.lib.fluids.FuelRegistry;
 import buildcraft.lib.item.ItemManager;
@@ -41,13 +44,13 @@ import buildcraft.lib.registry.TagManager.TagEntry;
 @Mod(modid = BCLib.MODID,
      name = "BuildCraft Lib",
      version = BCLib.VERSION,
-     acceptedMinecraftVersions = "[1.11.2]",
+     acceptedMinecraftVersions = "(gradle_replace_mcversion,)",
      dependencies = "required-after:forge@[13.19.0.2176,)")
 //@formatter:on
 public class BCLib {
     public static final String MODID = "buildcraftlib";
-    public static final String VERSION = "{$version}";
-    public static final String MC_VERSION = "{$mc_version}";
+    public static final String VERSION = "${version}";
+    public static final String MC_VERSION = "${mcversion}";
 
     @Instance(MODID)
     public static BCLib INSTANCE;
@@ -59,6 +62,9 @@ public class BCLib {
         BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2016");
         BCLog.logger.info("http://www.mod-buildcraft.com");
         BCLog.logger.info("");
+
+        ExpressionDebugManager.logger = BCLog.logger::info;
+
         BCModules.fmlPreInit();
 
         BuildcraftRecipeRegistry.assemblyRecipes = AssemblyRecipeRegistry.INSTANCE;

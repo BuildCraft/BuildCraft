@@ -45,9 +45,18 @@ public abstract class ActionWrapper extends StatementWrapper implements IActionI
     @Override
     public ActionWrapper[] getPossible() {
         IStatement[] possible = delegate.getPossible();
-        ActionWrapper[] real = new ActionWrapper[possible.length];
+        boolean andSides = sourcePart != EnumPipePart.CENTER;
+        ActionWrapper[] real = new ActionWrapper[possible.length + (andSides ? 5 : 0)];
         for (int i = 0; i < possible.length; i++) {
             real[i] = wrap(possible[i], sourcePart.face);
+        }
+        if (andSides) {
+            EnumPipePart part = sourcePart;
+            for (int j = 0; j < 5; j++) {
+                int i = j + possible.length;
+                part = part.next();
+                real[i] = wrap(delegate, part.face);
+            }
         }
         return real;
     }

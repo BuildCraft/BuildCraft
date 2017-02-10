@@ -12,6 +12,7 @@ import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.net.PacketBufferBC;

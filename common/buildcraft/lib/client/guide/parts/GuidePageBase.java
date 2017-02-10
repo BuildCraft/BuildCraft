@@ -4,7 +4,7 @@ import java.util.List;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.pos.GuiRectangle;
 
 public abstract class GuidePageBase extends GuidePart {
     /** The current page that is being rendered */

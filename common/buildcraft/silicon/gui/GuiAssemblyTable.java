@@ -15,7 +15,7 @@ import buildcraft.api.recipes.AssemblyRecipe;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.silicon.EnumAssemblyRecipeState;
 import buildcraft.silicon.container.ContainerAssemblyTable;
 

@@ -68,7 +68,9 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
     public void onTick() {
         // TODO: this probably shouldn't run every tick
         if (currentDir == EnumPipePart.CENTER) {
-            
+            advanceFacing();
+        } else if (!canFaceDirection(getCurrentDir())) {
+            currentDir = EnumPipePart.CENTER;
         }
 
         mjBattery.tick(pipe.getHolder().getPipeWorld(), pipe.getHolder().getPipePos());
@@ -100,7 +102,7 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
     }
 
     protected int extractItems(IFlowItems flow, EnumFacing dir, int count) {
-        return flow.tryExtractItems(count, dir, StackFilter.ALL);
+        return flow.tryExtractItems(count, dir, null, StackFilter.ALL);
     }
 
     protected FluidStack extractFluid(IFlowFluid flow, EnumFacing dir, int millibuckets) {

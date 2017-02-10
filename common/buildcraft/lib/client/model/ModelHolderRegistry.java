@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.LoaderState;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
-public class CustomModelLoader {
+public class ModelHolderRegistry {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.model.holder");
 
     static final List<ModelHolder> HOLDERS = new ArrayList<>();

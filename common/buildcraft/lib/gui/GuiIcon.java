@@ -151,6 +151,14 @@ public class GuiIcon implements ISimpleDrawable {
         tess.draw();
     }
 
+    public static void drawAt(ISprite sprite, int x, int y, int size) {
+        drawAt(sprite, x, y, size, size);
+    }
+
+    public static void drawAt(ISprite sprite, int x, int y, int width, int height) {
+        draw(sprite, x, y, x + width, y + height);
+    }
+
     public static void draw(ISprite sprite, double xMin, double yMin, double xMax, double yMax) {
         sprite.bindTexture();
 

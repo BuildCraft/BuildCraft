@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.builders.container.ContainerArchitect;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.pos.GuiRectangle;
 
 public class GuiArchitect extends GuiBC8<ContainerArchitect> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftbuilders:textures/gui/architect.png");

@@ -12,7 +12,7 @@ public abstract class ModelHolder {
 
     public ModelHolder(ResourceLocation modelLocation) {
         this.modelLocation = modelLocation;
-        CustomModelLoader.HOLDERS.add(this);
+        ModelHolderRegistry.HOLDERS.add(this);
     }
 
     public ModelHolder(String modelLocation) {

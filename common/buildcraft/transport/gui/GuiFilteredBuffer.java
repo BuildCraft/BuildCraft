@@ -16,14 +16,14 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.transport.BCTransportSprites;
-import buildcraft.transport.container.ContainerFilteredBuffer;
+import buildcraft.transport.container.ContainerFilteredBuffer_BC8;
 
-public class GuiFilteredBuffer extends GuiBC8<ContainerFilteredBuffer> {
+public class GuiFilteredBuffer extends GuiBC8<ContainerFilteredBuffer_BC8> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcrafttransport:textures/gui/filtered_buffer.png");
     private static final int SIZE_X = 176, SIZE_Y = 169;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
 
-    public GuiFilteredBuffer(ContainerFilteredBuffer container) {
+    public GuiFilteredBuffer(ContainerFilteredBuffer_BC8 container) {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;

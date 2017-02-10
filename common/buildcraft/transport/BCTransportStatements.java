@@ -2,27 +2,35 @@ package buildcraft.transport;
 
 import net.minecraft.item.EnumDyeColor;
 
-import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.StatementManager;
 
 import buildcraft.lib.misc.ColourUtil;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli.SlotIndex;
 import buildcraft.transport.statements.*;
 
 public class BCTransportStatements {
 
+    public static final TriggerLightSensor TRIGGER_LIGHT_LOW;
+    public static final TriggerLightSensor TRIGGER_LIGHT_HIGH;
+    public static final TriggerLightSensor[] TRIGGER_LIGHT;
+
     public static final ActionPowerPulsar ACTION_PULSAR_CONSTANT;
     public static final ActionPowerPulsar ACTION_PULSAR_SINGLE;
+    public static final ActionPowerPulsar[] ACTION_PULSAR;
 
     public static final TriggerPipeSignal[] TRIGGER_PIPE_SIGNAL;
     public static final ActionPipeSignal[] ACTION_PIPE_SIGNAL;
     public static final ActionPipeColor[] ACTION_PIPE_COLOUR;
-
-    public static final IStatement[] ACTION_PULSAR;
+    public static final ActionExtractionPreset[] ACTION_EXTRACTION_PRESET;
 
     static {
+        TRIGGER_LIGHT_LOW = new TriggerLightSensor(false);
+        TRIGGER_LIGHT_HIGH = new TriggerLightSensor(true);
+        TRIGGER_LIGHT = new TriggerLightSensor[] { TRIGGER_LIGHT_LOW, TRIGGER_LIGHT_HIGH };
+
         ACTION_PULSAR_CONSTANT = new ActionPowerPulsar(true);
         ACTION_PULSAR_SINGLE = new ActionPowerPulsar(false);
-        ACTION_PULSAR = new IStatement[] { ACTION_PULSAR_CONSTANT, ACTION_PULSAR_SINGLE };
+        ACTION_PULSAR = new ActionPowerPulsar[] { ACTION_PULSAR_CONSTANT, ACTION_PULSAR_SINGLE };
 
         TRIGGER_PIPE_SIGNAL = new TriggerPipeSignal[2 * ColourUtil.COLOURS.length];
         for (EnumDyeColor colour : ColourUtil.COLOURS) {
@@ -38,6 +46,11 @@ public class BCTransportStatements {
         ACTION_PIPE_COLOUR = new ActionPipeColor[ColourUtil.COLOURS.length];
         for (EnumDyeColor colour : ColourUtil.COLOURS) {
             ACTION_PIPE_COLOUR[colour.ordinal()] = new ActionPipeColor(colour);
+        }
+
+        ACTION_EXTRACTION_PRESET = new ActionExtractionPreset[SlotIndex.VALUES.length];
+        for (SlotIndex index : SlotIndex.VALUES) {
+            ACTION_EXTRACTION_PRESET[index.ordinal()] = new ActionExtractionPreset(index);
         }
 
         StatementManager.registerParameterClass(TriggerParameterSignal.class);

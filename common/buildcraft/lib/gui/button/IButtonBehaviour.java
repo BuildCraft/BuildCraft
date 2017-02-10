@@ -1,37 +1,34 @@
 package buildcraft.lib.gui.button;
 
 public interface IButtonBehaviour {
-    void mousePressed(GuiAbstractButton button);
+    void mousePressed(GuiAbstractButton button, int bkey);
 
-    void mouseReleased(GuiAbstractButton button);
+    void mouseReleased(GuiAbstractButton button, int bkey);
 
     public static final IButtonBehaviour DEFAULT = new IButtonBehaviour() {
         @Override
-        public void mousePressed(GuiAbstractButton button) {
+        public void mousePressed(GuiAbstractButton button, int bkey) {
             button.active = true;
-            button.notifyButtonStateChange();
         }
 
         @Override
-        public void mouseReleased(GuiAbstractButton button) {
+        public void mouseReleased(GuiAbstractButton button, int bkey) {
             button.active = false;
+            if (button.contains(button.gui.mouse)) {
+                button.notifyButtonClicked(bkey);
+            }
         }
     };
 
     public static final IButtonBehaviour TOGGLE = new IButtonBehaviour() {
         @Override
-        public void mousePressed(GuiAbstractButton button) {
-            if (button.active) {
-                button.active = false;
-                button.notifyButtonStateChange();
-            } else {
-                button.active = true;
-                button.notifyButtonStateChange();
-            }
+        public void mousePressed(GuiAbstractButton button, int bkey) {
+            button.active = !button.active;
+            button.notifyButtonClicked(bkey);
         }
 
         @Override
-        public void mouseReleased(GuiAbstractButton button) {}
+        public void mouseReleased(GuiAbstractButton button, int bkey) {}
     };
 
     public static Radio createAndSetRadioButtons(GuiAbstractButton... buttons) {
@@ -51,12 +48,11 @@ public interface IButtonBehaviour {
         }
 
         @Override
-        public void mousePressed(GuiAbstractButton button) {
+        public void mousePressed(GuiAbstractButton button, int bkey) {
             for (GuiAbstractButton toDisable : buttons) {
                 if (toDisable == button) {
                     if (!button.active) {
                         button.active = true;
-                        button.notifyButtonStateChange();
                     }
                 } else {
                     toDisable.active = false;
@@ -65,7 +61,10 @@ public interface IButtonBehaviour {
         }
 
         @Override
-        public void mouseReleased(GuiAbstractButton button) {
+        public void mouseReleased(GuiAbstractButton button, int bkey) {
+            if (button.contains(button.gui.mouse)) {
+                button.notifyButtonClicked(bkey);
+            }
             // NO-OP
         }
     }

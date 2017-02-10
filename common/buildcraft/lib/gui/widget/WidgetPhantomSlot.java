@@ -16,8 +16,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
 
-import buildcraft.lib.gui.*;
+import buildcraft.lib.gui.ContainerBC_Neptune;
+import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.GuiElementSimple;
+import buildcraft.lib.gui.Widget_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.StackUtil;
@@ -49,7 +53,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
         return null;
     }
 
-    private void tryMouseClick(int flags) {
+    void tryMouseClick(int flags) {
         boolean shift = (flags & CLICK_FLAG_SHIFT) == CLICK_FLAG_SHIFT;
         boolean single = (flags & CLICK_FLAG_SINGLE) == CLICK_FLAG_SINGLE;
         boolean clone = (flags & CLICK_FLAG_CLONE) == CLICK_FLAG_CLONE;
@@ -60,18 +64,19 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
                     container.player.inventory.setItemStack(get.copy());
                 }
             }
+        } else if (shift) {
+            setStack(StackUtil.EMPTY, true);
         } else {
-            ItemStack toSet = StackUtil.EMPTY;
-            if (!shift) {
-                toSet = container.player.inventory.getItemStack();
-                if (!toSet.isEmpty()) {
-                    toSet = toSet.copy();
-                    if (single) {
-                        toSet.setCount(1);
-                    }
+            ItemStack toSet = container.player.inventory.getItemStack();
+            if (toSet.isEmpty()) {
+                setStack(StackUtil.EMPTY, true);
+            } else {
+                toSet = toSet.copy();
+                if (single) {
+                    toSet.setCount(1);
                 }
+                setStack(toSet, true);
             }
-            setStack(toSet, true);
         }
     }
 
@@ -161,7 +166,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
 
         @Override
         public void addToolTips(List<ToolTip> tooltips) {
-            if (getStack() != null && contains(gui.mouse)) {
+            if (contains(gui.mouse) && !getStack().isEmpty()) {
                 tooltips.add(tooltip);
                 tooltip.refresh();
             }

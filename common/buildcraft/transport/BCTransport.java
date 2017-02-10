@@ -108,8 +108,9 @@ public class BCTransport {
         registerTag("item.waterproof").reg("waterproof").locale("pipeWaterproof").oldReg("pipeWaterproof").model("waterproof");
         registerTag("item.plug.blocker").reg("plug_blocker").locale("PipePlug").model("plug_blocker").tab("buildcraft.plugs");
         registerTag("item.plug.gate").reg("plug_gate").locale("gate").model("pluggable/gate").tab("buildcraft.plugs");
+        registerTag("item.plug.lens").reg("plug_lens").locale("lens").model("pluggable/lens").tab("buildcraft.plugs");
         registerTag("item.plug.pulsar").reg("plug_pulsar").locale("pulsar").model("plug_pulsar").tab("buildcraft.plugs");
-        registerTag("item.plug.daylight_sensor").reg("plug_daylight_sensor").locale("daylight_sensor").model("plug_daylight_sensor").tab("buildcraft.plugs");
+        registerTag("item.plug.light_sensor").reg("plug_light_sensor").locale("light_sensor").model("plug_light_sensor").tab("buildcraft.plugs");
         registerTag("item.wire").reg("wire").locale("pipeWire").model("wire/").tab("buildcraft.plugs");
         // Pipes
         startBatch();// Pipes
@@ -147,8 +148,9 @@ public class BCTransport {
         registerTag("item.pipe.buildcrafttransport.void_fluid").reg("pipe_void_fluid").locale("PipeFluidsVoid");
         registerTag("item.pipe.buildcrafttransport.obsidian_item").reg("pipe_obsidian_item").locale("PipeItemsObsidian");
         registerTag("item.pipe.buildcrafttransport.obsidian_fluid").reg("pipe_obsidian_fluid").locale("PipeFluidsObsidian");
-        registerTag("item.pipe.buildcrafttransport.lapis_item").reg("pipe_lapis_fluid").locale("PipeItemsLapis");
-        registerTag("item.pipe.buildcrafttransport.daizuli_item").reg("pipe_daizuli_fluid").locale("PipeItemsDaizuli");
+        registerTag("item.pipe.buildcrafttransport.lapis_item").reg("pipe_lapis_item").locale("PipeItemsLapis");
+        registerTag("item.pipe.buildcrafttransport.daizuli_item").reg("pipe_daizuli_item").locale("PipeItemsDaizuli");
+        registerTag("item.pipe.buildcrafttransport.emzuli_item").reg("pipe_emzuli_item").locale("PipeItemsEmzuli");
         endBatch(TagManager.setTab("buildcraft.pipes"));
         // Item Blocks
         registerTag("item.block.filtered_buffer").reg("filtered_buffer").locale("filteredBufferBlock").model("filtered_buffer");

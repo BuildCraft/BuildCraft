@@ -1,6 +1,7 @@
 package buildcraft.lib.gui;
 
 import buildcraft.lib.gui.pos.IGuiPosition;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 
 public class GuiElementSimple<G extends GuiBC8<?>> implements IGuiElement {

@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.pos.GuiRectangle;
 
 public class GuideSmelting extends GuidePartItem {
     public static final GuiIcon SMELTING_ICON = new GuiIcon(GuiGuide.ICONS_2, 119, 54, 80, 54);

@@ -1,11 +1,9 @@
-package buildcraft.lib.gui;
+package buildcraft.lib.gui.pos;
 
 import net.minecraft.util.math.MathHelper;
 
-import buildcraft.lib.gui.pos.IGuiArea;
-
 /** An immutable {@link IGuiArea}. */
-public class GuiRectangle implements IGuiArea {
+public final class GuiRectangle implements IGuiArea {
     /** A rectangle where all of the fields are set to 0. */
     public static final GuiRectangle ZERO = new GuiRectangle(0, 0, 0, 0);
 
@@ -36,6 +34,11 @@ public class GuiRectangle implements IGuiArea {
     @Override
     public int getHeight() {
         return height;
+    }
+
+    @Override
+    public GuiRectangle asImmutable() {
+        return this;
     }
 
     @Override

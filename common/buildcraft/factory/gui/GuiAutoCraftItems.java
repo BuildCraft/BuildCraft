@@ -12,7 +12,7 @@ import buildcraft.factory.container.ContainerAutoCraftItems;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.pos.GuiRectangle;
 
 public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftfactory:textures/gui/autobench_item.png");
@@ -49,7 +49,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> {
             int y = rootElement.getY() + 27;
             this.itemRender.renderItemAndEffectIntoGUI(this.mc.player, output, x, y);
             this.itemRender.renderItemOverlayIntoGUI(this.mc.fontRendererObj, output, x, y, null);
-            RenderHelper.enableStandardItemLighting();
+            RenderHelper.disableStandardItemLighting();
         }
     }
 }

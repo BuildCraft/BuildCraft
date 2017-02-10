@@ -362,6 +362,10 @@ public class MutableQuad {
     }
 
     public MutableQuad multColouri(int r, int g, int b, int a) {
+        r &= 0xFF;
+        g &= 0xFF;
+        b &= 0xFF;
+        a &= 0xFF;
         vertex_0.multColouri(r, g, b, a);
         vertex_1.multColouri(r, g, b, a);
         vertex_2.multColouri(r, g, b, a);
@@ -487,6 +491,48 @@ public class MutableQuad {
 
     public MutableQuad scaled(double x, double y, double z) {
         return scalef((float) x, (float) y, (float) z);
+    }
+
+    public MutableQuad rotate(EnumFacing from, EnumFacing to, float ox, float oy, float oz) {
+        if (from == to) {
+            // don't bother rotating: there is nothing to rotate!
+            return this;
+        }
+
+        translatef(-ox, -oy, -oz);
+        // @formatter:off
+        switch (from.getAxis()) {
+            case X: {
+                int mult = from.getFrontOffsetX();
+                switch (to.getAxis()) {
+                    case X: rotateY_180(); break;
+                    case Y: rotateZ_90(mult * to.getFrontOffsetY()); break;
+                    case Z: rotateY_90(mult * to.getFrontOffsetZ()); break;
+                }
+                break;
+            }
+            case Y: {
+                int mult = from.getFrontOffsetY();
+                switch (to.getAxis()) {
+                    case X: rotateZ_90(-mult * to.getFrontOffsetX()); break;
+                    case Y: rotateZ_180(); break;
+                    case Z: rotateX_90(mult * to.getFrontOffsetZ()); break;
+                }
+                break;
+            }
+            case Z: {
+                int mult = -from.getFrontOffsetZ();
+                switch (to.getAxis()) {
+                    case X: rotateY_90(mult * to.getFrontOffsetX()); break;
+                    case Y: rotateX_90(mult * to.getFrontOffsetY()); break;
+                    case Z: rotateY_180(); break;
+                }
+                break;
+            }
+        }
+        // @formatter:on
+        translatef(ox, oy, oz);
+        return this;
     }
 
     public MutableQuad rotateX_90(float scale) {

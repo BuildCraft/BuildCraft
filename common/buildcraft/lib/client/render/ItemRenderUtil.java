@@ -12,9 +12,7 @@ import com.google.common.cache.RemovalNotification;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.RenderEntityItem;
@@ -96,7 +94,7 @@ public class ItemRenderUtil {
 
     /** Used to render a lot of items in sequential order. Assumes that you don't change the glstate inbetween calls.
      * You must call {@link #endItemBatch()} after your have rendered all of the items. */
-    public static void renderItemStack(double x, double y, double z, ItemStack stack, EnumFacing dir, VertexBuffer vb) {
+    public static void renderItemStack(double x, double y, double z, ItemStack stack, int lightc, EnumFacing dir, VertexBuffer vb) {
         if (stack.isEmpty()) {
             return;
         }
@@ -111,8 +109,6 @@ public class ItemRenderUtil {
 
         if (vb != null && !requireGl) {
             vb.setTranslation(x, y, z);
-
-            // TODO: gl translation
             float scale = 0.30f;
 
             MutableQuad q = new MutableQuad(-1, null);
@@ -121,35 +117,7 @@ public class ItemRenderUtil {
                     q.fromBakedItem(quad);
                     q.translated(-0.5, -0.5, -0.5);
                     q.scaled(scale);
-
-                    switch (dir) {
-                        case EAST: {
-                            q.rotateY_90(1);
-                            break;
-                        }
-                        case WEST: {
-                            q.rotateY_90(-1);
-                            break;
-                        }
-                        case DOWN: {
-                            q.rotateX_90(1);
-                            break;
-                        }
-                        case UP: {
-                            q.rotateX_90(-1);
-                            break;
-                        }
-                        case NORTH: {
-                            q.rotateY_180();
-                            break;
-                        }
-                        case SOUTH: {
-                            break;
-                        }
-                        default: {
-                            throw new IllegalStateException("Unknown EnumFacing" + dir);
-                        }
-                    }
+                    q.rotate(EnumFacing.SOUTH, dir, 0, 0, 0);
                     if (quad.hasTintIndex()) {
                         int colour = Minecraft.getMinecraft().getItemColors().getColorFromItemstack(stack, quad.getTintIndex());
                         if (EntityRenderer.anaglyphEnable) {
@@ -157,7 +125,7 @@ public class ItemRenderUtil {
                         }
                         q.multColouri(colour, colour >> 8, colour >> 16, 0xFF);
                     }
-                    q.lighti(15, 15);
+                    q.lighti(lightc);
                     Vector3f normal = q.getCalculatedNormal();
                     q.normalvf(normal);
                     q.multShade();
@@ -172,15 +140,19 @@ public class ItemRenderUtil {
         if (!inBatch) {
             inBatch = true;
             Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-            // TODO: glstate changes
+            GL11.glPushMatrix();
+            GL11.glTranslated(x, y, z);
+            GL11.glScaled(0.3, 0.3, 0.3);
+            RenderHelper.disableStandardItemLighting();
         }
-        // TODO: render using opengl
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lightc % (float) 0x1_00_00, lightc / (float) 0x1_00_00);
+        Minecraft.getMinecraft().getRenderItem().renderItem(stack, model);
     }
 
     public static void endItemBatch() {
         if (inBatch) {
             inBatch = false;
-            // TODO: revert glstate changes
+            GL11.glPopMatrix();
         }
     }
 }

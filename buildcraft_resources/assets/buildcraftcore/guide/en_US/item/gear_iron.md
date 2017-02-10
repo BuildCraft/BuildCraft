@@ -1,6 +1,4 @@
-// TODO: Stone is not good for meshing lots of gears together
-//         and iron is much easier to make lots exactly to shape
-Stone has proven to be useful for simple machines, but making them all
+Stone has proven to be useful for simple machines, but doesn't hold up very well under the high stresses and temperatures found in engines and complex machinery.
 
-Iron however is much better for 
+Iron however is much better at these more demanding tasks.
 $[special.all_crafting](buildcraftcore:gear_iron)

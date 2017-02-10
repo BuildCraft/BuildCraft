@@ -472,6 +472,7 @@ item.FacadePhased.state=%s: %s
 item.FacadePhased.state_default=Default: %s
 item.FacadePhased.state_transparent=Transparent
 item.PipePlug.name=Pipe Plug
+item.light_sensor.name=Light Sensor
 item.Lens.name=Lens
 item.Filter.name=Filter
 item.PipePowerAdapter.name=Power Adapter

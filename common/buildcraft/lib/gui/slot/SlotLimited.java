@@ -4,13 +4,13 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.lib.gui.slot;
 
-import net.minecraftforge.items.IItemHandler;
+import buildcraft.lib.tile.item.IItemHandlerAdv;
 
 public class SlotLimited extends SlotBase {
 
     private final int limit;
 
-    public SlotLimited(IItemHandler itemHandler, int slotIndex, int posX, int posY, int limit) {
+    public SlotLimited(IItemHandlerAdv itemHandler, int slotIndex, int posX, int posY, int limit) {
         super(itemHandler, slotIndex, posX, posY);
         this.limit = limit;
     }

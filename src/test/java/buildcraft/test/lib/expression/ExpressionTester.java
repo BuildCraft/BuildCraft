@@ -27,6 +27,15 @@ public class ExpressionTester {
     }
 
     @Test
+    public void testLongBasics() {
+        bakeAndCallLong("0x0", 0);
+        bakeAndCallLong("0xa", 10);
+        bakeAndCallLong("0xA", 10);
+        bakeAndCallLong("0x10", 16);
+        bakeAndCallLong("0x1_0", 16);
+    }
+
+    @Test
     public void testDoubleBasics() {
         // I COULD change all these to be in separate functions... except that thats really long :/
         bakeAndCallDouble("0", 0);
@@ -87,7 +96,7 @@ public class ExpressionTester {
         bakeAndCallLong("(true ? false : true) ? 0 : 1", 1);
         bakeAndCallLong("(false ? 0 : 2) - 1", 1);
     }
-    
+
     @Test
     public void testMath() throws InvalidExpressionException {
         NodeVariableLong arg1 = new NodeVariableLong();
