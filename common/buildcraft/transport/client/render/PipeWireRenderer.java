@@ -17,7 +17,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.api.transport.neptune.EnumWirePart;
+import buildcraft.api.transport.EnumWirePart;
 
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.ModelUtil.UvFaceData;

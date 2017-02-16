@@ -11,9 +11,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.api.transport.neptune.PipeAPI;
-import buildcraft.api.transport.neptune.PipePluggable;
-import buildcraft.api.transport.neptune.PluggableDefinition;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.PluggableDefinition;
 
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.tile.TilePipeHolder;
@@ -54,7 +54,7 @@ public final class PluggableHolder {
         String id = nbt.getString("id");
         NBTTagCompound data = nbt.getCompoundTag("data");
         ResourceLocation identifier = new ResourceLocation(id);
-        PluggableDefinition def = PipeAPI.pluggableRegistry.getDefinition(identifier);
+        PluggableDefinition def = PipeApi.pluggableRegistry.getDefinition(identifier);
         if (def == null) {
             BCLog.logger.warn("Unknown pluggable id '" + id + "'");
             throw new Error("Def was null!");
@@ -89,7 +89,7 @@ public final class PluggableHolder {
 
     private void readCreateInternal(PacketBuffer buffer) {
         ResourceLocation identifer = new ResourceLocation(buffer.readString(256));
-        PluggableDefinition def = PipeAPI.pluggableRegistry.getDefinition(identifer);
+        PluggableDefinition def = PipeApi.pluggableRegistry.getDefinition(identifer);
         if (def == null) {
             throw new IllegalStateException("Unknown remote pluggable \"" + identifer + "\"");
         }

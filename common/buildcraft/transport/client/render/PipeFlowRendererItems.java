@@ -13,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import buildcraft.api.transport.neptune.IPipeFlowRenderer;
+import buildcraft.api.transport.pipe.IPipeFlowRenderer;
 
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.ModelUtil.UvFaceData;

@@ -12,9 +12,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.transport.neptune.IPipe;
-import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
-import buildcraft.api.transport.neptune.PipeBehaviour;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.PipeBehaviour;
+import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.misc.EntityUtil;
@@ -64,9 +64,6 @@ public abstract class PipeBehaviourDirectional extends PipeBehaviour {
                 } else {
                     if (canFaceDirection(part.face)) {
                         setCurrentDir(part.face);
-                        if (!player.world.isRemote) {
-                            pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
-                        }
                     }
                 }
             }
@@ -84,9 +81,6 @@ public abstract class PipeBehaviourDirectional extends PipeBehaviour {
             current = ROTATION_ORDER.next(current);
             if (canFaceDirection(current)) {
                 setCurrentDir(current);
-                if (!pipe.getHolder().getPipeWorld().isRemote) {
-                    pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
-                }
                 return true;
             }
         }
@@ -100,5 +94,8 @@ public abstract class PipeBehaviourDirectional extends PipeBehaviour {
 
     protected void setCurrentDir(EnumFacing setTo) {
         this.currentDir = EnumPipePart.fromFacing(setTo);
+        if (!pipe.getHolder().getPipeWorld().isRemote) {
+            pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
+        }
     }
 }

@@ -2,11 +2,11 @@ package buildcraft.transport;
 
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.transport.neptune.PipeAPI;
-import buildcraft.api.transport.neptune.PluggableDefinition;
-import buildcraft.api.transport.neptune.PluggableDefinition.IPluggableCreator;
-import buildcraft.api.transport.neptune.PluggableDefinition.IPluggableNbtReader;
-import buildcraft.api.transport.neptune.PluggableDefinition.IPluggableNetLoader;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.api.transport.pluggable.PluggableDefinition;
+import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableCreator;
+import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableNbtReader;
+import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableNetLoader;
 
 import buildcraft.transport.plug.*;
 
@@ -36,7 +36,7 @@ public class BCTransportPlugs {
 
     private static PluggableDefinition register(PluggableDefinition def) {
         // TODO: Add config for enabling/disabling
-        PipeAPI.pluggableRegistry.registerPluggable(def);
+        PipeApi.pluggableRegistry.register(def);
         return def;
     }
 

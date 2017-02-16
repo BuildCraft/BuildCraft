@@ -225,7 +225,7 @@ public class ExpressionTester {
 
     @Test
     public void testFunctions() throws InvalidExpressionException {
-        FunctionContext ctx = new FunctionContext(DefaultContexts.CONTEXT_DEFAULT);
+        FunctionContext ctx = new FunctionContext(DefaultContexts.createWithAll());
         compileFuncLong(ctx, "one", "1");
         compileFuncLong(ctx, "same", "value", argLong("value"));
 
@@ -268,7 +268,7 @@ public class ExpressionTester {
 
     @Test
     public void testVariables() {
-        FunctionContext ctx = new FunctionContext(DefaultContexts.CONTEXT_DEFAULT);
+        FunctionContext ctx = new FunctionContext(DefaultContexts.createWithAll());
 
         NodeVariableDouble someVariable = ctx.putVariableDouble("something");
         someVariable.value = 0;

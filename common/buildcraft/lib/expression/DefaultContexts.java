@@ -12,7 +12,10 @@ public class DefaultContexts {
 
     private static final FunctionContext[] CTX_ARRAY_ALL = { STRINGS, MATH_SCALAR, MATH_VECTOR, RENDERING };
 
-    public static final FunctionContext CONTEXT_DEFAULT = new FunctionContext(CTX_ARRAY_ALL);
+    /** Creates a new {@link FunctionContext} with all of the functions given in this class. */
+    public static FunctionContext createWithAll() {
+        return new FunctionContext(CTX_ARRAY_ALL);
+    }
 
     static {
         System.out.println(Math.ceil(Math.random() * 4));
@@ -161,9 +164,5 @@ public class DefaultContexts {
         EnumDyeColor colour = ColourUtil.parseColourOrNull(c);
         if (colour == null) return 0xFF_FF_FF_FF;
         return 0xFF_00_00_00 | ColourUtil.getLightHex(colour);
-    }
-
-    public static FunctionContext createWithAll() {
-        return new FunctionContext(CTX_ARRAY_ALL);
     }
 }

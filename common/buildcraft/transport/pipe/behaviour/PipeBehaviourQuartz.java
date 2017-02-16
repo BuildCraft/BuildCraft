@@ -3,10 +3,10 @@ package buildcraft.transport.pipe.behaviour;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.transport.PipeEventHandler;
-import buildcraft.api.transport.PipeEventItem;
-import buildcraft.api.transport.PipeEventPower;
-import buildcraft.api.transport.neptune.IPipe;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.api.transport.pipe.PipeEventItem;
+import buildcraft.api.transport.pipe.PipeEventPower;
 
 public class PipeBehaviourQuartz extends PipeBehaviourSeparate {
     private static final double SPEED_DELTA = 0.002;

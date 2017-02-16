@@ -22,7 +22,7 @@ public class StackUtil {
 
     /** A non-null version of {@link ItemStack#EMPTY}. When the original field adds an @Nonnull annotation this should
      * be inlined. */
-    // Actually the entire MC 
+    // Actually the entire MC
     @Nonnull
     public static final ItemStack EMPTY;
 
@@ -101,6 +101,7 @@ public class StackUtil {
         if (nbt.getSize() == 0) {
             return nbt;
         }
+        nbt.removeTag("_data");
         // TODO: Remove all of the non functional stuff (name, desc, etc)
         return nbt;
     }

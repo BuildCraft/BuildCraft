@@ -9,7 +9,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
+import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.Widget_Neptune;

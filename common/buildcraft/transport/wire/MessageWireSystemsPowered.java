@@ -1,7 +1,8 @@
 package buildcraft.transport.wire;
 
-import buildcraft.api.transport.neptune.IPipeHolder;
-import buildcraft.api.transport.neptune.IWireManager;
+import buildcraft.api.transport.IWireManager;
+import buildcraft.api.transport.pipe.IPipeHolder;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;

@@ -17,7 +17,7 @@ public class GenericExpressionCompiler {
     // Long support
 
     public static INodeLong compileExpressionLong(String function) throws InvalidExpressionException {
-        return compileExpressionLong(function, DefaultContexts.CONTEXT_DEFAULT);
+        return compileExpressionLong(function, DefaultContexts.createWithAll());
     }
 
     public static INodeLong compileExpressionLong(String function, FunctionContext context) throws InvalidExpressionException {
@@ -30,7 +30,7 @@ public class GenericExpressionCompiler {
     }
 
     public static INodeFuncLong compileFunctionLong(String function, Argument... args) throws InvalidExpressionException {
-        return compileFunctionLong(function, DefaultContexts.CONTEXT_DEFAULT, args);
+        return compileFunctionLong(function, DefaultContexts.createWithAll(), args);
     }
 
     public static INodeFuncLong compileFunctionLong(String function, FunctionContext context, Argument... args) throws InvalidExpressionException {
@@ -46,7 +46,7 @@ public class GenericExpressionCompiler {
     // Double support
 
     public static INodeDouble compileExpressionDouble(String function) throws InvalidExpressionException {
-        return compileExpressionDouble(function, DefaultContexts.CONTEXT_DEFAULT);
+        return compileExpressionDouble(function, DefaultContexts.createWithAll());
     }
 
     public static INodeDouble compileExpressionDouble(String function, FunctionContext context) throws InvalidExpressionException {
@@ -54,7 +54,7 @@ public class GenericExpressionCompiler {
     }
 
     public static INodeFuncDouble compileFunctionDouble(String function, Argument... args) throws InvalidExpressionException {
-        return compileFunctionDouble(function, DefaultContexts.CONTEXT_DEFAULT, args);
+        return compileFunctionDouble(function, DefaultContexts.createWithAll(), args);
     }
 
     public static INodeFuncDouble compileFunctionDouble(String function, FunctionContext context, Argument... args) throws InvalidExpressionException {
@@ -64,7 +64,7 @@ public class GenericExpressionCompiler {
     // Boolean support
 
     public static INodeBoolean compileExpressionBoolean(String function) throws InvalidExpressionException {
-        return compileExpressionBoolean(function, DefaultContexts.CONTEXT_DEFAULT);
+        return compileExpressionBoolean(function, DefaultContexts.createWithAll());
     }
 
     public static INodeBoolean compileExpressionBoolean(String function, FunctionContext context) throws InvalidExpressionException {
@@ -77,7 +77,7 @@ public class GenericExpressionCompiler {
     }
 
     public static INodeFuncBoolean compileFunctionBoolean(String function, Argument... args) throws InvalidExpressionException {
-        return compileFunctionBoolean(function, DefaultContexts.CONTEXT_DEFAULT, args);
+        return compileFunctionBoolean(function, DefaultContexts.createWithAll(), args);
     }
 
     public static INodeFuncBoolean compileFunctionBoolean(String function, FunctionContext context, Argument... args) throws InvalidExpressionException {
@@ -93,7 +93,7 @@ public class GenericExpressionCompiler {
     // String support
 
     public static INodeString compileExpressionString(String function) throws InvalidExpressionException {
-        return compileExpressionString(function, DefaultContexts.CONTEXT_DEFAULT);
+        return compileExpressionString(function, DefaultContexts.createWithAll());
     }
 
     public static INodeString compileExpressionString(String function, FunctionContext context) throws InvalidExpressionException {
@@ -101,7 +101,7 @@ public class GenericExpressionCompiler {
     }
 
     public static INodeFuncString compileFunctionString(String function, Argument... args) throws InvalidExpressionException {
-        return compileFunctionString(function, DefaultContexts.CONTEXT_DEFAULT, args);
+        return compileFunctionString(function, DefaultContexts.createWithAll(), args);
     }
 
     public static INodeFuncString compileFunctionString(String function, FunctionContext context, Argument... args) throws InvalidExpressionException {

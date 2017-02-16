@@ -7,7 +7,7 @@ import java.util.Objects;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.item.EnumDyeColor;
 
-import buildcraft.api.transport.neptune.PipeDefinition;
+import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.client.model.IModelCache;
 import buildcraft.lib.client.model.ModelCache;

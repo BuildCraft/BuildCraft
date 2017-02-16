@@ -24,7 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.properties.BuildCraftProperty;
-import buildcraft.api.transport.ICustomPipeConnection;
+import buildcraft.api.transport.pipe.ICustomPipeConnection;
 
 import buildcraft.factory.tile.TileTank;
 import buildcraft.lib.block.BlockBCTile_Neptune;

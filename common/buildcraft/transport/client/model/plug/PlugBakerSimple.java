@@ -10,14 +10,14 @@ import javax.vecmath.Matrix4f;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.transport.pluggable.IPluggableModelBaker;
+import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.MatrixUtil;
 
-/** An {@link IPluggableModelBaker} that rotates a given model to the correct side, and returns the quads. */
-public class PlugBakerSimple<K extends PluggableModelKey<K>> implements IPluggableModelBaker<K> {
+/** An {@link IPluggableStaticBaker} that rotates a given model to the correct side, and returns the quads. */
+public class PlugBakerSimple<K extends PluggableModelKey> implements IPluggableStaticBaker<K> {
 
     private final IQuadProvider provider;
     private final Map<EnumFacing, List<BakedQuad>> cached = new EnumMap<>(EnumFacing.class);
@@ -35,11 +35,9 @@ public class PlugBakerSimple<K extends PluggableModelKey<K>> implements IPluggab
             MutableQuad copy = new MutableQuad();
             for (EnumFacing to : EnumFacing.VALUES) {
                 List<BakedQuad> list = new ArrayList<>();
-                // TODO: Replace with "MutableQuad.rotate(WEST, to)" as it will probably be faster
-                Matrix4f transform = MatrixUtil.rotateTowardsFace(to);
                 for (MutableQuad q : quads) {
                     copy.copyFrom(q);
-                    copy.transform(transform);
+                    copy.rotate(EnumFacing.WEST, to, 0.5f, 0.5f, 0.5f);
                     copy.multShade();
                     list.add(copy.toBakedBlock());
                 }

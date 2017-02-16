@@ -15,11 +15,11 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IStackFilter;
-import buildcraft.api.transport.neptune.IFlowFluid;
-import buildcraft.api.transport.neptune.IFlowItems;
-import buildcraft.api.transport.neptune.IItemPluggable;
-import buildcraft.api.transport.neptune.IPipe;
-import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
+import buildcraft.api.transport.IItemPluggable;
+import buildcraft.api.transport.pipe.IFlowFluid;
+import buildcraft.api.transport.pipe.IFlowItems;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 
 import buildcraft.lib.inventory.filter.*;
 import buildcraft.lib.misc.EntityUtil;

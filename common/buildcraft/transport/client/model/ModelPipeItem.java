@@ -24,8 +24,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.world.World;
 
-import buildcraft.api.transport.neptune.IPipeItem;
-import buildcraft.api.transport.neptune.PipeDefinition;
+import buildcraft.api.transport.pipe.IItemPipe;
+import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.client.model.ModelItemSimple;
 import buildcraft.lib.client.model.ModelUtil;
@@ -167,8 +167,8 @@ public enum ModelPipeItem implements IBakedModel {
             TextureAtlasSprite top = center;
             TextureAtlasSprite bottom = center;
 
-            if (item instanceof IPipeItem) {
-                PipeDefinition def = ((IPipeItem) item).getDefiniton();
+            if (item instanceof IItemPipe) {
+                PipeDefinition def = ((IItemPipe) item).getDefiniton();
                 top = PipeModelCacheBase.generator.getItemSprite(def, def.itemTextureTop);
                 center = PipeModelCacheBase.generator.getItemSprite(def, def.itemTextureCenter);
                 bottom = PipeModelCacheBase.generator.getItemSprite(def, def.itemTextureBottom);

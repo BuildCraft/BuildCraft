@@ -20,8 +20,8 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.api.transport.neptune.PipeAPI;
-import buildcraft.api.transport.neptune.PipeDefinition;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.ModelUtil.UvFaceData;
@@ -40,7 +40,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
     @Override
     public void onTextureStitchPre(TextureMap map) {
         sprites.clear();
-        for (PipeDefinition def : PipeAPI.pipeRegistry.getAllRegisteredPipes()) {
+        for (PipeDefinition def : PipeApi.pipeRegistry.getAllRegisteredPipes()) {
             TextureAtlasSprite[] array = new TextureAtlasSprite[def.textures.length];
             for (int i = 0; i < array.length; i++) {
                 array[i] = map.registerSprite(new ResourceLocation(def.textures[i]));

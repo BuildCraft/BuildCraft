@@ -5,20 +5,16 @@ import java.util.Arrays;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.transport.neptune.IPluggableDynamicRenderer;
+import buildcraft.api.transport.pluggable.IPlugDynamicRenderer;
 
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.transport.BCTransportModels;
 import buildcraft.transport.plug.PluggablePulsar;
 
-public class PlugPulsarRenderer implements IPluggableDynamicRenderer {
+public enum PlugPulsarRenderer implements IPlugDynamicRenderer<PluggablePulsar> {
+    INSTANCE;
+
     private static final MutableQuad[][] cache = new MutableQuad[6][];
-
-    private final PluggablePulsar toRender;
-
-    public PlugPulsarRenderer(PluggablePulsar toRender) {
-        this.toRender = toRender;
-    }
 
     private static MutableQuad[] getFromCache(PluggablePulsar pulsar, double stage) {
         EnumFacing side = pulsar.side;
@@ -34,10 +30,7 @@ public class PlugPulsarRenderer implements IPluggableDynamicRenderer {
             MutableQuad[] quads = BCTransportModels.getPulsarDynQuads(isPulsing, stage, isAuto, isManual);
             for (MutableQuad q : quads) {
                 q.rotate(EnumFacing.WEST, side, 0.5f, 0.5f, 0.5f);
-                if (q.isShade()) {
-                    q.setCalculatedDiffuse();
-                    q.setShade(false);
-                }
+                q.multShade();
             }
             if (isPulsing) {
                 return quads;
@@ -52,9 +45,9 @@ public class PlugPulsarRenderer implements IPluggableDynamicRenderer {
     }
 
     @Override
-    public void render(double x, double y, double z, float partialTicks, VertexBuffer vb) {
+    public void render(PluggablePulsar pulsar, double x, double y, double z, float partialTicks, VertexBuffer vb) {
         vb.setTranslation(x, y, z);
-        for (MutableQuad q : getFromCache(toRender, toRender.getStage(partialTicks))) {
+        for (MutableQuad q : getFromCache(pulsar, pulsar.getStage(partialTicks))) {
             q.render(vb);
         }
         vb.setTranslation(0, 0, 0);

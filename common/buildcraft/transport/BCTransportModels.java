@@ -10,7 +10,7 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.api.transport.pluggable.IPluggableModelBaker;
+import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 
 import buildcraft.lib.client.model.ModelHolderStatic;
 import buildcraft.lib.client.model.ModelHolderVariable;
@@ -54,9 +54,12 @@ public class BCTransportModels {
     private static final NodeVariableBoolean PULSAR_AUTO;
     private static final NodeVariableBoolean PULSAR_MANUAL;
 
-    public static final IPluggableModelBaker<KeyPlugPulsar> BAKER_PLUG_PULSAR;
-    public static final IPluggableModelBaker<KeyPlugBlocker> BAKER_PLUG_BLOCKER;
-    public static final IPluggableModelBaker<KeyPlugLightSensor> BAKER_PLUG_LIGHT_SENSOR;
+    private static final ModelHolderVariable STRIPES;
+    private static final NodeVariableString STRIPES_DIRECTION;
+
+    public static final IPluggableStaticBaker<KeyPlugPulsar> BAKER_PLUG_PULSAR;
+    public static final IPluggableStaticBaker<KeyPlugBlocker> BAKER_PLUG_BLOCKER;
+    public static final IPluggableStaticBaker<KeyPlugLightSensor> BAKER_PLUG_LIGHT_SENSOR;
 
     static {
         BLOCKER = getModel("plugs/blocker.json");
@@ -64,28 +67,32 @@ public class BCTransportModels {
         POWER_ADAPTER = getModel("plugs/power_adapter.json");
         PULSAR_STATIC = getModel("plugs/pulsar_static.json");
 
-        FunctionContext fnCtx = new FunctionContext(DefaultContexts.CONTEXT_DEFAULT);
+        FunctionContext fnCtx = DefaultContexts.createWithAll();
         GATE_MATERIAL = fnCtx.putVariableString("material");
         GATE_MODIFIER = fnCtx.putVariableString("modifier");
         GATE_LOGIC = fnCtx.putVariableString("logic");
         GATE_STATIC = getModel("plugs/gate.json", fnCtx);
 
-        fnCtx = new FunctionContext(DefaultContexts.CONTEXT_DEFAULT);
+        fnCtx = DefaultContexts.createWithAll();
         GATE_ON = fnCtx.putVariableBoolean("on");
         GATE_DYNAMIC = getModel("plugs/gate_dynamic.json", fnCtx);
 
-        fnCtx = new FunctionContext(DefaultContexts.CONTEXT_DEFAULT);
+        fnCtx = DefaultContexts.createWithAll();
         LENS_COLOUR = fnCtx.putVariableString("colour");
         LENS_SIDE = fnCtx.putVariableString("side");
         LENS = getModel("plugs/lens.json", fnCtx);
         FILTER = getModel("plugs/filter.json", fnCtx);
 
-        fnCtx = new FunctionContext(DefaultContexts.CONTEXT_DEFAULT);
+        fnCtx = DefaultContexts.createWithAll();
         PULSAR_STAGE = fnCtx.putVariableDouble("stage");
         PULSAR_ON = fnCtx.putVariableBoolean("on");
         PULSAR_AUTO = fnCtx.putVariableBoolean("auto");
         PULSAR_MANUAL = fnCtx.putVariableBoolean("manual");
         PULSAR_DYNAMIC = getModel("plugs/pulsar_dynamic.json", fnCtx);
+
+        fnCtx = DefaultContexts.createWithAll();
+        STRIPES_DIRECTION = fnCtx.putVariableString("side");
+        STRIPES = getModel("pipes/stripes.json", fnCtx);
 
         BAKER_PLUG_PULSAR = new PlugBakerSimple<>(PULSAR_STATIC::getCutoutQuads);
         BAKER_PLUG_BLOCKER = new PlugBakerSimple<>(BLOCKER::getCutoutQuads);
@@ -184,5 +191,10 @@ public class BCTransportModels {
         PULSAR_AUTO.value = isAuto;
         PULSAR_MANUAL.value = isManual;
         return PULSAR_DYNAMIC.getCutoutQuads();
+    }
+
+    public static MutableQuad[] getStripesDynQuads(EnumFacing side) {
+        STRIPES_DIRECTION.value = side.getName();
+        return STRIPES.getCutoutQuads();
     }
 }

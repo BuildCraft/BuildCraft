@@ -23,10 +23,10 @@ import buildcraft.api.mj.IMjPassiveProvider;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.PipeEventPower;
-import buildcraft.api.transport.neptune.IFlowPower;
-import buildcraft.api.transport.neptune.IPipe;
-import buildcraft.api.transport.neptune.PipeFlow;
+import buildcraft.api.transport.pipe.IFlowPower;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.PipeEventPower;
+import buildcraft.api.transport.pipe.PipeFlow;
 
 import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.misc.MathUtil;

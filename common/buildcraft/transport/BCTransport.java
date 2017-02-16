@@ -13,10 +13,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.transport.ICustomPipeConnection;
-import buildcraft.api.transport.PipeConnectionAPI;
-import buildcraft.api.transport.neptune.PipeAPI;
-import buildcraft.api.transport.neptune.PipeFlowType;
+import buildcraft.api.transport.pipe.ICustomPipeConnection;
+import buildcraft.api.transport.pipe.PipeConnectionAPI;
 
 import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
@@ -28,12 +26,6 @@ import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
-import buildcraft.transport.pipe.PipeRegistry;
-import buildcraft.transport.pipe.flow.PipeFlowFluids;
-import buildcraft.transport.pipe.flow.PipeFlowItems;
-import buildcraft.transport.pipe.flow.PipeFlowPower;
-import buildcraft.transport.pipe.flow.PipeFlowStructure;
-import buildcraft.transport.plug.PluggableRegistry;
 import buildcraft.transport.wire.MessageWireSystems;
 import buildcraft.transport.wire.MessageWireSystemsPowered;
 
@@ -53,28 +45,16 @@ public class BCTransport {
     public static void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
-        PipeAPI.pipeRegistry = PipeRegistry.INSTANCE;
-        PipeAPI.pluggableRegistry = PluggableRegistry.INSTANCE;
-
-        PipeAPI.flowItems = new PipeFlowType(PipeFlowItems::new, PipeFlowItems::new);
-        PipeAPI.flowFluids = new PipeFlowType(PipeFlowFluids::new, PipeFlowFluids::new);
-        PipeAPI.flowPower = new PipeFlowType(PipeFlowPower::new, PipeFlowPower::new);
-        PipeAPI.flowStructure = new PipeFlowType(PipeFlowStructure::new, PipeFlowStructure::new);
-
         CreativeTabBC tabPipes = CreativeTabManager.createTab("buildcraft.pipes");
         CreativeTabBC tabPlugs = CreativeTabManager.createTab("buildcraft.plugs");
 
+        BCTransportRegistries.preInit();
         BCTransportConfig.preInit();
         BCTransportBlocks.preInit();
         BCTransportPipes.preInit();
         BCTransportPlugs.preInit();
         BCTransportItems.preInit();
         BCTransportStatements.preInit();
-
-        ICustomPipeConnection smallerBlockConnection = (world, pos, face, state) -> face == EnumFacing.UP ? 0 : 2 / 16f;
-        PipeConnectionAPI.registerConnection(Blocks.CHEST, smallerBlockConnection);
-        PipeConnectionAPI.registerConnection(Blocks.TRAPPED_CHEST, smallerBlockConnection);
-        PipeConnectionAPI.registerConnection(Blocks.HOPPER, smallerBlockConnection);
 
         // Reload after all of the pipe defs have been created.
         BCTransportConfig.reloadConfig(EnumRestartRequirement.GAME);
@@ -94,6 +74,7 @@ public class BCTransport {
     @Mod.EventHandler
     public static void init(FMLInitializationEvent evt) {
         BCTransportProxy.getProxy().fmlInit();
+        BCTransportRegistries.init();
         BCTransportRecipes.init();
     }
 
@@ -151,6 +132,7 @@ public class BCTransport {
         registerTag("item.pipe.buildcrafttransport.lapis_item").reg("pipe_lapis_item").locale("PipeItemsLapis");
         registerTag("item.pipe.buildcrafttransport.daizuli_item").reg("pipe_daizuli_item").locale("PipeItemsDaizuli");
         registerTag("item.pipe.buildcrafttransport.emzuli_item").reg("pipe_emzuli_item").locale("PipeItemsEmzuli");
+        registerTag("item.pipe.buildcrafttransport.stripes_item").reg("pipe_stripes_item").locale("PipeItemsStripes");
         endBatch(TagManager.setTab("buildcraft.pipes"));
         // Item Blocks
         registerTag("item.block.filtered_buffer").reg("filtered_buffer").locale("filteredBufferBlock").model("filtered_buffer");

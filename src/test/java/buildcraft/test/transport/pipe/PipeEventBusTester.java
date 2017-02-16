@@ -3,8 +3,8 @@ package buildcraft.test.transport.pipe;
 import org.junit.Assert;
 import org.junit.Test;
 
-import buildcraft.api.transport.PipeEventHandler;
-import buildcraft.api.transport.PipeEventItem;
+import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.api.transport.pipe.PipeEventItem;
 
 import buildcraft.transport.pipe.PipeEventBus;
 

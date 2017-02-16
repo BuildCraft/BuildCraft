@@ -11,9 +11,9 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.transport.neptune.IPipeItem;
-import buildcraft.api.transport.neptune.IPipeRegistry;
-import buildcraft.api.transport.neptune.PipeDefinition;
+import buildcraft.api.transport.pipe.IItemPipe;
+import buildcraft.api.transport.pipe.IPipeRegistry;
+import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.misc.data.LoadingException;
@@ -23,7 +23,7 @@ public enum PipeRegistry implements IPipeRegistry {
     INSTANCE;
 
     private final Map<ResourceLocation, PipeDefinition> definitions = new HashMap<>();
-    private final Map<PipeDefinition, IPipeItem> pipeItems = new IdentityHashMap<>();
+    private final Map<PipeDefinition, IItemPipe> pipeItems = new IdentityHashMap<>();
 
     @Override
     public ItemPipeHolder registerPipeAndItem(PipeDefinition definition) {
@@ -40,7 +40,7 @@ public enum PipeRegistry implements IPipeRegistry {
     }
 
     @Override
-    public void setItemForPipe(PipeDefinition definition, IPipeItem item) {
+    public void setItemForPipe(PipeDefinition definition, IItemPipe item) {
         if (definition == null) throw new NullPointerException("definition");
         if (item == null) {
             pipeItems.remove(definition);
@@ -50,7 +50,7 @@ public enum PipeRegistry implements IPipeRegistry {
     }
 
     @Override
-    public IPipeItem getItemForPipe(PipeDefinition definition) {
+    public IItemPipe getItemForPipe(PipeDefinition definition) {
         return pipeItems.get(definition);
     }
 

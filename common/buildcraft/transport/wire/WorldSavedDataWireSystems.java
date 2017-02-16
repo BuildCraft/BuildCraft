@@ -20,8 +20,8 @@ import net.minecraft.world.storage.MapStorage;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.api.transport.neptune.EnumWirePart;
-import buildcraft.api.transport.neptune.IPipeHolder;
+import buildcraft.api.transport.EnumWirePart;
+import buildcraft.api.transport.pipe.IPipeHolder;
 
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.transport.plug.PluggableGate;

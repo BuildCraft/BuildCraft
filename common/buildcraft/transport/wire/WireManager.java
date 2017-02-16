@@ -13,10 +13,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.transport.neptune.EnumWirePart;
-import buildcraft.api.transport.neptune.IPipe;
-import buildcraft.api.transport.neptune.IPipeHolder;
-import buildcraft.api.transport.neptune.IWireManager;
+import buildcraft.api.transport.EnumWirePart;
+import buildcraft.api.transport.IWireManager;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.IPipeHolder;
 
 import buildcraft.lib.net.PacketBufferBC;
 

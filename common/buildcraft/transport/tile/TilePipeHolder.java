@@ -21,8 +21,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.PipeEvent;
-import buildcraft.api.transport.neptune.*;
+import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.misc.data.LoadingException;
@@ -131,8 +131,8 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
         Item item = stack.getItem();
-        if (item instanceof IPipeItem) {
-            PipeDefinition definition = ((IPipeItem) item).getDefiniton();
+        if (item instanceof IItemPipe) {
+            PipeDefinition definition = ((IItemPipe) item).getDefiniton();
             this.pipe = new Pipe(this, definition);
             eventBus.registerHandler(pipe.behaviour);
             eventBus.registerHandler(pipe.flow);

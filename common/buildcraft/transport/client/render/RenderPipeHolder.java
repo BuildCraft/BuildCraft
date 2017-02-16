@@ -7,13 +7,15 @@ import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.client.model.animation.FastTESR;
 
-import buildcraft.api.transport.neptune.IPluggableDynamicRenderer;
-import buildcraft.api.transport.neptune.PipePluggable;
+import buildcraft.api.transport.pipe.IPipeBehaviourRenderer;
+import buildcraft.api.transport.pipe.IPipeFlowRenderer;
+import buildcraft.api.transport.pipe.PipeBehaviour;
+import buildcraft.api.transport.pipe.PipeFlow;
+import buildcraft.api.transport.pluggable.IPlugDynamicRenderer;
+import buildcraft.api.transport.pluggable.PipePluggable;
 
+import buildcraft.transport.client.PipeRegistryClient;
 import buildcraft.transport.pipe.Pipe;
-import buildcraft.transport.pipe.flow.PipeFlowFluids;
-import buildcraft.transport.pipe.flow.PipeFlowItems;
-import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.tile.TilePipeHolder;
 
 public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
@@ -44,24 +46,41 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
             if (plug == null) {
                 continue;
             }
-            IPluggableDynamicRenderer dynRenderer = plug.getDynamicRenderer();
-            if (dynRenderer == null) {
-                continue;
-            }
-            dynRenderer.render(x, y, z, partialTicks, vb);
+            renderPlug(plug, x, y, z, partialTicks, vb);
         }
     }
 
-    private void renderContents(TilePipeHolder pipe, double x, double y, double z, float partialTicks, VertexBuffer vb) {
+    private static <P extends PipePluggable> void renderPlug(P plug, double x, double y, double z, float partialTicks, VertexBuffer vb) {
+        IPlugDynamicRenderer<P> renderer = PipeRegistryClient.getPlugRenderer(plug);
+        if (renderer != null) {
+            renderer.render(plug, x, y, z, partialTicks, vb);
+        }
+    }
+
+    private static void renderContents(TilePipeHolder pipe, double x, double y, double z, float partialTicks, VertexBuffer vb) {
         Pipe p = pipe.getPipe();
-        if (p != null && p.flow != null) {
-            if (p.flow instanceof PipeFlowItems) {
-                PipeFlowRendererItems.INSTANCE.render((PipeFlowItems) p.flow, x, y, z, partialTicks, vb);
-            } else if (p.flow instanceof PipeFlowFluids) {
-                PipeFlowRendererFluids.INSTANCE.render((PipeFlowFluids) p.flow, x, y, z, partialTicks, vb);
-            } else if (p.flow instanceof PipeFlowPower) {
-                PipeFlowRendererPower.INSTANCE.render((PipeFlowPower) p.flow, x, y, z, partialTicks, vb);
-            }
+        if (p == null) {
+            return;
+        }
+        if (p.flow != null) {
+            renderFlow(p.flow, x, y, z, partialTicks, vb);
+        }
+        if (p.behaviour != null) {
+            renderBehaviour(p.behaviour, x, y, z, partialTicks, vb);
+        }
+    }
+
+    private static <F extends PipeFlow> void renderFlow(F flow, double x, double y, double z, float partialTicks, VertexBuffer vb) {
+        IPipeFlowRenderer<F> renderer = PipeRegistryClient.getFlowRenderer(flow);
+        if (renderer != null) {
+            renderer.render(flow, x, y, z, partialTicks, vb);
+        }
+    }
+
+    private static <B extends PipeBehaviour> void renderBehaviour(B behaviour, double x, double y, double z, float partialTicks, VertexBuffer vb) {
+        IPipeBehaviourRenderer<B> renderer = PipeRegistryClient.getBehaviourRenderer(behaviour);
+        if (renderer != null) {
+            renderer.render(behaviour, x, y, z, partialTicks, vb);
         }
     }
 }

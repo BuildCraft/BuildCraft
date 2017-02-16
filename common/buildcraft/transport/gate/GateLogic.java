@@ -16,9 +16,9 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.*;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
-import buildcraft.api.transport.PipeEventActionActivate;
-import buildcraft.api.transport.neptune.IPipeHolder;
-import buildcraft.api.transport.neptune.IWireManager;
+import buildcraft.api.transport.IWireManager;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeEventActionActivate;
 
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.IPayloadWriter;

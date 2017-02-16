@@ -7,9 +7,9 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.*;
 
-import buildcraft.api.transport.PipeEvent;
-import buildcraft.api.transport.PipeEventHandler;
-import buildcraft.api.transport.PipeEventPriority;
+import buildcraft.api.transport.pipe.PipeEvent;
+import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.api.transport.pipe.PipeEventPriority;
 
 public class PipeEventBus {
     private static final Map<Class<?>, List<Handler>> allHandlers = new HashMap<>();

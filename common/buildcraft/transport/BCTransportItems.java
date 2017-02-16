@@ -1,6 +1,6 @@
 package buildcraft.transport;
 
-import buildcraft.api.transport.neptune.PipeDefinition;
+import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemManager;
@@ -58,6 +58,7 @@ public class BCTransportItems {
     public static ItemPipeHolder pipeItemLapis;
     public static ItemPipeHolder pipeItemDaizuli;
     public static ItemPipeHolder pipeItemEmzuli;
+    public static ItemPipeHolder pipeItemStripes;
 
     public static ItemPluggableSimple plugBlocker;
     public static ItemPluggableGate plugGate;
@@ -89,6 +90,7 @@ public class BCTransportItems {
         pipeItemLapis = makePipeItem(BCTransportPipes.lapisItem);
         pipeItemDaizuli = makePipeItem(BCTransportPipes.daizuliItem);
         pipeItemEmzuli = makePipeItem(BCTransportPipes.emzuliItem);
+        pipeItemStripes = makePipeItem(BCTransportPipes.stripesItem);
 
         pipeFluidWood = makePipeItem(BCTransportPipes.woodFluid);
         pipeFluidCobble = makePipeItem(BCTransportPipes.cobbleFluid);

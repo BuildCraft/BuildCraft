@@ -20,8 +20,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.transport.neptune.IPipeFlowRenderer;
-import buildcraft.api.transport.neptune.IPipeHolder;
+import buildcraft.api.transport.pipe.IPipeFlowRenderer;
+import buildcraft.api.transport.pipe.IPipeHolder;
 
 import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.render.fluid.FluidSpriteType;

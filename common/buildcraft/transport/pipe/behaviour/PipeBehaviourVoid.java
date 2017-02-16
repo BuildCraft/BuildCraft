@@ -2,10 +2,10 @@ package buildcraft.transport.pipe.behaviour;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.api.transport.PipeEventHandler;
-import buildcraft.api.transport.PipeEventItem;
-import buildcraft.api.transport.neptune.IPipe;
-import buildcraft.api.transport.neptune.PipeBehaviour;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.PipeBehaviour;
+import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.api.transport.pipe.PipeEventItem;
 
 public class PipeBehaviourVoid extends PipeBehaviour {
     public PipeBehaviourVoid(IPipe pipe) {

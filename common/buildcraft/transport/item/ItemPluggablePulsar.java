@@ -4,7 +4,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.mj.IMjRedstoneReceiver;
-import buildcraft.api.transport.neptune.*;
+import buildcraft.api.transport.IItemPluggable;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeBehaviour;
+import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.SoundUtil;

@@ -11,7 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
+import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.slot.SlotPhantom;

@@ -5,14 +5,11 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.api.transport.PipeEventHandler;
-import buildcraft.api.transport.PipeEventStatement;
-import buildcraft.api.transport.neptune.IPipeHolder;
-import buildcraft.api.transport.neptune.PipePluggable;
-import buildcraft.api.transport.neptune.PluggableDefinition;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.api.transport.pipe.PipeEventStatement;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 import buildcraft.transport.BCTransportItems;
@@ -62,8 +59,7 @@ public class PluggableLightSensor extends PipePluggable {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public PluggableModelKey<?> getModelRenderKey(BlockRenderLayer layer) {
+    public PluggableModelKey getModelRenderKey(BlockRenderLayer layer) {
         if (layer == BlockRenderLayer.CUTOUT) return new KeyPlugLightSensor(side);
         return null;
     }

@@ -19,12 +19,8 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IStackFilter;
-import buildcraft.api.transport.PipeEventActionActivate;
-import buildcraft.api.transport.PipeEventHandler;
-import buildcraft.api.transport.PipeEventStatement;
-import buildcraft.api.transport.neptune.IFlowItems;
-import buildcraft.api.transport.neptune.IPipe;
-import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
+import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.MessageUtil;
@@ -35,7 +31,6 @@ import buildcraft.transport.BCTransportGuis;
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.statements.ActionExtractionPreset;
 
-// WIP
 public class PipeBehaviourEmzuli extends PipeBehaviourWood {
 
     public enum SlotIndex {
