@@ -6,8 +6,6 @@ package buildcraft.lib;
 
 import java.util.function.Consumer;
 
-import net.minecraft.world.World;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -19,23 +17,15 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.fuels.BuildcraftFuelRegistry;
-import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.expression.ExpressionDebugManager;
-import buildcraft.lib.fluids.CoolantRegistry;
-import buildcraft.lib.fluids.FuelRegistry;
 import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.list.ListMatchHandlerFluid;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
-import buildcraft.lib.recipe.AssemblyRecipeRegistry;
-import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
@@ -66,16 +56,9 @@ public class BCLib {
         ExpressionDebugManager.logger = BCLog.logger::info;
 
         BCModules.fmlPreInit();
-
-        BuildcraftRecipeRegistry.assemblyRecipes = AssemblyRecipeRegistry.INSTANCE;
-        BuildcraftRecipeRegistry.integrationRecipes = IntegrationRecipeRegistry.INSTANCE;
-        BuildcraftFuelRegistry.fuel = FuelRegistry.INSTANCE;
-        BuildcraftFuelRegistry.coolant = CoolantRegistry.INSTANCE;
-        BuildCraftAPI.fakePlayerProvider = FakePlayerUtil.INSTANCE;
-
+        BCLibRegistries.fmlPreInit();
         BCLibProxy.getProxy().fmlPreInit();
-
-        BCLibItems.preInit();
+        BCLibItems.fmlPreInit();
 
         BuildCraftObjectCaches.fmlPreInit();
         BCMessageHandler.fmlPreInit();
@@ -88,6 +71,7 @@ public class BCLib {
     public static void init(FMLInitializationEvent evt) {
         BCLibProxy.getProxy().fmlInit();
 
+        BCLibRegistries.fmlInit();
         VanillaListHandlers.fmlInit();
         VanillaPaintHandlers.fmlInit();
         VanillaRotationHandlers.fmlInit();

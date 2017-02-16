@@ -416,6 +416,9 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         if (world.isRemote) {
             throw new IllegalStateException("Cannot inject items on the client side!");
         }
+        if (stack.isEmpty()) {
+            return;
+        }
         if (speed < 0.01) {
             speed = 0.01;
         }

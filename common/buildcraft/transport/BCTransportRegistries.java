@@ -19,7 +19,9 @@ import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.pipe.flow.PipeFlowStructure;
 import buildcraft.transport.plug.PluggableRegistry;
 import buildcraft.transport.stripes.StripesHandlerDispenser;
+import buildcraft.transport.stripes.StripesHandlerHoe;
 import buildcraft.transport.stripes.StripesHandlerMinecartDestroy;
+import buildcraft.transport.stripes.StripesHandlerPlant;
 
 public class BCTransportRegistries {
     public static void preInit() {
@@ -40,18 +42,18 @@ public class BCTransportRegistries {
         PipeConnectionAPI.registerConnection(Blocks.HOPPER, smallerBlockConnection);
 
         // Item use stripes handlers
-        // PipeAPI.stripeRegistry.addHandler(new StripesHandlerPlant());
-        // PipeAPI.stripeRegistry.addHandler(new StripesHandlerBucket());
-        // PipeAPI.stripeRegistry.addHandler(new StripesHandlerArrow());
-        // PipeAPI.stripeRegistry.addHandler(new StripesHandlerShears());
-        // PipeAPI.stripeRegistry.addHandler(new StripesHandlerPipes());
-        // PipeAPI.stripeRegistry.addHandler(new StripesHandlerPipeWires());
-        // PipeAPI.stripeRegistry.addHandler(new StripesHandlerEntityInteract());
-        // PipeAPI.stripeRegistry.addHandler(new StripesHandlerHoe(), HandlerPriority.HIGH);
-        // PipeAPI.stripeRegistry.addHandler(new StripesHandlerRightClick(), HandlerPriority.LOW);
+        PipeApi.stripeRegistry.addHandler(StripesHandlerPlant.INSTANCE);
+        // PipeApi.stripeRegistry.addHandler(new StripesHandlerBucket());
+        // PipeApi.stripeRegistry.addHandler(new StripesHandlerArrow());
+        // PipeApi.stripeRegistry.addHandler(new StripesHandlerShears());
+        // PipeApi.stripeRegistry.addHandler(new StripesHandlerPipes());
+        // PipeApi.stripeRegistry.addHandler(new StripesHandlerPipeWires());
+        // PipeApi.stripeRegistry.addHandler(new StripesHandlerEntityInteract());
+        PipeApi.stripeRegistry.addHandler(StripesHandlerHoe.INSTANCE);
+        // PipeApi.stripeRegistry.addHandler(new StripesHandlerRightClick(), HandlerPriority.LOW);
         PipeApi.stripeRegistry.addHandler(StripesHandlerDispenser.INSTANCE, HandlerPriority.LOW);
-        // PipeAPI.stripeRegistry.addHandler(new StripesHandlerPlaceBlock(), HandlerPriority.LOW);
-        // PipeAPI.stripeRegistry.addHandler(new StripesHandlerUse(), HandlerPriority.LOW);
+        // PipeApi.stripeRegistry.addHandler(new StripesHandlerPlaceBlock(), HandlerPriority.LOW);
+        // PipeApi.stripeRegistry.addHandler(new StripesHandlerUse(), HandlerPriority.LOW);
 
         StripesHandlerDispenser.itemClasses.add(ItemBucket.class);
         StripesHandlerDispenser.itemClasses.add(ItemMinecart.class);

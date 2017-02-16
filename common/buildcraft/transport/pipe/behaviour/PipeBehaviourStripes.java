@@ -148,10 +148,10 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
     }
 
     @Override
-    public boolean sendItem(ItemStack itemStack, EnumFacing from) {
+    public boolean sendItem(ItemStack stack, EnumFacing from) {
         PipeFlow flow = pipe.getFlow();
         if (flow instanceof IFlowItems) {
-            ((IFlowItems) flow).insertItemsForce(itemStack, from, null, 0.02);
+            ((IFlowItems) flow).insertItemsForce(stack, from, null, 0.02);
             return true;
         } else {
             return false;
