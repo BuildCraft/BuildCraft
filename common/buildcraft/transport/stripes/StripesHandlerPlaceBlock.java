@@ -7,40 +7,30 @@ package buildcraft.transport.stripes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.transport.IStripesActivator;
-import buildcraft.api.transport.IStripesHandler;
+import buildcraft.api.transport.IStripesHandlerItem;
 
-public class StripesHandlerPlaceBlock implements IStripesHandler {
-
-    @Override
-    public StripesHandlerType getType() {
-        return StripesHandlerType.ITEM_USE;
-    }
-
-    @Override
-    public boolean shouldHandle(ItemStack stack) {
-        return stack.getItem() instanceof ItemBlock;
-    }
+public enum StripesHandlerPlaceBlock implements IStripesHandlerItem {
+    INSTANCE;
 
     @Override
     public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+        if (!(stack.getItem() instanceof ItemBlock)) {
+            return false;
+        }
+        pos = pos.offset(direction);
         if (!world.isAirBlock(pos)) {
             return false;
         }
 
         ItemBlock ib = (ItemBlock) stack.getItem();
+        ib.onItemUse(player, world, pos, EnumHand.MAIN_HAND, direction, 0.5f, 0.5f, 0.5f);
 
-        if (ib.onItemUse(stack, player, world, pos, direction, 0.5f, 0.5f, 0.5f)) {
-            if (stack.stackSize > 0) {
-                activator.sendItem(stack, direction.getOpposite());
-            }
-
-            return true;
-        }
-        return false;
+        return true;
     }
 }

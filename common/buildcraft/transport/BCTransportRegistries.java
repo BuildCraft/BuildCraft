@@ -1,6 +1,7 @@
 package buildcraft.transport;
 
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemMinecart;
 import net.minecraft.util.EnumFacing;
@@ -47,15 +48,15 @@ public class BCTransportRegistries {
         PipeApi.stripeRegistry.addHandler(StripesHandlerHoe.INSTANCE);
         // PipeApi.stripeRegistry.addHandler(new StripesHandlerRightClick(), HandlerPriority.LOW);
         PipeApi.stripeRegistry.addHandler(StripesHandlerDispenser.INSTANCE, HandlerPriority.LOW);
-        // PipeApi.stripeRegistry.addHandler(new StripesHandlerPlaceBlock(), HandlerPriority.LOW);
-        // PipeApi.stripeRegistry.addHandler(new StripesHandlerUse(), HandlerPriority.LOW);
+        PipeApi.stripeRegistry.addHandler(StripesHandlerPlaceBlock.INSTANCE, HandlerPriority.LOW);
+        PipeApi.stripeRegistry.addHandler(StripesHandlerUse.INSTANCE, HandlerPriority.LOW);
 
         StripesHandlerDispenser.itemClasses.add(ItemBucket.class);
         StripesHandlerDispenser.itemClasses.add(ItemMinecart.class);
         // StripesHandlerRightClick.items.add(Items.EGG);
         // StripesHandlerRightClick.items.add(Items.SNOWBALL);
         // StripesHandlerRightClick.items.add(Items.EXPERIENCE_BOTTLE);
-        // StripesHandlerUse.items.add(Items.FIREWORKS);
+        StripesHandlerUse.items.add(Items.FIREWORKS);
 
         // Block breaking stripes handlers
         PipeApi.stripeRegistry.addHandler(StripesHandlerMinecartDestroy.INSTANCE);
