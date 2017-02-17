@@ -15,17 +15,7 @@ public enum StripesHandlerPlant implements IStripesHandlerItem {
 
     @Override
     public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        if (CropManager.plantCrop(world, player, stack, pos.offset(direction).down())) {
-            if (!stack.isEmpty()) {
-                activator.sendItem(stack, direction.getOpposite());
-            }
-            return true;
-        } else if (CropManager.plantCrop(world, player, stack, pos.offset(direction))) {
-            if (!stack.isEmpty()) {
-                activator.sendItem(stack, direction.getOpposite());
-            }
-            return true;
-        }
-        return false;
+        return CropManager.plantCrop(world, player, stack, pos.offset(direction).down())//
+            || CropManager.plantCrop(world, player, stack, pos.offset(direction));
     }
 }

@@ -32,7 +32,7 @@ public class ActionExtractionPreset extends BCStatement implements IActionIntern
 
     @Override
     public String getDescription() {
-        return String.format(LocaleUtil.localize("gate.action.extraction"), ColourUtil.getTextFullTooltip(index.colour));
+        return LocaleUtil.localize("gate.action.extraction", ColourUtil.getTextFullTooltip(index.colour));
     }
 
     @Override

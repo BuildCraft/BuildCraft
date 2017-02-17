@@ -254,13 +254,7 @@ gate.action.station.forbid_robot=Forbid Robot
 gate.action.station.force_robot=Force Robot
 gate.action.robot.filter=Filter
 gate.action.robot.filter_tool=Filter Tool
-
-gate.expansion.fader=Redstone Fader
-gate.expansion.pulsar=Autarchic Pulsar
-gate.expansion.timer=Clock Timer
-gate.expansion.light_sensor=Light Sensor
-gate.expansion.rtc=Real-Time Clock
-gate.expansion.biological_sensor=Biological Sensor
+gate.action.pipe.direction=Face the %s side
 
 gate.logic.and=AND
 gate.logic.or=OR
@@ -269,17 +263,10 @@ gate.material.iron=Iron
 gate.material.nether_brick=Nether Brick
 gate.material.gold=Gold
 
-gate.modifier.lapis=Modifier: §9Lapis§r
-gate.modifier.quartz=Modifier: §fQuartz§r
-gate.modifier.diamond=Modifier: §bDiamond§r
-gate.modifier.prismarine=Modifier: §aPrismarine§r
-
-gate.modifier.desc.lapis=Adds 1 trigger parameter slot
-gate.modifier.desc.quartz=Adds 1 trigger and action parameter slots
-gate.modifier.desc.diamond=Adds 2 trigger and action parameter slots
-gate.modifier.desc.prismarine=Adds 3 trigger and action parameter slots
-
-gate.modifier.divisor=§cBut halves the number of action and trigger slots!§r
+gate.slots=%s Slots
+gate.params=%s Slot Parameters
+gate.params.trigger=%s Trigger Parameters
+gate.params.action=%s Action Parameters
 
 gate.side=§7on the %s§7 side
 

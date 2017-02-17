@@ -221,7 +221,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
             if (tryBounce.canBounce) {
                 order = ImmutableList.of(EnumSet.of(reachCenter.from));
             } else {
-                dropItem(item.stack, null, item.side.getOpposite());
+                dropItem(item.stack, null, item.side.getOpposite(), item.speed);
                 return;
             }
         }
@@ -263,7 +263,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
                 itemEntry.to = findDest.generateRandomOrder();
             }
             if (itemEntry.to.size() == 0) {
-                dropItem(itemEntry.stack, null, item.side.getOpposite());
+                dropItem(itemEntry.stack, null, item.side.getOpposite(), nSpeed);
             } else {
                 item.toCenter = false;
                 item.stack = itemEntry.stack;
@@ -335,7 +335,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         sendItemDataToClient(item);
     }
 
-    private void dropItem(ItemStack stack, EnumFacing side, EnumFacing motion) {
+    private void dropItem(ItemStack stack, EnumFacing side, EnumFacing motion, double speed) {
         if (stack == null || stack.isEmpty()) {
             return;
         }
@@ -351,23 +351,15 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
             return;
         }
 
-        double x = pos.getX() + 0.5;
-        double y = pos.getY() + 0.5;
-        double z = pos.getZ() + 0.5;
-        if (side != null) {
-            x += side.getFrontOffsetX() * 0.4;
-            y += side.getFrontOffsetY() * 0.4;
-            z += side.getFrontOffsetZ() * 0.4;
-        }
-
+        double x = pos.getX() + 0.5 + motion.getFrontOffsetX() * 0.5;
+        double y = pos.getY() + 0.5 + motion.getFrontOffsetY() * 0.5;
+        double z = pos.getZ() + 0.5 + motion.getFrontOffsetZ() * 0.5;
+        speed += 0.01;
+        speed *= 2;
         EntityItem ent = new EntityItem(world, x, y, z, stack);
-
-        if (motion != null) {
-            ent.motionX = motion.getFrontOffsetX() * 0.04;
-            ent.motionY = motion.getFrontOffsetY() * 0.04;
-            ent.motionZ = motion.getFrontOffsetZ() * 0.04;
-        }
-
+        ent.motionX = motion.getFrontOffsetX() * speed;
+        ent.motionY = motion.getFrontOffsetY() * speed;
+        ent.motionZ = motion.getFrontOffsetZ() * speed;
         world.spawnEntity(ent);
     }
 

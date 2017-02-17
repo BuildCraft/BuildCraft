@@ -24,18 +24,8 @@ public enum StripesHandlerHoe implements IStripesHandlerItem {
         if (!(stack.getItem() instanceof ItemHoe)) {
             return false;
         }
-        if (stack.onItemUse(player, world, pos.offset(direction).down(), EnumHand.MAIN_HAND, EnumFacing.UP, 0.0f, 0.0f, 0.0f) == EnumActionResult.SUCCESS) {
-            if (!stack.isEmpty()) {
-                activator.sendItem(stack, direction);
-            }
-            return true;
-        } else if (stack.onItemUse(player, world, pos.offset(direction), EnumHand.MAIN_HAND, EnumFacing.UP, 0.0f, 0.0f, 0.0f) == EnumActionResult.SUCCESS) {
-            if (!stack.isEmpty()) {
-                activator.sendItem(stack, direction);
-            }
-            return true;
-        }
-        return false;
+        return (stack.onItemUse(player, world, pos.offset(direction).down(), EnumHand.MAIN_HAND, EnumFacing.UP, 0.0f, 0.0f, 0.0f) != EnumActionResult.PASS)//
+            || (stack.onItemUse(player, world, pos.offset(direction), EnumHand.MAIN_HAND, EnumFacing.UP, 0.0f, 0.0f, 0.0f) != EnumActionResult.PASS);//
     }
 
 }

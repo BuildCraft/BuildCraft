@@ -89,20 +89,18 @@ public enum StripesHandlerDispenser implements IStripesHandlerItem {
 
     @Override
     public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        IBehaviorDispenseItem behaviour = BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.getObject(stack.getItem());
-        if (behaviour == IBehaviorDispenseItem.DEFAULT_BEHAVIOR) {
+        if (!BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.containsKey(stack.getItem())) {
             return false;
         }
+        IBehaviorDispenseItem behaviour = BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.getObject(stack.getItem());
         // Temp: for testing
-//        if (!shouldHandle(stack)) {
-//            return false;
-//        }
+        // if (!shouldHandle(stack)) {
+        // return false;
+        // }
 
         IBlockSource source = new Source(world, pos, direction);
         ItemStack output = behaviour.dispense(source, stack.copy());
-        if (!output.isEmpty()) {
-            activator.sendItem(output, direction);
-        }
+        player.inventory.setInventorySlotContents(player.inventory.currentItem, output);
         return true;
     }
 }

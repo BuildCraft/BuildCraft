@@ -6,7 +6,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -22,8 +21,10 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
+import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.misc.*;
+import buildcraft.transport.BCTransportStatements;
 
 public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActivator, IMjRedstoneReceiver {
     private final MjBattery mjBattery = new MjBattery(2 * MjAPI.MJ);
@@ -77,6 +78,20 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
         }
     }
 
+    // Actions
+
+    @PipeEventHandler
+    public void addInternalActions(PipeEventStatement.AddActionInternal event) {
+        for (EnumFacing face : EnumFacing.VALUES) {
+            if (!pipe.isConnected(face)) {
+                PipePluggable plug = pipe.getHolder().getPluggable(face);
+                if (plug == null || !plug.isBlocking()) {
+                    event.actions.add(BCTransportStatements.ACTION_PIPE_DIRECTION[face.ordinal()]);
+                }
+            }
+        }
+    }
+
     // IMjRedstoneReceiver
 
     @Override
@@ -99,6 +114,11 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
     }
 
     // Stripes
+
+    @Override
+    public boolean canConnect(EnumFacing face, PipeBehaviour other) {
+        return !(other instanceof PipeBehaviourStripes);
+    }
 
     @Override
     public void onTick() {
@@ -136,9 +156,16 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
         BlockPos pos = holder.getPipePos();
         FakePlayer player = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, pos, holder.getOwner());
         player.inventory.clear();
-        player.setHeldItem(EnumHand.MAIN_HAND, event.getStack());
+        // set the main hand of the fake player to the stack
+        player.inventory.setInventorySlotContents(player.inventory.currentItem, event.getStack());
         if (PipeApi.stripeRegistry.handleItem(world, pos, currentDir, event.getStack(), player, this)) {
             event.setStack(StackUtil.EMPTY);
+            for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
+                ItemStack stack = player.inventory.removeStackFromSlot(i);
+                if (!stack.isEmpty()) {
+                    sendItem(stack, currentDir);
+                }
+            }
         }
     }
 

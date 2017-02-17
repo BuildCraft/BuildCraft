@@ -18,10 +18,7 @@ import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.pipe.flow.PipeFlowStructure;
 import buildcraft.transport.plug.PluggableRegistry;
-import buildcraft.transport.stripes.StripesHandlerDispenser;
-import buildcraft.transport.stripes.StripesHandlerHoe;
-import buildcraft.transport.stripes.StripesHandlerMinecartDestroy;
-import buildcraft.transport.stripes.StripesHandlerPlant;
+import buildcraft.transport.stripes.*;
 
 public class BCTransportRegistries {
     public static void preInit() {
@@ -43,12 +40,10 @@ public class BCTransportRegistries {
 
         // Item use stripes handlers
         PipeApi.stripeRegistry.addHandler(StripesHandlerPlant.INSTANCE);
-        // PipeApi.stripeRegistry.addHandler(new StripesHandlerBucket());
-        // PipeApi.stripeRegistry.addHandler(new StripesHandlerArrow());
-        // PipeApi.stripeRegistry.addHandler(new StripesHandlerShears());
+        PipeApi.stripeRegistry.addHandler(StripesHandlerShears.INSTANCE);
         // PipeApi.stripeRegistry.addHandler(new StripesHandlerPipes());
         // PipeApi.stripeRegistry.addHandler(new StripesHandlerPipeWires());
-        // PipeApi.stripeRegistry.addHandler(new StripesHandlerEntityInteract());
+        PipeApi.stripeRegistry.addHandler(StripesHandlerEntityInteract.INSTANCE, HandlerPriority.LOW);
         PipeApi.stripeRegistry.addHandler(StripesHandlerHoe.INSTANCE);
         // PipeApi.stripeRegistry.addHandler(new StripesHandlerRightClick(), HandlerPriority.LOW);
         PipeApi.stripeRegistry.addHandler(StripesHandlerDispenser.INSTANCE, HandlerPriority.LOW);

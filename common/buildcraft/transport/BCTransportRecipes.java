@@ -172,6 +172,10 @@ public class BCTransportRecipes {
                     new ItemStack(BCTransportItems.wire, 8, color.getMetadata())));
             }
         }
+
+        if (BCTransportItems.plugLens != null) {
+
+        }
     }
 
     private static void makeGateRecipe(RecipeBuilderShaped builder, EnumGateMaterial material, EnumGateModifier modifier) {

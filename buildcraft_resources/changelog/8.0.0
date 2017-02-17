@@ -39,6 +39,7 @@ Improvements:
 
 * Transport:
   * The wooden-diamond pipe (formally known as the emerald pipe) shows the current index of what is being extracted, when in round-robin mode.
+  * The stripes pipe now shows which direction it is pointing.
   * Gates:
     * Added a small selection area for changing between different triggers, actions and paramaters. Complex params still require the existing mechanism (for example with itemstack params)
     * Dragging a trigger or action with the secondary mouse button will copy that statement, and can be placed in a similar way to dragging from the side selections.
