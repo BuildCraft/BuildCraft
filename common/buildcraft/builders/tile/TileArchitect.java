@@ -6,15 +6,13 @@ package buildcraft.builders.tile;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.schematic.SchematicBlock;
-import buildcraft.api.schematic.SchematicBlockContext;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.block.BlockArchitect;
-import buildcraft.builders.schematic.SchematicsLoader;
+import buildcraft.builders.schematic.*;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.BoxIterator;
 import buildcraft.lib.misc.data.EnumAxisOrder;
@@ -39,7 +37,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class TileArchitect extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final int NET_BOX = 20;
@@ -51,8 +51,7 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
     public final ItemHandlerSimple invBptOut = itemManager.addInvHandler("bptOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
 
     public boolean shouldScanEntities = false;
-    /** Details- if true then this will create a blueprint, otherwise it will be a template. */
-    private boolean shouldScanDetails = true;
+    private Snapshot.EnumSnapshotType snapshotType = Snapshot.EnumSnapshotType.BLUEPRINT;
     private final Box box = new Box();
 //    private List<SchematicEntityOffset> blueprintScannedEntities;
     private SchematicBlock[][][] blueprintScannedBlocks;
@@ -65,10 +64,6 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
     public final DeltaInt deltaProgress = deltaManager.addDelta("progress", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
 
     public TileArchitect() {}
-
-    private int maxBlocksPerTick() {
-        return shouldScanDetails ? BLOCKS_PER_TICK : BLOCKS_PER_TICK * 3;
-    }
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
@@ -117,7 +112,7 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
 
         if (shouldStartScanning && isValid) {
             int size = box.size().getX() * box.size().getY() * box.size().getZ();
-            size /= maxBlocksPerTick();
+            size /= snapshotType.maxPerTick;
             deltaProgress.addDelta(0, size, 100);
             deltaProgress.addDelta(size, size + 10, -100);
             shouldStartScanning = false;
@@ -136,7 +131,7 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
     }
 
     private void scanMultipleBlocks() {
-        for (int i = maxBlocksPerTick(); i > 0; i--) {
+        for (int i = snapshotType.maxPerTick; i > 0; i--) {
             scanSingleBlock();
             if (!scanning) {
                 break;
@@ -155,9 +150,8 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
         // Read from world
         BlockPos worldScanPos = boxIterator.getCurrent();
         BlockPos schematicIndex = worldScanPos.subtract(box.min());
-        if (shouldScanDetails) {
+        if (snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
             SchematicBlock schematic = readSchematicForBlock(worldScanPos);
-
             blueprintScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = schematic;
         } else {
             boolean solid = !world.isAirBlock(worldScanPos);
@@ -203,32 +197,13 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
     }
 
     private void finishScanning() {
-        EnumFacing direction = EnumFacing.NORTH;
-        IBlockState state = world.getBlockState(getPos());
-        if (state.getBlock() == BCBuildersBlocks.architect) {
-            direction = state.getValue(BlockArchitect.PROP_FACING);
-        }
-        if (shouldScanDetails) {
-//            BlockPos bptPos = getPos().add(direction.getOpposite().getDirectionVec());
-//
-//            BlockPos diff = box.min().subtract(bptPos);
-//            Blueprint bpt = new Blueprint(diff, blueprintScannedBlocks, blueprintScannedEntities);
-//            blueprintScannedBlocks = null;
-//            blueprintScannedEntities = null;
-//            bpt.facing = direction;
-//
-//            NBTTagCompound tag = bpt.serializeNBT();
-//            BptStorage storage = BCBuildersItems.blueprint.createStorage(tag);
-//            ItemStack stack = storage.save();
-//            BCBuildersItems.blueprint.setName(stack, name);
-//
-//            invBptIn.setStackInSlot(0, null);
-//            invBptOut.setStackInSlot(0, stack);
-        } else {
-            // Template tpl = new Template();
-            throw new IllegalStateException("// TODO: This :D");
-        }
-
+        EnumFacing facing = world.getBlockState(getPos()).getValue(BlockArchitect.PROP_FACING);
+        Snapshot snapshot = snapshotType.create.get();
+        snapshot.id = UUID.randomUUID();
+        snapshot.owner = getOwner().getId();
+        snapshot.created = new Date();
+        snapshot.name = name;
+        GlobalSavedDataSnapshots.get(world).snapshots.add(snapshot);
         sendNetworkUpdate(NET_RENDER_DATA);
     }
 
@@ -272,7 +247,7 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
         }
         nbt.setBoolean("shouldStartScanning", shouldStartScanning);
         nbt.setBoolean("scanning", scanning);
-        nbt.setBoolean("shouldScanDetails", shouldScanDetails);
+        nbt.setTag("snapshotType", NBTUtilBC.writeEnum(snapshotType));
         nbt.setBoolean("shouldScanEntities", shouldScanEntities);
         nbt.setBoolean("isValid", isValid);
         nbt.setString("name", name);
@@ -288,16 +263,10 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
         }
         shouldStartScanning = nbt.getBoolean("shouldStartScanning");
         scanning = nbt.getBoolean("scanning");
-        shouldScanDetails = nbt.getBoolean("shouldScanDetails");
+        snapshotType = NBTUtilBC.readEnum(nbt.getTag("snapshotType"), Snapshot.EnumSnapshotType.class);
         shouldScanEntities = nbt.getBoolean("shouldScanEntities");
         isValid = nbt.getBoolean("isValid");
         name = nbt.getString("name");
-    }
-
-    public void setScanDetails(boolean scanDetails) {
-        if (!scanning) {
-            shouldScanDetails = scanDetails;
-        }
     }
 
     @Override

@@ -14,6 +14,8 @@ import java.util.BitSet;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
@@ -392,5 +394,15 @@ public final class NBTUtilBC {
             }
         }
         return set;
+    }
+
+    public static NBTTagList writeCompoundList(Stream<NBTTagCompound> stream) {
+        NBTTagList list = new NBTTagList();
+        stream.forEach(list::appendTag);
+        return list;
+    }
+
+    public static Stream<NBTTagCompound> readCompoundList(NBTTagList list) {
+        return IntStream.range(0, list.tagCount()).mapToObj(list::getCompoundTagAt);
     }
 }
