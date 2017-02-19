@@ -24,14 +24,7 @@ public class MjBatteryReciver implements IMjReceiver, IMjReadable {
 
     @Override
     public long receivePower(long microJoules, boolean simulate) {
-        if (simulate) {
-            if (battery.isFull()) {
-                return microJoules;
-            } else {
-                return 0;
-            }
-        }
-        return battery.addPowerChecking(microJoules);
+        return battery.addPowerChecking(microJoules, simulate);
     }
 
     @Override
