@@ -85,7 +85,7 @@ public final class OilPopulate {
         boolean oilBiome = surfaceDepositBiomeNames.contains(biome.getBiomeName());
 
         double bonus = oilBiome ? 3.0 : 1.0;
-        if (excessiveBiomeNames.contains(biome.getBiomeName()) || true) {
+        if (excessiveBiomeNames.contains(biome.getBiomeName())) {
             bonus *= 30.0;
         }
         GenType type = GenType.NONE;
