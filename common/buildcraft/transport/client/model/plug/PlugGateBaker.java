@@ -9,14 +9,14 @@ import javax.vecmath.Matrix4f;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 
-import buildcraft.api.transport.pluggable.IPluggableModelBaker;
+import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.transport.BCTransportModels;
 import buildcraft.transport.client.model.key.KeyPlugGate;
 
-public enum PlugGateBaker implements IPluggableModelBaker<KeyPlugGate> {
+public enum PlugGateBaker implements IPluggableStaticBaker<KeyPlugGate> {
     INSTANCE;
 
     private static final Map<KeyPlugGate, List<BakedQuad>> cached = new HashMap<>();

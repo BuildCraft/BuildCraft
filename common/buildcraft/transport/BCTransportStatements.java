@@ -1,6 +1,7 @@
 package buildcraft.transport;
 
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.statements.StatementManager;
 
@@ -22,6 +23,7 @@ public class BCTransportStatements {
     public static final ActionPipeSignal[] ACTION_PIPE_SIGNAL;
     public static final ActionPipeColor[] ACTION_PIPE_COLOUR;
     public static final ActionExtractionPreset[] ACTION_EXTRACTION_PRESET;
+    public static final ActionPipeDirection[] ACTION_PIPE_DIRECTION;
 
     static {
         TRIGGER_LIGHT_LOW = new TriggerLightSensor(false);
@@ -51,6 +53,11 @@ public class BCTransportStatements {
         ACTION_EXTRACTION_PRESET = new ActionExtractionPreset[SlotIndex.VALUES.length];
         for (SlotIndex index : SlotIndex.VALUES) {
             ACTION_EXTRACTION_PRESET[index.ordinal()] = new ActionExtractionPreset(index);
+        }
+
+        ACTION_PIPE_DIRECTION = new ActionPipeDirection[EnumFacing.VALUES.length];
+        for (EnumFacing face : EnumFacing.VALUES) {
+            ACTION_PIPE_DIRECTION[face.ordinal()] = new ActionPipeDirection(face);
         }
 
         StatementManager.registerParameterClass(TriggerParameterSignal.class);

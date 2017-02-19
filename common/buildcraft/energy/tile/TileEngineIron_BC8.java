@@ -26,7 +26,7 @@ import buildcraft.api.fuels.IFuelManager.IDirtyFuel;
 import buildcraft.api.fuels.ISolidCoolant;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.transport.neptune.IPipeItem;
+import buildcraft.api.transport.pipe.IItemPipe;
 
 import buildcraft.energy.BCEnergyGuis;
 import buildcraft.lib.engine.EngineConnector;
@@ -137,7 +137,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
             if (EntityUtil.getWrenchHand(player) != null) {
                 return false;
             }
-            if (current.getItem() instanceof IPipeItem) {
+            if (current.getItem() instanceof IItemPipe) {
                 return false;
             }
             FluidActionResult result = FluidUtil.interactWithFluidHandler(current, fluidHandler, player);

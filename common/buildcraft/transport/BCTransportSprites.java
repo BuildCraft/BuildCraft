@@ -4,6 +4,7 @@ import java.util.EnumMap;
 import java.util.Locale;
 
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -33,6 +34,7 @@ public class BCTransportSprites {
     public static final EnumMap<SlotIndex, SpriteHolder> ACTION_EXTRACTION_PRESET;
     private static final EnumMap<EnumDyeColor, SpriteHolder> PIPE_SIGNAL_ON;
     private static final EnumMap<EnumDyeColor, SpriteHolder> PIPE_SIGNAL_OFF;
+    private static final EnumMap<EnumFacing, SpriteHolder> ACTION_PIPE_DIRECTION;
 
     static {
         EMPTY_FILTERED_BUFFER_SLOT = getHolder("gui/empty_filtered_buffer_slot");
@@ -63,6 +65,11 @@ public class BCTransportSprites {
         for (SlotIndex index : SlotIndex.VALUES) {
             ACTION_EXTRACTION_PRESET.put(index, getHolder("triggers/extraction_preset_" + index.colour.getName()));
         }
+
+        ACTION_PIPE_DIRECTION = new EnumMap<>(EnumFacing.class);
+        for (EnumFacing face : EnumFacing.VALUES) {
+            ACTION_PIPE_DIRECTION.put(face, getHolder("core", "triggers/trigger_dir_" + face.getName().toLowerCase(Locale.ROOT)));
+        }
     }
 
     private static SpriteHolder getHolder(String loc) {
@@ -90,5 +97,9 @@ public class BCTransportSprites {
 
     public static SpriteHolder getPipeSignal(boolean active, EnumDyeColor colour) {
         return (active ? PIPE_SIGNAL_ON : PIPE_SIGNAL_OFF).get(colour);
+    }
+
+    public static SpriteHolder getPipeDirection(EnumFacing face) {
+        return ACTION_PIPE_DIRECTION.get(face);
     }
 }

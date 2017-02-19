@@ -5,10 +5,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.transport.PipeEventHandler;
-import buildcraft.api.transport.PipeEventPower;
-import buildcraft.api.transport.neptune.IPipe;
-import buildcraft.api.transport.neptune.PipeBehaviour;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.PipeBehaviour;
+import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.api.transport.pipe.PipeEventPower;
 
 public class PipeBehaviourSandstone extends PipeBehaviour {
 

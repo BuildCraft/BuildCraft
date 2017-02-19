@@ -1,25 +1,11 @@
 package buildcraft.transport.block;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
-import buildcraft.api.blocks.ICustomPaintHandler;
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.transport.neptune.*;
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.InventoryUtil;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.prop.UnlistedNonNullProperty;
-import buildcraft.transport.BCTransportItems;
-import buildcraft.transport.item.ItemWire;
-import buildcraft.transport.pipe.Pipe;
-import buildcraft.transport.tile.TilePipeHolder;
-import buildcraft.transport.wire.EnumWireBetween;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -52,7 +38,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blocks.ICustomPaintHandler;
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.transport.neptune.*;
+import buildcraft.api.transport.EnumWirePart;
+import buildcraft.api.transport.IItemPluggable;
+import buildcraft.api.transport.WireNode;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.misc.BoundingBoxUtil;
@@ -354,7 +346,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             Pipe pipe = tile.getPipe();
             if (pipe != null) {
                 PipeDefinition def = pipe.getDefinition();
-                Item item = (Item) PipeAPI.pipeRegistry.getItemForPipe(def);
+                Item item = (Item) PipeApi.pipeRegistry.getItemForPipe(def);
                 if (item != null) {
                     int meta = pipe.getColour() == null ? 0 : pipe.getColour().getMetadata() + 1;
                     return new ItemStack(item, 1, meta);

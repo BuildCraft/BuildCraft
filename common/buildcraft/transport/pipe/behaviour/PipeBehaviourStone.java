@@ -3,9 +3,9 @@ package buildcraft.transport.pipe.behaviour;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.transport.PipeEventHandler;
-import buildcraft.api.transport.PipeEventPower;
-import buildcraft.api.transport.neptune.IPipe;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.api.transport.pipe.PipeEventPower;
 
 public class PipeBehaviourStone extends PipeBehaviourSeparate {
     public PipeBehaviourStone(IPipe pipe) {

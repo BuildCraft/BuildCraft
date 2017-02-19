@@ -15,9 +15,9 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.transport.neptune.IPipeItem;
-import buildcraft.api.transport.neptune.PipeAPI;
-import buildcraft.api.transport.neptune.PipeDefinition;
+import buildcraft.api.transport.pipe.IItemPipe;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.misc.ColourUtil;
@@ -26,7 +26,7 @@ import buildcraft.transport.BCTransportBlocks;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
-public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IPipeItem {
+public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemPipe {
     public final PipeDefinition definition;
     private final String id;
     private String unlocalisedName;
@@ -42,7 +42,7 @@ public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IPipeI
     }
 
     public ItemPipeHolder registerWithPipeApi() {
-        PipeAPI.pipeRegistry.setItemForPipe(definition, this);
+        PipeApi.pipeRegistry.setItemForPipe(definition, this);
         return this;
     }
 
@@ -114,10 +114,10 @@ public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IPipeI
         if (!localised.equals(tipName)) {
             tooltip.add(TextFormatting.GRAY + localised);
         }
-        if (definition.flowType == PipeAPI.flowFluids) {
-            PipeAPI.FluidTransferInfo fti = PipeAPI.getFluidTransferInfo(definition);
+        if (definition.flowType == PipeApi.flowFluids) {
+            PipeApi.FluidTransferInfo fti = PipeApi.getFluidTransferInfo(definition);
             tooltip.add(LocaleUtil.localizeFluidFlow(fti.transferPerTick));
-        } else if (definition.flowType == PipeAPI.flowPower) {
+        } else if (definition.flowType == PipeApi.flowPower) {
             // TODO!
         }
     }

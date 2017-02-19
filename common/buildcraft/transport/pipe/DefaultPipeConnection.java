@@ -6,7 +6,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.transport.ICustomPipeConnection;
+import buildcraft.api.transport.pipe.ICustomPipeConnection;
 
 public enum DefaultPipeConnection implements ICustomPipeConnection {
     INSTANCE;

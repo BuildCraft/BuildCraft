@@ -19,7 +19,7 @@ public class BCCoreModels {
     private static final ModelHolderVariable ENGINE_CREATIVE;
 
     static {
-        FunctionContext fnCtx = new FunctionContext(DefaultContexts.CONTEXT_DEFAULT);
+        FunctionContext fnCtx = DefaultContexts.createWithAll();
         ENGINE_PROGRESS = fnCtx.putVariableDouble("progress");
         ENGINE_STAGE = fnCtx.putVariableString("stage");
         ENGINE_FACING = fnCtx.putVariableString("facing");

@@ -18,7 +18,8 @@ import buildcraft.lib.misc.VecUtil;
 
 public class TravellingItem {
     // Client fields - public for rendering
-    public Supplier<ItemStack> clientItemLink;
+    @Nonnull
+    public final Supplier<ItemStack> clientItemLink;
     public int stackSize;
     public EnumDyeColor colour;
 
@@ -58,17 +59,17 @@ public class TravellingItem {
 
     public TravellingItem(@Nonnull ItemStack stack) {
         this.stack = stack;
+        clientItemLink = () -> ItemStack.EMPTY;
     }
 
     public TravellingItem(Supplier<ItemStack> clientStackLink, int count) {
-        this.clientItemLink = clientStackLink;
+        this.clientItemLink = StackUtil.asNonNull(clientStackLink);
         this.stackSize = count;
         this.stack = StackUtil.EMPTY;
     }
 
-    // List<EnumFacing> tried = null;
-
     public TravellingItem(NBTTagCompound nbt, long tickNow) {
+        clientItemLink = () -> ItemStack.EMPTY;
         stack = new ItemStack(nbt.getCompoundTag("stack"));
         int c = nbt.getByte("colour");
         this.colour = c == 0 ? null : EnumDyeColor.byMetadata(c - 1);

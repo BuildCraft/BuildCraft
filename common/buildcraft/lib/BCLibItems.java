@@ -22,7 +22,7 @@ public class BCLibItems {
         enableDebugger = true;
     }
 
-    public static void preInit() {
+    public static void fmlPreInit() {
         if (enableGuide) {
             guide = ItemManager.register(new ItemGuide("item.guide"), true);
         }

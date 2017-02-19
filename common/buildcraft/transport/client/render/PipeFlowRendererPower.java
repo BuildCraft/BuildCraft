@@ -2,7 +2,7 @@ package buildcraft.transport.client.render;
 
 import net.minecraft.client.renderer.VertexBuffer;
 
-import buildcraft.api.transport.neptune.IPipeFlowRenderer;
+import buildcraft.api.transport.pipe.IPipeFlowRenderer;
 
 import buildcraft.transport.pipe.flow.PipeFlowPower;
 

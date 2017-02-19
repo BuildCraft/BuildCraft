@@ -4,12 +4,13 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.function.Function;
 
-import buildcraft.api.transport.neptune.EnumWirePart;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
+
+import buildcraft.api.transport.EnumWirePart;
 
 /** Holds all of the possible boxes that a wire can occupy - excluding the ones in EnumWirePart. */
 public enum EnumWireBetween {

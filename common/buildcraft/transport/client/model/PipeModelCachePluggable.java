@@ -9,17 +9,19 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.transport.neptune.IPipeHolder;
-import buildcraft.api.transport.neptune.PipePluggable;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
+import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 import buildcraft.lib.client.model.IModelCache;
 import buildcraft.lib.client.model.ModelCache;
 import buildcraft.lib.client.model.ModelCacheMultipleSame;
+import buildcraft.transport.client.PipeRegistryClient;
 
 public class PipeModelCachePluggable {
     public static final IModelCache<PluggableKey> cacheCutoutAll, cacheTranslucentAll;
-    public static final ModelCache<PluggableModelKey<?>> cacheCutoutSingle, cacheTranslucentSingle;
+    public static final ModelCache<PluggableModelKey> cacheCutoutSingle, cacheTranslucentSingle;
 
     static {
         cacheCutoutSingle = new ModelCache<>(PipeModelCachePluggable::generate);
@@ -29,31 +31,35 @@ public class PipeModelCachePluggable {
         cacheTranslucentAll = new ModelCacheMultipleSame<>(PluggableKey::getKeys, cacheTranslucentSingle);
     }
 
-    private static <K extends PluggableModelKey<K>> List<BakedQuad> generate(PluggableModelKey<K> key) {
+    private static <K extends PluggableModelKey> List<BakedQuad> generate(K key) {
         if (key == null) {
             return ImmutableList.of();
         }
-        return key.baker.bake((K) key);
+        IPluggableStaticBaker<K> baker = PipeRegistryClient.getPlugBaker(key);
+        if (baker == null) {
+            return ImmutableList.of();
+        }
+        return baker.bake(key);
     }
 
     public static class PluggableKey {
-        private final ImmutableSet<PluggableModelKey<?>> pluggables;
+        private final ImmutableSet<PluggableModelKey> pluggables;
         private final int hash;
 
         public PluggableKey(BlockRenderLayer layer, IPipeHolder holder) {
-            ImmutableSet.Builder<PluggableModelKey<?>> builder = ImmutableSet.builder();
+            ImmutableSet.Builder<PluggableModelKey> builder = ImmutableSet.builder();
             for (EnumFacing side : EnumFacing.VALUES) {
                 PipePluggable pluggable = holder.getPluggable(side);
                 if (pluggable == null) continue;
-                PluggableModelKey<?> key = pluggable.getModelRenderKey(layer);
-                if (key == null || key.baker == null) continue;
+                PluggableModelKey key = pluggable.getModelRenderKey(layer);
+                if (key == null) continue;
                 builder.add(key);
             }
             this.pluggables = builder.build();
             this.hash = pluggables.hashCode();
         }
 
-        public ImmutableSet<PluggableModelKey<?>> getKeys() {
+        public ImmutableSet<PluggableModelKey> getKeys() {
             return pluggables;
         }
 

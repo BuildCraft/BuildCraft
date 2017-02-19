@@ -18,16 +18,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.transport.neptune.IPipeHolder;
-import buildcraft.api.transport.neptune.IPluggableDynamicRenderer;
-import buildcraft.api.transport.neptune.PipePluggable;
-import buildcraft.api.transport.neptune.PluggableDefinition;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugPulsar;
-import buildcraft.transport.client.render.PlugPulsarRenderer;
 
 public class PluggablePulsar extends PipePluggable {
 
@@ -228,16 +226,9 @@ public class PluggablePulsar extends PipePluggable {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public PluggableModelKey<?> getModelRenderKey(BlockRenderLayer layer) {
+    public PluggableModelKey getModelRenderKey(BlockRenderLayer layer) {
         if (layer == BlockRenderLayer.CUTOUT) return new KeyPlugPulsar(side);
         return null;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public IPluggableDynamicRenderer getDynamicRenderer() {
-        return new PlugPulsarRenderer(this);
     }
 
     public void enablePulsar() {

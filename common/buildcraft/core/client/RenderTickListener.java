@@ -184,7 +184,7 @@ public enum RenderTickListener {
     }
 
     @SubscribeEvent
-    public static void tick(RenderWorldLastEvent event) {
+    public static void renderLast(RenderWorldLastEvent event) {
         float partialTicks = event.getPartialTicks();
         renderHeldItemInWorld(partialTicks);
     }

@@ -22,7 +22,11 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.api.transport.neptune.*;
+import buildcraft.api.transport.EnumWirePart;
+import buildcraft.api.transport.WireNode;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeApi;
 
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.transport.plug.PluggableGate;
@@ -56,7 +60,7 @@ public class WireSystem {
             || (oPipe.getHolder().getPluggable(side.getOpposite()) != null && oPipe.getHolder().getPluggable(side.getOpposite()).isBlocking())) {
             return false;
         }
-        if (pipe.getDefinition().flowType == PipeAPI.flowStructure || oPipe.getDefinition().flowType == PipeAPI.flowStructure) {
+        if (pipe.getDefinition().flowType == PipeApi.flowStructure || oPipe.getDefinition().flowType == PipeApi.flowStructure) {
             return pipe.getColour() == null || oPipe.getColour() == null || pipe.getColour() == oPipe.getColour();
         }
         return false;
@@ -140,7 +144,8 @@ public class WireSystem {
     }
 
     public boolean update(WorldSavedDataWireSystems wireSystems) {
-        return elements.stream().filter(element -> element.type == WireElement.Type.EMITTER_SIDE).map(element -> wireSystems.isEmitterEmitting(element, color)).reduce(Boolean::logicalOr).orElse(false);
+        return elements.stream().filter(element -> element.type == WireElement.Type.EMITTER_SIDE).map(element -> wireSystems.isEmitterEmitting(element, color)).reduce(Boolean::logicalOr).orElse(
+            false);
     }
 
     public List<ChunkPos> getChunkPoses() {
@@ -150,8 +155,8 @@ public class WireSystem {
     public boolean isPlayerWatching(EntityPlayerMP player) {
         if (player.world instanceof WorldServer) {
             WorldServer world = (WorldServer) player.world;
-            return getChunkPoses().stream().map(chunkPos -> world.getPlayerChunkMap().getEntry(chunkPos.chunkXPos, chunkPos.chunkZPos)).filter(Objects::nonNull).anyMatch(playerChunkMapEntry -> playerChunkMapEntry.hasPlayerMatching(Predicates.equalTo(
-                    player)));
+            return getChunkPoses().stream().map(chunkPos -> world.getPlayerChunkMap().getEntry(chunkPos.chunkXPos, chunkPos.chunkZPos)).filter(Objects::nonNull).anyMatch(
+                playerChunkMapEntry -> playerChunkMapEntry.hasPlayerMatching(Predicates.equalTo(player)));
         }
         return false;
     }

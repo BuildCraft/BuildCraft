@@ -30,12 +30,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.transport.IInjectable;
-import buildcraft.api.transport.PipeEventItem;
-import buildcraft.api.transport.neptune.IFlowItems;
-import buildcraft.api.transport.neptune.IPipe;
-import buildcraft.api.transport.neptune.IPipe.ConnectedType;
-import buildcraft.api.transport.neptune.IPipeHolder;
-import buildcraft.api.transport.neptune.PipeFlow;
+import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IPipe.ConnectedType;
 
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
@@ -46,7 +42,7 @@ import buildcraft.lib.misc.data.DelayedList;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 
-public class PipeFlowItems extends PipeFlow implements IFlowItems {
+public final class PipeFlowItems extends PipeFlow implements IFlowItems {
     private static final double EXTRACT_SPEED = 0.08;
     public static final int NET_CREATE_ITEM = 2;
 
@@ -123,6 +119,9 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
 
     @Override
     public int tryExtractItems(int count, EnumFacing from, EnumDyeColor colour, IStackFilter filter) {
+        if (pipe.getHolder().getPipeWorld().isRemote) {
+            throw new IllegalStateException("Cannot extract items on the client side!");
+        }
         if (from == null) {
             return 0;
         }
@@ -222,7 +221,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
             if (tryBounce.canBounce) {
                 order = ImmutableList.of(EnumSet.of(reachCenter.from));
             } else {
-                dropItem(item.stack, null, item.side.getOpposite());
+                dropItem(item.stack, null, item.side.getOpposite(), item.speed);
                 return;
             }
         }
@@ -264,7 +263,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
                 itemEntry.to = findDest.generateRandomOrder();
             }
             if (itemEntry.to.size() == 0) {
-                dropItem(itemEntry.stack, null, item.side.getOpposite());
+                dropItem(itemEntry.stack, null, item.side.getOpposite(), nSpeed);
             } else {
                 item.toCenter = false;
                 item.stack = itemEntry.stack;
@@ -336,7 +335,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         sendItemDataToClient(item);
     }
 
-    private void dropItem(ItemStack stack, EnumFacing side, EnumFacing motion) {
+    private void dropItem(ItemStack stack, EnumFacing side, EnumFacing motion, double speed) {
         if (stack == null || stack.isEmpty()) {
             return;
         }
@@ -345,23 +344,22 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         World world = holder.getPipeWorld();
         BlockPos pos = holder.getPipePos();
 
-        double x = pos.getX() + 0.5;
-        double y = pos.getY() + 0.5;
-        double z = pos.getZ() + 0.5;
-        if (side != null) {
-            x += side.getFrontOffsetX() * 0.4;
-            y += side.getFrontOffsetY() * 0.4;
-            z += side.getFrontOffsetZ() * 0.4;
+        PipeEventItem.Drop drop = new PipeEventItem.Drop(holder, this, stack);
+        holder.fireEvent(drop);
+        stack = drop.getStack();
+        if (stack.isEmpty()) {
+            return;
         }
 
+        double x = pos.getX() + 0.5 + motion.getFrontOffsetX() * 0.5;
+        double y = pos.getY() + 0.5 + motion.getFrontOffsetY() * 0.5;
+        double z = pos.getZ() + 0.5 + motion.getFrontOffsetZ() * 0.5;
+        speed += 0.01;
+        speed *= 2;
         EntityItem ent = new EntityItem(world, x, y, z, stack);
-
-        if (motion != null) {
-            ent.motionX = motion.getFrontOffsetX() * 0.04;
-            ent.motionY = motion.getFrontOffsetY() * 0.04;
-            ent.motionZ = motion.getFrontOffsetZ() * 0.04;
-        }
-
+        ent.motionX = motion.getFrontOffsetX() * speed;
+        ent.motionY = motion.getFrontOffsetY() * speed;
+        ent.motionZ = motion.getFrontOffsetZ() * speed;
         world.spawnEntity(ent);
     }
 
@@ -372,6 +370,9 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
 
     @Override
     public ItemStack injectItem(@Nonnull ItemStack stack, boolean doAdd, EnumFacing from, EnumDyeColor colour, double speed) {
+        if (pipe.getHolder().getPipeWorld().isRemote) {
+            throw new IllegalStateException("Cannot inject items on the client side!");
+        }
         if (!canInjectItems(from)) {
             return stack;
         }
@@ -399,6 +400,30 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         }
 
         return toSplit;
+    }
+
+    @Override
+    public void insertItemsForce(ItemStack stack, EnumFacing from, EnumDyeColor colour, double speed) {
+        World world = pipe.getHolder().getPipeWorld();
+        if (world.isRemote) {
+            throw new IllegalStateException("Cannot inject items on the client side!");
+        }
+        if (stack.isEmpty()) {
+            return;
+        }
+        if (speed < 0.01) {
+            speed = 0.01;
+        }
+        long now = world.getTotalWorldTime();
+        TravellingItem item = new TravellingItem(stack);
+        item.side = from;
+        item.toCenter = true;
+        item.speed = speed;
+        item.colour = colour;
+        item.genTimings(now, 0);
+        item.tried.add(from);
+        items.add(item.timeToDest, item);
+        sendItemDataToClient(item);
     }
 
     /** Used internally to split up manual insertions from controlled extractions. */

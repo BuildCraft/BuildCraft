@@ -13,19 +13,29 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.transport.neptune.IPipe;
-import buildcraft.api.transport.neptune.IPipeHolder;
-import buildcraft.api.transport.neptune.PipeBehaviour;
-import buildcraft.api.transport.neptune.PipePluggable;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeApiClient;
+import buildcraft.api.transport.pipe.PipeBehaviour;
+import buildcraft.api.transport.pluggable.PipePluggable;
 
+import buildcraft.transport.client.PipeRegistryClient;
 import buildcraft.transport.client.model.GateMeshDefinition;
-import buildcraft.transport.client.render.RenderPipeHolder;
+import buildcraft.transport.client.model.key.*;
+import buildcraft.transport.client.model.plug.PlugBakerLens;
+import buildcraft.transport.client.model.plug.PlugGateBaker;
+import buildcraft.transport.client.render.*;
 import buildcraft.transport.container.*;
 import buildcraft.transport.gui.*;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourStripes;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
+import buildcraft.transport.pipe.flow.PipeFlowFluids;
+import buildcraft.transport.pipe.flow.PipeFlowItems;
+import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.plug.PluggableGate;
+import buildcraft.transport.plug.PluggablePulsar;
 import buildcraft.transport.tile.TileFilteredBuffer;
 import buildcraft.transport.tile.TilePipeHolder;
 
@@ -129,12 +139,28 @@ public abstract class BCTransportProxy implements IGuiHandler {
         public void fmlPreInit() {
             BCTransportSprites.fmlPreInit();
             BCTransportModels.fmlPreInit();
+            PipeApiClient.registry = PipeRegistryClient.INSTANCE;
         }
 
         @Override
         public void fmlInit() {
             Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(BCTransportItems.plugGate, GateMeshDefinition.INSTANCE);
             ClientRegistry.bindTileEntitySpecialRenderer(TilePipeHolder.class, new RenderPipeHolder());
+
+            PipeApiClient.registry.registerBaker(KeyPlugGate.class, PlugGateBaker.INSTANCE);
+            PipeApiClient.registry.registerBaker(KeyPlugBlocker.class, BCTransportModels.BAKER_PLUG_BLOCKER);
+            PipeApiClient.registry.registerBaker(KeyPlugPulsar.class, BCTransportModels.BAKER_PLUG_PULSAR);
+            PipeApiClient.registry.registerBaker(KeyPlugLightSensor.class, BCTransportModels.BAKER_PLUG_LIGHT_SENSOR);
+            PipeApiClient.registry.registerBaker(KeyPlugLens.class, PlugBakerLens.INSTANCE);
+
+            PipeApiClient.registry.registerRenderer(PluggableGate.class, PlugGateRenderer.INSTANCE);
+            PipeApiClient.registry.registerRenderer(PluggablePulsar.class, PlugPulsarRenderer.INSTANCE);
+
+            PipeApiClient.registry.registerRenderer(PipeFlowItems.class, PipeFlowRendererItems.INSTANCE);
+            PipeApiClient.registry.registerRenderer(PipeFlowFluids.class, PipeFlowRendererFluids.INSTANCE);
+            PipeApiClient.registry.registerRenderer(PipeFlowPower.class, PipeFlowRendererPower.INSTANCE);
+
+            PipeApiClient.registry.registerRenderer(PipeBehaviourStripes.class, PipeBehaviourRendererStripes.INSTANCE);
         }
 
         @Override

@@ -6,12 +6,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.api.transport.neptune.IPipeHolder;
-import buildcraft.api.transport.neptune.PipePluggable;
-import buildcraft.api.transport.neptune.PluggableDefinition;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 import buildcraft.transport.BCTransportItems;
@@ -62,8 +59,7 @@ public class PluggableBlocker extends PipePluggable {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public PluggableModelKey<?> getModelRenderKey(BlockRenderLayer layer) {
+    public PluggableModelKey getModelRenderKey(BlockRenderLayer layer) {
         if (layer == BlockRenderLayer.CUTOUT) return new KeyPlugBlocker(side);
         return null;
     }

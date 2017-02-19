@@ -20,12 +20,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.*;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.PipeEventFluid;
-import buildcraft.api.transport.neptune.IFlowFluid;
-import buildcraft.api.transport.neptune.IPipe;
-import buildcraft.api.transport.neptune.PipeAPI;
-import buildcraft.api.transport.neptune.PipeAPI.FluidTransferInfo;
-import buildcraft.api.transport.neptune.PipeFlow;
+import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.PipeApi.FluidTransferInfo;
 
 import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.misc.CapUtil;
@@ -47,7 +43,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     /** The number of pixels the fluid moves by per millisecond */
     public static final double FLOW_MULTIPLIER = 0.016;
 
-    private final FluidTransferInfo fluidTransferInfo = PipeAPI.getFluidTransferInfo(pipe.getDefinition());
+    private final FluidTransferInfo fluidTransferInfo = PipeApi.getFluidTransferInfo(pipe.getDefinition());
 
     /* Default to an additional second of fluid inserting and removal. This means that (for a normal pipe like cobble)
      * it will be 20 * (10 + 12) = 20 * 22 = 440 - oh that's not good is it */
@@ -325,10 +321,10 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     private void setFluid(FluidStack fluid) {
         currentFluid = fluid;
         if (fluid != null) {
-            currentDelay = (int) PipeAPI.getFluidTransferInfo(pipe.getDefinition()).transferDelayMultiplier;
+            currentDelay = (int) PipeApi.getFluidTransferInfo(pipe.getDefinition()).transferDelayMultiplier;
             // (int) (fluidTransferInfo.transferDelayMultiplier * fluid.getFluid().getViscosity(fluid) / 100);
         } else {
-            currentDelay = (int) PipeAPI.getFluidTransferInfo(pipe.getDefinition()).transferDelayMultiplier;
+            currentDelay = (int) PipeApi.getFluidTransferInfo(pipe.getDefinition()).transferDelayMultiplier;
         }
         for (Section section : sections.values()) {
             section.incoming = new int[currentDelay];

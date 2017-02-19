@@ -1,6 +1,4 @@
-package buildcraft.core.crops;
-
-import java.util.List;
+package buildcraft.lib.crops;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -9,6 +7,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -16,11 +15,9 @@ import net.minecraft.world.World;
 import buildcraft.api.crops.CropManager;
 import buildcraft.api.crops.ICropHandler;
 
-public class CropHandlerReeds implements ICropHandler {
-    public static final CropHandlerReeds INSTANCE = new CropHandlerReeds();
+public enum CropHandlerReeds implements ICropHandler {
+    INSTANCE;
     public static final int MAX_HEIGHT = 3;
-
-    protected CropHandlerReeds() {}
 
     @Override
     public boolean isSeed(ItemStack stack) {
@@ -45,7 +42,7 @@ public class CropHandlerReeds implements ICropHandler {
     }
 
     @Override
-    public boolean harvestCrop(World world, BlockPos pos, List<ItemStack> drops) {
+    public boolean harvestCrop(World world, BlockPos pos, NonNullList<ItemStack> drops) {
         return false;
     }
 }

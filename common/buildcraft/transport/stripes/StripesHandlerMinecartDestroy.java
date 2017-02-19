@@ -5,48 +5,29 @@
 package buildcraft.transport.stripes;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.item.EntityMinecartContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.transport.IStripesActivator;
-import buildcraft.api.transport.IStripesHandler;
+import buildcraft.api.transport.IStripesHandlerBlock;
 
-public class StripesHandlerMinecartDestroy implements IStripesHandler {
+import buildcraft.lib.misc.StackUtil;
 
-    @Override
-    public StripesHandlerType getType() {
-        return StripesHandlerType.BLOCK_BREAK;
-    }
+public enum StripesHandlerMinecartDestroy implements IStripesHandlerBlock {
+    INSTANCE;
 
     @Override
-    public boolean shouldHandle(ItemStack stack) {
-        return true;
-    }
-
-    @Override
-    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+    public boolean handle(World world, BlockPos pos, EnumFacing direction, EntityPlayer player, IStripesActivator activator) {
         AxisAlignedBB box = new AxisAlignedBB(pos, pos.add(1, 1, 1));
-        List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, box);
-        if (entities.size() <= 0) {
-            return false;
-        }
-
-        List<EntityMinecart> minecarts = new LinkedList<>();
-        for (Object entityObj : entities) {
-            if (entityObj instanceof EntityMinecart) {
-                minecarts.add((EntityMinecart) entityObj);
-            }
-        }
+        List<EntityMinecart> minecarts = world.getEntitiesWithinAABB(EntityMinecart.class, box);
 
         if (minecarts.size() > 0) {
             Collections.shuffle(minecarts);
@@ -56,22 +37,19 @@ public class StripesHandlerMinecartDestroy implements IStripesHandler {
                 EntityMinecartContainer container = (EntityMinecartContainer) cart;
                 for (int i = 0; i < container.getSizeInventory(); i++) {
                     ItemStack s = container.getStackInSlot(i);
-                    if (s != null) {
-                        container.setInventorySlotContents(i, null);
+                    if (!s.isEmpty()) {
+                        container.setInventorySlotContents(i, StackUtil.EMPTY);
                         // Safety check
-                        if (container.getStackInSlot(i) == null) {
+                        if (container.getStackInSlot(i).isEmpty()) {
                             activator.sendItem(s, direction.getOpposite());
                         }
                     }
                 }
             }
-            /* cart.captureDrops = true; cart.killMinecart(DamageSource.generic); for (EntityItem s :
-             * cart.capturedDrops) { activator.sendItem(s.getEntityItem(), direction.getOpposite()); } */
             cart.setDead();
-            activator.sendItem(cart.getCartItem(), direction.getOpposite());
+            activator.sendItem(StackUtil.asNonNull(cart.getCartItem()), direction.getOpposite());
             return true;
         }
-
         return false;
     }
 }

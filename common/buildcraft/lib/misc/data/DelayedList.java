@@ -40,7 +40,7 @@ public class DelayedList<E> {
         return elements.size();
     }
 
-    /** Advances this list by one, essentially decrementing the delays of every element by one and returning all
+    /** Advances this list by one, effectively decrementing the delays of every element by one and returning all
      * elements that have a delay of 0.
      * 
      * @return The elements that are no longer on a delay. */
@@ -51,7 +51,10 @@ public class DelayedList<E> {
         return elements.remove(0);
     }
 
-    /** Adds an element that will by returned by {@link #advance()} after it has been called delay times. */
+    /** Adds an element that will by returned by {@link #advance()} after it has been called delay times.
+     * 
+     * @param delay The number of times that advance needs to be called for the *next* advance to return this element.
+     *            Negative numbers default up to 0. */
     public void add(int delay, E element) {
         if (delay < 0) {
             delay = 0;
@@ -67,6 +70,7 @@ public class DelayedList<E> {
         return elements;
     }
 
+    /** Removes *all* elements from this list. */
     public void clear() {
         elements.clear();
     }

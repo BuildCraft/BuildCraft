@@ -15,13 +15,11 @@ import net.minecraft.util.math.RayTraceResult;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.transport.neptune.IPipeHolder;
-import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
-import buildcraft.api.transport.neptune.IPluggableDynamicRenderer;
-import buildcraft.api.transport.neptune.PipePluggable;
-import buildcraft.api.transport.neptune.PluggableDefinition;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 import buildcraft.lib.net.IPayloadWriter;
@@ -29,7 +27,6 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.BCTransportGuis;
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugGate;
-import buildcraft.transport.client.render.PlugGateRenderer;
 import buildcraft.transport.gate.GateLogic;
 import buildcraft.transport.gate.GateVariant;
 
@@ -144,18 +141,11 @@ public class PluggableGate extends PipePluggable {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public PluggableModelKey<?> getModelRenderKey(BlockRenderLayer layer) {
+    public PluggableModelKey getModelRenderKey(BlockRenderLayer layer) {
         if (layer == BlockRenderLayer.CUTOUT) {
             return new KeyPlugGate(side, logic.variant);
         }
         return null;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public IPluggableDynamicRenderer getDynamicRenderer() {
-        return new PlugGateRenderer(this);
     }
 
     @Override

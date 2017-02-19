@@ -13,8 +13,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.transport.neptune.PipeAPI;
-import buildcraft.api.transport.neptune.PipeDefinition;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.config.EnumRestartRequirement;
@@ -120,7 +120,7 @@ public class BCTransportConfig {
     }
 
     private static void fluidTransfer(PipeDefinition def, int rate, int delay) {
-        PipeAPI.fluidTransferData.put(def, new PipeAPI.FluidTransferInfo(rate, delay));
+        PipeApi.fluidTransferData.put(def, new PipeApi.FluidTransferInfo(rate, delay));
     }
 
     @SubscribeEvent

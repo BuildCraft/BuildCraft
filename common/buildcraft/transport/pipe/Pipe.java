@@ -20,10 +20,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.ICustomPipeConnection;
-import buildcraft.api.transport.PipeConnectionAPI;
-import buildcraft.api.transport.neptune.*;
-import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
+import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
+import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.LoadingException;
@@ -268,7 +267,7 @@ public final class Pipe implements IPipe, IDebuggable {
     }
 
     public void onRemove(NonNullList<ItemStack> toDrop) {
-        Item item = (Item) PipeAPI.pipeRegistry.getItemForPipe(definition);
+        Item item = (Item) PipeApi.pipeRegistry.getItemForPipe(definition);
         if (item != null) {
             toDrop.add(new ItemStack(item, 1, colour == null ? 0 : 1 + colour.ordinal()));
         }

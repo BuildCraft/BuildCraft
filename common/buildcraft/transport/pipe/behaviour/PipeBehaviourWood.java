@@ -11,13 +11,8 @@ import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
-import buildcraft.api.transport.PipeEventFluid;
-import buildcraft.api.transport.PipeEventHandler;
-import buildcraft.api.transport.neptune.IFlowFluid;
-import buildcraft.api.transport.neptune.IFlowItems;
-import buildcraft.api.transport.neptune.IPipe;
-import buildcraft.api.transport.neptune.IPipe.ConnectedType;
-import buildcraft.api.transport.neptune.PipeBehaviour;
+import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IPipe.ConnectedType;
 
 import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.transport.BCTransportConfig;
@@ -66,7 +61,10 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
 
     @Override
     public void onTick() {
-        // TODO: this probably shouldn't run every tick
+        if (pipe.getHolder().getPipeWorld().isRemote) {
+            return;
+        }
+
         if (currentDir == EnumPipePart.CENTER) {
             advanceFacing();
         } else if (!canFaceDirection(getCurrentDir())) {

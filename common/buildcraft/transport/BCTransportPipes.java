@@ -6,12 +6,12 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.transport.neptune.PipeAPI;
-import buildcraft.api.transport.neptune.PipeDefinition;
-import buildcraft.api.transport.neptune.PipeDefinition.IPipeCreator;
-import buildcraft.api.transport.neptune.PipeDefinition.IPipeLoader;
-import buildcraft.api.transport.neptune.PipeDefinition.PipeDefinitionBuilder;
-import buildcraft.api.transport.neptune.PipeFlowType;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.api.transport.pipe.PipeFlowType;
+import buildcraft.api.transport.pipe.PipeDefinition.IPipeCreator;
+import buildcraft.api.transport.pipe.PipeDefinition.IPipeLoader;
+import buildcraft.api.transport.pipe.PipeDefinition.PipeDefinitionBuilder;
 
 import buildcraft.transport.pipe.PipeRegistry;
 import buildcraft.transport.pipe.behaviour.*;
@@ -66,12 +66,13 @@ public class BCTransportPipes {
     public static PipeDefinition lapisItem;
     public static PipeDefinition daizuliItem;
     public static PipeDefinition emzuliItem;
+    public static PipeDefinition stripesItem;
 
     public static void preInit() {
         DefinitionBuilder builder = new DefinitionBuilder();
 
         builder.logic(PipeBehaviourStructure::new, PipeBehaviourStructure::new);
-        structure = builder.idTex("structure").flow(PipeAPI.flowStructure).define();
+        structure = builder.idTex("structure").flow(PipeApi.flowStructure).define();
 
         builder.logic(PipeBehaviourWood::new, PipeBehaviourWood::new).texSuffixes("_clear", "_filled");
         woodItem = builder.idTexPrefix("wood_item").flowItem().define();
@@ -153,6 +154,9 @@ public class BCTransportPipes {
 
         builder.logic(PipeBehaviourEmzuli::new, PipeBehaviourEmzuli::new).texSuffixes("_clear", "_filled");
         emzuliItem = builder.idTexPrefix("emzuli_item").flowItem().define();
+
+        builder.logic(PipeBehaviourStripes::new, PipeBehaviourStripes::new);
+        stripesItem = builder.idTex("stripes_item").flowItem().define();
     }
 
     private static class DefinitionBuilder {
@@ -196,15 +200,15 @@ public class BCTransportPipes {
         }
 
         public DefinitionBuilder flowItem() {
-            return flow(PipeAPI.flowItems);
+            return flow(PipeApi.flowItems);
         }
 
         public DefinitionBuilder flowFluid() {
-            return flow(PipeAPI.flowFluids);
+            return flow(PipeApi.flowFluids);
         }
 
         public DefinitionBuilder flowPower() {
-            return flow(PipeAPI.flowPower);
+            return flow(PipeApi.flowPower);
         }
 
         public DefinitionBuilder flow(PipeFlowType flow) {

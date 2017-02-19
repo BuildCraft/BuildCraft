@@ -7,21 +7,17 @@ import javax.vecmath.Matrix4f;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.transport.neptune.IPluggableDynamicRenderer;
+import buildcraft.api.transport.pluggable.IPlugDynamicRenderer;
 
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.transport.BCTransportModels;
 import buildcraft.transport.plug.PluggableGate;
 
-public class PlugGateRenderer implements IPluggableDynamicRenderer {
+public enum PlugGateRenderer implements IPlugDynamicRenderer<PluggableGate> {
+    INSTANCE;
+
     private static final MutableQuad[][] cache = new MutableQuad[6 * 2][];
-
-    private final PluggableGate toRender;
-
-    public PlugGateRenderer(PluggableGate toRender) {
-        this.toRender = toRender;
-    }
 
     private static MutableQuad[] getFromCache(EnumFacing side, boolean isOn) {
         int index = side.ordinal() + (isOn ? 6 : 0);
@@ -45,9 +41,9 @@ public class PlugGateRenderer implements IPluggableDynamicRenderer {
     }
 
     @Override
-    public void render(double x, double y, double z, float partialTicks, VertexBuffer vb) {
+    public void render(PluggableGate gate, double x, double y, double z, float partialTicks, VertexBuffer vb) {
         vb.setTranslation(x, y, z);
-        for (MutableQuad q : getFromCache(toRender.side, toRender.logic.isOn)) {
+        for (MutableQuad q : getFromCache(gate.side, gate.logic.isOn)) {
             q.render(vb);
         }
         vb.setTranslation(0, 0, 0);

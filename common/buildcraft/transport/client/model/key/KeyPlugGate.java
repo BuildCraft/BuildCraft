@@ -7,15 +7,14 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
-import buildcraft.transport.client.model.plug.PlugGateBaker;
 import buildcraft.transport.gate.GateVariant;
 
-public class KeyPlugGate extends PluggableModelKey<KeyPlugGate> {
+public class KeyPlugGate extends PluggableModelKey {
     public final GateVariant variant;
     public final int hash;
 
     public KeyPlugGate(EnumFacing side, GateVariant variant) {
-        super(BlockRenderLayer.CUTOUT, PlugGateBaker.INSTANCE, side);
+        super(BlockRenderLayer.CUTOUT, side);
         this.variant = variant;
         this.hash = Objects.hash(variant, side);
     }

@@ -3,8 +3,8 @@ package buildcraft.transport.pipe.behaviour;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.transport.neptune.IPipe;
-import buildcraft.api.transport.neptune.PipeBehaviour;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.PipeBehaviour;
 
 public abstract class PipeBehaviourSeparate extends PipeBehaviour {
     public PipeBehaviourSeparate(IPipe pipe) {

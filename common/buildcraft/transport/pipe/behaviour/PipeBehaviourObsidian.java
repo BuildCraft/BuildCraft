@@ -15,7 +15,7 @@ import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
-import buildcraft.api.transport.neptune.*;
+import buildcraft.api.transport.pipe.*;
 
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.filter.StackFilter;

@@ -6,8 +6,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.RayTraceResult;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.transport.neptune.IPipe;
-import buildcraft.api.transport.neptune.PipeBehaviour;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.PipeBehaviour;
 
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.transport.BCTransportGuis;

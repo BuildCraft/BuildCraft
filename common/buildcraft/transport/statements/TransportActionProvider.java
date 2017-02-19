@@ -8,9 +8,9 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.*;
-import buildcraft.api.transport.PipeEventStatement;
-import buildcraft.api.transport.neptune.IPipeHolder;
-import buildcraft.api.transport.neptune.PipePluggable;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeEventStatement;
+import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.transport.BCTransportStatements;
