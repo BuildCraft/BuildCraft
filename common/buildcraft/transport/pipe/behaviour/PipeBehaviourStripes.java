@@ -106,11 +106,7 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
 
     @Override
     public long receivePower(long microJoules, boolean simulate) {
-        if (simulate) {
-            return mjBattery.isFull() ? microJoules : 0;
-        } else {
-            return mjBattery.addPowerChecking(microJoules);
-        }
+        return mjBattery.addPowerChecking(microJoules, simulate);
     }
 
     // Stripes

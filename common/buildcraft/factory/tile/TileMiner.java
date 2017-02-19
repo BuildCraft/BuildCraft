@@ -122,7 +122,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
             NBTTagCompound oldBattery = nbt.getCompoundTag("battery");
             int energy = oldBattery.getInteger("energy");
             battery.extractPower(0, Integer.MAX_VALUE);
-            battery.addPower(energy * 100);
+            battery.addPower(energy * 100, false);
         }
     }
 

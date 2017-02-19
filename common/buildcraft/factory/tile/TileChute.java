@@ -127,7 +127,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
         battery.tick(getWorld(), getPos());
 
         // test with the output of a stone engine
-        battery.addPower(1000); // remove this
+        battery.addPower(1000, false); // remove this
 
         EnumFacing currentSide = world.getBlockState(pos).getValue(BlockBCBase_Neptune.BLOCK_FACING_6);
 
