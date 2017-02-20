@@ -5,12 +5,15 @@
 package buildcraft.builders.tile;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.BCBuildersItems;
+import buildcraft.builders.addon.AddonFillingPlanner;
 import buildcraft.builders.block.BlockArchitect;
 import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.schematic.*;
+import buildcraft.core.marker.volume.Lock;
+import buildcraft.core.marker.volume.VolumeBox;
+import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.misc.BoundingBoxUtil;
@@ -27,7 +30,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
@@ -44,6 +46,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class TileArchitect extends TileBC_Neptune implements ITickable, IDebuggable {
+    public AddonFillingPlanner addon;
     public static final int NET_BOX = 20;
     public static final int NET_SCAN = 21;
 
@@ -85,16 +88,22 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
         if (placer.world.isRemote) {
             return;
         }
-        EnumFacing facing = world.getBlockState(getPos()).getValue(BlockArchitect.PROP_FACING);
-        BlockPos areaPos = getPos().offset(facing.getOpposite());
-        TileEntity tile = world.getTileEntity(areaPos);
-        if (tile instanceof IAreaProvider) {
-            IAreaProvider provider = (IAreaProvider) tile;
+        WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
+        IBlockState blockState = world.getBlockState(getPos());
+        VolumeBox volumeBox = volumeBoxes.getBoxAt(getPos().offset(blockState.getValue(BlockArchitect.PROP_FACING).getOpposite()));
+        if (volumeBox != null) {
             box.reset();
-            box.setMin(provider.min());
-            box.setMax(provider.max());
-            provider.removeFromWorld();
+            box.setMin(volumeBox.box.min());
+            box.setMax(volumeBox.box.max());
             isValid = true;
+            volumeBox.locks.add(
+                    new Lock(
+                            new Lock.LockCause.LockCauseBlock(pos, blockState.getBlock()),
+                            new Lock.LockTarget.LockTargetResize(),
+                            new Lock.LockTarget.LockTargetUsedByMachine()
+                    )
+            );
+            volumeBoxes.markDirty();
             sendNetworkUpdate(NET_BOX);
         } else {
             isValid = false;
@@ -289,11 +298,6 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
     }
 
     // Rendering
-
-    @SideOnly(Side.CLIENT)
-    public Box getScanningBox() {
-        return box;
-    }
 
     @Override
     @SideOnly(Side.CLIENT)
