@@ -26,6 +26,7 @@ public abstract class ContainerBCTile<T extends TileBC_Neptune> extends Containe
 
     @Override
     public void detectAndSendChanges() {
+        super.detectAndSendChanges();
         tile.sendNetworkGuiTick();
     }
 }
