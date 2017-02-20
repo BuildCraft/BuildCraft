@@ -7,7 +7,6 @@ package buildcraft.builders.tile;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.BCBuildersItems;
-import buildcraft.builders.addon.AddonFillingPlanner;
 import buildcraft.builders.block.BlockArchitect;
 import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.schematic.*;
@@ -46,11 +45,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class TileArchitect extends TileBC_Neptune implements ITickable, IDebuggable {
-    public AddonFillingPlanner addon;
     public static final int NET_BOX = 20;
     public static final int NET_SCAN = 21;
-
-    private static final int BLOCKS_PER_TICK = 3;
 
     public final ItemHandlerSimple invBptIn = itemManager.addInvHandler("bptIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
     public final ItemHandlerSimple invBptOut = itemManager.addInvHandler("bptOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
@@ -169,9 +165,7 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
             templateScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = solid;
         }
 
-        createAndSendMessage(NET_SCAN, (buffer) -> {
-            buffer.writeBlockPos(worldScanPos);
-        });
+        createAndSendMessage(NET_SCAN, buffer -> buffer.writeBlockPos(worldScanPos));
 
         sendNetworkUpdate(NET_RENDER_DATA);
 
