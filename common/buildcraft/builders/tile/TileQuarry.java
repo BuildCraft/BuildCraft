@@ -603,7 +603,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             power += microJoules;
             if (power >= getTarget()) {
                 if (!finish()) {
-                    battery.addPower(Math.min(power, battery.getCapacity() - battery.getStored()));
+                    battery.addPower(Math.min(power, battery.getCapacity() - battery.getStored()), false);
                 }
                 return true;
             } else {

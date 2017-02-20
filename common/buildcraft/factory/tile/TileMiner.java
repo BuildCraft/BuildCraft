@@ -59,7 +59,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
 
         if (!battery.isFull()) {
             //  test with the output of a stone engine
-            battery.addPower(MjAPI.MJ); // remove this
+            battery.addPower(MjAPI.MJ, false); // remove this
         }
 
         battery.tick(getWorld(), getPos());

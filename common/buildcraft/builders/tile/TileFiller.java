@@ -171,7 +171,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
             return;
         }
 
-        battery.addPowerChecking(64 * MjAPI.MJ);
+        battery.addPowerChecking(64 * MjAPI.MJ, false);
 
         breakTasks.removeIf(breakTask -> world.isAirBlock(breakTask.getLeft()));
         placeTasks.removeIf(placeTask -> !world.isAirBlock(placeTask.getLeft()));
@@ -237,7 +237,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                         world.sendBlockBreakProgress(breakTask.getLeft().hashCode(), breakTask.getLeft(), -1);
                         world.destroyBlock(breakTask.getLeft(), false);
                     } else {
-                        battery.addPower(Math.min(target, battery.getCapacity() - battery.getStored()));
+                        battery.addPower(Math.min(target, battery.getCapacity() - battery.getStored()), false);
                     }
                     iterator.remove();
                 } else {
@@ -268,7 +268,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                             0.5F
                     );
                     if (result != EnumActionResult.SUCCESS) {
-                        battery.addPower(Math.min(target, battery.getCapacity() - battery.getStored()));
+                        battery.addPower(Math.min(target, battery.getCapacity() - battery.getStored()), false);
                         invResources.insert(placeTask.getMiddle(), false, false);
                     }
                     iterator.remove();
