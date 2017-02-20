@@ -22,13 +22,12 @@ public class GlobalSavedDataSnapshots {
                     FMLCommonHandler.instance().getSavesDirectory().getParentFile(),
                     "snapshots-" + side.name().toLowerCase(Locale.ROOT)
             );
-            if (!snapshotsFile.isDirectory()) {
-                throw new IllegalArgumentException();
-            }
             if (!snapshotsFile.exists()) {
                 if (!snapshotsFile.mkdirs()) {
                     throw new IOException();
                 }
+            } else if (!snapshotsFile.isDirectory()) {
+                throw new IllegalArgumentException();
             }
             readSnapshots();
 
@@ -39,7 +38,7 @@ public class GlobalSavedDataSnapshots {
 
     private void writeSnapshots() throws IOException {
         for (Snapshot snapshot : snapshots) {
-            File snapshotFile = new File(snapshotsFile, snapshot.getFileName());
+            File snapshotFile = new File(snapshotsFile, snapshot.header.getFileName());
             NBTTagCompound nbt = snapshot.serializeNBT();
             nbt.setTag("type", NBTUtilBC.writeEnum(snapshot.getType()));
             CompressedStreamTools.write(nbt, snapshotFile);

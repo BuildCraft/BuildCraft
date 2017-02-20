@@ -7,7 +7,9 @@ package buildcraft.builders.tile;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.tiles.IDebuggable;
+import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.block.BlockArchitect;
+import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.schematic.*;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
@@ -69,7 +71,7 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
         super.onSlotChange(handler, slot, before, after);
         if (handler == invBptIn) {
-            if (after != null) { // TODO: check item
+            if (after.getItem() instanceof ItemSnapshot) {
                 shouldStartScanning = true;
             } else {
                 scanning = false;
@@ -199,11 +201,17 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
     private void finishScanning() {
         EnumFacing facing = world.getBlockState(getPos()).getValue(BlockArchitect.PROP_FACING);
         Snapshot snapshot = snapshotType.create.get();
-        snapshot.id = UUID.randomUUID();
-        snapshot.owner = getOwner().getId();
-        snapshot.created = new Date();
-        snapshot.name = name;
+        snapshot.header = new Snapshot.Header();
+        snapshot.header.id = UUID.randomUUID();
+        snapshot.header.owner = getOwner().getId();
+        snapshot.header.created = new Date();
+        snapshot.header.name = name;
         GlobalSavedDataSnapshots.get(world).snapshots.add(snapshot);
+        invBptIn.setStackInSlot(0, ItemStack.EMPTY);
+        invBptOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshotType, snapshot.header));
+        blueprintScannedBlocks = null;
+        templateScannedBlocks = null;
+        boxIterator = null;
         sendNetworkUpdate(NET_RENDER_DATA);
     }
 

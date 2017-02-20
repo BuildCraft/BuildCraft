@@ -39,7 +39,7 @@ public enum SchematicsLoader {
                 int oldSize = rules.size();
                 // Add all parent rules to list
                 while (true) {
-                    rules.stream()
+                    new ArrayList<>(rules).stream() // Copy needed to avoid ConcurrentModificationException
                             .filter(rule -> rule.parentNames != null)
                             .flatMap(rule -> rule.parentNames.stream())
                             .flatMap(ruleName ->
@@ -64,7 +64,14 @@ public enum SchematicsLoader {
                                             .map(itemName -> itemName.contains("@") ? itemName : itemName + "@0")
                                             .map(itemName ->
                                                     new ItemStack(
-                                                            Item.getByNameOrId(itemName.substring(0, itemName.indexOf("@"))),
+                                                            Objects.requireNonNull(
+                                                                    Item.getByNameOrId(
+                                                                            itemName.substring(
+                                                                                    0,
+                                                                                    itemName.indexOf("@")
+                                                                            )
+                                                                    )
+                                                            ),
                                                             1,
                                                             Integer.parseInt(itemName.substring(itemName.indexOf("@") + 1))
                                                     )

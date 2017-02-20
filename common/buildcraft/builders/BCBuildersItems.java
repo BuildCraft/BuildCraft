@@ -7,17 +7,20 @@ package buildcraft.builders;
 import buildcraft.builders.item.ItemBlueprint;
 import buildcraft.builders.item.ItemFillingPlanner;
 import buildcraft.builders.item.ItemSchematicSingle;
+import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.lib.item.ItemManager;
 
 public class BCBuildersItems {
 
     public static ItemSchematicSingle schematicSingle;
     public static ItemBlueprint blueprint;
+    public static ItemSnapshot snapshot;
     public static ItemFillingPlanner fillingPlanner;
 
     public static void preInit() {
         schematicSingle = ItemManager.register(new ItemSchematicSingle("item.schematic.single"));
         blueprint = ItemManager.register(new ItemBlueprint("item.blueprint"));
+        snapshot = ItemManager.register(new ItemSnapshot("item.snapshot"));
         fillingPlanner = ItemManager.register(new ItemFillingPlanner("item.filling_planner"));
     }
 }

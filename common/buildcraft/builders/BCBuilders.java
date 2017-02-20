@@ -71,6 +71,7 @@ public class BCBuilders {
         // Items
         registerTag("item.schematic.single").reg("schematic_single").locale("schematicSingle").model("schematic_single/");
         registerTag("item.blueprint").reg("blueprint").locale("blueprintItem").model("blueprint/");
+        registerTag("item.snapshot").reg("snapshot").locale("snapshot").model("snapshot/");
         registerTag("item.filling_planner").reg("filling_planner").locale("fillingPlannerItem").model("filling_planner");
         // Item Blocks
         registerTag("item.block.architect").reg("architect").locale("architectBlock").model("architect");

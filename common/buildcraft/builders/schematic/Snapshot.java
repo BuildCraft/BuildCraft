@@ -13,53 +13,26 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
-    public UUID id;
-    public UUID owner;
-    public Date created;
-    public String name;
+    public Header header;
 
-    public Snapshot(UUID id, UUID owner, Date created, String name) {
-        this.id = id;
-        this.owner = owner;
-        this.created = created;
-        this.name = name;
+    public Snapshot(Header header) {
+        this.header = header;
     }
 
     public Snapshot() {
     }
 
-    public String getFileName() {
-        return Stream.of(
-                id,
-                owner,
-                created,
-                name
-        )
-                .filter(Objects::nonNull)
-                .map(Object::toString)
-                .collect(Collectors.joining(";"));
-    }
-
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setUniqueId("id", id);
-        nbt.setUniqueId("owner", owner);
-        nbt.setLong("created", created.getTime());
-        nbt.setString("name", name);
+        nbt.setTag("header", header.serializeNBT());
         return nbt;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        id = nbt.getUniqueId("id");
-        owner = nbt.getUniqueId("owner");
-        created = new Date(nbt.getLong("created"));
-        name = nbt.getString("name");
-    }
-
-    public EntityPlayer getOwnerPlayer(World world) {
-        return world.getPlayerEntityByUUID(owner);
+        header = new Header();
+        header.deserializeNBT(nbt.getCompoundTag("header"));
     }
 
     abstract public EnumSnapshotType getType();
@@ -74,6 +47,57 @@ public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
         EnumSnapshotType(Supplier<Snapshot> create, int maxPerTick) {
             this.create = create;
             this.maxPerTick = maxPerTick;
+        }
+    }
+
+    public static class Header implements INBTSerializable<NBTTagCompound> {
+        public UUID id;
+        public UUID owner;
+        public Date created;
+        public String name;
+
+        public Header(UUID id, UUID owner, Date created, String name) {
+            this.id = id;
+            this.owner = owner;
+            this.created = created;
+            this.name = name;
+        }
+
+        public Header() {
+        }
+
+        public String getFileName() {
+            return Stream.of(
+                    id,
+                    owner,
+                    created,
+                    name
+            )
+                    .filter(Objects::nonNull)
+                    .map(Object::toString)
+                    .collect(Collectors.joining(";"));
+        }
+
+        @Override
+        public NBTTagCompound serializeNBT() {
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setUniqueId("id", id);
+            nbt.setUniqueId("owner", owner);
+            nbt.setLong("created", created.getTime());
+            nbt.setString("name", name);
+            return nbt;
+        }
+
+        @Override
+        public void deserializeNBT(NBTTagCompound nbt) {
+            id = nbt.getUniqueId("id");
+            owner = nbt.getUniqueId("owner");
+            created = new Date(nbt.getLong("created"));
+            name = nbt.getString("name");
+        }
+
+        public EntityPlayer getOwnerPlayer(World world) {
+            return world.getPlayerEntityByUUID(owner);
         }
     }
 }
