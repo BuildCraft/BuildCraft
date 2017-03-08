@@ -14,6 +14,7 @@ import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.api.transport.pipe.PipeApi.PowerTransferInfo;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.core.BCCoreConfig;
@@ -99,6 +100,7 @@ public class BCTransportConfig {
             }
 
             baseFlowRate = MathUtil.clamp(propBaseFlowRate.getInt(), 1, 40);
+            int basePowerRate = 4;
 
             lossMode = PowerLossMode.get(propLossMode.getString(), true);
 
@@ -116,11 +118,26 @@ public class BCTransportConfig {
 
             // fluidTransfer(BCTransportPipes.diamondFluid, baseFlowRate * 8, 10);
             fluidTransfer(BCTransportPipes.goldFluid, baseFlowRate * 8, 2);
+
+            powerTransfer(BCTransportPipes.cobblePower, basePowerRate, 16, false);
+            powerTransfer(BCTransportPipes.stonePower, basePowerRate * 2, 32, false);
+            powerTransfer(BCTransportPipes.woodPower, basePowerRate * 4, 128, true);
+            powerTransfer(BCTransportPipes.sandstonePower, basePowerRate * 4, 32, false);
+            powerTransfer(BCTransportPipes.quartzPower, basePowerRate * 8, 32, false);
+            // powerTransfer(BCTransportPipes.ironPower, basePowerRate * 8, false);
+            powerTransfer(BCTransportPipes.goldPower, basePowerRate * 16, 32, false);
+            // powerTransfer(BCTransportPipes.diamondPower, basePowerRate * 32, false);
         }
     }
 
     private static void fluidTransfer(PipeDefinition def, int rate, int delay) {
         PipeApi.fluidTransferData.put(def, new PipeApi.FluidTransferInfo(rate, delay));
+    }
+
+    private static void powerTransfer(PipeDefinition def, int transferMultiplier, int resistanceDivisor, boolean recv) {
+        long transfer = MjAPI.MJ * transferMultiplier;
+        long resistance = MjAPI.MJ / resistanceDivisor;
+        PipeApi.powerTransferData.put(def, PowerTransferInfo.createFromResistance(transfer, resistance, recv));
     }
 
     @SubscribeEvent

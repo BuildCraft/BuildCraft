@@ -118,7 +118,8 @@ public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemP
             PipeApi.FluidTransferInfo fti = PipeApi.getFluidTransferInfo(definition);
             tooltip.add(LocaleUtil.localizeFluidFlow(fti.transferPerTick));
         } else if (definition.flowType == PipeApi.flowPower) {
-            // TODO!
+            PipeApi.PowerTransferInfo pti = PipeApi.getPowerTransferInfo(definition);
+            tooltip.add(LocaleUtil.localizeMjFlow(pti.transferPerTick));
         }
     }
 }

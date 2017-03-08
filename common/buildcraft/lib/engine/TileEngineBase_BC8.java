@@ -8,7 +8,10 @@ import javax.annotation.Nonnull;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ITickable;
 import net.minecraft.world.biome.Biome;
 
 import net.minecraftforge.common.capabilities.Capability;
@@ -21,7 +24,6 @@ import buildcraft.api.mj.*;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.VanillaRotationHandlers;
-import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.collect.OrderedEnumMap;
@@ -68,11 +70,19 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         EnumFacing current = currentDirection;
         for (int i = 0; i < 6; i++) {
             current = possible.next(current);
-            if (true) {// TODO: replace with sided check
-                currentDirection = current;
-                // makeTileCache();
-                redrawBlock();
-                return EnumActionResult.SUCCESS;
+            TileEntity neighbour = world.getTileEntity(getPos().offset(current));
+            if (neighbour == null) continue;
+            IMjConnector other = neighbour.getCapability(MjAPI.CAP_CONNECTOR, current.getOpposite());
+            if (other == null) continue;
+            if (mjConnector.canConnect(other) && other.canConnect(mjConnector)) {
+                if (currentDirection != current) {
+                    currentDirection = current;
+                    // makeTileCache();
+                    redrawBlock();
+                    world.notifyNeighborsRespectDebug(getPos(), getBlockType(), true);
+                    return EnumActionResult.SUCCESS;
+                }
+                return EnumActionResult.FAIL;
             }
         }
         return EnumActionResult.FAIL;
@@ -488,14 +498,15 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapUtil.CAP_ITEMS && facing == currentDirection) {
-            return null;
+        if (facing == currentDirection) {
+            return mjCaps.getCapability(capability, facing);
+        } else {
+            return super.getCapability(capability, facing);
         }
-        T cap = mjCaps.getCapability(capability, facing);
-        if (cap != null) {
-            return cap;
-        }
-        return super.getCapability(capability, facing);
+        // if (capability == CapUtil.CAP_ITEMS && facing == currentDirection) {
+        // return null;
+        // }
+        // return super.getCapability(capability, facing);
     }
 
     public abstract long getMaxPower();

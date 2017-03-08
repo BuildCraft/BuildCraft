@@ -24,10 +24,4 @@ public class PipeBehaviourCobble extends PipeBehaviourSeparate {
     public static void modifySpeed(PipeEventItem.ModifySpeed event) {
         event.modifyTo(SPEED_TARGET, SPEED_DELTA);
     }
-
-    @PipeEventHandler
-    public static void configurePower(PipeEventPower.Configure event) {
-        event.setMaxPower(MjAPI.MJ * 4);
-        event.setPowerResistance(MjAPI.MJ / 20);// 1/20th lost, or 0.05%
-    }
 }

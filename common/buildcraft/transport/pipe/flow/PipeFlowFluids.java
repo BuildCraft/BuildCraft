@@ -141,11 +141,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         if (from == null) {
             return null;
         }
-        TileEntity connected = pipe.getConnectedTile(from);
-        if (connected == null) {
-            return null;
-        }
-        IFluidHandler fluidHandler = connected.getCapability(CapUtil.CAP_FLUIDS, from.getOpposite());
+        IFluidHandler fluidHandler = pipe.getHolder().getCapabilityFromPipe(from, CapUtil.CAP_FLUIDS);
         if (fluidHandler == null) {
             return null;
         }
@@ -177,16 +173,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         int reallyFilled = section.fill(extracted, true);
         section.ticksInDirection = COOLDOWN_INPUT;
         if (reallyFilled != extracted) {
-            BCLog.logger.warn("[tryExtractFluid] Filled " + reallyFilled
-                + " != extracted "
-                + extracted //
-                + " (maxExtract = "
-                + millibuckets
-                + ")" //
-                + " (handler = "
-                + fluidHandler.getClass()
-                + ") @"
-                + pipe.getHolder().getPipePos());
+            BCLog.logger.warn("[tryExtractFluid] Filled " + reallyFilled + " != extracted " + extracted //
+                + " (maxExtract = " + millibuckets + ")" //
+                + " (handler = " + fluidHandler.getClass() + ") @" + pipe.getHolder().getPipePos());
         }
         return toAdd;
     }
@@ -197,11 +186,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         if (from == null || filter == null || millibuckets <= 0) {
             return null;
         }
-        TileEntity connected = pipe.getConnectedTile(from);
-        if (connected == null) {
-            return null;
-        }
-        IFluidHandler fluidHandler = connected.getCapability(CapUtil.CAP_FLUIDS, from.getOpposite());
+        IFluidHandler fluidHandler = pipe.getHolder().getCapabilityFromPipe(from, CapUtil.CAP_FLUIDS);
         if (!(fluidHandler instanceof IFluidHandlerAdv)) {
             return null;
         }
@@ -229,13 +214,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         int reallyFilled = section.fill(millibuckets, true);
         section.ticksInDirection = COOLDOWN_INPUT;
         if (reallyFilled != millibuckets) {
-            BCLog.logger.warn("[tryExtractFluidAdv] Filled " + reallyFilled
-                + " != extracted "
-                + millibuckets //
-                + " (handler = "
-                + fluidHandler.getClass()
-                + ") @"
-                + pipe.getHolder().getPipePos());
+            BCLog.logger.warn("[tryExtractFluidAdv] Filled " + reallyFilled + " != extracted " + millibuckets //
+                + " (handler = " + fluidHandler.getClass() + ") @" + pipe.getHolder().getPipePos());
         }
         return toAdd;
     }
@@ -413,16 +393,13 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 sideCheck.disallowAllExcept(part.face);
                 pipe.getHolder().fireEvent(sideCheck);
                 if (sideCheck.getOrder().size() == 1) {
-                    TileEntity target = pipe.getConnectedTile(part.face);
-                    if (target == null) continue;
-                    EnumFacing opposite = part.face.getOpposite();
-                    IFluidHandler cap = target.getCapability(CapUtil.CAP_FLUIDS, opposite);
-                    if (cap == null) continue;
+                    IFluidHandler fluidHandler = pipe.getHolder().getCapabilityFromPipe(part.face, CapUtil.CAP_FLUIDS);
+                    if (fluidHandler == null) continue;
 
                     FluidStack fluidToPush = new FluidStack(currentFluid, section.drainInternal(fluidTransferInfo.transferPerTick, false));
 
                     if (fluidToPush.amount > 0) {
-                        int filled = cap.fill(fluidToPush, true);
+                        int filled = fluidHandler.fill(fluidToPush, true);
                         if (filled > 0) {
                             section.drainInternal(filled, true);
                             section.ticksInDirection = COOLDOWN_OUTPUT;
@@ -446,7 +423,10 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
         // Move liquid from the center to the output sides
         for (EnumFacing direction : EnumFacing.VALUES) {
-            if (sections.get(EnumPipePart.fromFacing(direction)).getCurrentDirection().canOutput() && pipe.isConnected(direction)) {
+            if (!sections.get(EnumPipePart.fromFacing(direction)).getCurrentDirection().canOutput()) {
+                continue;
+            }
+            if (pipe.getHolder().getCapabilityFromPipe(direction, CapUtil.CAP_FLUIDS) != null) {
                 realDirections.add(direction);
             }
         }

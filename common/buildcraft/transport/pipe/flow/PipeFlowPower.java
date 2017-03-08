@@ -23,10 +23,8 @@ import buildcraft.api.mj.IMjPassiveProvider;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.pipe.IFlowPower;
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.PipeEventPower;
-import buildcraft.api.transport.pipe.PipeFlow;
+import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.PipeApi.PowerTransferInfo;
 
 import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.misc.MathUtil;
@@ -41,6 +39,8 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     long maxPower = -1;
     long powerLoss = -1;
     long powerResistance = -1;
+
+    private long currentWorldTime;
 
     boolean isReceiver = false;
     final EnumMap<EnumFacing, Section> sections = createSections();
@@ -99,10 +99,11 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     @Override
     public void reconfigure() {
         PipeEventPower.Configure configure = new PipeEventPower.Configure(pipe.getHolder(), this);
-        configure.setReceiver(isReceiver);
-        configure.setMaxPower(maxPower);
-        configure.setPowerLoss(powerLoss);
-        configure.setPowerResistance(powerResistance);
+        PowerTransferInfo pti = PipeApi.getPowerTransferInfo(pipe.getDefinition());
+        configure.setReceiver(pti.isReceiver);
+        configure.setMaxPower(pti.transferPerTick);
+        configure.setPowerLoss(pti.lossPerTick);
+        configure.setPowerResistance(pti.resistancePerTick);
         pipe.getHolder().fireEvent(configure);
         isReceiver = configure.isReceiver();
         maxPower = configure.getMaxPower();
@@ -149,16 +150,31 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (facing == null || capability != MjAPI.CAP_CONNECTOR || capability != MjAPI.CAP_RECEIVER) {
+        if (facing == null) {
+            return null;
+        } else if (capability == MjAPI.CAP_RECEIVER) {
+            return isReceiver ? (T) sections.get(facing) : null;
+        } else if (capability == MjAPI.CAP_CONNECTOR) {
+            return (T) sections.get(facing);
+        } else {
             return null;
         }
-        return (T) sections.get(facing);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
 
+    }
+
+    private void step() {
+        long now = pipe.getHolder().getPipeWorld().getTotalWorldTime();
+        if (currentWorldTime != now) {
+            currentWorldTime = now;
+            for (EnumFacing face : EnumFacing.VALUES) {
+                sections.get(face).step();
+            }
+        }
     }
 
     public class Section implements IMjReceiver {
@@ -183,6 +199,10 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
             this.side = side;
         }
 
+        void step() {
+
+        }
+
         void onTick() {
 
         }
@@ -203,7 +223,15 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
         @Override
         public long receivePower(long microJoules, boolean simulate) {
+            if (isReceiver) {
+
+            }
             return microJoules;
+        }
+
+        @Override
+        public boolean canReceive() {
+            return isReceiver;
         }
     }
 

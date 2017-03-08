@@ -323,7 +323,7 @@ public final class Pipe implements IPipe, IDebuggable {
 
     @Override
     public IPipe getConnectedPipe(EnumFacing side) {
-        if (connected.containsKey(side)) {
+        if (connected.containsKey(side) && getConnectedType(side) == ConnectedType.PIPE) {
             IPipe offset = getHolder().getNeighbouringPipe(side);
             if (offset == null && !getHolder().getPipeWorld().isRemote) {
                 markForUpdate();
