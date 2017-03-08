@@ -50,6 +50,6 @@ public class GuiIntegrationTable extends GuiBC8<ContainerIntegrationTable> {
     @Override
     protected void drawForegroundLayer() {
         String title = I18n.format("tile.integrationTableBlock.name");
-        fontRendererObj.drawString(title, guiLeft + (xSize - fontRendererObj.getStringWidth(title)) / 2, guiTop + 10, 0x404040);
+        fontRenderer.drawString(title, guiLeft + (xSize - fontRenderer.getStringWidth(title)) / 2, guiTop + 10, 0x404040);
     }
 }

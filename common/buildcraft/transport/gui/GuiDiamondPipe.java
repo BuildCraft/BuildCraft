@@ -38,8 +38,8 @@ public class GuiDiamondPipe extends GuiBC8<ContainerDiamondPipe> {
     @Override
     protected void drawForegroundLayer() {
         String string = LocaleUtil.localize("gui.pipes.emerald.title");
-        fontRendererObj.drawString(string, rootElement.getX() + 8, rootElement.getY() + 6, 0x404040);
-        fontRendererObj.drawString(LocaleUtil.localize("gui.inventory"), rootElement.getX() + 8, rootElement.getY() + ySize - 97, 0x404040);
+        fontRenderer.drawString(string, rootElement.getX() + 8, rootElement.getY() + 6, 0x404040);
+        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), rootElement.getX() + 8, rootElement.getY() + ySize - 97, 0x404040);
     }
 
     @Override

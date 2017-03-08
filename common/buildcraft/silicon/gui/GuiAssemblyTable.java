@@ -79,7 +79,7 @@ public class GuiAssemblyTable extends GuiBC8<ContainerAssemblyTable> {
     @Override
     protected void drawForegroundLayer() {
         String title = I18n.format("tile.assemblyTableBlock.name");
-        fontRendererObj.drawString(title, guiLeft + (xSize - fontRendererObj.getStringWidth(title)) / 2, guiTop + 15, 0x404040);
+        fontRenderer.drawString(title, guiLeft + (xSize - fontRenderer.getStringWidth(title)) / 2, guiTop + 15, 0x404040);
     }
 
     @Override

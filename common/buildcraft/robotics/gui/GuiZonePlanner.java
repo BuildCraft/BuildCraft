@@ -184,7 +184,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         int y = guiTop;
         if(lastSelected != null) {
             String text = "X: " + lastSelected.getX() + " Y: " + lastSelected.getY() + " Z: " + lastSelected.getZ();
-            fontRendererObj.drawString(text, x + 130, y + 130, 0x404040);
+            fontRenderer.drawString(text, x + 130, y + 130, 0x404040);
         }
         int offsetX = 8;
         int offsetY = 9;
