@@ -167,7 +167,11 @@ public abstract class BlockBuildCraft extends BlockContainer {
 
 	@SideOnly(Side.CLIENT)
 	public IIcon getIconAbsolute(int side, int metadata) {
-		return icons[metadata] == null ? icons[0][side] : icons[metadata][side];
+		if (metadata < 0 || metadata >= icons.length || icons[metadata] == null) {
+			return icons[0][side];
+		} else {
+			return icons[metadata][side];
+		}
 	}
 
 	@Override

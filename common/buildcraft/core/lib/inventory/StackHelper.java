@@ -194,18 +194,22 @@ public class StackHelper {
 		if (a.getItem() != b.getItem()) {
 			return false;
 		}
-		if (matchDamage && a.getHasSubtypes()) {
-			if (!isWildcard(a) && !isWildcard(b)) {
-				if (a.getItemDamage() != b.getItemDamage()) {
-					return false;
-				}
-			}
+
+		if (isWildcard(a) || isWildcard(b)) {
+			return true;
 		}
-		if (matchNBT) {
-			if (a.stackTagCompound != null && !a.stackTagCompound.equals(b.stackTagCompound)) {
+
+		if (matchDamage && a.getHasSubtypes()) {
+			if (a.getItemDamage() != b.getItemDamage()) {
 				return false;
 			}
 		}
+		if (matchNBT) {
+			if (!ItemStack.areItemStackTagsEqual(a, b)) {
+				return false;
+			}
+		}
+
 		return true;
 	}
 
