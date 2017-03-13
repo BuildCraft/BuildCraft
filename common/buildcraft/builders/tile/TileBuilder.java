@@ -70,7 +70,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     private List<BlockPos> basePoses = new ArrayList<>();
     private int currentBasePosIndex = 0;
     private Snapshot snapshot = null;
-    private Snapshot.EnumSnapshotType snapshotType = null;
+    public Snapshot.EnumSnapshotType snapshotType = null;
     private Template.BuildingInfo templateBuildingInfo = null;
     private Blueprint.BuildingInfo blueprintBuildingInfo = null;
     public TemplateBuilder templateBuilder = new TemplateBuilder(this);
@@ -79,18 +79,18 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     @Override
     protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, ItemStack before, ItemStack after) {
         if (itemHandler == invBlueprint) {
+            if (getBuilder() != null) {
+                getBuilder().cancel();
+            }
+            snapshot = null;
+            snapshotType = null;
+            templateBuildingInfo = null;
+            blueprintBuildingInfo = null;
             if (after.getItem() instanceof ItemSnapshot) {
                 Snapshot.Header header = BCBuildersItems.snapshot.getHeader(after);
                 if (header != null) {
                     Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(header);
                     if (snapshot != null) {
-                        if (getBuilder() != null) {
-                            getBuilder().cancel();
-                        }
-                        this.snapshot = null;
-                        snapshotType = null;
-                        templateBuildingInfo = null;
-                        blueprintBuildingInfo = null;
                         if (getCurrentBasePos() != null) {
                             this.snapshot = snapshot;
                             snapshotType = snapshot.getType();
@@ -159,6 +159,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
         if (getBuilder() != null) {
             getBuilder().tick();
         }
+        sendNetworkUpdate(NET_RENDER_DATA); // FIXME
     }
 
     // Networking
@@ -176,7 +177,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                 if (snapshotType != null) {
                     buffer.writeEnumValue(snapshotType);
                     // noinspection ConstantConditions
-                    getBuilder().writePayload(id, buffer, side);
+                    getBuilder().writePayload(buffer);
                 }
             }
         }
@@ -198,7 +199,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                 if (buffer.readBoolean()) {
                     snapshotType = buffer.readEnumValue(Snapshot.EnumSnapshotType.class);
                     // noinspection ConstantConditions
-                    getBuilder().readPayload(id, buffer, side, ctx);
+                    getBuilder().readPayload(buffer);
                 } else {
                     snapshotType = null;
                 }

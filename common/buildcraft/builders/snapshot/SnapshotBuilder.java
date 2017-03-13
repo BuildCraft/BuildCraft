@@ -5,16 +5,12 @@ import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.net.PacketBufferBC;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.IOException;
 import java.util.*;
@@ -118,7 +114,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         if (breakTasks.size() < MAX_QUEUE_SIZE) {
             Stream.concat(getToBreak().stream(), getToPlace().stream())
                     .sorted(Comparator.comparing(blockPos ->
-                            Math.pow(blockPos.getX() - getBox().center().getX(), 2) + Math.pow(blockPos.getZ() - getBox().center().getZ(), 2) +
+                            Math.pow(blockPos.getX() - getBox().center().getX(), 2) +
+                                    Math.pow(blockPos.getZ() - getBox().center().getZ(), 2) +
                                     100_000 - Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
                     ))
                     .filter(blockPos -> breakTasks.stream().map(BreakTask::getPos).noneMatch(Predicate.isEqual(blockPos)))
@@ -152,7 +149,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                     )
                     .filter(placeTask -> placeTask.items != null)
                     .filter(placeTask -> !placeTask.items.isEmpty())
-                    .filter(placeTask -> !placeTask.items.contains(null))
+                    .filter(placeTask -> !placeTask.items.contains(ItemStack.EMPTY))
                     .limit(MAX_QUEUE_SIZE - placeTasks.size())
                     .forEach(placeTasks::add);
         }
@@ -223,14 +220,14 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         }
     }
 
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+    public void writePayload(PacketBufferBC buffer) {
         buffer.writeInt(breakTasks.size());
         breakTasks.forEach(breakTask -> breakTask.writePayload(buffer));
         buffer.writeInt(placeTasks.size());
         placeTasks.forEach(placeTask -> placeTask.writePayload(buffer));
     }
 
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(PacketBufferBC buffer) {
         breakTasks.clear();
         IntStream.range(0, buffer.readInt()).mapToObj(i -> new BreakTask(buffer)).forEach(breakTasks::add);
         placeTasks.clear();

@@ -9,7 +9,6 @@ import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.addon.AddonFillingPlanner;
 import buildcraft.builders.filling.Filling;
-import buildcraft.builders.snapshot.ITileForSnapshotBuilder;
 import buildcraft.builders.snapshot.ITileForTemplateBuilder;
 import buildcraft.builders.snapshot.Template;
 import buildcraft.builders.snapshot.TemplateBuilder;
@@ -18,12 +17,8 @@ import buildcraft.core.marker.volume.Lock;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.fake.FakePlayerBC;
-import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -34,27 +29,18 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import org.apache.commons.lang3.tuple.MutableTriple;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.IntStream;
 
 public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder {
     public final ItemHandlerSimple invResources =
@@ -120,7 +106,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         super.writePayload(id, buffer, side);
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
-                builder.writePayload(id, buffer, side);
+                builder.writePayload(buffer);
             }
         }
     }
@@ -130,7 +116,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
-                builder.readPayload(id, buffer, side, ctx);
+                builder.readPayload(buffer);
             }
         }
     }

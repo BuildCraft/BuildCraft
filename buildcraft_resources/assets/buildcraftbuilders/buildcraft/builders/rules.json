@@ -5,6 +5,6 @@
     },
     {
         "parentNames": ["requireCake"],
-        "blocks": ["minecraft:stone"]
+        "blocks": ["minecraft:iron_block"]
     }
 ]

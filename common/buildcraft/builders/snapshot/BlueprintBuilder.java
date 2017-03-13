@@ -1,14 +1,21 @@
 package buildcraft.builders.snapshot;
 
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> {
+    public List<ItemStack> neededStacks = new ArrayList<>();
+
     public BlueprintBuilder(ITileForBlueprintBuilder tile) {
         super(tile);
     }
@@ -30,7 +37,28 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     @Override
     protected List<ItemStack> getToPlaceItems(BlockPos blockPos) {
         List<ItemStack> requiredItems = getBuildingInfo().toPlace.get(blockPos).requiredItems;
-        return Collections.singletonList(tile.getInvResources().extract(null, 1, 1, false));
+        if (requiredItems.stream()
+                .noneMatch(stack ->
+                        tile.getInvResources().extract(
+                                extracted -> StackUtil.canMerge(stack, extracted),
+                                stack.getCount(),
+                                stack.getCount(),
+                                true
+                        ).isEmpty()
+                )) {
+            return requiredItems.stream()
+                    .map(stack ->
+                            tile.getInvResources().extract(
+                                    extracted -> StackUtil.canMerge(stack, extracted),
+                                    stack.getCount(),
+                                    stack.getCount(),
+                                    false
+                            )
+                    )
+                    .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     @Override
@@ -53,5 +81,57 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     @Override
     protected Box getBox() {
         return tile.getBlueprintBuildingInfo().getBox();
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (tile.getWorld().isRemote) {
+            return;
+        }
+
+        neededStacks.clear();
+        getToPlace().stream()
+                .filter(blockPos -> !isBlockCorrect(blockPos))
+                .map(blockPos -> tile.getBlueprintBuildingInfo().toPlace.get(blockPos))
+                .flatMap(schematicBlock -> schematicBlock.requiredItems.stream())
+                .forEach(toAdd -> {
+                    boolean found = false;
+                    for (ItemStack stack : neededStacks) {
+                        if (StackUtil.canMerge(stack, toAdd)) {
+                            stack.setCount(stack.getCount() + toAdd.getCount());
+                            found = true;
+                        }
+                    }
+                    if (!found) {
+                        neededStacks.add(toAdd.copy());
+                    }
+                });
+    }
+
+    @Override
+    public void writePayload(PacketBufferBC buffer) {
+        super.writePayload(buffer);
+        buffer.writeInt(neededStacks.size());
+        neededStacks.forEach(stack -> {
+            buffer.writeItemStack(stack);
+            buffer.writeInt(stack.getCount());
+        });
+    }
+
+    @Override
+    public void readPayload(PacketBufferBC buffer) {
+        super.readPayload(buffer);
+        neededStacks.clear();
+        IntStream.range(0, buffer.readInt()).mapToObj(i -> {
+            ItemStack stack;
+            try {
+                stack = buffer.readItemStack();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            stack.setCount(buffer.readInt());
+            return stack;
+        }).forEach(neededStacks::add);
     }
 }
