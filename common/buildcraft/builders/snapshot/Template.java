@@ -36,9 +36,9 @@ public class Template extends Snapshot {
             this.basePos = basePos;
             this.rotation = rotation;
             size = RotationUtil.rotateBlockPos(getSnapshot().size, rotation);
-            for (int z = 0; z < size.getZ(); z++) {
-                for (int y = 0; y < size.getY(); y++) {
-                    for (int x = 0; x < size.getX(); x++) {
+            for (int z = 0; z < getSnapshot().size.getZ(); z++) {
+                for (int y = 0; y < getSnapshot().size.getY(); y++) {
+                    for (int x = 0; x < getSnapshot().size.getX(); x++) {
                         BlockPos blockPos = RotationUtil.rotateBlockPos(new BlockPos(x, y, z), rotation)
                                 .add(basePos)
                                 .add(RotationUtil.rotateBlockPos(offset, rotation));
