@@ -118,7 +118,7 @@ public class ItemSnapshot extends ItemBC_Neptune {
         }
 
         public static EnumItemSnapshotType getFromStack(ItemStack stack) {
-            return values()[stack.getMetadata()];
+            return values()[Math.abs(stack.getMetadata()) % values().length];
         }
     }
 }

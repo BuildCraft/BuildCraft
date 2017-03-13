@@ -5,6 +5,8 @@ import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.net.PacketBufferBC;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -19,6 +21,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
     private static final int MAX_QUEUE_SIZE = 64;
@@ -55,6 +58,11 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
      * Executed if {@link #doPlaceTask} failed
      */
     protected abstract void cancelPlaceTask(PlaceTask placeTask);
+
+    /**
+     * @return true if block in wold is correct (is not to break) according to snapshot, false otherwise
+     */
+    protected abstract boolean isBlockCorrect(BlockPos blockPos);
 
     protected abstract Box getBox();
 
@@ -104,18 +112,18 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             return;
         }
 
-        breakTasks.removeIf(breakTask -> tile.getWorld().isAirBlock(breakTask.pos));
-        placeTasks.removeIf(placeTask -> !tile.getWorld().isAirBlock(placeTask.pos));
+        breakTasks.removeIf(breakTask -> tile.getWorld().isAirBlock(breakTask.pos) || isBlockCorrect(breakTask.pos));
+        placeTasks.removeIf(placeTask -> isBlockCorrect(placeTask.pos));
 
         if (breakTasks.size() < MAX_QUEUE_SIZE) {
-            List<BlockPos> toBreak = getToBreak();
-            toBreak.sort(Comparator.comparing(blockPos ->
-                    Math.pow(blockPos.getX() - getBox().center().getX(), 2) + Math.pow(blockPos.getZ() - getBox().center().getZ(), 2) +
-                            100_000 - Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
-            ));
-            toBreak.stream()
+            Stream.concat(getToBreak().stream(), getToPlace().stream())
+                    .sorted(Comparator.comparing(blockPos ->
+                            Math.pow(blockPos.getX() - getBox().center().getX(), 2) + Math.pow(blockPos.getZ() - getBox().center().getZ(), 2) +
+                                    100_000 - Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
+                    ))
                     .filter(blockPos -> breakTasks.stream().map(BreakTask::getPos).noneMatch(Predicate.isEqual(blockPos)))
                     .filter(blockPos -> !tile.getWorld().isAirBlock(blockPos))
+                    .filter(blockPos -> !isBlockCorrect(blockPos))
                     .map(blockPos ->
                             new BreakTask(
                                     blockPos,
@@ -127,13 +135,12 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         }
 
         if (breakTasks.isEmpty() && placeTasks.size() < MAX_QUEUE_SIZE) {
-            List<BlockPos> toPlace = getToPlace();
-            toPlace.sort(Comparator.comparing(blockPos ->
-                    100_000 - (Math.pow(blockPos.getX() - tile.getBuilderPos().getX(), 2) +
-                            Math.pow(blockPos.getZ() - tile.getBuilderPos().getZ(), 2)) +
-                            Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
-            ));
-            toPlace.stream()
+            getToPlace().stream()
+                    .sorted(Comparator.comparing(blockPos ->
+                            100_000 - (Math.pow(blockPos.getX() - tile.getBuilderPos().getX(), 2) +
+                                    Math.pow(blockPos.getZ() - tile.getBuilderPos().getZ(), 2)) +
+                                    Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
+                    ))
                     .filter(blockPos -> placeTasks.stream().map(PlaceTask::getPos).noneMatch(Predicate.isEqual(blockPos)))
                     .filter(blockPos -> tile.getWorld().isAirBlock(blockPos))
                     .map(blockPos ->

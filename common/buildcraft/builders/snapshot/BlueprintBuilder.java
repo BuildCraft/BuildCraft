@@ -1,6 +1,5 @@
 package buildcraft.builders.snapshot;
 
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.Box;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -39,9 +38,16 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     }
 
     @Override
+    protected boolean isBlockCorrect(BlockPos blockPos) {
+        return getBuildingInfo() != null &&
+                getBuildingInfo().toPlace.containsKey(blockPos) &&
+                getBuildingInfo().toPlace.get(blockPos).blockState != null &&
+                getBuildingInfo().toPlace.get(blockPos).blockState.equals(tile.getWorld().getBlockState(blockPos)); // FIXME: wrong! no equals method overrode!
+    }
+
+    @Override
     protected boolean doPlaceTask(PlaceTask placeTask) {
-        tile.getWorld().setBlockState(placeTask.getPos(), getBuildingInfo().toPlace.get(placeTask.getPos()).blockState);
-        return true;
+        return tile.getWorld().setBlockState(placeTask.getPos(), getBuildingInfo().toPlace.get(placeTask.getPos()).blockState);
     }
 
     @Override

@@ -63,6 +63,11 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     }
 
     @Override
+    protected boolean isBlockCorrect(BlockPos blockPos) {
+        return getBuildingInfo().toPlace.contains(blockPos) && !tile.getWorld().isAirBlock(blockPos);
+    }
+
+    @Override
     protected Box getBox() {
         return tile.getTemplateBuildingInfo().getBox();
     }
