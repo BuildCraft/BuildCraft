@@ -1,5 +1,6 @@
 package buildcraft.builders.snapshot;
 
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.Box;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -29,12 +30,12 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     protected List<ItemStack> getToPlaceItems(BlockPos blockPos) {
+        List<ItemStack> requiredItems = getBuildingInfo().toPlace.get(blockPos).requiredItems;
         return Collections.singletonList(tile.getInvResources().extract(null, 1, 1, false));
     }
 
     @Override
     protected void cancelPlaceTask(PlaceTask placeTask) {
-
     }
 
     @Override

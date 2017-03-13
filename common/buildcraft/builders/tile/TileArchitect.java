@@ -73,6 +73,7 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
         super.onSlotChange(handler, slot, before, after);
         if (handler == invBptIn) {
             if (after.getItem() instanceof ItemSnapshot) {
+                snapshotType = ItemSnapshot.EnumItemSnapshotType.getFromStack(after).snapshotType;
                 shouldStartScanning = true;
             } else {
                 scanning = false;
@@ -213,6 +214,8 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
         if (snapshotType == Snapshot.EnumSnapshotType.TEMPLATE) {
             // noinspection ConstantConditions
             ((Template) snapshot).size = box.size();
+            // noinspection ConstantConditions
+            ((Template) snapshot).offset = box.min().subtract(pos.offset(facing.getOpposite()));
             // noinspection ConstantConditions
             ((Template) snapshot).data = templateScannedBlocks;
         }

@@ -8,6 +8,7 @@ import java.util.List;
 
 public class Template extends Snapshot {
     public BlockPos size;
+    public BlockPos offset = BlockPos.ORIGIN;
     public boolean[][][] data;
 
     @Override
@@ -31,7 +32,7 @@ public class Template extends Snapshot {
             for (int z = 0; z < size.getZ(); z++) {
                 for (int y = 0; y < size.getY(); y++) {
                     for (int x = 0; x < size.getX(); x++) {
-                        BlockPos blockPos = new BlockPos(x, y, z).add(basePos);
+                        BlockPos blockPos = new BlockPos(x, y, z).add(basePos).add(offset);
                         if (!data[x][y][z]) {
                             toBreak.add(blockPos);
                         } else {
