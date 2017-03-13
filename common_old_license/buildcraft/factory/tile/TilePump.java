@@ -26,7 +26,7 @@ import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 
 public class TilePump extends TileMiner {
-    private SingleUseTank tank = new SingleUseTank("tank", 160000, this); // TODO: remove 1 zero
+    private SingleUseTank tank = new SingleUseTank("tank", 16000, this);
     private TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<>();
     private int timeWithoutFluid = 0;
 
@@ -141,7 +141,7 @@ public class TilePump extends TileMiner {
             setComplete(true);
             return;
         }
-        int target = 1000; // TODO: add 2 zeroes
+        int target = 10_000_000; // TODO: add 2 zeroes
         BlockPos pumpPos = new BlockPos(pos.getX(), currentPos.getY(), pos.getZ());
         Fluid pumpingFluid = BlockUtil.getFluidWithFlowing(world.getBlockState(pumpPos).getBlock());
 

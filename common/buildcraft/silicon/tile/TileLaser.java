@@ -118,11 +118,6 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
 
         ticks++;
 
-        if (!battery.isFull()) {
-            // test with the output of a stone engine
-            battery.addPower(MjAPI.MJ, false); // remove this
-        }
-
         if (getTarget() == null) {
             targetPos = null;
         }
