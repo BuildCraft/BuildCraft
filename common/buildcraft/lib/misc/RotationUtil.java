@@ -1,7 +1,9 @@
 package buildcraft.lib.misc;
 
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 
 public class RotationUtil {
     public static AxisAlignedBB rotateAABB(AxisAlignedBB aabb, EnumFacing facing) {
@@ -19,5 +21,19 @@ public class RotationUtil {
             return new AxisAlignedBB(1 - aabb.maxY, aabb.minZ, aabb.minX, 1 - aabb.minY, aabb.maxZ, aabb.maxX);
         }
         return aabb;
+    }
+
+    public static BlockPos rotateBlockPos(BlockPos pos, Rotation rotation) {
+        switch (rotation) {
+            case NONE:
+                return new BlockPos(pos.getX(), pos.getY(), pos.getZ());
+            case CLOCKWISE_90:
+                return new BlockPos(pos.getZ(), pos.getY(), -pos.getX());
+            case CLOCKWISE_180:
+                return new BlockPos(-pos.getX(), pos.getY(), -pos.getZ());
+            case COUNTERCLOCKWISE_90:
+                return new BlockPos(-pos.getZ(), pos.getY(), pos.getX());
+        }
+        throw new IllegalArgumentException();
     }
 }

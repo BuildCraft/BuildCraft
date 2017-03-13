@@ -13,6 +13,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
@@ -38,7 +39,7 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon {
         Template template = new Template();
         template.size = box.box.size();
         template.data = getFillingPlan();
-        buildingInfo = template.new BuildingInfo(box.box.min());
+        buildingInfo = template.new BuildingInfo(box.box.min(), Rotation.NONE);
     }
 
     @Override

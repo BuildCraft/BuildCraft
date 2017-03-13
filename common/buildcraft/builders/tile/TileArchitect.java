@@ -211,17 +211,15 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
     private void finishScanning() {
         EnumFacing facing = world.getBlockState(getPos()).getValue(BlockArchitect.PROP_FACING);
         Snapshot snapshot = snapshotType.create.get();
+        snapshot.size = box.size();
+        snapshot.facing = facing;
         if (snapshotType == Snapshot.EnumSnapshotType.TEMPLATE) {
-            // noinspection ConstantConditions
-            ((Template) snapshot).size = box.size();
             // noinspection ConstantConditions
             ((Template) snapshot).offset = box.min().subtract(pos.offset(facing.getOpposite()));
             // noinspection ConstantConditions
             ((Template) snapshot).data = templateScannedBlocks;
         }
         if (snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
-            // noinspection ConstantConditions
-            ((Blueprint) snapshot).size = box.size();
             // noinspection ConstantConditions
             ((Blueprint) snapshot).schematicBlocks.addAll(blueprintScannedBlocks);
         }

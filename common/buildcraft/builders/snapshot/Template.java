@@ -1,13 +1,16 @@
 package buildcraft.builders.snapshot;
 
+import buildcraft.lib.misc.RotationUtil;
 import buildcraft.lib.misc.data.Box;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Template extends Snapshot {
-    public BlockPos size;
     public BlockPos offset = BlockPos.ORIGIN;
     public boolean[][][] data;
 
@@ -24,15 +27,21 @@ public class Template extends Snapshot {
 
     public class BuildingInfo {
         public final BlockPos basePos;
+        public final Rotation rotation;
+        public final BlockPos size;
         public final List<BlockPos> toBreak = new ArrayList<>();
         public final List<BlockPos> toPlace = new ArrayList<>();
 
-        public BuildingInfo(BlockPos basePos) {
+        public BuildingInfo(BlockPos basePos, Rotation rotation) {
             this.basePos = basePos;
+            this.rotation = rotation;
+            size = RotationUtil.rotateBlockPos(getSnapshot().size, rotation);
             for (int z = 0; z < size.getZ(); z++) {
                 for (int y = 0; y < size.getY(); y++) {
                     for (int x = 0; x < size.getX(); x++) {
-                        BlockPos blockPos = new BlockPos(x, y, z).add(basePos).add(offset);
+                        BlockPos blockPos = RotationUtil.rotateBlockPos(new BlockPos(x, y, z), rotation)
+                                .add(basePos)
+                                .add(RotationUtil.rotateBlockPos(offset, rotation));
                         if (!data[x][y][z]) {
                             toBreak.add(blockPos);
                         } else {

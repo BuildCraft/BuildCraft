@@ -1,10 +1,12 @@
 package buildcraft.builders.snapshot;
 
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.RotationUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -43,5 +45,13 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         NBTUtilBC.readCompoundList(nbt.getTagList("requiredItems", Constants.NBT.TAG_COMPOUND))
                 .map(ItemStack::new)
                 .forEach(requiredItems::add);
+    }
+
+    public SchematicBlock getRotated(Rotation rotation) {
+        SchematicBlock schematicBlock = new SchematicBlock();
+        schematicBlock.relativePos = RotationUtil.rotateBlockPos(relativePos, rotation);
+        schematicBlock.blockState = blockState.withRotation(rotation);
+        schematicBlock.requiredItems = requiredItems;
+        return schematicBlock;
     }
 }

@@ -2,6 +2,8 @@ package buildcraft.builders.snapshot;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -14,6 +16,8 @@ import java.util.stream.Stream;
 
 public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
     public Header header = new Snapshot.Header();
+    public BlockPos size;
+    public EnumFacing facing;
 
     public Snapshot(Header header) {
         this.header = header;

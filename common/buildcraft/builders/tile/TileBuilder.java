@@ -29,6 +29,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,6 +37,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
@@ -48,6 +50,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -94,11 +97,16 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                         if (getCurrentBasePos() != null) {
                             this.snapshot = snapshot;
                             snapshotType = snapshot.getType();
+                            EnumFacing facing = world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING);
+                            Rotation rotation = Arrays.stream(Rotation.values())
+                                    .filter(r -> r.rotate(snapshot.facing) == facing)
+                                    .findFirst()
+                                    .orElse(null);
                             if (snapshot.getType() == Snapshot.EnumSnapshotType.TEMPLATE) {
-                                templateBuildingInfo = ((Template) snapshot).new BuildingInfo(getCurrentBasePos());
+                                templateBuildingInfo = ((Template) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
                             }
                             if (snapshot.getType() == Snapshot.EnumSnapshotType.BLUEPRINT) {
-                                blueprintBuildingInfo = ((Blueprint) snapshot).new BuildingInfo(getCurrentBasePos());
+                                blueprintBuildingInfo = ((Blueprint) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
                             }
                         }
                     }
@@ -139,8 +147,8 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
-        EnumFacing thisFacing = world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING);
-        TileEntity inFront = world.getTileEntity(pos.offset(thisFacing.getOpposite()));
+        EnumFacing facing = world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING);
+        TileEntity inFront = world.getTileEntity(pos.offset(facing.getOpposite()));
         if (inFront instanceof IPathProvider) {
             IPathProvider provider = (IPathProvider) inFront;
             ImmutableList<BlockPos> copiedPath = ImmutableList.copyOf(provider.getPath());
