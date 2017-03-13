@@ -28,11 +28,11 @@ public class RotationUtil {
             case NONE:
                 return new BlockPos(pos.getX(), pos.getY(), pos.getZ());
             case CLOCKWISE_90:
-                return new BlockPos(pos.getZ(), pos.getY(), -pos.getX());
+                return new BlockPos(-pos.getZ(), pos.getY(), pos.getX());
             case CLOCKWISE_180:
                 return new BlockPos(-pos.getX(), pos.getY(), -pos.getZ());
             case COUNTERCLOCKWISE_90:
-                return new BlockPos(-pos.getZ(), pos.getY(), pos.getX());
+                return new BlockPos(pos.getZ(), pos.getY(), -pos.getX());
         }
         throw new IllegalArgumentException();
     }
