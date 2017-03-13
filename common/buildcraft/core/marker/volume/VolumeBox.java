@@ -55,8 +55,8 @@ public class VolumeBox {
             Class<? extends Addon> addonClass = AddonsRegistry.INSTANCE.getClassByName(new ResourceLocation(addonsEntryTag.getString("addonClass")));
             try {
                 Addon addon = addonClass.newInstance();
-                addon.readFromNBT(addonsEntryTag.getCompoundTag("addonData"));
                 addon.box = this;
+                addon.readFromNBT(addonsEntryTag.getCompoundTag("addonData"));
                 EnumAddonSlot slot = NBTUtilBC.readEnum(addonsEntryTag.getTag("slot"), EnumAddonSlot.class);
                 addons.put(slot, addon);
             } catch (InstantiationException | IllegalAccessException e) {

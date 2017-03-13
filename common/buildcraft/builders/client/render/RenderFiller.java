@@ -1,5 +1,7 @@
 package buildcraft.builders.client.render;
 
+import buildcraft.builders.snapshot.SnapshotBuilder;
+import buildcraft.builders.snapshot.TemplateBuilder;
 import buildcraft.builders.tile.TileFiller;
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.ItemRenderUtil;
@@ -13,43 +15,42 @@ import net.minecraft.client.renderer.entity.RenderEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.model.animation.FastTESR;
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.MutableTriple;
+
+import java.util.Collections;
 
 public class RenderFiller extends FastTESR<TileFiller> {
     @Override
     public void renderTileEntityFast(TileFiller tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
-
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("filler");
 
-        for (MutableTriple<BlockPos, ItemStack, Long> renderTask : tile.clientPlaceTasks) {
-            ItemStack stack = renderTask.getMiddle();
-            Vec3d prevPos = tile.prevClientPlaceTasks.stream()
-                    .filter(renderTaskLocal -> renderTaskLocal.getLeft().equals(renderTask.getLeft()))
-                    .map(tile::getTaskPos)
+        for (TemplateBuilder.PlaceTask placeTask : tile.builder.clientPlaceTasks) {
+            Vec3d prevPos = tile.builder.prevClientPlaceTasks.stream()
+                    .filter(renderTaskLocal -> renderTaskLocal.pos.equals(placeTask.pos))
+                    .map(tile.builder::getPlaceTaskItemPos)
                     .findFirst()
-                    .orElse(tile.getTaskPos(MutableTriple.of(tile.getPos(), ItemStack.EMPTY, 0L)));
-            Vec3d pos = prevPos.add(tile.getTaskPos(renderTask).subtract(prevPos).scale(partialTicks));
-            ItemRenderUtil.renderItemStack(
-                    x - tile.getPos().getX() + pos.xCoord,
-                    y - tile.getPos().getY() + pos.yCoord,
-                    z - tile.getPos().getZ() + pos.zCoord,
-                    stack,
-                    tile.getWorld().getCombinedLight(tile.getPos(), 0),
-                    EnumFacing.SOUTH,
-                    vb
-            );
+                    .orElse(tile.builder.getPlaceTaskItemPos(tile.builder.new PlaceTask(tile.getPos(), Collections.emptyList(), 0L)));
+            Vec3d pos = prevPos.add(tile.builder.getPlaceTaskItemPos(placeTask).subtract(prevPos).scale(partialTicks));
+            for (ItemStack item : placeTask.items) {
+                ItemRenderUtil.renderItemStack(
+                        x - tile.getPos().getX() + pos.xCoord,
+                        y - tile.getPos().getY() + pos.yCoord,
+                        z - tile.getPos().getZ() + pos.zCoord,
+                        item,
+                        tile.getWorld().getCombinedLight(tile.getPos(), 0),
+                        EnumFacing.SOUTH,
+                        vb
+                );
+            }
             ItemRenderUtil.endItemBatch();
         }
 
-        Vec3d robotPos = tile.robotPos;
+        Vec3d robotPos = tile.builder.robotPos;
         if (robotPos != null) {
-            if (tile.prevRobotPos != null) {
-                robotPos = tile.prevRobotPos.add(robotPos.subtract(tile.prevRobotPos).scale(partialTicks));
+            if (tile.builder.prevRobotPos != null) {
+                robotPos = tile.builder.prevRobotPos.add(robotPos.subtract(tile.builder.prevRobotPos).scale(partialTicks));
             }
 
             RenderEntity.renderOffsetAABB(
@@ -64,12 +65,18 @@ public class RenderFiller extends FastTESR<TileFiller> {
 
             vb.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
 
-            for (MutablePair<BlockPos, Long> breakTask : tile.clientBreakTasks) {
+            for (SnapshotBuilder.BreakTask breakTask : tile.builder.clientBreakTasks) {
                 LaserRenderer_BC8.renderLaserDynamic(
                         new LaserData_BC8(
-                                BuildCraftLaserManager.POWERS[(int) Math.round(MathUtil.clamp(breakTask.getRight() * 1D / tile.getTarget(breakTask), 0D, 1D) * (BuildCraftLaserManager.POWERS.length - 1))],
+                                BuildCraftLaserManager.POWERS[(int) Math.round(
+                                        MathUtil.clamp(
+                                                breakTask.power * 1D / breakTask.getTarget(),
+                                                0D,
+                                                1D
+                                        ) * (BuildCraftLaserManager.POWERS.length - 1)
+                                )],
                                 robotPos,
-                                new Vec3d(breakTask.getLeft()).add(VecUtil.VEC_HALF),
+                                new Vec3d(breakTask.pos).add(VecUtil.VEC_HALF),
                                 1 / 16D
                         ),
                         vb

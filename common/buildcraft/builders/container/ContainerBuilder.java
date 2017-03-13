@@ -1,12 +1,11 @@
 package buildcraft.builders.container;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-
-import buildcraft.builders.item.ItemBlueprint;
+import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.tile.TileBuilder;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
 public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
     public ContainerBuilder(EntityPlayer player, TileBuilder tile) {
@@ -17,7 +16,7 @@ public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
         addSlotToContainer(new SlotBase(tile.invBlueprint, 0, 80, 27) {
             @Override
             public boolean isItemValid(ItemStack stack) {
-                return stack == null || stack.getItem() instanceof ItemBlueprint && stack.getMetadata() == ItemBlueprint.META_USED;
+                return stack.getItem() instanceof ItemSnapshot && ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used;
             }
         });
 

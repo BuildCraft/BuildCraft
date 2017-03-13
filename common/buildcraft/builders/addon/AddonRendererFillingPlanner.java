@@ -15,7 +15,7 @@ import java.util.List;
 public class AddonRendererFillingPlanner implements IFastAddonRenderer<AddonFillingPlanner> {
     @Override
     public void renderAddonFast(AddonFillingPlanner addon, EntityPlayer player, float partialTicks, VertexBuffer vb) {
-        List<BlockPos> blocksShouldBePlaced = new ArrayList<>(addon.getBlocksShouldBePlaced());
+        List<BlockPos> blocksShouldBePlaced = new ArrayList<>(addon.buildingInfo.toPlace);
         blocksShouldBePlaced.sort(Comparator.comparing((BlockPos blockPos) ->
                 Math.pow(player.posX - blockPos.getX(), 2) +
                         Math.pow(player.posY - blockPos.getY(), 2) +

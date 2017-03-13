@@ -106,6 +106,7 @@ public class GuiFillingPlanner extends GuiBC8<ContainerFillingPlanner> {
                 found.set(true);
             }
         });
+        container.addon.markDirty();
         if (!found.get()) {
             super.mouseClicked(mouseX, mouseY, mouseButton);
         }

@@ -1,4 +1,4 @@
-package buildcraft.builders.schematic;
+package buildcraft.builders.snapshot;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
-    public Header header;
+    public Header header = new Snapshot.Header();
 
     public Snapshot(Header header) {
         this.header = header;
@@ -21,6 +21,8 @@ public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
 
     public Snapshot() {
     }
+
+    public abstract <T extends ITileForSnapshotBuilder> SnapshotBuilder<T> createBuilder(T tile);
 
     @Override
     public NBTTagCompound serializeNBT() {
@@ -98,6 +100,38 @@ public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
 
         public EntityPlayer getOwnerPlayer(World world) {
             return world.getPlayerEntityByUUID(owner);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            Header header = (Header) o;
+
+            if (!id.equals(header.id)) {
+                return false;
+            }
+            if (!owner.equals(header.owner)) {
+                return false;
+            }
+            if (!created.equals(header.created)) {
+                return false;
+            }
+            return name.equals(header.name);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = id.hashCode();
+            result = 31 * result + owner.hashCode();
+            result = 31 * result + created.hashCode();
+            result = 31 * result + name.hashCode();
+            return result;
         }
     }
 }

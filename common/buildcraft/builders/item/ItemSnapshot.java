@@ -1,6 +1,6 @@
 package buildcraft.builders.item;
 
-import buildcraft.builders.schematic.Snapshot;
+import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.lib.item.ItemBC_Neptune;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

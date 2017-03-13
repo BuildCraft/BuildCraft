@@ -1,4 +1,4 @@
-package buildcraft.builders.schematic;
+package buildcraft.builders.snapshot;
 
 import java.util.List;
 

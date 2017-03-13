@@ -55,6 +55,7 @@ public class ContainerFillingPlanner extends ContainerBC_Neptune {
                 inverted = buffer.readBoolean();
                 addon.parameters = parameters;
                 addon.inverted = inverted;
+                addon.markDirty();
                 WorldSavedDataVolumeBoxes.get(player.world).markDirty();
             }
         }

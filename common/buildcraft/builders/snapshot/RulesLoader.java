@@ -1,4 +1,4 @@
-package buildcraft.builders.schematic;
+package buildcraft.builders.snapshot;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;

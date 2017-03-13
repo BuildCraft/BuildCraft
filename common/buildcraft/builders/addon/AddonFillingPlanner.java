@@ -3,10 +3,12 @@ package buildcraft.builders.addon;
 import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.filling.Filling;
 import buildcraft.builders.filling.IParameter;
+import buildcraft.builders.snapshot.Template;
 import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.AddonDefaultRenderer;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
 import buildcraft.core.marker.volume.ISingleAddon;
+import buildcraft.lib.misc.NBTUtilBC;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,32 +23,22 @@ import java.util.stream.IntStream;
 public class AddonFillingPlanner extends Addon implements ISingleAddon {
     public List<IParameter> parameters = new ArrayList<>();
     public boolean inverted;
+    public Template.BuildingInfo buildingInfo;
 
-    public List<BlockPos> getBlocksShouldBe(boolean trueIfPlacedOrFalseIfBroken) {
-        List<BlockPos> blockShouldBePlaced = new ArrayList<>();
+    public boolean[][][] getFillingPlan() {
         BlockPos size = box.box.size();
         boolean[][][] fillingPlan = Filling.INSTANCE.getFillingPlan(size, parameters);
-        if (inverted == trueIfPlacedOrFalseIfBroken) {
+        if (inverted) {
             fillingPlan = Filling.INSTANCE.invertFillingPlan(size, fillingPlan);
         }
-        for (int z = 0; z < size.getZ(); z++) {
-            for (int y = 0; y < size.getY(); y++) {
-                for (int x = 0; x < size.getX(); x++) {
-                    if (fillingPlan[x][y][z]) {
-                        blockShouldBePlaced.add(new BlockPos(x, y, z).add(box.box.min()));
-                    }
-                }
-            }
-        }
-        return blockShouldBePlaced;
+        return fillingPlan;
     }
 
-    public List<BlockPos> getBlocksShouldBePlaced() {
-        return getBlocksShouldBe(true);
-    }
-
-    public List<BlockPos> getBlocksShouldBeBroken() {
-        return getBlocksShouldBe(false);
+    public void markDirty() {
+        Template template = new Template();
+        template.size = box.box.size();
+        template.data = getFillingPlan();
+        buildingInfo = template.new BuildingInfo(box.box.min());
     }
 
     @Override
@@ -65,6 +57,7 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon {
                 break;
             }
         }
+        markDirty();
     }
 
     @Override
@@ -74,16 +67,27 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon {
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        NBTTagList parametersTag = new NBTTagList();
-        parameters.stream().map(parameter -> IParameter.writeToNBT(new NBTTagCompound(), parameter)).forEach(parametersTag::appendTag);
-        nbt.setTag("parameters", parametersTag);
+        nbt.setTag(
+                "parameters",
+                NBTUtilBC.writeCompoundList(
+                        parameters.stream()
+                                .map(parameter -> IParameter.writeToNBT(new NBTTagCompound(), parameter))
+                )
+        );
         return nbt;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-        NBTTagList parametersTag = nbt.getTagList("parameters", Constants.NBT.TAG_COMPOUND);
-        IntStream.range(0, parametersTag.tagCount()).mapToObj(parametersTag::getCompoundTagAt).map(IParameter::readFromNBT).forEach(parameters::add);
+        NBTUtilBC.readCompoundList(
+                nbt.getTagList(
+                        "parameters",
+                        Constants.NBT.TAG_COMPOUND
+                )
+        )
+                .map(IParameter::readFromNBT)
+                .forEach(parameters::add);
+        markDirty();
     }
 
     @Override
@@ -98,5 +102,6 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon {
         parameters.clear();
         IntStream.range(0, buf.readInt()).mapToObj(i -> IParameter.fromBytes(buf)).forEach(parameters::add);
         inverted = buf.readBoolean();
+        markDirty();
     }
 }

@@ -1,4 +1,4 @@
-package buildcraft.builders.schematic;
+package buildcraft.builders.snapshot;
 
 import buildcraft.lib.misc.NBTUtilBC;
 import net.minecraft.block.state.IBlockState;

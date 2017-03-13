@@ -1,6 +1,7 @@
 package buildcraft.builders.tile;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
@@ -8,6 +9,10 @@ import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.addon.AddonFillingPlanner;
 import buildcraft.builders.filling.Filling;
+import buildcraft.builders.snapshot.ITileForSnapshotBuilder;
+import buildcraft.builders.snapshot.ITileForTemplateBuilder;
+import buildcraft.builders.snapshot.Template;
+import buildcraft.builders.snapshot.TemplateBuilder;
 import buildcraft.core.marker.volume.EnumAddonSlot;
 import buildcraft.core.marker.volume.Lock;
 import buildcraft.core.marker.volume.VolumeBox;
@@ -18,6 +23,7 @@ import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -41,7 +47,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.tuple.MutablePair;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.tuple.MutableTriple;
 
 import javax.annotation.Nonnull;
@@ -50,8 +56,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
-public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable {
-    private static final int MAX_QUEUE_SIZE = 64;
+public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder {
     public final ItemHandlerSimple invResources =
             itemManager.addInvHandler(
                     "resources",
@@ -64,42 +69,11 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                     EnumAccess.NONE,
                     EnumPipePart.VALUES
             );
-    public final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
+    private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
     private final IMjReceiver mjReceiver = new MjBatteryReciver(battery);
     private final MjCapabilityHelper mjCapHelper = new MjCapabilityHelper(mjReceiver);
     public AddonFillingPlanner addon;
-    private Queue<MutablePair<BlockPos, Long>> breakTasks = new ArrayDeque<>();
-    public Queue<MutablePair<BlockPos, Long>> clientBreakTasks = new ArrayDeque<>();
-    @SuppressWarnings("WeakerAccess")
-    public Queue<MutablePair<BlockPos, Long>> prevClientBreakTasks = new ArrayDeque<>();
-    private Queue<MutableTriple<BlockPos, ItemStack, Long>> placeTasks = new ArrayDeque<>();
-    public Queue<MutableTriple<BlockPos, ItemStack, Long>> clientPlaceTasks = new ArrayDeque<>();
-    public Queue<MutableTriple<BlockPos, ItemStack, Long>> prevClientPlaceTasks = new ArrayDeque<>();
-    public Vec3d robotPos = null;
-    public Vec3d prevRobotPos = null;
-
-    public long getTarget(MutablePair<BlockPos, Long> breakTask) {
-        return BlockUtil.computeBlockBreakPower(world, breakTask.getLeft());
-    }
-
-    @SuppressWarnings("unused")
-    public long getTarget(MutableTriple<BlockPos, ItemStack, Long> placeTask) {
-        return (long) (
-                Math.sqrt(Math.pow(placeTask.getLeft().getX() - pos.getX(), 2) +
-                        Math.pow(placeTask.getLeft().getY() - pos.getY(), 2) +
-                        Math.pow(placeTask.getLeft().getZ() - pos.getZ(), 2)
-                ) * 10 * MjAPI.MJ
-        );
-    }
-
-    public Vec3d getTaskPos(MutableTriple<BlockPos, ItemStack, Long> placeTask) {
-        Vec3d height = new Vec3d(placeTask.getLeft().subtract(getPos()));
-        double progress = placeTask.getRight() * 1D / getTarget(placeTask);
-        return new Vec3d(getPos())
-                .add(height.scale(progress))
-                .add(new Vec3d(0, Math.sin(progress * Math.PI) * (height.yCoord + 1), 0))
-                .add(new Vec3d(0.5, 1, 0.5));
-    }
+    public TemplateBuilder builder = new TemplateBuilder(this);
 
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
@@ -134,148 +108,10 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     @Override
     public void update() {
         battery.tick(getWorld(), getPos());
-        if (world.isRemote) {
-            prevClientBreakTasks.clear();
-            prevClientBreakTasks.addAll(clientBreakTasks);
-            clientBreakTasks.clear();
-            clientBreakTasks.addAll(breakTasks);
-            prevClientPlaceTasks.clear();
-            prevClientPlaceTasks.addAll(clientPlaceTasks);
-            clientPlaceTasks.clear();
-            clientPlaceTasks.addAll(placeTasks);
-            prevRobotPos = robotPos;
-            if (!breakTasks.isEmpty()) {
-                Vec3d newRobotPos = breakTasks.stream()
-                        .map(MutablePair::getLeft)
-                        .map(Vec3d::new)
-                        .reduce(Vec3d.ZERO, Vec3d::add)
-                        .scale(1D / breakTasks.size());
-                newRobotPos = new Vec3d(
-                        newRobotPos.xCoord,
-                        breakTasks.stream().map(MutablePair::getLeft).mapToDouble(BlockPos::getY).max().orElse(newRobotPos.yCoord),
-                        newRobotPos.zCoord
-                );
-                newRobotPos = newRobotPos.add(new Vec3d(0, 3, 0));
-                Vec3d oldRobotPos = robotPos;
-                robotPos = newRobotPos;
-                if (oldRobotPos != null) {
-                    robotPos = oldRobotPos.add(newRobotPos.subtract(oldRobotPos).scale(1 / 4D));
-                }
-            } else {
-                robotPos = null;
-            }
-            return;
-        }
-
-        if (addon == null) {
-            return;
-        }
-
         battery.addPowerChecking(64 * MjAPI.MJ, false);
-
-        breakTasks.removeIf(breakTask -> world.isAirBlock(breakTask.getLeft()));
-        placeTasks.removeIf(placeTask -> !world.isAirBlock(placeTask.getLeft()));
-
-        if (breakTasks.size() < MAX_QUEUE_SIZE) {
-            List<BlockPos> blocksShouldBeBroken = addon.getBlocksShouldBeBroken();
-            blocksShouldBeBroken.sort(Comparator.comparing(blockPos ->
-                    Math.pow(blockPos.getX() - addon.box.box.center().getX(), 2) + Math.pow(blockPos.getZ() - addon.box.box.center().getZ(), 2) +
-                            100_000 - Math.abs(blockPos.getY() - pos.getY()) * 100_000
-            ));
-            blocksShouldBeBroken.stream()
-                    .filter(blockPos -> breakTasks.stream().map(MutablePair::getLeft).noneMatch(Predicate.isEqual(blockPos)))
-                    .filter(blockPos -> !world.isAirBlock(blockPos))
-                    .map(blockPos ->
-                            MutablePair.of(
-                                    blockPos,
-                                    0L
-                            )
-                    )
-                    .limit(MAX_QUEUE_SIZE - breakTasks.size())
-                    .forEach(breakTasks::add);
+        if (addon != null || world.isRemote) {
+            builder.tick();
         }
-
-        if (breakTasks.isEmpty() && placeTasks.size() < MAX_QUEUE_SIZE) {
-            if (!invResources.extract(null, 1, 1, true).isEmpty()) {
-                List<BlockPos> blocksShouldBePlaced = addon.getBlocksShouldBePlaced();
-                blocksShouldBePlaced.sort(Comparator.comparing(blockPos ->
-                        100_000 - (Math.pow(blockPos.getX() - pos.getX(), 2) + Math.pow(blockPos.getZ() - pos.getZ(), 2)) +
-                                Math.abs(blockPos.getY() - pos.getY()) * 100_000
-                ));
-                blocksShouldBePlaced.stream()
-                        .filter(blockPos -> placeTasks.stream().map(MutableTriple::getLeft).noneMatch(Predicate.isEqual(blockPos)))
-                        .filter(blockPos -> world.isAirBlock(blockPos))
-                        .map(blockPos ->
-                                MutableTriple.of(
-                                        blockPos,
-                                        invResources.extract(null, 1, 1, false),
-                                        0L
-                                )
-                        )
-                        .limit(MAX_QUEUE_SIZE - placeTasks.size())
-                        .forEach(placeTasks::add);
-            }
-        }
-
-        if (!breakTasks.isEmpty()) {
-            for (Iterator<MutablePair<BlockPos, Long>> iterator = breakTasks.iterator(); iterator.hasNext(); ) {
-                MutablePair<BlockPos, Long> breakTask = iterator.next();
-                long target = getTarget(breakTask);
-                breakTask.setRight(
-                        breakTask.getRight() +
-                                battery.extractPower(0, Math.min(target - breakTask.getRight(), battery.getStored() / breakTasks.size()))
-                );
-                if (breakTask.getRight() >= target) {
-                    BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(
-                            world,
-                            breakTask.getLeft(),
-                            world.getBlockState(breakTask.getLeft()),
-                            FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, getPos(), getOwner())
-                    );
-                    MinecraftForge.EVENT_BUS.post(breakEvent);
-                    if (!breakEvent.isCanceled()) {
-                        world.sendBlockBreakProgress(breakTask.getLeft().hashCode(), breakTask.getLeft(), -1);
-                        world.destroyBlock(breakTask.getLeft(), false);
-                    } else {
-                        battery.addPower(Math.min(target, battery.getCapacity() - battery.getStored()), false);
-                    }
-                    iterator.remove();
-                } else {
-                    world.sendBlockBreakProgress(breakTask.getLeft().hashCode(), breakTask.getLeft(), (int) ((breakTask.getRight() * 9) / target));
-                }
-            }
-        }
-
-        if (!placeTasks.isEmpty()) {
-            for (Iterator<MutableTriple<BlockPos, ItemStack, Long>> iterator = placeTasks.iterator(); iterator.hasNext(); ) {
-                MutableTriple<BlockPos, ItemStack, Long> placeTask = iterator.next();
-                long target = getTarget(placeTask);
-                placeTask.setRight(
-                        placeTask.getRight() +
-                                battery.extractPower(0, Math.min(target - placeTask.getRight(), battery.getStored() / placeTasks.size()))
-                );
-                if (placeTask.getRight() >= target) {
-                    FakePlayerBC fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, getPos(), getOwner());
-                    fakePlayer.setHeldItem(fakePlayer.getActiveHand(), placeTask.getMiddle());
-                    EnumActionResult result = placeTask.getMiddle().onItemUse(
-                            fakePlayer,
-                            world,
-                            placeTask.getLeft(),
-                            fakePlayer.getActiveHand(),
-                            EnumFacing.UP,
-                            0.5F,
-                            0.0F,
-                            0.5F
-                    );
-                    if (result != EnumActionResult.SUCCESS) {
-                        battery.addPower(Math.min(target, battery.getCapacity() - battery.getStored()), false);
-                        invResources.insert(placeTask.getMiddle(), false, false);
-                    }
-                    iterator.remove();
-                }
-            }
-        }
-
         sendNetworkUpdate(NET_RENDER_DATA); // FIXME
     }
 
@@ -284,17 +120,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         super.writePayload(id, buffer, side);
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
-                buffer.writeInt(breakTasks.size());
-                breakTasks.forEach(breakTask -> {
-                    buffer.writeBlockPos(breakTask.getLeft());
-                    buffer.writeLong(breakTask.getRight());
-                });
-                buffer.writeInt(placeTasks.size());
-                placeTasks.forEach(placeTask -> {
-                    buffer.writeBlockPos(placeTask.getLeft());
-                    buffer.writeItemStack(placeTask.getMiddle());
-                    buffer.writeLong(placeTask.getRight());
-                });
+                builder.writePayload(id, buffer, side);
             }
         }
     }
@@ -304,20 +130,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
-                breakTasks.clear();
-                IntStream.range(0, buffer.readInt())
-                        .mapToObj(i -> MutablePair.of(buffer.readBlockPos(), buffer.readLong()))
-                        .forEach(breakTasks::add);
-                placeTasks.clear();
-                IntStream.range(0, buffer.readInt())
-                        .mapToObj(i -> {
-                            try {
-                                return MutableTriple.of(buffer.readBlockPos(), buffer.readItemStack(), buffer.readLong());
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        })
-                        .forEach(placeTasks::add);
+                builder.readPayload(id, buffer, side, ctx);
             }
         }
     }
@@ -403,7 +216,25 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         left.add("");
         left.add("battery = " + battery.getDebugString());
         left.add("addon = " + addon);
-        left.add("break tasks = " + breakTasks.size());
-        left.add("place tasks = " + placeTasks.size());
+    }
+
+    @Override
+    public MjBattery getBattery() {
+        return battery;
+    }
+
+    @Override
+    public BlockPos getBuilderPos() {
+        return pos;
+    }
+
+    @Override
+    public Template.BuildingInfo getTemplateBuildingInfo() {
+        return addon == null ? null : addon.buildingInfo;
+    }
+
+    @Override
+    public IItemTransactor getInvResources() {
+        return invResources;
     }
 }

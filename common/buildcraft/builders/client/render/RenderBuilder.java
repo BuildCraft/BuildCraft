@@ -34,7 +34,7 @@ public class RenderBuilder extends FastTESR<TileBuilder> {
 
         Minecraft.getMinecraft().mcProfiler.endStartSection("path");
 
-        List<BlockPos> path = te.getPath();
+        List<BlockPos> path = te.path;
         if (path != null) {
             BlockPos last = null;
             for (BlockPos p : path) {

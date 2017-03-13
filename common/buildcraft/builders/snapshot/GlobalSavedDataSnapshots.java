@@ -1,4 +1,4 @@
-package buildcraft.builders.schematic;
+package buildcraft.builders.snapshot;
 
 import buildcraft.lib.misc.NBTUtilBC;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -36,6 +36,17 @@ public class GlobalSavedDataSnapshots {
         }
     }
 
+    public static GlobalSavedDataSnapshots get(Side side) {
+        if (!instances.containsKey(side)) {
+            instances.put(side, new GlobalSavedDataSnapshots(side));
+        }
+        return instances.get(side);
+    }
+
+    public static GlobalSavedDataSnapshots get(World world) {
+        return get(world.isRemote ? Side.CLIENT : Side.SERVER);
+    }
+
     private void writeSnapshots() throws IOException {
         for (Snapshot snapshot : snapshots) {
             File snapshotFile = new File(snapshotsFile, snapshot.header.getFileName());
@@ -63,14 +74,7 @@ public class GlobalSavedDataSnapshots {
         }
     }
 
-    public static GlobalSavedDataSnapshots get(Side side) {
-        if (!instances.containsKey(side)) {
-            instances.put(side, new GlobalSavedDataSnapshots(side));
-        }
-        return instances.get(side);
-    }
-
-    public static GlobalSavedDataSnapshots get(World world) {
-        return get(world.isRemote ? Side.CLIENT : Side.SERVER);
+    public Snapshot getSnapshotByHeader(Snapshot.Header header) {
+        return snapshots.stream().filter(snapshot -> snapshot.header.equals(header)).findFirst().orElse(null);
     }
 }

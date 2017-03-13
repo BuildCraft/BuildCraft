@@ -4,10 +4,10 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import buildcraft.builders.schematic.GlobalSavedDataSnapshots;
+import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
 import buildcraft.builders.addon.AddonFillingPlanner;
-import buildcraft.builders.schematic.RulesLoader;
-import buildcraft.builders.schematic.SchematicsLoader;
+import buildcraft.builders.snapshot.RulesLoader;
+import buildcraft.builders.snapshot.SchematicsLoader;
 import buildcraft.core.marker.volume.AddonsRegistry;
 import net.minecraft.util.ResourceLocation;
 import java.util.function.Consumer;

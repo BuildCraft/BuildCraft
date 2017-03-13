@@ -9,10 +9,11 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.block.BlockArchitect;
 import buildcraft.builders.item.ItemSnapshot;
-import buildcraft.builders.schematic.*;
+import buildcraft.builders.snapshot.*;
 import buildcraft.core.marker.volume.Lock;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
+import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.misc.BoundingBoxUtil;
@@ -40,6 +41,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -55,7 +57,7 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
     private Snapshot.EnumSnapshotType snapshotType = Snapshot.EnumSnapshotType.BLUEPRINT;
     private final Box box = new Box();
 //    private List<SchematicEntityOffset> blueprintScannedEntities;
-    private SchematicBlock[][][] blueprintScannedBlocks;
+    private final List<SchematicBlock> blueprintScannedBlocks = new ArrayList<>();
     private boolean[][][] templateScannedBlocks;
     private BoxIterator boxIterator;
     private boolean isValid = false;
@@ -148,8 +150,8 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
 
     private void scanSingleBlock() {
         BlockPos size = box.size();
-        if (blueprintScannedBlocks == null) {
-            blueprintScannedBlocks = new SchematicBlock[size.getX()][size.getY()][size.getZ()];
+        if (templateScannedBlocks == null) {
+            blueprintScannedBlocks.clear();
             boxIterator = new BoxIterator(box, EnumAxisOrder.XZY.getMinToMaxOrder(), true);
             templateScannedBlocks = new boolean[size.getX()][size.getY()][size.getZ()];
         }
@@ -159,7 +161,7 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
         BlockPos schematicIndex = worldScanPos.subtract(box.min());
         if (snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
             SchematicBlock schematic = readSchematicForBlock(worldScanPos);
-            blueprintScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = schematic;
+            blueprintScannedBlocks.add(schematic);
         } else {
             boolean solid = !world.isAirBlock(worldScanPos);
             templateScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = solid;
@@ -192,7 +194,11 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
 //            }
 //        }
         Block block = world.getBlockState(worldScanPos).getBlock();
-        SchematicBlockContext schematicBlockContext = new SchematicBlockContext(world, worldScanPos, pos);
+        SchematicBlockContext schematicBlockContext = new SchematicBlockContext(
+                world,
+                worldScanPos,
+                pos.offset(world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite())
+        );
         return SchematicsLoader.INSTANCE.schematicFactories.get(block).apply(schematicBlockContext);
     }
 
@@ -204,7 +210,18 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
     private void finishScanning() {
         EnumFacing facing = world.getBlockState(getPos()).getValue(BlockArchitect.PROP_FACING);
         Snapshot snapshot = snapshotType.create.get();
-        snapshot.header = new Snapshot.Header();
+        if (snapshotType == Snapshot.EnumSnapshotType.TEMPLATE) {
+            // noinspection ConstantConditions
+            ((Template) snapshot).size = box.size();
+            // noinspection ConstantConditions
+            ((Template) snapshot).data = templateScannedBlocks;
+        }
+        if (snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
+            // noinspection ConstantConditions
+            ((Blueprint) snapshot).size = box.size();
+            // noinspection ConstantConditions
+            ((Blueprint) snapshot).schematicBlocks.addAll(blueprintScannedBlocks);
+        }
         snapshot.header.id = UUID.randomUUID();
         snapshot.header.owner = getOwner().getId();
         snapshot.header.created = new Date();
@@ -212,7 +229,7 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
         GlobalSavedDataSnapshots.get(world).snapshots.add(snapshot);
         invBptIn.setStackInSlot(0, ItemStack.EMPTY);
         invBptOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshotType, snapshot.header));
-        blueprintScannedBlocks = null;
+        blueprintScannedBlocks.clear();
         templateScannedBlocks = null;
         boxIterator = null;
         sendNetworkUpdate(NET_RENDER_DATA);
