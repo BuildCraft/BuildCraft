@@ -196,9 +196,9 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
         int x = rootElement.getX();
         int y = rootElement.getY();
         String localizedName = container.gate.variant.getLocalizedName();
-        int cX = x + (GUI_WIDTH - fontRendererObj.getStringWidth(localizedName)) / 2;
-        fontRendererObj.drawString(localizedName, cX, y + 5, 0x404040);
-        fontRendererObj.drawString(LocaleUtil.localize("gui.inventory"), x + 8, y + ySize - 97, 0x404040);
+        int cX = x + (GUI_WIDTH - fontRenderer.getStringWidth(localizedName)) / 2;
+        fontRenderer.drawString(localizedName, cX, y + 5, 0x404040);
+        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), x + 8, y + ySize - 97, 0x404040);
         GlStateManager.color(1, 1, 1);
 
         if (currentHover != null) {

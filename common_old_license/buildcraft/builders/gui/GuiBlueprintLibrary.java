@@ -78,7 +78,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
         String title = LocaleUtil.localize("tile.libraryBlock.name");
         int x = guiLeft;
         int y = guiTop;
-        fontRendererObj.drawString(title, x + getCenteredOffset(title), y + 6, 0x404040);
+        fontRenderer.drawString(title, x + getCenteredOffset(title), y + 6, 0x404040);
 
         int off = scrollbar.getPosition();
         for (int i = off; i < (off + 12); i++) {
@@ -103,17 +103,17 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
                 icon.drawAt(x + 8 + 146 + 1, yOff);
             }
 
-            while (fontRendererObj.getStringWidth(name) > (160 - 9)) {
+            while (fontRenderer.getStringWidth(name) > (160 - 9)) {
                 name = name.substring(0, name.length() - 1);
             }
 
             int colour = /* LibraryAPI.getHandlerFor(header.kind).getTextColor() */0;
-            fontRendererObj.drawString(name, x + 9, y + 23 + 9 * (i - off), colour);
+            fontRenderer.drawString(name, x + 9, y + 23 + 9 * (i - off), colour);
         }
     }
 
     public int getCenteredOffset(String title) {
-        int width = fontRendererObj.getStringWidth(title);
+        int width = fontRenderer.getStringWidth(title);
         return (xSize - width) / 2;
     }
 

@@ -31,7 +31,7 @@ public class GuiArchitect extends GuiBC8<ContainerArchitect> {
     @Override
     public void initGui() {
         super.initGui();
-        nameField = new GuiTextField(0, fontRendererObj, 90, 62, 156, 12);
+        nameField = new GuiTextField(0, fontRenderer, 90, 62, 156, 12);
         nameField.setText(container.tile.name);
         nameField.setFocused(true);
     }

@@ -50,6 +50,6 @@ public class GuiAdvancedCraftingTable extends GuiBC8<ContainerAdvancedCraftingTa
     @Override
     protected void drawForegroundLayer() {
         String title = I18n.format("tile.advancedCraftingTableBlock.name");
-        fontRendererObj.drawString(title, guiLeft + (xSize - fontRendererObj.getStringWidth(title)) / 2, guiTop + 5, 0x404040);
+        fontRenderer.drawString(title, guiLeft + (xSize - fontRenderer.getStringWidth(title)) / 2, guiTop + 5, 0x404040);
     }
 }

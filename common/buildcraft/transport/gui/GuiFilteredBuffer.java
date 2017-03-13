@@ -69,7 +69,7 @@ public class GuiFilteredBuffer extends GuiBC8<ContainerFilteredBuffer_BC8> {
         int x = guiLeft;
         int y = guiTop;
         String title = I18n.format("tile.filteredBufferBlock.name");
-        int xPos = (xSize - fontRendererObj.getStringWidth(title)) / 2;
-        fontRendererObj.drawString(title, x + xPos, y + 10, 0x404040);
+        int xPos = (xSize - fontRenderer.getStringWidth(title)) / 2;
+        fontRenderer.drawString(title, x + xPos, y + 10, 0x404040);
     }
 }

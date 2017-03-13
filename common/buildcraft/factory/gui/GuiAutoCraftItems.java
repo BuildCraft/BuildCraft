@@ -38,17 +38,17 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> {
         GuiRectangle progress = RECT_PROGRESS.createProgress(p, 1);
         ICON_PROGRESS.drawCutInside(progress.offset(rootElement));
 
-        fontRendererObj.drawString("Start = " + delta.getStatic(true), 10, 10, -1);
-        fontRendererObj.drawString("Dyn   = " + dynamic, 10, 20, -1);
-        fontRendererObj.drawString("End   = " + delta.getStatic(false), 10, 30, -1);
-        fontRendererObj.drawString("Count = " + delta.changingEntries.size(), 10, 40, -1);
+        fontRenderer.drawString("Start = " + delta.getStatic(true), 10, 10, -1);
+        fontRenderer.drawString("Dyn   = " + dynamic, 10, 20, -1);
+        fontRenderer.drawString("End   = " + delta.getStatic(false), 10, 30, -1);
+        fontRenderer.drawString("Count = " + delta.changingEntries.size(), 10, 40, -1);
         if (container.tile.currentRecipe != null) {
             RenderHelper.enableGUIStandardItemLighting();
             ItemStack output = container.tile.getOutput();
             int x = rootElement.getX() + 93;
             int y = rootElement.getY() + 27;
             this.itemRender.renderItemAndEffectIntoGUI(this.mc.player, output, x, y);
-            this.itemRender.renderItemOverlayIntoGUI(this.mc.fontRendererObj, output, x, y, null);
+            this.itemRender.renderItemOverlayIntoGUI(this.mc.fontRenderer, output, x, y, null);
             RenderHelper.disableStandardItemLighting();
         }
     }

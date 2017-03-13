@@ -57,8 +57,8 @@ public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
     @Override
     protected void drawForegroundLayer() {
         String str = LocaleUtil.localize("tile.engineStone.name");
-        int strWidth = fontRendererObj.getStringWidth(str);
-        fontRendererObj.drawString(str, rootElement.getCenterX() - strWidth / 2, rootElement.getY() + 6, 0x404040);
-        fontRendererObj.drawString(LocaleUtil.localize("gui.inventory"), rootElement.getX() + 8, rootElement.getY() + SIZE_Y - 96, 0x404040);
+        int strWidth = fontRenderer.getStringWidth(str);
+        fontRenderer.drawString(str, rootElement.getCenterX() - strWidth / 2, rootElement.getY() + 6, 0x404040);
+        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), rootElement.getX() + 8, rootElement.getY() + SIZE_Y - 96, 0x404040);
     }
 }

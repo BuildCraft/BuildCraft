@@ -77,7 +77,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
     }
 
     public FontRenderer getFontRenderer() {
-        return fontRendererObj;
+        return fontRenderer;
     }
 
     public float getLastPartialTicks() {
@@ -93,7 +93,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
     public void drawItemStackAt(ItemStack stack, int x, int y) {
         RenderHelper.enableGUIStandardItemLighting();
         itemRender.renderItemAndEffectIntoGUI(mc.player, stack, x, y);
-        itemRender.renderItemOverlayIntoGUI(mc.fontRendererObj, stack, x, y, null);
+        itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, stack, x, y, null);
         RenderHelper.disableStandardItemLighting();
     }
 
