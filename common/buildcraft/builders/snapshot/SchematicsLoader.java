@@ -1,11 +1,19 @@
 package buildcraft.builders.snapshot;
 
+import buildcraft.lib.cap.CapabilityHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.CapabilityItemHandler;
+
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import java.util.*;
 import java.util.function.Function;
@@ -88,8 +96,26 @@ public enum SchematicsLoader {
                 // Add schematic generator
                 schematicFactories.put(block, schematicBlockContext -> {
                     BlockPos relativePos = schematicBlockContext.pos.subtract(schematicBlockContext.basePos);
+                    List<ItemStack> currentRequiredItems = new ArrayList<>(requiredItems);
                     IBlockState blockState = schematicBlockContext.world.getBlockState(schematicBlockContext.pos);
-                    return new SchematicBlock(relativePos, blockState, requiredItems);
+                    NBTTagCompound tileNbt = null;
+                    if (block.hasTileEntity(blockState)) {
+                        TileEntity tileEntity = schematicBlockContext.world.getTileEntity(schematicBlockContext.pos);
+                        if (tileEntity != null) {
+                            tileNbt = tileEntity.serializeNBT();
+                            Arrays.stream(EnumFacing.values())
+                                    .filter(side -> tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side))
+                                    .map(side -> tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side))
+                                    .filter(Objects::nonNull)
+                                    .distinct() // FIXME: this can work wrongly with multi side inventories
+                                    .flatMap(itemHandler ->
+                                            IntStream.range(0, itemHandler.getSlots()).mapToObj(itemHandler::getStackInSlot)
+                                    )
+                                    .filter(stack -> !stack.isEmpty())
+                                    .forEach(currentRequiredItems::add);
+                        }
+                    }
+                    return new SchematicBlock(relativePos, currentRequiredItems, blockState, tileNbt);
                 });
             }
         });

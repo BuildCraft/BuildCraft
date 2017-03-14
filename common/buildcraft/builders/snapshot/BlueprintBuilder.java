@@ -75,7 +75,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     protected boolean doPlaceTask(PlaceTask placeTask) {
-        return tile.getWorld().setBlockState(placeTask.getPos(), getBuildingInfo().toPlace.get(placeTask.getPos()).blockState);
+        return getBuildingInfo().toPlace.get(placeTask.pos).build(tile.getWorld(), placeTask.pos);
     }
 
     @Override

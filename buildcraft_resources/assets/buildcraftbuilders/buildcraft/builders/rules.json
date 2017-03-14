@@ -1,10 +1,6 @@
 [
     {
-        "name": "requireCake",
+        "blocks": ["minecraft:cake"],
         "requiredItems": ["minecraft:cake"]
-    },
-    {
-        "parentNames": ["requireCake"],
-        "blocks": ["minecraft:iron_block"]
     }
 ]
