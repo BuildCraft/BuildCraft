@@ -40,6 +40,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
 
     protected abstract List<BlockPos> getToPlace();
 
+    protected abstract boolean canPlace(BlockPos blockPos);
+
     /**
      * @return items
      */
@@ -140,6 +142,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                     ))
                     .filter(blockPos -> placeTasks.stream().map(PlaceTask::getPos).noneMatch(Predicate.isEqual(blockPos)))
                     .filter(blockPos -> tile.getWorld().isAirBlock(blockPos))
+                    .filter(this::canPlace)
                     .map(blockPos ->
                             new PlaceTask(
                                     blockPos,

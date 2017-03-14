@@ -35,6 +35,13 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     }
 
     @Override
+    protected boolean canPlace(BlockPos blockPos) {
+        return getBuildingInfo().toPlace.get(blockPos).requiredBlockOffsets.stream()
+                .map(blockPos::add)
+                .allMatch(pos -> getBuildingInfo().toPlace.containsKey(pos) ? isBlockCorrect(pos) : !tile.getWorld().isAirBlock(pos));
+    }
+
+    @Override
     protected List<ItemStack> getToPlaceItems(BlockPos blockPos) {
         List<ItemStack> requiredItems = getBuildingInfo().toPlace.get(blockPos).requiredItems;
         if (requiredItems.stream()
@@ -67,7 +74,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     protected boolean isBlockCorrect(BlockPos blockPos) {
-        return getBuildingInfo() != null &&
+        return !tile.getWorld().isAirBlock(blockPos) &&
+                getBuildingInfo() != null &&
                 getBuildingInfo().toPlace.containsKey(blockPos) &&
                 getBuildingInfo().toPlace.get(blockPos).blockState != null &&
                 getBuildingInfo().toPlace.get(blockPos).blockState.equals(tile.getWorld().getBlockState(blockPos)); // FIXME: wrong! no equals method overrode!

@@ -7,5 +7,5 @@ public class JsonRule {
     public List<String> parentNames = null;
     public List<String> blocks = null;
     public List<String> requiredItems = null;
-    public List<int[]> q = null;
+    public List<int[]> requiredBlockOffsets = null;
 }

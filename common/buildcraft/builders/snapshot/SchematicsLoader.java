@@ -2,6 +2,7 @@ package buildcraft.builders.snapshot;
 
 import buildcraft.lib.cap.CapabilityHelper;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -93,9 +94,16 @@ public enum SchematicsLoader {
                         requiredItems.add(new ItemStack(itemFromBlock));
                     }
                 }
+                Set<BlockPos> requiredBlockOffsets = rules.stream()
+                        .filter(rule -> rule.requiredBlockOffsets != null)
+                        .map(rule -> rule.requiredBlockOffsets)
+                        .flatMap(poses -> poses.stream().map(ints -> new BlockPos(ints[0], ints[1], ints[2])))
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toCollection(HashSet::new));
                 // Add schematic generator
                 schematicFactories.put(block, schematicBlockContext -> {
                     BlockPos relativePos = schematicBlockContext.pos.subtract(schematicBlockContext.basePos);
+                    Set<BlockPos> currentRequiredBlockOffsets = new HashSet<>(requiredBlockOffsets);
                     List<ItemStack> currentRequiredItems = new ArrayList<>(requiredItems);
                     IBlockState blockState = schematicBlockContext.world.getBlockState(schematicBlockContext.pos);
                     NBTTagCompound tileNbt = null;
@@ -115,7 +123,16 @@ public enum SchematicsLoader {
                                     .forEach(currentRequiredItems::add);
                         }
                     }
-                    return new SchematicBlock(relativePos, currentRequiredItems, blockState, tileNbt);
+                    if (block instanceof BlockFalling) {
+                        currentRequiredBlockOffsets.add(new BlockPos(0, -1, 0));
+                    }
+                    return new SchematicBlock(
+                            relativePos,
+                            currentRequiredBlockOffsets,
+                            currentRequiredItems,
+                            blockState,
+                            tileNbt
+                    );
                 });
             }
         });
