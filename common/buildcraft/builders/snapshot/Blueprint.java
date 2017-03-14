@@ -1,7 +1,6 @@
 package buildcraft.builders.snapshot;
 
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.RotationUtil;
 import buildcraft.lib.misc.data.Box;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -10,6 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class Blueprint extends Snapshot {
     public final List<SchematicBlock> schematicBlocks = new ArrayList<>();
@@ -45,22 +45,23 @@ public class Blueprint extends Snapshot {
     public class BuildingInfo {
         public final BlockPos basePos;
         public final Rotation rotation;
-        public final BlockPos size;
+        public final Box box;
         public final List<BlockPos> toBreak = new ArrayList<>();
         public final Map<BlockPos, SchematicBlock> toPlace = new HashMap<>();
 
         public BuildingInfo(BlockPos basePos, Rotation rotation) {
             this.basePos = basePos;
             this.rotation = rotation;
-            size = RotationUtil.rotateBlockPos(getSnapshot().size, rotation);
             for (SchematicBlock schematicBlock : schematicBlocks) {
-                BlockPos blockPos = RotationUtil.rotateBlockPos(schematicBlock.relativePos, rotation).add(basePos);
+                BlockPos blockPos = schematicBlock.relativePos.rotate(rotation).add(basePos);
                 if (schematicBlock.blockState.getBlock().isAir(schematicBlock.blockState, null, null)) {
                     toBreak.add(blockPos);
                 } else {
                     toPlace.put(blockPos, schematicBlock.getRotated(rotation));
                 }
             }
+            box = new Box();
+            Stream.concat(toBreak.stream(), toPlace.keySet().stream()).forEach(box::extendToEncompass);
         }
 
         public Blueprint getSnapshot() {
@@ -68,7 +69,7 @@ public class Blueprint extends Snapshot {
         }
 
         public Box getBox() {
-            return new Box(basePos, basePos.add(getSnapshot().size));
+            return box;
         }
     }
 }

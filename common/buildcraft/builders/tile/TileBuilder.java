@@ -29,7 +29,6 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -67,9 +66,13 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
     private final IMjReceiver mjReceiver = new MjBatteryReciver(battery);
     private final MjCapabilityHelper mjCapHelper = new MjCapabilityHelper(mjReceiver);
-    /** Stores the real path - just a few block positions. */
+    /**
+     * Stores the real path - just a few block positions.
+     */
     public List<BlockPos> path = null;
-    /** Stores the real path plus all possible block positions inbetween. Not saved, regenerated from path. */
+    /**
+     * Stores the real path plus all possible block positions inbetween. Not saved, regenerated from path.
+     */
     private List<BlockPos> basePoses = new ArrayList<>();
     private int currentBasePosIndex = 0;
     private Snapshot snapshot = null;
@@ -78,45 +81,57 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     private Blueprint.BuildingInfo blueprintBuildingInfo = null;
     public TemplateBuilder templateBuilder = new TemplateBuilder(this);
     public BlueprintBuilder blueprintBuilder = new BlueprintBuilder(this);
+    private Box currentBox = new Box();
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, ItemStack before, ItemStack after) {
         if (itemHandler == invBlueprint) {
-            if (getBuilder() != null) {
-                getBuilder().cancel();
-            }
+            currentBasePosIndex = 0;
             snapshot = null;
-            snapshotType = null;
-            templateBuildingInfo = null;
-            blueprintBuildingInfo = null;
             if (after.getItem() instanceof ItemSnapshot) {
                 Snapshot.Header header = BCBuildersItems.snapshot.getHeader(after);
                 if (header != null) {
                     Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(header);
                     if (snapshot != null) {
-                        if (getCurrentBasePos() != null) {
-                            this.snapshot = snapshot;
-                            snapshotType = snapshot.getType();
-                            EnumFacing facing = world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING);
-                            Rotation rotation = Arrays.stream(Rotation.values())
-                                    .filter(r -> r.rotate(snapshot.facing) == facing)
-                                    .findFirst()
-                                    .orElse(null);
-                            if (snapshot.getType() == Snapshot.EnumSnapshotType.TEMPLATE) {
-                                templateBuildingInfo = ((Template) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
-                            }
-                            if (snapshot.getType() == Snapshot.EnumSnapshotType.BLUEPRINT) {
-                                blueprintBuildingInfo = ((Blueprint) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
-                            }
-                        }
+                        this.snapshot = snapshot;
                     }
                 }
             }
+            updateSnapshot();
         }
         super.onSlotChange(itemHandler, slot, before, after);
     }
 
-    private void recomputePathCache() {
+    private void updateSnapshot() {
+        if (getBuilder() != null) {
+            getBuilder().cancel();
+        }
+        if (snapshot != null && getCurrentBasePos() != null) {
+            snapshotType = snapshot.getType();
+            EnumFacing facing = world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING);
+            Rotation rotation = Arrays.stream(Rotation.values())
+                    .filter(r -> r.rotate(snapshot.facing) == facing)
+                    .findFirst()
+                    .orElse(null);
+            if (snapshot.getType() == Snapshot.EnumSnapshotType.TEMPLATE) {
+                templateBuildingInfo = ((Template) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
+            }
+            if (snapshot.getType() == Snapshot.EnumSnapshotType.BLUEPRINT) {
+                blueprintBuildingInfo = ((Blueprint) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
+            }
+            currentBox = getBuilder() == null ? null : getBuilder().getBox();
+        } else {
+            snapshotType = null;
+            templateBuildingInfo = null;
+            blueprintBuildingInfo = null;
+            currentBox = null;
+        }
+        if (currentBox == null) {
+            currentBox = new Box();
+        }
+    }
+
+    private void updateBasePoses() {
         basePoses.clear();
         if (path != null) {
             int max = path.size() - 1;
@@ -134,7 +149,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
         return currentBasePosIndex < basePoses.size() ? basePoses.get(currentBasePosIndex) : null;
     }
 
-    private SnapshotBuilder<?> getBuilder() {
+    public SnapshotBuilder<?> getBuilder() {
         if (snapshotType == Snapshot.EnumSnapshotType.TEMPLATE) {
             return templateBuilder;
         }
@@ -157,7 +172,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                 provider.removeFromWorld();
             }
         }
-        recomputePathCache();
+        updateBasePoses();
     }
 
     @Override
@@ -165,7 +180,13 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
         battery.tick(getWorld(), getPos());
         battery.addPowerChecking(64 * MjAPI.MJ, false);
         if (getBuilder() != null) {
-            getBuilder().tick();
+            if (getBuilder().tick()) {
+                currentBasePosIndex++;
+                if (currentBasePosIndex >= basePoses.size()) {
+                    currentBasePosIndex = basePoses.size() - 1;
+                }
+                updateSnapshot();
+            }
         }
         sendNetworkUpdate(NET_RENDER_DATA); // FIXME
     }
@@ -187,6 +208,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                     // noinspection ConstantConditions
                     getBuilder().writePayload(buffer);
                 }
+                currentBox.writeData(buffer);
             }
         }
     }
@@ -203,7 +225,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                 } else {
                     path = null;
                 }
-                recomputePathCache();
+                updateBasePoses();
                 if (buffer.readBoolean()) {
                     snapshotType = buffer.readEnumValue(Snapshot.EnumSnapshotType.class);
                     // noinspection ConstantConditions
@@ -211,6 +233,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                 } else {
                     snapshotType = null;
                 }
+                currentBox.readData(buffer);
             }
         }
     }
@@ -234,7 +257,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                     .map(NBTUtil::getPosFromTag)
                     .collect(Collectors.toList());
         }
-        recomputePathCache();
+        updateBasePoses();
     }
 
     // Capability
@@ -255,7 +278,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
 
     @SideOnly(Side.CLIENT)
     public Box getBox() {
-        return new Box(pos, pos); // TODO
+        return currentBox;
     }
 
     @Override

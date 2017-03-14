@@ -1,7 +1,6 @@
 package buildcraft.builders.snapshot;
 
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.RotationUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -63,7 +62,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
 
     public SchematicBlock getRotated(Rotation rotation) {
         SchematicBlock schematicBlock = new SchematicBlock();
-        schematicBlock.relativePos = RotationUtil.rotateBlockPos(relativePos, rotation);
+        schematicBlock.relativePos = relativePos.rotate(rotation);
         schematicBlock.requiredBlockOffsets = requiredBlockOffsets;
         schematicBlock.requiredItems = requiredItems;
         schematicBlock.blockState = blockState.withRotation(rotation);

@@ -62,7 +62,11 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         double minZ = -offset;
         double maxZ = 1 + offset;
 
-        EnumFacing side = tile.getWorld().getBlockState(tile.getPos()).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
+        EnumFacing side = null;
+        try {
+            side = tile.getWorld().getBlockState(tile.getPos()).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
+        } catch (IllegalArgumentException ignored) {
+        }
 
         DynamicTextureBC texture = getTexture(tile, side);
         Tessellator tessellator = Tessellator.getInstance();

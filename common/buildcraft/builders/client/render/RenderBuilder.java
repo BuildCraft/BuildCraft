@@ -21,20 +21,19 @@ public class RenderBuilder extends FastTESR<TileBuilder> {
     private static final double OFFSET = 0.1;
 
     @Override
-    public void renderTileEntityFast(TileBuilder te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
-
+    public void renderTileEntityFast(TileBuilder tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("builder");
 
-        vb.setTranslation(x - te.getPos().getX(), y - te.getPos().getY(), z - te.getPos().getZ());
+        vb.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
 
         Minecraft.getMinecraft().mcProfiler.startSection("box");
-        Box box = te.getBox();
+        Box box = tile.getBox();
         LaserBoxRenderer.renderLaserBoxDynamic(box, BuildCraftLaserManager.STRIPES_WRITE, vb);
 
         Minecraft.getMinecraft().mcProfiler.endStartSection("path");
 
-        List<BlockPos> path = te.path;
+        List<BlockPos> path = tile.path;
         if (path != null) {
             BlockPos last = null;
             for (BlockPos p : path) {
@@ -53,6 +52,10 @@ public class RenderBuilder extends FastTESR<TileBuilder> {
         Minecraft.getMinecraft().mcProfiler.endSection();
 
         vb.setTranslation(0, 0, 0);
+
+        if (tile.getBuilder() != null) {
+            RenderSnapshotBuilder.render(tile.getBuilder(), tile.getWorld(), tile.getPos(), x, y, z, partialTicks, vb);
+        }
 
         Minecraft.getMinecraft().mcProfiler.endSection();
         Minecraft.getMinecraft().mcProfiler.endSection();

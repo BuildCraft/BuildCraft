@@ -62,7 +62,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
      */
     protected abstract boolean isBlockCorrect(BlockPos blockPos);
 
-    protected abstract Box getBox();
+    public abstract Box getBox();
 
     /**
      * @return Pos where flying item should be rendered
@@ -76,7 +76,10 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                 .add(new Vec3d(0.5, 1, 0.5));
     }
 
-    public void tick() {
+    /**
+     * @return true is building is finished, false otherwise
+     */
+    public boolean tick() {
         if (tile.getWorld().isRemote) {
             prevClientBreakTasks.clear();
             prevClientBreakTasks.addAll(clientBreakTasks);
@@ -107,7 +110,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             } else {
                 robotPos = null;
             }
-            return;
+            return false;
         }
 
         breakTasks.removeIf(breakTask -> tile.getWorld().isAirBlock(breakTask.pos) || isBlockCorrect(breakTask.pos));
@@ -221,7 +224,15 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                 }
             }
         }
+
+        return getToBreak().stream().allMatch(tile.getWorld()::isAirBlock) && getToPlace().stream().allMatch(this::isBlockCorrect);
     }
+
+//    public Box getBox() {
+//        Box box = new Box();
+//        Stream.concat(getToBreak().stream(), getToPlace().stream()).forEach(box::extendToEncompass);
+//        return box;
+//    }
 
     public void writePayload(PacketBufferBC buffer) {
         buffer.writeInt(breakTasks.size());

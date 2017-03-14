@@ -73,7 +73,7 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     }
 
     @Override
-    protected Box getBox() {
-        return tile.getTemplateBuildingInfo().getBox();
+    public Box getBox() {
+        return tile.getTemplateBuildingInfo() == null ? null : tile.getTemplateBuildingInfo().getBox();
     }
 }

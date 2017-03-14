@@ -87,15 +87,15 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     }
 
     @Override
-    protected Box getBox() {
-        return tile.getBlueprintBuildingInfo().getBox();
+    public Box getBox() {
+        return tile.getBlueprintBuildingInfo() == null ? null : tile.getBlueprintBuildingInfo().getBox();
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public boolean tick() {
+        boolean result = super.tick();
         if (tile.getWorld().isRemote) {
-            return;
+            return result;
         }
 
         neededStacks.clear();
@@ -115,6 +115,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                         neededStacks.add(toAdd.copy());
                     }
                 });
+
+        return result;
     }
 
     @Override
