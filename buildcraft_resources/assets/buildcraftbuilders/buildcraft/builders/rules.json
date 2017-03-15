@@ -4,7 +4,7 @@
         "requiredItems": ["minecraft:cake"]
     },
     {
-        "blocks": ["minecraft:stained_glass", "minecraft:stained_hardened_clay", "minecraft:stained_glass_pane"],
+        "blocks": ["minecraft:stained_glass", "minecraft:stained_hardened_clay", "minecraft:stained_glass_pane", "minecraft:sandstone"],
         "copyRequiredItemMetaFromBlock": true
     }
 ]
