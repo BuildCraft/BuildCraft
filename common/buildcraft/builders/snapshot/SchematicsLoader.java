@@ -177,6 +177,7 @@ public enum SchematicsLoader {
                                             .forEach(currentRequiredItems::add);
                                 }
                             }
+                            currentRequiredItems.removeIf(ItemStack::isEmpty);
                             return new SchematicBlock(
                                     relativePos,
                                     requiredBlockOffsets,

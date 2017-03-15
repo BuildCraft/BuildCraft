@@ -37,12 +37,13 @@
             "minecraft:double_wooden_slab",
             "minecraft:wooden_slab",
             "minecraft:double_stone_slab2",
-            "minecraft:stone_slab2"
+            "minecraft:stone_slab2",
+            "minecraft:flower_pot"
         ],
         "copyRequiredItemsFromDrops": true
     },
     {
-        "blocks": ["minecraft:double_plant"], // TODO
+        "blocks": ["minecraft:fire", "minecraft:piston_head", "minecraft:double_plant" /* TODO */],
         "ignore": true
     },
     {
@@ -52,5 +53,25 @@
     {
         "blocks": ["minecraft:snow_layer"],
         "copyRequiredItemsCountFromProperty": "layers"
+    },
+    {
+        "blocks": ["minecraft:farmland"],
+        "requiredItems": ["minecraft:dirt"]
+    },
+    {
+        "blocks": ["minecraft:wheat"],
+        "requiredItems": ["minecraft:wheat_seeds"]
+    },
+    {
+        "blocks": ["minecraft:pumpkin_stem"],
+        "requiredItems": ["minecraft:pumpkin_seeds"]
+    },
+    {
+        "blocks": ["minecraft:melon_stem"],
+        "requiredItems": ["minecraft:melon_seeds"]
+    },
+    {
+        "blocks": ["minecraft:beetroots"],
+        "requiredItems": ["minecraft:beetroot_seeds"]
     }
 ]
