@@ -2,6 +2,7 @@ package buildcraft.builders.snapshot;
 
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -27,6 +28,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     public List<IProperty<?>> ignoredProperties;
     public IBlockState blockState;
     public NBTTagCompound tileNbt;
+    public Block placeBlock;
 
     public SchematicBlock(
             BlockPos relativePos,
@@ -34,7 +36,8 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
             List<ItemStack> requiredItems,
             List<IProperty<?>> ignoredProperties,
             IBlockState blockState,
-            NBTTagCompound tileNbt
+            NBTTagCompound tileNbt,
+            Block placeBlock
     ) {
         this.relativePos = relativePos;
         this.requiredBlockOffsets = requiredBlockOffsets;
@@ -42,6 +45,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         this.ignoredProperties = ignoredProperties;
         this.blockState = blockState;
         this.tileNbt = tileNbt;
+        this.placeBlock = placeBlock;
     }
 
     public SchematicBlock() {
@@ -77,16 +81,29 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         schematicBlock.ignoredProperties = ignoredProperties;
         schematicBlock.blockState = blockState.withRotation(rotation);
         schematicBlock.tileNbt = tileNbt;
+        schematicBlock.placeBlock = placeBlock;
         return schematicBlock;
     }
 
     public boolean build(World world, BlockPos blockPos) {
         IBlockState newBlockState = blockState;
+        if (placeBlock != blockState.getBlock()) {
+            newBlockState = placeBlock.getDefaultState();
+            for (IProperty<?> property : blockState.getPropertyKeys()) {
+                if (newBlockState.getPropertyKeys().contains(property)) {
+                    newBlockState = BlockUtil.copyProperty(
+                            property,
+                            newBlockState,
+                            blockState
+                    );
+                }
+            }
+        }
         for (IProperty<?> property : ignoredProperties) {
             newBlockState = BlockUtil.copyProperty(
                     property,
                     newBlockState,
-                    blockState.getBlock().getDefaultState()
+                    placeBlock.getDefaultState()
             );
         }
         if (world.setBlockState(blockPos, newBlockState)) {

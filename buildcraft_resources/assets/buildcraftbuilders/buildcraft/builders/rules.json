@@ -97,19 +97,32 @@
     },
     {
         "blocks": ["minecraft:redstone_wire"],
-        "requiredItems": ["minecraft:redstone"]
+        "requiredItems": ["minecraft:redstone"],
+        "ignoredProperties": ["power", "east", "north", "south", "west"]
     },
     {
         "blocks": ["minecraft:powered_repeater", "minecraft:unpowered_repeater"],
-        "requiredItems": ["minecraft:repeater"]
+        "requiredItems": ["minecraft:repeater"],
+        "placeBlock": "minecraft:repeater"
     },
     {
         "blocks": ["minecraft:powered_comparator", "minecraft:unpowered_comparator"],
-        "requiredItems": ["minecraft:comparator"]
+        "requiredItems": ["minecraft:comparator"],
+        "placeBlock": "minecraft:comparator",
+        "ignoredProperties": ["powered"]
     },
     {
         "blocks": ["minecraft:lit_redstone_ore"],
         "requiredItems": ["minecraft:redstone_ore"]
+    },
+    {
+        "blocks": ["minecraft:unlit_redstone_torch"],
+        "requiredItems": ["minecraft:redstone_torch"],
+        "placeBlock": "minecraft:redstone_torch"
+    },
+    {
+        "blocks": ["minecraft:hopper"],
+        "ignoredProperties": ["enabled"]
     },
     {
         "blocks": [

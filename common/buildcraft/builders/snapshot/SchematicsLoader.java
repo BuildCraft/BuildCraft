@@ -111,6 +111,12 @@ public enum SchematicsLoader {
                 if (block instanceof BlockFalling) {
                     requiredBlockOffsets.add(new BlockPos(0, -1, 0));
                 }
+                Block placeBlock = rules.stream()
+                        .map(rule -> rule.placeBlock)
+                        .filter(Objects::nonNull)
+                        .findFirst()
+                        .map(Block::getBlockFromName)
+                        .orElse(block);
                 // Add schematic generator
                 schematicFactories.put(
                         block,
@@ -235,21 +241,14 @@ public enum SchematicsLoader {
                                                     .filter(property -> property.getName().equals(propertyName))
                                     )
                                     .collect(Collectors.toList());
-                            IBlockState currentBlockState = blockState;
-                            for (IProperty<?> property : ignoredProperties) {
-                                currentBlockState = BlockUtil.copyProperty(
-                                        property,
-                                        currentBlockState,
-                                        blockState.getBlock().getDefaultState()
-                                );
-                            }
                             return new SchematicBlock(
                                     relativePos,
                                     currentRequiredBlockOffsets,
                                     currentRequiredItems,
                                     ignoredProperties,
-                                    currentBlockState,
-                                    tileNbt
+                                    blockState,
+                                    tileNbt,
+                                    placeBlock
                             );
                         }
                 );

@@ -79,15 +79,18 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 getBuildingInfo() != null &&
                 getBuildingInfo().toPlace.containsKey(blockPos) &&
                 getBuildingInfo().toPlace.get(blockPos).blockState != null &&
-                getBuildingInfo().toPlace.get(blockPos).blockState.getBlock() == tile.getWorld().getBlockState(blockPos).getBlock() &&
+                (
+                        getBuildingInfo().toPlace.get(blockPos).blockState.getBlock() == tile.getWorld().getBlockState(blockPos).getBlock()
+                                || getBuildingInfo().toPlace.get(blockPos).placeBlock == tile.getWorld().getBlockState(blockPos).getBlock()
+                ) &&
                 getBuildingInfo().toPlace.get(blockPos).blockState.getPropertyKeys().stream()
-                    .filter(property -> !getBuildingInfo().toPlace.get(blockPos).ignoredProperties.contains(property))
-                    .allMatch(property ->
-                            Objects.equals(
-                                    getBuildingInfo().toPlace.get(blockPos).blockState.getValue(property),
-                                    tile.getWorld().getBlockState(blockPos).getValue(property)
-                            )
-                    );
+                        .filter(property -> !getBuildingInfo().toPlace.get(blockPos).ignoredProperties.contains(property))
+                        .allMatch(property ->
+                                Objects.equals(
+                                        getBuildingInfo().toPlace.get(blockPos).blockState.getValue(property),
+                                        tile.getWorld().getBlockState(blockPos).getValue(property)
+                                )
+                        );
     }
 
     @Override

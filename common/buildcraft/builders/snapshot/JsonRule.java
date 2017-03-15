@@ -15,5 +15,6 @@ public class JsonRule {
     public String copyOppositeRequiredBlockOffsetFromProperty = null;
     public boolean copyRequiredBlockOffsetsFromProperties = false;
     public List<String> ignoredProperties = null;
+    public String placeBlock = null;
     public boolean ignore = false;
 }
