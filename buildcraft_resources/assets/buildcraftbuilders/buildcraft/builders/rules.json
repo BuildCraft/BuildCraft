@@ -17,7 +17,6 @@
             "minecraft:monster_egg",
             "minecraft:stonebrick",
             "minecraft:cobblestone_wall",
-            "minecraft:anvil",
             "minecraft:quartz_block",
             "minecraft:stained_hardened_clay",
             "minecraft:carpet",
@@ -121,5 +120,9 @@
     {
         "blocks": ["minecraft:piston_head"],
         "requiredItems": []
+    },
+    {
+        "blocks": ["minecraft:anvil"],
+        "copyRequiredItemMetaFromProperty": "damage"
     }
 ]

@@ -162,6 +162,31 @@ public enum SchematicsLoader {
                                                         }
                                                     })
                                     );
+                            if (currentRequiredItems.size() == 1) {
+                                rules.stream()
+                                        .map(rule -> rule.copyRequiredItemMetaFromProperty)
+                                        .filter(Objects::nonNull)
+                                        .forEach(propertyName ->
+                                                blockState.getProperties().keySet().stream()
+                                                        .filter(property -> property.getName().equals(propertyName))
+                                                        .map(property -> (PropertyInteger) property)
+                                                        .map(blockState::getValue)
+                                                        .findFirst()
+                                                        .ifPresent(value -> {
+                                                            for (int i = 0; i < currentRequiredItems.size(); i++) {
+                                                                ItemStack stack = currentRequiredItems.get(i);
+                                                                currentRequiredItems.set(
+                                                                        i,
+                                                                        new ItemStack(
+                                                                                stack.getItem(),
+                                                                                stack.getCount(),
+                                                                                value
+                                                                        )
+                                                                );
+                                                            }
+                                                        })
+                                        );
+                            }
                             if (block.hasTileEntity(blockState)) {
                                 TileEntity tileEntity = schematicBlockContext.world.getTileEntity(schematicBlockContext.pos);
                                 if (tileEntity != null) {
