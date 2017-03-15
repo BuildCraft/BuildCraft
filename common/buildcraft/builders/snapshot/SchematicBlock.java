@@ -1,6 +1,8 @@
 package buildcraft.builders.snapshot;
 
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,6 +24,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     public BlockPos relativePos;
     public Set<BlockPos> requiredBlockOffsets;
     public List<ItemStack> requiredItems;
+    public List<IProperty<?>> ignoredProperties;
     public IBlockState blockState;
     public NBTTagCompound tileNbt;
 
@@ -29,12 +32,14 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
             BlockPos relativePos,
             Set<BlockPos> requiredBlockOffsets,
             List<ItemStack> requiredItems,
+            List<IProperty<?>> ignoredProperties,
             IBlockState blockState,
             NBTTagCompound tileNbt
     ) {
         this.relativePos = relativePos;
         this.requiredBlockOffsets = requiredBlockOffsets;
         this.requiredItems = requiredItems;
+        this.ignoredProperties = ignoredProperties;
         this.blockState = blockState;
         this.tileNbt = tileNbt;
     }
@@ -69,13 +74,22 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
                 .map(blockPos -> blockPos.rotate(rotation))
                 .collect(Collectors.toCollection(HashSet::new));
         schematicBlock.requiredItems = requiredItems;
+        schematicBlock.ignoredProperties = ignoredProperties;
         schematicBlock.blockState = blockState.withRotation(rotation);
         schematicBlock.tileNbt = tileNbt;
         return schematicBlock;
     }
 
     public boolean build(World world, BlockPos blockPos) {
-        if (world.setBlockState(blockPos, blockState)) {
+        IBlockState newBlockState = blockState;
+        for (IProperty<?> property : ignoredProperties) {
+            newBlockState = BlockUtil.copyProperty(
+                    property,
+                    newBlockState,
+                    blockState.getBlock().getDefaultState()
+            );
+        }
+        if (world.setBlockState(blockPos, newBlockState)) {
             if (tileNbt != null && blockState.getBlock().hasTileEntity(blockState)) {
                 NBTTagCompound newTileNbt = new NBTTagCompound();
                 tileNbt.getKeySet().stream()

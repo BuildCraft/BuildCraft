@@ -12,6 +12,7 @@ import com.mojang.authlib.GameProfile;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -414,5 +415,9 @@ public final class BlockUtil {
             return adjacent;
         }
         return null;
+    }
+
+    public static <T extends Comparable<T>> IBlockState copyProperty(IProperty<T> property, IBlockState dst, IBlockState src) {
+        return dst.withProperty(property, src.getValue(property));
     }
 }

@@ -154,7 +154,6 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                             )
                     )
                     .filter(placeTask -> placeTask.items != null)
-                    .filter(placeTask -> !placeTask.items.isEmpty())
                     .filter(placeTask -> !placeTask.items.contains(ItemStack.EMPTY))
                     .limit(MAX_QUEUE_SIZE - placeTasks.size())
                     .forEach(placeTasks::add);

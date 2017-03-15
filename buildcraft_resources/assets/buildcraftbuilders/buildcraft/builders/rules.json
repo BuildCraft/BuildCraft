@@ -45,7 +45,6 @@
     {
         "blocks": [
             "minecraft:fire",
-            "minecraft:piston_head",
             "minecraft:double_plant" // TODO
         ],
         "ignore": true
@@ -114,5 +113,13 @@
     {
         "blocks": ["minecraft:vine"],
         "copyRequiredBlockOffsetsFromProperties": true
+    },
+    {
+        "blocks": ["minecraft:piston"],
+        "ignoredProperties": ["extended"]
+    },
+    {
+        "blocks": ["minecraft:piston_head"],
+        "requiredItems": []
     }
 ]

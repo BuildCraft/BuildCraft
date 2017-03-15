@@ -1,6 +1,6 @@
 package buildcraft.builders.snapshot;
 
-import buildcraft.lib.cap.CapabilityHelper;
+import buildcraft.lib.misc.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.properties.IProperty;
@@ -18,14 +18,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.CapabilityItemHandler;
 
-import java.util.function.Consumer;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public enum SchematicsLoader {
     INSTANCE;
@@ -204,11 +201,29 @@ public enum SchematicsLoader {
                                     }
                                 }
                             }
+                            List<IProperty<?>> ignoredProperties = rules.stream()
+                                    .map(rule -> rule.ignoredProperties)
+                                    .filter(Objects::nonNull)
+                                    .flatMap(List::stream)
+                                    .flatMap(propertyName ->
+                                            blockState.getProperties().keySet().stream()
+                                                    .filter(property -> property.getName().equals(propertyName))
+                                    )
+                                    .collect(Collectors.toList());
+                            IBlockState currentBlockState = blockState;
+                            for (IProperty<?> property : ignoredProperties) {
+                                currentBlockState = BlockUtil.copyProperty(
+                                        property,
+                                        currentBlockState,
+                                        blockState.getBlock().getDefaultState()
+                                );
+                            }
                             return new SchematicBlock(
                                     relativePos,
                                     currentRequiredBlockOffsets,
                                     currentRequiredItems,
-                                    blockState,
+                                    ignoredProperties,
+                                    currentBlockState,
                                     tileNbt
                             );
                         }
