@@ -4,7 +4,34 @@
         "requiredItems": ["minecraft:cake"]
     },
     {
-        "blocks": ["minecraft:stained_glass", "minecraft:stained_hardened_clay", "minecraft:stained_glass_pane", "minecraft:sandstone"],
+        // TODO: slabs, snow
+        "blocks": [
+            "minecraft:stone",
+            "minecraft:dirt",
+            "minecraft:planks",
+            "minecraft:sapling",
+            "minecraft:sand",
+            "minecraft:log",
+            "minecraft:log2",
+            "minecraft:leaves",
+            "minecraft:leaves2", // FIXME: wrong! not working! probably need custom mapper
+            "minecraft:sponge",
+            "minecraft:sandstone",
+            "minecraft:tallgrass",
+            "minecraft:wool",
+            "minecraft:monster_egg",
+            "minecraft:stonebrick",
+            "minecraft:cobblestone_wall",
+            "minecraft:anvil",
+            "minecraft:quartz_block",
+            "minecraft:stained_hardened_clay",
+            "minecraft:carpet",
+            "minecraft:double_plant", // FIXME: wrong! not working for one of plants blocks! probably need custom mapper
+            "minecraft:stained_glass",
+            "minecraft:stained_glass_pane",
+            "minecraft:prismarine",
+            "minecraft:red_sandstone"
+        ],
         "copyRequiredItemMetaFromBlock": true
     }
 ]
