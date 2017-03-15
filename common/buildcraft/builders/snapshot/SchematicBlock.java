@@ -13,8 +13,10 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     public BlockPos relativePos;
@@ -63,7 +65,9 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     public SchematicBlock getRotated(Rotation rotation) {
         SchematicBlock schematicBlock = new SchematicBlock();
         schematicBlock.relativePos = relativePos.rotate(rotation);
-        schematicBlock.requiredBlockOffsets = requiredBlockOffsets;
+        schematicBlock.requiredBlockOffsets = requiredBlockOffsets.stream()
+                .map(blockPos -> blockPos.rotate(rotation))
+                .collect(Collectors.toCollection(HashSet::new));
         schematicBlock.requiredItems = requiredItems;
         schematicBlock.blockState = blockState.withRotation(rotation);
         schematicBlock.tileNbt = tileNbt;
