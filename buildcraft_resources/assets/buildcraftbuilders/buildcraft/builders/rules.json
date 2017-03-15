@@ -85,5 +85,9 @@
     {
         "blocks": ["minecraft:powered_comparator", "minecraft:unpowered_comparator"],
         "requiredItems": ["minecraft:comparator"]
+    },
+    {
+        "blocks": ["minecraft:lit_redstone_ore"],
+        "requiredItems": ["minecraft:redstone_ore"]
     }
 ]
