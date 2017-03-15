@@ -64,6 +64,7 @@ public enum SchematicsLoader {
                 }
                 // Form items needed of placing this block
                 List<ItemStack> requiredItems = new ArrayList<>();
+                boolean copyRequiredItemMetaFromBlock;
                 if (rules.stream().filter(rule -> rule.requiredItems != null).count() > 0) {
                     rules.stream()
                             .filter(rule -> rule.requiredItems != null)
@@ -88,10 +89,14 @@ public enum SchematicsLoader {
                             )
                             .filter(Objects::nonNull)
                             .forEach(requiredItems::add);
+                    copyRequiredItemMetaFromBlock = false;
                 } else {
                     Item itemFromBlock = Item.getItemFromBlock(block);
                     if (itemFromBlock != Items.AIR) {
+                        copyRequiredItemMetaFromBlock = rules.stream().anyMatch(rule -> rule.copyRequiredItemMetaFromBlock);
                         requiredItems.add(new ItemStack(itemFromBlock));
+                    } else {
+                        copyRequiredItemMetaFromBlock = false;
                     }
                 }
                 Set<BlockPos> requiredBlockOffsets = rules.stream()
@@ -100,13 +105,25 @@ public enum SchematicsLoader {
                         .flatMap(poses -> poses.stream().map(ints -> new BlockPos(ints[0], ints[1], ints[2])))
                         .filter(Objects::nonNull)
                         .collect(Collectors.toCollection(HashSet::new));
+                if (block instanceof BlockFalling) {
+                    requiredBlockOffsets.add(new BlockPos(0, -1, 0));
+                }
                 // Add schematic generator
                 schematicFactories.put(block, schematicBlockContext -> {
                     BlockPos relativePos = schematicBlockContext.pos.subtract(schematicBlockContext.basePos);
-                    Set<BlockPos> currentRequiredBlockOffsets = new HashSet<>(requiredBlockOffsets);
                     List<ItemStack> currentRequiredItems = new ArrayList<>(requiredItems);
                     IBlockState blockState = schematicBlockContext.world.getBlockState(schematicBlockContext.pos);
                     NBTTagCompound tileNbt = null;
+                    if (copyRequiredItemMetaFromBlock) {
+                        currentRequiredItems.set(
+                                0,
+                                new ItemStack(
+                                        requiredItems.get(0).getItem(),
+                                        requiredItems.get(0).getCount(),
+                                        blockState.getBlock().getMetaFromState(blockState)
+                                )
+                        );
+                    }
                     if (block.hasTileEntity(blockState)) {
                         TileEntity tileEntity = schematicBlockContext.world.getTileEntity(schematicBlockContext.pos);
                         if (tileEntity != null) {
@@ -123,12 +140,9 @@ public enum SchematicsLoader {
                                     .forEach(currentRequiredItems::add);
                         }
                     }
-                    if (block instanceof BlockFalling) {
-                        currentRequiredBlockOffsets.add(new BlockPos(0, -1, 0));
-                    }
                     return new SchematicBlock(
                             relativePos,
-                            currentRequiredBlockOffsets,
+                            requiredBlockOffsets,
                             currentRequiredItems,
                             blockState,
                             tileNbt
