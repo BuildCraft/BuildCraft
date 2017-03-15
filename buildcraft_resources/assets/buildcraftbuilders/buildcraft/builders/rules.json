@@ -113,12 +113,18 @@
     },
     {
         "blocks": ["minecraft:lit_redstone_ore"],
-        "requiredItems": ["minecraft:redstone_ore"]
+        "requiredItems": ["minecraft:redstone_ore"],
+        "placeBlock": "minecraft:redstone_ore"
     },
     {
         "blocks": ["minecraft:unlit_redstone_torch"],
         "requiredItems": ["minecraft:redstone_torch"],
         "placeBlock": "minecraft:redstone_torch"
+    },
+    {
+        "blocks": ["minecraft:lit_redstone_lamp"],
+        "requiredItems": ["minecraft:redstone_lamp"],
+        "placeBlock": "minecraft:redstone_lamp"
     },
     {
         "blocks": ["minecraft:hopper"],
