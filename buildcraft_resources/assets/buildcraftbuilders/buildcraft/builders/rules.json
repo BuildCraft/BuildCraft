@@ -77,6 +77,25 @@
         "requiredItems": ["minecraft:beetroot_seeds"]
     },
     {
+        "blocks": ["minecraft:carrots"],
+        "requiredItems": ["minecraft:carrot"]
+    },
+    {
+        "blocks": ["minecraft:potatoes"],
+        "requiredItems": ["minecraft:potato"]
+    },
+    {
+        "blocks": [
+            "minecraft:wheat",
+            "minecraft:pumpkin_stem",
+            "minecraft:melon_stem",
+            "minecraft:beetroots",
+            "minecraft:carrots",
+            "minecraft:potatoes"
+        ],
+        "ignoredProperties": ["age"]
+    },
+    {
         "blocks": ["minecraft:redstone_wire"],
         "requiredItems": ["minecraft:redstone"]
     },
