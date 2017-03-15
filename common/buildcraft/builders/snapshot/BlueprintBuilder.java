@@ -65,7 +65,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                     )
                     .collect(Collectors.toList());
         } else {
-            return Collections.emptyList();
+            return Collections.singletonList(ItemStack.EMPTY);
         }
     }
 
