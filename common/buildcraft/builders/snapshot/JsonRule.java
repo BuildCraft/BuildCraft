@@ -8,5 +8,8 @@ public class JsonRule {
     public List<String> blocks = null;
     public List<String> requiredItems = null;
     public boolean copyRequiredItemMetaFromBlock = false;
+    public boolean copyRequiredItemsFromDrops = false;
+    public String copyRequiredItemsCountFromProperty = null;
     public List<int[]> requiredBlockOffsets = null;
+    public boolean ignore = false;
 }

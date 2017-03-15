@@ -1,10 +1,5 @@
 [
     {
-        "blocks": ["minecraft:cake"],
-        "requiredItems": ["minecraft:cake"]
-    },
-    {
-        // TODO: slabs, snow
         "blocks": [
             "minecraft:stone",
             "minecraft:dirt",
@@ -26,12 +21,36 @@
             "minecraft:quartz_block",
             "minecraft:stained_hardened_clay",
             "minecraft:carpet",
-            "minecraft:double_plant", // FIXME: wrong! not working for one of plants blocks! probably need custom mapper
             "minecraft:stained_glass",
             "minecraft:stained_glass_pane",
             "minecraft:prismarine",
             "minecraft:red_sandstone"
         ],
         "copyRequiredItemMetaFromBlock": true
+    },
+    {
+        "blocks": [
+            "minecraft:double_stone_slab",
+            "minecraft:stone_slab",
+            "minecraft:purpur_double_slab",
+            "minecraft:purpur_slab",
+            "minecraft:double_wooden_slab",
+            "minecraft:wooden_slab",
+            "minecraft:double_stone_slab2",
+            "minecraft:stone_slab2"
+        ],
+        "copyRequiredItemsFromDrops": true
+    },
+    {
+        "blocks": ["minecraft:double_plant"], // TODO
+        "ignore": true
+    },
+    {
+        "blocks": ["minecraft:cake"],
+        "requiredItems": ["minecraft:cake"]
+    },
+    {
+        "blocks": ["minecraft:snow_layer"],
+        "copyRequiredItemsCountFromProperty": "layers"
     }
 ]
