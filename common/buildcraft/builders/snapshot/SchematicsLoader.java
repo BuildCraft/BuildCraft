@@ -4,6 +4,8 @@ import buildcraft.lib.cap.CapabilityHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -117,6 +119,7 @@ public enum SchematicsLoader {
                         block,
                         rules.stream().anyMatch(rule -> rule.ignore) ? schematicFactories.get(Blocks.AIR) : schematicBlockContext -> {
                             BlockPos relativePos = schematicBlockContext.pos.subtract(schematicBlockContext.basePos);
+                            Set<BlockPos> currentRequiredBlockOffsets = new HashSet<>(requiredBlockOffsets);
                             List<ItemStack> currentRequiredItems = new ArrayList<>(requiredItems);
                             IBlockState blockState = schematicBlockContext.world.getBlockState(schematicBlockContext.pos);
                             NBTTagCompound tileNbt = null;
@@ -160,7 +163,8 @@ public enum SchematicsLoader {
                                                                     )
                                                             );
                                                         }
-                                                    }));
+                                                    })
+                                    );
                             if (block.hasTileEntity(blockState)) {
                                 TileEntity tileEntity = schematicBlockContext.world.getTileEntity(schematicBlockContext.pos);
                                 if (tileEntity != null) {
@@ -178,9 +182,31 @@ public enum SchematicsLoader {
                                 }
                             }
                             currentRequiredItems.removeIf(ItemStack::isEmpty);
+                            rules.stream()
+                                    .map(rule -> rule.copyOppositeRequiredBlockOffsetFromProperty)
+                                    .forEach(propertyName ->
+                                            blockState.getProperties().keySet().stream()
+                                                    .filter(property -> property.getName().equals(propertyName))
+                                                    .map(property -> (PropertyDirection) property)
+                                                    .map(blockState::getValue)
+                                                    .map(EnumFacing::getOpposite)
+                                                    .map(EnumFacing::getDirectionVec)
+                                                    .map(BlockPos::new)
+                                                    .forEach(currentRequiredBlockOffsets::add)
+                                    );
+                            if (rules.stream().anyMatch(rule -> rule.copyRequiredBlockOffsetsFromProperties)) {
+                                for (EnumFacing side : EnumFacing.values()) {
+                                    if (blockState.getProperties().keySet().stream()
+                                            .filter(property -> property.getName().equals(side.getName()))
+                                            .map(property -> (PropertyBool) property)
+                                            .anyMatch(blockState::getValue)) {
+                                        currentRequiredBlockOffsets.add(new BlockPos(side.getDirectionVec()));
+                                    }
+                                }
+                            }
                             return new SchematicBlock(
                                     relativePos,
-                                    requiredBlockOffsets,
+                                    currentRequiredBlockOffsets,
                                     currentRequiredItems,
                                     blockState,
                                     tileNbt

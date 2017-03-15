@@ -43,7 +43,11 @@
         "copyRequiredItemsFromDrops": true
     },
     {
-        "blocks": ["minecraft:fire", "minecraft:piston_head", "minecraft:double_plant" /* TODO */],
+        "blocks": [
+            "minecraft:fire",
+            "minecraft:piston_head",
+            "minecraft:double_plant" // TODO
+        ],
         "ignore": true
     },
     {
@@ -89,5 +93,26 @@
     {
         "blocks": ["minecraft:lit_redstone_ore"],
         "requiredItems": ["minecraft:redstone_ore"]
+    },
+    {
+        "blocks": [
+            "minecraft:cactus",
+            "minecraft:redstone_wire",
+            "minecraft:tripwire"
+        ],
+        "requiredBlockOffsets": [[0, -1, 0]]
+    },
+    {
+        "blocks": [
+            "minecraft:ladder",
+            "minecraft:tripwire_hook",
+            "minecraft:trapdoor",
+            "minecraft:iron_trapdoor"
+        ],
+        "copyOppositeRequiredBlockOffsetFromProperty": "facing"
+    },
+    {
+        "blocks": ["minecraft:vine"],
+        "copyRequiredBlockOffsetsFromProperties": true
     }
 ]

@@ -11,5 +11,7 @@ public class JsonRule {
     public boolean copyRequiredItemsFromDrops = false;
     public String copyRequiredItemsCountFromProperty = null;
     public List<int[]> requiredBlockOffsets = null;
+    public String copyOppositeRequiredBlockOffsetFromProperty = null;
+    public boolean copyRequiredBlockOffsetsFromProperties = false;
     public boolean ignore = false;
 }
