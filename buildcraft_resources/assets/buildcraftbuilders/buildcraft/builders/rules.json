@@ -73,5 +73,17 @@
     {
         "blocks": ["minecraft:beetroots"],
         "requiredItems": ["minecraft:beetroot_seeds"]
+    },
+    {
+        "blocks": ["minecraft:redstone_wire"],
+        "requiredItems": ["minecraft:redstone"]
+    },
+    {
+        "blocks": ["minecraft:powered_repeater", "minecraft:unpowered_repeater"],
+        "requiredItems": ["minecraft:repeater"]
+    },
+    {
+        "blocks": ["minecraft:powered_comparator", "minecraft:unpowered_comparator"],
+        "requiredItems": ["minecraft:comparator"]
     }
 ]
