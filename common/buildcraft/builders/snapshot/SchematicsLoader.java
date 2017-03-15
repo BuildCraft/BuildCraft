@@ -117,6 +117,14 @@ public enum SchematicsLoader {
                         .findFirst()
                         .map(Block::getBlockFromName)
                         .orElse(block);
+                Set<Block> canBeReplacedWithBlocks = rules.stream()
+                        .map(rule -> rule.canBeReplacedWithBlocks)
+                        .filter(Objects::nonNull)
+                        .flatMap(Collection::stream)
+                        .map(Block::getBlockFromName)
+                        .collect(Collectors.toCollection(HashSet::new));
+                canBeReplacedWithBlocks.add(block);
+                canBeReplacedWithBlocks.add(placeBlock);
                 // Add schematic generator
                 schematicFactories.put(
                         block,
@@ -248,7 +256,8 @@ public enum SchematicsLoader {
                                     ignoredProperties,
                                     blockState,
                                     tileNbt,
-                                    placeBlock
+                                    placeBlock,
+                                    canBeReplacedWithBlocks
                             );
                         }
                 );

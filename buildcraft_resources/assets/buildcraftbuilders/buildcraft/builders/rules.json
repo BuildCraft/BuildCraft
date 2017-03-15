@@ -103,28 +103,33 @@
     {
         "blocks": ["minecraft:powered_repeater", "minecraft:unpowered_repeater"],
         "requiredItems": ["minecraft:repeater"],
-        "placeBlock": "minecraft:repeater"
+        "placeBlock": "minecraft:repeater",
+        "canBeReplacedWithBlocks": ["minecraft:powered_repeater", "minecraft:unpowered_repeater"]
     },
     {
         "blocks": ["minecraft:powered_comparator", "minecraft:unpowered_comparator"],
         "requiredItems": ["minecraft:comparator"],
         "placeBlock": "minecraft:comparator",
-        "ignoredProperties": ["powered"]
+        "ignoredProperties": ["powered"],
+        "canBeReplacedWithBlocks": ["minecraft:powered_comparator", "minecraft:unpowered_comparator"]
     },
     {
-        "blocks": ["minecraft:lit_redstone_ore"],
+        "blocks": ["minecraft:redstone_ore", "minecraft:lit_redstone_ore"],
         "requiredItems": ["minecraft:redstone_ore"],
-        "placeBlock": "minecraft:redstone_ore"
+        "placeBlock": "minecraft:redstone_ore",
+        "canBeReplacedWithBlocks": ["minecraft:redstone_ore", "minecraft:lit_redstone_ore"]
     },
     {
-        "blocks": ["minecraft:unlit_redstone_torch"],
+        "blocks": ["minecraft:redstone_torch", "minecraft:unlit_redstone_torch"],
         "requiredItems": ["minecraft:redstone_torch"],
-        "placeBlock": "minecraft:redstone_torch"
+        "placeBlock": "minecraft:redstone_torch",
+        "canBeReplacedWithBlocks": ["minecraft:redstone_torch", "minecraft:unlit_redstone_torch"]
     },
     {
-        "blocks": ["minecraft:lit_redstone_lamp"],
+        "blocks": ["minecraft:redstone_lamp", "minecraft:lit_redstone_lamp"],
         "requiredItems": ["minecraft:redstone_lamp"],
-        "placeBlock": "minecraft:redstone_lamp"
+        "placeBlock": "minecraft:redstone_lamp",
+        "canBeReplacedWithBlocks": ["minecraft:redstone_lamp", "minecraft:lit_redstone_lamp"]
     },
     {
         "blocks": ["minecraft:hopper"],

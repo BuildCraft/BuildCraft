@@ -29,6 +29,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     public IBlockState blockState;
     public NBTTagCompound tileNbt;
     public Block placeBlock;
+    public Set<Block> canBeReplacedWithBlocks;
 
     public SchematicBlock(
             BlockPos relativePos,
@@ -37,7 +38,8 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
             List<IProperty<?>> ignoredProperties,
             IBlockState blockState,
             NBTTagCompound tileNbt,
-            Block placeBlock
+            Block placeBlock,
+            Set<Block> canBeReplacedWithBlocks
     ) {
         this.relativePos = relativePos;
         this.requiredBlockOffsets = requiredBlockOffsets;
@@ -46,6 +48,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         this.blockState = blockState;
         this.tileNbt = tileNbt;
         this.placeBlock = placeBlock;
+        this.canBeReplacedWithBlocks = canBeReplacedWithBlocks;
     }
 
     public SchematicBlock() {
@@ -82,6 +85,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         schematicBlock.blockState = blockState.withRotation(rotation);
         schematicBlock.tileNbt = tileNbt;
         schematicBlock.placeBlock = placeBlock;
+        schematicBlock.canBeReplacedWithBlocks = canBeReplacedWithBlocks;
         return schematicBlock;
     }
 
