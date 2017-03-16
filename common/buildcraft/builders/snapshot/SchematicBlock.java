@@ -28,6 +28,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     public List<IProperty<?>> ignoredProperties;
     public IBlockState blockState;
     public NBTTagCompound tileNbt;
+    public Rotation tileRotation = Rotation.NONE;
     public Block placeBlock;
     public Set<Block> canBeReplacedWithBlocks;
 
@@ -84,6 +85,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         schematicBlock.ignoredProperties = ignoredProperties;
         schematicBlock.blockState = blockState.withRotation(rotation);
         schematicBlock.tileNbt = tileNbt;
+        schematicBlock.tileRotation = tileRotation.add(rotation);
         schematicBlock.placeBlock = placeBlock;
         schematicBlock.canBeReplacedWithBlocks = canBeReplacedWithBlocks;
         return schematicBlock;
@@ -123,6 +125,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
                 if (tileEntity != null) {
                     tileEntity.setWorld(world);
                     world.setTileEntity(blockPos, tileEntity);
+                    tileEntity.rotate(tileRotation);
                 }
                 return true;
             }

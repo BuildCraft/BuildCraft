@@ -7,10 +7,10 @@ public class JsonRule {
     public List<String> parentNames = null;
     public List<String> blocks = null;
     public List<String> requiredItems = null;
-    public boolean copyRequiredItemMetaFromBlock = false;
+//    public boolean copyRequiredItemMetaFromBlock = false;
     public boolean copyRequiredItemsFromDrops = false;
     public String copyRequiredItemsCountFromProperty = null;
-    public String copyRequiredItemMetaFromProperty = null;
+//    public String copyRequiredItemMetaFromProperty = null;
     public List<int[]> requiredBlockOffsets = null;
     public String copyOppositeRequiredBlockOffsetFromProperty = null;
     public boolean copyRequiredBlockOffsetsFromProperties = false;

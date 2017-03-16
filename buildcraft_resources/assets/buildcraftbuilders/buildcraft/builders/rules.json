@@ -1,33 +1,4 @@
 [
-    // TODO: doors
-    {
-        "blocks": [
-            "minecraft:stone",
-            "minecraft:dirt",
-            "minecraft:planks",
-            "minecraft:sapling",
-            "minecraft:sand",
-            "minecraft:log",
-            "minecraft:log2",
-            "minecraft:leaves",
-            "minecraft:leaves2", // FIXME: wrong! not working! probably need custom mapper
-            "minecraft:sponge",
-            "minecraft:sandstone",
-            "minecraft:tallgrass",
-            "minecraft:wool",
-            "minecraft:monster_egg",
-            "minecraft:stonebrick",
-            "minecraft:cobblestone_wall",
-            "minecraft:quartz_block",
-            "minecraft:stained_hardened_clay",
-            "minecraft:carpet",
-            "minecraft:stained_glass",
-            "minecraft:stained_glass_pane",
-            "minecraft:prismarine",
-            "minecraft:red_sandstone"
-        ],
-        "copyRequiredItemMetaFromBlock": true
-    },
     {
         "blocks": [
             "minecraft:double_stone_slab",
@@ -44,8 +15,7 @@
     },
     {
         "blocks": [
-            "minecraft:fire",
-            "minecraft:double_plant" // TODO
+            "minecraft:fire"
         ],
         "ignore": true
     },
@@ -133,6 +103,14 @@
         "canBeReplacedWithBlocks": ["minecraft:redstone_lamp", "minecraft:lit_redstone_lamp"]
     },
     {
+        "blocks": ["minecraft:observer"],
+        "ignoredProperties": ["powered"]
+    },
+    {
+        "blocks": ["minecraft:wooden_door", "minecraft:iron_door"],
+        "ignoredProperties": ["powered", "open", "hinge" /* FIXME? */]
+    },
+    {
         "blocks": ["minecraft:hopper"],
         "ignoredProperties": ["enabled"]
     },
@@ -145,7 +123,23 @@
         "blocks": [
             "minecraft:cactus",
             "minecraft:redstone_wire",
-            "minecraft:tripwire"
+            "minecraft:tripwire",
+            "minecraft:wheat",
+            "minecraft:carrots",
+            "minecraft:potatoes",
+            "minecraft:melon_stem",
+            "minecraft:pumpkin_stem",
+            "minecraft:deadbush",
+            "minecraft:waterlily",
+            "minecraft:red_mushroom",
+            "minecraft:brown_mushroom",
+            "minecraft:nether_wart",
+            "minecraft:sapling",
+            "minecraft:tallgrass",
+            "minecraft:double_plant", // TODO: require ½ blocks
+            "minecraft:red_flower",
+            "minecraft:yellow_flower",
+            "minecraft:beetroots"
         ],
         "requiredBlockOffsets": [[0, -1, 0]]
     },
@@ -169,9 +163,5 @@
     {
         "blocks": ["minecraft:piston_head"],
         "requiredItems": []
-    },
-    {
-        "blocks": ["minecraft:anvil"],
-        "copyRequiredItemMetaFromProperty": "damage"
     }
 ]

@@ -1,6 +1,5 @@
 package buildcraft.builders.snapshot;
 
-import buildcraft.lib.misc.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.properties.IProperty;
@@ -9,7 +8,6 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -67,7 +65,8 @@ public enum SchematicsLoader {
                 }
                 // Form items needed of placing this block
                 List<ItemStack> requiredItems = new ArrayList<>();
-                boolean copyRequiredItemMetaFromBlock;
+                boolean getRequiredItemFromState;
+//                boolean copyRequiredItemMetaFromBlock;
                 if (rules.stream().filter(rule -> rule.requiredItems != null).count() > 0) {
                     rules.stream()
                             .filter(rule -> rule.requiredItems != null)
@@ -92,15 +91,13 @@ public enum SchematicsLoader {
                             )
                             .filter(Objects::nonNull)
                             .forEach(requiredItems::add);
-                    copyRequiredItemMetaFromBlock = false;
+//                    copyRequiredItemMetaFromBlock = false;
+                    getRequiredItemFromState = false;
                 } else {
-                    Item itemFromBlock = Item.getItemFromBlock(block);
-                    if (itemFromBlock != Items.AIR) {
-                        copyRequiredItemMetaFromBlock = rules.stream().anyMatch(rule -> rule.copyRequiredItemMetaFromBlock);
-                        requiredItems.add(new ItemStack(itemFromBlock));
-                    } else {
-                        copyRequiredItemMetaFromBlock = false;
-                    }
+//                    Item itemFromBlock = Item.getItemFromBlock(block);
+//                    copyRequiredItemMetaFromBlock = rules.stream().anyMatch(rule -> rule.copyRequiredItemMetaFromBlock);
+//                        requiredItems.add(new ItemStack(itemFromBlock));
+                    getRequiredItemFromState = true;
                 }
                 Set<BlockPos> requiredBlockOffsets = rules.stream()
                         .filter(rule -> rule.requiredBlockOffsets != null)
@@ -134,16 +131,27 @@ public enum SchematicsLoader {
                             List<ItemStack> currentRequiredItems = new ArrayList<>(requiredItems);
                             IBlockState blockState = schematicBlockContext.world.getBlockState(schematicBlockContext.pos);
                             NBTTagCompound tileNbt = null;
-                            if (copyRequiredItemMetaFromBlock) {
-                                currentRequiredItems.set(
-                                        0,
-                                        new ItemStack(
-                                                requiredItems.get(0).getItem(),
-                                                requiredItems.get(0).getCount(),
-                                                blockState.getBlock().getMetaFromState(blockState)
+                            if (getRequiredItemFromState) {
+                                currentRequiredItems.add(
+                                        block.getPickBlock(
+                                                blockState,
+                                                null,
+                                                schematicBlockContext.world,
+                                                schematicBlockContext.pos,
+                                                null
                                         )
                                 );
                             }
+//                            if (copyRequiredItemMetaFromBlock) {
+//                                currentRequiredItems.set(
+//                                        0,
+//                                        new ItemStack(
+//                                                requiredItems.get(0).getItem(),
+//                                                requiredItems.get(0).getCount(),
+//                                                blockState.getBlock().getMetaFromState(blockState)
+//                                        )
+//                                );
+//                            }
                             if (rules.stream().anyMatch(rule -> rule.copyRequiredItemsFromDrops)) {
                                 currentRequiredItems.clear();
                                 currentRequiredItems.addAll(block.getDrops(
@@ -176,31 +184,31 @@ public enum SchematicsLoader {
                                                         }
                                                     })
                                     );
-                            if (currentRequiredItems.size() == 1) {
-                                rules.stream()
-                                        .map(rule -> rule.copyRequiredItemMetaFromProperty)
-                                        .filter(Objects::nonNull)
-                                        .forEach(propertyName ->
-                                                blockState.getProperties().keySet().stream()
-                                                        .filter(property -> property.getName().equals(propertyName))
-                                                        .map(property -> (PropertyInteger) property)
-                                                        .map(blockState::getValue)
-                                                        .findFirst()
-                                                        .ifPresent(value -> {
-                                                            for (int i = 0; i < currentRequiredItems.size(); i++) {
-                                                                ItemStack stack = currentRequiredItems.get(i);
-                                                                currentRequiredItems.set(
-                                                                        i,
-                                                                        new ItemStack(
-                                                                                stack.getItem(),
-                                                                                stack.getCount(),
-                                                                                value
-                                                                        )
-                                                                );
-                                                            }
-                                                        })
-                                        );
-                            }
+//                            if (currentRequiredItems.size() == 1) {
+//                                rules.stream()
+//                                        .map(rule -> rule.copyRequiredItemMetaFromProperty)
+//                                        .filter(Objects::nonNull)
+//                                        .forEach(propertyName ->
+//                                                blockState.getProperties().keySet().stream()
+//                                                        .filter(property -> property.getName().equals(propertyName))
+//                                                        .map(property -> (PropertyInteger) property)
+//                                                        .map(blockState::getValue)
+//                                                        .findFirst()
+//                                                        .ifPresent(value -> {
+//                                                            for (int i = 0; i < currentRequiredItems.size(); i++) {
+//                                                                ItemStack stack = currentRequiredItems.get(i);
+//                                                                currentRequiredItems.set(
+//                                                                        i,
+//                                                                        new ItemStack(
+//                                                                                stack.getItem(),
+//                                                                                stack.getCount(),
+//                                                                                value
+//                                                                        )
+//                                                                );
+//                                                            }
+//                                                        })
+//                                        );
+//                            }
                             if (block.hasTileEntity(blockState)) {
                                 TileEntity tileEntity = schematicBlockContext.world.getTileEntity(schematicBlockContext.pos);
                                 if (tileEntity != null) {
