@@ -1,5 +1,6 @@
 package buildcraft.builders.snapshot;
 
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.net.PacketBufferBC;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> {
     public List<ItemStack> neededStacks = new ArrayList<>();
@@ -44,7 +46,11 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     protected List<ItemStack> getToPlaceItems(BlockPos blockPos) {
-        List<ItemStack> requiredItems = getBuildingInfo().toPlace.get(blockPos).requiredItems;
+        List<ItemStack> requiredItems = Stream.concat(
+                getBuildingInfo().toPlace.get(blockPos).requiredItems.stream(),
+                getBuildingInfo().toPlace.get(blockPos).requiredFluids.stream()
+                        .map(BlockUtil::getBucketFromFluid)
+        ).collect(Collectors.toList());
         if (requiredItems.stream()
                 .noneMatch(stack ->
                         tile.getInvResources().extract(
@@ -116,7 +122,13 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         getToPlace().stream()
                 .filter(blockPos -> !isBlockCorrect(blockPos))
                 .map(blockPos -> tile.getBlueprintBuildingInfo().toPlace.get(blockPos))
-                .flatMap(schematicBlock -> schematicBlock.requiredItems.stream())
+                .flatMap(schematicBlock ->
+                        Stream.concat(
+                                schematicBlock.requiredItems.stream(),
+                                schematicBlock.requiredFluids.stream()
+                                        .map(BlockUtil::getBucketFromFluid)
+                        )
+                )
                 .forEach(toAdd -> {
                     boolean found = false;
                     for (ItemStack stack : neededStacks) {

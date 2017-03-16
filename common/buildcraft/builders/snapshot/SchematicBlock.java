@@ -14,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fluids.Fluid;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashSet;
@@ -25,6 +26,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     public BlockPos relativePos;
     public Set<BlockPos> requiredBlockOffsets;
     public List<ItemStack> requiredItems;
+    public List<Fluid> requiredFluids;
     public List<IProperty<?>> ignoredProperties;
     public IBlockState blockState;
     public NBTTagCompound tileNbt;
@@ -36,6 +38,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
             BlockPos relativePos,
             Set<BlockPos> requiredBlockOffsets,
             List<ItemStack> requiredItems,
+            List<Fluid> requiredFluids,
             List<IProperty<?>> ignoredProperties,
             IBlockState blockState,
             NBTTagCompound tileNbt,
@@ -45,6 +48,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         this.relativePos = relativePos;
         this.requiredBlockOffsets = requiredBlockOffsets;
         this.requiredItems = requiredItems;
+        this.requiredFluids = requiredFluids;
         this.ignoredProperties = ignoredProperties;
         this.blockState = blockState;
         this.tileNbt = tileNbt;
@@ -82,6 +86,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
                 .map(blockPos -> blockPos.rotate(rotation))
                 .collect(Collectors.toCollection(HashSet::new));
         schematicBlock.requiredItems = requiredItems;
+        schematicBlock.requiredFluids = requiredFluids;
         schematicBlock.ignoredProperties = ignoredProperties;
         schematicBlock.blockState = blockState.withRotation(rotation);
         schematicBlock.tileNbt = tileNbt;

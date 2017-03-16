@@ -1,5 +1,6 @@
 package buildcraft.builders.snapshot;
 
+import buildcraft.lib.misc.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.properties.IProperty;
@@ -14,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.util.*;
@@ -122,10 +124,19 @@ public enum SchematicsLoader {
                         .collect(Collectors.toCollection(HashSet::new));
                 canBeReplacedWithBlocks.add(block);
                 canBeReplacedWithBlocks.add(placeBlock);
+                boolean ignore = rules.stream().anyMatch(rule -> rule.ignore);
+                List<Fluid> requiredFluids = new ArrayList<>();
+                if (BlockUtil.getFluidWithFlowing(block) != null) {
+                    if (BlockUtil.getFluid(block) != null) {
+                        requiredFluids.add(BlockUtil.getFluid(block));
+                    } else {
+                        ignore = true;
+                    }
+                }
                 // Add schematic generator
                 schematicFactories.put(
                         block,
-                        rules.stream().anyMatch(rule -> rule.ignore) ? schematicFactories.get(Blocks.AIR) : schematicBlockContext -> {
+                        ignore ? schematicFactories.get(Blocks.AIR) : schematicBlockContext -> {
                             BlockPos relativePos = schematicBlockContext.pos.subtract(schematicBlockContext.basePos);
                             Set<BlockPos> currentRequiredBlockOffsets = new HashSet<>(requiredBlockOffsets);
                             List<ItemStack> currentRequiredItems = new ArrayList<>(requiredItems);
@@ -261,6 +272,7 @@ public enum SchematicsLoader {
                                     relativePos,
                                     currentRequiredBlockOffsets,
                                     currentRequiredItems,
+                                    requiredFluids,
                                     ignoredProperties,
                                     blockState,
                                     tileNbt,

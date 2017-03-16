@@ -33,6 +33,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
 
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -272,6 +273,10 @@ public final class BlockUtil {
             fluid = ((BlockFluidBase) block).getFluid();
         }
         return fluid;
+    }
+
+    public static ItemStack getBucketFromFluid(Fluid fluid) {
+        return UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, fluid);
     }
 
     public static FluidStack drainBlock(World world, BlockPos pos, boolean doDrain) {
