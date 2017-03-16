@@ -72,11 +72,16 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
         super.onSlotChange(handler, slot, before, after);
         if (handler == invBptIn) {
-            if (after.getItem() instanceof ItemSnapshot) {
+            if (invBptOut.getStackInSlot(0).isEmpty() && after.getItem() instanceof ItemSnapshot) {
                 snapshotType = ItemSnapshot.EnumItemSnapshotType.getFromStack(after).snapshotType;
                 shouldStartScanning = true;
             } else {
                 scanning = false;
+            }
+        }
+        if (handler == invBptOut) {
+            if (after.isEmpty() && invBptIn.getStackInSlot(0).getItem() instanceof ItemSnapshot && !scanning) {
+                shouldStartScanning = true;
             }
         }
     }
@@ -127,6 +132,10 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
             deltaProgress.addDelta(size, size + 10, -100);
             shouldStartScanning = false;
             scanning = true;
+        }
+
+        if (!invBptOut.getStackInSlot(0).isEmpty()) {
+            scanning = false;
         }
 
         if (scanning) {
@@ -228,7 +237,12 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
         snapshot.header.created = new Date();
         snapshot.header.name = name;
         GlobalSavedDataSnapshots.get(world).snapshots.add(snapshot);
-        invBptIn.setStackInSlot(0, ItemStack.EMPTY);
+        ItemStack stackIn = invBptIn.getStackInSlot(0);
+        stackIn.setCount(stackIn.getCount() - 1);
+        if (stackIn.getCount() == 0) {
+            stackIn = ItemStack.EMPTY;
+        }
+        invBptIn.setStackInSlot(0, stackIn);
         invBptOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshotType, snapshot.header));
         blueprintScannedBlocks.clear();
         templateScannedBlocks = null;
