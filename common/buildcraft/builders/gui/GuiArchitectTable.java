@@ -8,12 +8,12 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.builders.container.ContainerArchitect;
+import buildcraft.builders.container.ContainerArchitectTable;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
 
-public class GuiArchitect extends GuiBC8<ContainerArchitect> {
+public class GuiArchitectTable extends GuiBC8<ContainerArchitectTable> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftbuilders:textures/gui/architect.png");
     private static final int SIZE_X = 256, SIZE_Y = 166;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
@@ -22,7 +22,7 @@ public class GuiArchitect extends GuiBC8<ContainerArchitect> {
 
     private GuiTextField nameField; // TODO: sending to server
 
-    public GuiArchitect(ContainerArchitect container) {
+    public GuiArchitectTable(ContainerArchitectTable container) {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
@@ -39,8 +39,12 @@ public class GuiArchitect extends GuiBC8<ContainerArchitect> {
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(rootElement);
-        double percent = container.tile.deltaProgress.getDynamic(partialTicks) / 100;
-        ICON_PROGRESS.drawCutInside(RECT_PROGRESS.createProgress(percent, 1).offset(rootElement));
+        ICON_PROGRESS.drawCutInside(
+                RECT_PROGRESS.createProgress(
+                        container.tile.deltaProgress.getDynamic(partialTicks),
+                        1
+                ).offset(rootElement)
+        );
     }
 
     @Override

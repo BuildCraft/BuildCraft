@@ -9,6 +9,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import buildcraft.lib.gui.button.*;
 import org.lwjgl.input.Keyboard;
 
 import net.minecraft.client.gui.GuiButton;
@@ -25,10 +26,6 @@ import buildcraft.core.item.ItemList_BC8;
 import buildcraft.core.list.ContainerList.WidgetListSlot;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.button.GuiImageButton;
-import buildcraft.lib.gui.button.IButtonBehaviour;
-import buildcraft.lib.gui.button.IButtonClickEventListener;
-import buildcraft.lib.gui.button.IButtonClickEventTrigger;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.list.ListHandler;
@@ -183,7 +180,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
     }
 
     @Override
-    public void handleButtonClick(IButtonClickEventTrigger sender, int id, int buttonKey) {
+    public void handleButtonClick(GuiAbstractButton sender, int id, int buttonKey) {
         int buttonId = id % BUTTON_COUNT;
         int lineId = id / BUTTON_COUNT;
 

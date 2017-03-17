@@ -98,6 +98,15 @@ public final class NBTUtilBC {
         return new NBTTagIntArray(new int[] { pos.getX(), pos.getY(), pos.getZ() });
     }
 
+    public static NBTTagCompound writeBlockPosAsCompound(BlockPos pos) {
+        if (pos == null) return null;
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setInteger("x", pos.getX());
+        nbt.setInteger("y", pos.getX());
+        nbt.setInteger("z", pos.getX());
+        return nbt;
+    }
+
     public static BlockPos readBlockPos(NBTBase base) {
         if (base == null) return null;
         switch (base.getId()) {
@@ -404,5 +413,15 @@ public final class NBTUtilBC {
 
     public static Stream<NBTTagCompound> readCompoundList(NBTTagList list) {
         return IntStream.range(0, list.tagCount()).mapToObj(list::getCompoundTagAt);
+    }
+
+    public static NBTTagList writeStringList(Stream<String> stream) {
+        NBTTagList list = new NBTTagList();
+        stream.map(NBTTagString::new).forEach(list::appendTag);
+        return list;
+    }
+
+    public static Stream<String> readStringList(NBTTagList list) {
+        return IntStream.range(0, list.tagCount()).mapToObj(list::getStringTagAt);
     }
 }

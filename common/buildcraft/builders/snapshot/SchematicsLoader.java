@@ -273,8 +273,8 @@ public enum SchematicsLoader {
                                     currentRequiredBlockOffsets,
                                     currentRequiredItems,
                                     requiredFluids,
-                                    ignoredProperties,
                                     blockState,
+                                    ignoredProperties,
                                     tileNbt,
                                     placeBlock,
                                     canBeReplacedWithBlocks

@@ -146,8 +146,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     }
 
     @Override
-    public void writePayload(PacketBufferBC buffer) {
-        super.writePayload(buffer);
+    public void writeToByteBuf(PacketBufferBC buffer) {
+        super.writeToByteBuf(buffer);
         buffer.writeInt(neededStacks.size());
         neededStacks.forEach(stack -> {
             buffer.writeItemStack(stack);
@@ -156,8 +156,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     }
 
     @Override
-    public void readPayload(PacketBufferBC buffer) {
-        super.readPayload(buffer);
+    public void readFromByteBuf(PacketBufferBC buffer) {
+        super.readFromByteBuf(buffer);
         neededStacks.clear();
         IntStream.range(0, buffer.readInt()).mapToObj(i -> {
             ItemStack stack;

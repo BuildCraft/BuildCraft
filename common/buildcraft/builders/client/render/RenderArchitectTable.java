@@ -1,13 +1,13 @@
 package buildcraft.builders.client.render;
 
-import buildcraft.builders.tile.TileArchitect;
+import buildcraft.builders.tile.TileArchitectTable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraftforge.client.model.animation.FastTESR;
 
-public class RenderArchitect extends FastTESR<TileArchitect> {
+public class RenderArchitectTable extends FastTESR<TileArchitectTable> {
     @Override
-    public void renderTileEntityFast(TileArchitect te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
+    public void renderTileEntityFast(TileArchitectTable te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("architect");
 
@@ -20,7 +20,7 @@ public class RenderArchitect extends FastTESR<TileArchitect> {
     }
 
     @Override
-    public boolean isGlobalRenderer(TileArchitect te) {
+    public boolean isGlobalRenderer(TileArchitectTable te) {
         return true;
     }
 }

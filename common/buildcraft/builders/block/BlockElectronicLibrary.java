@@ -14,18 +14,18 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.builders.BCBuildersGuis;
-import buildcraft.builders.tile.TileLibrary;
+import buildcraft.builders.tile.TileElectronicLibrary;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
 
-public class BlockLibrary extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public BlockLibrary(Material material, String id) {
+public class BlockElectronicLibrary extends BlockBCTile_Neptune implements IBlockWithFacing {
+    public BlockElectronicLibrary(Material material, String id) {
         super(material, id);
     }
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        return new TileLibrary();
+        return new TileElectronicLibrary();
     }
 
     @Override

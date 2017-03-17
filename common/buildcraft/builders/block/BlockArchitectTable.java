@@ -19,16 +19,16 @@ import net.minecraft.world.World;
 import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.builders.BCBuildersGuis;
-import buildcraft.builders.tile.TileArchitect;
+import buildcraft.builders.tile.TileArchitectTable;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
 
-public class BlockArchitect extends BlockBCTile_Neptune implements IBlockWithFacing {
+public class BlockArchitectTable extends BlockBCTile_Neptune implements IBlockWithFacing {
     public static final IProperty<Boolean> PROP_VALID = BuildCraftProperties.VALID;
 
     private static final int META_VALID_INDEX = 4;
 
-    public BlockArchitect(Material material, String id) {
+    public BlockArchitectTable(Material material, String id) {
         super(material, id);
         setDefaultState(getDefaultState().withProperty(PROP_VALID, Boolean.TRUE));
     }
@@ -53,7 +53,7 @@ public class BlockArchitect extends BlockBCTile_Neptune implements IBlockWithFac
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        return new TileArchitect();
+        return new TileArchitectTable();
     }
 
     @Override

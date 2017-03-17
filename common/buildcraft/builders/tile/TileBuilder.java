@@ -206,7 +206,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                 if (snapshotType != null) {
                     buffer.writeEnumValue(snapshotType);
                     // noinspection ConstantConditions
-                    getBuilder().writePayload(buffer);
+                    getBuilder().writeToByteBuf(buffer);
                 }
                 currentBox.writeData(buffer);
             }
@@ -229,7 +229,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                 if (buffer.readBoolean()) {
                     snapshotType = buffer.readEnumValue(Snapshot.EnumSnapshotType.class);
                     // noinspection ConstantConditions
-                    getBuilder().readPayload(buffer);
+                    getBuilder().readFromByteBuf(buffer);
                 } else {
                     snapshotType = null;
                 }

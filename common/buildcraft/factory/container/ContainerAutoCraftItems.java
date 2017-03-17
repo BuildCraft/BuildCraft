@@ -13,11 +13,9 @@ import buildcraft.lib.gui.slot.SlotOutput;
 import buildcraft.lib.gui.slot.SlotPhantom;
 
 public class ContainerAutoCraftItems extends ContainerBCTile<TileAutoWorkbenchItems> {
-    private static final int PLAYER_INV_START = 115;
-
     public ContainerAutoCraftItems(EntityPlayer player, TileAutoWorkbenchItems tile) {
         super(player, tile);
-        addFullPlayerInventory(PLAYER_INV_START);
+        addFullPlayerInventory(115);
 
         for (int x = 0; x < 9; x++) {
             addSlotToContainer(new SlotBase(tile.invMaterials, x, 8 + x * 18, 84));

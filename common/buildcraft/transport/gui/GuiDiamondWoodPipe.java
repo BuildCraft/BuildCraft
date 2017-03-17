@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.gui;
 
+import buildcraft.lib.gui.button.*;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -12,10 +13,6 @@ import buildcraft.api.transport.pipe.IFlowItems;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.button.GuiImageButton;
-import buildcraft.lib.gui.button.IButtonBehaviour;
-import buildcraft.lib.gui.button.IButtonClickEventListener;
-import buildcraft.lib.gui.button.IButtonClickEventTrigger;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.transport.container.ContainerDiamondWoodPipe;
@@ -92,7 +89,7 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
     }
 
     @Override
-    public void handleButtonClick(IButtonClickEventTrigger sender, int buttonId, int buttonKey) {
+    public void handleButtonClick(GuiAbstractButton sender, int buttonId, int buttonKey) {
         FilterMode newFilterMode = FilterMode.get(buttonId);
         this.pipe.filterMode = newFilterMode;
         container.sendNewFilterMode(newFilterMode);

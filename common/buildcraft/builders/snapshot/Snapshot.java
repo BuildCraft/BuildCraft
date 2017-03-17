@@ -1,7 +1,10 @@
 package buildcraft.builders.snapshot;
 
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -32,13 +35,16 @@ public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag("header", header.serializeNBT());
+        nbt.setTag("size", NBTUtil.createPosTag(size));
+        nbt.setTag("facing", NBTUtilBC.writeEnum(facing));
         return nbt;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        header = new Header();
         header.deserializeNBT(nbt.getCompoundTag("header"));
+        size = NBTUtil.getPosFromTag(nbt.getCompoundTag("size"));
+        facing = NBTUtilBC.readEnum(nbt.getCompoundTag("facing"), EnumFacing.class);
     }
 
     abstract public EnumSnapshotType getType();
@@ -100,6 +106,20 @@ public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
             owner = nbt.getUniqueId("owner");
             created = new Date(nbt.getLong("created"));
             name = nbt.getString("name");
+        }
+
+        public void writeToByteBuf(PacketBufferBC buffer) {
+            buffer.writeUniqueId(id);
+            buffer.writeUniqueId(owner);
+            buffer.writeLong(created.getTime());
+            buffer.writeString(name);
+        }
+
+        public void readFromByteBuf(PacketBufferBC buffer) {
+            id = buffer.readUniqueId();
+            owner = buffer.readUniqueId();
+            created = new Date(buffer.readLong());
+            name = buffer.readString(Integer.MAX_VALUE / 4);
         }
 
         public EntityPlayer getOwnerPlayer(World world) {

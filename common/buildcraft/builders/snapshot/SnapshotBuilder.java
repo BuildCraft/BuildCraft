@@ -233,14 +233,14 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
 //        return box;
 //    }
 
-    public void writePayload(PacketBufferBC buffer) {
+    public void writeToByteBuf(PacketBufferBC buffer) {
         buffer.writeInt(breakTasks.size());
         breakTasks.forEach(breakTask -> breakTask.writePayload(buffer));
         buffer.writeInt(placeTasks.size());
         placeTasks.forEach(placeTask -> placeTask.writePayload(buffer));
     }
 
-    public void readPayload(PacketBufferBC buffer) {
+    public void readFromByteBuf(PacketBufferBC buffer) {
         breakTasks.clear();
         IntStream.range(0, buffer.readInt()).mapToObj(i -> new BreakTask(buffer)).forEach(breakTasks::add);
         placeTasks.clear();

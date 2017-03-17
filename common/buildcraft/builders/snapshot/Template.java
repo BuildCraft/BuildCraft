@@ -1,6 +1,7 @@
 package buildcraft.builders.snapshot;
 
 import buildcraft.lib.misc.data.Box;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
@@ -16,6 +17,36 @@ public class Template extends Snapshot {
     public <T extends ITileForSnapshotBuilder> SnapshotBuilder<T> createBuilder(T tile) {
         // noinspection unchecked
         return (SnapshotBuilder<T>) new TemplateBuilder((ITileForTemplateBuilder) tile);
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound nbt = super.serializeNBT();
+        byte[] serializedData = new byte[size.getX() * size.getY() * size.getZ()];
+        int i = 0;
+        for (int z = 0; z < size.getZ(); z++) {
+            for (int y = 0; y < size.getY(); y++) {
+                for (int x = 0; x < size.getX(); x++) {
+                    serializedData[i++] = data[x][y][z] ? (byte) 1 : (byte) 0;
+                }
+            }
+        }
+        nbt.setByteArray("data", serializedData);
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        super.deserializeNBT(nbt);
+        byte[] serializedData = nbt.getByteArray("data");
+        int i = 0;
+        for (int z = 0; z < size.getZ(); z++) {
+            for (int y = 0; y < size.getY(); y++) {
+                for (int x = 0; x < size.getX(); x++) {
+                    data[x][y][z] = serializedData[i++] != 0;
+                }
+            }
+        }
     }
 
     @Override

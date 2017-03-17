@@ -106,7 +106,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         super.writePayload(id, buffer, side);
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
-                builder.writePayload(buffer);
+                builder.writeToByteBuf(buffer);
             }
         }
     }
@@ -116,7 +116,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
-                builder.readPayload(buffer);
+                builder.readFromByteBuf(buffer);
             }
         }
     }

@@ -3,6 +3,7 @@ package buildcraft.transport.gui;
 import java.util.EnumMap;
 import java.util.List;
 
+import buildcraft.lib.gui.button.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
@@ -13,10 +14,6 @@ import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.button.GuiSpriteButton;
-import buildcraft.lib.gui.button.IButtonBehaviour;
-import buildcraft.lib.gui.button.IButtonClickEventListener;
-import buildcraft.lib.gui.button.IButtonClickEventTrigger;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
@@ -59,7 +56,7 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> implement
     }
 
     @Override
-    public void handleButtonClick(IButtonClickEventTrigger button, int buttonId, int buttonKey) {
+    public void handleButtonClick(GuiAbstractButton button, int buttonId, int buttonKey) {
         if (button instanceof GuiPaintButton) {
             GuiPaintButton paint = (GuiPaintButton) button;
             switch (buttonKey) {

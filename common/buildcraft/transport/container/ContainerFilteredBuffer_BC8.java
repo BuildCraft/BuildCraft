@@ -16,11 +16,9 @@ import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.tile.TileFilteredBuffer;
 
 public class ContainerFilteredBuffer_BC8 extends ContainerBCTile<TileFilteredBuffer> {
-    private static final int PLAYER_INV_START = 86;
-
     public ContainerFilteredBuffer_BC8(EntityPlayer player, TileFilteredBuffer tile) {
         super(player, tile);
-        addFullPlayerInventory(PLAYER_INV_START);
+        addFullPlayerInventory(86);
 
         for (int i = 0; i < 9; i++) {
             // Filtered Buffer filter slots

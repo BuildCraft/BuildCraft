@@ -8,12 +8,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 public class ContainerFiller extends ContainerBCTile<TileFiller> {
-    private static final int PLAYER_INV_START = 153;
-
     public ContainerFiller(EntityPlayer player, TileFiller tile) {
         super(player, tile);
 
-        addFullPlayerInventory(PLAYER_INV_START);
+        addFullPlayerInventory(153);
 
         for (int sy = 0; sy < 3; sy++) {
             for (int sx = 0; sx < 9; sx++) {

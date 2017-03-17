@@ -34,9 +34,9 @@ public abstract class BCBuildersProxy implements IGuiHandler {
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
         if (id == BCBuildersGuis.LIBRARY.ordinal()) {
-            if (tile instanceof TileLibrary) {
-                TileLibrary library = (TileLibrary) tile;
-                return new ContainerBlueprintLibrary(player, library);
+            if (tile instanceof TileElectronicLibrary) {
+                TileElectronicLibrary electronicLibrary = (TileElectronicLibrary) tile;
+                return new ContainerElectronicLibrary(player, electronicLibrary);
             }
         }
         if (id == BCBuildersGuis.BUILDER.ordinal()) {
@@ -52,9 +52,9 @@ public abstract class BCBuildersProxy implements IGuiHandler {
             }
         }
         if (id == BCBuildersGuis.ARCHITECT.ordinal()) {
-            if (tile instanceof TileArchitect) {
-                TileArchitect library = (TileArchitect) tile;
-                return new ContainerArchitect(player, library);
+            if (tile instanceof TileArchitectTable) {
+                TileArchitectTable architectTable = (TileArchitectTable) tile;
+                return new ContainerArchitectTable(player, architectTable);
             }
         }
         if (id == BCBuildersGuis.QUARRY.ordinal()) {
@@ -95,9 +95,9 @@ public abstract class BCBuildersProxy implements IGuiHandler {
         public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
             TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
             if (id == BCBuildersGuis.LIBRARY.ordinal()) {
-                if (tile instanceof TileLibrary) {
-                    TileLibrary library = (TileLibrary) tile;
-                    return new GuiBlueprintLibrary(player, library);
+                if (tile instanceof TileElectronicLibrary) {
+                    TileElectronicLibrary library = (TileElectronicLibrary) tile;
+                    return new GuiElectronicLibrary(new ContainerElectronicLibrary(player, library));
                 }
             }
             if (id == BCBuildersGuis.BUILDER.ordinal()) {
@@ -113,9 +113,9 @@ public abstract class BCBuildersProxy implements IGuiHandler {
                 }
             }
             if (id == BCBuildersGuis.ARCHITECT.ordinal()) {
-                if (tile instanceof TileArchitect) {
-                    TileArchitect library = (TileArchitect) tile;
-                    return new GuiArchitect(new ContainerArchitect(player, library));
+                if (tile instanceof TileArchitectTable) {
+                    TileArchitectTable library = (TileArchitectTable) tile;
+                    return new GuiArchitectTable(new ContainerArchitectTable(player, library));
                 }
             }
             if (id == BCBuildersGuis.QUARRY.ordinal()) {
@@ -138,7 +138,7 @@ public abstract class BCBuildersProxy implements IGuiHandler {
         @Override
         public void fmlInit() {
             super.fmlInit();
-            ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new RenderArchitect());
+            ClientRegistry.bindTileEntitySpecialRenderer(TileArchitectTable.class, new RenderArchitectTable());
             ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilder());
             ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderFiller());
             ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderQuarry());

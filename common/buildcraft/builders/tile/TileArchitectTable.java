@@ -7,7 +7,7 @@ package buildcraft.builders.tile;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.BCBuildersItems;
-import buildcraft.builders.block.BlockArchitect;
+import buildcraft.builders.block.BlockArchitectTable;
 import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.snapshot.*;
 import buildcraft.core.marker.volume.Lock;
@@ -46,7 +46,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class TileArchitect extends TileBC_Neptune implements ITickable, IDebuggable {
+public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final int NET_BOX = 20;
     public static final int NET_SCAN = 21;
 
@@ -65,8 +65,6 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
     private boolean shouldStartScanning = false;
     public String name = "<unnamed>";
     public final DeltaInt deltaProgress = deltaManager.addDelta("progress", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
-
-    public TileArchitect() {}
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
@@ -94,7 +92,7 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
         }
         WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
         IBlockState blockState = world.getBlockState(getPos());
-        VolumeBox volumeBox = volumeBoxes.getBoxAt(getPos().offset(blockState.getValue(BlockArchitect.PROP_FACING).getOpposite()));
+        VolumeBox volumeBox = volumeBoxes.getBoxAt(getPos().offset(blockState.getValue(BlockArchitectTable.PROP_FACING).getOpposite()));
         if (volumeBox != null) {
             box.reset();
             box.setMin(volumeBox.box.min());
@@ -112,7 +110,7 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
         } else {
             isValid = false;
             IBlockState state = world.getBlockState(getPos());
-            state = state.withProperty(BlockArchitect.PROP_VALID, Boolean.FALSE);
+            state = state.withProperty(BlockArchitectTable.PROP_VALID, Boolean.FALSE);
             world.setBlockState(getPos(), state);
         }
     }
@@ -128,8 +126,8 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
         if (shouldStartScanning && isValid) {
             int size = box.size().getX() * box.size().getY() * box.size().getZ();
             size /= snapshotType.maxPerTick;
-            deltaProgress.addDelta(0, size, 100);
-            deltaProgress.addDelta(size, size + 10, -100);
+            deltaProgress.addDelta(0, size, 1);
+            deltaProgress.addDelta(size, size + 10, -1);
             shouldStartScanning = false;
             scanning = true;
         }
@@ -218,7 +216,7 @@ public class TileArchitect extends TileBC_Neptune implements ITickable, IDebugga
     }
 
     private void finishScanning() {
-        EnumFacing facing = world.getBlockState(getPos()).getValue(BlockArchitect.PROP_FACING);
+        EnumFacing facing = world.getBlockState(getPos()).getValue(BlockArchitectTable.PROP_FACING);
         Snapshot snapshot = snapshotType.create.get();
         snapshot.size = box.size();
         snapshot.facing = facing;
