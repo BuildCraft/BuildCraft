@@ -2,6 +2,7 @@ package buildcraft.builders.snapshot;
 
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.data.LoadingException;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -87,9 +88,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
                                 .map(FluidRegistry::getFluidName)
                 )
         );
-        NBTTagCompound blockStateTag = new NBTTagCompound();
-        NBTUtil.writeBlockState(blockStateTag, blockState);
-        nbt.setTag("blockState", blockStateTag);
+        nbt.setTag("blockState", NBTUtilBC.writeEntireBlockState(blockState));
         nbt.setTag(
                 "ignoredProperties",
                 NBTUtilBC.writeStringList(
@@ -124,7 +123,11 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         NBTUtilBC.readStringList(nbt.getTagList("requiredFluids", Constants.NBT.TAG_STRING))
                 .map(FluidRegistry::getFluid)
                 .forEach(requiredFluids::add);
-        blockState = NBTUtil.readBlockState(nbt.getCompoundTag("blockState"));
+        try {
+            blockState = NBTUtilBC.readEntireBlockState(nbt.getCompoundTag("blockState"));
+        } catch (LoadingException e) {
+            throw new RuntimeException(e);
+        }
         NBTUtilBC.readStringList(nbt.getTagList("ignoredProperties", Constants.NBT.TAG_STRING))
                 .map(propertyName ->
                         blockState.getPropertyKeys().stream()

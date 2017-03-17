@@ -8,6 +8,7 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
 import buildcraft.builders.snapshot.Snapshot;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -40,6 +41,9 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
         super.onSlotChange(handler, slot, before, after);
         if (handler == invDownIn) {
             sendNetworkGuiUpdate(NET_DOWN);
+        }
+        if (handler == invUpIn) {
+            sendNetworkGuiUpdate(NET_UP);
         }
     }
 
@@ -101,6 +105,28 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                     GlobalSavedDataSnapshots.get(world).snapshots.add(snapshot);
                 }
             }
+            if (id == NET_UP) {
+                if (selected != null) {
+                    Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(selected);
+                    if (snapshot != null) {
+                        MessageUtil.getWrapper().sendToServer(createMessage(NET_UP, localBuffer -> {
+                            NBTTagCompound nbt = snapshot.serializeNBT();
+                            nbt.setTag("type", NBTUtilBC.writeEnum(snapshot.getType()));
+                            buffer.writeCompoundTag(nbt);
+                        }));
+                    }
+                }
+            }
+        }
+        if (side == Side.SERVER) {
+            NBTTagCompound nbt = buffer.readCompoundTag();
+            Objects.requireNonNull(nbt);
+            Snapshot snapshot = NBTUtilBC.readEnum(nbt.getTag("type"), Snapshot.EnumSnapshotType.class).create.get();
+            snapshot.deserializeNBT(nbt);
+            snapshot.header.id = UUID.randomUUID();
+            invUpIn.setStackInSlot(0, ItemStack.EMPTY);
+            GlobalSavedDataSnapshots.get(world).snapshots.add(snapshot);
+            invUpOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshot.getType(), selected));
         }
     }
 }

@@ -11,7 +11,6 @@ import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.lib.item.ItemManager;
 
 public class BCBuildersItems {
-
     public static ItemSchematicSingle schematicSingle;
     public static ItemBlueprint blueprint;
     public static ItemSnapshot snapshot;
