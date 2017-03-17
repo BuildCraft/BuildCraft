@@ -108,7 +108,9 @@
     },
     {
         "blocks": ["minecraft:wooden_door", "minecraft:iron_door"],
-        "ignoredProperties": ["powered", "open", "hinge" /* FIXME? */]
+        "ignoredProperties": ["powered", "open", "hinge"],
+        "freeIfHavePropertiesValues": {"half": "upper"},
+        "requiredBlockOffsets": [[0, -1, 0]]
     },
     {
         "blocks": ["minecraft:hopper"],
@@ -167,5 +169,10 @@
     {
         "blocks": ["minecraft:rail"],
         "ignoredProperties": ["shape"]
+    },
+    {
+        "blocks": ["minecraft:bed"],
+        "freeIfHavePropertiesValues": {"part": "head"},
+        "copyOppositeRequiredBlockOffsetFromProperty": "facing"
     }
 ]

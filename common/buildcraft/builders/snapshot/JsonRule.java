@@ -1,6 +1,7 @@
 package buildcraft.builders.snapshot;
 
 import java.util.List;
+import java.util.Map;
 
 public class JsonRule {
     public String name = null;
@@ -15,6 +16,7 @@ public class JsonRule {
     public String copyOppositeRequiredBlockOffsetFromProperty = null;
     public boolean copyRequiredBlockOffsetsFromProperties = false;
     public List<String> ignoredProperties = null;
+    public Map<String, String> freeIfHavePropertiesValues = null;
     public String placeBlock = null;
     public List<String> canBeReplacedWithBlocks = null;
     public boolean ignore = false;

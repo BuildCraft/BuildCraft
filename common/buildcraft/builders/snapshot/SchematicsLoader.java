@@ -236,6 +236,24 @@ public enum SchematicsLoader {
                                             .forEach(currentRequiredItems::add);
                                 }
                             }
+                            if (
+                                    rules.stream()
+                                            .map(rule -> rule.freeIfHavePropertiesValues)
+                                            .filter(Objects::nonNull)
+                                            .map(Map::entrySet)
+                                            .flatMap(Collection::stream)
+                                            .anyMatch(propertyNamePropertyValue ->
+                                                    blockState.getProperties().keySet().stream()
+                                                            .filter(property ->
+                                                                    property.getName().equals(propertyNamePropertyValue.getKey())
+                                                            )
+                                                            .map(blockState::getValue)
+                                                            .map(Object::toString)
+                                                            .anyMatch(Predicate.isEqual(propertyNamePropertyValue.getValue()))
+                                            )
+                                    ) {
+                                currentRequiredItems.clear();
+                            }
                             currentRequiredItems.removeIf(ItemStack::isEmpty);
                             rules.stream()
                                     .map(rule -> rule.copyOppositeRequiredBlockOffsetFromProperty)
