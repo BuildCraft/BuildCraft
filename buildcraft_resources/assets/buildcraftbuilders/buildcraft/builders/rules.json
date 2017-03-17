@@ -163,5 +163,9 @@
     {
         "blocks": ["minecraft:piston_head"],
         "requiredItems": []
+    },
+    {
+        "blocks": ["minecraft:rail"],
+        "ignoredProperties": ["shape"]
     }
 ]
