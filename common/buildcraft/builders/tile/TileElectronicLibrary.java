@@ -112,7 +112,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                         MessageUtil.getWrapper().sendToServer(createMessage(NET_UP, localBuffer -> {
                             NBTTagCompound nbt = snapshot.serializeNBT();
                             nbt.setTag("type", NBTUtilBC.writeEnum(snapshot.getType()));
-                            buffer.writeCompoundTag(nbt);
+                            localBuffer.writeCompoundTag(nbt);
                         }));
                     }
                 }
@@ -126,7 +126,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
             snapshot.header.id = UUID.randomUUID();
             invUpIn.setStackInSlot(0, ItemStack.EMPTY);
             GlobalSavedDataSnapshots.get(world).snapshots.add(snapshot);
-            invUpOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshot.getType(), selected));
+            invUpOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshot.getType(), snapshot.header));
         }
     }
 }

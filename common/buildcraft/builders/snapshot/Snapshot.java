@@ -44,7 +44,7 @@ public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
     public void deserializeNBT(NBTTagCompound nbt) {
         header.deserializeNBT(nbt.getCompoundTag("header"));
         size = NBTUtil.getPosFromTag(nbt.getCompoundTag("size"));
-        facing = NBTUtilBC.readEnum(nbt.getCompoundTag("facing"), EnumFacing.class);
+        facing = NBTUtilBC.readEnum(nbt.getTag("facing"), EnumFacing.class);
     }
 
     abstract public EnumSnapshotType getType();
