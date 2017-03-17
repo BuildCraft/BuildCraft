@@ -37,5 +37,13 @@ public enum RulesLoader {
             }
         });
         readDomains.add("minecraft");
+        readDomains.add("buildcraftcore");
+        readDomains.add("buildcraftlib");
+        readDomains.add("buildcraftbuilders");
+        readDomains.add("buildcraftenergy");
+        readDomains.add("buildcraftfactory");
+        readDomains.add("buildcraftrobotics");
+        readDomains.add("buildcraftsilicon");
+        readDomains.add("buildcrafttransport");
     }
 }
