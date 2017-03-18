@@ -41,6 +41,7 @@ public class Blueprint extends Snapshot {
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         super.deserializeNBT(nbt);
+        data = new SchematicBlock[size.getX()][size.getY()][size.getZ()];
         SchematicBlock[] serializedData = NBTUtilBC.readCompoundList(nbt.getTagList("data", Constants.NBT.TAG_COMPOUND))
                 .map(schematicBlockTag -> {
                     SchematicBlock schematicBlock = new SchematicBlock();

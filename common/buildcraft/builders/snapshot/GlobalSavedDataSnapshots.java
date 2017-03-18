@@ -50,9 +50,7 @@ public class GlobalSavedDataSnapshots {
     private void writeSnapshots() throws IOException {
         for (Snapshot snapshot : snapshots) {
             File snapshotFile = new File(snapshotsFile, snapshot.header.getFileName());
-            NBTTagCompound nbt = snapshot.serializeNBT();
-            nbt.setTag("type", NBTUtilBC.writeEnum(snapshot.getType()));
-            CompressedStreamTools.write(nbt, snapshotFile);
+            CompressedStreamTools.write(Snapshot.writeToNBT(snapshot), snapshotFile);
         }
     }
 
@@ -60,9 +58,7 @@ public class GlobalSavedDataSnapshots {
         // noinspection ConstantConditions
         for (File snapshotFile : snapshotsFile.listFiles()) {
             NBTTagCompound nbt = CompressedStreamTools.read(snapshotFile);
-            Snapshot snapshot = NBTUtilBC.readEnum(nbt.getTag("type"), Snapshot.EnumSnapshotType.class).create.get();
-            snapshot.deserializeNBT(nbt);
-            snapshots.add(snapshot);
+            snapshots.add(Snapshot.readFromNBT(nbt));
         }
     }
 

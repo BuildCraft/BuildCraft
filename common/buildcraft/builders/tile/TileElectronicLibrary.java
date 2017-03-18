@@ -70,9 +70,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                     Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(header);
                     if (snapshot != null) {
                         buffer.writeBoolean(true);
-                        NBTTagCompound nbt = snapshot.serializeNBT();
-                        nbt.setTag("type", NBTUtilBC.writeEnum(snapshot.getType()));
-                        buffer.writeCompoundTag(nbt);
+                        buffer.writeCompoundTag(Snapshot.writeToNBT(snapshot));
                     } else {
                         buffer.writeBoolean(false);
                     }
@@ -97,10 +95,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
             }
             if (id == NET_DOWN) {
                 if (buffer.readBoolean()) {
-                    NBTTagCompound nbt = buffer.readCompoundTag();
-                    Objects.requireNonNull(nbt);
-                    Snapshot snapshot = NBTUtilBC.readEnum(nbt.getTag("type"), Snapshot.EnumSnapshotType.class).create.get();
-                    snapshot.deserializeNBT(nbt);
+                    Snapshot snapshot = Snapshot.readFromNBT(buffer.readCompoundTag());
                     snapshot.header.id = UUID.randomUUID();
                     GlobalSavedDataSnapshots.get(world).snapshots.add(snapshot);
                 }
@@ -109,20 +104,15 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                 if (selected != null) {
                     Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(selected);
                     if (snapshot != null) {
-                        MessageUtil.getWrapper().sendToServer(createMessage(NET_UP, localBuffer -> {
-                            NBTTagCompound nbt = snapshot.serializeNBT();
-                            nbt.setTag("type", NBTUtilBC.writeEnum(snapshot.getType()));
-                            localBuffer.writeCompoundTag(nbt);
-                        }));
+                        MessageUtil.getWrapper().sendToServer(createMessage(NET_UP, localBuffer ->
+                                localBuffer.writeCompoundTag(Snapshot.writeToNBT(snapshot))
+                        ));
                     }
                 }
             }
         }
         if (side == Side.SERVER) {
-            NBTTagCompound nbt = buffer.readCompoundTag();
-            Objects.requireNonNull(nbt);
-            Snapshot snapshot = NBTUtilBC.readEnum(nbt.getTag("type"), Snapshot.EnumSnapshotType.class).create.get();
-            snapshot.deserializeNBT(nbt);
+            Snapshot snapshot = Snapshot.readFromNBT(buffer.readCompoundTag());
             snapshot.header.id = UUID.randomUUID();
             invUpIn.setStackInSlot(0, ItemStack.EMPTY);
             GlobalSavedDataSnapshots.get(world).snapshots.add(snapshot);

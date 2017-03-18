@@ -32,6 +32,18 @@ public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
 
     public abstract <T extends ITileForSnapshotBuilder> SnapshotBuilder<T> createBuilder(T tile);
 
+    public static NBTTagCompound writeToNBT(Snapshot snapshot) {
+        NBTTagCompound nbt = snapshot.serializeNBT();
+        nbt.setTag("type", NBTUtilBC.writeEnum(snapshot.getType()));
+        return nbt;
+    }
+
+    public static Snapshot readFromNBT(NBTTagCompound nbt) {
+        Snapshot snapshot = NBTUtilBC.readEnum(nbt.getTag("type"), Snapshot.EnumSnapshotType.class).create.get();
+        snapshot.deserializeNBT(nbt);
+        return snapshot;
+    }
+
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();

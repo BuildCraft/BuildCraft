@@ -37,6 +37,7 @@ public class Template extends Snapshot {
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         super.deserializeNBT(nbt);
+        data = new boolean[size.getX()][size.getY()][size.getZ()];
         byte[] serializedData = nbt.getByteArray("data");
         int i = 0;
         for (int z = 0; z < size.getZ(); z++) {
