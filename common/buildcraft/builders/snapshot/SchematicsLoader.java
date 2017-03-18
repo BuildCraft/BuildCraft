@@ -117,19 +117,7 @@ public enum SchematicsLoader {
                                 .map(property -> (PropertyInteger) property)
                                 .map(blockState::getValue)
                                 .findFirst()
-                                .ifPresent(value -> {
-                                    for (int i = 0; i < requiredItems.size(); i++) {
-                                        ItemStack stack = requiredItems.get(i);
-                                        requiredItems.set(
-                                                i,
-                                                new ItemStack(
-                                                        stack.getItem(),
-                                                        stack.getCount() * value,
-                                                        stack.getMetadata()
-                                                )
-                                        );
-                                    }
-                                })
+                                .ifPresent(value -> requiredItems.forEach(stack -> stack.setCount(stack.getCount() * value)))
                 );
         if (block.hasTileEntity(blockState)) {
             TileEntity tileEntity = world.getTileEntity(pos);
