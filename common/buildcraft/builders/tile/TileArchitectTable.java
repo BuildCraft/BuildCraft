@@ -25,10 +25,8 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -46,7 +44,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Function;
 
 public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final int NET_BOX = 20;
@@ -191,29 +188,13 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     private SchematicBlock readSchematicForBlock(BlockPos worldScanPos) {
-//        IBlockState state = worldObj.getBlockState(worldScanPos);
-//        SchematicFactoryWorldBlock factory = BlueprintAPI.getWorldBlockSchematic(state.getBlock());
-//        if (factory == null) {
-//            return SchematicAir.INSTANCE;
-//        } else {
-//            try {
-//                return factory.createFromWorld(getWorld(), worldScanPos);
-//            } catch (SchematicException e) {
-//                e.printStackTrace();// TEMP!
-//                return SchematicAir.INSTANCE;
-//            }
-//        }
-        Block block = world.getBlockState(worldScanPos).getBlock();
-        SchematicBlockContext schematicBlockContext = new SchematicBlockContext(
+        return SchematicsLoader.INSTANCE.getSchematicBlock(
                 world,
                 worldScanPos,
-                pos.offset(world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite())
+                pos.offset(world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite()),
+                world.getBlockState(worldScanPos),
+                world.getBlockState(worldScanPos).getBlock()
         );
-        Function<SchematicBlockContext, SchematicBlock> factory = SchematicsLoader.INSTANCE.schematicFactories.get(block);
-        if (factory == null) {
-            factory = SchematicsLoader.INSTANCE.schematicFactories.get(Blocks.AIR);
-        }
-        return factory.apply(schematicBlockContext);
     }
 
     private void scanEntities() {

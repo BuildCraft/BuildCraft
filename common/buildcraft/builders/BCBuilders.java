@@ -4,25 +4,26 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
 import buildcraft.builders.addon.AddonFillingPlanner;
-import buildcraft.builders.snapshot.RulesLoader;
-import buildcraft.builders.snapshot.SchematicsLoader;
-import buildcraft.core.marker.volume.AddonsRegistry;
-import net.minecraft.util.ResourceLocation;
-import java.util.function.Consumer;
-
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.*;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-
 import buildcraft.builders.bpt.PerSaveBptStorage;
+import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
+import buildcraft.builders.snapshot.RulesLoader;
 import buildcraft.core.BCCore;
+import buildcraft.core.marker.volume.AddonsRegistry;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import java.util.function.Consumer;
 
 //@formatter:off
 @Mod(modid = BCBuilders.MODID,
@@ -57,7 +58,6 @@ public class BCBuilders {
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
         RulesLoader.INSTANCE.loadAll();
-        SchematicsLoader.INSTANCE.loadAll();
         GlobalSavedDataSnapshots.get(evt.getSide());
     }
 

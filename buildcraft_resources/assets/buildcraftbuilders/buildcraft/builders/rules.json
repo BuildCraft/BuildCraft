@@ -1,6 +1,6 @@
 [
     {
-        "blocks": [
+        "selectors": [
             "minecraft:double_stone_slab",
             "minecraft:stone_slab",
             "minecraft:purpur_double_slab",
@@ -14,49 +14,49 @@
         "copyRequiredItemsFromDrops": true
     },
     {
-        "blocks": [
+        "selectors": [
             "minecraft:fire"
         ],
         "ignore": true
     },
     {
-        "blocks": ["minecraft:cake"],
+        "selectors": ["minecraft:cake"],
         "requiredItems": ["minecraft:cake"]
     },
     {
-        "blocks": ["minecraft:snow_layer"],
+        "selectors": ["minecraft:snow_layer"],
         "copyRequiredItemsCountFromProperty": "layers"
     },
     {
-        "blocks": ["minecraft:farmland"],
+        "selectors": ["minecraft:farmland"],
         "requiredItems": ["minecraft:dirt"]
     },
     {
-        "blocks": ["minecraft:wheat"],
+        "selectors": ["minecraft:wheat"],
         "requiredItems": ["minecraft:wheat_seeds"]
     },
     {
-        "blocks": ["minecraft:pumpkin_stem"],
+        "selectors": ["minecraft:pumpkin_stem"],
         "requiredItems": ["minecraft:pumpkin_seeds"]
     },
     {
-        "blocks": ["minecraft:melon_stem"],
+        "selectors": ["minecraft:melon_stem"],
         "requiredItems": ["minecraft:melon_seeds"]
     },
     {
-        "blocks": ["minecraft:beetroots"],
+        "selectors": ["minecraft:beetroots"],
         "requiredItems": ["minecraft:beetroot_seeds"]
     },
     {
-        "blocks": ["minecraft:carrots"],
+        "selectors": ["minecraft:carrots"],
         "requiredItems": ["minecraft:carrot"]
     },
     {
-        "blocks": ["minecraft:potatoes"],
+        "selectors": ["minecraft:potatoes"],
         "requiredItems": ["minecraft:potato"]
     },
     {
-        "blocks": [
+        "selectors": [
             "minecraft:wheat",
             "minecraft:pumpkin_stem",
             "minecraft:melon_stem",
@@ -67,62 +67,61 @@
         "ignoredProperties": ["age"]
     },
     {
-        "blocks": ["minecraft:redstone_wire"],
+        "selectors": ["minecraft:redstone_wire"],
         "requiredItems": ["minecraft:redstone"],
         "ignoredProperties": ["power", "east", "north", "south", "west"]
     },
     {
-        "blocks": ["minecraft:powered_repeater", "minecraft:unpowered_repeater"],
+        "selectors": ["minecraft:powered_repeater", "minecraft:unpowered_repeater"],
         "requiredItems": ["minecraft:repeater"],
         "placeBlock": "minecraft:repeater",
-        "canBeReplacedWithBlocks": ["minecraft:powered_repeater", "minecraft:unpowered_repeater"]
+        "canBeReplacedWithselectors": ["minecraft:powered_repeater", "minecraft:unpowered_repeater"]
     },
     {
-        "blocks": ["minecraft:powered_comparator", "minecraft:unpowered_comparator"],
+        "selectors": ["minecraft:powered_comparator", "minecraft:unpowered_comparator"],
         "requiredItems": ["minecraft:comparator"],
         "placeBlock": "minecraft:comparator",
         "ignoredProperties": ["powered"],
-        "canBeReplacedWithBlocks": ["minecraft:powered_comparator", "minecraft:unpowered_comparator"]
+        "canBeReplacedWithselectors": ["minecraft:powered_comparator", "minecraft:unpowered_comparator"]
     },
     {
-        "blocks": ["minecraft:redstone_ore", "minecraft:lit_redstone_ore"],
+        "selectors": ["minecraft:redstone_ore", "minecraft:lit_redstone_ore"],
         "requiredItems": ["minecraft:redstone_ore"],
         "placeBlock": "minecraft:redstone_ore",
-        "canBeReplacedWithBlocks": ["minecraft:redstone_ore", "minecraft:lit_redstone_ore"]
+        "canBeReplacedWithselectors": ["minecraft:redstone_ore", "minecraft:lit_redstone_ore"]
     },
     {
-        "blocks": ["minecraft:redstone_torch", "minecraft:unlit_redstone_torch"],
+        "selectors": ["minecraft:redstone_torch", "minecraft:unlit_redstone_torch"],
         "requiredItems": ["minecraft:redstone_torch"],
         "placeBlock": "minecraft:redstone_torch",
-        "canBeReplacedWithBlocks": ["minecraft:redstone_torch", "minecraft:unlit_redstone_torch"]
+        "canBeReplacedWithselectors": ["minecraft:redstone_torch", "minecraft:unlit_redstone_torch"]
     },
     {
-        "blocks": ["minecraft:redstone_lamp", "minecraft:lit_redstone_lamp"],
+        "selectors": ["minecraft:redstone_lamp", "minecraft:lit_redstone_lamp"],
         "requiredItems": ["minecraft:redstone_lamp"],
         "placeBlock": "minecraft:redstone_lamp",
-        "canBeReplacedWithBlocks": ["minecraft:redstone_lamp", "minecraft:lit_redstone_lamp"]
+        "canBeReplacedWithselectors": ["minecraft:redstone_lamp", "minecraft:lit_redstone_lamp"]
     },
     {
-        "blocks": ["minecraft:observer"],
+        "selectors": ["minecraft:observer"],
         "ignoredProperties": ["powered"]
     },
     {
-        "blocks": ["minecraft:wooden_door", "minecraft:iron_door"],
+        "selectors": ["minecraft:wooden_door", "minecraft:iron_door"],
         "ignoredProperties": ["powered", "open", "hinge"],
-        "freeIfHavePropertiesValues": {"half": "upper"},
         "requiredBlockOffsets": [[0, -1, 0]]
     },
     {
-        "blocks": ["minecraft:hopper"],
+        "selectors": ["minecraft:hopper"],
         "ignoredProperties": ["enabled"]
     },
     {
-        "blocks": ["minecraft:daylight_detector", "minecraft:daylight_detector_inverted"],
+        "selectors": ["minecraft:daylight_detector", "minecraft:daylight_detector_inverted"],
         "requiredItems": ["minecraft:daylight_detector"],
         "ignoredProperties": ["power"]
     },
     {
-        "blocks": [
+        "selectors": [
             "minecraft:cactus",
             "minecraft:redstone_wire",
             "minecraft:tripwire",
@@ -138,7 +137,7 @@
             "minecraft:nether_wart",
             "minecraft:sapling",
             "minecraft:tallgrass",
-            "minecraft:double_plant", // TODO: require ½ blocks
+            "minecraft:double_plant",
             "minecraft:red_flower",
             "minecraft:yellow_flower",
             "minecraft:beetroots"
@@ -146,7 +145,7 @@
         "requiredBlockOffsets": [[0, -1, 0]]
     },
     {
-        "blocks": [
+        "selectors": [
             "minecraft:ladder",
             "minecraft:tripwire_hook",
             "minecraft:trapdoor",
@@ -155,24 +154,32 @@
         "copyOppositeRequiredBlockOffsetFromProperty": "facing"
     },
     {
-        "blocks": ["minecraft:vine"],
+        "selectors": ["minecraft:vine"],
         "copyRequiredBlockOffsetsFromProperties": true
     },
     {
-        "blocks": ["minecraft:piston"],
+        "selectors": ["minecraft:piston"],
         "ignoredProperties": ["extended"]
     },
     {
-        "blocks": ["minecraft:piston_head"],
+        "selectors": ["minecraft:piston_head"],
         "requiredItems": []
     },
     {
-        "blocks": ["minecraft:rail"],
+        "selectors": ["minecraft:rail"],
         "ignoredProperties": ["shape"]
     },
     {
-        "blocks": ["minecraft:bed"],
-        "freeIfHavePropertiesValues": {"part": "head"},
+        "selectors": [
+            "minecraft:bed[part=head]",
+            "minecraft:wooden_door[half=upper]",
+            "minecraft:iron_door[half=upper]",
+            "minecraft:double_plant[half=upper]"
+        ],
+        "requiredItems": []
+    },
+    {
+        "selectors": ["minecraft:bed[part=head]"],
         "copyOppositeRequiredBlockOffsetFromProperty": "facing"
     }
 ]
