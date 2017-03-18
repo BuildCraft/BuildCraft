@@ -69,17 +69,6 @@ public enum SchematicsLoader {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    private BlockPos getRelativePos(
-            World world,
-            BlockPos basePos,
-            BlockPos pos,
-            IBlockState blockState,
-            Block block,
-            Set<JsonRule> rules
-    ) {
-        return pos.subtract(basePos);
-    }
-
     private Set<BlockPos> getRequiredBlockOffsets(
             World world,
             BlockPos basePos,
@@ -328,8 +317,6 @@ public enum SchematicsLoader {
         }
         // Get list of all rules for this block
         Set<JsonRule> rules = getRules(world, basePos, pos, blockState, block);
-        // -- relativePos --
-        BlockPos relativePos = getRelativePos(world, basePos, pos, blockState, block, rules);
         // -- requiredBlockOffsets --
         Set<BlockPos> requiredBlockOffsets = getRequiredBlockOffsets(world, basePos, pos, blockState, block, rules);
         // -- requiredItems --
@@ -356,7 +343,6 @@ public enum SchematicsLoader {
             return getSchematicBlock(world, pos, basePos, Blocks.AIR.getDefaultState(), Blocks.AIR);
         }
         return new SchematicBlock(
-                relativePos,
                 requiredBlockOffsets,
                 requiredItems,
                 requiredFluids,

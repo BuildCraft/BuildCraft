@@ -40,7 +40,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -56,7 +55,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     private Snapshot.EnumSnapshotType snapshotType = Snapshot.EnumSnapshotType.BLUEPRINT;
     private final Box box = new Box();
 //    private List<SchematicEntityOffset> blueprintScannedEntities;
-    private final List<SchematicBlock> blueprintScannedBlocks = new ArrayList<>();
+    private SchematicBlock[][][] blueprintScannedBlocks;
     private boolean[][][] templateScannedBlocks;
     private BoxIterator boxIterator;
     private boolean isValid = false;
@@ -157,21 +156,22 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
 
     private void scanSingleBlock() {
         BlockPos size = box.size();
-        if (templateScannedBlocks == null) {
-            blueprintScannedBlocks.clear();
+        if (templateScannedBlocks == null && blueprintScannedBlocks == null) {
             boxIterator = new BoxIterator(box, EnumAxisOrder.XZY.getMinToMaxOrder(), true);
+            blueprintScannedBlocks = new SchematicBlock[size.getX()][size.getY()][size.getZ()];
             templateScannedBlocks = new boolean[size.getX()][size.getY()][size.getZ()];
         }
 
         // Read from world
         BlockPos worldScanPos = boxIterator.getCurrent();
         BlockPos schematicIndex = worldScanPos.subtract(box.min());
-        if (snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
-            SchematicBlock schematic = readSchematicForBlock(worldScanPos);
-            blueprintScannedBlocks.add(schematic);
-        } else {
+        if (snapshotType == Snapshot.EnumSnapshotType.TEMPLATE) {
             boolean solid = !world.isAirBlock(worldScanPos);
             templateScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = solid;
+        }
+        if (snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
+            SchematicBlock schematic = readSchematicForBlock(worldScanPos);
+            blueprintScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = schematic;
         }
 
         createAndSendMessage(NET_SCAN, buffer -> buffer.writeBlockPos(worldScanPos));
@@ -207,15 +207,14 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         Snapshot snapshot = snapshotType.create.get();
         snapshot.size = box.size();
         snapshot.facing = facing;
+        snapshot.offset = box.min().subtract(pos.offset(facing.getOpposite()));
         if (snapshotType == Snapshot.EnumSnapshotType.TEMPLATE) {
-            // noinspection ConstantConditions
-            ((Template) snapshot).offset = box.min().subtract(pos.offset(facing.getOpposite()));
             // noinspection ConstantConditions
             ((Template) snapshot).data = templateScannedBlocks;
         }
         if (snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
             // noinspection ConstantConditions
-            ((Blueprint) snapshot).schematicBlocks.addAll(blueprintScannedBlocks);
+            ((Blueprint) snapshot).data = blueprintScannedBlocks;
         }
         snapshot.header.id = UUID.randomUUID();
         snapshot.header.owner = getOwner().getId();
@@ -229,7 +228,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         }
         invBptIn.setStackInSlot(0, stackIn);
         invBptOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshotType, snapshot.header));
-        blueprintScannedBlocks.clear();
+        blueprintScannedBlocks = null;
         templateScannedBlocks = null;
         boxIterator = null;
         sendNetworkUpdate(NET_RENDER_DATA);

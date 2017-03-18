@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public class Blueprint extends Snapshot {
-    public final List<SchematicBlock> schematicBlocks = new ArrayList<>();
+    public SchematicBlock[][][] data;
 
     @Override
     public <T extends ITileForSnapshotBuilder> SnapshotBuilder<T> createBuilder(T tile) {
@@ -25,18 +25,37 @@ public class Blueprint extends Snapshot {
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = super.serializeNBT();
-        nbt.setTag("data", NBTUtilBC.writeCompoundList(schematicBlocks.stream().map(SchematicBlock::serializeNBT)));
+        SchematicBlock[] serializedData = new SchematicBlock[size.getX() * size.getY() * size.getZ()];
+        int i = 0;
+        for (int z = 0; z < size.getZ(); z++) {
+            for (int y = 0; y < size.getY(); y++) {
+                for (int x = 0; x < size.getX(); x++) {
+                    serializedData[i++] = data[x][y][z];
+                }
+            }
+        }
+        nbt.setTag("data", NBTUtilBC.writeCompoundList(Stream.of(serializedData).map(SchematicBlock::serializeNBT)));
         return nbt;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         super.deserializeNBT(nbt);
-        NBTUtilBC.readCompoundList(nbt.getTagList("data", Constants.NBT.TAG_COMPOUND)).map(schematicBlockTag -> {
-            SchematicBlock schematicBlock = new SchematicBlock();
-            schematicBlock.deserializeNBT(schematicBlockTag);
-            return schematicBlock;
-        }).forEach(schematicBlocks::add);
+        SchematicBlock[] serializedData = NBTUtilBC.readCompoundList(nbt.getTagList("data", Constants.NBT.TAG_COMPOUND))
+                .map(schematicBlockTag -> {
+                    SchematicBlock schematicBlock = new SchematicBlock();
+                    schematicBlock.deserializeNBT(schematicBlockTag);
+                    return schematicBlock;
+                })
+                .toArray(SchematicBlock[]::new);
+        int i = 0;
+        for (int z = 0; z < size.getZ(); z++) {
+            for (int y = 0; y < size.getY(); y++) {
+                for (int x = 0; x < size.getX(); x++) {
+                    data[x][y][z] = serializedData[i++];
+                }
+            }
+        }
     }
 
     @Override
@@ -54,12 +73,19 @@ public class Blueprint extends Snapshot {
         public BuildingInfo(BlockPos basePos, Rotation rotation) {
             this.basePos = basePos;
             this.rotation = rotation;
-            for (SchematicBlock schematicBlock : schematicBlocks) {
-                BlockPos blockPos = schematicBlock.relativePos.rotate(rotation).add(basePos);
-                if (schematicBlock.blockState.getBlock().isAir(schematicBlock.blockState, null, null)) {
-                    toBreak.add(blockPos);
-                } else {
-                    toPlace.put(blockPos, schematicBlock.getRotated(rotation));
+            for (int z = 0; z < getSnapshot().size.getZ(); z++) {
+                for (int y = 0; y < getSnapshot().size.getY(); y++) {
+                    for (int x = 0; x < getSnapshot().size.getX(); x++) {
+                        SchematicBlock schematicBlock = data[x][y][z];
+                        BlockPos blockPos = new BlockPos(x, y, z).rotate(rotation)
+                                .add(basePos)
+                                .add(offset.rotate(rotation));
+                        if (schematicBlock.blockState.getBlock().isAir(schematicBlock.blockState, null, null)) {
+                            toBreak.add(blockPos);
+                        } else {
+                            toPlace.put(blockPos, schematicBlock.getRotated(rotation));
+                        }
+                    }
                 }
             }
             box = new Box();

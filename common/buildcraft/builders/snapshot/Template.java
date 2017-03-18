@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class Template extends Snapshot {
-    public BlockPos offset = BlockPos.ORIGIN;
     public boolean[][][] data;
 
     @Override

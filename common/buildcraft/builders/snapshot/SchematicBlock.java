@@ -8,7 +8,6 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
@@ -27,7 +26,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
-    public BlockPos relativePos;
     public Set<BlockPos> requiredBlockOffsets = new HashSet<>();
     public List<ItemStack> requiredItems = new ArrayList<>();
     public List<Fluid> requiredFluids = new ArrayList<>();
@@ -40,7 +38,6 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     public Set<Block> canBeReplacedWithBlocks = new HashSet<>();
 
     public SchematicBlock(
-            BlockPos relativePos,
             Set<BlockPos> requiredBlockOffsets,
             List<ItemStack> requiredItems,
             List<Fluid> requiredFluids,
@@ -51,7 +48,6 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
             Block placeBlock,
             Set<Block> canBeReplacedWithBlocks
     ) {
-        this.relativePos = relativePos;
         this.requiredBlockOffsets = requiredBlockOffsets;
         this.requiredItems = requiredItems;
         this.requiredFluids = requiredFluids;
@@ -69,7 +65,6 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag("relativePos", NBTUtil.createPosTag(relativePos));
         nbt.setTag(
                 "requiredItems",
                 NBTUtilBC.writeCompoundList(
@@ -117,7 +112,6 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        relativePos = NBTUtil.getPosFromTag(nbt.getCompoundTag("relativePos"));
         NBTUtilBC.readCompoundList(nbt.getTagList("requiredBlockOffsets", Constants.NBT.TAG_COMPOUND))
                 .map(NBTUtilBC::readBlockPos)
                 .forEach(requiredBlockOffsets::add);
@@ -153,7 +147,6 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
 
     public SchematicBlock getRotated(Rotation rotation) {
         SchematicBlock schematicBlock = new SchematicBlock();
-        schematicBlock.relativePos = relativePos.rotate(rotation);
         schematicBlock.requiredBlockOffsets = requiredBlockOffsets.stream()
                 .map(blockPos -> blockPos.rotate(rotation))
                 .collect(Collectors.toCollection(HashSet::new));

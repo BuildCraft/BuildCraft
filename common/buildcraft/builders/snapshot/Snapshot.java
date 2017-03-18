@@ -21,6 +21,7 @@ public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
     public Header header = new Snapshot.Header();
     public BlockPos size;
     public EnumFacing facing;
+    public BlockPos offset;
 
     public Snapshot(Header header) {
         this.header = header;
@@ -37,6 +38,7 @@ public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
         nbt.setTag("header", header.serializeNBT());
         nbt.setTag("size", NBTUtil.createPosTag(size));
         nbt.setTag("facing", NBTUtilBC.writeEnum(facing));
+        nbt.setTag("offset", NBTUtil.createPosTag(offset));
         return nbt;
     }
 
@@ -45,6 +47,7 @@ public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
         header.deserializeNBT(nbt.getCompoundTag("header"));
         size = NBTUtil.getPosFromTag(nbt.getCompoundTag("size"));
         facing = NBTUtilBC.readEnum(nbt.getTag("facing"), EnumFacing.class);
+        offset = NBTUtil.getPosFromTag(nbt.getCompoundTag("offset"));
     }
 
     abstract public EnumSnapshotType getType();
