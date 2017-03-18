@@ -31,9 +31,10 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     public Set<BlockPos> requiredBlockOffsets = new HashSet<>();
     public List<ItemStack> requiredItems = new ArrayList<>();
     public List<Fluid> requiredFluids = new ArrayList<>();
-    public List<IProperty<?>> ignoredProperties = new ArrayList<>();
     public IBlockState blockState;
+    public List<IProperty<?>> ignoredProperties = new ArrayList<>();
     public NBTTagCompound tileNbt;
+    public List<String> ignoredTags = new ArrayList<>();
     public Rotation tileRotation = Rotation.NONE;
     public Block placeBlock;
     public Set<Block> canBeReplacedWithBlocks = new HashSet<>();
@@ -46,6 +47,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
             IBlockState blockState,
             List<IProperty<?>> ignoredProperties,
             NBTTagCompound tileNbt,
+            List<String> ignoredTags,
             Block placeBlock,
             Set<Block> canBeReplacedWithBlocks
     ) {
@@ -56,6 +58,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         this.blockState = blockState;
         this.ignoredProperties = ignoredProperties;
         this.tileNbt = tileNbt;
+        this.ignoredTags = ignoredTags;
         this.placeBlock = placeBlock;
         this.canBeReplacedWithBlocks = canBeReplacedWithBlocks;
     }
@@ -99,6 +102,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         if (tileNbt != null) {
             nbt.setTag("tileNbt", tileNbt);
         }
+        nbt.setTag("ignoredTags", NBTUtilBC.writeStringList(ignoredTags.stream()));
         nbt.setString("placeBlock", Block.REGISTRY.getNameForObject(placeBlock).toString());
         nbt.setTag(
                 "canBeReplacedWithBlocks",
@@ -139,6 +143,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         if (nbt.hasKey("tileNbt")) {
             tileNbt = nbt.getCompoundTag("tileNbt");
         }
+        NBTUtilBC.readStringList(nbt.getTagList("ignoredTags", Constants.NBT.TAG_STRING)).forEach(ignoredTags::add);
         placeBlock = Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("placeBlock")));
         NBTUtilBC.readStringList(nbt.getTagList("canBeReplacedWithBlocks", Constants.NBT.TAG_STRING))
                 .map(ResourceLocation::new)
@@ -157,6 +162,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         schematicBlock.blockState = blockState.withRotation(rotation);
         schematicBlock.ignoredProperties = ignoredProperties;
         schematicBlock.tileNbt = tileNbt;
+        schematicBlock.ignoredTags = ignoredTags;
         schematicBlock.tileRotation = tileRotation.add(rotation);
         schematicBlock.placeBlock = placeBlock;
         schematicBlock.canBeReplacedWithBlocks = canBeReplacedWithBlocks;
@@ -193,6 +199,9 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
                 newTileNbt.setInteger("x", blockPos.getX());
                 newTileNbt.setInteger("y", blockPos.getY());
                 newTileNbt.setInteger("z", blockPos.getZ());
+                ignoredTags.stream()
+                        .filter(newTileNbt::hasKey)
+                        .forEach(newTileNbt::removeTag);
                 TileEntity tileEntity = TileEntity.create(world, newTileNbt);
                 if (tileEntity != null) {
                     tileEntity.setWorld(world);

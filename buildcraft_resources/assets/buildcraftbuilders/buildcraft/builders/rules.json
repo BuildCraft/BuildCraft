@@ -15,7 +15,34 @@
     },
     {
         "selectors": [
-            "minecraft:fire"
+            "minecraft:hopper",
+            "minecraft:chest",
+            "minecraft:trapped_chest",
+            "minecraft:dispenser",
+            "minecraft:dropper",
+            "minecraft:white_shulker_box",
+            "minecraft:orange_shulker_box",
+            "minecraft:magenta_shulker_box",
+            "minecraft:light_blue_shulker_box",
+            "minecraft:yellow_shulker_box",
+            "minecraft:lime_shulker_box",
+            "minecraft:pink_shulker_box",
+            "minecraft:gray_shulker_box",
+            "minecraft:silver_shulker_box",
+            "minecraft:cyan_shulker_box",
+            "minecraft:purple_shulker_box",
+            "minecraft:blue_shulker_box",
+            "minecraft:brown_shulker_box",
+            "minecraft:green_shulker_box",
+            "minecraft:red_shulker_box",
+            "minecraft:black_shulker_box"
+        ],
+        "copyRequiredItemsFromItemHandlersOnSides": ["north"]
+    },
+    {
+        "selectors": [
+            "minecraft:fire",
+            "minecraft:ender_chest"
         ],
         "ignore": true
     },
@@ -75,32 +102,37 @@
         "selectors": ["minecraft:powered_repeater", "minecraft:unpowered_repeater"],
         "requiredItems": ["minecraft:repeater"],
         "placeBlock": "minecraft:repeater",
-        "canBeReplacedWithselectors": ["minecraft:powered_repeater", "minecraft:unpowered_repeater"]
+        "canBeReplacedWithBlocks": ["minecraft:powered_repeater", "minecraft:unpowered_repeater"]
     },
     {
         "selectors": ["minecraft:powered_comparator", "minecraft:unpowered_comparator"],
         "requiredItems": ["minecraft:comparator"],
         "placeBlock": "minecraft:comparator",
         "ignoredProperties": ["powered"],
-        "canBeReplacedWithselectors": ["minecraft:powered_comparator", "minecraft:unpowered_comparator"]
+        "canBeReplacedWithBlocks": ["minecraft:powered_comparator", "minecraft:unpowered_comparator"]
     },
     {
         "selectors": ["minecraft:redstone_ore", "minecraft:lit_redstone_ore"],
         "requiredItems": ["minecraft:redstone_ore"],
         "placeBlock": "minecraft:redstone_ore",
-        "canBeReplacedWithselectors": ["minecraft:redstone_ore", "minecraft:lit_redstone_ore"]
+        "canBeReplacedWithBlocks": ["minecraft:redstone_ore", "minecraft:lit_redstone_ore"]
     },
     {
         "selectors": ["minecraft:redstone_torch", "minecraft:unlit_redstone_torch"],
         "requiredItems": ["minecraft:redstone_torch"],
         "placeBlock": "minecraft:redstone_torch",
-        "canBeReplacedWithselectors": ["minecraft:redstone_torch", "minecraft:unlit_redstone_torch"]
+        "canBeReplacedWithBlocks": ["minecraft:redstone_torch", "minecraft:unlit_redstone_torch"]
     },
     {
         "selectors": ["minecraft:redstone_lamp", "minecraft:lit_redstone_lamp"],
         "requiredItems": ["minecraft:redstone_lamp"],
         "placeBlock": "minecraft:redstone_lamp",
-        "canBeReplacedWithselectors": ["minecraft:redstone_lamp", "minecraft:lit_redstone_lamp"]
+        "canBeReplacedWithBlocks": ["minecraft:redstone_lamp", "minecraft:lit_redstone_lamp"]
+    },
+    {
+        "selectors": ["minecraft:furnace", "minecraft:lit_furnace"],
+        "copyRequiredItemsFromItemHandlersOnSides": ["down", "up"],
+        "canBeReplacedWithBlocks": ["minecraft:furnace", "minecraft:lit_furnace"]
     },
     {
         "selectors": ["minecraft:observer"],

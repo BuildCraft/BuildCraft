@@ -27,7 +27,67 @@ import java.util.stream.IntStream;
 public enum SchematicsLoader {
     INSTANCE;
 
-    private Set<BlockPos> getRequiredBlockOffsets(World world, BlockPos pos, IBlockState blockState, Block block, Set<JsonRule> rules) {
+    private Set<JsonRule> getRules(
+            World world,
+            BlockPos basePos,
+            BlockPos pos,
+            IBlockState blockState,
+            Block block
+    ) {
+        return RulesLoader.INSTANCE.rules.stream()
+                .filter(rule -> rule.selectors != null)
+                .filter(rule ->
+                        rule.selectors.stream()
+                                .anyMatch(selector -> {
+                                    boolean complex = selector.contains("[");
+                                    return Block.getBlockFromName(
+                                            complex
+                                                    ? selector.substring(0, selector.indexOf("["))
+                                                    : selector
+                                    ) == block &&
+                                            (!complex ||
+                                                    Arrays.stream(
+                                                            selector.substring(
+                                                                    selector.indexOf("[") + 1,
+                                                                    selector.indexOf("]")
+                                                            )
+                                                                    .split(",")
+                                                    )
+                                                            .map(nameValue -> nameValue.split("="))
+                                                            .allMatch(nameValue ->
+                                                                    blockState.getPropertyKeys().stream()
+                                                                            .filter(property -> property.getName().equals(nameValue[0]))
+                                                                            .findFirst()
+                                                                            .map(blockState::getValue)
+                                                                            .map(Object::toString)
+                                                                            .map(nameValue[1]::equals)
+                                                                            .orElse(false)
+                                                            )
+                                            );
+                                })
+                )
+                .collect(Collectors.toCollection(HashSet::new));
+    }
+
+    private BlockPos getRelativePos(
+            World world,
+            BlockPos basePos,
+            BlockPos pos,
+            IBlockState blockState,
+            Block block,
+            Set<JsonRule> rules
+    ) {
+        return pos.subtract(basePos);
+    }
+
+    private Set<BlockPos> getRequiredBlockOffsets(
+            World world,
+            BlockPos basePos,
+            BlockPos pos,
+            IBlockState blockState,
+            Block block,
+            Set<JsonRule> rules
+    ) {
         Set<BlockPos> requiredBlockOffsets = rules.stream()
                 .filter(rule -> rule.requiredBlockOffsets != null)
                 .map(rule -> rule.requiredBlockOffsets)
@@ -62,7 +122,14 @@ public enum SchematicsLoader {
         return requiredBlockOffsets;
     }
 
-    private List<ItemStack> getRequiredItems(World world, BlockPos pos, IBlockState blockState, Block block, Set<JsonRule> rules) {
+    private List<ItemStack> getRequiredItems(
+            World world,
+            BlockPos basePos,
+            BlockPos pos,
+            IBlockState blockState,
+            Block block,
+            Set<JsonRule> rules
+    ) {
         List<ItemStack> requiredItems = new ArrayList<>();
         if (rules.stream().filter(rule -> rule.requiredItems != null).count() > 0) {
             rules.stream()
@@ -122,11 +189,14 @@ public enum SchematicsLoader {
         if (block.hasTileEntity(blockState)) {
             TileEntity tileEntity = world.getTileEntity(pos);
             if (tileEntity != null) {
-                Arrays.stream(EnumFacing.values())
+                rules.stream()
+                        .map(rule -> rule.copyRequiredItemsFromItemHandlersOnSides)
+                        .filter(Objects::nonNull)
+                        .flatMap(Collection::stream)
+                        .map(EnumFacing::byName)
                         .filter(side -> tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side))
                         .map(side -> tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side))
                         .filter(Objects::nonNull)
-                        .distinct() // FIXME: this can work wrongly with multi side inventories
                         .flatMap(itemHandler ->
                                 IntStream.range(0, itemHandler.getSlots()).mapToObj(itemHandler::getStackInSlot)
                         )
@@ -138,7 +208,14 @@ public enum SchematicsLoader {
         return requiredItems;
     }
 
-    private List<Fluid> getRequiredFluids(World world, BlockPos pos, IBlockState blockState, Block block, Set<JsonRule> rules) {
+    private List<Fluid> getRequiredFluids(
+            World world,
+            BlockPos basePos,
+            BlockPos pos,
+            IBlockState blockState,
+            Block block,
+            Set<JsonRule> rules
+    ) {
         List<Fluid> requiredFluids = new ArrayList<>();
         if (BlockUtil.getFluidWithFlowing(block) != null) {
             if (BlockUtil.getFluid(block) != null) {
@@ -150,7 +227,14 @@ public enum SchematicsLoader {
         return requiredFluids;
     }
 
-    private List<IProperty<?>> getIgnoredProperties(World world, BlockPos pos, IBlockState blockState, Block block, Set<JsonRule> rules) {
+    private List<IProperty<?>> getIgnoredProperties(
+            World world,
+            BlockPos basePos,
+            BlockPos pos,
+            IBlockState blockState,
+            Block block,
+            Set<JsonRule> rules
+    ) {
         return rules.stream()
                 .map(rule -> rule.ignoredProperties)
                 .filter(Objects::nonNull)
@@ -162,7 +246,14 @@ public enum SchematicsLoader {
                 .collect(Collectors.toList());
     }
 
-    private NBTTagCompound getTileNbt(World world, BlockPos pos, IBlockState blockState, Block block, Set<JsonRule> rules) {
+    private NBTTagCompound getTileNbt(
+            World world,
+            BlockPos basePos,
+            BlockPos pos,
+            IBlockState blockState,
+            Block block,
+            Set<JsonRule> rules
+    ) {
         NBTTagCompound tileNbt = null;
         if (block.hasTileEntity(blockState)) {
             TileEntity tileEntity = world.getTileEntity(pos);
@@ -173,7 +264,29 @@ public enum SchematicsLoader {
         return tileNbt;
     }
 
-    private Block getPlaceBlock(World world, BlockPos pos, IBlockState blockState, Block block, Set<JsonRule> rules) {
+    private List<String> getIgnoredTags(
+            World world,
+            BlockPos basePos,
+            BlockPos pos,
+            IBlockState blockState,
+            Block block,
+            Set<JsonRule> rules
+    ) {
+        return rules.stream()
+                .map(rule -> rule.ignoredTags)
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
+
+    private Block getPlaceBlock(
+            World world,
+            BlockPos basePos,
+            BlockPos pos,
+            IBlockState blockState,
+            Block block,
+            Set<JsonRule> rules
+    ) {
         return rules.stream()
                 .map(rule -> rule.placeBlock)
                 .filter(Objects::nonNull)
@@ -182,7 +295,14 @@ public enum SchematicsLoader {
                 .orElse(block);
     }
 
-    private Set<Block> getCanBeReplacedWithBlocks(World world, BlockPos pos, IBlockState blockState, Block block, Set<JsonRule> rules) {
+    private Set<Block> getCanBeReplacedWithBlocks(
+            World world,
+            BlockPos basePos,
+            BlockPos pos,
+            IBlockState blockState,
+            Block block,
+            Set<JsonRule> rules
+    ) {
         return rules.stream()
                 .map(rule -> rule.canBeReplacedWithBlocks)
                 .filter(Objects::nonNull)
@@ -191,7 +311,13 @@ public enum SchematicsLoader {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    public SchematicBlock getSchematicBlock(World world, BlockPos pos, BlockPos basePos, IBlockState blockState, Block block) {
+    public SchematicBlock getSchematicBlock(
+            World world,
+            BlockPos pos,
+            BlockPos basePos,
+            IBlockState blockState,
+            Block block
+    ) {
         ResourceLocation registryName = block.getRegistryName();
         if (registryName == null) {
             return getSchematicBlock(world, pos, basePos, Blocks.AIR.getDefaultState(), Blocks.AIR);
@@ -201,58 +327,28 @@ public enum SchematicsLoader {
             return getSchematicBlock(world, pos, basePos, Blocks.AIR.getDefaultState(), Blocks.AIR);
         }
         // Get list of all rules for this block
-        Set<JsonRule> rules = RulesLoader.INSTANCE.rules.stream()
-                .filter(rule -> rule.selectors != null)
-                .filter(rule ->
-                        rule.selectors.stream()
-                                .anyMatch(selector -> {
-                                    boolean complex = selector.contains("[");
-                                    return Block.getBlockFromName(
-                                            complex
-                                                    ? selector.substring(0, selector.indexOf("["))
-                                                    : selector
-                                    ) == block &&
-                                            (!complex ||
-                                                    Arrays.stream(
-                                                            selector.substring(
-                                                                    selector.indexOf("[") + 1,
-                                                                    selector.indexOf("]")
-                                                            )
-                                                                    .split(",")
-                                                    )
-                                                            .map(nameValue -> nameValue.split("="))
-                                                            .allMatch(nameValue ->
-                                                                    blockState.getPropertyKeys().stream()
-                                                                            .filter(property -> property.getName().equals(nameValue[0]))
-                                                                            .findFirst()
-                                                                            .map(blockState::getValue)
-                                                                            .map(Object::toString)
-                                                                            .map(nameValue[1]::equals)
-                                                                            .orElse(false)
-                                                            )
-                                            );
-                                })
-                )
-                .collect(Collectors.toCollection(HashSet::new));
+        Set<JsonRule> rules = getRules(world, basePos, pos, blockState, block);
         // -- relativePos --
-        BlockPos relativePos = pos.subtract(basePos);
+        BlockPos relativePos = getRelativePos(world, basePos, pos, blockState, block, rules);
         // -- requiredBlockOffsets --
-        Set<BlockPos> requiredBlockOffsets = getRequiredBlockOffsets(world, pos, blockState, block, rules);
+        Set<BlockPos> requiredBlockOffsets = getRequiredBlockOffsets(world, basePos, pos, blockState, block, rules);
         // -- requiredItems --
-        List<ItemStack> requiredItems = getRequiredItems(world, pos, blockState, block, rules);
+        List<ItemStack> requiredItems = getRequiredItems(world, basePos, pos, blockState, block, rules);
         // -- requiredFluids --
-        List<Fluid> requiredFluids = getRequiredFluids(world, pos, blockState, block, rules);
+        List<Fluid> requiredFluids = getRequiredFluids(world, basePos, pos, blockState, block, rules);
         if (requiredFluids == null) {
             return getSchematicBlock(world, pos, basePos, Blocks.AIR.getDefaultState(), Blocks.AIR);
         }
         // -- ignoredProperties --
-        List<IProperty<?>> ignoredProperties = getIgnoredProperties(world, pos, blockState, block, rules);
+        List<IProperty<?>> ignoredProperties = getIgnoredProperties(world, basePos, pos, blockState, block, rules);
         // -- tileNbt --
-        NBTTagCompound tileNbt = getTileNbt(world, pos, blockState, block, rules);
+        NBTTagCompound tileNbt = getTileNbt(world, basePos, pos, blockState, block, rules);
+        // -- tileNbt --
+        List<String> ignoredTags = getIgnoredTags(world, basePos, pos, blockState, block, rules);
         // -- placeBlock --
-        Block placeBlock = getPlaceBlock(world, pos, blockState, block, rules);
+        Block placeBlock = getPlaceBlock(world, basePos, pos, blockState, block, rules);
         // -- canBeReplacedWithBlocks --
-        Set<Block> canBeReplacedWithBlocks = getCanBeReplacedWithBlocks(world, pos, blockState, block, rules);
+        Set<Block> canBeReplacedWithBlocks = getCanBeReplacedWithBlocks(world, basePos, pos, blockState, block, rules);
         canBeReplacedWithBlocks.add(block);
         canBeReplacedWithBlocks.add(placeBlock);
         // Form schematic block
@@ -267,6 +363,7 @@ public enum SchematicsLoader {
                 blockState,
                 ignoredProperties,
                 tileNbt,
+                ignoredTags,
                 placeBlock,
                 canBeReplacedWithBlocks
         );
