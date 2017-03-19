@@ -16,7 +16,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -27,8 +26,6 @@ import java.util.stream.Collectors;
 
 public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     public Set<BlockPos> requiredBlockOffsets = new HashSet<>();
-    public List<ItemStack> requiredItems = new ArrayList<>();
-    public List<Fluid> requiredFluids = new ArrayList<>();
     public IBlockState blockState;
     public List<IProperty<?>> ignoredProperties = new ArrayList<>();
     public NBTTagCompound tileNbt;
@@ -36,11 +33,11 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     public Rotation tileRotation = Rotation.NONE;
     public Block placeBlock;
     public Set<Block> canBeReplacedWithBlocks = new HashSet<>();
+    public List<ItemStack> requiredItems = new ArrayList<>();
+    public List<Fluid> requiredFluids = new ArrayList<>();
 
     public SchematicBlock(
             Set<BlockPos> requiredBlockOffsets,
-            List<ItemStack> requiredItems,
-            List<Fluid> requiredFluids,
             IBlockState blockState,
             List<IProperty<?>> ignoredProperties,
             NBTTagCompound tileNbt,
@@ -49,8 +46,6 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
             Set<Block> canBeReplacedWithBlocks
     ) {
         this.requiredBlockOffsets = requiredBlockOffsets;
-        this.requiredItems = requiredItems;
-        this.requiredFluids = requiredFluids;
         this.blockState = blockState;
         this.ignoredProperties = ignoredProperties;
         this.tileNbt = tileNbt;
@@ -66,24 +61,10 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag(
-                "requiredItems",
-                NBTUtilBC.writeCompoundList(
-                        requiredItems.stream()
-                                .map(ItemStack::serializeNBT)
-                )
-        );
-        nbt.setTag(
                 "requiredBlockOffsets",
                 NBTUtilBC.writeCompoundList(
                         requiredBlockOffsets.stream()
                                 .map(NBTUtilBC::writeBlockPosAsCompound)
-                )
-        );
-        nbt.setTag(
-                "requiredFluids",
-                NBTUtilBC.writeStringList(
-                        requiredFluids.stream()
-                                .map(FluidRegistry::getFluidName)
                 )
         );
         nbt.setTag("blockState", NBTUtilBC.writeEntireBlockState(blockState));
@@ -115,12 +96,6 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         NBTUtilBC.readCompoundList(nbt.getTagList("requiredBlockOffsets", Constants.NBT.TAG_COMPOUND))
                 .map(NBTUtilBC::readBlockPos)
                 .forEach(requiredBlockOffsets::add);
-        NBTUtilBC.readCompoundList(nbt.getTagList("requiredItems", Constants.NBT.TAG_COMPOUND))
-                .map(ItemStack::new)
-                .forEach(requiredItems::add);
-        NBTUtilBC.readStringList(nbt.getTagList("requiredFluids", Constants.NBT.TAG_STRING))
-                .map(FluidRegistry::getFluid)
-                .forEach(requiredFluids::add);
         try {
             blockState = NBTUtilBC.readEntireBlockState(nbt.getCompoundTag("blockState"));
         } catch (LoadingException e) {
@@ -150,8 +125,6 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         schematicBlock.requiredBlockOffsets = requiredBlockOffsets.stream()
                 .map(blockPos -> blockPos.rotate(rotation))
                 .collect(Collectors.toCollection(HashSet::new));
-        schematicBlock.requiredItems = requiredItems;
-        schematicBlock.requiredFluids = requiredFluids;
         schematicBlock.blockState = blockState.withRotation(rotation);
         schematicBlock.ignoredProperties = ignoredProperties;
         schematicBlock.tileNbt = tileNbt;
@@ -159,6 +132,8 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         schematicBlock.tileRotation = tileRotation.add(rotation);
         schematicBlock.placeBlock = placeBlock;
         schematicBlock.canBeReplacedWithBlocks = canBeReplacedWithBlocks;
+        schematicBlock.requiredItems = requiredItems;
+        schematicBlock.requiredFluids = requiredFluids;
         return schematicBlock;
     }
 
