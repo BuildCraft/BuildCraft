@@ -38,6 +38,7 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon {
     public void markDirty() {
         Template template = new Template();
         template.size = box.box.size();
+        template.offset = BlockPos.ORIGIN;
         template.data = getFillingPlan();
         buildingInfo = template.new BuildingInfo(box.box.min(), Rotation.NONE);
     }

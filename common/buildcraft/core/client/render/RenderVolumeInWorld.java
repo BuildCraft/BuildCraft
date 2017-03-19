@@ -25,6 +25,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public enum RenderVolumeInWorld implements IDetachedRenderer {
     INSTANCE;
@@ -47,7 +48,14 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
                     box.isEditingBy(player) ?
                             BuildCraftLaserManager.MARKER_VOLUME_SIGNAL :
                             box.getLockTargetsStream().anyMatch(target -> target instanceof Lock.LockTarget.LockTargetUsedByMachine) ?
-                                    BuildCraftLaserManager.STRIPES_WRITE :
+                                    box.getLockTargetsStream()
+                                            .filter(target -> target instanceof Lock.LockTarget.LockTargetUsedByMachine)
+                                            .map(target -> (Lock.LockTarget.LockTargetUsedByMachine) target)
+                                            .map(target -> target.type)
+                                            .filter(Objects::nonNull)
+                                            .findFirst()
+                                            .orElse(Lock.LockTarget.LockTargetUsedByMachine.EnumLockTargetUsedByMachineType.STRIPES_WRITE)
+                                            .laserType :
                                     BuildCraftLaserManager.MARKER_VOLUME_CONNECTED,
                     box.isEditingBy(player) ? RENDER_SCALE_HIGHLIGHT : RENDER_SCALE
             );

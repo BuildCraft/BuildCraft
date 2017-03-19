@@ -100,7 +100,9 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
                     new Lock(
                             new Lock.LockCause.LockCauseBlock(pos, blockState.getBlock()),
                             new Lock.LockTarget.LockTargetResize(),
-                            new Lock.LockTarget.LockTargetUsedByMachine()
+                            new Lock.LockTarget.LockTargetUsedByMachine(
+                                    Lock.LockTarget.LockTargetUsedByMachine.EnumLockTargetUsedByMachineType.STRIPES_READ
+                            )
                     )
             );
             volumeBoxes.markDirty();

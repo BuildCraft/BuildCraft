@@ -1,5 +1,7 @@
 package buildcraft.core.marker.volume;
 
+import buildcraft.core.client.BuildCraftLaserManager;
+import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.block.Block;
@@ -226,21 +228,45 @@ public class Lock {
         }
 
         public static class LockTargetUsedByMachine extends LockTarget {
+            public EnumLockTargetUsedByMachineType type;
+
+            public LockTargetUsedByMachine() {
+            }
+
+            public LockTargetUsedByMachine(EnumLockTargetUsedByMachineType type) {
+                this.type = type;
+            }
+
             @Override
             public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+                nbt.setTag("type", NBTUtilBC.writeEnum(type));
                 return nbt;
             }
 
             @Override
             public void readFromNBT(NBTTagCompound nbt) {
+                type = NBTUtilBC.readEnum(nbt.getTag("type"), EnumLockTargetUsedByMachineType.class);
             }
 
             @Override
             public void toBytes(PacketBuffer buf) {
+                new PacketBufferBC(buf).writeEnumValue(type);
             }
 
             @Override
             public void fromBytes(PacketBuffer buf) {
+                type = new PacketBufferBC(buf).readEnumValue(EnumLockTargetUsedByMachineType.class);
+            }
+
+            public enum EnumLockTargetUsedByMachineType {
+                STRIPES_WRITE(BuildCraftLaserManager.STRIPES_WRITE),
+                STRIPES_READ(BuildCraftLaserManager.STRIPES_READ);
+
+                public final LaserData_BC8.LaserType laserType;
+
+                EnumLockTargetUsedByMachineType(LaserData_BC8.LaserType laserType) {
+                    this.laserType = laserType;
+                }
             }
         }
 

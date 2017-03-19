@@ -83,7 +83,9 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                                 new Lock.LockCause.LockCauseBlock(pos, blockState.getBlock()),
                                 new Lock.LockTarget.LockTargetResize(),
                                 new Lock.LockTarget.LockTargetAddon(addon.getSlot()),
-                                new Lock.LockTarget.LockTargetUsedByMachine()
+                                new Lock.LockTarget.LockTargetUsedByMachine(
+                                        Lock.LockTarget.LockTargetUsedByMachine.EnumLockTargetUsedByMachineType.STRIPES_WRITE
+                                )
                         )
                 );
                 volumeBoxes.markDirty();
