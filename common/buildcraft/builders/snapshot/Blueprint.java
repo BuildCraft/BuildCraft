@@ -74,6 +74,7 @@ public class Blueprint extends Snapshot {
         public BuildingInfo(BlockPos basePos, Rotation rotation) {
             this.basePos = basePos;
             this.rotation = rotation;
+            SchematicsLoader.INSTANCE.computeRequired(getSnapshot());
             for (int z = 0; z < getSnapshot().size.getZ(); z++) {
                 for (int y = 0; y < getSnapshot().size.getY(); y++) {
                     for (int x = 0; x < getSnapshot().size.getX(); x++) {
@@ -81,7 +82,6 @@ public class Blueprint extends Snapshot {
                         BlockPos blockPos = new BlockPos(x, y, z).rotate(rotation)
                                 .add(basePos)
                                 .add(offset.rotate(rotation));
-                        SchematicsLoader.INSTANCE.computeRequired(getSnapshot());
                         if (schematicBlock.blockState.getBlock().isAir(schematicBlock.blockState, null, null)) {
                             toBreak.add(blockPos);
                         } else {
