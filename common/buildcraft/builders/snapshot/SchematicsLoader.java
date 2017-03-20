@@ -309,18 +309,18 @@ public enum SchematicsLoader {
     ) {
         ResourceLocation registryName = block.getRegistryName();
         if (registryName == null) {
-            return getSchematicBlock(world, pos, basePos, Blocks.AIR.getDefaultState(), Blocks.AIR);
+            return getIgnoredSchematicBlock(world, basePos, pos);
         }
         String domain = registryName.getResourceDomain();
         if (!RulesLoader.INSTANCE.readDomains.contains(domain)) {
-            return getSchematicBlock(world, pos, basePos, Blocks.AIR.getDefaultState(), Blocks.AIR);
+            return getIgnoredSchematicBlock(world, basePos, pos);
         }
         // Get list of all rules for this block
         Set<JsonRule> rules = getRules(world, basePos, pos, blockState, block);
         // -- requiredBlockOffsets --
         Set<BlockPos> requiredBlockOffsets = getRequiredBlockOffsets(world, basePos, pos, blockState, block, rules);
         if (getRequiredFluids(world, basePos, pos, blockState, block, rules) == null) {
-            return getSchematicBlock(world, pos, basePos, Blocks.AIR.getDefaultState(), Blocks.AIR);
+            return getIgnoredSchematicBlock(world, basePos, pos);
         }
         // -- ignoredProperties --
         List<IProperty<?>> ignoredProperties = getIgnoredProperties(world, basePos, pos, blockState, block, rules);
@@ -336,7 +336,7 @@ public enum SchematicsLoader {
         canBeReplacedWithBlocks.add(placeBlock);
         // Form schematic block
         if (rules.stream().anyMatch(rule -> rule.ignore)) {
-            return getSchematicBlock(world, pos, basePos, Blocks.AIR.getDefaultState(), Blocks.AIR);
+            return getIgnoredSchematicBlock(world, basePos, pos);
         }
         return new SchematicBlock(
                 requiredBlockOffsets,
@@ -349,13 +349,20 @@ public enum SchematicsLoader {
         );
     }
 
-    public void computeRequiredForPos(FakeWorld world, Blueprint blueprint, BlockPos pos) {
+    public SchematicBlock getIgnoredSchematicBlock(World world, BlockPos basePos, BlockPos pos) {
+        return getSchematicBlock(world, pos, basePos, Blocks.AIR.getDefaultState(), Blocks.AIR);
+    }
+
+    private void computeRequiredForPos(FakeWorld world, Blueprint blueprint, BlockPos pos) {
         SchematicBlock schematicBlock = blueprint.data[pos.getX()][pos.getY()][pos.getZ()];
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
         Set<JsonRule> rules = getRules(world, BlockPos.ORIGIN, pos, blockState, block);
         schematicBlock.requiredItems = getRequiredItems(world, BlockPos.ORIGIN, pos, blockState, block, rules);
         schematicBlock.requiredFluids = getRequiredFluids(world, BlockPos.ORIGIN, pos, blockState, block, rules);
+        if (schematicBlock.requiredFluids == null) {
+            blueprint.data[pos.getX()][pos.getY()][pos.getZ()] = getIgnoredSchematicBlock(world, BlockPos.ORIGIN, pos);
+        }
     }
 
     public void computeRequired(Blueprint blueprint) {
