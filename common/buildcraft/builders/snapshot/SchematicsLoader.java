@@ -302,8 +302,8 @@ public enum SchematicsLoader {
 
     public SchematicBlock getSchematicBlock(
             World world,
-            BlockPos pos,
             BlockPos basePos,
+            BlockPos pos,
             IBlockState blockState,
             Block block
     ) {
@@ -350,7 +350,7 @@ public enum SchematicsLoader {
     }
 
     public SchematicBlock getIgnoredSchematicBlock(World world, BlockPos basePos, BlockPos pos) {
-        return getSchematicBlock(world, pos, basePos, Blocks.AIR.getDefaultState(), Blocks.AIR);
+        return getSchematicBlock(world, basePos, pos, Blocks.AIR.getDefaultState(), Blocks.AIR);
     }
 
     private void computeRequiredForPos(FakeWorld world, Blueprint blueprint, BlockPos pos) {
