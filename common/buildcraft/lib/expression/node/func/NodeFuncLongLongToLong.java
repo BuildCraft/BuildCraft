@@ -2,9 +2,9 @@ package buildcraft.lib.expression.node.func;
 
 import buildcraft.lib.expression.InvalidExpressionException;
 import buildcraft.lib.expression.NodeInliningHelper;
-import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
+import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 
 public class NodeFuncLongLongToLong implements INodeFuncLong {
@@ -33,7 +33,9 @@ public class NodeFuncLongLongToLong implements INodeFuncLong {
 
     @Override
     public INodeLong getNode(INodeStack stack) throws InvalidExpressionException {
-        return new Func(stack.popLong(), stack.popLong(), function, stringFunction);
+        INodeLong b = stack.popLong();
+        INodeLong a = stack.popLong();
+        return new Func(a, b, function, stringFunction);
     }
 
     private static class Func implements INodeLong {
@@ -41,9 +43,9 @@ public class NodeFuncLongLongToLong implements INodeFuncLong {
         private final IFuncLongLongToLong function;
         private final StringFunctionTri stringFunction;
 
-        public Func(INodeLong left, INodeLong right, IFuncLongLongToLong function, StringFunctionTri stringFunction) {
-            this.a = right;
-            this.b = left;
+        public Func(INodeLong a, INodeLong b, IFuncLongLongToLong function, StringFunctionTri stringFunction) {
+            this.a = a;
+            this.b = b;
             this.function = function;
             this.stringFunction = stringFunction;
         }
@@ -56,7 +58,7 @@ public class NodeFuncLongLongToLong implements INodeFuncLong {
         @Override
         public INodeLong inline() {
             return NodeInliningHelper.tryInline(this, a, b, (a, b) -> new Func(a, b, function, stringFunction),//
-                    (a, b) -> new NodeConstantLong(function.apply(a.evaluate(), b.evaluate())));
+                (a, b) -> new NodeConstantLong(function.apply(a.evaluate(), b.evaluate())));
         }
 
         @Override

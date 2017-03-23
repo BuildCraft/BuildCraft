@@ -7,7 +7,6 @@ import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pipe.IPipe.ConnectedType;
 
 public class PipeBehaviourClay extends PipeBehaviour {
-
     public PipeBehaviourClay(IPipe pipe) {
         super(pipe);
     }

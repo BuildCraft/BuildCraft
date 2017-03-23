@@ -29,10 +29,4 @@ public class PipeBehaviourSandstone extends PipeBehaviour {
     public boolean canConnect(EnumFacing face, TileEntity oTile) {
         return false;
     }
-
-    @PipeEventHandler
-    public static void configurePower(PipeEventPower.Configure event) {
-        event.setMaxPower(MjAPI.MJ * 8);
-        event.setPowerResistance(MjAPI.MJ / 40);// 1/40th lost, or 0.025%
-    }
 }

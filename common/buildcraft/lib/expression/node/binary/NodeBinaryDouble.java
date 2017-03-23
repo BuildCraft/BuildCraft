@@ -7,49 +7,30 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 
 public class NodeBinaryDouble implements INodeDouble {
-    public enum Type {
-        ADD("+", (l, r) -> l + r),
-        SUB("-", (l, r) -> l - r),
-        MUL("*", (l, r) -> l * r),
-        DIV("/", (l, r) -> l / r),
-        MOD("%", (l, r) -> l % r),
-        POW("^", (l, r) -> Math.pow(l, r));
-
-        private final String op;
-        private final DoubleBinaryOperator operator;
-
-        private Type(String op, DoubleBinaryOperator operator) {
-            this.op = op;
-            this.operator = operator;
-        }
-
-        public NodeBinaryDouble create(INodeDouble left, INodeDouble right) {
-            return new NodeBinaryDouble(left, right, this);
-        }
-    }
-
     private final INodeDouble left, right;
-    private final Type type;
+    private final DoubleBinaryOperator func;
+    private final String op;
 
-    private NodeBinaryDouble(INodeDouble left, INodeDouble right, Type type) {
+    public NodeBinaryDouble(INodeDouble left, INodeDouble right, DoubleBinaryOperator func, String op) {
         this.left = left;
         this.right = right;
-        this.type = type;
+        this.func = func;
+        this.op = op;
     }
 
     @Override
     public double evaluate() {
-        return type.operator.applyAsDouble(left.evaluate(), right.evaluate());
+        return func.applyAsDouble(left.evaluate(), right.evaluate());
     }
 
     @Override
     public INodeDouble inline() {
-        return NodeInliningHelper.tryInline(this, left, right, (l, r) -> new NodeBinaryDouble(l, r, type), //
-                (l, r) -> new NodeConstantDouble(type.operator.applyAsDouble(l.evaluate(), r.evaluate())));
+        return NodeInliningHelper.tryInline(this, left, right, (l, r) -> new NodeBinaryDouble(l, r, func, op), //
+            (l, r) -> new NodeConstantDouble(func.applyAsDouble(l.evaluate(), r.evaluate())));
     }
 
     @Override
     public String toString() {
-        return "(" + left + ") " + type.op + " (" + right + ")";
+        return "(" + left + ") " + op + " (" + right + ")";
     }
 }

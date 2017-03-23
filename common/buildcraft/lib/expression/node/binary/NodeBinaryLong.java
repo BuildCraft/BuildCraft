@@ -7,51 +7,30 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 
 public class NodeBinaryLong implements INodeLong {
-    public enum Type {
-        ADD("+", (l, r) -> l + r),
-        SUB("-", (l, r) -> l - r),
-        MUL("*", (l, r) -> l * r),
-        DIV("/", (l, r) -> l / r),
-        MOD("%", (l, r) -> l % r),
-        POW("^", (l, r) -> (long) Math.pow(l, r)),
-        SHIFT_LEFT("<<", (l, r) -> l << r),
-        SHIFT_RIGHT(">>", (l, r) -> l >> r);
-
-        private final String op;
-        private final LongBinaryOperator operator;
-
-        Type(String op, LongBinaryOperator operator) {
-            this.op = op;
-            this.operator = operator;
-        }
-
-        public NodeBinaryLong create(INodeLong left, INodeLong right) {
-            return new NodeBinaryLong(left, right, this);
-        }
-    }
-
     private final INodeLong left, right;
-    private final Type type;
+    private final LongBinaryOperator func;
+    private final String op;
 
-    private NodeBinaryLong(INodeLong left, INodeLong right, Type type) {
+    public NodeBinaryLong(INodeLong left, INodeLong right, LongBinaryOperator func, String op) {
         this.left = left;
         this.right = right;
-        this.type = type;
+        this.func = func;
+        this.op = op;
     }
 
     @Override
     public long evaluate() {
-        return type.operator.applyAsLong(left.evaluate(), right.evaluate());
+        return func.applyAsLong(left.evaluate(), right.evaluate());
     }
 
     @Override
     public INodeLong inline() {
-        return NodeInliningHelper.tryInline(this, left, right, (l, r) -> new NodeBinaryLong(l, r, type), //
-                (l, r) -> new NodeConstantLong(type.operator.applyAsLong(l.evaluate(), r.evaluate())));
+        return NodeInliningHelper.tryInline(this, left, right, (l, r) -> new NodeBinaryLong(l, r, func, op), //
+            (l, r) -> new NodeConstantLong(func.applyAsLong(l.evaluate(), r.evaluate())));
     }
 
     @Override
     public String toString() {
-        return "(" + left + ") " + type.op + " (" + right + ")";
+        return "(" + left + ") " + op + " (" + right + ")";
     }
 }

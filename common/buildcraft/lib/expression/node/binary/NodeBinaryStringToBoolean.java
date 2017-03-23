@@ -4,17 +4,17 @@ import buildcraft.lib.expression.NodeInliningHelper;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 
-public class NodeBinaryDoubleToBoolean implements INodeBoolean {
+public class NodeBinaryStringToBoolean implements INodeBoolean {
     @FunctionalInterface
-    public interface BiDoubleToBooleanFunction {
-        boolean apply(double l, double r);
+    public interface BiStringToBooleanFunction {
+        boolean apply(String l, String r);
     }
 
-    private final INodeDouble left, right;
-    private final BiDoubleToBooleanFunction func;
+    private final INodeString left, right;
+    private final BiStringToBooleanFunction func;
     private final String op;
 
-    public NodeBinaryDoubleToBoolean(INodeDouble left, INodeDouble right, BiDoubleToBooleanFunction func, String op) {
+    public NodeBinaryStringToBoolean(INodeString left, INodeString right, BiStringToBooleanFunction func, String op) {
         this.left = left;
         this.right = right;
         this.func = func;
@@ -28,7 +28,7 @@ public class NodeBinaryDoubleToBoolean implements INodeBoolean {
 
     @Override
     public INodeBoolean inline() {
-        return NodeInliningHelper.tryInline(this, left, right, (l, r) -> new NodeBinaryDoubleToBoolean(l, r, func, op), //
+        return NodeInliningHelper.tryInline(this, left, right, (l, r) -> new NodeBinaryStringToBoolean(l, r, func, op), //
             (l, r) -> NodeConstantBoolean.get(func.apply(l.evaluate(), r.evaluate())));
     }
 
@@ -36,5 +36,4 @@ public class NodeBinaryDoubleToBoolean implements INodeBoolean {
     public String toString() {
         return "(" + left + ") " + op + " (" + right + ")";
     }
-
 }

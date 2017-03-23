@@ -21,10 +21,4 @@ public class PipeBehaviourGold extends PipeBehaviour {
     public static void modifySpeed(PipeEventItem.ModifySpeed event) {
         event.modifyTo(SPEED_TARGET, SPEED_DELTA);
     }
-
-    @PipeEventHandler
-    public static void configurePower(PipeEventPower.Configure event) {
-        event.setMaxPower(MjAPI.MJ * 128);
-        event.setPowerResistance(MjAPI.MJ / 320);// 1/320th lost, or 0.003125%
-    }
 }

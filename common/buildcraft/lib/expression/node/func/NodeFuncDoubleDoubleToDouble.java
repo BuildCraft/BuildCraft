@@ -2,9 +2,9 @@ package buildcraft.lib.expression.node.func;
 
 import buildcraft.lib.expression.InvalidExpressionException;
 import buildcraft.lib.expression.NodeInliningHelper;
-import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
+import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 
 public class NodeFuncDoubleDoubleToDouble implements INodeFuncDouble {
@@ -33,7 +33,9 @@ public class NodeFuncDoubleDoubleToDouble implements INodeFuncDouble {
 
     @Override
     public INodeDouble getNode(INodeStack stack) throws InvalidExpressionException {
-        return new Func(stack.popDouble(), stack.popDouble(), function, stringFunction);
+        INodeDouble b = stack.popDouble();
+        INodeDouble a = stack.popDouble();
+        return new Func(a, b, function, stringFunction);
     }
 
     private static class Func implements INodeDouble {
@@ -41,9 +43,9 @@ public class NodeFuncDoubleDoubleToDouble implements INodeFuncDouble {
         private final IFuncDoubleDoubleToDouble function;
         private final StringFunctionTri stringFunction;
 
-        public Func(INodeDouble left, INodeDouble right, IFuncDoubleDoubleToDouble function, StringFunctionTri stringFunction) {
-            this.a = right;
-            this.b = left;
+        public Func(INodeDouble a, INodeDouble b, IFuncDoubleDoubleToDouble function, StringFunctionTri stringFunction) {
+            this.a = a;
+            this.b = b;
             this.function = function;
             this.stringFunction = stringFunction;
         }
@@ -56,7 +58,7 @@ public class NodeFuncDoubleDoubleToDouble implements INodeFuncDouble {
         @Override
         public INodeDouble inline() {
             return NodeInliningHelper.tryInline(this, a, b, (a, b) -> new Func(a, b, function, stringFunction),//
-                    (a, b) -> new NodeConstantDouble(function.apply(a.evaluate(), b.evaluate())));
+                (a, b) -> new NodeConstantDouble(function.apply(a.evaluate(), b.evaluate())));
         }
 
         @Override

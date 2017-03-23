@@ -63,11 +63,11 @@ public class VecUtil {
         return axis == Axis.X ? from.xCoord : axis == Axis.Y ? from.yCoord : from.zCoord;
     }
 
-    public static int getValue(BlockPos from, Axis axis) {
+    public static int getValue(Vec3i from, Axis axis) {
         return axis == Axis.X ? from.getX() : axis == Axis.Y ? from.getY() : from.getZ();
     }
 
-    public static Vec3d convertCenter(BlockPos pos) {
+    public static Vec3d convertCenter(Vec3i pos) {
         return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
     }
 

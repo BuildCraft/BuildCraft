@@ -65,6 +65,7 @@ public class DefaultContexts {
         MATH_SCALAR.put_ll_l("max_long", (a, b) -> Math.max(a, b));
         MATH_SCALAR.put_dd_d("min_double", (a, b) -> Math.min(a, b));
         MATH_SCALAR.put_dd_d("max_double", (a, b) -> Math.max(a, b));
+        MATH_SCALAR.put_dd_d("pow", (a, b) -> Math.pow(a, b));
 
         // MATH_VECTOR.putConstantVecLong("origin", VecLong.ZERO);
         // MATH_VECTOR.putConstantVecLong("vec_zero", VecLong.ZERO);
