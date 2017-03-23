@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class FakeChunkProvider implements IChunkProvider {
     private final FakeWorld world;
-    private final Map<ChunkPos, Chunk> chunks = new HashMap<>();
+    public final Map<ChunkPos, Chunk> chunks = new HashMap<>();
 
     public FakeChunkProvider(FakeWorld world) {
         this.world = world;

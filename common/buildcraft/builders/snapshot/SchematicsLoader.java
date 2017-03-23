@@ -247,6 +247,9 @@ public enum SchematicsLoader {
                     blockState,
                     0
             ));
+            if (world instanceof FakeWorld) {
+                requiredItems.addAll(((FakeWorld) world).breakBlockAndGetDrops(pos));
+            }
         }
         rules.stream()
                 .map(rule -> rule.copyRequiredItemsCountFromProperty)
@@ -366,11 +369,13 @@ public enum SchematicsLoader {
     }
 
     public void computeRequired(Blueprint blueprint) {
-        FakeWorld world = new FakeWorld(blueprint);
+        FakeWorld world = new FakeWorld();
         for (int z = 0; z < blueprint.size.getZ(); z++) {
             for (int y = 0; y < blueprint.size.getY(); y++) {
                 for (int x = 0; x < blueprint.size.getX(); x++) {
+                    world.uploadBlueprint(blueprint);
                     computeRequiredForPos(world, blueprint, new BlockPos(x, y, z));
+                    world.clear();
                 }
             }
         }

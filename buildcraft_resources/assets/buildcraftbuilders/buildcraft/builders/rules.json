@@ -9,17 +9,21 @@
             "minecraft:wooden_slab",
             "minecraft:double_stone_slab2",
             "minecraft:stone_slab2",
-            "minecraft:flower_pot"
-        ],
-        "copyRequiredItemsFromDrops": true
-    },
-    {
-        "selectors": [
+            "minecraft:flower_pot",
             "minecraft:hopper",
             "minecraft:chest",
             "minecraft:trapped_chest",
             "minecraft:dispenser",
             "minecraft:dropper",
+            "minecraft:furnace",
+            "minecraft:lit_furnace",
+            "minecraft:brewing_stand",
+            "minecraft:jukebox"
+        ],
+        "copyRequiredItemsFromDrops": true
+    },
+    {
+        "selectors": [
             "minecraft:white_shulker_box",
             "minecraft:orange_shulker_box",
             "minecraft:magenta_shulker_box",
@@ -131,7 +135,6 @@
     },
     {
         "selectors": ["minecraft:furnace", "minecraft:lit_furnace"],
-        "copyRequiredItemsFromItemHandlersOnSides": ["down", "up"],
         "canBeReplacedWithBlocks": ["minecraft:furnace", "minecraft:lit_furnace"]
     },
     {
