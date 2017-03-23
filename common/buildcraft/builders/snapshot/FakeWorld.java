@@ -33,7 +33,7 @@ public class FakeWorld extends World {
             for (int y = 0; y < blueprint.size.getY(); y++) {
                 for (int x = 0; x < blueprint.size.getX(); x++) {
                     SchematicBlock schematicBlock = blueprint.data[x][y][z];
-                    schematicBlock.build(this, new BlockPos(x, y, z));
+                    schematicBlock.buildWithoutChecks(this, new BlockPos(x, y, z));
                 }
             }
         }

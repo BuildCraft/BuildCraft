@@ -192,7 +192,8 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     private SchematicBlock readSchematicForBlock(BlockPos worldScanPos) {
         return SchematicsLoader.INSTANCE.getSchematicBlock(
                 world,
-                pos.offset(world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite()), worldScanPos,
+                pos.offset(world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite()),
+                worldScanPos,
                 world.getBlockState(worldScanPos),
                 world.getBlockState(worldScanPos).getBlock()
         );

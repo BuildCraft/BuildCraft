@@ -181,4 +181,26 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         }
         return false;
     }
+
+    public boolean buildWithoutChecks(World world, BlockPos blockPos) {
+        if (world.setBlockState(blockPos, blockState, 0)) {
+            if (tileNbt != null && blockState.getBlock().hasTileEntity(blockState)) {
+                NBTTagCompound newTileNbt = new NBTTagCompound();
+                tileNbt.getKeySet().stream()
+                        .map(key -> Pair.of(key, tileNbt.getTag(key)))
+                        .forEach(kv -> newTileNbt.setTag(kv.getKey(), kv.getValue()));
+                newTileNbt.setInteger("x", blockPos.getX());
+                newTileNbt.setInteger("y", blockPos.getY());
+                newTileNbt.setInteger("z", blockPos.getZ());
+                TileEntity tileEntity = TileEntity.create(world, newTileNbt);
+                if (tileEntity != null) {
+                    tileEntity.setWorld(world);
+                    world.setTileEntity(blockPos, tileEntity);
+                    tileEntity.rotate(tileRotation);
+                }
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -100,10 +100,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     protected boolean doPlaceTask(PlaceTask placeTask) {
-        if (getBuildingInfo() == null || getBuildingInfo().toPlace.get(placeTask.pos) == null) {
-            return false;
-        }
-        return getBuildingInfo().toPlace.get(placeTask.pos).build(tile.getWorld(), placeTask.pos);
+        return !(getBuildingInfo() == null || getBuildingInfo().toPlace.get(placeTask.pos) == null) &&
+                getBuildingInfo().toPlace.get(placeTask.pos).build(tile.getWorld(), placeTask.pos);
     }
 
     @Override
