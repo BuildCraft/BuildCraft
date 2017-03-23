@@ -227,12 +227,6 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         return getToBreak().stream().allMatch(tile.getWorld()::isAirBlock) && getToPlace().stream().allMatch(this::isBlockCorrect);
     }
 
-//    public Box getBox() {
-//        Box box = new Box();
-//        Stream.concat(getToBreak().stream(), getToPlace().stream()).forEach(box::extendToEncompass);
-//        return box;
-//    }
-
     public void writeToByteBuf(PacketBufferBC buffer) {
         buffer.writeInt(breakTasks.size());
         breakTasks.forEach(breakTask -> breakTask.writePayload(buffer));

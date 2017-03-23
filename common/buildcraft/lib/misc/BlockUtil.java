@@ -423,6 +423,6 @@ public final class BlockUtil {
     }
 
     public static <T extends Comparable<T>> IBlockState copyProperty(IProperty<T> property, IBlockState dst, IBlockState src) {
-        return dst.withProperty(property, src.getValue(property));
+        return dst.getPropertyKeys().contains(property) ? dst.withProperty(property, src.getValue(property)) : dst;
     }
 }
