@@ -120,7 +120,7 @@ dependencies {
 ````
 
 If you want to depend on the whole of buildcraft do this:
-````
+```
 dependencies {
     deobfCompile name: "buildcraft", version: "7.2.5"
 }
