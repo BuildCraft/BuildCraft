@@ -1,5 +1,7 @@
 package buildcraft.lib.net;
 
+import com.google.common.base.Charsets;
+import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
 
@@ -271,5 +273,12 @@ public class PacketBufferBC extends PacketBuffer {
             index = 0;
         }
         return enums[index];
+    }
+
+    /**
+     * Reads string of any possible length
+     */
+    public String readString() {
+        return new String(readBytes(readVarInt()).array(), Charsets.UTF_8);
     }
 }

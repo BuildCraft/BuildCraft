@@ -30,8 +30,13 @@ public enum RulesLoader {
                         "assets/" + domain + "/buildcraft/builders/rules.json"
                 );
                 if (inputStream != null) {
-                    rules.addAll(new GsonBuilder().create().fromJson(new InputStreamReader(inputStream), new TypeToken<List<JsonRule>>() {
-                    }.getType()));
+                    rules.addAll(
+                            new GsonBuilder().create().fromJson(
+                                    new InputStreamReader(inputStream),
+                                    new TypeToken<List<JsonRule>>() {
+                                    }.getType()
+                            )
+                    );
                     readDomains.add(domain);
                 }
             }

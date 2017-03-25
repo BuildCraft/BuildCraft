@@ -241,7 +241,8 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         super.writePayload(id, buffer, side);
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
-                box.writeData(buffer);
+                writePayload(NET_BOX, buffer, side);
+                buffer.writeString(name);
             }
             if (id == NET_BOX) {
                 box.writeData(buffer);
@@ -254,7 +255,8 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
-                box.readData(buffer);
+                readPayload(NET_BOX, buffer, side, ctx);
+                name = buffer.readString();
             } else if (id == NET_BOX) {
                 box.readData(buffer);
             } else if (id == NET_SCAN) {

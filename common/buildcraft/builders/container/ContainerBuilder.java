@@ -26,4 +26,9 @@ public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
             }
         }
     }
+
+    @Override
+    public boolean canInteractWith(EntityPlayer player) {
+        return true;
+    }
 }

@@ -42,6 +42,11 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
         addSlotToContainer(new SlotOutput(tile.invUpOut, 0, 219, 79));
     }
 
+    @Override
+    public boolean canInteractWith(EntityPlayer entityplayer) {
+        return true;
+    }
+
     public void sendSelectedToServer(Snapshot.Header selected) {
         sendMessage(ID_SELECTED, buffer -> {
             buffer.writeBoolean(selected != null);
@@ -65,10 +70,5 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
                 tile.sendNetworkUpdate(TileBC_Neptune.NET_RENDER_DATA);
             }
         }
-    }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer entityplayer) {
-        return true;
     }
 }

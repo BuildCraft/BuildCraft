@@ -54,6 +54,16 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
         }
     }
 
+    // How networking works here:
+    // down:
+    // 1. server sends NET_DOWN with snapshot to clients
+    // 2. clients add snapshot to their local database
+    // up:
+    // 1. server sends empty NET_UP to clients
+    // 2. client who have selected snapshot sends NET_UP with it back to server
+    // 3. server adds snapshot to its database
+
+    @SuppressWarnings({"Duplicates", "StatementWithEmptyBody"})
     @Override
     public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
@@ -78,9 +88,27 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                     buffer.writeBoolean(false);
                 }
             }
+            if (id == NET_UP) {
+            }
+        }
+        if (side == Side.CLIENT) {
+            if (id == NET_UP) {
+                if (selected != null) {
+                    Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(selected);
+                    if (snapshot != null) {
+                        buffer.writeBoolean(true);
+                        buffer.writeCompoundTag(Snapshot.writeToNBT(snapshot));
+                    } else {
+                        buffer.writeBoolean(false);
+                    }
+                } else {
+                    buffer.writeBoolean(false);
+                }
+            }
         }
     }
 
+    @SuppressWarnings({"Duplicates", "StatementWithEmptyBody"})
     @Override
     public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
@@ -101,22 +129,19 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                 }
             }
             if (id == NET_UP) {
-                if (selected != null) {
-                    Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(selected);
-                    if (snapshot != null) {
-                        MessageUtil.getWrapper().sendToServer(createMessage(NET_UP, localBuffer ->
-                                localBuffer.writeCompoundTag(Snapshot.writeToNBT(snapshot))
-                        ));
-                    }
-                }
+                MessageUtil.getWrapper().sendToServer(createNetworkUpdate(NET_UP));
             }
         }
         if (side == Side.SERVER) {
-            Snapshot snapshot = Snapshot.readFromNBT(buffer.readCompoundTag());
-            snapshot.header.id = UUID.randomUUID();
-            invUpIn.setStackInSlot(0, ItemStack.EMPTY);
-            GlobalSavedDataSnapshots.get(world).snapshots.add(snapshot);
-            invUpOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshot.getType(), snapshot.header));
+            if (id == NET_UP) {
+                if (buffer.readBoolean()) {
+                    Snapshot snapshot = Snapshot.readFromNBT(buffer.readCompoundTag());
+                    snapshot.header.id = UUID.randomUUID();
+                    invUpIn.setStackInSlot(0, ItemStack.EMPTY);
+                    GlobalSavedDataSnapshots.get(world).snapshots.add(snapshot);
+                    invUpOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshot.getType(), snapshot.header));
+                }
+            }
         }
     }
 }

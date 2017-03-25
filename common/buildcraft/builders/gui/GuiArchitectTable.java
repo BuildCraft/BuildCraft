@@ -13,6 +13,8 @@ import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
 
+import java.io.IOException;
+
 public class GuiArchitectTable extends GuiBC8<ContainerArchitectTable> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftbuilders:textures/gui/architect.png");
     private static final int SIZE_X = 256, SIZE_Y = 166;
@@ -31,7 +33,7 @@ public class GuiArchitectTable extends GuiBC8<ContainerArchitectTable> {
     @Override
     public void initGui() {
         super.initGui();
-        nameField = new GuiTextField(0, fontRenderer, 90, 62, 156, 12);
+        nameField = new GuiTextField(0, fontRenderer, guiLeft + 90, guiTop + 62, 156, 12);
         nameField.setText(container.tile.name);
         nameField.setFocused(true);
     }
@@ -49,8 +51,29 @@ public class GuiArchitectTable extends GuiBC8<ContainerArchitectTable> {
 
     @Override
     protected void drawForegroundLayer() {
-        GlStateManager.translate(guiLeft, guiTop, 0);
         nameField.drawTextBox();
-        GlStateManager.translate(-guiLeft, -guiTop, 0);
+    }
+
+    @Override
+    public void updateScreen() {
+        nameField.updateCursorCounter();
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        boolean typed = false;
+        if (nameField.isFocused()) {
+            typed = nameField.textboxKeyTyped(typedChar, keyCode);
+            container.sendNameToServer(nameField.getText().trim());
+        }
+        if (!typed) {
+            super.keyTyped(typedChar, keyCode);
+        }
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        nameField.mouseClicked(mouseX, mouseY, mouseButton);
     }
 }
