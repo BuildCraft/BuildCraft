@@ -168,7 +168,10 @@
             "minecraft:beetroots",
             "minecraft:wooden_door",
             "minecraft:iron_door",
-            "minecraft:rail"
+            "minecraft:rail",
+            "minecraft:activator_rail",
+            "minecraft:detector_rail",
+            "minecraft:golden_rail"
         ],
         "requiredBlockOffsets": [[0, -1, 0]]
     },
