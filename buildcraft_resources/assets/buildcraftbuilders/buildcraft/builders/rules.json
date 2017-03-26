@@ -134,8 +134,7 @@
     },
     {
         "selectors": ["minecraft:wooden_door", "minecraft:iron_door"],
-        "ignoredProperties": ["powered", "open", "hinge"],
-        "requiredBlockOffsets": [[0, -1, 0]]
+        "ignoredProperties": ["powered", "open", "hinge"]
     },
     {
         "selectors": ["minecraft:hopper"],
@@ -166,7 +165,10 @@
             "minecraft:double_plant",
             "minecraft:red_flower",
             "minecraft:yellow_flower",
-            "minecraft:beetroots"
+            "minecraft:beetroots",
+            "minecraft:wooden_door",
+            "minecraft:iron_door",
+            "minecraft:rail"
         ],
         "requiredBlockOffsets": [[0, -1, 0]]
     },
@@ -196,8 +198,13 @@
         "requiredItems": []
     },
     {
-        "selectors": ["minecraft:rail"],
-        "ignoredProperties": ["shape"]
+        "selectors": [
+            "minecraft:rail",
+            "minecraft:activator_rail",
+            "minecraft:detector_rail",
+            "minecraft:golden_rail"
+        ],
+        "ignoredProperties": ["shape", "powered"]
     },
     {
         "selectors": [
