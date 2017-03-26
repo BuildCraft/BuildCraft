@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FakeWorld extends World {
-    public static final BlockPos BLUEPRINT_OFFSET = new BlockPos(0, 128, 0);
+    public static final BlockPos BLUEPRINT_OFFSET = new BlockPos(0, 127, 0);
     private final List<ItemStack> drops = new ArrayList<>();
 
     public FakeWorld() {

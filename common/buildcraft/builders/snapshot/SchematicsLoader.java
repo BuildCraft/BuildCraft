@@ -361,14 +361,18 @@ public enum SchematicsLoader {
     }
 
     private void computeRequiredForPos(FakeWorld world, Blueprint blueprint, BlockPos pos) {
-        SchematicBlock schematicBlock = blueprint.data[pos.getX()][pos.getY()][pos.getZ()];
-        IBlockState blockState = world.getBlockState(pos.add(FakeWorld.BLUEPRINT_OFFSET));
+        BlockPos basePos = FakeWorld.BLUEPRINT_OFFSET;
+        SchematicBlock schematicBlock = blueprint.data
+                [pos.getX() - basePos.getX()]
+                [pos.getY() - basePos.getY()]
+                [pos.getZ() - basePos.getZ()];
+        IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
-        Set<JsonRule> rules = getRules(world, FakeWorld.BLUEPRINT_OFFSET, pos, blockState, block);
-        schematicBlock.requiredItems = getRequiredItems(world, FakeWorld.BLUEPRINT_OFFSET, pos, blockState, block, rules);
-        schematicBlock.requiredFluids = getRequiredFluids(world, FakeWorld.BLUEPRINT_OFFSET, pos, blockState, block, rules);
+        Set<JsonRule> rules = getRules(world, basePos, pos, blockState, block);
+        schematicBlock.requiredItems = getRequiredItems(world, basePos, pos, blockState, block, rules);
+        schematicBlock.requiredFluids = getRequiredFluids(world, basePos, pos, blockState, block, rules);
         if (schematicBlock.requiredFluids == null) {
-            blueprint.data[pos.getX()][pos.getY()][pos.getZ()] = getIgnoredSchematicBlock(world, FakeWorld.BLUEPRINT_OFFSET, pos);
+            blueprint.data[pos.getX()][pos.getY()][pos.getZ()] = getIgnoredSchematicBlock(world, basePos, pos);
         }
     }
 
@@ -378,7 +382,7 @@ public enum SchematicsLoader {
             for (int y = 0; y < blueprint.size.getY(); y++) {
                 for (int x = 0; x < blueprint.size.getX(); x++) {
                     world.uploadBlueprint(blueprint);
-                    computeRequiredForPos(world, blueprint, new BlockPos(x, y, z));
+                    computeRequiredForPos(world, blueprint, new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET));
                     world.clear();
                 }
             }

@@ -138,6 +138,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         return schematicBlock;
     }
 
+    @SuppressWarnings("Duplicates")
     public boolean build(World world, BlockPos blockPos) {
         IBlockState newBlockState = blockState;
         if (placeBlock != blockState.getBlock()) {
@@ -180,7 +181,9 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
                 if (tileEntity != null) {
                     tileEntity.setWorld(world);
                     world.setTileEntity(blockPos, tileEntity);
-                    tileEntity.rotate(tileRotation);
+                    if (tileRotation != Rotation.NONE) {
+                        tileEntity.rotate(tileRotation);
+                    }
                 }
                 return true;
             }
@@ -188,6 +191,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
         return false;
     }
 
+    @SuppressWarnings("Duplicates")
     public boolean buildWithoutChecks(World world, BlockPos blockPos) {
         if (world.setBlockState(blockPos, blockState, 0)) {
             if (tileNbt != null && blockState.getBlock().hasTileEntity(blockState)) {
@@ -202,7 +206,9 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
                 if (tileEntity != null) {
                     tileEntity.setWorld(world);
                     world.setTileEntity(blockPos, tileEntity);
-                    tileEntity.rotate(tileRotation);
+                    if (tileRotation != Rotation.NONE) {
+                        tileEntity.rotate(tileRotation);
+                    }
                 }
                 return true;
             }
