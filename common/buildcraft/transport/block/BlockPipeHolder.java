@@ -368,9 +368,9 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                 between = getWireBetweenHit(target);
             }
 
-            if (part != null) {
+            if (part != null && tile.wireManager.getColorOfPart(part) != null) {
                 return new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(part).getMetadata());
-            } else if (between != null) {
+            } else if (between != null && tile.wireManager.getColorOfPart(between.parts[0]) != null) {
                 return new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(between.parts[0]).getMetadata());
             }
         }
