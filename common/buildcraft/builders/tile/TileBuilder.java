@@ -181,11 +181,13 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
         battery.addPowerChecking(64 * MjAPI.MJ, false);
         if (getBuilder() != null) {
             if (getBuilder().tick()) {
-                currentBasePosIndex++;
-                if (currentBasePosIndex >= basePoses.size()) {
-                    currentBasePosIndex = basePoses.size() - 1;
+                if (currentBasePosIndex < basePoses.size() - 1) {
+                    currentBasePosIndex++;
+                    if (currentBasePosIndex >= basePoses.size()) {
+                        currentBasePosIndex = basePoses.size() - 1;
+                    }
+                    updateSnapshot();
                 }
-                updateSnapshot();
             }
         }
         sendNetworkUpdate(NET_RENDER_DATA); // FIXME

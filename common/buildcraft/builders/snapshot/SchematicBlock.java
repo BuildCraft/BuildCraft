@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     public Set<BlockPos> requiredBlockOffsets = new HashSet<>();
@@ -159,6 +160,11 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
             );
         }
         if (world.setBlockState(blockPos, newBlockState)) {
+            Stream.concat(
+                    requiredBlockOffsets.stream().map(blockPos::add),
+                    Stream.of(blockPos)
+            )
+                    .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, placeBlock, false));
             if (tileNbt != null && blockState.getBlock().hasTileEntity(blockState)) {
                 NBTTagCompound newTileNbt = new NBTTagCompound();
                 tileNbt.getKeySet().stream()

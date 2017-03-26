@@ -56,7 +56,9 @@ public enum SchematicsLoader {
                                                             .map(nameValue -> nameValue.split("="))
                                                             .allMatch(nameValue ->
                                                                     blockState.getPropertyKeys().stream()
-                                                                            .filter(property -> property.getName().equals(nameValue[0]))
+                                                                            .filter(property ->
+                                                                                    property.getName().equals(nameValue[0])
+                                                                            )
                                                                             .findFirst()
                                                                             .map(blockState::getValue)
                                                                             .map(Object::toString)
@@ -204,7 +206,31 @@ public enum SchematicsLoader {
             Set<JsonRule> rules
     ) {
         List<ItemStack> requiredItems = new ArrayList<>();
+        requiredItems.add(
+                block.getPickBlock(
+                        blockState,
+                        null,
+                        world,
+                        pos,
+                        null
+                )
+        );
+        if (rules.stream().anyMatch(rule -> rule.copyRequiredItemsFromDrops)) {
+            requiredItems.clear();
+            requiredItems.addAll(block.getDrops(
+                    world,
+                    pos,
+                    blockState,
+                    0
+            ));
+        }
+        if (rules.stream().noneMatch(rule -> rule.doNotCopyRequiredItemsFromBreakBlockDrops)) {
+            if (world instanceof FakeWorld) {
+                requiredItems.addAll(((FakeWorld) world).breakBlockAndGetDrops(pos));
+            }
+        }
         if (rules.stream().filter(rule -> rule.requiredItems != null).count() > 0) {
+            requiredItems.clear();
             rules.stream()
                     .filter(rule -> rule.requiredItems != null)
                     .map(rule -> rule.requiredItems)
@@ -228,28 +254,6 @@ public enum SchematicsLoader {
                     )
                     .filter(Objects::nonNull)
                     .forEach(requiredItems::add);
-        } else {
-            requiredItems.add(
-                    block.getPickBlock(
-                            blockState,
-                            null,
-                            world,
-                            pos,
-                            null
-                    )
-            );
-        }
-        if (rules.stream().anyMatch(rule -> rule.copyRequiredItemsFromDrops)) {
-            requiredItems.clear();
-            requiredItems.addAll(block.getDrops(
-                    world,
-                    pos,
-                    blockState,
-                    0
-            ));
-            if (world instanceof FakeWorld) {
-                requiredItems.addAll(((FakeWorld) world).breakBlockAndGetDrops(pos));
-            }
         }
         rules.stream()
                 .map(rule -> rule.copyRequiredItemsCountFromProperty)
@@ -358,13 +362,13 @@ public enum SchematicsLoader {
 
     private void computeRequiredForPos(FakeWorld world, Blueprint blueprint, BlockPos pos) {
         SchematicBlock schematicBlock = blueprint.data[pos.getX()][pos.getY()][pos.getZ()];
-        IBlockState blockState = world.getBlockState(pos);
+        IBlockState blockState = world.getBlockState(pos.add(FakeWorld.BLUEPRINT_OFFSET));
         Block block = blockState.getBlock();
-        Set<JsonRule> rules = getRules(world, BlockPos.ORIGIN, pos, blockState, block);
-        schematicBlock.requiredItems = getRequiredItems(world, BlockPos.ORIGIN, pos, blockState, block, rules);
-        schematicBlock.requiredFluids = getRequiredFluids(world, BlockPos.ORIGIN, pos, blockState, block, rules);
+        Set<JsonRule> rules = getRules(world, FakeWorld.BLUEPRINT_OFFSET, pos, blockState, block);
+        schematicBlock.requiredItems = getRequiredItems(world, FakeWorld.BLUEPRINT_OFFSET, pos, blockState, block, rules);
+        schematicBlock.requiredFluids = getRequiredFluids(world, FakeWorld.BLUEPRINT_OFFSET, pos, blockState, block, rules);
         if (schematicBlock.requiredFluids == null) {
-            blueprint.data[pos.getX()][pos.getY()][pos.getZ()] = getIgnoredSchematicBlock(world, BlockPos.ORIGIN, pos);
+            blueprint.data[pos.getX()][pos.getY()][pos.getZ()] = getIgnoredSchematicBlock(world, FakeWorld.BLUEPRINT_OFFSET, pos);
         }
     }
 

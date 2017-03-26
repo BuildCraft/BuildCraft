@@ -9,16 +9,7 @@
             "minecraft:wooden_slab",
             "minecraft:double_stone_slab2",
             "minecraft:stone_slab2",
-            "minecraft:flower_pot",
-            "minecraft:hopper",
-            "minecraft:chest",
-            "minecraft:trapped_chest",
-            "minecraft:dispenser",
-            "minecraft:dropper",
-            "minecraft:furnace",
-            "minecraft:lit_furnace",
-            "minecraft:brewing_stand",
-            "minecraft:jukebox"
+            "minecraft:flower_pot"
         ],
         "copyRequiredItemsFromDrops": true
     },
@@ -220,5 +211,29 @@
     {
         "selectors": ["minecraft:bed[part=head]"],
         "copyOppositeRequiredBlockOffsetFromProperty": "facing"
+    },
+    {
+        "selectors": ["lever[facing=down_x]", "lever[facing=down_z]"],
+        "requiredBlockOffsets": [[0, 1, 0]]
+    },
+    {
+        "selectors": ["lever[facing=up_x]", "lever[facing=up_x]"],
+        "requiredBlockOffsets": [[0, -1, 0]]
+    },
+    {
+        "selectors": ["lever[facing=north]"],
+        "requiredBlockOffsets": [[0, 0, 1]]
+    },
+    {
+        "selectors": ["lever[facing=south]"],
+        "requiredBlockOffsets": [[0, 0, -1]]
+    },
+    {
+        "selectors": ["lever[facing=west]"],
+        "requiredBlockOffsets": [[1, 0, 0]]
+    },
+    {
+        "selectors": ["lever[facing=east]"],
+        "requiredBlockOffsets": [[-1, 0, 0]]
     }
 ]

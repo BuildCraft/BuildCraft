@@ -1,8 +1,10 @@
 package buildcraft.builders.snapshot;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FakeWorld extends World {
+    public static final BlockPos BLUEPRINT_OFFSET = new BlockPos(0, 128, 0);
     private final List<ItemStack> drops = new ArrayList<>();
 
     public FakeWorld() {
@@ -40,11 +43,19 @@ public class FakeWorld extends World {
     }
 
     public void uploadBlueprint(Blueprint blueprint) {
-        for (int z = 0; z < blueprint.size.getZ(); z++) {
-            for (int y = 0; y < blueprint.size.getY(); y++) {
-                for (int x = 0; x < blueprint.size.getX(); x++) {
-                    SchematicBlock schematicBlock = blueprint.data[x][y][z];
-                    schematicBlock.buildWithoutChecks(this, new BlockPos(x, y, z));
+        for (int z = -1; z <= blueprint.size.getZ(); z++) {
+            for (int y = -1; y <= blueprint.size.getY(); y++) {
+                for (int x = -1; x <= blueprint.size.getX(); x++) {
+                    BlockPos pos = new BlockPos(x, y, z).add(BLUEPRINT_OFFSET);
+                    if (x == -1 || y == -1 || z == -1 ||
+                            x == blueprint.size.getX() ||
+                            y == blueprint.size.getY() ||
+                            z == blueprint.size.getZ()) {
+                        setBlockState(pos, Blocks.STONE.getDefaultState());
+                    } else {
+                        SchematicBlock schematicBlock = blueprint.data[x][y][z];
+                        schematicBlock.buildWithoutChecks(this, pos);
+                    }
                 }
             }
         }
@@ -55,6 +66,12 @@ public class FakeWorld extends World {
         List<ItemStack> dropsCopy = new ArrayList<>(drops);
         drops.clear();
         return dropsCopy;
+    }
+
+    @Override
+    public boolean setBlockState(BlockPos pos, IBlockState newState, int flags) {
+        captureBlockSnapshots = true;
+        return super.setBlockState(pos, newState, flags);
     }
 
     @Override

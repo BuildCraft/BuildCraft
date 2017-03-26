@@ -6,6 +6,7 @@ public class JsonRule {
     public List<String> selectors = null;
     public List<String> requiredItems = null;
     public boolean copyRequiredItemsFromDrops = false;
+    public boolean doNotCopyRequiredItemsFromBreakBlockDrops = false;
     public String copyRequiredItemsCountFromProperty = null;
     public List<String> copyRequiredItemsFromItemHandlersOnSides = null;
     public List<int[]> requiredBlockOffsets = null;
