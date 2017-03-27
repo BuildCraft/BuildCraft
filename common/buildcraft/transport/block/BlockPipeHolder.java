@@ -509,6 +509,10 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         return super.removedByPlayer(state, world, pos, player, willHarvest);
     }
 
+    @Override
+    public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {
+    }
+
     private static void removePluggable(EnumFacing side, TilePipeHolder tile, NonNullList<ItemStack> toDrop) {
         PipePluggable removed = tile.replacePluggable(side, null);
         if (removed != null) {
