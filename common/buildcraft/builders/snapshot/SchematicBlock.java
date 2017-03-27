@@ -37,24 +37,6 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     public List<ItemStack> requiredItems = new ArrayList<>();
     public List<Fluid> requiredFluids = new ArrayList<>();
 
-    public SchematicBlock(
-            Set<BlockPos> requiredBlockOffsets,
-            IBlockState blockState,
-            List<IProperty<?>> ignoredProperties,
-            NBTTagCompound tileNbt,
-            List<String> ignoredTags,
-            Block placeBlock,
-            Set<Block> canBeReplacedWithBlocks
-    ) {
-        this.requiredBlockOffsets = requiredBlockOffsets;
-        this.blockState = blockState;
-        this.ignoredProperties = ignoredProperties;
-        this.tileNbt = tileNbt;
-        this.ignoredTags = ignoredTags;
-        this.placeBlock = placeBlock;
-        this.canBeReplacedWithBlocks = canBeReplacedWithBlocks;
-    }
-
     public SchematicBlock() {
     }
 

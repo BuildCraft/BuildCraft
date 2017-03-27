@@ -46,9 +46,10 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     protected List<ItemStack> getToPlaceItems(BlockPos blockPos) {
+        SchematicBlock schematicBlock = getBuildingInfo().toPlace.get(blockPos);
         List<ItemStack> requiredItems = Stream.concat(
-                getBuildingInfo().toPlace.get(blockPos).requiredItems.stream(),
-                getBuildingInfo().toPlace.get(blockPos).requiredFluids.stream()
+                schematicBlock.requiredItems == null ? Stream.empty() : schematicBlock.requiredItems.stream(),
+                schematicBlock.requiredFluids == null ? Stream.empty() : schematicBlock.requiredFluids.stream()
                         .map(BlockUtil::getBucketFromFluid)
         ).collect(Collectors.toList());
         if (requiredItems.stream()
@@ -122,8 +123,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 .map(blockPos -> tile.getBlueprintBuildingInfo().toPlace.get(blockPos))
                 .flatMap(schematicBlock ->
                         Stream.concat(
-                                schematicBlock.requiredItems.stream(),
-                                schematicBlock.requiredFluids.stream()
+                                schematicBlock.requiredItems == null ? Stream.empty() : schematicBlock.requiredItems.stream(),
+                                schematicBlock.requiredFluids == null ? Stream.empty() : schematicBlock.requiredFluids.stream()
                                         .map(BlockUtil::getBucketFromFluid)
                         )
                 )

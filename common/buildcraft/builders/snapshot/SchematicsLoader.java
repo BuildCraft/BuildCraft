@@ -3,7 +3,6 @@ package buildcraft.builders.snapshot;
 import buildcraft.lib.misc.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyInteger;
@@ -23,6 +22,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public enum SchematicsLoader {
     INSTANCE;
@@ -71,13 +71,14 @@ public enum SchematicsLoader {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    private Set<BlockPos> getRequiredBlockOffsets(
+    private boolean setRequiredBlockOffsets(
             World world,
             BlockPos basePos,
             BlockPos pos,
             IBlockState blockState,
             Block block,
-            Set<JsonRule> rules
+            Set<JsonRule> rules,
+            SchematicBlock schematicBlock
     ) {
         Set<BlockPos> requiredBlockOffsets = rules.stream()
                 .filter(rule -> rule.requiredBlockOffsets != null)
@@ -110,18 +111,20 @@ public enum SchematicsLoader {
                 }
             }
         }
-        return requiredBlockOffsets;
+        schematicBlock.requiredBlockOffsets = requiredBlockOffsets;
+        return true;
     }
 
-    private List<IProperty<?>> getIgnoredProperties(
+    private boolean setIgnoredProperties(
             World world,
             BlockPos basePos,
             BlockPos pos,
             IBlockState blockState,
             Block block,
-            Set<JsonRule> rules
+            Set<JsonRule> rules,
+            SchematicBlock schematicBlock
     ) {
-        return rules.stream()
+        schematicBlock.ignoredProperties = rules.stream()
                 .map(rule -> rule.ignoredProperties)
                 .filter(Objects::nonNull)
                 .flatMap(List::stream)
@@ -130,15 +133,17 @@ public enum SchematicsLoader {
                                 .filter(property -> property.getName().equals(propertyName))
                 )
                 .collect(Collectors.toList());
+        return true;
     }
 
-    private NBTTagCompound getTileNbt(
+    private boolean setTileNbt(
             World world,
             BlockPos basePos,
             BlockPos pos,
             IBlockState blockState,
             Block block,
-            Set<JsonRule> rules
+            Set<JsonRule> rules,
+            SchematicBlock schematicBlock
     ) {
         NBTTagCompound tileNbt = null;
         if (block.hasTileEntity(blockState)) {
@@ -147,63 +152,75 @@ public enum SchematicsLoader {
                 tileNbt = tileEntity.serializeNBT();
             }
         }
-        return tileNbt;
+        schematicBlock.tileNbt = tileNbt;
+        return true;
     }
 
-    private List<String> getIgnoredTags(
+    private boolean setIgnoredTags(
             World world,
             BlockPos basePos,
             BlockPos pos,
             IBlockState blockState,
             Block block,
-            Set<JsonRule> rules
+            Set<JsonRule> rules,
+            SchematicBlock schematicBlock
     ) {
-        return rules.stream()
+        schematicBlock.ignoredTags = rules.stream()
                 .map(rule -> rule.ignoredTags)
                 .filter(Objects::nonNull)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
+        return true;
     }
 
-    private Block getPlaceBlock(
+    private boolean setPlaceBlock(
             World world,
             BlockPos basePos,
             BlockPos pos,
             IBlockState blockState,
             Block block,
-            Set<JsonRule> rules
+            Set<JsonRule> rules,
+            SchematicBlock schematicBlock
     ) {
-        return rules.stream()
+        schematicBlock.placeBlock = rules.stream()
                 .map(rule -> rule.placeBlock)
                 .filter(Objects::nonNull)
                 .findFirst()
                 .map(Block::getBlockFromName)
                 .orElse(block);
+        return true;
     }
 
-    private Set<Block> getCanBeReplacedWithBlocks(
+    private boolean setCanBeReplacedWithBlocks(
             World world,
             BlockPos basePos,
             BlockPos pos,
             IBlockState blockState,
             Block block,
-            Set<JsonRule> rules
+            Set<JsonRule> rules,
+            SchematicBlock schematicBlock
     ) {
-        return rules.stream()
-                .map(rule -> rule.canBeReplacedWithBlocks)
-                .filter(Objects::nonNull)
-                .flatMap(Collection::stream)
-                .map(Block::getBlockFromName)
-                .collect(Collectors.toCollection(HashSet::new));
+        schematicBlock.canBeReplacedWithBlocks =
+                Stream.concat(
+                        rules.stream()
+                                .map(rule -> rule.canBeReplacedWithBlocks)
+                                .filter(Objects::nonNull)
+                                .flatMap(Collection::stream)
+                                .map(Block::getBlockFromName),
+                        Stream.of(block, schematicBlock.placeBlock)
+                )
+                        .collect(Collectors.toCollection(HashSet::new));
+        return true;
     }
 
-    private List<ItemStack> getRequiredItems(
+    private boolean setRequiredItems(
             World world,
             BlockPos basePos,
             BlockPos pos,
             IBlockState blockState,
             Block block,
-            Set<JsonRule> rules
+            Set<JsonRule> rules,
+            SchematicBlock schematicBlock
     ) {
         List<ItemStack> requiredItems = new ArrayList<>();
         requiredItems.add(
@@ -285,26 +302,29 @@ public enum SchematicsLoader {
             }
         }
         requiredItems.removeIf(ItemStack::isEmpty);
-        return requiredItems;
+        schematicBlock.requiredItems = requiredItems;
+        return true;
     }
 
-    private List<Fluid> getRequiredFluids(
+    private boolean setRequiredFluids(
             World world,
             BlockPos basePos,
             BlockPos pos,
             IBlockState blockState,
             Block block,
-            Set<JsonRule> rules
+            Set<JsonRule> rules,
+            SchematicBlock schematicBlock
     ) {
         List<Fluid> requiredFluids = new ArrayList<>();
         if (BlockUtil.getFluidWithFlowing(block) != null) {
             if (BlockUtil.getFluid(block) != null) {
                 requiredFluids.add(BlockUtil.getFluid(block));
             } else {
-                return null;
+                return false;
             }
         }
-        return requiredFluids;
+        schematicBlock.requiredFluids = requiredFluids;
+        return true;
     }
 
     public SchematicBlock getSchematicBlock(
@@ -314,46 +334,36 @@ public enum SchematicsLoader {
             IBlockState blockState,
             Block block
     ) {
+        SchematicBlock schematicBlock = new SchematicBlock();
+        boolean ignore = false;
         ResourceLocation registryName = block.getRegistryName();
         if (registryName == null) {
-            return getIgnoredSchematicBlock(world, basePos, pos);
+            ignore = true;
         }
-        String domain = registryName.getResourceDomain();
-        if (!RulesLoader.INSTANCE.readDomains.contains(domain)) {
-            return getIgnoredSchematicBlock(world, basePos, pos);
+        if (!ignore) {
+            if (!RulesLoader.INSTANCE.readDomains.contains(registryName.getResourceDomain())) {
+                ignore = true;
+            }
         }
-        // Get list of all rules for this block
-        Set<JsonRule> rules = getRules(world, basePos, pos, blockState, block);
-        // -- requiredBlockOffsets --
-        Set<BlockPos> requiredBlockOffsets = getRequiredBlockOffsets(world, basePos, pos, blockState, block, rules);
-        if (getRequiredFluids(world, basePos, pos, blockState, block, rules) == null) {
-            return getIgnoredSchematicBlock(world, basePos, pos);
+        if (!ignore) {
+            Set<JsonRule> rules = getRules(world, basePos, pos, blockState, block);
+            if (rules.stream().anyMatch(rule -> rule.ignore) ||
+                    !setRequiredBlockOffsets /*   */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
+                    !setIgnoredProperties /*      */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
+                    !setTileNbt /*                */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
+                    !setIgnoredTags /*            */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
+                    !setPlaceBlock /*             */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
+                    !setCanBeReplacedWithBlocks /**/(world, basePos, pos, blockState, block, rules, schematicBlock) ||
+                    !setRequiredItems /*          */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
+                    !setRequiredFluids /*         */(world, basePos, pos, blockState, block, rules, schematicBlock)
+                    ) {
+                ignore = true;
+            }
         }
-        // -- ignoredProperties --
-        List<IProperty<?>> ignoredProperties = getIgnoredProperties(world, basePos, pos, blockState, block, rules);
-        // -- tileNbt --
-        NBTTagCompound tileNbt = getTileNbt(world, basePos, pos, blockState, block, rules);
-        // -- tileNbt --
-        List<String> ignoredTags = getIgnoredTags(world, basePos, pos, blockState, block, rules);
-        // -- placeBlock --
-        Block placeBlock = getPlaceBlock(world, basePos, pos, blockState, block, rules);
-        // -- canBeReplacedWithBlocks --
-        Set<Block> canBeReplacedWithBlocks = getCanBeReplacedWithBlocks(world, basePos, pos, blockState, block, rules);
-        canBeReplacedWithBlocks.add(block);
-        canBeReplacedWithBlocks.add(placeBlock);
-        // Form schematic block
-        if (rules.stream().anyMatch(rule -> rule.ignore)) {
-            return getIgnoredSchematicBlock(world, basePos, pos);
+        if (ignore) {
+            schematicBlock = getIgnoredSchematicBlock(world, basePos, pos);
         }
-        return new SchematicBlock(
-                requiredBlockOffsets,
-                blockState,
-                ignoredProperties,
-                tileNbt,
-                ignoredTags,
-                placeBlock,
-                canBeReplacedWithBlocks
-        );
+        return schematicBlock;
     }
 
     public SchematicBlock getIgnoredSchematicBlock(World world, BlockPos basePos, BlockPos pos) {
@@ -369,10 +379,10 @@ public enum SchematicsLoader {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
         Set<JsonRule> rules = getRules(world, basePos, pos, blockState, block);
-        schematicBlock.requiredItems = getRequiredItems(world, basePos, pos, blockState, block, rules);
-        schematicBlock.requiredFluids = getRequiredFluids(world, basePos, pos, blockState, block, rules);
-        if (schematicBlock.requiredFluids == null) {
-            blueprint.data[pos.getX()][pos.getY()][pos.getZ()] = getIgnoredSchematicBlock(world, basePos, pos);
+        if (!setRequiredItems(world, basePos, pos, blockState, block, rules, schematicBlock) ||
+                !setRequiredFluids(world, basePos, pos, blockState, block, rules, schematicBlock)) {
+            schematicBlock.requiredItems = null;
+            schematicBlock.requiredFluids = null;
         }
     }
 
