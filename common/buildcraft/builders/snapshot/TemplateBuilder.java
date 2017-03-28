@@ -76,4 +76,12 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     public Box getBox() {
         return tile.getTemplateBuildingInfo() == null ? null : tile.getTemplateBuildingInfo().getBox();
     }
+
+    @Override
+    protected boolean isDone() {
+        return getBuildingInfo() != null &&
+                getBuildingInfo().toBreak.stream().allMatch(tile.getWorld()::isAirBlock) &&
+                getBuildingInfo().toPlace.stream().allMatch(this::isBlockCorrect);
+    }
+
 }

@@ -24,10 +24,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public enum SchematicsLoader {
-    INSTANCE;
-
-    private Set<JsonRule> getRules(
+public class SchematicBlockFactory {
+    private static Set<JsonRule> getRules(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -71,7 +69,20 @@ public enum SchematicsLoader {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    private boolean setRequiredBlockOffsets(
+    private static boolean setLevel(
+            World world,
+            BlockPos basePos,
+            BlockPos pos,
+            IBlockState blockState,
+            Block block,
+            Set<JsonRule> rules,
+            SchematicBlock schematicBlock
+    ) {
+        schematicBlock.level = BlockUtil.getFluid(block) != null ? 1 : 0;
+        return true;
+    }
+
+    private static boolean setRequiredBlockOffsets(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -115,7 +126,20 @@ public enum SchematicsLoader {
         return true;
     }
 
-    private boolean setIgnoredProperties(
+    private static boolean setBlockState(
+            World world,
+            BlockPos basePos,
+            BlockPos pos,
+            IBlockState blockState,
+            Block block,
+            Set<JsonRule> rules,
+            SchematicBlock schematicBlock
+    ) {
+        schematicBlock.blockState = blockState;
+        return true;
+    }
+
+    private static boolean setIgnoredProperties(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -136,7 +160,7 @@ public enum SchematicsLoader {
         return true;
     }
 
-    private boolean setTileNbt(
+    private static boolean setTileNbt(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -156,7 +180,7 @@ public enum SchematicsLoader {
         return true;
     }
 
-    private boolean setIgnoredTags(
+    private static boolean setIgnoredTags(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -173,7 +197,7 @@ public enum SchematicsLoader {
         return true;
     }
 
-    private boolean setPlaceBlock(
+    private static boolean setPlaceBlock(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -191,7 +215,7 @@ public enum SchematicsLoader {
         return true;
     }
 
-    private boolean setCanBeReplacedWithBlocks(
+    private static boolean setCanBeReplacedWithBlocks(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -213,7 +237,7 @@ public enum SchematicsLoader {
         return true;
     }
 
-    private boolean setRequiredItems(
+    private static boolean setRequiredItems(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -306,7 +330,7 @@ public enum SchematicsLoader {
         return true;
     }
 
-    private boolean setRequiredFluids(
+    private static boolean setRequiredFluids(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -327,7 +351,7 @@ public enum SchematicsLoader {
         return true;
     }
 
-    public SchematicBlock getSchematicBlock(
+    public static SchematicBlock getSchematicBlock(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -348,51 +372,45 @@ public enum SchematicsLoader {
         if (!ignore) {
             Set<JsonRule> rules = getRules(world, basePos, pos, blockState, block);
             if (rules.stream().anyMatch(rule -> rule.ignore) ||
+                    !setLevel /*                  */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
                     !setRequiredBlockOffsets /*   */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
+                    !setBlockState /*             */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
                     !setIgnoredProperties /*      */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
                     !setTileNbt /*                */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
                     !setIgnoredTags /*            */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
                     !setPlaceBlock /*             */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
                     !setCanBeReplacedWithBlocks /**/(world, basePos, pos, blockState, block, rules, schematicBlock) ||
                     !setRequiredItems /*          */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
-                    !setRequiredFluids /*         */(world, basePos, pos, blockState, block, rules, schematicBlock)
-                    ) {
+                    !setRequiredFluids /*         */(world, basePos, pos, blockState, block, rules, schematicBlock)) {
                 ignore = true;
             }
         }
         if (ignore) {
-            schematicBlock = getIgnoredSchematicBlock(world, basePos, pos);
+            schematicBlock = getSchematicBlock(world, basePos, pos, Blocks.AIR.getDefaultState(), Blocks.AIR);
         }
         return schematicBlock;
     }
 
-    public SchematicBlock getIgnoredSchematicBlock(World world, BlockPos basePos, BlockPos pos) {
-        return getSchematicBlock(world, basePos, pos, Blocks.AIR.getDefaultState(), Blocks.AIR);
-    }
-
-    private void computeRequiredForPos(FakeWorld world, Blueprint blueprint, BlockPos pos) {
-        BlockPos basePos = FakeWorld.BLUEPRINT_OFFSET;
-        SchematicBlock schematicBlock = blueprint.data
-                [pos.getX() - basePos.getX()]
-                [pos.getY() - basePos.getY()]
-                [pos.getZ() - basePos.getZ()];
-        IBlockState blockState = world.getBlockState(pos);
-        Block block = blockState.getBlock();
-        Set<JsonRule> rules = getRules(world, basePos, pos, blockState, block);
-        if (!setRequiredItems(world, basePos, pos, blockState, block, rules, schematicBlock) ||
-                !setRequiredFluids(world, basePos, pos, blockState, block, rules, schematicBlock)) {
-            schematicBlock.requiredItems = null;
-            schematicBlock.requiredFluids = null;
-        }
-    }
-
-    public void computeRequired(Blueprint blueprint) {
+    public static void computeRequired(Blueprint blueprint) {
         FakeWorld world = new FakeWorld();
         for (int z = 0; z < blueprint.size.getZ(); z++) {
             for (int y = 0; y < blueprint.size.getY(); y++) {
                 for (int x = 0; x < blueprint.size.getX(); x++) {
                     world.uploadBlueprint(blueprint);
-                    computeRequiredForPos(world, blueprint, new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET));
+                    BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
+                    BlockPos basePos = FakeWorld.BLUEPRINT_OFFSET;
+                    SchematicBlock schematicBlock = blueprint.data
+                            [pos.getX() - basePos.getX()]
+                            [pos.getY() - basePos.getY()]
+                            [pos.getZ() - basePos.getZ()];
+                    IBlockState blockState = world.getBlockState(pos);
+                    Block block = blockState.getBlock();
+                    Set<JsonRule> rules = getRules(world, basePos, pos, blockState, block);
+                    if (!setRequiredItems(world, basePos, pos, blockState, block, rules, schematicBlock) ||
+                            !setRequiredFluids(world, basePos, pos, blockState, block, rules, schematicBlock)) {
+                        schematicBlock.requiredItems = null;
+                        schematicBlock.requiredFluids = null;
+                    }
                     world.clear();
                 }
             }

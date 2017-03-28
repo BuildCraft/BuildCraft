@@ -70,11 +70,12 @@ public class Blueprint extends Snapshot {
         public final Box box;
         public final List<BlockPos> toBreak = new ArrayList<>();
         public final Map<BlockPos, SchematicBlock> toPlace = new HashMap<>();
+        public final int maxLevel;
 
         public BuildingInfo(BlockPos basePos, Rotation rotation) {
             this.basePos = basePos;
             this.rotation = rotation;
-            SchematicsLoader.INSTANCE.computeRequired(getSnapshot());
+            SchematicBlockFactory.computeRequired(getSnapshot());
             for (int z = 0; z < getSnapshot().size.getZ(); z++) {
                 for (int y = 0; y < getSnapshot().size.getY(); y++) {
                     for (int x = 0; x < getSnapshot().size.getX(); x++) {
@@ -92,6 +93,7 @@ public class Blueprint extends Snapshot {
             }
             box = new Box();
             Stream.concat(toBreak.stream(), toPlace.keySet().stream()).forEach(box::extendToEncompass);
+            maxLevel = toPlace.values().stream().mapToInt(schematicBlock -> schematicBlock.level).max().orElse(0);
         }
 
         public Blueprint getSnapshot() {

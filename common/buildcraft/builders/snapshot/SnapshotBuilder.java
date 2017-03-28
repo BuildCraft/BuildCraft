@@ -64,6 +64,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
 
     public abstract Box getBox();
 
+    protected abstract boolean isDone();
+
     /**
      * @return Pos where flying item should be rendered
      */
@@ -126,6 +128,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                     .filter(blockPos -> breakTasks.stream().map(BreakTask::getPos).noneMatch(Predicate.isEqual(blockPos)))
                     .filter(blockPos -> !tile.getWorld().isAirBlock(blockPos))
                     .filter(blockPos -> !isBlockCorrect(blockPos))
+                    .filter(blockPos -> BlockUtil.getFluidWithFlowing(tile.getWorld(), blockPos) == null)
                     .map(blockPos ->
                             new BreakTask(
                                     blockPos,
@@ -224,7 +227,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             }
         }
 
-        return getToBreak().stream().allMatch(tile.getWorld()::isAirBlock) && getToPlace().stream().allMatch(this::isBlockCorrect);
+        return isDone();
     }
 
     public void writeToByteBuf(PacketBufferBC buffer) {

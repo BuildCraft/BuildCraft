@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
+    public int level;
     public Set<BlockPos> requiredBlockOffsets = new HashSet<>();
     public IBlockState blockState;
     public List<IProperty<?>> ignoredProperties = new ArrayList<>();
@@ -43,6 +44,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setInteger("level", level);
         nbt.setTag(
                 "requiredBlockOffsets",
                 NBTUtilBC.writeCompoundList(
@@ -76,6 +78,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
+        level = nbt.getInteger("level");
         NBTUtilBC.readCompoundList(nbt.getTagList("requiredBlockOffsets", Constants.NBT.TAG_COMPOUND))
                 .map(NBTUtilBC::readBlockPos)
                 .forEach(requiredBlockOffsets::add);
@@ -105,6 +108,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
 
     public SchematicBlock getRotated(Rotation rotation) {
         SchematicBlock schematicBlock = new SchematicBlock();
+        schematicBlock.level = level;
         schematicBlock.requiredBlockOffsets = requiredBlockOffsets.stream()
                 .map(blockPos -> blockPos.rotate(rotation))
                 .collect(Collectors.toCollection(HashSet::new));
