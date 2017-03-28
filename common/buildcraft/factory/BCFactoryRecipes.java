@@ -10,12 +10,14 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import buildcraft.api.BCBlocks;
+
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 
 public class BCFactoryRecipes {
     public static void init() {
-        if (BCFactoryBlocks.autoWorkbenchItems != null) {
-            ItemStack out = new ItemStack(BCFactoryBlocks.autoWorkbenchItems);
+        if (BCBlocks.FACTORY_AUTOWORKBENCH_ITEM != null) {
+            ItemStack out = new ItemStack(BCBlocks.FACTORY_AUTOWORKBENCH_ITEM);
             RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
             builder.add("gwg");
             builder.map('w', "craftingTableWood");
@@ -24,8 +26,8 @@ public class BCFactoryRecipes {
             GameRegistry.addRecipe(builder.buildRotated());
         }
 
-        if (BCFactoryBlocks.miningWell != null) {
-            ItemStack out = new ItemStack(BCFactoryBlocks.miningWell);
+        if (BCBlocks.FACTORY_MINING_WELL != null) {
+            ItemStack out = new ItemStack(BCBlocks.FACTORY_MINING_WELL);
             RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
             builder.add("iri");
             builder.add("igi");
@@ -37,8 +39,8 @@ public class BCFactoryRecipes {
             GameRegistry.addRecipe(builder.build());
         }
 
-        if (BCFactoryBlocks.tank != null) {
-            ItemStack out = new ItemStack(BCFactoryBlocks.tank);
+        if (BCBlocks.FACTORY_TANK != null) {
+            ItemStack out = new ItemStack(BCBlocks.FACTORY_TANK);
             RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
             builder.add("ggg");
             builder.add("g g");
@@ -47,8 +49,8 @@ public class BCFactoryRecipes {
             GameRegistry.addRecipe(builder.build());
         }
 
-        if (BCFactoryBlocks.pump != null) {
-            ItemStack out = new ItemStack(BCFactoryBlocks.pump);
+        if (BCBlocks.FACTORY_PUMP != null) {
+            ItemStack out = new ItemStack(BCBlocks.FACTORY_PUMP);
             RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
             builder.add("iri");
             builder.add("igi");
@@ -57,12 +59,12 @@ public class BCFactoryRecipes {
             builder.map('r', "dustRedstone");
             builder.map('g', "gearIron");
             builder.map('b', Items.BUCKET);
-            builder.map('t', BCFactoryBlocks.tank);
+            builder.map('t', BCBlocks.FACTORY_TANK, "blockGlassColorless");
             GameRegistry.addRecipe(builder.build());
         }
 
-        if (BCFactoryBlocks.floodGate != null) {
-            ItemStack out = new ItemStack(BCFactoryBlocks.floodGate);
+        if (BCBlocks.FACTORY_FLOOD_GATE != null) {
+            ItemStack out = new ItemStack(BCBlocks.FACTORY_FLOOD_GATE);
             RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
             builder.add("igi");
             builder.add("btb");
@@ -70,12 +72,12 @@ public class BCFactoryRecipes {
             builder.map('i', "ingotIron");
             builder.map('g', "gearIron");
             builder.map('b', Blocks.IRON_BARS);
-            builder.map('t', BCFactoryBlocks.tank);
+            builder.map('t', BCBlocks.FACTORY_TANK, "blockGlassColorless");
             GameRegistry.addRecipe(builder.build());
         }
 
-        if (BCFactoryBlocks.chute != null) {
-            ItemStack out = new ItemStack(BCFactoryBlocks.chute);
+        if (BCBlocks.FACTORY_CHUTE != null) {
+            ItemStack out = new ItemStack(BCBlocks.FACTORY_CHUTE);
             RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
             builder.add("ici");
             builder.add("igi");
