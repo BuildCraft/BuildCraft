@@ -11,6 +11,7 @@ import net.minecraft.world.WorldServer;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     public TemplateBuilder(ITileForTemplateBuilder tile) {
@@ -23,12 +24,16 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
 
     @Override
     protected List<BlockPos> getToBreak() {
-        return getBuildingInfo() == null ? Collections.emptyList() : getBuildingInfo().toBreak;
+        return Optional.ofNullable(getBuildingInfo())
+                .map(buildingInfo -> buildingInfo.toBreak)
+                .orElse(Collections.emptyList());
     }
 
     @Override
     protected List<BlockPos> getToPlace() {
-        return getBuildingInfo() == null ? Collections.emptyList() : getBuildingInfo().toPlace;
+        return Optional.ofNullable(getBuildingInfo())
+                .map(buildingInfo -> buildingInfo.toPlace)
+                .orElse(Collections.emptyList());
     }
 
     @Override
@@ -74,7 +79,9 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
 
     @Override
     public Box getBox() {
-        return tile.getTemplateBuildingInfo() == null ? null : tile.getTemplateBuildingInfo().getBox();
+        return Optional.ofNullable(getBuildingInfo())
+                .map(Template.BuildingInfo::getBox)
+                .orElse(null);
     }
 
     @Override

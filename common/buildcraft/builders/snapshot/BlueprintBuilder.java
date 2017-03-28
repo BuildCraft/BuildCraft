@@ -8,10 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -28,43 +25,53 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     }
 
     private int getBuiltLevel() {
-        return
-                getBuildingInfo() != null
-                        ?
-                        IntStream.concat(
+        return Optional.ofNullable(getBuildingInfo())
+                .map(buildingInfo ->
+                        Stream.concat(
                                 getBuildingInfo().toBreak.stream()
                                         .filter(pos -> !tile.getWorld().isAirBlock(pos))
-                                        .mapToInt(i -> 0),
+                                        .map(i -> 0),
                                 getBuildingInfo().toPlace.entrySet().stream()
                                         .filter(entry -> tile.getWorld().isAirBlock(entry.getKey()) || !isBlockCorrect(entry.getKey()))
-                                        .mapToInt(entry -> entry.getValue().level)
+                                        .map(entry -> entry.getValue().level)
                         )
-                                .min()
-                                .orElse(getBuildingInfo().maxLevel + 1)
-                                - 1
-                        : -1;
+                                .min(Integer::compare)
+                                .map(i -> i - 1)
+                                .orElse(getBuildingInfo().maxLevel)
+                )
+                .orElse(-1);
     }
 
     private int getMaxLevel() {
-        return getBuildingInfo() != null ? getBuildingInfo().maxLevel : 0;
+        return Optional.ofNullable(getBuildingInfo())
+                .map(buildingInfo -> buildingInfo.maxLevel)
+                .orElse(0);
     }
 
     @Override
     protected List<BlockPos> getToBreak() {
-        return getBuildingInfo() == null ? Collections.emptyList() : getBuildingInfo().toBreak;
+        return Optional.ofNullable(getBuildingInfo())
+                .map(buildingInfo -> buildingInfo.toBreak)
+                .orElse(Collections.emptyList());
     }
 
     @Override
     protected List<BlockPos> getToPlace() {
-        return getBuildingInfo() == null ? Collections.emptyList() : new ArrayList<>(getBuildingInfo().toPlace.keySet());
+        return Optional.ofNullable(getBuildingInfo())
+                .map(buildingInfo -> getBuildingInfo().toPlace)
+                .map(Map::keySet)
+                .<List<BlockPos>>map(ArrayList::new)
+                .orElse(Collections.emptyList());
     }
 
     @Override
     protected boolean canPlace(BlockPos blockPos) {
         return getBuildingInfo().toPlace.get(blockPos).requiredBlockOffsets.stream()
                 .map(blockPos::add)
-                .allMatch(pos -> getBuildingInfo().toPlace.containsKey(pos) ? isBlockCorrect(pos) : !tile.getWorld().isAirBlock(pos))
-                && getBuildingInfo().toPlace.get(blockPos).level == getBuiltLevel() + 1;
+                .allMatch(pos ->
+                        getBuildingInfo().toPlace.containsKey(pos) ? isBlockCorrect(pos) : !tile.getWorld().isAirBlock(pos)
+                ) &&
+                getBuildingInfo().toPlace.get(blockPos).level == getBuiltLevel() + 1;
     }
 
     @Override
@@ -130,7 +137,9 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     public Box getBox() {
-        return tile.getBlueprintBuildingInfo() == null ? null : tile.getBlueprintBuildingInfo().getBox();
+        return Optional.ofNullable(getBuildingInfo())
+                .map(Blueprint.BuildingInfo::getBox)
+                .orElse(null);
     }
 
     @Override
