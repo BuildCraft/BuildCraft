@@ -19,7 +19,7 @@ import buildcraft.lib.misc.StackUtil;
 import gnu.trove.map.hash.TCharObjectHashMap;
 
 public class RecipeBuilderShaped {
-    private final @Nonnull ItemStack result;
+    private @Nonnull ItemStack result;
     private final List<String> shape = new ArrayList<>();
     private final TCharObjectHashMap<Object> objects = new TCharObjectHashMap<>();
 
@@ -173,18 +173,28 @@ public class RecipeBuilderShaped {
         return objs;
     }
 
+    public void setResult(@Nonnull ItemStack result) {
+        this.result = result;
+    }
+
     public ShapedOreRecipe build() {
+        if (result.isEmpty()) {
+            throw new IllegalStateException("Tried to build without setting the result!");
+        }
         return build(result);
     }
 
-    public ShapedOreRecipe build(ItemStack resultStack) {
-        if (resultStack == null) {
-            throw new NullPointerException("result");
+    public ShapedOreRecipe build(@Nonnull ItemStack resultStack) {
+        if (resultStack.isEmpty()) {
+            throw new IllegalArgumentException("Provided an empty resultStack!");
         }
         return new ShapedOreRecipe(resultStack, createRecipeObjectArray());
     }
 
     public NBTAwareShapedOreRecipe buildNbtAware() {
+        if (result.isEmpty()) {
+            throw new IllegalStateException("Tried to build without setting the result!");
+        }
         return buildNbtAware(result);
     }
 
@@ -217,7 +227,6 @@ public class RecipeBuilderShaped {
             objs[offset++] = Character.valueOf(c);
             objs[offset++] = objects.get(c);
         }
-        BCLog.logger.info("Rotated from " + Arrays.toString(createRecipeObjectArray()) + " to " + Arrays.toString(objs));
         return new ShapedOreRecipe(result, objs);
     }
 }
