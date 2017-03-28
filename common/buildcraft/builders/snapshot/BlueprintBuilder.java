@@ -28,11 +28,14 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         return Optional.ofNullable(getBuildingInfo())
                 .map(buildingInfo ->
                         Stream.concat(
-                                getBuildingInfo().toBreak.stream()
+                                buildingInfo.toBreak.stream()
                                         .filter(pos -> !tile.getWorld().isAirBlock(pos))
                                         .map(i -> 0),
-                                getBuildingInfo().toPlace.entrySet().stream()
-                                        .filter(entry -> tile.getWorld().isAirBlock(entry.getKey()) || !isBlockCorrect(entry.getKey()))
+                                buildingInfo.toPlace.entrySet().stream()
+                                        .filter(entry ->
+                                                tile.getWorld().isAirBlock(entry.getKey()) ||
+                                                        !isBlockCorrect(entry.getKey())
+                                        )
                                         .map(entry -> entry.getValue().level)
                         )
                                 .min(Integer::compare)
