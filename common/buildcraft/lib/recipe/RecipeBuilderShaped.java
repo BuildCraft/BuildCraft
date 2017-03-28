@@ -1,35 +1,23 @@
 package buildcraft.lib.recipe;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.BCLog;
+import gnu.trove.map.hash.TCharObjectHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.misc.StackUtil;
-
-import gnu.trove.map.hash.TCharObjectHashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public class RecipeBuilderShaped {
-    private final @Nonnull ItemStack result;
+    private ItemStack result;
     private final List<String> shape = new ArrayList<>();
     private final TCharObjectHashMap<Object> objects = new TCharObjectHashMap<>();
-
-    public RecipeBuilderShaped() {
-        this(StackUtil.EMPTY);
-    }
-
-    public RecipeBuilderShaped(@Nonnull ItemStack result) {
-        this.result = result;
-    }
 
     public RecipeBuilderShaped add(String row) {
         if (shape.size() > 0 && shape.get(0).length() != row.length()) {
@@ -67,6 +55,11 @@ public class RecipeBuilderShaped {
         throw new IllegalArgumentException("Invalid value " + val.getClass());
     }
 
+    public RecipeBuilderShaped setResult(ItemStack result) {
+        this.result = result;
+        return this;
+    }
+
     public Object[] createRecipeObjectArray() {
         Object[] objs = new Object[shape.size() + objects.size() * 2];
         int offset = 0;
@@ -74,35 +67,29 @@ public class RecipeBuilderShaped {
             objs[offset++] = s;
         }
         for (char c : objects.keys()) {
-            objs[offset++] = Character.valueOf(c);
+            objs[offset++] = c;
             objs[offset++] = objects.get(c);
         }
         return objs;
     }
 
-    public ShapedOreRecipe build() {
-        return build(result);
+    public boolean isValid() {
+        return result != null && objects.valueCollection().stream().allMatch(Objects::nonNull);
     }
 
-    public ShapedOreRecipe build(ItemStack resultStack) {
-        if (resultStack == null) {
-            throw new NullPointerException("result");
-        }
-        return new ShapedOreRecipe(resultStack, createRecipeObjectArray());
+    public ShapedOreRecipe build() {
+        return isValid() ? new ShapedOreRecipe(result, createRecipeObjectArray()) : null;
     }
 
     public NBTAwareShapedOreRecipe buildNbtAware() {
-        return buildNbtAware(result);
-    }
-
-    public NBTAwareShapedOreRecipe buildNbtAware(@Nonnull ItemStack resultStack) {
-        if (resultStack.isEmpty()) {
-            throw new IllegalArgumentException("Provided an empty resultStack!");
-        }
-        return new NBTAwareShapedOreRecipe(resultStack, createRecipeObjectArray());
+        return isValid() ? new NBTAwareShapedOreRecipe(result, createRecipeObjectArray()) : null;
     }
 
     public ShapedOreRecipe buildRotated() {
+        if (!isValid()) {
+            return null;
+        }
+
         int fromRows = shape.size();
         int toRows = shape.get(0).length();
         StringBuilder[] strings = new StringBuilder[toRows];
@@ -121,10 +108,31 @@ public class RecipeBuilderShaped {
             objs[offset++] = strings[i].toString();
         }
         for (char c : objects.keys()) {
-            objs[offset++] = Character.valueOf(c);
+            objs[offset++] = c;
             objs[offset++] = objects.get(c);
         }
         BCLog.logger.info("Rotated from " + Arrays.toString(createRecipeObjectArray()) + " to " + Arrays.toString(objs));
         return new ShapedOreRecipe(result, objs);
+    }
+
+    public void register() {
+        IRecipe recipe = build();
+        if (recipe != null) {
+            GameRegistry.addRecipe(recipe);
+        }
+    }
+
+    public void registerNbtAware() {
+        IRecipe recipe = buildNbtAware();
+        if (recipe != null) {
+            GameRegistry.addRecipe(recipe);
+        }
+    }
+
+    public void registerRotated() {
+        IRecipe recipe = buildRotated();
+        if (recipe != null) {
+            GameRegistry.addRecipe(recipe);
+        }
     }
 }

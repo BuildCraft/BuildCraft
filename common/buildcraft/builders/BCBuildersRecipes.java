@@ -23,14 +23,14 @@ public class BCBuildersRecipes {
         }
 
         if (BCBuildersItems.blueprint != null) {
-            ItemStack out = new ItemStack(BCBuildersItems.blueprint);
-            RecipeBuilderShaped recipe = new RecipeBuilderShaped(out);
+            RecipeBuilderShaped recipe = new RecipeBuilderShaped();
             recipe.add("ppp");
             recipe.add("plp");
             recipe.add("ppp");
             recipe.map('l', "gemLapis");
             recipe.map('p', paper);
-            GameRegistry.addRecipe(recipe.build());
+            recipe.setResult(new ItemStack(BCBuildersItems.blueprint));
+            recipe.register();
         }
 
         // if (BCBuildersItems.template != null) {

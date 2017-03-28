@@ -4,29 +4,25 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory;
 
+import buildcraft.lib.recipe.RecipeBuilderShaped;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.fml.common.registry.GameRegistry;
-
-import buildcraft.lib.recipe.RecipeBuilderShaped;
-
 public class BCFactoryRecipes {
     public static void init() {
-        if (BCFactoryBlocks.autoWorkbenchItems != null) {
-            ItemStack out = new ItemStack(BCFactoryBlocks.autoWorkbenchItems);
-            RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
+        {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("gwg");
             builder.map('w', "craftingTableWood");
             builder.map('g', "gearStone");
-            GameRegistry.addRecipe(builder.build());
-            GameRegistry.addRecipe(builder.buildRotated());
+            builder.setResult(new ItemStack(BCFactoryBlocks.autoWorkbenchItems));
+            builder.register();
+            builder.registerRotated();
         }
 
-        if (BCFactoryBlocks.miningWell != null) {
-            ItemStack out = new ItemStack(BCFactoryBlocks.miningWell);
-            RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
+        {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("iri");
             builder.add("igi");
             builder.add("ipi");
@@ -34,22 +30,22 @@ public class BCFactoryRecipes {
             builder.map('r', "dustRedstone");
             builder.map('g', "gearIron");
             builder.map('p', Items.IRON_PICKAXE);
-            GameRegistry.addRecipe(builder.build());
+            builder.setResult(new ItemStack(BCFactoryBlocks.miningWell));
+            builder.register();
         }
 
-        if (BCFactoryBlocks.tank != null) {
-            ItemStack out = new ItemStack(BCFactoryBlocks.tank);
-            RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
+        {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("ggg");
             builder.add("g g");
             builder.add("ggg");
             builder.map('g', "blockGlassColorless");
-            GameRegistry.addRecipe(builder.build());
+            builder.setResult(new ItemStack(BCFactoryBlocks.tank));
+            builder.register();
         }
 
-        if (BCFactoryBlocks.pump != null && BCFactoryBlocks.tank != null) {
-            ItemStack out = new ItemStack(BCFactoryBlocks.pump);
-            RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
+        {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("iri");
             builder.add("igi");
             builder.add("tbt");
@@ -58,12 +54,12 @@ public class BCFactoryRecipes {
             builder.map('g', "gearIron");
             builder.map('b', Items.BUCKET);
             builder.map('t', BCFactoryBlocks.tank);
-            GameRegistry.addRecipe(builder.build());
+            builder.setResult(new ItemStack(BCFactoryBlocks.pump));
+            builder.register();
         }
 
-        if (BCFactoryBlocks.floodGate != null) {
-            ItemStack out = new ItemStack(BCFactoryBlocks.floodGate);
-            RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
+        {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("igi");
             builder.add("btb");
             builder.add("ibi");
@@ -71,19 +67,20 @@ public class BCFactoryRecipes {
             builder.map('g', "gearIron");
             builder.map('b', Blocks.IRON_BARS);
             builder.map('t', BCFactoryBlocks.tank);
-            GameRegistry.addRecipe(builder.build());
+            builder.setResult(new ItemStack(BCFactoryBlocks.floodGate));
+            builder.register();
         }
 
-        if (BCFactoryBlocks.chute != null) {
-            ItemStack out = new ItemStack(BCFactoryBlocks.chute);
-            RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
+        {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("ici");
             builder.add("igi");
             builder.add(" i ");
             builder.map('i', "ingotIron");
             builder.map('g', "gearStone");
             builder.map('c', Blocks.CHEST);
-            GameRegistry.addRecipe(builder.build());
+            builder.setResult(new ItemStack(BCFactoryBlocks.chute));
+            builder.register();
         }
     }
 }
