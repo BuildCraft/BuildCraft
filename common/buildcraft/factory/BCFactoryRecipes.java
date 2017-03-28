@@ -47,7 +47,7 @@ public class BCFactoryRecipes {
             GameRegistry.addRecipe(builder.build());
         }
 
-        if (BCFactoryBlocks.pump != null) {
+        if (BCFactoryBlocks.pump != null && BCFactoryBlocks.tank != null) {
             ItemStack out = new ItemStack(BCFactoryBlocks.pump);
             RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
             builder.add("iri");
