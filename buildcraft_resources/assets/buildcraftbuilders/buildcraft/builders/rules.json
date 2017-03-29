@@ -182,7 +182,7 @@
             "minecraft:trapdoor",
             "minecraft:iron_trapdoor"
         ],
-        "copyOppositeRequiredBlockOffsetFromProperty": "facing"
+        "ignoredProperties": ["open"]
     },
     {
         "selectors": ["minecraft:vine"],
