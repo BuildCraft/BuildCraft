@@ -46,24 +46,29 @@ public class ColourUtil {
     private static final TextFormatting[] COLOUR_TO_FORMAT = new TextFormatting[16];
     private static final TextFormatting[] REPLACE_FOR_WHITE = new TextFormatting[16];
     private static final TextFormatting[] REPLACE_FOR_BLACK = new TextFormatting[16];
+    private static final TextFormatting[] REPLACE_FOR_WHITE_HIGH_CONTRAST = new TextFormatting[16];
+    private static final TextFormatting[] REPLACE_FOR_BLACK_HIGH_CONTRAST = new TextFormatting[16];
     private static final TextFormatting[] FACE_TO_FORMAT = new TextFormatting[6];
 
     static {
         for (int i = 0; i < 16; i++) {
             DYES[i] = "dye" + NAMES[i];
-            REPLACE_FOR_WHITE[i] = REPLACE_FOR_BLACK[i] = FORMATTING_VALUES[i];
+            REPLACE_FOR_WHITE[i] = REPLACE_FOR_WHITE_HIGH_CONTRAST[i] = FORMATTING_VALUES[i];
+            REPLACE_FOR_BLACK[i] = REPLACE_FOR_BLACK_HIGH_CONTRAST[i] = FORMATTING_VALUES[i];
         }
 
-        REPLACE_FOR_WHITE[TextFormatting.WHITE.ordinal()] = TextFormatting.GRAY;
-        REPLACE_FOR_WHITE[TextFormatting.YELLOW.ordinal()] = TextFormatting.GOLD;
-        REPLACE_FOR_WHITE[TextFormatting.AQUA.ordinal()] = TextFormatting.BLUE;
-        REPLACE_FOR_WHITE[TextFormatting.GREEN.ordinal()] = TextFormatting.DARK_GREEN;
+        replaceColourForWhite(TextFormatting.WHITE, TextFormatting.GRAY);
+        replaceColourForWhite(TextFormatting.YELLOW, TextFormatting.GOLD);
+        replaceColourForWhite(TextFormatting.AQUA, TextFormatting.BLUE);
+        replaceColourForWhite(TextFormatting.GREEN, TextFormatting.DARK_GREEN);
 
-        REPLACE_FOR_BLACK[TextFormatting.BLACK.ordinal()] = TextFormatting.DARK_GRAY;
-        REPLACE_FOR_BLACK[TextFormatting.DARK_GRAY.ordinal()] = TextFormatting.GRAY;
-        REPLACE_FOR_BLACK[TextFormatting.DARK_BLUE.ordinal()] = TextFormatting.BLUE;
-        REPLACE_FOR_BLACK[TextFormatting.DARK_PURPLE.ordinal()] = TextFormatting.LIGHT_PURPLE;
-        REPLACE_FOR_BLACK[TextFormatting.DARK_RED.ordinal()] = TextFormatting.RED;
+        replaceColourForBlack(TextFormatting.BLACK, TextFormatting.GRAY);
+        replaceColourForBlack(TextFormatting.DARK_GRAY, TextFormatting.GRAY);
+        replaceColourForBlack(TextFormatting.DARK_BLUE, TextFormatting.BLUE, TextFormatting.AQUA);
+        replaceColourForBlack(TextFormatting.BLUE, TextFormatting.BLUE, TextFormatting.AQUA);
+        replaceColourForBlack(TextFormatting.DARK_PURPLE, TextFormatting.LIGHT_PURPLE);
+        replaceColourForBlack(TextFormatting.DARK_RED, TextFormatting.RED);
+        replaceColourForBlack(TextFormatting.DARK_GREEN, TextFormatting.GREEN);
 
         COLOUR_TO_FORMAT[EnumDyeColor.BLACK.ordinal()] = TextFormatting.BLACK;
         COLOUR_TO_FORMAT[EnumDyeColor.GRAY.ordinal()] = TextFormatting.DARK_GRAY;
@@ -97,6 +102,24 @@ public class ColourUtil {
             builder.put(c.getName(), c);
         }
         nameToColourMap = builder.build();
+    }
+
+    private static void replaceColourForBlack(TextFormatting colour, TextFormatting with) {
+        replaceColourForBlack(colour, with, with);
+    }
+
+    private static void replaceColourForBlack(TextFormatting colour, TextFormatting normal, TextFormatting highContrast) {
+        REPLACE_FOR_BLACK[colour.ordinal()] = normal;
+        REPLACE_FOR_BLACK_HIGH_CONTRAST[colour.ordinal()] = highContrast;
+    }
+
+    private static void replaceColourForWhite(TextFormatting colour, TextFormatting with) {
+        replaceColourForWhite(colour, with, with);
+    }
+
+    private static void replaceColourForWhite(TextFormatting colour, TextFormatting normal, TextFormatting highContrast) {
+        REPLACE_FOR_WHITE[colour.ordinal()] = normal;
+        REPLACE_FOR_WHITE_HIGH_CONTRAST[colour.ordinal()] = highContrast;
     }
 
     @Nullable
@@ -151,13 +174,29 @@ public class ColourUtil {
     /** Returns a {@link TextFormatting} colour that will display correctly on a black background, so it won't use any
      * of the darker colours (as they will be difficult to see). */
     public static TextFormatting getTextFormatForBlack(TextFormatting in) {
-        return in.isColor() ? REPLACE_FOR_BLACK[in.ordinal()] : in;
+        if (in.isColor()) {
+            if (BCLibConfig.useHighContrastLabelColours) {
+                return REPLACE_FOR_BLACK_HIGH_CONTRAST[in.ordinal()];
+            } else {
+                return REPLACE_FOR_BLACK[in.ordinal()];
+            }
+        } else {
+            return in;
+        }
     }
 
     /** Returns a {@link TextFormatting} colour that will display correctly on a white background, so it won't use any
      * of the lighter colours (as they will be difficult to see). */
     public static TextFormatting getTextFormatForWhite(TextFormatting in) {
-        return in.isColor() ? REPLACE_FOR_WHITE[in.ordinal()] : in;
+        if (in.isColor()) {
+            if (BCLibConfig.useHighContrastLabelColours) {
+                return REPLACE_FOR_WHITE_HIGH_CONTRAST[in.ordinal()];
+            } else {
+                return REPLACE_FOR_WHITE[in.ordinal()];
+            }
+        } else {
+            return in;
+        }
     }
 
     /** Converts an {@link EnumDyeColor} into an equivalent {@link TextFormatting} for display. */

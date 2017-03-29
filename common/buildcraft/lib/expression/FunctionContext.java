@@ -15,6 +15,8 @@ import buildcraft.lib.expression.node.func.NodeFuncDoubleToLong.IFuncDoubleToLon
 import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong.IFuncLongLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongToLong.IFuncLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncStringToLong.IFuncStringToLong;
+import buildcraft.lib.expression.node.func.NodeFuncToBoolean.IFuncToBoolean;
+import buildcraft.lib.expression.node.func.NodeFuncToString.IFuncToString;
 import buildcraft.lib.expression.node.value.*;
 
 public class FunctionContext {
@@ -197,6 +199,14 @@ public class FunctionContext {
 
     // Various putFunction_in_out methods that make adding a function quicker
 
+    public void put_b(String name, IFuncToBoolean func) {
+        putFunction(name, new NodeFuncToBoolean(name, func));
+    }
+
+    public void put_s(String name, IFuncToString func) {
+        putFunction(name, new NodeFuncToString(name, func));
+    }
+    
     public void put_l_l(String name, IFuncLongToLong func) {
         putFunction(name, new NodeFuncLongToLong(func, (a) -> name + "(" + a + ")"));
     }

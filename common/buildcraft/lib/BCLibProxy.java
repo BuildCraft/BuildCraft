@@ -29,6 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
+import buildcraft.lib.client.reload.LibConfigChangeListener;
 import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
 import buildcraft.lib.client.render.MarkerRenderer;
@@ -114,7 +115,8 @@ public abstract class BCLibProxy implements IGuiHandler {
             DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, MarkerRenderer.INSTANCE);
             DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, DebugRenderHelper.INSTANCE);
             // various sprite registers
-            BCLibSprites.fmlPreInitClient();
+            BCLibSprites.fmlPreInitClient(); 
+            BCLibConfig.configChangeListeners.add(LibConfigChangeListener.INSTANCE);
         }
 
         @Override

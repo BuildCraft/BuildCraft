@@ -20,12 +20,14 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.client.sprite.AtlasSpriteVariants;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
@@ -43,7 +45,13 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         for (PipeDefinition def : PipeApi.pipeRegistry.getAllRegisteredPipes()) {
             TextureAtlasSprite[] array = new TextureAtlasSprite[def.textures.length];
             for (int i = 0; i < array.length; i++) {
-                array[i] = map.registerSprite(new ResourceLocation(def.textures[i]));
+                AtlasSpriteVariants sprite = AtlasSpriteVariants.createForConfig(new ResourceLocation(def.textures[i]));
+                if (map.setTextureEntry(sprite)) {
+                    array[i] = sprite;
+                } else {
+                    array[i] = map.getAtlasSprite(def.textures[i]);
+                    BCLog.logger.warn("Couldn't override " + def.textures[i] + ", using existing sprite " + array[i].getClass());
+                }
             }
             sprites.put(def, array);
         }
@@ -109,14 +117,14 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         QUADS_COLOURED[1] = new MutableQuad[6][8];
         for (EnumFacing side : EnumFacing.VALUES) {
             center = new Point3f(//
-                    side.getFrontOffsetX() * 0.375f,//
-                    side.getFrontOffsetY() * 0.375f,//
-                    side.getFrontOffsetZ() * 0.375f //
+                side.getFrontOffsetX() * 0.375f,//
+                side.getFrontOffsetY() * 0.375f,//
+                side.getFrontOffsetZ() * 0.375f //
             );
             radius = new Vector3f(//
-                    side.getAxis() == Axis.X ? 0.125f : 0.25f,//
-                    side.getAxis() == Axis.Y ? 0.125f : 0.25f,//
-                    side.getAxis() == Axis.Z ? 0.125f : 0.25f //
+                side.getAxis() == Axis.X ? 0.125f : 0.25f,//
+                side.getAxis() == Axis.Y ? 0.125f : 0.25f,//
+                side.getAxis() == Axis.Z ? 0.125f : 0.25f //
             );//
             center.add(new Point3f(0.5f, 0.5f, 0.5f));
 

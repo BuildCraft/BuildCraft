@@ -12,6 +12,8 @@ import net.minecraftforge.fml.common.LoaderState;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
+import buildcraft.lib.client.sprite.AtlasSpriteVariants;
+
 public class ModelHolderRegistry {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.model.holder");
 
@@ -24,7 +26,7 @@ public class ModelHolderRegistry {
         }
 
         for (ResourceLocation res : toStitch) {
-            map.registerSprite(res);
+            map.setTextureEntry(AtlasSpriteVariants.createForConfig(res));
         }
     }
 

@@ -33,6 +33,12 @@ public class SpriteUtil {
         Minecraft.getMinecraft().renderEngine.bindTexture(identifier);
     }
 
+    /** Transforms the given {@link ResourceLocation}, adding ".png" to the end and prepending that
+     * {@link ResourceLocation#getResourcePath()} with "textures/", just like what {@link TextureMap} does. */
+    public static ResourceLocation transformLocation(ResourceLocation location) {
+        return new ResourceLocation(location.getResourceDomain(), "textures/" + location.getResourcePath() + ".png");
+    }
+
     public static ISprite getFaceSprite(GameProfile profile) {
         if (profile == null) {
             return BCLibSprites.HELP;
