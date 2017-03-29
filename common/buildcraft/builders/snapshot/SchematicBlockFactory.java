@@ -330,6 +330,9 @@ public class SchematicBlockFactory {
             }
         }
         requiredItems.removeIf(ItemStack::isEmpty);
+        if (BlockUtil.getFluidWithFlowing(world, pos) != null) {
+            requiredItems.clear();
+        }
         schematicBlock.requiredItems = requiredItems;
         return true;
     }
