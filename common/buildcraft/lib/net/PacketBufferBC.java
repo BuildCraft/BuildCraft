@@ -265,6 +265,9 @@ public class PacketBufferBC extends PacketBuffer {
     @Override
     public <E extends Enum<E>> E readEnumValue(Class<E> enumClass) {
         E[] enums = enumClass.getEnumConstants();
+        if (enums.length == 0) {
+            throw new IllegalArgumentException();
+        }
         int index;
         if (enums.length > 1) {
             int length = MathHelper.log2DeBruijn(enums.length);
