@@ -392,6 +392,7 @@ public class SchematicBlockFactory {
     }
 
     public static void computeRequired(Blueprint blueprint) {
+        long t = System.currentTimeMillis();
         FakeWorld world = new FakeWorld();
         for (int z = 0; z < blueprint.size.getZ(); z++) {
             for (int y = 0; y < blueprint.size.getY(); y++) {
@@ -415,5 +416,6 @@ public class SchematicBlockFactory {
                 }
             }
         }
+        System.out.println("Took: " + (System.currentTimeMillis() - t) + "ms");
     }
 }
