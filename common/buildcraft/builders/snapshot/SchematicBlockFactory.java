@@ -394,10 +394,11 @@ public class SchematicBlockFactory {
     public static void computeRequired(Blueprint blueprint) {
         long t = System.currentTimeMillis();
         FakeWorld world = new FakeWorld();
+        world.uploadBlueprint(blueprint);
+        world.editable = false;
         for (int z = 0; z < blueprint.size.getZ(); z++) {
             for (int y = 0; y < blueprint.size.getY(); y++) {
                 for (int x = 0; x < blueprint.size.getX(); x++) {
-                    world.uploadBlueprint(blueprint);
                     BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
                     BlockPos basePos = FakeWorld.BLUEPRINT_OFFSET;
                     SchematicBlock schematicBlock = blueprint.data
@@ -412,10 +413,12 @@ public class SchematicBlockFactory {
                         schematicBlock.requiredItems = null;
                         schematicBlock.requiredFluids = null;
                     }
-                    world.clear();
+//                    System.out.println((double) (z * blueprint.size.getY() * blueprint.size.getX() + y * blueprint.size.getX() + x) / (blueprint.size.getX() * blueprint.size.getY() * blueprint.size.getZ()));
                 }
             }
         }
+        world.editable = true;
+        world.clear();
         System.out.println("Took: " + (System.currentTimeMillis() - t) + "ms");
     }
 }

@@ -1,5 +1,6 @@
 package buildcraft.builders.snapshot;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -7,6 +8,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
@@ -15,12 +17,15 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.SaveHandlerMP;
 import net.minecraft.world.storage.WorldInfo;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class FakeWorld extends World {
     public static final BlockPos BLUEPRINT_OFFSET = new BlockPos(0, 127, 0);
     private final List<ItemStack> drops = new ArrayList<>();
+    public boolean editable = true;
 
     public FakeWorld() {
         super(
@@ -70,17 +75,144 @@ public class FakeWorld extends World {
 
     @Override
     public boolean setBlockState(BlockPos pos, IBlockState newState, int flags) {
-        captureBlockSnapshots = true;
-        return super.setBlockState(pos, newState, flags);
+        if (editable) {
+            captureBlockSnapshots = true;
+            return super.setBlockState(pos, newState, flags);
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void updateBlockTick(BlockPos pos, Block block, int delay, int priority) {
+        if (editable) {
+            super.updateBlockTick(pos, block, delay, priority);
+        }
+    }
+
+    @Override
+    public void scheduleBlockUpdate(BlockPos pos, Block block, int delay, int priority) {
+        if (editable) {
+            super.scheduleBlockUpdate(pos, block, delay, priority);
+        }
+    }
+
+    @Override
+    protected void updateBlocks() {
+        if (editable) {
+            super.updateBlocks();
+        }
+    }
+
+    @Override
+    public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress) {
+        if (editable) {
+            super.sendBlockBreakProgress(breakerId, pos, progress);
+        }
+    }
+
+    @Override
+    public boolean addTileEntity(TileEntity tile) {
+        if (editable) {
+            return super.addTileEntity(tile);
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void addTileEntities(Collection<TileEntity> tileEntityCollection) {
+        if (editable) {
+            super.addTileEntities(tileEntityCollection);
+        }
+    }
+
+    @Override
+    public void setTileEntity(BlockPos pos, @Nullable TileEntity tileEntity) {
+        if (editable) {
+            super.setTileEntity(pos, tileEntity);
+        }
+    }
+
+    @Override
+    public void removeTileEntity(BlockPos pos) {
+        if (editable) {
+            super.removeTileEntity(pos);
+        }
+    }
+
+    @Override
+    public void markTileEntityForRemoval(TileEntity tileEntity) {
+        if (editable) {
+            super.markTileEntityForRemoval(tileEntity);
+        }
     }
 
     @Override
     public boolean spawnEntity(Entity entity) {
-        if (entity instanceof EntityItem) {
-            drops.add(((EntityItem) entity).getEntityItem());
-            return true;
-        } else {
+        if (editable) {
             return super.spawnEntity(entity);
+        } else {
+            if (entity instanceof EntityItem) {
+                drops.add(((EntityItem) entity).getEntityItem());
+            }
+            return true;
+        }
+    }
+
+    @Override
+    public void removeEntity(Entity entity) {
+        if (editable) {
+            super.removeEntity(entity);
+        }
+    }
+
+    @Override
+    public void setEntityState(Entity entity, byte state) {
+        if (editable) {
+            super.setEntityState(entity, state);
+        }
+    }
+
+    @Override
+    public void removeEntityDangerously(Entity entity) {
+        if (editable) {
+            super.removeEntityDangerously(entity);
+        }
+    }
+
+    @Override
+    public void updateEntity(Entity entity) {
+        if (editable) {
+            super.updateEntity(entity);
+        }
+    }
+
+    @Override
+    public void updateEntityWithOptionalForce(Entity entity, boolean forceUpdate) {
+        if (editable) {
+            super.updateEntityWithOptionalForce(entity, forceUpdate);
+        }
+    }
+
+    @Override
+    public void loadEntities(Collection<Entity> entityCollection) {
+        if (editable) {
+            super.loadEntities(entityCollection);
+        }
+    }
+
+    @Override
+    public void unloadEntities(Collection<Entity> entityCollection) {
+        if (editable) {
+            super.unloadEntities(entityCollection);
+        }
+    }
+
+    @Override
+    public void joinEntityInSurroundings(Entity entity) {
+        if (editable) {
+            super.joinEntityInSurroundings(entity);
         }
     }
 
