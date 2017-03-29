@@ -30,7 +30,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 .map(buildingInfo ->
                         Stream.concat(
                                 buildingInfo.toBreak.stream()
-                                        .filter(pos -> !tile.getWorld().isAirBlock(pos))
+                                        .filter(pos -> !tile.getWorldBC().isAirBlock(pos))
                                         .map(i -> 0),
                                 buildingInfo.toPlace.entrySet().stream()
                                         .filter(entry -> !isBlockCorrect(entry.getKey()) )
@@ -70,17 +70,17 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         return getBuildingInfo().toPlace.get(blockPos).requiredBlockOffsets.stream()
                 .map(blockPos::add)
                 .allMatch(pos ->
-                        getBuildingInfo().toPlace.containsKey(pos) ? isBlockCorrect(pos) : !tile.getWorld().isAirBlock(pos)
+                        getBuildingInfo().toPlace.containsKey(pos) ? isBlockCorrect(pos) : !tile.getWorldBC().isAirBlock(pos)
                 ) &&
                 getBuildingInfo().toPlace.get(blockPos).level == getBuiltLevel() + 1 &&
                 getBuildingInfo().toPlace.get(blockPos).placeBlock != Blocks.AIR &&
                 (
-                        tile.getWorld().isAirBlock(blockPos) ||
+                        tile.getWorldBC().isAirBlock(blockPos) ||
                                 (
                                         BlockUtil.getFluidWithFlowing(
                                                 getBuildingInfo().toPlace.get(blockPos).blockState.getBlock()
                                         ) != null &&
-                                                BlockUtil.getFluidWithFlowing(tile.getWorld(), blockPos) != null
+                                                BlockUtil.getFluidWithFlowing(tile.getWorldBC(), blockPos) != null
                                 )
                 );
     }
@@ -127,15 +127,15 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 getBuildingInfo().toPlace.containsKey(blockPos) &&
                 getBuildingInfo().toPlace.get(blockPos).blockState != null &&
                 getBuildingInfo().toPlace.get(blockPos).canBeReplacedWithBlocks.contains(
-                        tile.getWorld().getBlockState(blockPos).getBlock()
+                        tile.getWorldBC().getBlockState(blockPos).getBlock()
                 ) &&
                 getBuildingInfo().toPlace.get(blockPos).blockState.getPropertyKeys().stream()
-                        .filter(tile.getWorld().getBlockState(blockPos).getPropertyKeys()::contains)
+                        .filter(tile.getWorldBC().getBlockState(blockPos).getPropertyKeys()::contains)
                         .filter(property -> !getBuildingInfo().toPlace.get(blockPos).ignoredProperties.contains(property))
                         .allMatch(property ->
                                 Objects.equals(
                                         getBuildingInfo().toPlace.get(blockPos).blockState.getValue(property),
-                                        tile.getWorld().getBlockState(blockPos).getValue(property)
+                                        tile.getWorldBC().getBlockState(blockPos).getValue(property)
                                 )
                         );
     }
@@ -143,7 +143,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     @Override
     protected boolean doPlaceTask(PlaceTask placeTask) {
         return !(getBuildingInfo() == null || getBuildingInfo().toPlace.get(placeTask.pos) == null) &&
-                getBuildingInfo().toPlace.get(placeTask.pos).build(tile.getWorld(), placeTask.pos);
+                getBuildingInfo().toPlace.get(placeTask.pos).build(tile.getWorldBC(), placeTask.pos);
     }
 
     @Override
@@ -156,7 +156,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     @Override
     public boolean tick() {
         boolean result = super.tick();
-        if (tile.getWorld().isRemote) {
+        if (tile.getWorldBC().isRemote) {
             return result;
         }
 

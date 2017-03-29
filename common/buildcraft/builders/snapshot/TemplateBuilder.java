@@ -38,7 +38,7 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
 
     @Override
     protected boolean canPlace(BlockPos blockPos) {
-        return tile.getWorld().isAirBlock(blockPos);
+        return tile.getWorldBC().isAirBlock(blockPos);
     }
 
     @Override
@@ -49,14 +49,14 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     @Override
     protected boolean doPlaceTask(PlaceTask placeTask) {
         FakePlayerBC fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer(
-                (WorldServer) tile.getWorld(),
+                (WorldServer) tile.getWorldBC(),
                 tile.getBuilderPos(),
                 tile.getOwner()
         );
         fakePlayer.setHeldItem(fakePlayer.getActiveHand(), placeTask.items.get(0));
         EnumActionResult result = placeTask.items.get(0).onItemUse(
                 fakePlayer,
-                tile.getWorld(),
+                tile.getWorldBC(),
                 placeTask.pos,
                 fakePlayer.getActiveHand(),
                 EnumFacing.UP,
@@ -74,7 +74,7 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
 
     @Override
     protected boolean isBlockCorrect(BlockPos blockPos) {
-        return getBuildingInfo().toPlace.contains(blockPos) && !tile.getWorld().isAirBlock(blockPos);
+        return getBuildingInfo().toPlace.contains(blockPos) && !tile.getWorldBC().isAirBlock(blockPos);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     @Override
     protected boolean isDone() {
         return getBuildingInfo() != null &&
-                getBuildingInfo().toBreak.stream().allMatch(tile.getWorld()::isAirBlock) &&
+                getBuildingInfo().toBreak.stream().allMatch(tile.getWorldBC()::isAirBlock) &&
                 getBuildingInfo().toPlace.stream().allMatch(this::isBlockCorrect);
     }
 

@@ -82,7 +82,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
      * @return true is building is finished, false otherwise
      */
     public boolean tick() {
-        if (tile.getWorld().isRemote) {
+        if (tile.getWorldBC().isRemote) {
             prevClientBreakTasks.clear();
             prevClientBreakTasks.addAll(clientBreakTasks);
             clientBreakTasks.clear();
@@ -115,7 +115,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             return false;
         }
 
-        breakTasks.removeIf(breakTask -> tile.getWorld().isAirBlock(breakTask.pos) || isBlockCorrect(breakTask.pos));
+        breakTasks.removeIf(breakTask -> tile.getWorldBC().isAirBlock(breakTask.pos) || isBlockCorrect(breakTask.pos));
         placeTasks.removeIf(placeTask -> isBlockCorrect(placeTask.pos));
 
         if (breakTasks.size() < MAX_QUEUE_SIZE) {
@@ -126,9 +126,9 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                                     100_000 - Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
                     ))
                     .filter(blockPos -> breakTasks.stream().map(BreakTask::getPos).noneMatch(Predicate.isEqual(blockPos)))
-                    .filter(blockPos -> !tile.getWorld().isAirBlock(blockPos))
+                    .filter(blockPos -> !tile.getWorldBC().isAirBlock(blockPos))
                     .filter(blockPos -> !isBlockCorrect(blockPos))
-                    .filter(blockPos -> BlockUtil.getFluidWithFlowing(tile.getWorld(), blockPos) == null)
+                    .filter(blockPos -> BlockUtil.getFluidWithFlowing(tile.getWorldBC(), blockPos) == null)
                     .map(blockPos ->
                             new BreakTask(
                                     blockPos,
@@ -172,23 +172,23 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                 );
                 if (breakTask.power >= target) {
                     BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(
-                            tile.getWorld(),
+                            tile.getWorldBC(),
                             breakTask.pos,
-                            tile.getWorld().getBlockState(breakTask.pos),
+                            tile.getWorldBC().getBlockState(breakTask.pos),
                             FakePlayerUtil.INSTANCE.getFakePlayer(
-                                    (WorldServer) tile.getWorld(),
+                                    (WorldServer) tile.getWorldBC(),
                                     tile.getBuilderPos(),
                                     tile.getOwner()
                             )
                     );
                     MinecraftForge.EVENT_BUS.post(breakEvent);
                     if (!breakEvent.isCanceled()) {
-                        tile.getWorld().sendBlockBreakProgress(
+                        tile.getWorldBC().sendBlockBreakProgress(
                                 breakTask.pos.hashCode(),
                                 breakTask.pos,
                                 -1
                         );
-                        tile.getWorld().destroyBlock(breakTask.pos, false);
+                        tile.getWorldBC().destroyBlock(breakTask.pos, false);
                     } else {
                         tile.getBattery().addPower(
                                 Math.min(target, tile.getBattery().getCapacity() - tile.getBattery().getStored()),
@@ -197,7 +197,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                     }
                     iterator.remove();
                 } else {
-                    tile.getWorld().sendBlockBreakProgress(
+                    tile.getWorldBC().sendBlockBreakProgress(
                             breakTask.pos.hashCode(),
                             breakTask.pos,
                             (int) ((breakTask.power * 9) / target)
@@ -290,7 +290,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         }
 
         public long getTarget() {
-            return BlockUtil.computeBlockBreakPower(tile.getWorld(), pos);
+            return BlockUtil.computeBlockBreakPower(tile.getWorldBC(), pos);
         }
 
         public void writePayload(PacketBufferBC buffer) {

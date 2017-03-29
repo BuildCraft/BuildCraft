@@ -33,6 +33,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -204,6 +205,11 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         left.add("");
         left.add("battery = " + battery.getDebugString());
         left.add("addon = " + addon);
+    }
+
+    @Override
+    public World getWorldBC() {
+        return world;
     }
 
     @Override

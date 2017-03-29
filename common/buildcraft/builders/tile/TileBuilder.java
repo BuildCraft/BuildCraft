@@ -40,6 +40,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
@@ -315,6 +316,11 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
 //        left.add("lastBox = " + lastBox);
         left.add("basePoses = " + (basePoses == null ? "null" : basePoses.size()));
         left.add("currentBasePosIndex = " + currentBasePosIndex);
+    }
+
+    @Override
+    public World getWorldBC() {
+        return world;
     }
 
     @Override

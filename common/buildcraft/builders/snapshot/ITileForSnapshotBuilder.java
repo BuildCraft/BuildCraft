@@ -6,7 +6,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public interface ITileForSnapshotBuilder extends IPlayerOwned {
-    World getWorld();
+    World getWorldBC();
 
     MjBattery getBattery();
 
