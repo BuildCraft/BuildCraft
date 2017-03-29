@@ -139,7 +139,7 @@ public class VolumeBox {
         return dist;
     }
 
-    public Stream<Lock.LockTarget> getLockTargetsStream() {
+    public Stream<Lock.Target> getLockTargetsStream() {
         return locks.stream().flatMap(lock -> lock.targets.stream());
     }
 
@@ -215,7 +215,9 @@ public class VolumeBox {
                     }
                 });
         addons.keySet().removeIf(slot -> !newAddons.containsKey(slot));
-        newAddons.entrySet().stream().filter(slotAddon -> !addons.containsKey(slotAddon.getKey())).forEach(slotAddon -> addons.put(slotAddon.getKey(), slotAddon.getValue()));
+        newAddons.entrySet().stream()
+                .filter(slotAddon -> !addons.containsKey(slotAddon.getKey()))
+                .forEach(slotAddon -> addons.put(slotAddon.getKey(), slotAddon.getValue()));
         for (Map.Entry<EnumAddonSlot, Addon> slotAddon : newAddons.entrySet()) {
             PacketBuffer buffer = new PacketBuffer(UnpooledByteBufAllocator.DEFAULT.buffer());
             slotAddon.getValue().toBytes(buffer);

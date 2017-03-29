@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 
 public class Blueprint extends Snapshot {
     public SchematicBlock[][][] data;
+    public List<SchematicEntity> entities;
 
     @Override
     public <T extends ITileForSnapshotBuilder> SnapshotBuilder<T> createBuilder(T tile) {

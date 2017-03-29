@@ -26,6 +26,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -40,6 +41,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -54,9 +56,9 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     public boolean shouldScanEntities = false;
     private Snapshot.EnumSnapshotType snapshotType = Snapshot.EnumSnapshotType.BLUEPRINT;
     private final Box box = new Box();
-//    private List<SchematicEntityOffset> blueprintScannedEntities;
-    private SchematicBlock[][][] blueprintScannedBlocks;
     private boolean[][][] templateScannedBlocks;
+    private SchematicBlock[][][] blueprintScannedBlocks;
+    private final List<SchematicEntity> blueprintScannedEntities = new ArrayList<>();
     private BoxIterator boxIterator;
     private boolean isValid = false;
     private boolean scanning = false;
@@ -98,10 +100,10 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             isValid = true;
             volumeBox.locks.add(
                     new Lock(
-                            new Lock.LockCause.LockCauseBlock(pos, blockState.getBlock()),
-                            new Lock.LockTarget.LockTargetResize(),
-                            new Lock.LockTarget.LockTargetUsedByMachine(
-                                    Lock.LockTarget.LockTargetUsedByMachine.EnumLockTargetUsedByMachineType.STRIPES_READ
+                            new Lock.Cause.CauseBlock(pos, blockState.getBlock()),
+                            new Lock.Target.TargetResize(),
+                            new Lock.Target.TargetUsedByMachine(
+                                    Lock.Target.TargetUsedByMachine.EnumType.STRIPES_READ
                             )
                     )
             );
@@ -158,7 +160,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
 
     private void scanSingleBlock() {
         BlockPos size = box.size();
-        if (templateScannedBlocks == null && blueprintScannedBlocks == null) {
+        if (templateScannedBlocks == null || blueprintScannedBlocks == null) {
             boxIterator = new BoxIterator(box, EnumAxisOrder.XZY.getMinToMaxOrder(), true);
             blueprintScannedBlocks = new SchematicBlock[size.getX()][size.getY()][size.getZ()];
             templateScannedBlocks = new boolean[size.getX()][size.getY()][size.getZ()];
@@ -215,8 +217,13 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             ((Template) snapshot).data = templateScannedBlocks;
         }
         if (snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
+            world.getEntitiesWithinAABB(Entity.class, box.getBoundingBox()).stream()
+                    .map(entity -> SchematicEntityFactory.getSchematicEntity(world, pos, entity))
+                    .forEach(blueprintScannedEntities::add);
             // noinspection ConstantConditions
             ((Blueprint) snapshot).data = blueprintScannedBlocks;
+            // noinspection ConstantConditions
+            ((Blueprint) snapshot).entities = blueprintScannedEntities;
         }
         snapshot.header.id = UUID.randomUUID();
         snapshot.header.owner = getOwner().getId();
@@ -230,8 +237,9 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         }
         invBptIn.setStackInSlot(0, stackIn);
         invBptOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshotType, snapshot.header));
-        blueprintScannedBlocks = null;
         templateScannedBlocks = null;
+        blueprintScannedBlocks = null;
+        blueprintScannedEntities.clear();
         boxIterator = null;
         sendNetworkUpdate(NET_RENDER_DATA);
     }

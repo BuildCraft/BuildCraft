@@ -22,7 +22,7 @@ public class GuiArchitectTable extends GuiBC8<ContainerArchitectTable> {
     private static final GuiIcon ICON_PROGRESS = new GuiIcon(TEXTURE_BASE, 0, 166, 24, 17);
     private static final GuiRectangle RECT_PROGRESS = new GuiRectangle(159, 34, 24, 17);
 
-    private GuiTextField nameField; // TODO: sending to server
+    private GuiTextField nameField;
 
     public GuiArchitectTable(ContainerArchitectTable container) {
         super(container);

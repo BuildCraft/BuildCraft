@@ -20,13 +20,13 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class Lock {
-    public LockCause cause;
-    public List<LockTarget> targets = new ArrayList<>();
+    public Cause cause;
+    public List<Target> targets = new ArrayList<>();
 
     public Lock() {
     }
 
-    public Lock(LockCause cause, LockTarget... targets) {
+    public Lock(Cause cause, Target... targets) {
         this.cause = cause;
         this.targets.addAll(Arrays.asList(targets));
     }
@@ -50,16 +50,16 @@ public class Lock {
     public void readFromNBT(NBTTagCompound nbt) {
         NBTTagCompound causeTag = nbt.getCompoundTag("cause");
         try {
-            cause = (LockCause) Class.forName(causeTag.getString("class")).newInstance();
+            cause = (Cause) Class.forName(causeTag.getString("class")).newInstance();
         } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
         cause.readFromNBT(causeTag.getCompoundTag("data"));
         NBTTagList targetsTag = nbt.getTagList("targets", Constants.NBT.TAG_COMPOUND);
         IntStream.range(0, targetsTag.tagCount()).mapToObj(targetsTag::getCompoundTagAt).map(targetTag -> {
-            LockTarget target;
+            Target target;
             try {
-                target = (LockTarget) Class.forName(targetTag.getString("class")).newInstance();
+                target = (Target) Class.forName(targetTag.getString("class")).newInstance();
             } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
@@ -69,27 +69,27 @@ public class Lock {
     }
 
     public void toBytes(PacketBuffer buf) {
-        new PacketBufferBC(buf).writeEnumValue(LockCause.EnumLockCause.getForClass(cause.getClass()));
+        new PacketBufferBC(buf).writeEnumValue(Cause.EnumCause.getForClass(cause.getClass()));
         cause.toBytes(buf);
         buf.writeInt(targets.size());
         targets.forEach(target -> {
-            new PacketBuffer(buf).writeEnumValue(LockTarget.EnumLockTarget.getForClass(target.getClass()));
+            new PacketBuffer(buf).writeEnumValue(Target.EnumTarget.getForClass(target.getClass()));
             target.toBytes(buf);
         });
     }
 
     public void fromBytes(PacketBuffer buf) {
         try {
-            cause = new PacketBufferBC(buf).readEnumValue(LockCause.EnumLockCause.class).clazz.newInstance();
+            cause = new PacketBufferBC(buf).readEnumValue(Cause.EnumCause.class).clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
         cause.fromBytes(buf);
         targets.clear();
         IntStream.range(0, buf.readInt()).mapToObj(i -> {
-            LockTarget target;
+            Target target;
             try {
-                target = new PacketBufferBC(buf).readEnumValue(LockTarget.EnumLockTarget.class).clazz.newInstance();
+                target = new PacketBufferBC(buf).readEnumValue(Target.EnumTarget.class).clazz.newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
@@ -98,7 +98,7 @@ public class Lock {
         }).forEach(targets::add);
     }
 
-    public static abstract class LockCause {
+    public static abstract class Cause {
         public abstract NBTTagCompound writeToNBT(NBTTagCompound nbt);
 
         public abstract void readFromNBT(NBTTagCompound nbt);
@@ -109,14 +109,14 @@ public class Lock {
 
         public abstract boolean stillWorks(World world);
 
-        public static class LockCauseBlock extends LockCause {
+        public static class CauseBlock extends Cause {
             public BlockPos pos;
             public Block block;
 
-            public LockCauseBlock() {
+            public CauseBlock() {
             }
 
-            public LockCauseBlock(BlockPos pos, Block block) {
+            public CauseBlock(BlockPos pos, Block block) {
                 this.pos = pos;
                 this.block = block;
             }
@@ -152,22 +152,22 @@ public class Lock {
             }
         }
 
-        enum EnumLockCause {
-            BLOCK(LockCauseBlock.class);
+        enum EnumCause {
+            BLOCK(CauseBlock.class);
 
-            public final Class<? extends LockCause> clazz;
+            public final Class<? extends Cause> clazz;
 
-            EnumLockCause(Class<? extends LockCause> clazz) {
+            EnumCause(Class<? extends Cause> clazz) {
                 this.clazz = clazz;
             }
 
-            public static Enum<EnumLockCause> getForClass(Class<? extends LockCause> clazz) {
+            public static Enum<EnumCause> getForClass(Class<? extends Cause> clazz) {
                 return Arrays.stream(values()).filter(enumCause -> enumCause.clazz == clazz).findFirst().orElse(null);
             }
         }
     }
 
-    public static abstract class LockTarget {
+    public static abstract class Target {
         public abstract NBTTagCompound writeToNBT(NBTTagCompound nbt);
 
         public abstract void readFromNBT(NBTTagCompound nbt);
@@ -176,7 +176,7 @@ public class Lock {
 
         public abstract void fromBytes(PacketBuffer buf);
 
-        public static class LockTargetResize extends LockTarget {
+        public static class TargetResize extends Target {
             @Override
             public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
                 return nbt;
@@ -195,13 +195,13 @@ public class Lock {
             }
         }
 
-        public static class LockTargetAddon extends LockTarget {
+        public static class TargetAddon extends Target {
             public EnumAddonSlot slot;
 
-            public LockTargetAddon() {
+            public TargetAddon() {
             }
 
-            public LockTargetAddon(EnumAddonSlot slot) {
+            public TargetAddon(EnumAddonSlot slot) {
                 this.slot = slot;
             }
 
@@ -227,13 +227,13 @@ public class Lock {
             }
         }
 
-        public static class LockTargetUsedByMachine extends LockTarget {
-            public EnumLockTargetUsedByMachineType type;
+        public static class TargetUsedByMachine extends Target {
+            public EnumType type;
 
-            public LockTargetUsedByMachine() {
+            public TargetUsedByMachine() {
             }
 
-            public LockTargetUsedByMachine(EnumLockTargetUsedByMachineType type) {
+            public TargetUsedByMachine(EnumType type) {
                 this.type = type;
             }
 
@@ -245,7 +245,7 @@ public class Lock {
 
             @Override
             public void readFromNBT(NBTTagCompound nbt) {
-                type = NBTUtilBC.readEnum(nbt.getTag("type"), EnumLockTargetUsedByMachineType.class);
+                type = NBTUtilBC.readEnum(nbt.getTag("type"), EnumType.class);
             }
 
             @Override
@@ -255,33 +255,33 @@ public class Lock {
 
             @Override
             public void fromBytes(PacketBuffer buf) {
-                type = new PacketBufferBC(buf).readEnumValue(EnumLockTargetUsedByMachineType.class);
+                type = new PacketBufferBC(buf).readEnumValue(EnumType.class);
             }
 
-            public enum EnumLockTargetUsedByMachineType {
+            public enum EnumType {
                 STRIPES_WRITE(BuildCraftLaserManager.STRIPES_WRITE),
                 STRIPES_READ(BuildCraftLaserManager.STRIPES_READ);
 
                 public final LaserData_BC8.LaserType laserType;
 
-                EnumLockTargetUsedByMachineType(LaserData_BC8.LaserType laserType) {
+                EnumType(LaserData_BC8.LaserType laserType) {
                     this.laserType = laserType;
                 }
             }
         }
 
-        enum EnumLockTarget {
-            RESIZE(LockTargetResize.class),
-            ADDON(LockTargetAddon.class),
-            USED_BY_MACHINE(LockTargetUsedByMachine.class);
+        enum EnumTarget {
+            RESIZE(TargetResize.class),
+            ADDON(TargetAddon.class),
+            USED_BY_MACHINE(TargetUsedByMachine.class);
 
-            public final Class<? extends LockTarget> clazz;
+            public final Class<? extends Target> clazz;
 
-            EnumLockTarget(Class<? extends LockTarget> clazz) {
+            EnumTarget(Class<? extends Target> clazz) {
                 this.clazz = clazz;
             }
 
-            public static Enum<EnumLockTarget> getForClass(Class<? extends LockTarget> clazz) {
+            public static Enum<EnumTarget> getForClass(Class<? extends Target> clazz) {
                 return Arrays.stream(values()).filter(enumTarget -> enumTarget.clazz == clazz).findFirst().orElse(null);
             }
         }

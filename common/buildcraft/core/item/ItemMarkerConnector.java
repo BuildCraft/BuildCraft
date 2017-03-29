@@ -143,8 +143,8 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                     addonBox.addons.containsKey(addonSlot) &&
                             addonBox.getLockTargetsStream()
                                     .noneMatch(target ->
-                                            target instanceof Lock.LockTarget.LockTargetAddon &&
-                                                    ((Lock.LockTarget.LockTargetAddon) target).slot == addonSlot)
+                                            target instanceof Lock.Target.TargetAddon &&
+                                                    ((Lock.Target.TargetAddon) target).slot == addonSlot)
                     ) {
                 if (player.isSneaking()) {
                     addonBox.addons.get(addonSlot).onRemoved();
@@ -182,7 +182,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                         volumeBoxes.boxes.stream()
                                 .filter(box ->
                                         box.getLockTargetsStream()
-                                                .noneMatch(target -> target instanceof Lock.LockTarget.LockTargetResize)
+                                                .noneMatch(target -> target instanceof Lock.Target.TargetResize)
                                 )
                                 .collect(Collectors.toList())
                         ) {

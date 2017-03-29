@@ -16,5 +16,6 @@ public class JsonRule {
     public List<String> ignoredTags = null;
     public String placeBlock = null;
     public List<String> canBeReplacedWithBlocks = null;
-    public boolean ignore = false;
+    public boolean ignore = false; // blacklist for blocks
+    public boolean capture = false; // whitelist for entities
 }

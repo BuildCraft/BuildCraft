@@ -29,6 +29,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import com.google.common.collect.ImmutableList;
+import jdk.nashorn.internal.ir.Optimistic;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -51,6 +52,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -119,7 +121,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
             if (snapshot.getType() == Snapshot.EnumSnapshotType.BLUEPRINT) {
                 blueprintBuildingInfo = ((Blueprint) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
             }
-            currentBox = getBuilder() == null ? null : getBuilder().getBox();
+            currentBox = Optional.ofNullable(getBuilder()).map(SnapshotBuilder::getBox).orElse(null);
         } else {
             snapshotType = null;
             templateBuildingInfo = null;
@@ -248,6 +250,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
         if (path != null) {
             nbt.setTag("path", NBTUtilBC.writeCompoundList(path.stream().map(NBTUtil::createPosTag)));
         }
+        nbt.setTag("basePoses", NBTUtilBC.writeCompoundList(basePoses.stream().map(NBTUtil::createPosTag)));
         return nbt;
     }
 
@@ -259,7 +262,9 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                     .map(NBTUtil::getPosFromTag)
                     .collect(Collectors.toList());
         }
-        updateBasePoses();
+        basePoses = NBTUtilBC.readCompoundList(nbt.getTagList("basePoses", Constants.NBT.TAG_COMPOUND))
+                .map(NBTUtil::getPosFromTag)
+                .collect(Collectors.toList());
     }
 
     // Capability

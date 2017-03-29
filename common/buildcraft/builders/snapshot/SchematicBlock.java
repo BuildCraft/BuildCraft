@@ -38,9 +38,6 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     public List<ItemStack> requiredItems = new ArrayList<>();
     public List<Fluid> requiredFluids = new ArrayList<>();
 
-    public SchematicBlock() {
-    }
-
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
