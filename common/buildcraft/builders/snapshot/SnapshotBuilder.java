@@ -147,7 +147,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                                     Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
                     ))
                     .filter(blockPos -> placeTasks.stream().map(PlaceTask::getPos).noneMatch(Predicate.isEqual(blockPos)))
-                    .filter(blockPos -> tile.getWorld().isAirBlock(blockPos))
+                    .filter(blockPos -> !isBlockCorrect(blockPos))
                     .filter(this::canPlace)
                     .map(blockPos ->
                             new PlaceTask(

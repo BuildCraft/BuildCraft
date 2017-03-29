@@ -78,7 +78,7 @@ public class SchematicBlockFactory {
             Set<JsonRule> rules,
             SchematicBlock schematicBlock
     ) {
-        schematicBlock.level = BlockUtil.getFluid(world, pos) != null ? 1 : 0;
+        schematicBlock.level = BlockUtil.getFluidWithFlowing(world, pos) != null ? 1 : 0;
         return true;
     }
 

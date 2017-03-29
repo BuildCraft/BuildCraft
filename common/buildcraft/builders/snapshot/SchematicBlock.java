@@ -9,6 +9,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -143,11 +145,14 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
                     placeBlock.getDefaultState()
             );
         }
-        if (world.setBlockState(blockPos, newBlockState)) {
-            Stream.concat(
+        if (world.setBlockState(blockPos, newBlockState, 11)) {
+            Stream.of(
+                    Stream.of(EnumFacing.values()).map(blockPos::offset),
                     requiredBlockOffsets.stream().map(blockPos::add),
                     Stream.of(blockPos)
             )
+                    .flatMap(Function.identity())
+                    .distinct()
                     .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, placeBlock, false));
             if (tileNbt != null && blockState.getBlock().hasTileEntity(blockState)) {
                 NBTTagCompound newTileNbt = new NBTTagCompound();

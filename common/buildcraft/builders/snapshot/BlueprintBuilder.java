@@ -4,6 +4,7 @@ import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.net.PacketBufferBC;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
@@ -32,10 +33,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                         .filter(pos -> !tile.getWorld().isAirBlock(pos))
                                         .map(i -> 0),
                                 buildingInfo.toPlace.entrySet().stream()
-                                        .filter(entry ->
-                                                tile.getWorld().isAirBlock(entry.getKey()) ||
-                                                        !isBlockCorrect(entry.getKey())
-                                        )
+                                        .filter(entry -> !isBlockCorrect(entry.getKey()) )
                                         .map(entry -> entry.getValue().level)
                         )
                                 .min(Integer::compare)
@@ -74,7 +72,17 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 .allMatch(pos ->
                         getBuildingInfo().toPlace.containsKey(pos) ? isBlockCorrect(pos) : !tile.getWorld().isAirBlock(pos)
                 ) &&
-                getBuildingInfo().toPlace.get(blockPos).level == getBuiltLevel() + 1;
+                getBuildingInfo().toPlace.get(blockPos).level == getBuiltLevel() + 1 &&
+                getBuildingInfo().toPlace.get(blockPos).placeBlock != Blocks.AIR &&
+                (
+                        tile.getWorld().isAirBlock(blockPos) ||
+                                (
+                                        BlockUtil.getFluidWithFlowing(
+                                                getBuildingInfo().toPlace.get(blockPos).blockState.getBlock()
+                                        ) != null &&
+                                                BlockUtil.getFluidWithFlowing(tile.getWorld(), blockPos) != null
+                                )
+                );
     }
 
     @Override
@@ -115,14 +123,14 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     protected boolean isBlockCorrect(BlockPos blockPos) {
-        return !tile.getWorld().isAirBlock(blockPos) &&
-                getBuildingInfo() != null &&
+        return getBuildingInfo() != null &&
                 getBuildingInfo().toPlace.containsKey(blockPos) &&
                 getBuildingInfo().toPlace.get(blockPos).blockState != null &&
                 getBuildingInfo().toPlace.get(blockPos).canBeReplacedWithBlocks.contains(
                         tile.getWorld().getBlockState(blockPos).getBlock()
                 ) &&
                 getBuildingInfo().toPlace.get(blockPos).blockState.getPropertyKeys().stream()
+                        .filter(tile.getWorld().getBlockState(blockPos).getPropertyKeys()::contains)
                         .filter(property -> !getBuildingInfo().toPlace.get(blockPos).ignoredProperties.contains(property))
                         .allMatch(property ->
                                 Objects.equals(
