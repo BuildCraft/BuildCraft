@@ -19,7 +19,7 @@ import buildcraft.lib.misc.StackUtil;
 import gnu.trove.map.hash.TCharObjectHashMap;
 
 public class RecipeBuilderShaped {
-    private final @Nonnull ItemStack result;
+    private @Nonnull ItemStack result;
     private final List<String> shape = new ArrayList<>();
     private final TCharObjectHashMap<Object> objects = new TCharObjectHashMap<>();
 
@@ -39,33 +39,126 @@ public class RecipeBuilderShaped {
         return this;
     }
 
+    // map(char, object)
+    // Straightforward mapping of a char to a non-null object
+
     public RecipeBuilderShaped map(char c, Item item) {
+        if (item == null) {
+            throw new NullPointerException("Tried to map a null item!");
+        }
         objects.put(c, item);
         return this;
     }
 
     public RecipeBuilderShaped map(char c, Block block) {
+        if (block == null) {
+            throw new NullPointerException("Tried to map a null block!");
+        }
         objects.put(c, block);
         return this;
     }
 
     public RecipeBuilderShaped map(char c, ItemStack stack) {
+        if (stack == null || stack.isEmpty()) {
+            throw new NullPointerException("Tried to map a null (or empty) stack!");
+        }
         objects.put(c, stack);
         return this;
     }
 
     public RecipeBuilderShaped map(char c, String oreDict) {
+        if (oreDict == null) {
+            throw new NullPointerException("Tried to map a null oreDict!");
+        }
         objects.put(c, oreDict);
         return this;
     }
 
     public RecipeBuilderShaped map(char c, Object val) {
+        if (val == null) {
+            throw new NullPointerException("Tried to map to a null object!");
+        }
         if (val instanceof Item || val instanceof Block || val instanceof ItemStack || val instanceof String) {
             objects.put(c, val);
             return this;
         }
         throw new IllegalArgumentException("Invalid value " + val.getClass());
     }
+
+    // map(char, toTry, fallback)
+    // Maps char to firsnNonNull(toTry, fallback)
+
+    public RecipeBuilderShaped map(char c, Item toTry, Item fallback) {
+        if (toTry != null) {
+            return map(c, toTry);
+        }
+        return map(c, fallback);
+    }
+
+    public RecipeBuilderShaped map(char c, Item toTry, ItemStack fallback) {
+        if (toTry != null) {
+            return map(c, toTry);
+        }
+        return map(c, fallback);
+    }
+
+    public RecipeBuilderShaped map(char c, Item toTry, String fallback) {
+        if (toTry != null) {
+            return map(c, toTry);
+        }
+        return map(c, fallback);
+    }
+
+    public RecipeBuilderShaped map(char c, Block toTry, Block fallback) {
+        if (toTry != null) {
+            return map(c, toTry);
+        }
+        return map(c, fallback);
+    }
+
+    public RecipeBuilderShaped map(char c, Block toTry, ItemStack fallback) {
+        if (toTry != null) {
+            return map(c, toTry);
+        }
+        return map(c, fallback);
+    }
+
+    public RecipeBuilderShaped map(char c, Block toTry, String fallback) {
+        if (toTry != null) {
+            return map(c, toTry);
+        }
+        return map(c, fallback);
+    }
+
+    public RecipeBuilderShaped map(char c, ItemStack toTry, Item fallback) {
+        if (toTry != null) {
+            return map(c, toTry);
+        }
+        return map(c, fallback);
+    }
+
+    public RecipeBuilderShaped map(char c, ItemStack toTry, Block fallback) {
+        if (!toTry.isEmpty()) {
+            return map(c, toTry);
+        }
+        return map(c, fallback);
+    }
+
+    public RecipeBuilderShaped map(char c, ItemStack toTry, ItemStack fallback) {
+        if (!toTry.isEmpty()) {
+            return map(c, toTry);
+        }
+        return map(c, fallback);
+    }
+
+    public RecipeBuilderShaped map(char c, ItemStack toTry, String fallback) {
+        if (!toTry.isEmpty()) {
+            return map(c, toTry);
+        }
+        return map(c, fallback);
+    }
+
+    // Util
 
     public Object[] createRecipeObjectArray() {
         Object[] objs = new Object[shape.size() + objects.size() * 2];
@@ -80,18 +173,28 @@ public class RecipeBuilderShaped {
         return objs;
     }
 
+    public void setResult(@Nonnull ItemStack result) {
+        this.result = result;
+    }
+
     public ShapedOreRecipe build() {
+        if (result.isEmpty()) {
+            throw new IllegalStateException("Tried to build without setting the result!");
+        }
         return build(result);
     }
 
-    public ShapedOreRecipe build(ItemStack resultStack) {
-        if (resultStack == null) {
-            throw new NullPointerException("result");
+    public ShapedOreRecipe build(@Nonnull ItemStack resultStack) {
+        if (resultStack.isEmpty()) {
+            throw new IllegalArgumentException("Provided an empty resultStack!");
         }
         return new ShapedOreRecipe(resultStack, createRecipeObjectArray());
     }
 
     public NBTAwareShapedOreRecipe buildNbtAware() {
+        if (result.isEmpty()) {
+            throw new IllegalStateException("Tried to build without setting the result!");
+        }
         return buildNbtAware(result);
     }
 
@@ -124,7 +227,6 @@ public class RecipeBuilderShaped {
             objs[offset++] = Character.valueOf(c);
             objs[offset++] = objects.get(c);
         }
-        BCLog.logger.info("Rotated from " + Arrays.toString(createRecipeObjectArray()) + " to " + Arrays.toString(objs));
         return new ShapedOreRecipe(result, objs);
     }
 }

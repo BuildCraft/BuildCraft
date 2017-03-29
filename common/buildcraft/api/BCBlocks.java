@@ -5,7 +5,6 @@ import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fml.common.Loader;
@@ -20,7 +19,7 @@ public class BCBlocks {
     private static final boolean DEBUG = BCDebugging.shouldDebugLog("api.blocks");
 
     // BC Core
-    public static final Block coreDecorated;
+    public static final Block CORE_DECORATED;
     public static final Block coreEngineRedstone;
     public static final Block CORE_MARKER_VOLUME;
     public static final Block CORE_MARKER_PATH;
@@ -33,6 +32,12 @@ public class BCBlocks {
     public static final Block energyEngineCreative;
 
     // BC Factory
+    public static final Block FACTORY_TANK;
+    public static final Block FACTORY_PUMP;
+    public static final Block FACTORY_CHUTE;
+    public static final Block FACTORY_FLOOD_GATE;
+    public static final Block FACTORY_MINING_WELL;
+    public static final Block FACTORY_AUTOWORKBENCH_ITEM;
 
     // BC Robotics
 
@@ -48,7 +53,7 @@ public class BCBlocks {
             throw new RuntimeException("Accessed BC blocks too early! You can only use them from init onwards!");
         }
         String core = "core";
-        coreDecorated = getRegisteredBlock(core, "decorated");
+        CORE_DECORATED = getRegisteredBlock(core, "decorated");
         coreEngineRedstone = getRegisteredBlock(core, "engine_redstone");
         CORE_MARKER_VOLUME = getRegisteredBlock(core, "marker_volume");
         CORE_MARKER_PATH = getRegisteredBlock(core, "marker_path");
@@ -57,6 +62,14 @@ public class BCBlocks {
         energyEngineStirling = getRegisteredBlock(energy, "engine_stirling");
         energyEngineCombustion = getRegisteredBlock(energy, "engine_combustion");
         energyEngineCreative = getRegisteredBlock(energy, "engine_creative");
+
+        String factory = "factory";
+        FACTORY_TANK = getRegisteredBlock(factory, "tank");
+        FACTORY_PUMP = getRegisteredBlock(factory, "pump");
+        FACTORY_CHUTE = getRegisteredBlock(factory, "chute");
+        FACTORY_FLOOD_GATE = getRegisteredBlock(factory, "flood_gate");
+        FACTORY_MINING_WELL = getRegisteredBlock(factory, "mining_well");
+        FACTORY_AUTOWORKBENCH_ITEM = getRegisteredBlock(factory, "autoworkbench_item");
 
         if (DEBUG) {
             for (Block block : Block.REGISTRY) {
