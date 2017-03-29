@@ -78,7 +78,7 @@ public class SchematicBlockFactory {
             Set<JsonRule> rules,
             SchematicBlock schematicBlock
     ) {
-        schematicBlock.level = BlockUtil.getFluid(block) != null ? 1 : 0;
+        schematicBlock.level = BlockUtil.getFluid(world, pos) != null ? 1 : 0;
         return true;
     }
 
@@ -211,7 +211,11 @@ public class SchematicBlockFactory {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .map(Block::getBlockFromName)
-                .orElse(block);
+                .orElse(
+                        BlockUtil.getFluidWithFlowing(world, pos) != null && BlockUtil.getFluid(world, pos) == null
+                                ? Blocks.AIR
+                                : block
+                );
         return true;
     }
 
@@ -340,12 +344,8 @@ public class SchematicBlockFactory {
             SchematicBlock schematicBlock
     ) {
         List<Fluid> requiredFluids = new ArrayList<>();
-        if (BlockUtil.getFluidWithFlowing(block) != null) {
-            if (BlockUtil.getFluid(block) != null) {
-                requiredFluids.add(BlockUtil.getFluid(block));
-            } else {
-                return false;
-            }
+        if (BlockUtil.getFluid(world, pos) != null) {
+            requiredFluids.add(BlockUtil.getFluid(world, pos));
         }
         schematicBlock.requiredFluids = requiredFluids;
         return true;

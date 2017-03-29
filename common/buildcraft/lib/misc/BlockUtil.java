@@ -233,6 +233,9 @@ public final class BlockUtil {
                 fluid = null;
             }
         }
+        if ((block == Blocks.WATER || block == Blocks.LAVA) && blockState.getValue(BlockLiquid.LEVEL) != 0) {
+            fluid = null;
+        }
         if (fluid == null) {
             if (block == Blocks.FLOWING_WATER && blockState.getValue(BlockLiquid.LEVEL) == 0) {
                 fluid = FluidRegistry.WATER;
