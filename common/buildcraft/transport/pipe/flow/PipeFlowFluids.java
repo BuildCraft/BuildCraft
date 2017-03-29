@@ -85,7 +85,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                     if (currentFluid == null) {
                         setFluid(stack);
                     }
-                    if (stack.isFluidEqual(currentFluid)) {
+                    if (stack != null && stack.isFluidEqual(currentFluid)) {
                         sections.get(part).readFromNbt(compound);
                     }
                 } else {
