@@ -101,6 +101,7 @@ public class BCCore {
         registerTag("item.paintbrush").reg("paintbrush").locale("paintbrush").model("paintbrush/");
         registerTag("item.marker_connector").reg("marker_connector").locale("markerConnector").model("marker_connector");
         registerTag("item.volume_marker").reg("volume_marker").locale("volume_marker").model("volume_marker");
+        registerTag("item.goggles").reg("goggles").locale("goggles").model("goggles");
         // Item Blocks
         registerTag("item.block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker_volume");
         registerTag("item.block.marker.path").reg("marker_path").locale("pathMarkerBlock").oldReg("pathMarkerBlock").model("marker_path");

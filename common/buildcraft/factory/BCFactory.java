@@ -70,6 +70,10 @@ public class BCFactory {
         registerTag("item.block.flood_gate").reg("flood_gate").locale("floodGateBlock").model("flood_gate");
         registerTag("item.block.tank").reg("tank").locale("tankBlock").model("tank");
         registerTag("item.block.chute").reg("chute").locale("chuteBlock").model("chute");
+        registerTag("item.block.distiller").reg("distiller").locale("distiller").model("distiller");
+        registerTag("item.block.heat_exchange.start").reg("heat_exchange_start").locale("heat_exchange_start").model("heat_exchange_start");
+        registerTag("item.block.heat_exchange.middle").reg("heat_exchange_middle").locale("heat_exchange_middle").model("heat_exchange_middle");
+        registerTag("item.block.heat_exchange.end").reg("heat_exchange_end").locale("heat_exchange_end").model("heat_exchange_end");
         // BC Factory Blocks
         registerTag("block.plastic").reg("plastic").locale("plasticBlock").model("plastic");
         registerTag("block.autoworkbench.item").reg("autoworkbench_item").oldReg("autoWorkbenchBlock").locale("autoWorkbenchBlock").model("autoworkbench_item");
@@ -79,6 +83,10 @@ public class BCFactory {
         registerTag("block.tank").reg("tank").oldReg("tankBlock").locale("tankBlock").model("tank");
         registerTag("block.chute").reg("chute").oldReg("chuteBlock").locale("chuteBlock").model("chute");
         registerTag("block.water_gel").reg("water_gel").locale("waterGel").model("water_gel");
+        registerTag("block.distiller").reg("distiller").locale("distiller").model("distiller");
+        registerTag("block.heat_exchange.start").reg("heat_exchange_start").locale("heat_exchange_start").model("heat_exchange_start");
+        registerTag("block.heat_exchange.middle").reg("heat_exchange_middle").locale("heat_exchange_middle").model("heat_exchange_middle");
+        registerTag("block.heat_exchange.end").reg("heat_exchange_end").locale("heat_exchange_end").model("heat_exchange_end");
         // BC Factory Tiles
         registerTag("tile.autoworkbench.item").reg("autoworkbench_item");
         registerTag("tile.mining_well").reg("mining_well");
@@ -86,6 +94,7 @@ public class BCFactory {
         registerTag("tile.flood_gate").reg("flood_gate");
         registerTag("tile.tank").reg("tank");
         registerTag("tile.chute").reg("chute");
+        registerTag("tile.distiller").reg("distiller");
 
         endBatch(TagManager.prependTags("buildcraftfactory:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(TagManager.setTab("buildcraft.main")));
     }

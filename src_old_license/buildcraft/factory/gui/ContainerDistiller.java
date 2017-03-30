@@ -5,13 +5,13 @@ import net.minecraft.inventory.Slot;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.widgets.FluidTankWidget;
-import buildcraft.factory.tile.TileDistiller;
+import buildcraft.factory.tile.TileDistiller_BC8;
 import buildcraft.lib.gui.slot.SlotValidated;
 
 public class ContainerDistiller extends BuildCraftContainer {
-    public final TileDistiller distiller;
+    public final TileDistiller_BC8 distiller;
 
-    public ContainerDistiller(EntityPlayer player, TileDistiller distiller) {
+    public ContainerDistiller(EntityPlayer player, TileDistiller_BC8 distiller) {
         super(player, 3);
         this.distiller = distiller;
 

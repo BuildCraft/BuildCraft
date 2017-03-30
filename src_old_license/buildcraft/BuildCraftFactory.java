@@ -76,9 +76,9 @@ import buildcraft.factory.schematics.SchematicAutoWorkbench;
 import buildcraft.factory.schematics.SchematicPump;
 import buildcraft.factory.schematics.SchematicRefinery;
 import buildcraft.factory.schematics.SchematicTileIgnoreState;
-import buildcraft.factory.tile.TileDistiller;
+import buildcraft.factory.tile.TileDistiller_BC8;
 import buildcraft.factory.tile.TileEnergyHeater;
-import buildcraft.factory.tile.TileHeatExchange;
+import buildcraft.factory.tile.TileHeatExchange_BC8;
 import buildcraft.lib.config.RestartRequirement;
 
 //@Mod(name = "BuildCraft Factory", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Factory",
@@ -273,8 +273,8 @@ public class BuildCraftFactory extends BuildCraftMod {
         BCRegistry.INSTANCE.registerTileEntity(TileRefinery.class, "buildcraft.factory.Refinery", "net.minecraft.src.buildcraft.factory.Refinery");
         BCRegistry.INSTANCE.registerTileEntity(TileChute.class, "buildcraft.factory.Chute", "net.minecraft.src.buildcraft.factory.TileHopper");
         BCRegistry.INSTANCE.registerTileEntity(TileEnergyHeater.class, "buildcraft.factory.TileEnergyHeater");
-        BCRegistry.INSTANCE.registerTileEntity(TileHeatExchange.class, "buildcraft.factory.TileHeatExchange");
-        BCRegistry.INSTANCE.registerTileEntity(TileDistiller.class, "buildcraft.factory.TileDistiller");
+        BCRegistry.INSTANCE.registerTileEntity(TileHeatExchange_BC8.class, "buildcraft.factory.TileHeatExchange");
+        BCRegistry.INSTANCE.registerTileEntity(TileDistiller_BC8.class, "buildcraft.factory.TileDistiller");
 
         if (Loader.isModLoaded("BuildCraft|Energy")) {
             ComplexRefiningManager.init();

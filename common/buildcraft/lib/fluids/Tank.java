@@ -163,7 +163,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
 
     @Override
     public boolean canFillFluidType(FluidStack fluid) {
-        return fluid != null && filter.test(fluid);
+        return super.canFillFluidType(fluid) && fluid != null && filter.test(fluid);
     }
 
     @Override

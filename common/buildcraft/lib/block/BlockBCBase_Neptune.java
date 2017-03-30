@@ -24,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.properties.BuildCraftProperty;
 

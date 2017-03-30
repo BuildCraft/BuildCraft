@@ -22,6 +22,7 @@ public class BCCoreItems {
     public static ItemList_BC8 list;
     public static ItemMapLocation mapLocation;
     public static ItemMarkerConnector markerConnector;
+    public static ItemGoggles goggles;
 
     public static void preInit() {
         wrench = ItemManager.register(new ItemWrench_Neptune("item.wrench"));
@@ -35,6 +36,7 @@ public class BCCoreItems {
         list = ItemManager.register(new ItemList_BC8("item.list"));
         mapLocation = ItemManager.register(new ItemMapLocation("item.map_location"));
         markerConnector = ItemManager.register(new ItemMarkerConnector("item.marker_connector"));
+        goggles = ItemManager.register(new ItemGoggles("item.goggles"));
 
         ItemManager.register(new ItemVolumeCuboid("item.volume_marker"));
 

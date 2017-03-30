@@ -44,18 +44,18 @@ public class VecUtil {
 
     public static Vec3d replaceValue(Vec3d old, Axis axis, double with) {
         return new Vec3d(//
-                axis == Axis.X ? with : old.xCoord,//
-                axis == Axis.Y ? with : old.yCoord,//
-                axis == Axis.Z ? with : old.zCoord//
+            axis == Axis.X ? with : old.xCoord,//
+            axis == Axis.Y ? with : old.yCoord,//
+            axis == Axis.Z ? with : old.zCoord//
         );
     }
 
     @Nonnull
     public static BlockPos replaceValue(Vec3i old, Axis axis, int with) {
         return new BlockPos(//
-                axis == Axis.X ? with : old.getX(),//
-                axis == Axis.Y ? with : old.getY(),//
-                axis == Axis.Z ? with : old.getZ()//
+            axis == Axis.X ? with : old.getX(),//
+            axis == Axis.Y ? with : old.getY(),//
+            axis == Axis.Z ? with : old.getZ()//
         );
     }
 
@@ -89,9 +89,9 @@ public class VecUtil {
         if (a == null) return b;
         if (b == null) return a;
         return new BlockPos(//
-                Math.min(a.getX(), b.getX()),//
-                Math.min(a.getY(), b.getY()),//
-                Math.min(a.getZ(), b.getZ())//
+            Math.min(a.getX(), b.getX()),//
+            Math.min(a.getY(), b.getY()),//
+            Math.min(a.getZ(), b.getZ())//
         );
     }
 
@@ -107,9 +107,9 @@ public class VecUtil {
         if (a == null) return b;
         if (b == null) return a;
         return new BlockPos(//
-                Math.max(a.getX(), b.getX()),//
-                Math.max(a.getY(), b.getY()),//
-                Math.max(a.getZ(), b.getZ())//
+            Math.max(a.getX(), b.getX()),//
+            Math.max(a.getY(), b.getY()),//
+            Math.max(a.getZ(), b.getZ())//
         );
     }
 
@@ -118,6 +118,42 @@ public class VecUtil {
     }
 
     public static BlockPos max(BlockPos a, BlockPos b, BlockPos c, BlockPos d) {
+        return max(max(a, b), max(c, d));
+    }
+
+    public static Vec3d min(Vec3d a, Vec3d b) {
+        if (a == null) return b;
+        if (b == null) return a;
+        return new Vec3d(//
+            Math.min(a.xCoord, b.xCoord),//
+            Math.min(a.yCoord, b.yCoord),//
+            Math.min(a.zCoord, b.zCoord)//
+        );
+    }
+
+    public static Vec3d min(Vec3d a, Vec3d b, Vec3d c) {
+        return min(min(a, b), c);
+    }
+
+    public static Vec3d min(Vec3d a, Vec3d b, Vec3d c, Vec3d d) {
+        return min(min(a, b), min(c, d));
+    }
+
+    public static Vec3d max(Vec3d a, Vec3d b) {
+        if (a == null) return b;
+        if (b == null) return a;
+        return new Vec3d(//
+            Math.max(a.xCoord, b.xCoord),//
+            Math.max(a.yCoord, b.yCoord),//
+            Math.max(a.zCoord, b.zCoord)//
+        );
+    }
+
+    public static Vec3d max(Vec3d a, Vec3d b, Vec3d c) {
+        return max(max(a, b), c);
+    }
+
+    public static Vec3d max(Vec3d a, Vec3d b, Vec3d c, Vec3d d) {
         return max(max(a, b), max(c, d));
     }
 }

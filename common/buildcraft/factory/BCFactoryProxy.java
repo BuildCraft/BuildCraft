@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.factory.client.render.RenderDistiller;
 import buildcraft.factory.client.render.RenderMiningWell;
 import buildcraft.factory.client.render.RenderPump;
 import buildcraft.factory.client.render.RenderTank;
@@ -24,6 +25,7 @@ import buildcraft.factory.gui.GuiAutoCraftItems;
 import buildcraft.factory.gui.GuiChute;
 import buildcraft.factory.tile.TileAutoWorkbenchItems;
 import buildcraft.factory.tile.TileChute;
+import buildcraft.factory.tile.TileDistiller_BC8;
 import buildcraft.factory.tile.TileMiningWell;
 import buildcraft.factory.tile.TilePump;
 import buildcraft.factory.tile.TileTank;
@@ -91,6 +93,7 @@ public abstract class BCFactoryProxy implements IGuiHandler {
             ClientRegistry.bindTileEntitySpecialRenderer(TileMiningWell.class, new RenderMiningWell());
             ClientRegistry.bindTileEntitySpecialRenderer(TilePump.class, new RenderPump());
             ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());
+            ClientRegistry.bindTileEntitySpecialRenderer(TileDistiller_BC8.class, new RenderDistiller());
         }
     }
 }
