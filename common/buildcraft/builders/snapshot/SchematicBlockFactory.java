@@ -370,7 +370,8 @@ public class SchematicBlockFactory {
             ignore = true;
         }
         if (!ignore) {
-            if (!RulesLoader.INSTANCE.readDomains.contains(registryName.getResourceDomain())) {
+            if (!RulesLoader.INSTANCE.readDomains.contains(registryName.getResourceDomain()) &&
+                    BlockUtil.getFluidWithFlowing(world, pos) == null) {
                 ignore = true;
             }
         }

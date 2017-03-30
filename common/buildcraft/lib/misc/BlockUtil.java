@@ -229,7 +229,8 @@ public final class BlockUtil {
         Block block = blockState.getBlock();
         Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
         if (block instanceof IFluidBlock) {
-            if (!((IFluidBlock) block).canDrain(world, pos)) {
+            IFluidBlock fluidBlock = (IFluidBlock) block;
+            if (!fluidBlock.canDrain(world, pos) || fluidBlock.drain(world, pos, false) == null) {
                 fluid = null;
             }
         }

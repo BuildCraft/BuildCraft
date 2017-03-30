@@ -33,7 +33,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                         .filter(pos -> !tile.getWorldBC().isAirBlock(pos))
                                         .map(i -> 0),
                                 buildingInfo.toPlace.entrySet().stream()
-                                        .filter(entry -> !isBlockCorrect(entry.getKey()) )
+                                        .filter(entry -> !isBlockCorrect(entry.getKey()))
                                         .map(entry -> entry.getValue().level)
                         )
                                 .min(Integer::compare)
