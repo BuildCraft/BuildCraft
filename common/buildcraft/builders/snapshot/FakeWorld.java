@@ -7,12 +7,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
+import net.minecraft.world.*;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.SaveHandlerMP;
 import net.minecraft.world.storage.WorldInfo;
@@ -23,6 +21,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class FakeWorld extends World {
+    public static FakeWorld INSTANCE = new FakeWorld();
+
     public static final BlockPos BLUEPRINT_OFFSET = new BlockPos(0, 127, 0);
     private final List<ItemStack> drops = new ArrayList<>();
     public boolean editable = true;
@@ -30,7 +30,16 @@ public class FakeWorld extends World {
     public FakeWorld() {
         super(
                 new SaveHandlerMP(),
-                new WorldInfo(new NBTTagCompound()),
+                new WorldInfo(
+                        new WorldSettings(
+                                0,
+                                GameType.CREATIVE,
+                                true,
+                                false,
+                                WorldType.DEFAULT
+                        ),
+                        "fake"
+                ),
                 new WorldProvider() {
                     @Override
                     public DimensionType getDimensionType() {
@@ -77,7 +86,12 @@ public class FakeWorld extends World {
     public boolean setBlockState(BlockPos pos, IBlockState newState, int flags) {
         if (editable) {
             captureBlockSnapshots = true;
-            return super.setBlockState(pos, newState, flags);
+            if (pos.getY() < 0 || pos.getY() >= 256) {
+                return false;
+            } else {
+                getChunkFromBlockCoords(pos).setBlockState(pos, newState);
+                return true;
+            }
         } else {
             return true;
         }

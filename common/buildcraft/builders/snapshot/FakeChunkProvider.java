@@ -22,7 +22,11 @@ public class FakeChunkProvider implements IChunkProvider {
     public Chunk getLoadedChunk(int x, int z) {
         ChunkPos chunkPos = new ChunkPos(x, z);
         if (!chunks.containsKey(chunkPos)) {
-            chunks.put(chunkPos, new Chunk(world, new ChunkPrimer(), x, z));
+            chunks.put(chunkPos, new Chunk(world, x, z) {
+                @Override
+                public void generateSkylightMap() {
+                }
+            });
         }
         return chunks.get(chunkPos);
     }

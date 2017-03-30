@@ -1,6 +1,9 @@
 package buildcraft.builders.snapshot;
 
 import buildcraft.lib.misc.BlockUtil;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.properties.PropertyBool;
@@ -20,18 +23,17 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class SchematicBlockFactory {
-    private static Set<JsonRule> getRules(
-            World world,
-            BlockPos basePos,
-            BlockPos pos,
-            IBlockState blockState,
-            Block block
-    ) {
+    private static LoadingCache<IBlockState, Set<JsonRule>> rulesCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(5, TimeUnit.MINUTES)
+            .build(CacheLoader.from(SchematicBlockFactory::getRules));
+
+    private static Set<JsonRule> getRules(IBlockState blockState) {
         return RulesLoader.INSTANCE.rules.stream()
                 .filter(rule -> rule.selectors != null)
                 .filter(rule ->
@@ -42,7 +44,7 @@ public class SchematicBlockFactory {
                                             complex
                                                     ? selector.substring(0, selector.indexOf("["))
                                                     : selector
-                                    ) == block &&
+                                    ) == blockState.getBlock() &&
                                             (!complex ||
                                                     Arrays.stream(
                                                             selector.substring(
@@ -274,7 +276,7 @@ public class SchematicBlockFactory {
                 requiredItems.addAll(((FakeWorld) world).breakBlockAndGetDrops(pos));
             }
         }
-        if (rules.stream().filter(rule -> rule.requiredItems != null).count() > 0) {
+        if (rules.stream().map(rule -> rule.requiredItems).anyMatch(Objects::nonNull)) {
             requiredItems.clear();
             rules.stream()
                     .filter(rule -> rule.requiredItems != null)
@@ -373,7 +375,7 @@ public class SchematicBlockFactory {
             }
         }
         if (!ignore) {
-            Set<JsonRule> rules = getRules(world, basePos, pos, blockState, block);
+            Set<JsonRule> rules = rulesCache.getUnchecked(blockState);
             if (rules.stream().anyMatch(rule -> rule.ignore) ||
                     !setLevel /*                  */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
                     !setRequiredBlockOffsets /*   */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
@@ -395,8 +397,8 @@ public class SchematicBlockFactory {
     }
 
     public static void computeRequired(Blueprint blueprint) {
-        long t = System.currentTimeMillis();
-        FakeWorld world = new FakeWorld();
+//        long t = System.currentTimeMillis();
+        FakeWorld world = FakeWorld.INSTANCE;
         world.uploadBlueprint(blueprint);
         world.editable = false;
         for (int z = 0; z < blueprint.size.getZ(); z++) {
@@ -410,7 +412,7 @@ public class SchematicBlockFactory {
                             [pos.getZ() - basePos.getZ()];
                     IBlockState blockState = world.getBlockState(pos);
                     Block block = blockState.getBlock();
-                    Set<JsonRule> rules = getRules(world, basePos, pos, blockState, block);
+                    Set<JsonRule> rules = rulesCache.getUnchecked(blockState);
                     if (!setRequiredItems(world, basePos, pos, blockState, block, rules, schematicBlock) ||
                             !setRequiredFluids(world, basePos, pos, blockState, block, rules, schematicBlock)) {
                         schematicBlock.requiredItems = null;
@@ -422,6 +424,6 @@ public class SchematicBlockFactory {
         }
         world.editable = true;
         world.clear();
-        System.out.println("Took: " + (System.currentTimeMillis() - t) + "ms");
+//        System.out.println("Took: " + (System.currentTimeMillis() - t) + "ms");
     }
 }
