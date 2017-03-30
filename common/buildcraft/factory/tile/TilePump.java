@@ -162,7 +162,7 @@ public class TilePump extends TileMiner {
                         }
                     }
                     if (count < 4) {
-                        world.setBlockToAir(currentPos);
+                        BlockUtil.drainBlock(world, currentPos, true);
                         nextPos();
                         updateYLevel();
                     }

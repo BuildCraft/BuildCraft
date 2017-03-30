@@ -4,12 +4,9 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.lib.misc;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.blueprints.BuilderAPI;
+import buildcraft.lib.BCLibConfig;
 import com.mojang.authlib.GameProfile;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.properties.IProperty;
@@ -32,18 +29,17 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
-
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import buildcraft.api.blueprints.BuilderAPI;
-
-import buildcraft.lib.BCLibConfig;
+import javax.annotation.Nonnull;
+import java.util.List;
 
 public final class BlockUtil {
 
@@ -225,27 +221,8 @@ public final class BlockUtil {
     }
 
     public static Fluid getFluid(World world, BlockPos pos) {
-        IBlockState blockState = world.getBlockState(pos);
-        Block block = blockState.getBlock();
-        Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
-        if (block instanceof IFluidBlock) {
-            IFluidBlock fluidBlock = (IFluidBlock) block;
-            if (!fluidBlock.canDrain(world, pos) || fluidBlock.drain(world, pos, false) == null) {
-                fluid = null;
-            }
-        }
-        if ((block == Blocks.WATER || block == Blocks.LAVA) && blockState.getValue(BlockLiquid.LEVEL) != 0) {
-            fluid = null;
-        }
-        if (fluid == null) {
-            if (block == Blocks.FLOWING_WATER && blockState.getValue(BlockLiquid.LEVEL) == 0) {
-                fluid = FluidRegistry.WATER;
-            }
-            if (block == Blocks.FLOWING_LAVA && blockState.getValue(BlockLiquid.LEVEL) == 0) {
-                fluid = FluidRegistry.LAVA;
-            }
-        }
-        return fluid;
+        FluidStack fluid = drainBlock(world, pos, false);
+        return fluid != null ? fluid.getFluid() : null;
     }
 
     public static Fluid getFluidWithFlowing(World world, BlockPos pos) {
@@ -284,33 +261,9 @@ public final class BlockUtil {
     }
 
     public static FluidStack drainBlock(World world, BlockPos pos, boolean doDrain) {
-        return drainBlock(world.getBlockState(pos), world, pos, doDrain);
-    }
-
-    public static FluidStack drainBlock(IBlockState state, World world, BlockPos pos, boolean doDrain) {
-        Block block = state.getBlock();
-        Fluid fluid = getFluidWithFlowing(block);
-
-        if (fluid != null && FluidRegistry.isFluidRegistered(fluid)) {
-            if (block instanceof IFluidBlock) {
-                IFluidBlock fluidBlock = (IFluidBlock) block;
-                if (!fluidBlock.canDrain(world, pos)) {
-                    return null;
-                }
-                return fluidBlock.drain(world, pos, doDrain);
-            } else {
-                // FIXME: this should probably check the level...
-                int level = state.getValue(BlockLiquid.LEVEL);
-                // if (level != 0) {
-                // return null;
-                // }
-
-                if (doDrain) {
-                    world.setBlockToAir(pos);
-                }
-
-                return new FluidStack(fluid, 1000);
-            }
+        IFluidHandler handler = FluidUtil.getFluidHandler(world, pos, null);
+        if (handler != null) {
+            return handler.drain(Fluid.BUCKET_VOLUME, doDrain);
         } else {
             return null;
         }
