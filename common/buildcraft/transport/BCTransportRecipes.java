@@ -148,8 +148,10 @@ public class BCTransportRecipes {
             builder.map('m', Items.QUARTZ);
             makeGateRecipe(builder, EnumGateMaterial.IRON, EnumGateModifier.QUARTZ);
 
-            builder.map('m', BCCoreItems.diamondShard);
-            makeGateRecipe(builder, EnumGateMaterial.IRON, EnumGateModifier.DIAMOND);
+            if (BCCoreItems.diamondShard != null) {
+                builder.map('m', BCCoreItems.diamondShard);
+                makeGateRecipe(builder, EnumGateMaterial.IRON, EnumGateModifier.DIAMOND);
+            }
 
             // And Gate <-> Or Gate (shapeless)
             for (EnumGateMaterial material : EnumGateMaterial.VALUES) {
