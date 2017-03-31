@@ -17,6 +17,8 @@ public class BCFactoryBlocks {
     public static BlockFloodGate floodGate;
     public static BlockTank tank;
     public static BlockChute chute;
+    public static BlockDistiller distiller;
+    public static BlockHeatExchange heatExchangeStart, heatExchangeMiddle, heatExchangeEnd;
 
     // public static BlockAutoWorkbenchFluids autoWorkbenchFluids;
     // public static BlockPlastic plastic;
@@ -30,6 +32,10 @@ public class BCFactoryBlocks {
         floodGate = BlockBCBase_Neptune.register(new BlockFloodGate(Material.ROCK, "block.flood_gate"));
         tank = BlockBCBase_Neptune.register(new BlockTank(Material.ROCK, "block.tank"));
         chute = BlockBCBase_Neptune.register(new BlockChute(Material.ROCK, "block.chute"));
+        distiller = BlockBCBase_Neptune.register(new BlockDistiller(Material.IRON, "block.distiller"));
+        heatExchangeStart = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.start", BlockHeatExchange.Part.START));
+        heatExchangeMiddle = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.middle", BlockHeatExchange.Part.MIDDLE));
+        heatExchangeEnd = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.end", BlockHeatExchange.Part.END));
 
         waterGel = BlockBCBase_Neptune.register(new BlockWaterGel(Material.CLAY, "block.water_gel"), null);
 
@@ -39,5 +45,6 @@ public class BCFactoryBlocks {
         TileBC_Neptune.registerTile(TileFloodGate.class, "tile.flood_gate");
         TileBC_Neptune.registerTile(TileTank.class, "tile.tank");
         TileBC_Neptune.registerTile(TileChute.class, "tile.chute");
+        TileBC_Neptune.registerTile(TileDistiller_BC8.class, "tile.distiller");
     }
 }

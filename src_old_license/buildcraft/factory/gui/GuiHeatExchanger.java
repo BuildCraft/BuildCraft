@@ -4,16 +4,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
-import buildcraft.factory.tile.TileHeatExchange;
+import buildcraft.factory.tile.TileHeatExchange_BC8;
 
 public class GuiHeatExchanger extends GuiAdvancedInterface {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/gui/heat_exchanger.png");
 
-    private final TileHeatExchange heatExchange;
+    private final TileHeatExchange_BC8 heatExchange;
     private int inCoolableTicks, inHeatableTicks, outCooledTicks, outHeatedTicks, craftTicks;
 
-    public GuiHeatExchanger(EntityPlayer player, TileHeatExchange heatExchange) {
+    public GuiHeatExchanger(EntityPlayer player, TileHeatExchange_BC8 heatExchange) {
         super(new ContainerHeatExchange(player, heatExchange), heatExchange, TEXTURE);
         this.heatExchange = heatExchange;
         xSize = 176;

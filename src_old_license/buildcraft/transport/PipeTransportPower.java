@@ -32,6 +32,7 @@ import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.data.AverageDouble;
 import buildcraft.lib.misc.data.AverageInt;
 import buildcraft.transport.network.PacketPowerUpdate;
+import buildcraft.transport.pipe.flow.IPipeTransportPowerHook;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerIron;
 import buildcraft.transport.pipes.PipePowerEmerald;

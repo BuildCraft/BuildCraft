@@ -34,4 +34,12 @@ public enum NodeType {
                 throw new IllegalStateException("Unknown node type '" + this + "'");
         }
     }
+
+    public static IConstantNode createConstantNode(IExpressionNode node) {
+        if (node instanceof INodeLong) return new NodeConstantLong(((INodeLong) node).evaluate());
+        else if (node instanceof INodeDouble) return new NodeConstantDouble(((INodeDouble) node).evaluate());
+        else if (node instanceof INodeBoolean) return NodeConstantBoolean.get(((INodeBoolean) node).evaluate());
+        else if (node instanceof INodeString) return new NodeConstantString(((INodeString) node).evaluate());
+        else throw new IllegalArgumentException("Illegal node " + node.getClass());
+    }
 }

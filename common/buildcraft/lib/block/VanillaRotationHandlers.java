@@ -190,7 +190,7 @@ public class VanillaRotationHandlers {
     //@formatter:on
     {
         E current = state.getValue(prop);
-        for (int i = possible.getOrderLength(); i > 0; i--) {
+        for (int i = possible.getOrderLength(); i > 1; i--) {
             current = possible.next(current);
             if (canPlace.test(current)) {
                 world.setBlockState(pos, state.withProperty(prop, current));

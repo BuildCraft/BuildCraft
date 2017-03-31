@@ -25,7 +25,7 @@ public class TokeniserDefaults {
         }
     };
 
-    private static final String[] MATH_OPS_2_CHAR = { "||", "&&", "<=", ">=", "==", "!=" };
+    private static final String[] MATH_OPS_2_CHAR = { "||", "&&", "<=", ">=", "==", "!=", "<<", ">>" };
     public static final ITokenizerGobbler GOBBLER_MATH_OPERATOR = (ctx) -> {
         String possible = ctx.get(2);
         for (String s : MATH_OPS_2_CHAR) {

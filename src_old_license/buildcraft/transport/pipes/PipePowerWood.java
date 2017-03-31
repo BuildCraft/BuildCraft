@@ -21,10 +21,10 @@ import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.RFBattery;
-import buildcraft.transport.IPipeTransportPowerHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
+import buildcraft.transport.pipe.flow.IPipeTransportPowerHook;
 
 public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTransportPowerHook, IRedstoneEngineReceiver, IDebuggable {
     public final boolean[] powerSources = new boolean[6];

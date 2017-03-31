@@ -136,7 +136,6 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
             }
         }
 
-        @Nonnull
         ItemStack total = StackUtil.EMPTY;
         if (min <= totalSize) {
             for (int slot : valids.toArray()) {

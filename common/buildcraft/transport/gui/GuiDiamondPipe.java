@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.items.IItemHandler;
 
-import buildcraft.core.BCCoreConfig;
+import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.misc.LocaleUtil;
@@ -19,7 +19,7 @@ import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
 
 public class GuiDiamondPipe extends GuiBC8<ContainerDiamondPipe> {
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcrafttransport:textures/gui/filter.png");
-    private static final ResourceLocation TEXTURE_CB = new ResourceLocation("buildcrafttransport:textures/gui/filter.png");
+    private static final ResourceLocation TEXTURE_CB = new ResourceLocation("buildcrafttransport:textures/gui/filter_cb.png");
     private static final int SIZE_X = 175, SIZE_Y = 225;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_GUI_CB = new GuiIcon(TEXTURE_CB, 0, 0, SIZE_X, SIZE_Y);
@@ -44,7 +44,7 @@ public class GuiDiamondPipe extends GuiBC8<ContainerDiamondPipe> {
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        if (BCCoreConfig.colourBlindMode) {
+        if (BCLibConfig.colourBlindMode) {
             ICON_GUI_CB.drawAt(rootElement);
         } else {
             ICON_GUI.drawAt(rootElement);

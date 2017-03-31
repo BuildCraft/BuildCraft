@@ -27,6 +27,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.client.model.ModelHolderRegistry;
+import buildcraft.lib.client.reload.ReloadManager;
 import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
@@ -66,6 +67,7 @@ public enum BCLibEventDist {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void textureStitchPre(TextureStitchEvent.Pre event) {
+        ReloadManager.INSTANCE.preReloadResources();
         TextureMap map = event.getMap();
         SpriteHolderRegistry.onTextureStitchPre(map);
         ModelHolderRegistry.onTextureStitchPre(map);

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -383,6 +385,27 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         // TODO: move this function to allow for compat support!
         if (neighbour instanceof IPipeHolder) {
             return ((IPipeHolder) neighbour).getPipe();
+        }
+        return null;
+    }
+
+    @Override
+    public <T> T getCapabilityFromPipe(EnumFacing side, @Nonnull Capability<T> capability) {
+        PipePluggable plug = getPluggable(side);
+        if (plug != null) {
+            T t = plug.getInternalCapability(capability);
+            if (t != null) {
+                return t;
+            }
+            if (plug.isBlocking()) {
+                return null;
+            }
+        }
+        if (pipe.isConnected(side)) {
+            TileEntity neighour = getNeighbouringTile(side);
+            if (neighour != null) {
+                return neighour.getCapability(capability, side.getOpposite());
+            }
         }
         return null;
     }

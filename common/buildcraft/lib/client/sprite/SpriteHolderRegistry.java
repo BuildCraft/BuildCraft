@@ -128,6 +128,7 @@ public class SpriteHolderRegistry {
         }
 
         protected void onTextureStitchPre(TextureMap map) {
+            map.setTextureEntry(AtlasSpriteVariants.createForConfig(spriteLocation));
             sprite = map.registerSprite(spriteLocation);
         }
 

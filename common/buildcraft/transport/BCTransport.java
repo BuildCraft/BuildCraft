@@ -133,6 +133,10 @@ public class BCTransport {
         registerTag("item.pipe.buildcrafttransport.daizuli_item").reg("pipe_daizuli_item").locale("PipeItemsDaizuli");
         registerTag("item.pipe.buildcrafttransport.emzuli_item").reg("pipe_emzuli_item").locale("PipeItemsEmzuli");
         registerTag("item.pipe.buildcrafttransport.stripes_item").reg("pipe_stripes_item").locale("PipeItemsStripes");
+        
+
+        registerTag("item.pipe.buildcrafttransport.wood_power_2").reg("pipe_wood_power_2").locale("PipePowerWood2");
+        registerTag("item.pipe.buildcrafttransport.quartz_power_2").reg("pipe_quartz_power_2").locale("PipePowerQuartz2");
         endBatch(TagManager.setTab("buildcraft.pipes"));
         // Item Blocks
         registerTag("item.block.filtered_buffer").reg("filtered_buffer").locale("filteredBufferBlock").model("filtered_buffer");

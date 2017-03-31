@@ -10,7 +10,9 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
 import buildcraft.lib.expression.api.INodeFunc;
 import buildcraft.lib.expression.api.NodeType;
-import buildcraft.lib.expression.node.binary.*;
+import buildcraft.lib.expression.node.binary.BiNodeToBooleanType;
+import buildcraft.lib.expression.node.binary.BiNodeType;
+import buildcraft.lib.expression.node.binary.IBinaryNodeType;
 import buildcraft.lib.expression.node.cast.NodeCastBooleanToString;
 import buildcraft.lib.expression.node.cast.NodeCastDoubleToString;
 import buildcraft.lib.expression.node.cast.NodeCastLongToDouble;
@@ -23,19 +25,18 @@ import buildcraft.lib.expression.node.func.NodeFuncGenericToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncGenericToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncGenericToLong;
 import buildcraft.lib.expression.node.func.NodeFuncGenericToString;
-import buildcraft.lib.expression.node.unary.NodeBooleanInvert;
-import buildcraft.lib.expression.node.unary.NodeUnaryDouble;
-import buildcraft.lib.expression.node.unary.NodeUnaryLong;
+import buildcraft.lib.expression.node.unary.IUnaryNodeType;
+import buildcraft.lib.expression.node.unary.UnaryNodeType;
 import buildcraft.lib.expression.node.value.*;
 
 public class InternalCompiler {
     private static final String UNARY_NEGATION = "¬";
     private static final String FUNCTION_START = "@";
     private static final String FUNCTION_ARGS = "#";
-    private static final String OPERATORS = "+-*/^%~?:& << >> == <= >= && || !=";
+    private static final String OPERATORS = "+-*/^%~?:& << >> >>> == <= >= && || !=";
     private static final String leftAssosiative = "+-^*/%||&&==!=<=>=<<>>?&";
     private static final String rightAssosiative = "";
-    private static final String[] precedence = { "(),", "?", "|| &&", "!= == <= >=", "&", "<< >>", "+-", "%", "*/", "^", "~¬" };
+    private static final String[] precedence = { "(),", "?", "&& ||", "!= == <= >=", "<< >>", "+-", "%", "*/", "^", "~¬" };
 
     private static final String LONG_REGEX = "[-+]?(0x[0-9a-fA-F_]+|[0-9]+)";
     private static final String DOUBLE_REGEX = "[-+]?[0-9]+(\\.[0-9]+)?";
@@ -48,11 +49,15 @@ public class InternalCompiler {
     private static final Pattern STRING_MATCHER = Pattern.compile(STRING_REGEX);
 
     public static IExpressionNode compileExpression(String expression, FunctionContext context) throws InvalidExpressionException {
-        ExpressionDebugManager.debugPrintln("Compiling " + expression);
-        String[] infix = tokenize(expression);
-        String[] postfix = convertToPostfix(infix);
-        ExpressionDebugManager.debugPrintln(Arrays.toString(postfix));
-        return makeExpression(postfix, context);
+        try {
+            ExpressionDebugManager.debugPrintln("Compiling " + expression);
+            String[] infix = tokenize(expression);
+            String[] postfix = convertToPostfix(infix);
+            ExpressionDebugManager.debugPrintln(Arrays.toString(postfix));
+            return makeExpression(postfix, context);
+        } catch (InvalidExpressionException iee) {
+            throw new InvalidExpressionException("Failed to compile expression " + expression, iee);
+        }
     }
 
     public static INodeFunc compileFunction(String expression, FunctionContext context, Argument... args) throws InvalidExpressionException {
@@ -80,7 +85,7 @@ public class InternalCompiler {
         }
     }
 
-    private static String[] tokenize(String function) {
+    private static String[] tokenize(String function) throws InvalidExpressionException {
         return TokeniserDefaults.createTokensizer().tokenize(function);
     }
 
@@ -229,26 +234,29 @@ public class InternalCompiler {
     private static IExpressionNode makeExpression(String[] postfix, FunctionContext context) throws InvalidExpressionException {
         NodeStack stack = new NodeStack();
         for (String op : postfix) {
-            if ("-".equals(op)) pushSubtraction(stack);
-            else if ("+".equals(op)) pushAddition(stack);
-            else if ("&".equals(op)) pushStringConcatenate(stack);
-            else if ("*".equals(op)) pushMultiply(stack);
-            else if ("/".equals(op)) pushDivide(stack);
-            else if ("%".equals(op)) pushModulus(stack);
-            else if ("^".equals(op)) pushPower(stack);
-            else if ("~".equals(op)) pushBitwiseInvert(stack);
-            else if ("==".equals(op)) pushEqual(stack);
-            else if ("<=".equals(op)) pushLessOrEqual(stack);
-            else if (">=".equals(op)) pushGreaterOrEqual(stack);
-            else if ("<".equals(op)) pushLess(stack);
-            else if (">".equals(op)) pushGreater(stack);
-            else if ("!=".equals(op)) pushNotEqual(stack);
-            else if ("&&".equals(op)) pushBooleanBi(stack, NodeBinaryBoolean.Type.AND);
-            else if ("||".equals(op)) pushBooleanBi(stack, NodeBinaryBoolean.Type.OR);
-            else if ("!".equals(op)) pushBooleanNot(stack);
+            if ("-".equals(op)) pushBiNode(stack, BiNodeType.SUB);
+            else if ("+".equals(op)) pushBiNode(stack, BiNodeType.ADD);
+            else if ("^".equals(op)) pushBiNode(stack, BiNodeType.XOR);
+            else if ("&".equals(op)) pushBiNode(stack, BiNodeType.AND);
+            else if ("|".equals(op)) pushBiNode(stack, BiNodeType.OR);
+            else if ("&&".equals(op)) pushBiNode(stack, BiNodeType.AND);
+            else if ("||".equals(op)) pushBiNode(stack, BiNodeType.OR);
+            else if ("*".equals(op)) pushBiNode(stack, BiNodeType.MUL);
+            else if ("/".equals(op)) pushBiNode(stack, BiNodeType.DIV);
+            else if ("%".equals(op)) pushBiNode(stack, BiNodeType.MOD);
+            else if (">>".equals(op)) pushBiNode(stack, BiNodeType.SHIFT_LEFT);
+            else if ("<<".equals(op)) pushBiNode(stack, BiNodeType.SHIFT_RIGHT);
+            else if ("~".equals(op)) pushUnaryNode(stack, UnaryNodeType.BITWISE_INVERT);
+            else if ("==".equals(op)) pushBiNode(stack, BiNodeToBooleanType.EQUAL);
+            else if ("!=".equals(op)) pushBiNode(stack, BiNodeToBooleanType.NOT_EQUAL);
+            else if ("<=".equals(op)) pushBiNode(stack, BiNodeToBooleanType.LESS_THAN_OR_EQUAL);
+            else if (">=".equals(op)) pushBiNode(stack, BiNodeToBooleanType.GREATER_THAN_OR_EQUAL);
+            else if ("<".equals(op)) pushBiNode(stack, BiNodeToBooleanType.LESS_THAN);
+            else if (">".equals(op)) pushBiNode(stack, BiNodeToBooleanType.GREATER_THAN);
+            else if ("!".equals(op)) pushUnaryNode(stack, UnaryNodeType.NEGATE);
             else if (":".equals(op)) ; // NO-OP, all handled by "?"
             else if ("?".equals(op)) pushConditional(stack);
-            else if (UNARY_NEGATION.equals(op)) pushNegation(stack);
+            else if (UNARY_NEGATION.equals(op)) pushUnaryNode(stack, UnaryNodeType.NEGATE);
             else if (isValidLong(op)) {
                 long val = parseValidLong(op);
                 stack.push(new NodeConstantLong(val));
@@ -299,111 +307,7 @@ public class InternalCompiler {
         return val;
     }
 
-    private static void pushSubtraction(NodeStack stack) throws InvalidExpressionException {
-        IExpressionNode right = stack.pop();
-        IExpressionNode left = stack.pop();
-
-        right = convertBinary(right, left);
-        left = convertBinary(left, right);
-
-        if (left instanceof INodeDouble) {
-            stack.push(NodeBinaryDouble.Type.SUB.create((INodeDouble) left, (INodeDouble) right));
-        } else if (left instanceof INodeLong) {
-            stack.push(NodeBinaryLong.Type.SUB.create((INodeLong) left, (INodeLong) right));
-        } else {
-            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
-        }
-    }
-
-    private static void pushAddition(NodeStack stack) throws InvalidExpressionException {
-        IExpressionNode right = stack.pop();
-        IExpressionNode left = stack.pop();
-
-        right = convertBinary(right, left);
-        left = convertBinary(left, right);
-
-        if (left instanceof INodeDouble) {
-            stack.push(NodeBinaryDouble.Type.ADD.create((INodeDouble) left, (INodeDouble) right));
-        } else if (left instanceof INodeLong) {
-            stack.push(NodeBinaryLong.Type.ADD.create((INodeLong) left, (INodeLong) right));
-        } else if (left instanceof INodeString) {
-            stack.push(new NodeConcatenateString((INodeString) left, (INodeString) right));
-        } else {
-            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
-        }
-    }
-
-    private static void pushStringConcatenate(NodeStack stack) throws InvalidExpressionException {
-        INodeString right = stack.popString();
-        INodeString left = stack.popString();
-        stack.push(new NodeConcatenateString(left, right));
-    }
-
-    private static void pushMultiply(NodeStack stack) throws InvalidExpressionException {
-        IExpressionNode right = stack.pop();
-        IExpressionNode left = stack.pop();
-
-        right = convertBinary(right, left);
-        left = convertBinary(left, right);
-
-        if (left instanceof INodeDouble) {
-            stack.push(NodeBinaryDouble.Type.MUL.create((INodeDouble) left, (INodeDouble) right));
-        } else if (left instanceof INodeLong) {
-            stack.push(NodeBinaryLong.Type.MUL.create((INodeLong) left, (INodeLong) right));
-        } else {
-            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
-        }
-    }
-
-    private static void pushDivide(NodeStack stack) throws InvalidExpressionException {
-        IExpressionNode right = stack.pop();
-        IExpressionNode left = stack.pop();
-
-        right = convertBinary(right, left);
-        left = convertBinary(left, right);
-
-        if (left instanceof INodeDouble) {
-            stack.push(NodeBinaryDouble.Type.DIV.create((INodeDouble) left, (INodeDouble) right));
-        } else if (left instanceof INodeLong) {
-            stack.push(NodeBinaryLong.Type.DIV.create((INodeLong) left, (INodeLong) right));
-        } else {
-            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
-        }
-    }
-
-    private static void pushModulus(NodeStack stack) throws InvalidExpressionException {
-        IExpressionNode right = stack.pop();
-        IExpressionNode left = stack.pop();
-
-        right = convertBinary(right, left);
-        left = convertBinary(left, right);
-
-        if (left instanceof INodeDouble) {
-            stack.push(NodeBinaryDouble.Type.MOD.create((INodeDouble) left, (INodeDouble) right));
-        } else if (left instanceof INodeLong) {
-            stack.push(NodeBinaryLong.Type.MOD.create((INodeLong) left, (INodeLong) right));
-        } else {
-            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
-        }
-    }
-
-    private static void pushPower(NodeStack stack) throws InvalidExpressionException {
-        IExpressionNode right = stack.pop();
-        IExpressionNode left = stack.pop();
-
-        right = convertBinary(right, left);
-        left = convertBinary(left, right);
-
-        if (left instanceof INodeDouble) {
-            stack.push(NodeBinaryDouble.Type.POW.create((INodeDouble) left, (INodeDouble) right));
-        } else if (left instanceof INodeLong) {
-            stack.push(NodeBinaryLong.Type.POW.create((INodeLong) left, (INodeLong) right));
-        } else {
-            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
-        }
-    }
-
-    private static IExpressionNode convertBinary(IExpressionNode convert, IExpressionNode compare) throws InvalidExpressionException {
+    public static IExpressionNode convertBinary(IExpressionNode convert, IExpressionNode compare) throws InvalidExpressionException {
         if (convert instanceof INodeDouble) {
             if (compare instanceof INodeDouble) {
                 return convert;
@@ -439,122 +343,25 @@ public class InternalCompiler {
         }
     }
 
-    private static void pushBitwiseInvert(NodeStack stack) throws InvalidExpressionException {
-        stack.push(NodeUnaryLong.Type.BITWISE_INVERT.create(stack.popLong()));
-    }
-
-    private static void pushEqual(NodeStack stack) throws InvalidExpressionException {
+    private static void pushBiNode(NodeStack stack, IBinaryNodeType type) throws InvalidExpressionException {
         IExpressionNode right = stack.pop();
         IExpressionNode left = stack.pop();
+        stack.push(type.createNode(left, right));
+    }
 
-        right = convertBinary(right, left);
-        left = convertBinary(left, right);
-
-        if (left instanceof INodeLong) {
-            stack.push(NodeBinaryLongToBoolean.Type.EQUAL.create((INodeLong) left, (INodeLong) right));
-        } else if (left instanceof INodeDouble) {
-            stack.push(NodeBinaryDoubleToBoolean.Type.EQUAL.create((INodeDouble) left, (INodeDouble) right));
-        } else if (left instanceof INodeString) {
-            stack.push(new NodeEqualityString((INodeString) left, (INodeString) right));
-        } else if (left instanceof INodeBoolean) {
-            stack.push(NodeBinaryBoolean.Type.EQUAL.create((INodeBoolean) left, (INodeBoolean) right));
+    private static void pushUnaryNode(NodeStack stack, IUnaryNodeType type) throws InvalidExpressionException {
+        IExpressionNode node = stack.pop();
+        if (node instanceof INodeLong) {
+            stack.push(type.createLongNode((INodeLong) node));
+        } else if (node instanceof INodeDouble) {
+            stack.push(type.createDoubleNode((INodeDouble) node));
+        } else if (node instanceof INodeBoolean) {
+            stack.push(type.createBooleanNode((INodeBoolean) node));
+        } else if (node instanceof INodeString) {
+            stack.push(type.createStringNode((INodeString) node));
         } else {
-            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
+            throw new InvalidExpressionException("Unknown node " + node);
         }
-    }
-
-    private static void pushLessOrEqual(NodeStack stack) throws InvalidExpressionException {
-        IExpressionNode right = stack.pop();
-        IExpressionNode left = stack.pop();
-
-        right = convertBinary(right, left);
-        left = convertBinary(left, right);
-
-        if (left instanceof INodeLong) {
-            stack.push(NodeBinaryLongToBoolean.Type.LESS_THAN_OR_EQUAL.create((INodeLong) left, (INodeLong) right));
-        } else if (left instanceof INodeDouble) {
-            stack.push(NodeBinaryDoubleToBoolean.Type.LESS_THAN_OR_EQUAL.create((INodeDouble) left, (INodeDouble) right));
-        } else {
-            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
-        }
-    }
-
-    private static void pushGreaterOrEqual(NodeStack stack) throws InvalidExpressionException {
-        IExpressionNode right = stack.pop();
-        IExpressionNode left = stack.pop();
-
-        right = convertBinary(right, left);
-        left = convertBinary(left, right);
-
-        if (left instanceof INodeLong) {
-            stack.push(NodeBinaryLongToBoolean.Type.GREATER_THAN_OR_EQUAL.create((INodeLong) left, (INodeLong) right));
-        } else if (left instanceof INodeDouble) {
-            stack.push(NodeBinaryDoubleToBoolean.Type.GREATER_THAN_OR_EQUAL.create((INodeDouble) left, (INodeDouble) right));
-        } else {
-            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
-        }
-    }
-
-    private static void pushLess(NodeStack stack) throws InvalidExpressionException {
-        IExpressionNode right = stack.pop();
-        IExpressionNode left = stack.pop();
-
-        right = convertBinary(right, left);
-        left = convertBinary(left, right);
-
-        if (left instanceof INodeLong) {
-            stack.push(NodeBinaryLongToBoolean.Type.LESS_THAN.create((INodeLong) left, (INodeLong) right));
-        } else if (left instanceof INodeDouble) {
-            stack.push(NodeBinaryDoubleToBoolean.Type.LESS_THAN.create((INodeDouble) left, (INodeDouble) right));
-        } else {
-            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
-        }
-    }
-
-    private static void pushGreater(NodeStack stack) throws InvalidExpressionException {
-        IExpressionNode right = stack.pop();
-        IExpressionNode left = stack.pop();
-
-        right = convertBinary(right, left);
-        left = convertBinary(left, right);
-
-        if (left instanceof INodeLong) {
-            stack.push(NodeBinaryLongToBoolean.Type.GREATER_THAN.create((INodeLong) left, (INodeLong) right));
-        } else if (left instanceof INodeDouble) {
-            stack.push(NodeBinaryDoubleToBoolean.Type.GREATER_THAN.create((INodeDouble) left, (INodeDouble) right));
-        } else {
-            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
-        }
-    }
-
-    private static void pushNotEqual(NodeStack stack) throws InvalidExpressionException {
-        IExpressionNode right = stack.pop();
-        IExpressionNode left = stack.pop();
-
-        right = convertBinary(right, left);
-        left = convertBinary(left, right);
-
-        if (left instanceof INodeLong) {
-            stack.push(NodeBinaryLongToBoolean.Type.NOT_EQUAL.create((INodeLong) left, (INodeLong) right));
-        } else if (left instanceof INodeDouble) {
-            stack.push(NodeBinaryDoubleToBoolean.Type.NOT_EQUAL.create((INodeDouble) left, (INodeDouble) right));
-        } else if (left instanceof INodeString) {
-            stack.push(new NodeBooleanInvert(new NodeEqualityString((INodeString) left, (INodeString) right)));
-        } else if (left instanceof INodeBoolean) {
-            stack.push(NodeBinaryBoolean.Type.NOT_EQUAL.create((INodeBoolean) left, (INodeBoolean) right));
-        } else {
-            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
-        }
-    }
-
-    private static void pushBooleanBi(NodeStack stack, NodeBinaryBoolean.Type type) throws InvalidExpressionException {
-        INodeBoolean right = stack.popBoolean();
-        INodeBoolean left = stack.popBoolean();
-        stack.push(type.create(left, right));
-    }
-
-    private static void pushBooleanNot(NodeStack stack) throws InvalidExpressionException {
-        stack.push(new NodeBooleanInvert(stack.popBoolean()));
     }
 
     private static void pushConditional(NodeStack stack) throws InvalidExpressionException {
@@ -581,17 +388,6 @@ public class InternalCompiler {
 
         } else {
             throw new InvalidExpressionException("Required a boolean node, but got '" + conditional + "' of " + conditional.getClass());
-        }
-    }
-
-    private static void pushNegation(NodeStack stack) throws InvalidExpressionException {
-        IExpressionNode node = stack.pop();
-        if (node instanceof INodeDouble) {
-            stack.push(NodeUnaryDouble.Type.NEG.create((INodeDouble) node));
-        } else if (node instanceof INodeLong) {
-            stack.push(NodeUnaryLong.Type.NEG.create((INodeLong) node));
-        } else {
-            throw new InvalidExpressionException("Unknown node " + node);
         }
     }
 

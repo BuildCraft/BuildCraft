@@ -23,9 +23,9 @@ import buildcraft.factory.gui.GuiDistiller;
 import buildcraft.factory.gui.GuiEnergyHeater;
 import buildcraft.factory.gui.GuiHeatExchanger;
 import buildcraft.factory.gui.GuiRefinery;
-import buildcraft.factory.tile.TileDistiller;
+import buildcraft.factory.tile.TileDistiller_BC8;
 import buildcraft.factory.tile.TileEnergyHeater;
-import buildcraft.factory.tile.TileHeatExchange;
+import buildcraft.factory.tile.TileHeatExchange_BC8;
 
 public class FactoryGuiHandler implements IGuiHandler {
 
@@ -70,14 +70,14 @@ public class FactoryGuiHandler implements IGuiHandler {
                 return null;
             }
             case GuiIds.DISTILLER: {
-                if (tile instanceof TileDistiller) {
-                    return new GuiDistiller(player, (TileDistiller) tile);
+                if (tile instanceof TileDistiller_BC8) {
+                    return new GuiDistiller(player, (TileDistiller_BC8) tile);
                 }
                 return null;
             }
             case GuiIds.HEAT_EXCHANGE: {
-                if (tile instanceof TileHeatExchange) {
-                    return new GuiHeatExchanger(player, (TileHeatExchange) tile);
+                if (tile instanceof TileHeatExchange_BC8) {
+                    return new GuiHeatExchanger(player, (TileHeatExchange_BC8) tile);
                 }
                 return null;
             }
@@ -127,14 +127,14 @@ public class FactoryGuiHandler implements IGuiHandler {
                 return null;
             }
             case GuiIds.DISTILLER: {
-                if (tile instanceof TileDistiller) {
-                    return new ContainerDistiller(player, (TileDistiller) tile);
+                if (tile instanceof TileDistiller_BC8) {
+                    return new ContainerDistiller(player, (TileDistiller_BC8) tile);
                 }
                 return null;
             }
             case GuiIds.HEAT_EXCHANGE: {
-                if (tile instanceof TileHeatExchange) {
-                    return new ContainerHeatExchange(player, (TileHeatExchange) tile);
+                if (tile instanceof TileHeatExchange_BC8) {
+                    return new ContainerHeatExchange(player, (TileHeatExchange_BC8) tile);
                 }
                 return null;
             }

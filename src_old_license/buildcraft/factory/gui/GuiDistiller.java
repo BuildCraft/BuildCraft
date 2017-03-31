@@ -4,16 +4,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
-import buildcraft.factory.tile.TileDistiller;
+import buildcraft.factory.tile.TileDistiller_BC8;
 
 public class GuiDistiller extends GuiAdvancedInterface {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/gui/distiller.png");
 
-    private final TileDistiller distiller;
+    private final TileDistiller_BC8 distiller;
     private int inTicks, outGasTicks, outLiquidTicks, craftTicks;
 
-    public GuiDistiller(EntityPlayer player, TileDistiller distiller) {
+    public GuiDistiller(EntityPlayer player, TileDistiller_BC8 distiller) {
         super(new ContainerDistiller(player, distiller), distiller, TEXTURE);
         this.distiller = distiller;
         xSize = 176;

@@ -34,6 +34,7 @@ public class BCItems {
     public static final Item CORE_GEAR_GOLD;
     public static final Item CORE_GEAR_DIAMOND;
     public static final Item CORE_MARKER_CONNECTOR;
+    public static final Item CORE_GOGGLES;
 
     // BC Builders
     public static final Item BUILDERS_SINGLE_SCHEMATIC;
@@ -96,6 +97,7 @@ public class BCItems {
         CORE_GEAR_GOLD = getRegisteredItem(core, "gear_gold");
         CORE_GEAR_DIAMOND = getRegisteredItem(core, "gear_diamond");
         CORE_MARKER_CONNECTOR = getRegisteredItem(core, "marker_connector");
+        CORE_GOGGLES = getRegisteredItem(core, "goggles");
 
         final String builders = "builders";
         BUILDERS_SINGLE_SCHEMATIC = getRegisteredItem(builders, "single_schematic");

@@ -5,13 +5,13 @@ import net.minecraft.inventory.Slot;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.widgets.FluidTankWidget;
-import buildcraft.factory.tile.TileHeatExchange;
+import buildcraft.factory.tile.TileHeatExchange_BC8;
 import buildcraft.lib.gui.slot.SlotValidated;
 
 public class ContainerHeatExchange extends BuildCraftContainer {
-    public final TileHeatExchange heatExchange;
+    public final TileHeatExchange_BC8 heatExchange;
 
-    public ContainerHeatExchange(EntityPlayer player, TileHeatExchange heatExchange) {
+    public ContainerHeatExchange(EntityPlayer player, TileHeatExchange_BC8 heatExchange) {
         super(player, 3);
         this.heatExchange = heatExchange;
 

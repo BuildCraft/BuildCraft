@@ -1,5 +1,8 @@
 package buildcraft.lib;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -8,6 +11,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.lib.chunkload.IChunkLoadingTile;
+import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 
@@ -19,6 +23,13 @@ public class BCLibConfig {
      * {@link TextFormatting} colour value.<br>
      * This changes the behaviour of {@link ColourUtil#convertColourToTextFormat(EnumDyeColor)}. */
     public static boolean useColouredLabels = true;
+
+    /** If this and {@link #useColouredLabels} is true then only colours which strongly contrast with the base colour
+     * will be used. Useful if you can't read dark-gray on black (for example) */
+    public static boolean useHighContrastLabelColours = false;
+
+    /** If true then applicable visual elements will be displayed in more colourblind friendly way. */
+    public static boolean colourBlindMode = false;
 
     /** The lifespan (in seconds) that spawned items will have, when dropped by a quarry or builder (etc) */
     public static int itemLifespan = 60;
@@ -42,9 +53,13 @@ public class BCLibConfig {
 
     public static ChunkLoaderLevel chunkLoadingLevel = ChunkLoaderLevel.SELF_TILES;
 
+    public static final List<Runnable> configChangeListeners = new ArrayList<>();
+
     /** Resets cached values across various BCLib classes that rely on these config options. */
     public static void refreshConfigs() {
-        LocaleUtil.onConfigChanged();
+        for (Runnable r : configChangeListeners) {
+            r.run();
+        }
     }
 
     public enum RenderRotation {
@@ -94,5 +109,12 @@ public class BCLibConfig {
 
         /** {@link TileEntity}'s that implement {@link ITickable} will be loaded (so a LOT of tiles) */
         ALL_TICKABLE,
+    }
+
+    static {
+        configChangeListeners.add(LocaleUtil::onConfigChanged);
+        // Function contexts
+        DefaultContexts.CONFIG.put_b("colourBlindMode", () -> colourBlindMode);
+        DefaultContexts.CONFIG.put_s("colourBlindMode_ext", () -> (colourBlindMode ? "_cb" : ""));
     }
 }

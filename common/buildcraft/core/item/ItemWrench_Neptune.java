@@ -54,8 +54,8 @@ public class ItemWrench_Neptune extends ItemBC_Neptune implements IToolWrench {
         EnumActionResult result = CustomRotationHelper.INSTANCE.attemptRotateBlock(world, pos, state, side);
         if (result == EnumActionResult.SUCCESS) {
             wrenchUsed(player, hand, player.getHeldItem(hand), new RayTraceResult(new Vec3d(hitX, hitY, hitZ), side, pos));
-            SoundUtil.playSlideSound(world, pos, state);
         }
+        SoundUtil.playSlideSound(world, pos, state, result);
         return result;
     }
 }

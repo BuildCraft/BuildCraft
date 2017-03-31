@@ -4,17 +4,19 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import buildcraft.api.transport.pipe.ICustomPipeConnection;
+
 import buildcraft.BuildCraftFactory;
-import buildcraft.api.transport.ICustomPipeConnection;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.factory.tile.TileDistiller;
+import buildcraft.factory.tile.TileDistiller_BC8;
 
 public class BlockDistiller extends BlockBuildCraft implements ICustomPipeConnection {
     public BlockDistiller() {
@@ -24,7 +26,7 @@ public class BlockDistiller extends BlockBuildCraft implements ICustomPipeConnec
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        return new TileDistiller();
+        return new TileDistiller_BC8();
     }
 
     @Override

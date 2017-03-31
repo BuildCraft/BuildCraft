@@ -3,6 +3,9 @@ package buildcraft.lib.cap;
 import java.util.*;
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.common.capabilities.Capability;
@@ -25,7 +28,7 @@ public class CapabilityHelper implements ICapabilityProvider {
         return caps.get(EnumPipePart.fromFacing(facing));
     }
 
-    public <T> void addCapability(Capability<T> cap, T instance, EnumFacing[] faces) {
+    public <T> void addCapability(@Nullable Capability<T> cap, T instance, EnumFacing... faces) {
         if (cap == null) {
             return;
         }
@@ -34,7 +37,7 @@ public class CapabilityHelper implements ICapabilityProvider {
         }
     }
 
-    public <T> void addCapability(Capability<T> cap, Supplier<T> supplier, EnumFacing[] faces) {
+    public <T> void addCapability(@Nullable Capability<T> cap, Supplier<T> supplier, EnumFacing... faces) {
         if (cap == null) {
             return;
         }
@@ -49,15 +52,12 @@ public class CapabilityHelper implements ICapabilityProvider {
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
         return getCapability(capability, facing) != null;
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == null) {
-            return null;
-        }
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (getCapMap(facing).containsKey(capability)) {
             return (T) getCapMap(facing).get(capability);
         }

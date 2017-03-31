@@ -1,7 +1,6 @@
 package buildcraft.lib.expression;
 
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
 
 public class Tokeniser {
@@ -13,7 +12,7 @@ public class Tokeniser {
         this.tokenizers = new ArrayList<>(tokenizers);
     }
 
-    public String[] tokenize(String src) {
+    public String[] tokenize(String src) throws InvalidExpressionException {
         List<String> tokens = new ArrayList<>();
 
         int index = 0;
@@ -34,10 +33,10 @@ public class Tokeniser {
                 TokenResult res = token.tokenizePart(ctx);
                 if (res == ResultSpecific.IGNORE) continue;
                 if (res == ResultSpecific.INVALID) {
-                    throw new InputMismatchException("Invalid src \"" + ctx.get(10).replace("\n", "\\n") + "\"");
+                    throw new InvalidExpressionException("Invalid src \"" + ctx.get(10).replace("\n", "\\n") + "\"");
                 }
                 if (res instanceof ResultInvalid) {
-                    throw new InputMismatchException("Invalid src \"" + ctx.get(((ResultInvalid) res).length).replace("\n", "\\n") + "\"");
+                    throw new InvalidExpressionException("Invalid src \"" + ctx.get(((ResultInvalid) res).length).replace("\n", "\\n") + "\"");
                 }
                 if (res instanceof ResultDiscard) {
                     int discardLength = ((ResultDiscard) res).length;
@@ -55,7 +54,7 @@ public class Tokeniser {
                 }
             }
             if (!consumed) {
-                throw new IllegalStateException("Did not consume:" + ctx.get(50));
+                throw new InvalidExpressionException("Did not consume:" + ctx.get(50));
             }
         }
         return tokens.toArray(new String[tokens.size()]);

@@ -27,32 +27,21 @@ public class RecipeBuilderShaped {
         return this;
     }
 
-    public RecipeBuilderShaped map(char c, Item item) {
-        objects.put(c, item);
+    public RecipeBuilderShaped map(char c, Object... vals) {
+        Arrays.stream(vals)
+                .filter(val ->
+                        !(val == null ||
+                                val instanceof Item ||
+                                val instanceof Block ||
+                                val instanceof ItemStack ||
+                                val instanceof String)
+                )
+                .findFirst()
+                .ifPresent(val -> {
+                    throw new IllegalArgumentException("Invalid value " + val.getClass());
+                });
+        objects.put(c, Arrays.stream(vals).filter(Objects::nonNull).findFirst().orElse(null));
         return this;
-    }
-
-    public RecipeBuilderShaped map(char c, Block block) {
-        objects.put(c, block);
-        return this;
-    }
-
-    public RecipeBuilderShaped map(char c, ItemStack stack) {
-        objects.put(c, stack);
-        return this;
-    }
-
-    public RecipeBuilderShaped map(char c, String oreDict) {
-        objects.put(c, oreDict);
-        return this;
-    }
-
-    public RecipeBuilderShaped map(char c, Object val) {
-        if (val instanceof Item || val instanceof Block || val instanceof ItemStack || val instanceof String) {
-            objects.put(c, val);
-            return this;
-        }
-        throw new IllegalArgumentException("Invalid value " + val.getClass());
     }
 
     public RecipeBuilderShaped setResult(ItemStack result) {

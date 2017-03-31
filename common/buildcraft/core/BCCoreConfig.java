@@ -33,6 +33,7 @@ public class BCCoreConfig {
     public static boolean useLocalServerOnClient;
     public static boolean minePlayerProteted;
     public static boolean useColouredLabels;
+    public static boolean useHighContrastLabelColours;
     public static boolean hidePower;
     public static boolean hideFluid;
     public static boolean useBucketsStatic;
@@ -48,6 +49,7 @@ public class BCCoreConfig {
     private static Property propUseLocalServerOnClient;
     private static Property propMinePlayerProtected;
     private static Property propUseColouredLabels;
+    private static Property propUseHighContrastColouredLabels;
     private static Property propHidePower;
     private static Property propHideFluid;
     private static Property propUseBucketsStatic;
@@ -76,7 +78,7 @@ public class BCCoreConfig {
 
         propColourBlindMode = config.get(display, "colorBlindMode", false);
         propColourBlindMode.setComment("Should I enable colorblind mode?");
-        game.setTo(propColourBlindMode);
+        none.setTo(propColourBlindMode);
 
         propWorldGen = config.get(worldgen, "enable", true);
         propWorldGen.setComment("Should BuildCraft generate anything in the world?");
@@ -97,6 +99,10 @@ public class BCCoreConfig {
         propUseColouredLabels = config.get(display, "useColouredLabels", true);
         propUseColouredLabels.setComment("Should colours be displayed as their own (or a similar) colour in tooltips?");
         none.setTo(propUseColouredLabels);
+
+        propUseHighContrastColouredLabels = config.get(display, "useHighContrastColouredLabels", false);
+        propUseHighContrastColouredLabels.setComment("Should colours displayed in tooltips use higher-contrast colours?");
+        none.setTo(propUseHighContrastColouredLabels);
 
         propHidePower = config.get(display, "hidePowerValues", false);
         propHidePower.setComment("Should all power values (MJ, MJ/t) be hidden?");
@@ -163,8 +169,8 @@ public class BCCoreConfig {
     public static void reloadConfig(EnumRestartRequirement restarted) {
         useLocalServerOnClient = propUseLocalServerOnClient.getBoolean();
         minePlayerProteted = propMinePlayerProtected.getBoolean();
-        useColouredLabels = propUseColouredLabels.getBoolean();
-        BCLibConfig.useColouredLabels = useColouredLabels;
+        BCLibConfig.useColouredLabels = useColouredLabels = propUseColouredLabels.getBoolean();
+        BCLibConfig.useHighContrastLabelColours = useHighContrastLabelColours = propUseHighContrastColouredLabels.getBoolean();
         hidePower = propHidePower.getBoolean();
         hideFluid = propHideFluid.getBoolean();
         BCLibConfig.useBucketsStatic = useBucketsStatic = propUseBucketsStatic.getBoolean();
@@ -173,9 +179,9 @@ public class BCCoreConfig {
         itemLifespan = propItemLifespan.getInt();
         BCLibConfig.itemLifespan = itemLifespan;
         markerMaxDistance = propMarkerMaxDistance.getInt();
+        BCLibConfig.colourBlindMode = colourBlindMode = propColourBlindMode.getBoolean();
 
         if (EnumRestartRequirement.GAME.hasBeenRestarted(restarted)) {
-            colourBlindMode = propColourBlindMode.getBoolean();
             worldGen = propWorldGen.getBoolean();
             worldGenWaterSpring = propWorldGenWaterSpring.getBoolean();
         }

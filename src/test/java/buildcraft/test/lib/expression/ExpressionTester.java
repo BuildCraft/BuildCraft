@@ -13,11 +13,11 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
 import buildcraft.lib.expression.api.NodeType;
-import buildcraft.lib.expression.node.binary.NodeBinaryLong;
+import buildcraft.lib.expression.node.binary.BiNodeType;
 import buildcraft.lib.expression.node.func.NodeFuncGenericToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongToLong;
-import buildcraft.lib.expression.node.unary.NodeUnaryLong;
+import buildcraft.lib.expression.node.unary.UnaryNodeType;
 import buildcraft.lib.expression.node.value.*;
 
 @SuppressWarnings("static-method")
@@ -57,12 +57,16 @@ public class ExpressionTester {
         bakeAndCallDouble("1-(2+1)", -2);
         bakeAndCallDouble("(1)-(2+1)", -2);
 
-        bakeAndCallDouble("2^5", 32);
-        bakeAndCallDouble("1+2^5*3", 97);
-
-        bakeAndCallDouble("(49)^(-1/-2.0)-(2*3)", 1);
+        bakeAndCallDouble("1 | 2", 3);
+        bakeAndCallDouble("3 & 5", 1);
         bakeAndCallDouble("2*(-3)", -6);
         bakeAndCallDouble("2*-3", -6);
+
+        bakeAndCallDouble("1 << 0", 1 << 0);
+        bakeAndCallDouble("1 >> 0", 1 >> 0);
+        bakeAndCallDouble("100 >> 2", 100 >> 2);
+        bakeAndCallDouble("1 << 2", 1 << 2);
+        bakeAndCallDouble("1 << 10", 1 << 10);
     }
 
     @Test
@@ -101,7 +105,7 @@ public class ExpressionTester {
     public void testMath() throws InvalidExpressionException {
         NodeVariableLong arg1 = new NodeVariableLong();
 
-        INodeLong node = NodeBinaryLong.Type.ADD.create(arg1, new NodeConstantLong(10));
+        INodeLong node = BiNodeType.ADD.createLongNode(arg1, new NodeConstantLong(10));
 
         arg1.value = 1;
         System.out.println(node.evaluate());
@@ -132,7 +136,7 @@ public class ExpressionTester {
         System.out.println(func2.getNode(nodeStack).inline().evaluate());
 
         nodeStack.push(new NodeConstantLong(13));
-        INodeLong neg = NodeUnaryLong.Type.NEG.create(func2.getNode(nodeStack));
+        INodeLong neg = UnaryNodeType.NEGATE.createLongNode(func2.getNode(nodeStack));
         System.out.println(neg);
         INodeLong negInlined = neg.inline();
         System.out.println(negInlined);
@@ -192,7 +196,6 @@ public class ExpressionTester {
         System.out.println(node3 + " = " + node3.evaluate());
 
         ctx2.putFunction("sub", new NodeFuncLongLongToLong((a, b) -> a - b, (a, b) -> a + " - " + b));
-        ExpressionDebugManager.debug = false;
 
         testExpr("floor(ceil(0.5)+0.5)", ctx2);
         testExpr("sub(5, 6)", ctx2);
@@ -225,22 +228,22 @@ public class ExpressionTester {
 
     @Test
     public void testFunctions() throws InvalidExpressionException {
-        FunctionContext ctx = new FunctionContext(DefaultContexts.createWithAll());
+        FunctionContext ctx = DefaultContexts.createWithAll();
         compileFuncLong(ctx, "one", "1");
         compileFuncLong(ctx, "same", "value", argLong("value"));
 
         compileFuncDouble(ctx, "same", "value", argDouble("value"));
-        compileFuncDouble(ctx, "powertwo", "2^input", argDouble("input"));
+        compileFuncDouble(ctx, "powertwo", "pow(2,input)", argDouble("input"));
         compileFuncDouble(ctx, "subtract", "l - r", argDouble("l"), argDouble("r"));
         compileFuncDouble(ctx, "tuple", "a + b + c", argDouble("a"), argDouble("b"), argDouble("c"));
-        compileFuncDouble(ctx, "powlong", "(same(a + 1) - 1) ^ (same(b) * one())", argDouble("a"), argDouble("b"));
+        compileFuncDouble(ctx, "powlong", "pow((same(a + 1) - 1) , (same(b) * one()))", argDouble("a"), argDouble("b"));
 
         bakeAndCallDouble("one()", 1, ctx);
         bakeAndCallDouble("oNe()", 1, ctx);
 
         bakeAndCallDouble("same(0)", 0, ctx);
         bakeAndCallDouble("same(one())", 1, ctx);
-        bakeAndCallDouble("same(2^5)", 32, ctx);
+        bakeAndCallDouble("same(pow(2,5))", 32, ctx);
 
         bakeAndCallDouble("powerTwo(5)", 32, ctx);
         bakeAndCallDouble("powertwo(6)", 64, ctx);

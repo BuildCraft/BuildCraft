@@ -7,44 +7,29 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 
 public class NodeUnaryLong implements INodeLong {
-    public enum Type {
-        NEG("-", (v) -> -v),
-        BITWISE_INVERT("~", v -> ~v);
-
-        private final String op;
-        private final LongUnaryOperator operator;
-
-        Type(String op, LongUnaryOperator operator) {
-            this.op = op;
-            this.operator = operator;
-        }
-
-        public NodeUnaryLong create(INodeLong from) {
-            return new NodeUnaryLong(from, this);
-        }
-    }
-
     private final INodeLong from;
-    private final Type type;
+    private final LongUnaryOperator func;
+    private final String op;
 
-    private NodeUnaryLong(INodeLong from, Type type) {
+    public NodeUnaryLong(INodeLong from, LongUnaryOperator func, String op) {
         this.from = from;
-        this.type = type;
+        this.func = func;
+        this.op = op;
     }
 
     @Override
     public long evaluate() {
-        return type.operator.applyAsLong(from.evaluate());
+        return func.applyAsLong(from.evaluate());
     }
 
     @Override
     public INodeLong inline() {
-        return NodeInliningHelper.tryInline(this, from, (f) -> new NodeUnaryLong(f, type), //
-                (f) -> new NodeConstantLong(type.operator.applyAsLong(f.evaluate())));
+        return NodeInliningHelper.tryInline(this, from, (f) -> new NodeUnaryLong(f, func, op), //
+            (f) -> new NodeConstantLong(func.applyAsLong(f.evaluate())));
     }
 
     @Override
     public String toString() {
-        return type.op + "(" + from + ")";
+        return op + "(" + from + ")";
     }
 }

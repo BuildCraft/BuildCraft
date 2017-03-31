@@ -9,8 +9,9 @@ public class DefaultContexts {
     public static final FunctionContext MATH_SCALAR = new FunctionContext();
     public static final FunctionContext MATH_VECTOR = new FunctionContext();
     public static final FunctionContext RENDERING = new FunctionContext();
+    public static final FunctionContext CONFIG = new FunctionContext();
 
-    private static final FunctionContext[] CTX_ARRAY_ALL = { STRINGS, MATH_SCALAR, MATH_VECTOR, RENDERING };
+    private static final FunctionContext[] CTX_ARRAY_ALL = { STRINGS, MATH_SCALAR, MATH_VECTOR, RENDERING, CONFIG };
 
     /** Creates a new {@link FunctionContext} with all of the functions given in this class. */
     public static FunctionContext createWithAll() {
@@ -18,8 +19,6 @@ public class DefaultContexts {
     }
 
     static {
-        System.out.println(Math.ceil(Math.random() * 4));
-
         // STRINGS.put_s_s("lowercase", (a) -> a.toLowerCase(Locale.ROOT));
         // STRINGS.put_s_s("uppercase", (a) -> a.toUpperCase(Locale.ROOT));
         STRINGS.put_s_l("length", (a) -> a.length());
@@ -65,6 +64,7 @@ public class DefaultContexts {
         MATH_SCALAR.put_ll_l("max_long", (a, b) -> Math.max(a, b));
         MATH_SCALAR.put_dd_d("min_double", (a, b) -> Math.min(a, b));
         MATH_SCALAR.put_dd_d("max_double", (a, b) -> Math.max(a, b));
+        MATH_SCALAR.put_dd_d("pow", (a, b) -> Math.pow(a, b));
 
         // MATH_VECTOR.putConstantVecLong("origin", VecLong.ZERO);
         // MATH_VECTOR.putConstantVecLong("vec_zero", VecLong.ZERO);

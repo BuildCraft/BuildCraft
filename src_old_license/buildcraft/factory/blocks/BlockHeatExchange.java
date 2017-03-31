@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import buildcraft.BuildCraftFactory;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
-import buildcraft.factory.tile.TileHeatExchange;
+import buildcraft.factory.tile.TileHeatExchange_BC8;
 
 public class BlockHeatExchange extends BlockBuildCraft {
     public BlockHeatExchange() {
@@ -22,7 +22,7 @@ public class BlockHeatExchange extends BlockBuildCraft {
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        return new TileHeatExchange();
+        return new TileHeatExchange_BC8();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class BlockHeatExchange extends BlockBuildCraft {
 
         TileEntity tile = world.getTileEntity(pos);
 
-        if (!(tile instanceof TileHeatExchange)) {
+        if (!(tile instanceof TileHeatExchange_BC8)) {
             return false;
         }
 

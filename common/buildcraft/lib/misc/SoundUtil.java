@@ -6,6 +6,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -53,9 +54,18 @@ public class SoundUtil {
         playSlideSound(world, pos, world.getBlockState(pos));
     }
 
+    public static void playSlideSound(World world, BlockPos pos, EnumActionResult result) {
+        playSlideSound(world, pos, world.getBlockState(pos), result);
+    }
+
     public static void playSlideSound(World world, BlockPos pos, IBlockState state) {
+        playSlideSound(world, pos, state, EnumActionResult.SUCCESS);
+    }
+
+    public static void playSlideSound(World world, BlockPos pos, IBlockState state, EnumActionResult result) {
+        if (result == EnumActionResult.PASS) return;
         SoundType soundType = state.getBlock().getSoundType(state, world, pos, null);
-        SoundEvent soundEvent = SoundEvents.BLOCK_PISTON_CONTRACT;
+        SoundEvent soundEvent = result == EnumActionResult.SUCCESS ? SoundEvents.BLOCK_PISTON_CONTRACT : SoundEvents.BLOCK_PISTON_EXTEND;
         float volume = (soundType.getVolume() + 1.0F) / 2.0F;
         float pitch = soundType.getPitch() * 0.8F;
         world.playSound(null, pos, soundEvent, SoundCategory.BLOCKS, volume, pitch);

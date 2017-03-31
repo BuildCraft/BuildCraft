@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory;
 
+import buildcraft.api.BCBlocks;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -16,7 +17,7 @@ public class BCFactoryRecipes {
             builder.add("gwg");
             builder.map('w', "craftingTableWood");
             builder.map('g', "gearStone");
-            builder.setResult(new ItemStack(BCFactoryBlocks.autoWorkbenchItems));
+            builder.setResult(new ItemStack(BCBlocks.FACTORY_AUTOWORKBENCH_ITEM));
             builder.register();
             builder.registerRotated();
         }
@@ -30,7 +31,7 @@ public class BCFactoryRecipes {
             builder.map('r', "dustRedstone");
             builder.map('g', "gearIron");
             builder.map('p', Items.IRON_PICKAXE);
-            builder.setResult(new ItemStack(BCFactoryBlocks.miningWell));
+            builder.setResult(new ItemStack(BCBlocks.FACTORY_MINING_WELL));
             builder.register();
         }
 
@@ -40,7 +41,7 @@ public class BCFactoryRecipes {
             builder.add("g g");
             builder.add("ggg");
             builder.map('g', "blockGlassColorless");
-            builder.setResult(new ItemStack(BCFactoryBlocks.tank));
+            builder.setResult(new ItemStack(BCBlocks.FACTORY_TANK));
             builder.register();
         }
 
@@ -53,8 +54,8 @@ public class BCFactoryRecipes {
             builder.map('r', "dustRedstone");
             builder.map('g', "gearIron");
             builder.map('b', Items.BUCKET);
-            builder.map('t', BCFactoryBlocks.tank);
-            builder.setResult(new ItemStack(BCFactoryBlocks.pump));
+            builder.map('t', BCBlocks.FACTORY_TANK, "blockGlassColorless");
+            builder.setResult(new ItemStack(BCBlocks.FACTORY_PUMP));
             builder.register();
         }
 
@@ -66,8 +67,8 @@ public class BCFactoryRecipes {
             builder.map('i', "ingotIron");
             builder.map('g', "gearIron");
             builder.map('b', Blocks.IRON_BARS);
-            builder.map('t', BCFactoryBlocks.tank);
-            builder.setResult(new ItemStack(BCFactoryBlocks.floodGate));
+            builder.map('t', BCBlocks.FACTORY_TANK, "blockGlassColorless");
+            builder.setResult(new ItemStack(BCBlocks.FACTORY_FLOOD_GATE));
             builder.register();
         }
 
@@ -79,7 +80,7 @@ public class BCFactoryRecipes {
             builder.map('i', "ingotIron");
             builder.map('g', "gearStone");
             builder.map('c', Blocks.CHEST);
-            builder.setResult(new ItemStack(BCFactoryBlocks.chute));
+            builder.setResult(new ItemStack(BCBlocks.FACTORY_CHUTE));
             builder.register();
         }
     }

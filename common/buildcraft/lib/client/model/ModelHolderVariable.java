@@ -18,7 +18,11 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.client.model.json.JsonModelRule;
 import buildcraft.lib.client.model.json.JsonVariableModel;
 import buildcraft.lib.client.model.json.JsonVariableModelPart;
+import buildcraft.lib.client.reload.ReloadManager;
+import buildcraft.lib.client.reload.ReloadSource;
+import buildcraft.lib.client.reload.SourceType;
 import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.misc.SpriteUtil;
 import buildcraft.transport.BCTransportModels;
 
 /** Holds a model that can be changed by variables. Models are defined in this way by firstly creating a
@@ -91,6 +95,7 @@ public class ModelHolderVariable extends ModelHolder {
             if (ModelHolderRegistry.DEBUG) {
                 BCLog.logger.info("[lib.model.holder] The model " + modelLocation + " requires these sprites:");
             }
+            ReloadSource srcModel = new ReloadSource(modelLocation, SourceType.MODEL);
             for (Entry<String, String> entry : rawModel.textures.entrySet()) {
                 String lookup = entry.getValue();
                 if (lookup.startsWith("#")) {
@@ -107,7 +112,11 @@ public class ModelHolderVariable extends ModelHolder {
                         break;
                     }
                 } else {
-                    toRegisterSprites.add(new ResourceLocation(lookup));
+                    ResourceLocation textureLoc = new ResourceLocation(lookup);
+                    toRegisterSprites.add(textureLoc);
+                    // Allow transisitve deps
+                    ReloadSource srcSprite = new ReloadSource(SpriteUtil.transformLocation(textureLoc), SourceType.SPRITE);
+                    ReloadManager.INSTANCE.addDependency(srcSprite, srcModel);
                 }
                 if (ModelHolderRegistry.DEBUG) {
                     BCLog.logger.info("[lib.model.holder]  - " + lookup);

@@ -8,10 +8,10 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeDefinition;
-import buildcraft.api.transport.pipe.PipeFlowType;
 import buildcraft.api.transport.pipe.PipeDefinition.IPipeCreator;
 import buildcraft.api.transport.pipe.PipeDefinition.IPipeLoader;
 import buildcraft.api.transport.pipe.PipeDefinition.PipeDefinitionBuilder;
+import buildcraft.api.transport.pipe.PipeFlowType;
 
 import buildcraft.transport.pipe.PipeRegistry;
 import buildcraft.transport.pipe.behaviour.*;
@@ -77,6 +77,7 @@ public class BCTransportPipes {
         builder.logic(PipeBehaviourWood::new, PipeBehaviourWood::new).texSuffixes("_clear", "_filled");
         woodItem = builder.idTexPrefix("wood_item").flowItem().define();
         woodFluid = builder.idTexPrefix("wood_fluid").flowFluid().define();
+        builder.logic(PipeBehaviourWoodPower::new, PipeBehaviourWoodPower::new);
         woodPower = builder.idTexPrefix("wood_power").flowPower().define();
 
         builder.logic(PipeBehaviourStone::new, PipeBehaviourStone::new);
