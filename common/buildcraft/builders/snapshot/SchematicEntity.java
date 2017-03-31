@@ -47,7 +47,7 @@ public class SchematicEntity implements INBTSerializable<NBTTagCompound> {
         schematicEntity.hangingPos = hangingPos.rotate(rotation);
         schematicEntity.hangingFacing = rotation.rotate(hangingFacing);
         schematicEntity.entityRotation = entityRotation.add(rotation);
-        return this;
+        return schematicEntity;
     }
 
 
@@ -65,7 +65,7 @@ public class SchematicEntity implements INBTSerializable<NBTTagCompound> {
             newEntityNbt.setInteger("TileX", placeHangingPos.getX());
             newEntityNbt.setInteger("TileY", placeHangingPos.getY());
             newEntityNbt.setInteger("TileZ", placeHangingPos.getZ());
-//            newEntityNbt.setByte("Facing", (byte) hangingFacing.getHorizontalIndex());
+            newEntityNbt.setByte("Facing", (byte) hangingFacing.getHorizontalIndex());
         }
         Entity entity = EntityList.createEntityFromNBT(newEntityNbt, world);
         if (entity != null) {

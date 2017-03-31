@@ -248,7 +248,15 @@
     },
     {
         "selectors": [
-            "minecraft:item_frame"
+            "minecraft:painting",
+            "minecraft:item_frame",
+            "minecraft:armor_stand",
+            "minecraft:boat",
+            "minecraft:minecart",
+            "minecraft:chest_minecart",
+            "minecraft:furnace_minecart",
+            "minecraft:tnt_minecart",
+            "minecraft:hopper_minecart"
         ],
         "capture": true
     }
