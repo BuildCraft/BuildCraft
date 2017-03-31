@@ -5,7 +5,9 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
@@ -59,34 +61,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     // Needed: Power stored
 
-    /* TODO: GuiDataValue<T> (new class) -- should automate sending values in TileBC_Neptune.NET_GUI_TICK it MUST be
-     * nice to use! otherwise fallback to having private "last sent" values. Look at Container.detectAndSendChanges for
-     * more desc */
-
     public TileEngineBase_BC8() {}
-
-    public EnumActionResult attemptRotation() {
-        OrderedEnumMap<EnumFacing> possible = VanillaRotationHandlers.ROTATE_FACING;
-        EnumFacing current = currentDirection;
-        for (int i = 0; i < 6; i++) {
-            current = possible.next(current);
-            TileEntity neighbour = world.getTileEntity(getPos().offset(current));
-            if (neighbour == null) continue;
-            IMjConnector other = neighbour.getCapability(MjAPI.CAP_CONNECTOR, current.getOpposite());
-            if (other == null) continue;
-            if (mjConnector.canConnect(other) && other.canConnect(mjConnector)) {
-                if (currentDirection != current) {
-                    currentDirection = current;
-                    // makeTileCache();
-                    redrawBlock();
-                    world.notifyNeighborsRespectDebug(getPos(), getBlockType(), true);
-                    return EnumActionResult.SUCCESS;
-                }
-                return EnumActionResult.FAIL;
-            }
-        }
-        return EnumActionResult.FAIL;
-    }
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
@@ -120,6 +95,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
                 isPumping = buffer.readBoolean();
                 currentDirection = buffer.readEnumValue(EnumFacing.class);
                 powerStage = buffer.readEnumValue(EnumPowerStage.class);
+                progress = buffer.readFloat();
             } else if (id == NET_GUI_DATA) {
                 heat = buffer.readFloat();
                 currentOutput = buffer.readLong();
@@ -142,11 +118,11 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
                 buffer.writeBoolean(isPumping);
                 buffer.writeEnumValue(currentDirection);
                 buffer.writeEnumValue(powerStage);
+                buffer.writeFloat(progress);
             } else if (id == NET_GUI_DATA) {
                 buffer.writeFloat((float) heat);
                 buffer.writeLong(currentOutput);
                 buffer.writeLong(power);
-
             } else if (id == NET_GUI_TICK) {
                 buffer.writeFloat((float) heat);
                 buffer.writeLong(currentOutput);
@@ -154,6 +130,51 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
             }
         }
+    }
+
+    public EnumActionResult attemptRotation() {
+        OrderedEnumMap<EnumFacing> possible = VanillaRotationHandlers.ROTATE_FACING;
+        EnumFacing current = currentDirection;
+        for (int i = 0; i < 6; i++) {
+            current = possible.next(current);
+            if (isFacingReceiver(current)) {
+                if (currentDirection != current) {
+                    currentDirection = current;
+                    // makeTileCache();
+                    sendNetworkUpdate(NET_RENDER_DATA);
+                    redrawBlock();
+                    world.notifyNeighborsRespectDebug(getPos(), getBlockType(), true);
+                    return EnumActionResult.SUCCESS;
+                }
+                return EnumActionResult.FAIL;
+            }
+        }
+        return EnumActionResult.FAIL;
+    }
+
+    private boolean isFacingReceiver(EnumFacing dir) {
+        TileEntity neighbour = world.getTileEntity(getPos().offset(dir));
+        if (neighbour == null) return false;
+        IMjConnector other = neighbour.getCapability(MjAPI.CAP_CONNECTOR, dir.getOpposite());
+        if (other == null) return false;
+        return mjConnector.canConnect(other) && other.canConnect(mjConnector);
+    }
+
+    public void rotateIfInvalid() {
+        if (currentDirection != null && isFacingReceiver(currentDirection)) {
+            return;
+        }
+        attemptRotation();
+        if (currentDirection == null) {
+            currentDirection = EnumFacing.UP;
+        }
+    }
+
+    @Override
+    public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
+        super.onPlacedBy(placer, stack);
+        currentDirection = null;// Force rotateIfInvalid to always attempt to rotate
+        rotateIfInvalid();
     }
 
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {

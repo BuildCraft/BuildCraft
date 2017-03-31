@@ -4,6 +4,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
@@ -122,6 +123,16 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile
     @Override
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
         return new ItemStack(this, 1, state.getValue(getEngineProperty()).ordinal());
+    }
+
+    @Override
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
+        if (world.isRemote) return;
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileEngineBase_BC8) {
+            TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
+            engine.rotateIfInvalid();
+        }
     }
 
     // ICustomRotationHandler
