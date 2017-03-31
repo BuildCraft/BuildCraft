@@ -223,27 +223,33 @@
         "copyOppositeRequiredBlockOffsetFromProperty": "facing"
     },
     {
-        "selectors": ["lever[facing=down_x]", "lever[facing=down_z]"],
+        "selectors": ["minecraft:lever[facing=down_x]", "minecraft:lever[facing=down_z]"],
         "requiredBlockOffsets": [[0, 1, 0]]
     },
     {
-        "selectors": ["lever[facing=up_x]", "lever[facing=up_x]"],
+        "selectors": ["minecraft:lever[facing=up_x]", "minecraft:lever[facing=up_x]"],
         "requiredBlockOffsets": [[0, -1, 0]]
     },
     {
-        "selectors": ["lever[facing=north]"],
+        "selectors": ["minecraft:lever[facing=north]"],
         "requiredBlockOffsets": [[0, 0, 1]]
     },
     {
-        "selectors": ["lever[facing=south]"],
+        "selectors": ["minecraft:lever[facing=south]"],
         "requiredBlockOffsets": [[0, 0, -1]]
     },
     {
-        "selectors": ["lever[facing=west]"],
+        "selectors": ["minecraft:lever[facing=west]"],
         "requiredBlockOffsets": [[1, 0, 0]]
     },
     {
-        "selectors": ["lever[facing=east]"],
+        "selectors": ["minecraft:lever[facing=east]"],
         "requiredBlockOffsets": [[-1, 0, 0]]
+    },
+    {
+        "selectors": [
+            "minecraft:item_frame"
+        ],
+        "capture": true
     }
 ]

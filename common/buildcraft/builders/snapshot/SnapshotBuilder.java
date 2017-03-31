@@ -36,6 +36,10 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         this.tile = tile;
     }
 
+    protected boolean customPre() {
+        return true;
+    }
+
     protected abstract List<BlockPos> getToBreak();
 
     protected abstract List<BlockPos> getToPlace();
@@ -65,6 +69,10 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
     public abstract Box getBox();
 
     protected abstract boolean isDone();
+
+    protected boolean customPost() {
+        return true;
+    }
 
     /**
      * @return Pos where flying item should be rendered
@@ -112,6 +120,10 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             } else {
                 robotPos = null;
             }
+            return false;
+        }
+
+        if (!customPre()) {
             return false;
         }
 
@@ -227,7 +239,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             }
         }
 
-        return isDone();
+        return isDone() && customPost();
     }
 
     public void writeToByteBuf(PacketBufferBC buffer) {

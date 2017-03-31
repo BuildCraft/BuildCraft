@@ -398,7 +398,6 @@ public class SchematicBlockFactory {
     }
 
     public static void computeRequired(Blueprint blueprint) {
-//        long t = System.currentTimeMillis();
         FakeWorld world = FakeWorld.INSTANCE;
         world.uploadBlueprint(blueprint);
         world.editable = false;
@@ -419,12 +418,10 @@ public class SchematicBlockFactory {
                         schematicBlock.requiredItems = null;
                         schematicBlock.requiredFluids = null;
                     }
-//                    System.out.println((double) (z * blueprint.size.getY() * blueprint.size.getX() + y * blueprint.size.getX() + x) / (blueprint.size.getX() * blueprint.size.getY() * blueprint.size.getZ()));
                 }
             }
         }
         world.editable = true;
         world.clear();
-//        System.out.println("Took: " + (System.currentTimeMillis() - t) + "ms");
     }
 }

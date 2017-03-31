@@ -41,10 +41,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final int NET_BOX = 20;
@@ -53,7 +50,6 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     public final ItemHandlerSimple invBptIn = itemManager.addInvHandler("bptIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
     public final ItemHandlerSimple invBptOut = itemManager.addInvHandler("bptOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
 
-    public boolean shouldScanEntities = false;
     private Snapshot.EnumSnapshotType snapshotType = Snapshot.EnumSnapshotType.BLUEPRINT;
     private final Box box = new Box();
     private boolean[][][] templateScannedBlocks;
@@ -141,7 +137,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         if (scanning) {
             scanMultipleBlocks();
             if (!scanning) {
-                if (shouldScanEntities) {
+                if (snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
                     scanEntities();
                 }
                 finishScanning();
@@ -202,8 +198,15 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     private void scanEntities() {
-//        blueprintScannedEntities = new ArrayList<>();
-        // TODO: Scan all entities
+        BlockPos basePos = pos.offset(
+                world.getBlockState(getPos())
+                        .getValue(BlockArchitectTable.PROP_FACING)
+                        .getOpposite()
+        );
+        world.getEntitiesWithinAABB(Entity.class, box.getBoundingBox()).stream()
+                .map(entity -> SchematicEntityFactory.getSchematicEntity(world, basePos, entity))
+                .filter(Objects::nonNull)
+                .forEach(blueprintScannedEntities::add);
     }
 
     private void finishScanning() {
@@ -217,13 +220,10 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             ((Template) snapshot).data = templateScannedBlocks;
         }
         if (snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
-            world.getEntitiesWithinAABB(Entity.class, box.getBoundingBox()).stream()
-                    .map(entity -> SchematicEntityFactory.getSchematicEntity(world, pos, entity))
-                    .forEach(blueprintScannedEntities::add);
             // noinspection ConstantConditions
             ((Blueprint) snapshot).data = blueprintScannedBlocks;
             // noinspection ConstantConditions
-            ((Blueprint) snapshot).entities = blueprintScannedEntities;
+            ((Blueprint) snapshot).entities = new ArrayList<>(blueprintScannedEntities);
         }
         snapshot.header.id = UUID.randomUUID();
         snapshot.header.owner = getOwner().getId();
@@ -287,7 +287,6 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         nbt.setBoolean("shouldStartScanning", shouldStartScanning);
         nbt.setBoolean("scanning", scanning);
         nbt.setTag("snapshotType", NBTUtilBC.writeEnum(snapshotType));
-        nbt.setBoolean("shouldScanEntities", shouldScanEntities);
         nbt.setBoolean("isValid", isValid);
         nbt.setString("name", name);
         return nbt;
@@ -303,7 +302,6 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         shouldStartScanning = nbt.getBoolean("shouldStartScanning");
         scanning = nbt.getBoolean("scanning");
         snapshotType = NBTUtilBC.readEnum(nbt.getTag("snapshotType"), Snapshot.EnumSnapshotType.class);
-        shouldScanEntities = nbt.getBoolean("shouldScanEntities");
         isValid = nbt.getBoolean("isValid");
         name = nbt.getString("name");
     }

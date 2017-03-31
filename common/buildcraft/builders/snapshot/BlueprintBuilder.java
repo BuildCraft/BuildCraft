@@ -4,9 +4,11 @@ import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.net.PacketBufferBC;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 import java.io.IOException;
 import java.util.*;
@@ -15,6 +17,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> {
+    private static final double MAX_ENTITY_DISTANCE = 0.1D;
     public List<ItemStack> neededStacks = new ArrayList<>();
 
     public BlueprintBuilder(ITileForBlueprintBuilder tile) {
@@ -47,6 +50,29 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         return Optional.ofNullable(getBuildingInfo())
                 .map(buildingInfo -> buildingInfo.maxLevel)
                 .orElse(0);
+    }
+
+    @Override
+    protected boolean customPre() {
+        Optional.ofNullable(getBuildingInfo()).ifPresent(buildingInfo ->
+                tile.getWorldBC().getEntitiesWithinAABB(
+                        Entity.class,
+                        buildingInfo.box.getBoundingBox(),
+                        entity ->
+                                entity != null &&
+                                        buildingInfo.entities.stream()
+                                                .map(schematicEntity -> schematicEntity.pos)
+                                                .map(new Vec3d(buildingInfo.basePos)::add)
+                                                .map(entity.getPositionVector()::distanceTo)
+                                                .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE) &&
+                                        SchematicEntityFactory.getSchematicEntity(
+                                                tile.getWorldBC(),
+                                                BlockPos.ORIGIN,
+                                                entity
+                                        ) != null
+                ).forEach(Entity::setDead)
+        );
+        return true;
     }
 
     @Override
@@ -154,6 +180,31 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     }
 
     @Override
+    protected boolean isDone() {
+        return getBuiltLevel() == getMaxLevel();
+    }
+
+    @Override
+    protected boolean customPost() {
+        Optional.ofNullable(getBuildingInfo()).ifPresent(buildingInfo -> {
+            List<Entity> entitiesWithinBox = tile.getWorldBC().getEntitiesWithinAABB(
+                    Entity.class,
+                    buildingInfo.box.getBoundingBox(),
+                    Objects::nonNull
+            );
+            buildingInfo.entities.stream()
+                    .filter(schematicEntity ->
+                            entitiesWithinBox.stream()
+                                    .map(Entity::getPositionVector)
+                                    .map(schematicEntity.pos.add(new Vec3d(buildingInfo.basePos))::distanceTo)
+                                    .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE)
+                    )
+                    .forEach(schematicEntity -> schematicEntity.build(tile.getWorldBC(), buildingInfo.basePos));
+        });
+        return true;
+    }
+
+    @Override
     public boolean tick() {
         boolean result = super.tick();
         if (tile.getWorldBC().isRemote) {
@@ -211,10 +262,5 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             stack.setCount(buffer.readInt());
             return stack;
         }).forEach(neededStacks::add);
-    }
-
-    @Override
-    protected boolean isDone() {
-        return getBuiltLevel() == getMaxLevel();
     }
 }
