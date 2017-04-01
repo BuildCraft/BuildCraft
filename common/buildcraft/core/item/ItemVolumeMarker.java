@@ -10,8 +10,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class ItemVolumeCuboid extends ItemBC_Neptune {
-    public ItemVolumeCuboid(String id) {
+public class ItemVolumeMarker extends ItemBC_Neptune {
+    public ItemVolumeMarker(String id) {
         super(id);
     }
 

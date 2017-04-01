@@ -16,7 +16,6 @@ public class BCBuildersBlocks {
     public static BlockBuilder builder;
     public static BlockFiller filler;
     public static BlockElectronicLibrary library;
-    private static final boolean DEV = BCLib.DEVELOPER;
 
     public static BlockFrame frame;
     public static BlockQuarry quarry;

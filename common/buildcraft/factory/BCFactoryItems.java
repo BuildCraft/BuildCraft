@@ -15,7 +15,7 @@ public class BCFactoryItems {
     public static ItemBC_Neptune gelledWater;
 
     public static void preInit() {
-        if (BCLib.DEVELOPER) {
+        if (BCLib.DEV) {
             plasticSheet = ItemManager.register(new ItemBC_Neptune("item.plastic.sheet"));
         }
         waterGel = ItemManager.register(new ItemWaterGel("item.water_gel_spawn"));
