@@ -511,6 +511,10 @@ tile.spring.water.name=Water Spring
 tile.stampingTableBlock.name=Stamping Table
 tile.tankBlock.name=Tank
 tile.zonePlan.name=Zone Planner
+tile.distiller.name=Distiller
+tile.heat_exchange_start.name=Heat Exchange (start)
+tile.heat_exchange_middle.name=Heat Exchange (middle)
+tile.heat_exchange_end.name=Heat Exchange (end)
 
 tile.architect.rotate=Rotate: On
 tile.architect.norotate=Rotate: Off
@@ -673,6 +677,7 @@ buildcraft.guide.chapter.subtype.gear=Gears
 buildcraft.guide.chapter.subtype.tool=Tools
 buildcraft.guide.chapter.subtype.pipe_item=Item Transport
 buildcraft.guide.chapter.subtype.pipe_plug=Pluggables
+buildcraft.guide.chapter.subtype.refining=Refining
 
 buildcraft.guide.chapter.stage.unknown=Unknown Era!
 buildcraft.guide.chapter.stage.base=Basic Resources
@@ -686,6 +691,7 @@ buildcraft.guide.chapter.mod.buildcraft=BuildCraft
 
 buildcraft.guide.chapter.submod.unknown=Unknown SubMod!
 buildcraft.guide.chapter.submod.core=Core
+buildcraft.guide.chapter.submod.factory=Factory
 buildcraft.guide.chapter.submod.transport=Transport
 
 buildcraft.guide.chapter.title.gate_base=Gates

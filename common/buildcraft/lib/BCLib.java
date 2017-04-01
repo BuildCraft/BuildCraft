@@ -42,6 +42,8 @@ public class BCLib {
     public static final String VERSION = "${version}";
     public static final String MC_VERSION = "${mcversion}";
 
+    public static final boolean DEVELOPER = true;
+
     @Instance(MODID)
     public static BCLib INSTANCE;
 

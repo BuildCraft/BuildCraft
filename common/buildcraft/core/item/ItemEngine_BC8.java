@@ -5,12 +5,17 @@
 package buildcraft.core.item;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
+
+import buildcraft.api.core.IEngineType;
 
 import buildcraft.lib.engine.BlockEngineBase_BC8;
 import buildcraft.lib.item.ItemBlockBCMulti;
 
-public class ItemEngine_BC8<E extends Enum<E>> extends ItemBlockBCMulti {
+import gnu.trove.map.hash.TIntObjectHashMap;
+
+public class ItemEngine_BC8<E extends Enum<E> & IEngineType> extends ItemBlockBCMulti {
     private final BlockEngineBase_BC8<E> engineBlock;
 
     public ItemEngine_BC8(BlockEngineBase_BC8<E> block) {
@@ -24,6 +29,14 @@ public class ItemEngine_BC8<E extends Enum<E>> extends ItemBlockBCMulti {
     public String getUnlocalizedName(ItemStack stack) {
         IBlockState state = engineBlock.getStateFromMeta(stack == null ? 0 : stack.getItemDamage());
         E engine = state.getValue(engineBlock.getEngineProperty());
-        return "item." + engineBlock.getUnlocalizedName(engine);
+        return "tile." + engineBlock.getUnlocalizedName(engine);
+    }
+
+    @Override
+    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
+        for (E type : engineBlock.getEngineProperty().getAllowedValues()) {
+            int index = type.ordinal();
+            addVariant(variants, index, type.getItemModelLocation());
+        }
     }
 }

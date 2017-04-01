@@ -9,7 +9,8 @@
             "blueprint": {"model": "buildcraftcore:decorated/blueprint"},
             "template": {"model": "buildcraftcore:decorated/template"},
             "paper": {"model": "buildcraftcore:decorated/paper"},
-            "leather": {"model": "buildcraftcore:decorated/leather"}
+            "leather": {"model": "buildcraftcore:decorated/leather"},
+            "laser_back":{"model":"buildcraftcore:decorated/laser_back"}
         }
     }
 }

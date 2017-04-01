@@ -5,12 +5,15 @@
 package buildcraft.core;
 
 import buildcraft.core.item.*;
+import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.registry.CreativeTabManager;
 
 public class BCCoreItems {
+    private static final boolean DEV = BCLib.DEVELOPER;
+
     public static ItemWrench_Neptune wrench;
     public static ItemBC_Neptune gearWood;
     public static ItemBC_Neptune gearStone;
@@ -31,14 +34,14 @@ public class BCCoreItems {
         gearIron = ItemManager.register(new ItemBC_Neptune("item.gear.iron"));
         gearGold = ItemManager.register(new ItemBC_Neptune("item.gear.gold"));
         gearDiamond = ItemManager.register(new ItemBC_Neptune("item.gear.diamond"));
-        diamondShard = ItemManager.register(new ItemBC_Neptune("item.diamond.shard"));
+        if (DEV) diamondShard = ItemManager.register(new ItemBC_Neptune("item.diamond.shard"));
         paintbrush = ItemManager.register(new ItemPaintbrush_BC8("item.paintbrush"));
         list = ItemManager.register(new ItemList_BC8("item.list"));
-        mapLocation = ItemManager.register(new ItemMapLocation("item.map_location"));
-        markerConnector = ItemManager.register(new ItemMarkerConnector("item.marker_connector"));
-        goggles = ItemManager.register(new ItemGoggles("item.goggles"));
+        if (DEV) mapLocation = ItemManager.register(new ItemMapLocation("item.map_location"));
+        if (DEV) markerConnector = ItemManager.register(new ItemMarkerConnector("item.marker_connector"));
+        if (DEV) goggles = ItemManager.register(new ItemGoggles("item.goggles"));
 
-        ItemManager.register(new ItemVolumeCuboid("item.volume_marker"));
+        if (DEV) ItemManager.register(new ItemVolumeCuboid("item.volume_marker"));
 
         BCLibItems.guide.setCreativeTab(CreativeTabManager.getTab("buildcraft.main"));
     }

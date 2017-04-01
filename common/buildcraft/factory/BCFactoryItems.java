@@ -5,6 +5,7 @@
 package buildcraft.factory;
 
 import buildcraft.factory.item.ItemWaterGel;
+import buildcraft.lib.BCLib;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemManager;
 
@@ -14,7 +15,9 @@ public class BCFactoryItems {
     public static ItemBC_Neptune gelledWater;
 
     public static void preInit() {
-        plasticSheet = ItemManager.register(new ItemBC_Neptune("item.plastic.sheet"));
+        if (BCLib.DEVELOPER) {
+            plasticSheet = ItemManager.register(new ItemBC_Neptune("item.plastic.sheet"));
+        }
         waterGel = ItemManager.register(new ItemWaterGel("item.water_gel_spawn"));
         gelledWater = ItemManager.register(new ItemBC_Neptune("item.gel"));
     }

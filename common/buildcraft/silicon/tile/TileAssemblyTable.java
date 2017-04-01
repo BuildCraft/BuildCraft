@@ -2,7 +2,8 @@ package buildcraft.silicon.tile;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -16,12 +17,12 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.recipes.AssemblyRecipe;
 
 import buildcraft.lib.misc.InventoryUtil;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
@@ -33,16 +34,18 @@ import buildcraft.silicon.EnumAssemblyRecipeState;
 public class TileAssemblyTable extends TileLaserTableBase {
     public static final int NET_RECIPE_STATE = 10;
     public final ItemHandlerSimple inv = itemManager.addInvHandler("", 3 * 4, ItemHandlerManager.EnumAccess.BOTH, EnumPipePart.VALUES);
-    public SortedMap<AssemblyRecipe, EnumAssemblyRecipeState> recipesStates = new TreeMap<>(Comparator.comparing(assemblyRecipe -> assemblyRecipe.output.getItem().hashCode() + (assemblyRecipe.output.getTagCompound() == null ? 0
-        : assemblyRecipe.output.getTagCompound().hashCode()) + assemblyRecipe.output.getMetadata() * assemblyRecipe.output.getMaxStackSize() + assemblyRecipe.output.getCount()));
+    public SortedMap<AssemblyRecipe, EnumAssemblyRecipeState> recipesStates = new TreeMap<>(Comparator.comparing(assemblyRecipe -> assemblyRecipe.output.getItem().hashCode() + (assemblyRecipe.output
+        .getTagCompound() == null ? 0 : assemblyRecipe.output.getTagCompound().hashCode()) + assemblyRecipe.output.getMetadata() * assemblyRecipe.output.getMaxStackSize() + assemblyRecipe.output
+            .getCount()));
 
     private boolean extract(ImmutableSet<ItemStack> items, boolean simulate) {
         NonNullList<ItemStack> itemsNeeded = items.stream().map(ItemStack::copy).collect(StackUtil.nonNullListCollector());
         for (int i = 0; i < inv.getSlots(); i++) {
+            @Nonnull
             ItemStack stack = inv.getStackInSlot(i);
             for (Iterator<ItemStack> iterator = itemsNeeded.iterator(); iterator.hasNext();) {
                 ItemStack itemStack = iterator.next();
-                if (StackUtil.canMerge(stack, itemStack) && stack != null) {
+                if (StackUtil.canMerge(stack, itemStack) && !stack.isEmpty()) {
                     int spend = Math.min(itemStack.getCount(), stack.getCount());
                     itemStack.setCount(itemStack.getCount() - spend);
                     if (!simulate) {
@@ -53,7 +56,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
                     }
                     if (!simulate) {
                         if (stack.getCount() <= 0) {
-                            stack = null;
+                            stack = ItemStack.EMPTY;
                         }
                         inv.setStackInSlot(i, stack);
                     }
@@ -247,7 +250,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         super.getDebugInfo(left, right, side);
         left.add("recipes - " + recipesStates.size());
-        left.add("target - " + getTarget());
+        left.add("target - " + LocaleUtil.localizeMj(getTarget()));
     }
 
     @Override

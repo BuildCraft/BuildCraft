@@ -1,7 +1,24 @@
 package buildcraft.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.registry.IRegistry;
+
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import buildcraft.api.enums.EnumEngineType;
+import buildcraft.api.enums.EnumPowerStage;
+
 import buildcraft.core.tile.TileEngineRedstone_BC8;
 import buildcraft.lib.client.model.ModelHolderVariable;
+import buildcraft.lib.client.model.ModelItemSimple;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.expression.DefaultContexts;
@@ -32,8 +49,26 @@ public class BCCoreModels {
         return new ModelHolderVariable("buildcraftcore:models/" + loc, fnCtx);
     }
 
-    /** Just loads this class. */
-    public static void fmlPreInit() {}
+    public static void fmlPreInit() {
+        MinecraftForge.EVENT_BUS.register(BCCoreModels.class);
+    }
+
+    @SubscribeEvent
+    public static void onModelBake(ModelBakeEvent event) {
+        IRegistry<ModelResourceLocation, IBakedModel> modelRegistry = event.getModelRegistry();
+        List<BakedQuad> quads = new ArrayList<>();
+        ENGINE_PROGRESS.value = 0.2;
+        ENGINE_STAGE.value = EnumPowerStage.BLUE.getModelName();
+        ENGINE_FACING.value = EnumFacing.UP.getName();
+        for (MutableQuad quad : ENGINE_REDSTONE.getCutoutQuads()) {
+            quads.add(quad.toBakedItem());
+        }
+        registerModel(modelRegistry, EnumEngineType.WOOD.getItemModelLocation() + "#inventory", new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK));
+    }
+
+    private static void registerModel(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, String reg, IBakedModel val) {
+        modelRegistry.putObject(new ModelResourceLocation(reg), val);
+    }
 
     private static MutableQuad[] getEngineQuads(ModelHolderVariable model, TileEngineBase_BC8 tile, float partialTicks) {
         ENGINE_PROGRESS.value = tile.getProgressClient(partialTicks);
