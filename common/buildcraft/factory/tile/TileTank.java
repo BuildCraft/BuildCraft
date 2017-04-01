@@ -286,7 +286,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         if (resource == null) {
             return null;
         }
-        return drain(fluid -> resource.isFluidEqual(fluid), resource.amount, doDrain);
+        return drain(resource::isFluidEqual, resource.amount, doDrain);
     }
 
     // IFluidHandlerAdv
