@@ -10,6 +10,6 @@
             "west": {"y": 270},
             "north": {"y": 0}
         },
-        "inventory": [{"model": "buildcraftfactory:mining_well"}]
+        "inventory": [{}]
     }
 }

@@ -14,6 +14,7 @@ public class BCFactoryBlocks {
     public static BlockAutoWorkbenchItems autoWorkbenchItems;
     public static BlockMiningWell miningWell;
     public static BlockPump pump;
+    public static BlockTube tube;
     public static BlockFloodGate floodGate;
     public static BlockTank tank;
     public static BlockChute chute;
@@ -29,6 +30,7 @@ public class BCFactoryBlocks {
         autoWorkbenchItems = BlockBCBase_Neptune.register(new BlockAutoWorkbenchItems(Material.ROCK, "block.autoworkbench.item"));
         miningWell = BlockBCBase_Neptune.register(new BlockMiningWell(Material.ROCK, "block.mining_well"));
         pump = BlockBCBase_Neptune.register(new BlockPump(Material.ROCK, "block.pump"));
+        tube = BlockBCBase_Neptune.register(new BlockTube(Material.IRON, "block.tube"));
         floodGate = BlockBCBase_Neptune.register(new BlockFloodGate(Material.ROCK, "block.flood_gate"));
         tank = BlockBCBase_Neptune.register(new BlockTank(Material.ROCK, "block.tank"));
         chute = BlockBCBase_Neptune.register(new BlockChute(Material.ROCK, "block.chute"));

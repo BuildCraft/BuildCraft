@@ -6,6 +6,7 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
+import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -25,14 +26,14 @@ import java.util.List;
 
 public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHasWork, IDebuggable {
     public static final int NET_LED_STATUS = 10;
-    public static final int NET_TUBE_LENGTH_WANTED = 11;
+    public static final int NET_WANTED_Y = 11;
 
     protected int progress = 0;
     protected BlockPos currentPos = null;
 
-    private int tubeLengthWanted = 0;
-    private double tubeLengthCurrent = 0;
-    private double tubeLengthLast = 0;
+    private int wantedY = -1;
+    private double currentY = 0;
+    private double lastY = 0;
 
     protected boolean isComplete = false;
     protected final MjBattery battery = new MjBattery(500 * MjAPI.MJ);
@@ -48,11 +49,11 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     @Override
     public void update() {
         if (world.isRemote) {
-            tubeLengthLast = tubeLengthCurrent;
-            if (Math.abs(tubeLengthWanted - tubeLengthCurrent) <= 0.1) {
-                tubeLengthCurrent = tubeLengthWanted;
+            lastY = currentY;
+            if (Math.abs(wantedY - currentY) <= 0.1) {
+                currentY = wantedY;
             } else {
-                tubeLengthCurrent = tubeLengthCurrent + Math.min(Math.abs((tubeLengthWanted - tubeLengthCurrent) / 10D), 0.1) * (tubeLengthWanted > tubeLengthCurrent ? 1 : -1);
+                currentY = currentY + Math.min(Math.abs((wantedY - currentY) / 10D), 0.1) * (wantedY > currentY ? 1 : -1);
             }
             return;
         }
@@ -69,21 +70,45 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         mine();
     }
 
-    protected void goToYLevel(int wantedY) {
-        int length = Math.max(0, getPos().getY() - wantedY - 1);
-        if (length != tubeLengthWanted) {
-            tubeLengthCurrent = tubeLengthWanted = length;
-            sendNetworkUpdate(NET_TUBE_LENGTH_WANTED);
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        for (int y = pos.getY() - 1; y > 0; y--) {
+            BlockPos blockPos = new BlockPos(pos.getX(), y, pos.getZ());
+            if (world.getBlockState(blockPos).getBlock() == BCFactoryBlocks.tube) {
+                world.setBlockToAir(blockPos);
+            } else {
+                break;
+            }
         }
     }
 
-    public double getTubeLength(float partialTicks) {
+    protected void goToYLevel(int newY) {
+        if (newY != wantedY) {
+            for (int y = pos.getY() - 1; y > 0; y--) {
+                BlockPos blockPos = new BlockPos(pos.getX(), y, pos.getZ());
+                if (world.getBlockState(blockPos).getBlock() == BCFactoryBlocks.tube) {
+                    world.setBlockToAir(blockPos);
+                } else {
+                    break;
+                }
+            }
+            for (int y = pos.getY() - 1; y > newY; y--) {
+                BlockPos blockPos = new BlockPos(pos.getX(), y, pos.getZ());
+                world.setBlockState(blockPos, BCFactoryBlocks.tube.getDefaultState());
+            }
+            currentY = wantedY = newY;
+            sendNetworkUpdate(NET_WANTED_Y);
+        }
+    }
+
+    public double getY(float partialTicks) {
         if (partialTicks <= 0) {
-            return tubeLengthLast;
+            return lastY;
         } else if (partialTicks >= 1) {
-            return tubeLengthCurrent;
+            return currentY;
         } else {
-            return tubeLengthLast * (1 - partialTicks) + tubeLengthCurrent * partialTicks;
+            return lastY * (1 - partialTicks) + currentY * partialTicks;
         }
     }
 
@@ -130,12 +155,12 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
                 writePayload(NET_LED_STATUS, buffer, side);
-                buffer.writeDouble(tubeLengthCurrent);
+                buffer.writeDouble(currentY);
             } else if (id == NET_LED_STATUS) {
                 buffer.writeBoolean(isComplete());
                 battery.writeToBuffer(buffer);
-            } else if (id == NET_TUBE_LENGTH_WANTED) {
-                buffer.writeInt(tubeLengthWanted);
+            } else if (id == NET_WANTED_Y) {
+                buffer.writeInt(wantedY);
             }
         }
     }
@@ -146,12 +171,16 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 readPayload(NET_LED_STATUS, buffer, side, ctx);
-                tubeLengthCurrent = buffer.readDouble();
+                currentY = buffer.readDouble();
             } else if (id == NET_LED_STATUS) {
                 isComplete = buffer.readBoolean();
                 battery.readFromBuffer(buffer);
-            } else if (id == NET_TUBE_LENGTH_WANTED) {
-                tubeLengthWanted = buffer.readInt();
+            } else if (id == NET_WANTED_Y) {
+                boolean firstTime = wantedY == -1;
+                wantedY = buffer.readInt();
+                if (firstTime) {
+                    currentY = lastY = pos.down().getY();
+                }
             }
         }
     }
@@ -161,9 +190,9 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         left.add("");
         left.add("battery = " + battery.getDebugString());
         left.add("current = " + currentPos);
-        left.add("tubeLengthWanted = " + tubeLengthWanted);
-        left.add("tubeLengthCurrent = " + tubeLengthCurrent);
-        left.add("tubeLengthLast = " + tubeLengthLast);
+        left.add("wantedY = " + wantedY);
+        left.add("currentY = " + currentY);
+        left.add("lastY = " + lastY);
         left.add("isComplete = " + isComplete());
         left.add("progress = " + progress);
     }

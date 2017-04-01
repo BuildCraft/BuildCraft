@@ -20,8 +20,8 @@ public class RenderTube extends FastTESR<TileMiner> {
 
     @Override
     public void renderTileEntityFast(TileMiner tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
-        double length = tile.getTubeLength(partialTicks);
-        if (length <= 0) {
+        double tubeY = tile.getY(partialTicks);
+        if (tubeY <= 0) {
             return;
         }
 
@@ -30,7 +30,7 @@ public class RenderTube extends FastTESR<TileMiner> {
 
         Vec3d start = new Vec3d(from.getX() + 0.5, from.getY(), from.getZ() + 0.5);
 
-        Vec3d end = start.addVector(0, -length, 0);
+        Vec3d end = new Vec3d(from.getX() + 0.5, tubeY, from.getZ() + 0.5);
 
         LaserData_BC8 data = new LaserData_BC8(laserType, start, end, 1 / 16.0);
         LaserRenderer_BC8.renderLaserDynamic(data, buffer);
