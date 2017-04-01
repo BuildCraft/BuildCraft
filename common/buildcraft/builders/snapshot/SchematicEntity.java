@@ -63,24 +63,26 @@ public class SchematicEntity implements INBTSerializable<NBTTagCompound> {
                 .forEach(kv -> newEntityNbt.setTag(kv.getKey(), kv.getValue()));
         newEntityNbt.setTag("Pos", NBTUtilBC.writeVec3d(placePos));
         newEntityNbt.setUniqueId("UUID", UUID.randomUUID());
+        boolean rotate = false;
         if (Stream.of("TileX", "TileY", "TileZ", "Facing").allMatch(newEntityNbt::hasKey)) {
             newEntityNbt.setInteger("TileX", placeHangingPos.getX());
             newEntityNbt.setInteger("TileY", placeHangingPos.getY());
             newEntityNbt.setInteger("TileZ", placeHangingPos.getZ());
             newEntityNbt.setByte("Facing", (byte) hangingFacing.getHorizontalIndex());
+        } else {
+            rotate = true;
         }
         Entity entity = EntityList.createEntityFromNBT(newEntityNbt, world);
         if (entity != null) {
-//            entity.setLocationAndAngles(
-//                    placePos.xCoord,
-//                    placePos.yCoord,
-//                    placePos.zCoord,
-////                    entityRotation == Rotation.NONE
-////                            ? entity.rotationYaw
-////                            : entity.rotationYaw + (entity.rotationYaw - entity.getRotatedYaw(entityRotation)),
-//                    entity.rotationYaw,
-//                    entity.rotationPitch
-//            );
+            if (rotate) {
+                entity.setLocationAndAngles(
+                        placePos.xCoord,
+                        placePos.yCoord,
+                        placePos.zCoord,
+                        entity.rotationYaw + (entity.rotationYaw - entity.getRotatedYaw(entityRotation)),
+                        entity.rotationPitch
+                );
+            }
             world.spawnEntity(entity);
         }
         return entity;
