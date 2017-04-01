@@ -104,7 +104,7 @@ public class BCCore {
         registerTag("item.map_location").reg("map_location").locale("mapLocation").oldReg("mapLocation").model("map_location/");
         registerTag("item.paintbrush").reg("paintbrush").locale("paintbrush").model("paintbrush/");
         registerTag("item.marker_connector").reg("marker_connector").locale("markerConnector").model("marker_connector");
-        registerTag("item.volume_marker").reg("volume_marker").locale("volume_marker").model("volume_marker");
+        registerTag("item.volume_box").reg("volume_box").locale("volume_box").model("volume_box");
         registerTag("item.goggles").reg("goggles").locale("goggles").model("goggles");
         // Item Blocks
         registerTag("item.block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker_volume");

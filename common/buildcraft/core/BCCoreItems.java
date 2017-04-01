@@ -24,8 +24,8 @@ public class BCCoreItems {
     public static ItemList_BC8 list;
     public static ItemMapLocation mapLocation;
     public static ItemMarkerConnector markerConnector;
+    public static ItemVolumeBox volumeBox;
     public static ItemGoggles goggles;
-    public static ItemVolumeMarker volumeMarker;
 
     public static void preInit() {
         wrench = ItemManager.register(new ItemWrench_Neptune("item.wrench"));
@@ -42,9 +42,11 @@ public class BCCoreItems {
         if (BCLib.DEV) {
             mapLocation = ItemManager.register(new ItemMapLocation("item.map_location"));
             markerConnector = ItemManager.register(new ItemMarkerConnector("item.marker_connector"));
+        }
+        volumeBox = ItemManager.register(new ItemVolumeBox("item.volume_box"));
+        if (BCLib.DEV) {
             goggles = ItemManager.register(new ItemGoggles("item.goggles"));
         }
-        volumeMarker = ItemManager.register(new ItemVolumeMarker("item.volume_marker"));
         BCLibItems.guide.setCreativeTab(CreativeTabManager.getTab("buildcraft.main"));
     }
 }
