@@ -38,6 +38,10 @@ public class BCBlocks {
     public static final Block FACTORY_FLOOD_GATE;
     public static final Block FACTORY_MINING_WELL;
     public static final Block FACTORY_AUTOWORKBENCH_ITEM;
+    public static final Block FACTORY_DISTILLER;
+    public static final Block FACTORY_HEAT_EXCHANGE_START;
+    public static final Block FACTORY_HEAT_EXCHANGE_MIDDLE;
+    public static final Block FACTORY_HEAT_EXCHANGE_END;
 
     // BC Robotics
 
@@ -70,6 +74,10 @@ public class BCBlocks {
         FACTORY_FLOOD_GATE = getRegisteredBlock(factory, "flood_gate");
         FACTORY_MINING_WELL = getRegisteredBlock(factory, "mining_well");
         FACTORY_AUTOWORKBENCH_ITEM = getRegisteredBlock(factory, "autoworkbench_item");
+        FACTORY_DISTILLER = getRegisteredBlock(factory, "distiller");
+        FACTORY_HEAT_EXCHANGE_START = getRegisteredBlock(factory, "heat_exchange_start");
+        FACTORY_HEAT_EXCHANGE_MIDDLE = getRegisteredBlock(factory, "heat_exchange_middle");
+        FACTORY_HEAT_EXCHANGE_END = getRegisteredBlock(factory, "heat_exchange_end");
 
         if (DEBUG) {
             for (Block block : Block.REGISTRY) {

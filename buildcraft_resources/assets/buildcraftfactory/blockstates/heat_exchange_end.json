@@ -1,0 +1,16 @@
+{
+    "forge_marker":1,
+    "defaults": {
+        "textures":{
+            "sprite":"buildcraftfactory:blocks/heat_exchange/end"
+        }
+    },
+    "variants": {
+        "facing": {
+            "east":  {"y":270   },
+            "north": { "y":180  },
+            "west":  { "y":90 },
+            "south": { "y":0 }
+        }
+    }
+}

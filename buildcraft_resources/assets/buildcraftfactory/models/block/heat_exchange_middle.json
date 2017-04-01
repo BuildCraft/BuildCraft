@@ -1,0 +1,26 @@
+{
+	"elements": [
+		{
+			"comment": "Inner Pipe",
+			"from": [0, 6, 6],
+			"to": [16, 10, 10],
+			"faces": {
+				"up":    { "uv": [ 0, 0, 16, 4 ], "texture": "#sprite_a" },
+				"down":  { "uv": [ 0, 0, 16, 4 ], "texture": "#sprite_a" },
+				"north": { "uv": [ 0, 0, 16, 4 ], "texture": "#sprite_a" },
+				"south": { "uv": [ 0, 0, 16, 4 ], "texture": "#sprite_a" }
+			}
+		},
+		{
+			"comment": "Outer Pipe",
+			"from": [ 0, 4, 4 ],
+			"to": [ 16, 12, 12 ],
+			"faces": {
+				"up":    { "uv": [ 0, 4, 16, 12 ], "texture": "#sprite_a" },
+				"down":  { "uv": [ 0, 4, 16, 12 ], "texture": "#sprite_a" },
+				"north": { "uv": [ 0, 4, 16, 12 ], "texture": "#sprite_a" },
+				"south": { "uv": [ 0, 4, 16, 12 ], "texture": "#sprite_a" }
+			}
+		}
+	]
+}

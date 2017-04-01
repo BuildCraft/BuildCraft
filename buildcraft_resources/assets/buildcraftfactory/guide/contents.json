@@ -1,0 +1,21 @@
+{
+    "entry_mask": "assets/<mod><sub_mod>/guide/<lang>/<type>/<page>",
+    "default_tags": 
+    {
+        "mod": "buildcraft",
+        "sub_mod": "factory"
+    },
+    "contents": 
+    [
+        {
+            "title": "tile.distiller.name",
+            "item_stack": "(buildcraftfactory:distiller)",
+            "page": "distiller.md",
+            "type_tags": 
+            {
+                "type": "block",
+                "sub_type": "refining"
+            }
+        }
+    ]
+}

@@ -1,0 +1,26 @@
+{
+	"elements": [
+		{
+			"comment": "Inner Pipe",
+			"from": [0, 6, 6],
+			"to": [16, 10, 10],
+			"faces": {
+				"up":    { "uv": [ 0, 0, 16, 4 ], "texture": "#sprite_a" },
+				"down":  { "uv": [ 0, 0, 16, 4 ], "texture": "#sprite_a" },
+				"north": { "uv": [ 0, 0, 16, 4 ], "texture": "#sprite_a" },
+				"south": { "uv": [ 0, 0, 16, 4 ], "texture": "#sprite_a" }
+			}
+		},
+		{
+			"comment": "Outer Pipe Center",
+			"from": [4, 4, 4],
+			"to": [12, 12, 12],
+			"faces": {
+				"up":    { "uv": [ 8, 8, 16, 16 ], "texture": "#sprite_b" },
+				"west":  { "uv": [ 8, 8, 16, 16 ], "texture": "#sprite_b", "rotation":90 },
+				"north": { "uv": [ 0, 8, 8, 16 ], "texture": "#sprite_b", "rotation": 270 },
+				"south": { "uv": [ 0, 8, 8, 16 ], "texture": "#sprite_b", "rotation": 90 }
+			}
+		}
+	]
+}

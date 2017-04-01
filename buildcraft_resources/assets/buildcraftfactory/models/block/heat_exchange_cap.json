@@ -1,0 +1,16 @@
+{
+	"elements": [
+		{
+			"comment": "Cap",
+			"from": [14, 4, 4],
+			"to": [16, 12, 12],
+			"faces": {
+				"east": { "uv": [ 0, 0, 8, 8 ],  "texture": "#sprite_b" },
+				"up":   { "uv": [ 8, 0, 10, 8 ], "texture": "#sprite_b", "rotation": 180 },
+				"down": { "uv": [ 8, 0, 10, 8 ], "texture": "#sprite_b", "rotation": 180 },
+				"north":{ "uv": [ 8, 0, 10, 8 ], "texture": "#sprite_b" },
+				"south":{ "uv": [ 8, 0, 10, 8 ], "texture": "#sprite_b", "rotation": 180 }
+			}
+		}
+	]
+}
