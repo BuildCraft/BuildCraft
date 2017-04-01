@@ -67,7 +67,6 @@ public class BCFactory {
         registerTag("item.block.autoworkbench.item").reg("autoworkbench_item").locale("autoWorkbenchBlock").model("autoworkbench_item");
         registerTag("item.block.mining_well").reg("mining_well").locale("miningWellBlock").model("mining_well");
         registerTag("item.block.pump").reg("pump").locale("pumpBlock").model("pump");
-        registerTag("item.block.tube").reg("tube").locale("tubeBlock").model("tube");
         registerTag("item.block.flood_gate").reg("flood_gate").locale("floodGateBlock").model("flood_gate");
         registerTag("item.block.tank").reg("tank").locale("tankBlock").model("tank");
         registerTag("item.block.chute").reg("chute").locale("chuteBlock").model("chute");

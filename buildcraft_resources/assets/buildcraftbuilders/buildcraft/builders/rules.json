@@ -260,5 +260,9 @@
             "minecraft:hopper_minecart"
         ],
         "capture": true
+    },
+    {
+        "selectors": ["minecraft:ender_crystal"],
+        "requiredItems": ["minecraft:end_crystal"]
     }
 ]

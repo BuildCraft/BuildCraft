@@ -47,12 +47,14 @@ public class SchematicEntity implements INBTSerializable<NBTTagCompound> {
         schematicEntity.hangingPos = hangingPos.rotate(rotation);
         schematicEntity.hangingFacing = rotation.rotate(hangingFacing);
         schematicEntity.entityRotation = entityRotation.add(rotation);
+        schematicEntity.requiredItems = requiredItems;
+        schematicEntity.requiredFluids = requiredFluids;
         return schematicEntity;
     }
 
 
     @SuppressWarnings("Duplicates")
-    public boolean build(World world, BlockPos basePos) {
+    public Entity build(World world, BlockPos basePos) {
         Vec3d placePos = new Vec3d(basePos).add(pos);
         BlockPos placeHangingPos = basePos.add(hangingPos);
         NBTTagCompound newEntityNbt = new NBTTagCompound();
@@ -81,12 +83,11 @@ public class SchematicEntity implements INBTSerializable<NBTTagCompound> {
 //            );
             world.spawnEntity(entity);
         }
-        return true;
+        return entity;
     }
 
-
     @SuppressWarnings("Duplicates")
-    public boolean buildWithoutChecks(World world, BlockPos basePos) {
+    public Entity buildWithoutChecks(World world, BlockPos basePos) {
         return build(world, basePos);
     }
 }

@@ -1,15 +1,16 @@
 package buildcraft.builders.snapshot;
 
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.lang.reflect.Type;
+import java.util.*;
 
 public enum RulesLoader {
     INSTANCE;
@@ -31,11 +32,41 @@ public enum RulesLoader {
                 );
                 if (inputStream != null) {
                     rules.addAll(
-                            new GsonBuilder().create().fromJson(
-                                    new InputStreamReader(inputStream),
-                                    new TypeToken<List<JsonRule>>() {
-                                    }.getType()
-                            )
+                            new GsonBuilder()
+                                    .registerTypeAdapter(
+                                            ItemStack.class,
+                                            (JsonDeserializer<ItemStack>) (json, typeOfT, context) -> {
+                                                String itemName = json.getAsString();
+                                                itemName = itemName.contains("@") ? itemName : itemName + "@0";
+                                                return new ItemStack(
+                                                        Objects.requireNonNull(
+                                                                Item.getByNameOrId(
+                                                                        itemName.substring(
+                                                                                0,
+                                                                                itemName.indexOf("@")
+                                                                        )
+                                                                )
+                                                        ),
+                                                        1,
+                                                        Integer.parseInt(itemName.substring(itemName.indexOf("@") + 1))
+                                                );
+                                            }
+                                    )
+                                    .registerTypeAdapter(
+                                            BlockPos.class,
+                                            (JsonDeserializer<BlockPos>) (json, typeOfT, context) ->
+                                                    new BlockPos(
+                                                            json.getAsJsonArray().get(0).getAsInt(),
+                                                            json.getAsJsonArray().get(1).getAsInt(),
+                                                            json.getAsJsonArray().get(2).getAsInt()
+                                                    )
+                                    )
+                                    .create()
+                                    .fromJson(
+                                            new InputStreamReader(inputStream),
+                                            new TypeToken<List<JsonRule>>() {
+                                            }.getType()
+                                    )
                     );
                     readDomains.add(domain);
                 }

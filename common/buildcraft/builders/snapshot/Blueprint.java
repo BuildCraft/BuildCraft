@@ -78,6 +78,7 @@ public class Blueprint extends Snapshot {
             this.basePos = basePos;
             this.rotation = rotation;
             SchematicBlockFactory.computeRequired(getSnapshot());
+            SchematicEntityFactory.computeRequired(getSnapshot());
             for (int z = 0; z < getSnapshot().size.getZ(); z++) {
                 for (int y = 0; y < getSnapshot().size.getY(); y++) {
                     for (int x = 0; x < getSnapshot().size.getX(); x++) {

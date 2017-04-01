@@ -1,16 +1,19 @@
 package buildcraft.builders.snapshot;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.*;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.SaveHandlerMP;
 import net.minecraft.world.storage.WorldInfo;
@@ -19,6 +22,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public class FakeWorld extends World {
     public static FakeWorld INSTANCE = new FakeWorld();
@@ -77,6 +81,47 @@ public class FakeWorld extends World {
 
     public List<ItemStack> breakBlockAndGetDrops(BlockPos pos) {
         getBlockState(pos).getBlock().breakBlock(this, pos, getBlockState(pos));
+        List<ItemStack> dropsCopy = new ArrayList<>(drops);
+        drops.clear();
+        return dropsCopy;
+    }
+
+    public List<ItemStack> killEntityAndGetDrops(Entity entity) {
+        entity.move(MoverType.PLAYER, 1, 1, 1);
+        if (drops.isEmpty()) {
+            entity.isDead = false;
+            entity.attackEntityFrom(
+                    DamageSource.causePlayerDamage(
+                            new EntityPlayer(
+                                    this,
+                                    new GameProfile(UUID.randomUUID(), "fake")
+                            ) {
+                                @Override
+                                public boolean isSpectator() {
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean isCreative() {
+                                    return false;
+                                }
+                            }
+                    ),
+                    100
+            );
+        }
+//        if (drops.isEmpty()) {
+//            entity.isDead = false;
+//            entity.attackEntityFrom(DamageSource.causeExplosionDamage(new Explosion(
+//                    this,
+//                    entity,
+//                    entity.posX,
+//                    entity.posY,
+//                    entity.posZ,
+//                    1,
+//                    Collections.emptyList()
+//            )), 100);
+//        }
         List<ItemStack> dropsCopy = new ArrayList<>(drops);
         drops.clear();
         return dropsCopy;
@@ -228,6 +273,11 @@ public class FakeWorld extends World {
         if (editable) {
             super.joinEntityInSurroundings(entity);
         }
+    }
+
+    @Override
+    public BlockPos getSpawnPoint() {
+        return BLUEPRINT_OFFSET;
     }
 
     @Override

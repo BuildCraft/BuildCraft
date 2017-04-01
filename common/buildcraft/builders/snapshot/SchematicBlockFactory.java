@@ -94,10 +94,9 @@ public class SchematicBlockFactory {
             SchematicBlock schematicBlock
     ) {
         Set<BlockPos> requiredBlockOffsets = rules.stream()
-                .filter(rule -> rule.requiredBlockOffsets != null)
                 .map(rule -> rule.requiredBlockOffsets)
-                .flatMap(poses -> poses.stream().map(ints -> new BlockPos(ints[0], ints[1], ints[2])))
                 .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
                 .collect(Collectors.toCollection(HashSet::new));
         if (block instanceof BlockFalling) {
             requiredBlockOffsets.add(new BlockPos(0, -1, 0));
@@ -279,27 +278,9 @@ public class SchematicBlockFactory {
         if (rules.stream().map(rule -> rule.requiredItems).anyMatch(Objects::nonNull)) {
             requiredItems.clear();
             rules.stream()
-                    .filter(rule -> rule.requiredItems != null)
                     .map(rule -> rule.requiredItems)
-                    .flatMap(itemNames ->
-                            itemNames.stream()
-                                    .map(itemName -> itemName.contains("@") ? itemName : itemName + "@0")
-                                    .map(itemName ->
-                                            new ItemStack(
-                                                    Objects.requireNonNull(
-                                                            Item.getByNameOrId(
-                                                                    itemName.substring(
-                                                                            0,
-                                                                            itemName.indexOf("@")
-                                                                    )
-                                                            )
-                                                    ),
-                                                    1,
-                                                    Integer.parseInt(itemName.substring(itemName.indexOf("@") + 1))
-                                            )
-                                    )
-                    )
                     .filter(Objects::nonNull)
+                    .flatMap(Collection::stream)
                     .forEach(requiredItems::add);
         }
         rules.stream()
@@ -405,16 +386,15 @@ public class SchematicBlockFactory {
             for (int y = 0; y < blueprint.size.getY(); y++) {
                 for (int x = 0; x < blueprint.size.getX(); x++) {
                     BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
-                    BlockPos basePos = FakeWorld.BLUEPRINT_OFFSET;
                     SchematicBlock schematicBlock = blueprint.data
-                            [pos.getX() - basePos.getX()]
-                            [pos.getY() - basePos.getY()]
-                            [pos.getZ() - basePos.getZ()];
+                            [pos.getX() - FakeWorld.BLUEPRINT_OFFSET.getX()]
+                            [pos.getY() - FakeWorld.BLUEPRINT_OFFSET.getY()]
+                            [pos.getZ() - FakeWorld.BLUEPRINT_OFFSET.getZ()];
                     IBlockState blockState = world.getBlockState(pos);
                     Block block = blockState.getBlock();
                     Set<JsonRule> rules = rulesCache.getUnchecked(blockState);
-                    if (!setRequiredItems(world, basePos, pos, blockState, block, rules, schematicBlock) ||
-                            !setRequiredFluids(world, basePos, pos, blockState, block, rules, schematicBlock)) {
+                    if (!setRequiredItems(world, FakeWorld.BLUEPRINT_OFFSET, pos, blockState, block, rules, schematicBlock) ||
+                            !setRequiredFluids(world, FakeWorld.BLUEPRINT_OFFSET, pos, blockState, block, rules, schematicBlock)) {
                         schematicBlock.requiredItems = null;
                         schematicBlock.requiredFluids = null;
                     }
