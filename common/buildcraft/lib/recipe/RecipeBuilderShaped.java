@@ -1,7 +1,6 @@
 package buildcraft.lib.recipe;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -11,8 +10,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.oredict.ShapedOreRecipe;
-
-import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.misc.StackUtil;
 
@@ -95,6 +92,13 @@ public class RecipeBuilderShaped {
         return map(c, fallback);
     }
 
+    public RecipeBuilderShaped map(char c, Item toTry, Block fallback) {
+        if (toTry != null) {
+            return map(c, toTry);
+        }
+        return map(c, fallback);
+    }
+
     public RecipeBuilderShaped map(char c, Item toTry, ItemStack fallback) {
         if (toTry != null) {
             return map(c, toTry);
@@ -103,6 +107,13 @@ public class RecipeBuilderShaped {
     }
 
     public RecipeBuilderShaped map(char c, Item toTry, String fallback) {
+        if (toTry != null) {
+            return map(c, toTry);
+        }
+        return map(c, fallback);
+    }
+
+    public RecipeBuilderShaped map(char c, Block toTry, Item fallback) {
         if (toTry != null) {
             return map(c, toTry);
         }

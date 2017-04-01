@@ -11,9 +11,11 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.mj.ILaserTarget;
+import buildcraft.api.mj.MjAPI;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
 
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
@@ -78,6 +80,6 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
-        left.add("power - " + power);
+        left.add("power - " + LocaleUtil.localizeMj(power));
     }
 }

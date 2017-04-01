@@ -26,9 +26,13 @@ import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 
 public class TilePump extends TileMiner {
-    private SingleUseTank tank = new SingleUseTank("tank", 16000, this);
+    private final SingleUseTank tank = new SingleUseTank("tank", 16000, this);
     private TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<>();
     private int timeWithoutFluid = 0;
+
+    public TilePump() {
+        tank.setCanFill(false);
+    }
 
     @Override
     protected IMjReceiver createMjReceiver() {
@@ -172,7 +176,7 @@ public class TilePump extends TileMiner {
                 FluidStack drain = BlockUtil.drainBlock(world, currentPos, false);
                 if (drain != null && canDrainBlock(world.getBlockState(currentPos), currentPos, drain.getFluid())) {
                     world.setBlockToAir(currentPos);
-                    tank.fill(drain, true);
+                    tank.fillInternal(drain, true);
                     for (Deque<BlockPos> layer : pumpLayerQueues.values()) {
                         for (Iterator<BlockPos> iterator = layer.iterator(); iterator.hasNext();) {
                             BlockPos pos = iterator.next();

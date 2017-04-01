@@ -24,10 +24,14 @@ public class RenderLaser extends FastTESR<TileLaser> {
         buffer.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
 
         if (tile.laserPos != null) {
-            EnumFacing side = tile.getWorld().getBlockState(tile.getPos()).getValue(BuildCraftProperties.BLOCK_FACING_6);
-            Vec3d offset = new Vec3d(0.5, 0.5, 0.5).add(new Vec3d(side.getDirectionVec()).scale(2 / 16D));
-            int index = (int) ((double) tile.getAverage() / tile.getMaxPowerPerTick() * (BuildCraftLaserManager.POWERS.length - 1));
-            LaserRenderer_BC8.renderLaserDynamic(new LaserData_BC8(BuildCraftLaserManager.POWERS[index], new Vec3d(tile.getPos()).add(offset), tile.laserPos, 1 / 16D), buffer);
+            long avg = tile.getAverage();
+            if (avg > 10) {
+                EnumFacing side = tile.getWorld().getBlockState(tile.getPos()).getValue(BuildCraftProperties.BLOCK_FACING_6);
+                Vec3d offset = new Vec3d(0.5, 0.5, 0.5).add(new Vec3d(side.getDirectionVec()).scale(2 / 16D));
+                int index = (int) ((double) tile.getAverage() / tile.getMaxPowerPerTick() * (BuildCraftLaserManager.POWERS.length - 1));
+                LaserData_BC8 laser = new LaserData_BC8(BuildCraftLaserManager.POWERS[index], new Vec3d(tile.getPos()).add(offset), tile.laserPos, 1 / 16D);
+                LaserRenderer_BC8.renderLaserDynamic(laser, buffer);
+            }
         }
 
         buffer.setTranslation(0, 0, 0);

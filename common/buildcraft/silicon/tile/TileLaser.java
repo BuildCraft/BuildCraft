@@ -21,6 +21,7 @@ import buildcraft.api.mj.*;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IDebuggable;
 
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.Box;
@@ -107,7 +108,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     }
 
     public long getMaxPowerPerTick() {
-        return 1000000;
+        return 4 * MjAPI.MJ;
     }
 
     @Override
@@ -211,7 +212,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         left.add("battery = " + battery.getDebugString());
         left.add("target = " + targetPos);
         left.add("laser = " + laserPos);
-        left.add("average = " + getAverage());
+        left.add("average = " + LocaleUtil.localizeMjFlow(getAverage()));
     }
 
     @Override

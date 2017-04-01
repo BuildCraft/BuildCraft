@@ -13,6 +13,8 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.BCItems;
+import buildcraft.api.enums.EnumRedstoneChipset;
+import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
 
 import buildcraft.core.BCCoreBlocks;
@@ -107,7 +109,7 @@ public class BCTransportRecipes {
             builder.add("rer");
             builder.add("gpg");
             builder.map('e', BCCoreBlocks.engine);
-            builder.map('p', BCTransportItems.plugBlocker);
+            builder.map('p', BCTransportItems.plugBlocker, Blocks.COBBLESTONE);
             builder.map('g', "gearIron");
             builder.map('r', "dustRedstone");
             GameRegistry.addRecipe(builder.build());
@@ -120,7 +122,7 @@ public class BCTransportRecipes {
             builder.add("mrm");
             builder.add(" b ");
             builder.map('r', "dustRedstone");
-            builder.map('b', BCTransportItems.plugBlocker);
+            builder.map('b', BCTransportItems.plugBlocker, Blocks.COBBLESTONE);
 
             // Base craftable types
 
@@ -169,8 +171,27 @@ public class BCTransportRecipes {
                     GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(resultOr, "i", 'i', resultAnd));
                 }
             }
+            ItemStack lapis = new ItemStack(Items.DYE, 1, EnumDyeColor.BLUE.getDyeDamage());
+            makeGateAssembly(20_000, EnumGateMaterial.IRON, EnumGateModifier.NO_MODIFIER, EnumRedstoneChipset.IRON);
+            makeGateAssembly(40_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.NO_MODIFIER, EnumRedstoneChipset.IRON, new ItemStack(Blocks.NETHER_BRICK));
+            makeGateAssembly(80_000, EnumGateMaterial.GOLD, EnumGateModifier.NO_MODIFIER, EnumRedstoneChipset.GOLD);
+
+            makeGateModifierAssembly(40_000, EnumGateMaterial.IRON, EnumGateModifier.LAPIS, lapis);
+            makeGateModifierAssembly(60_000, EnumGateMaterial.IRON, EnumGateModifier.QUARTZ, EnumRedstoneChipset.QUARTZ.getStack());
+            makeGateModifierAssembly(80_000, EnumGateMaterial.IRON, EnumGateModifier.DIAMOND, EnumRedstoneChipset.DIAMOND.getStack());
+
+            makeGateModifierAssembly(80_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.LAPIS, lapis);
+            makeGateModifierAssembly(100_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.QUARTZ, EnumRedstoneChipset.QUARTZ.getStack());
+            makeGateModifierAssembly(120_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.DIAMOND, EnumRedstoneChipset.DIAMOND.getStack());
+
+            makeGateModifierAssembly(100_000, EnumGateMaterial.GOLD, EnumGateModifier.LAPIS, lapis);
+            makeGateModifierAssembly(140_000, EnumGateMaterial.GOLD, EnumGateModifier.QUARTZ, EnumRedstoneChipset.QUARTZ.getStack());
+            makeGateModifierAssembly(180_000, EnumGateMaterial.GOLD, EnumGateModifier.DIAMOND, EnumRedstoneChipset.DIAMOND.getStack());
+        }
+
+        if (BCTransportItems.wire != null) {
             for (EnumDyeColor color : EnumDyeColor.values()) {
-                AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10000000000L, ImmutableSet.of(new ItemStack(Items.REDSTONE), new ItemStack(Items.DYE, 1, color.getMetadata())),
+                AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10_000_000_000L, ImmutableSet.of(new ItemStack(Items.REDSTONE), new ItemStack(Items.DYE, 1, color.getMetadata())),
                     new ItemStack(BCTransportItems.wire, 8, color.getMetadata())));
             }
         }
@@ -178,6 +199,28 @@ public class BCTransportRecipes {
         if (BCTransportItems.plugLens != null) {
 
         }
+    }
+
+    private static void makeGateModifierAssembly(int multiplier, EnumGateMaterial material, EnumGateModifier modifier, ItemStack... mods) {
+        for (EnumGateLogic logic : EnumGateLogic.VALUES) {
+            ItemStack toUpgrade = BCTransportItems.plugGate.getStack(new GateVariant(logic, material, EnumGateModifier.NO_MODIFIER));
+            ItemStack output = BCTransportItems.plugGate.getStack(new GateVariant(logic, material, modifier));
+            ImmutableSet<ItemStack> input = new ImmutableSet.Builder<ItemStack>().add(toUpgrade).add(mods).build();
+            AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(MjAPI.MJ * multiplier, input, output));
+        }
+    }
+
+    private static void makeGateAssembly(int multiplier, EnumGateMaterial material, EnumGateModifier modifier, EnumRedstoneChipset chipset, ItemStack... additional) {
+        ImmutableSet.Builder<ItemStack> temp = ImmutableSet.builder();
+        temp.add(chipset.getStack());
+        temp.add(additional);
+        ImmutableSet<ItemStack> input = temp.build();
+
+        ItemStack output = BCTransportItems.plugGate.getStack(new GateVariant(EnumGateLogic.AND, material, modifier));
+        AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(MjAPI.MJ * multiplier, input, output));
+
+        output = BCTransportItems.plugGate.getStack(new GateVariant(EnumGateLogic.OR, material, modifier));
+        AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(MjAPI.MJ * multiplier, input, output));
     }
 
     private static void makeGateRecipe(RecipeBuilderShaped builder, EnumGateMaterial material, EnumGateModifier modifier) {

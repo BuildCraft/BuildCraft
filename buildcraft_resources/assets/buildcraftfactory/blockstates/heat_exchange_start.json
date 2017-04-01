@@ -4,8 +4,7 @@
     	"model": "buildcraftfactory:heat_exchange_joiner",
         "textures": {
             "sprite_a":"buildcraftfactory:blocks/heat_exchange/sprite_a",
-            "sprite_b":"buildcraftfactory:blocks/heat_exchange/sprite_b",
-            "sprite_c":"buildcraftfactory:blocks/heat_exchange/sprite_c"
+            "sprite_b":"buildcraftfactory:blocks/heat_exchange/sprite_b"
         }
     },
     "variants": {
@@ -17,7 +16,9 @@
         },
         "connected": {
         	"true": {},
-        	"false": {}
+        	"false": {
+        		"submodel":"buildcraftfactory:heat_exchange_cap"
+        	}
         },
         "connected_y": {
         	"true": {},

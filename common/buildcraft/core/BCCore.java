@@ -107,15 +107,15 @@ public class BCCore {
         registerTag("item.block.marker.path").reg("marker_path").locale("pathMarkerBlock").oldReg("pathMarkerBlock").model("marker_path");
         registerTag("item.block.spring").reg("spring").locale("spring").model("spring");
         registerTag("item.block.decorated").reg("decorated").locale("decorated").model("decorated/");
-        registerTag("item.block.engine.bc").reg("engine").locale("engineBlock").model("engine/");
+        TagEntry engine = registerTag("item.block.engine.bc").reg("engine").locale("engineBlock");
         // Blocks
         registerTag("block.spring").reg("spring").locale("spring");
         registerTag("block.decorated").reg("decorated").locale("decorated");
         registerTag("block.engine.bc").reg("engine").locale("engineBlock").oldReg("engineBlock");
-        registerTag("block.engine.bc.wood").locale("engineBlockWood");
-        registerTag("block.engine.bc.stone").locale("engineBlockStone");
-        registerTag("block.engine.bc.iron").locale("engineBlockIron");
-        registerTag("block.engine.bc.creative").locale("engineBlockCreative");
+        registerTag("block.engine.bc.wood").locale("engineWood");
+        registerTag("block.engine.bc.stone").locale("engineStone");
+        registerTag("block.engine.bc.iron").locale("engineIron");
+        registerTag("block.engine.bc.creative").locale("engineCreative");
         registerTag("block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker_volume");
         registerTag("block.marker.path").reg("marker_path").locale("pathMarkerBlock").oldReg("pathMarkerBlock").model("marker_path");
         // Tiles
@@ -124,6 +124,7 @@ public class BCCore {
         registerTag("tile.engine.wood").reg("engine.wood");
 
         endBatch(TagManager.prependTags("buildcraftcore:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(TagManager.setTab("buildcraft.main")));
+        engine.model("");// Clear model so that subtypes can set it properly
     }
 
     private static TagEntry registerTag(String id) {

@@ -20,12 +20,13 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
 import buildcraft.api.blocks.ICustomRotationHandler;
+import buildcraft.api.core.IEngineType;
 import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.misc.EntityUtil;
 
-public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile_Neptune implements ICustomRotationHandler {
+public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> extends BlockBCTile_Neptune implements ICustomRotationHandler {
     private final Map<E, Supplier<? extends TileEngineBase_BC8>> engineTileConstructors = new EnumMap<>(getEngineProperty().getValueClass());
 
     public BlockEngineBase_BC8(Material material, String id) {

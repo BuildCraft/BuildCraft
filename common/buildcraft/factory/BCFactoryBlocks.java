@@ -46,15 +46,18 @@ public class BCFactoryBlocks {
             autoWorkbenchItems = BlockBCBase_Neptune.register(new BlockAutoWorkbenchItems(Material.ROCK, "block.autoworkbench.item"));
         }
         miningWell = BlockBCBase_Neptune.register(new BlockMiningWell(Material.ROCK, "block.mining_well"));
-        pump = BlockBCBase_Neptune.register(new BlockPump(Material.ROCK, "block.pump"));
+        if (BCLib.DEVELOPER) {
+            pump = BlockBCBase_Neptune.register(new BlockPump(Material.ROCK, "block.pump"));
+        }
         floodGate = BlockBCBase_Neptune.register(new BlockFloodGate(Material.ROCK, "block.flood_gate"));
         tank = BlockBCBase_Neptune.register(new BlockTank(Material.ROCK, "block.tank"));
         chute = BlockBCBase_Neptune.register(new BlockChute(Material.ROCK, "block.chute"));
-        distiller = BlockBCBase_Neptune.register(new BlockDistiller(Material.IRON, "block.distiller"));
-        heatExchangeStart = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.start", BlockHeatExchange.Part.START));
-        heatExchangeMiddle = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.middle", BlockHeatExchange.Part.MIDDLE));
-        heatExchangeEnd = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.end", BlockHeatExchange.Part.END));
-
+        if (BCLib.DEVELOPER) {
+            distiller = BlockBCBase_Neptune.register(new BlockDistiller(Material.IRON, "block.distiller"));
+            heatExchangeStart = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.start", BlockHeatExchange.Part.START));
+            heatExchangeMiddle = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.middle", BlockHeatExchange.Part.MIDDLE));
+            heatExchangeEnd = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.end", BlockHeatExchange.Part.END));
+        }
         waterGel = BlockBCBase_Neptune.register(new BlockWaterGel(Material.CLAY, "block.water_gel"), null);
 
         if (BCLib.DEVELOPER) {
@@ -65,6 +68,8 @@ public class BCFactoryBlocks {
         TileBC_Neptune.registerTile(TileFloodGate.class, "tile.flood_gate");
         TileBC_Neptune.registerTile(TileTank.class, "tile.tank");
         TileBC_Neptune.registerTile(TileChute.class, "tile.chute");
-        TileBC_Neptune.registerTile(TileDistiller_BC8.class, "tile.distiller");
+        if (BCLib.DEVELOPER) {
+            TileBC_Neptune.registerTile(TileDistiller_BC8.class, "tile.distiller");
+        }
     }
 }

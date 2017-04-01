@@ -38,10 +38,10 @@ public class BCCoreItems {
         paintbrush = ItemManager.register(new ItemPaintbrush_BC8("item.paintbrush"));
         list = ItemManager.register(new ItemList_BC8("item.list"));
         if (DEV) mapLocation = ItemManager.register(new ItemMapLocation("item.map_location"));
-        markerConnector = ItemManager.register(new ItemMarkerConnector("item.marker_connector"));
+        if (DEV) markerConnector = ItemManager.register(new ItemMarkerConnector("item.marker_connector"));
         if (DEV) goggles = ItemManager.register(new ItemGoggles("item.goggles"));
 
-        ItemManager.register(new ItemVolumeCuboid("item.volume_marker"));
+        if (DEV) ItemManager.register(new ItemVolumeCuboid("item.volume_marker"));
 
         BCLibItems.guide.setCreativeTab(CreativeTabManager.getTab("buildcraft.main"));
     }
