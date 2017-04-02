@@ -33,8 +33,8 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
     public RenderTank() {}
 
     @Override
-    public void renderTileEntityAt(TileTank te, double x, double y, double z, float partialTicks, int destroyStage) {
-        FluidStack forRender = te.tank.getFluidForRender();
+    public void renderTileEntityAt(TileTank tile, double x, double y, double z, float partialTicks, int destroyStage) {
+        FluidStack forRender = tile.tank.getFluidForRender();
         if (forRender == null) {
             return;
         }
@@ -53,19 +53,19 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
         vb.setTranslation(x, y, z);
 
         boolean[] sideRender = { true, true, true, true, true, true };
-        boolean connectedUp = isFullyConnected(te, EnumFacing.UP);
-        boolean connectedDown = isFullyConnected(te, EnumFacing.DOWN);
+        boolean connectedUp = isFullyConnected(tile, EnumFacing.UP);
+        boolean connectedDown = isFullyConnected(tile, EnumFacing.DOWN);
         sideRender[EnumFacing.DOWN.ordinal()] = !connectedDown;
         sideRender[EnumFacing.UP.ordinal()] = !connectedUp;
 
         Vec3d min = connectedDown ? MIN_CONNECTED : MIN;
         Vec3d max = connectedUp ? MAX_CONNECTED : MAX;
         int blocklight = forRender.getFluid().getLuminosity(forRender);
-        int combinedLight = te.getWorld().getCombinedLight(te.getPos(), blocklight);
+        int combinedLight = tile.getWorld().getCombinedLight(tile.getPos(), blocklight);
 
         FluidRenderer.vertex.lighti(combinedLight);
 
-        FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, te.getFluidAmountForRender(partialTicks), te.tank.getCapacity(), min, max, vb, sideRender);
+        FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, tile.getFluidAmountForRender(partialTicks), tile.tank.getCapacity(), min, max, vb, sideRender);
 
         // buffer finish
         vb.setTranslation(0, 0, 0);

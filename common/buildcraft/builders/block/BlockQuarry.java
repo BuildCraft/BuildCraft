@@ -33,10 +33,10 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
         properties.addAll(BuildCraftProperties.CONNECTED_MAP.values());
     }
 
-    private static boolean isConnected(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
+    private boolean isConnected(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
         EnumFacing facing = side;
         if (Arrays.asList(EnumFacing.HORIZONTALS).contains(facing)) {
-            facing = EnumFacing.getHorizontal(side.getHorizontalIndex() + 2 + state.getValue(PROP_FACING).getHorizontalIndex());
+            facing = EnumFacing.getHorizontal(side.getHorizontalIndex() + 2 + state.getValue(getFacingProperty()).getHorizontalIndex());
         }
         TileEntity tile = world.getTileEntity(pos.offset(facing));
         return tile != null && tile.hasCapability(CapUtil.CAP_ITEMS, facing.getOpposite());
@@ -45,8 +45,7 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         for (EnumFacing face : EnumFacing.VALUES) {
-            boolean isConnected = isConnected(world, pos, state, face);
-            state = state.withProperty(BuildCraftProperties.CONNECTED_MAP.get(face), isConnected);
+            state = state.withProperty(BuildCraftProperties.CONNECTED_MAP.get(face), isConnected(world, pos, state, face));
         }
         return state;
     }

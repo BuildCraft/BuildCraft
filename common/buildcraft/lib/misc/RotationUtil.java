@@ -3,7 +3,6 @@ package buildcraft.lib.misc;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 public class RotationUtil {
@@ -36,5 +35,23 @@ public class RotationUtil {
             case COUNTERCLOCKWISE_90:
                 return new Vec3d(vec.zCoord, vec.yCoord, 1 - vec.xCoord);
         }
+    }
+
+    public static EnumFacing rotateAll(EnumFacing facing) {
+        switch (facing) {
+            case NORTH:
+                return EnumFacing.EAST;
+            case EAST:
+                return EnumFacing.SOUTH;
+            case SOUTH:
+                return EnumFacing.WEST;
+            case WEST:
+                return EnumFacing.UP;
+            case UP:
+                return EnumFacing.DOWN;
+            case DOWN:
+                return EnumFacing.NORTH;
+        }
+        throw new IllegalArgumentException();
     }
 }

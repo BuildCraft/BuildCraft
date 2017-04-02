@@ -45,13 +45,6 @@ public class BlockBuilder extends BlockBCTile_Neptune implements IBlockWithFacin
     // Others
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        EnumFacing orientation = placer.getHorizontalFacing();
-        world.setBlockState(pos, state.withProperty(PROP_FACING, orientation.getOpposite()));
-        super.onBlockPlacedBy(world, pos, state, placer, stack);
-    }
-
-    @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileBuilder();
     }

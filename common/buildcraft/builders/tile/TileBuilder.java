@@ -74,7 +74,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
      */
     public List<BlockPos> path = null;
     /**
-     * Stores the real path plus all possible block positions inbetween. Not saved, regenerated from path.
+     * Stores the real path plus all possible block positions inbetween.
      */
     private List<BlockPos> basePoses = new ArrayList<>();
     private int currentBasePosIndex = 0;

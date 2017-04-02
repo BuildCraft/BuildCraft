@@ -46,10 +46,10 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
     }
 
     @Override
-    public void renderTileEntityAt(TileDistiller_BC8 te, double x, double y, double z, float partialTicks, int destroyStage) {
-        super.renderTileEntityAt(te, x, y, z, partialTicks, destroyStage);
+    public void renderTileEntityAt(TileDistiller_BC8 tile, double x, double y, double z, float partialTicks, int destroyStage) {
+        super.renderTileEntityAt(tile, x, y, z, partialTicks, destroyStage);
 
-        IBlockState state = te.getWorld().getBlockState(te.getPos());
+        IBlockState state = tile.getWorld().getBlockState(tile.getPos());
         if (state.getBlock() != BCFactoryBlocks.distiller) {
             return;
         }
@@ -57,7 +57,7 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("distiller");
 
-        int combinedLight = te.getWorld().getCombinedLight(te.getPos(), 0);
+        int combinedLight = tile.getWorld().getCombinedLight(tile.getPos(), 0);
         EnumFacing face = state.getValue(BlockBCBase_Neptune.PROP_FACING);
         TankRenderSizes sizes = TANK_SIZES.get(face);
 
@@ -72,9 +72,9 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         vb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         vb.setTranslation(x, y, z);
 
-        renderTank(sizes.tankIn, te.tankIn, combinedLight, vb);
-        renderTank(sizes.tankOutGas, te.tankOutGas, combinedLight, vb);
-        renderTank(sizes.tankOutLiquid, te.tankOutLiquid, combinedLight, vb);
+        renderTank(sizes.tankIn, tile.tankIn, combinedLight, vb);
+        renderTank(sizes.tankOutGas, tile.tankOutGas, combinedLight, vb);
+        renderTank(sizes.tankOutLiquid, tile.tankOutLiquid, combinedLight, vb);
 
         // buffer finish
         vb.setTranslation(0, 0, 0);
