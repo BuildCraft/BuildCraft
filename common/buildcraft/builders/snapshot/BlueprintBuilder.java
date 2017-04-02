@@ -184,6 +184,14 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                     buildingInfo.box.getBoundingBox(),
                     Objects::nonNull
             );
+            List<SchematicEntity> toSpawn = buildingInfo.entities.stream()
+                    .filter(schematicEntity ->
+                            entitiesWithinBox.stream()
+                                    .map(Entity::getPositionVector)
+                                    .map(schematicEntity.pos.add(new Vec3d(buildingInfo.basePos))::distanceTo)
+                                    .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE)
+                    )
+                    .collect(Collectors.toList());
             Stream.concat(
                     getToPlace().stream()
                             .filter(blockPos -> !isBlockCorrect(blockPos))
@@ -191,13 +199,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                             .flatMap(schematicBlock ->
                                     getRequired(schematicBlock.requiredItems, schematicBlock.requiredFluids)
                             ),
-                    buildingInfo.entities.stream()
-                            .filter(schematicEntity ->
-                                    entitiesWithinBox.stream()
-                                            .map(Entity::getPositionVector)
-                                            .map(schematicEntity.pos.add(new Vec3d(buildingInfo.basePos))::distanceTo)
-                                            .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE)
-                            )
+                    toSpawn.stream()
                             .flatMap(schematicEntity ->
                                     getRequired(schematicEntity.requiredItems, schematicEntity.requiredFluids)
                             )
@@ -241,14 +243,6 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             // Call superclass method
             if (super.tick()) {
                 // Spawn needed entities
-                List<SchematicEntity> toSpawn = buildingInfo.entities.stream()
-                        .filter(schematicEntity ->
-                                entitiesWithinBox.stream()
-                                        .map(Entity::getPositionVector)
-                                        .map(schematicEntity.pos.add(new Vec3d(buildingInfo.basePos))::distanceTo)
-                                        .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE)
-                        )
-                        .collect(Collectors.toList());
                 if (!toSpawn.isEmpty()) {
                     if (!tile.getBattery().isFull()) {
                         return false;
