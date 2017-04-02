@@ -132,6 +132,7 @@ public abstract class BCBuildersProxy implements IGuiHandler {
         
         @Override
         public void fmlPreInit() {
+            BCBuildersSprites.fmlPreInit();
             RenderingRegistry.registerEntityRenderingHandler(EntityQuarryFrame.class, RenderEntityQuarryFrame::new);
         }
 

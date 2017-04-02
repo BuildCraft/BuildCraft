@@ -1,6 +1,7 @@
 package buildcraft.builders.addon;
 
 import buildcraft.builders.BCBuildersGuis;
+import buildcraft.builders.BCBuildersSprites;
 import buildcraft.builders.filling.Filling;
 import buildcraft.builders.filling.IParameter;
 import buildcraft.builders.snapshot.Template;
@@ -45,7 +46,8 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon {
 
     @Override
     public IFastAddonRenderer<AddonFillingPlanner> getRenderer() {
-        return new AddonDefaultRenderer<AddonFillingPlanner>().then(new AddonRendererFillingPlanner());
+        return new AddonDefaultRenderer<AddonFillingPlanner>(BCBuildersSprites.FILLING_PLANNER.getSprite())
+                .then(new AddonRendererFillingPlanner());
     }
 
     @Override
