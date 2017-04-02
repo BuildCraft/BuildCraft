@@ -1,5 +1,7 @@
 package buildcraft.transport.pipe.behaviour;
 
+import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
@@ -11,13 +13,14 @@ import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pipe.IPipe.ConnectedType;
 
 import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.transport.BCTransportConfig;
 
-public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRedstoneReceiver {
+public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRedstoneReceiver, IDebuggable {
 
     private final MjBattery mjBattery = new MjBattery(2 * MjAPI.MJ);
 
@@ -135,5 +138,10 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
         else if (capability == MjAPI.CAP_RECEIVER) return (T) this;
         else if (capability == MjAPI.CAP_CONNECTOR) return (T) this;
         return null;
+    }
+
+    @Override
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        left.add("Power = " + mjBattery.getDebugString());
     }
 }

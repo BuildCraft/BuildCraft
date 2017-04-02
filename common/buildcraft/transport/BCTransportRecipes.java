@@ -13,6 +13,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.BCItems;
+import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
@@ -38,18 +39,13 @@ public class BCTransportRecipes {
         if (BCTransportBlocks.filteredBuffer != null) {
             ItemStack out = new ItemStack(BCTransportBlocks.filteredBuffer);
             RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
-            builder.add("wdw"); // TODO: diamond pipe in center of this line
+            builder.add("wdw");
             builder.add("wcw");
             builder.add("wpw");
             builder.map('w', "plankWood");
             builder.map('p', Blocks.PISTON);
             builder.map('c', Blocks.CHEST);
-
-            if (BCItems.TRANSPORT_PIPE_DIAMOND_ITEM == null) {
-                builder.map('d', Items.DIAMOND);
-            } else {
-                builder.map('d', BCItems.TRANSPORT_PIPE_DIAMOND_ITEM);
-            }
+            builder.map('d', BCItems.TRANSPORT_PIPE_DIAMOND_ITEM, Items.DIAMOND);
 
             GameRegistry.addRecipe(builder.build());
         }
@@ -108,7 +104,11 @@ public class BCTransportRecipes {
             RecipeBuilderShaped builder = new RecipeBuilderShaped(result);
             builder.add("rer");
             builder.add("gpg");
-            builder.map('e', BCCoreBlocks.engine);
+            if (BCCoreBlocks.engine != null && BCCoreBlocks.engine.isRegistered(EnumEngineType.WOOD)) {
+                builder.map('e', BCCoreBlocks.engine.getStack(EnumEngineType.WOOD));
+            } else {
+                builder.map('e', Blocks.REDSTONE_BLOCK);
+            }
             builder.map('p', BCTransportItems.plugBlocker, Blocks.COBBLESTONE);
             builder.map('g', "gearIron");
             builder.map('r', "dustRedstone");

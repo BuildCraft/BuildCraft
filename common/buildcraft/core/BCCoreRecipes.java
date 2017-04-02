@@ -16,9 +16,12 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.BCBlocks;
 import buildcraft.api.BCItems;
+import buildcraft.api.enums.EnumEngineType;
 
 import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.recipe.OredictionaryNames;
+import buildcraft.lib.recipe.RecipeBuilderShaped;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 
@@ -74,6 +77,19 @@ public class BCCoreRecipes {
                 ItemStack out = brush.save();
                 GameRegistry.addRecipe(new ShapelessOreRecipe(out, cleanPaintbrush, ColourUtil.getDyeName(colour)));
             }
+        }
+
+        if (BCCoreBlocks.engine != null && BCCoreBlocks.engine.isRegistered(EnumEngineType.WOOD)) {
+            ItemStack output = BCCoreBlocks.engine.getStack(EnumEngineType.WOOD);
+            RecipeBuilderShaped builder = new RecipeBuilderShaped(output);
+            builder.add("www");
+            builder.add(" g ");
+            builder.add("GpG");
+            builder.map('w', "plankWood");
+            builder.map('g', OredictionaryNames.GLASS_COLOURLESS);
+            builder.map('G', OredictionaryNames.GEAR_WOOD);
+            builder.map('p', Blocks.PISTON);
+            GameRegistry.addRecipe(builder.build());
         }
 
         String[] gears = { "wood", "stone", "iron", "gold", "diamond" };
