@@ -53,7 +53,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 .orElse(0);
     }
 
-    public Stream<ItemStack> getRequired(List<ItemStack> requiredItems, List<Fluid> requiredFluids) {
+    private Stream<ItemStack> getRequired(List<ItemStack> requiredItems, List<Fluid> requiredFluids) {
         return Stream.concat(
                 requiredItems == null ? Stream.empty() : requiredItems.stream(),
                 requiredFluids == null ? Stream.empty() : requiredFluids.stream()
@@ -85,28 +85,6 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         } else {
             return Collections.singletonList(ItemStack.EMPTY);
         }
-    }
-
-    protected boolean customPre() {
-        Optional.ofNullable(getBuildingInfo()).ifPresent(buildingInfo ->
-                tile.getWorldBC().getEntitiesWithinAABB(
-                        Entity.class,
-                        buildingInfo.box.getBoundingBox(),
-                        entity ->
-                                entity != null &&
-                                        buildingInfo.entities.stream()
-                                                .map(schematicEntity -> schematicEntity.pos)
-                                                .map(new Vec3d(buildingInfo.basePos)::add)
-                                                .map(entity.getPositionVector()::distanceTo)
-                                                .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE) &&
-                                        SchematicEntityFactory.getSchematicEntity(
-                                                tile.getWorldBC(),
-                                                BlockPos.ORIGIN,
-                                                entity
-                                        ) != null
-                ).forEach(Entity::setDead)
-        );
-        return true;
     }
 
     @Override
@@ -191,29 +169,6 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     @Override
     protected boolean isDone() {
         return getBuiltLevel() == getMaxLevel();
-    }
-
-    protected boolean customPost() {
-        Optional.ofNullable(getBuildingInfo()).ifPresent(buildingInfo -> {
-            List<Entity> entitiesWithinBox = tile.getWorldBC().getEntitiesWithinAABB(
-                    Entity.class,
-                    buildingInfo.box.getBoundingBox(),
-                    Objects::nonNull
-            );
-            buildingInfo.entities.stream()
-                    .filter(schematicEntity ->
-                            entitiesWithinBox.stream()
-                                    .map(Entity::getPositionVector)
-                                    .map(schematicEntity.pos.add(new Vec3d(buildingInfo.basePos))::distanceTo)
-                                    .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE)
-                    )
-                    .filter(schematicEntity ->
-                            !tryExtractRequired(schematicEntity.requiredItems, schematicEntity.requiredFluids)
-                                    .contains(ItemStack.EMPTY)
-                    )
-                    .forEach(schematicEntity -> schematicEntity.build(tile.getWorldBC(), buildingInfo.basePos));
-        });
-        return true;
     }
 
     @Override
