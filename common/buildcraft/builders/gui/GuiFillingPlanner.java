@@ -56,20 +56,21 @@ public class GuiFillingPlanner extends GuiBC8<ContainerFillingPlanner> {
 
     @Override
     protected void drawForegroundLayer() {
-        iterateParameters((i, x, y, width, height, parameter) -> {
-            new GuiIcon(
-                    new ResourceLocation(
-                            "buildcraftbuilders:textures/filling_planner/" +
-                                    parameter.getParameterName() +
-                                    "/" +
-                                    parameter.getName() +
-                                    ".png"),
-                    0,
-                    0,
-                    16,
-                    16
-            ).drawAt(x, y);
-        });
+        iterateParameters((i, x, y, width, height, parameter) ->
+                new GuiIcon(
+                        new ResourceLocation(
+                                "buildcraftbuilders:textures/filling_planner/" +
+                                        parameter.getParameterName() +
+                                        "/" +
+                                        parameter.getName() +
+                                        ".png"
+                        ),
+                        0,
+                        0,
+                        16,
+                        16
+                ).drawAt(x, y)
+        );
         iterateParameters((i, x, y, width, height, parameter) -> {
             if (mouse.getX() >= x && mouse.getX() < x + width && mouse.getY() >= y && mouse.getY() < y + height) {
                 drawHoveringText(Collections.singletonList(parameter.getParameterName() + ": " + parameter.getName()), mouse.getX(), mouse.getY());

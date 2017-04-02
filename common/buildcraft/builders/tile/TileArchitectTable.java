@@ -58,7 +58,6 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     private BoxIterator boxIterator;
     private boolean isValid = false;
     private boolean scanning = false;
-    private boolean shouldStartScanning = false;
     public String name = "<unnamed>";
     public final DeltaInt deltaProgress = deltaManager.addDelta("progress", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
 
@@ -68,14 +67,6 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         if (handler == invBptIn) {
             if (invBptOut.getStackInSlot(0).isEmpty() && after.getItem() instanceof ItemSnapshot) {
                 snapshotType = ItemSnapshot.EnumItemSnapshotType.getFromStack(after).snapshotType;
-                shouldStartScanning = true;
-            } else {
-                scanning = false;
-            }
-        }
-        if (handler == invBptOut) {
-            if (after.isEmpty() && invBptIn.getStackInSlot(0).getItem() instanceof ItemSnapshot && !scanning) {
-                shouldStartScanning = true;
             }
         }
     }
@@ -121,16 +112,15 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             return;
         }
 
-        if (shouldStartScanning && isValid) {
-            int size = box.size().getX() * box.size().getY() * box.size().getZ();
-            size /= snapshotType.maxPerTick;
-            deltaProgress.addDelta(0, size, 1);
-            deltaProgress.addDelta(size, size + 10, -1);
-            shouldStartScanning = false;
-            scanning = true;
-        }
-
-        if (!invBptOut.getStackInSlot(0).isEmpty()) {
+        if (!invBptIn.getStackInSlot(0).isEmpty() && invBptOut.getStackInSlot(0).isEmpty() && isValid) {
+            if (!scanning) {
+                int size = box.size().getX() * box.size().getY() * box.size().getZ();
+                size /= snapshotType.maxPerTick;
+                deltaProgress.addDelta(0, size, 1);
+                deltaProgress.addDelta(size, size + 10, -1);
+                scanning = true;
+            }
+        } else {
             scanning = false;
         }
 
@@ -284,7 +274,6 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         if (boxIterator != null) {
             nbt.setTag("iter", boxIterator.writeToNbt());
         }
-        nbt.setBoolean("shouldStartScanning", shouldStartScanning);
         nbt.setBoolean("scanning", scanning);
         nbt.setTag("snapshotType", NBTUtilBC.writeEnum(snapshotType));
         nbt.setBoolean("isValid", isValid);
@@ -299,7 +288,6 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         if (nbt.hasKey("iter")) {
             boxIterator = BoxIterator.readFromNbt(nbt.getCompoundTag("iter"));
         }
-        shouldStartScanning = nbt.getBoolean("shouldStartScanning");
         scanning = nbt.getBoolean("scanning");
         snapshotType = NBTUtilBC.readEnum(nbt.getTag("snapshotType"), Snapshot.EnumSnapshotType.class);
         isValid = nbt.getBoolean("isValid");
