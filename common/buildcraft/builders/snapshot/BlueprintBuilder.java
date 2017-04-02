@@ -217,10 +217,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                         }
                     });
             // Kill not needed entities
-            List<Entity> toKill = tile.getWorldBC().getEntitiesWithinAABB(
-                    Entity.class,
-                    buildingInfo.box.getBoundingBox(),
-                    entity ->
+            List<Entity> toKill = entitiesWithinBox.stream()
+                    .filter(entity ->
                             entity != null &&
                                     buildingInfo.entities.stream()
                                             .map(schematicEntity -> schematicEntity.pos)
@@ -232,7 +230,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                             BlockPos.ORIGIN,
                                             entity
                                     ) != null
-            );
+                    )
+                    .collect(Collectors.toList());
             if (!toKill.isEmpty()) {
                 if (!tile.getBattery().isFull()) {
                     return false;
