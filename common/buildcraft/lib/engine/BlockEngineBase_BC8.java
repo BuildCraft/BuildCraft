@@ -1,8 +1,11 @@
 package buildcraft.lib.engine;
 
 import java.util.EnumMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -25,6 +28,7 @@ import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.misc.EntityUtil;
+import buildcraft.lib.registry.RegistryHelper;
 
 public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> extends BlockBCTile_Neptune implements ICustomRotationHandler {
     private final Map<E, Supplier<? extends TileEngineBase_BC8>> engineTileConstructors = new EnumMap<>(getEngineProperty().getValueClass());
@@ -36,7 +40,18 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     // Engine directly related methods
 
     public void registerEngine(E type, Supplier<? extends TileEngineBase_BC8> constructor) {
-        engineTileConstructors.put(type, constructor);
+        if (RegistryHelper.isEnabled("engines", getRegistryName() + "/" + type.name().toLowerCase(Locale.ROOT), getUnlocalizedName(type))) {
+            engineTileConstructors.put(type, constructor);
+        }
+    }
+
+    public boolean isRegistered(E type) {
+        return engineTileConstructors.containsKey(type);
+    }
+
+    @Nonnull
+    public ItemStack getStack(E type) {
+        return new ItemStack(this, 1, type.ordinal());
     }
 
     public abstract IProperty<E> getEngineProperty();

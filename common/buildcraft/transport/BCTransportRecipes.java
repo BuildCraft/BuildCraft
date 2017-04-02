@@ -1,6 +1,7 @@
 package buildcraft.transport;
 
 import buildcraft.api.BCItems;
+import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
@@ -41,7 +42,7 @@ public class BCTransportRecipes {
             builder.map('w', "plankWood");
             builder.map('p', Blocks.PISTON);
             builder.map('c', Blocks.CHEST);
-            builder.map('d', Optional.ofNullable(BCItems.TRANSPORT_PIPE_DIAMOND_ITEM).orElse(Items.DIAMOND));
+            builder.map('d', BCItems.TRANSPORT_PIPE_DIAMOND_ITEM, Items.DIAMOND);
             builder.setResult(new ItemStack(BCTransportBlocks.filteredBuffer));
             builder.register();
         }
@@ -99,7 +100,11 @@ public class BCTransportRecipes {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("rer");
             builder.add("gpg");
-            builder.map('e', BCCoreBlocks.engine);
+            if (BCCoreBlocks.engine != null && BCCoreBlocks.engine.isRegistered(EnumEngineType.WOOD)) {
+                builder.map('e', BCCoreBlocks.engine.getStack(EnumEngineType.WOOD));
+            } else {
+                builder.map('e', Blocks.REDSTONE_BLOCK);
+            }
             builder.map('p', BCTransportItems.plugBlocker, Blocks.COBBLESTONE);
             builder.map('g', "gearIron");
             builder.map('r', "dustRedstone");
