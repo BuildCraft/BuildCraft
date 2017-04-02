@@ -339,8 +339,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     @Override
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
         TilePipeHolder tile = getPipe(world, pos, false);
-        if (tile == null) {
-            return null;
+        if (tile == null || target == null) {
+            return ItemStack.EMPTY;
         }
         if (target.subHit <= 6) {
             Pipe pipe = tile.getPipe();

@@ -20,7 +20,7 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public static final IProperty<EnumFillerPattern> PATTERN = BuildCraftProperties.PATTERN;
+    public static final IProperty<EnumFillerPattern> PATTERN = BuildCraftProperties.FILLER_PATTERN;
 
     public BlockFiller(Material material, String id) {
         super(material, id);
