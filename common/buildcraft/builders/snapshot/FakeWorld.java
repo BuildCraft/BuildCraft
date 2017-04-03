@@ -110,18 +110,6 @@ public class FakeWorld extends World {
                     100
             );
         }
-//        if (drops.isEmpty()) {
-//            entity.isDead = false;
-//            entity.attackEntityFrom(DamageSource.causeExplosionDamage(new Explosion(
-//                    this,
-//                    entity,
-//                    entity.posX,
-//                    entity.posY,
-//                    entity.posZ,
-//                    1,
-//                    Collections.emptyList()
-//            )), 100);
-//        }
         List<ItemStack> dropsCopy = new ArrayList<>(drops);
         drops.clear();
         return dropsCopy;
