@@ -6,10 +6,12 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.robotics.BCRoboticsBlocks;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalNotification;
 
+import net.minecraft.block.state.IBlockState;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -62,12 +64,11 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         double minZ = -offset;
         double maxZ = 1 + offset;
 
-        EnumFacing side;
-        try {
-            side = tile.getWorld().getBlockState(tile.getPos()).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
-        } catch (IllegalArgumentException ignored) {
-            side = EnumFacing.values()[0];
+        IBlockState state = tile.getWorld().getBlockState(tile.getPos());
+        if (state.getBlock() != BCRoboticsBlocks.zonePlanner) {
+            return;
         }
+        EnumFacing side = state.getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
 
         DynamicTextureBC texture = getTexture(tile, side);
         Tessellator tessellator = Tessellator.getInstance();

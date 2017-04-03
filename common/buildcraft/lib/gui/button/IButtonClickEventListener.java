@@ -13,5 +13,5 @@ public interface IButtonClickEventListener {
      * @param buttonKey The key of the button. Will always be 0 if called from minecraft code (as minecraft doesn't
      *            support button clicks with any other numbers), as opposed to if this was called from
      *            {@link IGuiElement} code, in which case all button keys will be listened to. */
-    void handleButtonClick(GuiAbstractButton button, int buttonId, int buttonKey);
+    void handleButtonClick(IButtonClickEventTrigger button, int buttonId, int buttonKey);
 }

@@ -20,7 +20,6 @@ import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond.FilterMode;
 
 public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> implements IButtonClickEventListener {
-
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcrafttransport:textures/gui/pipe_emerald.png");
     private static final ResourceLocation TEXTURE_BUTTON = new ResourceLocation("buildcrafttransport:textures/gui/pipe_emerald_button.png");
     private static final int WHITE_LIST_BUTTON_ID = FilterMode.WHITE_LIST.ordinal();
@@ -89,7 +88,7 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
     }
 
     @Override
-    public void handleButtonClick(GuiAbstractButton sender, int buttonId, int buttonKey) {
+    public void handleButtonClick(IButtonClickEventTrigger sender, int buttonId, int buttonKey) {
         FilterMode newFilterMode = FilterMode.get(buttonId);
         this.pipe.filterMode = newFilterMode;
         container.sendNewFilterMode(newFilterMode);

@@ -56,7 +56,7 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> implement
     }
 
     @Override
-    public void handleButtonClick(GuiAbstractButton button, int buttonId, int buttonKey) {
+    public void handleButtonClick(IButtonClickEventTrigger button, int buttonId, int buttonKey) {
         if (button instanceof GuiPaintButton) {
             GuiPaintButton paint = (GuiPaintButton) button;
             switch (buttonKey) {

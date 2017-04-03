@@ -56,6 +56,7 @@ public class BlockFrame extends BlockBCBase_Neptune {
         return block instanceof BlockFrame || block instanceof BlockQuarry;
     }
 
+    @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         return state
                 .withProperty(CONNECTED_UP, isConnected(world, pos, EnumFacing.UP))

@@ -6,7 +6,6 @@ import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -33,34 +32,31 @@ public class Lock {
 
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         NBTTagCompound causeTag = new NBTTagCompound();
-        causeTag.setString("class", cause.getClass().getName());
+        causeTag.setTag("type", NBTUtilBC.writeEnum(Cause.EnumCause.getForClass(cause.getClass())));
         causeTag.setTag("data", cause.writeToNBT(new NBTTagCompound()));
         nbt.setTag("cause", causeTag);
-        NBTTagList targetsTag = new NBTTagList();
-        targets.stream().map(target -> {
+        nbt.setTag("targets", NBTUtilBC.writeCompoundList(targets.stream().map(target -> {
             NBTTagCompound targetTag = new NBTTagCompound();
-            targetTag.setString("class", target.getClass().getName());
+            targetTag.setTag("type", NBTUtilBC.writeEnum(Target.EnumTarget.getForClass(target.getClass())));
             targetTag.setTag("data", target.writeToNBT(new NBTTagCompound()));
             return targetTag;
-        }).forEach(targetsTag::appendTag);
-        nbt.setTag("targets", targetsTag);
+        })));
         return nbt;
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
         NBTTagCompound causeTag = nbt.getCompoundTag("cause");
         try {
-            cause = (Cause) Class.forName(causeTag.getString("class")).newInstance();
-        } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
+            cause = NBTUtilBC.readEnum(causeTag.getTag("type"), Cause.EnumCause.class).clazz.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
         cause.readFromNBT(causeTag.getCompoundTag("data"));
-        NBTTagList targetsTag = nbt.getTagList("targets", Constants.NBT.TAG_COMPOUND);
-        IntStream.range(0, targetsTag.tagCount()).mapToObj(targetsTag::getCompoundTagAt).map(targetTag -> {
+        NBTUtilBC.readCompoundList(nbt.getTagList("targets", Constants.NBT.TAG_COMPOUND)).map(targetTag -> {
             Target target;
             try {
-                target = (Target) Class.forName(targetTag.getString("class")).newInstance();
-            } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
+                target = NBTUtilBC.readEnum(targetTag.getTag("type"), Target.EnumTarget.class).clazz.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
             target.readFromNBT(targetTag.getCompoundTag("data"));
@@ -161,7 +157,7 @@ public class Lock {
                 this.clazz = clazz;
             }
 
-            public static Enum<EnumCause> getForClass(Class<? extends Cause> clazz) {
+            public static EnumCause getForClass(Class<? extends Cause> clazz) {
                 return Arrays.stream(values()).filter(enumCause -> enumCause.clazz == clazz).findFirst().orElse(null);
             }
         }
@@ -281,7 +277,7 @@ public class Lock {
                 this.clazz = clazz;
             }
 
-            public static Enum<EnumTarget> getForClass(Class<? extends Target> clazz) {
+            public static EnumTarget getForClass(Class<? extends Target> clazz) {
                 return Arrays.stream(values()).filter(enumTarget -> enumTarget.clazz == clazz).findFirst().orElse(null);
             }
         }

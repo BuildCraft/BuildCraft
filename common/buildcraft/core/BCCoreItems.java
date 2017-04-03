@@ -41,8 +41,8 @@ public class BCCoreItems {
         list = ItemManager.register(new ItemList_BC8("item.list"));
         if (BCLib.DEV) {
             mapLocation = ItemManager.register(new ItemMapLocation("item.map_location"));
-            markerConnector = ItemManager.register(new ItemMarkerConnector("item.marker_connector"));
         }
+        markerConnector = ItemManager.register(new ItemMarkerConnector("item.marker_connector"));
         volumeBox = ItemManager.register(new ItemVolumeBox("item.volume_box"));
         if (BCLib.DEV) {
             goggles = ItemManager.register(new ItemGoggles("item.goggles"));

@@ -47,7 +47,9 @@ public class GuiElectronicLibrary extends GuiBC8<ContainerElectronicLibrary> {
                                         Snapshot snapshot = getSnapshots().getSnapshotByHeader(container.tile.selected);
                                         if (snapshot != null) {
                                             getSnapshots().snapshots.remove(snapshot);
-                                            button.setActive(false);
+                                            if (button instanceof GuiAbstractButton) {
+                                                ((GuiAbstractButton) button).setActive(false);
+                                            }
                                         }
                                     }
                                 }

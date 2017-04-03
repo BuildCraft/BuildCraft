@@ -240,7 +240,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 }
             }
             // Call superclass method
-            if (super.tick()) {
+            if (/*super.tick()*/ true) {
                 // Spawn needed entities
                 if (!toSpawn.isEmpty()) {
                     if (!tile.getBattery().isFull()) {

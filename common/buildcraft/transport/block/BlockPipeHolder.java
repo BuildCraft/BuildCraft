@@ -13,13 +13,16 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ParticleManager;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Enchantments;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -428,7 +431,6 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                     attachTile = getPipe(world, node.pos, false);
                 }
             } else {
-                System.out.println(trace.hitVec.xCoord);
                 wirePart = EnumWirePart.get((trace.hitVec.xCoord % 1 + 1) % 1 > 0.5, (trace.hitVec.yCoord % 1 + 1) % 1 > 0.5, (trace.hitVec.zCoord % 1 + 1) % 1 > 0.5);
             }
             if (wirePart != null && attachTile != null) {
@@ -511,6 +513,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
 
     @Override
     public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {
+        player.addStat(StatList.getBlockStats(this));
+        player.addExhaustion(0.005F);
     }
 
     private static void removePluggable(EnumFacing side, TilePipeHolder tile, NonNullList<ItemStack> toDrop) {
