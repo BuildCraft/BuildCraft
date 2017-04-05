@@ -1,6 +1,7 @@
 package buildcraft.factory.tile;
 
 import buildcraft.api.mj.IMjReceiver;
+import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.lib.fluids.SingleUseTank;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
@@ -10,6 +11,7 @@ import buildcraft.lib.net.PacketBufferBC;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.math.IntMath;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -25,58 +27,47 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class TilePump extends TileMiner {
-    private static int MAX_QUEUE_SIZE = 128 * 128;
     private SingleUseTank tank = new SingleUseTank("tank", 16 * Fluid.BUCKET_VOLUME, this);
-    public boolean queueBuilt = false;
-    public Queue<BlockPos> queue = new PriorityQueue<>(
-            Comparator.comparing(
-                    blockPos -> 100_000 - (Math.pow(blockPos.getX() - pos.getX(), 2) + Math.pow(blockPos.getZ() - pos.getZ(), 2)) +
-                            Math.abs(blockPos.getY() - pos.getY()) * 100_000
-            )
+    private boolean queueBuilt = false;
+    private Queue<BlockPos> queue = new PriorityQueue<>(
+            Comparator.<BlockPos, Integer>comparing(blockPos ->
+                    IntMath.pow(blockPos.getX() - pos.getX(), 2) + IntMath.pow(blockPos.getZ() - pos.getZ(), 2)
+            ).reversed()
     );
-    public Map<BlockPos, List<BlockPos>> paths = new HashMap<>();
+    private Map<BlockPos, List<BlockPos>> paths = new HashMap<>();
 
     @Override
     protected IMjReceiver createMjReceiver() {
         return new MjRedstoneBatteryReceiver(battery);
     }
 
-    public void buildQueue() {
+    private void buildQueue() {
         queue.clear();
         paths.clear();
         List<BlockPos> nextPosesToCheck = new ArrayList<>();
-        List<BlockPos> nextLaterPosesToCheck = new ArrayList<>();
         List<List<BlockPos>> nextPaths = new ArrayList<>();
-        List<List<BlockPos>> nextLaterPaths = new ArrayList<>();
-        int y = pos.getY() - 1;
         LoadingCache<BlockPos, Optional<Fluid>> fluidCache = CacheBuilder.newBuilder()
                 .expireAfterAccess(10, TimeUnit.SECONDS)
                 .build(CacheLoader.from(blockPos -> Optional.ofNullable(BlockUtil.getFluid(world, blockPos))));
-        while (true) {
-            if (nextPosesToCheck.isEmpty()) {
-                if (!nextLaterPosesToCheck.isEmpty()) {
-                    nextPosesToCheck.addAll(nextLaterPosesToCheck);
-                    nextLaterPosesToCheck.clear();
-                    nextPaths.addAll(nextLaterPaths);
-                    nextLaterPaths.clear();
-                } else {
-                    for (; y >= 0; y--) {
-                        BlockPos posToCheck = new BlockPos(pos.getX(), y, pos.getZ());
-                        if (BlockUtil.getFluid(world, posToCheck) != null) {
-                            if (!queue.contains(posToCheck)) {
-                                nextPosesToCheck.add(posToCheck);
-                                nextPaths.add(new ArrayList<>(Collections.singletonList(posToCheck)));
-                                break;
-                            }
-                        } else if (!world.isAirBlock(posToCheck)) {
-                            break;
-                        }
+        int y = pos.getY() - 1;
+        if (nextPosesToCheck.isEmpty()) {
+            for (; y >= 0; y--) {
+                BlockPos posToCheck = new BlockPos(pos.getX(), y, pos.getZ());
+                if (BlockUtil.getFluid(world, posToCheck) != null) {
+                    if (!queue.contains(posToCheck)) {
+                        nextPosesToCheck.add(posToCheck);
+                        nextPaths.add(new ArrayList<>(Collections.singletonList(posToCheck)));
+                        break;
                     }
-                }
-                if (nextPosesToCheck.isEmpty()) {
+                } else if (!world.isAirBlock(posToCheck) && world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.tube) {
                     break;
                 }
             }
+            if (nextPosesToCheck.isEmpty()) {
+                return;
+            }
+        }
+        while (!nextPosesToCheck.isEmpty()) {
             List<BlockPos> nextPosesToCheckCopy = new ArrayList<>(nextPosesToCheck);
             nextPosesToCheck.clear();
             List<List<BlockPos>> nextPathsCopy = new ArrayList<>(nextPaths);
@@ -87,17 +78,14 @@ public class TilePump extends TileMiner {
                 if (!queue.contains(posToCheck)) {
                     queue.add(posToCheck);
                     paths.put(posToCheck, path);
-                    if (queue.size() >= MAX_QUEUE_SIZE) {
-                        return;
-                    }
                 }
 
                 for (EnumFacing side : new EnumFacing[] {
+                        EnumFacing.UP,
                         EnumFacing.NORTH,
                         EnumFacing.SOUTH,
                         EnumFacing.WEST,
-                        EnumFacing.EAST,
-                        EnumFacing.DOWN
+                        EnumFacing.EAST
                 }) {
                     BlockPos offsetPos = posToCheck.offset(side);
                     if (Math.pow(offsetPos.getX() - pos.getX(), 2) + Math.pow(offsetPos.getZ() - pos.getZ(), 2) > Math.pow(64, 2)) {
@@ -108,16 +96,9 @@ public class TilePump extends TileMiner {
                             && !queue.contains(offsetPos)) {
                         List<BlockPos> currentPath = new ArrayList<>(path);
                         currentPath.add(offsetPos);
-                        if (side != EnumFacing.DOWN) {
-                            if (!nextPosesToCheck.contains(offsetPos) && !nextPosesToCheckCopy.contains(offsetPos)) {
-                                nextPosesToCheck.add(offsetPos);
-                                nextPaths.add(currentPath);
-                            }
-                        } else {
-                            if (!nextLaterPosesToCheck.contains(offsetPos)) {
-                                nextLaterPosesToCheck.add(offsetPos);
-                                nextLaterPaths.add(currentPath);
-                            }
+                        if (!nextPosesToCheck.contains(offsetPos) && !nextPosesToCheckCopy.contains(offsetPos)) {
+                            nextPosesToCheck.add(offsetPos);
+                            nextPaths.add(currentPath);
                         }
                     }
                 }
@@ -127,34 +108,27 @@ public class TilePump extends TileMiner {
         }
     }
 
-    public boolean canDrain(BlockPos blockPos) {
+    private boolean canDrain(BlockPos blockPos) {
         Fluid fluid = BlockUtil.getFluid(world, blockPos);
         return tank.isEmpty() ? fluid != null : fluid == tank.getAcceptedFluid();
     }
 
-    public void nextPos() {
+    private void nextPos() {
         while (!queue.isEmpty()) {
             currentPos = queue.poll();
             if (canDrain(currentPos)) {
+                updateLength();
                 return;
             }
         }
         currentPos = null;
-    }
-
-    public void updateYLevel() {
-        if (currentPos != null) {
-            goToYLevel(Math.min(currentPos.getY(), pos.getY()));
-        } else {
-            goToYLevel(pos.getY());
-        }
+        updateLength();
     }
 
     @Override
     protected void initCurrentPos() {
         if (currentPos == null) {
             nextPos();
-            updateYLevel();
         }
     }
 
@@ -200,19 +174,16 @@ public class TilePump extends TileMiner {
                         if (count < 4) {
                             BlockUtil.drainBlock(world, currentPos, true);
                             nextPos();
-                            updateYLevel();
                         }
                     } else {
                         buildQueue();
                         nextPos();
-                        updateYLevel();
                     }
                     prevResult = true;
                 }
             } else {
                 buildQueue();
                 nextPos();
-                updateYLevel();
             }
         }
     }

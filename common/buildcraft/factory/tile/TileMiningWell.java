@@ -1,6 +1,7 @@
 package buildcraft.factory.tile;
 
 import buildcraft.api.mj.IMjReceiver;
+import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.misc.InventoryUtil;
@@ -34,7 +35,7 @@ public class TileMiningWell extends TileMiner {
                     world.destroyBlock(currentPos, false);
                 }
                 nextPos();
-                updateYLevel();
+                updateLength();
             } else {
                 if (!world.isAirBlock(currentPos)) {
                     world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, (int) ((progress * 9) / target));
@@ -42,7 +43,7 @@ public class TileMiningWell extends TileMiner {
             }
         } else {
             nextPos();
-            updateYLevel();
+            updateLength();
         }
     }
 
@@ -50,30 +51,23 @@ public class TileMiningWell extends TileMiner {
         return !world.isAirBlock(currentPos) && !BlockUtil.isUnbreakableBlock(getWorld(), currentPos, getOwner());
     }
 
-    public void nextPos() {
+    private void nextPos() {
         for (currentPos = pos.down(); currentPos.getY() >= 0; currentPos = currentPos.down()) {
             if (canBreak()) {
+                updateLength();
                 return;
-            } else if (!world.isAirBlock(currentPos)) {
+            } else if (!world.isAirBlock(currentPos) && world.getBlockState(currentPos).getBlock() != BCFactoryBlocks.tube) {
                 break;
             }
         }
+        updateLength();
         currentPos = null;
-    }
-
-    public void updateYLevel() {
-        if (currentPos != null) {
-            goToYLevel(Math.min(currentPos.getY(), pos.getY()));
-        } else {
-            goToYLevel(pos.getY());
-        }
     }
 
     @Override
     protected void initCurrentPos() {
         if (currentPos == null) {
             nextPos();
-            updateYLevel();
         }
     }
 

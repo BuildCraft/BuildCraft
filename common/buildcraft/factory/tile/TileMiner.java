@@ -31,9 +31,9 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     protected int progress = 0;
     protected BlockPos currentPos = null;
 
-    private int wantedY = -1;
-    private double currentY = 0;
-    private double lastY = 0;
+    private int wantedLength = 0;
+    private double currentLength = 0;
+    private double lastLength = 0;
 
     protected boolean isComplete = false;
     protected final MjBattery battery = new MjBattery(500 * MjAPI.MJ);
@@ -49,11 +49,11 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     @Override
     public void update() {
         if (world.isRemote) {
-            lastY = currentY;
-            if (Math.abs(wantedY - currentY) <= 0.1) {
-                currentY = wantedY;
+            lastLength = currentLength;
+            if (Math.abs(wantedLength - currentLength) <= 0.01) {
+                currentLength = wantedLength;
             } else {
-                currentY = currentY + Math.min(Math.abs((wantedY - currentY) / 10D), 0.1) * (wantedY > currentY ? 1 : -1);
+                currentLength = currentLength + (wantedLength - currentLength) / 7D;
             }
             return;
         }
@@ -83,8 +83,10 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         }
     }
 
-    protected void goToYLevel(int newY) {
-        if (newY != wantedY) {
+    protected void updateLength() {
+        int newY = currentPos != null ? currentPos.getY() : pos.getY();
+        int newLength = pos.getY() - newY;
+        if (newLength != wantedLength) {
             for (int y = pos.getY() - 1; y > 0; y--) {
                 BlockPos blockPos = new BlockPos(pos.getX(), y, pos.getZ());
                 if (world.getBlockState(blockPos).getBlock() == BCFactoryBlocks.tube) {
@@ -97,18 +99,21 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
                 BlockPos blockPos = new BlockPos(pos.getX(), y, pos.getZ());
                 world.setBlockState(blockPos, BCFactoryBlocks.tube.getDefaultState());
             }
-            currentY = wantedY = newY;
+            if (wantedLength == 0) {
+                sendNetworkUpdate(NET_RENDER_DATA);
+            }
+            currentLength = wantedLength = newLength;
             sendNetworkUpdate(NET_WANTED_Y);
         }
     }
 
-    public double getY(float partialTicks) {
+    public double getLength(float partialTicks) {
         if (partialTicks <= 0) {
-            return lastY;
+            return lastLength;
         } else if (partialTicks >= 1) {
-            return currentY;
+            return currentLength;
         } else {
-            return lastY * (1 - partialTicks) + currentY * partialTicks;
+            return lastLength * (1 - partialTicks) + currentLength * partialTicks;
         }
     }
 
@@ -132,6 +137,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         if (currentPos != null) {
             nbt.setTag("currentPos", NBTUtil.createPosTag(currentPos));
         }
+        nbt.setInteger("wantedLength", wantedLength);
         nbt.setInteger("progress", progress);
         nbt.setTag("mj_battery", battery.serializeNBT());
         return nbt;
@@ -143,6 +149,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         if (nbt.hasKey("currentPos")) {
             currentPos = NBTUtil.getPosFromTag(nbt.getCompoundTag("currentPos"));
         }
+        wantedLength = nbt.getInteger("wantedLength");
         progress = nbt.getInteger("progress");
         battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
     }
@@ -155,12 +162,12 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
                 writePayload(NET_LED_STATUS, buffer, side);
-                buffer.writeDouble(currentY);
+                buffer.writeInt(wantedLength);
             } else if (id == NET_LED_STATUS) {
                 buffer.writeBoolean(isComplete());
                 battery.writeToBuffer(buffer);
             } else if (id == NET_WANTED_Y) {
-                buffer.writeInt(wantedY);
+                buffer.writeInt(wantedLength);
             }
         }
     }
@@ -171,16 +178,12 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 readPayload(NET_LED_STATUS, buffer, side, ctx);
-                currentY = buffer.readDouble();
+                currentLength = lastLength = wantedLength = buffer.readInt();
             } else if (id == NET_LED_STATUS) {
                 isComplete = buffer.readBoolean();
                 battery.readFromBuffer(buffer);
             } else if (id == NET_WANTED_Y) {
-                boolean firstTime = wantedY == -1;
-                wantedY = buffer.readInt();
-                if (firstTime) {
-                    currentY = lastY = pos.down().getY();
-                }
+                wantedLength = buffer.readInt();
             }
         }
     }
@@ -190,9 +193,9 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         left.add("");
         left.add("battery = " + battery.getDebugString());
         left.add("current = " + currentPos);
-        left.add("wantedY = " + wantedY);
-        left.add("currentY = " + currentY);
-        left.add("lastY = " + lastY);
+        left.add("wantedLength = " + wantedLength);
+        left.add("currentLength = " + currentLength);
+        left.add("lastLength = " + lastLength);
         left.add("isComplete = " + isComplete());
         left.add("progress = " + progress);
     }

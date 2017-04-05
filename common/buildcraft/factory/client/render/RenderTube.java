@@ -1,15 +1,13 @@
 package buildcraft.factory.client.render;
 
-import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-
-import net.minecraftforge.client.model.animation.FastTESR;
-
 import buildcraft.factory.tile.TileMiner;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.client.model.animation.FastTESR;
 
 public class RenderTube extends FastTESR<TileMiner> {
     private final LaserType laserType;
@@ -20,8 +18,8 @@ public class RenderTube extends FastTESR<TileMiner> {
 
     @Override
     public void renderTileEntityFast(TileMiner tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
-        double tubeY = tile.getY(partialTicks);
-        if (tubeY <= 0) {
+        double tubeY = tile.getPos().getY() - tile.getLength(partialTicks);
+        if (tubeY == 0) {
             return;
         }
 
