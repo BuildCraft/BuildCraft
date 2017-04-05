@@ -46,14 +46,15 @@ public class TilePump extends TileMiner {
         paths.clear();
         List<BlockPos> nextPosesToCheck = new ArrayList<>();
         List<List<BlockPos>> nextPaths = new ArrayList<>();
+        List<BlockPos> checkedButFlowingPoses = new ArrayList<>();
         LoadingCache<BlockPos, Optional<Fluid>> fluidCache = CacheBuilder.newBuilder()
                 .expireAfterAccess(10, TimeUnit.SECONDS)
-                .build(CacheLoader.from(blockPos -> Optional.ofNullable(BlockUtil.getFluid(world, blockPos))));
+                .build(CacheLoader.from(blockPos -> Optional.ofNullable(BlockUtil.getFluidWithFlowing(world, blockPos))));
         int y = pos.getY() - 1;
         if (nextPosesToCheck.isEmpty()) {
             for (; y >= 0; y--) {
                 BlockPos posToCheck = new BlockPos(pos.getX(), y, pos.getZ());
-                if (BlockUtil.getFluid(world, posToCheck) != null) {
+                if (fluidCache.getUnchecked(posToCheck).isPresent()) {
                     if (!queue.contains(posToCheck)) {
                         nextPosesToCheck.add(posToCheck);
                         nextPaths.add(new ArrayList<>(Collections.singletonList(posToCheck)));
@@ -76,8 +77,12 @@ public class TilePump extends TileMiner {
             for (BlockPos posToCheck : nextPosesToCheckCopy) {
                 List<BlockPos> path = nextPathsCopy.get(i);
                 if (!queue.contains(posToCheck)) {
-                    queue.add(posToCheck);
-                    paths.put(posToCheck, path);
+                    if (BlockUtil.getFluid(world, posToCheck) != null) {
+                        queue.add(posToCheck);
+                        paths.put(posToCheck, path);
+                    } else {
+                        checkedButFlowingPoses.add(posToCheck);
+                    }
                 }
 
                 for (EnumFacing side : new EnumFacing[] {
@@ -93,7 +98,8 @@ public class TilePump extends TileMiner {
                     }
                     if (fluidCache.getUnchecked(posToCheck).isPresent()
                             && Objects.equals(fluidCache.getUnchecked(offsetPos), fluidCache.getUnchecked(posToCheck))
-                            && !queue.contains(offsetPos)) {
+                            && !queue.contains(offsetPos)
+                            && !checkedButFlowingPoses.contains(offsetPos)) {
                         List<BlockPos> currentPath = new ArrayList<>(path);
                         currentPath.add(offsetPos);
                         if (!nextPosesToCheck.contains(offsetPos) && !nextPosesToCheckCopy.contains(offsetPos)) {
@@ -157,7 +163,10 @@ public class TilePump extends TileMiner {
                 progress += battery.extractPower(0, target - progress);
                 if (progress >= target) {
                     FluidStack drain = BlockUtil.drainBlock(world, currentPos, false);
-                    if (drain != null && paths.get(currentPos).stream().allMatch(this::canDrain)) {
+                    if (drain != null &&
+                            paths.get(currentPos).stream()
+                                    .allMatch(blockPos -> BlockUtil.getFluidWithFlowing(world, blockPos) != null) &&
+                            canDrain(currentPos)) {
                         tank.fill(drain, true);
                         progress = 0;
                         int count = 0;
