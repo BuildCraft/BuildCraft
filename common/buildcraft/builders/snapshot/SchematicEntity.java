@@ -6,6 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -32,12 +33,21 @@ public class SchematicEntity implements INBTSerializable<NBTTagCompound> {
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setTag("entityNbt", entityNbt);
+        nbt.setTag("pos", NBTUtilBC.writeVec3d(pos));
+        nbt.setTag("hangingPos", NBTUtil.createPosTag(hangingPos));
+        nbt.setTag("hangingFacing", NBTUtilBC.writeEnum(hangingFacing));
+        nbt.setTag("entityRotation", NBTUtilBC.writeEnum(entityRotation));
         return nbt;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-
+        entityNbt = nbt.getCompoundTag("entityNbt");
+        pos = NBTUtilBC.readVec3d(nbt.getTag("pos"));
+        hangingPos = NBTUtil.getPosFromTag(nbt.getCompoundTag("hangingPos"));
+        hangingFacing = NBTUtilBC.readEnum(nbt.getTag("hangingFacing"), EnumFacing.class);
+        entityRotation = NBTUtilBC.readEnum(nbt.getTag("entityRotation"), Rotation.class);
     }
 
     public SchematicEntity getRotated(Rotation rotation) {

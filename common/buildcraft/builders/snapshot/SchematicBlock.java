@@ -8,6 +8,7 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -48,7 +49,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
                 "requiredBlockOffsets",
                 NBTUtilBC.writeCompoundList(
                         requiredBlockOffsets.stream()
-                                .map(NBTUtilBC::writeBlockPosAsCompound)
+                                .map(NBTUtil::createPosTag)
                 )
         );
         nbt.setTag("blockState", NBTUtilBC.writeEntireBlockState(blockState));
@@ -63,6 +64,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
             nbt.setTag("tileNbt", tileNbt);
         }
         nbt.setTag("ignoredTags", NBTUtilBC.writeStringList(ignoredTags.stream()));
+        nbt.setTag("tileRotation", NBTUtilBC.writeEnum(tileRotation));
         nbt.setString("placeBlock", Block.REGISTRY.getNameForObject(placeBlock).toString());
         nbt.setTag(
                 "canBeReplacedWithBlocks",
@@ -79,7 +81,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     public void deserializeNBT(NBTTagCompound nbt) {
         level = nbt.getInteger("level");
         NBTUtilBC.readCompoundList(nbt.getTagList("requiredBlockOffsets", Constants.NBT.TAG_COMPOUND))
-                .map(NBTUtilBC::readBlockPos)
+                .map(NBTUtil::getPosFromTag)
                 .forEach(requiredBlockOffsets::add);
         try {
             blockState = NBTUtilBC.readEntireBlockState(nbt.getCompoundTag("blockState"));
@@ -98,6 +100,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
             tileNbt = nbt.getCompoundTag("tileNbt");
         }
         NBTUtilBC.readStringList(nbt.getTagList("ignoredTags", Constants.NBT.TAG_STRING)).forEach(ignoredTags::add);
+        tileRotation = NBTUtilBC.readEnum(nbt.getTag("tileRotation"), Rotation.class);
         placeBlock = Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("placeBlock")));
         NBTUtilBC.readStringList(nbt.getTagList("canBeReplacedWithBlocks", Constants.NBT.TAG_STRING))
                 .map(ResourceLocation::new)
