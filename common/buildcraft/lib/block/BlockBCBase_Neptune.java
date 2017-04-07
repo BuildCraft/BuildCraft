@@ -61,19 +61,15 @@ public class BlockBCBase_Neptune extends Block {
         setCreativeTab(CreativeTabManager.getTab(TagManager.getTag(id, EnumTagType.CREATIVE_TAB)));
 
         if (this instanceof IBlockWithFacing) {
-            setDefaultState(getDefaultState().withProperty(PROP_FACING, EnumFacing.NORTH));
+            setDefaultState(getDefaultState().withProperty(((IBlockWithFacing) this).getFacingProperty(), EnumFacing.NORTH));
         }
-    }
-
-    public BuildCraftProperty<EnumFacing> getFacingProperty() {
-        return (this instanceof IBlockWithFacing) ? (((IBlockWithFacing) this).canPlacedVertical() ? BLOCK_FACING_6 : PROP_FACING) : null;
     }
 
     // IBlockState
 
     protected void addProperties(List<IProperty<?>> properties) {
         if (this instanceof IBlockWithFacing) {
-            properties.add(getFacingProperty());
+            properties.add(((IBlockWithFacing) this).getFacingProperty());
         }
     }
 
@@ -89,9 +85,9 @@ public class BlockBCBase_Neptune extends Block {
         int meta = 0;
         if (this instanceof IBlockWithFacing) {
             if (((IBlockWithFacing) this).canPlacedVertical()) {
-                meta |= state.getValue(BLOCK_FACING_6).getIndex();
+                meta |= state.getValue(((IBlockWithFacing) this).getFacingProperty()).getIndex();
             } else {
-                meta |= state.getValue(PROP_FACING).getHorizontalIndex();
+                meta |= state.getValue(((IBlockWithFacing) this).getFacingProperty()).getHorizontalIndex();
             }
         }
         return meta;
@@ -102,9 +98,9 @@ public class BlockBCBase_Neptune extends Block {
         IBlockState state = getDefaultState();
         if (this instanceof IBlockWithFacing) {
             if (((IBlockWithFacing) this).canPlacedVertical()) {
-                state = state.withProperty(BLOCK_FACING_6, EnumFacing.getFront(meta & 7));
+                state = state.withProperty(((IBlockWithFacing) this).getFacingProperty(), EnumFacing.getFront(meta & 7));
             } else {
-                state = state.withProperty(PROP_FACING, EnumFacing.getHorizontal(meta & 3));
+                state = state.withProperty(((IBlockWithFacing) this).getFacingProperty(), EnumFacing.getHorizontal(meta & 3));
             }
         }
         return state;
@@ -113,8 +109,8 @@ public class BlockBCBase_Neptune extends Block {
     @Override
     public IBlockState withRotation(IBlockState state, Rotation rot) {
         if (this instanceof IBlockWithFacing) {
-            EnumFacing facing = state.getValue(getFacingProperty());
-            state = state.withProperty(getFacingProperty(), rot.rotate(facing));
+            EnumFacing facing = state.getValue(((IBlockWithFacing) this).getFacingProperty());
+            state = state.withProperty(((IBlockWithFacing) this).getFacingProperty(), rot.rotate(facing));
         }
         return state;
     }
@@ -122,8 +118,8 @@ public class BlockBCBase_Neptune extends Block {
     @Override
     public IBlockState withMirror(IBlockState state, Mirror mirror) {
         if (this instanceof IBlockWithFacing) {
-            EnumFacing facing = state.getValue(getFacingProperty());
-            state = state.withProperty(getFacingProperty(), mirror.mirror(facing));
+            EnumFacing facing = state.getValue(((IBlockWithFacing) this).getFacingProperty());
+            state = state.withProperty(((IBlockWithFacing) this).getFacingProperty(), mirror.mirror(facing));
         }
         return state;
     }
@@ -148,7 +144,7 @@ public class BlockBCBase_Neptune extends Block {
                     }
                 }
             }
-            state = state.withProperty(getFacingProperty(), orientation.getOpposite());
+            state = state.withProperty(((IBlockWithFacing) this).getFacingProperty(), orientation.getOpposite());
         }
         return state;
     }

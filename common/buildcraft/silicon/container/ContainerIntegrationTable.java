@@ -8,10 +8,9 @@ import buildcraft.lib.gui.slot.SlotOutput;
 import buildcraft.silicon.tile.TileIntegrationTable;
 
 public class ContainerIntegrationTable extends ContainerBCTile<TileIntegrationTable> {
-    private static final int PLAYER_INV_START = 109;
     public ContainerIntegrationTable(EntityPlayer player, TileIntegrationTable tile) {
         super(player, tile);
-        addFullPlayerInventory(PLAYER_INV_START);
+        addFullPlayerInventory(109);
 
         int[] indexes = {0, 1, 2, 3, 0, 4, 5, 6, 7};
 

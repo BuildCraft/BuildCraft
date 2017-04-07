@@ -72,11 +72,11 @@ public abstract class AtlasSpriteSwappable extends TextureAtlasSprite {
         return false;
     }
 
-    public static final TextureAtlasSprite loadSprite(String name, ResourceLocation location, boolean careIfMissing) {
+    public static TextureAtlasSprite loadSprite(String name, ResourceLocation location, boolean careIfMissing) {
         return loadSprite(Minecraft.getMinecraft().getResourceManager(), name, location, careIfMissing);
     }
 
-    public static final TextureAtlasSprite loadSprite(IResourceManager manager, String name, ResourceLocation location, boolean careIfMissing) {
+    public static TextureAtlasSprite loadSprite(IResourceManager manager, String name, ResourceLocation location, boolean careIfMissing) {
         // Load the initial variant
         TextureAtlasSprite sprite = new AtlasSpriteDirect(name);
         try {

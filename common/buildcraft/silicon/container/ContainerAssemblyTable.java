@@ -7,11 +7,9 @@ import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.silicon.tile.TileAssemblyTable;
 
 public class ContainerAssemblyTable extends ContainerBCTile<TileAssemblyTable> {
-    private static final int PLAYER_INV_START = 123;
-
     public ContainerAssemblyTable(EntityPlayer player, TileAssemblyTable tile) {
         super(player, tile);
-        addFullPlayerInventory(PLAYER_INV_START);
+        addFullPlayerInventory(123);
 
         for(int y = 0; y < 4; y++) {
             for(int x = 0; x < 3; x++) {

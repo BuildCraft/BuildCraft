@@ -12,7 +12,7 @@ public class BCEnergyItems {
     public static ItemBC_Neptune globOfOil;
 
     public static void preInit() {
-        if (BCLib.DEVELOPER) {
+        if (BCLib.DEV) {
             globOfOil = ItemManager.register(new ItemBC_Neptune("item.glob.oil"));
         }
     }

@@ -50,7 +50,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
         NBTTagList list = new NBTTagList();
         for (ItemStack stack : stacks) {
             NBTTagCompound itemNbt = new NBTTagCompound();
-            if (stack != null) stack.writeToNBT(itemNbt);
+            stack.writeToNBT(itemNbt);
             list.appendTag(itemNbt);
         }
         nbt.setTag("items", list);

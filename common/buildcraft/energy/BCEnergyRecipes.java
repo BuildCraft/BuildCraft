@@ -28,13 +28,15 @@ public class BCEnergyRecipes {
             if (BCCoreBlocks.engine.isRegistered(EnumEngineType.STONE)) {
                 builder.map('m', Blocks.COBBLESTONE);
                 builder.map('G', OredictionaryNames.GEAR_STONE);
-                GameRegistry.addRecipe(builder.build(BCCoreBlocks.engine.getStack(EnumEngineType.STONE)));
+                builder.setResult(BCCoreBlocks.engine.getStack(EnumEngineType.STONE));
+                builder.register();
             }
 
             if (BCCoreBlocks.engine.isRegistered(EnumEngineType.IRON)) {
                 builder.map('m', "ingotIron");
                 builder.map('G', OredictionaryNames.GEAR_IRON);
-                GameRegistry.addRecipe(builder.build(BCCoreBlocks.engine.getStack(EnumEngineType.IRON)));
+                builder.setResult(BCCoreBlocks.engine.getStack(EnumEngineType.IRON));
+                builder.register();
             }
         }
 

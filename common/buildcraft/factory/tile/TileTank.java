@@ -170,7 +170,12 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
 
     @SideOnly(Side.CLIENT)
     public double getFluidAmountForRender(float partialTicks) {
-        return amountLast * (1 - partialTicks) + amount * partialTicks;
+        float amount = amountLast * (1 - partialTicks) + this.amount * partialTicks;
+        Tank other = getTank(pos.up());
+        if (other != null && !other.isEmpty()) {
+            amount = tank.getCapacity();
+        }
+        return amount;
     }
 
     // Capabilities
@@ -281,7 +286,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         if (resource == null) {
             return null;
         }
-        return drain(fluid -> resource.isFluidEqual(fluid), resource.amount, doDrain);
+        return drain(resource::isFluidEqual, resource.amount, doDrain);
     }
 
     // IFluidHandlerAdv

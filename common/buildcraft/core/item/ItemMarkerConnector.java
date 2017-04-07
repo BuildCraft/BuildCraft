@@ -4,24 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.item;
 
-import java.util.Iterator;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
-import buildcraft.core.marker.volume.VolumeMarkerCache;
-import buildcraft.core.marker.volume.VolumeMarkerCache.VolumeBox;
+import buildcraft.core.marker.volume.*;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
@@ -29,6 +12,22 @@ import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.PositionUtil.Line;
 import buildcraft.lib.misc.PositionUtil.LineSkewResult;
 import buildcraft.lib.misc.VecUtil;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.Iterator;
+import java.util.stream.Collectors;
 
 public class ItemMarkerConnector extends ItemBC_Neptune {
     public ItemMarkerConnector(String id) {
@@ -98,13 +97,21 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
         }
 
         public MarkerLineInteraction getBetter(MarkerLineInteraction other) {
-            if (other == null) return this;
+            if (other == null) {
+                return this;
+            }
             if (other.marker1 == marker2 && other.marker2 == marker1) {
                 return other;
             }
-            if (other.distToLine < distToLine) return other;
-            if (other.distToLine > distToLine) return this;
-            if (other.distToPoint < distToPoint) return other;
+            if (other.distToLine < distToLine) {
+                return other;
+            }
+            if (other.distToLine > distToLine) {
+                return this;
+            }
+            if (other.distToPoint < distToPoint) {
+                return other;
+            }
             return this;
         }
     }
@@ -116,86 +123,107 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
     // ##################################
 
     private ActionResult<ItemStack> newVolumeCacheStuff_onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
-        if (!world.isRemote) {
+        if (world.isRemote) {
             // only run this on the client
             return new ActionResult<>(EnumActionResult.PASS, stack);
         }
 
-        VolumeMarkerCache mk = VolumeMarkerCache.SERVER_INSTANCE;
+        WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
 
-        if (player.isSneaking()) {
-            mk.currentlyEditing = null;
+        VolumeBox currentEditing = volumeBoxes.getCurrentEditing(player);
 
-            Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
-            Vec3d end = start.add(player.getLookVec().scale(4));
+        Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
+        Vec3d end = start.add(player.getLookVec().scale(4));
 
-            Iterator<VolumeBox> iter = mk.boxes.iterator();
-            while (iter.hasNext()) {
-                VolumeBox vbox = iter.next();
-                AxisAlignedBB aabb = new AxisAlignedBB(vbox.box.min(), vbox.box.max().add(VecUtil.POS_ONE));
-
-                RayTraceResult ray = aabb.calculateIntercept(start, end);
-                if (ray != null) {
-                    iter.remove();
-                    return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        Pair<VolumeBox, EnumAddonSlot> selectingBoxAndSlot = EnumAddonSlot.getSelectingBoxAndSlot(player, volumeBoxes);
+        VolumeBox addonBox = selectingBoxAndSlot.getLeft();
+        EnumAddonSlot addonSlot = selectingBoxAndSlot.getRight();
+        if (addonBox != null && addonSlot != null) {
+            if (
+                    addonBox.addons.containsKey(addonSlot) &&
+                            addonBox.getLockTargetsStream()
+                                    .noneMatch(target ->
+                                            target instanceof Lock.Target.TargetAddon &&
+                                                    ((Lock.Target.TargetAddon) target).slot == addonSlot)
+                    ) {
+                if (player.isSneaking()) {
+                    addonBox.addons.get(addonSlot).onRemoved();
+                    addonBox.addons.remove(addonSlot);
+                    volumeBoxes.markDirty();
+                } else {
+                    addonBox.addons.get(addonSlot).onPlayerRightClick(player);
+                    volumeBoxes.markDirty();
                 }
             }
-            return new ActionResult<>(EnumActionResult.FAIL, stack);
-        }
-
-        if (mk.currentlyEditing == null) {
-            VolumeBox vBest = null;
-            double bestDist = 10000;
-            BlockPos editing = null;
-
-            Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
-            Vec3d end = start.add(player.getLookVec().scale(4));
-
-            for (VolumeBox vbox : mk.boxes) {
-
-                for (BlockPos p : PositionUtil.getCorners(vbox.box.min(), vbox.box.max())) {
-                    AxisAlignedBB aabb = new AxisAlignedBB(p);
-
-                    RayTraceResult ray = aabb.calculateIntercept(start, end);
-
-                    if (ray != null) {
-                        double dist = ray.hitVec.distanceTo(start);
-                        if (bestDist > dist) {
-                            bestDist = dist;
-                            vBest = vbox;
-                            editing = p;
-                        }
+        } else if (player.isSneaking()) {
+            if (currentEditing == null) {
+                for (Iterator<VolumeBox> iterator = volumeBoxes.boxes.iterator(); iterator.hasNext(); ) {
+                    VolumeBox box = iterator.next();
+                    if (box.box.getBoundingBox().calculateIntercept(start, end) != null) {
+                        box.addons.values().forEach(Addon::onRemoved);
+                        iterator.remove();
+                        volumeBoxes.markDirty();
+                        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
                     }
                 }
-            }
-
-            if (vBest != null && editing != null) {
-                mk.currentlyEditing = vBest;
-
-                BlockPos min = vBest.box.min();
-                BlockPos max = vBest.box.max();
-
-                BlockPos held = min;
-                if (editing.getX() == min.getX()) {
-                    held = VecUtil.replaceValue(held, Axis.X, max.getX());
-                }
-                if (editing.getY() == min.getY()) {
-                    held = VecUtil.replaceValue(held, Axis.Y, max.getY());
-                }
-                if (editing.getZ() == min.getZ()) {
-                    held = VecUtil.replaceValue(held, Axis.Z, max.getZ());
-                }
-                mk.held = held;
-                mk.dist = Math.max(1.5, bestDist + 0.5);
+            } else {
+                currentEditing.cancelEditing();
+                volumeBoxes.markDirty();
                 return new ActionResult<>(EnumActionResult.SUCCESS, stack);
             }
         } else {
-            mk.currentlyEditing.box.reset();
-            mk.currentlyEditing.box.extendToEncompass(mk.held);
-            BlockPos lookingAt = new BlockPos(player.getPositionVector().addVector(0, player.getEyeHeight(), 0).add(player.getLookVec().scale(mk.dist)));
-            mk.currentlyEditing.box.extendToEncompass(lookingAt);
-            mk.currentlyEditing = null;
-            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+            if (currentEditing == null) {
+                VolumeBox bestBox = null;
+                double bestDist = 10000;
+                BlockPos editing = null;
+
+                for (
+                        VolumeBox box :
+                        volumeBoxes.boxes.stream()
+                                .filter(box ->
+                                        box.getLockTargetsStream()
+                                                .noneMatch(target -> target instanceof Lock.Target.TargetResize)
+                                )
+                                .collect(Collectors.toList())
+                        ) {
+                    for (BlockPos p : PositionUtil.getCorners(box.box.min(), box.box.max())) {
+                        RayTraceResult ray = new AxisAlignedBB(p).calculateIntercept(start, end);
+                        if (ray != null) {
+                            double dist = ray.hitVec.distanceTo(start);
+                            if (bestDist > dist) {
+                                bestDist = dist;
+                                bestBox = box;
+                                editing = p;
+                            }
+                        }
+                    }
+                }
+
+                if (bestBox != null) {
+                    bestBox.setPlayer(player);
+
+                    BlockPos min = bestBox.box.min();
+                    BlockPos max = bestBox.box.max();
+
+                    BlockPos held = min;
+                    if (editing.getX() == min.getX()) {
+                        held = VecUtil.replaceValue(held, EnumFacing.Axis.X, max.getX());
+                    }
+                    if (editing.getY() == min.getY()) {
+                        held = VecUtil.replaceValue(held, EnumFacing.Axis.Y, max.getY());
+                    }
+                    if (editing.getZ() == min.getZ()) {
+                        held = VecUtil.replaceValue(held, EnumFacing.Axis.Z, max.getZ());
+                    }
+                    bestBox.setHeldDistOldMinOldMax(held, Math.max(1.5, bestDist + 0.5), bestBox.box.min(), bestBox.box.max());
+                    volumeBoxes.markDirty();
+                    return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+                }
+            } else {
+                currentEditing.confirmEditing();
+                volumeBoxes.markDirty();
+                return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+            }
         }
         return new ActionResult<>(EnumActionResult.FAIL, stack);
     }

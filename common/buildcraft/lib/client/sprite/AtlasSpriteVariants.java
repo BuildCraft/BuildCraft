@@ -19,12 +19,9 @@ import buildcraft.lib.misc.SpriteUtil;
 
 /** A type of {@link AtlasSpriteSwappable} that will switch between multiple different */
 public class AtlasSpriteVariants extends AtlasSpriteSwappable implements IReloadable {
-    public static final IVariantType VARIANT_COLOUR_BLIND = (loc) -> {
-        return ImmutableList.of(loc, new ResourceLocation(loc.getResourceDomain(), loc.getResourcePath() + "_cb"));
-    };
-    public static final IntSupplier INDEX_COLOUR_BLIND = () -> {
-        return BCLibConfig.colourBlindMode ? 1 : 0;
-    };
+    public static final IVariantType VARIANT_COLOUR_BLIND = loc ->
+            ImmutableList.of(loc, new ResourceLocation(loc.getResourceDomain(), loc.getResourcePath() + "_cb"));
+    public static final IntSupplier INDEX_COLOUR_BLIND = () -> BCLibConfig.colourBlindMode ? 1 : 0;
 
     private final List<ResourceLocation> variantNames;
     private final IntSupplier currentIndexFunction;

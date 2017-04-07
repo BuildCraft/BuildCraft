@@ -13,7 +13,6 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
 
 public class ContainerDiamondPipe extends ContainerBC_Neptune {
-
     private final PipeBehaviourDiamond behaviour;
     private final ItemHandlerSimple filterInv;
 

@@ -42,7 +42,7 @@ public class BCLib {
     public static final String VERSION = "${version}";
     public static final String MC_VERSION = "${mcversion}";
 
-    public static final boolean DEVELOPER = false;
+    public static final boolean DEV = VERSION.equals("${version}") || Boolean.getBoolean("buildcraft.dev");
 
     @Instance(MODID)
     public static BCLib INSTANCE;
@@ -51,7 +51,7 @@ public class BCLib {
     public static void preInit(FMLPreInitializationEvent evt) {
         BCLog.logger.info("");
         BCLog.logger.info("Starting BuildCraft " + BCLib.VERSION);
-        BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2016");
+        BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2017");
         BCLog.logger.info("http://www.mod-buildcraft.com");
         BCLog.logger.info("");
 

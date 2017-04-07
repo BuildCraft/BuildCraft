@@ -10,11 +10,9 @@ import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 
 public class ContainerQuarry extends ContainerBCTile<TileQuarry> {
-    private static final int PLAYER_INV_START = 50;
-
     public ContainerQuarry(EntityPlayer player, TileQuarry tile) {
         super(player, tile);
-        addFullPlayerInventory(PLAYER_INV_START);
+        addFullPlayerInventory(50);
 
         for(int i = 0; i < 9; i++) {
             addSlotToContainer(new SlotBase(tile.invFrames, i, 8 + i * 18, 18) {

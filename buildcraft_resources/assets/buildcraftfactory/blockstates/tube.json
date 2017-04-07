@@ -1,0 +1,10 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "buildcraftfactory:tube"
+    },
+    "variants": {
+        "inventory": [{}],
+        "normal": [{}]
+    }
+}

@@ -80,8 +80,7 @@ public class BCCoreRecipes {
         }
 
         if (BCCoreBlocks.engine != null && BCCoreBlocks.engine.isRegistered(EnumEngineType.WOOD)) {
-            ItemStack output = BCCoreBlocks.engine.getStack(EnumEngineType.WOOD);
-            RecipeBuilderShaped builder = new RecipeBuilderShaped(output);
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("www");
             builder.add(" g ");
             builder.add("GpG");
@@ -89,7 +88,8 @@ public class BCCoreRecipes {
             builder.map('g', OredictionaryNames.GLASS_COLOURLESS);
             builder.map('G', OredictionaryNames.GEAR_WOOD);
             builder.map('p', Blocks.PISTON);
-            GameRegistry.addRecipe(builder.build());
+            builder.setResult(BCCoreBlocks.engine.getStack(EnumEngineType.WOOD));
+            builder.register();
         }
 
         String[] gears = { "wood", "stone", "iron", "gold", "diamond" };

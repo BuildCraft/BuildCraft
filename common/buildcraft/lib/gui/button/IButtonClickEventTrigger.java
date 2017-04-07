@@ -6,9 +6,9 @@
 package buildcraft.lib.gui.button;
 
 public interface IButtonClickEventTrigger {
-    void registerListener(IButtonClickEventListener listener);
+    IButtonClickEventTrigger registerListener(IButtonClickEventListener listener);
 
-    void removeListener(IButtonClickEventListener listener);
+    IButtonClickEventTrigger removeListener(IButtonClickEventListener listener);
 
     void notifyButtonClicked(int bkey);
 

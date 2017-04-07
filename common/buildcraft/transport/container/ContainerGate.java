@@ -27,7 +27,6 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.gate.*;
 
 public class ContainerGate extends ContainerBC_Neptune {
-
     protected static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("gate");
 
     public static final int ID_CONNECTION = IDS.allocId("CONNECTION");

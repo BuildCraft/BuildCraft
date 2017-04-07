@@ -1,37 +1,24 @@
 package buildcraft.builders.client.render;
 
+import buildcraft.builders.tile.TileFiller;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
-
 import net.minecraftforge.client.model.animation.FastTESR;
 
-import buildcraft.builders.tile.TileFiller_Neptune;
-import buildcraft.core.client.BuildCraftLaserManager;
-import buildcraft.lib.client.render.laser.LaserBoxRenderer;
-import buildcraft.lib.misc.data.Box;
-
-public class RenderFiller extends FastTESR<TileFiller_Neptune> {
-    private static final double OFFSET = 0.1;
-
+public class RenderFiller extends FastTESR<TileFiller> {
     @Override
-    public void renderTileEntityFast(TileFiller_Neptune te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
-
+    public void renderTileEntityFast(TileFiller tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("filler");
 
-        vb.setTranslation(x - te.getPos().getX(), y - te.getPos().getY(), z - te.getPos().getZ());
-
-        Box box = te.getBox();
-        LaserBoxRenderer.renderLaserBoxDynamic(box, BuildCraftLaserManager.STRIPES_WRITE, vb);
-
-        vb.setTranslation(0, 0, 0);
+        RenderSnapshotBuilder.render(tile.builder, tile.getWorld(), tile.getPos(), x, y, z, partialTicks, vb);
 
         Minecraft.getMinecraft().mcProfiler.endSection();
         Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
     @Override
-    public boolean isGlobalRenderer(TileFiller_Neptune te) {
+    public boolean isGlobalRenderer(TileFiller te) {
         return true;
     }
 }

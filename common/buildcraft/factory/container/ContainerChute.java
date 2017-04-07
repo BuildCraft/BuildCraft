@@ -7,11 +7,9 @@ import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 
 public class ContainerChute extends ContainerBCTile<TileChute> {
-    private static final int PLAYER_INV_START = 71;
-
     public ContainerChute(EntityPlayer player, TileChute tile) {
         super(player, tile);
-        addFullPlayerInventory(PLAYER_INV_START);
+        addFullPlayerInventory(71);
 
         addSlotToContainer(new SlotBase(tile.inv, 0, 62, 18));
         addSlotToContainer(new SlotBase(tile.inv, 1, 80, 18));

@@ -4,7 +4,7 @@
         "model": "buildcraftfactory:pump"
     },
     "variants": {
-        "inventory": [{"model": "buildcraftfactory:pump"}],
-        "normal": [{"model": "buildcraftfactory:pump"}]
+        "inventory": [{}],
+        "normal": [{}]
     }
 }

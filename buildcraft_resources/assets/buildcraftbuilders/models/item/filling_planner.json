@@ -1,0 +1,6 @@
+{
+    "parent": "block/cube_all",
+    "textures": {
+        "all": "buildcraftbuilders:addons/filling_planner"
+    }
+}

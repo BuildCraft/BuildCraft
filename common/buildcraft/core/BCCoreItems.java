@@ -12,7 +12,6 @@ import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.registry.CreativeTabManager;
 
 public class BCCoreItems {
-    private static final boolean DEV = BCLib.DEVELOPER;
 
     public static ItemWrench_Neptune wrench;
     public static ItemBC_Neptune gearWood;
@@ -25,6 +24,7 @@ public class BCCoreItems {
     public static ItemList_BC8 list;
     public static ItemMapLocation mapLocation;
     public static ItemMarkerConnector markerConnector;
+    public static ItemVolumeBox volumeBox;
     public static ItemGoggles goggles;
 
     public static void preInit() {
@@ -34,15 +34,19 @@ public class BCCoreItems {
         gearIron = ItemManager.register(new ItemBC_Neptune("item.gear.iron"));
         gearGold = ItemManager.register(new ItemBC_Neptune("item.gear.gold"));
         gearDiamond = ItemManager.register(new ItemBC_Neptune("item.gear.diamond"));
-        if (DEV) diamondShard = ItemManager.register(new ItemBC_Neptune("item.diamond.shard"));
+        if (BCLib.DEV) {
+            diamondShard = ItemManager.register(new ItemBC_Neptune("item.diamond.shard"));
+        }
         paintbrush = ItemManager.register(new ItemPaintbrush_BC8("item.paintbrush"));
         list = ItemManager.register(new ItemList_BC8("item.list"));
-        if (DEV) mapLocation = ItemManager.register(new ItemMapLocation("item.map_location"));
-        if (DEV) markerConnector = ItemManager.register(new ItemMarkerConnector("item.marker_connector"));
-        if (DEV) goggles = ItemManager.register(new ItemGoggles("item.goggles"));
-
-        if (DEV) ItemManager.register(new ItemVolumeCuboid("item.volume_marker"));
-
+        if (BCLib.DEV) {
+            mapLocation = ItemManager.register(new ItemMapLocation("item.map_location"));
+        }
+        markerConnector = ItemManager.register(new ItemMarkerConnector("item.marker_connector"));
+        volumeBox = ItemManager.register(new ItemVolumeBox("item.volume_box"));
+        if (BCLib.DEV) {
+            goggles = ItemManager.register(new ItemGoggles("item.goggles"));
+        }
         BCLibItems.guide.setCreativeTab(CreativeTabManager.getTab("buildcraft.main"));
     }
 }

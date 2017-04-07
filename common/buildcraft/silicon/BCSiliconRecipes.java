@@ -21,15 +21,15 @@ import buildcraft.lib.recipe.RecipeBuilderShaped;
 public class BCSiliconRecipes {
     public static void init() {
         if (BCBlocks.SILICON_LASER != null) {
-            ItemStack out = new ItemStack(BCBlocks.SILICON_LASER);
-            RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("rro");
             builder.add("rdo");
             builder.add("rro");
             builder.map('r', Items.REDSTONE);
             builder.map('o', Blocks.OBSIDIAN);
             builder.map('d', Items.DIAMOND);
-            GameRegistry.addRecipe(builder.build());
+            builder.setResult(new ItemStack(BCBlocks.SILICON_LASER));
+            builder.register();
         }
 
         if (BCItems.SILICON_REDSTONE_CLIPSET != null) {

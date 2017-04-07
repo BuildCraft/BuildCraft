@@ -105,7 +105,7 @@ public class BCTransportItems {
         pipeFluidDiaWood = makePipeItem(BCTransportPipes.diaWoodFluid);
         // pipeFluidObsidian = makePipeItem(BCTransportPipes.obsidianFluid);
 
-        if (BCLib.DEVELOPER) {
+        if (BCLib.DEV) {
             pipePowerWood = makePipeItem(BCTransportPipes.woodPower);
             pipePowerCobble = makePipeItem(BCTransportPipes.cobblePower);
             pipePowerStone = makePipeItem(BCTransportPipes.stonePower);

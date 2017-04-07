@@ -7,11 +7,9 @@ import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.silicon.tile.TileAdvancedCraftingTable;
 
 public class ContainerAdvancedCraftingTable extends ContainerBCTile<TileAdvancedCraftingTable> {
-    private static final int PLAYER_INV_START = 153;
-
     public ContainerAdvancedCraftingTable(EntityPlayer player, TileAdvancedCraftingTable tile) {
         super(player, tile);
-        addFullPlayerInventory(PLAYER_INV_START);
+        addFullPlayerInventory(153);
 
         for(int y = 0; y < 3; y++) {
             for(int x = 0; x < 3; x++) {

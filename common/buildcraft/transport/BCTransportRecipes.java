@@ -1,23 +1,10 @@
 package buildcraft.transport;
 
-import com.google.common.collect.ImmutableSet;
-
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
-
 import buildcraft.api.BCItems;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
-
 import buildcraft.core.BCCoreBlocks;
 import buildcraft.core.BCCoreItems;
 import buildcraft.lib.misc.ColourUtil;
@@ -29,6 +16,17 @@ import buildcraft.transport.gate.EnumGateMaterial;
 import buildcraft.transport.gate.EnumGateModifier;
 import buildcraft.transport.gate.GateVariant;
 import buildcraft.transport.item.ItemPipeHolder;
+import com.google.common.collect.ImmutableSet;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
+
+import java.util.Optional;
 
 public class BCTransportRecipes {
     public static void init() {
@@ -36,9 +34,8 @@ public class BCTransportRecipes {
             GameRegistry.addShapelessRecipe(new ItemStack(BCTransportItems.waterproof), new ItemStack(Items.DYE, 1, 2));
         }
 
-        if (BCTransportBlocks.filteredBuffer != null) {
-            ItemStack out = new ItemStack(BCTransportBlocks.filteredBuffer);
-            RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
+        {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("wdw");
             builder.add("wcw");
             builder.add("wpw");
@@ -46,17 +43,17 @@ public class BCTransportRecipes {
             builder.map('p', Blocks.PISTON);
             builder.map('c', Blocks.CHEST);
             builder.map('d', BCItems.TRANSPORT_PIPE_DIAMOND_ITEM, Items.DIAMOND);
-
-            GameRegistry.addRecipe(builder.build());
+            builder.setResult(new ItemStack(BCTransportBlocks.filteredBuffer));
+            builder.register();
         }
 
-        if (BCTransportItems.pipeStructure != null) {
-            ItemStack result = new ItemStack(BCTransportItems.pipeStructure, 8);
-            RecipeBuilderShaped builder = new RecipeBuilderShaped(result);
+        {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("cgc");
             builder.map('c', "cobblestone");
             builder.map('g', Blocks.GRAVEL);
-            GameRegistry.addRecipe(builder.build());
+            builder.setResult(new ItemStack(BCTransportItems.pipeStructure, 8));
+            builder.register();
         }
 
         addPipeRecipe(BCTransportItems.pipeItemWood, "plankWood");
@@ -92,16 +89,15 @@ public class BCTransportRecipes {
         addPipeUpgradeRecipe(BCTransportItems.pipeItemDiaWood, BCTransportItems.pipeFluidDiaWood, waterproof);
 
         if (BCTransportItems.plugBlocker != null) {
-            ItemStack result = new ItemStack(BCTransportItems.plugBlocker, 4);
-            RecipeBuilderShaped builder = new RecipeBuilderShaped(result);
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("s");
             builder.map('s', BCTransportItems.pipeStructure);
-            GameRegistry.addRecipe(builder.build());
+            builder.setResult(new ItemStack(BCTransportItems.plugBlocker, 4));
+            builder.register();
         }
 
         if (BCTransportItems.plugPulsar != null) {
-            ItemStack result = new ItemStack(BCTransportItems.plugPulsar);
-            RecipeBuilderShaped builder = new RecipeBuilderShaped(result);
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("rer");
             builder.add("gpg");
             if (BCCoreBlocks.engine != null && BCCoreBlocks.engine.isRegistered(EnumEngineType.WOOD)) {
@@ -112,7 +108,8 @@ public class BCTransportRecipes {
             builder.map('p', BCTransportItems.plugBlocker, Blocks.COBBLESTONE);
             builder.map('g', "gearIron");
             builder.map('r', "dustRedstone");
-            GameRegistry.addRecipe(builder.build());
+            builder.setResult(new ItemStack(BCTransportItems.plugPulsar));
+            builder.register();
         }
 
         if (BCTransportItems.plugGate != null) {
@@ -191,8 +188,15 @@ public class BCTransportRecipes {
 
         if (BCTransportItems.wire != null) {
             for (EnumDyeColor color : EnumDyeColor.values()) {
-                AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10_000_000_000L, ImmutableSet.of(new ItemStack(Items.REDSTONE), new ItemStack(Items.DYE, 1, color.getMetadata())),
-                    new ItemStack(BCTransportItems.wire, 8, color.getMetadata())));
+                AssemblyRecipeRegistry.INSTANCE.addRecipe(
+                        new AssemblyRecipe(
+                                10_000_000_000L,
+                                ImmutableSet.of(
+                                        new ItemStack(Items.REDSTONE),
+                                        new ItemStack(Items.DYE, 1, color.getMetadata())
+                                ),
+                                new ItemStack(BCTransportItems.wire, 8, color.getMetadata()))
+                );
             }
         }
 
@@ -225,8 +229,8 @@ public class BCTransportRecipes {
 
     private static void makeGateRecipe(RecipeBuilderShaped builder, EnumGateMaterial material, EnumGateModifier modifier) {
         GateVariant variant = new GateVariant(EnumGateLogic.AND, material, modifier);
-        ItemStack result = BCTransportItems.plugGate.getStack(variant);
-        GameRegistry.addRecipe(builder.buildNbtAware(result));
+        builder.setResult(BCTransportItems.plugGate.getStack(variant));
+        builder.registerNbtAware();
     }
 
     private static void addPipeRecipe(ItemPipeHolder pipe, Object material) {
@@ -245,11 +249,13 @@ public class BCTransportRecipes {
         pipeBuilderSingle.map('l', left);
         pipeBuilderSingle.map('r', right);
         pipeBuilderSingle.map('g', "blockGlassColorless");
-        GameRegistry.addRecipe(pipeBuilderSingle.build(new ItemStack(pipe, 8, 0)));
+        pipeBuilderSingle.setResult(new ItemStack(pipe, 8, 0));
+        pipeBuilderSingle.register();
 
         for (EnumDyeColor colour : EnumDyeColor.values()) {
             pipeBuilderSingle.map('g', "blockGlass" + ColourUtil.getName(colour));
-            GameRegistry.addRecipe(pipeBuilderSingle.build(new ItemStack(pipe, 8, colour.getMetadata() + 1)));
+            pipeBuilderSingle.setResult(new ItemStack(pipe, 8, colour.getMetadata() + 1));
+            pipeBuilderSingle.register();
         }
     }
 

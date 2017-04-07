@@ -65,8 +65,6 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
         }
     }
 
-    public RenderQuarry() {}
-
     @Override
     public void renderTileEntityAt(TileQuarry tile, double x, double y, double z, float partialTicks, int destroyStage) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;

@@ -4,30 +4,31 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core;
 
-import java.io.File;
-import java.util.function.Consumer;
-
-import net.minecraft.init.Blocks;
-
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.oredict.OreDictionary;
-
 import buildcraft.core.list.ListTooltipHandler;
 import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.VolumeCache;
+import buildcraft.core.marker.volume.MessageVolumeBoxes;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
+import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
+import net.minecraft.init.Blocks;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.oredict.OreDictionary;
+
+import java.io.File;
+import java.util.function.Consumer;
 
 @Mod(//
     modid = BCCore.MODID,//
@@ -67,6 +68,9 @@ public class BCCore {
         MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
 
         OreDictionary.registerOre("craftingTableWood", Blocks.CRAFTING_TABLE);
+
+        MinecraftForge.EVENT_BUS.register(BCCoreEventDist.INSTANCE);
+        BCMessageHandler.addMessageType(MessageVolumeBoxes.class, MessageVolumeBoxes.Handler.INSTANCE, Side.CLIENT);
     }
 
     @Mod.EventHandler
@@ -100,7 +104,7 @@ public class BCCore {
         registerTag("item.map_location").reg("map_location").locale("mapLocation").oldReg("mapLocation").model("map_location/");
         registerTag("item.paintbrush").reg("paintbrush").locale("paintbrush").model("paintbrush/");
         registerTag("item.marker_connector").reg("marker_connector").locale("markerConnector").model("marker_connector");
-        registerTag("item.volume_marker").reg("volume_marker").locale("volume_marker").model("volume_marker");
+        registerTag("item.volume_box").reg("volume_box").locale("volume_box").model("volume_box");
         registerTag("item.goggles").reg("goggles").locale("goggles").model("goggles");
         // Item Blocks
         registerTag("item.block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker_volume");
@@ -122,6 +126,7 @@ public class BCCore {
         registerTag("tile.marker.volume").reg("marker.volume").oldReg("buildcraft.builders.Marker", "Marker");
         registerTag("tile.marker.path").reg("marker.path");
         registerTag("tile.engine.wood").reg("engine.wood");
+        registerTag("tile.engine.creative").reg("engine.creative");
 
         endBatch(TagManager.prependTags("buildcraftcore:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(TagManager.setTab("buildcraft.main")));
         engine.model("");// Clear model so that subtypes can set it properly

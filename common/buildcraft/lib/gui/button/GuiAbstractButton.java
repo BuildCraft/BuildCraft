@@ -43,6 +43,11 @@ public abstract class GuiAbstractButton extends GuiButton implements IGuiElement
         active = false;
     }
 
+    public GuiAbstractButton setActive(boolean active) {
+        this.active = active;
+        return this;
+    }
+
     @Override
     public boolean isMouseOver() {
         return getGuiRectangle().contains(gui.mouse);
@@ -50,17 +55,11 @@ public abstract class GuiAbstractButton extends GuiButton implements IGuiElement
 
     @Override
     protected int getHoverState(boolean mouseOver) {
-        if (enabled) {
-            if (mouseOver) {
-                return 2;
-            } else if (active) {
-                return 3;
-            } else {
-                return 1;
-            }
-        } else {
+        if (!enabled) {
             return 0;
         }
+
+        return mouseOver ? (active ? 2 : 4) : (active ? 1 : 3);
     }
 
     // Behaviour
@@ -110,13 +109,15 @@ public abstract class GuiAbstractButton extends GuiButton implements IGuiElement
     }
 
     @Override
-    public void registerListener(IButtonClickEventListener listener) {
+    public GuiAbstractButton registerListener(IButtonClickEventListener listener) {
         listeners.add(listener);
+        return this;
     }
 
     @Override
-    public void removeListener(IButtonClickEventListener listener) {
+    public GuiAbstractButton removeListener(IButtonClickEventListener listener) {
         listeners.remove(listener);
+        return this;
     }
 
     @Override
