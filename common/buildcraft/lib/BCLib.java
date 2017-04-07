@@ -42,7 +42,7 @@ public class BCLib {
     public static final String VERSION = "${version}";
     public static final String MC_VERSION = "${mcversion}";
 
-    public static final boolean DEV = VERSION.equals("${version}") || Boolean.getBoolean("buildcraft.dev");
+    public static final boolean DEV = VERSION.startsWith("$") || Boolean.getBoolean("buildcraft.dev");
 
     @Instance(MODID)
     public static BCLib INSTANCE;
