@@ -9,7 +9,9 @@
 package buildcraft.factory;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
+import buildcraft.api.tiles.IDebuggable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -40,7 +42,7 @@ import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 
-public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory, IHasWork, IRedstoneEngineReceiver {
+public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory, IHasWork, IRedstoneEngineReceiver, IDebuggable {
 
 	public static final int SLOT_RESULT = 9;
 	public static final int CRAFT_TIME = 256;
@@ -51,7 +53,21 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	public LocalInventoryCrafting craftMatrix = new LocalInventoryCrafting();
 
 	private SimpleInventory resultInv = new SimpleInventory(1, "Auto Workbench", 64);
-	private SimpleInventory inputInv = new SimpleInventory(9, "Auto Workbench", 64);
+	private SimpleInventory inputInv = new SimpleInventory(9, "Auto Workbench", 64) {
+		@Override
+		public void setInventorySlotContents(int slotId, ItemStack itemstack) {
+			super.setInventorySlotContents(slotId, itemstack);
+			if (craftMatrix.isInputMissing && getStackInSlot(slotId) != null) {
+				craftMatrix.isInputMissing = false;
+			}
+		}
+
+		@Override
+		public void markDirty() {
+			super.markDirty();
+			craftMatrix.isInputMissing = false;
+		}
+	};
 
 	private IInventory inv = InventoryConcatenator.make().add(inputInv).add(resultInv).add(craftMatrix);
 
@@ -87,9 +103,15 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		return tile instanceof IRedstoneEngine;
 	}
 
+	@Override
+	public void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player) {
+		info.add("isInputMissing = " + craftMatrix.isInputMissing);
+		info.add("isOutputJammed = " + craftMatrix.isOutputJammed);
+	}
+
 	public class LocalInventoryCrafting extends InventoryCrafting {
 		public IRecipe currentRecipe;
-		public boolean useBindings, isJammed;
+		public boolean useBindings, isOutputJammed, isInputMissing;
 
 		public LocalInventoryCrafting() {
 			super(new ContainerDummy(), 3, 3);
@@ -145,9 +167,9 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 					!StackHelper.canStacksMerge(resultInto, result)
 							|| resultInto.stackSize + result.stackSize > resultInto.getMaxStackSize())
 					) {
-				isJammed = true;
+				isOutputJammed = true;
 			} else {
-				isJammed = false;
+				isOutputJammed = false;
 			}
 		}
 
@@ -286,7 +308,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			scheduledCacheRebuild = false;
 		}
 
-		if (craftMatrix.isJammed || craftMatrix.currentRecipe == null) {
+		if (craftMatrix.isOutputJammed || craftMatrix.isInputMissing || craftMatrix.currentRecipe == null) {
 			progress = 0;
 			return;
 		}
@@ -346,7 +368,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 					}
 				}
 				if (!found) {
-					craftMatrix.isJammed = true;
+					craftMatrix.isInputMissing = true;
 					progress = 0;
 					return;
 				}
