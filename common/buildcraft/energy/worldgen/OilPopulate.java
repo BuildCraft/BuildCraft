@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import buildcraft.core.lib.block.BlockBuildCraftFluid;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockStaticLiquid;
@@ -65,7 +66,6 @@ public final class OilPopulate {
 	}
 
 	public void generateOil(World world, Random rand, int chunkX, int chunkZ) {
-
 		// shift to world coordinates
 		int x = chunkX * 16 + 8 + rand.nextInt(16);
 		int z = chunkZ * 16 + 8 + rand.nextInt(16);
@@ -73,7 +73,7 @@ public final class OilPopulate {
 		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
 
 		// Do not generate oil in the End or Nether
-		if (excludedBiomes.contains(biome.biomeID)) {
+		if (excludedBiomes.contains(biome.biomeID) || BlockBuildCraftFluid.isFluidExplosive(world, x, z)) {
 			return;
 		}
 

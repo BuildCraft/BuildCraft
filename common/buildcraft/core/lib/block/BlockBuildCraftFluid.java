@@ -64,12 +64,17 @@ public class BlockBuildCraftFluid extends BlockFluidClassic {
 				iconRegister.registerIcon(prefix + fluidName + "_flow")};
 	}
 
+	public static boolean isFluidExplosive(World world, int x, int z) {
+		return world.provider.dimensionId == -1;
+	}
+
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-		super.onNeighborBlockChange(world, x, y, z, block);
-		if (flammable && world.provider.dimensionId == -1) {
+	public void updateTick(World world, int x, int y, int z, Random rand) {
+		if (flammable && isFluidExplosive(world, x, z)) {
 			world.setBlock(x, y, z, Blocks.air, 0, 2); // Do not cause block updates!
 			world.newExplosion(null, x, y, z, 4F, true, true);
+		} else {
+			super.updateTick(world, x, y, z, rand);
 		}
 	}
 
