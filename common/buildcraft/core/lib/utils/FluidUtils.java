@@ -1,7 +1,6 @@
 package buildcraft.core.lib.utils;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;

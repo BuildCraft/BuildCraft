@@ -11,7 +11,6 @@ package buildcraft.factory;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import buildcraft.api.tiles.IDebuggable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -29,6 +28,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.power.IRedstoneEngineReceiver;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;

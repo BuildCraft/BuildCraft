@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import buildcraft.core.lib.block.BlockBuildCraftFluid;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockStaticLiquid;
@@ -34,6 +33,7 @@ import net.minecraftforge.fluids.IFluidBlock;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
+import buildcraft.core.lib.block.BlockBuildCraftFluid;
 
 public final class OilPopulate {
 

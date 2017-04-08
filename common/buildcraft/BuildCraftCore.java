@@ -646,8 +646,9 @@ public class BuildCraftCore extends BuildCraftMod {
 
 			BuildingSlotMapIterator.MAX_PER_ITEM = builderMaxPerItemFactor;
 
-			if (miningMultiplier <= 0)
+			if (miningMultiplier <= 0) {
 				throw new RuntimeException("Please do not set the miningMultiplier to values <= 0.0!");
+			}
 
 			if (mainConfigManager.get("general.updateCheck").getBoolean(true)) {
 				Version.check();

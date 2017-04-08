@@ -1,0 +1,7 @@
+Bugs fixed:
+
+* [#3503] Auto Workbench dupe bug (asie)
+* [#3500] Rare division by zero error on world load (asie)
+* [#3498] Refinery deletes insufficient input fluids for non-standard refinery recipes (asie)
+* [#3496] Crafting Table IV rendering crash (asie)
+* [#3307] Auto Workbench not reacting to item insertion correctly in all cases (asie)
