@@ -40,7 +40,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
 
     public TileLaser() {
         super();
-        battery = new MjBattery(1600L * MjAPI.MJ);
+        battery = new MjBattery(1024 * MjAPI.MJ);
         mjCapHelper = new MjCapabilityHelper(new MjBatteryReciver(battery));
     }
 
@@ -133,7 +133,11 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
 
         ILaserTarget target = getTarget();
         if (target != null) {
-            long power = battery.extractPower(0, getMaxPowerPerTick());
+            long max = getMaxPowerPerTick();
+            max *= battery.getStored() + max;
+            max /= battery.getCapacity() / 2;
+            max = Math.min(max, getMaxPowerPerTick());
+            long power = battery.extractPower(0, max);
             addAverageValue(power);
             target.receiveLaserPower(power);
         } else {

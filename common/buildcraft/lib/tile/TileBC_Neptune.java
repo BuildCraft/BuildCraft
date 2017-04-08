@@ -181,8 +181,8 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
                 owner = null;
             }
         }
-        usingPlayers.add(player);
         sendNetworkUpdate(NET_GUI_DATA, player);
+        usingPlayers.add(player);
     }
 
     public void onPlayerClose(EntityPlayer player) {
@@ -273,16 +273,13 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         }
     }
 
-    /** Sends {@link #NET_GUI_TICK}. */
-    public final void sendNetworkGuiTick() {
+    public final void sendNetworkGuiTick(EntityPlayer player) {
         if (hasWorld() && !world.isRemote) {
             MessageUpdateTile message = createNetworkUpdate(NET_GUI_TICK);
             if (message.getPayloadSize() <= Short.BYTES) {
                 return;
             }
-            for (EntityPlayer player : usingPlayers) {
-                MessageUtil.getWrapper().sendTo(message, (EntityPlayerMP) player);
-            }
+            MessageUtil.getWrapper().sendTo(message, (EntityPlayerMP) player);
         }
     }
 

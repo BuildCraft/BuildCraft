@@ -15,6 +15,7 @@ public class RecipeLookupHelper {
     static {
         allHandlers.add(GuideSmeltingRecipes.INSTANCE);
         allHandlers.add(GuideCraftingRecipes.INSTANCE);
+        allHandlers.add(GuideAssemblyRecipes.INSTANCE);
     }
 
     public static List<GuidePartFactory> getAllUsages(@Nonnull ItemStack stack) {

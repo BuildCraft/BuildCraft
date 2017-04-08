@@ -27,8 +27,11 @@ public class RenderLaser extends FastTESR<TileLaser> {
             long avg = tile.getAverage();
             if (avg > 10) {
                 EnumFacing side = tile.getWorld().getBlockState(tile.getPos()).getValue(BuildCraftProperties.BLOCK_FACING_6);
-                Vec3d offset = new Vec3d(0.5, 0.5, 0.5).add(new Vec3d(side.getDirectionVec()).scale(2 / 16D));
+                Vec3d offset = new Vec3d(0.5, 0.5, 0.5).add(new Vec3d(side.getDirectionVec()).scale(4 / 16D));
                 int index = (int) ((double) tile.getAverage() / tile.getMaxPowerPerTick() * (BuildCraftLaserManager.POWERS.length - 1));
+                if (index > BuildCraftLaserManager.POWERS.length) {
+                    index = 3;
+                }
                 LaserData_BC8 laser = new LaserData_BC8(BuildCraftLaserManager.POWERS[index], new Vec3d(tile.getPos()).add(offset), tile.laserPos, 1 / 16D);
                 LaserRenderer_BC8.renderLaserDynamic(laser, buffer);
             }

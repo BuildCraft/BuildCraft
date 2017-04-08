@@ -1,4 +1,4 @@
-package buildcraft.lib.client.guide.parts;
+package buildcraft.lib.client.guide.parts.recipe;
 
 import javax.annotation.Nonnull;
 
@@ -8,8 +8,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.client.guide.GuiGuide;
+import buildcraft.lib.client.guide.parts.GuidePartItem;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.recipe.ChangingItemStack;
 
 public class GuideSmelting extends GuidePartItem {
     public static final GuiIcon SMELTING_ICON = new GuiIcon(GuiGuide.ICONS_2, 119, 54, 80, 54);
@@ -22,10 +24,10 @@ public class GuideSmelting extends GuidePartItem {
     private final ChangingItemStack input, output;
     private final ItemStack furnace;
 
-    public GuideSmelting(GuiGuide gui,@Nonnull ItemStack input,@Nonnull ItemStack output) {
+    public GuideSmelting(GuiGuide gui, @Nonnull ItemStack input, @Nonnull ItemStack output) {
         super(gui);
-        this.input = new ChangingItemStack(input);
-        this.output = new ChangingItemStack(output);
+        this.input = ChangingItemStack.create(input);
+        this.output = ChangingItemStack.create(output);
         furnace = new ItemStack(Blocks.FURNACE);
     }
 

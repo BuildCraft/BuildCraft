@@ -1,4 +1,4 @@
-package buildcraft.lib.client.guide.parts;
+package buildcraft.lib.client.guide.parts.recipe;
 
 import java.util.Arrays;
 import java.util.Map.Entry;
@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 
 import buildcraft.lib.client.guide.GuiGuide;
+import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.misc.StackUtil;
 
 public class GuideSmeltingFactory implements GuidePartFactory {

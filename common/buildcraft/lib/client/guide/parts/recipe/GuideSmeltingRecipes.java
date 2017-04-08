@@ -12,7 +12,6 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
-import buildcraft.lib.client.guide.parts.GuideSmeltingFactory;
 import buildcraft.lib.misc.StackUtil;
 
 public enum GuideSmeltingRecipes implements IStackRecipes {

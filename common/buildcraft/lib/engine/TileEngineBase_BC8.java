@@ -100,7 +100,6 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
                 heat = buffer.readFloat();
                 currentOutput = buffer.readLong();
                 power = buffer.readLong();
-
             } else if (id == NET_GUI_TICK) {
                 heat = buffer.readFloat();
                 currentOutput = buffer.readLong();

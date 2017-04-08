@@ -20,6 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import buildcraft.api.blocks.ICustomRotationHandler;
@@ -93,6 +94,16 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
 
     @Override
     public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+    
+    @Override
+    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileEngineBase_BC8) {
+            TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
+            return side == engine.currentDirection.getOpposite();
+        }
         return false;
     }
 

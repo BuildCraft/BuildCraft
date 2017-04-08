@@ -1,11 +1,6 @@
 package buildcraft.silicon;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -16,12 +11,6 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.recipes.AssemblyRecipe;
-import buildcraft.api.recipes.IntegrationRecipe;
-
-import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.recipe.AssemblyRecipeRegistry;
-import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 import buildcraft.silicon.client.render.RenderLaser;
 import buildcraft.silicon.client.render.RenderProgrammingTable;
 import buildcraft.silicon.container.ContainerAdvancedCraftingTable;
@@ -30,11 +19,7 @@ import buildcraft.silicon.container.ContainerIntegrationTable;
 import buildcraft.silicon.gui.GuiAdvancedCraftingTable;
 import buildcraft.silicon.gui.GuiAssemblyTable;
 import buildcraft.silicon.gui.GuiIntegrationTable;
-import buildcraft.silicon.tile.TileAdvancedCraftingTable;
-import buildcraft.silicon.tile.TileAssemblyTable;
-import buildcraft.silicon.tile.TileIntegrationTable;
-import buildcraft.silicon.tile.TileLaser;
-import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
+import buildcraft.silicon.tile.*;
 
 public abstract class BCSiliconProxy implements IGuiHandler {
     @SidedProxy(modId = BCSilicon.MODID)
@@ -76,10 +61,7 @@ public abstract class BCSiliconProxy implements IGuiHandler {
     public void fmlPreInit() {}
 
     public void fmlInit() {
-        AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10000000, ImmutableSet.of(new ItemStack(Items.BAKED_POTATO)), new ItemStack(Items.APPLE)));
-        AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10000000, ImmutableSet.of(new ItemStack(Items.BAKED_POTATO)), new ItemStack(Items.GOLDEN_APPLE)));
-        AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10000000, ImmutableSet.of(new ItemStack(Items.BAKED_POTATO)), new ItemStack(Items.GOLDEN_APPLE, 1, 1)));
-        IntegrationRecipeRegistry.INSTANCE.addRecipe(new IntegrationRecipe(10000000, new ItemStack(Items.BAKED_POTATO), StackUtil.listOf(new ItemStack(Items.REDSTONE)), new ItemStack(Items.FIRE_CHARGE)));
+
     }
 
     public void fmlPostInit() {}

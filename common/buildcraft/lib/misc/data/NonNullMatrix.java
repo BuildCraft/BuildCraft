@@ -18,6 +18,22 @@ public class NonNullMatrix<T> extends AbstractList<T> {
         internalList = NonNullList.withSize(width * height, fill);
     }
 
+    public NonNullMatrix(int width, int height, IEntryFiller<T> filler) {
+        this.width = width;
+        this.height = height;
+        internalList = NonNullList.withSize(width * height, filler.getEntry(0, 0));
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                internalList.set(flatIndexOf(x, y), filler.getEntry(x, y));
+            }
+        }
+    }
+
+    public interface IEntryFiller<T> {
+        @Nonnull
+        T getEntry(int x, int y);
+    }
+
     /** Creates a {@link NonNullMatrix} from the given 2-dim array, replacing all null values with the given nonnull
      * replacement. */
     public NonNullMatrix(T[][] from, @Nonnull T nullReplacor) {

@@ -27,7 +27,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class TilePump extends TileMiner {
-    private SingleUseTank tank = new SingleUseTank("tank", 16 * Fluid.BUCKET_VOLUME, this);
+    private final SingleUseTank tank = new SingleUseTank("tank", 16 * Fluid.BUCKET_VOLUME, this);
     private boolean queueBuilt = false;
     private Queue<BlockPos> queue = new PriorityQueue<>(
             Comparator.<BlockPos, Integer>comparing(blockPos ->
@@ -35,6 +35,10 @@ public class TilePump extends TileMiner {
             ).reversed()
     );
     private Map<BlockPos, List<BlockPos>> paths = new HashMap<>();
+
+    public TilePump() {
+        tank.setCanFill(false);
+    }
 
     @Override
     protected IMjReceiver createMjReceiver() {
@@ -167,7 +171,7 @@ public class TilePump extends TileMiner {
                             paths.get(currentPos).stream()
                                     .allMatch(blockPos -> BlockUtil.getFluidWithFlowing(world, blockPos) != null) &&
                             canDrain(currentPos)) {
-                        tank.fill(drain, true);
+                        tank.fillInternal(drain, true);
                         progress = 0;
                         int count = 0;
                         if (drain.getFluid() == FluidRegistry.WATER) {

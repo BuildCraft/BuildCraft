@@ -16,10 +16,14 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
 
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.data.AverageInt;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 public abstract class TileLaserTableBase extends TileBC_Neptune implements ILaserTarget, IHasWork, ITickable, IDebuggable {
+    private static final long MJ_FLOW_ROUND = MjAPI.MJ / 10;
+    private final AverageInt avgPower = new AverageInt(120);
+    public long avgPowerClient;
     public long power;
 
     @Override
@@ -30,6 +34,7 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
     @Override
     public void receiveLaserPower(long microJoules) {
         power += microJoules;
+        avgPower.push((int) microJoules);
     }
 
     @Override
@@ -39,12 +44,14 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
 
     @Override
     public void update() {
+        avgPower.tick();
         if (world.isRemote) {
             return;
         }
 
         if (!hasWork()) {
             power = 0;
+            avgPower.clear();
         }
     }
 
@@ -66,6 +73,12 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
         super.writePayload(id, buffer, side);
         if (id == NET_GUI_DATA) {
             buffer.writeLong(power);
+            double avg = avgPower.getAverage();
+            long pwrAvg = Math.round(avg);
+            long div = pwrAvg / MJ_FLOW_ROUND;
+            long mod = pwrAvg % MJ_FLOW_ROUND;
+            int mj = (int) (div) + ((mod > MJ_FLOW_ROUND / 2) ? 1 : 0);
+            buffer.writeInt(mj);
         }
     }
 
@@ -74,6 +87,7 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
         super.readPayload(id, buffer, side, ctx);
         if (id == NET_GUI_DATA) {
             power = buffer.readLong();
+            avgPowerClient = buffer.readInt() * MJ_FLOW_ROUND;
         }
     }
 

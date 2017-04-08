@@ -146,7 +146,9 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
                 return true;
             }
         }
-        BCEnergyGuis.ENGINE_IRON.openGUI(player, getPos());
+        if (!world.isRemote) {
+            BCEnergyGuis.ENGINE_IRON.openGUI(player, getPos());
+        }
         return true;
     }
 

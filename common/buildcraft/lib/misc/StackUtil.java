@@ -295,7 +295,7 @@ public class StackUtil {
      * 
      * @param stacks The stacks to put into a list
      * @return A {@link NonNullList} of all the given items. Note that the returned list of of a specified size, and
-     *         cannnot be expanded. */
+     *         cannot be expanded. */
     public static NonNullList<ItemStack> listOf(ItemStack... stacks) {
         switch (stacks.length) {
             case 0:

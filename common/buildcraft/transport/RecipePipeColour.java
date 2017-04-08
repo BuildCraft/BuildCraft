@@ -2,13 +2,14 @@ package buildcraft.transport;
 
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
-import buildcraft.lib.client.guide.parts.ChangingItemStack;
-import buildcraft.lib.client.guide.parts.IRecipeViewable;
+import buildcraft.lib.recipe.ChangingItemStack;
+import buildcraft.lib.recipe.IRecipeViewable;
 
-public class RecipePipeColour implements IRecipeViewable {
+public class RecipePipeColour implements IRecipe, IRecipeViewable {
 
     private final ItemStack output;
     /** Single-dimension because all pipe recipes use 3 items or less. */
@@ -51,7 +52,7 @@ public class RecipePipeColour implements IRecipeViewable {
     }
 
     @Override
-    public ChangingItemStack[][] getRecipeInputs() {
+    public ChangingItemStack[] getRecipeInputs() {
         return null;
     }
 

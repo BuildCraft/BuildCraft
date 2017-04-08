@@ -1,4 +1,4 @@
-package buildcraft.lib.client.guide.parts;
+package buildcraft.lib.client.guide.parts.recipe;
 
 import javax.annotation.Nonnull;
 
@@ -7,9 +7,13 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.client.guide.GuiGuide;
+import buildcraft.lib.client.guide.parts.GuidePart;
+import buildcraft.lib.client.guide.parts.GuidePartItem;
+import buildcraft.lib.client.guide.parts.GuidePart.PagePosition;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.data.NonNullMatrix;
+import buildcraft.lib.recipe.ChangingItemStack;
 
 public class GuideCrafting extends GuidePartItem {
     public static final GuiIcon CRAFTING_GRID = new GuiIcon(GuiGuide.ICONS_2, 119, 0, 116, 54);
@@ -34,10 +38,16 @@ public class GuideCrafting extends GuidePartItem {
         this.input = new ChangingItemStack[input.getWidth()][input.getHeight()];
         for (int x = 0; x < input.getWidth(); x++) {
             for (int y = 0; y < input.getHeight(); y++) {
-                this.input[x][y] = new ChangingItemStack(input.get(x, y));
+                this.input[x][y] = ChangingItemStack.create(input.get(x, y));
             }
         }
-        this.output = new ChangingItemStack(output);
+        this.output = ChangingItemStack.create(output);
+    }
+
+    GuideCrafting(GuiGuide gui, ChangingItemStack[][] input, ChangingItemStack output) {
+        super(gui);
+        this.input = input;
+        this.output = output;
     }
 
     @Override

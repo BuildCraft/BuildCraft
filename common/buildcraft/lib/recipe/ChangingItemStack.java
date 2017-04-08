@@ -1,4 +1,4 @@
-package buildcraft.lib.client.guide.parts;
+package buildcraft.lib.recipe;
 
 import javax.annotation.Nonnull;
 
@@ -7,40 +7,51 @@ import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.oredict.OreDictionary;
 
+import buildcraft.lib.misc.ArrayUtil;
 import buildcraft.lib.misc.StackUtil;
 
 /** Defines an {@link ItemStack} that changes between a specified list of stacks. Useful for displaying possible inputs
  * or outputs for recipes that use the oredictionary, or recipes that vary the output depending on the metadata of the
  * input (for example a pipe colouring recipe) */
-public class ChangingItemStack {
-    private final NonNullList<ItemStack> stacks;
-
+public final class ChangingItemStack extends ChangingObject<ItemStack>{
     /** Creates a stack list that iterates through all of the given stacks. This does NOT check possible variants.
      * 
      * @param stacks The list to iterate through. */
     public ChangingItemStack(NonNullList<ItemStack> stacks) {
-        this.stacks = stacks;
+        super(ArrayUtil.toArray(stacks));
     }
 
-    /** Creates a changing item stack that iterates through all {@link OreDictionary} variants of the specified stack.
+    /** Creates a changing item stack that iterates through all sub-item variants of the specified stack, if its
+     * metadata is equal to {@link OreDictionary#WILDCARD_VALUE}
      * 
      * @param stack the stack to check. */
-    public ChangingItemStack(@Nonnull ItemStack stack) {
+    public static ChangingItemStack create(@Nonnull ItemStack stack) {
         if (stack.isEmpty()) {
-            stacks = StackUtil.listOf(StackUtil.EMPTY);
+            return new ChangingItemStack(StackUtil.listOf(StackUtil.EMPTY));
         } else if (stack.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
             NonNullList<ItemStack> subs = NonNullList.create();
             stack.getItem().getSubItems(stack.getItem(), null, subs);
-            this.stacks = subs;
+            return new ChangingItemStack(subs);
         } else {
-            stacks = StackUtil.listOf(stack);
+            return new ChangingItemStack(StackUtil.listOf(stack));
         }
     }
 
-    /** @return The {@link ItemStack} that should be displayed at the current time. */
-    public ItemStack get() {
-        long now = System.currentTimeMillis();
-        int meta = (int) (now / 1000) % stacks.size();
-        return stacks.get(meta);
+    public ChangingItemStack(String oreId) {
+        this(OreDictionary.getOres(oreId));
+    }
+
+    @Override
+    protected int computeHash() {
+        return ArrayUtil.manualHash(options, StackUtil::hash);
+    }
+
+    public boolean matches(ItemStack target) {
+        for (ItemStack s : options) {
+            if (StackUtil.isCraftingEquivalent(s, target, false)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -1,50 +1,59 @@
 package buildcraft.lib.recipe;
 
-import buildcraft.api.core.BCLog;
-import gnu.trove.map.hash.TCharObjectHashMap;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
+
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import buildcraft.lib.misc.StackUtil;
+
+import gnu.trove.map.hash.TCharObjectHashMap;
 
 public class RecipeBuilderShaped {
-    private ItemStack result;
+    @Nonnull
+    private ItemStack result = StackUtil.EMPTY;
     private final List<String> shape = new ArrayList<>();
     private final TCharObjectHashMap<Object> objects = new TCharObjectHashMap<>();
 
     public RecipeBuilderShaped add(String row) {
         if (shape.size() > 0 && shape.get(0).length() != row.length()) {
-            throw new IllegalArgumentException("Badly sized row!");
+            throw new IllegalArgumentException("Badly sized row! (Other rows = " + shape.get(0).length() + ", given row = " + row.length() + ")");
         }
         shape.add(row);
         return this;
     }
 
-    public RecipeBuilderShaped map(char c, Object... vals) {
-        Arrays.stream(vals)
-                .filter(val ->
-                        !(val == null ||
-                                val instanceof Item ||
-                                val instanceof Block ||
-                                val instanceof ItemStack ||
-                                val instanceof String)
-                )
-                .findFirst()
-                .ifPresent(val -> {
-                    throw new IllegalArgumentException("Invalid value " + val.getClass());
-                });
-        objects.put(c, Arrays.stream(vals).filter(Objects::nonNull).findFirst().orElse(null));
+    public RecipeBuilderShaped map(char c, Object... values) {
+        boolean put = false;
+        for (Object v : values) {
+            if (v == null) {
+                continue;
+            } else if (v instanceof Item//
+                || v instanceof Block//
+                || v instanceof ItemStack//
+                || v instanceof String) {
+                if (!put) {
+                    objects.put(c, v);
+                    put = true;
+                }
+            } else {
+                throw new IllegalArgumentException("Invalid " + v.getClass());
+            }
+        }
+        if (!put) {
+            throw new IllegalArgumentException("Didn't find a non-null value!");
+        }
         return this;
     }
 
-    public RecipeBuilderShaped setResult(ItemStack result) {
+    public RecipeBuilderShaped setResult(@Nonnull ItemStack result) {
         this.result = result;
         return this;
     }
@@ -62,23 +71,7 @@ public class RecipeBuilderShaped {
         return objs;
     }
 
-    public boolean isValid() {
-        return result != null && objects.valueCollection().stream().allMatch(Objects::nonNull);
-    }
-
-    public ShapedOreRecipe build() {
-        return isValid() ? new ShapedOreRecipe(result, createRecipeObjectArray()) : null;
-    }
-
-    public NBTAwareShapedOreRecipe buildNbtAware() {
-        return isValid() ? new NBTAwareShapedOreRecipe(result, createRecipeObjectArray()) : null;
-    }
-
     public ShapedOreRecipe buildRotated() {
-        if (!isValid()) {
-            return null;
-        }
-
         int fromRows = shape.size();
         int toRows = shape.get(0).length();
         StringBuilder[] strings = new StringBuilder[toRows];
@@ -100,28 +93,27 @@ public class RecipeBuilderShaped {
             objs[offset++] = c;
             objs[offset++] = objects.get(c);
         }
-        BCLog.logger.info("Rotated from " + Arrays.toString(createRecipeObjectArray()) + " to " + Arrays.toString(objs));
         return new ShapedOreRecipe(result, objs);
     }
 
-    public void register() {
-        IRecipe recipe = build();
-        if (recipe != null) {
-            GameRegistry.addRecipe(recipe);
+    private void ensureValid() {
+        if (result.isEmpty()) {
+            throw new IllegalStateException("Result hasn't been set yet!");
         }
+    }
+
+    public void register() {
+        ensureValid();
+        GameRegistry.addRecipe(new ShapedOreRecipe(result, createRecipeObjectArray()));
     }
 
     public void registerNbtAware() {
-        IRecipe recipe = buildNbtAware();
-        if (recipe != null) {
-            GameRegistry.addRecipe(recipe);
-        }
+        ensureValid();
+        GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(result, createRecipeObjectArray()));
     }
 
     public void registerRotated() {
-        IRecipe recipe = buildRotated();
-        if (recipe != null) {
-            GameRegistry.addRecipe(recipe);
-        }
+        ensureValid();
+        GameRegistry.addRecipe(buildRotated());
     }
 }

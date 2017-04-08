@@ -16,7 +16,6 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-import buildcraft.lib.client.guide.parts.GuideCraftingFactory;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.misc.StackUtil;
 

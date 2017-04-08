@@ -1,10 +1,23 @@
 package buildcraft.transport;
 
+import com.google.common.collect.ImmutableSet;
+
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
+
 import buildcraft.api.BCItems;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
+
 import buildcraft.core.BCCoreBlocks;
 import buildcraft.core.BCCoreItems;
 import buildcraft.lib.misc.ColourUtil;
@@ -16,17 +29,6 @@ import buildcraft.transport.gate.EnumGateMaterial;
 import buildcraft.transport.gate.EnumGateModifier;
 import buildcraft.transport.gate.GateVariant;
 import buildcraft.transport.item.ItemPipeHolder;
-import com.google.common.collect.ImmutableSet;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
-
-import java.util.Optional;
 
 public class BCTransportRecipes {
     public static void init() {
@@ -34,7 +36,7 @@ public class BCTransportRecipes {
             GameRegistry.addShapelessRecipe(new ItemStack(BCTransportItems.waterproof), new ItemStack(Items.DYE, 1, 2));
         }
 
-        {
+        if (BCTransportBlocks.filteredBuffer != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("wdw");
             builder.add("wcw");
@@ -47,7 +49,7 @@ public class BCTransportRecipes {
             builder.register();
         }
 
-        {
+        if (BCTransportItems.pipeStructure != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("cgc");
             builder.map('c', "cobblestone");
@@ -188,20 +190,32 @@ public class BCTransportRecipes {
 
         if (BCTransportItems.wire != null) {
             for (EnumDyeColor color : EnumDyeColor.values()) {
-                AssemblyRecipeRegistry.INSTANCE.addRecipe(
-                        new AssemblyRecipe(
-                                10_000_000_000L,
-                                ImmutableSet.of(
-                                        new ItemStack(Items.REDSTONE),
-                                        new ItemStack(Items.DYE, 1, color.getMetadata())
-                                ),
-                                new ItemStack(BCTransportItems.wire, 8, color.getMetadata()))
-                );
+                ImmutableSet<ItemStack> input = ImmutableSet.of(new ItemStack(Items.REDSTONE), new ItemStack(Items.DYE, 1, color.getDyeDamage()));
+                AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10_000 * MjAPI.MJ, input, new ItemStack(BCTransportItems.wire, 8, color.getMetadata())));
             }
         }
 
         if (BCTransportItems.plugLens != null) {
+            for (EnumDyeColor colour : ColourUtil.COLOURS) {
+                // FIXME: Ore dictionary support for the assembly table!
+                ItemStack stainedGlass = new ItemStack(Blocks.STAINED_GLASS, 1, colour.getMetadata());
+                ImmutableSet<ItemStack> input = ImmutableSet.of(stainedGlass);
+                ItemStack output = BCTransportItems.plugLens.getStack(colour, false);
+                AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(500 * MjAPI.MJ, input, output));
 
+                output = BCTransportItems.plugLens.getStack(colour, true);
+                input = ImmutableSet.of(stainedGlass, new ItemStack(Blocks.IRON_BARS));
+                AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(500 * MjAPI.MJ, input, output));
+            }
+
+            ItemStack glass = new ItemStack(Blocks.GLASS);
+            ImmutableSet<ItemStack> input = ImmutableSet.of(glass);
+            ItemStack output = BCTransportItems.plugLens.getStack(null, false);
+            AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(500 * MjAPI.MJ, input, output));
+
+            output = BCTransportItems.plugLens.getStack(null, true);
+            input = ImmutableSet.of(glass, new ItemStack(Blocks.IRON_BARS));
+            AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(500 * MjAPI.MJ, input, output));
         }
     }
 

@@ -25,6 +25,8 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.client.guide.PageEntry;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.parts.*;
+import buildcraft.lib.client.guide.parts.recipe.GuideCraftingFactory;
+import buildcraft.lib.client.guide.parts.recipe.GuideSmeltingFactory;
 import buildcraft.lib.client.guide.parts.recipe.RecipeLookupHelper;
 import buildcraft.lib.client.resource.ResourceRegistry;
 import buildcraft.lib.client.resource.TextureResourceHolder;

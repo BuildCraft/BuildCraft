@@ -1,4 +1,4 @@
-package buildcraft.lib.client.guide.parts;
+package buildcraft.lib.client.guide.parts.recipe;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -21,8 +21,10 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.client.guide.GuiGuide;
+import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.NonNullMatrix;
+import buildcraft.lib.recipe.IRecipeViewable;
 
 public class GuideCraftingFactory implements GuidePartFactory {
     private static final Field SHAPED_ORE_RECIPE___WIDTH;

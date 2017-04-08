@@ -10,7 +10,9 @@ public abstract class ContainerBCTile<T extends TileBC_Neptune> extends Containe
     public ContainerBCTile(EntityPlayer player, T tile) {
         super(player);
         this.tile = tile;
-        tile.onPlayerOpen(player);
+        if (!tile.getWorld().isRemote) {
+            tile.onPlayerOpen(player);
+        }
     }
 
     @Override
@@ -27,6 +29,6 @@ public abstract class ContainerBCTile<T extends TileBC_Neptune> extends Containe
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        tile.sendNetworkGuiTick();
+        tile.sendNetworkGuiTick(this.player);
     }
 }

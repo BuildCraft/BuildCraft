@@ -47,7 +47,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
     /* Default to an additional second of fluid inserting and removal. This means that (for a normal pipe like cobble)
      * it will be 20 * (10 + 12) = 20 * 22 = 440 - oh that's not good is it */
-    public final int capacity = fluidTransferInfo.transferPerTick * (40);// TEMP!
+    public final int capacity = fluidTransferInfo.transferPerTick * (10);// TEMP!
 
     private final Map<EnumPipePart, Section> sections = new EnumMap<>(EnumPipePart.class);
     private FluidStack currentFluid;
@@ -423,10 +423,11 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
         // Move liquid from the center to the output sides
         for (EnumFacing direction : EnumFacing.VALUES) {
-            if (!sections.get(EnumPipePart.fromFacing(direction)).getCurrentDirection().canOutput()) {
+            Section section = sections.get(EnumPipePart.fromFacing(direction));
+            if (!section.getCurrentDirection().canOutput()) {
                 continue;
             }
-            if (pipe.getHolder().getCapabilityFromPipe(direction, CapUtil.CAP_FLUIDS) != null) {
+            if (section.getMaxFilled() > 0 && pipe.getHolder().getCapabilityFromPipe(direction, CapUtil.CAP_FLUIDS) != null) {
                 realDirections.add(direction);
             }
         }

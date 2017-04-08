@@ -127,6 +127,7 @@ public class GuiGuide extends GuiScreen {
 
     public int minX, minY;
     public ItemStack tooltipStack = null;
+    public final List<String> tooltip = new ArrayList<>();
 
     private final Deque<GuidePageBase> pages = Queues.newArrayDeque();
     private final List<GuideChapter> chapters = new ArrayList<>();
@@ -322,7 +323,8 @@ public class GuiGuide extends GuiScreen {
             // minX + bindingWidth + pageWidth, minY,
             // minX + bindingWidth, minY - offset
             // );
-            PAGE_LEFT.drawCustomQuad(minX + bindingWidth, minY + PAGE_LEFT.height + offset, minX + bindingWidth + pageWidth, minY + PAGE_LEFT.height, minX + bindingWidth + pageWidth, minY, minX + bindingWidth, minY - offset);
+            PAGE_LEFT.drawCustomQuad(minX + bindingWidth, minY + PAGE_LEFT.height + offset, minX + bindingWidth + pageWidth, minY + PAGE_LEFT.height, minX + bindingWidth + pageWidth, minY, minX
+                + bindingWidth, minY - offset);
             // PAGE_LEFT.drawScaledInside(minX + bindingWidth, minY, pageWidth, PAGE_LEFT.height);
 
             mc.renderEngine.bindTexture(COVER);
@@ -351,6 +353,7 @@ public class GuiGuide extends GuiScreen {
         }
 
         tooltipStack = null;
+        tooltip.clear();
         setupFontRenderer();
         for (GuideChapter chapter : chapters) {
             chapter.reset();
@@ -396,6 +399,8 @@ public class GuiGuide extends GuiScreen {
 
             if (tooltipStack != null) {
                 renderToolTip(tooltipStack, mouse.getX(), mouse.getY());
+            } else if (!tooltip.isEmpty()) {
+                drawHoveringText(tooltip, mouse.getX(), mouse.getY());
             }
         }
     }
