@@ -16,13 +16,13 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
 
 import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.data.AverageInt;
+import buildcraft.lib.misc.data.AverageLong;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 public abstract class TileLaserTableBase extends TileBC_Neptune implements ILaserTarget, IHasWork, ITickable, IDebuggable {
     private static final long MJ_FLOW_ROUND = MjAPI.MJ / 10;
-    private final AverageInt avgPower = new AverageInt(120);
+    private final AverageLong avgPower = new AverageLong(120);
     public long avgPowerClient;
     public long power;
 
@@ -34,7 +34,7 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
     @Override
     public void receiveLaserPower(long microJoules) {
         power += microJoules;
-        avgPower.push((int) microJoules);
+        avgPower.push(microJoules);
     }
 
     @Override

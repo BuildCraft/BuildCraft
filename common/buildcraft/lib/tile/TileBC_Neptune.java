@@ -443,6 +443,9 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             else if (id == NET_REN_DELTA_CLEAR) deltaManager.receiveDeltaData(false, EnumDeltaMessage.SET_VALUE, buffer);
             else if (id == NET_GUI_DELTA_CLEAR) deltaManager.receiveDeltaData(true, EnumDeltaMessage.SET_VALUE, buffer);
             else if (id == NET_REDRAW) redrawBlock();
+            else if (id == NET_ADV_DEBUG) {
+                BCAdvDebugging.setClientDebugTarget(this);
+            }
         }
     }
 

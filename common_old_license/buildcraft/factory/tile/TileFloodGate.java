@@ -263,7 +263,6 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                     }
                     clientLayerQueues.put(key, positions);
                 }
-                BCAdvDebugging.setClientDebugTarget(this);
             }
         }
     }

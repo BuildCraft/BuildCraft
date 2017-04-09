@@ -27,6 +27,7 @@ public class ItemDebugger extends ItemBC_Neptune {
         }
         if (tile instanceof IAdvDebugTarget) {
             BCAdvDebugging.setCurrentDebugTarget((IAdvDebugTarget) tile);
+            return EnumActionResult.SUCCESS;
         }
         return EnumActionResult.FAIL;
     }

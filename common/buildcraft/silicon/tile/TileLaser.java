@@ -1,10 +1,11 @@
 package buildcraft.silicon.tile;
 
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.LongStream;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -16,18 +17,23 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.mj.*;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IDebuggable;
 
+import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.VolumeUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.silicon.BCSiliconBlocks;
+import buildcraft.silicon.client.render.AdvDebuggerLaser;
 
 public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable {
     private int ticks = 0;
@@ -45,35 +51,36 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     }
 
     private void findTarget() {
-        BlockPos min = getPos().add(new BlockPos(-5, -5, -5));
-        BlockPos max = getPos().add(new BlockPos(5, 5, 5));
-
-        EnumFacing face = world.getBlockState(pos).getValue(BuildCraftProperties.BLOCK_FACING_6);
-        if (face.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE) {
-            max = max.offset(face, 5);
-        } else {
-            min = min.offset(face, -5);
+        IBlockState state = world.getBlockState(pos);
+        if (state.getBlock() != BCSiliconBlocks.laser) {
+            return;
         }
+        EnumFacing face = state.getValue(BuildCraftProperties.BLOCK_FACING_6);
 
-        List<BlockPos> targetPoses = new LinkedList<>();
-        for (BlockPos pos : BlockPos.getAllInBox(min, max)) {
-            if (world.getBlockState(pos).getBlock() instanceof ILaserTargetBlock) {
-                TileEntity tile = world.getTileEntity(pos);
-                if (tile instanceof ILaserTarget) {
-                    ILaserTarget target = (ILaserTarget) tile;
+        List<BlockPos> possible = new ArrayList<>();
 
-                    if (target.requiresLaserPower()) {
-                        targetPoses.add(pos);
+        VolumeUtil.iterateCone(world, pos, face, 6, true, (w, s, p, visible) -> {
+            if (!visible) {
+                return;
+            }
+            IBlockState stateAt = world.getBlockState(p);
+            if (stateAt.getBlock() instanceof ILaserTargetBlock) {
+                TileEntity tileAt = world.getTileEntity(p);
+                if (tileAt instanceof ILaserTarget) {
+                    ILaserTarget targetAt = (ILaserTarget) tileAt;
+                    if (targetAt.requiresLaserPower()) {
+                        possible.add(p);
                     }
                 }
             }
-        }
+        });
 
-        if (targetPoses.isEmpty()) {
+        if (possible.isEmpty()) {
+            targetPos = null;
             return;
         }
 
-        targetPos = targetPoses.get(world.rand.nextInt(targetPoses.size()));
+        targetPos = possible.get(world.rand.nextInt(possible.size()));
     }
 
     private ILaserTarget getTarget() {
@@ -231,5 +238,11 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         return new Box(this).extendToEncompass(targetPos).getBoundingBox();
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IDetachedRenderer getDebugRenderer() {
+        return AdvDebuggerLaser.getForTile(this);
     }
 }
