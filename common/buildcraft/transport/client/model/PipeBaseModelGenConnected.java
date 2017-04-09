@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
-import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTransclucentKey;
+import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;
 
 public enum PipeBaseModelGenConnected implements IPipeBaseModelGen {
     INSTANCE;
@@ -36,7 +36,7 @@ public enum PipeBaseModelGenConnected implements IPipeBaseModelGen {
     // Models
 
     @Override
-    public List<BakedQuad> generateTranslucent(PipeBaseTransclucentKey key) {
+    public List<BakedQuad> generateTranslucent(PipeBaseTranslucentKey key) {
         return PipeBaseModelGenStandard.INSTANCE.generateTranslucent(key);
     }
 

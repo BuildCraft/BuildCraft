@@ -17,7 +17,7 @@ public class PipeModelCacheBase {
     public static IPipeBaseModelGen generator = PipeBaseModelGenStandard.INSTANCE;
 
     static final IModelCache<PipeBaseCutoutKey> cacheCutout;
-    static final IModelCache<PipeBaseTransclucentKey> cacheTranslucent;
+    static final IModelCache<PipeBaseTranslucentKey> cacheTranslucent;
 
     static {
         cacheCutout = new ModelCache<>(PipeModelCacheBase::generateCutout);
@@ -28,7 +28,7 @@ public class PipeModelCacheBase {
         return generator.generateCutout(key);
     }
 
-    private static List<BakedQuad> generateTranslucent(PipeBaseTransclucentKey key) {
+    private static List<BakedQuad> generateTranslucent(PipeBaseTranslucentKey key) {
         return generator.generateTranslucent(key);
     }
 
@@ -71,12 +71,12 @@ public class PipeModelCacheBase {
         }
     }
 
-    public static final class PipeBaseTransclucentKey {
+    public static final class PipeBaseTranslucentKey {
         public final EnumDyeColor colour;
         public final float[] connections;
         private final int hashCode;
 
-        public PipeBaseTransclucentKey(PipeModelKey key) {
+        public PipeBaseTranslucentKey(PipeModelKey key) {
             this.colour = key.colour;
             if (colour == null) {
                 connections = null;
@@ -100,8 +100,8 @@ public class PipeModelCacheBase {
         public boolean equals(Object obj) {
             if (this == obj) return true;
             if (obj == null) return false;
-            if (!(obj instanceof PipeBaseTransclucentKey)) return false;
-            PipeBaseTransclucentKey other = (PipeBaseTransclucentKey) obj;
+            if (!(obj instanceof PipeBaseTranslucentKey)) return false;
+            PipeBaseTranslucentKey other = (PipeBaseTranslucentKey) obj;
             /* If we don't have any translucency and neither does the other then we don't care what the other variables
              * are and are considered equal to the other one. */
             if (!shouldRender() && !other.shouldRender()) return true;

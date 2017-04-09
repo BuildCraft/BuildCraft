@@ -31,7 +31,7 @@ import buildcraft.lib.client.sprite.AtlasSpriteVariants;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
-import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTransclucentKey;
+import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;
 
 public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
     INSTANCE;
@@ -203,7 +203,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
     }
 
     @Override
-    public List<BakedQuad> generateTranslucent(PipeBaseTransclucentKey key) {
+    public List<BakedQuad> generateTranslucent(PipeBaseTranslucentKey key) {
         if (!key.shouldRender()) return ImmutableList.of();
         List<MutableQuad> quads = new ArrayList<>();
         TextureAtlasSprite sprite = BCTransportSprites.PIPE_COLOUR.getSprite();

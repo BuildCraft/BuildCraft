@@ -11,7 +11,7 @@ import buildcraft.lib.client.model.IModelCache;
 import buildcraft.lib.client.model.ModelCacheJoiner;
 import buildcraft.lib.client.model.ModelCacheJoiner.ModelKeyWrapper;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
-import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTransclucentKey;
+import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;
 import buildcraft.transport.client.model.PipeModelCachePluggable.PluggableKey;
 import buildcraft.transport.tile.TilePipeHolder;
 
@@ -86,17 +86,17 @@ public class PipeModelCacheAll {
     }
 
     public static class PipeAllTranslucentKey {
-        private final PipeBaseTransclucentKey translucent;
+        private final PipeBaseTranslucentKey translucent;
         private final PluggableKey pluggable;
         private final int hash;
 
         public PipeAllTranslucentKey(TilePipeHolder tile) {
-            translucent = new PipeBaseTransclucentKey(tile.getPipe().getModel());
+            translucent = new PipeBaseTranslucentKey(tile.getPipe().getModel());
             this.pluggable = new PluggableKey(BlockRenderLayer.TRANSLUCENT, tile);
             hash = Objects.hash(translucent, pluggable);
         }
 
-        public PipeBaseTransclucentKey getBaseTranslucent() {
+        public PipeBaseTranslucentKey getBaseTranslucent() {
             return translucent;
         }
 

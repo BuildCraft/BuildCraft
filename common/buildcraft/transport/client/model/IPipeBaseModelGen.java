@@ -10,14 +10,14 @@ import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.config.DetailedConfigOption;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
-import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTransclucentKey;
+import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;
 
 public interface IPipeBaseModelGen {
     public static final DetailedConfigOption OPTION_INSIDE_COLOUR_MULT = new DetailedConfigOption("render.pipe.misc.inside.shade", "0.725");
 
     List<BakedQuad> generateCutout(PipeBaseCutoutKey key);
 
-    List<BakedQuad> generateTranslucent(PipeBaseTransclucentKey key);
+    List<BakedQuad> generateTranslucent(PipeBaseTranslucentKey key);
 
     /** Gets a sprite that can be baked into the item model. */
     TextureAtlasSprite getItemSprite(PipeDefinition def, int index);
