@@ -23,13 +23,6 @@ import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
 
 public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public static final BuildCraftProperty<Boolean> CONNECTED_UP = BuildCraftProperties.CONNECTED_UP;
-    public static final BuildCraftProperty<Boolean> CONNECTED_DOWN = BuildCraftProperties.CONNECTED_DOWN;
-    public static final BuildCraftProperty<Boolean> CONNECTED_EAST = BuildCraftProperties.CONNECTED_EAST;
-    public static final BuildCraftProperty<Boolean> CONNECTED_WEST = BuildCraftProperties.CONNECTED_WEST;
-    public static final BuildCraftProperty<Boolean> CONNECTED_NORTH = BuildCraftProperties.CONNECTED_NORTH;
-    public static final BuildCraftProperty<Boolean> CONNECTED_SOUTH = BuildCraftProperties.CONNECTED_SOUTH;
-
     public static final Map<EnumFacing, BuildCraftProperty<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;
 
     public BlockChute(Material material, String id) {
@@ -37,7 +30,7 @@ public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing 
     }
 
     @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
+    public TileEntity createNewTileEntity(World world, int meta) {
         return new TileChute();
     }
 
@@ -68,8 +61,11 @@ public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         for (EnumFacing side : EnumFacing.values()) {
-            boolean has = TileChute.hasInventoryAtPosition(world, pos.offset(side), side);
-            state = state.withProperty(CONNECTED_MAP.get(side), has && side != state.getValue(getFacingProperty()));
+            state = state.withProperty(
+                    CONNECTED_MAP.get(side),
+                    side != state.getValue(getFacingProperty()) &&
+                            TileChute.hasInventoryAtPosition(world, pos.offset(side), side)
+            );
         }
         return state;
     }
