@@ -106,6 +106,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     @Override
     protected final void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        GlStateManager.color(1, 1, 1, 1);
         SPRITE_DEBUG.drawAt(0, 0);
         if (debugging) {
             drawRect(0, 0, 16, 16, 0x33_FF_FF_FF);

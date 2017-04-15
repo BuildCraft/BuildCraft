@@ -1,6 +1,8 @@
 package buildcraft.builders.snapshot;
 
-import com.google.gson.*;
+import buildcraft.lib.BCLib;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.reflect.TypeToken;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -9,7 +11,6 @@ import net.minecraft.util.math.BlockPos;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.util.*;
 
 public enum RulesLoader {
@@ -81,5 +82,8 @@ public enum RulesLoader {
         readDomains.add("buildcraftrobotics");
         readDomains.add("buildcraftsilicon");
         readDomains.add("buildcrafttransport");
+        if (!BCLib.DEV) {
+            readDomains.removeIf(domain -> domain.startsWith("buildcraft"));
+        }
     }
 }

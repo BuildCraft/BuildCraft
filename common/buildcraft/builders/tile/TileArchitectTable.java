@@ -220,6 +220,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         snapshot.header.created = new Date();
         snapshot.header.name = name;
         GlobalSavedDataSnapshots.get(world).snapshots.add(snapshot);
+        GlobalSavedDataSnapshots.get(world).markDirty();
         ItemStack stackIn = invBptIn.getStackInSlot(0);
         stackIn.setCount(stackIn.getCount() - 1);
         if (stackIn.getCount() == 0) {

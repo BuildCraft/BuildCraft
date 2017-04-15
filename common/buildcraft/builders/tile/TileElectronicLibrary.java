@@ -126,6 +126,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                     Snapshot snapshot = Snapshot.readFromNBT(buffer.readCompoundTag());
                     snapshot.header.id = UUID.randomUUID();
                     GlobalSavedDataSnapshots.get(world).snapshots.add(snapshot);
+                    GlobalSavedDataSnapshots.get(world).markDirty();
                 }
             }
             if (id == NET_UP) {
@@ -139,6 +140,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                     snapshot.header.id = UUID.randomUUID();
                     invUpIn.setStackInSlot(0, ItemStack.EMPTY);
                     GlobalSavedDataSnapshots.get(world).snapshots.add(snapshot);
+                    GlobalSavedDataSnapshots.get(world).markDirty();
                     invUpOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshot.getType(), snapshot.header));
                 }
             }

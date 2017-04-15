@@ -310,9 +310,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
-//        left.add("cooldown = " + cooldown);
-//        left.add("lastBptPos = " + lastBptPos);
-//        left.add("lastBox = " + lastBox);
+        left.add("battery = " + battery.getDebugString());
         left.add("basePoses = " + (basePoses == null ? "null" : basePoses.size()));
         left.add("currentBasePosIndex = " + currentBasePosIndex);
     }

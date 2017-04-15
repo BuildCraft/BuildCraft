@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Blueprint extends Snapshot {
@@ -36,6 +37,7 @@ public class Blueprint extends Snapshot {
             }
         }
         nbt.setTag("data", NBTUtilBC.writeCompoundList(Stream.of(serializedData).map(SchematicBlock::serializeNBT)));
+        nbt.setTag("entities", NBTUtilBC.writeCompoundList(entities.stream().map(SchematicEntity::serializeNBT)));
         return nbt;
     }
 
@@ -58,6 +60,13 @@ public class Blueprint extends Snapshot {
                 }
             }
         }
+        entities = NBTUtilBC.readCompoundList(nbt.getTagList("entities", Constants.NBT.TAG_COMPOUND))
+                .map(schematicEntityTag -> {
+                    SchematicEntity schematicEntity = new SchematicEntity();
+                    schematicEntity.deserializeNBT(schematicEntityTag);
+                    return schematicEntity;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
