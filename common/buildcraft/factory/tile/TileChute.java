@@ -112,7 +112,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
         EnumFacing currentSide = world.getBlockState(pos).getValue(BlockBCBase_Neptune.BLOCK_FACING_6);
 
         int target = 100000;
-        if (currentSide == EnumFacing.UP.getOpposite()) {
+        if (currentSide == EnumFacing.UP) {
             progress += 1000; // can be free because of gravity
         }
         progress += battery.extractPower(0, target - progress);
