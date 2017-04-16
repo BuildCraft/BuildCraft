@@ -4,19 +4,22 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.tile;
 
-import buildcraft.api.mj.IMjConnector;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.lib.engine.EngineConnector;
-import buildcraft.lib.engine.TileEngineBase_BC8;
-import buildcraft.lib.misc.EntityUtil;
-import buildcraft.lib.misc.MathUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 
+import buildcraft.api.enums.EnumPowerStage;
+import buildcraft.api.mj.IMjConnector;
+import buildcraft.api.mj.MjAPI;
+
+import buildcraft.lib.engine.EngineConnector;
+import buildcraft.lib.engine.TileEngineBase_BC8;
+import buildcraft.lib.misc.EntityUtil;
+import buildcraft.lib.misc.MathUtil;
+
 public class TileEngineCreative extends TileEngineBase_BC8 {
-    public static final long[] outputs = {2, 4, 8, 16, 32, 64, 128, 256};
+    public static final long[] outputs = { 2, 4, 8, 16, 32, 64, 128, 256 };
     public int currentOutputIndex = 0;
 
     @Override
@@ -33,10 +36,15 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
     public boolean isBurning() {
         return isRedstonePowered;
     }
-    
+
     @Override
     public double getPistonSpeed() {
         return 0.16;
+    }
+
+    @Override
+    protected EnumPowerStage computePowerStage() {
+        return EnumPowerStage.BLACK;
     }
 
     @Override

@@ -40,7 +40,7 @@ public class BCEnergyRecipes {
             }
         }
 
-        BuildcraftFuelRegistry.fuel.addFuel(BCEnergyFluids.oil, 3 * MjAPI.MJ, 5000);
+        BuildcraftFuelRegistry.fuel.addFuel(BCEnergyFluids.crudeOil[0], 3 * MjAPI.MJ, 5000);
 
         BuildcraftFuelRegistry.coolant.addCoolant(FluidRegistry.WATER, 0.0023f);
         BuildcraftFuelRegistry.coolant.addSolidCoolant(new ItemStack(Blocks.ICE), new FluidStack(FluidRegistry.WATER, 1000), 1.5f);

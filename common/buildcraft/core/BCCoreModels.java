@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumPowerStage;
 
+import buildcraft.core.tile.TileEngineCreative;
 import buildcraft.core.tile.TileEngineRedstone_BC8;
 import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.ModelItemSimple;
@@ -56,14 +57,21 @@ public class BCCoreModels {
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent event) {
         IRegistry<ModelResourceLocation, IBakedModel> modelRegistry = event.getModelRegistry();
-        List<BakedQuad> quads = new ArrayList<>();
         ENGINE_PROGRESS.value = 0.2;
         ENGINE_STAGE.value = EnumPowerStage.BLUE.getModelName();
         ENGINE_FACING.value = EnumFacing.UP.getName();
+        List<BakedQuad> quads = new ArrayList<>();
         for (MutableQuad quad : ENGINE_REDSTONE.getCutoutQuads()) {
             quads.add(quad.toBakedItem());
         }
         registerModel(modelRegistry, EnumEngineType.WOOD.getItemModelLocation() + "#inventory", new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK));
+
+        quads = new ArrayList<>();
+        ENGINE_STAGE.value = EnumPowerStage.BLACK.getModelName();
+        for (MutableQuad quad : ENGINE_CREATIVE.getCutoutQuads()) {
+            quads.add(quad.toBakedItem());
+        }
+        registerModel(modelRegistry, EnumEngineType.CREATIVE.getItemModelLocation() + "#inventory", new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK));
     }
 
     private static void registerModel(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, String reg, IBakedModel val) {
@@ -81,7 +89,7 @@ public class BCCoreModels {
         return getEngineQuads(ENGINE_REDSTONE, tile, partialTicks);
     }
 
-    public static final MutableQuad[] getCreativeEngineQuads(TileEngineBase_BC8 tile, float partialTicks) {
+    public static final MutableQuad[] getCreativeEngineQuads(TileEngineCreative tile, float partialTicks) {
         return getEngineQuads(ENGINE_CREATIVE, tile, partialTicks);
     }
 }

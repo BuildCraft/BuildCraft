@@ -72,6 +72,7 @@ public abstract class BCEnergyProxy implements IGuiHandler {
         @Override
         public void fmlPreInit() {
             BCEnergyModels.fmlPreInit();
+            BCEnergySprites.fmlPreInit();
         }
 
         @Override

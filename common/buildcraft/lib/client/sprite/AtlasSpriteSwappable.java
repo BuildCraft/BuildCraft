@@ -72,13 +72,13 @@ public abstract class AtlasSpriteSwappable extends TextureAtlasSprite {
         return false;
     }
 
-    public static TextureAtlasSprite loadSprite(String name, ResourceLocation location, boolean careIfMissing) {
+    public static AtlasSpriteDirect loadSprite(String name, ResourceLocation location, boolean careIfMissing) {
         return loadSprite(Minecraft.getMinecraft().getResourceManager(), name, location, careIfMissing);
     }
 
-    public static TextureAtlasSprite loadSprite(IResourceManager manager, String name, ResourceLocation location, boolean careIfMissing) {
+    public static AtlasSpriteDirect loadSprite(IResourceManager manager, String name, ResourceLocation location, boolean careIfMissing) {
         // Load the initial variant
-        TextureAtlasSprite sprite = new AtlasSpriteDirect(name);
+        AtlasSpriteDirect sprite = new AtlasSpriteDirect(name);
         try {
             // Copied almost directly from TextureMap.
             PngSizeInfo pngsizeinfo = PngSizeInfo.makeFromResource(manager.getResource(location));
@@ -86,15 +86,15 @@ public abstract class AtlasSpriteSwappable extends TextureAtlasSprite {
                 boolean flag = iresource.getMetadata("animation") != null;
                 sprite.loadSprite(pngsizeinfo, flag);
                 sprite.loadSpriteFrames(iresource, Minecraft.getMinecraft().gameSettings.mipmapLevels + 1);
+                return sprite;
             }
-        } catch (IOException e) {
+        } catch (IOException io) {
             if (careIfMissing) {
                 // Do the same as forge - track the missing texture for later rather than printing out the error.
                 FMLClientHandler.instance().trackMissingTexture(location);
             }
             return null;
         }
-        return sprite;
     }
 
     @Override
@@ -113,6 +113,9 @@ public abstract class AtlasSpriteSwappable extends TextureAtlasSprite {
 
     @Override
     public int getFrameCount() {
+        if (current == null) {
+            return 0;
+        }
         return current.getFrameCount();
     }
 
@@ -128,6 +131,9 @@ public abstract class AtlasSpriteSwappable extends TextureAtlasSprite {
 
     @Override
     public int[][] getFrameTextureData(int index) {
+        if (current == null) {
+            return new int[1][1];
+        }
         return current.getFrameTextureData(index);
     }
 

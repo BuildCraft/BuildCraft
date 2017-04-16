@@ -6,10 +6,13 @@ import java.util.List;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.registry.IRegistry;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.model.ModelFluid;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -26,6 +29,7 @@ import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.fluid.BCFluid;
 
 public class BCEnergyModels {
 
@@ -72,6 +76,12 @@ public class BCEnergyModels {
             quads.add(quad.toBakedItem());
         }
         registerModel(modelRegistry, EnumEngineType.IRON.getItemModelLocation() + "#inventory", new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK));
+
+        for (BCFluid fluid : BCEnergyFluids.allFluids) {
+            String mrl = "buildcraftenergy:fluid_block_" + fluid.getBlockName();
+            ModelFluid mdl = new ModelFluid(fluid);
+            registerModel(modelRegistry, mrl, mdl.bake(mdl.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter()));
+        }
     }
 
     private static void registerModel(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, String reg, IBakedModel val) {

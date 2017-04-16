@@ -24,17 +24,18 @@ public class FluidManager {
     }
 
     public static <F extends BCFluid> F register(F fluid, boolean force) {
-        if (true) {// TODO: Replace with config check for registration
+        if (force || true) {// TODO: Replace with config check for registration
             FluidRegistry.registerFluid(fluid);
 
             Material material = new BCMaterialFluid(fluid.getMapColour(), fluid.isFlammable());
             Block block = new BCFluidBlock(fluid, material);
-            block.setRegistryName(Loader.instance().activeModContainer().getModId(), "fluid_block_" + fluid.getName());
-            block.setUnlocalizedName("blockFluid_" + fluid.getName());
+            block.setRegistryName(Loader.instance().activeModContainer().getModId(), "fluid_block_" + fluid.getBlockName());
+            block.setUnlocalizedName("blockFluid_" + fluid.getBlockName());
             block.setLightOpacity(fluid.getLightOpacity());
             GameRegistry.register(block);
             GameRegistry.register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
             fluid.setBlock(block);
+            FluidRegistry.addBucketForFluid(fluid);
             BCLibProxy.getProxy().postRegisterFluid(fluid);
             return fluid;
         }
@@ -43,11 +44,10 @@ public class FluidManager {
 
     @SideOnly(Side.CLIENT)
     public static void postRegisterFluid(BCFluid fluid) {
-        ModelResourceLocation modelLocation = new ModelResourceLocation(Loader.instance().activeModContainer().getModId() + ":fluids", fluid.getName());
+        ModelResourceLocation modelLocation = new ModelResourceLocation(Loader.instance().activeModContainer().getModId() + ":fluid_" + fluid.getName());
         Item item = ItemBlock.getItemFromBlock(fluid.getBlock());
         ModelBakery.registerItemVariants(item);
         ModelLoader.setCustomMeshDefinition(item, stack -> modelLocation);
         ModelLoader.setCustomStateMapper(fluid.getBlock(), new StateMap.Builder().ignore(BlockFluidBase.LEVEL).build());
-        FluidRegistry.addBucketForFluid(fluid);
     }
 }

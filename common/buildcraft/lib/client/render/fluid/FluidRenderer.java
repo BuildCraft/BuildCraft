@@ -60,12 +60,18 @@ public class FluidRenderer {
             fluidSprites.get(type).clear();
         }
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
-            TextureAtlasSprite stillSprite = map.registerSprite(fluid.getStill());
-            fluidSprites.get(FluidSpriteType.STILL).put(fluid, stillSprite);
+            SpriteFluidFrozen spriteFrozen = new SpriteFluidFrozen(fluid.getStill());
+            if (!map.setTextureEntry(spriteFrozen)) {
+                throw new IllegalStateException("Failed to set the frozen variant of " + fluid.getStill() + "!");
+            }
+            fluidSprites.get(FluidSpriteType.FROZEN).put(fluid, spriteFrozen);
+        }
+    }
+
+    public static void onTextureStitchPost(TextureMap map) {
+        for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
+            fluidSprites.get(FluidSpriteType.STILL).put(fluid, map.registerSprite(fluid.getStill()));
             fluidSprites.get(FluidSpriteType.FLOWING).put(fluid, map.registerSprite(fluid.getFlowing()));
-            SpriteFluidFrozen sproteFrozen = new SpriteFluidFrozen(stillSprite);
-            map.setTextureEntry(sproteFrozen);
-            fluidSprites.get(FluidSpriteType.FROZEN).put(fluid, sproteFrozen);
         }
     }
 

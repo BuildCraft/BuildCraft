@@ -12,19 +12,16 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.BCLog;
 
+import buildcraft.lib.misc.SpriteUtil;
+
 public class SpriteFluidFrozen extends TextureAtlasSprite {
     /** The source sprite of this fluid. */
-    public final TextureAtlasSprite src;
+    public final ResourceLocation srcLocation;
     private int[][] data = null;
 
-    public SpriteFluidFrozen(TextureAtlasSprite src) {
-        super("buildcraftlib:fluid_" + src.getIconName().replace(':', '_') + "_convert_frozen");
-        this.src = src;
-    }
-
-    private static ResourceLocation getResourceLocation(TextureAtlasSprite src) {
-        ResourceLocation resourcelocation = new ResourceLocation(src.getIconName());
-        return new ResourceLocation(resourcelocation.getResourceDomain(), String.format("%s/%s%s", "textures", resourcelocation.getResourcePath(), ".png"));
+    public SpriteFluidFrozen(ResourceLocation srcLocation) {
+        super("buildcraftlib:fluid_" + srcLocation.toString().replace(':', '_') + "_convert_frozen");
+        this.srcLocation = srcLocation;
     }
 
     @Override
@@ -34,8 +31,14 @@ public class SpriteFluidFrozen extends TextureAtlasSprite {
 
     @Override
     public boolean load(IResourceManager manager, ResourceLocation location) {
+        location = SpriteUtil.transformLocation(srcLocation);
+        TextureAtlasSprite src = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(srcLocation.toString());
+        if (src == null) {
+            BCLog.logger.warn("[lib.fluid] Failed to create a frozen sprite of " + srcLocation.toString() + " as the source sprite wasn't able to be loaded!");
+            return true;
+        }
+
         if (src.getFrameCount() <= 0) {
-            location = getResourceLocation(src);
             if (src.hasCustomLoader(manager, location)) {
                 src.load(manager, location);
             } else {
@@ -49,6 +52,10 @@ public class SpriteFluidFrozen extends TextureAtlasSprite {
                     io.printStackTrace();
                 }
             }
+        }
+        
+        if (location.toString().contains("water")) {
+            BCLog.logger.info(src);
         }
 
         if (src.getFrameCount() > 0) {

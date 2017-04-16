@@ -148,7 +148,7 @@ public final class OilPopulate {
 
                         if (distance <= radiusSq) {
                             BlockPos pos = new BlockPos(poolX + wellX, poolY + wellY, poolZ + wellZ);
-                            world.setBlockState(pos, BCEnergyFluids.oil.getBlock().getDefaultState(), distance == radiusSq ? 3 : 2);
+                            world.setBlockState(pos, BCEnergyFluids.crudeOil[0].getBlock().getDefaultState(), distance == radiusSq ? 3 : 2);
                         }
                     }
                 }
@@ -184,7 +184,7 @@ public final class OilPopulate {
                 state = state.withProperty(BuildCraftProperties.SPRING_TYPE, EnumSpring.OIL);
                 world.setBlockState(well, state, 3);
             } // TODO: reanimate
-            IBlockState oil = BCEnergyFluids.oil.getBlock().getDefaultState();
+            IBlockState oil = BCEnergyFluids.crudeOil[0].getBlock().getDefaultState();
             for (int y = 1; y <= maxHeight - baseY; ++y) {
                 world.setBlockState(well.up(y), oil, 3);
             }
@@ -266,7 +266,7 @@ public final class OilPopulate {
 
     private boolean isOil(World world, int x, int y, int z) {
         Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
-        return block == BCEnergyFluids.oil.getBlock();
+        return block == BCEnergyFluids.crudeOil[0].getBlock();
     }
 
     @SuppressWarnings("unchecked")
@@ -325,7 +325,7 @@ public final class OilPopulate {
             }
             BlockPos pos = new BlockPos(x, y, z);
             if (isReplaceableFluid(world, pos) || world.isSideSolid(pos.down(), EnumFacing.UP)) {
-                world.setBlockState(pos, BCEnergyFluids.oil.getBlock().getDefaultState(), update);
+                world.setBlockState(pos, BCEnergyFluids.crudeOil[0].getBlock().getDefaultState(), update);
             } else {
                 return;
             }
@@ -338,7 +338,7 @@ public final class OilPopulate {
                 if (isReplaceableFluid(world, down) || !world.isSideSolid(down.down(), EnumFacing.UP)) {
                     return;
                 }
-                world.setBlockState(down, BCEnergyFluids.oil.getBlock().getDefaultState(), 2);
+                world.setBlockState(down, BCEnergyFluids.crudeOil[0].getBlock().getDefaultState(), 2);
             }
         }
     }

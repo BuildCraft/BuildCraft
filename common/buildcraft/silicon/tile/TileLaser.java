@@ -58,7 +58,6 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         EnumFacing face = state.getValue(BuildCraftProperties.BLOCK_FACING_6);
 
         List<BlockPos> possible = new ArrayList<>();
-
         VolumeUtil.iterateCone(world, pos, face, 6, true, (w, s, p, visible) -> {
             if (!visible) {
                 return;

@@ -11,6 +11,7 @@ import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+/** Provides methods for iterating over a specific volume in a world. */
 public class VolumeUtil {
     public static void iterateCone(World world, BlockPos start, EnumFacing direction, int distance, boolean edges, VolumeIterator iter) {
         Cone cone = edges ? Cone.SQUARE : Cone.SQUARE;
