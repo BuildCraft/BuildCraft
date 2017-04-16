@@ -176,8 +176,8 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
                         tileEntity.rotate(tileRotation);
                     }
                 }
-                return true;
             }
+            return true;
         }
         return false;
     }

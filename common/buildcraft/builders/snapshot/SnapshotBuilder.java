@@ -215,7 +215,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                         Math.min(target - placeTask.power, tile.getBattery().getStored() / placeTasks.size())
                 );
                 if (placeTask.power >= target) {
-                    if (doPlaceTask(placeTask)) {
+                    if (!doPlaceTask(placeTask)) {
                         tile.getBattery().addPower(
                                 Math.min(target, tile.getBattery().getCapacity() - tile.getBattery().getStored()),
                                 false

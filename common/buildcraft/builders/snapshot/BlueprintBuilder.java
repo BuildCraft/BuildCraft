@@ -7,6 +7,7 @@ import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fluids.FluidStack;
@@ -91,9 +92,19 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                             )
                                     ),
                             StackUtil.mergeSameFluids(requiredFluids).stream()
-                                    .map(stack -> tile.getTankManager().drain(stack, true))
-                                    .map(FluidStack::getFluid)
-                                    .map(BlockUtil::getBucketFromFluid)
+                                    .map(fluidStack -> tile.getTankManager().drain(fluidStack, true))
+                                    .map(fluidStack -> {
+                                        ItemStack stack = BlockUtil.getBucketFromFluid(fluidStack.getFluid());
+                                        if (!stack.hasTagCompound()) {
+                                            stack.setTagCompound(new NBTTagCompound());
+                                        }
+                                        // noinspection ConstantConditions
+                                        stack.getTagCompound().setTag(
+                                                "BuilderFluidStack",
+                                                fluidStack.writeToNBT(new NBTTagCompound())
+                                        );
+                                        return stack;
+                                    })
                     ).collect(Collectors.toList())
             );
         } else {
@@ -132,7 +143,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                         BlockUtil.getFluidWithFlowing(
                                                 getBuildingInfo().toPlace.get(blockPos).blockState.getBlock()
                                         ) != null &&
-                                                BlockUtil.getFluidWithFlowing(tile.getWorldBC(), blockPos) != null
+                                                BlockUtil.getFluidWithFlowing(tile.getWorldBC(), blockPos) != null &&
+                                                BlockUtil.getFluid(tile.getWorldBC(), blockPos) == null
                                 )
                 );
     }
@@ -145,7 +157,16 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     protected void cancelPlaceTask(PlaceTask placeTask) {
-        placeTask.items.forEach(item -> tile.getInvResources().insert(item, false, false));
+        // noinspection ConstantConditions
+        placeTask.items.stream()
+                .filter(stack -> !stack.hasTagCompound() || !stack.getTagCompound().hasKey("BuilderFluidStack"))
+                .forEach(stack -> tile.getInvResources().insert(stack, false, false));
+        // noinspection ConstantConditions
+        placeTask.items.stream()
+                .filter(stack -> stack.hasTagCompound() && stack.getTagCompound().hasKey("BuilderFluidStack"))
+                .map(stack -> stack.getTagCompound().getCompoundTag("BuilderFluidStack"))
+                .map(FluidStack::loadFluidStackFromNBT)
+                .forEach(stack -> tile.getTankManager().fill(stack, true));
     }
 
     @Override
@@ -169,7 +190,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     protected boolean doPlaceTask(PlaceTask placeTask) {
-        return !(getBuildingInfo() == null || getBuildingInfo().toPlace.get(placeTask.pos) == null) &&
+        return getBuildingInfo() != null &&
+                getBuildingInfo().toPlace.get(placeTask.pos) != null &&
                 getBuildingInfo().toPlace.get(placeTask.pos).build(tile.getWorldBC(), placeTask.pos);
     }
 
