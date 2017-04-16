@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fluids.FluidStack;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
 import java.util.*;
@@ -164,9 +165,15 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         // noinspection ConstantConditions
         placeTask.items.stream()
                 .filter(stack -> stack.hasTagCompound() && stack.getTagCompound().hasKey("BuilderFluidStack"))
-                .map(stack -> stack.getTagCompound().getCompoundTag("BuilderFluidStack"))
-                .map(FluidStack::loadFluidStackFromNBT)
-                .forEach(stack -> tile.getTankManager().fill(stack, true));
+                .map(stack -> Pair.of(stack.getCount(), stack.getTagCompound().getCompoundTag("BuilderFluidStack")))
+                .map(countNbt -> {
+                    FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(countNbt.getRight());
+                    if (fluidStack != null) {
+                        fluidStack.amount *= countNbt.getLeft();
+                    }
+                    return fluidStack;
+                })
+                .forEach(fluidStack -> tile.getTankManager().fill(fluidStack, true));
     }
 
     @Override
