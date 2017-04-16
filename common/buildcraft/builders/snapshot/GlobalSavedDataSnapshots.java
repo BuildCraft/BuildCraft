@@ -29,7 +29,6 @@ public class GlobalSavedDataSnapshots {
                 throw new IllegalArgumentException();
             }
             readSnapshots();
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -17,7 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class SchematicBlock implements INBTSerializable<NBTTagCompound> {
     public Block placeBlock;
     public Set<Block> canBeReplacedWithBlocks = new HashSet<>();
     public List<ItemStack> requiredItems = new ArrayList<>();
-    public List<Fluid> requiredFluids = new ArrayList<>();
+    public List<FluidStack> requiredFluids = new ArrayList<>();
 
     @Override
     public NBTTagCompound serializeNBT() {

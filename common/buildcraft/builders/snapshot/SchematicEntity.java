@@ -13,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class SchematicEntity implements INBTSerializable<NBTTagCompound> {
     public EnumFacing hangingFacing;
     public Rotation entityRotation = Rotation.NONE;
     public List<ItemStack> requiredItems = new ArrayList<>();
-    public List<Fluid> requiredFluids = new ArrayList<>();
+    public List<FluidStack> requiredFluids = new ArrayList<>();
 
     @Override
     public NBTTagCompound serializeNBT() {

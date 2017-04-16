@@ -18,7 +18,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.util.*;
@@ -328,9 +328,9 @@ public class SchematicBlockFactory {
             Set<JsonRule> rules,
             SchematicBlock schematicBlock
     ) {
-        List<Fluid> requiredFluids = new ArrayList<>();
-        if (BlockUtil.getFluid(world, pos) != null) {
-            requiredFluids.add(BlockUtil.getFluid(world, pos));
+        List<FluidStack> requiredFluids = new ArrayList<>();
+        if (BlockUtil.drainBlock(world, pos, false) != null) {
+            requiredFluids.add(BlockUtil.drainBlock(world, pos, false));
         }
         schematicBlock.requiredFluids = requiredFluids;
         return true;
