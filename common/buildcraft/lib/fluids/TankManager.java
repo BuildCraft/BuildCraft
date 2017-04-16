@@ -11,11 +11,8 @@ import java.util.List;
 import com.google.common.collect.ForwardingList;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
@@ -26,11 +23,8 @@ import buildcraft.api.core.IFluidHandlerAdv;
 
 import buildcraft.lib.net.PacketBufferBC;
 
-import io.netty.buffer.ByteBuf;
-
 /** Provides a simple way to save+load and send+receive data for any number of tanks. This also attempts to fill all of
- * the tanks one by one via the {@link #fill(FluidStack, boolean)} and
- * {@link #drain(FluidStack, boolean)} methods. */
+ * the tanks one by one via the {@link #fill(FluidStack, boolean)} and {@link #drain(FluidStack, boolean)} methods. */
 public class TankManager<T extends Tank> extends ForwardingList<T> implements IFluidHandlerAdv, INBTSerializable<NBTTagCompound> {
 
     private List<T> tanks = new ArrayList<>();
@@ -48,13 +42,18 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 
     @Override
     public int fill(FluidStack resource, boolean doFill) {
+        int filled = 0;
         for (Tank tank : tanks) {
             int used = tank.fill(resource, doFill);
             if (used > 0) {
-                return used;
+                resource.amount -= used;
+                filled += used;
+                if (resource.amount <= 0) {
+                    return filled;
+                }
             }
         }
-        return 0;
+        return filled;
     }
 
     @Override
@@ -62,27 +61,40 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
         if (resource == null) {
             return null;
         }
+        FluidStack draining = new FluidStack(resource, 0);
+        int left = resource.amount;
         for (Tank tank : tanks) {
-            if (!resource.isFluidEqual(tank.getFluid())) {
+            if (!draining.isFluidEqual(tank.getFluid())) {
                 continue;
             }
-            FluidStack drained = tank.drain(resource.amount, doDrain);
+            FluidStack drained = tank.drain(left, doDrain);
             if (drained != null && drained.amount > 0) {
-                return drained;
+                draining.amount += drained.amount;
+                left -= drained.amount;
             }
         }
-        return null;
+        return draining.amount <= 0 ? null : draining;
     }
 
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain) {
+        FluidStack draining = null;
         for (Tank tank : tanks) {
-            FluidStack drained = tank.drain(maxDrain, doDrain);
-            if (drained != null && drained.amount > 0) {
-                return drained;
+            if (draining == null) {
+                FluidStack drained = tank.drain(maxDrain, doDrain);
+                if (drained != null && drained.amount > 0) {
+                    draining = drained;
+                    maxDrain -= drained.amount;
+                }
+            } else if (draining.isFluidEqual(tank.getFluid())) {
+                FluidStack drained = tank.drain(maxDrain, doDrain);
+                if (drained != null && drained.amount > 0) {
+                    draining.amount += drained.amount;
+                    maxDrain -= drained.amount;
+                }
             }
         }
-        return null;
+        return draining;
     }
 
     @Override
@@ -90,16 +102,26 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
         if (filter == null) {
             return null;
         }
+        FluidStack draining = null;
         for (Tank tank : tanks) {
             if (!filter.matches(tank.getFluid())) {
                 continue;
             }
-            FluidStack drained = tank.drain(maxDrain, doDrain);
-            if (drained != null && drained.amount > 0) {
-                return drained;
+            if (draining == null) {
+                FluidStack drained = tank.drain(maxDrain, doDrain);
+                if (drained != null && drained.amount > 0) {
+                    draining = drained;
+                    maxDrain -= drained.amount;
+                }
+            } else if (draining.isFluidEqual(tank.getFluid())) {
+                FluidStack drained = tank.drain(maxDrain, doDrain);
+                if (drained != null && drained.amount > 0) {
+                    draining.amount += drained.amount;
+                    maxDrain -= drained.amount;
+                }
             }
         }
-        return null;
+        return draining;
     }
 
     @Override
