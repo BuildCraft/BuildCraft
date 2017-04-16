@@ -1,6 +1,5 @@
 package buildcraft.builders.snapshot;
 
-import buildcraft.lib.misc.NBTUtilBC;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -30,7 +29,6 @@ public class GlobalSavedDataSnapshots {
                 throw new IllegalArgumentException();
             }
             readSnapshots();
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

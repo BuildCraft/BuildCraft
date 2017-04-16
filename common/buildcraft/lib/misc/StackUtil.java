@@ -1,6 +1,8 @@
 package buildcraft.lib.misc;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -13,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.items.IList;
@@ -355,9 +358,41 @@ public class StackUtil {
         return stack.serializeNBT().hashCode();
     }
 
-    /** Should be inlined EVERYWHERE that this is called. */
-    @Deprecated
-    public static boolean isInvalid(@Nonnull ItemStack stack) {
-        return stack.isEmpty();
+    public static List<ItemStack> mergeSameItems(List<ItemStack> items) {
+        List<ItemStack> stacks = new ArrayList<>();
+        items.forEach(toAdd -> {
+            boolean found = false;
+            for (ItemStack stack : stacks) {
+                if (StackUtil.canMerge(stack, toAdd)) {
+                    stack.setCount(stack.getCount() + toAdd.getCount());
+                    found = true;
+                }
+            }
+            if (!found) {
+                stacks.add(toAdd.copy());
+            }
+        });
+        return stacks;
+    }
+
+    public static List<FluidStack> mergeSameFluids(List<FluidStack> fluids) {
+        List<FluidStack> stacks = new ArrayList<>();
+        fluids.forEach(toAdd -> {
+            boolean found = false;
+            for (FluidStack stack : stacks) {
+                if (stack.isFluidEqual(toAdd)) {
+                    stack.amount += toAdd.amount;
+                    found = true;
+                }
+            }
+            if (!found) {
+                stacks.add(toAdd.copy());
+            }
+        });
+        return stacks;
+    }
+
+    public static boolean areFluidStackEqual(FluidStack a, FluidStack b) {
+        return (a == null && b == null) || (a != null && a.isFluidEqual(b) && a.amount == b.amount);
     }
 }

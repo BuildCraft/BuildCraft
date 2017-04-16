@@ -214,6 +214,9 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                 }
                 currentBox.writeData(buffer);
             }
+            if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
+                tankManager.writeData(buffer);
+            }
         }
     }
 
@@ -238,6 +241,9 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                     snapshotType = null;
                 }
                 currentBox.readData(buffer);
+            }
+            if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
+                tankManager.readData(buffer);
             }
         }
     }
@@ -310,9 +316,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
-//        left.add("cooldown = " + cooldown);
-//        left.add("lastBptPos = " + lastBptPos);
-//        left.add("lastBox = " + lastBox);
+        left.add("battery = " + battery.getDebugString());
         left.add("basePoses = " + (basePoses == null ? "null" : basePoses.size()));
         left.add("currentBasePosIndex = " + currentBasePosIndex);
     }
@@ -345,5 +349,10 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     @Override
     public IItemTransactor getInvResources() {
         return invResources;
+    }
+
+    @Override
+    public TankManager<Tank> getTankManager() {
+        return tankManager;
     }
 }

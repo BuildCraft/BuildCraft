@@ -4,10 +4,16 @@ import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.tile.TileBuilder;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
+import buildcraft.lib.gui.widget.WidgetFluidTank;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
+    public final List<WidgetFluidTank> widgetTanks;
+
     public ContainerBuilder(EntityPlayer player, TileBuilder tile) {
         super(player, tile);
 
@@ -25,6 +31,11 @@ public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
                 addSlotToContainer(new SlotBase(tile.invResources, sx + sy * 9, 8 + sx * 18, 72 + sy * 18));
             }
         }
+
+        widgetTanks = tile.getTankManager().stream()
+                .map(tank -> new WidgetFluidTank(this, tank))
+                .map(this::addWidget)
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -11,7 +11,6 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -19,7 +18,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.util.*;
@@ -329,9 +328,9 @@ public class SchematicBlockFactory {
             Set<JsonRule> rules,
             SchematicBlock schematicBlock
     ) {
-        List<Fluid> requiredFluids = new ArrayList<>();
-        if (BlockUtil.getFluid(world, pos) != null) {
-            requiredFluids.add(BlockUtil.getFluid(world, pos));
+        List<FluidStack> requiredFluids = new ArrayList<>();
+        if (BlockUtil.drainBlock(world, pos, false) != null) {
+            requiredFluids.add(BlockUtil.drainBlock(world, pos, false));
         }
         schematicBlock.requiredFluids = requiredFluids;
         return true;

@@ -1,7 +1,7 @@
 package buildcraft.builders.gui;
 
 import buildcraft.builders.snapshot.Snapshot;
-import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -9,11 +9,6 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.builders.container.ContainerBuilder;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Supplier;
 
 public class GuiBuilder extends GuiBC8<ContainerBuilder> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftbuilders:textures/gui/builder.png");
@@ -28,11 +23,30 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
             BLUEPRINT_WIDTH,
             SIZE_Y
     );
+    private static final GuiIcon ICON_TANK_OVERLAY = new GuiIcon(TEXTURE_BLUEPRINT, 0, 54, 16, 47);
 
     public GuiBuilder(ContainerBuilder container) {
         super(container);
         xSize = SIZE_BLUEPRINT_X;
         ySize = SIZE_Y;
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+
+        for (int i = 0; i < container.widgetTanks.size(); i++) {
+            guiElements.add(
+                    container.widgetTanks
+                            .get(i)
+                            .createGuiElement(
+                                    this,
+                                    rootElement,
+                                    new GuiRectangle(179 + i * 18, 145, 16, 47),
+                                    ICON_TANK_OVERLAY
+                            )
+            );
+        }
     }
 
     @Override
@@ -42,7 +56,7 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
         if (container.tile.snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
             int x = 0;
             int y = 0;
-            for (ItemStack stack : container.tile.blueprintBuilder.neededStacks) {
+            for (ItemStack stack : container.tile.blueprintBuilder.remainingDisplayRequired) {
                 int posX = rootElement.getX() + 179 + x * 18;
                 int posY = rootElement.getY() + 18 + y * 18;
                 RenderHelper.enableGUIStandardItemLighting();

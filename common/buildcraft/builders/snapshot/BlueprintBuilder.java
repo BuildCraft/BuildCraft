@@ -7,9 +7,11 @@ import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
 import java.util.*;
@@ -19,7 +21,7 @@ import java.util.stream.Stream;
 
 public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> {
     private static final double MAX_ENTITY_DISTANCE = 0.1D;
-    public List<ItemStack> neededStacks = new ArrayList<>();
+    public List<ItemStack> remainingDisplayRequired = new ArrayList<>();
 
     public BlueprintBuilder(ITileForBlueprintBuilder tile) {
         super(tile);
@@ -53,17 +55,20 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 .orElse(0);
     }
 
-    private Stream<ItemStack> getRequired(List<ItemStack> requiredItems, List<Fluid> requiredFluids) {
+    private Stream<ItemStack> getDisplayRequired(List<ItemStack> requiredItems, List<FluidStack> requiredFluids) {
         return Stream.concat(
                 requiredItems == null ? Stream.empty() : requiredItems.stream(),
                 requiredFluids == null ? Stream.empty() : requiredFluids.stream()
+                        .map(FluidStack::getFluid)
                         .map(BlockUtil::getBucketFromFluid)
         );
     }
 
-    private List<ItemStack> tryExtractRequired(List<ItemStack> requiredItems, List<Fluid> requiredFluids) {
-        List<ItemStack> required = getRequired(requiredItems, requiredFluids).collect(Collectors.toList());
-        if (required.stream()
+    /**
+     * @return return flying item on success, or list with one ItemStack.EMPTY on fail
+     */
+    private List<ItemStack> tryExtractRequired(List<ItemStack> requiredItems, List<FluidStack> requiredFluids) {
+        if (StackUtil.mergeSameItems(requiredItems).stream()
                 .noneMatch(stack ->
                         tile.getInvResources().extract(
                                 extracted -> StackUtil.canMerge(stack, extracted),
@@ -71,17 +76,38 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                 stack.getCount(),
                                 true
                         ).isEmpty()
-                )) {
-            return required.stream()
-                    .map(stack ->
-                            tile.getInvResources().extract(
-                                    extracted -> StackUtil.canMerge(stack, extracted),
-                                    stack.getCount(),
-                                    stack.getCount(),
-                                    false
-                            )
-                    )
-                    .collect(Collectors.toList());
+                ) &&
+                StackUtil.mergeSameFluids(requiredFluids).stream()
+                        .allMatch(stack ->
+                                StackUtil.areFluidStackEqual(stack, tile.getTankManager().drain(stack, false))
+                        )) {
+            return StackUtil.mergeSameItems(
+                    Stream.concat(
+                            requiredItems.stream()
+                                    .map(stack ->
+                                            tile.getInvResources().extract(
+                                                    extracted -> StackUtil.canMerge(stack, extracted),
+                                                    stack.getCount(),
+                                                    stack.getCount(),
+                                                    false
+                                            )
+                                    ),
+                            StackUtil.mergeSameFluids(requiredFluids).stream()
+                                    .map(fluidStack -> tile.getTankManager().drain(fluidStack, true))
+                                    .map(fluidStack -> {
+                                        ItemStack stack = BlockUtil.getBucketFromFluid(fluidStack.getFluid());
+                                        if (!stack.hasTagCompound()) {
+                                            stack.setTagCompound(new NBTTagCompound());
+                                        }
+                                        // noinspection ConstantConditions
+                                        stack.getTagCompound().setTag(
+                                                "BuilderFluidStack",
+                                                fluidStack.writeToNBT(new NBTTagCompound())
+                                        );
+                                        return stack;
+                                    })
+                    ).collect(Collectors.toList())
+            );
         } else {
             return Collections.singletonList(ItemStack.EMPTY);
         }
@@ -118,7 +144,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                         BlockUtil.getFluidWithFlowing(
                                                 getBuildingInfo().toPlace.get(blockPos).blockState.getBlock()
                                         ) != null &&
-                                                BlockUtil.getFluidWithFlowing(tile.getWorldBC(), blockPos) != null
+                                                BlockUtil.getFluidWithFlowing(tile.getWorldBC(), blockPos) != null &&
+                                                BlockUtil.getFluid(tile.getWorldBC(), blockPos) == null
                                 )
                 );
     }
@@ -131,7 +158,22 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     protected void cancelPlaceTask(PlaceTask placeTask) {
-        placeTask.items.forEach(item -> tile.getInvResources().insert(item, false, false));
+        // noinspection ConstantConditions
+        placeTask.items.stream()
+                .filter(stack -> !stack.hasTagCompound() || !stack.getTagCompound().hasKey("BuilderFluidStack"))
+                .forEach(stack -> tile.getInvResources().insert(stack, false, false));
+        // noinspection ConstantConditions
+        placeTask.items.stream()
+                .filter(stack -> stack.hasTagCompound() && stack.getTagCompound().hasKey("BuilderFluidStack"))
+                .map(stack -> Pair.of(stack.getCount(), stack.getTagCompound().getCompoundTag("BuilderFluidStack")))
+                .map(countNbt -> {
+                    FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(countNbt.getRight());
+                    if (fluidStack != null) {
+                        fluidStack.amount *= countNbt.getLeft();
+                    }
+                    return fluidStack;
+                })
+                .forEach(fluidStack -> tile.getTankManager().fill(fluidStack, true));
     }
 
     @Override
@@ -155,7 +197,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     protected boolean doPlaceTask(PlaceTask placeTask) {
-        return !(getBuildingInfo() == null || getBuildingInfo().toPlace.get(placeTask.pos) == null) &&
+        return getBuildingInfo() != null &&
+                getBuildingInfo().toPlace.get(placeTask.pos) != null &&
                 getBuildingInfo().toPlace.get(placeTask.pos).build(tile.getWorldBC(), placeTask.pos);
     }
 
@@ -177,8 +220,6 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             return super.tick();
         }
         return Optional.ofNullable(getBuildingInfo()).map(buildingInfo -> {
-            // Compute needed stacks
-            neededStacks.clear();
             List<Entity> entitiesWithinBox = tile.getWorldBC().getEntitiesWithinAABB(
                     Entity.class,
                     buildingInfo.box.getBoundingBox(),
@@ -192,30 +233,28 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                     .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE)
                     )
                     .collect(Collectors.toList());
-            Stream.concat(
-                    getToPlace().stream()
-                            .filter(blockPos -> !isBlockCorrect(blockPos))
-                            .map(blockPos -> tile.getBlueprintBuildingInfo().toPlace.get(blockPos))
-                            .flatMap(schematicBlock ->
-                                    getRequired(schematicBlock.requiredItems, schematicBlock.requiredFluids)
-                            ),
-                    toSpawn.stream()
-                            .flatMap(schematicEntity ->
-                                    getRequired(schematicEntity.requiredItems, schematicEntity.requiredFluids)
-                            )
-            )
-                    .forEach(toAdd -> {
-                        boolean found = false;
-                        for (ItemStack stack : neededStacks) {
-                            if (StackUtil.canMerge(stack, toAdd)) {
-                                stack.setCount(stack.getCount() + toAdd.getCount());
-                                found = true;
-                            }
-                        }
-                        if (!found) {
-                            neededStacks.add(toAdd.copy());
-                        }
-                    });
+            // Compute needed stacks
+            remainingDisplayRequired.clear();
+            remainingDisplayRequired.addAll(StackUtil.mergeSameItems(
+                    Stream.concat(
+                            getToPlace().stream()
+                                    .filter(blockPos -> !isBlockCorrect(blockPos))
+                                    .map(blockPos -> tile.getBlueprintBuildingInfo().toPlace.get(blockPos))
+                                    .flatMap(schematicBlock ->
+                                            getDisplayRequired(
+                                                    schematicBlock.requiredItems,
+                                                    schematicBlock.requiredFluids
+                                            )
+                                    ),
+                            toSpawn.stream()
+                                    .flatMap(schematicEntity ->
+                                            getDisplayRequired(
+                                                    schematicEntity.requiredItems,
+                                                    schematicEntity.requiredFluids
+                                            )
+                                    )
+                    ).collect(Collectors.toList())
+            ));
             // Kill not needed entities
             List<Entity> toKill = entitiesWithinBox.stream()
                     .filter(entity ->
@@ -240,7 +279,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 }
             }
             // Call superclass method
-            if (/*super.tick()*/ true) {
+            if (super.tick()) {
                 // Spawn needed entities
                 if (!toSpawn.isEmpty()) {
                     if (!tile.getBattery().isFull()) {
@@ -264,8 +303,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     @Override
     public void writeToByteBuf(PacketBufferBC buffer) {
         super.writeToByteBuf(buffer);
-        buffer.writeInt(neededStacks.size());
-        neededStacks.forEach(stack -> {
+        buffer.writeInt(remainingDisplayRequired.size());
+        remainingDisplayRequired.forEach(stack -> {
             buffer.writeItemStack(stack);
             buffer.writeInt(stack.getCount());
         });
@@ -274,7 +313,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     @Override
     public void readFromByteBuf(PacketBufferBC buffer) {
         super.readFromByteBuf(buffer);
-        neededStacks.clear();
+        remainingDisplayRequired.clear();
         IntStream.range(0, buffer.readInt()).mapToObj(i -> {
             ItemStack stack;
             try {
@@ -284,6 +323,6 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             }
             stack.setCount(buffer.readInt());
             return stack;
-        }).forEach(neededStacks::add);
+        }).forEach(remainingDisplayRequired::add);
     }
 }
