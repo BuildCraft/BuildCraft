@@ -25,7 +25,7 @@ public class BCTransportPlugs {
         lens = register("lens", PluggableLens::new, PluggableLens::new);
         pulsar = register("pulsar", PluggablePulsar::new, PluggablePulsar::new);
         lightSensor = register("daylight_sensor", PluggableLightSensor::new);
-        facade = register("facade", PluggableFacade::new);
+        facade = register("facade", PluggableFacade::new, PluggableFacade::new);
     }
 
     private static PluggableDefinition register(String name, IPluggableCreator creator) {
