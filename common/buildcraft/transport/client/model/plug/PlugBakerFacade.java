@@ -116,23 +116,24 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
         }
         for (EnumFacing facing : EnumFacing.values()) {
             if (facing.getAxis() != key.side.getAxis()) {
+                boolean positive = key.side.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE;
                 if (key.side.getAxis() == EnumFacing.Axis.Z && facing.getAxis() == EnumFacing.Axis.X ||
                         key.side.getAxis() == EnumFacing.Axis.X && facing.getAxis() == EnumFacing.Axis.Y ||
                         key.side.getAxis() == EnumFacing.Axis.Y && facing.getAxis() == EnumFacing.Axis.Z) {
                     quads.addAll(getTransormedQuads(
                             state, model, facing,
-                            new Vec3d(15 / 16D, 12 / 16D, 4 / 16D),
-                            new Vec3d(16 / 16D, 12 / 16D, 4 / 16D),
-                            new Vec3d(16 / 16D, 4 / 16D, 4 / 16D),
-                            new Vec3d(15 / 16D, 4 / 16D, 4 / 16D)
+                            new Vec3d(positive ? 15 / 16D : 0 / 16D, 12 / 16D, 4 / 16D),
+                            new Vec3d(positive ? 16 / 16D : 1 / 16D, 12 / 16D, 4 / 16D),
+                            new Vec3d(positive ? 16 / 16D : 1 / 16D, 4 / 16D, 4 / 16D),
+                            new Vec3d(positive ? 15 / 16D : 0 / 16D, 4 / 16D, 4 / 16D)
                     ));
                 } else {
                     quads.addAll(getTransormedQuads(
                             state, model, facing,
-                            new Vec3d(4 / 16D, 15 / 16D, 4 / 16D),
-                            new Vec3d(4 / 16D, 16 / 16D, 4 / 16D),
-                            new Vec3d(12 / 16D, 16 / 16D, 4 / 16D),
-                            new Vec3d(12 / 16D, 15 / 16D, 4 / 16D)
+                            new Vec3d(4 / 16D, positive ? 15 / 16D : 0 / 16D, 4 / 16D),
+                            new Vec3d(4 / 16D, positive ? 16 / 16D : 1 / 16D, 4 / 16D),
+                            new Vec3d(12 / 16D, positive ? 16 / 16D : 1 / 16D, 4 / 16D),
+                            new Vec3d(12 / 16D, positive ? 15 / 16D : 0 / 16D, 4 / 16D)
                     ));
                 }
             }
