@@ -25,7 +25,7 @@ public enum GuideAssemblyRecipes implements IStackRecipes {
         for (AssemblyRecipe recipe : AssemblyRecipeRegistry.INSTANCE.getAllRecipes()) {
             for (ItemStack req : recipe.requiredStacks) {
                 if (StackUtil.isCraftingEquivalent(req, stack, false)) {
-                    usages.add(new GuideAssemblyFactory(ArrayUtil.toArray(recipe.requiredStacks), recipe.output, recipe.requiredMicroJoules));
+                    usages.add(new GuideAssemblyFactory(recipe.requiredStacks.toArray(new ItemStack[0]), recipe.output, recipe.requiredMicroJoules));
                     break;
                 }
             }
@@ -48,7 +48,7 @@ public enum GuideAssemblyRecipes implements IStackRecipes {
         List<GuidePartFactory> recipes = new ArrayList<>();
         for (AssemblyRecipe recipe : AssemblyRecipeRegistry.INSTANCE.getAllRecipes()) {
             if (StackUtil.isCraftingEquivalent(recipe.output, stack, false)) {
-                recipes.add(new GuideAssemblyFactory(ArrayUtil.toArray(recipe.requiredStacks), recipe.output, recipe.requiredMicroJoules));
+                recipes.add(new GuideAssemblyFactory(recipe.requiredStacks.toArray(new ItemStack[0]), recipe.output, recipe.requiredMicroJoules));
             }
         }
         for (IAssemblyRecipeProvider adv : AssemblyRecipeRegistry.INSTANCE.getAllRecipeProviders()) {

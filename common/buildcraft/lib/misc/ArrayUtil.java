@@ -7,10 +7,6 @@ import java.util.function.*;
 import net.minecraft.item.ItemStack;
 
 public class ArrayUtil {
-    public static ItemStack[] toArray(Collection<ItemStack> collection) {
-        return collection.toArray(new ItemStack[collection.size()]);
-    }
-
     public static <F, T> T[] map(F[] from, Function<F, T> mapper, IntFunction<T[]> arrayConstructor) {
         T[] array = arrayConstructor.apply(from.length);
         int i = from.length;
