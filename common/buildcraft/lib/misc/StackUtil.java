@@ -15,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.items.IList;
@@ -373,26 +372,5 @@ public class StackUtil {
             }
         });
         return stacks;
-    }
-
-    public static List<FluidStack> mergeSameFluids(List<FluidStack> fluids) {
-        List<FluidStack> stacks = new ArrayList<>();
-        fluids.forEach(toAdd -> {
-            boolean found = false;
-            for (FluidStack stack : stacks) {
-                if (stack.isFluidEqual(toAdd)) {
-                    stack.amount += toAdd.amount;
-                    found = true;
-                }
-            }
-            if (!found) {
-                stacks.add(toAdd.copy());
-            }
-        });
-        return stacks;
-    }
-
-    public static boolean areFluidStackEqual(FluidStack a, FluidStack b) {
-        return (a == null && b == null) || (a != null && a.isFluidEqual(b) && a.amount == b.amount);
     }
 }

@@ -10,6 +10,9 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import buildcraft.lib.fluids.Tank;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FluidUtilBC {
     public static void pushFluidAround(IBlockAccess world, BlockPos pos, Tank tank) {
         FluidStack potential = tank.drain(tank.getFluidAmount(), false);
@@ -90,5 +93,26 @@ public class FluidUtilBC {
 
             }
         }
+    }
+
+    public static List<FluidStack> mergeSameFluids(List<FluidStack> fluids) {
+        List<FluidStack> stacks = new ArrayList<>();
+        fluids.forEach(toAdd -> {
+            boolean found = false;
+            for (FluidStack stack : stacks) {
+                if (stack.isFluidEqual(toAdd)) {
+                    stack.amount += toAdd.amount;
+                    found = true;
+                }
+            }
+            if (!found) {
+                stacks.add(toAdd.copy());
+            }
+        });
+        return stacks;
+    }
+
+    public static boolean areFluidStackEqual(FluidStack a, FluidStack b) {
+        return (a == null && b == null) || (a != null && a.isFluidEqual(b) && a.amount == b.amount);
     }
 }

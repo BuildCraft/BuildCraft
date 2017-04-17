@@ -1,6 +1,7 @@
 package buildcraft.builders.snapshot;
 
 import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.FluidUtilBC;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.net.PacketBufferBC;
@@ -77,9 +78,9 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                 true
                         ).isEmpty()
                 ) &&
-                StackUtil.mergeSameFluids(requiredFluids).stream()
+                FluidUtilBC.mergeSameFluids(requiredFluids).stream()
                         .allMatch(stack ->
-                                StackUtil.areFluidStackEqual(stack, tile.getTankManager().drain(stack, false))
+                                FluidUtilBC.areFluidStackEqual(stack, tile.getTankManager().drain(stack, false))
                         )) {
             return StackUtil.mergeSameItems(
                     Stream.concat(
@@ -92,7 +93,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                                     false
                                             )
                                     ),
-                            StackUtil.mergeSameFluids(requiredFluids).stream()
+                            FluidUtilBC.mergeSameFluids(requiredFluids).stream()
                                     .map(fluidStack -> tile.getTankManager().drain(fluidStack, true))
                                     .map(fluidStack -> {
                                         ItemStack stack = BlockUtil.getBucketFromFluid(fluidStack.getFluid());
