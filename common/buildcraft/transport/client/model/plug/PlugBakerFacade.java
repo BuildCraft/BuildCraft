@@ -93,8 +93,8 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
             addRotateQuads(
                     quads, key.state, model, key.side, rotation,
                     new Vec3d(0 / 16D, 16 / 16D, 0 / 16D),
-                    new Vec3d(4 / 16D, 16 / 16D, 0 / 16D),
-                    new Vec3d(4 / 16D, 0 / 16D, 0 / 16D),
+                    new Vec3d(key.isHollow ? 4 / 16D : 8 / 16D, 16 / 16D, 0 / 16D),
+                    new Vec3d(key.isHollow ? 4 / 16D : 8 / 16D, 0 / 16D, 0 / 16D),
                     new Vec3d(0 / 16D, 0 / 16D, 0 / 16D)
             );
             addRotateQuads(
@@ -107,8 +107,8 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
             addRotateQuads(
                     quads, key.state, model, key.side.getOpposite(), rotation,
                     new Vec3d(1 / 16D, 15 / 16D, 15 / 16D),
-                    new Vec3d(4 / 16D, 15 / 16D, 15 / 16D),
-                    new Vec3d(4 / 16D, 1 / 16D, 15 / 16D),
+                    new Vec3d(key.isHollow ? 4 / 16D : 8 / 16D, 15 / 16D, 15 / 16D),
+                    new Vec3d(key.isHollow ? 4 / 16D : 8 / 16D, 1 / 16D, 15 / 16D),
                     new Vec3d(1 / 16D, 1 / 16D, 15 / 16D)
             );
         }
