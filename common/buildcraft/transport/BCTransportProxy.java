@@ -1,43 +1,29 @@
 package buildcraft.transport;
 
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeApiClient;
+import buildcraft.api.transport.pipe.PipeBehaviour;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.transport.client.PipeRegistryClient;
+import buildcraft.transport.container.*;
+import buildcraft.transport.gui.*;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
+import buildcraft.transport.plug.PluggableGate;
+import buildcraft.transport.tile.TileFilteredBuffer;
+import buildcraft.transport.tile.TilePipeHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pipe.PipeApiClient;
-import buildcraft.api.transport.pipe.PipeBehaviour;
-import buildcraft.api.transport.pluggable.PipePluggable;
-
-import buildcraft.transport.client.PipeRegistryClient;
-import buildcraft.transport.client.model.GateMeshDefinition;
-import buildcraft.transport.client.model.key.*;
-import buildcraft.transport.client.model.plug.PlugBakerLens;
-import buildcraft.transport.client.model.plug.PlugGateBaker;
-import buildcraft.transport.client.render.*;
-import buildcraft.transport.container.*;
-import buildcraft.transport.gui.*;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourStripes;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
-import buildcraft.transport.pipe.flow.PipeFlowFluids;
-import buildcraft.transport.pipe.flow.PipeFlowItems;
-import buildcraft.transport.pipe.flow.PipeFlowPower;
-import buildcraft.transport.plug.PluggableGate;
-import buildcraft.transport.plug.PluggablePulsar;
-import buildcraft.transport.tile.TileFilteredBuffer;
-import buildcraft.transport.tile.TilePipeHolder;
 
 public abstract class BCTransportProxy implements IGuiHandler {
     @SidedProxy(modId = BCTransport.MODID)
@@ -145,6 +131,24 @@ public abstract class BCTransportProxy implements IGuiHandler {
         @Override
         public void fmlInit() {
             BCTransportModels.fmlInit();
+        }
+
+        @Override
+        public void fmlPostInit() {
+            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler((state, world, pos, tintIndex) -> {
+                if (world != null && pos != null) {
+                    TileEntity tile = world.getTileEntity(pos);
+                    if (tile instanceof TilePipeHolder) {
+                        TilePipeHolder tilePipeHolder = (TilePipeHolder) tile;
+                        EnumFacing side = EnumFacing.getFront(tintIndex % EnumFacing.values().length);
+                        PipePluggable pluggable = tilePipeHolder.getPluggable(side);
+                        if (pluggable != null) {
+                            return pluggable.getBlockColor(tintIndex);
+                        }
+                    }
+                }
+                return 0;
+            }, BCTransportBlocks.pipeHolder);
         }
 
         @Override

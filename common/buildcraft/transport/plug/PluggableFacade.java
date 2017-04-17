@@ -6,9 +6,13 @@ import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 import buildcraft.lib.misc.RotationUtil;
 import buildcraft.transport.client.model.key.KeyPlugFacade;
+import net.minecraft.client.Minecraft;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class PluggableFacade extends PipePluggable {
     public PluggableFacade(PluggableDefinition definition, IPipeHolder holder, EnumFacing side) {
@@ -34,5 +38,16 @@ public class PluggableFacade extends PipePluggable {
             default:
                 return null;
         }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getBlockColor(int tintIndex) {
+        return Minecraft.getMinecraft().getBlockColors().colorMultiplier(
+                Blocks.GRASS.getDefaultState(),
+                holder.getPipeWorld(),
+                holder.getPipePos(),
+                tintIndex / 6
+        );
     }
 }

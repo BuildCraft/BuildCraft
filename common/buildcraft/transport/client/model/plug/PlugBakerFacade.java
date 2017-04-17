@@ -138,6 +138,15 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
                 }
             }
         }
-        return quads;
+        return quads.stream()
+                .map(quad ->
+                        quad.hasTintIndex()
+                                ? new MutableQuad()
+                                .fromBakedItem(quad)
+                                .setTint(quad.getTintIndex() * 6 + key.side.ordinal())
+                                .toBakedItem()
+                                : quad
+                )
+                .collect(Collectors.toList());
     }
 }
