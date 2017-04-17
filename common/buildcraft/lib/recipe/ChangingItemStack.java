@@ -18,7 +18,7 @@ public final class ChangingItemStack extends ChangingObject<ItemStack>{
      * 
      * @param stacks The list to iterate through. */
     public ChangingItemStack(NonNullList<ItemStack> stacks) {
-        super(ArrayUtil.toArray(stacks));
+        super(stacks.toArray(new ItemStack[0]));
     }
 
     /** Creates a changing item stack that iterates through all sub-item variants of the specified stack, if its
