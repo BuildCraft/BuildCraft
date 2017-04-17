@@ -22,6 +22,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.io.IOException;
 
 public class PluggableFacade extends PipePluggable {
+    public static final int SIZE = 2;
     public final IBlockState state;
     public final boolean isHollow;
 
@@ -73,7 +74,7 @@ public class PluggableFacade extends PipePluggable {
 
     @Override
     public AxisAlignedBB getBoundingBox() {
-        return RotationUtil.rotateAABB(new AxisAlignedBB(0 / 16D, 0 / 16D, 0 / 16D, 16 / 16D, 1 / 16D, 16 / 16D), side);
+        return RotationUtil.rotateAABB(new AxisAlignedBB(0 / 16D, 0 / 16D, 0 / 16D, 16 / 16D, SIZE / 16D, 16 / 16D), side);
     }
 
     @Override

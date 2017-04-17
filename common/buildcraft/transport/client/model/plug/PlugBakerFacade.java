@@ -4,6 +4,7 @@ import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.transport.client.model.key.KeyPlugFacade;
+import buildcraft.transport.plug.PluggableFacade;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -100,16 +101,16 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
             addRotateQuads(
                     quads, key.state, model, key.side.getOpposite(), rotation,
                     new Vec3d(0 / 16D, 16 / 16D, 16 / 16D),
-                    new Vec3d(1 / 16D, 15 / 16D, 15 / 16D),
-                    new Vec3d(1 / 16D, 1 / 16D, 15 / 16D),
+                    new Vec3d(PluggableFacade.SIZE / 16D, (16 - PluggableFacade.SIZE) / 16D, (16 - PluggableFacade.SIZE) / 16D),
+                    new Vec3d(PluggableFacade.SIZE / 16D, PluggableFacade.SIZE / 16D, (16 - PluggableFacade.SIZE) / 16D),
                     new Vec3d(0 / 16D, 0 / 16D, 16 / 16D)
             );
             addRotateQuads(
                     quads, key.state, model, key.side.getOpposite(), rotation,
-                    new Vec3d(1 / 16D, 15 / 16D, 15 / 16D),
-                    new Vec3d(key.isHollow ? 4 / 16D : 8 / 16D, 15 / 16D, 15 / 16D),
-                    new Vec3d(key.isHollow ? 4 / 16D : 8 / 16D, 1 / 16D, 15 / 16D),
-                    new Vec3d(1 / 16D, 1 / 16D, 15 / 16D)
+                    new Vec3d(PluggableFacade.SIZE / 16D, (16 - PluggableFacade.SIZE) / 16D, (16 - PluggableFacade.SIZE) / 16D),
+                    new Vec3d(key.isHollow ? 4 / 16D : 8 / 16D, (16 - PluggableFacade.SIZE) / 16D, (16 - PluggableFacade.SIZE) / 16D),
+                    new Vec3d(key.isHollow ? 4 / 16D : 8 / 16D, PluggableFacade.SIZE / 16D, (16 - PluggableFacade.SIZE) / 16D),
+                    new Vec3d(PluggableFacade.SIZE / 16D, PluggableFacade.SIZE / 16D, (16 - PluggableFacade.SIZE) / 16D)
             );
         }
         for (EnumFacing facing : EnumFacing.values()) {
@@ -120,18 +121,18 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
                         key.side.getAxis() == EnumFacing.Axis.Y && facing.getAxis() == EnumFacing.Axis.Z) {
                     quads.addAll(getTransormedQuads(
                             key.state, model, facing,
-                            new Vec3d(positive ? 16 / 16D : 1 / 16D, 4 / 16D, 12 / 16D),
-                            new Vec3d(positive ? 16 / 16D : 1 / 16D, 12 / 16D, 12 / 16D),
-                            new Vec3d(positive ? 15 / 16D : 0 / 16D, 12 / 16D, 12 / 16D),
-                            new Vec3d(positive ? 15 / 16D : 0 / 16D, 4 / 16D, 12 / 16D)
+                            new Vec3d(positive ? 16 / 16D : PluggableFacade.SIZE / 16D, 4 / 16D, 12 / 16D),
+                            new Vec3d(positive ? 16 / 16D : PluggableFacade.SIZE / 16D, 12 / 16D, 12 / 16D),
+                            new Vec3d(positive ? (16 - PluggableFacade.SIZE) / 16D : 0 / 16D, 12 / 16D, 12 / 16D),
+                            new Vec3d(positive ? (16 - PluggableFacade.SIZE) / 16D : 0 / 16D, 4 / 16D, 12 / 16D)
                     ));
                 } else {
                     quads.addAll(getTransormedQuads(
                             key.state, model, facing,
-                            new Vec3d(4 / 16D, positive ? 16 / 16D : 1 / 16D, 12 / 16D),
-                            new Vec3d(4 / 16D, positive ? 15 / 16D : 0 / 16D, 12 / 16D),
-                            new Vec3d(12 / 16D, positive ? 15 / 16D : 0 / 16D, 12 / 16D),
-                            new Vec3d(12 / 16D, positive ? 16 / 16D : 1 / 16D, 12 / 16D)
+                            new Vec3d(4 / 16D, positive ? 16 / 16D : PluggableFacade.SIZE / 16D, 12 / 16D),
+                            new Vec3d(4 / 16D, positive ? (16 - PluggableFacade.SIZE) / 16D : 0 / 16D, 12 / 16D),
+                            new Vec3d(12 / 16D, positive ? (16 - PluggableFacade.SIZE) / 16D : 0 / 16D, 12 / 16D),
+                            new Vec3d(12 / 16D, positive ? 16 / 16D : PluggableFacade.SIZE / 16D, 12 / 16D)
                     ));
                 }
             }
