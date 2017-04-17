@@ -1,5 +1,6 @@
 package buildcraft.transport;
 
+import buildcraft.transport.client.model.plug.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -29,10 +30,6 @@ import buildcraft.transport.client.model.ModelGateItem;
 import buildcraft.transport.client.model.ModelPipe;
 import buildcraft.transport.client.model.ModelPipeItem;
 import buildcraft.transport.client.model.key.*;
-import buildcraft.transport.client.model.plug.ModelLensItem;
-import buildcraft.transport.client.model.plug.PlugBakerLens;
-import buildcraft.transport.client.model.plug.PlugBakerSimple;
-import buildcraft.transport.client.model.plug.PlugGateBaker;
 import buildcraft.transport.client.render.*;
 import buildcraft.transport.gate.GateVariant;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourStripes;
@@ -136,6 +133,7 @@ public class BCTransportModels {
         PipeApiClient.registry.registerBaker(KeyPlugPulsar.class, BCTransportModels.BAKER_PLUG_PULSAR);
         PipeApiClient.registry.registerBaker(KeyPlugLightSensor.class, BCTransportModels.BAKER_PLUG_LIGHT_SENSOR);
         PipeApiClient.registry.registerBaker(KeyPlugLens.class, PlugBakerLens.INSTANCE);
+        PipeApiClient.registry.registerBaker(KeyPlugFacade.class, PlugBakerFacade.INSTANCE);
 
         PipeApiClient.registry.registerRenderer(PluggableGate.class, PlugGateRenderer.INSTANCE);
         PipeApiClient.registry.registerRenderer(PluggablePulsar.class, PlugPulsarRenderer.INSTANCE);

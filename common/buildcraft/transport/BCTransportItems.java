@@ -66,6 +66,7 @@ public class BCTransportItems {
     public static ItemPluggableLens plugLens;
     public static ItemPluggablePulsar plugPulsar;
     public static ItemPluggableSimple plugLightSensor;
+    public static ItemPluggableFacade plugFacade;
 
     public static ItemWire wire;
 
@@ -120,6 +121,7 @@ public class BCTransportItems {
         plugLens = ItemManager.register(new ItemPluggableLens("item.plug.lens"));
         plugPulsar = ItemManager.register(new ItemPluggablePulsar("item.plug.pulsar"));
         plugLightSensor = ItemManager.register(new ItemPluggableSimple("item.plug.light_sensor", BCTransportPlugs.lightSensor));
+        plugFacade = ItemManager.register(new ItemPluggableFacade("item.plug.facade"));
 
         wire = ItemManager.register(new ItemWire("item.wire"));
     }
