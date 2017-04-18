@@ -234,18 +234,18 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
                             key.side.getAxis() == EnumFacing.Axis.Y && facing.getAxis() == EnumFacing.Axis.Z) {
                         quads.addAll(getTransformedQuads(
                                 key.state, model, facing,
-                                new Vec3d(positive ? 16 / 16D : pS / 16D, 4 / 16D, 12 / 16D),
-                                new Vec3d(positive ? 16 / 16D : pS / 16D, 12 / 16D, 12 / 16D),
-                                new Vec3d(positive ? nS / 16D : 0 / 16D, 12 / 16D, 12 / 16D),
-                                new Vec3d(positive ? nS / 16D : 0 / 16D, 4 / 16D, 12 / 16D)
+                                new Vec3d(positive ? 16 / 16D : pS / 16D, 4 / 16D, 12.003 / 16D),
+                                new Vec3d(positive ? 16 / 16D : pS / 16D, 12 / 16D, 12.003 / 16D),
+                                new Vec3d(positive ? nS / 16D : 0 / 16D, 12 / 16D, 12.003 / 16D),
+                                new Vec3d(positive ? nS / 16D : 0 / 16D, 4 / 16D, 12.003 / 16D)
                         ));
                     } else {
                         quads.addAll(getTransformedQuads(
                                 key.state, model, facing,
-                                new Vec3d(4 / 16D, positive ? 16 / 16D : pS / 16D, 12 / 16D),
-                                new Vec3d(4 / 16D, positive ? nS / 16D : 0 / 16D, 12 / 16D),
-                                new Vec3d(12 / 16D, positive ? nS / 16D : 0 / 16D, 12 / 16D),
-                                new Vec3d(12 / 16D, positive ? 16 / 16D : pS / 16D, 12 / 16D)
+                                new Vec3d(4 / 16D, positive ? 16 / 16D : pS / 16D, 12.003 / 16D),
+                                new Vec3d(4 / 16D, positive ? nS / 16D : 0 / 16D, 12.003 / 16D),
+                                new Vec3d(12 / 16D, positive ? nS / 16D : 0 / 16D, 12.003 / 16D),
+                                new Vec3d(12 / 16D, positive ? 16 / 16D : pS / 16D, 12.003 / 16D)
                         ));
                     }
                 }
@@ -261,7 +261,9 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
                                         .toBakedItem()
                                         : quad
                         ),
-                (key.isHollow ? Stream.empty() : BCTransportModels.BAKER_PLUG_BLOCKER.bake(new KeyPlugBlocker(key.side)).stream())
+                key.isHollow || !key.state.isFullBlock()
+                        ? Stream.empty()
+                        : BCTransportModels.BAKER_PLUG_BLOCKER.bake(new KeyPlugBlocker(key.side)).stream()
         )
                 .collect(Collectors.toList());
     }
