@@ -84,13 +84,7 @@ public class PluggableFacade extends PipePluggable {
 
     @Override
     public PluggableModelKey getModelRenderKey(BlockRenderLayer layer) {
-        switch (layer) {
-            case CUTOUT:
-            case TRANSLUCENT:
-                return new KeyPlugFacade(layer, side, state, isHollow);
-            default:
-                return null;
-        }
+        return new KeyPlugFacade(layer, side, state, isHollow);
     }
 
     @Override
