@@ -2,6 +2,7 @@ package buildcraft.transport.item;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 
@@ -13,6 +14,7 @@ import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableCreator;
 
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.SoundUtil;
+import net.minecraft.util.EnumHand;
 
 public class ItemPluggableSimple extends ItemBC_Neptune implements IItemPluggable {
 
@@ -35,7 +37,7 @@ public class ItemPluggableSimple extends ItemBC_Neptune implements IItemPluggabl
     }
 
     @Override
-    public PipePluggable onPlace(ItemStack stack, IPipeHolder holder, EnumFacing side) {
+    public PipePluggable onPlace(ItemStack stack, IPipeHolder holder, EnumFacing side, EntityPlayer player, EnumHand hand) {
         SoundUtil.playBlockPlace(holder.getPipeWorld(), holder.getPipePos());
         return creator.createSimplePluggable(definition, holder, side);
     }

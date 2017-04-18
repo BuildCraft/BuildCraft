@@ -1,5 +1,6 @@
 package buildcraft.transport.item;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 
@@ -14,6 +15,7 @@ import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.SoundUtil;
 import buildcraft.transport.BCTransportPlugs;
 import buildcraft.transport.plug.PluggablePulsar;
+import net.minecraft.util.EnumHand;
 
 public class ItemPluggablePulsar extends ItemBC_Neptune implements IItemPluggable {
     public ItemPluggablePulsar(String id) {
@@ -21,7 +23,7 @@ public class ItemPluggablePulsar extends ItemBC_Neptune implements IItemPluggabl
     }
 
     @Override
-    public PipePluggable onPlace(ItemStack stack, IPipeHolder holder, EnumFacing side) {
+    public PipePluggable onPlace(ItemStack stack, IPipeHolder holder, EnumFacing side, EntityPlayer player, EnumHand hand) {
         IPipe pipe = holder.getPipe();
         if (pipe == null) {
             return null;

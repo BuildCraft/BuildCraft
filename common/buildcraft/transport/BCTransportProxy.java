@@ -8,6 +8,7 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.transport.client.PipeRegistryClient;
 import buildcraft.transport.container.*;
 import buildcraft.transport.gui.*;
+import buildcraft.transport.item.ItemPluggableFacade;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
@@ -16,6 +17,7 @@ import buildcraft.transport.tile.TileFilteredBuffer;
 import buildcraft.transport.tile.TilePipeHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -149,6 +151,10 @@ public abstract class BCTransportProxy implements IGuiHandler {
                 }
                 return 0;
             }, BCTransportBlocks.pipeHolder);
+            Minecraft.getMinecraft().getItemColors().registerItemColorHandler((item, tintIndex) -> {
+                ItemStack stack =ItemPluggableFacade.getStack(item);
+                return stack != null ? Minecraft.getMinecraft().getItemColors().getColorFromItemstack(stack, tintIndex) : 0;
+            }, BCTransportItems.plugFacade);
         }
 
         @Override

@@ -8,6 +8,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -17,6 +18,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -77,7 +80,14 @@ public enum ModelFacadetem implements IBakedModel {
 
         @Override
         public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
-            IBlockState state = ItemPluggableFacade.getState(stack);
+            IBlockState state = ItemPluggableFacade.getState(
+                    stack,
+                    Minecraft.getMinecraft().world,
+                    BlockPos.ORIGIN,
+                    EnumFacing.NORTH,
+                    Minecraft.getMinecraft().player,
+                    EnumHand.MAIN_HAND
+            );
             boolean isHollow = ItemPluggableFacade.getIsHollow(stack);
             if (state == null) {
                 return originalModel;

@@ -4,11 +4,13 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -54,7 +56,7 @@ public class ItemPluggableLens extends ItemBC_Neptune implements IItemPluggable 
     }
 
     @Override
-    public PipePluggable onPlace(ItemStack stack, IPipeHolder holder, EnumFacing side) {
+    public PipePluggable onPlace(ItemStack stack, IPipeHolder holder, EnumFacing side, EntityPlayer player, EnumHand hand) {
         IPipe pipe = holder.getPipe();
         if (pipe == null || !(pipe.getFlow() instanceof IFlowItems)) {
             return null;
