@@ -149,7 +149,7 @@ public abstract class BCTransportProxy implements IGuiHandler {
                         }
                     }
                 }
-                return 0;
+                return 0xFFFFFF;
             }, BCTransportBlocks.pipeHolder);
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler((item, tintIndex) -> {
                 ItemStack stack =ItemPluggableFacade.getStack(item);

@@ -4,6 +4,8 @@ import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.misc.VecUtil;
+import buildcraft.transport.BCTransportModels;
+import buildcraft.transport.client.model.key.KeyPlugBlocker;
 import buildcraft.transport.client.model.key.KeyPlugFacade;
 import buildcraft.transport.plug.PluggableFacade;
 import net.minecraft.block.state.IBlockState;
@@ -249,15 +251,18 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
                 }
             }
         }
-        return quads.stream()
-                .map(quad ->
-                        quad.hasTintIndex()
-                                ? new MutableQuad()
-                                .fromBakedItem(quad)
-                                .setTint(quad.getTintIndex() * 6 + key.side.ordinal())
-                                .toBakedItem()
-                                : quad
-                )
+        return Stream.concat(
+                quads.stream()
+                        .map(quad ->
+                                quad.hasTintIndex()
+                                        ? new MutableQuad()
+                                        .fromBakedItem(quad)
+                                        .setTint(quad.getTintIndex() * 6 + key.side.ordinal())
+                                        .toBakedItem()
+                                        : quad
+                        ),
+                (key.isHollow ? Stream.empty() : BCTransportModels.BAKER_PLUG_BLOCKER.bake(new KeyPlugBlocker(key.side)).stream())
+        )
                 .collect(Collectors.toList());
     }
 }
