@@ -5,6 +5,8 @@ import java.util.*;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockGlass;
+import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
@@ -12,10 +14,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import buildcraft.api.facades.FacadeType;
@@ -36,16 +40,37 @@ public class FacadeStateManager {
         }
         return Integer.compare(ba.getMetaFromState(a), bb.getMetaFromState(b));
     });
-    private static final Map<ItemStack, FacadeBlockStateInfo> stackFacades = new HashMap<>();
+    public static final Map<ItemStack, FacadeBlockStateInfo> stackFacades = new HashMap<>();
     public static FacadeBlockStateInfo defaultState;
 
+    private static EnumActionResult isValidFacadeBlock(Block block) {
+        if (block instanceof IFluidBlock) {
+            return EnumActionResult.FAIL;
+        }
+        if (block instanceof BlockGlass || block instanceof BlockStainedGlass) {
+            return EnumActionResult.SUCCESS;
+        }
+        return EnumActionResult.PASS;
+    }
+
+    private static boolean isValidFacadeState(IBlockState state) {
+        if (state.getBlock().hasTileEntity(state)) {
+            return false;
+        }
+        return state.isFullCube();
+    }
+
     public static void postInit() {
-        defaultState = new FacadeBlockStateInfo(Blocks.COBBLESTONE.getDefaultState(), false);
+        defaultState = new FacadeBlockStateInfo(Blocks.AIR.getDefaultState(), false);
         for (Block block : ForgeRegistries.BLOCKS) {
+            EnumActionResult result = isValidFacadeBlock(block);
+            if (result == EnumActionResult.FAIL) {
+                continue;
+            }
             Set<IBlockState> usedStates = new HashSet<>();
             for (IBlockState state : block.getBlockState().getValidStates()) {
                 state = block.getStateFromMeta(block.getMetaFromState(state));
-                if (!state.isFullCube()) {
+                if (result == EnumActionResult.PASS && !isValidFacadeState(state)) {
                     continue;
                 }
                 if (!usedStates.add(state)) {
@@ -80,7 +105,7 @@ public class FacadeStateManager {
                 requiredStack = stack;
             }
             this.isTransparent = !state.isOpaqueCube();
-            this.isVisible = isVisible;
+            this.isVisible = isVisible && !requiredStack.isEmpty();
         }
     }
 

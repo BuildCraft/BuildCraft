@@ -1,10 +1,12 @@
 package buildcraft.transport.plug;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -19,6 +21,7 @@ import buildcraft.api.transport.pluggable.PluggableModelKey;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.RotationUtil;
 import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugBlocker;
 import buildcraft.transport.client.model.key.KeyPlugFacade;
 import buildcraft.transport.plug.FacadeStateManager.FacadePhasedState;
@@ -70,6 +73,16 @@ public class PluggableFacade extends PipePluggable {
     @Override
     public boolean isBlocking() {
         return !states.phasedStates[activeState].isHollow;
+    }
+
+    @Override
+    public void onRemove(NonNullList<ItemStack> toDrop) {
+        toDrop.add(getPickStack());
+    }
+
+    @Override
+    public ItemStack getPickStack() {
+        return BCTransportItems.plugFacade.createItemStack(states);
     }
 
     @Override

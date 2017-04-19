@@ -1,9 +1,11 @@
 package buildcraft.transport.item;
 
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -138,6 +141,15 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
             }
             if (defaultState != null) {
                 tooltip.add(1, String.format(LocaleUtil.localize("item.FacadePhased.state_default"), getFacadeStateDisplayName(defaultState)));
+            }
+        } else if (advanced) {
+            String propertiesStart = TextFormatting.GRAY + "" + TextFormatting.ITALIC;
+            IBlockState state = states.phasedStates[0].stateInfo.state;
+            tooltip.add(propertiesStart + state.getBlock().getRegistryName());
+            for (Entry<IProperty<?>, Comparable<?>> entry : state.getProperties().entrySet()) {
+                IProperty prop = entry.getKey();
+                Comparable comp = entry.getValue();
+                tooltip.add(propertiesStart + prop.getName() + " = " + prop.getName(comp));
             }
         }
     }
