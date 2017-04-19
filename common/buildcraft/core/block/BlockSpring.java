@@ -8,6 +8,7 @@ import java.util.Random;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -19,13 +20,12 @@ import net.minecraft.world.World;
 
 import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.api.properties.BuildCraftProperty;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.data.XorShift128Random;
 
 public class BlockSpring extends BlockBCBase_Neptune {
-    public static final BuildCraftProperty<EnumSpring> SPRING_TYPE = BuildCraftProperties.SPRING_TYPE;
+    public static final IProperty<EnumSpring> SPRING_TYPE = BuildCraftProperties.SPRING_TYPE;
 
     public static final XorShift128Random rand = new XorShift128Random();
 

@@ -1,14 +1,14 @@
 package buildcraft.transport.client.model.plug;
 
-import buildcraft.lib.client.model.ModelItemSimple;
-import buildcraft.transport.client.model.key.KeyPlugFacade;
-import buildcraft.transport.item.ItemPluggableFacade;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
+
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -18,19 +18,19 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import buildcraft.lib.client.model.ModelItemSimple;
+import buildcraft.transport.client.model.key.KeyPlugFacade;
+import buildcraft.transport.item.ItemPluggableFacade;
+import buildcraft.transport.plug.FacadeStateManager.FacadePhasedState;
+import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
 
-public enum ModelFacadetem implements IBakedModel {
+public enum ModelFacadeItem implements IBakedModel {
     INSTANCE;
 
-    private static final LoadingCache<KeyPlugFacade, IBakedModel> cache = CacheBuilder.newBuilder()
-            .expireAfterAccess(1, TimeUnit.MINUTES)
-            .build(CacheLoader.from(key -> new ModelItemSimple(PlugBakerFacade.INSTANCE.bake(key), ModelItemSimple.TRANSFORM_PLUG_AS_ITEM)));
+    private static final LoadingCache<KeyPlugFacade, IBakedModel> cache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build(CacheLoader.from(key -> new ModelItemSimple(
+        PlugBakerFacade.INSTANCE.bake(key), ModelItemSimple.TRANSFORM_PLUG_AS_ITEM)));
 
     public static void onModelBake() {
         cache.cleanUp();
@@ -80,19 +80,13 @@ public enum ModelFacadetem implements IBakedModel {
 
         @Override
         public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
-            IBlockState state = ItemPluggableFacade.getState(
-                    stack,
-                    Minecraft.getMinecraft().world,
-                    BlockPos.ORIGIN,
-                    EnumFacing.NORTH,
-                    Minecraft.getMinecraft().player,
-                    EnumHand.MAIN_HAND
-            );
-            boolean isHollow = ItemPluggableFacade.getIsHollow(stack);
-            if (state == null) {
+            FullFacadeInstance inst = ItemPluggableFacade.getStates(stack);
+            if (inst == null) {
                 return originalModel;
             }
-            return cache.getUnchecked(new KeyPlugFacade(BlockRenderLayer.TRANSLUCENT, EnumFacing.WEST, state, isHollow));
+            int count = inst.phasedStates.length;
+            final FacadePhasedState state = inst.getCurrentStateForStack();
+            return cache.getUnchecked(new KeyPlugFacade(BlockRenderLayer.TRANSLUCENT, EnumFacing.WEST, state.stateInfo.state, state.isHollow));
         }
     }
 }

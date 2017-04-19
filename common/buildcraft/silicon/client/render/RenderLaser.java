@@ -15,6 +15,8 @@ import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.silicon.tile.TileLaser;
 
 public class RenderLaser extends FastTESR<TileLaser> {
+    private static final int MAX_POWER = BuildCraftLaserManager.POWERS.length - 1;
+
     @Override
     public void renderTileEntityFast(TileLaser tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
 
@@ -24,13 +26,14 @@ public class RenderLaser extends FastTESR<TileLaser> {
         buffer.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
 
         if (tile.laserPos != null) {
-            long avg = tile.getAverage();
-            if (avg > 10) {
+            long avg = tile.getAverageClient();
+            if (avg > 200_000) {
+                avg += 200_000;
                 EnumFacing side = tile.getWorld().getBlockState(tile.getPos()).getValue(BuildCraftProperties.BLOCK_FACING_6);
                 Vec3d offset = new Vec3d(0.5, 0.5, 0.5).add(new Vec3d(side.getDirectionVec()).scale(4 / 16D));
-                int index = (int) ((double) tile.getAverage() / tile.getMaxPowerPerTick() * (BuildCraftLaserManager.POWERS.length - 1));
-                if (index > BuildCraftLaserManager.POWERS.length) {
-                    index = 3;
+                int index = (int) (avg * MAX_POWER / tile.getMaxPowerPerTick());
+                if (index > MAX_POWER) {
+                    index = MAX_POWER;
                 }
                 LaserData_BC8 laser = new LaserData_BC8(BuildCraftLaserManager.POWERS[index], new Vec3d(tile.getPos()).add(offset), tile.laserPos, 1 / 16D);
                 LaserRenderer_BC8.renderLaserDynamic(laser, buffer);

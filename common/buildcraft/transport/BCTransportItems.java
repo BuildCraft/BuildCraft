@@ -1,5 +1,13 @@
 package buildcraft.transport;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.BCLib;

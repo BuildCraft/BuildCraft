@@ -14,7 +14,10 @@ import buildcraft.api.transport.pipe.PipeFlowType;
 
 import buildcraft.transport.pipe.PipeRegistry;
 import buildcraft.transport.pipe.StripesRegistry;
-import buildcraft.transport.pipe.flow.*;
+import buildcraft.transport.pipe.flow.PipeFlowFluids;
+import buildcraft.transport.pipe.flow.PipeFlowItems;
+import buildcraft.transport.pipe.flow.PipeFlowPower;
+import buildcraft.transport.pipe.flow.PipeFlowStructure;
 import buildcraft.transport.plug.PluggableRegistry;
 import buildcraft.transport.stripes.*;
 

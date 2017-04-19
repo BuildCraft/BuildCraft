@@ -1,52 +1,50 @@
 package buildcraft.transport.plug;
 
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.api.transport.pluggable.PluggableDefinition;
-import buildcraft.api.transport.pluggable.PluggableModelKey;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.RotationUtil;
-import buildcraft.lib.misc.data.LoadingException;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.transport.client.model.key.KeyPlugFacade;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.io.IOException;
+import buildcraft.api.facades.FacadeType;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.PluggableDefinition;
+import buildcraft.api.transport.pluggable.PluggableModelKey;
+
+import buildcraft.lib.misc.MathUtil;
+import buildcraft.lib.misc.RotationUtil;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.transport.client.model.key.KeyPlugBlocker;
+import buildcraft.transport.client.model.key.KeyPlugFacade;
+import buildcraft.transport.plug.FacadeStateManager.FacadePhasedState;
+import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
 
 public class PluggableFacade extends PipePluggable {
     public static final int SIZE = 2;
-    public final IBlockState state;
-    public final boolean isHollow;
+    public final FullFacadeInstance states;
+    public int activeState;
 
-    public PluggableFacade(PluggableDefinition definition, IPipeHolder holder, EnumFacing side, IBlockState state, boolean isHollow) {
+    public PluggableFacade(PluggableDefinition definition, IPipeHolder holder, EnumFacing side, FullFacadeInstance states) {
         super(definition, holder, side);
-        this.state = state;
-        this.isHollow = isHollow;
+        this.states = states;
     }
 
     public PluggableFacade(PluggableDefinition def, IPipeHolder holder, EnumFacing side, NBTTagCompound nbt) {
         super(def, holder, side);
-        try {
-            state = NBTUtilBC.readEntireBlockState(nbt.getCompoundTag("state"));
-        } catch (LoadingException e) {
-            throw new RuntimeException(e);
-        }
-        isHollow = nbt.getBoolean("isHollow");
+        this.states = FullFacadeInstance.readFromNbt(nbt, "states");
+        activeState = MathUtil.clamp(nbt.getInteger("activeState"), 0, states.phasedStates.length - 1);
     }
 
     @Override
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = super.writeToNbt();
-        nbt.setTag("state", NBTUtilBC.writeEntireBlockState(state));
-        nbt.setBoolean("isHollow", isHollow);
+        states.writeToNbt(nbt, "states");
+        nbt.setInteger("activeState", activeState);
         return nbt;
     }
 
@@ -54,20 +52,12 @@ public class PluggableFacade extends PipePluggable {
 
     public PluggableFacade(PluggableDefinition def, IPipeHolder holder, EnumFacing side, PacketBuffer buffer) {
         super(def, holder, side);
-        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
-        try {
-            state = NBTUtilBC.readEntireBlockState(buffer.readCompoundTag());
-        } catch (LoadingException | IOException e) {
-            throw new RuntimeException(e);
-        }
-        isHollow = buf.readBoolean();
+        states = FullFacadeInstance.readFromBuffer(PacketBufferBC.asPacketBufferBc(buffer));
     }
 
     @Override
     public void writeCreationPayload(PacketBuffer buffer) {
-        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
-        buf.writeCompoundTag(NBTUtilBC.writeEntireBlockState(state));
-        buf.writeBoolean(isHollow);
+        states.writeToBuffer(PacketBufferBC.asPacketBufferBc(buffer));
     }
 
     // Pluggable methods
@@ -79,22 +69,23 @@ public class PluggableFacade extends PipePluggable {
 
     @Override
     public boolean isBlocking() {
-        return !isHollow;
+        return !states.phasedStates[activeState].isHollow;
     }
 
     @Override
     public PluggableModelKey getModelRenderKey(BlockRenderLayer layer) {
-        return new KeyPlugFacade(layer, side, state, isHollow);
+        if (states.type == FacadeType.Basic) {
+            FacadePhasedState state = states.phasedStates[activeState];
+            return new KeyPlugFacade(layer, side, state.stateInfo.state, state.isHollow);
+        } else {
+            return new KeyPlugBlocker(side);
+        }
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public int getBlockColor(int tintIndex) {
-        return Minecraft.getMinecraft().getBlockColors().colorMultiplier(
-                state,
-                holder.getPipeWorld(),
-                holder.getPipePos(),
-                tintIndex / 6
-        );
+        FacadePhasedState state = states.phasedStates[activeState];
+        return Minecraft.getMinecraft().getBlockColors().colorMultiplier(state.stateInfo.state, holder.getPipeWorld(), holder.getPipePos(), tintIndex / 6);
     }
 }

@@ -3,7 +3,6 @@ package buildcraft.silicon.tile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.LongStream;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,6 +27,7 @@ import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.VolumeUtil;
+import buildcraft.lib.misc.data.AverageLong;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
@@ -38,7 +38,8 @@ import buildcraft.silicon.client.render.AdvDebuggerLaser;
 public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable {
     private int ticks = 0;
     private BlockPos targetPos;
-    private long[] averageValues = new long[100];
+    private final AverageLong avgPower = new AverageLong(100);
+    private long averageClient;
     private final MjBattery battery;
     private final MjCapabilityHelper mjCapHelper;
 
@@ -104,13 +105,8 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         }
     }
 
-    private void addAverageValue(long power) {
-        System.arraycopy(averageValues, 1, averageValues, 0, averageValues.length - 1);
-        averageValues[averageValues.length - 1] = power;
-    }
-
-    public long getAverage() {
-        return LongStream.of(averageValues).sum() / averageValues.length;
+    public long getAverageClient() {
+        return averageClient;
     }
 
     public long getMaxPowerPerTick() {
@@ -122,7 +118,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         if (world.isRemote) {
             return;
         }
-
+        avgPower.tick();
         ticks++;
 
         if (getTarget() == null) {
@@ -144,10 +140,10 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             max /= battery.getCapacity() / 2;
             max = Math.min(max, getMaxPowerPerTick());
             long power = battery.extractPower(0, max);
-            addAverageValue(power);
+            avgPower.push(power);
             target.receiveLaserPower(power);
         } else {
-            averageValues = new long[averageValues.length];
+            avgPower.clear();
         }
 
         sendNetworkUpdate(NET_RENDER_DATA);
@@ -163,9 +159,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         if (targetPos != null) {
             nbt.setTag("target_pos", NBTUtilBC.writeBlockPos(targetPos));
         }
-        for (int i = 0; i < averageValues.length; i++) {
-            nbt.setLong("average_value_" + i, averageValues[i]);
-        }
+        avgPower.writeToNbt(nbt, "average_power");
         return nbt;
     }
 
@@ -175,44 +169,46 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
         targetPos = NBTUtilBC.readBlockPos(nbt.getTag("target_pos"));
         laserPos = NBTUtilBC.readVec3d(nbt.getTag("laser_pos"));
-        for (int i = 0; i < averageValues.length; i++) {
-            averageValues[i] = nbt.getLong("average_value_" + i);
-        }
+        avgPower.readFromNbt(nbt, "average_power");
     }
 
     @Override
     public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
-        if (id == NET_RENDER_DATA) {
-            battery.writeToBuffer(buffer);
-            buffer.writeBoolean(targetPos != null);
-            if (targetPos != null) {
-                buffer.writeBlockPos(targetPos);
+        if (side == Side.SERVER) {
+            if (id == NET_RENDER_DATA) {
+                battery.writeToBuffer(buffer);
+                buffer.writeBoolean(targetPos != null);
+                if (targetPos != null) {
+                    buffer.writeBlockPos(targetPos);
+                }
+                buffer.writeBoolean(laserPos != null);
+                if (laserPos != null) {
+                    MessageUtil.writeVec3d(buffer, laserPos);
+                }
+                buffer.writeLong((long) avgPower.getAverage());
             }
-            buffer.writeBoolean(laserPos != null);
-            if (laserPos != null) {
-                MessageUtil.writeVec3d(buffer, laserPos);
-            }
-            buffer.writeLongArray(averageValues);
         }
     }
 
     @Override
     public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (id == NET_RENDER_DATA) {
-            battery.readFromBuffer(buffer);
-            if (buffer.readBoolean()) {
-                targetPos = buffer.readBlockPos();
-            } else {
-                targetPos = null;
+        if (side == Side.CLIENT) {
+            if (id == NET_RENDER_DATA) {
+                battery.readFromBuffer(buffer);
+                if (buffer.readBoolean()) {
+                    targetPos = buffer.readBlockPos();
+                } else {
+                    targetPos = null;
+                }
+                if (buffer.readBoolean()) {
+                    laserPos = MessageUtil.readVec3d(buffer);
+                } else {
+                    laserPos = null;
+                }
+                averageClient = buffer.readLong();
             }
-            if (buffer.readBoolean()) {
-                laserPos = MessageUtil.readVec3d(buffer);
-            } else {
-                laserPos = null;
-            }
-            averageValues = buffer.readLongArray(new long[averageValues.length]);
         }
     }
 
@@ -222,7 +218,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         left.add("battery = " + battery.getDebugString());
         left.add("target = " + targetPos);
         left.add("laser = " + laserPos);
-        left.add("average = " + LocaleUtil.localizeMjFlow(getAverage()));
+        left.add("average = " + LocaleUtil.localizeMjFlow(averageClient == 0 ? (long) avgPower.getAverage() : averageClient));
     }
 
     @Override

@@ -19,18 +19,17 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.api.properties.BuildCraftProperty;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.RotationUtil;
 
 public class BlockFrame extends BlockBCBase_Neptune {
-    public static final BuildCraftProperty<Boolean> CONNECTED_UP = BuildCraftProperties.CONNECTED_UP;
-    public static final BuildCraftProperty<Boolean> CONNECTED_DOWN = BuildCraftProperties.CONNECTED_DOWN;
-    public static final BuildCraftProperty<Boolean> CONNECTED_EAST = BuildCraftProperties.CONNECTED_EAST;
-    public static final BuildCraftProperty<Boolean> CONNECTED_WEST = BuildCraftProperties.CONNECTED_WEST;
-    public static final BuildCraftProperty<Boolean> CONNECTED_NORTH = BuildCraftProperties.CONNECTED_NORTH;
-    public static final BuildCraftProperty<Boolean> CONNECTED_SOUTH = BuildCraftProperties.CONNECTED_SOUTH;
+    public static final IProperty<Boolean> CONNECTED_UP = BuildCraftProperties.CONNECTED_UP;
+    public static final IProperty<Boolean> CONNECTED_DOWN = BuildCraftProperties.CONNECTED_DOWN;
+    public static final IProperty<Boolean> CONNECTED_EAST = BuildCraftProperties.CONNECTED_EAST;
+    public static final IProperty<Boolean> CONNECTED_WEST = BuildCraftProperties.CONNECTED_WEST;
+    public static final IProperty<Boolean> CONNECTED_NORTH = BuildCraftProperties.CONNECTED_NORTH;
+    public static final IProperty<Boolean> CONNECTED_SOUTH = BuildCraftProperties.CONNECTED_SOUTH;
 
     public static final AxisAlignedBB BASE_AABB = new AxisAlignedBB(4 / 16D, 4 / 16D, 4 / 16D, 12 / 16D, 12 / 16D, 12 / 16D);
     public static final AxisAlignedBB CONNECTION_AABB = new AxisAlignedBB(4 / 16D, 0 / 16D, 4 / 16D, 12 / 16D, 4 / 16D, 12 / 16D);

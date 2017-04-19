@@ -24,9 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.api.properties.BuildCraftProperty;
 
 import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.item.ItemBlockBC_Neptune;
@@ -40,8 +38,8 @@ import buildcraft.lib.registry.TagManager.EnumTagTypeMulti;
 
 public class BlockBCBase_Neptune extends Block {
     private static List<BlockBCBase_Neptune> registeredBlocks = new ArrayList<>();
-    public static final BuildCraftProperty<EnumFacing> PROP_FACING = BuildCraftProperties.BLOCK_FACING;
-    public static final BuildCraftProperty<EnumFacing> BLOCK_FACING_6 = BuildCraftProperties.BLOCK_FACING_6;
+    public static final IProperty<EnumFacing> PROP_FACING = BuildCraftProperties.BLOCK_FACING;
+    public static final IProperty<EnumFacing> BLOCK_FACING_6 = BuildCraftProperties.BLOCK_FACING_6;
 
     /** The tag used to identify this in the {@link TagManager} */
     public final String id;

@@ -17,14 +17,13 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.api.properties.BuildCraftProperty;
 import buildcraft.api.tools.IToolWrench;
 
 import buildcraft.factory.tile.TileFloodGate;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 
 public class BlockFloodGate extends BlockBCTile_Neptune {
-    public static final Map<EnumFacing, BuildCraftProperty<Boolean>> CONNECTED_MAP;
+    public static final Map<EnumFacing, IProperty<Boolean>> CONNECTED_MAP;
 
     static {
         CONNECTED_MAP = new HashMap<>(BuildCraftProperties.CONNECTED_MAP);

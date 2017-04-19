@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
@@ -24,6 +26,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.misc.data.DelayedList;
+import buildcraft.lib.nbt.PrintingByteBuf;
 import buildcraft.lib.net.PacketBufferBC;
 
 import io.netty.buffer.ByteBuf;
@@ -171,6 +174,19 @@ public class MessageUtil {
             }
         }
         return null;
+    }
+
+    /** Writes a block state using the block ID and its metadata. Not suitable for full states. */
+    public static void writeBlockState(PacketBuffer buf, IBlockState state) {
+        buf.writeVarInt(Block.REGISTRY.getIDForObject(state.getBlock()));
+        buf.writeVarInt(state.getBlock().getMetaFromState(state));
+    }
+
+    public static IBlockState readBlockState(PacketBuffer buf) {
+        int id = buf.readVarInt();
+        int meta = buf.readVarInt();
+        Block block = Block.REGISTRY.getObjectById(id);
+        return block.getStateFromMeta(meta);
     }
 
     /** {@link PacketBuffer#writeEnumValue(Enum)} can only write *actual* enum values - so not null. This method allows

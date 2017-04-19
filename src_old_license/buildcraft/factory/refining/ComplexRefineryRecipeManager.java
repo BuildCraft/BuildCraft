@@ -4,13 +4,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import com.google.common.base.Predicate;
 
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.api.recipes.IComplexRefineryRecipeManager;
+import buildcraft.api.recipes.IRefineryRecipeManager;
 
-public enum ComplexRefineryRecipeManager implements IComplexRefineryRecipeManager {
+public enum ComplexRefineryRecipeManager implements IRefineryRecipeManager {
     INSTANCE;
 
     private final ComplexRefineryRegistry<IHeatableRecipe> heatableRegistry = new ComplexRefineryRegistry<>();
@@ -48,21 +49,21 @@ public enum ComplexRefineryRecipeManager implements IComplexRefineryRecipeManage
     }
 
     @Override
-    public IComplexRefineryRegistry<IHeatableRecipe> getHeatableRegistry() {
+    public IRefineryRegistry<IHeatableRecipe> getHeatableRegistry() {
         return heatableRegistry;
     }
 
     @Override
-    public IComplexRefineryRegistry<ICoolableRecipe> getCoolableRegistry() {
+    public IRefineryRegistry<ICoolableRecipe> getCoolableRegistry() {
         return coolantRegistry;
     }
 
     @Override
-    public IComplexRefineryRegistry<IDistilationRecipe> getDistilationRegistry() {
+    public IRefineryRegistry<IDistilationRecipe> getDistilationRegistry() {
         return distillationRegistry;
     }
 
-    private static class ComplexRefineryRegistry<R extends IComplexRefineryRecipe> implements IComplexRefineryRegistry<R> {
+    private static class ComplexRefineryRegistry<R extends IRefineryRecipe> implements IRefineryRegistry<R> {
         private final Set<R> recipeSet = new HashSet<>();
 
         @Override
@@ -108,7 +109,7 @@ public enum ComplexRefineryRecipeManager implements IComplexRefineryRecipeManage
         }
     }
 
-    private static abstract class ComplexRefineryRecipe implements IComplexRefineryRecipe {
+    private static abstract class ComplexRefineryRecipe implements IRefineryRecipe {
         private final int ticks;
         private final FluidStack in;
 
@@ -132,7 +133,7 @@ public enum ComplexRefineryRecipeManager implements IComplexRefineryRecipeManage
             if (obj == null) return false;
             if (obj == this) return true;
             if (obj.getClass() != getClass()) return false;
-            return in().equals(((IComplexRefineryRecipe) obj).in());
+            return in().equals(((IRefineryRecipe) obj).in());
         }
 
         @Override

@@ -298,6 +298,7 @@ public final class NBTUtilBC {
         return nbt;
     }
 
+    /** @deprecated Use {@link NBTUtil#readBlockState(NBTTagCompound)} instead! */
     public static IBlockState readEntireBlockState(NBTTagCompound nbt) throws LoadingException {
         if (nbt.hasNoTags()) {
             return Blocks.AIR.getDefaultState();

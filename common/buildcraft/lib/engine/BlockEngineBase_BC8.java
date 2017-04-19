@@ -136,9 +136,6 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (world.isRemote) {
-            return false;
-        }
         if (EntityUtil.getWrenchHand(player) != null && !player.isSneaking()) {
             return false;
         }

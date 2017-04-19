@@ -2,9 +2,6 @@ package buildcraft.transport;
 
 import java.util.function.Consumer;
 
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -12,9 +9,6 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
-
-import buildcraft.api.transport.pipe.ICustomPipeConnection;
-import buildcraft.api.transport.pipe.PipeConnectionAPI;
 
 import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
@@ -26,6 +20,7 @@ import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
+import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.wire.MessageWireSystems;
 import buildcraft.transport.wire.MessageWireSystemsPowered;
 
@@ -81,6 +76,7 @@ public class BCTransport {
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
         BCTransportProxy.getProxy().fmlPostInit();
+        FacadeStateManager.postInit();
     }
 
     static {
@@ -92,7 +88,7 @@ public class BCTransport {
         registerTag("item.plug.lens").reg("plug_lens").locale("lens").model("pluggable/lens").tab("buildcraft.plugs");
         registerTag("item.plug.pulsar").reg("plug_pulsar").locale("pulsar").model("plug_pulsar").tab("buildcraft.plugs");
         registerTag("item.plug.light_sensor").reg("plug_light_sensor").locale("light_sensor").model("plug_light_sensor").tab("buildcraft.plugs");
-        registerTag("item.plug.facade").reg("plug_facade").locale("facade").model("plug_facade").tab("buildcraft.plugs");
+        registerTag("item.plug.facade").reg("plug_facade").locale("Facade").model("plug_facade").tab("buildcraft.plugs");
         registerTag("item.wire").reg("wire").locale("pipeWire").model("wire/").tab("buildcraft.plugs");
         // Pipes
         startBatch();// Pipes
@@ -134,7 +130,6 @@ public class BCTransport {
         registerTag("item.pipe.buildcrafttransport.daizuli_item").reg("pipe_daizuli_item").locale("PipeItemsDaizuli");
         registerTag("item.pipe.buildcrafttransport.emzuli_item").reg("pipe_emzuli_item").locale("PipeItemsEmzuli");
         registerTag("item.pipe.buildcrafttransport.stripes_item").reg("pipe_stripes_item").locale("PipeItemsStripes");
-        
 
         registerTag("item.pipe.buildcrafttransport.wood_power_2").reg("pipe_wood_power_2").locale("PipePowerWood2");
         registerTag("item.pipe.buildcrafttransport.quartz_power_2").reg("pipe_quartz_power_2").locale("PipePowerQuartz2");

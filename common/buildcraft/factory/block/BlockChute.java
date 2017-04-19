@@ -15,7 +15,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.api.properties.BuildCraftProperty;
 
 import buildcraft.factory.BCFactoryGuis;
 import buildcraft.factory.tile.TileChute;
@@ -23,7 +22,7 @@ import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
 
 public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public static final Map<EnumFacing, BuildCraftProperty<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;
+    public static final Map<EnumFacing, IProperty<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;
 
     public BlockChute(Material material, String id) {
         super(material, id);
@@ -61,11 +60,7 @@ public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         for (EnumFacing side : EnumFacing.values()) {
-            state = state.withProperty(
-                    CONNECTED_MAP.get(side),
-                    side != state.getValue(getFacingProperty()) &&
-                            TileChute.hasInventoryAtPosition(world, pos.offset(side), side)
-            );
+            state = state.withProperty(CONNECTED_MAP.get(side), side != state.getValue(getFacingProperty()) && TileChute.hasInventoryAtPosition(world, pos.offset(side), side));
         }
         return state;
     }

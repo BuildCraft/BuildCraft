@@ -23,7 +23,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.api.properties.BuildCraftProperty;
 import buildcraft.api.transport.pipe.ICustomPipeConnection;
 
 import buildcraft.factory.tile.TileTank;
@@ -32,7 +31,7 @@ import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnection {
-    private static final BuildCraftProperty<Boolean> JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
+    private static final IProperty<Boolean> JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
     private static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(2 / 16D, 0 / 16D, 2 / 16D, 14 / 16D, 16 / 16D, 14 / 16D);
 
     public BlockTank(Material material, String id) {

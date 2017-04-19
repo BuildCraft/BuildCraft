@@ -5,6 +5,8 @@ import java.util.List;
 
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.BCModules;
+
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.fluid.BCFluidBlock;
 import buildcraft.lib.fluid.FluidManager;
@@ -46,20 +48,32 @@ public class BCEnergyFluids {
             { 0xFA_F6_30, 0xE0_D9_00 },// Gas Fuel
             { 0x3F_3F_3F, 0x30_30_30 },// Tar
         };
+        if (BCModules.FACTORY.isLoaded()) {
+            int index = 0;
 
-        int index = 0;
-
-        // Add all of the fluid states
-        crudeOil = defineFluids("oil", 4000, 4000, 3, 6, colours[index++]);
-        oilResidue = defineFluids("oil_residue", 6000, 8000, 3, 4, colours[index++]);
-        oilHeavy = defineFluids("oil_heavy", 4000, 4000, 2, 6, colours[index++]);
-        oilDense = defineFluids("oil_dense", 5000, 5000, 3, 5, colours[index++]);
-        oilDistilled = defineFluids("oil_distilled", 3000, 3500, 2, 8, colours[index++]);
-        fuelDense = defineFluids("fuel_dense", 2000, 5000, 2, 7, colours[index++]);
-        fuelMixedHeavy = defineFluids("fuel_mixed_heavy", 1200, 700, 2, 7, colours[index++]);
-        fuelLight = defineFluids("fuel_light", 1000, 900, 1, 8, colours[index++]);
-        fuelMixedLight = defineFluids("fuel_mixed_light", 800, 700, 1, 9, colours[index++]);
-        fuelGaseous = defineFluids("fuel_gaseous", 300, 600, 0, 10, colours[index++]);
+            // Add all of the fluid states
+            crudeOil = defineFluids("oil", 4000, 4000, 3, 6, colours[index++]);
+            oilResidue = defineFluids("oil_residue", 6000, 8000, 3, 4, colours[index++]);
+            oilHeavy = defineFluids("oil_heavy", 4000, 4000, 2, 6, colours[index++]);
+            oilDense = defineFluids("oil_dense", 5000, 5000, 3, 5, colours[index++]);
+            oilDistilled = defineFluids("oil_distilled", 3000, 3500, 2, 8, colours[index++]);
+            fuelDense = defineFluids("fuel_dense", 2000, 5000, 2, 7, colours[index++]);
+            fuelMixedHeavy = defineFluids("fuel_mixed_heavy", 1200, 700, 2, 7, colours[index++]);
+            fuelLight = defineFluids("fuel_light", 1000, 900, 1, 8, colours[index++]);
+            fuelMixedLight = defineFluids("fuel_mixed_light", 800, 700, 1, 9, colours[index++]);
+            fuelGaseous = defineFluids("fuel_gaseous", 300, 600, 0, 10, colours[index++]);
+        } else {
+            crudeOil = new BCFluid[] { defineFluid("oil", 4000, 4000, 0, 3, 6, colours[0]) };
+            oilResidue = new BCFluid[0];
+            oilHeavy = new BCFluid[0];
+            oilDense = new BCFluid[0];
+            oilDistilled = new BCFluid[0];
+            fuelDense = new BCFluid[0];
+            fuelMixedHeavy = new BCFluid[0];
+            fuelLight = new BCFluid[] { defineFluid("fuel_light", 1000, 900, 0, 1, 8, colours[7]) };
+            fuelMixedLight = new BCFluid[0];
+            fuelGaseous = new BCFluid[0];
+        }
     }
 
     private static BCFluid[] defineFluids(String name, int density, int baseViscocity, int boilPoint, int baseQuanta, int[] texColours) {

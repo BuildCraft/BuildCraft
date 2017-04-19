@@ -133,18 +133,20 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     @Override
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         ItemStack current = player.getHeldItem(hand);
-        if (current != null) {
+        if (!current.isEmpty()) {
             if (EntityUtil.getWrenchHand(player) != null) {
                 return false;
             }
             if (current.getItem() instanceof IItemPipe) {
                 return false;
             }
-            FluidActionResult result = FluidUtil.interactWithFluidHandler(current, fluidHandler, player);
-            if (result.isSuccess()) {
-                player.setHeldItem(hand, result.result);
-                return true;
+            if (!world.isRemote) {
+                FluidActionResult result = FluidUtil.interactWithFluidHandler(current, fluidHandler, player);
+                if (result.isSuccess()) {
+                    player.setHeldItem(hand, result.result);
+                }
             }
+            return true;
         }
         if (!world.isRemote) {
             BCEnergyGuis.ENGINE_IRON.openGUI(player, getPos());

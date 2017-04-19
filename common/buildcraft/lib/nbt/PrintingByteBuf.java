@@ -61,7 +61,7 @@ public final class PrintingByteBuf extends PacketBufferBC {
 
     @Override
     public PacketBuffer writeVarInt(int value) {
-        System.out.print(" _var(");
+        System.out.print(" _var[" + value + "] (");
         super.writeVarInt(value);
         System.out.print(" )");
         return this;
@@ -69,7 +69,7 @@ public final class PrintingByteBuf extends PacketBufferBC {
 
     @Override
     public PacketBuffer writeVarLong(long value) {
-        System.out.print(" _var(");
+        System.out.print(" _var[" + value + "L](");
         super.writeVarLong(value);
         System.out.print(" )");
         return this;

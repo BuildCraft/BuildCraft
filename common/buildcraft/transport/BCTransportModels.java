@@ -156,13 +156,13 @@ public class BCTransportModels {
         registerModel(modelRegistry, start + "plug_blocker#inventory", new ModelPluggableItem(BLOCKER.getCutoutQuads()));
         registerModel(modelRegistry, start + "plug_pulsar#inventory", new ModelPluggableItem(PULSAR_STATIC.getCutoutQuads(), getPulsarDynQuads(true, 0.5, false, false)));
         registerModel(modelRegistry, start + "plug_light_sensor#inventory", new ModelPluggableItem(LIGHT_SENSOR.getCutoutQuads()));
-        registerModel(modelRegistry, start + "plug_facade#inventory", ModelFacadetem.INSTANCE);
+        registerModel(modelRegistry, start + "plug_facade#inventory", ModelFacadeItem.INSTANCE);
 
         PlugGateBaker.onModelBake();
         PlugBakerLens.onModelBake();
         ModelGateItem.onModelBake();
         ModelLensItem.onModelBake();
-        ModelFacadetem.onModelBake();
+        ModelFacadeItem.onModelBake();
 
         PlugGateRenderer.onModelBake();
         PlugPulsarRenderer.onModelBake();

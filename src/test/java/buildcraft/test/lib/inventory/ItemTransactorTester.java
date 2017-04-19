@@ -14,7 +14,7 @@ import buildcraft.test.VanillaSetupBaseTester;
 public class ItemTransactorTester extends VanillaSetupBaseTester {
     @Test
     public void testSimpleMoving() {
-        IItemTransactor trans = new ItemHandlerSimple(2, (a, b, c, d) -> {});
+        IItemTransactor trans = new ItemHandlerSimple(2, null);
 
         Assert.assertTrue(trans.extract(null, 1, 1, false).isEmpty());
 
