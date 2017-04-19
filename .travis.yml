@@ -2,7 +2,7 @@ language: java
 jdk:
   - oraclejdk8
 
-install: ./gradlew setupDecompWorkspace -S
+install: ./gradlew setupCiWorkspace -S
 script: ./gradlew build
 
 env:
