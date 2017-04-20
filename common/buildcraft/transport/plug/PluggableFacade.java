@@ -101,4 +101,9 @@ public class PluggableFacade extends PipePluggable {
         FacadePhasedState state = states.phasedStates[activeState];
         return Minecraft.getMinecraft().getBlockColors().colorMultiplier(state.stateInfo.state, holder.getPipeWorld(), holder.getPipePos(), tintIndex / 6);
     }
+
+    @Override
+    public boolean canBeConnected() {
+        return !states.phasedStates[activeState].isHollow;
+    }
 }

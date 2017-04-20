@@ -228,7 +228,7 @@ public class FacadeStateManager {
 
         public static FullFacadeInstance readFromNbt(NBTTagCompound nbt, String subTag) {
             NBTTagList list = nbt.getTagList(subTag, Constants.NBT.TAG_COMPOUND);
-            if (list == null || list.hasNoTags()) {
+            if (list.hasNoTags()) {
                 return new FullFacadeInstance(new FacadePhasedState[] { new FacadePhasedState(defaultState, false, null) });
             }
             FacadePhasedState[] states = new FacadePhasedState[list.tagCount()];

@@ -33,7 +33,7 @@ public enum ModelFacadeItem implements IBakedModel {
         PlugBakerFacade.INSTANCE.bake(key), ModelItemSimple.TRANSFORM_PLUG_AS_ITEM)));
 
     public static void onModelBake() {
-        cache.cleanUp();
+        cache.invalidateAll();
     }
 
     @Override
@@ -81,11 +81,7 @@ public enum ModelFacadeItem implements IBakedModel {
         @Override
         public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
             FullFacadeInstance inst = ItemPluggableFacade.getStates(stack);
-            if (inst == null) {
-                return originalModel;
-            }
-            int count = inst.phasedStates.length;
-            final FacadePhasedState state = inst.getCurrentStateForStack();
+            FacadePhasedState state = inst.getCurrentStateForStack();
             return cache.getUnchecked(new KeyPlugFacade(BlockRenderLayer.TRANSLUCENT, EnumFacing.WEST, state.stateInfo.state, state.isHollow));
         }
     }
