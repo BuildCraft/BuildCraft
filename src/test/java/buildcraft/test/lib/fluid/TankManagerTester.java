@@ -8,8 +8,9 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
+import buildcraft.test.VanillaSetupBaseTester;
 
-public class TankManagerTester {
+public class TankManagerTester extends VanillaSetupBaseTester{
     @Test
     public void testSimpleMoving() {
         TankManager<Tank> manager = new TankManager<>();
