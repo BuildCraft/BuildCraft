@@ -24,7 +24,9 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
 
     @Override
     protected void engineUpdate() {
-        power = getCurrentOutput();
+        if (isBurning()) {
+            power += getCurrentOutput();
+        }
     }
 
     @Override
