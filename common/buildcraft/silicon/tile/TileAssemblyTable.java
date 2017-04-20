@@ -20,6 +20,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.api.recipes.IAssemblyRecipeProvider;
 
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.LocaleUtil;
@@ -107,6 +108,15 @@ public class TileAssemblyTable extends TileLaserTableBase {
             if (!recipesStates.containsKey(recipe)) {
                 if (extract(recipe.requiredStacks, true)) {
                     recipesStates.put(recipe, EnumAssemblyRecipeState.POSSIBLE);
+                }
+            }
+        }
+        for (IAssemblyRecipeProvider provider : AssemblyRecipeRegistry.INSTANCE.getAllRecipeProviders()) {
+            for (AssemblyRecipe recipe : provider.getRecipesFor(inv.stacks)) {
+                if (!recipesStates.containsKey(recipe)) {
+                    if (extract(recipe.requiredStacks, true)) {
+                        recipesStates.put(recipe, EnumAssemblyRecipeState.POSSIBLE);
+                    }
                 }
             }
         }

@@ -1,13 +1,14 @@
 package buildcraft.transport.client.model.plug;
 
-import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
-import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.client.model.MutableVertex;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.transport.BCTransportModels;
-import buildcraft.transport.client.model.key.KeyPlugBlocker;
-import buildcraft.transport.client.model.key.KeyPlugFacade;
-import buildcraft.transport.plug.PluggableFacade;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -15,14 +16,16 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.Vec3d;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
+
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.client.model.MutableVertex;
+import buildcraft.lib.misc.VecUtil;
+import buildcraft.transport.BCTransportModels;
+import buildcraft.transport.client.model.key.KeyPlugBlocker;
+import buildcraft.transport.client.model.key.KeyPlugFacade;
+import buildcraft.transport.plug.PluggableFacade;
 
 public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
     INSTANCE;

@@ -2,23 +2,15 @@ package buildcraft.lib.recipe;
 
 import java.util.Arrays;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-
-import net.minecraftforge.oredict.OreDictionary;
-
-import buildcraft.lib.misc.ArrayUtil;
-import buildcraft.lib.misc.StackUtil;
 
 public class ChangingObject<T> {
     protected final T[] options;
     private final int hash;
+    private int timeGap = 1000;
 
     public ChangingObject(T[] options) {
-        this.options 
-         = options;
+        this.options = options;
         hash = computeHash();
     }
 
@@ -32,9 +24,14 @@ public class ChangingObject<T> {
     }
 
     public T get(int indexOffset) {
-        long now = System.currentTimeMillis();
-        int i = (int) (now / 1000) + indexOffset;
+        long now = (System.currentTimeMillis() / timeGap) % options.length;
+        int i = (int) now + indexOffset;
         return options[i % options.length];
+    }
+
+    /** Sets the time gap between different stacks showing, in milliseconds. Defaults to 1000 (1 second) */
+    public void setTimeGap(int timeGap) {
+        this.timeGap = timeGap;
     }
 
     @Override

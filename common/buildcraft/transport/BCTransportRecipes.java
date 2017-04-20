@@ -1,5 +1,8 @@
 package buildcraft.transport;
 
+import java.util.List;
+import java.util.Map.Entry;
+
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.init.Blocks;
@@ -21,6 +24,7 @@ import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.BCCoreBlocks;
 import buildcraft.core.BCCoreItems;
 import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.NBTAwareShapedOreRecipe;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
@@ -29,8 +33,14 @@ import buildcraft.transport.gate.EnumGateMaterial;
 import buildcraft.transport.gate.EnumGateModifier;
 import buildcraft.transport.gate.GateVariant;
 import buildcraft.transport.item.ItemPipeHolder;
+import buildcraft.transport.plug.FacadeStateManager;
+import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
+import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
+import buildcraft.transport.recipe.FacadeAssemblyRecipes;
 
 public class BCTransportRecipes {
+    private static final boolean[] FALSE_OR_TRUE = { false, true };
+
     public static void init() {
         if (BCTransportItems.waterproof != null) {
             GameRegistry.addShapelessRecipe(new ItemStack(BCTransportItems.waterproof), new ItemStack(Items.DYE, 1, 2));
@@ -216,6 +226,10 @@ public class BCTransportRecipes {
             output = BCTransportItems.plugLens.getStack(null, true);
             input = ImmutableSet.of(glass, new ItemStack(Blocks.IRON_BARS));
             AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(500 * MjAPI.MJ, input, output));
+        }
+
+        if (BCTransportItems.plugFacade != null) {
+            AssemblyRecipeRegistry.INSTANCE.addRecipeProvider(FacadeAssemblyRecipes.INSTANCE);
         }
     }
 

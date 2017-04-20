@@ -5,7 +5,6 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 
-import buildcraft.api.BCItems;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.IAssemblyRecipeProvider;
 
@@ -14,7 +13,7 @@ import buildcraft.lib.misc.ArrayUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.ChangingItemStack;
-import buildcraft.lib.recipe.IRecipeViewable;
+import buildcraft.lib.recipe.IRecipeViewable.IRecipePowered;
 
 public enum GuideAssemblyRecipes implements IStackRecipes {
     INSTANCE;
@@ -31,12 +30,12 @@ public enum GuideAssemblyRecipes implements IStackRecipes {
             }
         }
         for (IAssemblyRecipeProvider adv : AssemblyRecipeRegistry.INSTANCE.getAllRecipeProviders()) {
-            if (adv instanceof IRecipeViewable) {
-                IRecipeViewable view = (IRecipeViewable) adv;
+            if (adv instanceof IRecipePowered) {
+                IRecipePowered view = (IRecipePowered) adv;
                 ChangingItemStack[] in = view.getRecipeInputs();
                 if (ArrayUtil.testForAny(in, c -> c.matches(stack))) {
                     ChangingItemStack out = view.getRecipeOutputs();
-                    usages.add(new GuideAssemblyFactory(in, out, null));
+                    usages.add(new GuideAssemblyFactory(in, out, view.getMjCost()));
                 }
             }
         }
@@ -52,12 +51,12 @@ public enum GuideAssemblyRecipes implements IStackRecipes {
             }
         }
         for (IAssemblyRecipeProvider adv : AssemblyRecipeRegistry.INSTANCE.getAllRecipeProviders()) {
-            if (adv instanceof IRecipeViewable) {
-                IRecipeViewable view = (IRecipeViewable) adv;
+            if (adv instanceof IRecipePowered) {
+                IRecipePowered view = (IRecipePowered) adv;
                 ChangingItemStack out = view.getRecipeOutputs();
                 if (out.matches(stack)) {
                     ChangingItemStack[] in = view.getRecipeInputs();
-                    recipes.add(new GuideAssemblyFactory(in, out, null));
+                    recipes.add(new GuideAssemblyFactory(in, out, view.getMjCost()));
                 }
             }
         }

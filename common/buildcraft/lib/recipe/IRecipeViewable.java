@@ -10,4 +10,9 @@ public interface IRecipeViewable {
 
         int getRecipeHeight();
     }
+
+    /** Use this for integration table recipes or assembly table recipes. */
+    public interface IRecipePowered extends IRecipeViewable {
+        ChangingObject<Long> getMjCost();
+    }
 }

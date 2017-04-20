@@ -83,7 +83,7 @@ public class BCEnergyRecipes {
         return array[0];
     }
 
-    private static final int TIME_BASE = 256_000;
+    private static final int TIME_BASE = 240_000; // 240_000 - multiple of 3, 5, 16, 1000
 
     private static void addFuel(Fluid[] in, int amountDiff, int multiplier) {
         Fluid fuel = getFirstOrNull(in);

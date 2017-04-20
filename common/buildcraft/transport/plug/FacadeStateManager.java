@@ -1,12 +1,16 @@
 package buildcraft.transport.plug;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
+
+import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGlass;
 import net.minecraft.block.BlockStainedGlass;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
@@ -25,10 +29,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import buildcraft.api.facades.FacadeType;
 
 import buildcraft.builders.snapshot.FakeWorld;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.misc.*;
 import buildcraft.lib.net.PacketBufferBC;
 
 public class FacadeStateManager {
@@ -40,8 +41,8 @@ public class FacadeStateManager {
         }
         return Integer.compare(ba.getMetaFromState(a), bb.getMetaFromState(b));
     });
-    public static final Map<ItemStack, FacadeBlockStateInfo> stackFacades = new HashMap<>();
-    public static FacadeBlockStateInfo defaultState;
+    public static final Map<ItemStackKey, List<FacadeBlockStateInfo>> stackFacades = new HashMap<>();
+    public static FacadeBlockStateInfo defaultState, previewState;
 
     private static EnumActionResult isValidFacadeBlock(Block block) {
         if (block instanceof IFluidBlock) {
@@ -60,52 +61,93 @@ public class FacadeStateManager {
         return state.isFullCube();
     }
 
+    private static ItemStack getRequiredStack(IBlockState state) {
+        FakeWorld world = FakeWorld.INSTANCE;
+        world.clear();
+        world.setBlockState(BlockPos.ORIGIN, state);
+        ItemStack stack = state.getBlock().getPickBlock(state, new RayTraceResult(VecUtil.VEC_HALF, null, BlockPos.ORIGIN), world, BlockPos.ORIGIN, null);
+        world.clear();
+        if (stack.isEmpty()) {
+            return StackUtil.EMPTY;
+        } else {
+            return stack;
+        }
+    }
+
     public static void postInit() {
-        defaultState = new FacadeBlockStateInfo(Blocks.AIR.getDefaultState(), false);
+        defaultState = new FacadeBlockStateInfo(Blocks.AIR.getDefaultState(), StackUtil.EMPTY, ImmutableSet.of());
         for (Block block : ForgeRegistries.BLOCKS) {
             EnumActionResult result = isValidFacadeBlock(block);
             if (result == EnumActionResult.FAIL) {
                 continue;
             }
-            Set<IBlockState> usedStates = new HashSet<>();
+            Map<IBlockState, ItemStack> usedStates = new HashMap<>();
+            Map<ItemStackKey, Map<IProperty<?>, Comparable<?>>> varyingProperties = new HashMap<>();
             for (IBlockState state : block.getBlockState().getValidStates()) {
                 state = block.getStateFromMeta(block.getMetaFromState(state));
+                if (usedStates.containsKey(state)) {
+                    continue;
+                }
                 if (result == EnumActionResult.PASS && !isValidFacadeState(state)) {
                     continue;
                 }
-                if (!usedStates.add(state)) {
-                    continue;
+                ItemStack stack = getRequiredStack(state);
+                usedStates.put(state, stack);
+                ItemStackKey stackKey = new ItemStackKey(stack);
+                Map<IProperty<?>, Comparable<?>> vars = varyingProperties.get(stackKey);
+                if (vars == null) {
+                    vars = new HashMap<>();
+                    vars.putAll(state.getProperties());
+                    varyingProperties.put(stackKey, vars);
+                } else {
+                    for (Entry<IProperty<?>, Comparable<?>> entry : state.getProperties().entrySet()) {
+                        IProperty prop = entry.getKey();
+                        Comparable<?> value = entry.getValue();
+                        if (vars.get(prop) != value) {
+                            vars.put(prop, null);
+                        }
+                    }
                 }
-                FacadeBlockStateInfo info = new FacadeBlockStateInfo(state, true);
+            }
+            for (Entry<IBlockState, ItemStack> entry : usedStates.entrySet()) {
+                IBlockState state = entry.getKey();
+                ItemStack stack = entry.getValue();
+                Map<IProperty<?>, Comparable<?>> vars = varyingProperties.get(new ItemStackKey(stack));
+                Iterator<Comparable<?>> iter = vars.values().iterator();
+                while (iter.hasNext()) {
+                    if (iter.next() != null) {
+                        iter.remove();
+                    }
+                }
+                FacadeBlockStateInfo info = new FacadeBlockStateInfo(state, stack, ImmutableSet.copyOf(vars.keySet()));
                 validFacadeStates.put(state, info);
                 if (!info.requiredStack.isEmpty()) {
-                    stackFacades.put(info.requiredStack, info);
+                    ItemStackKey stackKey = new ItemStackKey(info.requiredStack);
+                    List<FacadeBlockStateInfo> infos = stackFacades.get(stackKey);
+                    if (infos == null) {
+                        infos = new ArrayList<>();
+                        stackFacades.put(stackKey, infos);
+                    }
+                    infos.add(info);
                 }
             }
         }
+        previewState = validFacadeStates.get(Blocks.BRICK_BLOCK.getDefaultState());
     }
 
     public static class FacadeBlockStateInfo {
         public final IBlockState state;
         public final ItemStack requiredStack;
+        public final ImmutableSet<IProperty<?>> varyingProperties;
         public final boolean isTransparent;
         public final boolean isVisible;
 
-        public FacadeBlockStateInfo(IBlockState state, boolean isVisible) {
+        public FacadeBlockStateInfo(IBlockState state, ItemStack requiredStack, ImmutableSet<IProperty<?>> varyingProperties) {
             this.state = state;
-            Block block = state.getBlock();
-            FakeWorld world = FakeWorld.INSTANCE;
-            world.clear();
-            world.setBlockState(BlockPos.ORIGIN, state);
-            ItemStack stack = block.getPickBlock(state, new RayTraceResult(VecUtil.VEC_HALF, null, BlockPos.ORIGIN), world, BlockPos.ORIGIN, null);
-            world.clear();
-            if (stack.isEmpty()) {
-                requiredStack = StackUtil.EMPTY;
-            } else {
-                requiredStack = stack;
-            }
+            this.requiredStack = requiredStack;
+            this.varyingProperties = varyingProperties;
             this.isTransparent = !state.isOpaqueCube();
-            this.isVisible = isVisible && !requiredStack.isEmpty();
+            this.isVisible = !requiredStack.isEmpty();
         }
     }
 

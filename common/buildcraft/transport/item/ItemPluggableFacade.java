@@ -1,7 +1,6 @@
 package buildcraft.transport.item;
 
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
 
@@ -32,6 +31,7 @@ import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.SoundUtil;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.BCTransportPlugs;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
@@ -46,6 +46,7 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
         setHasSubtypes(true);
     }
 
+    @Nonnull
     public ItemStack createItemStack(FullFacadeInstance state) {
         ItemStack item = new ItemStack(this);
         NBTTagCompound nbt = NBTUtilBC.getItemData(item);
@@ -65,14 +66,22 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
 
     @Override
     public ItemStack getFacadeForBlock(IBlockState state) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+        FacadeBlockStateInfo info = FacadeStateManager.validFacadeStates.get(state);
+        if (info == null) {
+            return StackUtil.EMPTY;
+        } else {
+            return createItemStack(FullFacadeInstance.createSingle(info, false));
+        }
     }
 
     @Override
     public IBlockState[] getBlockStatesForFacade(ItemStack facade) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+        FullFacadeInstance info = getStates(facade);
+        IBlockState[] states = new IBlockState[info.phasedStates.length];
+        for (int i = 0; i < states.length; i++) {
+            states[i] = info.phasedStates[i].stateInfo.state;
+        }
+        return states;
     }
 
     @Override
@@ -142,13 +151,11 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
             if (defaultState != null) {
                 tooltip.add(1, String.format(LocaleUtil.localize("item.FacadePhased.state_default"), getFacadeStateDisplayName(defaultState)));
             }
-        } else if (advanced) {
+        } else {
             String propertiesStart = TextFormatting.GRAY + "" + TextFormatting.ITALIC;
-            IBlockState state = states.phasedStates[0].stateInfo.state;
-            tooltip.add(propertiesStart + state.getBlock().getRegistryName());
-            for (Entry<IProperty<?>, Comparable<?>> entry : state.getProperties().entrySet()) {
-                IProperty prop = entry.getKey();
-                Comparable comp = entry.getValue();
+            FacadeBlockStateInfo info = states.phasedStates[0].stateInfo;
+            for (IProperty prop : info.varyingProperties) {
+                Comparable comp = info.state.getValue(prop);
                 tooltip.add(propertiesStart + prop.getName() + " = " + prop.getName(comp));
             }
         }

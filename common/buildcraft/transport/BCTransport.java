@@ -21,6 +21,8 @@ import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
 import buildcraft.transport.plug.FacadeStateManager;
+import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
+import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
 import buildcraft.transport.wire.MessageWireSystems;
 import buildcraft.transport.wire.MessageWireSystemsPowered;
 
@@ -36,12 +38,15 @@ public class BCTransport {
     @Mod.Instance(MODID)
     public static BCTransport INSTANCE = null;
 
+    private static CreativeTabBC tabFacades;
+
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
         CreativeTabBC tabPipes = CreativeTabManager.createTab("buildcraft.pipes");
         CreativeTabBC tabPlugs = CreativeTabManager.createTab("buildcraft.plugs");
+        tabFacades = CreativeTabManager.createTab("buildcraft.facades");
 
         BCTransportRegistries.preInit();
         BCTransportConfig.preInit();
@@ -69,6 +74,12 @@ public class BCTransport {
     @Mod.EventHandler
     public static void init(FMLInitializationEvent evt) {
         BCTransportProxy.getProxy().fmlInit();
+        FacadeStateManager.postInit();
+        if (BCTransportItems.plugFacade != null) {
+            FacadeBlockStateInfo state = FacadeStateManager.previewState;
+            FullFacadeInstance inst = FullFacadeInstance.createSingle(state, false);
+            tabFacades.setItem(BCTransportItems.plugFacade.createItemStack(inst));
+        }
         BCTransportRegistries.init();
         BCTransportRecipes.init();
     }
@@ -76,7 +87,6 @@ public class BCTransport {
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
         BCTransportProxy.getProxy().fmlPostInit();
-        FacadeStateManager.postInit();
     }
 
     static {
@@ -88,7 +98,7 @@ public class BCTransport {
         registerTag("item.plug.lens").reg("plug_lens").locale("lens").model("pluggable/lens").tab("buildcraft.plugs");
         registerTag("item.plug.pulsar").reg("plug_pulsar").locale("pulsar").model("plug_pulsar").tab("buildcraft.plugs");
         registerTag("item.plug.light_sensor").reg("plug_light_sensor").locale("light_sensor").model("plug_light_sensor").tab("buildcraft.plugs");
-        registerTag("item.plug.facade").reg("plug_facade").locale("Facade").model("plug_facade").tab("buildcraft.plugs");
+        registerTag("item.plug.facade").reg("plug_facade").locale("Facade").model("plug_facade").tab("buildcraft.facades");
         registerTag("item.wire").reg("wire").locale("pipeWire").model("wire/").tab("buildcraft.plugs");
         // Pipes
         startBatch();// Pipes
