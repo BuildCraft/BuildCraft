@@ -55,6 +55,12 @@ dependencies {
     testCompile "junit:junit:4.12"
 }
 
+test {
+    testLogging {
+        lifecycle.showStandardStreams = true
+    }
+}
+
 minecraft {
     version = config.mc_version + "-" + config.forge_version
     runDir = "run"
