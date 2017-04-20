@@ -8,7 +8,6 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.api.lists.ListMatchHandler.Type;
 
-import buildcraft.lib.list.ListMatchHandlerFluid;
 import buildcraft.lib.list.ListMatchHandlerTools;
 import buildcraft.test.VanillaSetupBaseTester;
 

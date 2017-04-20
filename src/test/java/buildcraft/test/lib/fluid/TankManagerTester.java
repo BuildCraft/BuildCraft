@@ -10,7 +10,7 @@ import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
 import buildcraft.test.VanillaSetupBaseTester;
 
-public class TankManagerTester extends VanillaSetupBaseTester{
+public class TankManagerTester extends VanillaSetupBaseTester {
     @Test
     public void testSimpleMoving() {
         TankManager<Tank> manager = new TankManager<>();
