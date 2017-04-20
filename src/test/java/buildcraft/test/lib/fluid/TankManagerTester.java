@@ -1,5 +1,6 @@
 package buildcraft.test.lib.fluid;
 
+import net.minecraft.init.Bootstrap;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,6 +13,8 @@ import buildcraft.lib.fluids.TankManager;
 public class TankManagerTester {
     @Test
     public void testSimpleMoving() {
+        Bootstrap.register();
+
         TankManager<Tank> manager = new TankManager<>();
         manager.add(new Tank("tank_1", 3, null));
         Assert.assertEquals(2, manager.fill(new FluidStack(FluidRegistry.WATER, 2), true));

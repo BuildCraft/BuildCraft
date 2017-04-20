@@ -1,5 +1,6 @@
 package buildcraft.test.lib.list;
 
+import net.minecraft.init.Bootstrap;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,6 +16,8 @@ import buildcraft.test.VanillaSetupBaseTester;
 public class ListTester extends VanillaSetupBaseTester {
     @Test
     public void testTools() {
+        Bootstrap.register();
+
         ListMatchHandlerTools matcher = new ListMatchHandlerTools();
         ItemStack woodenAxe = new ItemStack(Items.WOODEN_AXE);
         ItemStack ironAxe = new ItemStack(Items.IRON_AXE);
