@@ -1,6 +1,5 @@
 package buildcraft.test.lib.inventory;
 
-import net.minecraft.init.Bootstrap;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,8 +14,6 @@ import buildcraft.test.VanillaSetupBaseTester;
 public class ItemTransactorTester extends VanillaSetupBaseTester {
     @Test
     public void testSimpleMoving() {
-        Bootstrap.register();
-
         IItemTransactor trans = new ItemHandlerSimple(2, null);
 
         Assert.assertTrue(trans.extract(null, 1, 1, false).isEmpty());

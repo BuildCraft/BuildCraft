@@ -3,7 +3,7 @@ jdk:
   - oraclejdk8
 
 install: ./gradlew setupCiWorkspace -S
-script: ./gradlew build
+script: ./gradlew build -S
 
 env:
   global:
