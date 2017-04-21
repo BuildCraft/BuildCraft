@@ -33,4 +33,11 @@ public class NodeVariableDouble implements INodeDouble, IVariableNode {
     public String toString() {
         return "mutable_double#" + System.identityHashCode(this);
     }
+
+    @Override
+    public String valueToString() {
+        double strVal = value * 1000;
+        strVal = Math.round(strVal) / 1000.0;
+        return Double.toString(strVal);
+    }
 }

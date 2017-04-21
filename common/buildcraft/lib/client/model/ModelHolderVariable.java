@@ -22,6 +22,7 @@ import buildcraft.lib.client.reload.ReloadManager;
 import buildcraft.lib.client.reload.ReloadSource;
 import buildcraft.lib.client.reload.SourceType;
 import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.node.value.ITickableNode;
 import buildcraft.lib.misc.SpriteUtil;
 import buildcraft.transport.BCTransportModels;
 
@@ -132,7 +133,6 @@ public class ModelHolderVariable extends ModelHolder {
 
     private MutableQuad[] bakePart(JsonVariableModelPart[] a) {
         List<MutableQuad> list = new ArrayList<>();
-        rawModel.refreshLocalVariables();
         for (JsonVariableModelPart part : a) {
             part.addQuads(list, this::lookupTexture);
         }
@@ -178,6 +178,14 @@ public class ModelHolderVariable extends ModelHolder {
                 BCLog.logger.warn(warnText);
             }
         }
+    }
+
+    public ITickableNode[] createTickableNodes() {
+        if (rawModel == null) {
+            printNoModelWarning();
+            return new ITickableNode[0];
+        }
+        return rawModel.createTickableNodes();
     }
 
     public MutableQuad[] getCutoutQuads() {

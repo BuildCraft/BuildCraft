@@ -7,6 +7,10 @@ import java.util.Map;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.INodeFunc;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncString;
 import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.node.func.*;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleToDouble.IFuncDoubleDoubleToDouble;
@@ -192,42 +196,43 @@ public class FunctionContext {
         return recorder.types.size();
     }
 
-    public void putFunction(String name, INodeFunc function) {
+    public <F extends INodeFunc> F putFunction(String name, F function) {
         name = name.toLowerCase(Locale.ROOT);
         functions.put(name + FUNCTION_ARG_SEPERATOR + getArgCount(function), function);
+        return function;
     }
 
     // Various putFunction_in_out methods that make adding a function quicker
 
-    public void put_b(String name, IFuncToBoolean func) {
-        putFunction(name, new NodeFuncToBoolean(name, func));
+    public INodeFuncBoolean put_b(String name, IFuncToBoolean func) {
+        return putFunction(name, new NodeFuncToBoolean(name, func));
     }
 
-    public void put_s(String name, IFuncToString func) {
-        putFunction(name, new NodeFuncToString(name, func));
-    }
-    
-    public void put_l_l(String name, IFuncLongToLong func) {
-        putFunction(name, new NodeFuncLongToLong(func, (a) -> name + "(" + a + ")"));
+    public INodeFuncString put_s(String name, IFuncToString func) {
+        return putFunction(name, new NodeFuncToString(name, func));
     }
 
-    public void put_ll_l(String name, IFuncLongLongToLong func) {
-        putFunction(name, new NodeFuncLongLongToLong(func, (a, b) -> name + "(" + a + ", " + b + ")"));
+    public INodeFuncLong put_l_l(String name, IFuncLongToLong func) {
+        return putFunction(name, new NodeFuncLongToLong(func, (a) -> name + "(" + a + ")"));
     }
 
-    public void put_d_l(String name, IFuncDoubleToLong func) {
-        putFunction(name, new NodeFuncDoubleToLong(func, (a) -> name + "(" + a + ")"));
+    public INodeFuncLong put_ll_l(String name, IFuncLongLongToLong func) {
+        return putFunction(name, new NodeFuncLongLongToLong(func, (a, b) -> name + "(" + a + ", " + b + ")"));
     }
 
-    public void put_d_d(String name, IFuncDoubleToDouble func) {
-        putFunction(name, new NodeFuncDoubleToDouble(func, (a) -> name + "(" + a + ")"));
+    public INodeFuncLong put_d_l(String name, IFuncDoubleToLong func) {
+        return putFunction(name, new NodeFuncDoubleToLong(func, (a) -> name + "(" + a + ")"));
     }
 
-    public void put_dd_d(String name, IFuncDoubleDoubleToDouble func) {
-        putFunction(name, new NodeFuncDoubleDoubleToDouble(func, (a, b) -> name + "(" + a + ", " + b + ")"));
+    public INodeFuncDouble put_d_d(String name, IFuncDoubleToDouble func) {
+        return putFunction(name, new NodeFuncDoubleToDouble(func, (a) -> name + "(" + a + ")"));
     }
 
-    public void put_s_l(String name, IFuncStringToLong func) {
-        putFunction(name, new NodeFuncStringToLong(func, (a) -> name + "(" + a + ")"));
+    public INodeFuncDouble put_dd_d(String name, IFuncDoubleDoubleToDouble func) {
+        return putFunction(name, new NodeFuncDoubleDoubleToDouble(func, (a, b) -> name + "(" + a + ", " + b + ")"));
+    }
+
+    public INodeFuncLong put_s_l(String name, IFuncStringToLong func) {
+        return putFunction(name, new NodeFuncStringToLong(func, (a) -> name + "(" + a + ")"));
     }
 }

@@ -16,16 +16,20 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.factory.BCFactoryModels;
 import buildcraft.factory.tile.TileDistiller_BC8;
 import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.render.fluid.FluidSpriteType;
+import buildcraft.lib.expression.node.value.ITickableNode;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.misc.VecUtil;
 
@@ -54,8 +58,9 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
             return;
         }
 
-        Minecraft.getMinecraft().mcProfiler.startSection("bc");
-        Minecraft.getMinecraft().mcProfiler.startSection("distiller");
+        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        profiler.startSection("bc");
+        profiler.startSection("distiller");
 
         int combinedLight = tile.getWorld().getCombinedLight(tile.getPos(), 0);
         EnumFacing face = state.getValue(BlockBCBase_Neptune.PROP_FACING);
@@ -72,19 +77,47 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         vb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         vb.setTranslation(x, y, z);
 
+        profiler.startSection("model");
+        profiler.startSection("compute");
+        if (tile.clientRenderVariables == null) {
+            tile.clientRenderVariables = BCFactoryModels.DISTILLER.createTickableNodes();
+        }
+        tile.setClientModelVariables(partialTicks);
+        for (ITickableNode node : tile.clientRenderVariables) {
+            node.refresh();
+        }
+        MutableQuad[] quads = BCFactoryModels.DISTILLER.getCutoutQuads();
+        profiler.endStartSection("render");
+
+        MutableQuad copy = new MutableQuad(0, null);
+        int lightc = combinedLight;
+        int light_block = (lightc >> 4) & 15;
+        int light_sky = (lightc >> 20) & 15;
+        for (MutableQuad q : quads) {
+            copy.copyFrom(q);
+            copy.maxLighti(light_block, light_sky);
+            copy.multShade();
+            copy.render(vb);
+        }
+
+        profiler.endSection();
+        profiler.endStartSection("fluid");
+
         renderTank(sizes.tankIn, tile.tankIn, combinedLight, vb);
         renderTank(sizes.tankOutGas, tile.tankOutGas, combinedLight, vb);
         renderTank(sizes.tankOutLiquid, tile.tankOutLiquid, combinedLight, vb);
 
         // buffer finish
         vb.setTranslation(0, 0, 0);
+        profiler.endStartSection("draw");
         Tessellator.getInstance().draw();
 
         // gl state finish
         RenderHelper.enableStandardItemLighting();
 
-        Minecraft.getMinecraft().mcProfiler.endSection();
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        profiler.endSection();
+        profiler.endSection();
+        profiler.endSection();
     }
 
     private static void renderTank(Size size, Tank tank, int combinedLight, VertexBuffer vb) {

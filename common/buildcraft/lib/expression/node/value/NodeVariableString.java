@@ -33,4 +33,9 @@ public class NodeVariableString implements INodeString, IVariableNode {
     public String toString() {
         return "mutable_string#" + System.identityHashCode(this);
     }
+
+    @Override
+    public String valueToString() {
+        return value;
+    }
 }

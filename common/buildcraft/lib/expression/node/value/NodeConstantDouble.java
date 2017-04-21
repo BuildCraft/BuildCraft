@@ -4,6 +4,7 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 
 public class NodeConstantDouble implements INodeDouble, IConstantNode {
     public static final NodeConstantDouble ZERO = new NodeConstantDouble(0);
+    public static final NodeConstantDouble ONE = new NodeConstantDouble(1);
 
     public final double value;
 

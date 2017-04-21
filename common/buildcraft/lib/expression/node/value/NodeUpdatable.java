@@ -1,20 +1,35 @@
 package buildcraft.lib.expression.node.value;
 
 import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.api.NodeType;
 
-public class NodeUpdatable {
+public class NodeUpdatable implements ITickableNode, ITickableNode.Source {
+    public final String name;
     public final IVariableNode variable;
     private IExpressionNode source;
 
-    public NodeUpdatable(IExpressionNode source, IVariableNode variable) {
+    public NodeUpdatable(String name, IExpressionNode source) {
+        this.name = name;
         this.source = source;
-        this.variable = variable;
+        this.variable = NodeType.getType(source).makeVariableNode();
     }
 
+    @Override
     public void refresh() {
         variable.set(source);
     }
 
+    @Override
+    public void tick() {
+        // NO-OP
+    }
+
+    @Override
+    public ITickableNode createTickable() {
+        return this;
+    }
+
+    @Override
     public void setSource(IExpressionNode source) {
         this.source = source;
     }

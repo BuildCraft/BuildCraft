@@ -33,4 +33,9 @@ public class NodeVariableBoolean implements INodeBoolean, IVariableNode {
     public void set(IExpressionNode from) {
         value = ((INodeBoolean) from).evaluate();
     }
+
+    @Override
+    public String valueToString() {
+        return Boolean.toString(value);
+    }
 }

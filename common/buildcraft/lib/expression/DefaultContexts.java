@@ -2,6 +2,8 @@ package buildcraft.lib.expression;
 
 import net.minecraft.item.EnumDyeColor;
 
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
+import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.misc.ColourUtil;
 
 public class DefaultContexts {
@@ -10,6 +12,10 @@ public class DefaultContexts {
     public static final FunctionContext MATH_VECTOR = new FunctionContext();
     public static final FunctionContext RENDERING = new FunctionContext();
     public static final FunctionContext CONFIG = new FunctionContext();
+
+    public static final NodeVariableDouble RENDER_PARTIAL_TICKS;
+
+    public static final INodeFuncLong MATH_SCALAR_FUNC_ROUND;
 
     private static final FunctionContext[] CTX_ARRAY_ALL = { STRINGS, MATH_SCALAR, MATH_VECTOR, RENDERING, CONFIG };
 
@@ -33,7 +39,7 @@ public class DefaultContexts {
         MATH_SCALAR.put_l_l("abs_long", (a) -> Math.abs(a));
         MATH_SCALAR.put_d_d("abs_double", (a) -> Math.abs(a));
 
-        MATH_SCALAR.put_d_l("round", (a) -> Math.round(a));
+        MATH_SCALAR_FUNC_ROUND = MATH_SCALAR.put_d_l("round", (a) -> Math.round(a));
         MATH_SCALAR.put_d_l("floor", (a) -> (long) Math.floor(a));
         MATH_SCALAR.put_d_l("ceil", (a) -> (long) Math.ceil(a));
         MATH_SCALAR.put_d_l("sign", (a) -> a == 0 ? 0 : a < 0 ? -1 : 1);
@@ -152,6 +158,7 @@ public class DefaultContexts {
 
         RENDERING.put_s_l("convertColourToAbgr", DefaultContexts::convertColourToAbgr);
         RENDERING.put_s_l("convertColourToArgb", DefaultContexts::convertColourToArgb);
+        RENDER_PARTIAL_TICKS = RENDERING.putVariableDouble("partial_ticks");
     }
 
     private static long convertColourToAbgr(String c) {

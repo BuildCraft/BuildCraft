@@ -7,4 +7,6 @@ public interface IVariableNode extends IExpressionNode {
      * cast. This should throw an {@link IllegalArgumentException} or a {@link ClassCastException} if the given node is
      * not of the correct type. */
     void set(IExpressionNode from);
+
+    String valueToString();
 }

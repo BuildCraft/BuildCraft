@@ -83,6 +83,7 @@ public abstract class BCFactoryProxy implements IGuiHandler {
 
         @Override
         public void fmlInit() {
+            BCFactoryModels.fmlPreInit();
             ClientRegistry.bindTileEntitySpecialRenderer(TileMiningWell.class, new RenderMiningWell());
             ClientRegistry.bindTileEntitySpecialRenderer(TilePump.class, new RenderPump());
             ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());

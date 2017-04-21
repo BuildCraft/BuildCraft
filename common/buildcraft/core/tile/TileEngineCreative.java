@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.mj.IMjConnector;
@@ -77,8 +78,11 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
     @Override
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (EntityUtil.getWrenchHand(player) != null && player.isSneaking()) {
-            currentOutputIndex++;
-            currentOutputIndex %= outputs.length;
+            if (!world.isRemote) {
+                currentOutputIndex++;
+                currentOutputIndex %= outputs.length;
+                player.sendStatusMessage(new TextComponentTranslation("chat.pipe.power.iron.mode", outputs[currentOutputIndex]), true);
+            }
             return true;
         }
         return false;

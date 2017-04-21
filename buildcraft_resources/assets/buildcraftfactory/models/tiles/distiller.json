@@ -1,0 +1,57 @@
+{
+	"rules": [
+		{
+			"when": "facing != 'west'",
+			"type": "builtin:rotate_facing",
+			"from": "'west'",
+			"to": "facing"
+		}
+	],
+	"variables": {
+		"change_speed": "active ? power_average * 0.01 : 0.01",
+		"state": {
+			"type": "double",
+			"value": "(active) ? (state + change_speed) : ( state > change_speed ? state - change_speed : 0 )",
+			"getter": "interpolate_partial_ticks",
+			"rounder": "last >= 1.5 && var >= 1.5 ? value - 1 : value",
+			"comment": "Starts at 0 when off, goes up to 1.5 then resets back down to 0.5 while active."
+		},
+		"y1": "1 - abs_double( (state							% 1) - 0.5) * 2",
+		"y2": "1 - abs_double( (state <= 0.5 ? 0 : (state - 0.5) % 1) - 0.5) * 2",
+		"tex": "power_average <= 0 ? '#off' : '#power_' + (power_average <= 3 ? power_average : 3)"
+	},
+	"textures": {
+		"#off": "minecraft:blocks/cobblestone",
+		"#power_1": "minecraft:blocks/iron_block",
+		"#power_2": "minecraft:blocks/gold_block",
+		"#power_3": "minecraft:blocks/diamond_block"
+	},
+	"elements": [
+		{
+			"comment": "Right",
+			"from": [ 0, "y1 * 12", 12 ],
+			"to": [ 8, "(y1 * 12) + 4", 16 ],
+			"faces": {
+				"down":  { "uv": [ 0, 0, 8, 4 ], "texture": "tex" },
+				"up":	{ "uv": [ 0, 0, 8, 4 ], "texture": "tex" },
+				"north": { "uv": [ 0, 0, 8, 4 ], "texture": "tex" },
+				"south": { "uv": [ 0, 0, 8, 4 ], "texture": "tex" },
+				"west":  { "uv": [ 0, 0, 4, 4 ], "texture": "tex" },
+				"east":  { "uv": [ 0, 0, 4, 4 ], "texture": "tex" }
+			}
+		},
+		{
+			"comment": "Left",
+			"from": [ 0, "y2 * 12", 0 ],
+			"to": [ 8, "(y2 * 12) + 4", 4 ],
+			"faces": {
+				"down":  { "uv": [ 0, 0, 8, 4 ], "texture": "tex" },
+				"up":	{ "uv": [ 0, 0, 8, 4 ], "texture": "tex" },
+				"north": { "uv": [ 0, 0, 8, 4 ], "texture": "tex" },
+				"south": { "uv": [ 0, 0, 8, 4 ], "texture": "tex" },
+				"west":  { "uv": [ 0, 0, 4, 4 ], "texture": "tex" },
+				"east":  { "uv": [ 0, 0, 4, 4 ], "texture": "tex" }
+			}
+		}
+	]
+}

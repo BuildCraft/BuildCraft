@@ -1,8 +1,8 @@
 package buildcraft.lib.misc;
 
 public class MathUtil {
-    public static double interp(double interp, double min, double max) {
-        return min * (1 - interp) + max * interp;
+    public static double interp(double interp, double from, double to) {
+        return from * (1 - interp) + to * interp;
     }
 
     public static int clamp(int toClamp, int min, int max) {

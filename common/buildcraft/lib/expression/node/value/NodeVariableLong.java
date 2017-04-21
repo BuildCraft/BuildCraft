@@ -33,4 +33,9 @@ public class NodeVariableLong implements INodeLong, IVariableNode {
     public String toString() {
         return "mutable_long#" + System.identityHashCode(this);
     }
+
+    @Override
+    public String valueToString() {
+        return Long.toString(value);
+    }
 }

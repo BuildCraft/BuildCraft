@@ -17,7 +17,9 @@ import buildcraft.lib.expression.InternalCompiler;
 import buildcraft.lib.expression.InvalidExpressionException;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.NodeType;
-import buildcraft.lib.expression.node.value.IVariableNode;
+import buildcraft.lib.expression.node.value.ITickableNode;
+import buildcraft.lib.expression.node.value.NodeStateful;
+import buildcraft.lib.expression.node.value.NodeStateful.IGetterFunc;
 import buildcraft.lib.expression.node.value.NodeUpdatable;
 import buildcraft.lib.misc.JsonUtil;
 
@@ -26,9 +28,9 @@ public class JsonVariableModel {
     // Never allow ao or textures to be variable - they need to be hardcoded so that we can stitch them
     public final boolean ambientOcclusion;
     public final Map<String, String> textures;
-    public final Map<String, NodeUpdatable> variables;
+    public final Map<String, ITickableNode.Source> variables;
     public final JsonModelRule[] rules;
-    private final NodeUpdatable[] variablesArray;
+    private final ITickableNode.Source[] variablesArray;
     public final JsonVariableModelPart[] cutoutElements, translucentElements;
 
     public static JsonVariableModel deserialize(ResourceLocation from, FunctionContext fnCtx) throws JsonParseException, IOException {
@@ -109,7 +111,7 @@ public class JsonVariableModel {
             fnCtx = new FunctionContext(fnCtx);
             putVariables(JsonUtils.getJsonObject(obj, "variables"), fnCtx);
         }
-        variablesArray = variables.values().toArray(new NodeUpdatable[variables.size()]);
+        variablesArray = variables.values().toArray(new ITickableNode.Source[0]);
 
         boolean require = cutout.isEmpty() && translucent.isEmpty();
         if (obj.has("elements")) {
@@ -144,9 +146,51 @@ public class JsonVariableModel {
                 continue;
             }
             JsonElement value = entry.getValue();
+            String type = null, getter = null, rounder = null;
+
+            if (value.isJsonObject()) {
+                JsonObject objValue = value.getAsJsonObject();
+                value = objValue.get("value");
+                type = JsonUtils.getString(objValue, "type");
+                getter = JsonUtils.getString(objValue, "getter");
+                if (objValue.has("rounder")) {
+                    rounder = JsonUtils.getString(objValue, "rounder");
+                }
+            }
+
             if (!value.isJsonPrimitive() && value.getAsJsonPrimitive().isString()) {
                 throw new JsonSyntaxException("Expected a string, got " + value + " for the variable '" + name + "'");
             }
+            NodeStateful stateful = null;
+            if (getter != null) {
+                // stateful node
+                NodeType nodeType;
+                try {
+                    nodeType = NodeType.parseType(type);
+                } catch (InvalidExpressionException iee) {
+                    throw new JsonSyntaxException("Could not parse node type for variable '" + name + "'", iee);
+                }
+                IGetterFunc getterFunc = parseGetterFunction(getter, fnCtx);
+                try {
+                    stateful = new NodeStateful(name, nodeType, getterFunc);
+                } catch (InvalidExpressionException iee) {
+                    throw new JsonSyntaxException("Could not create a getter for the variable '" + name + "'", iee);
+                }
+                fnCtx.putVariable(name, stateful.getter);
+                if (rounder != null) {
+                    FunctionContext fnCtx2 = new FunctionContext(fnCtx);
+                    fnCtx2.putVariable("last", stateful.last);
+                    fnCtx2.putVariable("var", stateful.variable);
+                    fnCtx2.putVariable("value", stateful.rounderValue);
+                    try {
+                        IExpressionNode nodeRounder = InternalCompiler.compileExpression(rounder, fnCtx2);
+                        stateful.setRounder(nodeRounder);
+                    } catch (InvalidExpressionException iee) {
+                        throw new JsonSyntaxException("Could not compile a rounder for the variable '" + name + "'", iee);
+                    }
+                }
+            }
+
             String expression = value.getAsString();
             IExpressionNode node;
             try {
@@ -155,20 +199,43 @@ public class JsonVariableModel {
                 throw new JsonSyntaxException("Invalid expression " + expression, e);
             }
             if (variables.containsKey(name)) {
-                NodeUpdatable existing = variables.get(name);
+                ITickableNode.Source existing = variables.get(name);
                 existing.setSource(node);
+            } else if (stateful != null) {
+                stateful.setSource(node);
+                variables.put(name, stateful);
             } else {
-                IVariableNode varNode = NodeType.getType(node).makeVariableNode();
-                variables.put(name, new NodeUpdatable(node, varNode));
-                fnCtx.putVariable(name, varNode);
+                NodeUpdatable nodeUpdatable = new NodeUpdatable(name, node);
+                variables.put(name, nodeUpdatable);
+                fnCtx.putVariable(name, nodeUpdatable.variable);
             }
         }
     }
 
-    public void refreshLocalVariables() {
-        for (NodeUpdatable updatable : variablesArray) {
-            updatable.refresh();
+    private static IGetterFunc parseGetterFunction(String getter, FunctionContext fnCtx) {
+        if ("interpolate_partial_ticks".equalsIgnoreCase(getter)) {
+            return NodeStateful.GetterType.INTERPOLATE_PARTIAL_TICKS;
         }
+        if ("last".equalsIgnoreCase(getter)) {
+            return NodeStateful.GetterType.USE_LAST;
+        }
+        if ("var".equalsIgnoreCase(getter)) {
+            return NodeStateful.GetterType.USE_VAR;
+        }
+        return (var, last) -> {
+            FunctionContext fnCtx2 = new FunctionContext(fnCtx);
+            fnCtx2.putVariable("var", var);
+            fnCtx2.putVariable("last", last);
+            return InternalCompiler.compileExpression(getter, fnCtx2);
+        };
+    }
+
+    public ITickableNode[] createTickableNodes() {
+        ITickableNode[] nodes = new ITickableNode[variablesArray.length];
+        for (int i = 0; i < nodes.length; i++) {
+            nodes[i] = variablesArray[i].createTickable();
+        }
+        return nodes;
     }
 
     public interface ITextureGetter {
