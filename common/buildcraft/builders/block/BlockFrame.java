@@ -1,11 +1,8 @@
 package buildcraft.builders.block;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
-
-import javax.annotation.Nullable;
-
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.misc.RotationUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -18,18 +15,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.misc.RotationUtil;
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class BlockFrame extends BlockBCBase_Neptune {
-    public static final IProperty<Boolean> CONNECTED_UP = BuildCraftProperties.CONNECTED_UP;
-    public static final IProperty<Boolean> CONNECTED_DOWN = BuildCraftProperties.CONNECTED_DOWN;
-    public static final IProperty<Boolean> CONNECTED_EAST = BuildCraftProperties.CONNECTED_EAST;
-    public static final IProperty<Boolean> CONNECTED_WEST = BuildCraftProperties.CONNECTED_WEST;
-    public static final IProperty<Boolean> CONNECTED_NORTH = BuildCraftProperties.CONNECTED_NORTH;
-    public static final IProperty<Boolean> CONNECTED_SOUTH = BuildCraftProperties.CONNECTED_SOUTH;
+    public static final Map<EnumFacing, IProperty<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;
 
     public static final AxisAlignedBB BASE_AABB = new AxisAlignedBB(4 / 16D, 4 / 16D, 4 / 16D, 12 / 16D, 12 / 16D, 12 / 16D);
     public static final AxisAlignedBB CONNECTION_AABB = new AxisAlignedBB(4 / 16D, 0 / 16D, 4 / 16D, 12 / 16D, 4 / 16D, 12 / 16D);
@@ -38,33 +30,19 @@ public class BlockFrame extends BlockBCBase_Neptune {
         super(material, id);
     }
 
-    @SuppressWarnings("Duplicates")
     @Override
     protected void addProperties(List<IProperty<?>> properties) {
         super.addProperties(properties);
-        properties.add(CONNECTED_UP);
-        properties.add(CONNECTED_DOWN);
-        properties.add(CONNECTED_EAST);
-        properties.add(CONNECTED_WEST);
-        properties.add(CONNECTED_NORTH);
-        properties.add(CONNECTED_SOUTH);
-    }
-
-    private boolean isConnected(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        Block block = world.getBlockState(pos.offset(side)).getBlock();
-        return block instanceof BlockFrame || block instanceof BlockQuarry;
+        properties.addAll(CONNECTED_MAP.values());
     }
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        return state
-                .withProperty(CONNECTED_UP, isConnected(world, pos, EnumFacing.UP))
-                .withProperty(CONNECTED_DOWN, isConnected(world, pos, EnumFacing.DOWN))
-                .withProperty(CONNECTED_EAST, isConnected(world, pos, EnumFacing.EAST))
-                .withProperty(CONNECTED_WEST, isConnected(world, pos, EnumFacing.WEST))
-                .withProperty(CONNECTED_NORTH, isConnected(world, pos, EnumFacing.NORTH))
-                .withProperty(CONNECTED_SOUTH, isConnected(world, pos, EnumFacing.SOUTH))
-                ;
+        for (EnumFacing side : CONNECTED_MAP.keySet()) {
+            Block block = world.getBlockState(pos.offset(side)).getBlock();
+            state = state.withProperty(CONNECTED_MAP.get(side), block instanceof BlockFrame || block instanceof BlockQuarry);
+        }
+        return state;
     }
 
     @Override
@@ -83,11 +61,14 @@ public class BlockFrame extends BlockBCBase_Neptune {
     }
 
     @Override
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        EnumFacing[] facings = Stream.of(EnumFacing.values()).filter(facing -> isConnected(world, pos, facing)).toArray(EnumFacing[]::new);
-        if(facings.length == 1) {
+    public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        IBlockState actualState = state.getActualState(world, pos);
+        EnumFacing[] facings = CONNECTED_MAP.keySet().stream()
+                .filter(facing -> actualState.getValue(CONNECTED_MAP.get(facing)))
+                .toArray(EnumFacing[]::new);
+        if (facings.length == 1) {
             return side != facings[0];
-        } else if(facings.length == 2 && facings[0] == facings[1].getOpposite()) {
+        } else if (facings.length == 2 && facings[0] == facings[1].getOpposite()) {
             return side != facings[0] && side != facings[1];
         }
         return true;
@@ -95,25 +76,23 @@ public class BlockFrame extends BlockBCBase_Neptune {
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
-        AxisAlignedBB result = BASE_AABB;
-        for(EnumFacing facing : Stream.of(EnumFacing.values()).filter(side -> isConnected(world, pos, side)).toArray(EnumFacing[]::new)) {
-            result = result.union(RotationUtil.rotateAABB(CONNECTION_AABB, facing));
-        }
-        return result;
+        IBlockState actualState = state.getActualState(world, pos);
+        AtomicReference<AxisAlignedBB> box = new AtomicReference<>(BASE_AABB);
+        CONNECTED_MAP.forEach((side, property) -> {
+            if (actualState.getValue(property)) {
+                box.set(box.get().union(RotationUtil.rotateAABB(CONNECTION_AABB, side)));
+            }
+        });
+        return box.get();
     }
 
     @Override
     public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity, boolean isPistonMoving) {
-        List<AxisAlignedBB> boxes = new ArrayList<>();
-        boxes.add(BASE_AABB);
-        for(EnumFacing facing : Stream.of(EnumFacing.values()).filter(side -> isConnected(world, pos, side)).toArray(EnumFacing[]::new)) {
-            boxes.add(RotationUtil.rotateAABB(CONNECTION_AABB, facing));
-        }
-        for(AxisAlignedBB box : boxes) {
-            AxisAlignedBB boxWithOffset = box.offset(pos);
-            if(entityBox.intersectsWith(boxWithOffset)) {
-                collidingBoxes.add(boxWithOffset);
-            }
-        }
+        IBlockState actualState = state.getActualState(world, pos);
+        addCollisionBoxToList(pos, entityBox, collidingBoxes, BASE_AABB);
+        CONNECTED_MAP.keySet().stream()
+                .filter(side -> actualState.getValue(CONNECTED_MAP.get(side)))
+                .map(side -> RotationUtil.rotateAABB(CONNECTION_AABB, side))
+                .forEach(box -> addCollisionBoxToList(pos, entityBox, collidingBoxes, box));
     }
 }
