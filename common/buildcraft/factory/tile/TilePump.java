@@ -2,7 +2,7 @@ package buildcraft.factory.tile;
 
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.lib.fluids.SingleUseTank;
+import buildcraft.lib.fluid.SingleUseTank;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;

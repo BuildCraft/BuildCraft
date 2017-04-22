@@ -35,6 +35,7 @@ import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.debug.BCAdvDebugging;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 
 public enum BCLibEventDist {
@@ -88,6 +89,7 @@ public enum BCLibEventDist {
         SpriteHolderRegistry.exportTextureMap();
         LaserRenderer_BC8.clearModels();
         ModelHolderRegistry.onModelBake();
+        ModelVariableData.onModelBake();
     }
 
     @SubscribeEvent

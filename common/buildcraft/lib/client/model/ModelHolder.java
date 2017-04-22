@@ -1,6 +1,6 @@
 package buildcraft.lib.client.model;
 
-import java.util.List;
+import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
 
@@ -21,7 +21,7 @@ public abstract class ModelHolder {
 
     protected abstract void onModelBake();
 
-    protected abstract void onTextureStitchPre(List<ResourceLocation> toRegisterSprites);
+    protected abstract void onTextureStitchPre(Set<ResourceLocation> toRegisterSprites);
 
     public abstract boolean hasBakedQuads();
 }

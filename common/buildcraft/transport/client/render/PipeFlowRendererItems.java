@@ -37,10 +37,10 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
 
         ISprite sprite = BCTransportSprites.COLOUR_ITEM_BOX;
         UvFaceData uvs = new UvFaceData();
-        uvs.uMin = (float) sprite.getInterpU(0);
-        uvs.uMax = (float) sprite.getInterpU(1);
-        uvs.vMin = (float) sprite.getInterpV(0);
-        uvs.vMax = (float) sprite.getInterpV(1);
+        uvs.minU = (float) sprite.getInterpU(0);
+        uvs.maxU = (float) sprite.getInterpU(1);
+        uvs.minV = (float) sprite.getInterpV(0);
+        uvs.maxV = (float) sprite.getInterpV(1);
 
         for (EnumFacing face : EnumFacing.VALUES) {
             MutableQuad q = ModelUtil.createFace(face, center, radius, uvs);

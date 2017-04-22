@@ -5,6 +5,7 @@
         "#trunk_yellow":"buildcraftlib:blocks/engine/trunk_yellow",
         "#trunk_red":"buildcraftlib:blocks/engine/trunk_red",
         "#trunk_overheat":"buildcraftlib:blocks/engine/trunk_overheat",
+        "#trunk_black":"#trunk_overheat",
         "#chamber":"buildcraftlib:blocks/engine/chamber_base",
 
         "#back":"_ABSTRACT_engine_base_back",

@@ -29,8 +29,9 @@ import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
 public enum ModelFacadeItem implements IBakedModel {
     INSTANCE;
 
-    private static final LoadingCache<KeyPlugFacade, IBakedModel> cache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build(CacheLoader.from(key -> new ModelItemSimple(
-        PlugBakerFacade.INSTANCE.bake(key), ModelItemSimple.TRANSFORM_PLUG_AS_ITEM)));
+    private static final LoadingCache<KeyPlugFacade, IBakedModel> cache = CacheBuilder.newBuilder()//
+        .expireAfterAccess(1, TimeUnit.MINUTES)//
+        .build(CacheLoader.from(key -> new ModelItemSimple(PlugBakerFacade.INSTANCE.bake(key), ModelItemSimple.TRANSFORM_BLOCK)));
 
     public static void onModelBake() {
         cache.invalidateAll();
@@ -82,7 +83,7 @@ public enum ModelFacadeItem implements IBakedModel {
         public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
             FullFacadeInstance inst = ItemPluggableFacade.getStates(stack);
             FacadePhasedState state = inst.getCurrentStateForStack();
-            return cache.getUnchecked(new KeyPlugFacade(BlockRenderLayer.TRANSLUCENT, EnumFacing.WEST, state.stateInfo.state, state.isHollow));
+            return cache.getUnchecked(new KeyPlugFacade(BlockRenderLayer.TRANSLUCENT, EnumFacing.NORTH, state.stateInfo.state, state.isHollow));
         }
     }
 }

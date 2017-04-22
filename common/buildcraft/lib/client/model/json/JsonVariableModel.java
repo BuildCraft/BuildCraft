@@ -7,11 +7,12 @@ import java.util.Map.Entry;
 
 import com.google.gson.*;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.ResourceLoaderContext;
+import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.InternalCompiler;
 import buildcraft.lib.expression.InvalidExpressionException;
@@ -27,7 +28,7 @@ import buildcraft.lib.misc.JsonUtil;
 public class JsonVariableModel {
     // Never allow ao or textures to be variable - they need to be hardcoded so that we can stitch them
     public final boolean ambientOcclusion;
-    public final Map<String, String> textures;
+    public final Map<String, JsonTexture> textures;
     public final Map<String, ITickableNode.Source> variables;
     public final JsonModelRule[] rules;
     private final ITickableNode.Source[] variablesArray;
@@ -67,7 +68,7 @@ public class JsonVariableModel {
 
     public JsonVariableModel(JsonObject obj, FunctionContext fnCtx, ResourceLoaderContext ctx) throws JsonParseException {
         boolean ambf = false;
-        Map<String, String> texturesP = new HashMap<>();
+        textures = new HashMap<>();
         variables = new LinkedHashMap<>();
         List<JsonVariableModelPart> cutout = new ArrayList<>();
         List<JsonVariableModelPart> translucent = new ArrayList<>();
@@ -90,7 +91,7 @@ public class JsonVariableModel {
             }
             ambf = parent.ambientOcclusion;
             if (!JsonUtils.getBoolean(obj, "textures_reset", false)) {
-                texturesP.putAll(parent.textures);
+                textures.putAll(parent.textures);
             }
             variables.putAll(parent.variables);
             if (!JsonUtils.getBoolean(obj, "cutout_replace", false)) {
@@ -105,8 +106,7 @@ public class JsonVariableModel {
         }
 
         ambientOcclusion = JsonUtils.getBoolean(obj, "ambientocclusion", ambf);
-        texturesP.putAll(JsonUtil.deserializeStringMap(obj, "textures"));
-        textures = texturesP;
+        deserializeTextures(obj.get("textures"));
         if (obj.has("variables")) {
             fnCtx = new FunctionContext(fnCtx);
             putVariables(JsonUtils.getJsonObject(obj, "variables"), fnCtx);
@@ -132,6 +132,28 @@ public class JsonVariableModel {
             }
         }
         rules = rulesP.toArray(new JsonModelRule[rulesP.size()]);
+    }
+
+    private void deserializeTextures(JsonElement elem) {
+        if (elem == null) return;
+        if (!elem.isJsonObject()) {
+            throw new JsonSyntaxException("Expected to find an object for 'textures', but found " + elem);
+        }
+        JsonObject obj = elem.getAsJsonObject();
+        for (Entry<String, JsonElement> entry : obj.entrySet()) {
+            String name = entry.getKey();
+            JsonElement tex = entry.getValue();
+            JsonTexture texture;
+            if (tex.isJsonPrimitive() && tex.getAsJsonPrimitive().isString()) {
+                String location = tex.getAsString();
+                texture = new JsonTexture(location);
+            } else if (tex.isJsonObject()) {
+                texture = new JsonTexture(tex.getAsJsonObject());
+            } else {
+                throw new JsonSyntaxException("Expected a string or an object, but got " + tex);
+            }
+            textures.put(name, texture);
+        }
     }
 
     private void putVariables(JsonObject values, FunctionContext fnCtx) {
@@ -239,6 +261,6 @@ public class JsonVariableModel {
     }
 
     public interface ITextureGetter {
-        TextureAtlasSprite get(String location);
+        ModelUtil.TexturedFace get(String location);
     }
 }

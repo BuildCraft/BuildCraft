@@ -47,8 +47,8 @@ public enum ModelPipeItem implements IBakedModel {
             QUADS_SAME = new MutableQuad[6];
             Tuple3f center = new Point3f(0.5f, 0.5f, 0.5f);
             Tuple3f radius = new Vector3f(0.25f, 0.5f, 0.25f);
-            UvFaceData uvsY = new UvFaceData(4, 12, 4, 12);
-            UvFaceData uvsXZ = new UvFaceData(4, 12, 0, 16);
+            UvFaceData uvsY = UvFaceData.from16(4, 4, 12, 12);
+            UvFaceData uvsXZ = UvFaceData.from16(4, 0, 12, 16);
             for (EnumFacing face : EnumFacing.VALUES) {
                 UvFaceData uvs = face.getAxis() == Axis.Y ? uvsY : uvsXZ;
                 QUADS_SAME[face.ordinal()] = ModelUtil.createFace(face, center, radius, uvs);
@@ -65,8 +65,8 @@ public enum ModelPipeItem implements IBakedModel {
             QUADS_COLOUR = new MutableQuad[6];
             Tuple3f center = new Point3f(0.5f, 0.5f, 0.5f);
             Tuple3f radius = new Vector3f(0.24f, 0.49f, 0.24f);
-            UvFaceData uvsY = new UvFaceData(4, 12, 4, 12);
-            UvFaceData uvsXZ = new UvFaceData(4, 12, 0, 16);
+            UvFaceData uvsY = UvFaceData.from16(4, 4, 12, 12);
+            UvFaceData uvsXZ = UvFaceData.from16(4, 0, 12, 16);
             for (EnumFacing face : EnumFacing.VALUES) {
                 UvFaceData uvs = face.getAxis() == Axis.Y ? uvsY : uvsXZ;
                 QUADS_COLOUR[face.ordinal()] = ModelUtil.createFace(face, center, radius, uvs);

@@ -10,6 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.mj.MjAPI;
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 
 import buildcraft.core.BCCoreBlocks;
 import buildcraft.lib.recipe.OredictionaryNames;
@@ -74,6 +75,18 @@ public class BCEnergyRecipes {
         addDirtyFuel(BCEnergyFluids.oilHeavy, _light_dense_residue, 2);
 
         addDirtyFuel(BCEnergyFluids.crudeOil, _oil, 3);
+
+        // TEMP
+        Fluid fluidOil = getFirstOrNull(BCEnergyFluids.crudeOil);
+        Fluid fluidDis = getFirstOrNull(BCEnergyFluids.oilDistilled);
+        Fluid fluidRes = getFirstOrNull(BCEnergyFluids.oilResidue);
+        if (fluidOil != null) {
+            FluidStack in = new FluidStack(fluidOil, _oil);
+            FluidStack outGas = new FluidStack(fluidDis, _gas_light_dense);
+            FluidStack outLiquid = new FluidStack(fluidRes, _residue);
+
+            BuildcraftRecipeRegistry.refineryRecipes.addDistillationRecipe(in, outGas, outLiquid, 16 * MjAPI.MJ);
+        }
     }
 
     private static Fluid getFirstOrNull(Fluid[] array) {

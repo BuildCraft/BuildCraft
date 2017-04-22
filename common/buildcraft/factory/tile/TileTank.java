@@ -27,7 +27,7 @@ import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.core.BCCoreConfig;
-import buildcraft.lib.fluids.Tank;
+import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.net.PacketBufferBC;

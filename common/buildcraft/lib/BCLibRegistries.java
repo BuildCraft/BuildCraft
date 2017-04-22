@@ -7,8 +7,8 @@ import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 
 import buildcraft.lib.crops.CropHandlerPlantable;
 import buildcraft.lib.crops.CropHandlerReeds;
-import buildcraft.lib.fluids.CoolantRegistry;
-import buildcraft.lib.fluids.FuelRegistry;
+import buildcraft.lib.fluid.CoolantRegistry;
+import buildcraft.lib.fluid.FuelRegistry;
 import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.IntegrationRecipeRegistry;

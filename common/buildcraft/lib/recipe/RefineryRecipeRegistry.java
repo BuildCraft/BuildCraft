@@ -14,44 +14,23 @@ import buildcraft.api.recipes.IRefineryRecipeManager;
 public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
     INSTANCE;
 
-    public final IRefineryRegistry<IDistilationRecipe> distillationRegistry = new SingleRegistry<>();
+    public final IRefineryRegistry<IDistillationRecipe> distillationRegistry = new SingleRegistry<>();
     public final IRefineryRegistry<IHeatableRecipe> heatableRegistry = new SingleRegistry<>();
     public final IRefineryRegistry<ICoolableRecipe> coolableRegistry = new SingleRegistry<>();
 
     @Override
     public IHeatableRecipe createHeatingRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo, int ticks) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
-    }
-
-    @Override
-    public IHeatableRecipe addHeatableRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo, int ticks, boolean replaceExisting) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+        return new HeatableRecipe(ticks, in, out, heatFrom, heatTo);
     }
 
     @Override
     public ICoolableRecipe createCoolableRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo, int ticks) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+        return new CoolableRecipe(ticks, in, out, heatFrom, heatTo);
     }
 
     @Override
-    public ICoolableRecipe addCoolableRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo, int ticks, boolean replaceExisting) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
-    }
-
-    @Override
-    public IDistilationRecipe createDistilationRecipe(FluidStack in, FluidStack outGas, FluidStack outLiquid, int ticks) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
-    }
-
-    @Override
-    public IDistilationRecipe addDistilationRecipe(FluidStack in, FluidStack outGas, FluidStack outLiquid, int ticks, boolean replaceExisting) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+    public IDistillationRecipe createDistillationRecipe(FluidStack in, FluidStack outGas, FluidStack outLiquid, long powerRequired) {
+        return new DistillationRecipe(powerRequired, in, outGas, outLiquid);
     }
 
     @Override
@@ -65,7 +44,7 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
     }
 
     @Override
-    public IRefineryRegistry<IDistilationRecipe> getDistilationRegistry() {
+    public IRefineryRegistry<IDistillationRecipe> getDistilationRegistry() {
         return distillationRegistry;
     }
 
@@ -84,7 +63,10 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
 
         @Override
         @Nullable
-        public R getRecipeForInput(FluidStack fluid) {
+        public R getRecipeForInput(@Nullable FluidStack fluid) {
+            if (fluid == null) {
+                return null;
+            }
             for (R recipe : allRecipes) {
                 if (recipe.in().isFluidEqual(fluid)) {
                     return recipe;
@@ -108,18 +90,14 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
         }
 
         @Override
-        public R addRecipe(R recipe, boolean replaceExisting) {
+        public R addRecipe(R recipe) {
             if (recipe == null) throw new NullPointerException("recipe");
             ListIterator<R> iter = allRecipes.listIterator();
             while (iter.hasNext()) {
                 R existing = iter.next();
                 if (existing.in().isFluidEqual(recipe.in())) {
-                    if (replaceExisting) {
-                        iter.set(recipe);
-                        return recipe;
-                    } else {
-                        return existing;
-                    }
+                    iter.set(recipe);
+                    return recipe;
                 }
             }
             allRecipes.add(recipe);
@@ -128,17 +106,10 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
     }
 
     public static abstract class RefineryRecipe implements IRefineryRecipe {
-        private final int ticks;
         private final FluidStack in;
 
-        public RefineryRecipe(int ticks, FluidStack in) {
-            this.ticks = ticks;
+        public RefineryRecipe(FluidStack in) {
             this.in = in;
-        }
-
-        @Override
-        public int ticks() {
-            return ticks;
         }
 
         @Override
@@ -147,11 +118,13 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
         }
     }
 
-    public static class DistillationRecipe extends RefineryRecipe implements IDistilationRecipe {
+    public static class DistillationRecipe extends RefineryRecipe implements IDistillationRecipe {
         private final FluidStack outGas, outLiquid;
+        private final long powerRequired;
 
-        public DistillationRecipe(int ticks, FluidStack in, FluidStack outGas, FluidStack outLiquid) {
-            super(ticks, in);
+        public DistillationRecipe(long powerRequired, FluidStack in, FluidStack outGas, FluidStack outLiquid) {
+            super(in);
+            this.powerRequired = powerRequired;
             this.outGas = outGas;
             this.outLiquid = outLiquid;
         }
@@ -165,17 +138,29 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
         public FluidStack outLiquid() {
             return outLiquid;
         }
+
+        @Override
+        public long powerRequired() {
+            return powerRequired;
+        }
     }
 
     public static abstract class HeatExchangeRecipe extends RefineryRecipe implements IHeatExchangerRecipe {
+        private final int ticks;
         private final FluidStack out;
         private final int heatFrom, heatTo;
 
         public HeatExchangeRecipe(int ticks, FluidStack in, FluidStack out, int heatFrom, int heatTo) {
-            super(ticks, in);
+            super(in);
+            this.ticks = ticks;
             this.out = out;
             this.heatFrom = heatFrom;
             this.heatTo = heatTo;
+        }
+
+        @Override
+        public int ticks() {
+            return ticks;
         }
 
         @Override

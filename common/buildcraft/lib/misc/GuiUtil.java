@@ -18,7 +18,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
 import buildcraft.lib.client.render.fluid.FluidRenderer;
-import buildcraft.lib.fluids.Tank;
+import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiArea;

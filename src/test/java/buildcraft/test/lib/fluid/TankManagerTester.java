@@ -6,8 +6,8 @@ import org.junit.Test;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.lib.fluids.Tank;
-import buildcraft.lib.fluids.TankManager;
+import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.fluid.TankManager;
 import buildcraft.test.VanillaSetupBaseTester;
 
 public class TankManagerTester extends VanillaSetupBaseTester {

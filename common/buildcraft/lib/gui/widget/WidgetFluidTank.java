@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.fluids.Tank;
+import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;

@@ -38,9 +38,6 @@ public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeVie
         }
         List<AssemblyRecipe> recipes = new ArrayList<>();
         for (ItemStack stack : possible) {
-            if (stack.getCount() < 6) {
-                continue;
-            }
             stack = stack.copy();
             stack.setCount(1);
             List<FacadeBlockStateInfo> infos = FacadeStateManager.stackFacades.get(new ItemStackKey(stack));
@@ -55,9 +52,7 @@ public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeVie
     }
 
     private static void addRecipe(List<AssemblyRecipe> recipes, ItemStack from, FacadeBlockStateInfo info) {
-        ItemStack req = from.copy();
-        req.setCount(6);
-        ImmutableSet<ItemStack> stacks = ImmutableSet.of(req, new ItemStack(BCTransportItems.pipeStructure, 3));
+        ImmutableSet<ItemStack> stacks = ImmutableSet.of(from, new ItemStack(BCTransportItems.pipeStructure, 3));
 
         recipes.add(new AssemblyRecipe(MJ_COST, stacks, createFacadeStack(info, false)));
         recipes.add(new AssemblyRecipe(MJ_COST, stacks, createFacadeStack(info, true)));

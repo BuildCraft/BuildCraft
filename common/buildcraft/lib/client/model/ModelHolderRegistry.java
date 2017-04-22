@@ -1,7 +1,9 @@
 package buildcraft.lib.client.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
@@ -20,7 +22,7 @@ public class ModelHolderRegistry {
     static final List<ModelHolder> HOLDERS = new ArrayList<>();
 
     public static void onTextureStitchPre(TextureMap map) {
-        List<ResourceLocation> toStitch = new ArrayList<>();
+        Set<ResourceLocation> toStitch = new HashSet<>();
         for (ModelHolder holder : HOLDERS) {
             holder.onTextureStitchPre(toStitch);
         }

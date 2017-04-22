@@ -16,6 +16,7 @@ public class BCFactoryModels {
     }
 
     public static void fmlPreInit() {
-
+        // TODO: Item model
+        // TODO: Proper textures for the side thingys
     }
 }

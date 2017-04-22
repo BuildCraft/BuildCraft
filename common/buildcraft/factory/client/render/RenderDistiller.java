@@ -29,8 +29,7 @@ import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.render.fluid.FluidSpriteType;
-import buildcraft.lib.expression.node.value.ITickableNode;
-import buildcraft.lib.fluids.Tank;
+import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.VecUtil;
 
 public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8> {
@@ -79,13 +78,11 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
 
         profiler.startSection("model");
         profiler.startSection("compute");
-        if (tile.clientRenderVariables == null) {
-            tile.clientRenderVariables = BCFactoryModels.DISTILLER.createTickableNodes();
+        if (tile.clientModelData.hasNoNodes()) {
+            tile.clientModelData.setNodes(BCFactoryModels.DISTILLER.createTickableNodes());
         }
         tile.setClientModelVariables(partialTicks);
-        for (ITickableNode node : tile.clientRenderVariables) {
-            node.refresh();
-        }
+        tile.clientModelData.refresh();
         MutableQuad[] quads = BCFactoryModels.DISTILLER.getCutoutQuads();
         profiler.endStartSection("render");
 

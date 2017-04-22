@@ -14,8 +14,8 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.fluids.Tank;
-import buildcraft.lib.fluids.TankManager;
+import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.fluid.TankManager;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.StackUtil;
 

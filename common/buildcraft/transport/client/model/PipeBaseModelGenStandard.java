@@ -81,8 +81,8 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         Tuple3f center = new Point3f(0.5f, 0.5f, 0.5f);
         Tuple3f radius = new Vector3f(0.25f, 0.25f, 0.25f);
         UvFaceData uvs = new UvFaceData();
-        uvs.uMin = uvs.vMin = 4;
-        uvs.uMax = uvs.vMax = 12;
+        uvs.minU = uvs.minV = 4 / 16f;
+        uvs.maxU = uvs.maxV = 12 / 16f;
         for (EnumFacing face : EnumFacing.VALUES) {
             MutableQuad quad = ModelUtil.createFace(face, center, radius, uvs);
             quad.setDiffuse(quad.normalvf());
@@ -106,10 +106,10 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         };
 
         UvFaceData[] types = {//
-            new UvFaceData(4, 12, 0, 4),//
-            new UvFaceData(4, 12, 12, 16),//
-            new UvFaceData(0, 4, 4, 12),//
-            new UvFaceData(12, 16, 4, 12) //
+            UvFaceData.from16(4, 0, 12, 4),//
+            UvFaceData.from16(4, 12, 12, 16),//
+            UvFaceData.from16(0, 4, 4, 12),//
+            UvFaceData.from16(12, 4, 16, 12) //
         };
 
         // connected

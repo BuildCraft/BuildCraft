@@ -70,10 +70,10 @@ public class PipeWireRenderer {
         Tuple3f radius = new Point3f(1 / 32f, 1 / 32f, 1 / 32f);
         UvFaceData uvs = new UvFaceData();
         int off = func(part.x) * 4 + func(part.y) * 2 + func(part.z);
-        uvs.uMin = off / 16f;
-        uvs.uMax = (off + 1) / 16f;
-        uvs.vMin = 0;
-        uvs.vMax = 1 / 16f;
+        uvs.minU = off / 16f;
+        uvs.maxU = (off + 1) / 16f;
+        uvs.minV = 0;
+        uvs.maxV = 1 / 16f;
         for (EnumFacing face : EnumFacing.VALUES) {
             quads[face.ordinal()] = ModelUtil.createFace(face, center, radius, uvs);
         }
@@ -128,10 +128,10 @@ public class PipeWireRenderer {
         }
 
         UvFaceData uvBase = new UvFaceData();
-        uvBase.uMin = (float) VecUtil.getValue(center.subtract(radius), between.mainAxis);
-        uvBase.uMax = (float) VecUtil.getValue(center.add(radius), between.mainAxis);
-        uvBase.vMin = 0;
-        uvBase.vMax = 1 / 16f;
+        uvBase.minU = (float) VecUtil.getValue(center.subtract(radius), between.mainAxis);
+        uvBase.maxU = (float) VecUtil.getValue(center.add(radius), between.mainAxis);
+        uvBase.minV = 0;
+        uvBase.maxV = 1 / 16f;
 
         Tuple3f centerFloat = VecUtil.convertFloat(center);
         Tuple3f radiusFloat = VecUtil.convertFloat(radius);
@@ -165,14 +165,14 @@ public class PipeWireRenderer {
             }
 
             if (swapU) {
-                float t = uvs.uMin;
-                uvs.uMin = uvs.uMax;
-                uvs.uMax = t;
+                float t = uvs.minU;
+                uvs.minU = uvs.maxU;
+                uvs.maxU = t;
             }
             if (swapV) {
-                float t = uvs.vMin;
-                uvs.vMin = uvs.vMax;
-                uvs.vMax = t;
+                float t = uvs.minV;
+                uvs.minV = uvs.maxV;
+                uvs.maxV = t;
             }
 
             MutableQuad quad = ModelUtil.createFace(face, centerFloat, radiusFloat, uvs);

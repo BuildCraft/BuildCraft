@@ -8,7 +8,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-import buildcraft.lib.fluids.Tank;
+import buildcraft.lib.fluid.Tank;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -41,7 +41,7 @@ public abstract class JsonVariableModelPart {
             }
         }
         if ("face".equals(type)) {
-            throw new AbstractMethodError("Implement this!");
+            throw new AbstractMethodError("// TODO: Implement this!");
         } else if ("led".equals(type)) {
             return new VariablePartLed(obj, fnCtx);
         } else {

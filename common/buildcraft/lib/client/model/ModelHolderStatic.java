@@ -1,8 +1,11 @@
 package buildcraft.lib.client.model;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonParseException;
@@ -62,7 +65,7 @@ public class ModelHolderStatic extends ModelHolder {
     }
 
     @Override
-    protected void onTextureStitchPre(List<ResourceLocation> toRegisterSprites) {
+    protected void onTextureStitchPre(Set<ResourceLocation> toRegisterSprites) {
         rawModel = null;
         quads = null;
         failReason = null;

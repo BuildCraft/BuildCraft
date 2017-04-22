@@ -21,7 +21,7 @@ public class NodeUpdatable implements ITickableNode, ITickableNode.Source {
 
     @Override
     public void tick() {
-        // NO-OP
+        refresh();
     }
 
     @Override

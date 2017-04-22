@@ -44,7 +44,12 @@ public class JsonVariableFaceUV {
         if (!elem.isJsonPrimitive()) {
             throw new JsonSyntaxException("Expected a string, but got '" + json + "'");
         }
-        return JsonVariableModelPart.convertStringToStringNode(elem.getAsString(), fnCtx);
+        String asString = elem.getAsString();
+        if (asString.startsWith("#")) {
+            // Its a simple texture definition
+            asString = "'" + asString + "'";
+        }
+        return JsonVariableModelPart.convertStringToStringNode(asString, fnCtx);
     }
 
     public static INodeDouble[] readVariableUV(JsonObject obj, String member, FunctionContext fnCtx) {

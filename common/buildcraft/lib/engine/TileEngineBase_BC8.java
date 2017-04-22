@@ -29,6 +29,7 @@ import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.collect.OrderedEnumMap;
+import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
@@ -58,6 +59,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     public long currentOutput;// TODO: sync gui data
     public boolean isRedstonePowered = false;
     private boolean isPumping = false;
+
+    /** The model variables, used to keep track of the various state-based variables. */
+    public final ModelVariableData clientModelData = new ModelVariableData();
 
     // Needed: Power stored
 
@@ -275,6 +279,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
             } else if (progress > 0) {
                 progress -= 0.01f;
             }
+            clientModelData.tick();
             return;
         }
 
@@ -577,6 +582,10 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         left.add("stage = " + powerStage);
         left.add("progress = " + progress);
         left.add("last = +" + MjAPI.formatMjShort(lastPower));
+        if (world.isRemote) {
+            left.add("Current Model Variables:");
+            clientModelData.addDebugInfo(left);
+        }
     }
 
     @Override

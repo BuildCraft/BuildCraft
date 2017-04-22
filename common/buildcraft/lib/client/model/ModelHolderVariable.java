@@ -2,11 +2,10 @@ package buildcraft.lib.client.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonParseException;
 
 import net.minecraft.client.Minecraft;
@@ -15,7 +14,9 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.BCLog;
 
+import buildcraft.lib.client.model.ModelUtil.TexturedFace;
 import buildcraft.lib.client.model.json.JsonModelRule;
+import buildcraft.lib.client.model.json.JsonTexture;
 import buildcraft.lib.client.model.json.JsonVariableModel;
 import buildcraft.lib.client.model.json.JsonVariableModelPart;
 import buildcraft.lib.client.reload.ReloadManager;
@@ -34,41 +35,12 @@ import buildcraft.transport.BCTransportModels;
  * be replaced with an expression, that may use any of the variables you have defined. */
 public class ModelHolderVariable extends ModelHolder {
     private final FunctionContext context;
-    private final ImmutableMap<String, String> textureLookup;
-    private final boolean allowTextureFallthrough;
     private JsonVariableModel rawModel;
     private boolean unseen = true;
 
-    public ModelHolderVariable(String location, FunctionContext context) {
-        this(location, context, ImmutableMap.of(), false);
-    }
-
-    public ModelHolderVariable(String location, FunctionContext context, String[][] textures, boolean allowTextureFallthrough) {
-        this(location, context, genTextureMap(textures), allowTextureFallthrough);
-    }
-
-    public ModelHolderVariable(String modelLocation, FunctionContext context, ImmutableMap<String, String> textureLookup, boolean allowTextureFallthrough) {
+    public ModelHolderVariable(String modelLocation, FunctionContext context) {
         super(modelLocation);
         this.context = context;
-        this.textureLookup = textureLookup;
-        this.allowTextureFallthrough = allowTextureFallthrough;
-    }
-
-    private static ImmutableMap<String, String> genTextureMap(String[][] textures) {
-        if (textures == null || textures.length == 0) {
-            return ImmutableMap.of();
-        }
-        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-        for (String[] ar : textures) {
-            if (ar.length != 2) {
-                throw new IllegalArgumentException("Must have 2 elements (key,value) but got " + Arrays.toString(ar));
-            }
-            if (!ar[0].startsWith("~")) {
-                throw new IllegalArgumentException("Key must start with '~' otherwise it will never be used!");
-            }
-            builder.put(ar[0], ar[1]);
-        }
-        return builder.build();
     }
 
     @Override
@@ -77,7 +49,7 @@ public class ModelHolderVariable extends ModelHolder {
     }
 
     @Override
-    protected void onTextureStitchPre(List<ResourceLocation> toRegisterSprites) {
+    protected void onTextureStitchPre(Set<ResourceLocation> toRegisterSprites) {
         rawModel = null;
         failReason = null;
 
@@ -97,30 +69,20 @@ public class ModelHolderVariable extends ModelHolder {
                 BCLog.logger.info("[lib.model.holder] The model " + modelLocation + " requires these sprites:");
             }
             ReloadSource srcModel = new ReloadSource(modelLocation, SourceType.MODEL);
-            for (Entry<String, String> entry : rawModel.textures.entrySet()) {
-                String lookup = entry.getValue();
-                if (lookup.startsWith("#")) {
+            for (Entry<String, JsonTexture> entry : rawModel.textures.entrySet()) {
+                JsonTexture lookup = entry.getValue();
+                String location = lookup.location;
+                if (location.startsWith("#")) {
                     // its somewhere else in the map so we don't need to register it twice
                     continue;
                 }
-                if (lookup.startsWith("~") && textureLookup.containsKey(lookup)) {
-                    lookup = textureLookup.get(lookup);
-                }
-                if (lookup == null || lookup.startsWith("#") || lookup.startsWith("~")) {
-                    if (!allowTextureFallthrough) {
-                        failReason = "The sprite lookup '" + lookup + "' did not exist in ay of the maps";
-                        rawModel = null;
-                        break;
-                    }
-                } else {
-                    ResourceLocation textureLoc = new ResourceLocation(lookup);
-                    toRegisterSprites.add(textureLoc);
-                    // Allow transisitve deps
-                    ReloadSource srcSprite = new ReloadSource(SpriteUtil.transformLocation(textureLoc), SourceType.SPRITE);
-                    ReloadManager.INSTANCE.addDependency(srcSprite, srcModel);
-                }
+                ResourceLocation textureLoc = new ResourceLocation(location);
+                toRegisterSprites.add(textureLoc);
+                // Allow transisitve deps
+                ReloadSource srcSprite = new ReloadSource(SpriteUtil.transformLocation(textureLoc), SourceType.SPRITE);
+                ReloadManager.INSTANCE.addDependency(srcSprite, srcModel);
                 if (ModelHolderRegistry.DEBUG) {
-                    BCLog.logger.info("[lib.model.holder]  - " + lookup);
+                    BCLog.logger.info("[lib.model.holder]  - " + location);
                 }
             }
         }
@@ -144,28 +106,21 @@ public class ModelHolderVariable extends ModelHolder {
         return list.toArray(new MutableQuad[list.size()]);
     }
 
-    private TextureAtlasSprite lookupTexture(String lookup) {
+    private TexturedFace lookupTexture(String lookup) {
         int attempts = 0;
-        while (lookup.startsWith("#") && rawModel.textures.containsKey(lookup) && attempts < 10) {
-            lookup = rawModel.textures.get(lookup);
+        JsonTexture texture = new JsonTexture(lookup);
+        while (texture.location.startsWith("#") && attempts < 10) {
+            JsonTexture tex = rawModel.textures.get(texture.location);
+            if (tex == null) break;
+            else texture = texture.inParent(tex);
             attempts++;
         }
-        if (lookup.startsWith("~") && textureLookup.containsKey(lookup)) {
-            lookup = textureLookup.get(lookup);
-        }
-        TextureAtlasSprite sprite;
-        if (lookup.startsWith("#") || lookup.startsWith("~")) {
-            if (allowTextureFallthrough) {
-                // Let the caller manually replace the sprite (as we don't know what to replace it with)
-                // But only if the model user is aware of this (so its not an error)
-                sprite = null;
-            } else {
-                sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
-            }
-        } else {
-            sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
-        }
-        return sprite;
+        lookup = texture.location;
+        TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
+        TexturedFace face = new TexturedFace();
+        face.sprite = sprite;
+        face.faceData = texture.faceData;
+        return face;
     }
 
     private void printNoModelWarning() {

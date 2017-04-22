@@ -1,6 +1,5 @@
 package buildcraft.transport;
 
-import buildcraft.transport.client.model.plug.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -25,11 +24,13 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.transport.client.model.GateMeshDefinition;
 import buildcraft.transport.client.model.ModelGateItem;
 import buildcraft.transport.client.model.ModelPipe;
 import buildcraft.transport.client.model.ModelPipeItem;
 import buildcraft.transport.client.model.key.*;
+import buildcraft.transport.client.model.plug.*;
 import buildcraft.transport.client.render.*;
 import buildcraft.transport.gate.GateVariant;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourStripes;
@@ -185,31 +186,39 @@ public class BCTransportModels {
 
     public static MutableQuad[] getGateDynQuads(boolean isOn) {
         GATE_ON.value = isOn;
+        ModelVariableData varData = new ModelVariableData();
+        varData.setNodes(GATE_DYNAMIC.createTickableNodes());
+        varData.tick();
+        varData.refresh();
         return GATE_DYNAMIC.getCutoutQuads();
     }
 
-    private static void setupLensVariables(EnumFacing side, EnumDyeColor colour) {
+    private static void setupLensVariables(ModelHolderVariable model, EnumFacing side, EnumDyeColor colour) {
         LENS_COLOUR.value = colour == null ? "clear" : colour.getName();
         LENS_SIDE.value = side.getName();
+        ModelVariableData varData = new ModelVariableData();
+        varData.setNodes(model.createTickableNodes());
+        varData.tick();
+        varData.refresh();
     }
 
     public static MutableQuad[] getLensCutoutQuads(EnumFacing side, EnumDyeColor colour) {
-        setupLensVariables(side, colour);
+        setupLensVariables(LENS, side, colour);
         return LENS.getCutoutQuads();
     }
 
     public static MutableQuad[] getLensTranslucentQuads(EnumFacing side, EnumDyeColor colour) {
-        setupLensVariables(side, colour);
+        setupLensVariables(LENS, side, colour);
         return LENS.getTranslucentQuads();
     }
 
     public static MutableQuad[] getFilterCutoutQuads(EnumFacing side, EnumDyeColor colour) {
-        setupLensVariables(side, colour);
+        setupLensVariables(FILTER, side, colour);
         return FILTER.getCutoutQuads();
     }
 
     public static MutableQuad[] getFilterTranslucentQuads(EnumFacing side, EnumDyeColor colour) {
-        setupLensVariables(side, colour);
+        setupLensVariables(FILTER, side, colour);
         return FILTER.getTranslucentQuads();
     }
 

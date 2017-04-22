@@ -9,6 +9,7 @@ import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.lib.client.model.ModelUtil.TexturedFace;
 import buildcraft.lib.client.model.json.JsonVariableModel.ITextureGetter;
 import buildcraft.lib.expression.FunctionContext;
 
@@ -46,12 +47,14 @@ public class VariablePartCuboid extends VariablePartCuboidBase {
             return null;
         }
         VariableFaceData data = new VariableFaceData();
-        data.sprite = spriteLookup.get(var.texture.evaluate());
+        TexturedFace face = spriteLookup.get(var.texture.evaluate());
+        data.sprite = face.sprite;
         data.rotations = (int) var.textureRotation.evaluate();
-        data.uvs.uMin = (float) var.uv[0].evaluate();
-        data.uvs.vMin = (float) var.uv[1].evaluate();
-        data.uvs.uMax = (float) var.uv[2].evaluate();
-        data.uvs.vMax = (float) var.uv[3].evaluate();
+        data.uvs.minU = (float) (var.uv[0].evaluate() / 16.0);
+        data.uvs.minV = (float) (var.uv[1].evaluate() / 16.0);
+        data.uvs.maxU = (float) (var.uv[2].evaluate() / 16.0);
+        data.uvs.maxV = (float) (var.uv[3].evaluate() / 16.0);
+        data.uvs = data.uvs.inParent(face.faceData);
         return data;
     }
 }

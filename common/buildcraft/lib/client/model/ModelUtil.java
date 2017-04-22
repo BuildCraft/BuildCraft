@@ -4,6 +4,7 @@ import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
@@ -11,28 +12,66 @@ import net.minecraft.util.EnumFacing.AxisDirection;
 /** Provides various utilities for creating {@link MutableQuad} out of various position information, such as a single
  * face of a cuboid. */
 public class ModelUtil {
-    /** Mutable class for holding the current {@link #uMin}, {@link #uMax}, {@link #vMin} and {@link #vMax} of a
+    /** Mutable class for holding the current {@link #minU}, {@link #maxU}, {@link #minV} and {@link #maxV} of a
      * face. */
     public static class UvFaceData {
-        private static final UvFaceData DEFAULT = new UvFaceData(0, 1, 0, 1);
+        private static final UvFaceData DEFAULT = new UvFaceData(0, 0, 1, 1);
 
-        public float uMin, uMax, vMin, vMax;
+        public float minU, maxU, minV, maxV;
 
         public UvFaceData() {}
 
         public UvFaceData(UvFaceData from) {
-            this.uMin = from.uMin;
-            this.uMax = from.uMax;
-            this.vMin = from.vMin;
-            this.vMax = from.vMax;
+            this.minU = from.minU;
+            this.maxU = from.maxU;
+            this.minV = from.minV;
+            this.maxV = from.maxV;
         }
 
-        public UvFaceData(float uMin, float uMax, float vMin, float vMax) {
-            this.uMin = uMin;
-            this.uMax = uMax;
-            this.vMin = vMin;
-            this.vMax = vMax;
+        public static UvFaceData from16(double minU, double minV, double maxU, double maxV) {
+            return new UvFaceData(minU / 16.0, minV / 16.0, maxU / 16.0, maxV / 16.0);
         }
+
+        public static UvFaceData from16(int minU, int minV, int maxU, int maxV) {
+            return new UvFaceData(minU / 16f, minV / 16f, maxU / 16f, maxV / 16f);
+        }
+
+        public UvFaceData(float uMin, float vMin, float uMax, float vMax) {
+            this.minU = uMin;
+            this.maxU = uMax;
+            this.minV = vMin;
+            this.maxV = vMax;
+        }
+
+        public UvFaceData(double minU, double minV, double maxU, double maxV) {
+            this((float) minU, (float) minV, (float) maxU, (float) maxV);
+        }
+
+        public UvFaceData andSub(UvFaceData sub) {
+            float size_u = maxU - minU;
+            float size_v = maxV - minV;
+
+            float min_u = minU + sub.minU * size_u;
+            float min_v = minV + sub.minV * size_v;
+            float max_u = minU + sub.maxU * size_u;
+            float max_v = minV + sub.maxV * size_v;
+
+            return new UvFaceData(min_u, min_v, max_u, max_v);
+        }
+
+        public UvFaceData inParent(UvFaceData parent) {
+            return parent.andSub(this);
+        }
+
+        @Override
+        public String toString() {
+            return "[ " + minU * 16 + ", " + minV * 16 + ", " + maxU * 16 + ", " + maxV * 16 + " ]";
+        }
+    }
+
+    public static class TexturedFace {
+        public TextureAtlasSprite sprite;
+        public UvFaceData faceData = new UvFaceData();
     }
 
     public static MutableQuad createFace(EnumFacing face, Tuple3f a, Tuple3f b, Tuple3f c, Tuple3f d, UvFaceData uvs) {
@@ -41,15 +80,15 @@ public class ModelUtil {
             uvs = UvFaceData.DEFAULT;
         }
         if (face == null || shouldInvertForRender(face)) {
-            quad.vertex_0.positionv(a).texf(uvs.uMin, uvs.vMin);
-            quad.vertex_1.positionv(b).texf(uvs.uMin, uvs.vMax);
-            quad.vertex_2.positionv(c).texf(uvs.uMax, uvs.vMax);
-            quad.vertex_3.positionv(d).texf(uvs.uMax, uvs.vMin);
+            quad.vertex_0.positionv(a).texf(uvs.minU, uvs.minV);
+            quad.vertex_1.positionv(b).texf(uvs.minU, uvs.maxV);
+            quad.vertex_2.positionv(c).texf(uvs.maxU, uvs.maxV);
+            quad.vertex_3.positionv(d).texf(uvs.maxU, uvs.minV);
         } else {
-            quad.vertex_3.positionv(a).texf(uvs.uMin, uvs.vMin);
-            quad.vertex_2.positionv(b).texf(uvs.uMin, uvs.vMax);
-            quad.vertex_1.positionv(c).texf(uvs.uMax, uvs.vMax);
-            quad.vertex_0.positionv(d).texf(uvs.uMax, uvs.vMin);
+            quad.vertex_3.positionv(a).texf(uvs.minU, uvs.minV);
+            quad.vertex_2.positionv(b).texf(uvs.minU, uvs.maxV);
+            quad.vertex_1.positionv(c).texf(uvs.maxU, uvs.maxV);
+            quad.vertex_0.positionv(d).texf(uvs.maxU, uvs.minV);
         }
         return quad;
     }

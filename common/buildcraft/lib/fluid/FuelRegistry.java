@@ -1,4 +1,4 @@
-package buildcraft.lib.fluids;
+package buildcraft.lib.fluid;
 
 import java.util.Collection;
 import java.util.LinkedList;

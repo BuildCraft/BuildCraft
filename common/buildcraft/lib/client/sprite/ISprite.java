@@ -31,6 +31,9 @@ public interface ISprite {
     }
 
     default ISprite subAbsolute(double uMin, double vMin, double uMax, double vMax) {
+        if (uMin == 0 && vMin == 0 && uMax == 1 && vMax == 1) {
+            return this;
+        }
         return new SubSprite(this, uMin, vMin, uMax, vMax);
     }
 

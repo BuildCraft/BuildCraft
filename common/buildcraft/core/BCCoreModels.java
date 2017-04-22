@@ -26,6 +26,7 @@ import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.misc.data.ModelVariableData;
 
 public class BCCoreModels {
 
@@ -60,6 +61,10 @@ public class BCCoreModels {
         ENGINE_PROGRESS.value = 0.2;
         ENGINE_STAGE.value = EnumPowerStage.BLUE.getModelName();
         ENGINE_FACING.value = EnumFacing.UP.getName();
+        ModelVariableData varData = new ModelVariableData();
+        varData.setNodes(ENGINE_REDSTONE.createTickableNodes());
+        varData.tick();
+        varData.refresh();
         List<BakedQuad> quads = new ArrayList<>();
         for (MutableQuad quad : ENGINE_REDSTONE.getCutoutQuads()) {
             quads.add(quad.toBakedItem());
@@ -68,6 +73,9 @@ public class BCCoreModels {
 
         quads = new ArrayList<>();
         ENGINE_STAGE.value = EnumPowerStage.BLACK.getModelName();
+        varData.setNodes(ENGINE_CREATIVE.createTickableNodes());
+        varData.tick();
+        varData.refresh();
         for (MutableQuad quad : ENGINE_CREATIVE.getCutoutQuads()) {
             quads.add(quad.toBakedItem());
         }
@@ -82,6 +90,10 @@ public class BCCoreModels {
         ENGINE_PROGRESS.value = tile.getProgressClient(partialTicks);
         ENGINE_STAGE.value = tile.getPowerStage().getModelName();
         ENGINE_FACING.value = tile.getCurrentFacing().getName();
+        if (tile.clientModelData.hasNoNodes()) {
+            tile.clientModelData.setNodes(model.createTickableNodes());
+        }
+        tile.clientModelData.refresh();
         return model.getCutoutQuads();
     }
 

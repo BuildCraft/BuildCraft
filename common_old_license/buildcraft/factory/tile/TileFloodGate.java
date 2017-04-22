@@ -26,7 +26,7 @@ import buildcraft.factory.client.render.AdvDebuggerFloodGate;
 import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
 import buildcraft.lib.debug.BCAdvDebugging;
 import buildcraft.lib.debug.IAdvDebugTarget;
-import buildcraft.lib.fluids.Tank;
+import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;

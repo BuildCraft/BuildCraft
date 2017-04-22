@@ -1,8 +1,9 @@
 package buildcraft.builders.snapshot;
 
 import buildcraft.api.inventory.IItemTransactor;
-import buildcraft.lib.fluids.Tank;
-import buildcraft.lib.fluids.TankManager;
+
+import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.fluid.TankManager;
 
 public interface ITileForBlueprintBuilder extends ITileForSnapshotBuilder {
     Blueprint.BuildingInfo getBlueprintBuildingInfo();

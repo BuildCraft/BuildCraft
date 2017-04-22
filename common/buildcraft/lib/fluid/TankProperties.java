@@ -1,4 +1,4 @@
-package buildcraft.lib.fluids;
+package buildcraft.lib.fluid;
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;

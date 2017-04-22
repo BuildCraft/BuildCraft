@@ -33,10 +33,10 @@ public class JsonQuad {
             throw new JsonSyntaxException("Expected exactly 4 floats, but got " + Arrays.toString(uv));
         }
         UvFaceData uvs = new UvFaceData();
-        uvs.uMin = uv[0];
-        uvs.vMin = uv[1];
-        uvs.uMax = uv[2];
-        uvs.vMax = uv[3];
+        uvs.minU = uv[0] / 16f;
+        uvs.minV = uv[1] / 16f;
+        uvs.maxU = uv[2] / 16f;
+        uvs.maxV = uv[3] / 16f;
         Vector3f radius = new Vector3f(to[0] - from[0], to[1] - from[1], to[2] - from[2]);
         radius.scale(0.5f);
         Vector3f center = new Vector3f(from);
