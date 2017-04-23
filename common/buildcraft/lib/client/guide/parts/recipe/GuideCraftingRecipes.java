@@ -18,6 +18,8 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.recipe.ChangingItemStack;
+import buildcraft.lib.recipe.IRecipeViewable;
 
 public enum GuideCraftingRecipes implements IStackRecipes {
     INSTANCE;
@@ -28,7 +30,7 @@ public enum GuideCraftingRecipes implements IStackRecipes {
 
         for (IRecipe recipe : CraftingManager.getInstance().getRecipeList()) {
             if (checkRecipeUses(recipe, target)) {
-                GuideCraftingFactory factory = GuideCraftingFactory.getFactory(recipe);
+                GuidePartFactory factory = GuideCraftingFactory.getFactory(recipe);
                 if (factory != null) {
                     list.add(factory);
                 }
@@ -66,6 +68,13 @@ public enum GuideCraftingRecipes implements IStackRecipes {
                     return true;
                 }
             }
+        } else if (recipe instanceof IRecipeViewable) {
+            IRecipeViewable viewable = (IRecipeViewable) recipe;
+            for (ChangingItemStack changing : viewable.getRecipeInputs()) {
+                if (changing.matches(target)) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -90,11 +99,21 @@ public enum GuideCraftingRecipes implements IStackRecipes {
         List<GuidePartFactory> list = new ArrayList<>();
 
         for (IRecipe recipe : CraftingManager.getInstance().getRecipeList()) {
-            ItemStack out = StackUtil.asNonNull(recipe.getRecipeOutput());
-            if (OreDictionary.itemMatches(target, out, false) || OreDictionary.itemMatches(out, target, false)) {
-                GuideCraftingFactory factory = GuideCraftingFactory.getFactory(recipe);
-                if (factory != null) {
-                    list.add(factory);
+            if (recipe instanceof IRecipeViewable) {
+                ChangingItemStack changing = ((IRecipeViewable) recipe).getRecipeOutputs();
+                if (changing.matches(target)) {
+                    GuidePartFactory factory = GuideCraftingFactory.getFactory(recipe);
+                    if (factory != null) {
+                        list.add(factory);
+                    }
+                }
+            } else {
+                ItemStack out = StackUtil.asNonNull(recipe.getRecipeOutput());
+                if (OreDictionary.itemMatches(target, out, false) || OreDictionary.itemMatches(out, target, false)) {
+                    GuidePartFactory factory = GuideCraftingFactory.getFactory(recipe);
+                    if (factory != null) {
+                        list.add(factory);
+                    }
                 }
             }
         }

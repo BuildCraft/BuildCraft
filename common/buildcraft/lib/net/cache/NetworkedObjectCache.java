@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import buildcraft.api.core.BCDebugging;
@@ -186,7 +187,14 @@ public abstract class NetworkedObjectCache<T> {
             int id = serverCurrentId++;
             serverObjectToId.put(canonical, Integer.valueOf(id));
             if (DEBUG_CPLX) {
-                BCLog.logger.info("[lib.net.cache] The cache " + getNameAndId() + " stored #" + id + " as " + canonical);
+                String toString;
+                if (canonical instanceof FluidStack) {
+                    FluidStack fluid = (FluidStack) canonical;
+                    toString = fluid.getUnlocalizedName();
+                } else {
+                    toString = canonical.toString();
+                }
+                BCLog.logger.info("[lib.net.cache] The cache " + getNameAndId() + " stored #" + id + " as " + toString);
             }
             return id;
         } else {
@@ -244,7 +252,15 @@ public abstract class NetworkedObjectCache<T> {
         Link link = clientRetrieve(id);
         link.actual = readObject(buffer);
         if (DEBUG_CPLX) {
-            BCLog.logger.info("[lib.net.cache] The cache " + getNameAndId() + " just received #" + id + " as " + link.actual);
+            T read = link.actual;
+            String toString;
+            if (read instanceof FluidStack) {
+                FluidStack fluid = (FluidStack) read;
+                toString = fluid.getUnlocalizedName();
+            } else {
+                toString = read.toString();
+            }
+            BCLog.logger.info("[lib.net.cache] The cache " + getNameAndId() + " just received #" + id + " as " + toString);
         }
     }
 

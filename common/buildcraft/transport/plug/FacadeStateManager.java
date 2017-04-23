@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGlass;
+import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -45,7 +46,7 @@ public class FacadeStateManager {
     public static FacadeBlockStateInfo defaultState, previewState;
 
     private static EnumActionResult isValidFacadeBlock(Block block) {
-        if (block instanceof IFluidBlock) {
+        if (block instanceof IFluidBlock || block instanceof BlockLeaves) {
             return EnumActionResult.FAIL;
         }
         if (block instanceof BlockGlass || block instanceof BlockStainedGlass) {
@@ -203,6 +204,14 @@ public class FacadeStateManager {
             buf.writeBoolean(isHollow);
             MessageUtil.writeEnumOrNull(buf, activeColour);
         }
+
+        public FacadePhasedState withSwappedIsHollow() {
+            return new FacadePhasedState(stateInfo, !isHollow, activeColour);
+        }
+
+        public FacadePhasedState withColour(EnumDyeColor colour) {
+            return new FacadePhasedState(stateInfo, isHollow, colour);
+        }
     }
 
     public static class FullFacadeInstance {
@@ -290,6 +299,14 @@ public class FacadeStateManager {
                 int now = (int) (System.currentTimeMillis() % 100_000);
                 return phasedStates[(now / 500) % count];
             }
+        }
+
+        public FullFacadeInstance withSwappedIsHollow() {
+            FacadePhasedState[] newStates = Arrays.copyOf(phasedStates, phasedStates.length);
+            for (int i = 0; i < newStates.length; i++) {
+                newStates[i] = newStates[i].withSwappedIsHollow();
+            }
+            return new FullFacadeInstance(newStates);
         }
     }
 }

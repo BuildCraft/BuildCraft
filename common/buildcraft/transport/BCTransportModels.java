@@ -22,7 +22,6 @@ import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
-import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableString;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.transport.client.model.GateMeshDefinition;
@@ -54,11 +53,7 @@ public class BCTransportModels {
     private static final NodeVariableString LENS_COLOUR, LENS_SIDE;
 
     public static final ModelHolderStatic PULSAR_STATIC;
-    private static final ModelHolderVariable PULSAR_DYNAMIC;
-    private static final NodeVariableDouble PULSAR_STAGE;
-    private static final NodeVariableBoolean PULSAR_ON;
-    private static final NodeVariableBoolean PULSAR_AUTO;
-    private static final NodeVariableBoolean PULSAR_MANUAL;
+    public static final ModelHolderVariable PULSAR_DYNAMIC;
 
     private static final ModelHolderVariable STRIPES;
     private static final NodeVariableString STRIPES_DIRECTION;
@@ -89,12 +84,7 @@ public class BCTransportModels {
         LENS = getModel("plugs/lens.json", fnCtx);
         FILTER = getModel("plugs/filter.json", fnCtx);
 
-        fnCtx = DefaultContexts.createWithAll();
-        PULSAR_STAGE = fnCtx.putVariableDouble("stage");
-        PULSAR_ON = fnCtx.putVariableBoolean("on");
-        PULSAR_AUTO = fnCtx.putVariableBoolean("auto");
-        PULSAR_MANUAL = fnCtx.putVariableBoolean("manual");
-        PULSAR_DYNAMIC = getModel("plugs/pulsar_dynamic.json", fnCtx);
+        PULSAR_DYNAMIC = getModel("plugs/pulsar_dynamic.json", PluggablePulsar.MODEL_FUNC_CTX);
 
         fnCtx = DefaultContexts.createWithAll();
         STRIPES_DIRECTION = fnCtx.putVariableString("side");
@@ -155,7 +145,8 @@ public class BCTransportModels {
         registerModel(modelRegistry, start + "gate_item#inventory", ModelGateItem.INSTANCE);
         registerModel(modelRegistry, start + "lens_item#inventory", ModelLensItem.INSTANCE);
         registerModel(modelRegistry, start + "plug_blocker#inventory", new ModelPluggableItem(BLOCKER.getCutoutQuads()));
-        registerModel(modelRegistry, start + "plug_pulsar#inventory", new ModelPluggableItem(PULSAR_STATIC.getCutoutQuads(), getPulsarDynQuads(true, 0.5, false, false)));
+        PluggablePulsar.setModelVariablesForItem();
+        registerModel(modelRegistry, start + "plug_pulsar#inventory", new ModelPluggableItem(PULSAR_STATIC.getCutoutQuads(), PULSAR_DYNAMIC.getCutoutQuads()));
         registerModel(modelRegistry, start + "plug_light_sensor#inventory", new ModelPluggableItem(LIGHT_SENSOR.getCutoutQuads()));
         registerModel(modelRegistry, start + "plug_facade#inventory", ModelFacadeItem.INSTANCE);
 
@@ -166,7 +157,6 @@ public class BCTransportModels {
         ModelFacadeItem.onModelBake();
 
         PlugGateRenderer.onModelBake();
-        PlugPulsarRenderer.onModelBake();
     }
 
     private static void registerModel(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, String reg, IBakedModel val) {
@@ -220,14 +210,6 @@ public class BCTransportModels {
     public static MutableQuad[] getFilterTranslucentQuads(EnumFacing side, EnumDyeColor colour) {
         setupLensVariables(FILTER, side, colour);
         return FILTER.getTranslucentQuads();
-    }
-
-    public static MutableQuad[] getPulsarDynQuads(boolean isPulsing, double stage, boolean isAuto, boolean isManual) {
-        PULSAR_STAGE.value = stage;
-        PULSAR_ON.value = isPulsing;
-        PULSAR_AUTO.value = isAuto;
-        PULSAR_MANUAL.value = isManual;
-        return PULSAR_DYNAMIC.getCutoutQuads();
     }
 
     public static MutableQuad[] getStripesDynQuads(EnumFacing side) {

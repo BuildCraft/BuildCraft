@@ -8,6 +8,14 @@
         "mirrored_pos": "2 * (stage > 0.5 ? 1 - stage : stage)",
         "pos": "(1 - mirrored_pos) * 2 - 0.001"
     },
+    "rules": [
+		{
+			"when": "side != 'west'",
+			"type": "builtin:rotate_facing",
+			"from": "'west'",
+			"to": "side"
+		}
+	],
     "inlines": {
         "led_auto": {
             "shade": "!auto",

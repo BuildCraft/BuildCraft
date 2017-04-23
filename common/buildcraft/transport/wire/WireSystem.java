@@ -135,7 +135,6 @@ public class WireSystem {
         while (!queue.isEmpty()) {
             build.accept(queue.remove());
         }
-        BCLog.logger.info("[transport.wire] Wire rebuild took " + (System.currentTimeMillis() - time) + "ms");
         return this;
     }
 

@@ -30,6 +30,7 @@ import buildcraft.transport.gate.EnumGateModifier;
 import buildcraft.transport.gate.GateVariant;
 import buildcraft.transport.item.ItemPipeHolder;
 import buildcraft.transport.recipe.FacadeAssemblyRecipes;
+import buildcraft.transport.recipe.FacadeSwapRecipe;
 
 public class BCTransportRecipes {
     public static void init() {
@@ -221,6 +222,7 @@ public class BCTransportRecipes {
 
         if (BCTransportItems.plugFacade != null) {
             AssemblyRecipeRegistry.INSTANCE.addRecipeProvider(FacadeAssemblyRecipes.INSTANCE);
+            GameRegistry.addRecipe(FacadeSwapRecipe.INSTANCE);
         }
     }
 

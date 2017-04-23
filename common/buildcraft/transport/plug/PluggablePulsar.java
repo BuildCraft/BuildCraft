@@ -1,6 +1,8 @@
 package buildcraft.transport.plug;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -14,7 +16,6 @@ import net.minecraft.util.math.RayTraceResult;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
@@ -23,15 +24,35 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
+import buildcraft.lib.expression.DefaultContexts;
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.info.ContextInfo;
+import buildcraft.lib.expression.info.VariableInfo.CacheType;
+import buildcraft.lib.expression.info.VariableInfo.VariableInfoDouble;
+import buildcraft.lib.expression.info.VariableInfo.VariableInfoString;
+import buildcraft.lib.expression.node.value.NodeVariableBoolean;
+import buildcraft.lib.expression.node.value.NodeVariableDouble;
+import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugPulsar;
 
 public class PluggablePulsar extends PipePluggable {
 
+    public static final FunctionContext MODEL_FUNC_CTX;
+    private static final NodeVariableString MODEL_SIDE;
+    private static final NodeVariableDouble MODEL_STAGE;
+    private static final NodeVariableBoolean MODEL_ON;
+    private static final NodeVariableBoolean MODEL_AUTO;
+    private static final NodeVariableBoolean MODEL_MANUAL;
+    public static final ContextInfo MODEL_VAR_INFO;
+
     private static final int PULSE_STAGE = 20;
 
     private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
+
+    public final ModelVariableData clientModelData = new ModelVariableData();
 
     private boolean manuallyEnabled = false;
     /** Increments from 0 to {@link #PULSE_STAGE} to decide when it should pulse some power into the pipe behaviour */
@@ -60,6 +81,24 @@ public class PluggablePulsar extends PipePluggable {
         BOXES[EnumFacing.SOUTH.ordinal()] = new AxisAlignedBB(min, min, ul, max, max, uu);
         BOXES[EnumFacing.WEST.ordinal()] = new AxisAlignedBB(ll, min, min, lu, max, max);
         BOXES[EnumFacing.EAST.ordinal()] = new AxisAlignedBB(ul, min, min, uu, max, max);
+
+        MODEL_FUNC_CTX = DefaultContexts.createWithAll();
+        MODEL_SIDE = MODEL_FUNC_CTX.putVariableString("side");
+        MODEL_STAGE = MODEL_FUNC_CTX.putVariableDouble("stage");
+        MODEL_ON = MODEL_FUNC_CTX.putVariableBoolean("on");
+        MODEL_AUTO = MODEL_FUNC_CTX.putVariableBoolean("auto");
+        MODEL_MANUAL = MODEL_FUNC_CTX.putVariableBoolean("manual");
+
+        MODEL_VAR_INFO = new ContextInfo(MODEL_FUNC_CTX);
+        VariableInfoString infoSide = MODEL_VAR_INFO.createInfoString("side", MODEL_SIDE);
+        infoSide.cacheType = CacheType.ALWAYS;
+        infoSide.setIsComplete = true;
+        infoSide.possibleValues.addAll(Arrays.stream(EnumFacing.VALUES).map(EnumFacing::getName).collect(Collectors.toList()));
+
+        VariableInfoDouble infoStage = MODEL_VAR_INFO.createInfoDouble("stage", MODEL_STAGE);
+        infoStage.cacheType = CacheType.IN_SET;
+        infoStage.setIsComplete = false;
+        infoStage.possibleValues.add(0);
     }
 
     public PluggablePulsar(PluggableDefinition definition, IPipeHolder holder, EnumFacing side) {
@@ -163,6 +202,8 @@ public class PluggablePulsar extends PipePluggable {
                 pulseStage = 0;
                 // }
             }
+            setModelVariables(1);
+            clientModelData.tick();
             return;
         }
         boolean isOn = isPulsing();
@@ -201,30 +242,6 @@ public class PluggablePulsar extends PipePluggable {
         return true;
     }
 
-    @SideOnly(Side.CLIENT)
-    public double getStage(float partialTicks) {
-        if (isPulsingClient()) {
-            return (pulseStage + partialTicks) / 20 % 1;
-        } else {
-            return 0;
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public boolean isPulsingClient() {
-        return isPulsing;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public boolean isAutoEnabledClient() {
-        return autoEnabled;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public boolean isManuallyEnabledClient() {
-        return manuallyEnabled;
-    }
-
     @Override
     public PluggableModelKey getModelRenderKey(BlockRenderLayer layer) {
         if (layer == BlockRenderLayer.CUTOUT) return new KeyPlugPulsar(side);
@@ -241,5 +258,27 @@ public class PluggablePulsar extends PipePluggable {
 
     private boolean isPulsing() {
         return manuallyEnabled || gateEnabledTicks > 0 || gateSinglePulses > 0;
+    }
+
+    // Model
+
+    public static void setModelVariablesForItem() {
+        MODEL_STAGE.value = 0;
+        MODEL_AUTO.value = false;
+        MODEL_MANUAL.value = false;
+        MODEL_ON.value = false;
+        MODEL_SIDE.value = "west";
+    }
+
+    public void setModelVariables(float partialTicks) {
+        if (isPulsing) {
+            MODEL_STAGE.value = (pulseStage + partialTicks) / 20 % 1;
+        } else {
+            MODEL_STAGE.value = 0;
+        }
+        MODEL_ON.value = isPulsing;
+        MODEL_MANUAL.value = manuallyEnabled;
+        MODEL_AUTO.value = autoEnabled;
+        MODEL_SIDE.value = side.getName();
     }
 }

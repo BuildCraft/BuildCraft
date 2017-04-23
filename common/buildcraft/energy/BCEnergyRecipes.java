@@ -7,10 +7,12 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
+import buildcraft.api.BCModules;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.api.recipes.IRefineryRecipeManager.IDistillationRecipe;
 
 import buildcraft.core.BCCoreBlocks;
 import buildcraft.lib.recipe.OredictionaryNames;
@@ -76,17 +78,42 @@ public class BCEnergyRecipes {
 
         addDirtyFuel(BCEnergyFluids.crudeOil, _oil, 3);
 
-        // TEMP
-        Fluid fluidOil = getFirstOrNull(BCEnergyFluids.crudeOil);
-        Fluid fluidDis = getFirstOrNull(BCEnergyFluids.oilDistilled);
-        Fluid fluidRes = getFirstOrNull(BCEnergyFluids.oilResidue);
-        if (fluidOil != null) {
-            FluidStack in = new FluidStack(fluidOil, _oil);
-            FluidStack outGas = new FluidStack(fluidDis, _gas_light_dense);
-            FluidStack outLiquid = new FluidStack(fluidRes, _residue);
+        if (BCModules.FACTORY.isLoaded()) {
+            FluidStack[] gas_light_dense_residue = createFluidStack(BCEnergyFluids.crudeOil, _oil);
+            FluidStack[] gas_light_dense = createFluidStack(BCEnergyFluids.oilDistilled, _gas_light_dense);
+            FluidStack[] gas_light = createFluidStack(BCEnergyFluids.fuelMixedLight, _gas_light);
+            FluidStack[] gas = createFluidStack(BCEnergyFluids.fuelGaseous, _gas);
+            FluidStack[] light_dense_residue = createFluidStack(BCEnergyFluids.oilHeavy, _light_dense_residue);
+            FluidStack[] light_dense = createFluidStack(BCEnergyFluids.fuelMixedHeavy, _light_dense);
+            FluidStack[] light = createFluidStack(BCEnergyFluids.fuelLight, _light);
+            FluidStack[] dense_residue = createFluidStack(BCEnergyFluids.oilDense, _dense_residue);
+            FluidStack[] dense = createFluidStack(BCEnergyFluids.fuelDense, _dense);
+            FluidStack[] residue = createFluidStack(BCEnergyFluids.oilResidue, _residue);
 
-            BuildcraftRecipeRegistry.refineryRecipes.addDistillationRecipe(in, outGas, outLiquid, 16 * MjAPI.MJ);
+            addDistillation(gas_light_dense_residue, gas, light_dense_residue, 0, 32 * MjAPI.MJ);
+            addDistillation(gas_light_dense_residue, gas_light, dense_residue, 1, 16 * MjAPI.MJ);
+            addDistillation(gas_light_dense_residue, gas_light_dense, residue, 2, 12 * MjAPI.MJ);
+
+            addDistillation(gas_light_dense, gas, light_dense, 0, 24 * MjAPI.MJ);
+            addDistillation(gas_light_dense, gas_light, dense, 1, 16 * MjAPI.MJ);
+
+            addDistillation(gas_light, gas, light, 0, 24 * MjAPI.MJ);
+
+            addDistillation(light_dense_residue, light, dense_residue, 1, 16 * MjAPI.MJ);
+            addDistillation(light_dense_residue, light_dense, residue, 2, 12 * MjAPI.MJ);
+
+            addDistillation(light_dense, light, dense, 1, 16 * MjAPI.MJ);
+
+            addDistillation(dense_residue, dense, residue, 2, 12 * MjAPI.MJ);
         }
+    }
+
+    private static FluidStack[] createFluidStack(Fluid[] fluid, int amount) {
+        FluidStack[] arr = new FluidStack[fluid.length];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = new FluidStack(fluid[i], amount);
+        }
+        return arr;
     }
 
     private static Fluid getFirstOrNull(Fluid[] array) {
@@ -121,5 +148,16 @@ public class BCEnergyRecipes {
         } else {
             BuildcraftFuelRegistry.fuel.addDirtyFuel(fuel, powerPerCycle, totalTime, new FluidStack(residue, 1000 / amountDiff));
         }
+    }
+
+    private static void addDistillation(FluidStack[] in, FluidStack[] outGas, FluidStack[] outLiquid, int heat, long mjCost) {
+        FluidStack _in = in[heat];
+        FluidStack _outGas = outGas[heat];
+        FluidStack _outLiquid = outLiquid[heat];
+        IDistillationRecipe existing = BuildcraftRecipeRegistry.refineryRecipes.getDistilationRegistry().getRecipeForInput(_in);
+        if (existing != null) {
+            throw new IllegalStateException("Already added distillation recipe for " + _in.getFluid().getName());
+        }
+        BuildcraftRecipeRegistry.refineryRecipes.addDistillationRecipe(_in, _outGas, _outLiquid, mjCost);
     }
 }

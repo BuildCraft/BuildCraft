@@ -24,6 +24,7 @@ import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.NonNullMatrix;
+import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.IRecipeViewable;
 
 public class GuideCraftingFactory implements GuidePartFactory {
@@ -56,10 +57,10 @@ public class GuideCraftingFactory implements GuidePartFactory {
         }
     }
 
-    public static GuideCraftingFactory create(@Nonnull ItemStack stack) {
+    public static GuidePartFactory create(@Nonnull ItemStack stack) {
         for (IRecipe recipe : CraftingManager.getInstance().getRecipeList()) {
             if (OreDictionary.itemMatches(stack, StackUtil.asNonNull(recipe.getRecipeOutput()), false)) {
-                GuideCraftingFactory val = getFactory(recipe);
+                GuidePartFactory val = getFactory(recipe);
                 if (val != null) {
                     return val;
                 } else {
@@ -70,7 +71,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
         return null;
     }
 
-    public static GuideCraftingFactory getFactory(IRecipe recipe) {
+    public static GuidePartFactory getFactory(IRecipe recipe) {
         GuideCraftingFactory val = null;
         if (recipe instanceof ShapedRecipes) {
             ShapedRecipes shaped = (ShapedRecipes) recipe;
@@ -116,7 +117,25 @@ public class GuideCraftingFactory implements GuidePartFactory {
             }
             val = new GuideCraftingFactory(dimInput, recipe.getRecipeOutput());
         } else if (recipe instanceof IRecipeViewable) {
-            // TODO: Implement IRecipeViewable usage
+            IRecipeViewable viewableRecipe = (IRecipeViewable) recipe;
+            ChangingItemStack[] input = viewableRecipe.getRecipeInputs();
+            ChangingItemStack output = viewableRecipe.getRecipeOutputs();
+            ChangingItemStack[][] inputGrid = { input };
+            if (recipe instanceof IRecipeViewable.IViewableGrid) {
+                int width = ((IRecipeViewable.IViewableGrid) recipe).getRecipeWidth();
+                inputGrid = new ChangingItemStack[inputGrid.length / width][width];
+                int x = 0;
+                int y = 0;
+                for (int i = 0; i < input.length; i++) {
+                    inputGrid[x][y] = input[i];
+                    x++;
+                    if (x > width) {
+                        x = 0;
+                        y++;
+                    }
+                }
+            }
+            return new GuideCraftingFactoryDirect(inputGrid, output);
         } else {
             BCLog.logger.warn("[lib.guide.crafting] Found an unknown recipe " + recipe.getClass());
         }
@@ -185,7 +204,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
         return StackUtil.EMPTY;
     }
 
-    public static GuideCraftingFactory create(Item output) {
+    public static GuidePartFactory create(Item output) {
         return create(new ItemStack(output));
     }
 

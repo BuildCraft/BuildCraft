@@ -13,6 +13,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import buildcraft.api.core.BCLog;
+
 import buildcraft.lib.BCLibProxy;
 
 import io.netty.buffer.ByteBuf;
@@ -65,6 +67,8 @@ public class MessageUpdateTile implements IMessage {
                 } catch (IOException io) {
                     throw Throwables.propagate(io);
                 }
+            } else {
+                BCLog.logger.warn("Dropped message for player " + player.getName() + " for tile at " + message.pos);
             }
             return null;
         }
