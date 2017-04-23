@@ -12,9 +12,4 @@ public enum EnumParameterAxis implements IParameter {
     EnumParameterAxis(EnumFacing.Axis axis) {
         this.axis = axis;
     }
-
-    @Override
-    public String getParameterName() {
-        return "axis";
-    }
 }
