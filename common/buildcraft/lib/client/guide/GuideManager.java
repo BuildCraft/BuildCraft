@@ -11,7 +11,10 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.Language;
 import net.minecraft.item.ItemStack;
+
+import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.client.guide.data.GuideEntryLoader;
 import buildcraft.lib.client.guide.data.JsonEntry;
@@ -47,14 +50,21 @@ public enum GuideManager {
     public void reloadLang() {
         pages.clear();
 
-        String lang = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
+        Language currentLanguage = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage();
+        String langCode;
+        if (currentLanguage == null) {
+            BCLog.logger.warn("Current language was null!");
+            langCode = DEFAULT_LANG;
+        } else {
+            langCode = currentLanguage.getLanguageCode();
+        }
 
         // load the default ones
         loadLangInternal(DEFAULT_LANG);
         // replace any existing with the new ones.
 
-        if (!DEFAULT_LANG.equals(lang)) {
-            loadLangInternal(lang);
+        if (!DEFAULT_LANG.equals(langCode)) {
+            loadLangInternal(langCode);
         }
     }
 

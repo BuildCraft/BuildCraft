@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
-import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.node.value.IVariableNode;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableLong;
@@ -24,7 +23,6 @@ import gnu.trove.set.hash.TLongHashSet;
 
 public abstract class VariableInfo<N extends IVariableNode> {
     public final N node;
-    private final NodeType nodeType;
 
     @Nonnull
     public CacheType cacheType = CacheType.NEVER;
@@ -34,7 +32,6 @@ public abstract class VariableInfo<N extends IVariableNode> {
 
     public VariableInfo(N node) {
         this.node = node;
-        nodeType = NodeType.getType(node);
     }
 
     public abstract Collection<?> getPossibleValues();

@@ -202,12 +202,12 @@ public class GuiUtil {
         int endX = startX + position.getWidth();
         int endY;
 
-        if (!fluid.getFluid().isGaseous(fluid)) {
+        if (fluid.getFluid().isGaseous(fluid)) {
+            startY = position.getY() + height;
+            endY = position.getY();
+        } else {
             startY = position.getEndY();
             endY = startY - height;
-        } else {
-            endY = position.getEndY();
-            startY = endY - height;
         }
 
         FluidRenderer.drawFluidForGui(fluid, startX, startY, endX, endY);

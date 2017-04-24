@@ -114,6 +114,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
                 tankManager.writeData(buffer);
+                buffer.writeBoolean(isActive);
                 powerAvgClient = powerAvg.getAverageLong();
                 final long div = MjAPI.MJ / 2;
                 powerAvgClient = Math.round(powerAvgClient / (double) div) * div;
@@ -128,6 +129,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 tankManager.readData(buffer);
+                isActive = buffer.readBoolean();
                 powerAvgClient = buffer.readLong();
             }
         }
@@ -144,7 +146,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
     public void setClientModelVariables(float partialTicks) {
         DefaultContexts.RENDER_PARTIAL_TICKS.value = partialTicks;
 
-        MODEL_ACTIVE.value = powerAvgClient / MjAPI.MJ > 0;
+        MODEL_ACTIVE.value = isActive;
         MODEL_POWER_AVG.value = powerAvgClient / MjAPI.MJ;
         MODEL_POWER_MAX.value = MAX_MJ_PER_TICK / MjAPI.MJ;
         MODEL_FACING.value = "west";
@@ -170,6 +172,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         if (currentRecipe == null) {
             mjBattery.addPowerChecking(distillPower, false);
             distillPower = 0;
+            isActive = false;
         } else {
             FluidStack reqIn = currentRecipe.in();
             FluidStack outLiquid = currentRecipe.outLiquid();
@@ -190,7 +193,9 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
                 long power = mjBattery.extractPower(0, max);
                 powerAvg.push(max);
                 distillPower += power;
+                isActive = power > 0;
                 if (distillPower >= powerReq) {
+                    isActive = true;
                     distillPower -= powerReq;
                     tankIn.drainInternal(reqIn, true);
                     tankOutGas.fillInternal(outGas, true);
@@ -200,15 +205,11 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
             } else {
                 mjBattery.addPowerChecking(distillPower, false);
                 distillPower = 0;
+                isActive = false;
             }
         }
 
-        boolean send = changedSinceNetUpdate && updateTracker.markTimeIfDelay(getWorld());
-        if (!send) {
-            send = updateTracker.markTimeIfDelay(getWorld(), BCCoreConfig.networkUpdateRate * 3);
-        }
-        if (send) {
-            changedSinceNetUpdate = false;
+        if (updateTracker.markTimeIfDelay(getWorld())) {
             sendNetworkUpdate(NET_RENDER_DATA);
         }
     }

@@ -5,8 +5,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.vecmath.Matrix4f;
-
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.util.EnumFacing;
 
@@ -14,7 +12,6 @@ import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.misc.MatrixUtil;
 
 /** An {@link IPluggableStaticBaker} that rotates a given model to the correct side, and returns the quads. */
 public class PlugBakerSimple<K extends PluggableModelKey> implements IPluggableStaticBaker<K> {

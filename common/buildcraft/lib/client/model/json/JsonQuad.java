@@ -25,7 +25,7 @@ public class JsonQuad {
 
     public JsonQuad(JsonObject obj, float[] from, float[] to, EnumFacing face) {
         this.face = face;
-        tint = JsonUtils.getInt(obj, "tintindex", 0);
+        tint = JsonUtils.getInt(obj, "tintindex", -1);
         texture = JsonUtils.getString(obj, "texture");
         int rotation = JsonUtils.getInt(obj, "rotation", 0);
         float[] uv = JsonUtil.getSubAsFloatArray(obj, "uv");
