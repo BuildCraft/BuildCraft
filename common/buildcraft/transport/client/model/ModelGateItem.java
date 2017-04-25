@@ -37,11 +37,11 @@ public enum ModelGateItem implements IBakedModel {
     private static List<BakedQuad> getQuads(GateVariant variant) {
         if (!cached.containsKey(variant)) {
             List<BakedQuad> list = new ArrayList<>();
-            MutableQuad[] quads = BCTransportModels.getGateQuads(variant);
+            MutableQuad[] quads = BCTransportModels.getGateStaticQuads(EnumFacing.WEST, variant);
             for (MutableQuad q : quads) {
                 list.add(q.toBakedItem());
             }
-            for (MutableQuad q : BCTransportModels.getGateDynQuads(false)) {
+            for (MutableQuad q : BCTransportModels.GATE_DYNAMIC.getCutoutQuads()) {
                 list.add(q.toBakedItem());
             }
 

@@ -103,7 +103,7 @@ public class ExpressionTester {
 
     @Test
     public void testMath() throws InvalidExpressionException {
-        NodeVariableLong arg1 = new NodeVariableLong();
+        NodeVariableLong arg1 = new NodeVariableLong("arg1");
 
         INodeLong node = BiNodeType.ADD.createLongNode(arg1, new NodeConstantLong(10));
 
@@ -186,7 +186,7 @@ public class ExpressionTester {
 
         INodeFuncLong func3 = GenericExpressionCompiler.compileFunctionLong("input * 2 + 1", ctx2, Argument.argLong("input"));
         NodeStack stack3 = new NodeStack();
-        NodeVariableLong input = stack3.push(new NodeVariableLong());
+        NodeVariableLong input = stack3.push(new NodeVariableLong("input"));
         INodeLong node3 = func3.getNode(stack3);
 
         input.value = 1;

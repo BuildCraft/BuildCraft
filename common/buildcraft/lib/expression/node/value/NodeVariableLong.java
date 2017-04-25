@@ -4,8 +4,13 @@ import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 
 public class NodeVariableLong implements INodeLong, IVariableNode {
+    public final String name;
     public long value;
     private boolean isConst = false;
+
+    public NodeVariableLong(String name) {
+        this.name = name;
+    }
 
     public void setConstant(boolean isConst) {
         this.isConst = isConst;
@@ -31,7 +36,12 @@ public class NodeVariableLong implements INodeLong, IVariableNode {
 
     @Override
     public String toString() {
-        return "mutable_long#" + System.identityHashCode(this);
+        return name;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override

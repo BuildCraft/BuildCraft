@@ -11,7 +11,7 @@ public class NodeUpdatable implements ITickableNode, ITickableNode.Source {
     public NodeUpdatable(String name, IExpressionNode source) {
         this.name = name;
         this.source = source;
-        this.variable = NodeType.getType(source).makeVariableNode();
+        this.variable = NodeType.getType(source).makeVariableNode(name);
     }
 
     @Override

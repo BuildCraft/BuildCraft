@@ -1,6 +1,8 @@
 package buildcraft.transport.plug;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -22,23 +24,37 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
+import buildcraft.lib.expression.DefaultContexts;
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.info.ContextInfo;
+import buildcraft.lib.expression.info.VariableInfo.CacheType;
+import buildcraft.lib.expression.info.VariableInfo.VariableInfoBoolean;
+import buildcraft.lib.expression.info.VariableInfo.VariableInfoBoolean.BooleanPosibilities;
+import buildcraft.lib.expression.info.VariableInfo.VariableInfoString;
+import buildcraft.lib.expression.node.value.NodeVariableBoolean;
+import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.BCTransportGuis;
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugGate;
-import buildcraft.transport.gate.GateLogic;
-import buildcraft.transport.gate.GateVariant;
+import buildcraft.transport.gate.*;
 
 public class PluggableGate extends PipePluggable {
-    public static final int SET_TRIGGER = 0;
-    public static final int SET_ACTION = 1;
-    public static final int SET_TRIGGER_ARG = 2;
-    public static final int SET_ACTION_ARG = 3;
+    public static final FunctionContext MODEL_FUNC_CTX_STATIC, MODEL_FUNC_CTX_DYNAMIC;
+    private static final NodeVariableString MODEL_MATERIAL;
+    private static final NodeVariableString MODEL_MODIFIER;
+    private static final NodeVariableString MODEL_LOGIC;
+    private static final NodeVariableString MODEL_SIDE;
+    private static final NodeVariableBoolean MODEL_IS_ON;
+    public static final ContextInfo MODEL_VAR_INFO;
 
     private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
 
     public final GateLogic logic;
+
+    public final ModelVariableData clientModelData = new ModelVariableData();
 
     static {
         double ll = 2 / 16.0;
@@ -55,6 +71,41 @@ public class PluggableGate extends PipePluggable {
         BOXES[EnumFacing.SOUTH.getIndex()] = new AxisAlignedBB(min, min, ul, max, max, uu);
         BOXES[EnumFacing.WEST.getIndex()] = new AxisAlignedBB(ll, min, min, lu, max, max);
         BOXES[EnumFacing.EAST.getIndex()] = new AxisAlignedBB(ul, min, min, uu, max, max);
+
+        MODEL_FUNC_CTX_STATIC = DefaultContexts.createWithAll();
+        MODEL_MATERIAL = MODEL_FUNC_CTX_STATIC.putVariableString("material");
+        MODEL_MODIFIER = MODEL_FUNC_CTX_STATIC.putVariableString("modifier");
+        MODEL_LOGIC = MODEL_FUNC_CTX_STATIC.putVariableString("logic");
+        MODEL_SIDE = MODEL_FUNC_CTX_STATIC.putVariableString("side");
+
+        MODEL_FUNC_CTX_DYNAMIC = new FunctionContext(MODEL_FUNC_CTX_STATIC);
+        MODEL_IS_ON = MODEL_FUNC_CTX_DYNAMIC.putVariableBoolean("on");
+
+        MODEL_VAR_INFO = new ContextInfo(MODEL_FUNC_CTX_DYNAMIC);
+        VariableInfoString infoMaterial = MODEL_VAR_INFO.createInfoString("material", MODEL_MATERIAL);
+        infoMaterial.cacheType = CacheType.ALWAYS;
+        infoMaterial.setIsComplete = true;
+        infoMaterial.possibleValues.addAll(Arrays.stream(EnumGateMaterial.VALUES).map(m -> m.tag).collect(Collectors.toList()));
+
+        VariableInfoString infoModifier = MODEL_VAR_INFO.createInfoString("modifier", MODEL_MODIFIER);
+        infoModifier.cacheType = CacheType.ALWAYS;
+        infoModifier.setIsComplete = true;
+        infoModifier.possibleValues.addAll(Arrays.stream(EnumGateModifier.VALUES).map(m -> m.tag).collect(Collectors.toList()));
+
+        VariableInfoString infoLogic = MODEL_VAR_INFO.createInfoString("logic", MODEL_LOGIC);
+        infoLogic.cacheType = CacheType.ALWAYS;
+        infoLogic.setIsComplete = true;
+        infoLogic.possibleValues.addAll(Arrays.stream(EnumGateLogic.VALUES).map(m -> m.tag).collect(Collectors.toList()));
+
+        VariableInfoString infoSide = MODEL_VAR_INFO.createInfoString("side", MODEL_SIDE);
+        infoSide.cacheType = CacheType.ALWAYS;
+        infoSide.setIsComplete = true;
+        infoSide.possibleValues.addAll(Arrays.stream(EnumFacing.VALUES).map(EnumFacing::getName).collect(Collectors.toList()));
+
+        VariableInfoBoolean infoIsOn = MODEL_VAR_INFO.createInfoBoolean("on", MODEL_IS_ON);
+        infoIsOn.cacheType = CacheType.ALWAYS;
+        infoIsOn.setIsComplete = true;
+        infoIsOn.possibleValues = BooleanPosibilities.FALSE_TRUE;
     }
 
     // Manual constructor (called by the specific item pluggable gate code)
@@ -165,5 +216,23 @@ public class PluggableGate extends PipePluggable {
     @Override
     public void onTick() {
         logic.onTick();
+        if (holder.getPipeWorld().isRemote) {
+            clientModelData.tick();
+        }
+    }
+
+    // Model
+
+    public static void setClientModelVariables(EnumFacing side, GateVariant variant) {
+        MODEL_SIDE.value = side.getName();
+        MODEL_MATERIAL.value = variant.material.tag;
+        MODEL_MODIFIER.value = variant.modifier.tag;
+        MODEL_LOGIC.value = variant.logic.tag;
+        MODEL_IS_ON.value = false;// Used by the item
+    }
+
+    public void setClientModelVariables() {
+        setClientModelVariables(side, logic.variant);
+        MODEL_IS_ON.value = logic.isOn;
     }
 }

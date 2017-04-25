@@ -9,4 +9,6 @@ public interface IVariableNode extends IExpressionNode {
     void set(IExpressionNode from);
 
     String valueToString();
+
+    String getName();
 }

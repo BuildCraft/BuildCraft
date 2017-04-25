@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.info.VariableInfo.VariableInfoBoolean;
 import buildcraft.lib.expression.info.VariableInfo.VariableInfoDouble;
 import buildcraft.lib.expression.info.VariableInfo.VariableInfoLong;
 import buildcraft.lib.expression.info.VariableInfo.VariableInfoString;
+import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableLong;
 import buildcraft.lib.expression.node.value.NodeVariableString;
@@ -47,7 +49,7 @@ public class ContextInfo {
         return null;
     }
 
-    public VariableInfoLong createInfoString(String name, NodeVariableLong node) {
+    public VariableInfoLong createInfoLong(String name, NodeVariableLong node) {
         VariableInfoLong info = new VariableInfoLong(node);
         variables.put(name, info);
         return info;
@@ -57,6 +59,20 @@ public class ContextInfo {
         VariableInfo<?> info = variables.get(name);
         if (info instanceof VariableInfoLong) {
             return (VariableInfoLong) info;
+        }
+        return null;
+    }
+
+    public VariableInfoBoolean createInfoBoolean(String name, NodeVariableBoolean node) {
+        VariableInfoBoolean info = new VariableInfoBoolean(node);
+        variables.put(name, info);
+        return info;
+    }
+
+    public VariableInfoBoolean getInfoBoolean(String name) {
+        VariableInfo<?> info = variables.get(name);
+        if (info instanceof VariableInfoBoolean) {
+            return (VariableInfoBoolean) info;
         }
         return null;
     }

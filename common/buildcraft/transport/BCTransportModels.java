@@ -21,7 +21,6 @@ import buildcraft.lib.client.model.ModelPluggableItem;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
-import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableString;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.transport.client.model.GateMeshDefinition;
@@ -45,9 +44,8 @@ public class BCTransportModels {
     public static final ModelHolderStatic LIGHT_SENSOR;
     public static final ModelHolderStatic POWER_ADAPTER;
 
-    private static final ModelHolderVariable GATE_STATIC, GATE_DYNAMIC;
-    private static final NodeVariableString GATE_MATERIAL, GATE_MODIFIER, GATE_LOGIC;
-    private static final NodeVariableBoolean GATE_ON;
+    public static final ModelHolderVariable GATE_STATIC, GATE_DYNAMIC;
+    private static final ModelVariableData GATE_VAR_DATA_STATIC;
 
     private static final ModelHolderVariable LENS, FILTER;
     private static final NodeVariableString LENS_COLOUR, LENS_SIDE;
@@ -68,17 +66,11 @@ public class BCTransportModels {
         POWER_ADAPTER = getModel("plugs/power_adapter.json");
         PULSAR_STATIC = getModel("plugs/pulsar_static.json");
 
+        GATE_STATIC = getModel("plugs/gate.json", PluggableGate.MODEL_FUNC_CTX_STATIC);
+        GATE_DYNAMIC = getModel("plugs/gate_dynamic.json", PluggableGate.MODEL_FUNC_CTX_DYNAMIC);
+        GATE_VAR_DATA_STATIC = new ModelVariableData();
+
         FunctionContext fnCtx = DefaultContexts.createWithAll();
-        GATE_MATERIAL = fnCtx.putVariableString("material");
-        GATE_MODIFIER = fnCtx.putVariableString("modifier");
-        GATE_LOGIC = fnCtx.putVariableString("logic");
-        GATE_STATIC = getModel("plugs/gate.json", fnCtx);
-
-        fnCtx = DefaultContexts.createWithAll();
-        GATE_ON = fnCtx.putVariableBoolean("on");
-        GATE_DYNAMIC = getModel("plugs/gate_dynamic.json", fnCtx);
-
-        fnCtx = DefaultContexts.createWithAll();
         LENS_COLOUR = fnCtx.putVariableString("colour");
         LENS_SIDE = fnCtx.putVariableString("side");
         LENS = getModel("plugs/lens.json", fnCtx);
@@ -97,10 +89,6 @@ public class BCTransportModels {
 
     private static ModelHolderStatic getModel(String loc) {
         return getModel(loc, null, false);
-    }
-
-    private static ModelHolderStatic getModel(String loc, String[][] textures) {
-        return getModel(loc, textures, false);
     }
 
     private static ModelHolderStatic getModel(String loc, String[][] textures, boolean allowTextureFallthrough) {
@@ -155,7 +143,7 @@ public class BCTransportModels {
         ModelGateItem.onModelBake();
         ModelLensItem.onModelBake();
         ModelFacadeItem.onModelBake();
-
+        PlugPulsarRenderer.onModelBake();
         PlugGateRenderer.onModelBake();
     }
 
@@ -163,24 +151,13 @@ public class BCTransportModels {
         modelRegistry.putObject(new ModelResourceLocation(reg), val);
     }
 
-    public static MutableQuad[] getGateQuads(GateVariant variant) {
-        return getGateQuads(variant.material.tag, variant.modifier.tag, variant.logic.tag);
-    }
-
-    public static MutableQuad[] getGateQuads(String material, String modifier, String logic) {
-        GATE_MATERIAL.value = material;
-        GATE_MODIFIER.value = modifier;
-        GATE_LOGIC.value = logic;
+    public static MutableQuad[] getGateStaticQuads(EnumFacing side, GateVariant variant) {
+        PluggableGate.setClientModelVariables(side, variant);
+        if (GATE_VAR_DATA_STATIC.hasNoNodes()) {
+            GATE_VAR_DATA_STATIC.setNodes(GATE_STATIC.createTickableNodes());
+        }
+        GATE_VAR_DATA_STATIC.refresh();
         return GATE_STATIC.getCutoutQuads();
-    }
-
-    public static MutableQuad[] getGateDynQuads(boolean isOn) {
-        GATE_ON.value = isOn;
-        ModelVariableData varData = new ModelVariableData();
-        varData.setNodes(GATE_DYNAMIC.createTickableNodes());
-        varData.tick();
-        varData.refresh();
-        return GATE_DYNAMIC.getCutoutQuads();
     }
 
     private static void setupLensVariables(ModelHolderVariable model, EnumFacing side, EnumDyeColor colour) {

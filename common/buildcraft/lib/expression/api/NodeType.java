@@ -31,16 +31,16 @@ public enum NodeType {
         else throw new IllegalArgumentException("Illegal node " + node.getClass());
     }
 
-    public IVariableNode makeVariableNode() {
+    public IVariableNode makeVariableNode(String name) {
         switch (this) {
             case BOOLEAN:
-                return new NodeVariableBoolean();
+                return new NodeVariableBoolean(name);
             case DOUBLE:
-                return new NodeVariableDouble();
+                return new NodeVariableDouble(name);
             case LONG:
-                return new NodeVariableLong();
+                return new NodeVariableLong(name);
             case STRING:
-                return new NodeVariableString();
+                return new NodeVariableString(name);
             default:
                 throw new IllegalStateException("Unknown node type '" + this + "'");
         }

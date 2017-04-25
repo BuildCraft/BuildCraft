@@ -21,10 +21,10 @@ public class NodeStateful implements ITickableNode.Source {
     public NodeStateful(String name, NodeType nodeType, IGetterFunc func) throws InvalidExpressionException {
         this.name = name;
         this.nodeType = nodeType;
-        this.variable = nodeType.makeVariableNode();
-        this.last = nodeType.makeVariableNode();
-        this.rounderValue = nodeType.makeVariableNode();
-        this.getter = nodeType.makeVariableNode();
+        this.variable = nodeType.makeVariableNode(name);
+        this.last = nodeType.makeVariableNode(name);
+        this.rounderValue = nodeType.makeVariableNode(name);
+        this.getter = nodeType.makeVariableNode(name);
         this.getterReal = func.createGetter(variable, last);
     }
 
@@ -53,8 +53,8 @@ public class NodeStateful implements ITickableNode.Source {
         public final IVariableNode storedVar, storedLast;
 
         private Instance() {
-            storedVar = nodeType.makeVariableNode();
-            storedLast = nodeType.makeVariableNode();
+            storedVar = nodeType.makeVariableNode(name);
+            storedLast = nodeType.makeVariableNode(name);
         }
 
         public NodeStateful getContainer() {

@@ -4,12 +4,13 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory;
 
+import net.minecraft.block.material.Material;
+
 import buildcraft.factory.block.*;
 import buildcraft.factory.tile.*;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.tile.TileBC_Neptune;
-import net.minecraft.block.material.Material;
 
 public class BCFactoryBlocks {
     public static BlockAutoWorkbenchItems autoWorkbenchItems;
@@ -37,8 +38,8 @@ public class BCFactoryBlocks {
         floodGate = BlockBCBase_Neptune.register(new BlockFloodGate(Material.ROCK, "block.flood_gate"));
         tank = BlockBCBase_Neptune.register(new BlockTank(Material.ROCK, "block.tank"));
         chute = BlockBCBase_Neptune.register(new BlockChute(Material.ROCK, "block.chute"));
+        distiller = BlockBCBase_Neptune.register(new BlockDistiller(Material.IRON, "block.distiller"));
         if (BCLib.DEV) {
-            distiller = BlockBCBase_Neptune.register(new BlockDistiller(Material.IRON, "block.distiller"));
             heatExchangeStart = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.start", BlockHeatExchange.Part.START));
             heatExchangeMiddle = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.middle", BlockHeatExchange.Part.MIDDLE));
             heatExchangeEnd = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.end", BlockHeatExchange.Part.END));
@@ -53,8 +54,6 @@ public class BCFactoryBlocks {
         TileBC_Neptune.registerTile(TileFloodGate.class, "tile.flood_gate");
         TileBC_Neptune.registerTile(TileTank.class, "tile.tank");
         TileBC_Neptune.registerTile(TileChute.class, "tile.chute");
-        if (BCLib.DEV) {
-            TileBC_Neptune.registerTile(TileDistiller_BC8.class, "tile.distiller");
-        }
+        TileBC_Neptune.registerTile(TileDistiller_BC8.class, "tile.distiller");
     }
 }

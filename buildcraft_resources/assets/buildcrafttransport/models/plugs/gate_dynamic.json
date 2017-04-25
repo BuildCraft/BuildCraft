@@ -1,5 +1,11 @@
 {
-	"rules": [
+    "textures": {
+        "#gate_false":"buildcrafttransport:gates/gate_off",
+        "#gate_true":"buildcrafttransport:gates/gate_on",
+
+        "particle":"#gate_off"
+    },
+    "rules": [
 		{
 			"when": "side != 'west'",
 			"type": "builtin:rotate_facing",
@@ -7,12 +13,6 @@
 			"to": "side"
 		}
 	],
-    "textures": {
-        "#gate_false":"buildcrafttransport:gates/gate_off",
-        "#gate_true":"buildcrafttransport:gates/gate_on",
-
-        "particle":"#gate_off"
-    },
     "shade": true,
     "elements": [
         {

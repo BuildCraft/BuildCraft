@@ -90,22 +90,22 @@ public class FunctionContext {
     }
 
     public NodeVariableLong putVariableLong(String name) {
-        NodeVariableLong node = new NodeVariableLong();
+        NodeVariableLong node = new NodeVariableLong(name);
         return putVariable(name, node);
     }
 
     public NodeVariableDouble putVariableDouble(String name) {
-        NodeVariableDouble node = new NodeVariableDouble();
+        NodeVariableDouble node = new NodeVariableDouble(name);
         return putVariable(name, node);
     }
 
     public NodeVariableBoolean putVariableBoolean(String name) {
-        NodeVariableBoolean node = new NodeVariableBoolean();
+        NodeVariableBoolean node = new NodeVariableBoolean(name);
         return putVariable(name, node);
     }
 
     public NodeVariableString putVariableString(String name) {
-        NodeVariableString node = new NodeVariableString();
+        NodeVariableString node = new NodeVariableString(name);
         return putVariable(name, node);
     }
 

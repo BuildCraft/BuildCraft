@@ -1,9 +1,9 @@
 package buildcraft.lib.expression.info;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.function.DoublePredicate;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
@@ -11,15 +11,12 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
-import buildcraft.lib.expression.node.value.IVariableNode;
-import buildcraft.lib.expression.node.value.NodeVariableDouble;
-import buildcraft.lib.expression.node.value.NodeVariableLong;
-import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.expression.node.value.*;
 
-import gnu.trove.set.TDoubleSet;
-import gnu.trove.set.TLongSet;
-import gnu.trove.set.hash.TDoubleHashSet;
-import gnu.trove.set.hash.TLongHashSet;
+import gnu.trove.list.TDoubleList;
+import gnu.trove.list.TLongList;
+import gnu.trove.list.array.TDoubleArrayList;
+import gnu.trove.list.array.TLongArrayList;
 
 public abstract class VariableInfo<N extends IVariableNode> {
     public final N node;
@@ -34,9 +31,18 @@ public abstract class VariableInfo<N extends IVariableNode> {
         this.node = node;
     }
 
+    @Override
+    public String toString() {
+        return node.toString();
+    }
+
     public abstract Collection<?> getPossibleValues();
 
     public abstract boolean shouldCacheCurrentValue();
+
+    /** @return A unique ordinal identifying the current value, if it is contained within the possibleValues set, or -1
+     *         if its not in the set. Note that this value does NOT have to match the index of the value in the set. */
+    public abstract int getCurrentOrdinal();
 
     public enum CacheType {
         NEVER,
@@ -46,7 +52,7 @@ public abstract class VariableInfo<N extends IVariableNode> {
     }
 
     public static class VariableInfoString extends VariableInfo<NodeVariableString> {
-        public final Set<String> possibleValues = new HashSet<>();
+        public final List<String> possibleValues = new ArrayList<>();
         public Predicate<String> shouldCacheFunc = possibleValues::contains;
 
         public VariableInfoString(NodeVariableString node) {
@@ -73,10 +79,15 @@ public abstract class VariableInfo<N extends IVariableNode> {
                     throw new IllegalStateException("Unknown CacheType " + cacheType);
             }
         }
+
+        @Override
+        public int getCurrentOrdinal() {
+            return possibleValues.indexOf(node.value);
+        }
     }
 
     public static class VariableInfoLong extends VariableInfo<NodeVariableLong> {
-        public final TLongSet possibleValues = new TLongHashSet();
+        public final TLongList possibleValues = new TLongArrayList();
         public LongPredicate shouldCacheFunc = possibleValues::contains;
 
         public VariableInfoLong(NodeVariableLong node) {
@@ -103,10 +114,15 @@ public abstract class VariableInfo<N extends IVariableNode> {
                     throw new IllegalStateException("Unknown CacheType " + cacheType);
             }
         }
+
+        @Override
+        public int getCurrentOrdinal() {
+            return possibleValues.indexOf(node.value);
+        }
     }
 
     public static class VariableInfoDouble extends VariableInfo<NodeVariableDouble> {
-        public final TDoubleSet possibleValues = new TDoubleHashSet();
+        public final TDoubleList possibleValues = new TDoubleArrayList();
         public DoublePredicate shouldCacheFunc = possibleValues::contains;
 
         public VariableInfoDouble(NodeVariableDouble node) {
@@ -131,6 +147,77 @@ public abstract class VariableInfo<N extends IVariableNode> {
                     return true;
                 default:
                     throw new IllegalStateException("Unknown CacheType " + cacheType);
+            }
+        }
+
+        @Override
+        public int getCurrentOrdinal() {
+            return possibleValues.indexOf(node.value);
+        }
+    }
+
+    public static class VariableInfoBoolean extends VariableInfo<NodeVariableBoolean> {
+        public enum BooleanPosibilities {
+            FALSE(Boolean.FALSE),
+            TRUE(Boolean.TRUE),
+            FALSE_TRUE(Boolean.FALSE, Boolean.TRUE);
+
+            public final Collection<Boolean> possible;
+
+            private BooleanPosibilities(Boolean... possible) {
+                this.possible = Arrays.asList(possible);
+            }
+        }
+
+        @Nonnull
+        public BooleanPosibilities possibleValues = BooleanPosibilities.FALSE_TRUE;
+
+        public VariableInfoBoolean(NodeVariableBoolean node) {
+            super(node);
+            cacheType = CacheType.ALWAYS;
+        }
+
+        @Override
+        public Collection<Boolean> getPossibleValues() {
+            return possibleValues.possible;
+        }
+
+        @Override
+        public boolean shouldCacheCurrentValue() {
+            switch (cacheType) {
+                case NEVER:
+                    return false;
+                case MATCHES_EXP:
+                case IN_SET:
+                    switch (possibleValues) {
+                        case FALSE:
+                            return node.value == false;
+                        case TRUE:
+                            return node.value == true;
+                        default:
+                            return true;
+                    }
+                case ALWAYS:
+                    return true;
+                default:
+                    throw new IllegalStateException("Unknown CacheType " + cacheType);
+            }
+        }
+
+        @Override
+        public int getCurrentOrdinal() {
+            boolean current = node.value;
+            switch (possibleValues) {
+                case FALSE: {
+                    return current ? -1 : 0;
+                }
+                case TRUE: {
+                    return current ? 0 : -1;
+                }
+                default:
+                case FALSE_TRUE: {
+                    return current ? 1 : 0;
+                }
             }
         }
     }

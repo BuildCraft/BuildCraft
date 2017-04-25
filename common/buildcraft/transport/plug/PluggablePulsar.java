@@ -33,6 +33,7 @@ import buildcraft.lib.expression.info.VariableInfo.VariableInfoString;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.BCTransportItems;
@@ -112,6 +113,7 @@ public class PluggablePulsar extends PipePluggable {
         this.manuallyEnabled = nbt.getBoolean("manuallyEnabled");
         gateEnabledTicks = nbt.getInteger("gateEnabledTicks");
         gateSinglePulses = nbt.getInteger("gateSinglePulses");
+        pulseStage = MathUtil.clamp(nbt.getInteger("pulseStage"), 0, PULSE_STAGE);
     }
 
     @Override
@@ -120,6 +122,7 @@ public class PluggablePulsar extends PipePluggable {
         nbt.setBoolean("manuallyEnabled", manuallyEnabled);
         nbt.setInteger("gateEnabledTicks", gateEnabledTicks);
         nbt.setInteger("gateSinglePulses", gateSinglePulses);
+        nbt.setInteger("pulseStage", pulseStage);
         return nbt;
     }
 
@@ -157,6 +160,7 @@ public class PluggablePulsar extends PipePluggable {
         buffer.writeBoolean(isPulsing());
         buffer.writeBoolean(gateEnabledTicks > 0 || gateSinglePulses > 0);
         buffer.writeBoolean(manuallyEnabled);
+        buffer.writeByte(pulseStage);
     }
 
     private void readData(PacketBuffer b) {
@@ -164,6 +168,7 @@ public class PluggablePulsar extends PipePluggable {
         isPulsing = buffer.readBoolean();
         autoEnabled = buffer.readBoolean();
         manuallyEnabled = buffer.readBoolean();
+        pulseStage = buffer.readByte();
     }
 
     // PipePluggable

@@ -15,6 +15,14 @@
 
         "particle":"#logic_and"
     },
+    "rules": [
+		{
+			"when": "side != 'west'",
+			"type": "builtin:rotate_facing",
+			"from": "'west'",
+			"to": "side"
+		}
+	],
     "shade": true,
     "elements": [
         {

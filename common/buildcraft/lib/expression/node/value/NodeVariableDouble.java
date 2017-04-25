@@ -4,8 +4,13 @@ import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 
 public class NodeVariableDouble implements INodeDouble, IVariableNode {
+    public final String name;
     public double value;
     private boolean isConst = false;
+
+    public NodeVariableDouble(String name) {
+        this.name = name;
+    }
 
     public void setConstant(boolean isConst) {
         this.isConst = isConst;
@@ -31,7 +36,12 @@ public class NodeVariableDouble implements INodeDouble, IVariableNode {
 
     @Override
     public String toString() {
-        return "mutable_double#" + System.identityHashCode(this);
+        return name + " = " + valueToString();
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
