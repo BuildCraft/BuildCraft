@@ -260,7 +260,7 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
                                 quad.hasTintIndex()
                                         ? new MutableQuad()
                                         .fromBakedItem(quad)
-                                        .setTint(quad.getTintIndex() * 6 + key.side.ordinal())
+                                        .setTint(quad.getTintIndex() * EnumFacing.values().length + key.side.ordinal())
                                         .toBakedItem()
                                         : quad
                         ),

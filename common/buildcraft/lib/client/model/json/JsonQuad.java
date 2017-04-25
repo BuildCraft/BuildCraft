@@ -18,7 +18,7 @@ import buildcraft.lib.misc.JsonUtil;
 
 public class JsonQuad {
     public boolean shade = false;
-    public int tint;
+    public int tint = -1;
     public String texture;
     public final JsonVertex[] vertices = new JsonVertex[4];
     public EnumFacing face;

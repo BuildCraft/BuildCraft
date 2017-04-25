@@ -34,14 +34,7 @@ import buildcraft.lib.misc.*;
 import buildcraft.lib.net.PacketBufferBC;
 
 public class FacadeStateManager {
-    public static final SortedMap<IBlockState, FacadeBlockStateInfo> validFacadeStates = new TreeMap<>((a, b) -> {
-        Block ba = a.getBlock();
-        Block bb = b.getBlock();
-        if (ba != bb) {
-            return Integer.compare(Block.REGISTRY.getIDForObject(ba), Block.REGISTRY.getIDForObject(bb));
-        }
-        return Integer.compare(ba.getMetaFromState(a), bb.getMetaFromState(b));
-    });
+    public static final SortedMap<IBlockState, FacadeBlockStateInfo> validFacadeStates = new TreeMap<>(BlockUtil.blockStateComparator());
     public static final Map<ItemStackKey, List<FacadeBlockStateInfo>> stackFacades = new HashMap<>();
     public static FacadeBlockStateInfo defaultState, previewState;
 
@@ -114,22 +107,12 @@ public class FacadeStateManager {
                 IBlockState state = entry.getKey();
                 ItemStack stack = entry.getValue();
                 Map<IProperty<?>, Comparable<?>> vars = varyingProperties.get(new ItemStackKey(stack));
-                Iterator<Comparable<?>> iter = vars.values().iterator();
-                while (iter.hasNext()) {
-                    if (iter.next() != null) {
-                        iter.remove();
-                    }
-                }
+                vars.values().removeIf(Objects::nonNull);
                 FacadeBlockStateInfo info = new FacadeBlockStateInfo(state, stack, ImmutableSet.copyOf(vars.keySet()));
                 validFacadeStates.put(state, info);
                 if (!info.requiredStack.isEmpty()) {
                     ItemStackKey stackKey = new ItemStackKey(info.requiredStack);
-                    List<FacadeBlockStateInfo> infos = stackFacades.get(stackKey);
-                    if (infos == null) {
-                        infos = new ArrayList<>();
-                        stackFacades.put(stackKey, infos);
-                    }
-                    infos.add(info);
+                    stackFacades.computeIfAbsent(stackKey, k -> new ArrayList<>()).add(info);
                 }
             }
         }
@@ -266,8 +249,8 @@ public class FacadeStateManager {
 
         public void writeToBuffer(PacketBufferBC buf) {
             buf.writeFixedBits(phasedStates.length, 5);
-            for (int i = 0; i < phasedStates.length; i++) {
-                phasedStates[i].writeToBuffer(buf);
+            for (FacadePhasedState phasedState : phasedStates) {
+                phasedState.writeToBuffer(buf);
             }
         }
 

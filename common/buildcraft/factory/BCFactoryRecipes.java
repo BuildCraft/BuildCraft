@@ -13,7 +13,7 @@ import net.minecraft.item.ItemStack;
 
 public class BCFactoryRecipes {
     public static void init() {
-        {
+        if (BCBlocks.FACTORY_AUTOWORKBENCH_ITEM != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("gwg");
             builder.map('w', "craftingTableWood");
@@ -23,7 +23,7 @@ public class BCFactoryRecipes {
             builder.registerRotated();
         }
 
-        {
+        if (BCBlocks.FACTORY_MINING_WELL != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("iri");
             builder.add("igi");
@@ -36,7 +36,7 @@ public class BCFactoryRecipes {
             builder.register();
         }
 
-        {
+        if (BCBlocks.FACTORY_TANK != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("ggg");
             builder.add("g g");
@@ -46,7 +46,7 @@ public class BCFactoryRecipes {
             builder.register();
         }
 
-        {
+        if (BCBlocks.FACTORY_PUMP != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("iri");
             builder.add("igi");
@@ -60,7 +60,7 @@ public class BCFactoryRecipes {
             builder.register();
         }
 
-        {
+        if (BCBlocks.FACTORY_FLOOD_GATE != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("igi");
             builder.add("btb");
@@ -73,7 +73,7 @@ public class BCFactoryRecipes {
             builder.register();
         }
 
-        {
+        if (BCBlocks.FACTORY_CHUTE != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("ici");
             builder.add("igi");
