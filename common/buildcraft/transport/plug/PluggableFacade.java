@@ -99,7 +99,7 @@ public class PluggableFacade extends PipePluggable {
     @SideOnly(Side.CLIENT)
     public int getBlockColor(int tintIndex) {
         FacadePhasedState state = states.phasedStates[activeState];
-        return Minecraft.getMinecraft().getBlockColors().colorMultiplier(state.stateInfo.state, holder.getPipeWorld(), holder.getPipePos(), tintIndex / 6);
+        return Minecraft.getMinecraft().getBlockColors().colorMultiplier(state.stateInfo.state, holder.getPipeWorld(), holder.getPipePos(), tintIndex);
     }
 
     @Override

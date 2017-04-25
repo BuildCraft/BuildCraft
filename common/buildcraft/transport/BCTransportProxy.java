@@ -147,7 +147,7 @@ public abstract class BCTransportProxy implements IGuiHandler {
                         EnumFacing side = EnumFacing.getFront(tintIndex % EnumFacing.values().length);
                         PipePluggable pluggable = tilePipeHolder.getPluggable(side);
                         if (pluggable != null) {
-                            return pluggable.getBlockColor(tintIndex);
+                            return pluggable.getBlockColor(tintIndex / EnumFacing.values().length);
                         }
                     }
                 }
