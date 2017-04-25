@@ -1,5 +1,7 @@
 package buildcraft.factory.tile;
 
-public class TileHeatExchange_BC8 {
+import buildcraft.lib.tile.TileBC_Neptune;
+
+public class TileHeatExchange_BC8 extends TileBC_Neptune {
 
 }
