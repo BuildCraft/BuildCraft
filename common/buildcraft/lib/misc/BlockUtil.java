@@ -6,6 +6,8 @@ package buildcraft.lib.misc;
 
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.lib.BCLibConfig;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -39,14 +41,14 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import javax.annotation.Nonnull;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collector;
 
 public final class BlockUtil {
-
     public static NonNullList<ItemStack> getItemStackFromBlock(WorldServer world, BlockPos pos, GameProfile owner) {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
-        if (block == null || block.isAir(state, world, pos)) {
+        if (block.isAir(state, world, pos)) {
             return null;
         }
 
@@ -156,7 +158,7 @@ public final class BlockUtil {
         if (state == null) return true;
 
         Block block = state.getBlock();
-        if (block == null || block.isAir(state, world, pos)) {
+        if (block.isAir(state, world, pos)) {
             return true;
         }
 
@@ -209,10 +211,7 @@ public final class BlockUtil {
         Block block = state.getBlock();
         if (block instanceof IFluidBlock) {
             FluidStack fluid = ((IFluidBlock) block).drain(world, pos, false);
-            if (fluid == null || fluid.amount > 0) {
-                return true;
-            }
-            return false;
+            return fluid == null || fluid.amount > 0;
         } else if (block instanceof BlockLiquid) {
             int level = state.getValue(BlockLiquid.LEVEL);
             return level == 0;
@@ -381,5 +380,45 @@ public final class BlockUtil {
 
     public static <T extends Comparable<T>> IBlockState copyProperty(IProperty<T> property, IBlockState dst, IBlockState src) {
         return dst.getPropertyKeys().contains(property) ? dst.withProperty(property, src.getValue(property)) : dst;
+    }
+
+    public static <T extends Comparable<T>> int compareProperty(IProperty<T> property, IBlockState a, IBlockState b) {
+        return a.getValue(property).compareTo(b.getValue(property));
+    }
+
+    public static <T extends Comparable<T>> String getPropertyStringValue(IBlockState blockState, IProperty<T> property) {
+        return property.getName(blockState.getValue(property));
+    }
+
+    public static Map<String, String> getPropertiesStringMap(IBlockState blockState, Collection<IProperty<?>> properties) {
+        ImmutableMap.Builder<String, String> mapBuilder = new ImmutableMap.Builder<>();
+        for (IProperty<?> property : properties) {
+            mapBuilder.put(property.getName(), getPropertyStringValue(blockState, property));
+        }
+        return mapBuilder.build();
+    }
+
+    public static Map<String, String> getPropertiesStringMap(IBlockState blockState) {
+        return getPropertiesStringMap(blockState, blockState.getPropertyKeys());
+    }
+
+    public static Comparator<IBlockState> blockStateComparator() {
+        return (blockStateA, blockStateB) -> {
+            Block blockA = blockStateA.getBlock();
+            Block blockB = blockStateB.getBlock();
+            if (blockA != blockB) {
+                return blockA.getRegistryName().toString().compareTo(blockB.getRegistryName().toString());
+            }
+            for (IProperty<?> property : Sets.intersection(
+                    new HashSet<>(blockStateA.getPropertyKeys()),
+                    new HashSet<>(blockStateB.getPropertyKeys())
+            )) {
+                int compareResult = BlockUtil.compareProperty(property, blockStateA, blockStateB);
+                if (compareResult != 0) {
+                    return compareResult;
+                }
+            }
+            return 0;
+        };
     }
 }

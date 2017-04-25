@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.block.properties.IProperty;
+import buildcraft.lib.misc.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,10 +28,6 @@ import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.SoundUtil;
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.BCTransportPlugs;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
@@ -154,10 +150,9 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
         } else {
             String propertiesStart = TextFormatting.GRAY + "" + TextFormatting.ITALIC;
             FacadeBlockStateInfo info = states.phasedStates[0].stateInfo;
-            for (IProperty prop : info.varyingProperties) {
-                Comparable comp = info.state.getValue(prop);
-                tooltip.add(propertiesStart + prop.getName() + " = " + prop.getName(comp));
-            }
+            BlockUtil.getPropertiesStringMap(info.state, info.varyingProperties).forEach((name, value) -> {
+                tooltip.add(propertiesStart + name + " = " + value);
+            });
         }
     }
 }
