@@ -3,6 +3,7 @@ package buildcraft.transport.client.model.plug;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -254,20 +255,20 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
                 }
             }
         }
-        return Stream.concat(
-                quads.stream()
-                        .map(quad ->
-                                quad.hasTintIndex()
-                                        ? new MutableQuad()
-                                        .fromBakedItem(quad)
-                                        .setTint(quad.getTintIndex() * EnumFacing.values().length + key.side.ordinal())
-                                        .toBakedItem()
-                                        : quad
-                        ),
-                key.isHollow || !key.state.isFullBlock()
-                        ? Stream.empty()
-                        : BCTransportModels.BAKER_PLUG_BLOCKER.bake(new KeyPlugBlocker(key.side)).stream()
-        )
-                .collect(Collectors.toList());
+        ListIterator<BakedQuad> iter = quads.listIterator();
+        while (iter.hasNext()) {
+            BakedQuad quad = iter.next();
+            if (quad.hasTintIndex()) {
+                int tint = quad.getTintIndex() * EnumFacing.values().length + key.side.ordinal();
+                quad = new BakedQuad(quad.getVertexData(), tint, quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat());
+                iter.set(quad);
+            }
+        }
+        if (key.state.isFullBlock() && !key.isHollow) {
+            for (MutableQuad quad : BCTransportModels.BLOCKER.getCutoutQuads()) {
+                quads.add(quad.toBakedItem());
+            }
+        }
+        return quads;
     }
 }

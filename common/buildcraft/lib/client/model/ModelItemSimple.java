@@ -19,6 +19,7 @@ public class ModelItemSimple implements IBakedModel {
     public static final ItemCameraTransforms TRANSFORM_BLOCK;
     public static final ItemCameraTransforms TRANSFORM_PLUG_AS_ITEM;
     public static final ItemCameraTransforms TRANSFORM_PLUG_AS_ITEM_BIGGER;
+    public static final ItemCameraTransforms TRANSFORM_PLUG_AS_BLOCK;
     // TODO: TRANSFORM_ITEM
     // TODO: TRANSFORM_TOOL
 
@@ -34,17 +35,19 @@ public class ModelItemSimple implements IBakedModel {
         ItemTransformVec3f fixed = def(0, 0, 0, 0, 0, 0, 0.5);
         TRANSFORM_BLOCK = new ItemCameraTransforms(thirdperson_left, thirdperson_right, firstperson_left, firstperson_right, head, gui, ground, fixed);
 
-        // Same as block
-        // thirdperson_left = def(0, 270, 0, 0, 0, -8, 0.5);
-        // thirdperson_right = def(0, 90, 0, 0, 0, -8, 0.5);
-        // firstperson_left = def(0, 270, 0, 0, 0, -8, 0.5);
-        // firstperson_right = def(0, 90, 0, 0, 0, -8, 0.5);
-        head = def(0, 90, 0, 0, 0, 0, 1);
-        gui = def(0, 90, 0, 0, 0, 0, 1);
-        ground = def(0, 90, 0, 0, 0, -4, 0.5);
-        fixed = def(0, 90, 0, 0, 0, -4, 0.85);
-        TRANSFORM_PLUG_AS_ITEM = new ItemCameraTransforms(thirdperson_left, thirdperson_right, firstperson_left, firstperson_right, head, gui, ground, fixed);
+        ItemTransformVec3f item_head = def(0, 0, 0, 0, 0, 0, 1);
+        ItemTransformVec3f item_gui = def(0, 90, 0, 0, 0, 0, 1);
+        ItemTransformVec3f item_ground = def(0, 0, 0, 0, 3, 0, 0.5);
+        ItemTransformVec3f item_fixed = def(0, 0, 0, 0, 0, 0, 0.85);
+        TRANSFORM_PLUG_AS_ITEM = new ItemCameraTransforms(thirdperson_left, thirdperson_right, firstperson_left, firstperson_right, item_head, item_gui, item_ground, item_fixed);
         TRANSFORM_PLUG_AS_ITEM_BIGGER = scale(TRANSFORM_PLUG_AS_ITEM, 1.8);
+
+        thirdperson_left = def(75, 45, 0, 0, 2.5, 0, 0.375);
+        thirdperson_right = def(75, 225, 0, 0, 2.5, 0, 0.375);
+        firstperson_left = def(0, 45, 0, 0, 0, 0, 0.4);
+        firstperson_right = def(0, 225, 0, 0, 0, 0, 0.4);
+        gui = def(30, 135, 0, -3, 1.5, 0, 0.625);
+        TRANSFORM_PLUG_AS_BLOCK = new ItemCameraTransforms(thirdperson_left, thirdperson_right, firstperson_left, firstperson_right, head, gui, ground, fixed);
     }
 
     private static ItemCameraTransforms scale(ItemCameraTransforms from, double by) {
@@ -66,6 +69,12 @@ public class ModelItemSimple implements IBakedModel {
         nScale.scale(scale);
 
         return new ItemTransformVec3f(from.rotation, from.translation, nScale);
+    }
+
+    private static ItemTransformVec3f translate(ItemTransformVec3f from, double dx, double dy, double dz) {
+        Vector3f nTranslation = new Vector3f(from.translation);
+        nTranslation.translate((float) dx, (float) dy, (float) dz);
+        return new ItemTransformVec3f(from.rotation, nTranslation, from.scale);
     }
 
     private static ItemTransformVec3f def(double rx, double ry, double rz, double tx, double ty, double tz, double scale) {
