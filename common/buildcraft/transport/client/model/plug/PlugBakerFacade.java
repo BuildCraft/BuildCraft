@@ -67,7 +67,7 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
         );
     }
 
-    private List<BakedQuad> getTransformedQuads(IBlockState state, IBakedModel model, EnumFacing side,
+    private List<MutableQuad> getTransformedQuads(IBlockState state, IBakedModel model, EnumFacing side,
                                                 Vec3d pos0, Vec3d pos1, Vec3d pos2, Vec3d pos3) {
         return model.getQuads(state, side, 0).stream()
                 .map(quad -> {
@@ -150,7 +150,7 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
                                 break;
                         }
                     });
-                    return mutableQuad.toBakedItem();
+                    return mutableQuad;
                 })
                 .collect(Collectors.toList());
     }
@@ -169,7 +169,7 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
         throw new IllegalArgumentException();
     }
 
-    private void addRotatedQuads(List<BakedQuad> quads, IBlockState state, IBakedModel model, EnumFacing side, Rotation rotation,
+    private void addRotatedQuads(List<MutableQuad> quads, IBlockState state, IBakedModel model, EnumFacing side, Rotation rotation,
                                  Vec3d pos0, Vec3d pos1, Vec3d pos2, Vec3d pos3) {
         quads.addAll(getTransformedQuads(
                 state, model, side,
@@ -180,10 +180,9 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
         ));
     }
 
-    @Override
-    public List<BakedQuad> bake(KeyPlugFacade key) {
+    public List<MutableQuad> bakeForKey(KeyPlugFacade key) {
         IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(key.state);
-        List<BakedQuad> quads = new ArrayList<>();
+        List<MutableQuad> quads = new ArrayList<>();
         int pS = PluggableFacade.SIZE;
         int nS = 16 - pS;
         if (!key.isHollow) {
@@ -255,20 +254,27 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
                 }
             }
         }
-        ListIterator<BakedQuad> iter = quads.listIterator();
-        while (iter.hasNext()) {
-            BakedQuad quad = iter.next();
-            if (quad.hasTintIndex()) {
-                int tint = quad.getTintIndex() * EnumFacing.values().length + key.side.ordinal();
-                quad = new BakedQuad(quad.getVertexData(), tint, quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat());
-                iter.set(quad);
-            }
-        }
-        if (key.state.isFullBlock() && !key.isHollow) {
-            for (MutableQuad quad : BCTransportModels.BLOCKER.getCutoutQuads()) {
-                quads.add(quad.toBakedItem());
+        for (MutableQuad quad : quads) {
+            int tint = quad.getTint();
+            if (tint != -1) {
+                quad.setTint(tint * EnumFacing.values().length + key.side.ordinal());
             }
         }
         return quads;
+    }
+    
+    @Override
+    public List<BakedQuad> bake(KeyPlugFacade key) {
+        List<MutableQuad> mutableQuads = bakeForKey(key);
+        List<BakedQuad> baked = new ArrayList<>();
+        for (MutableQuad quad : mutableQuads) {
+            baked.add(quad.toBakedItem());
+        }
+        if (key.state.isFullBlock() && !key.isHollow) {
+            for (BakedQuad quad : BCTransportModels.BAKER_PLUG_BLOCKER.bake(new KeyPlugBlocker(key.side))) {
+                baked.add(quad);
+            }
+        }
+        return baked;
     }
 }

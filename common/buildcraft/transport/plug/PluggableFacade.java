@@ -30,17 +30,20 @@ import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
 public class PluggableFacade extends PipePluggable {
     public static final int SIZE = 2;
     public final FullFacadeInstance states;
+    public final boolean isSideSolid;
     public int activeState;
 
     public PluggableFacade(PluggableDefinition definition, IPipeHolder holder, EnumFacing side, FullFacadeInstance states) {
         super(definition, holder, side);
         this.states = states;
+        isSideSolid = states.areAllStatesSolid(side);
     }
 
     public PluggableFacade(PluggableDefinition def, IPipeHolder holder, EnumFacing side, NBTTagCompound nbt) {
         super(def, holder, side);
         this.states = FullFacadeInstance.readFromNbt(nbt, "states");
         activeState = MathUtil.clamp(nbt.getInteger("activeState"), 0, states.phasedStates.length - 1);
+        isSideSolid = states.areAllStatesSolid(side);
     }
 
     @Override
@@ -55,12 +58,16 @@ public class PluggableFacade extends PipePluggable {
 
     public PluggableFacade(PluggableDefinition def, IPipeHolder holder, EnumFacing side, PacketBuffer buffer) {
         super(def, holder, side);
-        states = FullFacadeInstance.readFromBuffer(PacketBufferBC.asPacketBufferBc(buffer));
+        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
+        states = FullFacadeInstance.readFromBuffer(buf);
+        isSideSolid = buf.readBoolean();
     }
 
     @Override
     public void writeCreationPayload(PacketBuffer buffer) {
-        states.writeToBuffer(PacketBufferBC.asPacketBufferBc(buffer));
+        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
+        states.writeToBuffer(buf);
+        buf.writeBoolean(isSideSolid);
     }
 
     // Pluggable methods
@@ -73,6 +80,16 @@ public class PluggableFacade extends PipePluggable {
     @Override
     public boolean isBlocking() {
         return !states.phasedStates[activeState].isHollow;
+    }
+
+    @Override
+    public boolean canBeConnected() {
+        return !states.phasedStates[activeState].isHollow;
+    }
+
+    @Override
+    public boolean isSideSolid() {
+        return isSideSolid;
     }
 
     @Override
@@ -100,10 +117,5 @@ public class PluggableFacade extends PipePluggable {
     public int getBlockColor(int tintIndex) {
         FacadePhasedState state = states.phasedStates[activeState];
         return Minecraft.getMinecraft().getBlockColors().colorMultiplier(state.stateInfo.state, holder.getPipeWorld(), holder.getPipePos(), tintIndex);
-    }
-
-    @Override
-    public boolean canBeConnected() {
-        return !states.phasedStates[activeState].isHollow;
     }
 }

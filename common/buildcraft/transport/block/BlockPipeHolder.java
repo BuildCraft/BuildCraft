@@ -525,6 +525,16 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         return pluggable != null && pluggable.canBeConnected();
     }
 
+    @Override
+    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        TilePipeHolder tile = getPipe(world, pos, false);
+        if (tile == null) {
+            return false;
+        }
+        PipePluggable pluggable = tile.getPluggable(side);
+        return pluggable != null && pluggable.isSideSolid();
+    }
+
     private static void removePluggable(EnumFacing side, TilePipeHolder tile, NonNullList<ItemStack> toDrop) {
         PipePluggable removed = tile.replacePluggable(side, null);
         if (removed != null) {

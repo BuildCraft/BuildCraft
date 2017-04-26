@@ -1,5 +1,6 @@
 package buildcraft.transport.client.model.plug;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -21,6 +22,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 import buildcraft.lib.client.model.ModelItemSimple;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.transport.BCTransportModels;
 import buildcraft.transport.client.model.key.KeyPlugFacade;
 import buildcraft.transport.item.ItemPluggableFacade;
 import buildcraft.transport.plug.FacadeStateManager.FacadePhasedState;
@@ -31,10 +34,21 @@ public enum ModelFacadeItem implements IBakedModel {
 
     private static final LoadingCache<KeyPlugFacade, IBakedModel> cache = CacheBuilder.newBuilder()//
         .expireAfterAccess(1, TimeUnit.MINUTES)//
-        .build(CacheLoader.from(key -> new ModelItemSimple(PlugBakerFacade.INSTANCE.bake(key), ModelItemSimple.TRANSFORM_PLUG_AS_BLOCK)));
+        .build(CacheLoader.from(key -> new ModelItemSimple(bakeForKey(key), ModelItemSimple.TRANSFORM_PLUG_AS_BLOCK)));
 
     public static void onModelBake() {
         cache.invalidateAll();
+    }
+
+    private static List<BakedQuad> bakeForKey(KeyPlugFacade key) {
+        List<BakedQuad> quads = new ArrayList<>();
+        for (MutableQuad quad : PlugBakerFacade.INSTANCE.bakeForKey(key)) {
+            quads.add(quad.toBakedItem());
+        }
+        for (MutableQuad quad: BCTransportModels.BLOCKER.getCutoutQuads()) {
+            quads.add(quad.toBakedItem());
+        }
+        return quads;
     }
 
     @Override

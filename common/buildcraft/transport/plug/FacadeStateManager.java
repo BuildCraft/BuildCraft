@@ -20,8 +20,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.IBlockAccess;
 
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -125,6 +127,7 @@ public class FacadeStateManager {
         public final ImmutableSet<IProperty<?>> varyingProperties;
         public final boolean isTransparent;
         public final boolean isVisible;
+        public final boolean[] isSideSolid = new boolean[6];
 
         public FacadeBlockStateInfo(IBlockState state, ItemStack requiredStack, ImmutableSet<IProperty<?>> varyingProperties) {
             this.state = state;
@@ -132,6 +135,12 @@ public class FacadeStateManager {
             this.varyingProperties = varyingProperties;
             this.isTransparent = !state.isOpaqueCube();
             this.isVisible = !requiredStack.isEmpty();
+            FakeWorld world = FakeWorld.INSTANCE;
+            world.clear();
+            world.setBlockState(BlockPos.ORIGIN, state);
+            for (EnumFacing side : EnumFacing.VALUES) {
+                isSideSolid[side.ordinal()] = state.isSideSolid(world, BlockPos.ORIGIN, side);
+            }
         }
     }
 
@@ -194,6 +203,10 @@ public class FacadeStateManager {
 
         public FacadePhasedState withColour(EnumDyeColor colour) {
             return new FacadePhasedState(stateInfo, isHollow, colour);
+        }
+
+        public boolean isSideSolid(EnumFacing side) {
+            return stateInfo.isSideSolid[side.ordinal()];
         }
     }
 
@@ -290,6 +303,15 @@ public class FacadeStateManager {
                 newStates[i] = newStates[i].withSwappedIsHollow();
             }
             return new FullFacadeInstance(newStates);
+        }
+
+        public boolean areAllStatesSolid(EnumFacing side) {
+            for (FacadePhasedState state : phasedStates) {
+                if (!state.isSideSolid(side)) {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
