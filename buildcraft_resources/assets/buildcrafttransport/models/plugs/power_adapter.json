@@ -6,7 +6,7 @@
     "elements": [
         {
            "from": [ 2, 4, 4 ],
-            "to": [ 4, 12, 12 ],
+            "to": [ 4.01, 12, 12 ],
             "faces": {
                 "down":  { "uv": [ 2, 4, 4, 12 ], "texture": "#all" },
                 "up":    { "uv": [ 2, 4, 4, 12 ], "texture": "#all" },
