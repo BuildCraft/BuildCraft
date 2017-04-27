@@ -3,22 +3,27 @@ package buildcraft.builders.snapshot;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.storage.SaveHandlerMP;
+import net.minecraft.world.chunk.storage.IChunkLoader;
+import net.minecraft.world.gen.structure.template.TemplateManager;
+import net.minecraft.world.storage.IPlayerFileData;
+import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,7 +38,55 @@ public class FakeWorld extends World {
 
     public FakeWorld() {
         super(
-                new SaveHandlerMP(),
+                new ISaveHandler() {
+                    @Nullable
+                    @Override
+                    public WorldInfo loadWorldInfo() {
+                        return null;
+                    }
+
+                    @Override
+                    public void checkSessionLock() throws MinecraftException {
+
+                    }
+
+                    @Override
+                    public IChunkLoader getChunkLoader(WorldProvider provider) {
+                        return null;
+                    }
+
+                    @Override
+                    public void saveWorldInfoWithPlayer(WorldInfo worldInformation, NBTTagCompound tagCompound) {
+                    }
+
+                    @Override
+                    public void saveWorldInfo(WorldInfo worldInformation) {
+                    }
+
+                    @Override
+                    public IPlayerFileData getPlayerNBTManager() {
+                        return null;
+                    }
+
+                    @Override
+                    public void flush() {
+                    }
+
+                    @Override
+                    public File getWorldDirectory() {
+                        return null;
+                    }
+
+                    @Override
+                    public File getMapFileFromName(String mapName) {
+                        return null;
+                    }
+
+                    @Override
+                    public TemplateManager getStructureTemplateManager() {
+                        return null;
+                    }
+                },
                 new WorldInfo(
                         new WorldSettings(
                                 0,
@@ -50,7 +103,7 @@ public class FakeWorld extends World {
                         return DimensionType.OVERWORLD;
                     }
                 },
-                Minecraft.getMinecraft().mcProfiler,
+                new Profiler(),
                 false
         );
         chunkProvider = new FakeChunkProvider(this);
