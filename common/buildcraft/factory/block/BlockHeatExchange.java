@@ -22,6 +22,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.factory.tile.TileHeatExchangeEnd;
+import buildcraft.factory.tile.TileHeatExchangeMiddle;
+import buildcraft.factory.tile.TileHeatExchangeStart;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 
 public class BlockHeatExchange extends BlockBCTile_Neptune {
@@ -176,7 +179,16 @@ public class BlockHeatExchange extends BlockBCTile_Neptune {
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        return null;
+        switch (part) {
+            case START:
+                return new TileHeatExchangeStart();
+            case MIDDLE:
+                return new TileHeatExchangeMiddle();
+            case END:
+                return new TileHeatExchangeEnd();
+            default:
+                throw new IllegalStateException("Unknown part " + part);
+        }
     }
 
     @Override

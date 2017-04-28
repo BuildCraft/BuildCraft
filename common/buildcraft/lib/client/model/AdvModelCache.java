@@ -12,6 +12,9 @@ import buildcraft.lib.expression.info.ContextInfo;
 import buildcraft.lib.expression.info.VariableInfo;
 
 public class AdvModelCache {
+    private static final int MODEL_INDEX_INCORRECT = -1;
+    private static final int MODEL_INDEX_NO_CACHE = -2;
+
     public final ModelHolderVariable model;
     public final ContextInfo modelCtxInfo;
 
@@ -110,7 +113,7 @@ public class AdvModelCache {
         CacheValue getCurrentValue() {
             int index = computeIndex();
             if (index < 0 || index >= values.length) {
-                if (index == -1) {
+                if (index == MODEL_INDEX_INCORRECT) {
                     // Uh-oh! incorrect creation of this cache!
                     BCLog.logger.warn("[lib.model.adv_cache] Cache miss for indexed cache - this should be impossible! (index = " + index + ", length = " + values.length + ")");
                     for (VariableInfo<?> var : variables) {
@@ -132,11 +135,11 @@ public class AdvModelCache {
             for (int i = 0; i < variables.size(); i++) {
                 VariableInfo<?> info = variables.get(i);
                 if (!info.shouldCacheCurrentValue()) {
-                    return -2;
+                    return MODEL_INDEX_NO_CACHE;
                 }
                 int ord = info.getCurrentOrdinal();
                 if (ord < 0) {
-                    return -1;
+                    return MODEL_INDEX_INCORRECT;
                 }
                 index += ord * multipliers[i];
             }

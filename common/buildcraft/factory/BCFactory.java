@@ -96,6 +96,9 @@ public class BCFactory {
         registerTag("tile.tank").reg("tank");
         registerTag("tile.chute").reg("chute");
         registerTag("tile.distiller").reg("distiller");
+        registerTag("tile.heat_exchange.start").reg("heat_exchange.start");
+        registerTag("tile.heat_exchange.middle").reg("heat_exchange.middle");
+        registerTag("tile.heat_exchange.end").reg("heat_exchange.end");
 
         endBatch(TagManager.prependTags("buildcraftfactory:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(TagManager.setTab("buildcraft.main")));
     }

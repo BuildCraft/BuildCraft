@@ -1,13 +1,5 @@
 package buildcraft.transport;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.BCLib;
@@ -49,7 +41,7 @@ public class BCTransportItems {
     // public static ItemPipeHolder pipePowerIron;
 
     public static ItemPipeHolder pipeItemDiamond;
-    // public static ItemPipeHolder pipeFluidDiamond;
+    public static ItemPipeHolder pipeFluidDiamond;
     // public static ItemPipeHolder pipePowerDiamond;
 
     public static ItemPipeHolder pipeItemDiaWood;
@@ -111,6 +103,7 @@ public class BCTransportItems {
         pipeFluidClay = makePipeItem(BCTransportPipes.clayFluid);
         pipeFluidSandstone = makePipeItem(BCTransportPipes.sandstoneFluid);
         pipeFluidVoid = makePipeItem(BCTransportPipes.voidFluid);
+        pipeFluidDiamond = makePipeItem(BCTransportPipes.diamondFluid);
         pipeFluidDiaWood = makePipeItem(BCTransportPipes.diaWoodFluid);
         // pipeFluidObsidian = makePipeItem(BCTransportPipes.obsidianFluid);
 
