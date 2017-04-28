@@ -4,19 +4,25 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib;
 
-import buildcraft.lib.misc.FakePlayerUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
@@ -34,6 +40,7 @@ import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.debug.BCAdvDebugging;
 import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
@@ -63,6 +70,64 @@ public enum BCLibEventDist {
     @SideOnly(Side.CLIENT)
     public void onConnectToServer(ClientConnectedToServerEvent event) {
         BCLibDatabase.connectToServer();
+        // Really obnoxious warning
+        if (!BCLib.DEV) {
+            /* If people are in a dev environment or have toggled the flag then they probably already know about this */
+            Runnable r = () -> {
+                try {
+                    Thread.sleep(4000);
+                } catch (InterruptedException e) {
+                    // NO-OP
+                }
+
+                String ver;
+                if (BCLib.VERSION.startsWith("${")) {
+                    ModContainer mod = Loader.instance().getIndexedModList().get(BCLib.MODID);
+                    if (mod == null) {
+                        ver = "[UNKNOWN-MANUAL-BUILD]";
+                    } else {
+                        ver = mod.getDisplayVersion();
+                        if (ver.startsWith("${")) {
+                            // The difference with the above is intentional
+                            ver = "[UNKNOWN_MANUAL_BUILD]";
+                        }
+                    }
+                } else {
+                    ver = BCLib.VERSION;
+                }
+
+                ITextComponent componentVersion = new TextComponentString(ver);
+                Style styleVersion = new Style();
+                styleVersion.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, BCLib.VERSION));
+                // styleVersion.setHoverEvent(new HoverEvent(HoverEvent.Action., valueIn));
+                componentVersion.setStyle(styleVersion);
+
+                String githubIssuesUrl = "https://github.com/BuildCraft/BuildCraft/issues";
+                ITextComponent componentGithubLink = new TextComponentString("here");
+                Style styleGithubLink = new Style();
+                styleGithubLink.setUnderlined(Boolean.TRUE);
+                styleGithubLink.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, githubIssuesUrl));
+                componentGithubLink.setStyle(styleGithubLink);
+
+                TextComponentString textWarn = new TextComponentString("WARNING: BuildCraft ");
+                textWarn.appendSibling(componentVersion);
+                textWarn.appendText(" is in ALPHA!");
+
+                TextComponentString textReport = new TextComponentString("  Report bugs you find ");
+                textReport.appendSibling(componentGithubLink);
+
+                TextComponentString textDesc = new TextComponentString("  and include the version ");
+                textDesc.appendSibling(componentVersion);
+                textDesc.appendText(" in the description");
+
+                ITextComponent[] lines = { textWarn, textReport, textDesc };
+                GuiNewChat chat = Minecraft.getMinecraft().ingameGUI.getChatGUI();
+                for (ITextComponent line : lines) {
+                    chat.printChatMessage(line);
+                }
+            };
+            new Thread(r).start();
+        }
     }
 
     @SubscribeEvent

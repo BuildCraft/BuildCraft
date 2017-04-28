@@ -45,8 +45,10 @@ public enum ModelFacadeItem implements IBakedModel {
         for (MutableQuad quad : PlugBakerFacade.INSTANCE.bakeForKey(key)) {
             quads.add(quad.toBakedItem());
         }
-        for (MutableQuad quad: BCTransportModels.BLOCKER.getCutoutQuads()) {
-            quads.add(quad.toBakedItem());
+        if (key.state.isFullBlock() && !key.isHollow) {
+            for (MutableQuad quad : BCTransportModels.BLOCKER.getCutoutQuads()) {
+                quads.add(quad.toBakedItem());
+            }
         }
         return quads;
     }
