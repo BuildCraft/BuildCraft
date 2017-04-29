@@ -1,0 +1,47 @@
+/**
+ * Copyright (c) SpaceToad, 2011
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
+
+package buildcraft.api.core;
+
+/**
+ * A class for registering hooks related to Buildcraft machines to allow other mods to interact with them.
+ *
+ * Rough draft, being worked on. Not working yet.
+ * @author Calclavia
+ */
+public class MachineHookRegistry
+{
+	public interface IMachineHookCallback
+	{
+		/**
+		 * Called when the machine initializes.
+		 */
+		public void onMachineInitialize(TileEntity machine);
+
+		/**
+		 * Called when the machine starts its update cycle.
+		 */
+		public void onMachineUpdateStart(TileEntity machine);
+
+		/**
+		 * Called when the machine ends its update cycle.
+		 */
+		public void onMachineUpdateEnd(TileEntity machine);
+	}
+
+	private static final List<IMachineHookCallback> registered = new ArrayList<IMachineHookCallback>();
+	
+	/**
+	 * Registers the machine hook to be used by Buildcraft.
+	 */
+	public void register(IMachineHookCallback callBack)
+	{
+		registered.add(callBack);
+	}
+}
