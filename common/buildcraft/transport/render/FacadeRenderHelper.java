@@ -87,12 +87,12 @@ public final class FacadeRenderHelper {
 
 	private static void setRenderBounds(RenderBlocks renderblocks, float[][] rotated, ForgeDirection side) {
 		renderblocks.setRenderBounds(
-				rotated[0][0] + xOffsets[side.ordinal()],
+				rotated[0][1] + xOffsets[side.ordinal()],
 				rotated[1][0] + yOffsets[side.ordinal()],
-				rotated[2][0] + zOffsets[side.ordinal()],
-				rotated[0][1] - xOffsets[side.ordinal()],
+				rotated[2][1] + zOffsets[side.ordinal()],
+				rotated[0][0] - xOffsets[side.ordinal()],
 				rotated[1][1] - yOffsets[side.ordinal()],
-				rotated[2][1] - zOffsets[side.ordinal()]);
+				rotated[2][0] - zOffsets[side.ordinal()]);
 	}
 
 	public static void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, IPipeTile tile, int renderPass, int x, int y, int z, ForgeDirection direction, IFacadePluggable pluggable) {
