@@ -32,7 +32,8 @@ public abstract class PipeLogicIron {
 		boolean currentPower = pipe.container.getWorldObj().isBlockIndirectlyGettingPowered(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 
 		if (currentPower != lastPower) {
-			switchPosition();
+			if (currentPower)
+				switchPosition();
 
 			lastPower = currentPower;
 		}
