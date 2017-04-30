@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
@@ -59,12 +60,19 @@ public class FluidRenderer {
         for (FluidSpriteType type : FluidSpriteType.values()) {
             fluidSprites.get(type).clear();
         }
+        Map<ResourceLocation, SpriteFluidFrozen> spritesStitched = new HashMap<>();
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
-            SpriteFluidFrozen spriteFrozen = new SpriteFluidFrozen(fluid.getStill());
-            if (!map.setTextureEntry(spriteFrozen)) {
-                throw new IllegalStateException("Failed to set the frozen variant of " + fluid.getStill() + "!");
+            ResourceLocation still = fluid.getStill();
+            if (spritesStitched.containsKey(still)) {
+                fluidSprites.get(FluidSpriteType.FROZEN).put(fluid, spritesStitched.get(still));
+            } else {
+                SpriteFluidFrozen spriteFrozen = new SpriteFluidFrozen(still);
+                spritesStitched.put(still, spriteFrozen);
+                if (!map.setTextureEntry(spriteFrozen)) {
+                    throw new IllegalStateException("Failed to set the frozen variant of " + still + "!");
+                }
+                fluidSprites.get(FluidSpriteType.FROZEN).put(fluid, spriteFrozen);
             }
-            fluidSprites.get(FluidSpriteType.FROZEN).put(fluid, spriteFrozen);
         }
     }
 
