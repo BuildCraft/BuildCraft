@@ -60,10 +60,10 @@ public class FacadeStateManager {
         FakeWorld world = FakeWorld.INSTANCE;
         world.clear();
         world.setBlockState(BlockPos.ORIGIN, state);
-        ItemStack stack = StackUtil.EMPTY;
+        ItemStack stack;
         try {
             stack = state.getBlock().getPickBlock(state, new RayTraceResult(VecUtil.VEC_HALF, null, BlockPos.ORIGIN), world, BlockPos.ORIGIN, null);
-        } catch (NullPointerException ignored) {
+        } catch (NullPointerException | IllegalArgumentException ignored) {
             /* Some mods require a non-null player, but we don't have one to give. If a mod's block does require a
              * player entity then we won't support it, as it may require a different stack depending on the player. */
             world.clear();
