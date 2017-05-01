@@ -13,6 +13,7 @@ import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -60,7 +61,27 @@ public class FacadeStateManager {
         FakeWorld world = FakeWorld.INSTANCE;
         world.clear();
         world.setBlockState(BlockPos.ORIGIN, state);
-        ItemStack stack = state.getBlock().getPickBlock(state, new RayTraceResult(VecUtil.VEC_HALF, null, BlockPos.ORIGIN), world, BlockPos.ORIGIN, null);
+        ItemStack stack = state.getBlock().getPickBlock(
+                state,
+                new RayTraceResult(
+                        VecUtil.VEC_HALF,
+                        null,
+                        BlockPos.ORIGIN
+                ),
+                world,
+                BlockPos.ORIGIN,
+                new EntityPlayer(world, FakePlayerUtil.INSTANCE.gameProfile) {
+                    @Override
+                    public boolean isSpectator() {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean isCreative() {
+                        return false;
+                    }
+                }
+        );
         world.clear();
         if (stack.isEmpty()) {
             return StackUtil.EMPTY;
@@ -214,10 +235,16 @@ public class FacadeStateManager {
         public final FacadeType type;
 
         public FullFacadeInstance(FacadePhasedState[] phasedStates) {
-            if (phasedStates == null) throw new NullPointerException("phasedStates");
-            if (phasedStates.length == 0) throw new IllegalArgumentException("phasedStates.length was 0");
+            if (phasedStates == null) {
+                throw new NullPointerException("phasedStates");
+            }
+            if (phasedStates.length == 0) {
+                throw new IllegalArgumentException("phasedStates.length was 0");
+            }
             // Maximum of 17 states - 16 for each colour, 1 for no colour
-            if (phasedStates.length > 17) throw new IllegalArgumentException("phasedStates.length was > 17");
+            if (phasedStates.length > 17) {
+                throw new IllegalArgumentException("phasedStates.length was > 17");
+            }
             this.phasedStates = phasedStates;
             if (phasedStates.length == 1) {
                 type = FacadeType.Basic;
@@ -227,13 +254,13 @@ public class FacadeStateManager {
         }
 
         public static FullFacadeInstance createSingle(FacadeBlockStateInfo info, boolean isHollow) {
-            return new FullFacadeInstance(new FacadePhasedState[] { new FacadePhasedState(info, isHollow, null) });
+            return new FullFacadeInstance(new FacadePhasedState[] {new FacadePhasedState(info, isHollow, null)});
         }
 
         public static FullFacadeInstance readFromNbt(NBTTagCompound nbt, String subTag) {
             NBTTagList list = nbt.getTagList(subTag, Constants.NBT.TAG_COMPOUND);
             if (list.hasNoTags()) {
-                return new FullFacadeInstance(new FacadePhasedState[] { new FacadePhasedState(defaultState, false, null) });
+                return new FullFacadeInstance(new FacadePhasedState[] {new FacadePhasedState(defaultState, false, null)});
             }
             FacadePhasedState[] states = new FacadePhasedState[list.tagCount()];
             for (int i = 0; i < list.tagCount(); i++) {
