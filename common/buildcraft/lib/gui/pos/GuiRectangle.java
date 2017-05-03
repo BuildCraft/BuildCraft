@@ -16,6 +16,13 @@ public final class GuiRectangle implements IGuiArea {
         this.height = height;
     }
 
+    public GuiRectangle(int width, int height) {
+        this.x = 0;
+        this.y = 0;
+        this.width = width;
+        this.height = height;
+    }
+
     @Override
     public int getX() {
         return x;

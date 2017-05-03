@@ -41,10 +41,6 @@ public class GuiIntegrationTable extends GuiBC8<ContainerIntegrationTable> {
                     ).offset(rootElement)
             );
         }
-
-        if(container.tile.recipe != null) {
-            drawItemStackAt(container.tile.recipe.output, rootElement.getX() + 101, rootElement.getY() + 36);
-        }
     }
 
     @Override

@@ -5,9 +5,10 @@
 package buildcraft.silicon.gui;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
-import javax.vecmath.Point2i;
-
+import buildcraft.lib.gui.pos.IGuiPosition;
+import buildcraft.lib.gui.pos.PositionAbsolute;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
@@ -38,10 +39,16 @@ public class GuiAssemblyTable extends GuiBC8<ContainerAssemblyTable> {
         ledgersRight.ledgers.add(new LedgerTablePower(ledgersRight, container.tile));
     }
 
-    private Point2i getPos(int index) {
+    private IGuiPosition getPos(int index) {
         int posX = index % 3;
         int posY = index / 3;
-        return new Point2i(116 + posX * 18, 36 + posY * 18);
+        return new PositionAbsolute(116 + posX * 18, 36 + posY * 18);
+    }
+
+    private IGuiArea getArea(int index) {
+        return index < 3 * 4
+                ? new GuiRectangle(16, 16).offset(rootElement).offset(getPos(index))
+                : GuiRectangle.ZERO;
     }
 
     @Override
@@ -51,26 +58,25 @@ public class GuiAssemblyTable extends GuiBC8<ContainerAssemblyTable> {
         long target = container.tile.getTarget();
         if (target != 0) {
             double v = (double) container.tile.power / target;
-            ICON_PROGRESS.drawCutInside(new GuiRectangle(RECT_PROGRESS.x, (int) (RECT_PROGRESS.y + RECT_PROGRESS.height * Math.max(1 - v, 0)), RECT_PROGRESS.width, (int) Math.ceil(RECT_PROGRESS.height
-                * Math.min(v, 1))).offset(rootElement));
+            ICON_PROGRESS.drawCutInside(
+                    new GuiRectangle(
+                            RECT_PROGRESS.x,
+                            (int) (RECT_PROGRESS.y + RECT_PROGRESS.height * Math.max(1 - v, 0)),
+                            RECT_PROGRESS.width,
+                            (int) Math.ceil(RECT_PROGRESS.height * Math.min(v, 1))
+                    ).offset(rootElement)
+            );
         }
         for (int i = 0; i < container.tile.recipesStates.size(); i++) {
-            AssemblyRecipe recipe = container.tile.recipesStates.keySet().toArray(new AssemblyRecipe[0])[i];
-            EnumAssemblyRecipeState state = container.tile.recipesStates.values().toArray(new EnumAssemblyRecipeState[0])[i];
-            Point2i pos = getPos(i);
-            IGuiArea iconArea = rootElement.offset(pos.x, pos.y).resize(16, 16);
-            drawItemStackAt(recipe.output, iconArea.getX(), iconArea.getY());
+            EnumAssemblyRecipeState state = new ArrayList<>(container.tile.recipesStates.values()).get(i);
             if (state == EnumAssemblyRecipeState.SAVED) {
-                ICON_SAVED.drawAt(iconArea);
+                ICON_SAVED.drawAt(getArea(i));
             }
             if (state == EnumAssemblyRecipeState.SAVED_ENOUGH) {
-                ICON_SAVED_ENOUGH.drawAt(iconArea);
+                ICON_SAVED_ENOUGH.drawAt(getArea(i));
             }
             if (state == EnumAssemblyRecipeState.SAVED_ENOUGH_ACTIVE) {
-                ICON_SAVED_ENOUGH_ACTIVE.drawAt(iconArea);
-            }
-            if (!recipe.output.isEmpty() && iconArea.contains(mouse)) {
-                // TODO: Draw stack overlay
+                ICON_SAVED_ENOUGH_ACTIVE.drawAt(getArea(i));
             }
         }
     }
@@ -79,29 +85,21 @@ public class GuiAssemblyTable extends GuiBC8<ContainerAssemblyTable> {
     protected void drawForegroundLayer() {
         String title = I18n.format("tile.assemblyTableBlock.name");
         fontRenderer.drawString(title, guiLeft + (xSize - fontRenderer.getStringWidth(title)) / 2, guiTop + 15, 0x404040);
-
-        for (int i = 0; i < container.tile.recipesStates.size(); i++) {
-            AssemblyRecipe recipe = container.tile.recipesStates.keySet().toArray(new AssemblyRecipe[0])[i];
-            EnumAssemblyRecipeState state = container.tile.recipesStates.values().toArray(new EnumAssemblyRecipeState[0])[i];
-            Point2i pos = getPos(i);
-            IGuiArea iconArea = rootElement.offset(pos.x - 1, pos.y - 1).resize(18, 18);
-            if (!recipe.output.isEmpty() && iconArea.contains(mouse)) {
-                renderToolTip(recipe.output, mouse.getX(), mouse.getY());
-            }
-        }
     }
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         for (int i = 0; i < container.tile.recipesStates.size(); i++) {
-            AssemblyRecipe recipe = container.tile.recipesStates.keySet().toArray(new AssemblyRecipe[0])[i];
-            EnumAssemblyRecipeState state = container.tile.recipesStates.values().toArray(new EnumAssemblyRecipeState[0])[i];
-            Point2i pos = getPos(i);
-            int x = rootElement.getX() + pos.getX();
-            int y = rootElement.getY() + pos.getY();
-            if (mouseX > x && mouseX < x + 16 && mouseY > y && mouseY < y + 16) {
-                container.tile.sendRecipeStateToServer(recipe, state == EnumAssemblyRecipeState.POSSIBLE ? EnumAssemblyRecipeState.SAVED : EnumAssemblyRecipeState.POSSIBLE);
+            AssemblyRecipe recipe = new ArrayList<>(container.tile.recipesStates.keySet()).get(i);
+            EnumAssemblyRecipeState state = new ArrayList<>(container.tile.recipesStates.values()).get(i);
+            if (getArea(i).contains(mouseX, mouseY)) {
+                container.tile.sendRecipeStateToServer(
+                        recipe,
+                        state == EnumAssemblyRecipeState.POSSIBLE
+                                ? EnumAssemblyRecipeState.SAVED
+                                : EnumAssemblyRecipeState.POSSIBLE
+                );
             }
         }
     }
