@@ -2,6 +2,7 @@ package buildcraft.lib.expression;
 
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.INodeFunc;
+import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;

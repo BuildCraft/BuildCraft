@@ -3,13 +3,11 @@ package buildcraft.lib.expression;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.api.*;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
-import buildcraft.lib.expression.api.INodeFunc;
-import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.node.binary.BiNodeToBooleanType;
 import buildcraft.lib.expression.node.binary.BiNodeType;
 import buildcraft.lib.expression.node.binary.IBinaryNodeType;

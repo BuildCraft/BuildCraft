@@ -3,7 +3,7 @@ package buildcraft.lib.expression.node.binary;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.LongBinaryOperator;
 
-import buildcraft.lib.expression.InvalidExpressionException;
+import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;

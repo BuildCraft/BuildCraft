@@ -1,7 +1,8 @@
-package buildcraft.lib.expression;
+package buildcraft.lib.expression.api;
 
-@SuppressWarnings("serial")
 public class InvalidExpressionException extends Exception {
+    private static final long serialVersionUID = 1288939405116211505L;
+
     public InvalidExpressionException(String message) {
         super(message);
     }

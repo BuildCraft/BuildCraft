@@ -10,7 +10,7 @@ import net.minecraft.util.JsonUtils;
 import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.GenericExpressionCompiler;
-import buildcraft.lib.expression.InvalidExpressionException;
+import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.misc.MathUtil;
 
 public class JsonTexture {

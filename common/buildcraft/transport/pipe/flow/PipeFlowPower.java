@@ -32,7 +32,6 @@ import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.data.AverageInt;
-import buildcraft.transport.pipe.behaviour.*;
 
 public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
