@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
+import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 
 public class BCBuildersRecipes {
@@ -30,6 +31,20 @@ public class BCBuildersRecipes {
             recipe.map('l', "gemLapis");
             recipe.map('p', paper);
             recipe.setResult(new ItemStack(BCBuildersItems.blueprint));
+            recipe.register();
+        }
+
+        if (BCBuildersBlocks.quarry != null) {
+            RecipeBuilderShaped recipe = new RecipeBuilderShaped();
+            recipe.add("iri");
+            recipe.add("gig");
+            recipe.add("dpd");
+            recipe.map('i', OredictionaryNames.GEAR_IRON);
+            recipe.map('g', OredictionaryNames.GEAR_GOLD);
+            recipe.map('d', OredictionaryNames.GEAR_DIAMOND);
+            recipe.map('r', "dustRedstone");
+            recipe.map('p', Items.DIAMOND_PICKAXE);
+            recipe.setResult(new ItemStack(BCBuildersBlocks.quarry));
             recipe.register();
         }
 

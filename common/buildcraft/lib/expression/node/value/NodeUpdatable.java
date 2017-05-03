@@ -1,6 +1,7 @@
 package buildcraft.lib.expression.node.value;
 
 import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.NodeType;
 
 public class NodeUpdatable implements ITickableNode, ITickableNode.Source {

@@ -1,9 +1,9 @@
 package buildcraft.lib.expression.node.value;
 
 import buildcraft.lib.expression.api.IExpressionNode;
-import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
 
-public class NodeVariableBoolean implements INodeBoolean, IVariableNode {
+public class NodeVariableBoolean implements IVariableNodeBoolean {
     public final String name;
     public boolean value;
     private boolean isConst = false;
@@ -12,6 +12,7 @@ public class NodeVariableBoolean implements INodeBoolean, IVariableNode {
         this.name = name;
     }
 
+    @Override
     public void setConstant(boolean isConst) {
         this.isConst = isConst;
     }

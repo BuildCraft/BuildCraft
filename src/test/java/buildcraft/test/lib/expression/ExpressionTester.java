@@ -12,6 +12,8 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
+import buildcraft.lib.expression.api.IVariableNode;
+import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.node.binary.BiNodeType;
 import buildcraft.lib.expression.node.func.NodeFuncGenericToLong;
@@ -306,7 +308,7 @@ public class ExpressionTester {
     private static INodeDouble bakeFunctionDouble(String function, FunctionContext ctx) {
         try {
             return GenericExpressionCompiler.compileExpressionDouble(function, ctx);
-        } catch (buildcraft.lib.expression.InvalidExpressionException e) {
+        } catch (buildcraft.lib.expression.api.InvalidExpressionException e) {
             throw new AssertionError(e);
         }
     }
@@ -326,7 +328,7 @@ public class ExpressionTester {
     private static INodeBoolean bakeFunctionBoolean(String function, FunctionContext ctx) {
         try {
             return GenericExpressionCompiler.compileExpressionBoolean(function, ctx);
-        } catch (buildcraft.lib.expression.InvalidExpressionException e) {
+        } catch (buildcraft.lib.expression.api.InvalidExpressionException e) {
             throw new AssertionError(e);
         }
     }
@@ -346,7 +348,7 @@ public class ExpressionTester {
     private static INodeString bakeFunctionString(String function, FunctionContext ctx) {
         try {
             return GenericExpressionCompiler.compileExpressionString(function, ctx);
-        } catch (buildcraft.lib.expression.InvalidExpressionException e) {
+        } catch (buildcraft.lib.expression.api.InvalidExpressionException e) {
             throw new AssertionError(e);
         }
     }
@@ -366,7 +368,7 @@ public class ExpressionTester {
     private static INodeLong bakeFunctionLong(String function, FunctionContext ctx) {
         try {
             return GenericExpressionCompiler.compileExpressionLong(function, ctx);
-        } catch (buildcraft.lib.expression.InvalidExpressionException e) {
+        } catch (buildcraft.lib.expression.api.InvalidExpressionException e) {
             throw new AssertionError(e);
         }
     }

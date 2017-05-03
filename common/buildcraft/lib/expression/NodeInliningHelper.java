@@ -3,8 +3,8 @@ package buildcraft.lib.expression;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import buildcraft.lib.expression.api.IConstantNode;
 import buildcraft.lib.expression.api.IExpressionNode;
-import buildcraft.lib.expression.node.value.IConstantNode;
 
 public class NodeInliningHelper {
     /** Attempts to inline a specified node with only 1 input (a unary node)
