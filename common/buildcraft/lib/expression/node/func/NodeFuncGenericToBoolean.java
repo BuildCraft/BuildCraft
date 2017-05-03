@@ -1,12 +1,8 @@
 package buildcraft.lib.expression.node.func;
 
-import buildcraft.lib.expression.InvalidExpressionException;
-import buildcraft.lib.expression.api.IExpressionNode;
-import buildcraft.lib.expression.api.INodeStack;
-import buildcraft.lib.expression.api.NodeType;
+import buildcraft.lib.expression.api.*;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
-import buildcraft.lib.expression.node.value.IVariableNode;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 
 public class NodeFuncGenericToBoolean extends NodeFuncGeneric implements INodeFuncBoolean {

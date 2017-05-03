@@ -7,11 +7,14 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.*;
 
+import buildcraft.api.core.BCDebugging;
 import buildcraft.api.transport.pipe.PipeEvent;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventPriority;
 
 public class PipeEventBus {
+    public static final boolean DEBUG = BCDebugging.shouldDebugLog("transport.pipe.event_bus");
+
     private static final Map<Class<?>, List<Handler>> allHandlers = new HashMap<>();
 
     private final List<LocalHandler> currentHandlers = new ArrayList<>();
@@ -56,7 +59,8 @@ public class PipeEventBus {
                     throw new IllegalStateException("Cannot annotate " + m + " with @PipeEventHandler as there was a problem with it!", e);
                 }
                 boolean isStatic = Modifier.isStatic(m.getModifiers());
-                list.add(new Handler(annot.priority(), annot.receiveCancelled(), isStatic, mh, p.getType()));
+                String methodName = m.toString();
+                list.add(new Handler(annot.priority(), annot.receiveCancelled(), isStatic, methodName, mh, p.getType()));
             }
 
             Class<?> superCls = cls.getSuperclass();
@@ -96,8 +100,22 @@ public class PipeEventBus {
      * @return True if at least 1 event handler was called, 0 if no handlers were called. */
     public boolean fireEvent(PipeEvent event) {
         boolean handled = false;
+        if (DEBUG) {
+            String error = event.checkStateForErrors();
+            if (error != null) {
+                throw new IllegalArgumentException("The event " + event.getClass() + " was in an invalid state when firing! This is DEFINATLY a bug!\n"//
+                    + "(error = " + error + ")");
+            }
+        }
         for (LocalHandler handler : currentHandlers) {
             handled |= handler.handleEvent(event);
+            if (DEBUG) {
+                String error = event.checkStateForErrors();
+                if (error != null) {
+                    throw new IllegalStateException("The event " + event.getClass() + " was in an invalid state after being handled by "//
+                        + handler.methodName + " (error = " + error + ")");
+                }
+            }
         }
         return handled;
     }
@@ -105,13 +123,15 @@ public class PipeEventBus {
     public static class Handler {
         final PipeEventPriority priority;
         final boolean receiveCanceled, isStatic;
+        final String methodName;
         final MethodHandle handle;
         final Class<?> eventClassHandled;
 
-        public Handler(PipeEventPriority priority, boolean receiveCanceled, boolean isStatic, MethodHandle handle, Class<?> eventClassHandled) {
+        public Handler(PipeEventPriority priority, boolean receiveCanceled, boolean isStatic, String methodName, MethodHandle handle, Class<?> eventClassHandled) {
             this.priority = priority;
             this.receiveCanceled = receiveCanceled;
             this.isStatic = isStatic;
+            this.methodName = methodName;
             this.handle = handle;
             this.eventClassHandled = eventClassHandled;
         }
@@ -122,7 +142,7 @@ public class PipeEventBus {
                 return null;
             }
             MethodHandle bound = isStatic ? handle : handle.bindTo(obj);
-            return new LocalHandler(priority, receiveCanceled, obj, eventClassHandled, bound);
+            return new LocalHandler(priority, receiveCanceled, obj, methodName, eventClassHandled, bound);
         }
     }
 
@@ -130,13 +150,15 @@ public class PipeEventBus {
         final PipeEventPriority priority;
         final boolean receiveCanceled;
         final Object target;
+        final String methodName;
         final Class<?> classHandled;
         final MethodHandle handle;
 
-        public LocalHandler(PipeEventPriority priority, boolean receiveCanceled, Object target, Class<?> classHandled, MethodHandle handle) {
+        public LocalHandler(PipeEventPriority priority, boolean receiveCanceled, Object target, String methodName, Class<?> classHandled, MethodHandle handle) {
             this.priority = priority;
             this.receiveCanceled = receiveCanceled;
             this.target = target;
+            this.methodName = methodName;
             this.classHandled = classHandled;
             this.handle = handle;
         }

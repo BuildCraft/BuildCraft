@@ -11,13 +11,12 @@ public class DefaultContexts {
     public static final FunctionContext MATH_SCALAR = new FunctionContext();
     public static final FunctionContext MATH_VECTOR = new FunctionContext();
     public static final FunctionContext RENDERING = new FunctionContext();
-    public static final FunctionContext CONFIG = new FunctionContext();
 
     public static final NodeVariableDouble RENDER_PARTIAL_TICKS;
 
     public static final INodeFuncLong MATH_SCALAR_FUNC_ROUND;
 
-    private static final FunctionContext[] CTX_ARRAY_ALL = { STRINGS, MATH_SCALAR, MATH_VECTOR, RENDERING, CONFIG };
+    private static final FunctionContext[] CTX_ARRAY_ALL = { STRINGS, MATH_SCALAR, MATH_VECTOR, RENDERING };
 
     /** Creates a new {@link FunctionContext} with all of the functions given in this class. */
     public static FunctionContext createWithAll() {

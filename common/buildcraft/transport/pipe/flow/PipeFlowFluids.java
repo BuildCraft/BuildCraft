@@ -22,6 +22,8 @@ import buildcraft.api.core.*;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pipe.PipeApi.FluidTransferInfo;
+import buildcraft.api.transport.pipe.PipeEventFluid.OnMoveToCentre;
+import buildcraft.api.transport.pipe.PipeEventFluid.PreMoveToCentre;
 
 import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.misc.CapUtil;
@@ -484,25 +486,57 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             }
         }
 
+        int[] totalOffered = Arrays.copyOf(inputPerTick, 6);
+        PreMoveToCentre preMove = new PreMoveToCentre(pipe.getHolder(), this, currentFluid, Math.min(flowRate, spaceAvailable), totalOffered, inputPerTick);
+        // Event handlers edit the array in-place
+        pipe.getHolder().fireEvent(preMove);
+
+        int[] fluidLeavingSide = new int[6];
+
+        // Work out how much fluid should leave
+        int left = Math.min(flowRate, spaceAvailable);
         float min = Math.min(flowRate * transferInCount, spaceAvailable) / (float) flowRate / transferInCount;
         for (EnumPipePart part : EnumPipePart.FACES) {
             Section section = sections.get(part);
-            // Move liquid from input sides to the center
-            if (inputPerTick[part.getIndex()] > 0) {
-                int amountToDrain = (int) (inputPerTick[part.getIndex()] * min);
+            // Move liquid from input sides to the centre
+            int i = part.getIndex();
+            if (inputPerTick[i] > 0) {
+                int amountToDrain = (int) (inputPerTick[i] * min);
                 if (amountToDrain < 1) {
                     amountToDrain++;
                 }
-
+                if (amountToDrain > left) {
+                    amountToDrain = left;
+                }
                 int amountToPush = section.drainInternal(amountToDrain, false);
                 if (amountToPush > 0) {
-                    int filled = center.fill(amountToPush, true);
-                    section.drainInternal(filled, true);
-                    if (filled > 0) {
-                        section.ticksInDirection = COOLDOWN_INPUT;
+                    fluidLeavingSide[i] = amountToPush;
+                }
+            }
+        }
+
+        int[] fluidEnteringCentre = Arrays.copyOf(fluidLeavingSide, 6);
+        OnMoveToCentre move = new OnMoveToCentre(pipe.getHolder(), this, currentFluid, fluidLeavingSide, fluidEnteringCentre);
+        pipe.getHolder().fireEvent(move);
+
+        for (EnumPipePart part : EnumPipePart.FACES) {
+            Section section = sections.get(part);
+            int i = part.getIndex();
+            int leaving = fluidLeavingSide[i];
+            if (leaving > 0) {
+                int actuallyDrained = section.drainInternal(leaving, true);
+                if (actuallyDrained != leaving) {
+                    throw new IllegalStateException("Couldn't drain " + leaving + " from " + section + ", only drained " + actuallyDrained);
+                }
+                if (actuallyDrained > 0) {
+                    section.ticksInDirection = COOLDOWN_INPUT;
+                }
+                int entering = fluidEnteringCentre[i];
+                if (entering > 0) {
+                    int actuallyFilled = center.fill(entering, true);
+                    if (actuallyFilled != entering) {
+                        throw new IllegalStateException("Couldn't fill " + entering + " from " + section + ", only drained " + actuallyFilled);
                     }
-                    // FIXME: This is the animated flow variable
-                    // flow[dir.ordinal()] = -1;
                 }
             }
         }
@@ -753,9 +787,15 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
         @Override
         public int fill(FluidStack resource, boolean doFill) {
-            if (!getCurrentDirection().canInput() || !pipe.isConnected(part.face)) {
+            if (!getCurrentDirection().canInput() || !pipe.isConnected(part.face) || resource == null) {
                 return 0;
             }
+            PipeEventFluid.TryInsert tryInsert = new PipeEventFluid.TryInsert(pipe.getHolder(), PipeFlowFluids.this, part.face, resource);
+            pipe.getHolder().fireEvent(tryInsert);
+            if (tryInsert.isCanceled()) {
+                return 0;
+            }
+
             if (currentFluid == null || currentFluid.isFluidEqual(resource)) {
                 if (doFill) {
                     if (currentFluid == null) {

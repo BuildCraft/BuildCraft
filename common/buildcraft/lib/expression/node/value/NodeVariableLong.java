@@ -1,9 +1,9 @@
 package buildcraft.lib.expression.node.value;
 
 import buildcraft.lib.expression.api.IExpressionNode;
-import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
+import buildcraft.lib.expression.api.IVariableNode.IVariableNodeLong;
 
-public class NodeVariableLong implements INodeLong, IVariableNode {
+public class NodeVariableLong implements IVariableNodeLong {
     public final String name;
     public long value;
     private boolean isConst = false;
@@ -12,6 +12,7 @@ public class NodeVariableLong implements INodeLong, IVariableNode {
         this.name = name;
     }
 
+    @Override
     public void setConstant(boolean isConst) {
         this.isConst = isConst;
     }

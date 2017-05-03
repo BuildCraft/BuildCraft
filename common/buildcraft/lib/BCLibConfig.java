@@ -113,8 +113,5 @@ public class BCLibConfig {
 
     static {
         configChangeListeners.add(LocaleUtil::onConfigChanged);
-        // Function contexts
-        DefaultContexts.CONFIG.put_b("colourBlindMode", () -> colourBlindMode);
-        DefaultContexts.CONFIG.put_s("colourBlindMode_ext", () -> (colourBlindMode ? "_cb" : ""));
     }
 }

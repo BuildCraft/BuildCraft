@@ -1,9 +1,9 @@
 package buildcraft.lib.expression.node.cast;
 
 import buildcraft.lib.expression.ExpressionDebugManager;
-import buildcraft.lib.expression.InvalidExpressionException;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.INodeFunc;
+import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;

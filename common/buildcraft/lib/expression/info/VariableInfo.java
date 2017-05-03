@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.node.value.*;
 
 import gnu.trove.list.TDoubleList;

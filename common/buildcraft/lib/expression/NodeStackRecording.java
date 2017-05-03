@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import buildcraft.lib.expression.api.INodeStack;
+import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;

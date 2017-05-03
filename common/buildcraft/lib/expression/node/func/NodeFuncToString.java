@@ -1,9 +1,9 @@
 package buildcraft.lib.expression.node.func;
 
-import buildcraft.lib.expression.InvalidExpressionException;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncString;
 import buildcraft.lib.expression.api.INodeStack;
+import buildcraft.lib.expression.api.InvalidExpressionException;
 
 public class NodeFuncToString implements INodeFuncString, INodeString {
 
