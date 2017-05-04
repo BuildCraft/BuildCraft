@@ -8,6 +8,7 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -61,5 +62,10 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
             BCBuildersGuis.QUARRY.openGUI(player, pos);
         }
         return true;
+    }
+
+    @Override
+    public EnumActionResult attemptRotation(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        return EnumActionResult.FAIL;
     }
 }
