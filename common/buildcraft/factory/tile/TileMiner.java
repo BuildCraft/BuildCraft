@@ -6,6 +6,7 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
+import buildcraft.api.tiles.TilesAPI;
 import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.net.PacketBufferBC;
@@ -24,7 +25,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.io.IOException;
 import java.util.List;
 
-public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHasWork, IDebuggable {
+public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final int NET_LED_STATUS = 10;
     public static final int NET_WANTED_Y = 11;
 
@@ -212,20 +213,17 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         return Double.MAX_VALUE;
     }
 
-    // IHasWork
-
-    @Override
-    public boolean hasWork() {
-        return !isComplete;
-    }
-
     // Capability
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         T cap = mjCapHelper.getCapability(capability, facing);
         if (cap != null) {
             return cap;
+        }
+        if (capability == TilesAPI.CAP_HAS_WORK) {
+            return (T) (IHasWork) () -> !isComplete;
         }
         return super.getCapability(capability, facing);
     }

@@ -35,4 +35,24 @@ public class SlotDisplay extends Slot {
     @Override
     public void putStack(ItemStack stack) {
     }
+
+    @Override
+    public boolean canTakeStack(EntityPlayer player) {
+        return false;
+    }
+
+    @Override
+    public ItemStack decrStackSize(int amount) {
+        return getStack();
+    }
+
+    @Override
+    public int getItemStackLimit(ItemStack stack) {
+        return getStack().getCount();
+    }
+
+    @Override
+    public int getSlotStackLimit() {
+        return getStack().getCount();
+    }
 }

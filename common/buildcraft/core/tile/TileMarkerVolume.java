@@ -7,6 +7,7 @@ package buildcraft.core.tile;
 import java.io.IOException;
 import java.util.List;
 
+import buildcraft.api.tiles.TilesAPI;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +16,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -183,5 +185,14 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
             }
         }
         return false;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == TilesAPI.CAP_TILE_AREA_PROVIDER) {
+            return (T) this;
+        }
+        return super.getCapability(capability, facing);
     }
 }

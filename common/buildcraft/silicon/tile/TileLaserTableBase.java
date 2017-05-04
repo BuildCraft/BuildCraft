@@ -3,10 +3,12 @@ package buildcraft.silicon.tile;
 import java.io.IOException;
 import java.util.List;
 
+import buildcraft.api.tiles.TilesAPI;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -95,5 +97,14 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
         left.add("power - " + LocaleUtil.localizeMj(power));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == TilesAPI.CAP_HAS_WORK) {
+            return (T) this;
+        }
+        return super.getCapability(capability, facing);
     }
 }
