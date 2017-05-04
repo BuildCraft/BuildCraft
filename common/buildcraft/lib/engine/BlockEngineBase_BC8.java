@@ -148,7 +148,12 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
 
     @Override
     public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
-        return new ItemStack(this, 1, state.getValue(getEngineProperty()).ordinal());
+        return new ItemStack(this, 1, damageDropped(state));
+    }
+
+    @Override
+    public int damageDropped(IBlockState state) {
+        return state.getValue(getEngineProperty()).ordinal();
     }
 
     @Override

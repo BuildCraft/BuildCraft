@@ -32,7 +32,7 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
 
     @Override
     protected IMjConnector createConnector() {
-        return new EngineConnector(true);
+        return new EngineConnector(false);
     }
 
     @Override
