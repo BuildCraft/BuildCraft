@@ -54,8 +54,13 @@ public final class GuiRectangle implements IGuiArea {
     }
 
     public GuiRectangle createProgress(double widthPercent, double heightPercent) {
-        int nWidth = MathHelper.ceil(width * widthPercent);
-        int nHeight = MathHelper.ceil(height * heightPercent);
-        return new GuiRectangle(x, y, nWidth, nHeight);
+        int nWidth = MathHelper.ceil(width * Math.abs(widthPercent));
+        int nHeight = MathHelper.ceil(height * Math.abs(heightPercent));
+        return new GuiRectangle(
+                widthPercent > 0 ? x : x + (width - nWidth),
+                heightPercent > 0 ? y : y + (height - nHeight),
+                nWidth,
+                nHeight
+        );
     }
 }

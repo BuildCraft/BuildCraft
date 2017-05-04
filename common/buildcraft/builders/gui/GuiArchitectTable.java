@@ -47,6 +47,12 @@ public class GuiArchitectTable extends GuiBC8<ContainerArchitectTable> {
                         1
                 ).offset(rootElement)
         );
+        drawProgress(
+                RECT_PROGRESS,
+                ICON_PROGRESS,
+                container.tile.deltaProgress.getDynamic(partialTicks),
+                1
+        );
     }
 
     @Override

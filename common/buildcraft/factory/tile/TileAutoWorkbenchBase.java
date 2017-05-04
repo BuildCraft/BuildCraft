@@ -96,8 +96,8 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
         updateRecipe();
         if (hasMaterialsForRecipe()) {
             if (progress == 0) {
-                deltaProgress.addDelta(0, 200, 100);
-                deltaProgress.addDelta(200, 205, -100);
+                deltaProgress.addDelta(0, 200, 1);
+                deltaProgress.addDelta(200, 205, -1);
             }
             if (progress < 200) {
                 progress++;

@@ -25,11 +25,21 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
         super(player, tile);
         addFullPlayerInventory(138);
 
-        addSlotToContainer(new SlotOutput(tile.invDownOut, 0, 175, 57));
+        addSlotToContainer(new SlotOutput(tile.invDownOut, 0, 175, 57) {
+            @Override
+            public int getSlotStackLimit() {
+                return 1;
+            }
+        });
         addSlotToContainer(new SlotBase(tile.invDownIn, 0, 219, 57) {
             @Override
             public boolean isItemValid(ItemStack stack) {
                 return stack.getItem() instanceof ItemSnapshot && ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used;
+            }
+
+            @Override
+            public int getSlotStackLimit() {
+                return 1;
             }
         });
 
@@ -39,7 +49,12 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
                 return stack.getItem() instanceof ItemSnapshot;
             }
         });
-        addSlotToContainer(new SlotOutput(tile.invUpOut, 0, 219, 79));
+        addSlotToContainer(new SlotOutput(tile.invUpOut, 0, 219, 79) {
+            @Override
+            public int getSlotStackLimit() {
+                return 1;
+            }
+        });
     }
 
     @Override

@@ -153,8 +153,8 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
             if (paintbrushStack != null && paintbrushStack.getItem() instanceof ItemPaintbrush_BC8 && mapLocationStack != null && mapLocationStack.getItem() instanceof ItemMapLocation && mapLocationStack.getTagCompound() != null && mapLocationStack
                     .getTagCompound().hasKey("chunkMapping") && invInputResult.getStackInSlot(0) == null) {
                 if (progressInput == 0) {
-                    deltaProgressInput.addDelta(0, 200, 100);
-                    deltaProgressInput.addDelta(200, 205, -100);
+                    deltaProgressInput.addDelta(0, 200, 1);
+                    deltaProgressInput.addDelta(200, 205, -1);
                 }
 
                 if (progressInput < 200) {
@@ -178,8 +178,8 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
             ItemStack mapLocationStack = invOutputMapLocation.getStackInSlot(0);
             if (paintbrushStack != null && paintbrushStack.getItem() instanceof ItemPaintbrush_BC8 && mapLocationStack != null && mapLocationStack.getItem() instanceof ItemMapLocation && invOutputResult.getStackInSlot(0) == null) {
                 if (progressOutput == 0) {
-                    deltaProgressOutput.addDelta(0, 200, 100);
-                    deltaProgressOutput.addDelta(200, 205, -100);
+                    deltaProgressOutput.addDelta(0, 200, 1);
+                    deltaProgressOutput.addDelta(200, 205, -1);
                 }
 
                 if (progressOutput < 200) {

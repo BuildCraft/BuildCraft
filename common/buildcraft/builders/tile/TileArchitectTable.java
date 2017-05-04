@@ -106,7 +106,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
 
     @Override
     public void update() {
-        deltaProgress.tick();
+        deltaManager.tick();
 
         if (world.isRemote) {
             return;

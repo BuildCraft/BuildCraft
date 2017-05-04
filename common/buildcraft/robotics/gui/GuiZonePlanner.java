@@ -153,8 +153,18 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(rootElement);
 
-        ICON_PROGRESS_INPUT.drawCutInside(RECT_PROGRESS_INPUT.createProgress(container.tile.deltaProgressInput.getDynamic(partialTicks) / 100, 1).offset(rootElement));
-        ICON_PROGRESS_OUTPUT.drawCutInside(RECT_PROGRESS_OUTPUT.createProgress(1, container.tile.deltaProgressOutput.getDynamic(partialTicks) / 100).offset(rootElement));
+        drawProgress(
+                RECT_PROGRESS_INPUT,
+                ICON_PROGRESS_INPUT,
+                container.tile.deltaProgressInput.getDynamic(partialTicks) / 100,
+                1
+        );
+        drawProgress(
+                RECT_PROGRESS_OUTPUT,
+                ICON_PROGRESS_OUTPUT,
+                container.tile.deltaProgressOutput.getDynamic(partialTicks) / 100,
+                1
+        );
     }
 
     @SuppressWarnings("PointlessBitwiseExpression")

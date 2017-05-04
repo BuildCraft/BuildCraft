@@ -8,14 +8,14 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
 import buildcraft.builders.snapshot.Snapshot;
+import buildcraft.lib.delta.DeltaInt;
+import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -23,7 +23,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.UUID;
 
 public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
@@ -35,22 +34,71 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
     public final ItemHandlerSimple invUpIn = itemManager.addInvHandler("upIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
     public final ItemHandlerSimple invUpOut = itemManager.addInvHandler("upOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
     public Snapshot.Header selected = null;
+    public int progressDown = -1;
+    public int progressUp = -1;
+    public final DeltaInt deltaProgressDown = deltaManager.addDelta("progressDown", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
+    public final DeltaInt deltaProgressUp = deltaManager.addDelta("progressUp", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
         super.onSlotChange(handler, slot, before, after);
         if (handler == invDownIn) {
-            sendNetworkGuiUpdate(NET_DOWN);
+            if (progressDown > 0) {
+                progressDown = -1;
+                deltaProgressDown.setValue(0);
+            }
         }
         if (handler == invUpIn) {
-            sendNetworkGuiUpdate(NET_UP);
+            if (progressUp > 0) {
+                progressUp = -1;
+                deltaProgressUp.setValue(0);
+            }
         }
     }
 
+    @SuppressWarnings("Duplicates")
     @Override
     public void update() {
+        deltaManager.tick();
+
         if (world.isRemote) {
             return;
+        }
+
+        if (!invDownIn.getStackInSlot(0).isEmpty() && invDownOut.getStackInSlot(0).isEmpty()) {
+            if (progressDown == -1) {
+                progressDown = 0;
+                deltaProgressDown.addDelta(0, 50, 1);
+                deltaProgressDown.addDelta(50, 55, -1);
+            }
+            if (progressDown >= 50) {
+                sendNetworkGuiUpdate(NET_DOWN);
+                invDownOut.setStackInSlot(0, invDownIn.getStackInSlot(0));
+                invDownIn.setStackInSlot(0, ItemStack.EMPTY);
+                progressDown = -1;
+            } else {
+                progressDown++;
+            }
+        } else if(progressDown != -1) {
+            progressDown = -1;
+            deltaProgressDown.setValue(0);
+        }
+
+        if (selected != null && !invUpIn.getStackInSlot(0).isEmpty() && invUpOut.getStackInSlot(0).isEmpty()) {
+            if (progressUp == -1) {
+                progressUp = 0;
+                deltaProgressUp.addDelta(0, 50, 1);
+                deltaProgressUp.addDelta(50, 55, -1);
+            }
+            if (progressUp >= 50) {
+                sendNetworkGuiUpdate(NET_UP);
+                progressUp = -1;
+            } else {
+                progressUp++;
+            }
+        } else if(progressUp != -1) {
+            progressUp = -1;
+            deltaProgressUp.setValue(0);
         }
     }
 

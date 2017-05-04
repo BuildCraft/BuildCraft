@@ -11,6 +11,7 @@ import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.button.GuiAbstractButton;
 import buildcraft.lib.gui.button.GuiBetterButton;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.LocaleUtil;
 import net.minecraft.util.ResourceLocation;
 
@@ -18,9 +19,13 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GuiElectronicLibrary extends GuiBC8<ContainerElectronicLibrary> {
-    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftbuilders:textures/gui/library_rw.png");
+    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftbuilders:textures/gui/electronic_library.png");
     private static final int SIZE_X = 244, SIZE_Y = 220;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
+    private static final GuiIcon ICON_PROGRESS_DOWN = new GuiIcon(TEXTURE_BASE, 234, 240, 22, 16);
+    private static final GuiRectangle RECT_PROGRESS_DOWN = new GuiRectangle(194, 58, 22, 16);
+    private static final GuiIcon ICON_PROGRESS_UP = new GuiIcon(TEXTURE_BASE, 234, 224, 22, 16);
+    private static final GuiRectangle RECT_PROGRESS_UP = new GuiRectangle(194, 79, 22, 16);
     private GuiAbstractButton delButton;
 
     public GuiElectronicLibrary(ContainerElectronicLibrary container) {
@@ -46,6 +51,7 @@ public class GuiElectronicLibrary extends GuiBC8<ContainerElectronicLibrary> {
                                     if (container.tile.selected != null) {
                                         Snapshot snapshot = getSnapshots().getSnapshotByHeader(container.tile.selected);
                                         if (snapshot != null) {
+                                            container.sendSelectedToServer(null);
                                             getSnapshots().snapshots.remove(snapshot);
                                             getSnapshots().markDirty();
                                             if (button instanceof GuiAbstractButton) {
@@ -61,6 +67,18 @@ public class GuiElectronicLibrary extends GuiBC8<ContainerElectronicLibrary> {
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(rootElement);
+        drawProgress(
+                RECT_PROGRESS_DOWN,
+                ICON_PROGRESS_DOWN,
+                -container.tile.deltaProgressDown.getDynamic(partialTicks),
+                1
+        );
+        drawProgress(
+                RECT_PROGRESS_UP,
+                ICON_PROGRESS_UP,
+                container.tile.deltaProgressUp.getDynamic(partialTicks),
+                1
+        );
         iterateSnapshots((i, x, y, width, height, snapshot) ->
                 drawString(fontRenderer, snapshot.header.name, x, y, snapshot.header.equals(container.tile.selected) ? 0xffffa0 : 0xe0e0e0)
         );

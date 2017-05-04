@@ -4,12 +4,12 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory.gui;
 
+import buildcraft.lib.BCLib;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.factory.container.ContainerAutoCraftItems;
-import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
@@ -31,17 +31,19 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> {
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(rootElement);
 
-        DeltaInt delta = container.tile.deltaProgress;
-        double dynamic = delta.getDynamic(partialTicks);
-        double p = dynamic / 100;
+        drawProgress(
+                RECT_PROGRESS,
+                ICON_PROGRESS,
+                container.tile.deltaProgress.getDynamic(partialTicks),
+                1
+        );
 
-        GuiRectangle progress = RECT_PROGRESS.createProgress(p, 1);
-        ICON_PROGRESS.drawCutInside(progress.offset(rootElement));
-
-        fontRenderer.drawString("Start = " + delta.getStatic(true), 10, 10, -1);
-        fontRenderer.drawString("Dyn   = " + dynamic, 10, 20, -1);
-        fontRenderer.drawString("End   = " + delta.getStatic(false), 10, 30, -1);
-        fontRenderer.drawString("Count = " + delta.changingEntries.size(), 10, 40, -1);
+        if (BCLib.DEV) {
+            fontRenderer.drawString("Start = " + container.tile.deltaProgress.getStatic(true), 10, 10, -1);
+            fontRenderer.drawString("Dyn   = " + container.tile.deltaProgress.getDynamic(partialTicks), 10, 20, -1);
+            fontRenderer.drawString("End   = " + container.tile.deltaProgress.getStatic(false), 10, 30, -1);
+            fontRenderer.drawString("Count = " + container.tile.deltaProgress.changingEntries.size(), 10, 40, -1);
+        }
         if (container.tile.currentRecipe != null) {
             RenderHelper.enableGUIStandardItemLighting();
             ItemStack output = container.tile.getOutput();

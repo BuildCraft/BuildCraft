@@ -20,9 +20,12 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.MousePosition;
 import buildcraft.lib.gui.pos.PositionCallable;
+import net.minecraft.util.math.MathHelper;
 
 public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer {
-    /** Used to control if this gui should show debugging lines, and other oddities that help development. */
+    /**
+     * Used to control if this gui should show debugging lines, and other oddities that help development.
+     */
     public static boolean debugging = false;
 
     public static final GuiSpriteScaled SPRITE_DEBUG = new GuiSpriteScaled(BCLibSprites.DEBUG, 16, 16);
@@ -54,7 +57,9 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         }
     }
 
-    /** Checks to see if the main */
+    /**
+     * Checks to see if the main
+     */
     protected boolean shouldAddHelpLedger() {
         return true;
     }
@@ -162,6 +167,24 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         GlStateManager.translate(guiLeft, guiTop, 0);
     }
 
+    public void drawProgress(GuiRectangle rect, GuiIcon icon, double widthPercent, double heightPercent) {
+        int nWidth = MathHelper.ceil(rect.width * Math.abs(widthPercent));
+        int nHeight = MathHelper.ceil(rect.height * Math.abs(heightPercent));
+        icon
+                .offset(
+                        widthPercent > 0 ? 0 : rect.width - nWidth,
+                        heightPercent > 0 ? 0 : rect.height - nHeight
+                )
+                .drawCutInside(
+                        new GuiRectangle(
+                                widthPercent > 0 ? rect.x : rect.x + (rect.width - nWidth),
+                                heightPercent > 0 ? rect.y : rect.y + (rect.height - nHeight),
+                                nWidth,
+                                nHeight
+                        ).offset(rootElement)
+                );
+    }
+
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -209,9 +232,11 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         ledgersRight.onMouseReleased(state);
     }
 
-    protected void drawBackgroundLayer(float partialTicks) {}
+    protected void drawBackgroundLayer(float partialTicks) {
+    }
 
-    protected void drawForegroundLayer() {}
+    protected void drawForegroundLayer() {
+    }
 
     public static final class RootPosition implements IGuiArea {
         public final GuiBC8<?> gui;
