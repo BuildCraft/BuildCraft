@@ -59,4 +59,9 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
         }
         return true;
     }
+
+    @Override
+    public boolean canBeRotated(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        return false;
+    }
 }

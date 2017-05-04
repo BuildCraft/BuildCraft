@@ -9,9 +9,7 @@ import java.util.List;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -55,5 +53,11 @@ public class BlockBuilder extends BlockBCTile_Neptune implements IBlockWithFacin
             BCBuildersGuis.BUILDER.openGUI(player, pos);
         }
         return true;
+    }
+
+    @Override
+    public boolean canBeRotated(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        TileEntity tile = world.getTileEntity(pos);
+        return !(tile instanceof TileBuilder) || ((TileBuilder) tile).getBuilder() == null;
     }
 }
