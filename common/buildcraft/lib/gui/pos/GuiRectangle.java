@@ -1,7 +1,5 @@
 package buildcraft.lib.gui.pos;
 
-import net.minecraft.util.math.MathHelper;
-
 /** An immutable {@link IGuiArea}. */
 public final class GuiRectangle implements IGuiArea {
     /** A rectangle where all of the fields are set to 0. */
@@ -51,16 +49,5 @@ public final class GuiRectangle implements IGuiArea {
     @Override
     public String toString() {
         return "Rectangle [x=" + x + ", y=" + y + ", width=" + width + ", height=" + height + "]";
-    }
-
-    public GuiRectangle createProgress(double widthPercent, double heightPercent) {
-        int nWidth = MathHelper.ceil(width * Math.abs(widthPercent));
-        int nHeight = MathHelper.ceil(height * Math.abs(heightPercent));
-        return new GuiRectangle(
-                widthPercent > 0 ? x : x + (width - nWidth),
-                heightPercent > 0 ? y : y + (height - nHeight),
-                nWidth,
-                nHeight
-        );
     }
 }

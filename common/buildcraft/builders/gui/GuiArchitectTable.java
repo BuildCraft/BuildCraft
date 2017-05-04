@@ -5,7 +5,6 @@
 package buildcraft.builders.gui;
 
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.builders.container.ContainerArchitectTable;
@@ -41,12 +40,6 @@ public class GuiArchitectTable extends GuiBC8<ContainerArchitectTable> {
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(rootElement);
-        ICON_PROGRESS.drawCutInside(
-                RECT_PROGRESS.createProgress(
-                        container.tile.deltaProgress.getDynamic(partialTicks),
-                        1
-                ).offset(rootElement)
-        );
         drawProgress(
                 RECT_PROGRESS,
                 ICON_PROGRESS,
