@@ -511,6 +511,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 int amountToPush = section.drainInternal(amountToDrain, false);
                 if (amountToPush > 0) {
                     fluidLeavingSide[i] = amountToPush;
+                    left -= amountToPush;
                 }
             }
         }
@@ -526,7 +527,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             if (leaving > 0) {
                 int actuallyDrained = section.drainInternal(leaving, true);
                 if (actuallyDrained != leaving) {
-                    throw new IllegalStateException("Couldn't drain " + leaving + " from " + section + ", only drained " + actuallyDrained);
+                    throw new IllegalStateException("Couldn't drain " + leaving + " from " + part + ", only drained " + actuallyDrained);
                 }
                 if (actuallyDrained > 0) {
                     section.ticksInDirection = COOLDOWN_INPUT;
@@ -535,7 +536,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 if (entering > 0) {
                     int actuallyFilled = center.fill(entering, true);
                     if (actuallyFilled != entering) {
-                        throw new IllegalStateException("Couldn't fill " + entering + " from " + section + ", only drained " + actuallyFilled);
+                        throw new IllegalStateException("Couldn't fill " + entering + " from " + part + ", only filled " + actuallyFilled);
                     }
                 }
             }
