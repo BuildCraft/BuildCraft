@@ -90,16 +90,18 @@ public class GuiAssemblyTable extends GuiBC8<ContainerAssemblyTable> {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        for (int i = 0; i < container.tile.recipesStates.size(); i++) {
-            AssemblyRecipe recipe = new ArrayList<>(container.tile.recipesStates.keySet()).get(i);
-            EnumAssemblyRecipeState state = new ArrayList<>(container.tile.recipesStates.values()).get(i);
-            if (getArea(i).contains(mouseX, mouseY)) {
-                container.tile.sendRecipeStateToServer(
-                        recipe,
-                        state == EnumAssemblyRecipeState.POSSIBLE
-                                ? EnumAssemblyRecipeState.SAVED
-                                : EnumAssemblyRecipeState.POSSIBLE
-                );
+        if (mouseButton == 0) {
+            for (int i = 0; i < container.tile.recipesStates.size(); i++) {
+                AssemblyRecipe recipe = new ArrayList<>(container.tile.recipesStates.keySet()).get(i);
+                EnumAssemblyRecipeState state = new ArrayList<>(container.tile.recipesStates.values()).get(i);
+                if (getArea(i).contains(mouseX, mouseY)) {
+                    container.tile.sendRecipeStateToServer(
+                            recipe,
+                            state == EnumAssemblyRecipeState.POSSIBLE
+                                    ? EnumAssemblyRecipeState.SAVED
+                                    : EnumAssemblyRecipeState.POSSIBLE
+                    );
+                }
             }
         }
     }

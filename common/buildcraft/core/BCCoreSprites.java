@@ -55,7 +55,7 @@ public class BCCoreSprites {
         }
 
         ACTION_MACHINE_CONTROL = new EnumMap<>(IControllable.Mode.class);
-        for (IControllable.Mode mode : IControllable.Mode.VALID_VALUES) {
+        for (IControllable.Mode mode : IControllable.Mode.VALUES) {
             String tex = "triggers/action_machinecontrol_" + mode.name().toLowerCase(Locale.ROOT);
             ACTION_MACHINE_CONTROL.put(mode, getHolder(tex));
         }

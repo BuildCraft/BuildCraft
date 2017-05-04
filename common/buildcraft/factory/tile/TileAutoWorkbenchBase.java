@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.api.tiles.TilesAPI;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -20,6 +21,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
 
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -40,7 +42,7 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 import gnu.trove.set.hash.TIntHashSet;
 
-public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements ITickable, IDebuggable, IHasWork {
+public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements ITickable, IDebuggable {
     protected WorkbenchCrafting crafting = createCrafting();
     public final ItemHandlerSimple invBlueprint;
     public final ItemHandlerSimple invMaterials;
@@ -123,11 +125,6 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
         return has;
     }
 
-    @Override
-    public boolean hasWork() {
-        return progress >= 0;
-    }
-
     private void moveOverflowDown() {
         // TODO!
 
@@ -200,6 +197,15 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
 
     public ItemStack getOutput() {
         return currentRecipe.getCraftingResult(crafting);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == TilesAPI.CAP_HAS_WORK) {
+            return (T) (IHasWork) () -> progress >= 0;
+        }
+        return super.getCapability(capability, facing);
     }
 
     protected abstract class WorkbenchCrafting extends InventoryCrafting {

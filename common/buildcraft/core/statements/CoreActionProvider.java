@@ -4,8 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.statements;
 
+import java.util.Arrays;
 import java.util.Collection;
 
+import buildcraft.api.tiles.TilesAPI;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
@@ -30,12 +32,11 @@ public enum CoreActionProvider implements IActionProvider {
 
     @Override
     public void addExternalActions(Collection<IActionExternal> res, EnumFacing side, TileEntity tile) {
-        if (tile instanceof IControllable) {
-            for (ActionMachineControl action : BCCoreStatements.ACTION_MACHINE_CONTROL) {
-                if (((IControllable) tile).acceptsControlMode(action.mode)) {
-                    res.add(action);
-                }
-            }
+        if (tile.hasCapability(TilesAPI.CAP_CONTROLLABLE, null)) {
+            IControllable controllable = tile.getCapability(TilesAPI.CAP_CONTROLLABLE, null);
+            Arrays.stream(BCCoreStatements.ACTION_MACHINE_CONTROL)
+                    .filter(action -> controllable.setControlMode(action.mode, true))
+                    .forEach(res::add);
         }
     }
 }

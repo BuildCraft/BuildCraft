@@ -6,6 +6,7 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
+import buildcraft.api.tiles.TilesAPI;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
@@ -16,7 +17,6 @@ import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IControllable.Mode;
 
 import buildcraft.core.BCCoreSprites;
@@ -39,8 +39,8 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
 
     @Override
     public void actionActivate(TileEntity target, EnumFacing side, IStatementContainer source, IStatementParameter[] parameters) {
-        if (target instanceof IControllable) {
-            ((IControllable) target).setControlMode(mode);
+        if (target.hasCapability(TilesAPI.CAP_CONTROLLABLE, null)) {
+            target.getCapability(TilesAPI.CAP_CONTROLLABLE, null).setControlMode(mode, false);
         }
     }
 

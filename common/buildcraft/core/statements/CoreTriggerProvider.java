@@ -6,6 +6,7 @@ package buildcraft.core.statements;
 
 import java.util.Collection;
 
+import buildcraft.api.tiles.TilesAPI;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
@@ -86,7 +87,7 @@ public enum CoreTriggerProvider implements ITriggerProvider {
             }
         }
 
-        if (tile instanceof IHasWork) {
+        if (tile.hasCapability(TilesAPI.CAP_HAS_WORK, null)) {
             res.add(BCCoreStatements.TRIGGER_MACHINE_ACTIVE);
             res.add(BCCoreStatements.TRIGGER_MACHINE_INACTIVE);
         }
