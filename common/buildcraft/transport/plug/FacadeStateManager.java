@@ -7,10 +7,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockGlass;
-import net.minecraft.block.BlockLeaves;
-import net.minecraft.block.BlockStainedGlass;
+import net.minecraft.block.*;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -40,7 +37,7 @@ public class FacadeStateManager {
     public static FacadeBlockStateInfo defaultState, previewState;
 
     private static EnumActionResult isValidFacadeBlock(Block block) {
-        if (block instanceof IFluidBlock || block instanceof BlockLeaves) {
+        if (block instanceof IFluidBlock || block instanceof BlockSlime) {
             return EnumActionResult.FAIL;
         }
         if (block instanceof BlockGlass || block instanceof BlockStainedGlass) {
@@ -60,14 +57,12 @@ public class FacadeStateManager {
         FakeWorld world = FakeWorld.INSTANCE;
         world.clear();
         world.setBlockState(BlockPos.ORIGIN, state);
-        ItemStack stack;
+        ItemStack stack = ItemStack.EMPTY;
         try {
             stack = state.getBlock().getPickBlock(state, new RayTraceResult(VecUtil.VEC_HALF, null, BlockPos.ORIGIN), world, BlockPos.ORIGIN, null);
-        } catch (NullPointerException | IllegalArgumentException ignored) {
+        } catch (Exception ignored) {
             /* Some mods require a non-null player, but we don't have one to give. If a mod's block does require a
              * player entity then we won't support it, as it may require a different stack depending on the player. */
-            world.clear();
-            return StackUtil.EMPTY;
         }
         world.clear();
         if (stack.isEmpty()) {

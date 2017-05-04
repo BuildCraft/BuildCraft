@@ -3,7 +3,6 @@ package buildcraft.transport.client.model.plug;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -271,9 +270,7 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
             baked.add(quad.toBakedItem());
         }
         if (key.state.isFullBlock() && !key.isHollow) {
-            for (BakedQuad quad : BCTransportModels.BAKER_PLUG_BLOCKER.bake(new KeyPlugBlocker(key.side))) {
-                baked.add(quad);
-            }
+            baked.addAll(BCTransportModels.BAKER_PLUG_BLOCKER.bake(new KeyPlugBlocker(key.side)));
         }
         return baked;
     }
