@@ -3,20 +3,18 @@ package buildcraft.builders.block;
 import java.util.Arrays;
 import java.util.List;
 
+import buildcraft.builders.BCBuildersBlocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
 
-import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileQuarry;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
@@ -56,15 +54,20 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {
-            BCBuildersGuis.QUARRY.openGUI(player, pos);
-        }
-        return true;
+    public boolean canBeRotated(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        return false;
     }
 
     @Override
-    public boolean canBeRotated(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
-        return false;
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileQuarry) {
+            for (BlockPos blockPos : ((TileQuarry) tile).getFramePositions(state)) {
+                if (world.getBlockState(blockPos).getBlock() == BCBuildersBlocks.frame) {
+                    world.setBlockToAir(blockPos);
+                }
+            }
+        }
+        super.breakBlock(world, pos, state);
     }
 }

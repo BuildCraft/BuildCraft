@@ -57,12 +57,6 @@ public abstract class BCBuildersProxy implements IGuiHandler {
                 return new ContainerArchitectTable(player, architectTable);
             }
         }
-        if (id == BCBuildersGuis.QUARRY.ordinal()) {
-            if (tile instanceof TileQuarry) {
-                TileQuarry quarry = (TileQuarry) tile;
-                return new ContainerQuarry(player, quarry);
-            }
-        }
         if (id == BCBuildersGuis.FILLING_PLANNER.ordinal()) {
             return new ContainerFillingPlanner(player);
         }
@@ -116,12 +110,6 @@ public abstract class BCBuildersProxy implements IGuiHandler {
                 if (tile instanceof TileArchitectTable) {
                     TileArchitectTable library = (TileArchitectTable) tile;
                     return new GuiArchitectTable(new ContainerArchitectTable(player, library));
-                }
-            }
-            if (id == BCBuildersGuis.QUARRY.ordinal()) {
-                if (tile instanceof TileQuarry) {
-                    TileQuarry quarry = (TileQuarry) tile;
-                    return new GuiQuarry(new ContainerQuarry(player, quarry));
                 }
             }
             if (id == BCBuildersGuis.FILLING_PLANNER.ordinal()) {
