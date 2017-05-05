@@ -2,17 +2,15 @@ package buildcraft.silicon.tile;
 
 import java.io.IOException;
 import java.util.*;
-
-import javax.annotation.Nonnull;
-
-import com.google.common.collect.ImmutableSet;
+import java.util.stream.IntStream;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -21,7 +19,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.IAssemblyRecipeProvider;
-
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
@@ -35,45 +32,17 @@ import buildcraft.silicon.EnumAssemblyRecipeState;
 public class TileAssemblyTable extends TileLaserTableBase {
     public static final int NET_RECIPE_STATE = 10;
     public final ItemHandlerSimple inv = itemManager.addInvHandler("", 3 * 4, ItemHandlerManager.EnumAccess.BOTH, EnumPipePart.VALUES);
-    public SortedMap<AssemblyRecipe, EnumAssemblyRecipeState> recipesStates = new TreeMap<>(Comparator.comparing(assemblyRecipe -> assemblyRecipe.output.getItem().hashCode() + (assemblyRecipe.output
-        .getTagCompound() == null ? 0 : assemblyRecipe.output.getTagCompound().hashCode()) + assemblyRecipe.output.getMetadata() * assemblyRecipe.output.getMaxStackSize() + assemblyRecipe.output
-            .getCount()));
-
-    private boolean extract(ImmutableSet<ItemStack> items, boolean simulate) {
-        NonNullList<ItemStack> itemsNeeded = items.stream().map(ItemStack::copy).collect(StackUtil.nonNullListCollector());
-        for (int i = 0; i < inv.getSlots(); i++) {
-            @Nonnull
-            ItemStack stack = inv.getStackInSlot(i);
-            for (Iterator<ItemStack> iterator = itemsNeeded.iterator(); iterator.hasNext();) {
-                ItemStack itemStack = iterator.next();
-                if (StackUtil.canMerge(stack, itemStack) && !stack.isEmpty()) {
-                    int spend = Math.min(itemStack.getCount(), stack.getCount());
-                    itemStack.setCount(itemStack.getCount() - spend);
-                    if (!simulate) {
-                        stack.setCount(stack.getCount() - spend);
-                    }
-                    if (itemStack.getCount() <= 0) {
-                        iterator.remove();
-                    }
-                    if (!simulate) {
-                        if (stack.getCount() <= 0) {
-                            stack = ItemStack.EMPTY;
-                        }
-                        inv.setStackInSlot(i, stack);
-                    }
-                }
-            }
-        }
-        return itemsNeeded.size() == 0;
-    }
+    public SortedMap<AssemblyRecipe, EnumAssemblyRecipeState> recipesStates = new TreeMap<>();
 
     private void updateRecipes() {
+        AssemblyRecipeRegistry.INSTANCE.getRecipesFor(inv.stacks).forEach(recipe ->
+                recipesStates.putIfAbsent(recipe, EnumAssemblyRecipeState.POSSIBLE));
         boolean findActive = false;
-        for (Iterator<Map.Entry<AssemblyRecipe, EnumAssemblyRecipeState>> iterator = recipesStates.entrySet().iterator(); iterator.hasNext();) {
+        for (Iterator<Map.Entry<AssemblyRecipe, EnumAssemblyRecipeState>> iterator = recipesStates.entrySet().iterator(); iterator.hasNext(); ) {
             Map.Entry<AssemblyRecipe, EnumAssemblyRecipeState> entry = iterator.next();
             AssemblyRecipe recipe = entry.getKey();
             EnumAssemblyRecipeState state = entry.getValue();
-            boolean enough = extract(recipe.requiredStacks, true);
+            boolean enough = extract(inv, recipe.requiredStacks, true, false);
             if (state == EnumAssemblyRecipeState.POSSIBLE) {
                 if (!enough) {
                     iterator.remove();
@@ -101,22 +70,6 @@ public class TileAssemblyTable extends TileLaserTableBase {
                     state = EnumAssemblyRecipeState.SAVED_ENOUGH_ACTIVE;
                     entry.setValue(state);
                     break;
-                }
-            }
-        }
-        for (AssemblyRecipe recipe : AssemblyRecipeRegistry.INSTANCE.getAllRecipes()) {
-            if (!recipesStates.containsKey(recipe)) {
-                if (extract(recipe.requiredStacks, true)) {
-                    recipesStates.put(recipe, EnumAssemblyRecipeState.POSSIBLE);
-                }
-            }
-        }
-        for (IAssemblyRecipeProvider provider : AssemblyRecipeRegistry.INSTANCE.getAllRecipeProviders()) {
-            for (AssemblyRecipe recipe : provider.getRecipesFor(inv.stacks)) {
-                if (!recipesStates.containsKey(recipe)) {
-                    if (extract(recipe.requiredStacks, true)) {
-                        recipesStates.put(recipe, EnumAssemblyRecipeState.POSSIBLE);
-                    }
                 }
             }
         }
@@ -179,7 +132,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
 
         if (power >= getTarget() && getTarget() != 0) {
             AssemblyRecipe recipe = getActiveRecipe();
-            extract(recipe.requiredStacks, false);
+            extract(inv, recipe.requiredStacks, false, false);
 
             InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, recipe.output.copy());
 
@@ -195,7 +148,8 @@ public class TileAssemblyTable extends TileLaserTableBase {
         NBTTagList recipesStatesTag = new NBTTagList();
         recipesStates.forEach((recipe, state) -> {
             NBTTagCompound entryTag = new NBTTagCompound();
-            entryTag.setTag("recipe", recipe.writeToNBT());
+            entryTag.setString("recipe", recipe.name.toString());
+            if (recipe.recipeTag != null) entryTag.setTag("recipe_tag", recipe.recipeTag);
             entryTag.setInteger("state", state.ordinal());
             recipesStatesTag.appendTag(entryTag);
         });
@@ -210,7 +164,9 @@ public class TileAssemblyTable extends TileLaserTableBase {
         NBTTagList recipesStatesTag = nbt.getTagList("recipes_states", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < recipesStatesTag.tagCount(); i++) {
             NBTTagCompound entryTag = recipesStatesTag.getCompoundTagAt(i);
-            recipesStates.put(new AssemblyRecipe(entryTag.getCompoundTag("recipe")), EnumAssemblyRecipeState.values()[entryTag.getInteger("state")]);
+            String name = entryTag.getString("recipe");
+            NBTTagCompound recipeTag = entryTag.hasKey("recipe_tag") ? entryTag.getCompoundTag("recipe_tag") : null;
+            recipesStates.put(lookupRecipe(name, recipeTag), EnumAssemblyRecipeState.values()[entryTag.getInteger("state")]);
         }
     }
 
@@ -221,7 +177,8 @@ public class TileAssemblyTable extends TileLaserTableBase {
         if (id == NET_GUI_DATA) {
             buffer.writeInt(recipesStates.size());
             recipesStates.forEach((recipe, state) -> {
-                recipe.writeToBuffer(buffer);
+                buffer.writeString(recipe.name.toString());
+                buffer.writeCompoundTag(recipe.recipeTag);
                 buffer.writeInt(state.ordinal());
             });
         }
@@ -235,12 +192,13 @@ public class TileAssemblyTable extends TileLaserTableBase {
             recipesStates.clear();
             int count = buffer.readInt();
             for (int i = 0; i < count; i++) {
-                recipesStates.put(new AssemblyRecipe(buffer), EnumAssemblyRecipeState.values()[buffer.readInt()]);
+                AssemblyRecipe recipe = lookupRecipe(buffer.readString(), buffer.readCompoundTag());
+                recipesStates.put(recipe, EnumAssemblyRecipeState.values()[buffer.readInt()]);
             }
         }
 
         if (id == NET_RECIPE_STATE) {
-            AssemblyRecipe recipe = new AssemblyRecipe(buffer);
+            AssemblyRecipe recipe = lookupRecipe(buffer.readString(), buffer.readCompoundTag());
             EnumAssemblyRecipeState state = EnumAssemblyRecipeState.values()[buffer.readInt()];
             if (recipesStates.containsKey(recipe)) {
                 recipesStates.put(recipe, state);
@@ -250,7 +208,8 @@ public class TileAssemblyTable extends TileLaserTableBase {
 
     public void sendRecipeStateToServer(AssemblyRecipe recipe, EnumAssemblyRecipeState state) {
         IMessage message = createMessage(NET_RECIPE_STATE, (buffer) -> {
-            recipe.writeToBuffer(buffer);
+            buffer.writeString(recipe.name.toString());
+            buffer.writeCompoundTag(recipe.recipeTag);
             buffer.writeInt(state.ordinal());
         });
         MessageUtil.getWrapper().sendToServer(message);
@@ -266,5 +225,9 @@ public class TileAssemblyTable extends TileLaserTableBase {
     @Override
     public boolean hasWork() {
         return getActiveRecipe() != null;
+    }
+
+    private AssemblyRecipe lookupRecipe(String name, NBTTagCompound recipeTag) {
+        return AssemblyRecipeRegistry.INSTANCE.getRecipe(new ResourceLocation(name), recipeTag).orElseThrow(() -> new RuntimeException("Assembly recipe with name " + name + " not found"));
     }
 }

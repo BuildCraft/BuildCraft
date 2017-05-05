@@ -1,12 +1,14 @@
 package buildcraft.lib.recipe;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.recipes.IIntegrationRecipeProvider;
 import buildcraft.api.recipes.IIntegrationRecipeRegistry;
@@ -16,12 +18,12 @@ import buildcraft.lib.misc.StackUtil;
 
 public enum IntegrationRecipeRegistry implements IIntegrationRecipeRegistry {
     INSTANCE;
-    private final List<IntegrationRecipe> recipes = new ArrayList<>();
+    private final Map<ResourceLocation, IntegrationRecipe> recipes = new HashMap<>();
     private final List<IIntegrationRecipeProvider> providers = new ArrayList<>();
 
     @Override
     public IntegrationRecipe getRecipeFor(@Nonnull ItemStack target, NonNullList<ItemStack> toIntegrate) {
-        for (IntegrationRecipe recipe : recipes) {
+        for (IntegrationRecipe recipe : recipes.values()) {
             if (matches(recipe, target, toIntegrate)) {
                 return recipe;
             }
@@ -39,22 +41,30 @@ public enum IntegrationRecipeRegistry implements IIntegrationRecipeRegistry {
         if (!StackUtil.contains(recipe.target, target)) {
             return false;
         }
-        if (recipe.toIntegrate.size() != toIntegrate.size()) {
-            return false;
-        }
-        for (int i = 0; i < toIntegrate.size(); i++) {
-            ItemStack required = recipe.toIntegrate.get(i);
-            ItemStack given = toIntegrate.get(i);
-            if (!StackUtil.contains(required, given)) {
-                return false;
+        NonNullList<ItemStack> toIntegrateCopy = toIntegrate.stream().filter(stack -> !stack.isEmpty()).collect(StackUtil.nonNullListCollector());
+        boolean stackMatches = recipe.toIntegrate.stream().allMatch((definition) -> {
+            boolean matches = false;
+            Iterator<ItemStack> iterator = toIntegrateCopy.iterator();
+            while (iterator.hasNext()) {
+                ItemStack stack = iterator.next();
+                if (StackUtil.contains(definition, stack)) {
+                    matches = true;
+                    iterator.remove();
+                    break;
+                }
             }
-        }
-        return true;
+            return matches;
+        });
+        return stackMatches && toIntegrateCopy.isEmpty();
     }
 
     @Override
     public void addRecipe(IntegrationRecipe recipe) {
-        recipes.add(recipe);
+        if (recipes.containsKey(recipe.name)) {
+            throw new IllegalStateException("Trying to override integration recipe with name " + recipe.name + ".\n" +
+                    "If you want replace recipe remove old one first.");
+        }
+        recipes.put(recipe.name, recipe);
     }
 
     @Override
@@ -64,11 +74,19 @@ public enum IntegrationRecipeRegistry implements IIntegrationRecipeRegistry {
 
     @Override
     public Iterable<IntegrationRecipe> getAllRecipes() {
-        return recipes;
+        return recipes.values();
     }
 
     @Override
     public Iterable<IIntegrationRecipeProvider> getAllRecipeProviders() {
         return providers;
+    }
+
+    @Override
+    public Optional<IntegrationRecipe> getRecipe(@Nonnull ResourceLocation name, @Nullable NBTTagCompound recipeTag) {
+        IntegrationRecipe recipe = recipes.get(name);
+        if (recipe != null) return Optional.of(recipe);
+        return providers.stream().map(provider -> provider.getRecipe(name, recipeTag).orElse(null))
+                .filter(Objects::nonNull).findFirst();
     }
 }

@@ -4,11 +4,17 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.lib.inventory.filter;
 
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.item.ItemStack;
 
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.core.IStackFilter;
+import buildcraft.api.recipes.StackDefinition;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class OreStackFilter implements IStackFilter {
@@ -38,5 +44,18 @@ public class OreStackFilter implements IStackFilter {
         }
 
         return false;
+    }
+
+    @Override
+    public NonNullList<ItemStack> getExamples() {
+        return Arrays.stream(ores).map(OreDictionary::getOres).flatMap(Collection::stream).distinct().collect(StackUtil.nonNullListCollector());
+    }
+
+    public static StackDefinition definition(int count, String... ores) {
+        return new StackDefinition(new OreStackFilter(ores), count);
+    }
+
+    public static StackDefinition definition( String... ores) {
+        return definition(1, ores);
     }
 }
