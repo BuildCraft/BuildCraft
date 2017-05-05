@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import buildcraft.api.recipes.StackDefinition;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -81,6 +82,20 @@ public class StackUtil {
             }
         }
         return false;
+    }
+
+    /**
+     * Checks that passed stack meets stack definition requirements
+     */
+    public static boolean contains(@Nonnull StackDefinition stackDefinition, @Nonnull ItemStack stack) {
+        return !stack.isEmpty() && stackDefinition.filter.matches(stack) && stack.getCount() >= stackDefinition.count;
+    }
+
+    /**
+     * Checks that passed stack definition acceptable for stack collection
+     */
+    public static boolean contains(@Nonnull StackDefinition stackDefinition, @Nonnull NonNullList<ItemStack> stacks) {
+        return stacks.stream().anyMatch((stack) -> contains(stackDefinition, stack));
     }
 
     /** Checks to see if the given required stacks are all contained within the collection of containers. Note that this

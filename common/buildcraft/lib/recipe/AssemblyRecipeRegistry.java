@@ -1,9 +1,12 @@
 package buildcraft.lib.recipe;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import buildcraft.lib.BCLib;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 
 import buildcraft.api.recipes.AssemblyRecipe;
@@ -11,18 +14,19 @@ import buildcraft.api.recipes.IAssemblyRecipeProvider;
 import buildcraft.api.recipes.IAssemblyRecipeRegistry;
 
 import buildcraft.lib.misc.StackUtil;
+import net.minecraft.util.ResourceLocation;
 
 public enum AssemblyRecipeRegistry implements IAssemblyRecipeRegistry {
     INSTANCE;
 
-    private final List<AssemblyRecipe> recipes = new ArrayList<>();
+    private final Map<ResourceLocation, AssemblyRecipe> recipes = new HashMap<>();
     private final List<IAssemblyRecipeProvider> providers = new ArrayList<>();
 
     @Override
     public List<AssemblyRecipe> getRecipesFor(NonNullList<ItemStack> possibleIn) {
         List<AssemblyRecipe> all = new ArrayList<>();
-        for (AssemblyRecipe ar : recipes) {
-            if (StackUtil.containsAll(ar.requiredStacks, possibleIn)) {
+        for (AssemblyRecipe ar : recipes.values()) {
+            if (ar.requiredStacks.stream().allMatch((definition) -> StackUtil.contains(definition, possibleIn))) {
                 all.add(ar);
             }
         }
@@ -34,7 +38,11 @@ public enum AssemblyRecipeRegistry implements IAssemblyRecipeRegistry {
 
     @Override
     public void addRecipe(AssemblyRecipe recipe) {
-        recipes.add(recipe);
+        if (recipes.containsKey(recipe.name)) {
+            throw new IllegalStateException("Trying to override assembly recipe with name " + recipe.name + ".\n" +
+                    "If you want replace recipe remove old one first.");
+        }
+        recipes.put(recipe.name, recipe);
     }
 
     @Override
@@ -44,11 +52,19 @@ public enum AssemblyRecipeRegistry implements IAssemblyRecipeRegistry {
 
     @Override
     public Iterable<AssemblyRecipe> getAllRecipes() {
-        return recipes;
+        return recipes.values();
     }
 
     @Override
     public Iterable<IAssemblyRecipeProvider> getAllRecipeProviders() {
         return providers;
+    }
+
+    @Override
+    public Optional<AssemblyRecipe> getRecipe(@Nonnull ResourceLocation name, @Nullable NBTTagCompound recipeTag) {
+        AssemblyRecipe recipe = recipes.get(name);
+        if (recipe != null) return Optional.of(recipe);
+        return providers.stream().map(provider -> provider.getRecipe(name, recipeTag).orElse(null))
+                .filter(Objects::nonNull).findFirst();
     }
 }

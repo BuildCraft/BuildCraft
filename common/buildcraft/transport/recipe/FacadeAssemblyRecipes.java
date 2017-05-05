@@ -1,12 +1,15 @@
 package buildcraft.transport.recipe;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+import buildcraft.api.recipes.StackDefinition;
+import buildcraft.lib.inventory.filter.ArrayStackFilter;
+import buildcraft.transport.BCTransport;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 
 import buildcraft.api.mj.MjAPI;
@@ -22,6 +25,10 @@ import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
 import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
+import net.minecraft.util.ResourceLocation;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeViewable.IRecipePowered {
     INSTANCE;
@@ -52,10 +59,16 @@ public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeVie
     }
 
     private static void addRecipe(List<AssemblyRecipe> recipes, ItemStack from, FacadeBlockStateInfo info) {
-        ImmutableSet<ItemStack> stacks = ImmutableSet.of(from, new ItemStack(BCTransportItems.pipeStructure, 3));
+        ImmutableSet<StackDefinition> stacks = ImmutableSet.of(ArrayStackFilter.definition(from),
+                ArrayStackFilter.definition(3, BCTransportItems.pipeStructure));
 
-        recipes.add(new AssemblyRecipe(MJ_COST, stacks, createFacadeStack(info, false)));
-        recipes.add(new AssemblyRecipe(MJ_COST, stacks, createFacadeStack(info, true)));
+        NBTTagCompound recipeTag = new NBTTagCompound();
+        recipeTag.setTag("stack", from.serializeNBT());
+
+        String name = String.format("facade-normal-%s", info.state);
+        recipes.add(new AssemblyRecipe(new ResourceLocation(BCTransport.MODID, name), MJ_COST, stacks, createFacadeStack(info, false), recipeTag));
+        name = String.format("facade-hollow-%s", info.state);
+        recipes.add(new AssemblyRecipe(new ResourceLocation(BCTransport.MODID, name), MJ_COST, stacks, createFacadeStack(info, true), recipeTag));
     }
 
     public static ItemStack createFacadeStack(FacadeBlockStateInfo info, boolean isHollow) {
@@ -97,5 +110,23 @@ public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeVie
     @Override
     public ChangingObject<Long> getMjCost() {
         return MJ_COSTS;
+    }
+
+    @Override
+    public Optional<AssemblyRecipe> getRecipe(@Nonnull ResourceLocation name, @Nullable NBTTagCompound recipeTag) {
+        if (!name.getResourceDomain().equals(BCTransport.MODID) || !name.getResourcePath().startsWith("facade-") ||
+                recipeTag == null || !recipeTag.hasKey("stack")) return Optional.empty();
+        ItemStack stack = new ItemStack(recipeTag.getCompoundTag("stack"));
+        List<FacadeBlockStateInfo> infos = FacadeStateManager.stackFacades.get(new ItemStackKey(stack));
+        if (infos == null || infos.isEmpty()) {
+            return Optional.empty();
+        }
+        for (FacadeBlockStateInfo info : infos) {
+            List<AssemblyRecipe> recipes = new ArrayList<>();
+            addRecipe(recipes, stack, info);
+            Optional<AssemblyRecipe> recipe = recipes.stream().filter(r -> name.equals(r.name)).findFirst();
+            if (recipe.isPresent()) return recipe;
+        }
+        return Optional.empty();
     }
 }

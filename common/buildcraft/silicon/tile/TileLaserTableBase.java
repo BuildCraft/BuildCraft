@@ -2,8 +2,11 @@ package buildcraft.silicon.tile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
-import buildcraft.api.tiles.TilesAPI;
+import com.google.common.collect.ImmutableCollection;
+
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -16,11 +19,14 @@ import buildcraft.api.mj.ILaserTarget;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
+import buildcraft.api.tiles.TilesAPI;
+import buildcraft.api.recipes.StackDefinition;
 
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.data.AverageLong;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 public abstract class TileLaserTableBase extends TileBC_Neptune implements ILaserTarget, IHasWork, ITickable, IDebuggable {
     private static final long MJ_FLOW_ROUND = MjAPI.MJ / 10;
@@ -106,5 +112,30 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
             return (T) this;
         }
         return super.getCapability(capability, facing);
+    }
+
+    protected boolean extract(ItemHandlerSimple inv, ImmutableCollection<StackDefinition> items, boolean simulate, boolean precise) {
+        AtomicLong remainingStacks = new AtomicLong(inv.stacks.stream().filter(stack -> !stack.isEmpty()).count());
+        boolean allItemsConsumed = items.stream().allMatch((definition) -> {
+            int remaining = definition.count;
+            for (int i = 0; i < inv.getSlots() && remaining > 0; i++) {
+                ItemStack slotStack = inv.getStackInSlot(i);
+                if (slotStack.isEmpty()) continue;
+                if (definition.filter.matches(slotStack)) {
+                    int spend = Math.min(remaining, slotStack.getCount());
+                    remaining -= spend;
+                    if (!simulate) {
+                        slotStack.setCount(slotStack.getCount() - spend);
+                        inv.setStackInSlot(i, slotStack);
+                    }
+                }
+            }
+            if (remaining == 0) {
+                remainingStacks.decrementAndGet();
+                return true;
+            }
+            return false;
+        });
+        return allItemsConsumed && (!precise || remainingStacks.get() == 0);
     }
 }
