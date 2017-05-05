@@ -1,8 +1,13 @@
 package buildcraft.lib.client.guide.parts.recipe;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
+import buildcraft.api.recipes.StackDefinition;
+import buildcraft.lib.recipe.ChangingObject;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.recipes.AssemblyRecipe;
@@ -14,6 +19,7 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.IRecipeViewable.IRecipePowered;
+import net.minecraft.util.NonNullList;
 
 public enum GuideAssemblyRecipes implements IStackRecipes {
     INSTANCE;
@@ -22,11 +28,8 @@ public enum GuideAssemblyRecipes implements IStackRecipes {
     public List<GuidePartFactory> getUsages(ItemStack stack) {
         List<GuidePartFactory> usages = new ArrayList<>();
         for (AssemblyRecipe recipe : AssemblyRecipeRegistry.INSTANCE.getAllRecipes()) {
-            for (ItemStack req : recipe.requiredStacks) {
-                if (StackUtil.isCraftingEquivalent(req, stack, false)) {
-                    usages.add(new GuideAssemblyFactory(recipe.requiredStacks.toArray(new ItemStack[0]), recipe.output, recipe.requiredMicroJoules));
-                    break;
-                }
+            if (recipe.requiredStacks.stream().anyMatch((definition) -> definition.filter.matches(stack))) {
+                usages.add(getFactory(recipe));
             }
         }
         for (IAssemblyRecipeProvider adv : AssemblyRecipeRegistry.INSTANCE.getAllRecipeProviders()) {
@@ -47,7 +50,7 @@ public enum GuideAssemblyRecipes implements IStackRecipes {
         List<GuidePartFactory> recipes = new ArrayList<>();
         for (AssemblyRecipe recipe : AssemblyRecipeRegistry.INSTANCE.getAllRecipes()) {
             if (StackUtil.isCraftingEquivalent(recipe.output, stack, false)) {
-                recipes.add(new GuideAssemblyFactory(recipe.requiredStacks.toArray(new ItemStack[0]), recipe.output, recipe.requiredMicroJoules));
+                recipes.add(getFactory(recipe));
             }
         }
         for (IAssemblyRecipeProvider adv : AssemblyRecipeRegistry.INSTANCE.getAllRecipeProviders()) {
@@ -61,5 +64,14 @@ public enum GuideAssemblyRecipes implements IStackRecipes {
             }
         }
         return recipes;
+    }
+
+    private GuideAssemblyFactory getFactory(AssemblyRecipe recipe) {
+        ChangingItemStack[] stacks = recipe.requiredStacks.stream().map(definition -> {
+                NonNullList<ItemStack> items = definition.filter.getExamples().stream().map(ItemStack::copy).collect(StackUtil.nonNullListCollector());
+                items.forEach(stack -> stack.setCount(definition.count));
+                return items;
+        }).map(ChangingItemStack::new).toArray(ChangingItemStack[]::new);
+        return new GuideAssemblyFactory(stacks, ChangingItemStack.create(recipe.output), new ChangingObject<>(new Long[] { recipe.requiredMicroJoules }));
     }
 }

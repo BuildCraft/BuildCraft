@@ -1,21 +1,21 @@
 package buildcraft.silicon.tile;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import com.google.common.collect.ImmutableList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.recipes.IntegrationRecipe;
+import buildcraft.api.recipes.StackDefinition;
 
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
@@ -29,68 +29,26 @@ public class TileIntegrationTable extends TileLaserTableBase {
     public final ItemHandlerSimple invResult = itemManager.addInvHandler("result", 1, ItemHandlerManager.EnumAccess.INSERT, EnumPipePart.VALUES);
     public IntegrationRecipe recipe;
 
-    private boolean extract(ItemStack item, NonNullList<ItemStack> items, boolean simulate) {
+    private boolean extract(StackDefinition item, ImmutableList<StackDefinition> items, boolean simulate) {
         ItemStack targetStack = invTarget.getStackInSlot(0);
-        if (targetStack != null && StackUtil.canMerge(targetStack, item) && item.getCount() <= targetStack.getCount()) {
-            if (!simulate) {
-                targetStack.setCount(targetStack.getCount() - item.getCount());
-                invTarget.setStackInSlot(0, targetStack);
-            }
-        } else {
-            return false;
+        if (targetStack.isEmpty()) return false;
+        if (!StackUtil.contains(item, targetStack)) return false;
+        if (!extract(invToIntegrate, items, simulate, true)) return false;
+        if (!simulate) {
+            targetStack.setCount(targetStack.getCount() - item.count);
+            invTarget.setStackInSlot(0, targetStack);
         }
-        NonNullList<ItemStack> itemsNeeded = items.stream().map(ItemStack::copy).collect(StackUtil.nonNullListCollector());
-        for (int i = 0; i < invToIntegrate.getSlots(); i++) {
-            ItemStack stack = invToIntegrate.getStackInSlot(i);
-            boolean found = false;
-            for (Iterator<ItemStack> iterator = itemsNeeded.iterator(); iterator.hasNext();) {
-                ItemStack itemStack = iterator.next();
-                if (StackUtil.canMerge(stack, itemStack) && stack != null) {
-                    found = true;
-                    int spend = Math.min(itemStack.getCount(), stack.getCount());
-                    itemStack.setCount(itemStack.getCount() - spend);
-                    if (!simulate) {
-                        stack.setCount(stack.getCount() - spend);
-                    }
-                    if (itemStack.getCount() <= 0) {
-                        iterator.remove();
-                    }
-                    if (!simulate) {
-                        if (stack.getCount() <= 0) {
-                            stack = null;
-                        }
-                        invToIntegrate.setStackInSlot(i, stack);
-                    }
-                }
-            }
-            if (!found && stack != null) {
-                return false;
-            }
-        }
-        return itemsNeeded.size() == 0;
+        return true;
     }
 
     private boolean isSpaceEnough(ItemStack stack) {
         ItemStack output = invResult.getStackInSlot(0);
-        return output == null || (StackUtil.canMerge(stack, output) && stack.getCount() + output.getCount() <= stack.getMaxStackSize());
-    }
-
-    private boolean canUseRecipe(IntegrationRecipe recipe) {
-        return recipe != null && extract(recipe.target, recipe.toIntegrate, true) && isSpaceEnough(recipe.output);
+        return output.isEmpty() || (StackUtil.canMerge(stack, output) && stack.getCount() + output.getCount() <= stack.getMaxStackSize());
     }
 
     private void updateRecipe() {
-        if (canUseRecipe(recipe)) {
-            return;
-        }
-
-        recipe = null;
-        for (IntegrationRecipe possible : IntegrationRecipeRegistry.INSTANCE.getAllRecipes()) {
-            if (canUseRecipe(possible)) {
-                recipe = possible;
-                return;
-            }
-        }
+        if (recipe != null && extract(recipe.target, recipe.toIntegrate, true)) return;
+        recipe = IntegrationRecipeRegistry.INSTANCE.getRecipeFor(invTarget.getStackInSlot(0), invToIntegrate.stacks);
     }
 
     public long getTarget() {
@@ -107,10 +65,10 @@ public class TileIntegrationTable extends TileLaserTableBase {
 
         updateRecipe();
 
-        if (power >= getTarget() && getTarget() != 0) {
+        if (recipe != null && power >= getTarget() && isSpaceEnough(recipe.output)) {
             extract(recipe.target, recipe.toIntegrate, false);
             ItemStack result = invResult.getStackInSlot(0);
-            if (result != null) {
+            if (!result.isEmpty()) {
                 result = result.copy();
                 result.setCount(result.getCount() + recipe.output.getCount());
             } else {
@@ -127,7 +85,8 @@ public class TileIntegrationTable extends TileLaserTableBase {
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         if (recipe != null) {
-            nbt.setTag("recipe", recipe.writeToNBT());
+            nbt.setString("recipe", recipe.name.toString());
+            if (recipe.recipeTag != null) nbt.setTag("recipe_tag", recipe.recipeTag);
         }
         return nbt;
     }
@@ -136,7 +95,9 @@ public class TileIntegrationTable extends TileLaserTableBase {
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         if (nbt.hasKey("recipe")) {
-            recipe = new IntegrationRecipe(nbt.getCompoundTag("recipe"));
+            String name = nbt.getString("recipe");
+            NBTTagCompound recipeTag = nbt.hasKey("recipe_tag") ? nbt.getCompoundTag("recipe_tag") : null;
+            recipe = lookupRecipe(name, recipeTag);
         } else {
             recipe = null;
         }
@@ -149,7 +110,8 @@ public class TileIntegrationTable extends TileLaserTableBase {
         if (id == NET_GUI_DATA) {
             buffer.writeBoolean(recipe != null);
             if (recipe != null) {
-                recipe.writeToBuffer(buffer);
+                buffer.writeString(recipe.name.toString());
+                buffer.writeCompoundTag(recipe.recipeTag);
             }
         }
     }
@@ -160,7 +122,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
 
         if (id == NET_GUI_DATA) {
             if (buffer.readBoolean()) {
-                recipe = new IntegrationRecipe(buffer);
+                recipe = lookupRecipe(buffer.readString(), buffer.readCompoundTag());
             } else {
                 recipe = null;
             }
@@ -176,6 +138,12 @@ public class TileIntegrationTable extends TileLaserTableBase {
 
     @Override
     public boolean hasWork() {
-        return recipe != null;
+        return recipe != null && isSpaceEnough(recipe.output);
+    }
+
+    private IntegrationRecipe lookupRecipe(String name, NBTTagCompound recipeTag) {
+        return IntegrationRecipeRegistry.INSTANCE.getRecipe(new ResourceLocation(name), recipeTag).orElseThrow(() ->
+                new RuntimeException("Integration recipe with name " + name + " not found")
+        );
     }
 }
