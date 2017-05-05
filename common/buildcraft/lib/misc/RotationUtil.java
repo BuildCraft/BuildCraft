@@ -1,39 +1,11 @@
 package buildcraft.lib.misc;
 
-import buildcraft.lib.net.PacketBufferBC;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializer;
-import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 
-import java.io.IOException;
-
 public class RotationUtil {
-    public static final DataSerializer<EnumFacing.Axis> AXIS_SERIALIZER = new DataSerializer<EnumFacing.Axis>() {
-        @Override
-        public void write(PacketBuffer buf, EnumFacing.Axis value) {
-            new PacketBufferBC(buf).writeEnumValue(value);
-        }
-
-        @Override
-        public EnumFacing.Axis read(PacketBuffer buf) throws IOException {
-            return new PacketBufferBC(buf).readEnumValue(EnumFacing.Axis.class);
-        }
-
-        @Override
-        public DataParameter<EnumFacing.Axis> createKey(int id) {
-            return new DataParameter<>(id, this);
-        }
-    };
-
-    static {
-        DataSerializers.registerSerializer(AXIS_SERIALIZER);
-    }
-
     public static AxisAlignedBB rotateAABB(AxisAlignedBB aabb, EnumFacing facing) {
         if (facing == EnumFacing.DOWN) {
             return new AxisAlignedBB(aabb.minX, aabb.maxY, aabb.minZ, aabb.maxX, aabb.minY, aabb.maxZ);

@@ -3,7 +3,6 @@ package buildcraft.builders.entity;
 import buildcraft.builders.tile.TileQuarry;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.RotationUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
@@ -22,14 +21,14 @@ public class EntityQuarryFrame extends Entity {
     public static final int INIT_TIMEOUT = 20;
     public static final DataParameter<BlockPos> QUARRY_POS = EntityDataManager.createKey(EntityQuarryFrame.class, DataSerializers.BLOCK_POS);
     public static final DataParameter<BlockPos> FRAME_POS = EntityDataManager.createKey(EntityQuarryFrame.class, DataSerializers.BLOCK_POS);
-    public static final DataParameter<EnumFacing.Axis> AXIS = EntityDataManager.createKey(EntityQuarryFrame.class, RotationUtil.AXIS_SERIALIZER);
+    public static final DataParameter<Integer> AXIS = EntityDataManager.createKey(EntityQuarryFrame.class, DataSerializers.VARINT);
     public static final DataParameter<Integer> TIMEOUT = EntityDataManager.createKey(EntityQuarryFrame.class, DataSerializers.VARINT);
 
     public EntityQuarryFrame(World world) {
         super(world);
         dataManager.register(QUARRY_POS, BlockPos.ORIGIN);
         dataManager.register(FRAME_POS, BlockPos.ORIGIN);
-        dataManager.register(AXIS, EnumFacing.Axis.X);
+        dataManager.register(AXIS, 0);
         dataManager.register(TIMEOUT, INIT_TIMEOUT);
     }
 
@@ -41,7 +40,7 @@ public class EntityQuarryFrame extends Entity {
         prevPosX = framePos.getX();
         prevPosY = framePos.getY();
         prevPosZ = framePos.getZ();
-        dataManager.register(AXIS, axis);
+        dataManager.register(AXIS, axis.ordinal());
         dataManager.register(TIMEOUT, INIT_TIMEOUT);
     }
 
@@ -69,7 +68,7 @@ public class EntityQuarryFrame extends Entity {
         nbt.setTag("quarryPos", NBTUtilBC.writeBlockPos(dataManager.get(QUARRY_POS)));
         nbt.setTag("framePos", NBTUtilBC.writeBlockPos(dataManager.get(FRAME_POS)));
         nbt.setInteger("timeout", dataManager.get(TIMEOUT));
-        nbt.setTag("axis", NBTUtilBC.writeEnum(dataManager.get(AXIS)));
+        nbt.setInteger("axis", dataManager.get(AXIS));
     }
 
     @Override
@@ -77,7 +76,7 @@ public class EntityQuarryFrame extends Entity {
         dataManager.set(QUARRY_POS, NBTUtilBC.readBlockPos(nbt.getTag("quarryPos")));
         dataManager.set(FRAME_POS, NBTUtilBC.readBlockPos(nbt.getTag("framePos")));
         dataManager.set(TIMEOUT, nbt.getInteger("timeout"));
-        dataManager.set(AXIS, NBTUtilBC.readEnum(nbt.getTag("axis"), EnumFacing.Axis.class));
+        dataManager.set(AXIS, nbt.getInteger("axis"));
     }
 
     @Override
@@ -87,7 +86,7 @@ public class EntityQuarryFrame extends Entity {
             BlockPos min = tile.frameBox.min();
             BlockPos max = tile.frameBox.max();
             AxisAlignedBB boundingBox = null;
-            switch (dataManager.get(AXIS)) {
+            switch (EnumFacing.Axis.values()[dataManager.get(AXIS)]) {
                 case X:
                     boundingBox = BoundingBoxUtil.makeFrom(
                             new Vec3d(tile.drillPos.xCoord + 0.5, max.getY() + 0.5, min.getZ() + 1),

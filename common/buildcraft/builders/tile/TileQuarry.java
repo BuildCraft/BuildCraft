@@ -230,7 +230,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 List<EntityQuarryFrame> entities = allEntities.stream()
                         .filter(
                                 entity -> entity != null &&
-                                        entity.getDataManager().get(EntityQuarryFrame.AXIS) == axis &&
+                                        EnumFacing.Axis.values()[entity.getDataManager().get(EntityQuarryFrame.AXIS)] == axis &&
                                         entity.getDataManager().get(EntityQuarryFrame.QUARRY_POS).equals(pos) &&
                                         entity.getDataManager().get(EntityQuarryFrame.FRAME_POS).equals(currentPos)
                         )
