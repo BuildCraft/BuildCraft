@@ -70,7 +70,7 @@ public class SchematicBlockFactory {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    private static boolean setLevel(
+    private static void setLevel(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -80,10 +80,9 @@ public class SchematicBlockFactory {
             SchematicBlock schematicBlock
     ) {
         schematicBlock.level = BlockUtil.getFluidWithFlowing(world, pos) != null ? 1 : 0;
-        return true;
     }
 
-    private static boolean setRequiredBlockOffsets(
+    private static void setRequiredBlockOffsets(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -105,7 +104,7 @@ public class SchematicBlockFactory {
                 .forEach(propertyName ->
                         blockState.getProperties().keySet().stream()
                                 .filter(property -> property.getName().equals(propertyName))
-                                .map(property -> (PropertyDirection) property)
+                                .map(PropertyDirection.class::cast)
                                 .map(blockState::getValue)
                                 .map(EnumFacing::getOpposite)
                                 .map(EnumFacing::getDirectionVec)
@@ -116,17 +115,16 @@ public class SchematicBlockFactory {
             for (EnumFacing side : EnumFacing.values()) {
                 if (blockState.getProperties().keySet().stream()
                         .filter(property -> property.getName().equals(side.getName()))
-                        .map(property -> (PropertyBool) property)
+                        .map(PropertyBool.class::cast)
                         .anyMatch(blockState::getValue)) {
                     requiredBlockOffsets.add(new BlockPos(side.getDirectionVec()));
                 }
             }
         }
         schematicBlock.requiredBlockOffsets = requiredBlockOffsets;
-        return true;
     }
 
-    private static boolean setBlockState(
+    private static void setBlockState(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -136,10 +134,9 @@ public class SchematicBlockFactory {
             SchematicBlock schematicBlock
     ) {
         schematicBlock.blockState = blockState;
-        return true;
     }
 
-    private static boolean setIgnoredProperties(
+    private static void setIgnoredProperties(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -157,10 +154,9 @@ public class SchematicBlockFactory {
                                 .filter(property -> property.getName().equals(propertyName))
                 )
                 .collect(Collectors.toList());
-        return true;
     }
 
-    private static boolean setTileNbt(
+    private static void setTileNbt(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -177,10 +173,9 @@ public class SchematicBlockFactory {
             }
         }
         schematicBlock.tileNbt = tileNbt;
-        return true;
     }
 
-    private static boolean setIgnoredTags(
+    private static void setIgnoredTags(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -194,10 +189,9 @@ public class SchematicBlockFactory {
                 .filter(Objects::nonNull)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
-        return true;
     }
 
-    private static boolean setPlaceBlock(
+    private static void setPlaceBlock(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -216,10 +210,9 @@ public class SchematicBlockFactory {
                                 ? Blocks.AIR
                                 : block
                 );
-        return true;
     }
 
-    private static boolean setCanBeReplacedWithBlocks(
+    private static void setCanBeReplacedWithBlocks(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -238,10 +231,9 @@ public class SchematicBlockFactory {
                         Stream.of(block, schematicBlock.placeBlock)
                 )
                         .collect(Collectors.toCollection(HashSet::new));
-        return true;
     }
 
-    private static boolean setRequiredItems(
+    private static void setRequiredItems(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -288,7 +280,7 @@ public class SchematicBlockFactory {
                 .forEach(propertyName ->
                         blockState.getProperties().keySet().stream()
                                 .filter(property -> property.getName().equals(propertyName))
-                                .map(property -> (PropertyInteger) property)
+                                .map(PropertyInteger.class::cast)
                                 .map(blockState::getValue)
                                 .findFirst()
                                 .ifPresent(value -> requiredItems.forEach(stack -> stack.setCount(stack.getCount() * value)))
@@ -316,10 +308,9 @@ public class SchematicBlockFactory {
             requiredItems.clear();
         }
         schematicBlock.requiredItems = requiredItems;
-        return true;
     }
 
-    private static boolean setRequiredFluids(
+    private static void setRequiredFluids(
             World world,
             BlockPos basePos,
             BlockPos pos,
@@ -333,7 +324,6 @@ public class SchematicBlockFactory {
             requiredFluids.add(BlockUtil.drainBlock(world, pos, false));
         }
         schematicBlock.requiredFluids = requiredFluids;
-        return true;
     }
 
     public static SchematicBlock getSchematicBlock(
@@ -355,21 +345,24 @@ public class SchematicBlockFactory {
                 ignore = true;
             }
         }
+        Set<JsonRule> rules = null;
         if (!ignore) {
-            Set<JsonRule> rules = rulesCache.getUnchecked(blockState);
-            if (rules.stream().anyMatch(rule -> rule.ignore) ||
-                    !setLevel /*                  */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
-                    !setRequiredBlockOffsets /*   */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
-                    !setBlockState /*             */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
-                    !setIgnoredProperties /*      */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
-                    !setTileNbt /*                */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
-                    !setIgnoredTags /*            */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
-                    !setPlaceBlock /*             */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
-                    !setCanBeReplacedWithBlocks /**/(world, basePos, pos, blockState, block, rules, schematicBlock) ||
-                    !setRequiredItems /*          */(world, basePos, pos, blockState, block, rules, schematicBlock) ||
-                    !setRequiredFluids /*         */(world, basePos, pos, blockState, block, rules, schematicBlock)) {
+            rules = rulesCache.getUnchecked(blockState);
+            if (rules.stream().anyMatch(rule -> rule.ignore)) {
                 ignore = true;
             }
+        }
+        if (!ignore) {
+            setLevel /*                  */(world, basePos, pos, blockState, block, rules, schematicBlock);
+            setRequiredBlockOffsets /*   */(world, basePos, pos, blockState, block, rules, schematicBlock);
+            setBlockState /*             */(world, basePos, pos, blockState, block, rules, schematicBlock);
+            setIgnoredProperties /*      */(world, basePos, pos, blockState, block, rules, schematicBlock);
+            setTileNbt /*                */(world, basePos, pos, blockState, block, rules, schematicBlock);
+            setIgnoredTags /*            */(world, basePos, pos, blockState, block, rules, schematicBlock);
+            setPlaceBlock /*             */(world, basePos, pos, blockState, block, rules, schematicBlock);
+            setCanBeReplacedWithBlocks /**/(world, basePos, pos, blockState, block, rules, schematicBlock);
+            setRequiredItems /*          */(world, basePos, pos, blockState, block, rules, schematicBlock);
+            setRequiredFluids /*         */(world, basePos, pos, blockState, block, rules, schematicBlock);
         }
         if (ignore) {
             schematicBlock = getSchematicBlock(world, basePos, pos, Blocks.AIR.getDefaultState(), Blocks.AIR);
@@ -392,11 +385,8 @@ public class SchematicBlockFactory {
                     IBlockState blockState = world.getBlockState(pos);
                     Block block = blockState.getBlock();
                     Set<JsonRule> rules = rulesCache.getUnchecked(blockState);
-                    if (!setRequiredItems(world, FakeWorld.BLUEPRINT_OFFSET, pos, blockState, block, rules, schematicBlock) ||
-                            !setRequiredFluids(world, FakeWorld.BLUEPRINT_OFFSET, pos, blockState, block, rules, schematicBlock)) {
-                        schematicBlock.requiredItems = null;
-                        schematicBlock.requiredFluids = null;
-                    }
+                    setRequiredItems(world, FakeWorld.BLUEPRINT_OFFSET, pos, blockState, block, rules, schematicBlock);
+                    setRequiredFluids(world, FakeWorld.BLUEPRINT_OFFSET, pos, blockState, block, rules, schematicBlock);
                 }
             }
         }
