@@ -4,10 +4,11 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
+import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
+import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
 import buildcraft.builders.addon.AddonFillingPlanner;
 import buildcraft.builders.bpt.PerSaveBptStorage;
-import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
-import buildcraft.builders.snapshot.RulesLoader;
+import buildcraft.builders.snapshot.*;
 import buildcraft.core.BCCore;
 import buildcraft.core.marker.volume.AddonsRegistry;
 import buildcraft.lib.BCLib;
@@ -46,6 +47,27 @@ public class BCBuilders {
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCBuildersProxy.getProxy());
         AddonsRegistry.INSTANCE.register(new ResourceLocation("buildcraftbuilders", "filling_planner"), AddonFillingPlanner.class);
+
+        SchematicBlockFactoryRegistry.registerFactory(
+                "air",
+                0,
+                SchematicBlockAir::predicate,
+                SchematicBlockAir::new
+        );
+        SchematicBlockFactoryRegistry.registerFactory(
+                "default",
+                100,
+                SchematicBlockDefault::predicate,
+                SchematicBlockDefault::new
+        );
+
+        SchematicEntityFactoryRegistry.registerFactory(
+                "default",
+                100,
+                SchematicEntityDefault::predicate,
+                SchematicEntityDefault::new
+        );
+
         BCBuildersProxy.getProxy().fmlPreInit();
     }
 
@@ -57,7 +79,7 @@ public class BCBuilders {
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
-        RulesLoader.INSTANCE.loadAll();
+        RulesLoader.loadAll();
         GlobalSavedDataSnapshots.get(evt.getSide());
     }
 

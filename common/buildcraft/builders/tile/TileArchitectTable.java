@@ -5,6 +5,8 @@
 package buildcraft.builders.tile;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.api.schematics.ISchematicEntity;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.block.BlockArchitectTable;
@@ -53,8 +55,8 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     private Snapshot.EnumSnapshotType snapshotType = Snapshot.EnumSnapshotType.BLUEPRINT;
     private final Box box = new Box();
     private boolean[][][] templateScannedBlocks;
-    private SchematicBlock[][][] blueprintScannedBlocks;
-    private final List<SchematicEntity> blueprintScannedEntities = new ArrayList<>();
+    private ISchematicBlock<?>[][][] blueprintScannedBlocks;
+    private final List<ISchematicEntity<?>> blueprintScannedEntities = new ArrayList<>();
     private BoxIterator boxIterator;
     private boolean isValid = false;
     private boolean scanning = false;
@@ -148,7 +150,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         BlockPos size = box.size();
         if (templateScannedBlocks == null || blueprintScannedBlocks == null) {
             boxIterator = new BoxIterator(box, EnumAxisOrder.XZY.getMinToMaxOrder(), true);
-            blueprintScannedBlocks = new SchematicBlock[size.getX()][size.getY()][size.getZ()];
+            blueprintScannedBlocks = new ISchematicBlock<?>[size.getX()][size.getY()][size.getZ()];
             templateScannedBlocks = new boolean[size.getX()][size.getY()][size.getZ()];
         }
 
@@ -160,7 +162,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             templateScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = solid;
         }
         if (snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
-            SchematicBlock schematic = readSchematicForBlock(worldScanPos);
+            ISchematicBlock<?> schematic = readSchematicForBlock(worldScanPos);
             blueprintScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = schematic;
         }
 
@@ -177,8 +179,8 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         }
     }
 
-    private SchematicBlock readSchematicForBlock(BlockPos worldScanPos) {
-        return SchematicBlockFactory.getSchematicBlock(
+    private ISchematicBlock<?> readSchematicForBlock(BlockPos worldScanPos) {
+        return SchematicBlockManager.getSchematicBlock(
                 world,
                 pos.offset(world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite()),
                 worldScanPos,
@@ -194,7 +196,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
                         .getOpposite()
         );
         world.getEntitiesWithinAABB(Entity.class, box.getBoundingBox()).stream()
-                .map(entity -> SchematicEntityFactory.getSchematicEntity(world, basePos, entity))
+                .map(entity -> SchematicEntityManager.getSchematicEntity(world, basePos, entity))
                 .filter(Objects::nonNull)
                 .forEach(blueprintScannedEntities::add);
     }

@@ -1,5 +1,6 @@
 package buildcraft.builders.snapshot;
 
+import buildcraft.api.schematics.ISchematicBlock;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -124,7 +125,7 @@ public class FakeWorld extends World {
                             z == blueprint.size.getZ()) {
                         setBlockState(pos, Blocks.STONE.getDefaultState());
                     } else {
-                        SchematicBlock schematicBlock = blueprint.data[x][y][z];
+                        ISchematicBlock<?> schematicBlock = blueprint.data[x][y][z];
                         schematicBlock.buildWithoutChecks(this, pos);
                     }
                 }

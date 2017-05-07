@@ -1,8 +1,13 @@
 package buildcraft.builders.snapshot;
 
+import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.api.schematics.ISchematicEntity;
+import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
+import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.Box;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
@@ -15,8 +20,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Blueprint extends Snapshot {
-    public SchematicBlock[][][] data;
-    public List<SchematicEntity> entities;
+    public ISchematicBlock<?>[][][] data;
+    public List<ISchematicEntity<?>> entities;
 
     @Override
     public <T extends ITileForSnapshotBuilder> SnapshotBuilder<T> createBuilder(T tile) {
@@ -27,7 +32,7 @@ public class Blueprint extends Snapshot {
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = super.serializeNBT();
-        SchematicBlock[] serializedData = new SchematicBlock[size.getX() * size.getY() * size.getZ()];
+        ISchematicBlock<?>[] serializedData = new ISchematicBlock<?>[size.getX() * size.getY() * size.getZ()];
         int i = 0;
         for (int z = 0; z < size.getZ(); z++) {
             for (int y = 0; y < size.getY(); y++) {
@@ -36,22 +41,59 @@ public class Blueprint extends Snapshot {
                 }
             }
         }
-        nbt.setTag("data", NBTUtilBC.writeCompoundList(Stream.of(serializedData).map(SchematicBlock::serializeNBT)));
-        nbt.setTag("entities", NBTUtilBC.writeCompoundList(entities.stream().map(SchematicEntity::serializeNBT)));
+        nbt.setTag(
+                "data",
+                NBTUtilBC.writeCompoundList(
+                        Stream.of(serializedData)
+                                .map(schematicBlock -> {
+                                    NBTTagCompound schematicBlockTag = new NBTTagCompound();
+                                    schematicBlockTag.setString(
+                                            "name",
+                                            SchematicBlockFactoryRegistry
+                                                    .getFactoryByInstance(schematicBlock)
+                                                    .name
+                                                    .toString()
+                                    );
+                                    schematicBlockTag.setTag("data", schematicBlock.serializeNBT());
+                                    return schematicBlockTag;
+                                })
+                )
+        );
+        nbt.setTag(
+                "entities",
+                NBTUtilBC.writeCompoundList(
+                        entities.stream()
+                                .map(schematicEntity -> {
+                                    NBTTagCompound schematicEntityTag = new NBTTagCompound();
+                                    schematicEntityTag.setString(
+                                            "name",
+                                            SchematicEntityFactoryRegistry
+                                                    .getFactoryByInstance(schematicEntity)
+                                                    .name
+                                                    .toString()
+                                    );
+                                    schematicEntityTag.setTag("data", schematicEntity.serializeNBT());
+                                    return schematicEntityTag;
+                                })
+                )
+        );
         return nbt;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         super.deserializeNBT(nbt);
-        data = new SchematicBlock[size.getX()][size.getY()][size.getZ()];
-        SchematicBlock[] serializedData = NBTUtilBC.readCompoundList(nbt.getTagList("data", Constants.NBT.TAG_COMPOUND))
+        data = new ISchematicBlock<?>[size.getX()][size.getY()][size.getZ()];
+        ISchematicBlock<?>[] serializedData = NBTUtilBC.readCompoundList(nbt.getTagList("data", Constants.NBT.TAG_COMPOUND))
                 .map(schematicBlockTag -> {
-                    SchematicBlock schematicBlock = new SchematicBlock();
-                    schematicBlock.deserializeNBT(schematicBlockTag);
+                    ISchematicBlock<?> schematicBlock = SchematicBlockFactoryRegistry
+                            .getFactoryByName(new ResourceLocation(schematicBlockTag.getString("name")))
+                            .supplier
+                            .get();
+                    schematicBlock.deserializeNBT(schematicBlockTag.getCompoundTag("data"));
                     return schematicBlock;
                 })
-                .toArray(SchematicBlock[]::new);
+                .toArray(ISchematicBlock<?>[]::new);
         int i = 0;
         for (int z = 0; z < size.getZ(); z++) {
             for (int y = 0; y < size.getY(); y++) {
@@ -62,8 +104,11 @@ public class Blueprint extends Snapshot {
         }
         entities = NBTUtilBC.readCompoundList(nbt.getTagList("entities", Constants.NBT.TAG_COMPOUND))
                 .map(schematicEntityTag -> {
-                    SchematicEntity schematicEntity = new SchematicEntity();
-                    schematicEntity.deserializeNBT(schematicEntityTag);
+                    ISchematicEntity<?> schematicEntity = SchematicEntityFactoryRegistry
+                            .getFactoryByName(new ResourceLocation(schematicEntityTag.getString("name")))
+                            .supplier
+                            .get();
+                    schematicEntity.deserializeNBT(schematicEntityTag.getCompoundTag("data"));
                     return schematicEntity;
                 })
                 .collect(Collectors.toList());
@@ -79,23 +124,23 @@ public class Blueprint extends Snapshot {
         public final Rotation rotation;
         public final Box box;
         public final List<BlockPos> toBreak = new ArrayList<>();
-        public final Map<BlockPos, SchematicBlock> toPlace = new HashMap<>();
-        public final List<SchematicEntity> entities = new ArrayList<>();
+        public final Map<BlockPos, ISchematicBlock<?>> toPlace = new HashMap<>();
+        public final List<ISchematicEntity<?>> entities = new ArrayList<>();
         public final int maxLevel;
 
         public BuildingInfo(BlockPos basePos, Rotation rotation) {
             this.basePos = basePos;
             this.rotation = rotation;
-            SchematicBlockFactory.computeRequired(getSnapshot());
-            SchematicEntityFactory.computeRequired(getSnapshot());
+            SchematicBlockManager.computeRequired(getSnapshot());
+            SchematicEntityManager.computeRequired(getSnapshot());
             for (int z = 0; z < getSnapshot().size.getZ(); z++) {
                 for (int y = 0; y < getSnapshot().size.getY(); y++) {
                     for (int x = 0; x < getSnapshot().size.getX(); x++) {
-                        SchematicBlock schematicBlock = data[x][y][z];
+                        ISchematicBlock<?> schematicBlock = data[x][y][z];
                         BlockPos blockPos = new BlockPos(x, y, z).rotate(rotation)
                                 .add(basePos)
                                 .add(offset.rotate(rotation));
-                        if (schematicBlock.blockState.getBlock().isAir(schematicBlock.blockState, null, null)) {
+                        if (schematicBlock.isAir()) {
                             toBreak.add(blockPos);
                         } else {
                             toPlace.put(blockPos, schematicBlock.getRotated(rotation));
@@ -108,7 +153,7 @@ public class Blueprint extends Snapshot {
                     .forEach(entities::add);
             box = new Box();
             Stream.concat(toBreak.stream(), toPlace.keySet().stream()).forEach(box::extendToEncompass);
-            maxLevel = toPlace.values().stream().mapToInt(schematicBlock -> schematicBlock.level).max().orElse(0);
+            maxLevel = toPlace.values().stream().mapToInt(ISchematicBlock::getLevel).max().orElse(0);
         }
 
         public Blueprint getSnapshot() {

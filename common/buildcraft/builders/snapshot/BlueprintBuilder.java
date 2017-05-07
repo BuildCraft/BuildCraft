@@ -1,12 +1,13 @@
 package buildcraft.builders.snapshot;
 
+import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.api.schematics.ISchematicEntity;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.FluidUtilBC;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -41,7 +42,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                         .map(i -> 0),
                                 buildingInfo.toPlace.entrySet().stream()
                                         .filter(entry -> !isBlockCorrect(entry.getKey()))
-                                        .map(entry -> entry.getValue().level)
+                                        .map(entry -> entry.getValue().getLevel())
                         )
                                 .min(Integer::compare)
                                 .map(i -> i - 1)
@@ -132,29 +133,20 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     protected boolean canPlace(BlockPos blockPos) {
-        return getBuildingInfo().toPlace.get(blockPos).requiredBlockOffsets.stream()
+        return getBuildingInfo().toPlace.get(blockPos).getRequiredBlockOffsets().stream()
                 .map(blockPos::add)
                 .allMatch(pos ->
                         getBuildingInfo().toPlace.containsKey(pos) ? isBlockCorrect(pos) : !tile.getWorldBC().isAirBlock(pos)
                 ) &&
-                getBuildingInfo().toPlace.get(blockPos).level == getBuiltLevel() + 1 &&
-                getBuildingInfo().toPlace.get(blockPos).placeBlock != Blocks.AIR &&
-                (
-                        tile.getWorldBC().isAirBlock(blockPos) ||
-                                (
-                                        BlockUtil.getFluidWithFlowing(
-                                                getBuildingInfo().toPlace.get(blockPos).blockState.getBlock()
-                                        ) != null &&
-                                                BlockUtil.getFluidWithFlowing(tile.getWorldBC(), blockPos) != null &&
-                                                BlockUtil.getFluid(tile.getWorldBC(), blockPos) == null
-                                )
-                );
+                getBuildingInfo().toPlace.get(blockPos).getLevel() == getBuiltLevel() + 1 &&
+                !getBuildingInfo().toPlace.get(blockPos).isAir() &&
+                getBuildingInfo().toPlace.get(blockPos).canBuild(tile.getWorldBC(), blockPos);
     }
 
     @Override
     protected List<ItemStack> getToPlaceItems(BlockPos blockPos) {
-        SchematicBlock schematicBlock = getBuildingInfo().toPlace.get(blockPos);
-        return tryExtractRequired(schematicBlock.requiredItems, schematicBlock.requiredFluids);
+        ISchematicBlock<?> schematicBlock = getBuildingInfo().toPlace.get(blockPos);
+        return tryExtractRequired(schematicBlock.getRequiredItems(), schematicBlock.getRequiredFluids());
     }
 
     @Override
@@ -181,19 +173,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     protected boolean isBlockCorrect(BlockPos blockPos) {
         return getBuildingInfo() != null &&
                 getBuildingInfo().toPlace.containsKey(blockPos) &&
-                getBuildingInfo().toPlace.get(blockPos).blockState != null &&
-                getBuildingInfo().toPlace.get(blockPos).canBeReplacedWithBlocks.contains(
-                        tile.getWorldBC().getBlockState(blockPos).getBlock()
-                ) &&
-                getBuildingInfo().toPlace.get(blockPos).blockState.getPropertyKeys().stream()
-                        .filter(tile.getWorldBC().getBlockState(blockPos).getPropertyKeys()::contains)
-                        .filter(property -> !getBuildingInfo().toPlace.get(blockPos).ignoredProperties.contains(property))
-                        .allMatch(property ->
-                                Objects.equals(
-                                        getBuildingInfo().toPlace.get(blockPos).blockState.getValue(property),
-                                        tile.getWorldBC().getBlockState(blockPos).getValue(property)
-                                )
-                        );
+                getBuildingInfo().toPlace.get(blockPos).isBuilt(tile.getWorldBC(), blockPos);
     }
 
     @Override
@@ -226,11 +206,11 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                     buildingInfo.box.getBoundingBox(),
                     Objects::nonNull
             );
-            List<SchematicEntity> toSpawn = buildingInfo.entities.stream()
+            List<ISchematicEntity<?>> toSpawn = buildingInfo.entities.stream()
                     .filter(schematicEntity ->
                             entitiesWithinBox.stream()
                                     .map(Entity::getPositionVector)
-                                    .map(schematicEntity.pos.add(new Vec3d(buildingInfo.basePos))::distanceTo)
+                                    .map(schematicEntity.getPos().add(new Vec3d(buildingInfo.basePos))::distanceTo)
                                     .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE)
                     )
                     .collect(Collectors.toList());
@@ -243,15 +223,15 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                     .map(blockPos -> tile.getBlueprintBuildingInfo().toPlace.get(blockPos))
                                     .flatMap(schematicBlock ->
                                             getDisplayRequired(
-                                                    schematicBlock.requiredItems,
-                                                    schematicBlock.requiredFluids
+                                                    schematicBlock.getRequiredItems(),
+                                                    schematicBlock.getRequiredFluids()
                                             )
                                     ),
                             toSpawn.stream()
                                     .flatMap(schematicEntity ->
                                             getDisplayRequired(
-                                                    schematicEntity.requiredItems,
-                                                    schematicEntity.requiredFluids
+                                                    schematicEntity.getRequiredItems(),
+                                                    schematicEntity.getRequiredFluids()
                                             )
                                     )
                     ).collect(Collectors.toList())
@@ -261,11 +241,11 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                     .filter(entity ->
                             entity != null &&
                                     buildingInfo.entities.stream()
-                                            .map(schematicEntity -> schematicEntity.pos)
+                                            .map(ISchematicEntity::getPos)
                                             .map(new Vec3d(buildingInfo.basePos)::add)
                                             .map(entity.getPositionVector()::distanceTo)
                                             .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE) &&
-                                    SchematicEntityFactory.getSchematicEntity(
+                                    SchematicEntityManager.getSchematicEntity(
                                             tile.getWorldBC(),
                                             BlockPos.ORIGIN,
                                             entity
@@ -288,7 +268,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                     } else {
                         toSpawn.stream()
                                 .filter(schematicEntity ->
-                                        !tryExtractRequired(schematicEntity.requiredItems, schematicEntity.requiredFluids)
+                                        !tryExtractRequired(schematicEntity.getRequiredItems(), schematicEntity.getRequiredFluids())
                                                 .contains(ItemStack.EMPTY)
                                 )
                                 .forEach(schematicEntity -> schematicEntity.build(tile.getWorldBC(), buildingInfo.basePos));

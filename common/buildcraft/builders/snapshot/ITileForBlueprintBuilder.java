@@ -1,7 +1,6 @@
 package buildcraft.builders.snapshot;
 
 import buildcraft.api.inventory.IItemTransactor;
-
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.fluid.TankManager;
 
