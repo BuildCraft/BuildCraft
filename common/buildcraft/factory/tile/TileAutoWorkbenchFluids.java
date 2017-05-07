@@ -4,15 +4,15 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.AxisDirection;
 
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import buildcraft.api.core.EnumPipePart;
 
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.fluid.TankManager;
@@ -26,25 +26,14 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
 
     public TileAutoWorkbenchFluids() {
         super(4);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankManager, EnumPipePart.CENTER);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank1, EnumPipePart.DOWN, EnumPipePart.NORTH, EnumPipePart.WEST);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank2, EnumPipePart.UP, EnumPipePart.SOUTH, EnumPipePart.EAST);
     }
 
     @Override
     protected WorkbenchCrafting createCrafting() {
         return new WorkbenchCraftingFluids(2, 2);
-    }
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapUtil.CAP_FLUIDS) {
-            if (facing == null) {
-                return (T) tankManager;
-            } else if (facing.getAxisDirection() == AxisDirection.POSITIVE) {
-                return (T) tank1;
-            } else {
-                return (T) tank2;
-            }
-        }
-        return super.getCapability(capability, facing);
     }
 
     @Override

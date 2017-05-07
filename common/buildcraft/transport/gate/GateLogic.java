@@ -255,7 +255,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
 
     @Override
     public TileEntity getNeighbourTile(EnumFacing side) {
-        return getPipeHolder().getNeighbouringTile(side);
+        return getPipeHolder().getNeighbourTile(side);
     }
 
     @Override

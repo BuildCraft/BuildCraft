@@ -9,7 +9,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -17,6 +16,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
@@ -79,6 +79,8 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
         tankCoolant.helpInfo = new ElementHelpInfo(tankCoolant.helpInfo.title, 0xFF_55_55_FF, Tank.DEFAULT_HELP_KEY, null, "buildcraft.help.tank.coolant");
 
         tankResidue.helpInfo = new ElementHelpInfo(tankResidue.helpInfo.title, 0xFF_AA_33_AA, Tank.DEFAULT_HELP_KEY, null, "buildcraft.help.tank.residue");
+
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, fluidHandler, EnumPipePart.VALUES);
     }
 
     // TileEntity overrides
@@ -118,14 +120,6 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
                 tankManager.writeData(buffer);
             }
         }
-    }
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapUtil.CAP_FLUIDS) {
-            return facing != currentDirection ? (T) fluidHandler : null;
-        }
-        return super.getCapability(capability, facing);
     }
 
     // TileEngineBase overrrides

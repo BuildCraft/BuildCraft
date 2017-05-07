@@ -2,8 +2,8 @@
 	"elements": [
 		{
 			"comment": "Inner Pipe",
-			"from": [0, 6, 6],
-			"to": [16, 10, 10],
+			"from": [2, 4, 4],
+			"to": [16, 12, 12],
 			"faces": {
 				"up":    { "uv": [ 0, 0, 16, 4 ], "texture": "#sprite_a" },
 				"down":  { "uv": [ 0, 0, 16, 4 ], "texture": "#sprite_a" },
@@ -13,8 +13,8 @@
 		},
 		{
 			"comment": "Outer Pipe Center",
-			"from": [4, 4, 4],
-			"to": [12, 12, 12],
+			"from": [2, 2, 2],
+			"to": [14, 14, 14],
 			"faces": {
 				"up":    { "uv": [ 8, 8, 16, 16 ], "texture": "#sprite_b" },
 				"west":  { "uv": [ 8, 8, 16, 16 ], "texture": "#sprite_b", "rotation":90 },
@@ -24,8 +24,8 @@
 		},
 		{
 			"comment": "Outer Pipe To Middle",
-			"from": [12, 4, 4],
-			"to": [16, 12, 12],
+			"from": [14, 2, 2],
+			"to": [16, 14, 14],
 			"faces": {
 				"up":    { "uv": [ 0, 4, 4, 12 ], "texture": "#sprite_a" },
 				"down":  { "uv": [ 0, 4, 4, 12 ], "texture": "#sprite_a" },
@@ -35,8 +35,8 @@
 		},
 		{
 			"comment": "Outer Pipe To Out",
-			"from": [4, 0, 4],
-			"to": [12, 4, 12],
+			"from": [2, 0, 2],
+			"to": [14, 2, 14],
 			"faces": {
 				"east":  { "uv": [ 0, 4, 4, 12 ], "texture": "#sprite_a", "rotation":90 },
 				"west":  { "uv": [ 0, 4, 4, 12 ], "texture": "#sprite_a", "rotation":90 },

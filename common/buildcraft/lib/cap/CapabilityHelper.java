@@ -1,6 +1,7 @@
 package buildcraft.lib.cap;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
@@ -15,7 +16,7 @@ import buildcraft.api.core.EnumPipePart;
 
 /** Provides a simple way of mapping {@link Capability}'s to instances. Also allows for additional providers */
 public class CapabilityHelper implements ICapabilityProvider {
-    private final Map<EnumPipePart, Map<Capability<?>, Object>> caps = new EnumMap<>(EnumPipePart.class);
+    private final Map<EnumPipePart, Map<Capability<?>, Supplier<?>>> caps = new EnumMap<>(EnumPipePart.class);
     private final List<ICapabilityProvider> additional = new ArrayList<>();
 
     public CapabilityHelper() {
@@ -24,24 +25,31 @@ public class CapabilityHelper implements ICapabilityProvider {
         }
     }
 
-    private Map<Capability<?>, Object> getCapMap(EnumFacing facing) {
+    private Map<Capability<?>, Supplier<?>> getCapMap(EnumFacing facing) {
         return caps.get(EnumPipePart.fromFacing(facing));
     }
 
-    public <T> void addCapability(@Nullable Capability<T> cap, T instance, EnumFacing... faces) {
+    public <T> void addCapabilityInstance(@Nullable Capability<T> cap, T instance, EnumPipePart... parts) {
+        Supplier<T> supplier = () -> instance;
+        addCapability(cap, supplier, parts);
+    }
+
+    public <T> void addCapability(@Nullable Capability<T> cap, Supplier<T> getter, EnumPipePart... parts) {
         if (cap == null) {
             return;
         }
-        for (EnumFacing face : faces) {
-            getCapMap(face).put(cap, instance);
+        for (EnumPipePart part : parts) {
+            caps.get(part).put(cap, getter);
         }
     }
 
-    public <T> void addCapability(@Nullable Capability<T> cap, Supplier<T> supplier, EnumFacing... faces) {
+    public <T> void addCapability(@Nullable Capability<T> cap, Function<EnumFacing, T> getter, EnumPipePart... parts) {
         if (cap == null) {
             return;
         }
-        addCapability(cap, supplier.get(), faces);
+        for (EnumPipePart part : parts) {
+            caps.get(part).put(cap, () -> getter.apply(part.face));
+        }
     }
 
     public <T extends ICapabilityProvider> T addProvider(T provider) {
@@ -58,8 +66,10 @@ public class CapabilityHelper implements ICapabilityProvider {
 
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
-        if (getCapMap(facing).containsKey(capability)) {
-            return (T) getCapMap(facing).get(capability);
+        Map<Capability<?>, Supplier<?>> capMap = getCapMap(facing);
+        Supplier<?> supplier = capMap.get(capability);
+        if (supplier != null) {
+            return (T) supplier.get();
         }
         for (ICapabilityProvider provider : additional) {
             if (provider.hasCapability(capability, facing)) {

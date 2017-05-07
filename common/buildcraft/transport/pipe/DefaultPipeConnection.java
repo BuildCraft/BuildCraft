@@ -30,7 +30,7 @@ public enum DefaultPipeConnection implements ICustomPipeConnection {
             case WEST:
                 return (float) bb.minX;
             case EAST:
-                return 1 - (float) bb.minX;
+                return 1 - (float) bb.maxX;
             default:
                 return 0;
         }

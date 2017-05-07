@@ -22,6 +22,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pluggable.PipePluggable;
@@ -80,6 +81,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         for (EnumFacing side : EnumFacing.VALUES) {
             pluggables.put(side, new PluggableHolder(this, side));
         }
+        caps.addCapabilityInstance(PipeApi.CAP_PIPE_HOLDER, this, EnumPipePart.VALUES);
+        caps.addCapability(PipeApi.CAP_PIPE, this::getPipe, EnumPipePart.VALUES);
+        caps.addCapability(PipeApi.CAP_PLUG, this::getPluggable, EnumPipePart.FACES);
     }
 
     // Read + write
@@ -361,32 +365,12 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     }
 
     @Override
-    public TileEntity getNeighbouringTile(EnumFacing side) {
-        if (side == null) return null;
-        return world.getTileEntity(getPos().offset(side));
-        // TODO: Make caching work!
-        // WeakReference<TileEntity> weakRef = neighbourTiles.get(side);
-        // if (weakRef == null) {
-        // return null;
-        // }
-        // TileEntity tile = weakRef.get();
-        // if (tile == null) {
-        // return null;
-        // } else if (tile.isInvalid()) {
-        // neighbourTiles.remove(side);
-        // return null;
-        // }
-        // return tile;
-    }
-
-    @Override
-    public IPipe getNeighbouringPipe(EnumFacing side) {
-        TileEntity neighbour = getNeighbouringTile(side);
-        // TODO: move this function to allow for compat support!
-        if (neighbour instanceof IPipeHolder) {
-            return ((IPipeHolder) neighbour).getPipe();
+    public IPipe getNeighbourPipe(EnumFacing side) {
+        TileEntity neighbour = getNeighbourTile(side);
+        if (neighbour == null) {
+            return null;
         }
-        return null;
+        return neighbour.getCapability(PipeApi.CAP_PIPE, side.getOpposite());
     }
 
     @Override
@@ -402,7 +386,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             }
         }
         if (pipe.isConnected(side)) {
-            TileEntity neighour = getNeighbouringTile(side);
+            TileEntity neighour = getNeighbourTile(side);
             if (neighour != null) {
                 return neighour.getCapability(capability, side.getOpposite());
             }
@@ -471,7 +455,13 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                 if (plug.isBlocking()) return null;
             }
         }
-        return pipe == null ? null : pipe.getCapability(capability, facing);
+        if (pipe != null) {
+            T val = pipe.getCapability(capability, facing);
+            if (val != null) {
+                return val;
+            }
+        }
+        return super.getCapability(capability, facing);
     }
 
     // Client side stuffs

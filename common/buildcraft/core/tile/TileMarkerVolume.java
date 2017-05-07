@@ -7,7 +7,6 @@ package buildcraft.core.tile;
 import java.io.IOException;
 import java.util.List;
 
-import buildcraft.api.tiles.TilesAPI;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,12 +15,13 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.ITileAreaProvider;
+import buildcraft.api.tiles.TilesAPI;
 
 import buildcraft.core.BCCoreConfig;
 import buildcraft.core.marker.VolumeCache;
@@ -38,6 +38,10 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     public static final int NET_SIGNALS_OFF = 11;
 
     private boolean showSignals = false;
+
+    public TileMarkerVolume() {
+        caps.addCapabilityInstance(TilesAPI.CAP_TILE_AREA_PROVIDER, this, EnumPipePart.VALUES);
+    }
 
     public boolean isShowingSignals() {
         return showSignals;
@@ -185,14 +189,5 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
             }
         }
         return false;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == TilesAPI.CAP_TILE_AREA_PROVIDER) {
-            return (T) this;
-        }
-        return super.getCapability(capability, facing);
     }
 }

@@ -1,29 +1,31 @@
 package buildcraft.factory.tile;
 
-import buildcraft.api.mj.IMjReceiver;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjBattery;
-import buildcraft.api.mj.MjCapabilityHelper;
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.tiles.IHasWork;
-import buildcraft.api.tiles.TilesAPI;
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.lib.migrate.BCVersion;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBC_Neptune;
+import java.io.IOException;
+import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.capabilities.Capability;
+
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.io.IOException;
-import java.util.List;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.mj.IMjReceiver;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjBattery;
+import buildcraft.api.mj.MjCapabilityHelper;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.tiles.TilesAPI;
+
+import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.lib.migrate.BCVersion;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final int NET_LED_STATUS = 10;
@@ -46,6 +48,11 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
     protected abstract void mine();
 
     protected abstract IMjReceiver createMjReceiver();
+
+    public TileMiner() {
+        caps.addProvider(mjCapHelper);
+        caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, () -> !isComplete, EnumPipePart.VALUES);
+    }
 
     @Override
     public void update() {
@@ -211,21 +218,6 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
     @SideOnly(Side.CLIENT)
     public double getMaxRenderDistanceSquared() {
         return Double.MAX_VALUE;
-    }
-
-    // Capability
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        T cap = mjCapHelper.getCapability(capability, facing);
-        if (cap != null) {
-            return cap;
-        }
-        if (capability == TilesAPI.CAP_HAS_WORK) {
-            return (T) (IHasWork) () -> !isComplete;
-        }
-        return super.getCapability(capability, facing);
     }
 
     // Rendering

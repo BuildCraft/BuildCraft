@@ -1,5 +1,6 @@
 package buildcraft.factory.tile;
 
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.lib.fluid.SingleUseTank;
@@ -38,6 +39,7 @@ public class TilePump extends TileMiner {
 
     public TilePump() {
         tank.setCanFill(false);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank, EnumPipePart.VALUES);
     }
 
     @Override
@@ -245,15 +247,5 @@ public class TilePump extends TileMiner {
         super.getDebugInfo(left, right, side);
         left.add("fluid = " + tank.getDebugString());
         left.add("queue size = " + queue.size());
-    }
-
-    // Capabilities
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapUtil.CAP_FLUIDS) {
-            return (T) tank;
-        }
-        return super.getCapability(capability, facing);
     }
 }

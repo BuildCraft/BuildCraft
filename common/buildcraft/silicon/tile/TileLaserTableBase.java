@@ -11,16 +11,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.ILaserTarget;
 import buildcraft.api.mj.MjAPI;
+import buildcraft.api.recipes.StackDefinition;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.tiles.TilesAPI;
-import buildcraft.api.recipes.StackDefinition;
 
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.data.AverageLong;
@@ -33,6 +33,10 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
     private final AverageLong avgPower = new AverageLong(120);
     public long avgPowerClient;
     public long power;
+
+    public TileLaserTableBase() {
+        caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, this, EnumPipePart.VALUES);
+    }
 
     @Override
     public boolean requiresLaserPower() {
@@ -103,15 +107,6 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
         left.add("power - " + LocaleUtil.localizeMj(power));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == TilesAPI.CAP_HAS_WORK) {
-            return (T) this;
-        }
-        return super.getCapability(capability, facing);
     }
 
     protected boolean extract(ItemHandlerSimple inv, ImmutableCollection<StackDefinition> items, boolean simulate, boolean precise) {

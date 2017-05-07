@@ -15,7 +15,7 @@ public class FilterEventHandler {
             if (!event.isAllowed(side)) {
                 continue;
             }
-            IPipe neighbour = event.holder.getNeighbouringPipe(side);
+            IPipe neighbour = event.holder.getNeighbourPipe(side);
             if (neighbour == null) {
                 continue;
             }

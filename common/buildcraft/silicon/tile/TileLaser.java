@@ -13,7 +13,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -49,6 +48,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         super();
         battery = new MjBattery(1024 * MjAPI.MJ);
         mjCapHelper = new MjCapabilityHelper(new MjBatteryReciver(battery));
+        caps.addProvider(mjCapHelper);
     }
 
     private void findTarget() {
@@ -219,15 +219,6 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         left.add("target = " + targetPos);
         left.add("laser = " + laserPos);
         left.add("average = " + LocaleUtil.localizeMjFlow(averageClient == 0 ? (long) avgPower.getAverage() : averageClient));
-    }
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        T cap = mjCapHelper.getCapability(capability, facing);
-        if (cap != null) {
-            return cap;
-        }
-        return super.getCapability(capability, facing);
     }
 
     @Override

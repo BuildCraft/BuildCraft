@@ -44,6 +44,23 @@ public class PositionUtil {
         return set.build();
     }
 
+    public static boolean isOnEdge(BlockPos min, BlockPos max, BlockPos pos) {
+        if (min == null || max == null || pos == null) {
+            return false;
+        }
+        int same = 0;
+        if (min.getX() == pos.getX() || max.getX() == pos.getX()) {
+            same++;
+        }
+        if (min.getY() == pos.getY() || max.getY() == pos.getY()) {
+            same++;
+        }
+        if (min.getZ() == pos.getZ() || max.getZ() == pos.getZ()) {
+            same++;
+        }
+        return same >= 2;
+    }
+
     public static boolean isNextTo(BlockPos one, BlockPos two) {
         BlockPos diff = one.subtract(two);
         boolean x = diff.getX() == 1 || diff.getX() == -1;
@@ -200,6 +217,78 @@ public class PositionUtil {
         }
     }
 
+    /** Returns a list of all the block positions on the edge of the given box. */
+    public static ImmutableList<BlockPos> getAllOnEdge(BlockPos min, BlockPos max) {
+        ImmutableList.Builder<BlockPos> list = ImmutableList.builder();
+        boolean addX = max.getX() != min.getX();
+        boolean addY = max.getY() != min.getY();
+        boolean addZ = max.getZ() != min.getZ();
+        if (addX & addY & addZ) {
+            return getAllOnEdgeFull(min, max);
+        }
+        for (int x = min.getX(); x <= max.getX(); x++) {
+            list.add(new BlockPos(x, min.getY(), min.getZ()));
+            if (addY) {
+                list.add(new BlockPos(x, max.getY(), min.getZ()));
+                if (addZ) {
+                    list.add(new BlockPos(x, max.getY(), max.getZ()));
+                }
+            } else if (addZ) {
+                list.add(new BlockPos(x, min.getY(), max.getZ()));
+            }
+        }
+        if (addY) {
+            for (int y = min.getY() + 1; y < max.getY(); y++) {
+                list.add(new BlockPos(min.getX(), y, min.getZ()));
+                if (addX) {
+                    list.add(new BlockPos(max.getX(), y, min.getZ()));
+                    if (addZ) {
+                        list.add(new BlockPos(max.getX(), y, max.getZ()));
+                    }
+                } else if (addZ) {
+                    list.add(new BlockPos(min.getX(), y, max.getZ()));
+                }
+            }
+        }
+        if (addZ) {
+            for (int z = min.getZ() + 1; z < max.getZ(); z++) {
+                list.add(new BlockPos(min.getX(), min.getY(), z));
+                if (addX) {
+                    list.add(new BlockPos(max.getX(), min.getY(), z));
+                    if (addY) {
+                        list.add(new BlockPos(max.getX(), max.getY(), z));
+                    }
+                } else {
+                    list.add(new BlockPos(min.getX(), max.getY(), z));
+                }
+            }
+        }
+        return list.build();
+    }
+
+    private static ImmutableList<BlockPos> getAllOnEdgeFull(BlockPos min, BlockPos max) {
+        ImmutableList.Builder<BlockPos> list = ImmutableList.builder();
+        for (int x = min.getX(); x <= max.getX(); x++) {
+            list.add(new BlockPos(x, min.getY(), min.getZ()));
+            list.add(new BlockPos(x, max.getY(), min.getZ()));
+            list.add(new BlockPos(x, max.getY(), max.getZ()));
+            list.add(new BlockPos(x, min.getY(), max.getZ()));
+        }
+        for (int y = min.getY() + 1; y < max.getY(); y++) {
+            list.add(new BlockPos(min.getX(), y, min.getZ()));
+            list.add(new BlockPos(max.getX(), y, min.getZ()));
+            list.add(new BlockPos(max.getX(), y, max.getZ()));
+            list.add(new BlockPos(min.getX(), y, max.getZ()));
+        }
+        for (int z = min.getZ() + 1; z < max.getZ(); z++) {
+            list.add(new BlockPos(min.getX(), min.getY(), z));
+            list.add(new BlockPos(max.getX(), min.getY(), z));
+            list.add(new BlockPos(max.getX(), max.getY(), z));
+            list.add(new BlockPos(min.getX(), max.getY(), z));
+        }
+        return list.build();
+    }
+
     /** Returns a list of all the block positions between from and to (mostly).
      * <p>
      * Does not return the "from" co-ordinate, but does include the "to" co-ordinate (provided that from does not equal
@@ -255,17 +344,17 @@ public class PositionUtil {
 
     public static BlockPos randomBlockPos(Random rand, BlockPos size) {
         return new BlockPos(//
-                rand.nextInt(size.getX()),//
-                rand.nextInt(size.getY()),//
-                rand.nextInt(size.getZ())//
+            rand.nextInt(size.getX()),//
+            rand.nextInt(size.getY()),//
+            rand.nextInt(size.getZ())//
         );
     }
 
     public static BlockPos randomBlockPos(Random rand, BlockPos min, BlockPos max) {
         return new BlockPos(//
-                min.getX() + rand.nextInt(max.getX() - min.getX()),//
-                min.getY() + rand.nextInt(max.getY() - min.getY()),//
-                min.getZ() + rand.nextInt(max.getZ() - min.getZ())//
+            min.getX() + rand.nextInt(max.getX() - min.getX()),//
+            min.getY() + rand.nextInt(max.getY() - min.getY()),//
+            min.getZ() + rand.nextInt(max.getZ() - min.getZ())//
         );
     }
 }

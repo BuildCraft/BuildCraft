@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
@@ -27,6 +28,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
@@ -50,6 +52,7 @@ import buildcraft.lib.debug.IAdvDebugTarget;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.delta.DeltaManager.EnumDeltaMessage;
 import buildcraft.lib.migrate.BCVersion;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.PermissionUtil;
 import buildcraft.lib.misc.PermissionUtil.PermissionBlock;
@@ -127,6 +130,58 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         String regName = TagManager.getTag(id, EnumTagType.REGISTRY_NAME);
         String[] alternatives = TagManager.getMultiTag(id, EnumTagTypeMulti.OLD_REGISTRY_NAME);
         GameRegistry.registerTileEntityWithAlternatives(tileClass, regName, alternatives);
+    }
+
+    // ##############################
+    //
+    // Local blockstate + tile entity getters
+    //
+    // Some of these (may) use a cached version
+    // at some point in the future, or are already
+    // based on a cache.
+    //
+    // ################################
+
+    public final IBlockState getCurrentState() {
+        return BlockUtil.getBlockState(getWorld(), getPos());
+    }
+
+    @Nullable
+    public final IBlockState getCurrentStateForBlock(Block expectedBlock) {
+        IBlockState state = getCurrentState();
+        if (state.getBlock() == expectedBlock) {
+            return state;
+        }
+        return null;
+    }
+
+    public final IBlockState getNeighbourState(EnumFacing offset) {
+        return getOffsetState(offset.getDirectionVec());
+    }
+
+    /** @param offset The position of the {@link IBlockState}, <i>relative</i> to this {@link TileEntity#getPos()} . */
+    public final IBlockState getOffsetState(Vec3i offset) {
+        return getLocalState(getPos().add(offset));
+    }
+
+    /** @param pos The <i>absolute</i> position of the {@link IBlockState} . */
+    public final IBlockState getLocalState(BlockPos pos) {
+        return BlockUtil.getBlockState(getWorld(), pos);
+    }
+
+    public final TileEntity getNeighbourTile(EnumFacing offset) {
+        return getOffsetTile(offset.getDirectionVec());
+    }
+
+    /** @param offset The position of the {@link TileEntity} to retrieve, <i>relative</i> to this
+     *            {@link TileEntity#getPos()} . */
+    public final TileEntity getOffsetTile(Vec3i offset) {
+        return getLocalTile(getPos().add(offset));
+    }
+
+    /** @param pos The <i>absolute</i> position of the {@link TileEntity} . */
+    public final TileEntity getLocalTile(BlockPos pos) {
+        return BlockUtil.getTileEntity(getWorld(), pos);
     }
 
     // ##################

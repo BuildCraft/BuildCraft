@@ -4,6 +4,35 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.tile;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import com.google.common.collect.ImmutableList;
+
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.Rotation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandlerModifiable;
+
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IPathProvider;
 import buildcraft.api.inventory.IItemTransactor;
@@ -12,6 +41,7 @@ import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
+
 import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.snapshot.*;
@@ -28,53 +58,19 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
-import com.google.common.collect.ImmutableList;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandlerModifiable;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder {
     public final ItemHandlerSimple invBlueprint = itemManager.addInvHandler("blueprint", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
     public final ItemHandlerSimple invResources = itemManager.addInvHandler("resources", 27, EnumAccess.NONE, EnumPipePart.VALUES);
-    private final TankManager<Tank> tankManager = new TankManager<>(
-            new Tank("fluid1", Fluid.BUCKET_VOLUME * 8, this),
-            new Tank("fluid2", Fluid.BUCKET_VOLUME * 8, this),
-            new Tank("fluid3", Fluid.BUCKET_VOLUME * 8, this),
-            new Tank("fluid4", Fluid.BUCKET_VOLUME * 8, this)
-    );
+    private final TankManager<Tank> tankManager = new TankManager<>();
+
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
     private final IMjReceiver mjReceiver = new MjBatteryReciver(battery);
     private final MjCapabilityHelper mjCapHelper = new MjCapabilityHelper(mjReceiver);
-    /**
-     * Stores the real path - just a few block positions.
-     */
+
+    /** Stores the real path - just a few block positions. */
     public List<BlockPos> path = null;
-    /**
-     * Stores the real path plus all possible block positions inbetween.
-     */
+    /** Stores the real path plus all possible block positions inbetween. */
     private List<BlockPos> basePoses = new ArrayList<>();
     private int currentBasePosIndex = 0;
     private Snapshot snapshot = null;
@@ -84,6 +80,14 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     public TemplateBuilder templateBuilder = new TemplateBuilder(this);
     public BlueprintBuilder blueprintBuilder = new BlueprintBuilder(this);
     private Box currentBox = new Box();
+
+    public TileBuilder() {
+        for (int i = 1; i <= 4; i++) {
+            tankManager.add(new Tank("fluid" + i, Fluid.BUCKET_VOLUME * 8, this));
+        }
+        caps.addProvider(mjCapHelper);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankManager, EnumPipePart.VALUES);
+    }
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, ItemStack before, ItemStack after) {
@@ -111,10 +115,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
         if (snapshot != null && getCurrentBasePos() != null) {
             snapshotType = snapshot.getType();
             EnumFacing facing = world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING);
-            Rotation rotation = Arrays.stream(Rotation.values())
-                    .filter(r -> r.rotate(snapshot.facing) == facing)
-                    .findFirst()
-                    .orElse(null);
+            Rotation rotation = Arrays.stream(Rotation.values()).filter(r -> r.rotate(snapshot.facing) == facing).findFirst().orElse(null);
             if (snapshot.getType() == Snapshot.EnumSnapshotType.TEMPLATE) {
                 templateBuildingInfo = ((Template) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
             }
@@ -264,27 +265,9 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         if (nbt.hasKey("path")) {
-            path = NBTUtilBC.readCompoundList(nbt.getTagList("path", Constants.NBT.TAG_COMPOUND))
-                    .map(NBTUtil::getPosFromTag)
-                    .collect(Collectors.toList());
+            path = NBTUtilBC.readCompoundList(nbt.getTagList("path", Constants.NBT.TAG_COMPOUND)).map(NBTUtil::getPosFromTag).collect(Collectors.toList());
         }
-        basePoses = NBTUtilBC.readCompoundList(nbt.getTagList("basePoses", Constants.NBT.TAG_COMPOUND))
-                .map(NBTUtil::getPosFromTag)
-                .collect(Collectors.toList());
-    }
-
-    // Capability
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapUtil.CAP_FLUIDS) {
-            // noinspection unchecked
-            return (T) tankManager;
-        }
-        if (mjCapHelper.getCapability(capability, facing) != null) {
-            return mjCapHelper.getCapability(capability, facing);
-        }
-        return super.getCapability(capability, facing);
+        basePoses = NBTUtilBC.readCompoundList(nbt.getTagList("basePoses", Constants.NBT.TAG_COMPOUND)).map(NBTUtil::getPosFromTag).collect(Collectors.toList());
     }
 
     // Rendering
