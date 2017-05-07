@@ -5,6 +5,7 @@
 package buildcraft.builders.tile;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.ISchematicEntity;
 import buildcraft.api.tiles.IDebuggable;
@@ -32,6 +33,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
@@ -80,8 +82,10 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             return;
         }
         WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
-        IBlockState blockState = world.getBlockState(getPos());
-        VolumeBox volumeBox = volumeBoxes.getBoxAt(getPos().offset(blockState.getValue(BlockArchitectTable.PROP_FACING).getOpposite()));
+        IBlockState blockState = world.getBlockState(pos);
+        BlockPos offsetPos = pos.offset(blockState.getValue(BlockArchitectTable.PROP_FACING).getOpposite());
+        VolumeBox volumeBox = volumeBoxes.getBoxAt(offsetPos);
+        TileEntity tile = world.getTileEntity(offsetPos);
         if (volumeBox != null) {
             box.reset();
             box.setMin(volumeBox.box.min());
@@ -98,11 +102,18 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             );
             volumeBoxes.markDirty();
             sendNetworkUpdate(NET_BOX);
+        } else if (tile instanceof IAreaProvider) {
+            IAreaProvider provider = (IAreaProvider) tile;
+            box.reset();
+            box.setMin(provider.min());
+            box.setMax(provider.max());
+            isValid = true;
+            provider.removeFromWorld();
         } else {
             isValid = false;
-            IBlockState state = world.getBlockState(getPos());
+            IBlockState state = world.getBlockState(pos);
             state = state.withProperty(BlockArchitectTable.PROP_VALID, Boolean.FALSE);
-            world.setBlockState(getPos(), state);
+            world.setBlockState(pos, state);
         }
     }
 
@@ -191,7 +202,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
 
     private void scanEntities() {
         BlockPos basePos = pos.offset(
-                world.getBlockState(getPos())
+                world.getBlockState(pos)
                         .getValue(BlockArchitectTable.PROP_FACING)
                         .getOpposite()
         );
@@ -202,7 +213,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     private void finishScanning() {
-        EnumFacing facing = world.getBlockState(getPos()).getValue(BlockArchitectTable.PROP_FACING);
+        EnumFacing facing = world.getBlockState(pos).getValue(BlockArchitectTable.PROP_FACING);
         Snapshot snapshot = snapshotType.create.get();
         snapshot.size = box.size();
         snapshot.facing = facing;
@@ -319,7 +330,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        return BoundingBoxUtil.makeFrom(getPos(), box);
+        return BoundingBoxUtil.makeFrom(pos, box);
     }
 
     @Override
