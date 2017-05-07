@@ -111,14 +111,14 @@ public final class StringUtilBC {
 
     public static String replaceCharactersForFilename(String original) {
         return original
-                .replaceAll("/", "-")
-                .replaceAll("\\\\", "-")
-                .replaceAll(":", "-")
-                .replaceAll("\\*", "-")
-                .replaceAll("\\?", "-")
-                .replaceAll("\"", "-")
-                .replaceAll("<", "-")
-                .replaceAll(">", "-")
-                .replaceAll("\\|", "-");
+                .replace("/", "-")
+                .replace("\\", "-")
+                .replace(":", "-")
+                .replace("*", "-")
+                .replace("?", "-")
+                .replace("\"", "-")
+                .replace("<", "-")
+                .replace(">", "-")
+                .replace("|", "-");
     }
 }
