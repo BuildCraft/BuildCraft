@@ -1,6 +1,7 @@
 package buildcraft.builders.snapshot;
 
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -102,6 +103,7 @@ public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
             )
                     .filter(Objects::nonNull)
                     .map(Object::toString)
+                    .map(StringUtilBC::replaceCharactersForFilename)
                     .collect(Collectors.joining(";"));
         }
 

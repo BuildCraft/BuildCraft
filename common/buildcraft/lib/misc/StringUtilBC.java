@@ -108,4 +108,17 @@ public final class StringUtilBC {
         builder.append(vec.getZ());
         return builder.toString();
     }
+
+    public static String replaceCharactersForFilename(String original) {
+        return original
+                .replaceAll("/", "-")
+                .replaceAll("\\\\", "-")
+                .replaceAll(":", "-")
+                .replaceAll("\\*", "-")
+                .replaceAll("\\?", "-")
+                .replaceAll("\"", "-")
+                .replaceAll("<", "-")
+                .replaceAll(">", "-")
+                .replaceAll("\\|", "-");
+    }
 }
