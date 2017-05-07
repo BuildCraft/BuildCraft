@@ -146,6 +146,10 @@
         "ignoredProperties": ["power"]
     },
     {
+        "selectors": ["minecraft:dispenser"],
+        "ignoredProperties": ["triggered"]
+    },
+    {
         "selectors": [
             "minecraft:cactus",
             "minecraft:redstone_wire",
