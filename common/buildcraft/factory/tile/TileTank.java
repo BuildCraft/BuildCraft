@@ -13,7 +13,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -21,6 +20,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.api.core.SafeTimeTracker;
@@ -47,6 +47,10 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     private int target;
     private int amount, amountLast;
     private long lastMessage, lastMessageMinus1;
+
+    public TileTank() {
+        caps.addCapability(CapUtil.CAP_FLUIDS, this, EnumPipePart.VALUES);
+    }
 
     // ITickable
 
@@ -176,16 +180,6 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
             amount = tank.getCapacity();
         }
         return amount;
-    }
-
-    // Capabilities
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapUtil.CAP_FLUIDS) {
-            return (T) this;// Nothing we can do about this warning provided that "this" always implements IFluidHandler
-        }
-        return super.getCapability(capability, facing);
     }
 
     // Tank helper methods

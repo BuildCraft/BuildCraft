@@ -49,7 +49,7 @@ public class WireSystem {
         if (pipe == null) {
             return false;
         }
-        IPipe oPipe = holder.getNeighbouringPipe(side);
+        IPipe oPipe = holder.getNeighbourPipe(side);
         if (oPipe == null) {
             return false;
         }

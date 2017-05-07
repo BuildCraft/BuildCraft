@@ -62,6 +62,10 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     public AddonFillingPlanner addon;
     public TemplateBuilder builder = new TemplateBuilder(this);
 
+    public TileFiller() {
+        caps.addProvider(mjCapHelper);
+    }
+
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
@@ -188,15 +192,6 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     @SideOnly(Side.CLIENT)
     public double getMaxRenderDistanceSquared() {
         return Double.MAX_VALUE;
-    }
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        T cap = mjCapHelper.getCapability(capability, facing);
-        if (cap != null) {
-            return cap;
-        }
-        return super.getCapability(capability, facing);
     }
 
     @Override

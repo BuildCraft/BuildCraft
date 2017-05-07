@@ -17,6 +17,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.transport.IInjectable;
+import buildcraft.api.transport.pipe.PipeApi;
 
 import buildcraft.lib.misc.CapUtil;
 
@@ -75,7 +76,7 @@ public class ItemTransactorHelper {
         if (provider == null) {
             return NoSpaceInjectable.INSTANCE;
         }
-        IInjectable injectable = provider.getCapability(CapUtil.CAP_ITEM_INJECTABLE, face);
+        IInjectable injectable = provider.getCapability(PipeApi.CAP_INJECTABLE, face);
         if (injectable == null) {
             return NoSpaceInjectable.INSTANCE;
         }

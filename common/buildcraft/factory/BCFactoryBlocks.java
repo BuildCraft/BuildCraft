@@ -57,7 +57,6 @@ public class BCFactoryBlocks {
         TileBC_Neptune.registerTile(TileDistiller_BC8.class, "tile.distiller");
         if (BCLib.DEV) {
             TileBC_Neptune.registerTile(TileHeatExchangeStart.class, "tile.heat_exchange.start");
-            TileBC_Neptune.registerTile(TileHeatExchangeMiddle.class, "tile.heat_exchange.middle");
             TileBC_Neptune.registerTile(TileHeatExchangeEnd.class, "tile.heat_exchange.end");
         }
     }

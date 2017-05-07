@@ -12,7 +12,6 @@ import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
 
-import buildcraft.api.tiles.TilesAPI;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -21,14 +20,13 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
 
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.tiles.IHasWork;
+import buildcraft.api.tiles.TilesAPI;
 
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
@@ -51,7 +49,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
     protected final Map<ItemStackKey, TIntHashSet> itemStackCache;
 
     public IRecipe currentRecipe;
-    private int progress = 0;
+    private int progress = -1;
 
     public final DeltaInt deltaProgress = deltaManager.addDelta("progress", EnumNetworkVisibility.GUI_ONLY);
 
@@ -61,6 +59,11 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
         invResult = itemManager.addInvHandler("result", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
         invOverflow = itemManager.addInvHandler("overflow", slots, EnumAccess.EXTRACT, EnumPipePart.VALUES);
         itemStackCache = new HashMap<>();
+        caps.addCapability(TilesAPI.CAP_HAS_WORK, this::hasWork, EnumPipePart.VALUES);
+    }
+
+    public boolean hasWork() {
+        return progress >= 0;
     }
 
     protected abstract WorkbenchCrafting createCrafting();
@@ -199,15 +202,6 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
         return currentRecipe.getCraftingResult(crafting);
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == TilesAPI.CAP_HAS_WORK) {
-            return (T) (IHasWork) () -> progress >= 0;
-        }
-        return super.getCapability(capability, facing);
-    }
-
     protected abstract class WorkbenchCrafting extends InventoryCrafting {
         protected final CraftingSlot[] craftingSlots;
 
@@ -220,7 +214,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
         public ItemStack craft() {
             enableBindings();
             ItemStack out = StackUtil.asNonNull(currentRecipe.getCraftingResult(crafting));
-            if (! out.isEmpty()) {
+            if (!out.isEmpty()) {
                 NonNullList<ItemStack> leftOvers = currentRecipe.getRemainingItems(crafting);
                 for (int i = 0; i < leftOvers.size(); i++) {
                     CraftingSlot slot = craftingSlots[i];

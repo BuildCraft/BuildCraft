@@ -271,7 +271,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
             if (transferQuery[face.ordinal()] <= 0 || !pipe.isConnected(face)) {
                 continue;
             }
-            IPipe oPipe = pipe.getHolder().getNeighbouringPipe(face);
+            IPipe oPipe = pipe.getHolder().getNeighbourPipe(face);
             if (oPipe == null || !(oPipe.getFlow() instanceof PipeFlowPower)) {
                 continue;
             }

@@ -528,10 +528,6 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         } else {
             return super.getCapability(capability, facing);
         }
-        // if (capability == CapUtil.CAP_ITEMS && facing == currentDirection) {
-        // return null;
-        // }
-        // return super.getCapability(capability, facing);
     }
 
     public abstract long getMaxPower();

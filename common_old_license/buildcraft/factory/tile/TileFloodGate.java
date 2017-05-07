@@ -12,19 +12,18 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.factory.block.BlockFloodGate;
 import buildcraft.factory.client.render.AdvDebuggerFloodGate;
 import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
-import buildcraft.lib.debug.BCAdvDebugging;
 import buildcraft.lib.debug.IAdvDebugTarget;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.BlockUtil;
@@ -46,6 +45,10 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
     /** Used for debugging on the client with {@link IAdvDebugTarget} */
     public final TreeMap<Integer, Deque<BlockPos>> clientLayerQueues = new TreeMap<>();
+
+    public TileFloodGate() {
+        caps.addCapability(CapUtil.CAP_FLUIDS, tank, EnumPipePart.VALUES);
+    }
 
     public static int getIndexFromSide(EnumFacing side) {
         return Arrays.binarySearch(SIDE_INDEXES, side);
@@ -265,15 +268,5 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                 }
             }
         }
-    }
-
-    // Capabilities
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapUtil.CAP_FLUIDS) {
-            return (T) tank;
-        }
-        return super.getCapability(capability, facing);
     }
 }

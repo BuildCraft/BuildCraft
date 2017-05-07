@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
@@ -85,9 +86,9 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         tankOutGas.setCanFill(false);
         tankOutLiquid.setCanFill(false);
 
-        caps.addCapability(CapUtil.CAP_FLUIDS, tankIn, EnumFacing.HORIZONTALS);
-        caps.addCapability(CapUtil.CAP_FLUIDS, tankOutGas, EnumFacing.UP);
-        caps.addCapability(CapUtil.CAP_FLUIDS, tankOutLiquid, EnumFacing.DOWN);
+        caps.addCapability(CapUtil.CAP_FLUIDS, tankIn, EnumPipePart.HORIZONTALS);
+        caps.addCapability(CapUtil.CAP_FLUIDS, tankOutGas, EnumPipePart.UP);
+        caps.addCapability(CapUtil.CAP_FLUIDS, tankOutLiquid, EnumPipePart.DOWN);
         caps.addProvider(mjCapHelper);
     }
 

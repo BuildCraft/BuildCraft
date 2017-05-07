@@ -159,7 +159,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapUtil.CAP_ITEM_INJECTABLE) {
+        if (capability == PipeApi.CAP_INJECTABLE) {
             return (T) this;
         } else if (capability == CapUtil.CAP_ITEM_TRANSACTOR) {
             return (T) ItemTransactorHelper.wrapInjectable(this, facing);

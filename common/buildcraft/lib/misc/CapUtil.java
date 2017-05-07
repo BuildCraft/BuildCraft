@@ -32,14 +32,8 @@ public class CapUtil {
     @Nonnull
     public static final Capability<IItemTransactor> CAP_ITEM_TRANSACTOR;
 
-    @Nonnull
-    public static final Capability<IInjectable> CAP_ITEM_INJECTABLE;
-
     @CapabilityInject(IItemTransactor.class)
     private static Capability<IItemTransactor> capTransactor;
-
-    @CapabilityInject(IInjectable.class)
-    private static Capability<IInjectable> capInjectable;
 
     static {
         if (!Loader.instance().hasReachedState(LoaderState.INITIALIZATION)) {
@@ -50,10 +44,9 @@ public class CapUtil {
         CAP_FLUIDS = getCapNonNull(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, IFluidHandler.class);
 
         registerAbstractCapability(IItemTransactor.class);
-        registerAbstractCapability(IInjectable.class);
 
+        // FIXME: Move cap registration into API!
         CAP_ITEM_TRANSACTOR = getCapNonNull(capTransactor, IItemTransactor.class);
-        CAP_ITEM_INJECTABLE = getCapNonNull(capInjectable, IInjectable.class);
     }
 
     @Nonnull

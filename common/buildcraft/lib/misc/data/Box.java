@@ -131,6 +131,10 @@ public class Box implements IBox {
         return blocks;
     }
 
+    public List<BlockPos> getBlocksOnEdge() {
+        return PositionUtil.getAllOnEdge(min, max);
+    }
+
     @Override
     public Box expand(int amount) {
         if (!isInitialized()) return this;
@@ -236,6 +240,10 @@ public class Box implements IBox {
     @Override
     public BlockPos getRandomBlockPos(Random rand) {
         return PositionUtil.randomBlockPos(rand, min, max.add(1, 1, 1));
+    }
+
+    public boolean isOnEdge(BlockPos pos) {
+        return PositionUtil.isOnEdge(min, max, pos);
     }
 
     public void readData(PacketBuffer stream) {

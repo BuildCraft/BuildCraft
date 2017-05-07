@@ -102,7 +102,7 @@ public class WireManager implements IWireManager {
                         betweens.put(between, color);
                     }
                 } else if (WireSystem.canWireConnect(holder, between.to)) {
-                    IPipe pipe = holder.getNeighbouringPipe(between.to);
+                    IPipe pipe = holder.getNeighbourPipe(between.to);
                     if (pipe != null) {
                         IPipeHolder holder = pipe.getHolder();
                         IWireManager wireManager = holder.getWireManager();

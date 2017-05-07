@@ -22,12 +22,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.transport.pipe.ICustomPipeConnection;
+
 import buildcraft.factory.tile.TileHeatExchangeEnd;
-import buildcraft.factory.tile.TileHeatExchangeMiddle;
 import buildcraft.factory.tile.TileHeatExchangeStart;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 
-public class BlockHeatExchange extends BlockBCTile_Neptune {
+public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPipeConnection {
     public enum Part {
         START,
         END,
@@ -49,12 +50,12 @@ public class BlockHeatExchange extends BlockBCTile_Neptune {
             }
 
             @Override
-            Axis getAxis(IBlockState state) {
+            public Axis getAxis(IBlockState state) {
                 return state.getValue(PROP_AXIS);
             }
 
             @Override
-            public void addProperties(List<IProperty<?>> properties) {
+            void addProperties(List<IProperty<?>> properties) {
                 properties.add(PROP_AXIS);
                 properties.add(PROP_CONNECTED_NEG);
                 properties.add(PROP_CONNECTED_POS);
@@ -92,7 +93,7 @@ public class BlockHeatExchange extends BlockBCTile_Neptune {
         }
 
         /** @return The axis That fluids flow through (horizontally) */
-        Axis getAxis(IBlockState state) {
+        public Axis getAxis(IBlockState state) {
             return state.getValue(PROP_FACING).getAxis();
         }
 
@@ -121,7 +122,6 @@ public class BlockHeatExchange extends BlockBCTile_Neptune {
         static boolean doesNeighbourConnect(IBlockAccess world, BlockPos thisPos, EnumFacing dir) {
             IBlockState offset = world.getBlockState(thisPos.offset(dir));
             Block block = offset.getBlock();
-            boolean connected = false;
             if (block instanceof BlockHeatExchange) {
                 Part part = ((BlockHeatExchange) block).part;
                 return part.doesConnect(offset, dir.getOpposite());
@@ -183,7 +183,7 @@ public class BlockHeatExchange extends BlockBCTile_Neptune {
             case START:
                 return new TileHeatExchangeStart();
             case MIDDLE:
-                return new TileHeatExchangeMiddle();
+                return null;
             case END:
                 return new TileHeatExchangeEnd();
             default:
@@ -205,5 +205,17 @@ public class BlockHeatExchange extends BlockBCTile_Neptune {
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getBlockLayer() {
         return BlockRenderLayer.CUTOUT;
+    }
+
+    @Override
+    public float getExtension(World world, BlockPos pos, EnumFacing face, IBlockState state) {
+        if (part == Part.MIDDLE) {
+            return 0;
+        }
+        EnumFacing thisFacing = state.getValue(PROP_FACING);
+        if (face != thisFacing.getOpposite()) {
+            return 0;
+        }
+        return 2 / 16.0f;
     }
 }
