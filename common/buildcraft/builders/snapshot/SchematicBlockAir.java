@@ -26,7 +26,7 @@ public final class SchematicBlockAir implements ISchematicBlock<SchematicBlockAi
 
     @Override
     public int getLevel() {
-        return 0;
+        return BLOCK_LEVEL;
     }
 
     @Override

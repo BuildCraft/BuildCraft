@@ -62,7 +62,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
 
     @SuppressWarnings({"unused", "WeakerAccess"})
     protected void setLevel(SchematicBlockContext context, Set<JsonRule> rules) {
-        level = BlockUtil.getFluidWithFlowing(context.world, context.pos) != null ? 1 : 0;
+        level = BlockUtil.getFluidWithFlowing(context.world, context.pos) != null ? FLUID_LEVEL : BLOCK_LEVEL;
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
