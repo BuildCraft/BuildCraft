@@ -71,7 +71,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
     public TileQuarry() {
         caps.addProvider(mjCapHelper);
-        caps.addCapability(CapUtil.CAP_ITEM_TRANSACTOR, AutomaticProvidingTransactor.INSTANCE, EnumPipePart.VALUES);
+        caps.addCapabilityInstance(CapUtil.CAP_ITEM_TRANSACTOR, AutomaticProvidingTransactor.INSTANCE, EnumPipePart.VALUES);
     }
 
     public List<BlockPos> getFramePositions(IBlockState state) {

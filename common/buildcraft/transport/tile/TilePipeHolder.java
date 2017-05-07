@@ -81,7 +81,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         for (EnumFacing side : EnumFacing.VALUES) {
             pluggables.put(side, new PluggableHolder(this, side));
         }
-        caps.addCapability(PipeApi.CAP_PIPE_HOLDER, this, EnumPipePart.VALUES);
+        caps.addCapabilityInstance(PipeApi.CAP_PIPE_HOLDER, this, EnumPipePart.VALUES);
         caps.addCapability(PipeApi.CAP_PIPE, this::getPipe, EnumPipePart.VALUES);
         caps.addCapability(PipeApi.CAP_PLUG, this::getPluggable, EnumPipePart.FACES);
     }

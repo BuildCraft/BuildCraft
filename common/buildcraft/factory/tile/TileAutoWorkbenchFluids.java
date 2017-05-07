@@ -26,9 +26,9 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
 
     public TileAutoWorkbenchFluids() {
         super(4);
-        caps.addCapability(CapUtil.CAP_FLUIDS, tankManager, EnumPipePart.CENTER);
-        caps.addCapability(CapUtil.CAP_FLUIDS, tank1, EnumPipePart.DOWN, EnumPipePart.NORTH, EnumPipePart.WEST);
-        caps.addCapability(CapUtil.CAP_FLUIDS, tank2, EnumPipePart.UP, EnumPipePart.SOUTH, EnumPipePart.EAST);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankManager, EnumPipePart.CENTER);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank1, EnumPipePart.DOWN, EnumPipePart.NORTH, EnumPipePart.WEST);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank2, EnumPipePart.UP, EnumPipePart.SOUTH, EnumPipePart.EAST);
     }
 
     @Override

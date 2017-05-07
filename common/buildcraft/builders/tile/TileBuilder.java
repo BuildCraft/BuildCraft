@@ -86,7 +86,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
             tankManager.add(new Tank("fluid" + i, Fluid.BUCKET_VOLUME * 8, this));
         }
         caps.addProvider(mjCapHelper);
-        caps.addCapability(CapUtil.CAP_FLUIDS, tankManager, EnumPipePart.VALUES);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankManager, EnumPipePart.VALUES);
     }
 
     @Override

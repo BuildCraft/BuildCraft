@@ -39,7 +39,7 @@ public class TilePump extends TileMiner {
 
     public TilePump() {
         tank.setCanFill(false);
-        caps.addCapability(CapUtil.CAP_FLUIDS, tank, EnumPipePart.VALUES);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank, EnumPipePart.VALUES);
     }
 
     @Override

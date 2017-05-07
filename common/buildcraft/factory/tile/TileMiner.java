@@ -51,7 +51,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
 
     public TileMiner() {
         caps.addProvider(mjCapHelper);
-        caps.addCapability(TilesAPI.CAP_HAS_WORK, () -> !isComplete, EnumPipePart.VALUES);
+        caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, () -> !isComplete, EnumPipePart.VALUES);
     }
 
     @Override

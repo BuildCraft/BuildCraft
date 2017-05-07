@@ -86,9 +86,9 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         tankOutGas.setCanFill(false);
         tankOutLiquid.setCanFill(false);
 
-        caps.addCapability(CapUtil.CAP_FLUIDS, tankIn, EnumPipePart.HORIZONTALS);
-        caps.addCapability(CapUtil.CAP_FLUIDS, tankOutGas, EnumPipePart.UP);
-        caps.addCapability(CapUtil.CAP_FLUIDS, tankOutLiquid, EnumPipePart.DOWN);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankIn, EnumPipePart.HORIZONTALS);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankOutGas, EnumPipePart.UP);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankOutLiquid, EnumPipePart.DOWN);
         caps.addProvider(mjCapHelper);
     }
 

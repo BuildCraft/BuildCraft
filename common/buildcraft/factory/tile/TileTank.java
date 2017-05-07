@@ -49,7 +49,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     private long lastMessage, lastMessageMinus1;
 
     public TileTank() {
-        caps.addCapability(CapUtil.CAP_FLUIDS, this, EnumPipePart.VALUES);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, this, EnumPipePart.VALUES);
     }
 
     // ITickable

@@ -36,7 +36,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
     private TileHeatExchangeEnd tileEnd;
 
     public TileHeatExchangeStart() {
-        caps.addCapability(CapUtil.CAP_FLUIDS, tankHeatableIn, EnumPipePart.DOWN);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankHeatableIn, EnumPipePart.DOWN);
         caps.addCapability(CapUtil.CAP_FLUIDS, this::getTankForSide, EnumPipePart.HORIZONTALS);
     }
 

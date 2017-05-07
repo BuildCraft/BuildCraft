@@ -29,7 +29,7 @@ public class CapabilityHelper implements ICapabilityProvider {
         return caps.get(EnumPipePart.fromFacing(facing));
     }
 
-    public <T> void addCapability(@Nullable Capability<T> cap, T instance, EnumPipePart... parts) {
+    public <T> void addCapabilityInstance(@Nullable Capability<T> cap, T instance, EnumPipePart... parts) {
         Supplier<T> supplier = () -> instance;
         addCapability(cap, supplier, parts);
     }

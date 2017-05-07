@@ -40,7 +40,7 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     private boolean showSignals = false;
 
     public TileMarkerVolume() {
-        caps.addCapability(TilesAPI.CAP_TILE_AREA_PROVIDER, this, EnumPipePart.VALUES);
+        caps.addCapabilityInstance(TilesAPI.CAP_TILE_AREA_PROVIDER, this, EnumPipePart.VALUES);
     }
 
     public boolean isShowingSignals() {

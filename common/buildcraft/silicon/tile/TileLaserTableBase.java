@@ -35,7 +35,7 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
     public long power;
 
     public TileLaserTableBase() {
-        caps.addCapability(TilesAPI.CAP_HAS_WORK, this, EnumPipePart.VALUES);
+        caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, this, EnumPipePart.VALUES);
     }
 
     @Override

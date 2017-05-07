@@ -80,7 +80,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
 
         tankResidue.helpInfo = new ElementHelpInfo(tankResidue.helpInfo.title, 0xFF_AA_33_AA, Tank.DEFAULT_HELP_KEY, null, "buildcraft.help.tank.residue");
 
-        caps.addCapability(CapUtil.CAP_FLUIDS, fluidHandler, EnumPipePart.VALUES);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, fluidHandler, EnumPipePart.VALUES);
     }
 
     // TileEntity overrides

@@ -47,7 +47,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     public final TreeMap<Integer, Deque<BlockPos>> clientLayerQueues = new TreeMap<>();
 
     public TileFloodGate() {
-        caps.addCapability(CapUtil.CAP_FLUIDS, tank, EnumPipePart.VALUES);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank, EnumPipePart.VALUES);
     }
 
     public static int getIndexFromSide(EnumFacing side) {

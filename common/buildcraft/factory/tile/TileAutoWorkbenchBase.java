@@ -59,7 +59,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
         invResult = itemManager.addInvHandler("result", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
         invOverflow = itemManager.addInvHandler("overflow", slots, EnumAccess.EXTRACT, EnumPipePart.VALUES);
         itemStackCache = new HashMap<>();
-        caps.addCapability(TilesAPI.CAP_HAS_WORK, this::hasWork, EnumPipePart.VALUES);
+        caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, this::hasWork, EnumPipePart.VALUES);
     }
 
     public boolean hasWork() {

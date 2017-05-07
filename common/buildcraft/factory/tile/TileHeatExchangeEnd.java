@@ -33,7 +33,7 @@ public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable {
     private final TankManager<Tank> tankManager = new TankManager<>(tankHeatableOut, tankCoolableIn);
 
     public TileHeatExchangeEnd() {
-        caps.addCapability(CapUtil.CAP_FLUIDS, tankHeatableOut, EnumPipePart.UP);
+        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankHeatableOut, EnumPipePart.UP);
         caps.addCapability(CapUtil.CAP_FLUIDS, this::getTankForSide, EnumPipePart.HORIZONTALS);
     }
 
