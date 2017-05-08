@@ -35,6 +35,70 @@
         "copyRequiredItemsFromItemHandlersOnSides": ["north"]
     },
     {
+        "selectors": ["minecraft:white_shulker_box"],
+        "requiredItems": ["minecraft:white_shulker_box"]
+    },
+    {
+        "selectors": ["minecraft:orange_shulker_box"],
+        "requiredItems": ["minecraft:orange_shulker_box"]
+    },
+    {
+        "selectors": ["minecraft:magenta_shulker_box"],
+        "requiredItems": ["minecraft:magenta_shulker_box"]
+    },
+    {
+        "selectors": ["minecraft:light_blue_shulker_box"],
+        "requiredItems": ["minecraft:light_blue_shulker_box"]
+    },
+    {
+        "selectors": ["minecraft:yellow_shulker_box"],
+        "requiredItems": ["minecraft:yellow_shulker_box"]
+    },
+    {
+        "selectors": ["minecraft:lime_shulker_box"],
+        "requiredItems": ["minecraft:lime_shulker_box"]
+    },
+    {
+        "selectors": ["minecraft:pink_shulker_box"],
+        "requiredItems": ["minecraft:pink_shulker_box"]
+    },
+    {
+        "selectors": ["minecraft:gray_shulker_box"],
+        "requiredItems": ["minecraft:gray_shulker_box"]
+    },
+    {
+        "selectors": ["minecraft:silver_shulker_box"],
+        "requiredItems": ["minecraft:silver_shulker_box"]
+    },
+    {
+        "selectors": ["minecraft:cyan_shulker_box"],
+        "requiredItems": ["minecraft:cyan_shulker_box"]
+    },
+    {
+        "selectors": ["minecraft:purple_shulker_box"],
+        "requiredItems": ["minecraft:purple_shulker_box"]
+    },
+    {
+        "selectors": ["minecraft:blue_shulker_box"],
+        "requiredItems": ["minecraft:blue_shulker_box"]
+    },
+    {
+        "selectors": ["minecraft:brown_shulker_box"],
+        "requiredItems": ["minecraft:brown_shulker_box"]
+    },
+    {
+        "selectors": ["minecraft:green_shulker_box"],
+        "requiredItems": ["minecraft:green_shulker_box"]
+    },
+    {
+        "selectors": ["minecraft:red_shulker_box"],
+        "requiredItems": ["minecraft:red_shulker_box"]
+    },
+    {
+        "selectors": ["minecraft:black_shulker_box"],
+        "requiredItems": ["minecraft:black_shulker_box"]
+    },
+    {
         "selectors": [
             "minecraft:fire",
             "minecraft:ender_chest"
