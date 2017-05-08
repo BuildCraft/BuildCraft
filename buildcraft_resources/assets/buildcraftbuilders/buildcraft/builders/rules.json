@@ -254,10 +254,6 @@
         "ignoredProperties": ["open"]
     },
     {
-        "selectors": ["minecraft:vine"],
-        "copyRequiredBlockOffsetsFromProperties": true
-    },
-    {
         "selectors": ["minecraft:piston"],
         "canBeReplacedWithBlocks": ["minecraft:piston", "minecraft:piston_extension"],
         "ignoredProperties": ["extended"]
