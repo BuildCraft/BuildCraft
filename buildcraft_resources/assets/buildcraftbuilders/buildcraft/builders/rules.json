@@ -115,7 +115,8 @@
     },
     {
         "selectors": ["minecraft:farmland"],
-        "requiredItems": ["minecraft:dirt"]
+        "requiredItems": ["minecraft:dirt"],
+        "ignoredProperties": ["moisture"]
     },
     {
         "selectors": ["minecraft:wheat"],
