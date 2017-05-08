@@ -55,7 +55,7 @@ public class BCSiliconRecipes {
             builder.add("OgO");
             builder.map('O', Blocks.OBSIDIAN);
             builder.map('r', "dustRedstone");
-            builder.map('d', Items.DIAMOND);
+            builder.map('d', "gemDiamond");
             builder.map('g', OredictionaryNames.GEAR_DIAMOND);
             builder.register();
         }

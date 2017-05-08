@@ -93,7 +93,7 @@ public class BCCoreRecipes {
                 ImmutableSet<StackDefinition> required = ImmutableSet.of(//
                     ArrayStackFilter.definition(8, Items.PAPER),//
                     OreStackFilter.definition(ColourUtil.getDyeName(EnumDyeColor.GREEN)),//
-                    ArrayStackFilter.definition(Items.REDSTONE)//
+                    OreStackFilter.definition("dustRedstone")//
                 );
                 BuildcraftRecipeRegistry.assemblyRecipes.addRecipe(new AssemblyRecipe("list", mjCost, required, new ItemStack(BCItems.CORE_LIST)));
             } else {
@@ -103,7 +103,7 @@ public class BCCoreRecipes {
                 recipe.add("ppp");
                 recipe.map('p', Items.PAPER);
                 recipe.map('G', ColourUtil.getDyeName(EnumDyeColor.GREEN));
-                recipe.map('R', Items.REDSTONE);
+                recipe.map('R', "dustRedstone");
                 recipe.setResult(new ItemStack(BCItems.CORE_LIST));
                 recipe.register();
             }
