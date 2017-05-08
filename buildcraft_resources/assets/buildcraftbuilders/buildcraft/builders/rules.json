@@ -223,6 +223,15 @@
         "requiredItems": []
     },
     {
+        "selectors": [
+            "minecraft:bed[part=foot]",
+            "minecraft:wooden_door[half=lower]",
+            "minecraft:iron_door[half=lower]",
+            "minecraft:double_plant[half=lower]"
+        ],
+        "updateBlockOffsets": []
+    },
+    {
         "selectors": ["minecraft:bed[part=head]"],
         "copyOppositeRequiredBlockOffsetFromProperty": "facing"
     },

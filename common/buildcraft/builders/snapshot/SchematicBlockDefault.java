@@ -41,6 +41,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
     private final List<String> ignoredTags = new ArrayList<>();
     private Rotation tileRotation = Rotation.NONE;
     private Block placeBlock;
+    private final Set<BlockPos> updateBlockOffsets = new HashSet<>();
     private final Set<Block> canBeReplacedWithBlocks = new HashSet<>();
     private final List<ItemStack> requiredItems = new ArrayList<>();
     private final List<FluidStack> requiredFluids = new ArrayList<>();
@@ -156,6 +157,24 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
+    protected void setUpdateBlockOffsets(SchematicBlockContext context, Set<JsonRule> rules) {
+        updateBlockOffsets.clear();
+        if (rules.stream().map(rule -> rule.updateBlockOffsets).anyMatch(Objects::nonNull)) {
+            rules.stream()
+                    .map(rule -> rule.updateBlockOffsets)
+                    .filter(Objects::nonNull)
+                    .flatMap(Collection::stream)
+                    .forEach(updateBlockOffsets::add);
+        } else {
+            Stream.of(EnumFacing.values())
+                    .map(EnumFacing::getDirectionVec)
+                    .map(BlockPos::new)
+                    .forEach(updateBlockOffsets::add);
+            updateBlockOffsets.add(BlockPos.ORIGIN);
+        }
+    }
+
+    @SuppressWarnings({"unused", "WeakerAccess"})
     protected void setCanBeReplacedWithBlocks(SchematicBlockContext context, Set<JsonRule> rules) {
         canBeReplacedWithBlocks.clear();
         rules.stream()
@@ -255,6 +274,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         setTileNbt /*                */(context, rules);
         setIgnoredTags /*            */(context, rules);
         setPlaceBlock /*             */(context, rules);
+        setUpdateBlockOffsets /*     */(context, rules);
         setCanBeReplacedWithBlocks /**/(context, rules);
         setRequiredItems /*          */(context, rules);
         setRequiredFluids /*         */(context, rules);
@@ -346,13 +366,8 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
             );
         }
         if (world.setBlockState(blockPos, newBlockState, 11)) {
-            Stream.of(
-                    Stream.of(EnumFacing.values()).map(blockPos::offset),
-                    requiredBlockOffsets.stream().map(blockPos::add),
-                    Stream.of(blockPos)
-            )
-                    .flatMap(Function.identity())
-                    .distinct()
+            updateBlockOffsets.stream()
+                    .map(blockPos::add)
                     .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, placeBlock, false));
             if (tileNbt != null && blockState.getBlock().hasTileEntity(blockState)) {
                 NBTTagCompound newTileNbt = new NBTTagCompound();
@@ -446,6 +461,13 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         nbt.setTag("tileRotation", NBTUtilBC.writeEnum(tileRotation));
         nbt.setString("placeBlock", Block.REGISTRY.getNameForObject(placeBlock).toString());
         nbt.setTag(
+                "updateBlockOffsets",
+                NBTUtilBC.writeCompoundList(
+                        updateBlockOffsets.stream()
+                                .map(NBTUtil::createPosTag)
+                )
+        );
+        nbt.setTag(
                 "canBeReplacedWithBlocks",
                 NBTUtilBC.writeStringList(
                         canBeReplacedWithBlocks.stream()
@@ -477,6 +499,9 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         NBTUtilBC.readStringList(nbt.getTagList("ignoredTags", Constants.NBT.TAG_STRING)).forEach(ignoredTags::add);
         tileRotation = NBTUtilBC.readEnum(nbt.getTag("tileRotation"), Rotation.class);
         placeBlock = Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("placeBlock")));
+        NBTUtilBC.readCompoundList(nbt.getTagList("updateBlockOffsets", Constants.NBT.TAG_COMPOUND))
+                .map(NBTUtil::getPosFromTag)
+                .forEach(updateBlockOffsets::add);
         NBTUtilBC.readStringList(nbt.getTagList("canBeReplacedWithBlocks", Constants.NBT.TAG_STRING))
                 .map(ResourceLocation::new)
                 .map(Block.REGISTRY::getObject)
