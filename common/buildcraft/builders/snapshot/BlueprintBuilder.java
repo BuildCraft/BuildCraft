@@ -136,7 +136,9 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         return getBuildingInfo().toPlace.get(blockPos).getRequiredBlockOffsets().stream()
                 .map(blockPos::add)
                 .allMatch(pos ->
-                        getBuildingInfo().toPlace.containsKey(pos) ? isBlockCorrect(pos) : !tile.getWorldBC().isAirBlock(pos)
+                        getBuildingInfo().toPlace.containsKey(pos)
+                                ? isBlockCorrect(pos)
+                                : !getToBreak().contains(pos) || tile.getWorldBC().isAirBlock(pos)
                 ) &&
                 getBuildingInfo().toPlace.get(blockPos).getLevel() == getBuiltLevel() + 1 &&
                 !getBuildingInfo().toPlace.get(blockPos).isAir() &&
