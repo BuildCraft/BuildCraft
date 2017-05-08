@@ -1,9 +1,11 @@
 package buildcraft.builders.container;
 
 import buildcraft.builders.item.ItemSnapshot;
+import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.builders.tile.TileBuilder;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
+import buildcraft.lib.gui.slot.SlotDisplay;
 import buildcraft.lib.gui.widget.WidgetFluidTank;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -36,6 +38,19 @@ public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
                 .map(tank -> new WidgetFluidTank(this, tank))
                 .map(this::addWidget)
                 .collect(Collectors.toList());
+
+        for(int y = 0; y < 6; y++) {
+            for(int x = 0; x < 4; x++) {
+                addSlotToContainer(new SlotDisplay(this::getDisplay, x + y * 4, 179 + x * 18, 18 + y * 18));
+            }
+        }
+    }
+
+    private ItemStack getDisplay(int index) {
+        return tile.snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT &&
+                index < tile.blueprintBuilder.remainingDisplayRequired.size()
+                ? tile.blueprintBuilder.remainingDisplayRequired.get(index)
+                : ItemStack.EMPTY;
     }
 
     @Override

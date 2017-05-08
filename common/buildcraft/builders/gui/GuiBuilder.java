@@ -1,14 +1,10 @@
 package buildcraft.builders.gui;
 
-import buildcraft.builders.snapshot.Snapshot;
-import buildcraft.lib.gui.pos.GuiRectangle;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.builders.container.ContainerBuilder;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.pos.GuiRectangle;
+import net.minecraft.util.ResourceLocation;
 
 public class GuiBuilder extends GuiBC8<ContainerBuilder> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftbuilders:textures/gui/builder.png");
@@ -53,22 +49,5 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(rootElement);
         ICON_BLUEPRINT_GUI.drawAt(rootElement.offset(SIZE_BLUEPRINT_X - BLUEPRINT_WIDTH, 0));
-        if (container.tile.snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
-            int x = 0;
-            int y = 0;
-            for (ItemStack stack : container.tile.blueprintBuilder.remainingDisplayRequired) {
-                int posX = rootElement.getX() + 179 + x * 18;
-                int posY = rootElement.getY() + 18 + y * 18;
-                RenderHelper.enableGUIStandardItemLighting();
-                this.itemRender.renderItemAndEffectIntoGUI(this.mc.player, stack, posX, posY);
-                this.itemRender.renderItemOverlayIntoGUI(this.mc.fontRenderer, stack, posX, posY, null);
-                RenderHelper.disableStandardItemLighting();
-                x++;
-                if (x == 4) {
-                    x = 0;
-                    y++;
-                }
-            }
-        }
     }
 }
