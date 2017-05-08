@@ -266,16 +266,6 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         }
     }
 
-    @Override
-    public void validate() {
-        super.validate();
-    }
-
-    @Override
-    public void invalidate() {
-        super.invalidate();
-    }
-
     // ##################
     //
     // Permission related
