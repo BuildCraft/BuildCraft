@@ -29,7 +29,7 @@ public class SlotDisplay extends Slot {
 
     @Override
     public ItemStack getStack() {
-        return getter.apply(getSlotIndex());
+        return getter.apply(getSlotIndex()).copy();
     }
 
     @Override
