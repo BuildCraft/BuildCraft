@@ -88,6 +88,9 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
                     world.getBlockState(pos),
                     world.getBlockState(pos).getBlock()
             );
+            if (schematicBlock.isAir()) {
+                return EnumActionResult.FAIL;
+            }
             NBTUtilBC.getItemData(stack).setTag("schematic", SchematicBlockManager.writeToNBT(schematicBlock));
             stack.setItemDamage(DAMAGE_USED);
             return EnumActionResult.SUCCESS;
