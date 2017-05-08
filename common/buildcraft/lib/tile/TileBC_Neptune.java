@@ -166,7 +166,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     /** @param pos The <i>absolute</i> position of the {@link IBlockState} . */
     public final IBlockState getLocalState(BlockPos pos) {
-        return BlockUtil.getBlockState(getWorld(), pos);
+        return BlockUtil.getBlockState(getWorld(), pos, isInThisChunk(pos));
     }
 
     public final TileEntity getNeighbourTile(EnumFacing offset) {
@@ -181,7 +181,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     /** @param pos The <i>absolute</i> position of the {@link TileEntity} . */
     public final TileEntity getLocalTile(BlockPos pos) {
-        return BlockUtil.getTileEntity(getWorld(), pos);
+        return BlockUtil.getTileEntity(getWorld(), pos, isInThisChunk(pos));
+    }
+
+    private boolean isInThisChunk(BlockPos other) {
+        return pos.getX() / 16 == other.getX() / 16//
+            && pos.getZ() / 16 == other.getZ() / 16;
     }
 
     // ##################
@@ -259,6 +264,16 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (world.isBlockLoaded(getPos())) {
             markDirty();
         }
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
     }
 
     // ##################

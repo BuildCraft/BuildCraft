@@ -143,5 +143,6 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("Power = " + mjBattery.getDebugString());
+        left.add("Facing = " + currentDir);
     }
 }

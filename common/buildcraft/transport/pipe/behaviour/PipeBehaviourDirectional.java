@@ -13,13 +13,14 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.PipeBehaviour;
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
+import buildcraft.api.transport.pipe.PipeBehaviour;
 
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.collect.OrderedEnumMap;
+import buildcraft.lib.net.PacketBufferBC;
 
 public abstract class PipeBehaviourDirectional extends PipeBehaviour {
     public static final OrderedEnumMap<EnumFacing> ROTATION_ORDER = VanillaRotationHandlers.ROTATE_FACING;
@@ -45,13 +46,14 @@ public abstract class PipeBehaviourDirectional extends PipeBehaviour {
     @Override
     public void writePayload(PacketBuffer buffer, Side side) {
         super.writePayload(buffer, side);
-        buffer.writeByte(currentDir.getIndex());
+        PacketBufferBC bufBc = PacketBufferBC.asPacketBufferBc(buffer);
+        bufBc.writeEnumValue(currentDir);
     }
 
     @Override
     public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) {
         super.readPayload(buffer, side, ctx);
-        currentDir = EnumPipePart.fromMeta(buffer.readUnsignedByte());
+        currentDir = PacketBufferBC.asPacketBufferBc(buffer).readEnumValue(EnumPipePart.class);
     }
 
     @Override

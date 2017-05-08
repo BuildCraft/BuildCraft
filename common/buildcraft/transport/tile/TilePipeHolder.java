@@ -177,6 +177,14 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         wireManager.removeParts(new ArrayList<>(wireManager.parts.keySet()));
     }
 
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (pipe != null) {
+            pipe.onLoad();
+        }
+    }
+
     // ITickable
 
     @Override

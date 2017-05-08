@@ -196,75 +196,85 @@ public final class Pipe implements IPipe, IDebuggable {
 
     // misc
 
+    public void onLoad() {
+        updateConnections();
+    }
+
     public void onTick() {
         behaviour.onTick();
         flow.onTick();
-        if (updateMarked && !holder.getPipeWorld().isRemote) {
-            updateMarked = false;
-
-            EnumMap<EnumFacing, Float> old = connected.clone();
-
-            connected.clear();
-            types.clear();
-            textures.clear();
-
-            for (EnumFacing facing : EnumFacing.VALUES) {
-                PipePluggable plug = getHolder().getPluggable(facing);
-                if (plug != null && plug.isBlocking()) {
-                    continue;
-                }
-                TileEntity oTile = getHolder().getNeighbourTile(facing);
-                if (oTile == null) {
-                    continue;
-                }
-                IPipe oPipe = getHolder().getNeighbourPipe(facing);
-                if (oPipe != null) {
-                    PipeBehaviour oBehaviour = oPipe.getBehaviour();
-                    if (oBehaviour == null) {
-                        continue;
-                    }
-                    PipePluggable oPlug = oTile.getCapability(PipeApi.CAP_PLUG, facing.getOpposite());
-                    if (oPlug != null && oPlug.isBlocking()) {
-                        continue;
-                    }
-                    if (canPipesConnect(facing, this, oPipe)) {
-                        connected.put(facing, 0.25f);
-                        types.put(facing, ConnectedType.PIPE);
-                    }
-                } else {
-                    BlockPos nPos = holder.getPipePos().offset(facing);
-                    IBlockState neighbour = holder.getPipeWorld().getBlockState(nPos);
-
-                    ICustomPipeConnection cust = PipeConnectionAPI.getCustomConnection(neighbour.getBlock());
-                    if (cust == null) {
-                        cust = DefaultPipeConnection.INSTANCE;
-                    }
-                    float ext = 0.25f + cust.getExtension(holder.getPipeWorld(), nPos, facing.getOpposite(), neighbour);
-
-                    if (behaviour.canConnect(facing, oTile) & flow.canConnect(facing, oTile)) {
-                        connected.put(facing, ext);
-                        types.put(facing, ConnectedType.TILE);
-                    }
-                }
-                if (connected.containsKey(facing)) {
-                    textures.put(facing, behaviour.getTextureIndex(facing));
-                }
-            }
-            if (!old.equals(connected)) {
-                for (EnumFacing face : EnumFacing.VALUES) {
-                    boolean o = old.containsKey(face);
-                    boolean n = connected.containsKey(face);
-                    if (o != n) {
-                        IPipe oPipe = getHolder().getNeighbourPipe(face);
-                        if (oPipe != null) {
-                            oPipe.markForUpdate();
-                        }
-                    }
-                }
-            }
-
-            getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
+        if (updateMarked) {
+            updateConnections();
         }
+    }
+
+    private void updateConnections() {
+        if (holder.getPipeWorld().isRemote) {
+            return;
+        }
+        updateMarked = false;
+
+        EnumMap<EnumFacing, Float> old = connected.clone();
+
+        connected.clear();
+        types.clear();
+        textures.clear();
+
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            PipePluggable plug = getHolder().getPluggable(facing);
+            if (plug != null && plug.isBlocking()) {
+                continue;
+            }
+            TileEntity oTile = getHolder().getNeighbourTile(facing);
+            if (oTile == null) {
+                continue;
+            }
+            IPipe oPipe = getHolder().getNeighbourPipe(facing);
+            if (oPipe != null) {
+                PipeBehaviour oBehaviour = oPipe.getBehaviour();
+                if (oBehaviour == null) {
+                    continue;
+                }
+                PipePluggable oPlug = oTile.getCapability(PipeApi.CAP_PLUG, facing.getOpposite());
+                if (oPlug != null && oPlug.isBlocking()) {
+                    continue;
+                }
+                if (canPipesConnect(facing, this, oPipe)) {
+                    connected.put(facing, 0.25f);
+                    types.put(facing, ConnectedType.PIPE);
+                }
+            } else {
+                BlockPos nPos = holder.getPipePos().offset(facing);
+                IBlockState neighbour = holder.getPipeWorld().getBlockState(nPos);
+
+                ICustomPipeConnection cust = PipeConnectionAPI.getCustomConnection(neighbour.getBlock());
+                if (cust == null) {
+                    cust = DefaultPipeConnection.INSTANCE;
+                }
+                float ext = 0.25f + cust.getExtension(holder.getPipeWorld(), nPos, facing.getOpposite(), neighbour);
+
+                if (behaviour.canConnect(facing, oTile) & flow.canConnect(facing, oTile)) {
+                    connected.put(facing, ext);
+                    types.put(facing, ConnectedType.TILE);
+                }
+            }
+            if (connected.containsKey(facing)) {
+                textures.put(facing, behaviour.getTextureIndex(facing));
+            }
+        }
+        if (!old.equals(connected)) {
+            for (EnumFacing face : EnumFacing.VALUES) {
+                boolean o = old.containsKey(face);
+                boolean n = connected.containsKey(face);
+                if (o != n) {
+                    IPipe oPipe = getHolder().getNeighbourPipe(face);
+                    if (oPipe != null) {
+                        oPipe.markForUpdate();
+                    }
+                }
+            }
+        }
+        getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
     }
 
     public void onRemove(NonNullList<ItemStack> toDrop) {
