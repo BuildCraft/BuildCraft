@@ -36,7 +36,7 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
         ResourceLocation registryName = EntityList.getKey(context.entity);
         return registryName != null &&
                 RulesLoader.READ_DOMAINS.contains(registryName.getResourceDomain()) &&
-                RulesLoader.getRules(context.entity).stream().noneMatch(rule -> rule.ignore);
+                RulesLoader.getRules(context.entity).stream().anyMatch(rule -> rule.capture);
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
