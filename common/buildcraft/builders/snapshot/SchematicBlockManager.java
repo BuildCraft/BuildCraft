@@ -7,10 +7,25 @@ import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
+
 public class SchematicBlockManager {
+    public static ISchematicBlock<?> getSchematicBlock(SchematicBlockContext context) {
+        for (SchematicBlockFactory<?> schematicBlockFactory : Lists.reverse(SchematicBlockFactoryRegistry.getFactories())) {
+            if (schematicBlockFactory.predicate.test(context)) {
+                ISchematicBlock<?> schematicBlock = schematicBlockFactory.supplier.get();
+                schematicBlock.init(context);
+                return schematicBlock;
+            }
+        }
+        throw new UnsupportedOperationException();
+    }
+
     public static ISchematicBlock<?> getSchematicBlock(World world,
                                                        BlockPos basePos,
                                                        BlockPos pos,
@@ -23,14 +38,7 @@ public class SchematicBlockManager {
                 blockState,
                 block
         );
-        for (SchematicBlockFactory<?> schematicBlockFactory : Lists.reverse(SchematicBlockFactoryRegistry.getFactories())) {
-            if (schematicBlockFactory.predicate.test(context)) {
-                ISchematicBlock<?> schematicBlock = schematicBlockFactory.supplier.get();
-                schematicBlock.init(context);
-                return schematicBlock;
-            }
-        }
-        throw new UnsupportedOperationException();
+        return getSchematicBlock(context);
     }
 
     public static void computeRequired(Blueprint blueprint) {
@@ -61,5 +69,29 @@ public class SchematicBlockManager {
         }
         world.editable = true;
         world.clear();
+    }
+
+    @Nonnull
+    public static NBTTagCompound writeToNBT(ISchematicBlock<?> schematicBlock) {
+        NBTTagCompound schematicBlockTag = new NBTTagCompound();
+        schematicBlockTag.setString(
+                "name",
+                SchematicBlockFactoryRegistry
+                        .getFactoryByInstance(schematicBlock)
+                        .name
+                        .toString()
+        );
+        schematicBlockTag.setTag("data", schematicBlock.serializeNBT());
+        return schematicBlockTag;
+    }
+
+    @Nonnull
+    public static ISchematicBlock<?> readFromNBT(NBTTagCompound schematicBlockTag) {
+        ISchematicBlock<?> schematicBlock = SchematicBlockFactoryRegistry
+                .getFactoryByName(new ResourceLocation(schematicBlockTag.getString("name")))
+                .supplier
+                .get();
+        schematicBlock.deserializeNBT(schematicBlockTag.getCompoundTag("data"));
+        return schematicBlock;
     }
 }

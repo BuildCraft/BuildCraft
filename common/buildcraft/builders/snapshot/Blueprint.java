@@ -2,12 +2,9 @@ package buildcraft.builders.snapshot;
 
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.ISchematicEntity;
-import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
-import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.Box;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
@@ -41,42 +38,8 @@ public class Blueprint extends Snapshot {
                 }
             }
         }
-        nbt.setTag(
-                "data",
-                NBTUtilBC.writeCompoundList(
-                        Stream.of(serializedData)
-                                .map(schematicBlock -> {
-                                    NBTTagCompound schematicBlockTag = new NBTTagCompound();
-                                    schematicBlockTag.setString(
-                                            "name",
-                                            SchematicBlockFactoryRegistry
-                                                    .getFactoryByInstance(schematicBlock)
-                                                    .name
-                                                    .toString()
-                                    );
-                                    schematicBlockTag.setTag("data", schematicBlock.serializeNBT());
-                                    return schematicBlockTag;
-                                })
-                )
-        );
-        nbt.setTag(
-                "entities",
-                NBTUtilBC.writeCompoundList(
-                        entities.stream()
-                                .map(schematicEntity -> {
-                                    NBTTagCompound schematicEntityTag = new NBTTagCompound();
-                                    schematicEntityTag.setString(
-                                            "name",
-                                            SchematicEntityFactoryRegistry
-                                                    .getFactoryByInstance(schematicEntity)
-                                                    .name
-                                                    .toString()
-                                    );
-                                    schematicEntityTag.setTag("data", schematicEntity.serializeNBT());
-                                    return schematicEntityTag;
-                                })
-                )
-        );
+        nbt.setTag("data", NBTUtilBC.writeCompoundList(Stream.of(serializedData).map(SchematicBlockManager::writeToNBT)));
+        nbt.setTag("entities", NBTUtilBC.writeCompoundList(entities.stream().map(SchematicEntityManager::writeToNBT)));
         return nbt;
     }
 
@@ -85,14 +48,7 @@ public class Blueprint extends Snapshot {
         super.deserializeNBT(nbt);
         data = new ISchematicBlock<?>[size.getX()][size.getY()][size.getZ()];
         ISchematicBlock<?>[] serializedData = NBTUtilBC.readCompoundList(nbt.getTagList("data", Constants.NBT.TAG_COMPOUND))
-                .map(schematicBlockTag -> {
-                    ISchematicBlock<?> schematicBlock = SchematicBlockFactoryRegistry
-                            .getFactoryByName(new ResourceLocation(schematicBlockTag.getString("name")))
-                            .supplier
-                            .get();
-                    schematicBlock.deserializeNBT(schematicBlockTag.getCompoundTag("data"));
-                    return schematicBlock;
-                })
+                .map(SchematicBlockManager::readFromNBT)
                 .toArray(ISchematicBlock<?>[]::new);
         int i = 0;
         for (int z = 0; z < size.getZ(); z++) {
@@ -103,14 +59,7 @@ public class Blueprint extends Snapshot {
             }
         }
         entities = NBTUtilBC.readCompoundList(nbt.getTagList("entities", Constants.NBT.TAG_COMPOUND))
-                .map(schematicEntityTag -> {
-                    ISchematicEntity<?> schematicEntity = SchematicEntityFactoryRegistry
-                            .getFactoryByName(new ResourceLocation(schematicEntityTag.getString("name")))
-                            .supplier
-                            .get();
-                    schematicEntity.deserializeNBT(schematicEntityTag.getCompoundTag("data"));
-                    return schematicEntity;
-                })
+                .map(SchematicEntityManager::readFromNBT)
                 .collect(Collectors.toList());
     }
 

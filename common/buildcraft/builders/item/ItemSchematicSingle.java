@@ -4,7 +4,12 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.item;
 
-import net.minecraft.block.state.IBlockState;
+import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.builders.snapshot.SchematicBlockManager;
+import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -16,26 +21,12 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.bpt.BlueprintAPI;
-import buildcraft.api.bpt.SchematicBlock;
-import buildcraft.api.bpt.SchematicException;
-import buildcraft.api.bpt.SchematicFactoryWorldBlock;
-
-import buildcraft.builders.bpt.player.BuilderPlayer;
-import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.StackUtil;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
-
 public class ItemSchematicSingle extends ItemBC_Neptune {
-    private static final String NBT_KEY_SCHEMATIC = "schematic";
     private static final int DAMAGE_CLEAN = 0;
-    private static final int DAMAGE_STORED_SCHEMATIC = 1;
+    private static final int DAMAGE_USED = 1;
 
     public ItemSchematicSingle(String id) {
         super(id);
@@ -45,18 +36,14 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
 
     @Override
     public int getItemStackLimit(ItemStack stack) {
-        if (stack.getItemDamage() == DAMAGE_CLEAN) {
-            return 16;
-        } else {
-            return super.getItemStackLimit(stack);
-        }
+        return stack.getItemDamage() == DAMAGE_CLEAN ? 16 : super.getItemStackLimit(stack);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
         addVariant(variants, DAMAGE_CLEAN, "clean");
-        addVariant(variants, DAMAGE_STORED_SCHEMATIC, "used");
+        addVariant(variants, DAMAGE_USED, "used");
     }
 
     @Override
@@ -67,7 +54,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
         }
         if (player.isSneaking()) {
             NBTTagCompound itemData = NBTUtilBC.getItemData(stack);
-            itemData.removeTag(NBT_KEY_SCHEMATIC);
+            itemData.removeTag("schematic");
             if (itemData.hasNoTags()) {
                 stack.setTagCompound(null);
             }
@@ -85,7 +72,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
         ItemStack stack = player.getHeldItem(hand);
         if (player.isSneaking()) {
             NBTTagCompound itemData = NBTUtilBC.getItemData(StackUtil.asNonNull(stack));
-            itemData.removeTag(NBT_KEY_SCHEMATIC);
+            itemData.removeTag("schematic");
             if (itemData.hasNoTags()) {
                 stack.setTagCompound(null);
             }
@@ -93,45 +80,32 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
             return EnumActionResult.SUCCESS;
         }
         int damage = stack.getItemDamage();
-        if (damage != DAMAGE_STORED_SCHEMATIC) {
-            IBlockState state = world.getBlockState(pos);
-            SchematicFactoryWorldBlock factory = BlueprintAPI.getWorldBlockSchematic(state.getBlock());
-            if (factory != null) {
-                try {
-                    SchematicBlock schematic = factory.createFromWorld(world, pos);
-                    NBTTagCompound schematicData = schematic.serializeNBT();
-                    NBTTagCompound itemData = NBTUtilBC.getItemData(stack);
-                    itemData.setTag(NBT_KEY_SCHEMATIC, schematicData);
-                    stack.setItemDamage(DAMAGE_STORED_SCHEMATIC);
-                    return EnumActionResult.SUCCESS;
-                } catch (SchematicException e) {
-                    e.printStackTrace();
-                }
-            }
-            return EnumActionResult.FAIL;
+        if (damage != DAMAGE_USED) {
+            ISchematicBlock<?> schematicBlock = SchematicBlockManager.getSchematicBlock(
+                    world,
+                    pos,
+                    pos,
+                    world.getBlockState(pos),
+                    world.getBlockState(pos).getBlock()
+            );
+            NBTUtilBC.getItemData(stack).setTag("schematic", SchematicBlockManager.writeToNBT(schematicBlock));
+            stack.setItemDamage(DAMAGE_USED);
+            return EnumActionResult.SUCCESS;
         } else {
-            NBTTagCompound schematicNBT = NBTUtilBC.getItemData(stack).getCompoundTag(NBT_KEY_SCHEMATIC);
-            if (schematicNBT == null) {
-                player.sendMessage(new TextComponentString("No schematic data!"));
+            BlockPos placePos = pos.offset(side);
+            if (!world.isAirBlock(placePos)) {
+                player.sendMessage(new TextComponentString("Not an air block @" + placePos));
                 return EnumActionResult.FAIL;
             }
-            BlockPos place = pos.offset(side);
-            if (!world.isAirBlock(place)) {
-                player.sendMessage(new TextComponentString("Not an air block @" + place));
-                return EnumActionResult.FAIL;
+            ISchematicBlock<?> schematicBlock = SchematicBlockManager.readFromNBT(
+                    NBTUtilBC.getItemData(stack).getCompoundTag("schematic")
+            );
+            // TODO: extract required items and fluids from player's inventory
+            if (!schematicBlock.isBuilt(world, placePos) &&
+                    schematicBlock.canBuild(world, placePos) &&
+                    schematicBlock.build(world, placePos)) {
+                return EnumActionResult.SUCCESS;
             } else {
-                world.setBlockToAir(place);
-            }
-            try {
-                SchematicBlock schematic = BlueprintAPI.deserializeSchematicBlock(schematicNBT);
-                BuilderPlayer playerBuilder = new BuilderPlayer(player);
-                if (schematic.buildImmediatly(world, playerBuilder, place)) {
-                    return EnumActionResult.SUCCESS;
-                } else {
-                    return EnumActionResult.FAIL;
-                }
-            } catch (SchematicException e) {
-                e.printStackTrace();
                 return EnumActionResult.FAIL;
             }
         }
