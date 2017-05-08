@@ -28,7 +28,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -328,6 +327,9 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         schematicBlock.ignoredTags.addAll(ignoredTags);
         schematicBlock.tileRotation = tileRotation.add(rotation);
         schematicBlock.placeBlock = placeBlock;
+        updateBlockOffsets.stream()
+                .map(blockPos -> blockPos.rotate(rotation))
+                .forEach(schematicBlock.updateBlockOffsets::add);
         schematicBlock.canBeReplacedWithBlocks.addAll(canBeReplacedWithBlocks);
         schematicBlock.requiredItems.addAll(requiredItems);
         schematicBlock.requiredFluids.addAll(requiredFluids);
@@ -345,6 +347,9 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
     @Override
     @SuppressWarnings("Duplicates")
     public boolean build(World world, BlockPos blockPos) {
+        if (placeBlock == Blocks.AIR) {
+            return true;
+        }
         IBlockState newBlockState = blockState;
         if (placeBlock != blockState.getBlock()) {
             newBlockState = placeBlock.getDefaultState();
