@@ -60,6 +60,12 @@ public class BCBuilders {
                 SchematicBlockDefault::predicate,
                 SchematicBlockDefault::new
         );
+        SchematicBlockFactoryRegistry.registerFactory(
+                "fluid",
+                200,
+                SchematicBlockFluid::predicate,
+                SchematicBlockFluid::new
+        );
 
         SchematicEntityFactoryRegistry.registerFactory(
                 "default",

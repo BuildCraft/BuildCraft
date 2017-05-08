@@ -51,18 +51,14 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
             return false;
         }
         ResourceLocation registryName = context.block.getRegistryName();
-        if (registryName == null) {
-            return false;
-        }
-        if (!RulesLoader.READ_DOMAINS.contains(registryName.getResourceDomain())) {
-            return BlockUtil.getFluidWithFlowing(context.world, context.pos) != null;
-        }
-        return RulesLoader.getRules(context.blockState).stream().noneMatch(rule -> rule.ignore);
+        return registryName != null &&
+                RulesLoader.READ_DOMAINS.contains(registryName.getResourceDomain()) &&
+                RulesLoader.getRules(context.blockState).stream().noneMatch(rule -> rule.ignore);
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
     protected void setLevel(SchematicBlockContext context, Set<JsonRule> rules) {
-        level = BlockUtil.getFluidWithFlowing(context.world, context.pos) != null ? FLUID_LEVEL : BLOCK_LEVEL;
+        level = BLOCK_LEVEL;
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
@@ -147,12 +143,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
                 .filter(Objects::nonNull)
                 .findFirst()
                 .map(Block::getBlockFromName)
-                .orElse(
-                        BlockUtil.getFluidWithFlowing(context.world, context.pos) != null &&
-                                BlockUtil.getFluid(context.world, context.pos) == null
-                                ? Blocks.AIR
-                                : context.block
-                );
+                .orElse(context.block);
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
@@ -250,9 +241,6 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
             }
         }
         requiredItems.removeIf(ItemStack::isEmpty);
-        if (BlockUtil.getFluidWithFlowing(context.world, context.pos) != null) {
-            requiredItems.clear();
-        }
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
@@ -338,10 +326,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
 
     @Override
     public boolean canBuild(World world, BlockPos blockPos) {
-        return world.isAirBlock(blockPos) ||
-                BlockUtil.getFluidWithFlowing(blockState.getBlock()) != null &&
-                        BlockUtil.getFluidWithFlowing(world, blockPos) != null &&
-                        BlockUtil.getFluid(world, blockPos) == null;
+        return world.isAirBlock(blockPos);
     }
 
     @Override
@@ -429,15 +414,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
     public boolean isBuilt(World world, BlockPos blockPos) {
         return blockState != null &&
                 canBeReplacedWithBlocks.contains(world.getBlockState(blockPos).getBlock()) &&
-                blockState.getPropertyKeys().stream()
-                        .filter(world.getBlockState(blockPos).getPropertyKeys()::contains)
-                        .filter(property -> !ignoredProperties.contains(property))
-                        .allMatch(property ->
-                                Objects.equals(
-                                        blockState.getValue(property),
-                                        world.getBlockState(blockPos).getValue(property)
-                                )
-                        );
+                BlockUtil.blockStatesWithoutBlockEqual(blockState, world.getBlockState(blockPos), ignoredProperties);
     }
 
     @Override
