@@ -1,8 +1,5 @@
 package buildcraft.silicon;
 
-import buildcraft.api.recipes.StackDefinition;
-import buildcraft.lib.inventory.filter.ArrayStackFilter;
-import buildcraft.lib.inventory.filter.OreStackFilter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
@@ -10,18 +7,23 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
+import net.minecraftforge.oredict.OreDictionary;
+
 import buildcraft.api.BCBlocks;
 import buildcraft.api.BCItems;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.IntegrationRecipe;
+import buildcraft.api.recipes.StackDefinition;
 
 import buildcraft.lib.BCLib;
-import buildcraft.lib.recipe.IntegrationRecipeRegistry;
+import buildcraft.lib.inventory.filter.ArrayStackFilter;
+import buildcraft.lib.inventory.filter.OreStackFilter;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
+import buildcraft.lib.recipe.IntegrationRecipeRegistry;
+import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
-import net.minecraftforge.oredict.OreDictionary;
 
 public class BCSiliconRecipes {
     public static void init() {
@@ -45,14 +47,28 @@ public class BCSiliconRecipes {
             addChipsetAssembly(8, "gemDiamond", EnumRedstoneChipset.DIAMOND);
         }
 
-        if(BCLib.DEV) {
+        if (BCBlocks.SILICON_TABLE_ASSEMBLY != null) {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
+            builder.setResult(new ItemStack(BCBlocks.SILICON_TABLE_ASSEMBLY));
+            builder.add("OrO");
+            builder.add("OdO");
+            builder.add("OgO");
+            builder.map('O', Blocks.OBSIDIAN);
+            builder.map('r', "dustRedstone");
+            builder.map('d', Items.DIAMOND);
+            builder.map('g', OredictionaryNames.GEAR_DIAMOND);
+            builder.register();
+        }
+
+        if (BCLib.DEV) {
             OreDictionary.registerOre("dyeYellow", Blocks.GOLD_BLOCK);
             OreDictionary.registerOre("dyeBlue", Blocks.LAPIS_BLOCK);
             OreDictionary.registerOre("dyeRed", Blocks.REDSTONE_BLOCK);
 
-            IntegrationRecipeRegistry.INSTANCE.addRecipe(new IntegrationRecipe("potato-baker", 100,
-                    ArrayStackFilter.definition(Items.POTATO),
-                    ImmutableList.of(OreStackFilter.definition("dustRedstone")), new ItemStack(Items.BAKED_POTATO, 4)));
+            StackDefinition target = ArrayStackFilter.definition(Items.POTATO);
+            ImmutableList<StackDefinition> required = ImmutableList.of(OreStackFilter.definition("dustRedstone"));
+            ItemStack output = new ItemStack(Items.BAKED_POTATO, 4);
+            IntegrationRecipeRegistry.INSTANCE.addRecipe(new IntegrationRecipe("potato-baker", 100, target, required, output));
         }
     }
 

@@ -184,8 +184,11 @@ task deobfJar(type: Jar) {
     classifier = 'dev'
 }
 
+def modulesDir = file("build/libs/modules");
+def modulesDirSrc = new File(modulesDir, "src");
+
 task apiJar(type: Jar, dependsOn: reobfJar) {
-    destinationDir = file("modules")
+    destinationDir = modulesDir
     appendix = "api"
 
     doFirst {
@@ -196,7 +199,7 @@ task apiJar(type: Jar, dependsOn: reobfJar) {
 }
 
 task apiSrcJar(type: Jar, dependsOn: build) {
-    destinationDir = file("modules/src")
+    destinationDir = modulesDirSrc
     appendix = "api"
     classifier = 'sources'
 
@@ -206,7 +209,7 @@ task apiSrcJar(type: Jar, dependsOn: build) {
 }
 
 task libJar(type: Jar, dependsOn: reobfJar) {
-    destinationDir = file("modules")
+    destinationDir = modulesDir
     appendix = 'lib'
 
     doFirst {
@@ -218,7 +221,7 @@ task libJar(type: Jar, dependsOn: reobfJar) {
 }
 
 task libSrcJar(type: Jar, dependsOn: build) {
-    destinationDir = file("modules/src")
+    destinationDir = modulesDirSrc
     appendix = "lib"
     classifier = "sources"
 
@@ -231,7 +234,7 @@ task libSrcJar(type: Jar, dependsOn: build) {
 }
 
 task coreJar(type: Jar, dependsOn: reobfJar) {
-    destinationDir = file("modules")
+    destinationDir = modulesDir
     appendix = "core"
 
     doFirst {
@@ -244,7 +247,7 @@ task coreJar(type: Jar, dependsOn: reobfJar) {
 
 task buildersJar(type: Jar, dependsOn: reobfJar) {
 
-    destinationDir = file("modules")
+    destinationDir = modulesDir
     appendix = "builders"
 
     doFirst {
@@ -257,7 +260,7 @@ task buildersJar(type: Jar, dependsOn: reobfJar) {
 
 task energyJar(type: Jar, dependsOn: reobfJar) {
 
-    destinationDir = file("modules")
+    destinationDir = modulesDir
     appendix = "energy"
 
     doFirst {
@@ -270,7 +273,7 @@ task energyJar(type: Jar, dependsOn: reobfJar) {
 
 task factoryJar(type: Jar, dependsOn: reobfJar) {
 
-    destinationDir = file("modules")
+    destinationDir = modulesDir
     appendix = "factory"
 
     doFirst {
@@ -283,7 +286,7 @@ task factoryJar(type: Jar, dependsOn: reobfJar) {
 
 task siliconJar(type: Jar, dependsOn: reobfJar) {
 
-    destinationDir = file("modules")
+    destinationDir = modulesDir
     appendix = "silicon"
 
     doFirst {
@@ -296,7 +299,7 @@ task siliconJar(type: Jar, dependsOn: reobfJar) {
 
 task transportJar(type: Jar, dependsOn: reobfJar) {
 
-    destinationDir = file("modules")
+    destinationDir = modulesDir
     appendix = "transport"
 
     doFirst {
@@ -309,7 +312,7 @@ task transportJar(type: Jar, dependsOn: reobfJar) {
 
 task roboticsJar(type: Jar, dependsOn: reobfJar) {
 
-    destinationDir = file("modules")
+    destinationDir = modulesDir
     appendix = "robotics"
 
     doFirst {
@@ -321,7 +324,7 @@ task roboticsJar(type: Jar, dependsOn: reobfJar) {
 }
 
 task allJar(type: Jar, dependsOn:reobfJar) {
-    destinationDir = file("modules")
+    destinationDir = modulesDir
 
     doFirst {
         from(project.ext.jarFile) {
@@ -331,7 +334,7 @@ task allJar(type: Jar, dependsOn:reobfJar) {
 }
 
 task allSrcJar(type: Jar, dependsOn:reobfJar) {
-    destinationDir = file("modules")
+    destinationDir = modulesDir
     classifier = "sources"
 
     doFirst {
@@ -363,11 +366,6 @@ dependencies {
     deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
     sshAntTask "org.apache.ant:ant-jsch:1.9.6", "com.jcraft:jsch:0.1.53"
 }
-
-clean{
-    delete "modules"
-}
-
 // specify artifacts to be uploaded
 artifacts {
     // the default jar is already here by default

@@ -132,7 +132,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         GameRegistry.registerTileEntityWithAlternatives(tileClass, regName, alternatives);
     }
 
-    // ##############################
+    // ##################################################
     //
     // Local blockstate + tile entity getters
     //
@@ -140,7 +140,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     // at some point in the future, or are already
     // based on a cache.
     //
-    // ################################
+    // ##################################################
 
     public final IBlockState getCurrentState() {
         return BlockUtil.getBlockState(getWorld(), getPos());

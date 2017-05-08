@@ -4,6 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core;
 
+import com.google.common.collect.ImmutableSet;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
@@ -17,8 +19,14 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import buildcraft.api.BCBlocks;
 import buildcraft.api.BCItems;
 import buildcraft.api.enums.EnumEngineType;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.api.recipes.StackDefinition;
 
 import buildcraft.core.item.ItemPaintbrush_BC8;
+import buildcraft.lib.inventory.filter.ArrayStackFilter;
+import buildcraft.lib.inventory.filter.OreStackFilter;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
@@ -76,6 +84,28 @@ public class BCCoreRecipes {
                 ItemPaintbrush_BC8.Brush brush = BCCoreItems.paintbrush.new Brush(colour);
                 ItemStack out = brush.save();
                 GameRegistry.addRecipe(new ShapelessOreRecipe(out, cleanPaintbrush, ColourUtil.getDyeName(colour)));
+            }
+        }
+
+        if (BCItems.CORE_LIST != null) {
+            if (BCBlocks.SILICON_TABLE_ASSEMBLY != null) {
+                long mjCost = 2_000 * MjAPI.MJ;
+                ImmutableSet<StackDefinition> required = ImmutableSet.of(//
+                    ArrayStackFilter.definition(8, Items.PAPER),//
+                    OreStackFilter.definition(ColourUtil.getDyeName(EnumDyeColor.GREEN)),//
+                    ArrayStackFilter.definition(Items.REDSTONE)//
+                );
+                BuildcraftRecipeRegistry.assemblyRecipes.addRecipe(new AssemblyRecipe("list", mjCost, required, new ItemStack(BCItems.CORE_LIST)));
+            } else {
+                RecipeBuilderShaped recipe = new RecipeBuilderShaped();
+                recipe.add("pRp");
+                recipe.add("pGp");
+                recipe.add("ppp");
+                recipe.map('p', Items.PAPER);
+                recipe.map('G', ColourUtil.getDyeName(EnumDyeColor.GREEN));
+                recipe.map('R', Items.REDSTONE);
+                recipe.setResult(new ItemStack(BCItems.CORE_LIST));
+                recipe.register();
             }
         }
 
