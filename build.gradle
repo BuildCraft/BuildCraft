@@ -71,7 +71,8 @@ minecraft {
     replace "\${version}", project.version
     replace "\${mcversion}", version
     // Replace @Mod.acceptedMinecraftVersions specially as it has to be a valid version in a dev environment :/
-    replace "(gradle_replace_mcversion,)", "[" + version + "]"
+   	replace "(gradle_replace_mcversion,)", "[" + version + "]"
+   	replace "(gradle_replace_forgeversion,)", "[" + config.forge_version + ",)"
 }
 
 // configure  the source folders
