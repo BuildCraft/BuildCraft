@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import buildcraft.api.enums.EnumOptionalSnapshotType;
 import buildcraft.api.enums.EnumSnapshotType;
 import com.google.common.collect.ImmutableList;
 
@@ -61,6 +62,8 @@ import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder {
+    public static final int NET_SNAPSHOT_TYPE = 20;
+
     public final ItemHandlerSimple invSnapshot = itemManager.addInvHandler("snapshot", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
     public final ItemHandlerSimple invResources = itemManager.addInvHandler("resources", 27, EnumAccess.NONE, EnumPipePart.VALUES);
     private final TankManager<Tank> tankManager = new TankManager<>();
@@ -105,6 +108,9 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                 }
             }
             updateSnapshot();
+            if (!world.isRemote) {
+                sendNetworkUpdate(NET_SNAPSHOT_TYPE);
+            }
         }
         super.onSlotChange(itemHandler, slot, before, after);
     }
@@ -215,9 +221,13 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                     getBuilder().writeToByteBuf(buffer);
                 }
                 currentBox.writeData(buffer);
+                writePayload(NET_SNAPSHOT_TYPE, buffer, side);
             }
             if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
                 tankManager.writeData(buffer);
+            }
+            if (id == NET_SNAPSHOT_TYPE) {
+                buffer.writeEnumValue(EnumOptionalSnapshotType.fromNullable(snapshotType));
             }
         }
     }
@@ -243,9 +253,19 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                     snapshotType = null;
                 }
                 currentBox.readData(buffer);
+                readPayload(NET_SNAPSHOT_TYPE, buffer, side, ctx);
             }
             if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
                 tankManager.readData(buffer);
+            }
+            if (id == NET_SNAPSHOT_TYPE) {
+                snapshotType = buffer.readEnumValue(EnumOptionalSnapshotType.class).type;
+                world.notifyBlockUpdate(
+                        pos,
+                        world.getBlockState(pos),
+                        world.getBlockState(pos),
+                        0
+                );
             }
         }
     }
