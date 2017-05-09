@@ -83,8 +83,6 @@ public class BCLib {
         ItemManager.fmlInit();
 
         BCLibRecipes.fmlInit();
-
-        BCLibDatabase.fmlInit();
     }
 
     @Mod.EventHandler
@@ -95,11 +93,6 @@ public class BCLib {
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();
         ListMatchHandlerFluid.fmlPostInit();
-    }
-
-    @Mod.EventHandler
-    public static void onServerStarted(FMLServerStartedEvent evt) {
-        BCLibEventDist.onServerStarted(evt);
     }
 
     static {

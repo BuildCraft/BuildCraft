@@ -1,5 +1,6 @@
 package buildcraft.builders.snapshot;
 
+import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.ISchematicEntity;
 import buildcraft.lib.misc.NBTUtilBC;

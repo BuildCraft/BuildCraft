@@ -7,6 +7,7 @@ package buildcraft.lib.block;
 import java.util.EnumMap;
 import java.util.Map;
 
+import buildcraft.lib.misc.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -75,7 +76,7 @@ public abstract class BlockMarkerBase extends BlockBCTile_Neptune implements ICu
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
+        TileEntity tile = BlockUtil.getTileEntityForGetActualState(world, pos);
         if (tile instanceof TileMarker) {
             TileMarker<?> marker = (TileMarker<?>) tile;
             state = state.withProperty(BuildCraftProperties.ACTIVE, marker.isActiveForRender());

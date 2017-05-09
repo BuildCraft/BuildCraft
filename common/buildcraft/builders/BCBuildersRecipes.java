@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
+import buildcraft.api.enums.EnumSnapshotType;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -23,14 +24,25 @@ public class BCBuildersRecipes {
             GameRegistry.addRecipe(recipe);
         }
 
-        if (BCBuildersItems.blueprint != null) {
+        if (BCBuildersItems.snapshot != null) {
+            RecipeBuilderShaped recipe = new RecipeBuilderShaped();
+            recipe.add("ppp");
+            recipe.add("plp");
+            recipe.add("ppp");
+            recipe.map('l', "dyeBlack");
+            recipe.map('p', paper);
+            recipe.setResult(BCBuildersItems.snapshot.getClean(EnumSnapshotType.TEMPLATE));
+            recipe.register();
+        }
+
+        if (BCBuildersItems.snapshot != null) {
             RecipeBuilderShaped recipe = new RecipeBuilderShaped();
             recipe.add("ppp");
             recipe.add("plp");
             recipe.add("ppp");
             recipe.map('l', "gemLapis");
             recipe.map('p', paper);
-            recipe.setResult(new ItemStack(BCBuildersItems.blueprint));
+            recipe.setResult(BCBuildersItems.snapshot.getClean(EnumSnapshotType.BLUEPRINT));
             recipe.register();
         }
 

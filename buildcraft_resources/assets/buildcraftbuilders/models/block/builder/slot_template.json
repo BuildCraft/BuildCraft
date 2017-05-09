@@ -4,8 +4,8 @@
     },
     "elements": [
         {
-            "from": [8, 4, 3],
-            "to": [18, 6, 13],
+            "from": [3, 4, -2],
+            "to": [13, 6, 8],
             "faces": {
                 "down": {"texture": "#template", "uv": [3, 3, 13, 13]},
                 "up": {"texture": "#template", "uv": [3, 3, 13, 13]},

@@ -1,5 +1,6 @@
 package buildcraft.builders.snapshot;
 
+import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.lib.misc.data.Box;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Rotation;

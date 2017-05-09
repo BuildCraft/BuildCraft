@@ -6,6 +6,7 @@ import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileFiller;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
+import buildcraft.lib.misc.BlockUtil;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -37,7 +38,7 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
+        TileEntity tile = BlockUtil.getTileEntityForGetActualState(world, pos);
         if(tile instanceof TileFiller) {
             TileFiller filler = (TileFiller) tile;
             return state.withProperty(PATTERN, EnumFillerPattern.NONE); // FIXME

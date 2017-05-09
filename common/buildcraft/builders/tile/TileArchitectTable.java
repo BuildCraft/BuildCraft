@@ -6,6 +6,7 @@ package buildcraft.builders.tile;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.ISchematicEntity;
 import buildcraft.api.tiles.IDebuggable;
@@ -51,10 +52,10 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     public static final int NET_BOX = 20;
     public static final int NET_SCAN = 21;
 
-    public final ItemHandlerSimple invBptIn = itemManager.addInvHandler("bptIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
-    public final ItemHandlerSimple invBptOut = itemManager.addInvHandler("bptOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invSnapshotIn = itemManager.addInvHandler("in", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invSnapshotOut = itemManager.addInvHandler("out", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
 
-    private Snapshot.EnumSnapshotType snapshotType = Snapshot.EnumSnapshotType.BLUEPRINT;
+    private EnumSnapshotType snapshotType = EnumSnapshotType.BLUEPRINT;
     private final Box box = new Box();
     private boolean[][][] templateScannedBlocks;
     private ISchematicBlock<?>[][][] blueprintScannedBlocks;
@@ -68,8 +69,8 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
         super.onSlotChange(handler, slot, before, after);
-        if (handler == invBptIn) {
-            if (invBptOut.getStackInSlot(0).isEmpty() && after.getItem() instanceof ItemSnapshot) {
+        if (handler == invSnapshotIn) {
+            if (invSnapshotOut.getStackInSlot(0).isEmpty() && after.getItem() instanceof ItemSnapshot) {
                 snapshotType = ItemSnapshot.EnumItemSnapshotType.getFromStack(after).snapshotType;
             }
         }
@@ -125,7 +126,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             return;
         }
 
-        if (!invBptIn.getStackInSlot(0).isEmpty() && invBptOut.getStackInSlot(0).isEmpty() && isValid) {
+        if (!invSnapshotIn.getStackInSlot(0).isEmpty() && invSnapshotOut.getStackInSlot(0).isEmpty() && isValid) {
             if (!scanning) {
                 int size = box.size().getX() * box.size().getY() * box.size().getZ();
                 size /= snapshotType.maxPerTick;
@@ -140,7 +141,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         if (scanning) {
             scanMultipleBlocks();
             if (!scanning) {
-                if (snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
+                if (snapshotType == EnumSnapshotType.BLUEPRINT) {
                     scanEntities();
                 }
                 finishScanning();
@@ -168,11 +169,11 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         // Read from world
         BlockPos worldScanPos = boxIterator.getCurrent();
         BlockPos schematicIndex = worldScanPos.subtract(box.min());
-        if (snapshotType == Snapshot.EnumSnapshotType.TEMPLATE) {
+        if (snapshotType == EnumSnapshotType.TEMPLATE) {
             boolean solid = !world.isAirBlock(worldScanPos);
             templateScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = solid;
         }
-        if (snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
+        if (snapshotType == EnumSnapshotType.BLUEPRINT) {
             ISchematicBlock<?> schematic = readSchematicForBlock(worldScanPos);
             blueprintScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = schematic;
         }
@@ -214,15 +215,15 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
 
     private void finishScanning() {
         EnumFacing facing = world.getBlockState(pos).getValue(BlockArchitectTable.PROP_FACING);
-        Snapshot snapshot = snapshotType.create.get();
+        Snapshot snapshot = Snapshot.create(snapshotType);
         snapshot.size = box.size();
         snapshot.facing = facing;
         snapshot.offset = box.min().subtract(pos.offset(facing.getOpposite()));
-        if (snapshotType == Snapshot.EnumSnapshotType.TEMPLATE) {
+        if (snapshotType == EnumSnapshotType.TEMPLATE) {
             // noinspection ConstantConditions
             ((Template) snapshot).data = templateScannedBlocks;
         }
-        if (snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
+        if (snapshotType == EnumSnapshotType.BLUEPRINT) {
             // noinspection ConstantConditions
             ((Blueprint) snapshot).data = blueprintScannedBlocks;
             // noinspection ConstantConditions
@@ -234,13 +235,13 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         snapshot.header.name = name;
         GlobalSavedDataSnapshots.get(world).snapshots.add(snapshot);
         GlobalSavedDataSnapshots.get(world).markDirty();
-        ItemStack stackIn = invBptIn.getStackInSlot(0);
+        ItemStack stackIn = invSnapshotIn.getStackInSlot(0);
         stackIn.setCount(stackIn.getCount() - 1);
         if (stackIn.getCount() == 0) {
             stackIn = ItemStack.EMPTY;
         }
-        invBptIn.setStackInSlot(0, stackIn);
-        invBptOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshotType, snapshot.header));
+        invSnapshotIn.setStackInSlot(0, stackIn);
+        invSnapshotOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshotType, snapshot.header));
         templateScannedBlocks = null;
         blueprintScannedBlocks = null;
         blueprintScannedEntities.clear();
@@ -303,7 +304,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             boxIterator = BoxIterator.readFromNbt(nbt.getCompoundTag("iter"));
         }
         scanning = nbt.getBoolean("scanning");
-        snapshotType = NBTUtilBC.readEnum(nbt.getTag("snapshotType"), Snapshot.EnumSnapshotType.class);
+        snapshotType = NBTUtilBC.readEnum(nbt.getTag("snapshotType"), EnumSnapshotType.class);
         isValid = nbt.getBoolean("isValid");
         name = nbt.getString("name");
     }

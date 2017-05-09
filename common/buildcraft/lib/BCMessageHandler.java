@@ -20,9 +20,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
-import buildcraft.lib.library.network.MessageLibraryDBIndex;
-import buildcraft.lib.library.network.MessageLibraryRequest;
-import buildcraft.lib.library.network.MessageLibraryTransferEntry;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.MessageContainer;
 import buildcraft.lib.net.MessageMarker;
@@ -48,9 +45,6 @@ public enum BCMessageHandler {
         addMessageType(MessageUpdateTile.class, MessageUpdateTile.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageContainer.class, MessageContainer.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageMarker.class, MessageMarker.Handler.INSTANCE, Side.CLIENT);
-        addMessageType(MessageLibraryTransferEntry.class, MessageLibraryTransferEntry.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
-        addMessageType(MessageLibraryRequest.class, MessageLibraryRequest.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
-        addMessageType(MessageLibraryDBIndex.class, MessageLibraryDBIndex.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageParticleVanilla.class, MessageParticleVanilla.Handler.INSTANCE, Side.CLIENT);
         addMessageType(MessageObjectCacheReq.class, MessageObjectCacheReq.Handler.INSTANCE, Side.SERVER);
         addMessageType(MessageObjectCacheReply.class, MessageObjectCacheReply.Handler.INSTANCE, Side.CLIENT);

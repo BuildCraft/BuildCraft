@@ -1,5 +1,6 @@
 package buildcraft.builders.item;
 
+import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.lib.item.ItemBC_Neptune;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -24,7 +25,7 @@ public class ItemSnapshot extends ItemBC_Neptune {
         setHasSubtypes(true);
     }
 
-    public ItemStack getClean(Snapshot.EnumSnapshotType snapshotType, Snapshot.Header header) {
+    public ItemStack getClean(EnumSnapshotType snapshotType) {
         return new ItemStack(
                 this,
                 1,
@@ -32,7 +33,7 @@ public class ItemSnapshot extends ItemBC_Neptune {
         );
     }
 
-    public ItemStack getUsed(Snapshot.EnumSnapshotType snapshotType, Snapshot.Header header) {
+    public ItemStack getUsed(EnumSnapshotType snapshotType, Snapshot.Header header) {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag("header", header.serializeNBT());
         ItemStack stack = new ItemStack(
@@ -89,15 +90,15 @@ public class ItemSnapshot extends ItemBC_Neptune {
     }
 
     public enum EnumItemSnapshotType implements IStringSerializable {
-        TEMPLATE_CLEAN(Snapshot.EnumSnapshotType.TEMPLATE, false),
-        TEMPLATE_USED(Snapshot.EnumSnapshotType.TEMPLATE, true),
-        BLUEPRINT_CLEAN(Snapshot.EnumSnapshotType.BLUEPRINT, false),
-        BLUEPRINT_USED(Snapshot.EnumSnapshotType.BLUEPRINT, true);
+        TEMPLATE_CLEAN(EnumSnapshotType.TEMPLATE, false),
+        TEMPLATE_USED(EnumSnapshotType.TEMPLATE, true),
+        BLUEPRINT_CLEAN(EnumSnapshotType.BLUEPRINT, false),
+        BLUEPRINT_USED(EnumSnapshotType.BLUEPRINT, true);
 
-        public Snapshot.EnumSnapshotType snapshotType;
+        public EnumSnapshotType snapshotType;
         public boolean used;
 
-        EnumItemSnapshotType(Snapshot.EnumSnapshotType snapshotType, boolean used) {
+        EnumItemSnapshotType(EnumSnapshotType snapshotType, boolean used) {
             this.snapshotType = snapshotType;
             this.used = used;
         }
@@ -107,10 +108,10 @@ public class ItemSnapshot extends ItemBC_Neptune {
             return name().toLowerCase(Locale.ROOT);
         }
 
-        public static EnumItemSnapshotType get(Snapshot.EnumSnapshotType snapshotType, boolean used){
-            if (snapshotType == Snapshot.EnumSnapshotType.TEMPLATE) {
+        public static EnumItemSnapshotType get(EnumSnapshotType snapshotType, boolean used){
+            if (snapshotType == EnumSnapshotType.TEMPLATE) {
                 return !used ? TEMPLATE_CLEAN : TEMPLATE_USED;
-            } else if (snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
+            } else if (snapshotType == EnumSnapshotType.BLUEPRINT) {
                 return !used ? BLUEPRINT_CLEAN : BLUEPRINT_USED;
             } else {
                 throw new IllegalArgumentException();

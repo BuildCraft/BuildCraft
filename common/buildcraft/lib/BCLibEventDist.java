@@ -4,8 +4,6 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib;
 
-import java.io.File;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -71,7 +69,6 @@ public enum BCLibEventDist {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void onConnectToServer(ClientConnectedToServerEvent event) {
-        BCLibDatabase.connectToServer();
         // Really obnoxious warning
         if (!BCLib.DEV) {
             /* If people are in a dev environment or have toggled the flag then they probably already know about this */
@@ -184,9 +181,5 @@ public enum BCLibEventDist {
             BuildCraftObjectCaches.onClientTick();
             MessageUtil.postTick();
         }
-    }
-
-    public static void onServerStarted(FMLServerStartedEvent started) {
-        BCLibDatabase.onServerStarted();
     }
 }

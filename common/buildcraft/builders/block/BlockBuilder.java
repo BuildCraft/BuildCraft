@@ -6,6 +6,8 @@ package buildcraft.builders.block;
 
 import java.util.List;
 
+import buildcraft.api.enums.EnumOptionalSnapshotType;
+import buildcraft.lib.misc.BlockUtil;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -14,9 +16,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import buildcraft.api.enums.EnumBlueprintType;
 import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.builders.BCBuildersGuis;
@@ -25,11 +27,11 @@ import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
 
 public class BlockBuilder extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public static final IProperty<EnumBlueprintType> BLUEPRINT_TYPE = BuildCraftProperties.BLUEPRINT_TYPE;
+    public static final IProperty<EnumOptionalSnapshotType> SNAPSHOT_TYPE = BuildCraftProperties.SNAPSHOT_TYPE;
 
     public BlockBuilder(Material material, String id) {
         super(material, id);
-        setDefaultState(getDefaultState().withProperty(BLUEPRINT_TYPE, EnumBlueprintType.NONE));
+        setDefaultState(getDefaultState().withProperty(SNAPSHOT_TYPE, EnumOptionalSnapshotType.NONE));
     }
 
     // BlockState
@@ -37,7 +39,20 @@ public class BlockBuilder extends BlockBCTile_Neptune implements IBlockWithFacin
     @Override
     protected void addProperties(List<IProperty<?>> properties) {
         super.addProperties(properties);
-        properties.add(BLUEPRINT_TYPE);
+        properties.add(SNAPSHOT_TYPE);
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        TileEntity tile = BlockUtil.getTileEntityForGetActualState(world, pos);
+        if (tile instanceof TileBuilder) {
+            return state
+                    .withProperty(
+                            SNAPSHOT_TYPE,
+                            EnumOptionalSnapshotType.fromNullable(((TileBuilder) tile).snapshotType)
+                    );
+        }
+        return state;
     }
 
     // Others

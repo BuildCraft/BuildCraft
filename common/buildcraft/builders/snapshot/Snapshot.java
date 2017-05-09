@@ -1,5 +1,6 @@
 package buildcraft.builders.snapshot;
 
+import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
@@ -14,7 +15,6 @@ import net.minecraftforge.common.util.INBTSerializable;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,6 +31,16 @@ public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
     public Snapshot() {
     }
 
+    public static Snapshot create(EnumSnapshotType type) {
+        switch (type) {
+            case TEMPLATE:
+                return new Template();
+            case BLUEPRINT:
+                return new Blueprint();
+        }
+        throw new UnsupportedOperationException();
+    }
+
     public abstract <T extends ITileForSnapshotBuilder> SnapshotBuilder<T> createBuilder(T tile);
 
     public static NBTTagCompound writeToNBT(Snapshot snapshot) {
@@ -40,7 +50,7 @@ public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
     }
 
     public static Snapshot readFromNBT(NBTTagCompound nbt) {
-        Snapshot snapshot = NBTUtilBC.readEnum(nbt.getTag("type"), Snapshot.EnumSnapshotType.class).create.get();
+        Snapshot snapshot = Snapshot.create(NBTUtilBC.readEnum(nbt.getTag("type"), EnumSnapshotType.class));
         snapshot.deserializeNBT(nbt);
         return snapshot;
     }
@@ -64,19 +74,6 @@ public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
     }
 
     abstract public EnumSnapshotType getType();
-
-    public enum EnumSnapshotType {
-        TEMPLATE(Template::new, 3),
-        BLUEPRINT(Blueprint::new, 9);
-
-        public final Supplier<Snapshot> create;
-        public final int maxPerTick;
-
-        EnumSnapshotType(Supplier<Snapshot> create, int maxPerTick) {
-            this.create = create;
-            this.maxPerTick = maxPerTick;
-        }
-    }
 
     public static class Header implements INBTSerializable<NBTTagCompound> {
         public UUID id;

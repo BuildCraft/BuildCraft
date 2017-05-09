@@ -10,11 +10,11 @@
             "west": {"y": 270},
             "north": {"y": 0}
         },
-        "blueprint_type": {
+        "snapshot_type": {
             "none": {"submodel": "buildcraftbuilders:builder/slot_empty"},
             "blueprint": {"submodel": "buildcraftbuilders:builder/slot_blueprint"},
             "template": {"submodel": "buildcraftbuilders:builder/slot_template"}
         },
-        "inventory": [{"model": "buildcraftbuilders:builder/main"}]
+        "inventory": [{}]
     }
 }

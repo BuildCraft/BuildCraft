@@ -7,7 +7,6 @@ package buildcraft.builders;
 import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
 import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
 import buildcraft.builders.addon.AddonFillingPlanner;
-import buildcraft.builders.bpt.PerSaveBptStorage;
 import buildcraft.builders.snapshot.*;
 import buildcraft.core.BCCore;
 import buildcraft.core.marker.volume.AddonsRegistry;
@@ -21,7 +20,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import java.util.function.Consumer;
@@ -89,16 +87,10 @@ public class BCBuilders {
         GlobalSavedDataSnapshots.get(evt.getSide());
     }
 
-    @Mod.EventHandler
-    public static void onServerStopping(FMLServerStoppingEvent event) {
-        PerSaveBptStorage.onServerStopping();
-    }
-
     static {
         startBatch();
         // Items
         registerTag("item.schematic.single").reg("schematic_single").locale("schematicSingle").model("schematic_single/");
-        registerTag("item.blueprint").reg("blueprint").locale("blueprintItem").model("blueprint/");
         registerTag("item.snapshot").reg("snapshot").locale("snapshot").model("snapshot/");
         registerTag("item.filling_planner").reg("filling_planner").locale("fillingPlannerItem").model("filling_planner");
         // Item Blocks

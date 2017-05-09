@@ -1,7 +1,7 @@
 package buildcraft.builders.container;
 
 import buildcraft.builders.item.ItemSnapshot;
-import buildcraft.builders.snapshot.Snapshot;
+import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.builders.tile.TileBuilder;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
@@ -21,7 +21,7 @@ public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
 
         addFullPlayerInventory(140);
 
-        addSlotToContainer(new SlotBase(tile.invBlueprint, 0, 80, 27) {
+        addSlotToContainer(new SlotBase(tile.invSnapshot, 0, 80, 27) {
             @Override
             public boolean isItemValid(ItemStack stack) {
                 return stack.getItem() instanceof ItemSnapshot && ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used;
@@ -47,7 +47,7 @@ public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
     }
 
     private ItemStack getDisplay(int index) {
-        return tile.snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT &&
+        return tile.snapshotType == EnumSnapshotType.BLUEPRINT &&
                 index < tile.blueprintBuilder.remainingDisplayRequired.size()
                 ? tile.blueprintBuilder.remainingDisplayRequired.get(index)
                 : ItemStack.EMPTY;

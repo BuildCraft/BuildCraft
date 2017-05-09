@@ -2,6 +2,7 @@ package buildcraft.factory.block;
 
 import java.util.List;
 
+import buildcraft.lib.misc.BlockUtil;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -90,17 +91,14 @@ public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnect
         if (world.isRemote) {
             return true;
         }
-        ItemStack heldItem = player.getHeldItem(hand);
-        if (heldItem.isEmpty()) {
+        if (player.getHeldItem(hand).isEmpty()) {
             return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
         }
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileTank) {
             TileTank tank = (TileTank) tile;
-            FluidActionResult result = FluidUtil.interactWithFluidHandler(heldItem, tank.getCapability(CapUtil.CAP_FLUIDS, null), player);
-            if (result.success) {
+            if (FluidUtil.interactWithFluidHandler(player, hand, world, pos, side)) {
                 tank.sendNetworkUpdate(TileBC_Neptune.NET_RENDER_DATA);
-                player.setHeldItem(hand, result.result);
                 player.inventoryContainer.detectAndSendChanges();
                 return true;
             }

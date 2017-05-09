@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.lib.misc;
 
-import buildcraft.api.blueprints.BuilderAPI;
+import buildcraft.api.mj.MjAPI;
 import buildcraft.lib.BCLibConfig;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
@@ -26,9 +26,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.*;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
 import net.minecraftforge.common.ForgeModContainer;
@@ -295,7 +293,7 @@ public final class BlockUtil {
     public static long computeBlockBreakPower(World world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
         float hardness = state.getBlockHardness(world, pos);
-        return (long) Math.floor(BuilderAPI.BREAK_POWER * ((hardness + 1) * 2));
+        return (long) Math.floor(16 * MjAPI.MJ * ((hardness + 1) * 2));
     }
 
     /** The following functions let you avoid unnecessary chunk loads, which is nice. */
@@ -443,5 +441,11 @@ public final class BlockUtil {
         return a.getBlock() == b.getBlock() &&
                 Sets.union(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
                 .allMatch(property -> Objects.equals(a.getValue(property), b.getValue(property)));
+    }
+
+    public static TileEntity getTileEntityForGetActualState(IBlockAccess world, BlockPos pos) {
+        return world instanceof ChunkCache
+                ? ((ChunkCache) world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK)
+                : world.getTileEntity(pos);
     }
 }

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import buildcraft.lib.misc.BlockUtil;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -47,7 +48,7 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
+        TileEntity tile = BlockUtil.getTileEntityForGetActualState(world, pos);
         if (tile instanceof TileFloodGate) {
             TileFloodGate gate = (TileFloodGate) tile;
             for (EnumFacing side : CONNECTED_MAP.keySet()) {

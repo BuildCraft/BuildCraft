@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import buildcraft.api.enums.EnumSnapshotType;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.EntityLivingBase;
@@ -60,7 +61,7 @@ import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder {
-    public final ItemHandlerSimple invBlueprint = itemManager.addInvHandler("blueprint", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invSnapshot = itemManager.addInvHandler("snapshot", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
     public final ItemHandlerSimple invResources = itemManager.addInvHandler("resources", 27, EnumAccess.NONE, EnumPipePart.VALUES);
     private final TankManager<Tank> tankManager = new TankManager<>();
 
@@ -74,7 +75,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     private List<BlockPos> basePoses = new ArrayList<>();
     private int currentBasePosIndex = 0;
     private Snapshot snapshot = null;
-    public Snapshot.EnumSnapshotType snapshotType = null;
+    public EnumSnapshotType snapshotType = null;
     private Template.BuildingInfo templateBuildingInfo = null;
     private Blueprint.BuildingInfo blueprintBuildingInfo = null;
     public TemplateBuilder templateBuilder = new TemplateBuilder(this);
@@ -91,15 +92,15 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, ItemStack before, ItemStack after) {
-        if (itemHandler == invBlueprint) {
+        if (itemHandler == invSnapshot) {
             currentBasePosIndex = 0;
             snapshot = null;
             if (after.getItem() instanceof ItemSnapshot) {
                 Snapshot.Header header = BCBuildersItems.snapshot.getHeader(after);
                 if (header != null) {
-                    Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(header);
-                    if (snapshot != null) {
-                        this.snapshot = snapshot;
+                    Snapshot newSnapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(header);
+                    if (newSnapshot != null) {
+                        snapshot = newSnapshot;
                     }
                 }
             }
@@ -116,10 +117,10 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
             snapshotType = snapshot.getType();
             EnumFacing facing = world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING);
             Rotation rotation = Arrays.stream(Rotation.values()).filter(r -> r.rotate(snapshot.facing) == facing).findFirst().orElse(null);
-            if (snapshot.getType() == Snapshot.EnumSnapshotType.TEMPLATE) {
+            if (snapshot.getType() == EnumSnapshotType.TEMPLATE) {
                 templateBuildingInfo = ((Template) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
             }
-            if (snapshot.getType() == Snapshot.EnumSnapshotType.BLUEPRINT) {
+            if (snapshot.getType() == EnumSnapshotType.BLUEPRINT) {
                 blueprintBuildingInfo = ((Blueprint) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
             }
             currentBox = Optional.ofNullable(getBuilder()).map(SnapshotBuilder::getBox).orElse(null);
@@ -153,10 +154,10 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     }
 
     public SnapshotBuilder<?> getBuilder() {
-        if (snapshotType == Snapshot.EnumSnapshotType.TEMPLATE) {
+        if (snapshotType == EnumSnapshotType.TEMPLATE) {
             return templateBuilder;
         }
-        if (snapshotType == Snapshot.EnumSnapshotType.BLUEPRINT) {
+        if (snapshotType == EnumSnapshotType.BLUEPRINT) {
             return blueprintBuilder;
         }
         return null;
@@ -235,7 +236,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                 }
                 updateBasePoses();
                 if (buffer.readBoolean()) {
-                    snapshotType = buffer.readEnumValue(Snapshot.EnumSnapshotType.class);
+                    snapshotType = buffer.readEnumValue(EnumSnapshotType.class);
                     // noinspection ConstantConditions
                     getBuilder().readFromByteBuf(buffer);
                 } else {
