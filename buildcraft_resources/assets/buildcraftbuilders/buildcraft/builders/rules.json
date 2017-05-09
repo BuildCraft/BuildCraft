@@ -296,7 +296,8 @@
         "selectors": [
             "minecraft:bed[part=head]",
             "minecraft:torch",
-            "minecraft:redstone_torch"
+            "minecraft:redstone_torch",
+            "minecraft:wall_sign"
         ],
         "copyOppositeRequiredBlockOffsetFromProperty": "facing"
     },
@@ -323,6 +324,10 @@
     {
         "selectors": ["minecraft:lever[facing=east]"],
         "requiredBlockOffsets": [[-1, 0, 0]]
+    },
+    {
+        "selectors": ["minecraft:standing_sign"],
+        "requiredBlockOffsets": [[0, -1, 0]]
     },
     {
         "selectors": [
