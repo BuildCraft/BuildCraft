@@ -293,7 +293,11 @@
         "updateBlockOffsets": []
     },
     {
-        "selectors": ["minecraft:bed[part=head]"],
+        "selectors": [
+            "minecraft:bed[part=head]",
+            "minecraft:torch",
+            "minecraft:redstone_torch"
+        ],
         "copyOppositeRequiredBlockOffsetFromProperty": "facing"
     },
     {
