@@ -75,7 +75,9 @@ public enum ClientSnapshots {
             }
             return localWorld;
         });
+        GlStateManager.pushAttrib();
         GlStateManager.enableDepth();
+        GlStateManager.enableBlend();
         GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT); // TODO: save depth buffer?
         GlStateManager.pushMatrix();
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
@@ -126,6 +128,7 @@ public enum ClientSnapshots {
             for (int y = 0; y < snapshot.size.getY(); y++) {
                 for (int x = 0; x < snapshot.size.getX(); x++) {
                     BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
+                    GlStateManager.pushAttrib();
                     // noinspection ConstantConditions
                     TileEntityRendererDispatcher.instance.renderTileEntityAt(
                             world.getTileEntity(pos),
@@ -134,6 +137,7 @@ public enum ClientSnapshots {
                             pos.getZ() - FakeWorld.BLUEPRINT_OFFSET.getZ(),
                             0
                     );
+                    GlStateManager.popAttrib();
                 }
             }
         }
@@ -170,6 +174,7 @@ public enum ClientSnapshots {
                     );
                     break;
             }
+            GlStateManager.pushAttrib();
             Minecraft.getMinecraft().getRenderManager().doRenderEntity(
                     entity,
                     pos.xCoord - FakeWorld.BLUEPRINT_OFFSET.getX(),
@@ -179,6 +184,7 @@ public enum ClientSnapshots {
                     0,
                     true
             );
+            GlStateManager.popAttrib();
         }
         GlStateManager.popMatrix();
         GlStateManager.disableRescaleNormal();
@@ -187,6 +193,8 @@ public enum ClientSnapshots {
         GlStateManager.popMatrix();
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.popMatrix();
+        GlStateManager.disableBlend();
         GlStateManager.disableDepth();
+        GlStateManager.popAttrib();
     }
 }
