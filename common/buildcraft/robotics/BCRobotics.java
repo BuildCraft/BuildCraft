@@ -40,8 +40,8 @@ public class BCRobotics {
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCRoboticsProxy.getProxy());
 
-        BCMessageHandler.addMessageType(MessageZoneMapRequest.class, MessageZoneMapRequest.Handler.INSTANCE, Side.SERVER);
-        BCMessageHandler.addMessageType(MessageZoneMapResponse.class, MessageZoneMapResponse.Handler.INSTANCE, Side.CLIENT);
+        BCMessageHandler.addMessageType(MessageZoneMapRequest.class, MessageZoneMapRequest.HANDLER, Side.SERVER);
+        BCMessageHandler.addMessageType(MessageZoneMapResponse.class, MessageZoneMapResponse.HANDLER, Side.CLIENT);
     }
 
     @Mod.EventHandler

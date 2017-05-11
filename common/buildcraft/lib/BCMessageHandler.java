@@ -42,12 +42,12 @@ public enum BCMessageHandler {
     }
 
     public static void fmlPreInit() {
-        addMessageType(MessageUpdateTile.class, MessageUpdateTile.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
-        addMessageType(MessageContainer.class, MessageContainer.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
-        addMessageType(MessageMarker.class, MessageMarker.Handler.INSTANCE, Side.CLIENT);
-        addMessageType(MessageParticleVanilla.class, MessageParticleVanilla.Handler.INSTANCE, Side.CLIENT);
-        addMessageType(MessageObjectCacheReq.class, MessageObjectCacheReq.Handler.INSTANCE, Side.SERVER);
-        addMessageType(MessageObjectCacheReply.class, MessageObjectCacheReply.Handler.INSTANCE, Side.CLIENT);
+        addMessageType(MessageUpdateTile.class, MessageUpdateTile.HANDLER, Side.CLIENT, Side.SERVER);
+        addMessageType(MessageContainer.class, MessageContainer.HANDLER, Side.CLIENT, Side.SERVER);
+        addMessageType(MessageMarker.class, MessageMarker.HANDLER, Side.CLIENT);
+        addMessageType(MessageParticleVanilla.class, MessageParticleVanilla.HANDLER, Side.CLIENT);
+        addMessageType(MessageObjectCacheReq.class, MessageObjectCacheReq.HANDLER, Side.SERVER);
+        addMessageType(MessageObjectCacheReply.class, MessageObjectCacheReply.HANDLER, Side.CLIENT);
     }
 
     public static void fmlPostInit() {

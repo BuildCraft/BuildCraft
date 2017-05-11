@@ -35,19 +35,20 @@ public class MessageVolumeBoxes implements IMessage {
         IntStream.range(0, buf.readInt()).mapToObj(i -> new VolumeBox(new PacketBuffer(buf))).forEach(boxes::add);
     }
 
-    public enum Handler implements IMessageHandler<MessageVolumeBoxes, IMessage> {
-        INSTANCE;
-
-        @Override
-        public IMessage onMessage(MessageVolumeBoxes message, MessageContext ctx) {
-            ClientVolumeBoxes.INSTANCE.boxes.removeIf(box -> !message.boxes.contains(box));
-            message.boxes.stream().filter(box -> !ClientVolumeBoxes.INSTANCE.boxes.contains(box)).forEach(ClientVolumeBoxes.INSTANCE.boxes::add);
-            for (VolumeBox box : message.boxes) {
-                PacketBuffer buf = new PacketBuffer(UnpooledByteBufAllocator.DEFAULT.buffer());
-                box.toBytes(buf);
-                ClientVolumeBoxes.INSTANCE.boxes.stream().filter(box::equals).findFirst().orElse(null).fromBytes(buf);
-            }
-            return null;
-        }
-    }
+    public static final IMessageHandler<MessageVolumeBoxes, IMessage> HANDLER =
+            (MessageVolumeBoxes message, MessageContext ctx) -> {
+                ClientVolumeBoxes.INSTANCE.boxes.removeIf(box -> !message.boxes.contains(box));
+                message.boxes.stream()
+                        .filter(box -> !ClientVolumeBoxes.INSTANCE.boxes.contains(box))
+                        .forEach(ClientVolumeBoxes.INSTANCE.boxes::add);
+                for (VolumeBox box : message.boxes) {
+                    PacketBuffer buf = new PacketBuffer(UnpooledByteBufAllocator.DEFAULT.buffer());
+                    box.toBytes(buf);
+                    ClientVolumeBoxes.INSTANCE.boxes.stream()
+                            .filter(box::equals)
+                            .findFirst()
+                            .ifPresent(b -> b.fromBytes(buf));
+                }
+                return null;
+            };
 }

@@ -15,7 +15,8 @@ public class MessageZoneMapResponse implements IMessage {
     private ZonePlannerMapChunkKey key;
     private ZonePlannerMapChunk data;
 
-    public MessageZoneMapResponse() {}
+    public MessageZoneMapResponse() {
+    }
 
     public MessageZoneMapResponse(ZonePlannerMapChunkKey zonePlannerMapChunkKey, ZonePlannerMapChunk data) {
         this.key = zonePlannerMapChunkKey;
@@ -34,18 +35,14 @@ public class MessageZoneMapResponse implements IMessage {
         data.write(new PacketBuffer(buf));
     }
 
-    public static enum Handler implements IMessageHandler<MessageZoneMapResponse, IMessage> {
-        INSTANCE;
-
-        @Override
-        public IMessage onMessage(MessageZoneMapResponse message, MessageContext ctx) {
-            Deque<Consumer<ZonePlannerMapChunk>> queue = ZonePlannerMapDataClient.INSTANCE.pendingRequests.get(message.key);
-            if (queue != null) {
-                while (!queue.isEmpty()) {
-                    queue.remove().accept(message.data);
+    public static final IMessageHandler<MessageZoneMapResponse, IMessage> HANDLER =
+            (MessageZoneMapResponse message, MessageContext ctx) -> {
+                Deque<Consumer<ZonePlannerMapChunk>> queue = ZonePlannerMapDataClient.INSTANCE.pendingRequests.get(message.key);
+                if (queue != null) {
+                    while (!queue.isEmpty()) {
+                        queue.poll().accept(message.data);
+                    }
                 }
-            }
-            return null;
-        }
-    }
+                return null;
+            };
 }

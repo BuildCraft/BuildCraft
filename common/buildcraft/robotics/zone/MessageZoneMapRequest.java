@@ -11,7 +11,8 @@ import io.netty.buffer.ByteBuf;
 public class MessageZoneMapRequest implements IMessage {
     private ZonePlannerMapChunkKey key;
 
-    public MessageZoneMapRequest() {}
+    public MessageZoneMapRequest() {
+    }
 
     public MessageZoneMapRequest(ZonePlannerMapChunkKey key) {
         this.key = key;
@@ -27,15 +28,13 @@ public class MessageZoneMapRequest implements IMessage {
         key.toBytes(buf);
     }
 
-    public static enum Handler implements IMessageHandler<MessageZoneMapRequest, IMessage> {
-        INSTANCE;
-
-        @Override
-        public IMessage onMessage(MessageZoneMapRequest message, MessageContext ctx) {
-            ZonePlannerMapDataServer.INSTANCE.getChunk(ctx.getServerHandler().player.world, message.key, data -> {
-                MessageUtil.sendReturnMessage(ctx, new MessageZoneMapResponse(message.key, data));
-            });
-            return null;
-        }
-    }
+    public static final IMessageHandler<MessageZoneMapRequest, IMessage> HANDLER =
+            (MessageZoneMapRequest message, MessageContext ctx) -> {
+                ZonePlannerMapDataServer.INSTANCE.getChunk(
+                        ctx.getServerHandler().player.world,
+                        message.key,
+                        data -> MessageUtil.sendReturnMessage(ctx, new MessageZoneMapResponse(message.key, data))
+                );
+                return null;
+            };
 }

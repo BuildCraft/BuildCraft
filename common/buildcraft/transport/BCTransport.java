@@ -67,8 +67,8 @@ public class BCTransport {
         BCTransportProxy.getProxy().fmlPreInit();
 
         MinecraftForge.EVENT_BUS.register(BCTransportEventDist.INSTANCE);
-        BCMessageHandler.addMessageType(MessageWireSystems.class, MessageWireSystems.Handler.INSTANCE, Side.CLIENT);
-        BCMessageHandler.addMessageType(MessageWireSystemsPowered.class, MessageWireSystemsPowered.Handler.INSTANCE, Side.CLIENT);
+        BCMessageHandler.addMessageType(MessageWireSystems.class, MessageWireSystems.HANDLER, Side.CLIENT);
+        BCMessageHandler.addMessageType(MessageWireSystemsPowered.class, MessageWireSystemsPowered.HANDLER, Side.CLIENT);
     }
 
     @Mod.EventHandler

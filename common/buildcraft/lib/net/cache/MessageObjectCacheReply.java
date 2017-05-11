@@ -18,9 +18,12 @@ public class MessageObjectCacheReply implements IMessage {
     private int[] ids;
     private byte[][] values;
 
-    /** Used by forge automatically to construct the message. Do not use! */
+    /**
+     * Used by forge automatically to construct the message. Do not use!
+     */
     @Deprecated
-    public MessageObjectCacheReply() {}
+    public MessageObjectCacheReply() {
+    }
 
     MessageObjectCacheReply(int cacheId, int[] ids, byte[][] values) {
         this.cacheId = cacheId;
@@ -52,22 +55,18 @@ public class MessageObjectCacheReply implements IMessage {
         }
     }
 
-    public enum Handler implements IMessageHandler<MessageObjectCacheReply, IMessage> {
-        INSTANCE;
-
-        @Override
-        public IMessage onMessage(MessageObjectCacheReply message, MessageContext ctx) {
-            try {
-                NetworkedObjectCache<?> cache = BuildCraftObjectCaches.CACHES.get(message.cacheId);
-                for (int i = 0; i < message.ids.length; i++) {
-                    int id = message.ids[i];
-                    byte[] payload = message.values[i];
-                    cache.readObjectClient(id, new PacketBufferBC(Unpooled.copiedBuffer(payload)));
+    public static final IMessageHandler<MessageObjectCacheReply, IMessage> HANDLER =
+            (MessageObjectCacheReply message, MessageContext ctx) -> {
+                try {
+                    NetworkedObjectCache<?> cache = BuildCraftObjectCaches.CACHES.get(message.cacheId);
+                    for (int i = 0; i < message.ids.length; i++) {
+                        int id = message.ids[i];
+                        byte[] payload = message.values[i];
+                        cache.readObjectClient(id, new PacketBufferBC(Unpooled.copiedBuffer(payload)));
+                    }
+                    return null;
+                } catch (IOException io) {
+                    throw new Error(io);
                 }
-                return null;
-            } catch (IOException io) {
-                throw new Error(io);
-            }
-        }
-    }
+            };
 }

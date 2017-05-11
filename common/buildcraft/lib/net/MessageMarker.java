@@ -3,8 +3,9 @@ package buildcraft.lib.net;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiConsumer;
 
-import net.minecraft.client.Minecraft;
+import buildcraft.lib.BCLibProxy;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -12,8 +13,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
 
@@ -30,7 +29,8 @@ public class MessageMarker implements IMessage {
     public int cacheId, count;
     public final List<BlockPos> positions = new ArrayList<>();
 
-    public MessageMarker() {}
+    public MessageMarker() {
+    }
 
     @Override
     public void fromBytes(ByteBuf buf) {
@@ -40,8 +40,11 @@ public class MessageMarker implements IMessage {
         multiple = flags[1];
         connection = flags[2];
         cacheId = packet.readShort();
-        if (multiple) count = packet.readShort();
-        else count = 1;
+        if (multiple) {
+            count = packet.readShort();
+        } else {
+            count = 1;
+        }
         for (int i = 0; i < count; i++) {
             positions.add(packet.readBlockPos());
         }
@@ -52,10 +55,12 @@ public class MessageMarker implements IMessage {
         count = positions.size();
         multiple = count != 1;
         PacketBuffer packet = new PacketBuffer(buf);
-        boolean[] flags = { add, multiple, connection };
+        boolean[] flags = {add, multiple, connection};
         MessageUtil.writeBooleanArray(packet, flags);
         packet.writeShort(cacheId);
-        if (multiple) packet.writeShort(count);
+        if (multiple) {
+            packet.writeShort(count);
+        }
         for (int i = 0; i < count; i++) {
             packet.writeBlockPos(positions.get(i));
         }
@@ -63,38 +68,36 @@ public class MessageMarker implements IMessage {
 
     @Override
     public String toString() {
-        boolean[] flags = { add, multiple, connection };
-        return "Message Marker [" + Arrays.toString(flags) + ", cacheId " + cacheId + ", count = " + count + ", positions = " + positions + "]";
+        boolean[] flags = {add, multiple, connection};
+        return "Message Marker [" + Arrays.toString(flags) +
+                ", cacheId " + cacheId +
+                ", count = " + count +
+                ", positions = " + positions +
+                "]";
     }
 
-    public enum Handler implements IMessageHandler<MessageMarker, IMessage> {
-        INSTANCE;
-
-        @Override
-        public IMessage onMessage(MessageMarker message, MessageContext ctx) {
-            if (ctx.side == Side.CLIENT) {
-                handleClient(message, ctx);
-            }
-            return null;
-        }
-
-        @SideOnly(Side.CLIENT)
-        private static void handleClient(MessageMarker message, MessageContext ctx) {
-            World world = Minecraft.getMinecraft().world;
-            if (world == null) {
-                if (DEBUG) {
-                    BCLog.logger.warn("[lib.messages][marker] The world was null for a message!");
+    private static final BiConsumer<MessageMarker, MessageContext> HANDLER_CLIENT =
+            (MessageMarker message, MessageContext ctx) -> {
+                World world = BCLibProxy.getProxy().getClientWorld();
+                if (world == null) {
+                    if (DEBUG) {
+                        BCLog.logger.warn("[lib.messages][marker] The world was null for a message!");
+                    }
+                    return;
                 }
-                return;
-            }
-            if (message.cacheId < 0 || message.cacheId >= MarkerCache.CACHES.size()) {
-                if (DEBUG) {
-                    BCLog.logger.warn("[lib.messages][marker] The cache ID " + message.cacheId + " was invalid!");
+                if (message.cacheId < 0 || message.cacheId >= MarkerCache.CACHES.size()) {
+                    if (DEBUG) {
+                        BCLog.logger.warn("[lib.messages][marker] The cache ID " + message.cacheId + " was invalid!");
+                    }
+                    return;
                 }
-                return;
-            }
-            MarkerCache<?> cache = MarkerCache.CACHES.get(message.cacheId);
-            cache.getSubCache(world).handleMessageMain(message);
-        }
-    }
+                MarkerCache<?> cache = MarkerCache.CACHES.get(message.cacheId);
+                cache.getSubCache(world).handleMessageMain(message);
+            };
+
+    public static final IMessageHandler<MessageMarker, IMessage> HANDLER =
+            (MessageMarker message, MessageContext ctx) -> {
+                HANDLER_CLIENT.accept(message, ctx);
+                return null;
+            };
 }

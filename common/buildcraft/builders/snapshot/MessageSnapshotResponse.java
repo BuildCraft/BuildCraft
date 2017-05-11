@@ -32,13 +32,9 @@ public class MessageSnapshotResponse implements IMessage {
         }
     }
 
-    public enum Handler implements IMessageHandler<MessageSnapshotResponse, IMessage> {
-        INSTANCE;
-
-        @Override
-        public IMessage onMessage(MessageSnapshotResponse message, MessageContext ctx) {
-            ClientSnapshots.INSTANCE.onSnapshotReceived(message.snapshot);
-            return null;
-        }
-    }
+    public static final IMessageHandler<MessageSnapshotResponse, IMessage> HANDLER =
+            (MessageSnapshotResponse message, MessageContext ctx) -> {
+                ClientSnapshots.INSTANCE.onSnapshotReceived(message.snapshot);
+                return null;
+            };
 }

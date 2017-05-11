@@ -1,6 +1,6 @@
 package buildcraft.lib.particle;
 
-import net.minecraft.client.Minecraft;
+import buildcraft.lib.BCLibProxy;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 
@@ -10,15 +10,11 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.BCMessageHandler;
-
 import io.netty.buffer.ByteBuf;
 
-public class MessageParticleVanilla implements IMessage {
-    private static final boolean DEBUG = BCMessageHandler.DEBUG;
+import java.util.function.BiConsumer;
 
+public class MessageParticleVanilla implements IMessage {
     public EnumParticleTypes type;
     public double x, y, z;
     public double dx, dy, dz;
@@ -60,32 +56,19 @@ public class MessageParticleVanilla implements IMessage {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     private void spawn(World world) {
         world.spawnParticle(type, ignoreRange, x, y, z, dx, dy, dz, paramaters);
     }
 
-    public enum Handler implements IMessageHandler<MessageParticleVanilla, IMessage> {
-        INSTANCE;
+    private static final BiConsumer<MessageParticleVanilla, MessageContext> HANDLER_CLIENT =
+            (MessageParticleVanilla message, MessageContext ctx) -> {
+                message.spawn(BCLibProxy.getProxy().getClientWorld());
+            };
 
-        @Override
-        public IMessage onMessage(MessageParticleVanilla message, MessageContext ctx) {
-            if (ctx.side == Side.CLIENT) {
-                handleClient(message, ctx);
-            }
-            return null;
-        }
-
-        @SideOnly(Side.CLIENT)
-        private void handleClient(MessageParticleVanilla message, MessageContext ctx) {
-            World world = Minecraft.getMinecraft().world;
-            if (world == null) {
-                if (DEBUG) {
-                    BCLog.logger.warn("[lib.messages][particle.vanilla] The world was null for a message!");
-                }
-                return;
-            } else {
-                message.spawn(world);
-            }
-        }
-    }
+    public static final IMessageHandler<MessageParticleVanilla, IMessage> HANDLER =
+            (MessageParticleVanilla message, MessageContext ctx) -> {
+                HANDLER_CLIENT.accept(message, ctx);
+                return null;
+            };
 }

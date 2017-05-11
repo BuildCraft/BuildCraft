@@ -28,13 +28,9 @@ public class MessageSnapshotRequest implements IMessage {
         header.readFromByteBuf(new PacketBufferBC(buf));
     }
 
-    public enum Handler implements IMessageHandler<MessageSnapshotRequest, MessageSnapshotResponse> {
-        INSTANCE;
-
-        @Override
-        public MessageSnapshotResponse onMessage(MessageSnapshotRequest message, MessageContext ctx) {
-            Snapshot snapshot = GlobalSavedDataSnapshots.get(Side.SERVER).getSnapshotByHeader(message.header);
-            return snapshot != null ? new MessageSnapshotResponse(snapshot) : null;
-        }
-    }
+    public static final IMessageHandler<MessageSnapshotRequest, MessageSnapshotResponse> HANDLER =
+            (MessageSnapshotRequest message, MessageContext ctx) -> {
+                Snapshot snapshot = GlobalSavedDataSnapshots.get(Side.SERVER).getSnapshotByHeader(message.header);
+                return snapshot != null ? new MessageSnapshotResponse(snapshot) : null;
+            };
 }

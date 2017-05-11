@@ -70,7 +70,7 @@ public class BCCore {
         OreDictionary.registerOre("craftingTableWood", Blocks.CRAFTING_TABLE);
 
         MinecraftForge.EVENT_BUS.register(BCCoreEventDist.INSTANCE);
-        BCMessageHandler.addMessageType(MessageVolumeBoxes.class, MessageVolumeBoxes.Handler.INSTANCE, Side.CLIENT);
+        BCMessageHandler.addMessageType(MessageVolumeBoxes.class, MessageVolumeBoxes.HANDLER, Side.CLIENT);
     }
 
     @Mod.EventHandler

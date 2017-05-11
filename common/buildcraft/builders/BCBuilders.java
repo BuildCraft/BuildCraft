@@ -79,8 +79,8 @@ public class BCBuilders {
 
         MinecraftForge.EVENT_BUS.register(BCBuildersEventDist.INSTANCE);
 
-        BCMessageHandler.addMessageType(MessageSnapshotRequest.class, MessageSnapshotRequest.Handler.INSTANCE, Side.SERVER);
-        BCMessageHandler.addMessageType(MessageSnapshotResponse.class, MessageSnapshotResponse.Handler.INSTANCE, Side.CLIENT);
+        BCMessageHandler.addMessageType(MessageSnapshotRequest.class, MessageSnapshotRequest.HANDLER, Side.SERVER);
+        BCMessageHandler.addMessageType(MessageSnapshotResponse.class, MessageSnapshotResponse.HANDLER, Side.CLIENT);
     }
 
     @Mod.EventHandler

@@ -23,9 +23,8 @@ public class MessageUpdateTile implements IMessage {
     private BlockPos pos;
     private PacketBufferBC payload;
 
-    /** Used by forge to construct this upon receive. Do not use! */
-    @Deprecated
-    public MessageUpdateTile() {}
+    public MessageUpdateTile() {
+    }
 
     public MessageUpdateTile(BlockPos pos, PacketBufferBC payload) {
         this.pos = pos;
@@ -53,24 +52,22 @@ public class MessageUpdateTile implements IMessage {
         buffer.writeBytes(payload, 0, length);
     }
 
-    public enum Handler implements IMessageHandler<MessageUpdateTile, IMessage> {
-        INSTANCE;
-
-        @Override
-        public IMessage onMessage(final MessageUpdateTile message, MessageContext ctx) {
-            EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
-            if (player == null || player.world == null) return null;
-            TileEntity tile = player.world.getTileEntity(message.pos);
-            if (tile instanceof IPayloadReceiver) {
-                try {
-                    return ((IPayloadReceiver) tile).receivePayload(ctx, message.payload);
-                } catch (IOException io) {
-                    throw Throwables.propagate(io);
+    public static final IMessageHandler<MessageUpdateTile, IMessage> HANDLER =
+            (MessageUpdateTile message, MessageContext ctx) -> {
+                EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
+                if (player == null || player.world == null) {
+                    return null;
                 }
-            } else {
-                BCLog.logger.warn("Dropped message for player " + player.getName() + " for tile at " + message.pos);
-            }
-            return null;
-        }
-    }
+                TileEntity tile = player.world.getTileEntity(message.pos);
+                if (tile instanceof IPayloadReceiver) {
+                    try {
+                        return ((IPayloadReceiver) tile).receivePayload(ctx, message.payload);
+                    } catch (IOException io) {
+                        throw Throwables.propagate(io);
+                    }
+                } else {
+                    BCLog.logger.warn("Dropped message for player " + player.getName() + " for tile at " + message.pos);
+                }
+                return null;
+            };
 }

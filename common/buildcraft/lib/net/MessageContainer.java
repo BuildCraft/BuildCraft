@@ -21,9 +21,8 @@ public class MessageContainer implements IMessage {
     private int msgId;
     private PacketBufferBC payload;
 
-    /** Used by forge to construct this upon receive. Do not use! */
-    @Deprecated
-    public MessageContainer() {}
+    public MessageContainer() {
+    }
 
     public MessageContainer(ContainerBC_Neptune container, int msgId, PacketBufferBC payload) {
         this(container.windowId, msgId, payload);
@@ -58,26 +57,24 @@ public class MessageContainer implements IMessage {
         buf.writeBytes(payload, 0, length);
     }
 
-    public enum Handler implements IMessageHandler<MessageContainer, IMessage> {
-        INSTANCE;
+    public static final IMessageHandler<MessageContainer, IMessage> HANDLER =
+            (MessageContainer message, MessageContext ctx) -> {
+                try {
+                    int windowId = message.windowId;
+                    EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
+                    if (player != null &&
+                            player.openContainer instanceof ContainerBC_Neptune &&
+                            player.openContainer.windowId == windowId) {
+                        ContainerBC_Neptune container = (ContainerBC_Neptune) player.openContainer;
+                        container.readMessage(message.msgId, message.payload, ctx.side, ctx);
 
-        @Override
-        public IMessage onMessage(MessageContainer message, MessageContext ctx) {
-            try {
-                int windowId = message.windowId;
-                EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
-                if (player != null && player.openContainer instanceof ContainerBC_Neptune && player.openContainer.windowId == windowId) {
-                    ContainerBC_Neptune container = (ContainerBC_Neptune) player.openContainer;
-                    container.readMessage(message.msgId, message.payload, ctx.side, ctx);
-
-                    // error checking
-                    String extra = container.getClass() + ", id = " + container.getIdAllocator().getNameFor(message.msgId);
-                    MessageUtil.ensureEmpty(message.payload, ctx.side == Side.CLIENT, extra);
+                        // error checking
+                        String extra = container.getClass() + ", id = " + container.getIdAllocator().getNameFor(message.msgId);
+                        MessageUtil.ensureEmpty(message.payload, ctx.side == Side.CLIENT, extra);
+                    }
+                    return null;
+                } catch (IOException e) {
+                    throw new Error(e);
                 }
-                return null;
-            } catch (IOException e) {
-                throw new Error(e);
-            }
-        }
-    }
+            };
 }

@@ -37,25 +37,21 @@ public class MessageWireSystems implements IMessage {
     public void fromBytes(ByteBuf buf) {
         wireSystems.clear();
         int count = buf.readInt();
-        for(int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++) {
             WireSystem wireSystem = new WireSystem();
             int wiresHashCode = buf.readInt();
             int localCount = buf.readInt();
-            for(int j = 0; j < localCount; j++) {
+            for (int j = 0; j < localCount; j++) {
                 wireSystem.elements.add(new WireSystem.WireElement(buf));
             }
             wireSystems.put(wiresHashCode, wireSystem);
         }
     }
 
-    public enum Handler implements IMessageHandler<MessageWireSystems, IMessage> {
-        INSTANCE;
-
-        @Override
-        public IMessage onMessage(MessageWireSystems message, MessageContext ctx) {
-            ClientWireSystems.INSTANCE.wireSystems.clear();
-            ClientWireSystems.INSTANCE.wireSystems.putAll(message.wireSystems);
-            return null;
-        }
-    }
+    public static final IMessageHandler<MessageWireSystems, IMessage> HANDLER =
+            (MessageWireSystems message, MessageContext ctx) -> {
+                ClientWireSystems.INSTANCE.wireSystems.clear();
+                ClientWireSystems.INSTANCE.wireSystems.putAll(message.wireSystems);
+                return null;
+            };
 }
