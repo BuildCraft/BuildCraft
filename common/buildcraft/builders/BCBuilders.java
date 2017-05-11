@@ -11,16 +11,19 @@ import buildcraft.builders.snapshot.*;
 import buildcraft.core.BCCore;
 import buildcraft.core.marker.volume.AddonsRegistry;
 import buildcraft.lib.BCLib;
+import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.function.Consumer;
 
@@ -73,6 +76,11 @@ public class BCBuilders {
         );
 
         BCBuildersProxy.getProxy().fmlPreInit();
+
+        MinecraftForge.EVENT_BUS.register(BCBuildersEventDist.INSTANCE);
+
+        BCMessageHandler.addMessageType(MessageSnapshotRequest.class, MessageSnapshotRequest.Handler.INSTANCE, Side.SERVER);
+        BCMessageHandler.addMessageType(MessageSnapshotResponse.class, MessageSnapshotResponse.Handler.INSTANCE, Side.CLIENT);
     }
 
     @Mod.EventHandler

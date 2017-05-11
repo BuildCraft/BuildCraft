@@ -36,7 +36,7 @@ public class SchematicEntityManager {
 
     public static void computeRequired(Blueprint blueprint) {
         FakeWorld world = FakeWorld.INSTANCE;
-        world.uploadBlueprint(blueprint);
+        world.uploadBlueprint(blueprint, true);
         for (ISchematicEntity<?> schematicEntity : blueprint.entities) {
             Entity entity = schematicEntity.buildWithoutChecks(world, FakeWorld.BLUEPRINT_OFFSET);
             if (entity != null) {

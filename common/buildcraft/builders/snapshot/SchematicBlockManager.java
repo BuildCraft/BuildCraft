@@ -43,7 +43,7 @@ public class SchematicBlockManager {
 
     public static void computeRequired(Blueprint blueprint) {
         FakeWorld world = FakeWorld.INSTANCE;
-        world.uploadBlueprint(blueprint);
+        world.uploadBlueprint(blueprint, true);
         world.editable = false;
         for (int z = 0; z < blueprint.size.getZ(); z++) {
             for (int y = 0; y < blueprint.size.getY(); y++) {
