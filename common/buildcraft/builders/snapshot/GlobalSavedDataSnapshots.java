@@ -46,13 +46,12 @@ public class GlobalSavedDataSnapshots {
     }
 
     private void writeSnapshots() throws IOException {
-        for (Snapshot snapshot : snapshots) {
-            // noinspection ConstantConditions
-            for (File file : snapshotsFile.listFiles()) {
-                if (!file.delete()) {
-                    throw new IllegalArgumentException();
-                }
+        for (File file : snapshotsFile.listFiles()) {
+            if (!file.delete()) {
+                throw new IOException("Failed to delete snapshot file " + file);
             }
+        }
+        for (Snapshot snapshot : snapshots) {
             File snapshotFile = new File(snapshotsFile, snapshot.header.getFileName());
             CompressedStreamTools.write(Snapshot.writeToNBT(snapshot), snapshotFile);
         }
