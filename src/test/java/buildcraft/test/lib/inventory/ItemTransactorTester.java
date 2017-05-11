@@ -9,6 +9,8 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.inventory.IItemTransactor;
 
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.lib.tile.item.StackInsertionFunction;
+
 import buildcraft.test.VanillaSetupBaseTester;
 
 public class ItemTransactorTester extends VanillaSetupBaseTester {
@@ -30,5 +32,19 @@ public class ItemTransactorTester extends VanillaSetupBaseTester {
         extracted = trans.extract(null, 1, 1, false);
 
         Assert.assertTrue(extracted.isEmpty());
+    }
+
+    @Test
+    public void testLimitedInventory() {
+        IItemTransactor limited = new ItemHandlerSimple(2, (i, s) -> true, StackInsertionFunction.getInsertionFunction(4), null);
+
+        ItemStack toInsert = new ItemStack(Items.APPLE, 9);
+        ItemStack toInsertCopy = toInsert.copy();
+        ItemStack supposedLeftOver = new ItemStack(Items.APPLE);
+
+        ItemStack actuallyLeftOver = limited.insert(toInsert, false, false);
+
+        Assert.assertTrue(ItemStack.areItemStacksEqual(toInsert, toInsertCopy));
+        Assert.assertTrue(ItemStack.areItemStacksEqual(supposedLeftOver, actuallyLeftOver));
     }
 }

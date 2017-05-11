@@ -103,7 +103,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
         }
         if (canSet(slot, stack)) {
             ItemStack current = stacks.get(slot);
-            InsertionResult result = insertor.modifyForInsertion(slot, asValid(current), asValid(stack));
+            InsertionResult result = insertor.modifyForInsertion(slot, asValid(current.copy()), asValid(stack.copy()));
             if (!canSet(slot, result.toSet)) {
                 // We have a bad inserter or checker, as they should not be conflicting
                 CrashReport report = new CrashReport("Inserting an item (buildcraft:ItemHandlerSimple)", new IllegalStateException("Confilicting Insertion!"));
