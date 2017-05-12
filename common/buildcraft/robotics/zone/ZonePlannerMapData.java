@@ -1,38 +1,29 @@
 package buildcraft.robotics.zone;
 
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-
 import net.minecraft.world.World;
 
+import java.util.concurrent.TimeUnit;
+
 public abstract class ZonePlannerMapData {
-    public static final int TIMEOUT = 10 * 60 * 1000;
+    protected final Cache<ZonePlannerMapChunkKey, ZonePlannerMapChunk> data = CacheBuilder.newBuilder()
+            .expireAfterWrite(2, TimeUnit.MINUTES)
+            .build();
 
-    private final Cache<ZonePlannerMapChunkKey, ZonePlannerMapChunk> data;
+    /** Use {@link #getChunk(World, ZonePlannerMapChunkKey)} for a cached version */
+    protected abstract ZonePlannerMapChunk loadChunk(World world, ZonePlannerMapChunkKey key);
 
-    public ZonePlannerMapData() {
-        data = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.MINUTES).build();
-    }
-
-    /** Use {@link #getChunk(World, ZonePlannerMapChunkKey, Consumer)} for a cached version */
-    protected abstract void loadChunk(World world, ZonePlannerMapChunkKey key, Consumer<ZonePlannerMapChunk> onLoad);
-
-    public final void getChunk(World world, ZonePlannerMapChunkKey key, Consumer<ZonePlannerMapChunk> onLoad) {
-        ZonePlannerMapChunk loadedChunk = getLoadedChunk(key);
-        if (loadedChunk != null) {
-            onLoad.accept(loadedChunk);
+    public final ZonePlannerMapChunk getChunk(World world, ZonePlannerMapChunkKey key) {
+        if (data.getIfPresent(key) != null) {
+            return data.getIfPresent(key);
         } else {
-            loadChunk(world, key, chunk -> {
-                data.put(key, chunk);
-                onLoad.accept(chunk);
-            });
+            ZonePlannerMapChunk zonePlannerMapChunk = loadChunk(world, key);
+            if (zonePlannerMapChunk != null) {
+                data.put(key, zonePlannerMapChunk);
+                return zonePlannerMapChunk;
+            }
         }
-    }
-
-    public final ZonePlannerMapChunk getLoadedChunk(ZonePlannerMapChunkKey key) {
-        return data.getIfPresent(key);
+        return null;
     }
 }

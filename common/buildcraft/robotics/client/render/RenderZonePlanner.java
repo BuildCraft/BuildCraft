@@ -1,19 +1,18 @@
 package buildcraft.robotics.client.render;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.lib.client.model.MutableVertex;
+import buildcraft.lib.client.sprite.DynamicTextureBC;
+import buildcraft.lib.misc.data.WorldPos;
 import buildcraft.robotics.BCRoboticsBlocks;
+import buildcraft.robotics.tile.TileZonePlanner;
+import buildcraft.robotics.zone.ZonePlannerMapChunk;
+import buildcraft.robotics.zone.ZonePlannerMapChunkKey;
+import buildcraft.robotics.zone.ZonePlannerMapDataClient;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalNotification;
-
 import net.minecraft.block.state.IBlockState;
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -21,27 +20,17 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
+import org.lwjgl.opengl.GL11;
 
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.lib.client.model.MutableVertex;
-import buildcraft.lib.client.sprite.DynamicTextureBC;
-import buildcraft.lib.misc.data.WorldPos;
-import buildcraft.robotics.tile.TileZonePlanner;
-import buildcraft.robotics.zone.ZonePlannerMapChunkKey;
-import buildcraft.robotics.zone.ZonePlannerMapDataClient;
+import java.util.concurrent.TimeUnit;
 
 public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner> {
-    public static final Cache<WorldPos, DynamicTextureBC> TEXTURES;
+    private static final Cache<WorldPos, DynamicTextureBC> TEXTURES = CacheBuilder.newBuilder()
+            .expireAfterWrite(5, TimeUnit.MINUTES)
+            .removalListener(RenderZonePlanner::onRemove)
+            .build();
     private static final int TEXTURE_WIDTH = 10;
     private static final int TEXTURE_HEIGHT = 8;
-
-    static {
-        TEXTURES = CacheBuilder.newBuilder()//
-                .expireAfterWrite(5, TimeUnit.MINUTES)//
-                .removalListener(RenderZonePlanner::onRemove)//
-                .build();
-    }
 
     private static void onRemove(RemovalNotification<WorldPos, DynamicTextureBC> notification) {
         DynamicTextureBC texture = notification.getValue();
@@ -52,10 +41,9 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
 
     @Override
     public final void renderTileEntityAt(TileZonePlanner tile, double x, double y, double z, float partialTicks, int destroyStage) {
-
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("zone");
-        
+
         double offset = 0.001;
         double minX = 3 / 16D - offset;
         double maxX = 13 / 16D + offset;
@@ -71,6 +59,9 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         EnumFacing side = state.getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
 
         DynamicTextureBC texture = getTexture(tile, side);
+        if (texture == null) {
+            return;
+        }
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer buffer = tessellator.getBuffer();
         texture.updateTexture();
@@ -117,15 +108,15 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
                 break;
         }
 
-        MutableVertex vert = new MutableVertex();
+        MutableVertex vertex = new MutableVertex();
 
-        vert.colouri(-1);
-        vert.lighti(0xF, 0xF);
+        vertex.colouri(-1);
+        vertex.lighti(0xF, 0xF);
 
-        vert.positiond(min.xCoord, min.yCoord, min.zCoord).texf(minU, minV).render(buffer);
-        vert.positiond(max.xCoord, min.yCoord, max.zCoord).texf(maxU, minV).render(buffer);
-        vert.positiond(max.xCoord, max.yCoord, max.zCoord).texf(maxU, maxV).render(buffer);
-        vert.positiond(min.xCoord, max.yCoord, min.zCoord).texf(minU, maxV).render(buffer);
+        vertex.positiond(min.xCoord, min.yCoord, min.zCoord).texf(minU, minV).render(buffer);
+        vertex.positiond(max.xCoord, min.yCoord, max.zCoord).texf(maxU, minV).render(buffer);
+        vertex.positiond(max.xCoord, max.yCoord, max.zCoord).texf(maxU, maxV).render(buffer);
+        vertex.positiond(min.xCoord, max.yCoord, min.zCoord).texf(minU, maxV).render(buffer);
 
         buffer.setTranslation(0, 0, 0);
         tessellator.draw();
@@ -135,19 +126,14 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
-    @Nonnull
-    private static DynamicTextureBC getTexture(final TileZonePlanner tile, final EnumFacing side) {
-        Callable<DynamicTextureBC> textureGetter = () -> createTexture(tile, side);
-        try {
-            DynamicTextureBC texture = TEXTURES.get(new WorldPos(tile), textureGetter);
-            if (texture == null) {
-                throw new NullPointerException("Somehow generated a null texture!");
+    private static DynamicTextureBC getTexture(TileZonePlanner tile, EnumFacing side) {
+        if (TEXTURES.getIfPresent(new WorldPos(tile)) == null) {
+            DynamicTextureBC texture = createTexture(tile, side);
+            if (texture != null) {
+                TEXTURES.put(new WorldPos(tile), texture);
             }
-            return texture;
-
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
         }
+        return TEXTURES.getIfPresent(new WorldPos(tile));
     }
 
     private static DynamicTextureBC createTexture(TileZonePlanner tile, EnumFacing side) {
@@ -178,17 +164,23 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
                         posZ = tile.getPos().getZ() + offset1;
                         break;
                 }
-                int finalTextureX = textureX;
-                int finalTextureY = textureY;
                 ChunkPos chunkPos = new ChunkPos(posX >> 4, posZ >> 4);
-                int finalPosX = posX;
-                int finalPosZ = posZ;
-                texture.setColor(finalTextureX, finalTextureY, -1);
-                ZonePlannerMapChunkKey key = new ZonePlannerMapChunkKey(chunkPos, tile.getWorld().provider.getDimension(), tile.getLevel());
-                ZonePlannerMapDataClient.INSTANCE.loadChunk(tile.getWorld(), key, (chunk) -> {
-                    int colour = chunk.getColour(finalPosX, finalPosZ) | 0xFF_00_00_00;
-                    texture.setColor(finalTextureX, finalTextureY, colour);
-                });
+                texture.setColor(textureX, textureY, -1);
+                ZonePlannerMapChunkKey key = new ZonePlannerMapChunkKey(
+                        chunkPos,
+                        tile.getWorld().provider.getDimension(),
+                        tile.getLevel()
+                );
+                ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(tile.getWorld(), key);
+                if (zonePlannerMapChunk != null) {
+                    texture.setColor(
+                            textureX,
+                            textureY,
+                            zonePlannerMapChunk.getColour(posX, posZ) | 0xFF_00_00_00
+                    );
+                } else {
+                    return null;
+                }
             }
         }
         return texture;

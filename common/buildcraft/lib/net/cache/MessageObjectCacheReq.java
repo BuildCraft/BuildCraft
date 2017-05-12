@@ -49,17 +49,17 @@ public class MessageObjectCacheReq implements IMessage {
     }
 
     public static final IMessageHandler<MessageObjectCacheReq, MessageObjectCacheReply> HANDLER = (message, ctx) -> {
-                NetworkedObjectCache<?> cache = BuildCraftObjectCaches.CACHES.get(message.cacheId);
-                byte[][] values = new byte[message.ids.length][];
+        NetworkedObjectCache<?> cache = BuildCraftObjectCaches.CACHES.get(message.cacheId);
+        byte[][] values = new byte[message.ids.length][];
 
-                PacketBufferBC buffer = new PacketBufferBC(Unpooled.buffer());
-                for (int i = 0; i < values.length; i++) {
-                    int id = message.ids[i];
-                    cache.writeObjectServer(id, buffer);
-                    values[i] = new byte[buffer.readableBytes()];
-                    buffer.readBytes(values[i]);
-                    buffer.clear();
-                }
-                return new MessageObjectCacheReply(message.cacheId, message.ids, values);
-            };
+        PacketBufferBC buffer = new PacketBufferBC(Unpooled.buffer());
+        for (int i = 0; i < values.length; i++) {
+            int id = message.ids[i];
+            cache.writeObjectServer(id, buffer);
+            values[i] = new byte[buffer.readableBytes()];
+            buffer.readBytes(values[i]);
+            buffer.clear();
+        }
+        return new MessageObjectCacheReply(message.cacheId, message.ids, values);
+    };
 }

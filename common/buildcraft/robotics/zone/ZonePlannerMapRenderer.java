@@ -1,8 +1,6 @@
 package buildcraft.robotics.zone;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.Cache;
@@ -22,21 +20,16 @@ import buildcraft.robotics.zone.ZonePlannerMapChunk.MapColourData;
 public enum ZonePlannerMapRenderer {
     INSTANCE;
 
-    private static final Cache<ZonePlannerMapChunkKey, Integer> CHUNK_GL_CACHE;
-    private static final Set<ZonePlannerMapChunkKey> GENERATING = Collections.synchronizedSet(new HashSet<>());
+    private static final Cache<ZonePlannerMapChunkKey, Integer> CHUNK_GL_CACHE = CacheBuilder.newBuilder()
+            .expireAfterAccess(20, TimeUnit.SECONDS)
+            .removalListener(ZonePlannerMapRenderer::onRemove)
+            .build();
     private final MutableVertex vertex = new MutableVertex();
 
-    static {
-        CHUNK_GL_CACHE = CacheBuilder.newBuilder()//
-                .expireAfterAccess(20, TimeUnit.SECONDS)//
-                .removalListener(ZonePlannerMapRenderer::onRemove)//
-                .build();
-    }
-
     private static void onRemove(RemovalNotification<ZonePlannerMapChunkKey, Integer> notification) {
-        Integer val = notification.getValue();
-        if (val != null) {
-            GL11.glDeleteLists(val, 1);
+        Integer glList = notification.getValue();
+        if (glList != null) {
+            GL11.glDeleteLists(glList, 1);
         }
     }
 
@@ -46,8 +39,10 @@ public enum ZonePlannerMapRenderer {
     }
 
     public void drawBlockCuboid(VertexBuffer builder, double x, double y, double z, double height, double radius) {
+        @SuppressWarnings("UnnecessaryLocalVariable")
         double rX = radius;
         double rY = height * 0.5;
+        @SuppressWarnings("UnnecessaryLocalVariable")
         double rZ = radius;
 
         y -= rY;
@@ -95,17 +90,15 @@ public enum ZonePlannerMapRenderer {
         drawBlockCuboid(builder, x, y, z, 1);
     }
 
-    public int getChunkGlList(ZonePlannerMapChunkKey key) {
-        Integer val = CHUNK_GL_CACHE.getIfPresent(key);
-        if (val == null) {
-            if (GENERATING.add(key)) {
-                genChunk(key);
-            }
-            return -1;
-        } else {
-            GENERATING.remove(key);
-            return val;
+    public OptionalInt getChunkGlList(ZonePlannerMapChunkKey key) {
+        Integer glList = CHUNK_GL_CACHE.getIfPresent(key);
+        if (glList == null) {
+            genChunk(key);
+            glList = CHUNK_GL_CACHE.getIfPresent(key);
         }
+        return glList != null
+                ? OptionalInt.of(glList)
+                : OptionalInt.empty();
     }
 
     public void setColor(int color) {
@@ -113,23 +106,31 @@ public enum ZonePlannerMapRenderer {
     }
 
     private void genChunk(ZonePlannerMapChunkKey key) {
-        ZonePlannerMapDataClient.INSTANCE.getChunk(Minecraft.getMinecraft().world, key, chunk -> {
-            VertexBuffer builder = Tessellator.getInstance().getBuffer();
-            builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);// TODO: normals
-            for (int x = 0; x < 16; x++) {
-                for (int z = 0; z < 16; z++) {
-                    MapColourData data = chunk.getData(x, z);
-                    if (data != null) {
-                        setColor(data.colour);
-                        drawBlockCuboid(builder, key.chunkPos.getXStart() + x, data.posY, key.chunkPos.getZStart() + z, data.posY);
-                    }
+        ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(Minecraft.getMinecraft().world, key);
+        if (zonePlannerMapChunk == null) {
+            return;
+        }
+        VertexBuffer builder = Tessellator.getInstance().getBuffer();
+        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR); // TODO: normals
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                MapColourData data = zonePlannerMapChunk.getData(x, z);
+                if (data != null) {
+                    setColor(data.colour);
+                    drawBlockCuboid(
+                            builder,
+                            key.chunkPos.getXStart() + x,
+                            data.posY,
+                            key.chunkPos.getZStart() + z,
+                            data.posY
+                    );
                 }
             }
-            int listIndex = GL11.glGenLists(1);
-            GL11.glNewList(listIndex, GL11.GL_COMPILE);
-            Tessellator.getInstance().draw();
-            GL11.glEndList();
-            CHUNK_GL_CACHE.put(key, listIndex);
-        });
+        }
+        int glList = GL11.glGenLists(1);
+        GL11.glNewList(glList, GL11.GL_COMPILE);
+        Tessellator.getInstance().draw();
+        GL11.glEndList();
+        CHUNK_GL_CACHE.put(key, glList);
     }
 }
