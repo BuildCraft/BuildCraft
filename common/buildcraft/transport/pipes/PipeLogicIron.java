@@ -20,7 +20,7 @@ import buildcraft.transport.Pipe;
 public abstract class PipeLogicIron {
 
     protected final Pipe<?> pipe;
-    private boolean lastPower = false;
+    protected boolean lastPower = false;
 
     public PipeLogicIron(Pipe<?> pipe) {
         this.pipe = pipe;
@@ -47,7 +47,7 @@ public abstract class PipeLogicIron {
         }
     }
 
-    private boolean isValidFacing(EnumFacing side) {
+    protected boolean isValidFacing(EnumFacing side) {
         if (!pipe.container.isPipeConnected(side)) {
             return false;
         }
