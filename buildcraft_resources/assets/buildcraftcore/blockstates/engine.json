@@ -1,7 +1,7 @@
 {
     "forge_marker":1,
     "defaults": {
-        "model":"buildcraftcore:engine_on"
+        "model":"buildcraftcore:empty"
     },
     "variants":{
         "type":{
