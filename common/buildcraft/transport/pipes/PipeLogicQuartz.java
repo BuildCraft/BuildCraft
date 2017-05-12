@@ -3,24 +3,12 @@
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.lib.TileBuffer;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TravelingItem;
 
 public abstract class PipeLogicQuartz extends PipeLogicIron{
     public PipeLogicQuartz(Pipe<?> pipe) {
-
         super(pipe);
     }
 
@@ -59,6 +47,7 @@ public abstract class PipeLogicQuartz extends PipeLogicIron{
         }
     }
 
+    @Override
     public void onBlockPlaced() {
         setFacing(null);
         switchPosition(null);
