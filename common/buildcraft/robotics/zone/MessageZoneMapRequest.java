@@ -1,12 +1,9 @@
 package buildcraft.robotics.zone;
 
+import buildcraft.lib.misc.MessageUtil;
+import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
-import buildcraft.lib.misc.MessageUtil;
-
-import io.netty.buffer.ByteBuf;
 
 public class MessageZoneMapRequest implements IMessage {
     private ZonePlannerMapChunkKey key;
@@ -29,10 +26,15 @@ public class MessageZoneMapRequest implements IMessage {
     }
 
     public static final IMessageHandler<MessageZoneMapRequest, IMessage> HANDLER = (message, ctx) -> {
-        ZonePlannerMapDataServer.INSTANCE.getChunk(
-                ctx.getServerHandler().player.world,
-                message.key,
-                data -> MessageUtil.sendReturnMessage(ctx, new MessageZoneMapResponse(message.key, data))
+        MessageUtil.sendReturnMessage(
+                ctx,
+                new MessageZoneMapResponse(
+                        message.key,
+                        ZonePlannerMapDataServer.INSTANCE.getChunk(
+                                ctx.getServerHandler().player.world,
+                                message.key
+                        )
+                )
         );
         return null;
     };

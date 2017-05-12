@@ -1,15 +1,9 @@
 package buildcraft.robotics.zone;
 
-import java.util.Deque;
-import java.util.function.Consumer;
-
+import io.netty.buffer.ByteBuf;
 import net.minecraft.network.PacketBuffer;
-
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
-import io.netty.buffer.ByteBuf;
 
 public class MessageZoneMapResponse implements IMessage {
     private ZonePlannerMapChunkKey key;
@@ -36,12 +30,7 @@ public class MessageZoneMapResponse implements IMessage {
     }
 
     public static final IMessageHandler<MessageZoneMapResponse, IMessage> HANDLER = (message, ctx) -> {
-        Deque<Consumer<ZonePlannerMapChunk>> queue = ZonePlannerMapDataClient.INSTANCE.pendingRequests.get(message.key);
-        if (queue != null) {
-            while (!queue.isEmpty()) {
-                queue.poll().accept(message.data);
-            }
-        }
+        ZonePlannerMapDataClient.INSTANCE.onChunkReceived(message.key, message.data);
         return null;
     };
 }

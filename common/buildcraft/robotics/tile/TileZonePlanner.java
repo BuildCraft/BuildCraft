@@ -15,7 +15,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.core.BCCoreItems;
@@ -37,27 +36,29 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
     protected static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("zone_planner");
     public static final int NET_PLAN_CHANGE = IDS.allocId("PLAN_CHANGE");
 
-    public final ItemHandlerSimple invPaintbrushes;
-    public final ItemHandlerSimple invInputPaintbrush;
-    public final ItemHandlerSimple invInputMapLocation;
-    public final ItemHandlerSimple invInputResult;
-    public final ItemHandlerSimple invOutputPaintbrush;
-    public final ItemHandlerSimple invOutputMapLocation;
-    public final ItemHandlerSimple invOutputResult;
+    public final ItemHandlerSimple invPaintbrushes =
+            itemManager.addInvHandler("paintbrushes", 16, ItemHandlerManager.EnumAccess.NONE);
+    public final ItemHandlerSimple invInputPaintbrush =
+            itemManager.addInvHandler("inputPaintbrush", 1, ItemHandlerManager.EnumAccess.NONE);
+    public final ItemHandlerSimple invInputMapLocation =
+            itemManager.addInvHandler("inputMapLocation", 1, ItemHandlerManager.EnumAccess.NONE);
+    public final ItemHandlerSimple invInputResult =
+            itemManager.addInvHandler("inputResult", 1, ItemHandlerManager.EnumAccess.NONE);
+    public final ItemHandlerSimple invOutputPaintbrush =
+            itemManager.addInvHandler("outputPaintbrush", 1, ItemHandlerManager.EnumAccess.NONE);
+    public final ItemHandlerSimple invOutputMapLocation =
+            itemManager.addInvHandler("outputMapLocation", 1, ItemHandlerManager.EnumAccess.NONE);
+    public final ItemHandlerSimple invOutputResult =
+            itemManager.addInvHandler("outputResult", 1, ItemHandlerManager.EnumAccess.NONE);
     private int progressInput = 0;
-    public final DeltaInt deltaProgressInput = deltaManager.addDelta("progressInput", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
+    public final DeltaInt deltaProgressInput =
+            deltaManager.addDelta("progressInput", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
     private int progressOutput = 0;
-    public final DeltaInt deltaProgressOutput = deltaManager.addDelta("progressOutput", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
+    public final DeltaInt deltaProgressOutput =
+            deltaManager.addDelta("progressOutput", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
     public ZonePlan[] layers = new ZonePlan[16];
 
     public TileZonePlanner() {
-        invPaintbrushes = itemManager.addInvHandler("paintbrushes", 16, ItemHandlerManager.EnumAccess.NONE);
-        invInputPaintbrush = itemManager.addInvHandler("inputPaintbrush", 1, ItemHandlerManager.EnumAccess.NONE);
-        invInputMapLocation = itemManager.addInvHandler("inputMapLocation", 1, ItemHandlerManager.EnumAccess.NONE);
-        invInputResult = itemManager.addInvHandler("inputResult", 1, ItemHandlerManager.EnumAccess.NONE);
-        invOutputPaintbrush = itemManager.addInvHandler("outputPaintbrush", 1, ItemHandlerManager.EnumAccess.NONE);
-        invOutputMapLocation = itemManager.addInvHandler("outputMapLocation", 1, ItemHandlerManager.EnumAccess.NONE);
-        invOutputResult = itemManager.addInvHandler("outputResult", 1, ItemHandlerManager.EnumAccess.NONE);
         for (int i = 0; i < layers.length; i++) {
             layers[i] = new ZonePlan();
         }
@@ -66,7 +67,9 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
     @SideOnly(Side.CLIENT)
     public int getLevel() {
         BlockPos blockPos = Minecraft.getMinecraft().player.getPosition();
-        while (!Minecraft.getMinecraft().world.getBlockState(blockPos).getBlock().isBlockSolid(Minecraft.getMinecraft().world, blockPos, EnumFacing.DOWN) && blockPos.getY() < 255) {
+        while (!Minecraft.getMinecraft().world.getBlockState(blockPos)
+                .isSideSolid(Minecraft.getMinecraft().world, blockPos, EnumFacing.DOWN) &&
+                blockPos.getY() < 255) {
             blockPos = new BlockPos(blockPos.getX(), blockPos.getY() + 1, blockPos.getZ());
         }
         return (int) Math.floor((double) blockPos.getY() / ZonePlannerMapChunkKey.LEVEL_HEIGHT);
@@ -148,10 +151,14 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
         }
 
         {
-            ItemStack paintbrushStack = invInputPaintbrush.getStackInSlot(0);
-            ItemStack mapLocationStack = invInputMapLocation.getStackInSlot(0);
-            if (paintbrushStack != null && paintbrushStack.getItem() instanceof ItemPaintbrush_BC8 && mapLocationStack != null && mapLocationStack.getItem() instanceof ItemMapLocation && mapLocationStack.getTagCompound() != null && mapLocationStack
-                    .getTagCompound().hasKey("chunkMapping") && invInputResult.getStackInSlot(0) == null) {
+            // noinspection ConstantConditions
+            if (!invInputPaintbrush.getStackInSlot(0).isEmpty() &&
+                    invInputPaintbrush.getStackInSlot(0).getItem() instanceof ItemPaintbrush_BC8 &&
+                    !invInputMapLocation.getStackInSlot(0).isEmpty() &&
+                    invInputMapLocation.getStackInSlot(0).getItem() instanceof ItemMapLocation &&
+                    invInputMapLocation.getStackInSlot(0).getTagCompound() != null &&
+                    invInputMapLocation.getStackInSlot(0).getTagCompound().hasKey("chunkMapping") &&
+                    invInputResult.getStackInSlot(0).isEmpty()) {
                 if (progressInput == 0) {
                     deltaProgressInput.addDelta(0, 200, 1);
                     deltaProgressInput.addDelta(200, 205, -1);
@@ -162,7 +169,8 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
                     return;
                 }
 
-                layers[BCCoreItems.paintbrush.getBrushFromStack(paintbrushStack).colour.getMetadata()].readFromNBT(mapLocationStack.getTagCompound());
+                layers[BCCoreItems.paintbrush.getBrushFromStack(invInputPaintbrush.getStackInSlot(0)).colour.getMetadata()]
+                        .readFromNBT(invInputMapLocation.getStackInSlot(0).getTagCompound());
                 invInputMapLocation.setStackInSlot(0, StackUtil.EMPTY);
                 invInputResult.setStackInSlot(0, new ItemStack(BCCoreItems.mapLocation));
                 this.markDirty();
@@ -174,9 +182,11 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
             }
         }
         {
-            ItemStack paintbrushStack = invOutputPaintbrush.getStackInSlot(0);
-            ItemStack mapLocationStack = invOutputMapLocation.getStackInSlot(0);
-            if (paintbrushStack != null && paintbrushStack.getItem() instanceof ItemPaintbrush_BC8 && mapLocationStack != null && mapLocationStack.getItem() instanceof ItemMapLocation && invOutputResult.getStackInSlot(0) == null) {
+            if (!invOutputPaintbrush.getStackInSlot(0).isEmpty() &&
+                    invOutputPaintbrush.getStackInSlot(0).getItem() instanceof ItemPaintbrush_BC8 &&
+                    !invOutputMapLocation.getStackInSlot(0).isEmpty() &&
+                    invOutputMapLocation.getStackInSlot(0).getItem() instanceof ItemMapLocation &&
+                    invOutputResult.getStackInSlot(0).isEmpty()) {
                 if (progressOutput == 0) {
                     deltaProgressOutput.addDelta(0, 200, 1);
                     deltaProgressOutput.addDelta(200, 205, -1);
@@ -187,9 +197,12 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
                     return;
                 }
 
-                ItemMapLocation.setZone(mapLocationStack, layers[BCCoreItems.paintbrush.getBrushFromStack(paintbrushStack).colour.getMetadata()]);
+                ItemMapLocation.setZone(
+                        invOutputMapLocation.getStackInSlot(0),
+                        layers[BCCoreItems.paintbrush.getBrushFromStack(invOutputPaintbrush.getStackInSlot(0)).colour.getMetadata()]
+                );
                 invOutputMapLocation.setStackInSlot(0, StackUtil.EMPTY);
-                invOutputResult.setStackInSlot(0, mapLocationStack);
+                invOutputResult.setStackInSlot(0, invOutputMapLocation.getStackInSlot(0));
                 progressOutput = 0;
             } else if (progressOutput != -1) {
                 progressOutput = -1;
