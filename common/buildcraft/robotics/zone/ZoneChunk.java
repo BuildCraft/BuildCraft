@@ -1,18 +1,17 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.zone;
 
 import java.util.BitSet;
+import java.util.List;
 import java.util.Random;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
-public class ZoneChunk {
+import javax.vecmath.Point2i;
 
+public class ZoneChunk {
     public BitSet property;
     private boolean fullSet = false;
 
@@ -25,13 +24,7 @@ public class ZoneChunk {
     }
 
     public boolean get(int xChunk, int zChunk) {
-        if (fullSet) {
-            return true;
-        } else if (property == null) {
-            return false;
-        } else {
-            return property.get(xChunk + zChunk * 16);
-        }
+        return fullSet || property != null && property.get(xChunk + zChunk * 16);
     }
 
     public void set(int xChunk, int zChunk, boolean value) {
@@ -44,7 +37,7 @@ public class ZoneChunk {
                 property = new BitSet(16 * 16);
             }
 
-            property.set(xChunk + zChunk * 16, value);
+            property.set(xChunk + zChunk * 16, true);
 
             if (property.cardinality() >= 16 * 16) {
                 property = null;
@@ -60,8 +53,20 @@ public class ZoneChunk {
                 property = new BitSet(16 * 16);
             }
 
-            property.set(xChunk + zChunk * 16, value);
+            property.set(xChunk + zChunk * 16, false);
         }
+    }
+
+    public List<Point2i> getAll() {
+        ImmutableList.Builder<Point2i> builder = ImmutableList.builder();
+        for (int zChunk = 0; zChunk < 16; zChunk++) {
+            for (int xChunk = 0; xChunk < 16; xChunk++) {
+                if (get(xChunk, zChunk)) {
+                    builder.add(new Point2i(xChunk, zChunk));
+                }
+            }
+        }
+        return builder.build();
     }
 
     public void writeToNBT(NBTTagCompound nbt) {

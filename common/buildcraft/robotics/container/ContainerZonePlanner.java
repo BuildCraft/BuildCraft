@@ -40,7 +40,10 @@ public class ContainerZonePlanner extends ContainerBCTile<TileZonePlanner> {
             @Override
             public boolean isItemValid(ItemStack stack) {
                 NBTTagCompound stackTag = stack.getTagCompound();
-                return stack.getItem() instanceof ItemMapLocation && stackTag != null && stackTag.hasKey("chunkMapping") && stack.getCount() == 1;
+                return stack.getItem() instanceof ItemMapLocation &&
+                        stackTag != null &&
+                        stackTag.hasKey("chunkMapping") &&
+                        stack.getCount() == 1;
             }
         });
         addSlotToContainer(new SlotOutput(tile.invInputResult, 0, 74, 125));

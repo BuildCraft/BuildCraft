@@ -169,8 +169,10 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
                     return;
                 }
 
-                layers[BCCoreItems.paintbrush.getBrushFromStack(invInputPaintbrush.getStackInSlot(0)).colour.getMetadata()]
-                        .readFromNBT(invInputMapLocation.getStackInSlot(0).getTagCompound());
+                ZonePlan zonePlan = new ZonePlan();
+                zonePlan.readFromNBT(invInputMapLocation.getStackInSlot(0).getTagCompound());
+                layers[BCCoreItems.paintbrush.getBrushFromStack(invInputPaintbrush.getStackInSlot(0)).colour.getMetadata()] =
+                        zonePlan.getWithOffset(-pos.getX(), -pos.getZ());
                 invInputMapLocation.setStackInSlot(0, StackUtil.EMPTY);
                 invInputResult.setStackInSlot(0, new ItemStack(BCCoreItems.mapLocation));
                 this.markDirty();
@@ -200,9 +202,10 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
                 ItemMapLocation.setZone(
                         invOutputMapLocation.getStackInSlot(0),
                         layers[BCCoreItems.paintbrush.getBrushFromStack(invOutputPaintbrush.getStackInSlot(0)).colour.getMetadata()]
+                                .getWithOffset(pos.getX(), pos.getZ())
                 );
-                invOutputMapLocation.setStackInSlot(0, StackUtil.EMPTY);
                 invOutputResult.setStackInSlot(0, invOutputMapLocation.getStackInSlot(0));
+                invOutputMapLocation.setStackInSlot(0, StackUtil.EMPTY);
                 progressOutput = 0;
             } else if (progressOutput != -1) {
                 progressOutput = -1;

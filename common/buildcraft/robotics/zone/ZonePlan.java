@@ -1,16 +1,10 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.zone;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
+import buildcraft.lib.misc.NBTUtilBC;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -19,6 +13,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.IZone;
+
+import javax.vecmath.Point2i;
 
 public class ZonePlan implements IZone {
     private final HashMap<ChunkPos, ZoneChunk> chunkMapping = new HashMap<>();
@@ -69,6 +65,29 @@ public class ZonePlan implements IZone {
         }
     }
 
+    public List<Point2i> getAll() {
+        ImmutableList.Builder<Point2i> builder = ImmutableList.builder();
+        for (int zChunk = 0; zChunk < 16; zChunk++) {
+            for (int xChunk = 0; xChunk < 16; xChunk++) {
+                if (get(xChunk, zChunk)) {
+                    builder.add(new Point2i(xChunk, zChunk));
+                }
+            }
+        }
+        chunkMapping.forEach((chunkPos, zoneChunk) -> {
+            List<Point2i> zoneChunkAll = zoneChunk.getAll();
+            zoneChunkAll.forEach(p -> p.add(new Point2i(chunkPos.getXStart(), chunkPos.getZStart())));
+            builder.addAll(zoneChunkAll);
+        });
+        return builder.build();
+    }
+
+    public ZonePlan getWithOffset(int offsetX, int offsetY) {
+        ZonePlan zonePlan = new ZonePlan();
+        getAll().forEach(p -> zonePlan.set(p.x + offsetX, p.y + offsetY, true));
+        return zonePlan;
+    }
+
     public boolean hasChunk(ChunkPos chunkPos) {
         return chunkMapping.containsKey(chunkPos);
     }
@@ -82,32 +101,34 @@ public class ZonePlan implements IZone {
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
-        NBTTagList list = new NBTTagList();
-
-        for (Map.Entry<ChunkPos, ZoneChunk> e : chunkMapping.entrySet()) {
-            NBTTagCompound subNBT = new NBTTagCompound();
-            subNBT.setInteger("chunkX", e.getKey().chunkXPos);
-            subNBT.setInteger("chunkZ", e.getKey().chunkZPos);
-            e.getValue().writeToNBT(subNBT);
-            list.appendTag(subNBT);
-        }
-
-        nbt.setTag("chunkMapping", list);
+        nbt.setTag(
+                "chunkMapping",
+                NBTUtilBC.writeCompoundList(
+                        chunkMapping.entrySet().stream()
+                                .map(entry -> {
+                                    NBTTagCompound zoneChunkTag = new NBTTagCompound();
+                                    entry.getValue().writeToNBT(zoneChunkTag);
+                                    zoneChunkTag.setInteger("chunkX", entry.getKey().chunkXPos);
+                                    zoneChunkTag.setInteger("chunkZ", entry.getKey().chunkZPos);
+                                    return zoneChunkTag;
+                                })
+                )
+        );
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
-        NBTTagList list = nbt.getTagList("chunkMapping", Constants.NBT.TAG_COMPOUND);
-
-        for (int i = 0; i < list.tagCount(); ++i) {
-            NBTTagCompound subNBT = list.getCompoundTagAt(i);
-
-            ChunkPos id = new ChunkPos(subNBT.getInteger("chunkX"), subNBT.getInteger("chunkZ"));
-
-            ZoneChunk chunk = new ZoneChunk();
-            chunk.readFromNBT(subNBT);
-
-            chunkMapping.put(id, chunk);
-        }
+        NBTUtilBC.readCompoundList(nbt.getTagList("chunkMapping", Constants.NBT.TAG_COMPOUND))
+                .forEach(zoneChunkTag -> {
+                    ZoneChunk chunk = new ZoneChunk();
+                    chunk.readFromNBT(zoneChunkTag);
+                    chunkMapping.put(
+                            new ChunkPos(
+                                    zoneChunkTag.getInteger("chunkX"),
+                                    zoneChunkTag.getInteger("chunkZ")
+                            ),
+                            chunk
+                    );
+                });
     }
 
     @Override

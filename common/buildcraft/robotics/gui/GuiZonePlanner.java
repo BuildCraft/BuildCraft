@@ -78,7 +78,10 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     private ItemPaintbrush_BC8.Brush getPaintbrushBrush() {
         ItemStack paintbrush = getPaintbrush();
         if (paintbrush != null) {
-            return BCCoreItems.paintbrush.getBrushFromStack(paintbrush);
+            ItemPaintbrush_BC8.Brush brush = BCCoreItems.paintbrush.getBrushFromStack(paintbrush);
+            if (brush.colour != null) {
+                return brush;
+            }
         }
         return null;
     }
@@ -123,9 +126,17 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                              z < Math.max(selectionStartXZ.getZ(), lastSelected.getZ());
                              z++) {
                             if (clickedMouseButton == 0) {
-                                bufferLayer.set(x, z, true);
+                                bufferLayer.set(
+                                        x - container.tile.getPos().getX(),
+                                        z - container.tile.getPos().getZ(),
+                                        true
+                                );
                             } else if (clickedMouseButton == 1) {
-                                bufferLayer.set(x, z, false);
+                                bufferLayer.set(
+                                        x - container.tile.getPos().getX(),
+                                        z - container.tile.getPos().getZ(),
+                                        false
+                                );
                             }
                         }
                     }
@@ -158,14 +169,14 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         drawProgress(
                 RECT_PROGRESS_INPUT,
                 ICON_PROGRESS_INPUT,
-                container.tile.deltaProgressInput.getDynamic(partialTicks) / 100,
+                container.tile.deltaProgressInput.getDynamic(partialTicks),
                 1
         );
         drawProgress(
                 RECT_PROGRESS_OUTPUT,
                 ICON_PROGRESS_OUTPUT,
-                container.tile.deltaProgressOutput.getDynamic(partialTicks) / 100,
-                1
+                1,
+                container.tile.deltaProgressOutput.getDynamic(partialTicks)
         );
     }
 
@@ -338,51 +349,56 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                 layer = bufferLayer;
             }
             if (!layer.getChunkPoses().isEmpty()) {
+                Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
                 for (int chunkX = chunkBaseX - radius; chunkX < chunkBaseX + radius; chunkX++) {
                     for (int chunkZ = chunkBaseZ - radius; chunkZ < chunkBaseZ + radius; chunkZ++) {
                         ChunkPos chunkPos = new ChunkPos(chunkX, chunkZ);
-                        if (layer.hasChunk(chunkPos)) {
-                            for (int blockX = chunkPos.getXStart(); blockX <= chunkPos.getXEnd(); blockX++) {
-                                for (int blockZ = chunkPos.getZStart(); blockZ <= chunkPos.getZEnd(); blockZ++) {
-                                    if (layer.get(blockX, blockZ)) {
-                                        int height = 256;
-                                        ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(
-                                                mc.world,
-                                                new ZonePlannerMapChunkKey(
-                                                        chunkPos,
-                                                        dimension,
-                                                        container.tile.getLevel()
-                                                )
-                                        );
-                                        if (zonePlannerMapChunk != null) {
-                                            MapColourData data = zonePlannerMapChunk.getData(blockX, blockZ);
-                                            if (data != null) {
-                                                height = data.posY;
-                                            }
-                                        }
-                                        int color = EnumDyeColor.byMetadata(i).getMapColor().colorValue;
-                                        int r = (color >> 16) & 0xFF;
-                                        int g = (color >> 8) & 0xFF;
-                                        int b = (color >> 0) & 0xFF;
-                                        int a = 0x55;
-                                        ZonePlannerMapRenderer.INSTANCE.setColor(r << 16 | g << 8 | b << 0 | a << 24);
-                                        VertexBuffer builder = Tessellator.getInstance().getBuffer();
-                                        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-                                        ZonePlannerMapRenderer.INSTANCE.drawBlockCuboid(
-                                                builder,
-                                                blockX,
-                                                height + 0.1,
-                                                blockZ,
-                                                height,
-                                                0.6
-                                        );
-                                        Tessellator.getInstance().draw();
-                                    }
+                        for (int blockX = chunkPos.getXStart(); blockX <= chunkPos.getXEnd(); blockX++) {
+                            for (int blockZ = chunkPos.getZStart(); blockZ <= chunkPos.getZEnd(); blockZ++) {
+                                if (!layer.get(
+                                        blockX - container.tile.getPos().getX(),
+                                        blockZ - container.tile.getPos().getZ()
+                                )) {
+                                    continue;
                                 }
+                                int height;
+                                ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(
+                                        mc.world,
+                                        new ZonePlannerMapChunkKey(
+                                                chunkPos,
+                                                dimension,
+                                                container.tile.getLevel()
+                                        )
+                                );
+                                if (zonePlannerMapChunk != null) {
+                                    MapColourData data = zonePlannerMapChunk.getData(blockX, blockZ);
+                                    if (data != null) {
+                                        height = data.posY;
+                                    } else {
+                                        continue;
+                                    }
+                                } else {
+                                    continue;
+                                }
+                                int color = EnumDyeColor.byMetadata(i).getMapColor().colorValue;
+                                int r = (color >> 16) & 0xFF;
+                                int g = (color >> 8) & 0xFF;
+                                int b = (color >> 0) & 0xFF;
+                                int a = 0x55;
+                                ZonePlannerMapRenderer.INSTANCE.setColor(r << 16 | g << 8 | b << 0 | a << 24);
+                                ZonePlannerMapRenderer.INSTANCE.drawBlockCuboid(
+                                        Tessellator.getInstance().getBuffer(),
+                                        blockX,
+                                        height + 0.1,
+                                        blockZ,
+                                        height,
+                                        0.6
+                                );
                             }
                         }
                     }
                 }
+                Tessellator.getInstance().draw();
             }
         }
         GlStateManager.disableBlend();
