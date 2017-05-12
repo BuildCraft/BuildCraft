@@ -48,8 +48,7 @@ public class MessageObjectCacheReq implements IMessage {
         }
     }
 
-    public static final IMessageHandler<MessageObjectCacheReq, MessageObjectCacheReply> HANDLER =
-            (MessageObjectCacheReq message, MessageContext ctx) -> {
+    public static final IMessageHandler<MessageObjectCacheReq, MessageObjectCacheReply> HANDLER = (message, ctx) -> {
                 NetworkedObjectCache<?> cache = BuildCraftObjectCaches.CACHES.get(message.cacheId);
                 byte[][] values = new byte[message.ids.length][];
 

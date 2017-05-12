@@ -35,14 +35,13 @@ public class MessageZoneMapResponse implements IMessage {
         data.write(new PacketBuffer(buf));
     }
 
-    public static final IMessageHandler<MessageZoneMapResponse, IMessage> HANDLER =
-            (MessageZoneMapResponse message, MessageContext ctx) -> {
-                Deque<Consumer<ZonePlannerMapChunk>> queue = ZonePlannerMapDataClient.INSTANCE.pendingRequests.get(message.key);
-                if (queue != null) {
-                    while (!queue.isEmpty()) {
-                        queue.poll().accept(message.data);
-                    }
-                }
-                return null;
-            };
+    public static final IMessageHandler<MessageZoneMapResponse, IMessage> HANDLER = (message, ctx) -> {
+        Deque<Consumer<ZonePlannerMapChunk>> queue = ZonePlannerMapDataClient.INSTANCE.pendingRequests.get(message.key);
+        if (queue != null) {
+            while (!queue.isEmpty()) {
+                queue.poll().accept(message.data);
+            }
+        }
+        return null;
+    };
 }

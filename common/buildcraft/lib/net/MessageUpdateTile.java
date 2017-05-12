@@ -52,22 +52,21 @@ public class MessageUpdateTile implements IMessage {
         buffer.writeBytes(payload, 0, length);
     }
 
-    public static final IMessageHandler<MessageUpdateTile, IMessage> HANDLER =
-            (MessageUpdateTile message, MessageContext ctx) -> {
-                EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
-                if (player == null || player.world == null) {
-                    return null;
-                }
-                TileEntity tile = player.world.getTileEntity(message.pos);
-                if (tile instanceof IPayloadReceiver) {
-                    try {
-                        return ((IPayloadReceiver) tile).receivePayload(ctx, message.payload);
-                    } catch (IOException io) {
-                        throw Throwables.propagate(io);
-                    }
-                } else {
-                    BCLog.logger.warn("Dropped message for player " + player.getName() + " for tile at " + message.pos);
-                }
-                return null;
-            };
+    public static final IMessageHandler<MessageUpdateTile, IMessage> HANDLER = (message, ctx) -> {
+        EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
+        if (player == null || player.world == null) {
+            return null;
+        }
+        TileEntity tile = player.world.getTileEntity(message.pos);
+        if (tile instanceof IPayloadReceiver) {
+            try {
+                return ((IPayloadReceiver) tile).receivePayload(ctx, message.payload);
+            } catch (IOException io) {
+                throw Throwables.propagate(io);
+            }
+        } else {
+            BCLog.logger.warn("Dropped message for player " + player.getName() + " for tile at " + message.pos);
+        }
+        return null;
+    };
 }

@@ -57,24 +57,23 @@ public class MessageContainer implements IMessage {
         buf.writeBytes(payload, 0, length);
     }
 
-    public static final IMessageHandler<MessageContainer, IMessage> HANDLER =
-            (MessageContainer message, MessageContext ctx) -> {
-                try {
-                    int windowId = message.windowId;
-                    EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
-                    if (player != null &&
-                            player.openContainer instanceof ContainerBC_Neptune &&
-                            player.openContainer.windowId == windowId) {
-                        ContainerBC_Neptune container = (ContainerBC_Neptune) player.openContainer;
-                        container.readMessage(message.msgId, message.payload, ctx.side, ctx);
+    public static final IMessageHandler<MessageContainer, IMessage> HANDLER = (message, ctx) -> {
+        try {
+            int windowId = message.windowId;
+            EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
+            if (player != null &&
+                    player.openContainer instanceof ContainerBC_Neptune &&
+                    player.openContainer.windowId == windowId) {
+                ContainerBC_Neptune container = (ContainerBC_Neptune) player.openContainer;
+                container.readMessage(message.msgId, message.payload, ctx.side, ctx);
 
-                        // error checking
-                        String extra = container.getClass() + ", id = " + container.getIdAllocator().getNameFor(message.msgId);
-                        MessageUtil.ensureEmpty(message.payload, ctx.side == Side.CLIENT, extra);
-                    }
-                    return null;
-                } catch (IOException e) {
-                    throw new Error(e);
-                }
-            };
+                // error checking
+                String extra = container.getClass() + ", id = " + container.getIdAllocator().getNameFor(message.msgId);
+                MessageUtil.ensureEmpty(message.payload, ctx.side == Side.CLIENT, extra);
+            }
+            return null;
+        } catch (IOException e) {
+            throw new Error(e);
+        }
+    };
 }

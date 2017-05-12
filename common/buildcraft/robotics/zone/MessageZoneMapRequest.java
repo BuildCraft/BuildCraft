@@ -28,13 +28,12 @@ public class MessageZoneMapRequest implements IMessage {
         key.toBytes(buf);
     }
 
-    public static final IMessageHandler<MessageZoneMapRequest, IMessage> HANDLER =
-            (MessageZoneMapRequest message, MessageContext ctx) -> {
-                ZonePlannerMapDataServer.INSTANCE.getChunk(
-                        ctx.getServerHandler().player.world,
-                        message.key,
-                        data -> MessageUtil.sendReturnMessage(ctx, new MessageZoneMapResponse(message.key, data))
-                );
-                return null;
-            };
+    public static final IMessageHandler<MessageZoneMapRequest, IMessage> HANDLER = (message, ctx) -> {
+        ZonePlannerMapDataServer.INSTANCE.getChunk(
+                ctx.getServerHandler().player.world,
+                message.key,
+                data -> MessageUtil.sendReturnMessage(ctx, new MessageZoneMapResponse(message.key, data))
+        );
+        return null;
+    };
 }

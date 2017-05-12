@@ -32,9 +32,8 @@ public class MessageSnapshotResponse implements IMessage {
         }
     }
 
-    public static final IMessageHandler<MessageSnapshotResponse, IMessage> HANDLER =
-            (MessageSnapshotResponse message, MessageContext ctx) -> {
-                ClientSnapshots.INSTANCE.onSnapshotReceived(message.snapshot);
-                return null;
-            };
+    public static final IMessageHandler<MessageSnapshotResponse, IMessage> HANDLER = (message, ctx) -> {
+        ClientSnapshots.INSTANCE.onSnapshotReceived(message.snapshot);
+        return null;
+    };
 }

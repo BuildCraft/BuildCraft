@@ -61,14 +61,11 @@ public class MessageParticleVanilla implements IMessage {
         world.spawnParticle(type, ignoreRange, x, y, z, dx, dy, dz, paramaters);
     }
 
-    private static final BiConsumer<MessageParticleVanilla, MessageContext> HANDLER_CLIENT =
-            (MessageParticleVanilla message, MessageContext ctx) -> {
-                message.spawn(BCLibProxy.getProxy().getClientWorld());
-            };
+    private static final BiConsumer<MessageParticleVanilla, MessageContext> HANDLER_CLIENT = (message, ctx) ->
+            message.spawn(BCLibProxy.getProxy().getClientWorld());
 
-    public static final IMessageHandler<MessageParticleVanilla, IMessage> HANDLER =
-            (MessageParticleVanilla message, MessageContext ctx) -> {
-                HANDLER_CLIENT.accept(message, ctx);
-                return null;
-            };
+    public static final IMessageHandler<MessageParticleVanilla, IMessage> HANDLER = (message, ctx) -> {
+        HANDLER_CLIENT.accept(message, ctx);
+        return null;
+    };
 }

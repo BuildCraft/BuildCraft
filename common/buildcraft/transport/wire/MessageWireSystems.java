@@ -48,10 +48,9 @@ public class MessageWireSystems implements IMessage {
         }
     }
 
-    public static final IMessageHandler<MessageWireSystems, IMessage> HANDLER =
-            (MessageWireSystems message, MessageContext ctx) -> {
-                ClientWireSystems.INSTANCE.wireSystems.clear();
-                ClientWireSystems.INSTANCE.wireSystems.putAll(message.wireSystems);
-                return null;
-            };
+    public static final IMessageHandler<MessageWireSystems, IMessage> HANDLER = (message, ctx) -> {
+        ClientWireSystems.INSTANCE.wireSystems.clear();
+        ClientWireSystems.INSTANCE.wireSystems.putAll(message.wireSystems);
+        return null;
+    };
 }
