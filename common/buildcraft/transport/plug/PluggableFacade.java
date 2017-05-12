@@ -1,5 +1,6 @@
 package buildcraft.transport.plug;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,6 +22,7 @@ import buildcraft.api.transport.pluggable.PluggableModelKey;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.RotationUtil;
 import buildcraft.lib.net.PacketBufferBC;
+
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugBlocker;
 import buildcraft.transport.client.model.key.KeyPlugFacade;
@@ -105,11 +107,21 @@ public class PluggableFacade extends PipePluggable {
     @Override
     public PluggableModelKey getModelRenderKey(BlockRenderLayer layer) {
         if (states.type == FacadeType.Basic) {
-            FacadePhasedState state = states.phasedStates[activeState];
-            return new KeyPlugFacade(layer, side, state.stateInfo.state, state.isHollow);
-        } else {
+            FacadePhasedState facadeState = states.phasedStates[activeState];
+            IBlockState blockState = facadeState.stateInfo.state;
+            BlockRenderLayer targetLayer = blockState.getBlock().getBlockLayer();
+            if (targetLayer == BlockRenderLayer.TRANSLUCENT) {
+                if (layer != targetLayer) {
+                    return null;
+                }
+            } else if (layer == BlockRenderLayer.TRANSLUCENT) {
+                return null;
+            }
+            return new KeyPlugFacade(layer, side, blockState, facadeState.isHollow);
+        } else if (layer == BlockRenderLayer.CUTOUT) {
             return new KeyPlugBlocker(side);
         }
+        return null;
     }
 
     @Override
