@@ -33,7 +33,6 @@ public class FluidManager {
             block.setUnlocalizedName("blockFluid_" + fluid.getBlockName());
             block.setLightOpacity(fluid.getLightOpacity());
             GameRegistry.register(block);
-            GameRegistry.register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
             fluid.setBlock(block);
             FluidRegistry.addBucketForFluid(fluid);
             BCLibProxy.getProxy().postRegisterFluid(fluid);
