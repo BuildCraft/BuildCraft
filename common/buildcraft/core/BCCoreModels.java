@@ -3,6 +3,10 @@ package buildcraft.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableMap;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -10,14 +14,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.registry.IRegistry;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumPowerStage;
 
-import buildcraft.core.tile.TileEngineCreative;
-import buildcraft.core.tile.TileEngineRedstone_BC8;
 import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.ModelItemSimple;
 import buildcraft.lib.client.model.MutableQuad;
@@ -27,6 +31,13 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableString;
 import buildcraft.lib.misc.data.ModelVariableData;
+
+import buildcraft.core.client.render.RenderEngineCreative;
+import buildcraft.core.client.render.RenderEngineWood;
+import buildcraft.core.client.render.RenderMarkerVolume;
+import buildcraft.core.tile.TileEngineCreative;
+import buildcraft.core.tile.TileEngineRedstone_BC8;
+import buildcraft.core.tile.TileMarkerVolume;
 
 public class BCCoreModels {
 
@@ -53,6 +64,13 @@ public class BCCoreModels {
 
     public static void fmlPreInit() {
         MinecraftForge.EVENT_BUS.register(BCCoreModels.class);
+        ModelLoader.setCustomStateMapper(BCCoreBlocks.engine, b -> ImmutableMap.of());
+    }
+
+    public static void fmlInit() {
+        ClientRegistry.bindTileEntitySpecialRenderer(TileMarkerVolume.class, RenderMarkerVolume.INSTANCE);
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEngineRedstone_BC8.class, RenderEngineWood.INSTANCE);
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEngineCreative.class, RenderEngineCreative.INSTANCE);
     }
 
     @SubscribeEvent

@@ -4,20 +4,11 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core;
 
-import buildcraft.core.list.ListTooltipHandler;
-import buildcraft.core.marker.PathCache;
-import buildcraft.core.marker.VolumeCache;
-import buildcraft.core.marker.volume.MessageVolumeBoxes;
-import buildcraft.lib.BCLib;
-import buildcraft.lib.BCLibItems;
-import buildcraft.lib.BCMessageHandler;
-import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.registry.CreativeTabManager;
-import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
-import buildcraft.lib.registry.TagManager;
-import buildcraft.lib.registry.TagManager.EnumTagType;
-import buildcraft.lib.registry.TagManager.TagEntry;
+import java.io.File;
+import java.util.function.Consumer;
+
 import net.minecraft.init.Blocks;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -27,8 +18,20 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 
-import java.io.File;
-import java.util.function.Consumer;
+import buildcraft.lib.BCLib;
+import buildcraft.lib.BCLibItems;
+import buildcraft.lib.BCMessageHandler;
+import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.registry.CreativeTabManager;
+import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
+import buildcraft.lib.registry.TagManager;
+import buildcraft.lib.registry.TagManager.EnumTagType;
+import buildcraft.lib.registry.TagManager.TagEntry;
+
+import buildcraft.core.list.ListTooltipHandler;
+import buildcraft.core.marker.PathCache;
+import buildcraft.core.marker.VolumeCache;
+import buildcraft.core.marker.volume.MessageVolumeBoxes;
 
 @Mod(//
     modid = BCCore.MODID,//
@@ -53,13 +56,14 @@ public class BCCore {
         File cfgFolder = event.getModConfigurationDirectory();
         cfgFolder = new File(cfgFolder, "buildcraft");
         BCCoreConfig.preInit(cfgFolder);
-        BCCoreProxy.getProxy().fmlPreInit();
 
         CreativeTabBC tab = CreativeTabManager.createTab("buildcraft.main");
 
         BCCoreItems.preInit();
         BCCoreBlocks.preInit();
         BCCoreStatements.preInit();
+
+        BCCoreProxy.getProxy().fmlPreInit();
 
         tab.setItem(BCCoreItems.wrench);
 

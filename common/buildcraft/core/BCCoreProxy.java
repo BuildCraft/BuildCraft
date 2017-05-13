@@ -81,10 +81,7 @@ public abstract class BCCoreProxy implements IGuiHandler {
 
         @Override
         public void fmlInit() {
-            ClientRegistry.bindTileEntitySpecialRenderer(TileMarkerVolume.class, RenderMarkerVolume.INSTANCE);
-            ClientRegistry.bindTileEntitySpecialRenderer(TileEngineRedstone_BC8.class, RenderEngineWood.INSTANCE);
-            ClientRegistry.bindTileEntitySpecialRenderer(TileEngineCreative.class, RenderEngineCreative.INSTANCE);
-
+            BCCoreModels.fmlInit();
             MinecraftForge.EVENT_BUS.register(RenderTickListener.class);
         }
     }

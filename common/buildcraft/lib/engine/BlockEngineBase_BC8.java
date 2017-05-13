@@ -64,7 +64,7 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, getEngineProperty(), BuildCraftProperties.ENERGY_STAGE, BuildCraftProperties.BLOCK_FACING_6);
+        return new BlockStateContainer(this, getEngineProperty());
     }
 
     @Override
