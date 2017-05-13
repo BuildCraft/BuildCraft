@@ -2,6 +2,7 @@ package buildcraft.transport.block;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -27,6 +28,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -507,6 +509,28 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             InventoryUtil.dropAll(world, pos, toDrop);
         }
         return super.removedByPlayer(state, world, pos, player, willHarvest);
+    }
+
+    @Override
+    public float getExplosionResistance(World world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
+        if (exploder != null) {
+            Vec3d subtract = exploder.getPositionVector().subtract(new Vec3d(pos).add(VecUtil.VEC_HALF)).normalize();
+            EnumFacing side = Arrays.stream(EnumFacing.values())
+                    .min(Comparator.comparing(facing -> new Vec3d(facing.getDirectionVec()).distanceTo(subtract)))
+                    .orElseThrow(IllegalArgumentException::new);
+            TilePipeHolder tile = getPipe(world, pos, true);
+            if (tile != null) {
+                PipePluggable pluggable = tile.getPluggable(side);
+                if (pluggable != null) {
+                    float explosionResistance = pluggable.getExplosionResistance(exploder, explosion);
+                    if (explosionResistance > 0) {
+                        return explosionResistance;
+                    }
+                }
+            }
+        }
+        // noinspection ConstantConditions
+        return super.getExplosionResistance(world, pos, exploder, explosion);
     }
 
     @Override

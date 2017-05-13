@@ -2,6 +2,7 @@ package buildcraft.transport.plug;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -10,6 +11,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 
+import net.minecraft.world.Explosion;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -28,6 +30,8 @@ import buildcraft.transport.client.model.key.KeyPlugBlocker;
 import buildcraft.transport.client.model.key.KeyPlugFacade;
 import buildcraft.transport.plug.FacadeStateManager.FacadePhasedState;
 import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
+
+import javax.annotation.Nullable;
 
 public class PluggableFacade extends PipePluggable {
     public static final int SIZE = 2;
@@ -92,6 +96,11 @@ public class PluggableFacade extends PipePluggable {
     @Override
     public boolean isSideSolid() {
         return isSideSolid;
+    }
+
+    @Override
+    public float getExplosionResistance(@Nullable Entity exploder, Explosion explosion) {
+        return states.phasedStates[activeState].stateInfo.state.getBlock().getExplosionResistance(exploder);
     }
 
     @Override
