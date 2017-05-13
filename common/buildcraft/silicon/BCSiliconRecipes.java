@@ -50,12 +50,64 @@ public class BCSiliconRecipes {
         if (BCBlocks.SILICON_TABLE_ASSEMBLY != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.setResult(new ItemStack(BCBlocks.SILICON_TABLE_ASSEMBLY));
-            builder.add("OrO");
             builder.add("OdO");
+            builder.add("OrO");
             builder.add("OgO");
             builder.map('O', Blocks.OBSIDIAN);
-            builder.map('r', "dustRedstone");
             builder.map('d', "gemDiamond");
+            builder.map('r', "dustRedstone");
+            builder.map('g', OredictionaryNames.GEAR_DIAMOND);
+            builder.register();
+        }
+
+        if (BCBlocks.SILICON_TABLE_ADV_CRAFT != null) {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
+            builder.setResult(new ItemStack(BCBlocks.SILICON_TABLE_ADV_CRAFT));
+            builder.add("OtO");
+            builder.add("OcO");
+            builder.add("OrO");
+            builder.map('O', Blocks.OBSIDIAN);
+            builder.map('t', Blocks.CRAFTING_TABLE);
+            builder.map('c', Blocks.CHEST);
+            builder.map('r', EnumRedstoneChipset.RED.getStack());
+            builder.register();
+        }
+
+        if (BCBlocks.SILICON_TABLE_INTEGRATION != null) {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
+            builder.setResult(new ItemStack(BCBlocks.SILICON_TABLE_INTEGRATION));
+            builder.add("OiO");
+            builder.add("OrO");
+            builder.add("OgO");
+            builder.map('O', Blocks.OBSIDIAN);
+            builder.map('i', "ingotGold");
+            builder.map('r', EnumRedstoneChipset.RED.getStack());
+            builder.map('g', OredictionaryNames.GEAR_DIAMOND);
+            builder.register();
+        }
+
+        if (BCBlocks.SILICON_TABLE_CHARGING != null) {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
+            builder.setResult(new ItemStack(BCBlocks.SILICON_TABLE_CHARGING));
+            builder.add("OdO");
+            builder.add("OrO");
+            builder.add("OgO");
+            builder.map('O', Blocks.OBSIDIAN);
+            builder.map('d', "dustRedstone");
+            builder.map('r', EnumRedstoneChipset.RED.getStack());
+            builder.map('g', OredictionaryNames.GEAR_GOLD);
+            builder.register();
+        }
+
+        if (BCBlocks.SILICON_TABLE_PROGRAMMING != null) {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
+            builder.setResult(new ItemStack(BCBlocks.SILICON_TABLE_PROGRAMMING));
+            builder.add("OeO");
+            builder.add("OrO");
+            builder.add("OgO");
+            builder.map('O', Blocks.OBSIDIAN);
+            builder.map('e', "gemEmerald");
+            builder.map('r', EnumRedstoneChipset.RED.getStack());
             builder.map('g', OredictionaryNames.GEAR_DIAMOND);
             builder.register();
         }

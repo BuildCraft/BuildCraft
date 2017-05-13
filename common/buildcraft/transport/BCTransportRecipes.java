@@ -1,5 +1,6 @@
 package buildcraft.transport;
 
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.StackDefinition;
 import buildcraft.lib.inventory.filter.ArrayStackFilter;
 import buildcraft.lib.inventory.filter.OreStackFilter;
@@ -223,6 +224,17 @@ public class BCTransportRecipes {
             output = BCTransportItems.plugLens.getStack(null, true);
             input = ImmutableSet.of(glass, ArrayStackFilter.definition(new ItemStack(Blocks.IRON_BARS)));
             AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe("lens-filter", 500 * MjAPI.MJ, input, output));
+        }
+
+        if (BCTransportItems.plugLightSensor != null) {
+            BuildcraftRecipeRegistry.assemblyRecipes.addRecipe(
+                    new AssemblyRecipe(
+                            "light-sensor",
+                            500 * MjAPI.MJ,
+                            ImmutableSet.of(ArrayStackFilter.definition(Blocks.DAYLIGHT_DETECTOR)),
+                            new ItemStack(BCTransportItems.plugLightSensor)
+                    )
+            );
         }
 
         if (BCTransportItems.plugFacade != null) {
