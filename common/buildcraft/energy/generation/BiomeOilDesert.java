@@ -8,9 +8,11 @@ public final class BiomeOilDesert extends BiomeDesert {
     public BiomeOilDesert() {
         super(
                 new BiomeProperties("Desert Oil Field")
-                        .setRainDisabled()
-                        .setTemperature(2.0F)
                         .setBaseHeight(0.125F)
+                        .setHeightVariation(0.05F)
+                        .setTemperature(2.0F)
+                        .setRainfall(0.0F)
+                        .setRainDisabled()
         );
         setRegistryName("oil_desert");
     }

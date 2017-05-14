@@ -8,7 +8,6 @@ public final class BiomeOilOcean extends BiomeOcean {
     public BiomeOilOcean() {
         super(
                 new BiomeProperties("Ocean Oil Field")
-                        .setRainDisabled()
                         .setBaseHeight(-1.0F)
                         .setHeightVariation(0.1F)
         );
