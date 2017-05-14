@@ -14,23 +14,4 @@ public final class BiomeOilDesert extends BiomeDesert {
         );
         setRegistryName("oil_desert");
     }
-
-//    protected static final BiomeDesert.Height height_OilDesert = new Biome.Height(0.1F, 0.2F);
-//
-//    private BiomeOilDesert(int id) {
-//        super(id);
-//        setColor(16421912);
-//        setBiomeName("Desert Oil Field");
-//        setDisableRain();
-//        setTemperatureRainfall(2.0F, 0.0F);
-//        setHeight(height_OilDesert);
-//    }
-//
-//    public static BiomeOilDesert makeBiome(int id) {
-//        BiomeOilDesert biome = new BiomeOilDesert(id);
-//        BiomeDictionary.registerBiomeType(biome, BiomeDictionary.Type.SANDY);
-//        OilPopulateOld.INSTANCE.excessiveBiomes.add(biome.biomeID);
-//        OilPopulateOld.INSTANCE.surfaceDepositBiomes.add(biome.biomeID);
-//        return biome;
-//    }
 }

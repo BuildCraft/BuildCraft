@@ -14,21 +14,4 @@ public final class BiomeOilOcean extends BiomeOcean {
         );
         setRegistryName("oil_ocean");
     }
-
-//    protected static final BiomeGenBase.Height height_OilOcean = new BiomeGenBase.Height(0.1F, 0.2F);
-//
-//    private BiomeOilOcean(int id) {
-//        super(id);
-//        setBiomeName("Ocean Oil Field");
-//        setColor(112);
-//        setHeight(height_Oceans);
-//    }
-//
-//    public static BiomeOilOcean makeBiome(int id) {
-//        BiomeOilOcean biome = new BiomeOilOcean(id);
-//        BiomeDictionary.registerBiomeType(biome, BiomeDictionary.Type.WATER);
-//        OilPopulateOld.INSTANCE.excessiveBiomes.add(biome.biomeID);
-//        OilPopulateOld.INSTANCE.surfaceDepositBiomes.add(biome.biomeID);
-//        return biome;
-//    }
 }
