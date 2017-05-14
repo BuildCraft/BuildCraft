@@ -32,14 +32,23 @@ public class GuiFillingPlanner extends GuiBC8<ContainerFillingPlanner> {
     @Override
     public void initGui() {
         super.initGui();
-        buttonList.add(new GuiButtonSmall(this, 0, rootElement.getX() + 7, rootElement.getY() + 38, 100, "Inverted")
-                .setToolTip(ToolTip.createLocalized("gui.filling_planner.inverted"))
-                .setBehaviour(IButtonBehaviour.TOGGLE)
-                .setActive(container.inverted)
-                .registerListener((button, buttonId, buttonKey) -> {
-                    container.inverted = button.isButtonActive();
-                    container.sendDataToServer();
-                }));
+        buttonList.add(
+                new GuiButtonSmall(
+                        this,
+                        0,
+                        rootElement.getX() + 7,
+                        rootElement.getY() + 38,
+                        100,
+                        "Inverted"
+                )
+                        .setToolTip(ToolTip.createLocalized("gui.filling_planner.inverted"))
+                        .setBehaviour(IButtonBehaviour.TOGGLE)
+                        .setActive(container.inverted)
+                        .registerListener((button, buttonId, buttonKey) -> {
+                            container.inverted = button.isButtonActive();
+                            container.sendDataToServer();
+                        })
+        );
     }
 
     private void iterateParameters(IParameterIterator iterator) {

@@ -23,7 +23,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -49,16 +48,6 @@ import buildcraft.lib.tile.TileBC_Neptune;
 
 public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable {
     private final MjBattery battery = new MjBattery(1600L * MjAPI.MJ);
-    private final MjCapabilityHelper mjCapHelper = new MjCapabilityHelper(new MjBatteryReciver(battery) {
-        @Override
-        public long receivePower(long microJoules, boolean simulate) {
-            long excess = super.receivePower(microJoules, simulate);
-            if (!simulate) {
-                recentPowerAverage.push((int) ((microJoules - excess) / MjAPI.MJ));
-            }
-            return excess;
-        }
-    });
     public final Box frameBox = new Box();
     private final Box miningBox = new Box();
     private BoxIterator boxIterator;
@@ -70,7 +59,16 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     private final AverageInt recentPowerAverage = new AverageInt(200);
 
     public TileQuarry() {
-        caps.addProvider(mjCapHelper);
+        caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(battery) {
+            @Override
+            public long receivePower(long microJoules, boolean simulate) {
+                long excess = super.receivePower(microJoules, simulate);
+                if (!simulate) {
+                    recentPowerAverage.push((int) ((microJoules - excess) / MjAPI.MJ));
+                }
+                return excess;
+            }
+        }));
         caps.addCapabilityInstance(CapUtil.CAP_ITEM_TRANSACTOR, AutomaticProvidingTransactor.INSTANCE, EnumPipePart.VALUES);
     }
 

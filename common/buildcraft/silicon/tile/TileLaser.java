@@ -40,15 +40,13 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     private final AverageLong avgPower = new AverageLong(100);
     private long averageClient;
     private final MjBattery battery;
-    private final MjCapabilityHelper mjCapHelper;
 
     public Vec3d laserPos;
 
     public TileLaser() {
         super();
         battery = new MjBattery(1024 * MjAPI.MJ);
-        mjCapHelper = new MjCapabilityHelper(new MjBatteryReciver(battery));
-        caps.addProvider(mjCapHelper);
+        caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(battery)));
     }
 
     private void findTarget() {
