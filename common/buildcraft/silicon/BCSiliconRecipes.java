@@ -67,8 +67,8 @@ public class BCSiliconRecipes {
             builder.add("OcO");
             builder.add("OrO");
             builder.map('O', Blocks.OBSIDIAN);
-            builder.map('t', Blocks.CRAFTING_TABLE);
-            builder.map('c', Blocks.CHEST);
+            builder.map('t', "craftingTableWood");
+            builder.map('c', "chestWood");
             builder.map('r', EnumRedstoneChipset.RED.getStack());
             builder.register();
         }
@@ -81,7 +81,7 @@ public class BCSiliconRecipes {
             builder.add("OgO");
             builder.map('O', Blocks.OBSIDIAN);
             builder.map('i', "ingotGold");
-            builder.map('r', EnumRedstoneChipset.RED.getStack());
+            builder.map('r', EnumRedstoneChipset.IRON.getStack(), "ingotIron");
             builder.map('g', OredictionaryNames.GEAR_DIAMOND);
             builder.register();
         }
@@ -94,7 +94,7 @@ public class BCSiliconRecipes {
             builder.add("OgO");
             builder.map('O', Blocks.OBSIDIAN);
             builder.map('d', "dustRedstone");
-            builder.map('r', EnumRedstoneChipset.RED.getStack());
+            builder.map('r', EnumRedstoneChipset.RED.getStack(), Blocks.REDSTONE_BLOCK);
             builder.map('g', OredictionaryNames.GEAR_GOLD);
             builder.register();
         }
@@ -106,8 +106,8 @@ public class BCSiliconRecipes {
             builder.add("OrO");
             builder.add("OgO");
             builder.map('O', Blocks.OBSIDIAN);
-            builder.map('e', "gemEmerald");
-            builder.map('r', EnumRedstoneChipset.RED.getStack());
+            builder.map('e', EnumRedstoneChipset.GOLD.getStack(), "ingotGold");
+            builder.map('r', EnumRedstoneChipset.DIAMOND.getStack(), "gemDiamond");
             builder.map('g', OredictionaryNames.GEAR_DIAMOND);
             builder.register();
         }
@@ -120,7 +120,7 @@ public class BCSiliconRecipes {
             StackDefinition target = ArrayStackFilter.definition(Items.POTATO);
             ImmutableList<StackDefinition> required = ImmutableList.of(OreStackFilter.definition("dustRedstone"));
             ItemStack output = new ItemStack(Items.BAKED_POTATO, 4);
-            IntegrationRecipeRegistry.INSTANCE.addRecipe(new IntegrationRecipe("potato-baker", 100, target, required, output));
+            IntegrationRecipeRegistry.INSTANCE.addRecipe(new IntegrationRecipe("potato-baker", 100 * MjAPI.MJ, target, required, output));
         }
     }
 

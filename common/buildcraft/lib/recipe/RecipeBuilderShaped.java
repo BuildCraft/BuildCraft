@@ -33,7 +33,7 @@ public class RecipeBuilderShaped {
     public RecipeBuilderShaped map(char c, Object... values) {
         boolean put = false;
         for (Object v : values) {
-            if (v == null) {
+            if (v == null || v == StackUtil.EMPTY) {
                 continue;
             } else if (v instanceof Item//
                 || v instanceof Block//

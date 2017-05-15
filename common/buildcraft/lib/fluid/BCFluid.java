@@ -12,7 +12,7 @@ public class BCFluid extends Fluid {
     private int colour = 0xFFFFFFFF, light = 0xFF_FF_FF_FF, dark = 0xFF_FF_FF_FF;
     private boolean isFlamable = false;
     private int lightOpacity = 0;
-    private MapColor mapColour = null;
+    private MapColor mapColour = MapColor.BLACK;
     private int heat;
     private boolean heatable;
     private String blockName;
