@@ -12,9 +12,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import buildcraft.api.enums.EnumOptionalSnapshotType;
-import buildcraft.api.enums.EnumSnapshotType;
-import buildcraft.lib.misc.*;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.EntityLivingBase;
@@ -38,41 +35,49 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IPathProvider;
+import buildcraft.api.enums.EnumOptionalSnapshotType;
+import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.builders.BCBuildersItems;
-import buildcraft.builders.item.ItemSnapshot;
-import buildcraft.builders.snapshot.*;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.fluid.TankManager;
+import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
-public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder {
-    public static final int NET_CAN_EXCAVATE = 20;
-    public static final int NET_SNAPSHOT_TYPE = 21;
+import buildcraft.builders.BCBuildersItems;
+import buildcraft.builders.item.ItemSnapshot;
+import buildcraft.builders.snapshot.Blueprint;
+import buildcraft.builders.snapshot.BlueprintBuilder;
+import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
+import buildcraft.builders.snapshot.ITileForBlueprintBuilder;
+import buildcraft.builders.snapshot.ITileForTemplateBuilder;
+import buildcraft.builders.snapshot.Snapshot;
+import buildcraft.builders.snapshot.SnapshotBuilder;
+import buildcraft.builders.snapshot.Template;
+import buildcraft.builders.snapshot.TemplateBuilder;
 
-    public final ItemHandlerSimple invSnapshot = itemManager.addInvHandler(
-            "snapshot",
-            1,
-            EnumAccess.BOTH,
-            EnumPipePart.VALUES
-    );
-    public final ItemHandlerSimple invResources = itemManager.addInvHandler(
-            "resources",
-            27,
-            EnumAccess.NONE,
-            EnumPipePart.VALUES
-    );
+public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder {
+    public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("builder");
+    public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
+    public static final int NET_SNAPSHOT_TYPE = IDS.allocId("SNAPSHOT_TYPE");
+
+    public final ItemHandlerSimple invSnapshot = itemManager.addInvHandler("snapshot", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invResources = itemManager.addInvHandler("resources", 27, EnumAccess.NONE, EnumPipePart.VALUES);
     private final TankManager<Tank> tankManager = new TankManager<>();
 
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
@@ -97,6 +102,11 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
         }
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(battery)));
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankManager, EnumPipePart.VALUES);
+    }
+
+    @Override
+    public IdAllocator getIdAllocator() {
+        return IDS;
     }
 
     @Override
@@ -274,12 +284,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
             }
             if (id == NET_SNAPSHOT_TYPE) {
                 snapshotType = buffer.readEnumValue(EnumOptionalSnapshotType.class).type;
-                world.notifyBlockUpdate(
-                        pos,
-                        world.getBlockState(pos),
-                        world.getBlockState(pos),
-                        0
-                );
+                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 0);
             }
         }
         if (side == Side.SERVER) {
@@ -311,13 +316,9 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         if (nbt.hasKey("path")) {
-            path = NBTUtilBC.readCompoundList(nbt.getTagList("path", Constants.NBT.TAG_COMPOUND))
-                    .map(NBTUtil::getPosFromTag)
-                    .collect(Collectors.toList());
+            path = NBTUtilBC.readCompoundList(nbt.getTagList("path", Constants.NBT.TAG_COMPOUND)).map(NBTUtil::getPosFromTag).collect(Collectors.toList());
         }
-        basePoses = NBTUtilBC.readCompoundList(nbt.getTagList("basePoses", Constants.NBT.TAG_COMPOUND))
-                .map(NBTUtil::getPosFromTag)
-                .collect(Collectors.toList());
+        basePoses = NBTUtilBC.readCompoundList(nbt.getTagList("basePoses", Constants.NBT.TAG_COMPOUND)).map(NBTUtil::getPosFromTag).collect(Collectors.toList());
         canExcavate = nbt.getBoolean("canExcavate");
     }
 

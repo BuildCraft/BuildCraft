@@ -424,7 +424,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             int id = buf.readUnsignedShort();
             readPayload(id, new PacketBufferBC(buf), world.isRemote ? Side.CLIENT : Side.SERVER, null);
             // Make sure that we actually read the entire message rather than just discarding it
-            MessageUtil.ensureEmpty(buf, world.isRemote, getClass().getSimpleName());
+            MessageUtil.ensureEmpty(buf, world.isRemote, getClass() + ", id = " + getIdAllocator().getNameFor(id));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -451,7 +451,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         readPayload(id, buffer, ctx.side, ctx);
 
         // Make sure that we actually read the entire message rather than just discarding it
-        MessageUtil.ensureEmpty(buffer, world.isRemote, getClass().getSimpleName());
+        MessageUtil.ensureEmpty(buffer, world.isRemote, getClass() + ", id = " + getIdAllocator().getNameFor(id));
 
         if (ctx.side == Side.CLIENT) {
             spawnReceiveParticles();

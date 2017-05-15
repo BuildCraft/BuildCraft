@@ -22,14 +22,17 @@ import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.TilesAPI;
 
-import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.lib.migrate.BCVersion;
+import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
+import buildcraft.factory.BCFactoryBlocks;
+
 public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDebuggable {
-    public static final int NET_LED_STATUS = 10;
-    public static final int NET_WANTED_Y = 11;
+    public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("miner");
+    public static final int NET_LED_STATUS = IDS.allocId("LED_STATUS");
+    public static final int NET_WANTED_Y = IDS.allocId("WANTED_Y");
 
     protected int progress = 0;
     protected BlockPos currentPos = null;
@@ -41,15 +44,20 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
     protected boolean isComplete = false;
     protected final MjBattery battery = new MjBattery(500 * MjAPI.MJ);
 
+    public TileMiner() {
+        caps.addProvider(new MjCapabilityHelper(createMjReceiver()));
+        caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, () -> !isComplete, EnumPipePart.VALUES);
+    }
+
     protected abstract void initCurrentPos();
 
     protected abstract void mine();
 
     protected abstract IMjReceiver createMjReceiver();
 
-    public TileMiner() {
-        caps.addProvider(new MjCapabilityHelper(createMjReceiver()));
-        caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, () -> !isComplete, EnumPipePart.VALUES);
+    @Override
+    public IdAllocator getIdAllocator() {
+        return IDS;
     }
 
     @Override

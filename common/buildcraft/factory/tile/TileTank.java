@@ -26,15 +26,18 @@ import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.MathUtil;
+import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
+import buildcraft.core.BCCoreConfig;
+
 public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, IFluidHandlerAdv {
-    public static final int NET_FLUID_DELTA = 10;
+    public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("tank");
+    public static final int NET_FLUID_DELTA = IDS.allocId("FLUID_DELTA");
 
     public Tank tank = new Tank("tank", 16000, this);
 
@@ -50,6 +53,11 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
 
     public TileTank() {
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, this, EnumPipePart.VALUES);
+    }
+
+    @Override
+    public IdAllocator getIdAllocator() {
+        return IDS;
     }
 
     // ITickable

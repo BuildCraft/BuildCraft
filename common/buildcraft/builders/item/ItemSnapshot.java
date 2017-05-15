@@ -1,9 +1,9 @@
 package buildcraft.builders.item;
 
-import buildcraft.api.enums.EnumSnapshotType;
-import buildcraft.builders.snapshot.Snapshot;
-import buildcraft.lib.item.ItemBC_Neptune;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.IntStream;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,12 +12,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.IntStream;
+import buildcraft.api.enums.EnumSnapshotType;
+
+import buildcraft.lib.item.ItemBC_Neptune;
+
+import buildcraft.builders.snapshot.Snapshot;
+
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class ItemSnapshot extends ItemBC_Neptune {
     public ItemSnapshot(String id) {
@@ -26,21 +31,13 @@ public class ItemSnapshot extends ItemBC_Neptune {
     }
 
     public ItemStack getClean(EnumSnapshotType snapshotType) {
-        return new ItemStack(
-                this,
-                1,
-                EnumItemSnapshotType.get(snapshotType, false).ordinal()
-        );
+        return new ItemStack(this, 1, EnumItemSnapshotType.get(snapshotType, false).ordinal());
     }
 
     public ItemStack getUsed(EnumSnapshotType snapshotType, Snapshot.Header header) {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag("header", header.serializeNBT());
-        ItemStack stack = new ItemStack(
-                this,
-                1,
-                EnumItemSnapshotType.get(snapshotType, true).ordinal()
-        );
+        ItemStack stack = new ItemStack(this, 1, EnumItemSnapshotType.get(snapshotType, true).ordinal());
         stack.setTagCompound(nbt);
         return stack;
     }
@@ -108,7 +105,7 @@ public class ItemSnapshot extends ItemBC_Neptune {
             return name().toLowerCase(Locale.ROOT);
         }
 
-        public static EnumItemSnapshotType get(EnumSnapshotType snapshotType, boolean used){
+        public static EnumItemSnapshotType get(EnumSnapshotType snapshotType, boolean used) {
             if (snapshotType == EnumSnapshotType.TEMPLATE) {
                 return !used ? TEMPLATE_CLEAN : TEMPLATE_USED;
             } else if (snapshotType == EnumSnapshotType.BLUEPRINT) {

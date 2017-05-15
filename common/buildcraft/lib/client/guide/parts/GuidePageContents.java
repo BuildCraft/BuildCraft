@@ -11,7 +11,11 @@ import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.api.core.BCLog;
 
-import buildcraft.lib.client.guide.*;
+import buildcraft.lib.client.guide.GuiGuide;
+import buildcraft.lib.client.guide.GuideManager;
+import buildcraft.lib.client.guide.PageEntry;
+import buildcraft.lib.client.guide.PageLine;
+import buildcraft.lib.client.guide.TypeOrder;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.node.NodePageLine;
 import buildcraft.lib.gui.GuiIcon;
@@ -57,8 +61,7 @@ public class GuidePageContents extends GuidePageBase {
                     }
                 }
                 if (notFound) {
-                    GuideChapter text = new GuideChapterWithin(gui, indent, translated);
-                    node = node.addChild(text);
+                    node = node.addChild(new GuideChapterWithin(gui, indent, translated));
                 }
                 indent++;
             }
@@ -88,7 +91,7 @@ public class GuidePageContents extends GuidePageBase {
     public List<GuideChapter> getChapters() {
         List<GuideChapter> list = new ArrayList<>();
         for (GuidePart part : parentNode.iterateNonNullLines()) {
-            if (part instanceof GuideChapter) {
+            if (part instanceof GuideChapter && ((GuideChapter) part).chapter.indent == 1) {
                 list.add((GuideChapter) part);
             }
         }

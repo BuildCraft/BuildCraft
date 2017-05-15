@@ -4,31 +4,13 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.tile;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.enums.EnumSnapshotType;
-import buildcraft.api.schematics.ISchematicBlock;
-import buildcraft.api.schematics.ISchematicEntity;
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.builders.BCBuildersItems;
-import buildcraft.builders.block.BlockArchitectTable;
-import buildcraft.builders.item.ItemSnapshot;
-import buildcraft.builders.snapshot.*;
-import buildcraft.core.marker.volume.Lock;
-import buildcraft.core.marker.volume.VolumeBox;
-import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.delta.DeltaInt;
-import buildcraft.lib.delta.DeltaManager;
-import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.data.Box;
-import buildcraft.lib.misc.data.BoxIterator;
-import buildcraft.lib.misc.data.EnumAxisOrder;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
-import buildcraft.lib.tile.item.ItemHandlerSimple;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -40,17 +22,50 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import java.io.IOException;
-import java.util.*;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.enums.EnumSnapshotType;
+import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.api.schematics.ISchematicEntity;
+import buildcraft.api.tiles.IDebuggable;
+
+import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.delta.DeltaInt;
+import buildcraft.lib.delta.DeltaManager;
+import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.misc.data.BoxIterator;
+import buildcraft.lib.misc.data.EnumAxisOrder;
+import buildcraft.lib.misc.data.IdAllocator;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
+
+import buildcraft.builders.BCBuildersItems;
+import buildcraft.builders.block.BlockArchitectTable;
+import buildcraft.builders.item.ItemSnapshot;
+import buildcraft.builders.snapshot.Blueprint;
+import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
+import buildcraft.builders.snapshot.SchematicBlockManager;
+import buildcraft.builders.snapshot.SchematicEntityManager;
+import buildcraft.builders.snapshot.Snapshot;
+import buildcraft.builders.snapshot.Template;
+import buildcraft.core.marker.volume.Lock;
+import buildcraft.core.marker.volume.VolumeBox;
+import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 
 public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDebuggable {
-    public static final int NET_BOX = 20;
-    public static final int NET_SCAN = 21;
+    public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("architect");
+    public static final int NET_BOX = IDS.allocId("BOX");
+    public static final int NET_SCAN = IDS.allocId("SCAN");
 
     public final ItemHandlerSimple invSnapshotIn = itemManager.addInvHandler("in", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
     public final ItemHandlerSimple invSnapshotOut = itemManager.addInvHandler("out", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
@@ -65,6 +80,11 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     private boolean scanning = false;
     public String name = "<unnamed>";
     public final DeltaInt deltaProgress = deltaManager.addDelta("progress", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
+
+    @Override
+    public IdAllocator getIdAllocator() {
+        return IDS;
+    }
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
@@ -92,15 +112,8 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             box.setMin(volumeBox.box.min());
             box.setMax(volumeBox.box.max());
             isValid = true;
-            volumeBox.locks.add(
-                    new Lock(
-                            new Lock.Cause.CauseBlock(pos, blockState.getBlock()),
-                            new Lock.Target.TargetResize(),
-                            new Lock.Target.TargetUsedByMachine(
-                                    Lock.Target.TargetUsedByMachine.EnumType.STRIPES_READ
-                            )
-                    )
-            );
+            volumeBox.locks.add(new Lock(new Lock.Cause.CauseBlock(pos, blockState.getBlock()), new Lock.Target.TargetResize(), new Lock.Target.TargetUsedByMachine(
+                Lock.Target.TargetUsedByMachine.EnumType.STRIPES_READ)));
             volumeBoxes.markDirty();
             sendNetworkUpdate(NET_BOX);
         } else if (tile instanceof IAreaProvider) {
@@ -192,25 +205,14 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     private ISchematicBlock<?> readSchematicForBlock(BlockPos worldScanPos) {
-        return SchematicBlockManager.getSchematicBlock(
-                world,
-                pos.offset(world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite()),
-                worldScanPos,
-                world.getBlockState(worldScanPos),
-                world.getBlockState(worldScanPos).getBlock()
-        );
+        return SchematicBlockManager.getSchematicBlock(world, pos.offset(world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite()), worldScanPos, world.getBlockState(
+            worldScanPos), world.getBlockState(worldScanPos).getBlock());
     }
 
     private void scanEntities() {
-        BlockPos basePos = pos.offset(
-                world.getBlockState(pos)
-                        .getValue(BlockArchitectTable.PROP_FACING)
-                        .getOpposite()
-        );
-        world.getEntitiesWithinAABB(Entity.class, box.getBoundingBox()).stream()
-                .map(entity -> SchematicEntityManager.getSchematicEntity(world, basePos, entity))
-                .filter(Objects::nonNull)
-                .forEach(blueprintScannedEntities::add);
+        BlockPos basePos = pos.offset(world.getBlockState(pos).getValue(BlockArchitectTable.PROP_FACING).getOpposite());
+        world.getEntitiesWithinAABB(Entity.class, box.getBoundingBox()).stream().map(entity -> SchematicEntityManager.getSchematicEntity(world, basePos, entity)).filter(Objects::nonNull).forEach(
+            blueprintScannedEntities::add);
     }
 
     private void finishScanning() {

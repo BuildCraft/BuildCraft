@@ -1,16 +1,17 @@
 package buildcraft.silicon.tile;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.stream.IntStream;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
-
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -18,27 +19,35 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.recipes.AssemblyRecipe;
-import buildcraft.api.recipes.IAssemblyRecipeProvider;
+
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
+import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+
 import buildcraft.silicon.EnumAssemblyRecipeState;
 
 public class TileAssemblyTable extends TileLaserTableBase {
-    public static final int NET_RECIPE_STATE = 10;
+    public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("assembly_table");
+    public static final int NET_RECIPE_STATE = IDS.allocId("RECIPE_STATE");
+
     public final ItemHandlerSimple inv = itemManager.addInvHandler("", 3 * 4, ItemHandlerManager.EnumAccess.BOTH, EnumPipePart.VALUES);
     public SortedMap<AssemblyRecipe, EnumAssemblyRecipeState> recipesStates = new TreeMap<>();
 
+    @Override
+    public IdAllocator getIdAllocator() {
+        return IDS;
+    }
+
     private void updateRecipes() {
-        AssemblyRecipeRegistry.INSTANCE.getRecipesFor(inv.stacks).forEach(recipe ->
-                recipesStates.putIfAbsent(recipe, EnumAssemblyRecipeState.POSSIBLE));
+        AssemblyRecipeRegistry.INSTANCE.getRecipesFor(inv.stacks).forEach(recipe -> recipesStates.putIfAbsent(recipe, EnumAssemblyRecipeState.POSSIBLE));
         boolean findActive = false;
-        for (Iterator<Map.Entry<AssemblyRecipe, EnumAssemblyRecipeState>> iterator = recipesStates.entrySet().iterator(); iterator.hasNext(); ) {
+        for (Iterator<Map.Entry<AssemblyRecipe, EnumAssemblyRecipeState>> iterator = recipesStates.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry<AssemblyRecipe, EnumAssemblyRecipeState> entry = iterator.next();
             AssemblyRecipe recipe = entry.getKey();
             EnumAssemblyRecipeState state = entry.getValue();

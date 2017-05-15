@@ -19,6 +19,7 @@ import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -43,7 +44,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder {
-    public static final int NET_CAN_EXCAVATE = 20;
+    public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("filler");
+    public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
 
     public final ItemHandlerSimple invResources =
             itemManager.addInvHandler(

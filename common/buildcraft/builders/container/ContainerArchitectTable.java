@@ -33,6 +33,11 @@ public class ContainerArchitectTable extends ContainerBCTile<TileArchitectTable>
         });
         addSlotToContainer(new SlotOutput(tile.invSnapshotOut, 0, 194, 35));
     }
+    
+    @Override
+    public IdAllocator getIdAllocator() {
+        return IDS;
+    }
 
     @Override
     public boolean canInteractWith(EntityPlayer player) {

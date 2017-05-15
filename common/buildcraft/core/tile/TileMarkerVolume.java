@@ -23,24 +23,33 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.api.tiles.TilesAPI;
 
-import buildcraft.core.BCCoreConfig;
-import buildcraft.core.marker.VolumeCache;
-import buildcraft.core.marker.VolumeConnection;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.PermissionUtil;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.TileMarker;
 
+import buildcraft.core.BCCoreConfig;
+import buildcraft.core.marker.VolumeCache;
+import buildcraft.core.marker.VolumeConnection;
+
 public class TileMarkerVolume extends TileMarker<VolumeConnection> implements ITileAreaProvider {
-    public static final int NET_SIGNALS_ON = 10;
-    public static final int NET_SIGNALS_OFF = 11;
+    public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("marker_volume");
+    public static final int NET_SIGNALS_ON = IDS.allocId("SIGNALS_ON");
+    public static final int NET_SIGNALS_OFF = IDS.allocId("SIGNALS_OFF");
 
     private boolean showSignals = false;
 
     public TileMarkerVolume() {
         caps.addCapabilityInstance(TilesAPI.CAP_TILE_AREA_PROVIDER, this, EnumPipePart.VALUES);
+    }
+
+    @Override
+    public IdAllocator getIdAllocator() {
+        return IDS;
     }
 
     public boolean isShowingSignals() {

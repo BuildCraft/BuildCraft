@@ -4,12 +4,13 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import buildcraft.api.enums.EnumSnapshotType;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+
+import buildcraft.api.enums.EnumSnapshotType;
 
 import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
@@ -19,8 +20,8 @@ public class BCBuildersRecipes {
         ItemStack paper = new ItemStack(Items.PAPER);
 
         if (BCBuildersItems.schematicSingle != null) {
-            ItemStack out = new ItemStack(BCBuildersItems.schematicSingle);
-            ShapelessOreRecipe recipe = new ShapelessOreRecipe(out, "gemLapis", "gemLapis");
+            ItemStack out = new ItemStack(BCBuildersItems.schematicSingle, 4);
+            ShapelessOreRecipe recipe = new ShapelessOreRecipe(out, paper, paper, "gemLapis");
             GameRegistry.addRecipe(recipe);
         }
 

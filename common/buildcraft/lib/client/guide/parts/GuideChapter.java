@@ -28,7 +28,10 @@ public abstract class GuideChapter extends GuidePart {
 
     private int getColour() {
         int index = gui.getChapterIndex(this);
-        if (index < 0) return -1;
+        if (index < 0) {
+            index = chapter.text.hashCode();
+            return index;
+        }
         return COLOURS[index % COLOURS.length];
     }
 

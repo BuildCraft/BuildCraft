@@ -58,6 +58,11 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
     }
 
     @Override
+    public IdAllocator getIdAllocator() {
+        return IDS;
+    }
+    
+    @Override
     public boolean canInteractWith(EntityPlayer entityplayer) {
         return true;
     }

@@ -1,23 +1,27 @@
 package buildcraft.builders.container;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+
+import org.apache.commons.lang3.tuple.Pair;
+
+import net.minecraft.entity.player.EntityPlayer;
+
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+
+import buildcraft.lib.gui.ContainerBC_Neptune;
+import buildcraft.lib.misc.data.IdAllocator;
+import buildcraft.lib.net.PacketBufferBC;
+
 import buildcraft.builders.addon.AddonFillingPlanner;
 import buildcraft.builders.filling.IParameter;
 import buildcraft.core.marker.volume.ClientVolumeBoxes;
 import buildcraft.core.marker.volume.EnumAddonSlot;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
-import buildcraft.lib.gui.ContainerBC_Neptune;
-import buildcraft.lib.misc.data.IdAllocator;
-import buildcraft.lib.net.PacketBufferBC;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
 
 public class ContainerFillingPlanner extends ContainerBC_Neptune {
     private static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("filling_planner");
@@ -35,6 +39,11 @@ public class ContainerFillingPlanner extends ContainerBC_Neptune {
         addon = (AddonFillingPlanner) selectingBoxAndSlot.getLeft().addons.get(selectingBoxAndSlot.getRight());
         parameters.addAll(addon.parameters);
         inverted = addon.inverted;
+    }
+
+    @Override
+    public IdAllocator getIdAllocator() {
+        return IDS;
     }
 
     public void sendDataToServer() {
