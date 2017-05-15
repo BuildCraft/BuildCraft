@@ -5,6 +5,7 @@ import net.minecraft.entity.projectile.EntityArrow.PickupStatus;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.core.IStackFilter;
+import buildcraft.api.inventory.IItemTransactor.IItemExtractable;
 
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.StackUtil;
