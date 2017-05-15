@@ -11,4 +11,6 @@ public interface ITileForSnapshotBuilder extends IPlayerOwned {
     MjBattery getBattery();
 
     BlockPos getBuilderPos();
+
+    boolean canExcavate();
 }

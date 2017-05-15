@@ -1,24 +1,20 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.energy.generation;
 
-import net.minecraft.init.Biomes;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.layer.GenLayer;
+import net.minecraftforge.common.BiomeDictionary;
 
 public class GenLayerAddOilOcean extends GenLayerBiomeReplacer {
-
     public static final double NOISE_FIELD_SCALE = 0.0005;
     public static final double NOISE_FIELD_THRESHOLD = 0.9;
 
-    public GenLayerAddOilOcean(final long worldSeed, final long seed, final GenLayer parent) {
+    public GenLayerAddOilOcean(long worldSeed, long seed, GenLayer parent) {
         super(worldSeed, seed, parent, NOISE_FIELD_SCALE, NOISE_FIELD_THRESHOLD, Biome.getIdForBiome(BiomeOilOcean.INSTANCE));
     }
 
     @Override
     protected boolean canReplaceBiome(int biomeId) {
-        return Biome.getBiomeForId(biomeId) == Biomes.OCEAN;
+        // noinspection ConstantConditions
+        return BiomeDictionary.getTypes(Biome.getBiomeForId(biomeId)).contains(BiomeDictionary.Type.OCEAN);
     }
 }

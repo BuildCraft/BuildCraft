@@ -38,7 +38,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 .map(buildingInfo ->
                         Stream.concat(
                                 buildingInfo.toBreak.stream()
-                                        .filter(pos -> !tile.getWorldBC().isAirBlock(pos))
+                                        .filter(pos -> tile.canExcavate() && !tile.getWorldBC().isAirBlock(pos))
                                         .map(i -> 0),
                                 buildingInfo.toPlace.entrySet().stream()
                                         .filter(entry -> !isBlockCorrect(entry.getKey()))

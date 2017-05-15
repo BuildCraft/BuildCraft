@@ -40,8 +40,6 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
 
     protected boolean isComplete = false;
     protected final MjBattery battery = new MjBattery(500 * MjAPI.MJ);
-    protected final IMjReceiver mjReceiver = createMjReceiver();
-    protected final MjCapabilityHelper mjCapHelper = new MjCapabilityHelper(mjReceiver);
 
     protected abstract void initCurrentPos();
 
@@ -50,7 +48,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
     protected abstract IMjReceiver createMjReceiver();
 
     public TileMiner() {
-        caps.addProvider(mjCapHelper);
+        caps.addProvider(new MjCapabilityHelper(createMjReceiver()));
         caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, () -> !isComplete, EnumPipePart.VALUES);
     }
 

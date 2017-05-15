@@ -87,7 +87,7 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     @Override
     protected boolean isDone() {
         return getBuildingInfo() != null &&
-                getBuildingInfo().toBreak.stream().allMatch(tile.getWorldBC()::isAirBlock) &&
+                (!tile.canExcavate() || getBuildingInfo().toBreak.stream().allMatch(tile.getWorldBC()::isAirBlock)) &&
                 getBuildingInfo().toPlace.stream().allMatch(this::isBlockCorrect);
     }
 

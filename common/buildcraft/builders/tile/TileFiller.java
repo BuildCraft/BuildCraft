@@ -2,7 +2,6 @@ package buildcraft.builders.tile;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.inventory.IItemTransactor;
-import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
@@ -18,6 +17,7 @@ import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
@@ -34,7 +34,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -44,6 +43,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder {
+    public static final int NET_CAN_EXCAVATE = 20;
+
     public final ItemHandlerSimple invResources =
             itemManager.addInvHandler(
                     "resources",
@@ -57,13 +58,12 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                     EnumPipePart.VALUES
             );
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
-    private final IMjReceiver mjReceiver = new MjBatteryReciver(battery);
-    private final MjCapabilityHelper mjCapHelper = new MjCapabilityHelper(mjReceiver);
+    private boolean canExcavate = true;
     public AddonFillingPlanner addon;
     public TemplateBuilder builder = new TemplateBuilder(this);
 
     public TileFiller() {
-        caps.addProvider(mjCapHelper);
+        caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(battery)));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
             addon = (AddonFillingPlanner) box.addons
                     .values()
                     .stream()
-                    .filter(addon -> addon instanceof AddonFillingPlanner)
+                    .filter(AddonFillingPlanner.class::isInstance)
                     .findFirst()
                     .orElse(null);
             if (addon != null) {
@@ -114,6 +114,10 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
                 builder.writeToByteBuf(buffer);
+                writePayload(NET_CAN_EXCAVATE, buffer, side);
+            }
+            if (id == NET_CAN_EXCAVATE) {
+                buffer.writeBoolean(canExcavate);
             }
         }
     }
@@ -124,8 +128,22 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 builder.readFromByteBuf(buffer);
+                readPayload(NET_CAN_EXCAVATE, buffer, side, ctx);
+            }
+            if (id == NET_CAN_EXCAVATE) {
+                canExcavate = buffer.readBoolean();
             }
         }
+        if (side == Side.SERVER) {
+            if (id == NET_CAN_EXCAVATE) {
+                canExcavate = buffer.readBoolean();
+                sendNetworkUpdate(NET_CAN_EXCAVATE);
+            }
+        }
+    }
+
+    public void sendCanExcavate(boolean newValue) {
+        MessageUtil.getWrapper().sendToServer(createMessage(NET_CAN_EXCAVATE, buffer -> buffer.writeBoolean(newValue)));
     }
 
     // Read-write
@@ -138,16 +156,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
             nbt.setUniqueId("addonBoxId", addon.box.id);
             nbt.setTag("addonSlot", NBTUtilBC.writeEnum(addon.getSlot()));
         }
-//        if (currentTaskType != null) {
-//            nbt.setTag("currentTaskType", NBTUtilBC.writeEnum(currentTaskType));
-//        }
-//        if (currentPos != null) {
-//            nbt.setTag("currentPos", NBTUtilBC.writeBlockPos(currentPos));
-//        }
-//        if (stackToPlace != null) {
-//            nbt.setTag("stackToPlace", stackToPlace.writeToNBT(new NBTTagCompound()));
-//        }
-//        nbt.setInteger("progress", progress);
+        nbt.setBoolean("canExcavate", canExcavate);
         return nbt;
     }
 
@@ -161,16 +170,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                     .addons
                     .get(NBTUtilBC.readEnum(nbt.getTag("addonSlot"), EnumAddonSlot.class));
         }
-//        if (nbt.hasKey("currentTaskType")) {
-//            currentTaskType = NBTUtilBC.readEnum(nbt.getTag("currentTaskType"), EnumTaskType.class);
-//        }
-//        if (nbt.hasKey("currentPos")) {
-//            currentPos = NBTUtilBC.readBlockPos(nbt.getTag("currentPos"));
-//        }
-//        if (nbt.hasKey("stackToPlace")) {
-//            stackToPlace = new ItemStack(nbt.getCompoundTag("stackToPlace"));
-//        }
-//        progress = nbt.getInteger("progress");
+        canExcavate = nbt.getBoolean("canExcavate");
     }
 
     // Rendering
@@ -215,6 +215,11 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     @Override
     public BlockPos getBuilderPos() {
         return pos;
+    }
+
+    @Override
+    public boolean canExcavate() {
+        return canExcavate;
     }
 
     @Override

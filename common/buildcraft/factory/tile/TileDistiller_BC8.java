@@ -66,8 +66,6 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
     public final TankManager<Tank> tankManager = new TankManager<>(tankIn, tankOutGas, tankOutLiquid);
 
     private final MjBattery mjBattery = new MjBattery(1024 * MjAPI.MJ);
-    private final MjBatteryReciver mjBatteryReceiver = new MjBatteryReciver(mjBattery);
-    private final MjCapabilityHelper mjCapHelper = new MjCapabilityHelper(mjBatteryReceiver);
 
     /** The model variables, used to keep track of the various state-based variables. */
     public final ModelVariableData clientModelData = new ModelVariableData();
@@ -89,7 +87,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankIn, EnumPipePart.HORIZONTALS);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankOutGas, EnumPipePart.UP);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankOutLiquid, EnumPipePart.DOWN);
-        caps.addProvider(mjCapHelper);
+        caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(mjBattery)));
     }
 
     @Override

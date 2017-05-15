@@ -20,7 +20,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
@@ -40,12 +39,10 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
     private static final int PICKUP_MAX = 3;
     public final ItemHandlerSimple inv = itemManager.addInvHandler("inv", 4, ItemHandlerManager.EnumAccess.INSERT, EnumPipePart.VALUES);
     private final MjBattery battery = new MjBattery(1 * MjAPI.MJ);
-    private final IMjReceiver mjReceiver = new MjBatteryReciver(battery);
-    private final MjCapabilityHelper mjCapHelper = new MjCapabilityHelper(mjReceiver);
     private int progress = 0;
 
     public TileChute() {
-        caps.addProvider(mjCapHelper);
+        caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(battery)));
     }
 
     public static boolean hasInventoryAtPosition(IBlockAccess world, BlockPos pos, EnumFacing side) {

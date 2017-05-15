@@ -118,7 +118,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         breakTasks.removeIf(breakTask -> tile.getWorldBC().isAirBlock(breakTask.pos) || isBlockCorrect(breakTask.pos));
         placeTasks.removeIf(placeTask -> isBlockCorrect(placeTask.pos));
 
-        if (breakTasks.size() < MAX_QUEUE_SIZE) {
+        if (tile.canExcavate() && breakTasks.size() < MAX_QUEUE_SIZE) {
             Stream.concat(getToBreak().stream(), getToPlace().stream())
                     .sorted(Comparator.comparing(blockPos ->
                             Math.pow(blockPos.getX() - getBox().center().getX(), 2) +
@@ -139,7 +139,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                     .forEach(breakTasks::add);
         }
 
-        if (breakTasks.isEmpty() && placeTasks.size() < MAX_QUEUE_SIZE) {
+        if ((!tile.canExcavate() || breakTasks.isEmpty()) && placeTasks.size() < MAX_QUEUE_SIZE) {
             getToPlace().stream()
                     .sorted(Comparator.comparing(blockPos ->
                             100_000 - (Math.pow(blockPos.getX() - tile.getBuilderPos().getX(), 2) +

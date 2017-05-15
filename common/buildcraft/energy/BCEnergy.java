@@ -6,6 +6,7 @@ package buildcraft.energy;
 
 import java.util.function.Consumer;
 
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -52,6 +53,16 @@ public class BCEnergy {
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCEnergyProxy.getProxy());
         GameRegistry.register(BiomeOilOcean.INSTANCE);
         GameRegistry.register(BiomeOilDesert.INSTANCE);
+        BiomeDictionary.addTypes(
+                BiomeOilOcean.INSTANCE,
+                BiomeDictionary.Type.OCEAN
+        );
+        BiomeDictionary.addTypes(
+                BiomeOilDesert.INSTANCE,
+                BiomeDictionary.Type.HOT,
+                BiomeDictionary.Type.DRY,
+                BiomeDictionary.Type.SANDY
+        );
         MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
 
         BCEnergyProxy.getProxy().fmlPreInit();
