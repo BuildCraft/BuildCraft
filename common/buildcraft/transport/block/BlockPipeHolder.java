@@ -500,15 +500,32 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             tile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
             return false;
         } else {
+            toDrop.addAll(getDrops(world, pos, state, 0));
             for (EnumFacing face : EnumFacing.VALUES) {
-                removePluggable(face, tile, toDrop);
+                removePluggable(face, tile, NonNullList.create());
             }
-            tile.getPipe().onRemove(toDrop);
         }
         if (!player.capabilities.isCreativeMode) {
             InventoryUtil.dropAll(world, pos, toDrop);
         }
         return super.removedByPlayer(state, world, pos, player, willHarvest);
+    }
+
+    @Override
+    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+        NonNullList<ItemStack> toDrop = NonNullList.create();
+        TilePipeHolder tile = getPipe(world, pos, false);
+        for (EnumFacing face : EnumFacing.VALUES) {
+            PipePluggable pluggable = tile.getPluggable(face);
+            if (pluggable != null) {
+                pluggable.onRemove(toDrop);
+            }
+        }
+        for (EnumDyeColor color : tile.wireManager.parts.values()) {
+            toDrop.add(new ItemStack(BCTransportItems.wire, 1, color.getMetadata()));
+        }
+        tile.getPipe().onRemove(toDrop);
+        return toDrop;
     }
 
     @Override
