@@ -1,8 +1,9 @@
 package buildcraft.energy;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+import com.google.common.math.IntMath;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.BCModules;
@@ -37,7 +38,7 @@ public class BCEnergyFluids {
     public static void preInit() {
         int[][] colours = {//
             { 0x50_50_50, 0x05_05_05 }, // Crude Oil
-            { 0x10_0F_10, 0x42_10F_42 },// Residue
+            { 0x10_0F_10, 0x21_0F_42 },// Residue
             { 0xA0_8F_1F, 0x42_35_20 },// Heavy Oil
             { 0x87_6E_77, 0x42_24_24 },// Dense Oil
             { 0xE4_BF_78, 0xA4_8F_00 },// Distilled Oil
@@ -100,6 +101,18 @@ public class BCEnergyFluids {
         def.setDensity(boilAdjustedDensity);
         def.setGaseous(def.getDensity() < 0);
         def.setColour(texColours[0], texColours[1]);
+        int averageColor = texColours[1];
+        def.setMapColour(
+                Arrays.stream(MapColor.COLORS)
+                        .filter(Objects::nonNull)
+                        .filter(mapColor -> mapColor.colorValue != 0)
+                        .min(Comparator.comparingInt(mapColor ->
+                                        IntMath.pow((mapColor.colorValue >> 16 & 0xFF) - (averageColor >> 16 & 0xFF), 2) +
+                                        IntMath.pow((mapColor.colorValue >> 8 & 0xFF) - (averageColor >> 8 & 0xFF), 2) +
+                                        IntMath.pow((mapColor.colorValue & 0xFF) - (averageColor & 0xFF), 2)
+                        ))
+                        .orElseThrow(IllegalArgumentException::new)
+        );
         def.setHeatable(true);
         FluidManager.register(def, true);
 
