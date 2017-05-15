@@ -10,7 +10,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -36,10 +35,15 @@ import buildcraft.lib.expression.node.value.NodeVariableString;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
+
 import buildcraft.transport.BCTransportGuis;
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugGate;
-import buildcraft.transport.gate.*;
+import buildcraft.transport.gate.EnumGateLogic;
+import buildcraft.transport.gate.EnumGateMaterial;
+import buildcraft.transport.gate.EnumGateModifier;
+import buildcraft.transport.gate.GateLogic;
+import buildcraft.transport.gate.GateVariant;
 
 public class PluggableGate extends PipePluggable {
     public static final FunctionContext MODEL_FUNC_CTX_STATIC, MODEL_FUNC_CTX_DYNAMIC;
@@ -179,11 +183,6 @@ public class PluggableGate extends PipePluggable {
     @Override
     public boolean isBlocking() {
         return true;
-    }
-
-    @Override
-    public void onRemove(NonNullList<ItemStack> toDrop) {
-        toDrop.add(getPickStack());
     }
 
     @Override

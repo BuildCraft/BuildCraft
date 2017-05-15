@@ -49,11 +49,6 @@ public class PluggableBlocker extends PipePluggable {
     }
 
     @Override
-    public void onRemove(NonNullList<ItemStack> toDrop) {
-        toDrop.add(new ItemStack(BCTransportItems.plugBlocker));
-    }
-
-    @Override
     public ItemStack getPickStack() {
         return new ItemStack(BCTransportItems.plugBlocker);
     }

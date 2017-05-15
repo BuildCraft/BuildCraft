@@ -10,7 +10,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 
@@ -36,6 +35,7 @@ import buildcraft.lib.expression.node.value.NodeVariableString;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.PacketBufferBC;
+
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugPulsar;
 
@@ -181,11 +181,6 @@ public class PluggablePulsar extends PipePluggable {
     @Override
     public boolean isBlocking() {
         return true;
-    }
-
-    @Override
-    public void onRemove(NonNullList<ItemStack> toDrop) {
-        toDrop.add(new ItemStack(BCTransportItems.plugPulsar));
     }
 
     @Override
