@@ -1,13 +1,23 @@
 package buildcraft.transport.plug;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockGlass;
+import net.minecraft.block.BlockSlime;
+import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -27,9 +37,15 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import buildcraft.api.facades.FacadeType;
 
-import buildcraft.builders.snapshot.FakeWorld;
-import buildcraft.lib.misc.*;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.ItemStackKey;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.net.PacketBufferBC;
+
+import buildcraft.builders.snapshot.FakeWorld;
 
 public class FacadeStateManager {
     public static final SortedMap<IBlockState, FacadeBlockStateInfo> validFacadeStates = new TreeMap<>(BlockUtil.blockStateComparator());
@@ -161,10 +177,14 @@ public class FacadeStateManager {
         public static FacadePhasedState readFromNbt(NBTTagCompound nbt) {
             FacadeBlockStateInfo stateInfo = defaultState;
             if (nbt.hasKey("state")) {
-                IBlockState blockState = NBTUtil.readBlockState(nbt.getCompoundTag("state"));
-                stateInfo = validFacadeStates.get(blockState);
-                if (stateInfo == null) {
-                    stateInfo = defaultState;
+                try {
+                    IBlockState blockState = NBTUtil.readBlockState(nbt.getCompoundTag("state"));
+                    stateInfo = validFacadeStates.get(blockState);
+                    if (stateInfo == null) {
+                        stateInfo = defaultState;
+                    }
+                } catch (Throwable t) {
+                    t.printStackTrace();
                 }
             }
             boolean isHollow = nbt.getBoolean("isHollow");
