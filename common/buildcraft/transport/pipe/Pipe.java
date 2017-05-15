@@ -277,7 +277,7 @@ public final class Pipe implements IPipe, IDebuggable {
         getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
     }
 
-    public void onRemove(NonNullList<ItemStack> toDrop) {
+    public void getDrops(NonNullList<ItemStack> toDrop) {
         Item item = (Item) PipeApi.pipeRegistry.getItemForPipe(definition);
         if (item != null) {
             toDrop.add(new ItemStack(item, 1, colour == null ? 0 : 1 + colour.ordinal()));

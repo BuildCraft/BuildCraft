@@ -23,7 +23,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -54,6 +58,7 @@ import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.prop.UnlistedNonNullProperty;
+
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.item.ItemWire;
 import buildcraft.transport.pipe.Pipe;
@@ -488,7 +493,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             tile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
             return false;
         } else if (between != null) {
-            toDrop.add(new ItemStack(BCTransportItems.wire, between.to == null ? 1 : 2, tile.wireManager.getColorOfPart(between.parts[0]).getMetadata()));
+            toDrop.add(new ItemStack(BCTransportItems.wire, between.to == null ? 2 : 1, tile.wireManager.getColorOfPart(between.parts[0]).getMetadata()));
             if (between.to == null) {
                 tile.wireManager.removeParts(Arrays.asList(between.parts));
             } else {
@@ -500,10 +505,10 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             tile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
             return false;
         } else {
+            toDrop.addAll(getDrops(world, pos, state, 0));
             for (EnumFacing face : EnumFacing.VALUES) {
-                removePluggable(face, tile, toDrop);
+                removePluggable(face, tile, NonNullList.create());
             }
-            tile.getPipe().onRemove(toDrop);
         }
         if (!player.capabilities.isCreativeMode) {
             InventoryUtil.dropAll(world, pos, toDrop);
@@ -512,12 +517,28 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     }
 
     @Override
+    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+        NonNullList<ItemStack> toDrop = NonNullList.create();
+        TilePipeHolder tile = getPipe(world, pos, false);
+        for (EnumFacing face : EnumFacing.VALUES) {
+            PipePluggable pluggable = tile.getPluggable(face);
+            if (pluggable != null) {
+                pluggable.getDrops(toDrop);
+            }
+        }
+        for (EnumDyeColor color : tile.wireManager.parts.values()) {
+            toDrop.add(new ItemStack(BCTransportItems.wire, 1, color.getMetadata()));
+        }
+        tile.getPipe().getDrops(toDrop);
+        return toDrop;
+    }
+
+    @Override
     public float getExplosionResistance(World world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
         if (exploder != null) {
             Vec3d subtract = exploder.getPositionVector().subtract(new Vec3d(pos).add(VecUtil.VEC_HALF)).normalize();
-            EnumFacing side = Arrays.stream(EnumFacing.values())
-                    .min(Comparator.comparing(facing -> new Vec3d(facing.getDirectionVec()).distanceTo(subtract)))
-                    .orElseThrow(IllegalArgumentException::new);
+            EnumFacing side = Arrays.stream(EnumFacing.values()).min(Comparator.comparing(facing -> new Vec3d(facing.getDirectionVec()).distanceTo(subtract))).orElseThrow(
+                IllegalArgumentException::new);
             TilePipeHolder tile = getPipe(world, pos, true);
             if (tile != null) {
                 PipePluggable pluggable = tile.getPluggable(side);
@@ -562,7 +583,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     private static void removePluggable(EnumFacing side, TilePipeHolder tile, NonNullList<ItemStack> toDrop) {
         PipePluggable removed = tile.replacePluggable(side, null);
         if (removed != null) {
-            removed.onRemove(toDrop);
+            removed.onRemove();
+            removed.getDrops(toDrop);
         }
     }
 
