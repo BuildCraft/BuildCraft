@@ -2,6 +2,7 @@ package buildcraft.lib.net;
 
 import java.io.IOException;
 
+import buildcraft.lib.misc.data.AutoIdAllocator;
 import net.minecraft.entity.player.EntityPlayer;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -68,7 +69,8 @@ public class MessageContainer implements IMessage {
                 container.readMessage(message.msgId, message.payload, ctx.side, ctx);
 
                 // error checking
-                String extra = container.getClass().toString();
+                String extra = container.getClass().toString() +
+                        ", name = " + AutoIdAllocator.getName(container.getClass(), message.msgId);
                 MessageUtil.ensureEmpty(message.payload, ctx.side == Side.CLIENT, extra);
             }
             return null;

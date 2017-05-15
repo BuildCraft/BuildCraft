@@ -1,6 +1,7 @@
 package buildcraft.lib.misc.data;
 
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -12,6 +13,7 @@ import java.util.function.ToIntFunction;
 
 public class AutoIdAllocator {
     private static final Map<String, Integer> ALLOCATED = new HashMap<>();
+    private static final Map<Pair<String, Integer>, String> NAMES = new HashMap<>();
 
     public static void allocate(ASMDataTable asmDataTable) {
         List<ASMDataTable.ASMData> asmDataList = new ArrayList<>(asmDataTable.getAll(AutoId.class.getName()));
@@ -68,9 +70,14 @@ public class AutoIdAllocator {
                         null,
                         ALLOCATED.get(clazz.getName())
                 );
+                NAMES.put(Pair.of(clazz.getName(), ALLOCATED.get(clazz.getName())), field.getName());
             } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public static String getName(Class<?> clazz, int id) {
+        return NAMES.get(Pair.of(clazz.getName(), id));
     }
 }
