@@ -1,12 +1,12 @@
 package buildcraft.transport.client.model.plug;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import buildcraft.api.core.BCLog;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.block.state.IBlockState;
@@ -29,6 +29,8 @@ import buildcraft.transport.plug.PluggableFacade;
 
 public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
     INSTANCE;
+
+    private Set<KeyPlugFacade> blacklist = new HashSet<>();
 
     private int getVertexIndex(List<Vec3d> positions, EnumFacing.Axis axis,
                                boolean minOrMax1, boolean minOrMax2) {
@@ -66,8 +68,11 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
         );
     }
 
-    private List<MutableQuad> getTransformedQuads(IBlockState state, IBakedModel model, EnumFacing side,
-                                                Vec3d pos0, Vec3d pos1, Vec3d pos2, Vec3d pos3) {
+    @SuppressWarnings("SuspiciousNameCombination")
+    private List<MutableQuad> getTransformedQuads(IBlockState state,
+                                                  IBakedModel model,
+                                                  EnumFacing side,
+                                                  Vec3d pos0, Vec3d pos1, Vec3d pos2, Vec3d pos3) {
         return model.getQuads(state, side, 0).stream()
                 .map(quad -> {
                     MutableQuad mutableQuad = new MutableQuad().fromBakedItem(quad);
@@ -154,6 +159,7 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
                 .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("SuspiciousNameCombination")
     private Vec3d rotate(Vec3d vec, Rotation rotation) {
         switch (rotation) {
             case NONE:
@@ -168,7 +174,11 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
         throw new IllegalArgumentException();
     }
 
-    private void addRotatedQuads(List<MutableQuad> quads, IBlockState state, IBakedModel model, EnumFacing side, Rotation rotation,
+    private void addRotatedQuads(List<MutableQuad> quads,
+                                 IBlockState state,
+                                 IBakedModel model,
+                                 EnumFacing side,
+                                 Rotation rotation,
                                  Vec3d pos0, Vec3d pos1, Vec3d pos2, Vec3d pos3) {
         quads.addAll(getTransformedQuads(
                 state, model, side,
@@ -261,13 +271,19 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
         }
         return quads;
     }
-    
+
     @Override
     public List<BakedQuad> bake(KeyPlugFacade key) {
-        List<MutableQuad> mutableQuads = bakeForKey(key);
         List<BakedQuad> baked = new ArrayList<>();
-        for (MutableQuad quad : mutableQuads) {
-            baked.add(quad.toBakedItem());
+        if (!blacklist.contains(key)) {
+            try {
+                for (MutableQuad quad : bakeForKey(key)) {
+                    baked.add(quad.toBakedItem());
+                }
+            } catch (Exception e) {
+                BCLog.logger.warn(ExceptionUtils.getStackTrace(new RuntimeException("Exception while baking facade", e)));
+                blacklist.add(key);
+            }
         }
         if (key.state.isFullBlock() && !key.isHollow) {
             baked.addAll(BCTransportModels.BAKER_PLUG_BLOCKER.bake(new KeyPlugBlocker(key.side)));
