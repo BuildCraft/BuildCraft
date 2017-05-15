@@ -77,7 +77,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     public static final int NET_SNAPSHOT_TYPE = IDS.allocId("SNAPSHOT_TYPE");
 
     public final ItemHandlerSimple invSnapshot = itemManager.addInvHandler("snapshot", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
-    public final ItemHandlerSimple invResources = itemManager.addInvHandler("resources", 27, EnumAccess.NONE, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invResources = itemManager.addInvHandler("resources", 27, EnumAccess.BOTH, EnumPipePart.VALUES);
     private final TankManager<Tank> tankManager = new TankManager<>();
 
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);

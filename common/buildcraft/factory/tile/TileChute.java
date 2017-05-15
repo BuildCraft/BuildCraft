@@ -1,6 +1,10 @@
 package buildcraft.factory.tile;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -25,19 +29,20 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.factory.block.BlockChute;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.lib.tile.item.ItemHandlerManager;
+import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+
+import buildcraft.factory.block.BlockChute;
 
 public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable {
     private static final int PICKUP_RADIUS = 3;
     private static final int PICKUP_MAX = 3;
-    public final ItemHandlerSimple inv = itemManager.addInvHandler("inv", 4, ItemHandlerManager.EnumAccess.INSERT, EnumPipePart.VALUES);
+    public final ItemHandlerSimple inv = itemManager.addInvHandler("inv", 4, EnumAccess.INSERT, EnumPipePart.VALUES);
     private final MjBattery battery = new MjBattery(1 * MjAPI.MJ);
     private int progress = 0;
 

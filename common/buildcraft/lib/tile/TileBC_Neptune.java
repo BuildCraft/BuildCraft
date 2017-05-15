@@ -27,6 +27,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.Explosion;
@@ -53,6 +54,7 @@ import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.delta.DeltaManager.EnumDeltaMessage;
 import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.PermissionUtil;
 import buildcraft.lib.misc.PermissionUtil.PermissionBlock;
@@ -220,7 +222,17 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     /** Called whenever the block is removed. Called by {@link #onExplode(Explosion)}, and
      * {@link Block#breakBlock(World, BlockPos, IBlockState)} */
-    public void onRemove() {}
+    public void onRemove() {
+        NonNullList<ItemStack> toDrop = NonNullList.create();
+        addDrops(toDrop, 0);
+        InventoryUtil.dropAll(getWorld(), getPos(), toDrop);
+    }
+
+    /** Called whenever {@link Block#getDrops(net.minecraft.world.IBlockAccess, BlockPos, IBlockState, int)}, or
+     * {@link #onRemove()} is called (by default). */
+    public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
+        itemManager.addDrops(toDrop);
+    }
 
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         if (!placer.world.isRemote) {

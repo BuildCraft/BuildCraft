@@ -114,5 +114,15 @@ public class InventoryUtil {
         drop(world, pos, stack);
     }
 
+    /** Adds every stack from src to dst. Doesn't add empty stacks. */
+    public static void addAll(IItemHandler src, NonNullList<ItemStack> dst) {
+        for (int i = 0; i < src.getSlots(); i++) {
+            ItemStack stack = src.getStackInSlot(i);
+            if (!stack.isEmpty()) {
+                dst.add(stack);
+            }
+        }
+    }
+
     // NBT migration
 }

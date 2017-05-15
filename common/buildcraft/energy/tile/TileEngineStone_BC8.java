@@ -12,12 +12,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
 
-import buildcraft.energy.BCEnergyGuis;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
 import buildcraft.lib.engine.EngineConnector;
@@ -25,6 +25,8 @@ import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.lib.tile.item.StackInsertionFunction;
+
+import buildcraft.energy.BCEnergyGuis;
 
 public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     private static final long MAX_OUTPUT = MjAPI.MJ;

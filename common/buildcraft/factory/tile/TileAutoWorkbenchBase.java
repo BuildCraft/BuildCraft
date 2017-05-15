@@ -54,7 +54,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
     public final DeltaInt deltaProgress = deltaManager.addDelta("progress", EnumNetworkVisibility.GUI_ONLY);
 
     public TileAutoWorkbenchBase(int slots) {
-        invBlueprint = itemManager.addInvHandler("blueprint", slots, EnumAccess.NONE);
+        invBlueprint = itemManager.addInvHandler("blueprint", slots, EnumAccess.PHANTOM);
         invMaterials = itemManager.addInvHandler("materials", slots, EnumAccess.INSERT, EnumPipePart.VALUES);
         invResult = itemManager.addInvHandler("result", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
         invOverflow = itemManager.addInvHandler("overflow", slots, EnumAccess.EXTRACT, EnumPipePart.VALUES);
@@ -78,14 +78,6 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-    }
-
-    @Override
-    public void onRemove() {
-        super.onRemove();
-        InventoryUtil.dropAll(getWorld(), getPos(), invMaterials);
-        InventoryUtil.dropAll(getWorld(), getPos(), invResult);
-        InventoryUtil.dropAll(getWorld(), getPos(), invOverflow);
     }
 
     @Override
