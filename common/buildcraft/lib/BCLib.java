@@ -6,13 +6,13 @@ package buildcraft.lib;
 
 import java.util.function.Consumer;
 
+import buildcraft.lib.misc.data.AutoIdAllocator;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.BCModules;
@@ -50,12 +50,14 @@ public class BCLib {
     public static BCLib INSTANCE;
 
     @Mod.EventHandler
-    public static void preInit(FMLPreInitializationEvent evt) {
+    public static void preInit(FMLPreInitializationEvent event) {
         BCLog.logger.info("");
         BCLog.logger.info("Starting BuildCraft " + BCLib.VERSION);
         BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2017");
         BCLog.logger.info("http://www.mod-buildcraft.com");
         BCLog.logger.info("");
+
+        AutoIdAllocator.allocate(event.getAsmData());
 
         ExpressionDebugManager.logger = BCLog.logger::info;
 

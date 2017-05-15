@@ -22,6 +22,7 @@ import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.data.AutoId;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.BoxIterator;
 import buildcraft.lib.misc.data.EnumAxisOrder;
@@ -49,8 +50,10 @@ import java.io.IOException;
 import java.util.*;
 
 public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDebuggable {
-    public static final int NET_BOX = 20;
-    public static final int NET_SCAN = 21;
+    @AutoId
+    public static int NET_BOX;
+    @AutoId
+    public static int NET_SCAN;
 
     public final ItemHandlerSimple invSnapshotIn = itemManager.addInvHandler("in", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
     public final ItemHandlerSimple invSnapshotOut = itemManager.addInvHandler("out", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);

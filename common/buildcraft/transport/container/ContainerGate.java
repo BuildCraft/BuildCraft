@@ -6,6 +6,7 @@ import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import buildcraft.lib.misc.data.AutoId;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -22,20 +23,24 @@ import buildcraft.api.statements.StatementManager;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.misc.data.ForwardingReference;
 import buildcraft.lib.misc.data.IReference;
-import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.gate.*;
 
 public class ContainerGate extends ContainerBC_Neptune {
-    protected static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("gate");
-
-    public static final int ID_CONNECTION = IDS.allocId("CONNECTION");
-    public static final int ID_TRIGGER = IDS.allocId("TRIGGER");
-    public static final int ID_TRIGGER_PARAM = IDS.allocId("TRIGGER_PARAM");
-    public static final int ID_ACTION = IDS.allocId("ACTION");
-    public static final int ID_ACTION_PARAM = IDS.allocId("ACTION_PARAM");
-    public static final int ID_VALID_STATEMENTS = IDS.allocId("VALID_STATEMENTS");
-    public static final int ID_CURRENT_SET = IDS.allocId("CURRENT_SET");
+    @AutoId
+    public static int ID_CONNECTION;
+    @AutoId
+    public static int ID_TRIGGER;
+    @AutoId
+    public static int ID_TRIGGER_PARAM;
+    @AutoId
+    public static int ID_ACTION;
+    @AutoId
+    public static int ID_ACTION_PARAM;
+    @AutoId
+    public static int ID_VALID_STATEMENTS;
+    @AutoId
+    public static int ID_CURRENT_SET;
 
     public final GateLogic gate;
 
@@ -71,11 +76,6 @@ public class ContainerGate extends ContainerBC_Neptune {
         }
 
         addFullPlayerInventory(33 + slotHeight * 18);
-    }
-
-    @Override
-    public IdAllocator getIdAllocator() {
-        return IDS;
     }
 
     @Override

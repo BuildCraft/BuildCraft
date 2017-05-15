@@ -6,6 +6,7 @@ import java.util.*;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.lib.misc.data.AutoId;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -27,7 +28,6 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
-import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.misc.data.LoadingException;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -38,35 +38,26 @@ import buildcraft.transport.plug.FilterEventHandler;
 import buildcraft.transport.wire.WireManager;
 
 public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITickable, IDebuggable {
-
-    protected static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("pipe");
-
-    public static final int NET_UPDATE_MULTI = IDS.allocId("UPDATE_MULTI");
-    public static final int NET_UPDATE_PIPE_BEHAVIOUR = getReceiverId(PipeMessageReceiver.BEHAVIOUR);
-    public static final int NET_UPDATE_PIPE_FLOW = getReceiverId(PipeMessageReceiver.FLOW);
-    public static final int NET_UPDATE_PLUG_DOWN = getReceiverId(PipeMessageReceiver.PLUGGABLE_DOWN);
-    public static final int NET_UPDATE_PLUG_UP = getReceiverId(PipeMessageReceiver.PLUGGABLE_UP);
-    public static final int NET_UPDATE_PLUG_NORTH = getReceiverId(PipeMessageReceiver.PLUGGABLE_NORTH);
-    public static final int NET_UPDATE_PLUG_SOUTH = getReceiverId(PipeMessageReceiver.PLUGGABLE_SOUTH);
-    public static final int NET_UPDATE_PLUG_WEST = getReceiverId(PipeMessageReceiver.PLUGGABLE_WEST);
-    public static final int NET_UPDATE_PLUG_EAST = getReceiverId(PipeMessageReceiver.PLUGGABLE_EAST);
-    public static final int NET_UPDATE_WIRES = getReceiverId(PipeMessageReceiver.WIRES);
-
-    static {
-        for (PipeMessageReceiver rec : PipeMessageReceiver.VALUES) {
-            IDS.allocId("UPDATE_" + rec);
-        }
-    }
-
-    public static final int[] NET_UPDATE_PLUGS = {//
-        NET_UPDATE_PLUG_DOWN, NET_UPDATE_PLUG_UP,//
-        NET_UPDATE_PLUG_NORTH, NET_UPDATE_PLUG_SOUTH,//
-        NET_UPDATE_PLUG_WEST, NET_UPDATE_PLUG_EAST,//
-    };
-
-    private static int getReceiverId(PipeMessageReceiver type) {
-        return NET_UPDATE_MULTI + 1 + type.ordinal();
-    }
+    @AutoId
+    public static int NET_UPDATE_MULTI;
+    @AutoId
+    public static int NET_UPDATE_PIPE_BEHAVIOUR;
+    @AutoId
+    public static int NET_UPDATE_PIPE_FLOW;
+    @AutoId
+    public static int NET_UPDATE_PLUG_DOWN;
+    @AutoId
+    public static int NET_UPDATE_PLUG_UP;
+    @AutoId
+    public static int NET_UPDATE_PLUG_NORTH;
+    @AutoId
+    public static int NET_UPDATE_PLUG_SOUTH;
+    @AutoId
+    public static int NET_UPDATE_PLUG_WEST;
+    @AutoId
+    public static int NET_UPDATE_PLUG_EAST;
+    @AutoId
+    public static int NET_UPDATE_WIRES;
 
     public final WireManager wireManager = new WireManager(this);
     public final PipeEventBus eventBus = new PipeEventBus();
@@ -230,6 +221,21 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     }
 
     // Network
+
+    private static int getReceiverId(PipeMessageReceiver type) {
+        switch (type) {
+            case BEHAVIOUR: return NET_UPDATE_PIPE_BEHAVIOUR;
+            case FLOW: return NET_UPDATE_PIPE_FLOW;
+            case PLUGGABLE_DOWN: return NET_UPDATE_PLUG_DOWN;
+            case PLUGGABLE_UP: return NET_UPDATE_PLUG_UP;
+            case PLUGGABLE_NORTH: return NET_UPDATE_PLUG_NORTH;
+            case PLUGGABLE_SOUTH: return NET_UPDATE_PLUG_SOUTH;
+            case PLUGGABLE_WEST: return NET_UPDATE_PLUG_WEST;
+            case PLUGGABLE_EAST: return NET_UPDATE_PLUG_EAST;
+            case WIRES: return NET_UPDATE_WIRES;
+        }
+        return -1;
+    }
 
     @Override
     public void writePayload(int id, PacketBufferBC buffer, Side side) {

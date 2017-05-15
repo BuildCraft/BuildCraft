@@ -3,6 +3,7 @@ package buildcraft.factory.tile;
 import java.io.IOException;
 import java.util.List;
 
+import buildcraft.lib.misc.data.AutoId;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
@@ -28,8 +29,10 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDebuggable {
-    public static final int NET_LED_STATUS = 10;
-    public static final int NET_WANTED_Y = 11;
+    @AutoId
+    public static int NET_LED_STATUS;
+    @AutoId
+    public static int NET_WANTED_Y;
 
     protected int progress = 0;
     protected BlockPos currentPos = null;

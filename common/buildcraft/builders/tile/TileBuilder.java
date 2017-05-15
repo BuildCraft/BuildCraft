@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import buildcraft.api.enums.EnumOptionalSnapshotType;
 import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.lib.misc.*;
+import buildcraft.lib.misc.data.AutoId;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.EntityLivingBase;
@@ -58,8 +59,10 @@ import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder {
-    public static final int NET_CAN_EXCAVATE = 20;
-    public static final int NET_SNAPSHOT_TYPE = 21;
+    @AutoId
+    public static int NET_CAN_EXCAVATE;
+    @AutoId
+    public static int NET_SNAPSHOT_TYPE;
 
     public final ItemHandlerSimple invSnapshot = itemManager.addInvHandler(
             "snapshot",

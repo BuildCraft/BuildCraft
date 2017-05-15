@@ -11,6 +11,7 @@ import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.data.AutoId;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
@@ -26,8 +27,10 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
-    public static final int NET_DOWN = 20;
-    public static final int NET_UP = 21;
+    @AutoId
+    public static int NET_DOWN;
+    @AutoId
+    public static int NET_UP;
 
     public final ItemHandlerSimple invDownIn = itemManager.addInvHandler("downIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
     public final ItemHandlerSimple invDownOut = itemManager.addInvHandler("downOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);

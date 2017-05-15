@@ -7,6 +7,7 @@ package buildcraft.core.tile;
 import java.io.IOException;
 import java.util.List;
 
+import buildcraft.lib.misc.data.AutoId;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,8 +35,10 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileMarker;
 
 public class TileMarkerVolume extends TileMarker<VolumeConnection> implements ITileAreaProvider {
-    public static final int NET_SIGNALS_ON = 10;
-    public static final int NET_SIGNALS_OFF = 11;
+    @AutoId
+    public static int NET_SIGNALS_ON;
+    @AutoId
+    public static int NET_SIGNALS_OFF;
 
     private boolean showSignals = false;
 

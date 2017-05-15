@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import buildcraft.lib.misc.data.AutoId;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 
@@ -56,7 +57,6 @@ import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.PermissionUtil;
 import buildcraft.lib.misc.PermissionUtil.PermissionBlock;
-import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.IPayloadReceiver;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.MessageUpdateTile;
@@ -72,32 +72,40 @@ import io.netty.buffer.Unpooled;
 public abstract class TileBC_Neptune extends TileEntity implements IPayloadReceiver, IAdvDebugTarget, IPlayerOwned {
     public static final boolean DEBUG_PARTICLES = BCDebugging.shouldDebugLog("tile.debug.particles");
 
-    protected static final IdAllocator IDS = new IdAllocator("tile");
-
     /** Used for sending all data used for rendering the tile on a client. This does not include items, power, stages,
      * etc (Unless some are shown in the world) */
-    public static final int NET_RENDER_DATA = IDS.allocId("RENDER_DATA");
+    @AutoId
+    public static int NET_RENDER_DATA;
     /** Used for sending all data in the GUI. Basically what has been omitted from {@link #NET_RENDER_DATA} that is
      * shown in the GUI. */
-    public static final int NET_GUI_DATA = IDS.allocId("GUI_DATA");
+    @AutoId
+    public static int NET_GUI_DATA;
     /** Used for sending the data that would normally be sent with {@link Container#detectAndSendChanges()}. Note that
      * if no bytes are written then the update message won't be sent. You should detect if any changes have been made to
      * the gui since the last tick, so you don't resend duplicate information if nothing has changed by the next
      * tick. */
-    public static final int NET_GUI_TICK = IDS.allocId("GUI_TICK");
+    @AutoId
+    public static int NET_GUI_TICK;
 
-    public static final int NET_REN_DELTA_SINGLE = IDS.allocId("REN_DELTA_SINGLE");
-    public static final int NET_REN_DELTA_CLEAR = IDS.allocId("REN_DELTA_CLEAR");
-    public static final int NET_GUI_DELTA_SINGLE = IDS.allocId("GUI_DELTA_SINGLE");
-    public static final int NET_GUI_DELTA_CLEAR = IDS.allocId("GUI_DELTA_CLEAR");
+    @AutoId
+    public static int NET_REN_DELTA_SINGLE;
+    @AutoId
+    public static int NET_REN_DELTA_CLEAR;
+    @AutoId
+    public static int NET_GUI_DELTA_SINGLE;
+    @AutoId
+    public static int NET_GUI_DELTA_CLEAR;
 
     /** Used for detailed debugging for inspecting every part of the current tile. For example, tanks use this to
      * display which other tanks makeup the whole structure. */
-    public static final int NET_ADV_DEBUG = IDS.allocId("DEBUG_DATA");
-    public static final int NET_ADV_DEBUG_DISABLE = IDS.allocId("DEBUG_DISABLE");
+    @AutoId
+    public static int NET_ADV_DEBUG;
+    @AutoId
+    public static int NET_ADV_DEBUG_DISABLE;
 
     /** Used to tell the client to redraw the block. */
-    public static final int NET_REDRAW = IDS.allocId("REDRAW");
+    @AutoId
+    public static int NET_REDRAW;
 
     protected final CapabilityHelper caps = new CapabilityHelper();
     protected final ItemHandlerManager itemManager = caps.addProvider(new ItemHandlerManager(this::onSlotChange));
@@ -194,13 +202,6 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     // Misc overridables
     //
     // ##################
-
-    /** @return The {@link IdAllocator} that allocates all ID's for this class, and its parent classes. All subclasses
-     *         should override this if they allocate their own ids after calling
-     *         {@link IdAllocator#makeChild(String)} */
-    public IdAllocator getIdAllocator() {
-        return IDS;
-    }
 
     /** Checks to see if this tile can update. The base implementation only checks to see if it has a world. */
     public boolean cannotUpdate() {

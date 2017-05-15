@@ -68,7 +68,7 @@ public class MessageContainer implements IMessage {
                 container.readMessage(message.msgId, message.payload, ctx.side, ctx);
 
                 // error checking
-                String extra = container.getClass() + ", id = " + container.getIdAllocator().getNameFor(message.msgId);
+                String extra = container.getClass().toString();
                 MessageUtil.ensureEmpty(message.payload, ctx.side == Side.CLIENT, extra);
             }
             return null;

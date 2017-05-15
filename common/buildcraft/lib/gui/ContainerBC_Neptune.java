@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import buildcraft.lib.misc.data.AutoId;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,7 +26,6 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.gui.slot.IPhantomSlot;
 import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.MessageContainer;
 import buildcraft.lib.net.PacketBufferBC;
@@ -33,24 +33,17 @@ import buildcraft.lib.net.PacketBufferBC;
 public abstract class ContainerBC_Neptune extends Container {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.container");
 
-    protected static final IdAllocator IDS = new IdAllocator("container");
-    /** Generic "data" id. Used by all containers which only have 1 id to write out (no point in making EVERY container
-     * have an {@link IdAllocator} if they only allocate one. */
-    public static final int NET_DATA = IDS.allocId("DATA");
-    public static final int NET_WDIGET = IDS.allocId("WIDGET");
+    /** Generic "data" id. Used by all containers which only have 1 id to write out if they only allocate one. */
+    @AutoId
+    public static int NET_DATA;
+    @AutoId
+    public static int NET_WIDGET;
 
     public final EntityPlayer player;
     private final List<Widget_Neptune<?>> widgets = new ArrayList<>();
 
     public ContainerBC_Neptune(EntityPlayer player) {
         this.player = player;
-    }
-
-    /** @return The {@link IdAllocator} that allocates all ID's for this class, and its parent classes. All subclasses
-     *         should override this if they allocate their own ids after calling
-     *         {@link IdAllocator#makeChild(String)} */
-    public IdAllocator getIdAllocator() {
-        return IDS;
     }
 
     protected void addFullPlayerInventory(int startX, int startY) {
@@ -166,7 +159,7 @@ public abstract class ContainerBC_Neptune extends Container {
                 BCLog.logger.warn("[lib.container]   Player {class = " + player.getClass() + ", name = " + player.getName() + "}");
             }
         } else {
-            sendMessage(NET_WDIGET, (buffer) -> {
+            sendMessage(NET_WIDGET, (buffer) -> {
                 buffer.writeShort(widgetId);
                 writer.write(buffer);
             });
@@ -191,7 +184,7 @@ public abstract class ContainerBC_Neptune extends Container {
     public void writeMessage(int id, PacketBufferBC buffer, Side side) {}
 
     public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
-        if (id == NET_WDIGET) {
+        if (id == NET_WIDGET) {
             int widgetId = buffer.readUnsignedShort();
             if (widgetId < 0 || widgetId >= widgets.size()) {
                 if (DEBUG) {

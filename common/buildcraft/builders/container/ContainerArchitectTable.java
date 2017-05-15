@@ -1,8 +1,7 @@
 package buildcraft.builders.container;
 
 import buildcraft.builders.item.ItemSnapshot;
-import buildcraft.lib.gui.ContainerBC_Neptune;
-import buildcraft.lib.misc.data.IdAllocator;
+import buildcraft.lib.misc.data.AutoId;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,8 +17,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import java.io.IOException;
 
 public class ContainerArchitectTable extends ContainerBCTile<TileArchitectTable> {
-    private static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("architect_table");
-    private static final int ID_NAME = IDS.allocId("NAME");
+    @AutoId
+    public static int ID_NAME;
 
     public ContainerArchitectTable(EntityPlayer player, TileArchitectTable tile) {
         super(player, tile);

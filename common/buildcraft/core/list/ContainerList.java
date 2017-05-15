@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.lib.misc.data.AutoId;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -23,20 +24,13 @@ import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.widget.WidgetPhantomSlot;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 
 public class ContainerList extends ContainerBC_Neptune {
-    // Network ID's
-
-    protected static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("list");
-    private static final int ID_LABEL = IDS.allocId("LABEL");
-    private static final int ID_BUTTON = IDS.allocId("BUTTON");
-
-    @Override
-    public IdAllocator getIdAllocator() {
-        return IDS;
-    }
+    @AutoId
+    public static int ID_LABEL;
+    @AutoId
+    public static int ID_BUTTON;
 
     // Main container list
 

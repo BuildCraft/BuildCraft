@@ -7,7 +7,7 @@ import buildcraft.core.marker.volume.EnumAddonSlot;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 import buildcraft.lib.gui.ContainerBC_Neptune;
-import buildcraft.lib.misc.data.IdAllocator;
+import buildcraft.lib.misc.data.AutoId;
 import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class ContainerFillingPlanner extends ContainerBC_Neptune {
-    private static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("filling_planner");
-    private static final int ID_DATA = IDS.allocId("DATA");
+    @AutoId
+    public static int ID_DATA;
 
     public AddonFillingPlanner addon;
     public List<IParameter> parameters = new ArrayList<>();
