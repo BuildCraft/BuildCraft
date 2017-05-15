@@ -36,7 +36,7 @@ public abstract class PipeLogicIron {
         }
     }
 
-    private void switchPosition() {
+    protected void switchPosition() {
         int meta = pipe.container.getBlockMetadata();
 
         for (int i = meta + 1; i <= meta + 6; ++i) {

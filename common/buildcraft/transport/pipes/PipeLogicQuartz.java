@@ -32,17 +32,20 @@ public abstract class PipeLogicQuartz extends PipeLogicIron{
     }
 
     public void switchPosition(TravelingItem item) {
-        int meta = pipe.container.getBlockMetadata();
-        EnumFacing bounceback = null;
-        if (item != null) {
-            bounceback = getInverse(item.input);
+        if(item == null){
+            super.switchPosition();
+            return;
         }
 
+        int meta = pipe.container.getBlockMetadata();
+        EnumFacing bounceback = getInverse(item.input);
 
         for (int i = meta + 1; i <= meta + 6; ++i) {
             EnumFacing facing = EnumFacing.getFront(i % 6);
-            if ((bounceback != null && !facing.equals(bounceback) || bounceback == null) && setFacing(facing)) {
-                return;
+            if (!facing.equals(bounceback)) {
+                if(setFacing(facing)){
+                    return;
+                }
             }
         }
     }
