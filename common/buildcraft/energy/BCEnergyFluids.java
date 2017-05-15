@@ -1,7 +1,12 @@
 package buildcraft.energy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+
+import com.google.common.math.IntMath;
 
 import net.minecraft.block.material.MapColor;
 import net.minecraft.util.ResourceLocation;
@@ -54,39 +59,39 @@ public class BCEnergyFluids {
             int index = 0;
 
             // Add all of the fluid states
-            crudeOil = defineFluids(data[index++], "oil", MapColor.BLACK);
-            oilResidue = defineFluids(data[index++], "oil_residue", MapColor.OBSIDIAN);
-            oilHeavy = defineFluids(data[index++], "oil_heavy", MapColor.BROWN);
-            oilDense = defineFluids(data[index++], "oil_dense", MapColor.BROWN);
-            oilDistilled = defineFluids(data[index++], "oil_distilled", MapColor.YELLOW);
-            fuelDense = defineFluids(data[index++], "fuel_dense", MapColor.YELLOW);
-            fuelMixedHeavy = defineFluids(data[index++], "fuel_mixed_heavy", MapColor.YELLOW);
-            fuelLight = defineFluids(data[index++], "fuel_light", MapColor.YELLOW);
-            fuelMixedLight = defineFluids(data[index++], "fuel_mixed_light", MapColor.YELLOW);
-            fuelGaseous = defineFluids(data[index++], "fuel_gaseous", MapColor.YELLOW);
+            crudeOil = defineFluids(data[index++], "oil");
+            oilResidue = defineFluids(data[index++], "oil_residue");
+            oilHeavy = defineFluids(data[index++], "oil_heavy");
+            oilDense = defineFluids(data[index++], "oil_dense");
+            oilDistilled = defineFluids(data[index++], "oil_distilled");
+            fuelDense = defineFluids(data[index++], "fuel_dense");
+            fuelMixedHeavy = defineFluids(data[index++], "fuel_mixed_heavy");
+            fuelLight = defineFluids(data[index++], "fuel_light");
+            fuelMixedLight = defineFluids(data[index++], "fuel_mixed_light");
+            fuelGaseous = defineFluids(data[index++], "fuel_gaseous");
         } else {
-            crudeOil = new BCFluid[] { defineFluid(data[0], 0, "oil", MapColor.BLACK) };
+            crudeOil = new BCFluid[] { defineFluid(data[0], 0, "oil") };
             oilResidue = new BCFluid[0];
             oilHeavy = new BCFluid[0];
             oilDense = new BCFluid[0];
             oilDistilled = new BCFluid[0];
             fuelDense = new BCFluid[0];
             fuelMixedHeavy = new BCFluid[0];
-            fuelLight = new BCFluid[] { defineFluid(data[7], 0, "fuel_light", MapColor.YELLOW) };
+            fuelLight = new BCFluid[] { defineFluid(data[7], 0, "fuel_light") };
             fuelMixedLight = new BCFluid[0];
             fuelGaseous = new BCFluid[0];
         }
     }
 
-    private static BCFluid[] defineFluids(int[] data, String name, MapColor mapColour) {
+    private static BCFluid[] defineFluids(int[] data, String name) {
         BCFluid[] arr = new BCFluid[3];
         for (int h = 0; h < 3; h++) {
-            arr[h] = defineFluid(data, h, name, mapColour);
+            arr[h] = defineFluid(data, h, name);
         }
         return arr;
     }
 
-    private static BCFluid defineFluid(int[] data, int heat, String name, MapColor mapColour) {
+    private static BCFluid defineFluid(int[] data, int heat, String name) {
         final int density = data[0];
         final int baseViscocity = data[1];
         final int boilPoint = data[2];
@@ -101,7 +106,17 @@ public class BCEnergyFluids {
         String fluidTexture = "buildcraftenergy:blocks/fluids/" + name + "_heat_" + heat;
         BCFluid def = new BCFluid(fullName, new ResourceLocation(fluidTexture + "_still"), new ResourceLocation(fluidTexture + "_flow"));
         def.setBlockName(name + "_heat_" + heat);
-        def.setMapColour(mapColour);
+                def.setMapColour(
+                        Arrays.stream(MapColor.COLORS)
+                                .filter(Objects::nonNull)
+                                .filter(mapColor -> mapColor.colorValue != 0)
+                                .min(Comparator.comparingInt(mapColor ->
+                                                IntMath.pow((mapColor.colorValue >> 16 & 0xFF) - (texLight >> 16 & 0xFF), 2) +
+                                                IntMath.pow((mapColor.colorValue >> 8 & 0xFF) - (texLight >> 8 & 0xFF), 2) +
+                                                IntMath.pow((mapColor.colorValue & 0xFF) - (texLight & 0xFF), 2)
+                                ))
+                                .orElseThrow(IllegalArgumentException::new)
+                );
         def.setFlamable(true);
         def.setHeat(heat);
         def.setUnlocalizedName(name);
