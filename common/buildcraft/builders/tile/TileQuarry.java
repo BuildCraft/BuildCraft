@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -565,8 +566,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 if (put) {
                     NonNullList<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) world, breakPos, getOwner());
                     if (stacks != null) {
-                        for (int i = 0; i < stacks.size(); i++) {
-                            InventoryUtil.addToBestAcceptor(world, pos, null, stacks.get(i));
+                        for (ItemStack stack : stacks) {
+                            InventoryUtil.addToBestAcceptor(world, pos, null, stack);
                         }
                     }
                 }
@@ -655,15 +656,44 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             return (long) (from.distanceTo(to) * 20 * MjAPI.MJ);
         }
 
+        private void moveEntities(Vec3d oldDrillPos) {
+            if (drillPos.yCoord < oldDrillPos.yCoord) {
+                return;
+            }
+            List<Entity> moved = new ArrayList<>();
+            for (EntityQuarryFrame entityQuarryFrame : world.getEntitiesWithinAABB(
+                    EntityQuarryFrame.class,
+                    miningBox.getBoundingBox().union(frameBox.getBoundingBox()).expandXyz(1)
+            )) {
+                AxisAlignedBB collisionBoundingBox = entityQuarryFrame.getCollisionBoundingBox();
+                if (collisionBoundingBox != null) {
+                    for (Entity entity : world.getEntitiesWithinAABB(
+                            Entity.class,
+                            collisionBoundingBox.expandXyz(0.001)
+                    )) {
+                        if (!moved.contains(entity)) {
+                            Vec3d newPos = entity.getPositionVector().add(drillPos.subtract(oldDrillPos));
+                            entity.setPositionAndUpdate(newPos.xCoord, newPos.yCoord, newPos.zCoord);
+                            moved.add(entity);
+                        }
+                    }
+                }
+            }
+        }
+
         @Override
         protected boolean onReceivePower() {
+            Vec3d oldDrillPos = drillPos;
             drillPos = from.scale(1 - power / (double) getTarget()).add(to.scale(power / (double) getTarget()));
+            moveEntities(oldDrillPos);
             return false;
         }
 
         @Override
         protected boolean finish() {
+            Vec3d oldDrillPos = drillPos;
             drillPos = to;
+            moveEntities(oldDrillPos);
             return true;
         }
     }
