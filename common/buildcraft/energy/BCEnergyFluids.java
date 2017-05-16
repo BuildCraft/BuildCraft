@@ -106,17 +106,17 @@ public class BCEnergyFluids {
         String fluidTexture = "buildcraftenergy:blocks/fluids/" + name + "_heat_" + heat;
         BCFluid def = new BCFluid(fullName, new ResourceLocation(fluidTexture + "_still"), new ResourceLocation(fluidTexture + "_flow"));
         def.setBlockName(name + "_heat_" + heat);
-                def.setMapColour(
-                        Arrays.stream(MapColor.COLORS)
-                                .filter(Objects::nonNull)
-                                .filter(mapColor -> mapColor.colorValue != 0)
-                                .min(Comparator.comparingInt(mapColor ->
-                                                IntMath.pow((mapColor.colorValue >> 16 & 0xFF) - (texLight >> 16 & 0xFF), 2) +
-                                                IntMath.pow((mapColor.colorValue >> 8 & 0xFF) - (texLight >> 8 & 0xFF), 2) +
-                                                IntMath.pow((mapColor.colorValue & 0xFF) - (texLight & 0xFF), 2)
-                                ))
-                                .orElseThrow(IllegalArgumentException::new)
-                );
+        def.setMapColour(
+            Arrays.stream(MapColor.COLORS)
+                .filter(Objects::nonNull)
+                .filter(mapColor -> mapColor.colorValue != 0)
+                .min(Comparator.comparingInt(mapColor ->
+                    IntMath.pow((mapColor.colorValue >> 16 & 0xFF) - (texLight >> 16 & 0xFF), 2) +
+                    IntMath.pow((mapColor.colorValue >> 8 & 0xFF) - (texLight >> 8 & 0xFF), 2) +
+                    IntMath.pow((mapColor.colorValue & 0xFF) - (texLight & 0xFF), 2)
+                ))
+                .orElseThrow(IllegalArgumentException::new)
+        );
         def.setFlamable(true);
         def.setHeat(heat);
         def.setUnlocalizedName(name);

@@ -22,6 +22,7 @@ import buildcraft.energy.generation.BiomeOilDesert;
 import buildcraft.energy.generation.BiomeOilOcean;
 import buildcraft.energy.generation.OilPopulate;
 import buildcraft.lib.BCLib;
+import buildcraft.lib.registry.MigrationManager;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
@@ -49,6 +50,8 @@ public class BCEnergy {
         BCEnergyFluids.preInit();
         BCEnergyBlocks.preInit();
         BCEnergyEntities.preInit();
+        MigrationManager.INSTANCE.addBlockMigration(BCEnergyFluids.crudeOil[0].getBlock(), "buildcraftenergy:fluid_block_oil");
+        MigrationManager.INSTANCE.addBlockMigration(BCEnergyFluids.fuelLight[0].getBlock(), "buildcraftenergy:fluid_block_fuel");
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCEnergyProxy.getProxy());
         GameRegistry.register(BiomeOilOcean.INSTANCE);
