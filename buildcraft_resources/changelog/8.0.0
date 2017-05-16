@@ -1,45 +1,74 @@
 Breaking Changes:
 
+* General:
+  * Volume Boxes
+    * Right-click block with volume box to place in near this block
+    * Right-click volume box with wrench to activate editing mode
+      * Move and look to change size
+      * Right-click to confirm
+      * Shift+Right-click to cancel
+    * Addons
+      * Right-click corner of volume box with addon to install it
+      * Right-click addon with wrench to open its GUI
+      * Shift+Right-click addon with wrench to remove it
+    * Shift+Right-click volume box with wrench to remove it
+
 * Transport:
-  * Actions and triggers on gates are based upon the side that they act on, rather than being generic and deciding which tile to use by themselves.
-  * Gate expansions have been moved to seperate pluggables.
-    * The "Autarchic gate" expansion is now the "Pipe Pulsar" pluggable, and requires a redstone engine to craft.
+  * Actions and triggers on gates are based upon the side that they act on, rather than being generic and deciding which tile to use by themselves
+  * Gate expansions have been moved to separate pluggables
+    * The "Autarchic gate" expansion is now the "Pipe Pulsar" pluggable, and requires a redstone engine to craft
 
 * Silicon:
-  * Added the remaining 12 colours of pipe wire. Pipe wire is now placed manually on the 8 corners of a pipe.
+  * Added the remaining 12 colours of pipe wire. Pipe wire is now placed manually on the 8 corners of a pipe (afdw)
   * Removed the emerald chipset and the pulsating chipset
-    * All recipes using those chipsets now use a different item.
+    * All recipes using those chipsets now use a different item
+
+* Robotics:
+ * Zone Planner
+    * 3D map (afdw)
+    * Brushes slots are now not fake slots but slots for storing brushes in it (empty in new machine) (afdw)
+    * By default all layers are displayed (afdw)
+    * When taking colored brush from slot with mouse layer of its color will be displayed (afdw)
+    * Left-click while having colored brush on your cursor to add rectangle to layer (afdw)
+    * Right-click while having colored brush on your cursor to subtract rectangle to layer (afdw)
 
 Additions:
 
 * Lib:
-  * Moved "buildcraft.core.lib" into its own module, which is contained within the "core" jar file, or can be downloaded seperatly.
-  * This allows developers to use all of the BC library code, without forcing players to also have buildcraft itself.
+  * Moved "buildcraft.core.lib" into its own module, which is contained within the "core" jar file, or can be downloaded seperatly
+  * This allows developers to use all of the BC library code, without forcing players to also have buildcraft itself
 
 Improvements:
 
 * General:
-  * All coloured items (pipes, paintbrushes, pipe wire) is displayed with an appropriate text colour infront.
-    * This behaviour can be toggled in the config (gui or file).
-  * Tanks in gui's now display their contents.
-  * Tanks in gui's can be added to or removed from by clicking on them with a bucket or other fluid container in hand.
-    * This removes most of the slots found in various fluid holding blocks, such as the combustion engine.
+  * All coloured items (pipes, paintbrushes, pipe wire) is displayed with an appropriate text colour infront
+    * This behaviour can be toggled in the config (gui or file)
+  * Tanks in gui's now display their contents
+  * Tanks in gui's can be added to or removed from by clicking on them with a bucket or other fluid container in hand
+    * This removes most of the slots found in various fluid holding blocks, such as the combustion engine
   * Displayed fluid values can be displayed in buckets or millibuckets, and in long or short form
-    * This behaviour can be toggled in the config, or in game.
+    * This behaviour can be toggled in the config, or in game
   * You can now clone items from phantom slots if you are in creative mode
   * Gui ledgers now render their contents even if they are not fully open
-  * Most gui's now have a "help" ledger, which describes whatever gui element you are hovering over.
-  * Tiles save the first valid player as their owner, which is used as the fake player UUID.
-    * This owner is displayed in a ledger in the gui, alongside the face of the owner.
+  * Most gui's now have a "help" ledger, which describes whatever gui element you are hovering over
+  * Tiles save the first valid player as their owner, which is used as the fake player UUID
+    * This owner is displayed in a ledger in the gui, alongside the face of the owner
+
+* Factory:
+  * Pump, Mining Well
+    * The frame will break automatically when you break quarry (afdw)
+    * You can't break the frame manually (afdw)
 
 * Builders:
   * Quarry:
     * The drill bit has an animation while it is mining (afdw)
     * The frame has a collision box (so you can walk on top of it) (afdw)
+    * The frame will break automatically when you break quarry (afdw)
+    * You can't break the frame manually (afdw)
 
 * Transport:
   * The wooden-diamond pipe (formally known as the emerald pipe) shows the current index of what is being extracted, when in round-robin mode.
   * The stripes pipe now shows which direction it is pointing.
   * Gates:
-    * Added a small selection area for changing between different triggers, actions and paramaters. Complex params still require the existing mechanism (for example with itemstack params)
+    * Added a small selection area for changing between different triggers, actions and parameters. Complex params still require the existing mechanism (for example with itemstack params)
     * Dragging a trigger or action with the secondary mouse button will copy that statement, and can be placed in a similar way to dragging from the side selections.
