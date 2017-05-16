@@ -42,6 +42,9 @@ public abstract class GenLayerBiomeReplacer extends GenLayer {
         Random rand = new Random(worldSeed);
         xOffset = rand.nextInt(OFFSET_RANGE) - (OFFSET_RANGE / 2);
         zOffset = rand.nextInt(OFFSET_RANGE) - (OFFSET_RANGE / 2);
+        if (newBiomeId < 0) {
+            throw new IllegalArgumentException("This biome isn't registered!");
+        }
     }
 
     protected abstract boolean canReplaceBiome(int biomeId);

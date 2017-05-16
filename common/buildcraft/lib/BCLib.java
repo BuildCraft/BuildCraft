@@ -10,6 +10,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
@@ -26,6 +27,7 @@ import buildcraft.lib.list.ListMatchHandlerFluid;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
+import buildcraft.lib.registry.MigrationManager;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
@@ -93,6 +95,11 @@ public class BCLib {
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();
         ListMatchHandlerFluid.fmlPostInit();
+    }
+
+    @Mod.EventHandler
+    public static void missingMappings(FMLMissingMappingsEvent evt) {
+        MigrationManager.INSTANCE.missingMappingEvent(evt);
     }
 
     static {

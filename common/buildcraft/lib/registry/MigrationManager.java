@@ -17,6 +17,8 @@ import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent.MissingMappin
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry.Type;
 
+import buildcraft.api.core.BCLog;
+
 public enum MigrationManager {
     INSTANCE;
 
@@ -30,6 +32,7 @@ public enum MigrationManager {
             String oldLowerCase = old.toLowerCase(Locale.ROOT);
             if (itemMigrations.containsKey(oldLowerCase)) throw new IllegalArgumentException("Already registered item migration \"" + oldLowerCase + "\"!");
             itemMigrations.put(oldLowerCase, to);
+            BCLog.logger.info("Adding migration (ITEM) from " + old + " to " + to.getRegistryName());
         }
     }
 
@@ -40,27 +43,36 @@ public enum MigrationManager {
             String oldLowerCase = old.toLowerCase(Locale.ROOT);
             if (blockMigrations.containsKey(oldLowerCase)) throw new IllegalArgumentException("Already registered block migration \"" + oldLowerCase + "\"!");
             blockMigrations.put(oldLowerCase, to);
+            BCLog.logger.info("Adding migration (BLOCK) from " + old + " to " + to.getRegistryName());
         }
     }
 
     public void missingMappingEvent(FMLMissingMappingsEvent missing) {
+        BCLog.logger.info("EVENT");
         for (MissingMapping mapping : missing.getAll()) {
             ResourceLocation loc = mapping.resourceLocation;
             String domain = loc.getResourceDomain();
             String path = loc.getResourcePath().toLowerCase(Locale.ROOT);
             // TECHNICALLY this can pick up non-bc mods, but generally only addons
+            BCLog.logger.info("missing mapping " + loc);
             if (!domain.startsWith("buildcraft")) continue;
+            BCLog.logger.info("  - of type buildcraft (" + mapping.type + ")");
             if (mapping.type == Type.ITEM) {
                 if (itemMigrations.containsKey(path)) {
                     Item to = itemMigrations.get(path);
                     mapping.remap(to);
+                    BCLog.logger.info("  - remapped to " + to.getRegistryName());
+                    continue;
                 }
             } else if (mapping.type == Type.BLOCK) {
                 if (blockMigrations.containsKey(path)) {
                     Block to = blockMigrations.get(path);
                     mapping.remap(to);
+                    BCLog.logger.info("  - remapped to " + to.getRegistryName());
+                    continue;
                 }
             }
+            BCLog.logger.info("  - unknown");
         }
     }
 }

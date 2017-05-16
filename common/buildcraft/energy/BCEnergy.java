@@ -44,14 +44,12 @@ public class BCEnergy {
     public static BCEnergy INSTANCE;
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent evt) {
+    public static void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
         BCEnergyItems.preInit();
         BCEnergyFluids.preInit();
         BCEnergyBlocks.preInit();
         BCEnergyEntities.preInit();
-        MigrationManager.INSTANCE.addBlockMigration(BCEnergyFluids.crudeOil[0].getBlock(), "buildcraftenergy:fluid_block_oil");
-        MigrationManager.INSTANCE.addBlockMigration(BCEnergyFluids.fuelLight[0].getBlock(), "buildcraftenergy:fluid_block_fuel");
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCEnergyProxy.getProxy());
         GameRegistry.register(BiomeOilOcean.INSTANCE);
@@ -72,15 +70,23 @@ public class BCEnergy {
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent evt) {
+    public static void init(FMLInitializationEvent evt) {
         BCEnergyRecipes.init();
         BCEnergyProxy.getProxy().fmlInit();
     }
 
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent evt) {
+    public static void postInit(FMLPostInitializationEvent evt) {
         MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
         BCEnergyProxy.getProxy().fmlPostInit();
+        registerMigrations();
+    }
+
+    private static void registerMigrations() {
+        /** 7.99.0 */
+        // Fluid registration changed from "fluid_block_[FLUID]" to "fluid_block_heat_[HEAT]_[FLUID]"
+        MigrationManager.INSTANCE.addBlockMigration(BCEnergyFluids.crudeOil[0].getBlock(), "fluid_block_oil");
+        MigrationManager.INSTANCE.addBlockMigration(BCEnergyFluids.fuelLight[0].getBlock(), "fluid_block_fuel");
     }
 
     static {

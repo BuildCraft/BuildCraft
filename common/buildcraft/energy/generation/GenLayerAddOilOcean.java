@@ -2,6 +2,7 @@ package buildcraft.energy.generation;
 
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.layer.GenLayer;
+
 import net.minecraftforge.common.BiomeDictionary;
 
 public class GenLayerAddOilOcean extends GenLayerBiomeReplacer {
@@ -14,7 +15,10 @@ public class GenLayerAddOilOcean extends GenLayerBiomeReplacer {
 
     @Override
     protected boolean canReplaceBiome(int biomeId) {
-        // noinspection ConstantConditions
-        return BiomeDictionary.getTypes(Biome.getBiomeForId(biomeId)).contains(BiomeDictionary.Type.OCEAN);
+        Biome biome = Biome.getBiomeForId(biomeId);
+        if (biome == null) {
+            throw new IllegalArgumentException("Couldn't find a biome with an ID of " + biomeId);
+        }
+        return BiomeDictionary.getTypes(biome).contains(BiomeDictionary.Type.OCEAN);
     }
 }
