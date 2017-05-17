@@ -3,7 +3,6 @@ package buildcraft.transport.pipe;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Optional;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.EnumDyeColor;
@@ -182,13 +181,14 @@ public final class Pipe implements IPipe, IDebuggable {
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        return behaviour.hasCapability(capability, facing) || flow.hasCapability(capability, facing);
+        return getCapability(capability, facing) != null;
     }
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        return Optional.ofNullable(behaviour.getCapability(capability, facing))
-            .orElseGet(() -> flow.getCapability(capability, facing));
+        T val = behaviour.getCapability(capability, facing);
+        if (val != null) return val;
+        return flow.getCapability(capability, facing);
     }
 
     // misc
@@ -353,7 +353,8 @@ public final class Pipe implements IPipe, IDebuggable {
     }
 
     public float getConnectedDist(EnumFacing face) {
-        return Optional.ofNullable(connected.get(face)).orElse(0F);
+        Float custom = connected.get(face);
+        return custom == null ? 0 : custom;
     }
 
     @Override

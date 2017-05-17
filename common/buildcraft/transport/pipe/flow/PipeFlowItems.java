@@ -264,20 +264,22 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
                 }
             }
 
-            if (itemEntry.to == null || itemEntry.to.size() == 0) {
-                itemEntry.to = findDest.generateRandomOrder();
+            List<EnumFacing> destinations = itemEntry.to;
+            if (destinations == null || destinations.size() == 0) {
+                destinations = findDest.generateRandomOrder();
             }
-            if (itemEntry.to.size() == 0) {
+            if (destinations.size() == 0) {
                 dropItem(itemEntry.stack, null, item.side.getOpposite(), nSpeed);
             } else {
-                item.toCenter = false;
-                item.stack = itemEntry.stack;
-                item.colour = itemEntry.colour;
-                item.side = itemEntry.to.get(0);
-                item.speed = nSpeed;
-                item.genTimings(now, getPipeLength(item.side));
-                items.add(item.timeToDest, item);
-                sendItemDataToClient(item);
+                TravellingItem newItem = new TravellingItem(itemEntry.stack);
+                newItem.tried.addAll(item.tried);
+                newItem.toCenter = false;
+                newItem.colour = itemEntry.colour;
+                newItem.side = destinations.get(0);
+                newItem.speed = nSpeed;
+                newItem.genTimings(now, getPipeLength(newItem.side));
+                items.add(newItem.timeToDest, newItem);
+                sendItemDataToClient(newItem);
             }
         }
     }

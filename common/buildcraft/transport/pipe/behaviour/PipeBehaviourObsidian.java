@@ -140,7 +140,7 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
 
     /** Attempts to pull in the given */
     protected boolean trySuckEntity(Entity entity, EnumFacing faceFrom, boolean requiresPower) {
-        if (entity.isDead/* || (requiresPower && battery.getStored() < MjAPI.MJ) */) {
+        if (entity.isDead || (requiresPower && battery.getStored() < MjAPI.MJ)) {
             return false;
         }
         if (entity instanceof EntityLivingBase) {
@@ -166,7 +166,8 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
         IItemTransactor transactor = ItemTransactorHelper.getTransactorForEntity(entity, faceFrom.getOpposite());
 
         if (flowItem != null) {
-            ItemStack extracted = transactor.extract(StackFilter.ALL, 1, 1, false);
+            int max = requiresPower ? 1 : Integer.MAX_VALUE;
+            ItemStack extracted = transactor.extract(StackFilter.ALL, 1, max, false);
             if (!extracted.isEmpty()) {
                 flowItem.insertItemsForce(extracted, faceFrom, null, INSERT_SPEED);
                 battery.extractPower(MjAPI.MJ);
