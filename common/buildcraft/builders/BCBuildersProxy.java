@@ -4,23 +4,36 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import buildcraft.builders.client.render.*;
-import buildcraft.builders.container.*;
-import buildcraft.builders.entity.EntityQuarryFrame;
-import buildcraft.builders.gui.*;
-import buildcraft.builders.tile.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import buildcraft.builders.client.render.RenderArchitectTable;
+import buildcraft.builders.client.render.RenderBuilder;
+import buildcraft.builders.client.render.RenderFiller;
+import buildcraft.builders.client.render.RenderQuarry;
+import buildcraft.builders.container.ContainerArchitectTable;
+import buildcraft.builders.container.ContainerBuilder;
+import buildcraft.builders.container.ContainerElectronicLibrary;
+import buildcraft.builders.container.ContainerFiller;
+import buildcraft.builders.container.ContainerFillingPlanner;
+import buildcraft.builders.gui.GuiArchitectTable;
+import buildcraft.builders.gui.GuiBuilder;
+import buildcraft.builders.gui.GuiElectronicLibrary;
+import buildcraft.builders.gui.GuiFiller;
+import buildcraft.builders.gui.GuiFillingPlanner;
+import buildcraft.builders.tile.TileArchitectTable;
+import buildcraft.builders.tile.TileBuilder;
+import buildcraft.builders.tile.TileElectronicLibrary;
+import buildcraft.builders.tile.TileFiller;
+import buildcraft.builders.tile.TileQuarry;
 
 public abstract class BCBuildersProxy implements IGuiHandler {
     @SidedProxy
@@ -74,8 +87,7 @@ public abstract class BCBuildersProxy implements IGuiHandler {
     }
 
     public void fmlInit() {
-        ResourceLocation idQuarry = new ResourceLocation("buildcraftbuilders:quarry");
-        EntityRegistry.registerModEntity(idQuarry, EntityQuarryFrame.class, "quarry", 0, BCBuilders.INSTANCE, 50, 1, true);
+
     }
 
     @SideOnly(Side.SERVER)
@@ -117,11 +129,10 @@ public abstract class BCBuildersProxy implements IGuiHandler {
             }
             return null;
         }
-        
+
         @Override
         public void fmlPreInit() {
             BCBuildersSprites.fmlPreInit();
-            RenderingRegistry.registerEntityRenderingHandler(EntityQuarryFrame.class, RenderEntityQuarryFrame::new);
         }
 
         @Override

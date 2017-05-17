@@ -1,20 +1,87 @@
 package buildcraft.builders;
 
-import buildcraft.builders.snapshot.ClientSnapshots;
+import java.lang.ref.WeakReference;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.WeakHashMap;
+
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.World;
+
 import net.minecraftforge.client.event.RenderTooltipEvent;
+import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.BCLog;
+
+import buildcraft.builders.snapshot.ClientSnapshots;
+import buildcraft.builders.tile.TileQuarry;
+
 public enum BCBuildersEventDist {
     INSTANCE;
+
+    private final Map<World, Deque<WeakReference<TileQuarry>>> allQuarries = new WeakHashMap<>();
+
+    public void validateQuarry(TileQuarry quarry) {
+        Deque<WeakReference<TileQuarry>> quarries = allQuarries.get(quarry.getWorld());
+        if (quarries == null) {
+            quarries = new LinkedList<>();
+            allQuarries.put(quarry.getWorld(), quarries);
+        }
+        quarries.add(new WeakReference<>(quarry));
+        BCLog.logger.info("Added quarry to checking list");
+    }
+
+    public void invalidateQuarry(TileQuarry quarry) {
+        Deque<WeakReference<TileQuarry>> quarries = allQuarries.get(quarry.getWorld());
+        if (quarries == null) {
+            // Odd.
+            return;
+        }
+        Iterator<WeakReference<TileQuarry>> iter = quarries.iterator();
+        while (iter.hasNext()) {
+            WeakReference<TileQuarry> ref = iter.next();
+            TileQuarry pos = ref.get();
+            if (pos == null || pos == quarry) {
+                iter.remove();
+                BCLog.logger.info("Removed quarry from checking list");
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onGetCollisionBoxesForQuarry(GetCollisionBoxesEvent event) {
+        AxisAlignedBB target = event.getAabb();
+        Deque<WeakReference<TileQuarry>> quarries = allQuarries.get(event.getWorld());
+        if (quarries == null) {
+            // No quarries in the target world
+            return;
+        }
+        Iterator<WeakReference<TileQuarry>> iter = quarries.iterator();
+        while (iter.hasNext()) {
+            WeakReference<TileQuarry> ref = iter.next();
+            TileQuarry quarry = ref.get();
+            if (quarry == null) {
+                iter.remove();
+                continue;
+            }
+            for (AxisAlignedBB aabb : quarry.getCollisionBoxes()) {
+                if (target.intersectsWith(aabb)) {
+                    event.getCollisionBoxesList().add(aabb);
+                }
+            }
+        }
+    }
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void onPostText(RenderTooltipEvent.PostText event) {
-        if (BCBuildersItems.snapshot.getHeader(event.getStack()) != null &&
-                ClientSnapshots.INSTANCE.getSnapshot(BCBuildersItems.snapshot.getHeader(event.getStack())) != null) {
+        if (BCBuildersItems.snapshot.getHeader(event.getStack()) != null && ClientSnapshots.INSTANCE.getSnapshot(BCBuildersItems.snapshot.getHeader(event.getStack())) != null) {
             int pX = event.getX();
             int pY = event.getY() + event.getHeight() + 10;
             int sX = 100;
@@ -35,13 +102,7 @@ public enum BCBuildersEventDist {
             GuiUtils.drawGradientRect(zLevel, pX - 3, pY - 3, pX + sX + 3, pY - 3 + 1, borderColorStart, borderColorStart);
             GuiUtils.drawGradientRect(zLevel, pX - 3, pY + sY + 2, pX + sX + 3, pY + sY + 3, borderColorEnd, borderColorEnd);
 
-            ClientSnapshots.INSTANCE.renderSnapshot(
-                    BCBuildersItems.snapshot.getHeader(event.getStack()),
-                    pX,
-                    pY,
-                    sX,
-                    sY
-            );
+            ClientSnapshots.INSTANCE.renderSnapshot(BCBuildersItems.snapshot.getHeader(event.getStack()), pX, pY, sX, sY);
         }
     }
 }

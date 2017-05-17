@@ -1,14 +1,21 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+
+import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -16,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -37,15 +45,27 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.builders.BCBuildersBlocks;
-import buildcraft.builders.entity.EntityQuarryFrame;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.inventory.AutomaticProvidingTransactor;
-import buildcraft.lib.misc.*;
-import buildcraft.lib.misc.data.*;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.FakePlayerUtil;
+import buildcraft.lib.misc.InventoryUtil;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.misc.data.AverageInt;
+import buildcraft.lib.misc.data.AxisOrder;
+import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.misc.data.BoxIterator;
+import buildcraft.lib.misc.data.EnumAxisOrder;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+
+import buildcraft.builders.BCBuildersBlocks;
+import buildcraft.builders.BCBuildersEventDist;
 
 public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable {
     private final MjBattery battery = new MjBattery(1600L * MjAPI.MJ);
@@ -197,6 +217,18 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     }
 
     @Override
+    public void validate() {
+        super.validate();
+        BCBuildersEventDist.INSTANCE.validateQuarry(this);
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        BCBuildersEventDist.INSTANCE.invalidateQuarry(this);
+    }
+
+    @Override
     public void update() {
         if (world.isRemote) {
             prevClientDrillPos = clientDrillPos;
@@ -226,6 +258,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 entityPoses.put(new BlockPos(drillPos.xCoord + 0.5, max.getY(), z), EnumFacing.Axis.Z);
             }
 
+            /*
             List<EntityQuarryFrame> allEntities = world.getEntitiesWithinAABB(
                     EntityQuarryFrame.class,
                     miningBox.getBoundingBox().union(frameBox.getBoundingBox()).expandXyz(1)
@@ -246,6 +279,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                     }
                 }
             });
+            */
         }
 
         if (currentTask != null) {
@@ -405,6 +439,30 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
     }
 
+    public Iterable<AxisAlignedBB> getCollisionBoxes() {
+        if (!frameBox.isInitialized() || drillPos == null) {
+            return ImmutableList.of();
+        }
+        List<AxisAlignedBB> list = new ArrayList<>(3);
+        Vec3d min = VecUtil.convertCenter(frameBox.min());
+        Vec3d max = VecUtil.convertCenter(frameBox.max());
+        min = VecUtil.replaceValue(min, Axis.Y, max.yCoord);
+
+        Vec3d minXAdj = VecUtil.replaceValue(min, Axis.X, drillPos.xCoord + 0.5);
+        Vec3d maxXAdj = VecUtil.replaceValue(max, Axis.X, drillPos.xCoord + 0.5);
+        list.add(BoundingBoxUtil.makeFrom(minXAdj, maxXAdj, 0.25));
+
+        Vec3d minZAdj = VecUtil.replaceValue(min, Axis.Z, drillPos.zCoord + 0.5);
+        Vec3d maxZAdj = VecUtil.replaceValue(max, Axis.Z, drillPos.zCoord + 0.5);
+        list.add(BoundingBoxUtil.makeFrom(minZAdj, maxZAdj, 0.25));
+
+        Vec3d realDrillPos = drillPos.addVector(0.5, 0, 0.5);
+        Vec3d minYAdj = realDrillPos;
+        Vec3d maxYAdj = VecUtil.replaceValue(realDrillPos, Axis.Y, max.yCoord);
+        list.add(BoundingBoxUtil.makeFrom(minYAdj, maxYAdj, 0.25));
+        return list;
+    }
+    
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
@@ -660,6 +718,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             if (drillPos.yCoord < oldDrillPos.yCoord) {
                 return;
             }
+            /*
             List<Entity> moved = new ArrayList<>();
             for (EntityQuarryFrame entityQuarryFrame : world.getEntitiesWithinAABB(
                     EntityQuarryFrame.class,
@@ -679,6 +738,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                     }
                 }
             }
+            */
         }
 
         @Override
