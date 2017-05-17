@@ -8,6 +8,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -16,6 +17,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -94,5 +96,10 @@ public class BlockFrame extends BlockBCBase_Neptune {
                 .filter(side -> actualState.getValue(CONNECTED_MAP.get(side)))
                 .map(side -> RotationUtil.rotateAABB(CONNECTION_AABB, side))
                 .forEach(box -> addCollisionBoxToList(pos, entityBox, collidingBoxes, box));
+    }
+
+    @Override
+    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+        return Collections.emptyList();
     }
 }

@@ -64,7 +64,6 @@ Improvements:
     * The drill bit has an animation while it is mining (afdw)
     * The frame has a collision box (so you can walk on top of it) (afdw)
     * The frame will break automatically when you break quarry (afdw)
-    * You can't break the frame manually (afdw)
 
 * Transport:
   * The wooden-diamond pipe (formally known as the emerald pipe) shows the current index of what is being extracted, when in round-robin mode.
