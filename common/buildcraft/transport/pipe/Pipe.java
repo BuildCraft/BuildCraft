@@ -66,7 +66,7 @@ public final class Pipe implements IPipe, IDebuggable {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag("col", NBTUtilBC.writeEnum(colour));
         nbt.setString("def", definition.identifier.toString());
-        nbt.setTag("beh", behaviour.writeToNBT());
+        nbt.setTag("beh", behaviour.writeToNbt());
         nbt.setTag("flow", flow.writeToNbt());
         return nbt;
     }

@@ -65,8 +65,8 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
     }
 
     @Override
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound nbt = super.writeToNBT();
+    public NBTTagCompound writeToNbt() {
+        NBTTagCompound nbt = super.writeToNbt();
         nbt.setTag("filters", filters.serializeNBT());
         nbt.setByte("mode", (byte) filterMode.ordinal());
         nbt.setByte("currentFilter", (byte) currentFilter);

@@ -37,8 +37,8 @@ public abstract class PipeBehaviourDirectional extends PipeBehaviour {
     }
 
     @Override
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound nbt = super.writeToNBT();
+    public NBTTagCompound writeToNbt() {
+        NBTTagCompound nbt = super.writeToNbt();
         nbt.setTag("currentDir", NBTUtilBC.writeEnum(getCurrentDir()));
         return nbt;
     }

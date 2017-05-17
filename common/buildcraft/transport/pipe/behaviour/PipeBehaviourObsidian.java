@@ -51,8 +51,8 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
     }
 
     @Override
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound nbt = super.writeToNBT();
+    public NBTTagCompound writeToNbt() {
+        NBTTagCompound nbt = super.writeToNbt();
         nbt.setTag("battery", battery.serializeNBT());
         nbt.setTag(
             "entitiesProgress",
@@ -152,6 +152,11 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
     @Override
     public long receivePower(long microJoules, boolean simulate) {
         return battery.addPowerChecking(microJoules, simulate);
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        return getCapability(capability, facing) != null;
     }
 
     @SuppressWarnings({"Duplicates", "unchecked"})

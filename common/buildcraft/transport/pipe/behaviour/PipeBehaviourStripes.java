@@ -44,8 +44,8 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
     }
 
     @Override
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound nbt = super.writeToNBT();
+    public NBTTagCompound writeToNbt() {
+        NBTTagCompound nbt = super.writeToNbt();
         nbt.setTag("mjBattery", mjBattery.serializeNBT());
         nbt.setTag("currentDir", NBTUtilBC.writeEnum(getCurrentDir()));
         return nbt;

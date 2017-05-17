@@ -36,8 +36,8 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
     }
 
     @Override
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound nbt = super.writeToNBT();
+    public NBTTagCompound writeToNbt() {
+        NBTTagCompound nbt = super.writeToNbt();
         nbt.setTag("mjBattery", mjBattery.serializeNBT());
         return nbt;
     }
@@ -127,6 +127,11 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
     @Override
     public long receivePower(long microJoules, boolean simulate) {
         return mjBattery.addPowerChecking(microJoules, simulate);
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        return getCapability(capability, facing) != null;
     }
 
     @SuppressWarnings({"Duplicates", "unchecked"})
