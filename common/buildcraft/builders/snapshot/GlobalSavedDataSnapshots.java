@@ -1,14 +1,19 @@
 package buildcraft.builders.snapshot;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
 
 public class GlobalSavedDataSnapshots {
     public static final Map<Side, GlobalSavedDataSnapshots> instances = new EnumMap<>(Side.class);
@@ -17,10 +22,7 @@ public class GlobalSavedDataSnapshots {
 
     private GlobalSavedDataSnapshots(Side side) {
         try {
-            snapshotsFile = new File(
-                    FMLCommonHandler.instance().getSavesDirectory().getParentFile(),
-                    "snapshots-" + side.name().toLowerCase(Locale.ROOT)
-            );
+            snapshotsFile = new File(FMLCommonHandler.instance().getSavesDirectory().getParentFile(), "snapshots-" + side.name().toLowerCase(Locale.ROOT));
             if (!snapshotsFile.exists()) {
                 if (!snapshotsFile.mkdirs()) {
                     throw new IOException();
@@ -46,14 +48,11 @@ public class GlobalSavedDataSnapshots {
     }
 
     private void writeSnapshots() throws IOException {
-        for (File file : snapshotsFile.listFiles()) {
-            if (!file.delete()) {
-                throw new IOException("Failed to delete snapshot file " + file);
-            }
-        }
         for (Snapshot snapshot : snapshots) {
             File snapshotFile = new File(snapshotsFile, snapshot.header.getFileName());
-            CompressedStreamTools.write(Snapshot.writeToNBT(snapshot), snapshotFile);
+            if (!snapshotFile.exists()) {
+                CompressedStreamTools.write(Snapshot.writeToNBT(snapshot), snapshotFile);
+            }
         }
     }
 
