@@ -21,19 +21,15 @@ public class GlobalSavedDataSnapshots {
     private final File snapshotsFile;
 
     private GlobalSavedDataSnapshots(Side side) {
-        try {
-            snapshotsFile = new File(FMLCommonHandler.instance().getSavesDirectory().getParentFile(), "snapshots-" + side.name().toLowerCase(Locale.ROOT));
-            if (!snapshotsFile.exists()) {
-                if (!snapshotsFile.mkdirs()) {
-                    throw new IOException();
-                }
-            } else if (!snapshotsFile.isDirectory()) {
-                throw new IllegalArgumentException();
+        snapshotsFile = new File(FMLCommonHandler.instance().getSavesDirectory().getParentFile(), "snapshots-" + side.name().toLowerCase(Locale.ROOT));
+        if (!snapshotsFile.exists()) {
+            if (!snapshotsFile.mkdirs()) {
+                throw new RuntimeException("Failed to make the directories required for snapshots! \n\tdir = " + snapshotsFile);
             }
-            readSnapshots();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } else if (!snapshotsFile.isDirectory()) {
+            throw new IllegalStateException("The snapshots directory was a file! We can't use this!\n\tfile = " + snapshotsFile);
         }
+        readSnapshots();
     }
 
     public static GlobalSavedDataSnapshots get(Side side) {
@@ -47,29 +43,34 @@ public class GlobalSavedDataSnapshots {
         return get(world.isRemote ? Side.CLIENT : Side.SERVER);
     }
 
-    private void writeSnapshots() throws IOException {
+    private void writeSnapshots() {
         for (Snapshot snapshot : snapshots) {
             File snapshotFile = new File(snapshotsFile, snapshot.header.getFileName());
             if (!snapshotFile.exists()) {
-                CompressedStreamTools.write(Snapshot.writeToNBT(snapshot), snapshotFile);
+                try {
+                    CompressedStreamTools.write(Snapshot.writeToNBT(snapshot), snapshotFile);
+                } catch (IOException io) {
+                    IOException ex = new IOException("Failed to write the snapshot file" + snapshotFile, io);
+                    ex.printStackTrace();
+                }
             }
         }
     }
 
-    private void readSnapshots() throws IOException {
-        // noinspection ConstantConditions
+    private void readSnapshots() {
         for (File snapshotFile : snapshotsFile.listFiles()) {
-            NBTTagCompound nbt = CompressedStreamTools.read(snapshotFile);
-            snapshots.add(Snapshot.readFromNBT(nbt));
+            try {
+                NBTTagCompound nbt = CompressedStreamTools.read(snapshotFile);
+                snapshots.add(Snapshot.readFromNBT(nbt));
+            } catch (IOException io) {
+                IOException ex = new IOException("Failed to read the snapshot file" + snapshotFile, io);
+                ex.printStackTrace();
+            }
         }
     }
 
     public void markDirty() {
-        try {
-            writeSnapshots();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        writeSnapshots();
     }
 
     public Snapshot getSnapshotByHeader(Snapshot.Header header) {
