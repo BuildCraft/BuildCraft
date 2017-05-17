@@ -168,7 +168,9 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
     }
 
     public EnumFacing resolveDestination(TravelingItem data) {
+        container.pipe.prepareForItemPush(data);
         List<EnumFacing> validDestinations = getPossibleMovements(data);
+
 
         if (validDestinations.isEmpty()) {
             return null;

@@ -537,6 +537,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
         scheduleWireUpdate = true;
     }
 
+    public void prepareForItemPush(TravelingItem data){};
+
     @Override
     public int compareTo(Pipe<?> pipe) {
         // TO keep BuildCraftExtendedProperty happy
