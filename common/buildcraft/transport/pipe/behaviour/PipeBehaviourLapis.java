@@ -37,8 +37,8 @@ public class PipeBehaviourLapis extends PipeBehaviour {
     }
 
     @Override
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = super.writeToNbt();
+    public NBTTagCompound writeToNBT() {
+        NBTTagCompound nbt = super.writeToNBT();
         nbt.setTag("colour", NBTUtilBC.writeEnum(colour));
         return nbt;
     }

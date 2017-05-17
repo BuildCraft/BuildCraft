@@ -86,13 +86,7 @@ public class PipeEventBus {
             return;
         }
 
-        Iterator<LocalHandler> iter = currentHandlers.iterator();
-        while (iter.hasNext()) {
-            LocalHandler next = iter.next();
-            if (next.target == obj) {
-                iter.remove();
-            }
-        }
+        currentHandlers.removeIf(next -> next.target == obj);
     }
 
     /** Sends this event to all of the registered handlers.

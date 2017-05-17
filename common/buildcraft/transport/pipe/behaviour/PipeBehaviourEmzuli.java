@@ -87,8 +87,8 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
     }
 
     @Override
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = super.writeToNbt();
+    public NBTTagCompound writeToNBT() {
+        NBTTagCompound nbt = super.writeToNBT();
         nbt.setTag("Filters", invFilters.serializeNBT());
         nbt.setTag("activeSlots", NBTUtilBC.writeEnumSet(activeSlots, SlotIndex.class));
         nbt.setTag("currentSlot", NBTUtilBC.writeEnum(currentSlot));

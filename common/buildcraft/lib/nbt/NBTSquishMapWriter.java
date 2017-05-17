@@ -194,7 +194,7 @@ class NBTSquishMapWriter {
     }
 
     private boolean shouldPackList(NBTTagList list) {
-        if (packList != null) return packList.booleanValue();
+        if (packList != null) return packList;
         profiler.startSection("should_pack");
         TIntHashSet indexes = new TIntHashSet();
         for (int i = 0; i < list.tagCount(); i++) {

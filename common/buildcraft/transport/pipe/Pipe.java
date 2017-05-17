@@ -3,6 +3,7 @@ package buildcraft.transport.pipe;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Optional;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.EnumDyeColor;
@@ -31,8 +32,6 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.client.model.key.PipeModelKey;
 
 public final class Pipe implements IPipe, IDebuggable {
-    public static final int NET_RENDER = 0;
-
     public final IPipeHolder holder;
     public final PipeDefinition definition;
     public final PipeBehaviour behaviour;
@@ -67,7 +66,7 @@ public final class Pipe implements IPipe, IDebuggable {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag("col", NBTUtilBC.writeEnum(colour));
         nbt.setString("def", definition.identifier.toString());
-        nbt.setTag("beh", behaviour.writeToNbt());
+        nbt.setTag("beh", behaviour.writeToNBT());
         nbt.setTag("flow", flow.writeToNbt());
         return nbt;
     }
@@ -100,10 +99,10 @@ public final class Pipe implements IPipe, IDebuggable {
                 Float con = connected.get(face);
                 if (con != null && textures.get(face) != null) {
                     buffer.writeBoolean(true);
-                    buffer.writeFloat(con.floatValue());
+                    buffer.writeFloat(con);
 
                     Integer tex = textures.get(face);
-                    buffer.writeByte(tex.intValue());
+                    buffer.writeByte(tex);
                     MessageUtil.writeEnumOrNull(buffer, types.get(face));
                 } else {
                     buffer.writeBoolean(false);
@@ -129,7 +128,7 @@ public final class Pipe implements IPipe, IDebuggable {
                     int tex = buffer.readUnsignedByte();
 
                     connected.put(face, dist);
-                    textures.put(face, Integer.valueOf(tex));
+                    textures.put(face, tex);
 
                     ConnectedType type = MessageUtil.readEnumOrNull(buffer, ConnectedType.class);
                     types.put(face, type);
@@ -183,15 +182,13 @@ public final class Pipe implements IPipe, IDebuggable {
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (behaviour.hasCapability(capability, facing)) return true;
-        return flow.hasCapability(capability, facing);
+        return behaviour.hasCapability(capability, facing) || flow.hasCapability(capability, facing);
     }
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        T val = behaviour.getCapability(capability, facing);
-        if (val != null) return val;
-        return flow.getCapability(capability, facing);
+        return Optional.ofNullable(behaviour.getCapability(capability, facing))
+            .orElseGet(() -> flow.getCapability(capability, facing));
     }
 
     // misc
@@ -291,7 +288,7 @@ public final class Pipe implements IPipe, IDebuggable {
     }
 
     public static boolean canColoursConnect(EnumDyeColor one, EnumDyeColor two) {
-        return one == null ? true : (two == null ? true : one == two);
+        return one == null || two == null || one == two;
     }
 
     public static boolean canBehavioursConnect(EnumFacing to, PipeBehaviour one, PipeBehaviour two) {
@@ -356,8 +353,7 @@ public final class Pipe implements IPipe, IDebuggable {
     }
 
     public float getConnectedDist(EnumFacing face) {
-        Float custom = connected.get(face);
-        return custom == null ? 0 : custom.floatValue();
+        return Optional.ofNullable(connected.get(face)).orElse(0F);
     }
 
     @Override

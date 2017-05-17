@@ -28,8 +28,8 @@ public abstract class PipeBehaviourDiamond extends PipeBehaviour {
     }
 
     @Override
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = super.writeToNbt();
+    public NBTTagCompound writeToNBT() {
+        NBTTagCompound nbt = super.writeToNBT();
         nbt.setTag("filters", filters.serializeNBT());
         return nbt;
     }
