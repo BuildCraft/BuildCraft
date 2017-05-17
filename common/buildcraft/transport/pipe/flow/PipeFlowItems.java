@@ -429,8 +429,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         item.colour = colour;
         item.genTimings(now, 0);
         item.tried.add(from);
-        items.add(item.timeToDest, item);
-        sendItemDataToClient(item);
+        addItemTryMerge(item);
     }
 
     /** Used internally to split up manual insertions from controlled extractions. */
@@ -455,6 +454,17 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         item.stack = onInsert.getStack();
         item.genTimings(now, getPipeLength(from));
         item.tried.add(from);
+        addItemTryMerge(item);
+    }
+    
+    private void addItemTryMerge(TravellingItem item) {
+        for (List<TravellingItem> list : items.getAllElements()) {
+            for (TravellingItem item2 : list) {
+                if (item2.mergeWith(item)) {
+                    return;
+                }
+            }
+        }
         items.add(item.timeToDest, item);
         sendItemDataToClient(item);
     }

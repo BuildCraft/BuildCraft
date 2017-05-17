@@ -126,6 +126,27 @@ public class TravellingItem {
         tickFinished = now + timeToDest;
     }
 
+    public boolean canMerge(TravellingItem with) {
+        return toCenter == with.toCenter//
+            && colour == with.colour//
+            && side == with.side//
+            && Math.abs(tickFinished - with.tickFinished) < 10//
+            && stack.getMaxStackSize() >= stack.getCount() + with.stack.getCount()//
+            && StackUtil.canMerge(stack, with.stack);
+    }
+
+    /** Attempts to merge the two travelling item's together, if they are close enough.
+     * 
+     * @param with
+     * @return */
+    public boolean mergeWith(TravellingItem with) {
+        if (canMerge(with)) {
+            this.stack.grow(with.stack.getCount());
+            return true;
+        }
+        return false;
+    }
+
     public Vec3d interpolatePosition(Vec3d start, Vec3d end, long tick, float partialTicks) {
         long diff = tickFinished - tickStarted;
         long nowDiff = tick - tickStarted;
