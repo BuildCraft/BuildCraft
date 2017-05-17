@@ -550,8 +550,19 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                 }
             }
         }
-        // noinspection ConstantConditions
         return super.getExplosionResistance(world, pos, exploder, explosion);
+    }
+
+    @Override
+    public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
+        TilePipeHolder tile = getPipe(world, pos, false);
+        if (tile == null) {
+            return;
+        }
+        Pipe pipe = tile.getPipe();
+        if (pipe != null) {
+            pipe.getBehaviour().onEntityCollide(entity);
+        }
     }
 
     @Override

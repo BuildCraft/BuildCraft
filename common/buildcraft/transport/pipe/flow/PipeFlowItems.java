@@ -30,8 +30,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.transport.IInjectable;
-import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IFlowItems;
+import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipe.ConnectedType;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.api.transport.pipe.PipeEventItem;
+import buildcraft.api.transport.pipe.PipeFlow;
 
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
@@ -344,13 +349,6 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         World world = holder.getPipeWorld();
         BlockPos pos = holder.getPipePos();
 
-        PipeEventItem.Drop drop = new PipeEventItem.Drop(holder, this, stack);
-        holder.fireEvent(drop);
-        stack = drop.getStack();
-        if (stack.isEmpty()) {
-            return;
-        }
-
         double x = pos.getX() + 0.5 + motion.getFrontOffsetX() * 0.5;
         double y = pos.getY() + 0.5 + motion.getFrontOffsetY() * 0.5;
         double z = pos.getZ() + 0.5 + motion.getFrontOffsetZ() * 0.5;
@@ -360,6 +358,13 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         ent.motionX = motion.getFrontOffsetX() * speed;
         ent.motionY = motion.getFrontOffsetY() * speed;
         ent.motionZ = motion.getFrontOffsetZ() * speed;
+
+        PipeEventItem.Drop drop = new PipeEventItem.Drop(holder, this, ent);
+        holder.fireEvent(drop);
+        if (ent.getEntityItem().isEmpty() || ent.isDead) {
+            return;
+        }
+
         world.spawnEntity(ent);
     }
 
