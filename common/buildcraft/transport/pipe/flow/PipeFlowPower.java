@@ -33,6 +33,8 @@ import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.data.AverageInt;
 
+import javax.annotation.Nonnull;
+
 public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
     private static final long DEFAULT_MAX_POWER = MjAPI.MJ * 10;
@@ -338,7 +340,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         }
 
         @Override
-        public boolean canConnect(IMjConnector other) {
+        public boolean canConnect(@Nonnull IMjConnector other) {
             return true;
         }
 

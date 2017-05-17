@@ -20,6 +20,8 @@ import buildcraft.api.transport.pipe.IPipe.ConnectedType;
 import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.transport.BCTransportConfig;
 
+import javax.annotation.Nonnull;
+
 public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRedstoneReceiver, IDebuggable {
 
     private final MjBattery mjBattery = new MjBattery(2 * MjAPI.MJ);
@@ -113,7 +115,7 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
     // IMjRedstoneReceiver
 
     @Override
-    public boolean canConnect(IMjConnector other) {
+    public boolean canConnect(@Nonnull IMjConnector other) {
         return true;
     }
 
@@ -132,6 +134,7 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
         return getCapability(capability, facing) != null;
     }
 
+    @SuppressWarnings({"Duplicates", "unchecked"})
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (capability == MjAPI.CAP_REDSTONE_RECEIVER) return (T) this;

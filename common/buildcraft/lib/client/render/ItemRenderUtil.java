@@ -57,13 +57,13 @@ public class ItemRenderUtil {
         GL11.glNewList(list, GL11.GL_COMPILE);
         renderItemImpl(0, 0, 0, item.baseStack);
         GL11.glEndList();
-        return Integer.valueOf(list);
+        return list;
     }
 
     private static void onStackRemove(RemovalNotification<ItemStackKey, Integer> notification) {
         Integer val = notification.getValue();
         if (val != null) {
-            GLAllocation.deleteDisplayLists(val.intValue());
+            GLAllocation.deleteDisplayLists(val);
         }
     }
 

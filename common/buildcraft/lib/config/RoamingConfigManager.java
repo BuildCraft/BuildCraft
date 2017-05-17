@@ -39,7 +39,7 @@ public class RoamingConfigManager extends StreamConfigManager {
 
     public boolean exists() {
         if (cacheExists == null) read();
-        return cacheExists.booleanValue();
+        return cacheExists;
     }
 
     @Override

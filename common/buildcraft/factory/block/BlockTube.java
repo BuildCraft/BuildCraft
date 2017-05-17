@@ -1,5 +1,6 @@
 package buildcraft.factory.block;
 
+import buildcraft.factory.tile.TileMiner;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -29,7 +30,15 @@ public class BlockTube extends BlockBCBase_Neptune {
 
     @Override
     public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
-        return false;
+        BlockPos currentPos = pos;
+        // noinspection StatementWithEmptyBody
+        while (world.getBlockState(currentPos = currentPos.up()).getBlock() == this) {
+        }
+        if (!(world.getTileEntity(currentPos) instanceof TileMiner)) {
+            return super.removedByPlayer(state, world, pos, player, willHarvest);
+        } else {
+            return false;
+        }
     }
 
     @Override

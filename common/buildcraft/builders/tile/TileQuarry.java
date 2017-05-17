@@ -525,7 +525,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     }
 
     private abstract class Task {
-
         protected long power;
 
         public Task() {}

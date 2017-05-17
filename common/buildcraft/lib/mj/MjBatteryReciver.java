@@ -5,6 +5,8 @@ import buildcraft.api.mj.IMjReadable;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjBattery;
 
+import javax.annotation.Nonnull;
+
 public class MjBatteryReciver implements IMjReceiver, IMjReadable {
     private final MjBattery battery;
 
@@ -13,7 +15,7 @@ public class MjBatteryReciver implements IMjReceiver, IMjReadable {
     }
 
     @Override
-    public boolean canConnect(IMjConnector other) {
+    public boolean canConnect(@Nonnull IMjConnector other) {
         return true;
     }
 

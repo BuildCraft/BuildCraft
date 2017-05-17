@@ -1,5 +1,6 @@
 package buildcraft.transport.pipe.behaviour;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
@@ -95,7 +96,7 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
     // IMjRedstoneReceiver
 
     @Override
-    public boolean canConnect(IMjConnector other) {
+    public boolean canConnect(@Nonnull IMjConnector other) {
         return true;
     }
 

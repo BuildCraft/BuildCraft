@@ -185,7 +185,7 @@ public abstract class NetworkedObjectCache<T> {
         if (current == null) {
             // new entry
             int id = serverCurrentId++;
-            serverObjectToId.put(canonical, Integer.valueOf(id));
+            serverObjectToId.put(canonical, id);
             if (DEBUG_CPLX) {
                 String toString;
                 if (canonical instanceof FluidStack) {
@@ -199,7 +199,7 @@ public abstract class NetworkedObjectCache<T> {
             return id;
         } else {
             // existing entry
-            return current.intValue();
+            return current;
         }
     }
 
@@ -216,7 +216,7 @@ public abstract class NetworkedObjectCache<T> {
             // Unknown entry
             return -1;
         } else {
-            return current.intValue();
+            return current;
         }
     }
 

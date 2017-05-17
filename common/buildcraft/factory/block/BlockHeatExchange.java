@@ -106,7 +106,7 @@ public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPip
         IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
             EnumFacing facing = state.getValue(PROP_FACING);
             boolean connected = doesNeighbourConnect(world, pos, facing);
-            state = state.withProperty(PROP_CONNECTED, Boolean.valueOf(connected));
+            state = state.withProperty(PROP_CONNECTED, connected);
 
             // EnumFacing yFace = this == Part.START ? EnumFacing.DOWN : EnumFacing.UP;
             // TODO: test the above connection (use the tile?)
