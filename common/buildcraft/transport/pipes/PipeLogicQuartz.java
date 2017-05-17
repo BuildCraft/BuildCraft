@@ -7,7 +7,7 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TravelingItem;
 
-public abstract class PipeLogicQuartz extends PipeLogicIron{
+public abstract class PipeLogicQuartz extends PipeLogicRouting{
     public PipeLogicQuartz(Pipe<?> pipe) {
         super(pipe);
     }
@@ -31,9 +31,10 @@ public abstract class PipeLogicQuartz extends PipeLogicIron{
         }
     }
 
+    @Override
     public void switchPosition(TravelingItem item) {
         if(item == null){
-            super.switchPosition();
+            super.switchPosition(item);
             return;
         }
 
