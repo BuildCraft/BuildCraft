@@ -8,23 +8,29 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.statements.IStatementContainer;
 
-import buildcraft.lib.client.sprite.RawSprite;
-import buildcraft.lib.client.sprite.SpriteNineSliced;
-import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.ITooltipElement;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
+import buildcraft.lib.gui.statement.ElementStatement;
+import buildcraft.lib.gui.statement.ElementStatementParam;
+import buildcraft.lib.gui.statement.GuiStatementSelector;
+import buildcraft.lib.gui.statement.StatementWrapper;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
-import buildcraft.transport.container.ContainerGate;
-import buildcraft.transport.gate.*;
 
-public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
+import buildcraft.transport.container.ContainerGate;
+import buildcraft.transport.gate.ActionWrapper;
+import buildcraft.transport.gate.GateLogic;
+import buildcraft.transport.gate.GateVariant;
+import buildcraft.transport.gate.TriggerWrapper;
+
+public class GuiGate extends GuiStatementSelector<ContainerGate> implements ITooltipElement {
 
     public static final ResourceLocation TEXTURE_GATE = new ResourceLocation("buildcrafttransport:textures/gui/gate_interface.png");
 
@@ -34,9 +40,6 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
     public static final GuiIcon ICON_BACK_TOP = new GuiIcon(TEXTURE_GATE, 0, 0, GUI_WIDTH, 16);
     public static final GuiIcon ICON_BACK_MID = new GuiIcon(TEXTURE_GATE, 0, 23, GUI_WIDTH, 18);
     public static final GuiIcon ICON_BACK_BOTTOM = new GuiIcon(TEXTURE_GATE, 0, 48, GUI_WIDTH, 101);
-
-    public static final GuiIcon ICON_SLOT_BLOCKED = new GuiIcon(TEXTURE_GATE, 176, 0, 18, 18);
-    public static final GuiIcon ICON_SLOT_NOT_SET = ICON_SLOT_BLOCKED.offset(18, 0);
 
     public static final GuiIcon CONNECT_HORIZ_OFF = new GuiIcon(TEXTURE_GATE, 176, 18, 18, 18);
     public static final GuiIcon CONNECT_HORIZ_ON_TRIGGER = new GuiIcon(TEXTURE_GATE, 194, 18, 7, 18);
@@ -52,18 +55,7 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
     public static final GuiIcon CONNECT_VERT_OFF = new GuiIcon(TEXTURE_GATE, 176, 54, 18, 18);
     public static final GuiIcon CONNECT_VERT_ON = CONNECT_VERT_OFF.offset(18, 0);
 
-    public static final RawSprite ICON_SELECT_HOVER = new RawSprite(TEXTURE_GATE, 212, 0, 16, 16, 256);
-    public static final SpriteNineSliced SELECTION_HOVER = new SpriteNineSliced(ICON_SELECT_HOVER, 3, 3, 13, 13, 16);
-
-    public static final GuiIcon SLOT_COLOUR = new GuiIcon(TEXTURE_GATE, 176, 72, 18, 18);
-
-    public ElementGuiSlot<?> currentHover = null;
-
     private final IGuiArea[] positionSlotPair, positionConnect;
-
-    public boolean isDraggingStatement;
-    public TriggerWrapper draggingTrigger;
-    public ActionWrapper draggingAction;
 
     public GuiGate(ContainerGate container) {
         super(container);
@@ -104,6 +96,11 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
     @Override
     protected boolean shouldAddHelpLedger() {
         return false;
+    }
+
+    @Override
+    public IStatementContainer getStatementContainer() {
+        return container.gate;
     }
 
     @Override
@@ -207,9 +204,8 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
             GlStateManager.enableDepth();
         }
 
-        if (isDraggingStatement) {
-            StatementWrapper wrapper = draggingTrigger == null ? draggingAction : draggingTrigger;
-            ElementStatement.draw(this, wrapper, mouse.offset(-9, -9));
+        if (draggingElement != null) {
+            ElementStatement.draw(this, draggingElement, mouse.offset(-9, -9));
         }
     }
 
@@ -285,12 +281,7 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
         // Test for dragging statements from the side contexts
         iteratePossible((wrapper, pos) -> {
             if (pos.contains(mouse)) {
-                isDraggingStatement = true;
-                if (wrapper instanceof TriggerWrapper) {
-                    draggingTrigger = (TriggerWrapper) wrapper;
-                } else if (wrapper instanceof ActionWrapper) {
-                    draggingAction = (ActionWrapper) wrapper;
-                }
+                draggingElement = wrapper;
             }
         });
     }
@@ -298,26 +289,19 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
-        // Test for dragging statements from the side contexts
 
-        if (isDraggingStatement) {
-            // Is our location valid?
+        // Test for dragging statements from the side contexts
+        if (draggingElement != null) {
             for (IGuiElement elem : guiElements) {
-                if (elem instanceof ElementStatement<?>) {
-                    ElementStatement<?> element = (ElementStatement<?>) elem;
+                if (elem instanceof ElementStatement<?, ?>) {
+                    ElementStatement<?, ?> element = (ElementStatement<?, ?>) elem;
                     if (element.contains(mouse)) {
-                        if (element instanceof ElementTrigger && draggingAction == null) {
-                            ((ElementTrigger) element).reference.set(draggingTrigger);
-                        } else if (element instanceof ElementAction && draggingTrigger == null) {
-                            ((ElementAction) element).reference.set(draggingAction);
-                        }
+                        element.reference.setifCan(draggingElement);
                         break;
                     }
                 }
             }
-            isDraggingStatement = false;
-            draggingTrigger = null;
-            draggingAction = null;
+            draggingElement = null;
         }
     }
 }

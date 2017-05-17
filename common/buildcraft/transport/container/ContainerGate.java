@@ -20,6 +20,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
 
 import buildcraft.lib.gui.ContainerBC_Neptune;
+import buildcraft.lib.gui.statement.StatementWrapper;
 import buildcraft.lib.misc.data.ForwardingReference;
 import buildcraft.lib.misc.data.IReference;
 import buildcraft.lib.misc.data.IdAllocator;
@@ -256,10 +257,10 @@ public class ContainerGate extends ContainerBC_Neptune {
 
         public SlotPair(final int slotIndex, GateVariant variant) {
             this.index = slotIndex;
-            trigger = new ForwardingReference<>(() -> logic().triggers[slotIndex], (val) -> {
+            trigger = new ForwardingReference<>(TriggerWrapper.class, () -> logic().triggers[slotIndex], (val) -> {
                 setTrigger(slotIndex, val);
             });
-            action = new ForwardingReference<>(() -> logic().actions[slotIndex], (val) -> {
+            action = new ForwardingReference<>(ActionWrapper.class, () -> logic().actions[slotIndex], (val) -> {
                 setAction(slotIndex, val);
             });
             triggerParams = new ParamRef[variant.numTriggerArgs];
@@ -335,7 +336,7 @@ public class ContainerGate extends ContainerBC_Neptune {
 
     private static class ParamRef extends ForwardingReference<IStatementParameter> {
         public ParamRef(Supplier<IStatementParameter> getter, Consumer<IStatementParameter> setter) {
-            super(getter, setter);
+            super(IStatementParameter.class, getter, setter);
         }
 
         public void writeToBuffer(PacketBuffer buffer) {

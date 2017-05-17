@@ -1,4 +1,4 @@
-package buildcraft.transport.gui;
+package buildcraft.lib.gui.statement;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
@@ -6,15 +6,15 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
-import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
+import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.data.IReference;
 
-public class ElementStatementParam extends ElementGuiSlot<IStatementParameter> {
+public class ElementStatementParam extends ElementGuiSlot<GuiStatementSelector<?>, IStatementParameter> {
     public final int paramIndex;
-    public final ElementStatement<?> parent;
+    public final ElementStatement<?, ?> parent;
 
-    public ElementStatementParam(GuiGate gui, IGuiArea element, IReference<IStatementParameter> reference, int paramIndex, ElementStatement<?> elemParent) {
+    public ElementStatementParam(GuiStatementSelector<?> gui, IGuiArea element, IReference<IStatementParameter> reference, int paramIndex, ElementStatement<?, ?> elemParent) {
         super(gui, element, reference);
         this.paramIndex = paramIndex;
         this.parent = elemParent;
@@ -24,11 +24,11 @@ public class ElementStatementParam extends ElementGuiSlot<IStatementParameter> {
     public void drawBackground(float partialTicks) {
         IStatementParameter param = reference.get();
         if (!parent.hasParam(paramIndex)) {
-            GuiGate.ICON_SLOT_BLOCKED.drawAt(this);
+            GuiStatementSelector.ICON_SLOT_BLOCKED.drawAt(this);
         } else if (param == null) {
-            GuiGate.ICON_SLOT_NOT_SET.drawAt(this);
+            GuiStatementSelector.ICON_SLOT_NOT_SET.drawAt(this);
         } else {
-            GuiGate.SLOT_COLOUR.drawAt(this);
+            GuiStatementSelector.SLOT_COLOUR.drawAt(this);
             super.drawBackground(partialTicks);
             ItemStack stack = param.getItemStack();
             if (!stack.isEmpty()) {
@@ -40,9 +40,9 @@ public class ElementStatementParam extends ElementGuiSlot<IStatementParameter> {
     @Override
     public void draw(IStatementParameter val, IGuiPosition element) {
         if (val == null) {
-            GuiGate.ICON_SLOT_BLOCKED.drawAt(element);
+            GuiStatementSelector.ICON_SLOT_BLOCKED.drawAt(element);
         } else {
-            GuiGate.SLOT_COLOUR.drawAt(element);
+            GuiStatementSelector.SLOT_COLOUR.drawAt(element);
             super.draw(val, element);
             ItemStack stack = val.getItemStack();
             if (!stack.isEmpty()) {
@@ -55,8 +55,12 @@ public class ElementStatementParam extends ElementGuiSlot<IStatementParameter> {
     public void onMouseClicked(int button) {
         if (contains(gui.mouse)) {
             IStatementParameter value = reference.get();
-            if (value == null) return;
-            if (value.onClick(gui.container.gate, parent.reference.get(), gui.mc.player.inventory.getItemStack(), new StatementMouseClick(button, GuiScreen.isShiftKeyDown()))) {
+            if (value == null) {
+                return;
+            }
+            ItemStack currentStack = gui.mc.player.inventory.getItemStack();
+            StatementMouseClick event = new StatementMouseClick(button, GuiScreen.isShiftKeyDown());
+            if (value.onClick(gui.getStatementContainer(), parent.reference.get(), currentStack, event)) {
                 // update the server with the click
                 reference.set(value);
                 return;
@@ -68,7 +72,9 @@ public class ElementStatementParam extends ElementGuiSlot<IStatementParameter> {
     @Override
     protected IStatementParameter[] getPossible() {
         IStatementParameter value = reference.get();
-        if (value == null) return null;
-        return value.getPossible(gui.container.gate, parent.reference.get());
+        if (value == null) {
+            return null;
+        }
+        return value.getPossible(gui.getStatementContainer(), parent.reference.get());
     }
 }

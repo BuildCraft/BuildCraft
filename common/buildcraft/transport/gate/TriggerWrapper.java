@@ -8,6 +8,8 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.statements.*;
 
+import buildcraft.lib.gui.statement.StatementWrapper;
+
 /** Wrapper class around ITriggerInternal to allow for treating all triggers as internal triggers. It also provides the
  * background colour for sides. */
 public abstract class TriggerWrapper extends StatementWrapper implements ITriggerInternal {

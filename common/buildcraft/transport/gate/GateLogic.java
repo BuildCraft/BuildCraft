@@ -20,6 +20,7 @@ import buildcraft.api.transport.IWireManager;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeEventActionActivate;
 
+import buildcraft.lib.gui.statement.StatementWrapper;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.transport.gate.ActionWrapper.ActionWrapperExternal;

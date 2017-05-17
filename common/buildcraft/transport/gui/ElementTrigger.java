@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import buildcraft.lib.gui.pos.IGuiArea;
+import buildcraft.lib.gui.statement.ElementStatement;
 import buildcraft.lib.misc.data.IReference;
+
 import buildcraft.transport.gate.TriggerWrapper;
 
-public class ElementTrigger extends ElementStatement<TriggerWrapper> {
+public class ElementTrigger extends ElementStatement<GuiGate, TriggerWrapper> {
 
     public ElementTrigger(GuiGate gui, IGuiArea element, IReference<TriggerWrapper> reference) {
         super(gui, element, reference);

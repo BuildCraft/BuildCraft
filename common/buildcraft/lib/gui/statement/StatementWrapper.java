@@ -1,4 +1,4 @@
-package buildcraft.transport.gate;
+package buildcraft.lib.gui.statement;
 
 import java.util.Arrays;
 

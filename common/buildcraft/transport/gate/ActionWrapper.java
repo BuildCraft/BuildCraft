@@ -8,6 +8,8 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.statements.*;
 
+import buildcraft.lib.gui.statement.StatementWrapper;
+
 public abstract class ActionWrapper extends StatementWrapper implements IActionInternal {
 
     protected boolean isActive = false;

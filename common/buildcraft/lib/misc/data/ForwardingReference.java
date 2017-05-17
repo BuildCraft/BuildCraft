@@ -7,10 +7,12 @@ public class ForwardingReference<T> implements IReference<T> {
 
     public final Supplier<T> getter;
     public final Consumer<T> setter;
+    public final Class<T> clazz;
 
-    public ForwardingReference(Supplier<T> getter, Consumer<T> setter) {
+    public ForwardingReference(Class<T> clazz, Supplier<T> getter, Consumer<T> setter) {
         this.getter = getter;
         this.setter = setter;
+        this.clazz = clazz;
     }
 
     @Override
@@ -21,5 +23,10 @@ public class ForwardingReference<T> implements IReference<T> {
     @Override
     public void set(T to) {
         setter.accept(to);
+    }
+
+    @Override
+    public boolean canSet(Object value) {
+        return clazz.isInstance(value);
     }
 }

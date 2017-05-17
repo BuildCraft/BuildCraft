@@ -4,15 +4,19 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.gui;
 
-import buildcraft.builders.container.ContainerFiller;
-import buildcraft.lib.gui.GuiBC8;
+import net.minecraft.util.ResourceLocation;
+
+import buildcraft.api.statements.IStatementContainer;
+
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.button.GuiButtonSmall;
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.elem.ToolTip;
-import net.minecraft.util.ResourceLocation;
+import buildcraft.lib.gui.statement.GuiStatementSelector;
 
-public class GuiFiller extends GuiBC8<ContainerFiller> {
+import buildcraft.builders.container.ContainerFiller;
+
+public class GuiFiller extends GuiStatementSelector<ContainerFiller> {
     private static final ResourceLocation TEXTURE_BASE =
             new ResourceLocation("buildcraftbuilders:textures/gui/filler.png");
     private static final int SIZE_X = 176, SIZE_Y = 241;
@@ -48,5 +52,10 @@ public class GuiFiller extends GuiBC8<ContainerFiller> {
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(rootElement);
+    }
+
+    @Override
+    public IStatementContainer getStatementContainer() {
+        return null;// TODO!
     }
 }
