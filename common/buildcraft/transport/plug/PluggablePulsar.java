@@ -33,6 +33,7 @@ import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableString;
 import buildcraft.lib.misc.MathUtil;
+import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -237,6 +238,7 @@ public class PluggablePulsar extends PipePluggable {
     public boolean onPluggableActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ) {
         if (!holder.getPipeWorld().isRemote) {
             manuallyEnabled = !manuallyEnabled;
+            SoundUtil.playLeverSwitch(holder.getPipeWorld(), holder.getPipePos(), manuallyEnabled);
             scheduleNetworkUpdate();
         }
         return true;

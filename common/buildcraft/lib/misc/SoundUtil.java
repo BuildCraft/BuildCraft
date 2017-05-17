@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumActionResult;
@@ -33,6 +34,12 @@ public class SoundUtil {
         float volume = (soundType.getVolume() + 1.0F) / 2.0F;
         float pitch = soundType.getPitch() * 0.8F;
         world.playSound(null, pos, soundType.getBreakSound(), SoundCategory.BLOCKS, volume, pitch);
+    }
+
+    public static void playLeverSwitch(World world, BlockPos pos, boolean isNowOn) {
+        float pitch = isNowOn ? 0.6f : 0.5f;
+        SoundEvent soundEvent = SoundEvents.BLOCK_LEVER_CLICK;
+        world.playSound(null, pos, soundEvent, SoundCategory.BLOCKS, 0.2f, pitch);
     }
 
     public static void playChangeColour(World world, BlockPos pos, @Nullable EnumDyeColor colour) {

@@ -2,7 +2,6 @@ package buildcraft.builders.item;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.IntStream;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -19,6 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.enums.EnumSnapshotType;
 
 import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.LocaleUtil;
 
 import buildcraft.builders.snapshot.Snapshot;
 
@@ -63,7 +63,8 @@ public class ItemSnapshot extends ItemBC_Neptune {
 
     @Override
     public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> subItems) {
-        IntStream.range(0, EnumItemSnapshotType.values().length).forEach(i -> subItems.add(new ItemStack(item, 1, i)));
+        subItems.add(new ItemStack(item, 1, 2));// clean blueprint
+        subItems.add(new ItemStack(item, 1));// clean template
     }
 
     @Override
@@ -75,14 +76,30 @@ public class ItemSnapshot extends ItemBC_Neptune {
     }
 
     @Override
+    public String getUnlocalizedName(ItemStack stack) {
+        EnumItemSnapshotType type = EnumItemSnapshotType.getFromStack(stack);
+        if (type.snapshotType == EnumSnapshotType.BLUEPRINT) {
+            return "item.blueprintItem";
+        }
+        return "item.templateItem";
+    }
+
+    @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
         Snapshot.Header header = getHeader(stack);
-        if (header != null) {
-            tooltip.add("Id: " + header.id);
-            EntityPlayer ownerPlayer = header.getOwnerPlayer(player.world);
-            tooltip.add("Owner: " + (ownerPlayer != null ? ownerPlayer.getName() : header.owner));
-            tooltip.add("Created: " + header.created);
-            tooltip.add("Name: " + header.name);
+        if (header == null) {
+            tooltip.add(LocaleUtil.localize("item.blueprint.blank"));
+        } else {
+            tooltip.add(header.name);
+            EntityPlayer author = header.getOwnerPlayer(player.world);
+            if (author != null) {
+                tooltip.add(LocaleUtil.localize("item.blueprint.author") + author.getName());
+            }
+            if (advanced) {
+                tooltip.add("Id: " + header.id);
+                tooltip.add("Date: " + header.created);
+                tooltip.add("AuthorId: " + header.owner);
+            }
         }
     }
 
@@ -92,8 +109,8 @@ public class ItemSnapshot extends ItemBC_Neptune {
         BLUEPRINT_CLEAN(EnumSnapshotType.BLUEPRINT, false),
         BLUEPRINT_USED(EnumSnapshotType.BLUEPRINT, true);
 
-        public EnumSnapshotType snapshotType;
-        public boolean used;
+        public final EnumSnapshotType snapshotType;
+        public final boolean used;
 
         EnumItemSnapshotType(EnumSnapshotType snapshotType, boolean used) {
             this.snapshotType = snapshotType;
