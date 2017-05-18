@@ -7,7 +7,26 @@ package buildcraft.core;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.tiles.IControllable.Mode;
 
-import buildcraft.core.statements.*;
+import buildcraft.core.builders.patterns.Pattern;
+import buildcraft.core.builders.patterns.PatternBox;
+import buildcraft.core.builders.patterns.PatternClear;
+import buildcraft.core.builders.patterns.PatternFill;
+import buildcraft.core.builders.patterns.PatternNone;
+import buildcraft.core.statements.ActionMachineControl;
+import buildcraft.core.statements.ActionRedstoneOutput;
+import buildcraft.core.statements.BCStatement;
+import buildcraft.core.statements.CoreActionProvider;
+import buildcraft.core.statements.CoreTriggerProvider;
+import buildcraft.core.statements.StatementParamGateSideOnly;
+import buildcraft.core.statements.StatementParameterRedstoneLevel;
+import buildcraft.core.statements.TriggerFluidContainer;
+import buildcraft.core.statements.TriggerFluidContainerLevel;
+import buildcraft.core.statements.TriggerInventory;
+import buildcraft.core.statements.TriggerInventoryLevel;
+import buildcraft.core.statements.TriggerMachine;
+import buildcraft.core.statements.TriggerPower;
+import buildcraft.core.statements.TriggerRedstoneInput;
+import buildcraft.core.statements.TriggerTrue;
 
 public class BCCoreStatements {
     public static final TriggerTrue TRIGGER_TRUE = new TriggerTrue();
@@ -65,6 +84,15 @@ public class BCCoreStatements {
 
     public static final BCStatement[] TRIGGER_INVENTORY_ALL;
     public static final BCStatement[] TRIGGER_FLUID_ALL;
+
+    public static final PatternNone PATTERN_NONE = new PatternNone();
+    public static final PatternClear PATTERN_CLEAR = new PatternClear();
+    public static final PatternFill PATTERN_FILL = new PatternFill();
+    public static final PatternBox PATTERN_BOX = new PatternBox();
+
+    public static final Pattern[] PATTERNS = {//
+        PATTERN_NONE, PATTERN_CLEAR, PATTERN_FILL, PATTERN_BOX//
+    };
 
     static {
         TRIGGER_INVENTORY_ALL = new BCStatement[7];

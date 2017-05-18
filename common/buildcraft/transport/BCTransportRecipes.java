@@ -1,9 +1,5 @@
 package buildcraft.transport;
 
-import buildcraft.api.recipes.BuildcraftRecipeRegistry;
-import buildcraft.api.recipes.StackDefinition;
-import buildcraft.lib.inventory.filter.ArrayStackFilter;
-import buildcraft.lib.inventory.filter.OreStackFilter;
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.init.Blocks;
@@ -14,6 +10,8 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.RecipeSorter.Category;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.BCItems;
@@ -21,13 +19,18 @@ import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.api.recipes.StackDefinition;
 
-import buildcraft.core.BCCoreBlocks;
-import buildcraft.core.BCCoreItems;
+import buildcraft.lib.inventory.filter.ArrayStackFilter;
+import buildcraft.lib.inventory.filter.OreStackFilter;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.NBTAwareShapedOreRecipe;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
+
+import buildcraft.core.BCCoreBlocks;
+import buildcraft.core.BCCoreItems;
 import buildcraft.transport.gate.EnumGateLogic;
 import buildcraft.transport.gate.EnumGateMaterial;
 import buildcraft.transport.gate.EnumGateModifier;
@@ -38,6 +41,8 @@ import buildcraft.transport.recipe.FacadeSwapRecipe;
 
 public class BCTransportRecipes {
     public static void init() {
+        RecipeSorter.register("buildcrafttransport:facade_swap_recipe", FacadeSwapRecipe.class, Category.SHAPELESS, "after:forge:shapedore");
+
         if (BCTransportItems.waterproof != null) {
             GameRegistry.addShapelessRecipe(new ItemStack(BCTransportItems.waterproof), new ItemStack(Items.DYE, 1, 2));
         }
@@ -227,14 +232,8 @@ public class BCTransportRecipes {
         }
 
         if (BCTransportItems.plugLightSensor != null) {
-            BuildcraftRecipeRegistry.assemblyRecipes.addRecipe(
-                    new AssemblyRecipe(
-                            "light-sensor",
-                            500 * MjAPI.MJ,
-                            ImmutableSet.of(ArrayStackFilter.definition(Blocks.DAYLIGHT_DETECTOR)),
-                            new ItemStack(BCTransportItems.plugLightSensor)
-                    )
-            );
+            BuildcraftRecipeRegistry.assemblyRecipes.addRecipe(new AssemblyRecipe("light-sensor", 500 * MjAPI.MJ, ImmutableSet.of(ArrayStackFilter.definition(Blocks.DAYLIGHT_DETECTOR)), new ItemStack(
+                BCTransportItems.plugLightSensor)));
         }
 
         if (BCTransportItems.plugFacade != null) {

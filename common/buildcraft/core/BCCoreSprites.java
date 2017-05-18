@@ -6,12 +6,13 @@ import java.util.Map;
 
 import buildcraft.api.tiles.IControllable;
 
+import buildcraft.lib.client.sprite.SpriteHolderRegistry;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+
 import buildcraft.core.statements.TriggerFluidContainer;
 import buildcraft.core.statements.TriggerFluidContainerLevel;
 import buildcraft.core.statements.TriggerInventory;
 import buildcraft.core.statements.TriggerInventoryLevel;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
 public class BCCoreSprites {
     public static final SpriteHolder TRIGGER_TRUE;
@@ -26,6 +27,13 @@ public class BCCoreSprites {
 
     public static final SpriteHolder TRIGGER_POWER_HIGH;
     public static final SpriteHolder TRIGGER_POWER_LOW;
+
+    public static final SpriteHolder FILLER_NONE;
+    public static final SpriteHolder FILLER_CLEAR;
+    public static final SpriteHolder FILLER_FILL;
+    public static final SpriteHolder FILLER_BOX;
+    public static final SpriteHolder FILLER_FLATTEN;
+    public static final SpriteHolder FILLER_HORIZON;
 
     public static final SpriteHolder[] PARAM_REDSTONE_LEVEL;
 
@@ -48,6 +56,13 @@ public class BCCoreSprites {
 
         TRIGGER_POWER_HIGH = getHolder("triggers/trigger_energy_storage_high");
         TRIGGER_POWER_LOW = getHolder("triggers/trigger_energy_storage_low");
+
+        FILLER_NONE = getHolder("filler/patterns/none");
+        FILLER_CLEAR = getHolder("filler/patterns/clear");
+        FILLER_FILL = getHolder("filler/patterns/fill");
+        FILLER_BOX = getHolder("filler/patterns/box");
+        FILLER_FLATTEN = getHolder("filler/patterns/flatten");
+        FILLER_HORIZON = getHolder("filler/patterns/horizon");
 
         PARAM_REDSTONE_LEVEL = new SpriteHolder[16];
         for (int i = 0; i < PARAM_REDSTONE_LEVEL.length; i++) {

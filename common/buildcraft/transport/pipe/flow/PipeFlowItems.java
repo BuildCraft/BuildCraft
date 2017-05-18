@@ -123,7 +123,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
     // IFlowItems
 
     @Override
-    public int tryExtractItems(int count, EnumFacing from, EnumDyeColor colour, IStackFilter filter) {
+    public int tryExtractItems(int count, EnumFacing from, EnumDyeColor colour, IStackFilter filter, boolean simulate) {
         if (pipe.getHolder().getPipeWorld().isRemote) {
             throw new IllegalStateException("Cannot extract items on the client side!");
         }
@@ -139,6 +139,10 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         if (possible.isEmpty()) {
             return 0;
         }
+        if (possible.getCount() > possible.getMaxStackSize()) {
+            possible.setCount(possible.getMaxStackSize());
+            count = possible.getMaxStackSize();
+        }
 
         IPipeHolder holder = pipe.getHolder();
         PipeEventItem.TryInsert tryInsert = new PipeEventItem.TryInsert(holder, this, colour, from, possible);
@@ -149,14 +153,15 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         count = Math.min(count, tryInsert.accepted);
 
-        ItemStack stack = trans.extract(filter, count, count, false);
+        ItemStack stack = trans.extract(filter, count, count, simulate);
 
         if (stack.isEmpty()) {
             throw new IllegalStateException("The transactor " + trans + " returned an empty itemstack from a known good request!");
         }
 
-        insertItemEvents(stack, colour, EXTRACT_SPEED, from);
-
+        if (!simulate) {
+            insertItemEvents(stack, colour, EXTRACT_SPEED, from);
+        }
         return count;
     }
 
@@ -456,7 +461,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         item.tried.add(from);
         addItemTryMerge(item);
     }
-    
+
     private void addItemTryMerge(TravellingItem item) {
         for (List<TravellingItem> list : items.getAllElements()) {
             for (TravellingItem item2 : list) {

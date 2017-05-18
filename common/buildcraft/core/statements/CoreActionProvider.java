@@ -7,13 +7,18 @@ package buildcraft.core.statements;
 import java.util.Arrays;
 import java.util.Collection;
 
-import buildcraft.api.tiles.TilesAPI;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.statements.*;
+import buildcraft.api.statements.IActionExternal;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IActionInternalSided;
+import buildcraft.api.statements.IActionProvider;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.containers.IFillerStatementContainer;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.tiles.IControllable;
+import buildcraft.api.tiles.TilesAPI;
 
 import buildcraft.core.BCCoreStatements;
 
@@ -32,11 +37,17 @@ public enum CoreActionProvider implements IActionProvider {
 
     @Override
     public void addExternalActions(Collection<IActionExternal> res, EnumFacing side, TileEntity tile) {
-        if (tile.hasCapability(TilesAPI.CAP_CONTROLLABLE, null)) {
-            IControllable controllable = tile.getCapability(TilesAPI.CAP_CONTROLLABLE, null);
+        IControllable controllable = tile.getCapability(TilesAPI.CAP_CONTROLLABLE, side.getOpposite());
+        if (controllable != null) {
             Arrays.stream(BCCoreStatements.ACTION_MACHINE_CONTROL)
                     .filter(action -> controllable.setControlMode(action.mode, true))
                     .forEach(res::add);
+        }
+        if (tile instanceof IFillerStatementContainer) {
+            res.add(BCCoreStatements.PATTERN_NONE);
+            res.add(BCCoreStatements.PATTERN_CLEAR);
+            res.add(BCCoreStatements.PATTERN_FILL);
+            res.add(BCCoreStatements.PATTERN_BOX);
         }
     }
 }

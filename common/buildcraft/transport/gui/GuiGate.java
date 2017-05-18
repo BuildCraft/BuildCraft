@@ -30,11 +30,10 @@ import buildcraft.transport.gate.GateLogic;
 import buildcraft.transport.gate.GateVariant;
 import buildcraft.transport.gate.TriggerWrapper;
 
-public class GuiGate extends GuiStatementSelector<ContainerGate> implements ITooltipElement {
+public class GuiGate extends GuiStatementSelector<ContainerGate> {
 
     public static final ResourceLocation TEXTURE_GATE = new ResourceLocation("buildcrafttransport:textures/gui/gate_interface.png");
 
-    public static final int GUI_WIDTH = 176;
     public static final int GUI_HEIGHT_NORM = 117;
 
     public static final GuiIcon ICON_BACK_TOP = new GuiIcon(TEXTURE_GATE, 0, 0, GUI_WIDTH, 16);
@@ -180,12 +179,7 @@ public class GuiGate extends GuiStatementSelector<ContainerGate> implements IToo
                 }
             }
         }
-        iteratePossible((wrapper, pos) -> {
-            ElementStatement.draw(this, wrapper, pos);
-            if (currentHover != null) {
-                drawGradientRect(pos.getX(), pos.getY(), pos.getX() + 18, pos.getY() + 18, 0x55_00_00_00, 0x55_00_00_00);
-            }
-        });
+        super.drawBackgroundLayer(partialTicks);
     }
 
     @Override
@@ -197,68 +191,36 @@ public class GuiGate extends GuiStatementSelector<ContainerGate> implements IToo
         fontRenderer.drawString(localizedName, cX, y + 5, 0x404040);
         fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), x + 8, y + ySize - 97, 0x404040);
         GlStateManager.color(1, 1, 1);
-
-        if (currentHover != null) {
-            GlStateManager.disableDepth();
-            drawGradientRect(rootElement.getX(), rootElement.getY(), rootElement.getX() + GUI_WIDTH, rootElement.getY() + ySize, 0x55_00_00_00, 0x55_00_00_00);
-            GlStateManager.enableDepth();
-        }
-
-        if (draggingElement != null) {
-            ElementStatement.draw(this, draggingElement, mouse.offset(-9, -9));
-        }
+        super.drawForegroundLayer();
     }
 
     @Override
-    public void addToolTips(List<ToolTip> tooltips) {
-        if (currentHover != null) {
-            return;
-        }
-
-        iteratePossible((wrapper, pos) -> {
-            if (pos.contains(mouse) && wrapper != null) {
-                String[] arr = { wrapper.getDescription() };
-                EnumFacing face = wrapper.sourcePart.face;
-                if (face != null) {
-                    String translated = ColourUtil.getTextFullTooltip(face);
-                    translated = LocaleUtil.localize("gate.side", translated);
-                    arr = new String[] { arr[0], translated };
-                }
-                tooltips.add(new ToolTip(arr));
-            }
-        });
-    }
-
-    private interface OnStatement {
-        void iterate(StatementWrapper wrapper, IGuiArea pos);
-    }
-
-    private void iteratePossible(OnStatement onStatemenet) {
+    protected void iteratePossible(OnStatement consumer) {
         int tx = 0;
         int ty = 0;
         EnumPipePart last = null;
-        onStatemenet.iterate(null, rootElement.offset(-18, 8).resize(18, 18));
+        consumer.iterate(null, rootElement.offset(-18, 8).resize(18, 18));
         for (TriggerWrapper wrapper : container.possibleTriggers) {
             tx++;
             if (tx > 3 || (last != null && last != wrapper.sourcePart)) {
                 tx = 0;
                 ty++;
             }
-            onStatemenet.iterate(wrapper, rootElement.offset(18 * (-1 - tx), ty * 18 + 8).resize(18, 18));
+            consumer.iterate(wrapper, rootElement.offset(18 * (-1 - tx), ty * 18 + 8).resize(18, 18));
             last = wrapper.sourcePart;
         }
 
         tx = 0;
         ty = 0;
         last = null;
-        onStatemenet.iterate(null, rootElement.offset(GUI_WIDTH, 8).resize(18, 18));
+        consumer.iterate(null, rootElement.offset(GUI_WIDTH, 8).resize(18, 18));
         for (ActionWrapper wrapper : container.possibleActions) {
             tx++;
             if (tx > 3 || (last != null && last != wrapper.sourcePart)) {
                 tx = 0;
                 ty++;
             }
-            onStatemenet.iterate(wrapper, rootElement.offset(GUI_WIDTH + 18 * tx, ty * 18 + 8).resize(18, 18));
+            consumer.iterate(wrapper, rootElement.offset(GUI_WIDTH + 18 * tx, ty * 18 + 8).resize(18, 18));
             last = wrapper.sourcePart;
         }
     }
@@ -276,32 +238,6 @@ public class GuiGate extends GuiStatementSelector<ContainerGate> implements IToo
                 container.setConnected(i, !container.gate.connections[i]);
                 return;
             }
-        }
-
-        // Test for dragging statements from the side contexts
-        iteratePossible((wrapper, pos) -> {
-            if (pos.contains(mouse)) {
-                draggingElement = wrapper;
-            }
-        });
-    }
-
-    @Override
-    protected void mouseReleased(int mouseX, int mouseY, int state) {
-        super.mouseReleased(mouseX, mouseY, state);
-
-        // Test for dragging statements from the side contexts
-        if (draggingElement != null) {
-            for (IGuiElement elem : guiElements) {
-                if (elem instanceof ElementStatement<?, ?>) {
-                    ElementStatement<?, ?> element = (ElementStatement<?, ?>) elem;
-                    if (element.contains(mouse)) {
-                        element.reference.setifCan(draggingElement);
-                        break;
-                    }
-                }
-            }
-            draggingElement = null;
         }
     }
 }

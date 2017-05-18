@@ -2,6 +2,7 @@ package buildcraft.lib;
 
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.crops.CropManager;
+import buildcraft.api.filler.FillerManager;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 
@@ -13,6 +14,7 @@ import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 import buildcraft.lib.recipe.RefineryRecipeRegistry;
+import buildcraft.lib.registry.FillerRegistry;
 
 public class BCLibRegistries {
     public static void fmlPreInit() {
@@ -22,6 +24,7 @@ public class BCLibRegistries {
         BuildcraftFuelRegistry.fuel = FuelRegistry.INSTANCE;
         BuildcraftFuelRegistry.coolant = CoolantRegistry.INSTANCE;
         BuildCraftAPI.fakePlayerProvider = FakePlayerUtil.INSTANCE;
+        FillerManager.registry = FillerRegistry.INSTANCE;
 
         CropManager.setDefaultHandler(CropHandlerPlantable.INSTANCE);
         CropManager.registerHandler(CropHandlerReeds.INSTANCE);

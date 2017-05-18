@@ -1,7 +1,14 @@
 package buildcraft.transport.pipe.flow;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -12,20 +19,28 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.*;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.IFluidFilter;
+import buildcraft.api.core.IFluidHandlerAdv;
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IFlowFluid;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeApi.FluidTransferInfo;
+import buildcraft.api.transport.pipe.PipeEventFluid;
 import buildcraft.api.transport.pipe.PipeEventFluid.OnMoveToCentre;
 import buildcraft.api.transport.pipe.PipeEventFluid.PreMoveToCentre;
+import buildcraft.api.transport.pipe.PipeFlow;
 
-import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MathUtil;
@@ -33,6 +48,8 @@ import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.net.cache.NetworkedObjectCache;
+
+import buildcraft.core.BCCoreConfig;
 
 public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable {
 
@@ -49,7 +66,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
     /* Default to an additional second of fluid inserting and removal. This means that (for a normal pipe like cobble)
      * it will be 20 * (10 + 12) = 20 * 22 = 440 - oh that's not good is it */
-    public final int capacity = fluidTransferInfo.transferPerTick * (10);// TEMP!
+    public final int capacity = Math.max(Fluid.BUCKET_VOLUME, fluidTransferInfo.transferPerTick * (10));// TEMP!
 
     private final Map<EnumPipePart, Section> sections = new EnumMap<>(EnumPipePart.class);
     private FluidStack currentFluid;
@@ -138,74 +155,51 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     // IFlowFluid
 
     @Override
-    public FluidStack tryExtractFluid(int millibuckets, EnumFacing from, FluidStack filter) {
-        // NOTE: all changes to this method probably also need to be applied to the advanced version below!
-        if (from == null) {
+    public FluidStack tryExtractFluid(int millibuckets, EnumFacing from, FluidStack filter, boolean simulate) {
+        FluidExtractor extractor = (mb, c, handler) -> {
+            FluidStack f = filter == null ? c : filter;
+            return extractSimple(mb, f, handler, simulate);
+        };
+        return tryExtractFluidInternal(millibuckets, from, extractor, simulate);
+    }
+
+    @Override
+    public FluidStack tryExtractFluidAdv(int millibuckets, EnumFacing from, IFluidFilter filter, boolean simulate) {
+        FluidExtractor extractor = (mb, c, handler) -> {
+            if (c != null) {
+                if (!filter.matches(c)) {
+                    return null;
+                }
+                return extractSimple(mb, c, handler, simulate);
+            }
+            if (!(handler instanceof IFluidHandlerAdv)) {
+                return null;
+            }
+            IFluidHandlerAdv handlerAdv = (IFluidHandlerAdv) handler;
+            return handlerAdv.drain(filter, mb, !simulate);
+        };
+        return tryExtractFluidInternal(millibuckets, from, extractor, simulate);
+    }
+
+    @FunctionalInterface
+    private interface FluidExtractor {
+        FluidStack extract(int millibuckets, FluidStack current, IFluidHandler handler);
+    }
+
+    private FluidStack tryExtractFluidInternal(int millibuckets, EnumFacing from, FluidExtractor extractor, boolean simulate) {
+        if (from == null || millibuckets <= 0) {
             return null;
         }
         IFluidHandler fluidHandler = pipe.getHolder().getCapabilityFromPipe(from, CapUtil.CAP_FLUIDS);
         if (fluidHandler == null) {
             return null;
         }
-        if (filter == null) {
-            filter = this.currentFluid;
-        } else if (currentFluid != null && !filter.isFluidEqual(currentFluid)) {
-            return null;
-        }
         Section section = sections.get(EnumPipePart.fromFacing(from));
-        millibuckets = Math.min(millibuckets, section.getMaxFilled());
+        millibuckets = Math.min(millibuckets, capacity - section.amount);
         if (millibuckets <= 0) {
             return null;
         }
-        FluidStack toAdd;
-        if (filter == null) {
-            toAdd = fluidHandler.drain(millibuckets, true);
-        } else {
-            filter = filter.copy();
-            filter.amount = millibuckets;
-            toAdd = fluidHandler.drain(filter, true);
-        }
-        if (toAdd == null || toAdd.amount <= 0) {
-            return null;
-        }
-        int extracted = toAdd.amount;
-        if (currentFluid == null) {
-            setFluid(toAdd);
-        }
-        int reallyFilled = section.fill(extracted, true);
-        section.ticksInDirection = COOLDOWN_INPUT;
-        if (reallyFilled != extracted) {
-            BCLog.logger.warn("[tryExtractFluid] Filled " + reallyFilled + " != extracted " + extracted //
-                + " (maxExtract = " + millibuckets + ")" //
-                + " (handler = " + fluidHandler.getClass() + ") @" + pipe.getHolder().getPipePos());
-        }
-        return toAdd;
-    }
-
-    @Override
-    public FluidStack tryExtractFluidAdv(int millibuckets, EnumFacing from, IFluidFilter filter) {
-        // Mostly a copy of the above method
-        if (from == null || filter == null || millibuckets <= 0) {
-            return null;
-        }
-        IFluidHandler fluidHandler = pipe.getHolder().getCapabilityFromPipe(from, CapUtil.CAP_FLUIDS);
-        if (!(fluidHandler instanceof IFluidHandlerAdv)) {
-            return null;
-        }
-        IFluidHandlerAdv handlerAdv = (IFluidHandlerAdv) fluidHandler;
-        if (currentFluid != null) {
-            if (!filter.matches(currentFluid)) {
-                return null;
-            }
-            final IFluidFilter existing = filter;
-            filter = (fluid) -> currentFluid.isFluidEqual(fluid) && existing.matches(fluid);
-        }
-        Section section = sections.get(EnumPipePart.fromFacing(from));
-        millibuckets = Math.min(millibuckets, section.getMaxFilled());
-        if (millibuckets <= 0) {
-            return null;
-        }
-        FluidStack toAdd = handlerAdv.drain(filter, millibuckets, true);
+        FluidStack toAdd = extractor.extract(millibuckets, currentFluid, fluidHandler);
         if (toAdd == null || toAdd.amount <= 0) {
             return null;
         }
@@ -213,13 +207,22 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         if (currentFluid == null) {
             setFluid(toAdd);
         }
-        int reallyFilled = section.fill(millibuckets, true);
+        int reallyFilled = section.fillInternal(millibuckets, !simulate);
         section.ticksInDirection = COOLDOWN_INPUT;
         if (reallyFilled != millibuckets) {
             BCLog.logger.warn("[tryExtractFluidAdv] Filled " + reallyFilled + " != extracted " + millibuckets //
                 + " (handler = " + fluidHandler.getClass() + ") @" + pipe.getHolder().getPipePos());
         }
         return toAdd;
+    }
+
+    private static FluidStack extractSimple(int millibuckets, FluidStack filter, IFluidHandler handler, boolean simulate) {
+        if (filter == null) {
+            return handler.drain(millibuckets, !simulate);
+        }
+        filter = filter.copy();
+        filter.amount = millibuckets;
+        return handler.drain(filter, !simulate);
     }
 
     // IDebuggable
@@ -675,6 +678,18 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         /** @return The fluid filled */
         int fill(int maxFill, boolean doFill) {
             int amountToFill = Math.min(getMaxFilled(), maxFill);
+            if (amountToFill <= 0) {
+                return 0;
+            }
+            if (doFill) {
+                incoming[currentTime] += amountToFill;
+                amount += amountToFill;
+            }
+            return amountToFill;
+        }
+
+        public int fillInternal(int maxFill, boolean doFill) {
+            int amountToFill = Math.min(capacity - amount, maxFill);
             if (amountToFill <= 0) {
                 return 0;
             }

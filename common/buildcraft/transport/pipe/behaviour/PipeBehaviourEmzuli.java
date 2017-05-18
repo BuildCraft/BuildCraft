@@ -135,7 +135,7 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
             currentSlot = getNextSlot();
         }
         if (currentSlot == null) return 0;
-        int extracted = flow.tryExtractItems(count, dir, slotColours.get(currentSlot), filter);
+        int extracted = flow.tryExtractItems(count, dir, slotColours.get(currentSlot), filter, false);
         if (extracted > 0) {
             currentSlot = getNextSlot();
             pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);

@@ -141,7 +141,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
         if (filters.getStackInSlot(currentFilter).isEmpty()) {
             advanceFilter();
         }
-        int extracted = flow.tryExtractItems(1, getCurrentDir(), null, getStackFilter());
+        int extracted = flow.tryExtractItems(1, getCurrentDir(), null, getStackFilter(), false);
         if (extracted > 0 & filterMode == FilterMode.ROUND_ROBIN) {
             advanceFilter();
         }
@@ -158,12 +158,12 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
             default:
             case WHITE_LIST:
                 // Firstly try the advanced version - if that fails we will need to try the basic version
-                FluidStack extracted = flow.tryExtractFluidAdv(millibuckets, dir, new ArrayFluidFilter(filters.stacks));
+                FluidStack extracted = flow.tryExtractFluidAdv(millibuckets, dir, new ArrayFluidFilter(filters.stacks), false);
 
                 if (extracted == null || extracted.amount <= 0) {
                     for (int i = 0; i < filters.getSlots(); i++) {
                         ItemStack stack = filters.getStackInSlot(i);
-                        extracted = flow.tryExtractFluid(millibuckets, dir, FluidUtil.getFluidContained(stack));
+                        extracted = flow.tryExtractFluid(millibuckets, dir, FluidUtil.getFluidContained(stack), false);
                         if (extracted != null && extracted.amount > 0) {
                             return extracted;
                         }
@@ -172,7 +172,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
                 return null;
             case BLACK_LIST:
                 // We cannot fallback to the basic version - only use the advanced version
-                return flow.tryExtractFluidAdv(millibuckets, dir, new InvertedFluidFilter(new ArrayFluidFilter(filters.stacks)));
+                return flow.tryExtractFluidAdv(millibuckets, dir, new InvertedFluidFilter(new ArrayFluidFilter(filters.stacks)), false);
             case ROUND_ROBIN:
                 // We can't do this -- amounts might differ and its just ugly
                 return null;
