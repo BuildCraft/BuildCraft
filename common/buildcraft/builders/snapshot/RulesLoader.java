@@ -25,8 +25,8 @@ public class RulesLoader {
     private static final List<JsonRule> RULES = new ArrayList<>();
     public static final Set<String> READ_DOMAINS = new HashSet<>();
     private static final LoadingCache<IBlockState, Set<JsonRule>> BLOCK_RULES_CACHE = CacheBuilder.newBuilder()
-            .expireAfterAccess(5, TimeUnit.MINUTES)
-            .build(CacheLoader.from(RulesLoader::getBlockRulesInternal));
+        .expireAfterAccess(5, TimeUnit.MINUTES)
+        .build(CacheLoader.from(RulesLoader::getBlockRulesInternal));
 
     public static void loadAll() {
         RULES.clear();
@@ -38,45 +38,45 @@ public class RulesLoader {
             String domain = block.getRegistryName().getResourceDomain();
             if (!READ_DOMAINS.contains(domain)) {
                 InputStream inputStream = block.getClass().getClassLoader().getResourceAsStream(
-                        "assets/" + domain + "/buildcraft/builders/rules.json"
+                    "assets/" + domain + "/buildcraft/builders/rules.json"
                 );
                 if (inputStream != null) {
                     RULES.addAll(
-                            new GsonBuilder()
-                                    .registerTypeAdapter(
-                                            ItemStack.class,
-                                            (JsonDeserializer<ItemStack>) (json, typeOfT, context) -> {
-                                                String itemName = json.getAsString();
-                                                itemName = itemName.contains("@") ? itemName : itemName + "@0";
-                                                return new ItemStack(
-                                                        Objects.requireNonNull(
-                                                                Item.getByNameOrId(
-                                                                        itemName.substring(
-                                                                                0,
-                                                                                itemName.indexOf("@")
-                                                                        )
-                                                                )
-                                                        ),
-                                                        1,
-                                                        Integer.parseInt(itemName.substring(itemName.indexOf("@") + 1))
-                                                );
-                                            }
+                        new GsonBuilder()
+                            .registerTypeAdapter(
+                                ItemStack.class,
+                                (JsonDeserializer<ItemStack>) (json, typeOfT, context) -> {
+                                    String itemName = json.getAsString();
+                                    itemName = itemName.contains("@") ? itemName : itemName + "@0";
+                                    return new ItemStack(
+                                        Objects.requireNonNull(
+                                            Item.getByNameOrId(
+                                                itemName.substring(
+                                                    0,
+                                                    itemName.indexOf("@")
+                                                )
+                                            )
+                                        ),
+                                        1,
+                                        Integer.parseInt(itemName.substring(itemName.indexOf("@") + 1))
+                                    );
+                                }
+                            )
+                            .registerTypeAdapter(
+                                BlockPos.class,
+                                (JsonDeserializer<BlockPos>) (json, typeOfT, context) ->
+                                    new BlockPos(
+                                        json.getAsJsonArray().get(0).getAsInt(),
+                                        json.getAsJsonArray().get(1).getAsInt(),
+                                        json.getAsJsonArray().get(2).getAsInt()
                                     )
-                                    .registerTypeAdapter(
-                                            BlockPos.class,
-                                            (JsonDeserializer<BlockPos>) (json, typeOfT, context) ->
-                                                    new BlockPos(
-                                                            json.getAsJsonArray().get(0).getAsInt(),
-                                                            json.getAsJsonArray().get(1).getAsInt(),
-                                                            json.getAsJsonArray().get(2).getAsInt()
-                                                    )
-                                    )
-                                    .create()
-                                    .fromJson(
-                                            new InputStreamReader(inputStream),
-                                            new TypeToken<List<JsonRule>>() {
-                                            }.getType()
-                                    )
+                            )
+                            .create()
+                            .fromJson(
+                                new InputStreamReader(inputStream),
+                                new TypeToken<List<JsonRule>>() {
+                                }.getType()
+                            )
                     );
                     READ_DOMAINS.add(domain);
                 }
@@ -98,40 +98,40 @@ public class RulesLoader {
 
     private static Set<JsonRule> getBlockRulesInternal(IBlockState blockState) {
         return RulesLoader.RULES.stream()
-                .filter(rule -> rule.selectors != null)
-                .filter(rule ->
-                        rule.selectors.stream()
-                                .anyMatch(selector -> {
-                                    boolean complex = selector.contains("[");
-                                    return Block.getBlockFromName(
-                                            complex
-                                                    ? selector.substring(0, selector.indexOf("["))
-                                                    : selector
-                                    ) == blockState.getBlock() &&
-                                            (!complex ||
-                                                    Arrays.stream(
-                                                            selector.substring(
-                                                                    selector.indexOf("[") + 1,
-                                                                    selector.indexOf("]")
-                                                            )
-                                                                    .split(",")
-                                                    )
-                                                            .map(nameValue -> nameValue.split("="))
-                                                            .allMatch(nameValue ->
-                                                                    blockState.getPropertyKeys().stream()
-                                                                            .filter(property ->
-                                                                                    property.getName().equals(nameValue[0])
-                                                                            )
-                                                                            .findFirst()
-                                                                            .map(blockState::getValue)
-                                                                            .map(Object::toString)
-                                                                            .map(nameValue[1]::equals)
-                                                                            .orElse(false)
-                                                            )
-                                            );
-                                })
-                )
-                .collect(Collectors.toCollection(HashSet::new));
+            .filter(rule -> rule.selectors != null)
+            .filter(rule ->
+                rule.selectors.stream()
+                    .anyMatch(selector -> {
+                        boolean complex = selector.contains("[");
+                        return Block.getBlockFromName(
+                            complex
+                                ? selector.substring(0, selector.indexOf("["))
+                                : selector
+                        ) == blockState.getBlock() &&
+                            (!complex ||
+                                Arrays.stream(
+                                    selector.substring(
+                                        selector.indexOf("[") + 1,
+                                        selector.indexOf("]")
+                                    )
+                                        .split(",")
+                                )
+                                    .map(nameValue -> nameValue.split("="))
+                                    .allMatch(nameValue ->
+                                        blockState.getPropertyKeys().stream()
+                                            .filter(property ->
+                                                property.getName().equals(nameValue[0])
+                                            )
+                                            .findFirst()
+                                            .map(blockState::getValue)
+                                            .map(Object::toString)
+                                            .map(nameValue[1]::equals)
+                                            .orElse(false)
+                                    )
+                            );
+                    })
+            )
+            .collect(Collectors.toCollection(HashSet::new));
     }
 
     public static Set<JsonRule> getRules(IBlockState blockState) {
@@ -141,8 +141,8 @@ public class RulesLoader {
     public static Set<JsonRule> getRules(Entity entity) {
         // noinspection ConstantConditions
         return RulesLoader.RULES.stream()
-                .filter(rule -> rule.selectors != null)
-                .filter(rule -> rule.selectors.stream().anyMatch(EntityList.getKey(entity).toString()::equals))
-                .collect(Collectors.toCollection(HashSet::new));
+            .filter(rule -> rule.selectors != null)
+            .filter(rule -> rule.selectors.stream().anyMatch(EntityList.getKey(entity).toString()::equals))
+            .collect(Collectors.toCollection(HashSet::new));
     }
 }

@@ -48,9 +48,9 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
     @Override
     public Set<BlockPos> getRequiredBlockOffsets() {
         return Stream.concat(Arrays.stream(EnumFacing.HORIZONTALS), Stream.of(EnumFacing.DOWN))
-                .map(EnumFacing::getDirectionVec)
-                .map(BlockPos::new)
-                .collect(Collectors.toSet());
+            .map(EnumFacing::getDirectionVec)
+            .map(BlockPos::new)
+            .collect(Collectors.toSet());
     }
 
     @Override
@@ -85,8 +85,8 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
     @Override
     public boolean canBuild(World world, BlockPos blockPos) {
         return world.isAirBlock(blockPos) ||
-                BlockUtil.getFluidWithFlowing(world, blockPos) != BlockUtil.getFluidWithFlowing(blockState.getBlock()) &&
-                        BlockUtil.getFluid(world, blockPos) == null;
+            BlockUtil.getFluidWithFlowing(world, blockPos) != BlockUtil.getFluidWithFlowing(blockState.getBlock()) &&
+                BlockUtil.getFluid(world, blockPos) == null;
     }
 
     @Override
@@ -96,13 +96,13 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
         }
         if (world.setBlockState(blockPos, blockState, 11)) {
             Stream.concat(
-                    Stream.of(EnumFacing.values())
-                            .map(EnumFacing::getDirectionVec)
-                            .map(BlockPos::new),
-                    Stream.of(BlockPos.ORIGIN)
+                Stream.of(EnumFacing.values())
+                    .map(EnumFacing::getDirectionVec)
+                    .map(BlockPos::new),
+                Stream.of(BlockPos.ORIGIN)
             )
-                    .map(blockPos::add)
-                    .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, blockState.getBlock(), false));
+                .map(blockPos::add)
+                .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, blockState.getBlock(), false));
             return true;
         }
         return false;

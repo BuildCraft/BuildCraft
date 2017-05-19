@@ -8,9 +8,7 @@ import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.addon.AddonFillingPlanner;
 import buildcraft.builders.filling.Filling;
-import buildcraft.builders.snapshot.ITileForTemplateBuilder;
-import buildcraft.builders.snapshot.Template;
-import buildcraft.builders.snapshot.TemplateBuilder;
+import buildcraft.builders.snapshot.*;
 import buildcraft.core.marker.volume.EnumAddonSlot;
 import buildcraft.core.marker.volume.Lock;
 import buildcraft.core.marker.volume.VolumeBox;
@@ -56,7 +54,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                             StackInsertionFunction.getDefaultInserter(),
                             this::onSlotChange
                     ),
-                    EnumAccess.NONE,
+                    EnumAccess.INSERT,
                     EnumPipePart.VALUES
             );
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
@@ -222,6 +220,11 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     @Override
     public boolean canExcavate() {
         return canExcavate;
+    }
+
+    @Override
+    public SnapshotBuilder getBuilder() {
+        return builder;
     }
 
     @Override

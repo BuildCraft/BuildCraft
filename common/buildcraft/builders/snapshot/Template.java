@@ -69,8 +69,8 @@ public class Template extends Snapshot {
                 for (int y = 0; y < getSnapshot().size.getY(); y++) {
                     for (int x = 0; x < getSnapshot().size.getX(); x++) {
                         BlockPos blockPos = new BlockPos(x, y, z).rotate(rotation)
-                                .add(basePos)
-                                .add(offset.rotate(rotation));
+                            .add(basePos)
+                            .add(offset.rotate(rotation));
                         if (!data[x][y][z]) {
                             toBreak.add(blockPos);
                         } else {

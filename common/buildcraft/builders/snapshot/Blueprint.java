@@ -49,8 +49,8 @@ public class Blueprint extends Snapshot {
         super.deserializeNBT(nbt);
         data = new ISchematicBlock<?>[size.getX()][size.getY()][size.getZ()];
         ISchematicBlock<?>[] serializedData = NBTUtilBC.readCompoundList(nbt.getTagList("data", Constants.NBT.TAG_COMPOUND))
-                .map(SchematicBlockManager::readFromNBT)
-                .toArray(ISchematicBlock<?>[]::new);
+            .map(SchematicBlockManager::readFromNBT)
+            .toArray(ISchematicBlock<?>[]::new);
         int i = 0;
         for (int z = 0; z < size.getZ(); z++) {
             for (int y = 0; y < size.getY(); y++) {
@@ -60,8 +60,8 @@ public class Blueprint extends Snapshot {
             }
         }
         entities = NBTUtilBC.readCompoundList(nbt.getTagList("entities", Constants.NBT.TAG_COMPOUND))
-                .map(SchematicEntityManager::readFromNBT)
-                .collect(Collectors.toList());
+            .map(SchematicEntityManager::readFromNBT)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -88,8 +88,8 @@ public class Blueprint extends Snapshot {
                     for (int x = 0; x < getSnapshot().size.getX(); x++) {
                         ISchematicBlock<?> schematicBlock = data[x][y][z];
                         BlockPos blockPos = new BlockPos(x, y, z).rotate(rotation)
-                                .add(basePos)
-                                .add(offset.rotate(rotation));
+                            .add(basePos)
+                            .add(offset.rotate(rotation));
                         if (schematicBlock.isAir()) {
                             toBreak.add(blockPos);
                         } else {
@@ -99,8 +99,8 @@ public class Blueprint extends Snapshot {
                 }
             }
             getSnapshot().entities.stream()
-                    .map(schematicEntity -> schematicEntity.getRotated(rotation))
-                    .forEach(entities::add);
+                .map(schematicEntity -> schematicEntity.getRotated(rotation))
+                .forEach(entities::add);
             box = new Box();
             Stream.concat(toBreak.stream(), toPlace.keySet().stream()).forEach(box::extendToEncompass);
             maxLevel = toPlace.values().stream().mapToInt(ISchematicBlock::getLevel).max().orElse(0);

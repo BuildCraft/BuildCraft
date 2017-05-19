@@ -31,6 +31,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
     public Queue<PlaceTask> prevClientPlaceTasks = new ArrayDeque<>();
     public Vec3d robotPos = null;
     public Vec3d prevRobotPos = null;
+    public int leftToBreak;
+    public int leftToPlace;
 
     protected SnapshotBuilder(T tile) {
         this.tile = tile;
@@ -62,6 +64,10 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
      */
     protected abstract boolean isBlockCorrect(BlockPos blockPos);
 
+    protected abstract int getLeftToBreak();
+
+    protected abstract int getLeftToPlace();
+
     public abstract Box getBox();
 
     protected abstract boolean isDone();
@@ -73,9 +79,9 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         Vec3d height = new Vec3d(placeTask.pos.subtract(tile.getBuilderPos()));
         double progress = placeTask.power * 1D / placeTask.getTarget();
         return new Vec3d(tile.getBuilderPos())
-                .add(height.scale(progress))
-                .add(new Vec3d(0, Math.sin(progress * Math.PI) * (height.yCoord + 1), 0))
-                .add(new Vec3d(0.5, 1, 0.5));
+            .add(height.scale(progress))
+            .add(new Vec3d(0, Math.sin(progress * Math.PI) * (height.yCoord + 1), 0))
+            .add(new Vec3d(0.5, 1, 0.5));
     }
 
     /**
@@ -94,14 +100,14 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             prevRobotPos = robotPos;
             if (!breakTasks.isEmpty()) {
                 Vec3d newRobotPos = breakTasks.stream()
-                        .map(BreakTask::getPos)
-                        .map(Vec3d::new)
-                        .reduce(Vec3d.ZERO, Vec3d::add)
-                        .scale(1D / breakTasks.size());
+                    .map(BreakTask::getPos)
+                    .map(Vec3d::new)
+                    .reduce(Vec3d.ZERO, Vec3d::add)
+                    .scale(1D / breakTasks.size());
                 newRobotPos = new Vec3d(
-                        newRobotPos.xCoord,
-                        breakTasks.stream().map(BreakTask::getPos).mapToDouble(BlockPos::getY).max().orElse(newRobotPos.yCoord),
-                        newRobotPos.zCoord
+                    newRobotPos.xCoord,
+                    breakTasks.stream().map(BreakTask::getPos).mapToDouble(BlockPos::getY).max().orElse(newRobotPos.yCoord),
+                    newRobotPos.zCoord
                 );
                 newRobotPos = newRobotPos.add(new Vec3d(0, 3, 0));
                 Vec3d oldRobotPos = robotPos;
@@ -120,46 +126,46 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
 
         if (tile.canExcavate() && breakTasks.size() < MAX_QUEUE_SIZE) {
             Stream.concat(getToBreak().stream(), getToPlace().stream())
-                    .sorted(Comparator.comparing(blockPos ->
-                            Math.pow(blockPos.getX() - getBox().center().getX(), 2) +
-                                    Math.pow(blockPos.getZ() - getBox().center().getZ(), 2) +
-                                    100_000 - Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
-                    ))
-                    .filter(blockPos -> breakTasks.stream().map(BreakTask::getPos).noneMatch(Predicate.isEqual(blockPos)))
-                    .filter(blockPos -> !tile.getWorldBC().isAirBlock(blockPos))
-                    .filter(blockPos -> !isBlockCorrect(blockPos))
-                    .filter(blockPos -> BlockUtil.getFluidWithFlowing(tile.getWorldBC(), blockPos) == null)
-                    .map(blockPos ->
-                            new BreakTask(
-                                    blockPos,
-                                    0
-                            )
+                .sorted(Comparator.comparing(blockPos ->
+                    Math.pow(blockPos.getX() - getBox().center().getX(), 2) +
+                        Math.pow(blockPos.getZ() - getBox().center().getZ(), 2) +
+                        100_000 - Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
+                ))
+                .filter(blockPos -> breakTasks.stream().map(BreakTask::getPos).noneMatch(Predicate.isEqual(blockPos)))
+                .filter(blockPos -> !tile.getWorldBC().isAirBlock(blockPos))
+                .filter(blockPos -> !isBlockCorrect(blockPos))
+                .filter(blockPos -> BlockUtil.getFluidWithFlowing(tile.getWorldBC(), blockPos) == null)
+                .map(blockPos ->
+                    new BreakTask(
+                        blockPos,
+                        0
                     )
-                    .limit(MAX_QUEUE_SIZE - breakTasks.size())
-                    .forEach(breakTasks::add);
+                )
+                .limit(MAX_QUEUE_SIZE - breakTasks.size())
+                .forEach(breakTasks::add);
         }
 
         if ((!tile.canExcavate() || breakTasks.isEmpty()) && placeTasks.size() < MAX_QUEUE_SIZE) {
             getToPlace().stream()
-                    .sorted(Comparator.comparing(blockPos ->
-                            100_000 - (Math.pow(blockPos.getX() - tile.getBuilderPos().getX(), 2) +
-                                    Math.pow(blockPos.getZ() - tile.getBuilderPos().getZ(), 2)) +
-                                    Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
-                    ))
-                    .filter(blockPos -> placeTasks.stream().map(PlaceTask::getPos).noneMatch(Predicate.isEqual(blockPos)))
-                    .filter(blockPos -> !isBlockCorrect(blockPos))
-                    .filter(this::canPlace)
-                    .map(blockPos ->
-                            new PlaceTask(
-                                    blockPos,
-                                    getToPlaceItems(blockPos),
-                                    0
-                            )
+                .sorted(Comparator.comparing(blockPos ->
+                    100_000 - (Math.pow(blockPos.getX() - tile.getBuilderPos().getX(), 2) +
+                        Math.pow(blockPos.getZ() - tile.getBuilderPos().getZ(), 2)) +
+                        Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
+                ))
+                .filter(blockPos -> placeTasks.stream().map(PlaceTask::getPos).noneMatch(Predicate.isEqual(blockPos)))
+                .filter(blockPos -> !isBlockCorrect(blockPos))
+                .filter(this::canPlace)
+                .map(blockPos ->
+                    new PlaceTask(
+                        blockPos,
+                        getToPlaceItems(blockPos),
+                        0
                     )
-                    .filter(placeTask -> placeTask.items != null)
-                    .filter(placeTask -> !placeTask.items.contains(ItemStack.EMPTY))
-                    .limit(MAX_QUEUE_SIZE - placeTasks.size())
-                    .forEach(placeTasks::add);
+                )
+                .filter(placeTask -> placeTask.items != null)
+                .filter(placeTask -> !placeTask.items.contains(ItemStack.EMPTY))
+                .limit(MAX_QUEUE_SIZE - placeTasks.size())
+                .forEach(placeTasks::add);
         }
 
         if (!breakTasks.isEmpty()) {
@@ -167,40 +173,40 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                 BreakTask breakTask = iterator.next();
                 long target = breakTask.getTarget();
                 breakTask.power += tile.getBattery().extractPower(
-                        0,
-                        Math.min(target - breakTask.power, tile.getBattery().getStored() / breakTasks.size())
+                    0,
+                    Math.min(target - breakTask.power, tile.getBattery().getStored() / breakTasks.size())
                 );
                 if (breakTask.power >= target) {
                     BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(
-                            tile.getWorldBC(),
-                            breakTask.pos,
-                            tile.getWorldBC().getBlockState(breakTask.pos),
-                            FakePlayerUtil.INSTANCE.getFakePlayer(
-                                    (WorldServer) tile.getWorldBC(),
-                                    tile.getBuilderPos(),
-                                    tile.getOwner()
-                            )
+                        tile.getWorldBC(),
+                        breakTask.pos,
+                        tile.getWorldBC().getBlockState(breakTask.pos),
+                        FakePlayerUtil.INSTANCE.getFakePlayer(
+                            (WorldServer) tile.getWorldBC(),
+                            tile.getBuilderPos(),
+                            tile.getOwner()
+                        )
                     );
                     MinecraftForge.EVENT_BUS.post(breakEvent);
                     if (!breakEvent.isCanceled()) {
                         tile.getWorldBC().sendBlockBreakProgress(
-                                breakTask.pos.hashCode(),
-                                breakTask.pos,
-                                -1
+                            breakTask.pos.hashCode(),
+                            breakTask.pos,
+                            -1
                         );
                         tile.getWorldBC().destroyBlock(breakTask.pos, false);
                     } else {
                         tile.getBattery().addPower(
-                                Math.min(target, tile.getBattery().getCapacity() - tile.getBattery().getStored()),
-                                false
+                            Math.min(target, tile.getBattery().getCapacity() - tile.getBattery().getStored()),
+                            false
                         );
                     }
                     iterator.remove();
                 } else {
                     tile.getWorldBC().sendBlockBreakProgress(
-                            breakTask.pos.hashCode(),
-                            breakTask.pos,
-                            (int) ((breakTask.power * 9) / target)
+                        breakTask.pos.hashCode(),
+                        breakTask.pos,
+                        (int) ((breakTask.power * 9) / target)
                     );
                 }
             }
@@ -211,14 +217,14 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                 PlaceTask placeTask = iterator.next();
                 long target = placeTask.getTarget();
                 placeTask.power += tile.getBattery().extractPower(
-                        0,
-                        Math.min(target - placeTask.power, tile.getBattery().getStored() / placeTasks.size())
+                    0,
+                    Math.min(target - placeTask.power, tile.getBattery().getStored() / placeTasks.size())
                 );
                 if (placeTask.power >= target) {
                     if (!doPlaceTask(placeTask)) {
                         tile.getBattery().addPower(
-                                Math.min(target, tile.getBattery().getCapacity() - tile.getBattery().getStored()),
-                                false
+                            Math.min(target, tile.getBattery().getCapacity() - tile.getBattery().getStored()),
+                            false
                         );
                         cancelPlaceTask(placeTask);
                     }
@@ -227,6 +233,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             }
         }
 
+        leftToBreak = getLeftToBreak();
+        leftToPlace = getLeftToPlace();
         return isDone();
     }
 
@@ -235,6 +243,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         breakTasks.forEach(breakTask -> breakTask.writePayload(buffer));
         buffer.writeInt(placeTasks.size());
         placeTasks.forEach(placeTask -> placeTask.writePayload(buffer));
+        buffer.writeInt(leftToBreak);
+        buffer.writeInt(leftToPlace);
     }
 
     public void readFromByteBuf(PacketBufferBC buffer) {
@@ -242,20 +252,22 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         IntStream.range(0, buffer.readInt()).mapToObj(i -> new BreakTask(buffer)).forEach(breakTasks::add);
         placeTasks.clear();
         IntStream.range(0, buffer.readInt()).mapToObj(i -> new PlaceTask(buffer)).forEach(placeTasks::add);
+        leftToBreak = buffer.readInt();
+        leftToPlace = buffer.readInt();
     }
 
     public void cancel() {
         breakTasks.forEach(breakTask ->
-                tile.getBattery().addPower(
-                        Math.min(breakTask.getTarget(), tile.getBattery().getCapacity() - tile.getBattery().getStored()),
-                        false
-                )
+            tile.getBattery().addPower(
+                Math.min(breakTask.getTarget(), tile.getBattery().getCapacity() - tile.getBattery().getStored()),
+                false
+            )
         );
         placeTasks.forEach(placeTask ->
-                tile.getBattery().addPower(
-                        Math.min(placeTask.getTarget(), tile.getBattery().getCapacity() - tile.getBattery().getStored()),
-                        false
-                )
+            tile.getBattery().addPower(
+                Math.min(placeTask.getTarget(), tile.getBattery().getCapacity() - tile.getBattery().getStored()),
+                false
+            )
         );
     }
 

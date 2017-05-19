@@ -13,4 +13,6 @@ public interface ITileForSnapshotBuilder extends IPlayerOwned {
     BlockPos getBuilderPos();
 
     boolean canExcavate();
+
+    SnapshotBuilder<?> getBuilder();
 }

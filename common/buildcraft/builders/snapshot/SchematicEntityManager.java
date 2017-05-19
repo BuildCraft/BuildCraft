@@ -30,7 +30,9 @@ public class SchematicEntityManager {
                                                          Entity entity) {
         SchematicEntityContext context = new SchematicEntityContext(world, basePos, entity);
         ISchematicEntity<?> schematicEntity = getSchematicEntity(context);
-        if (schematicEntity != null) return schematicEntity;
+        if (schematicEntity != null) {
+            return schematicEntity;
+        }
         return null;
     }
 
@@ -53,11 +55,11 @@ public class SchematicEntityManager {
     public static NBTTagCompound writeToNBT(ISchematicEntity<?> schematicEntity) {
         NBTTagCompound schematicEntityTag = new NBTTagCompound();
         schematicEntityTag.setString(
-                "name",
-                SchematicEntityFactoryRegistry
-                        .getFactoryByInstance(schematicEntity)
-                        .name
-                        .toString()
+            "name",
+            SchematicEntityFactoryRegistry
+                .getFactoryByInstance(schematicEntity)
+                .name
+                .toString()
         );
         schematicEntityTag.setTag("data", schematicEntity.serializeNBT());
         return schematicEntityTag;
@@ -66,9 +68,9 @@ public class SchematicEntityManager {
     @Nonnull
     public static ISchematicEntity<?> readFromNBT(NBTTagCompound schematicEntityTag) {
         ISchematicEntity<?> schematicEntity = SchematicEntityFactoryRegistry
-                .getFactoryByName(new ResourceLocation(schematicEntityTag.getString("name")))
-                .supplier
-                .get();
+            .getFactoryByName(new ResourceLocation(schematicEntityTag.getString("name")))
+            .supplier
+            .get();
         schematicEntity.deserializeNBT(schematicEntityTag.getCompoundTag("data"));
         return schematicEntity;
     }

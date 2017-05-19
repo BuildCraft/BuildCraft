@@ -175,16 +175,6 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
         return currentBasePosIndex < basePoses.size() ? basePoses.get(currentBasePosIndex) : null;
     }
 
-    public SnapshotBuilder<?> getBuilder() {
-        if (snapshotType == EnumSnapshotType.TEMPLATE) {
-            return templateBuilder;
-        }
-        if (snapshotType == EnumSnapshotType.BLUEPRINT) {
-            return blueprintBuilder;
-        }
-        return null;
-    }
-
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
@@ -374,6 +364,17 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     @Override
     public boolean canExcavate() {
         return canExcavate;
+    }
+
+    @Override
+    public SnapshotBuilder<?> getBuilder() {
+        if (snapshotType == EnumSnapshotType.TEMPLATE) {
+            return templateBuilder;
+        }
+        if (snapshotType == EnumSnapshotType.BLUEPRINT) {
+            return blueprintBuilder;
+        }
+        return null;
     }
 
     @Override

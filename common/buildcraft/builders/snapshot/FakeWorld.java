@@ -42,73 +42,73 @@ public class FakeWorld extends World {
 
     public FakeWorld() {
         super(
-                new ISaveHandler() {
-                    @Nullable
-                    @Override
-                    public WorldInfo loadWorldInfo() {
-                        return null;
-                    }
+            new ISaveHandler() {
+                @Nullable
+                @Override
+                public WorldInfo loadWorldInfo() {
+                    return null;
+                }
 
-                    @Override
-                    public void checkSessionLock() throws MinecraftException {
+                @Override
+                public void checkSessionLock() throws MinecraftException {
 
-                    }
+                }
 
-                    @Override
-                    public IChunkLoader getChunkLoader(WorldProvider provider) {
-                        return null;
-                    }
+                @Override
+                public IChunkLoader getChunkLoader(WorldProvider provider) {
+                    return null;
+                }
 
-                    @Override
-                    public void saveWorldInfoWithPlayer(WorldInfo worldInformation, NBTTagCompound tagCompound) {
-                    }
+                @Override
+                public void saveWorldInfoWithPlayer(WorldInfo worldInformation, NBTTagCompound tagCompound) {
+                }
 
-                    @Override
-                    public void saveWorldInfo(WorldInfo worldInformation) {
-                    }
+                @Override
+                public void saveWorldInfo(WorldInfo worldInformation) {
+                }
 
-                    @Override
-                    public IPlayerFileData getPlayerNBTManager() {
-                        return null;
-                    }
+                @Override
+                public IPlayerFileData getPlayerNBTManager() {
+                    return null;
+                }
 
-                    @Override
-                    public void flush() {
-                    }
+                @Override
+                public void flush() {
+                }
 
-                    @Override
-                    public File getWorldDirectory() {
-                        return null;
-                    }
+                @Override
+                public File getWorldDirectory() {
+                    return null;
+                }
 
-                    @Override
-                    public File getMapFileFromName(String mapName) {
-                        return null;
-                    }
+                @Override
+                public File getMapFileFromName(String mapName) {
+                    return null;
+                }
 
-                    @Override
-                    public TemplateManager getStructureTemplateManager() {
-                        return null;
-                    }
-                },
-                new WorldInfo(
-                        new WorldSettings(
-                                0,
-                                GameType.CREATIVE,
-                                true,
-                                false,
-                                WorldType.DEFAULT
-                        ),
-                        "fake"
+                @Override
+                public TemplateManager getStructureTemplateManager() {
+                    return null;
+                }
+            },
+            new WorldInfo(
+                new WorldSettings(
+                    0,
+                    GameType.CREATIVE,
+                    true,
+                    false,
+                    WorldType.DEFAULT
                 ),
-                new WorldProvider() {
-                    @Override
-                    public DimensionType getDimensionType() {
-                        return DimensionType.OVERWORLD;
-                    }
-                },
-                new Profiler(),
-                false
+                "fake"
+            ),
+            new WorldProvider() {
+                @Override
+                public DimensionType getDimensionType() {
+                    return DimensionType.OVERWORLD;
+                }
+            },
+            new Profiler(),
+            false
         );
         chunkProvider = new FakeChunkProvider(this);
     }
@@ -123,9 +123,9 @@ public class FakeWorld extends World {
                 for (int x = -1; x <= blueprint.size.getX(); x++) {
                     BlockPos pos = new BlockPos(x, y, z).add(BLUEPRINT_OFFSET);
                     if (x == -1 || y == -1 || z == -1 ||
-                            x == blueprint.size.getX() ||
-                            y == blueprint.size.getY() ||
-                            z == blueprint.size.getZ()) {
+                        x == blueprint.size.getX() ||
+                        y == blueprint.size.getY() ||
+                        z == blueprint.size.getZ()) {
                         setBlockState(pos, useStone ? Blocks.STONE.getDefaultState() : Blocks.AIR.getDefaultState());
                     } else {
                         ISchematicBlock<?> schematicBlock = blueprint.data[x][y][z];
@@ -148,23 +148,23 @@ public class FakeWorld extends World {
         if (drops.isEmpty()) {
             entity.isDead = false;
             entity.attackEntityFrom(
-                    DamageSource.causePlayerDamage(
-                            new EntityPlayer(
-                                    this,
-                                    new GameProfile(UUID.randomUUID(), "fake")
-                            ) {
-                                @Override
-                                public boolean isSpectator() {
-                                    return false;
-                                }
+                DamageSource.causePlayerDamage(
+                    new EntityPlayer(
+                        this,
+                        new GameProfile(UUID.randomUUID(), "fake")
+                    ) {
+                        @Override
+                        public boolean isSpectator() {
+                            return false;
+                        }
 
-                                @Override
-                                public boolean isCreative() {
-                                    return false;
-                                }
-                            }
-                    ),
-                    100
+                        @Override
+                        public boolean isCreative() {
+                            return false;
+                        }
+                    }
+                ),
+                100
             );
         }
         List<ItemStack> dropsCopy = new ArrayList<>(drops);

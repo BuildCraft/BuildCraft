@@ -32,11 +32,11 @@ public class SchematicBlockManager {
                                                        IBlockState blockState,
                                                        Block block) {
         SchematicBlockContext context = new SchematicBlockContext(
-                world,
-                basePos,
-                pos,
-                blockState,
-                block
+            world,
+            basePos,
+            pos,
+            blockState,
+            block
         );
         return getSchematicBlock(context);
     }
@@ -50,19 +50,19 @@ public class SchematicBlockManager {
                 for (int x = 0; x < blueprint.size.getX(); x++) {
                     BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
                     ISchematicBlock<?> schematicBlock = blueprint.data
-                            [pos.getX() - FakeWorld.BLUEPRINT_OFFSET.getX()]
-                            [pos.getY() - FakeWorld.BLUEPRINT_OFFSET.getY()]
-                            [pos.getZ() - FakeWorld.BLUEPRINT_OFFSET.getZ()];
+                        [pos.getX() - FakeWorld.BLUEPRINT_OFFSET.getX()]
+                        [pos.getY() - FakeWorld.BLUEPRINT_OFFSET.getY()]
+                        [pos.getZ() - FakeWorld.BLUEPRINT_OFFSET.getZ()];
                     IBlockState blockState = world.getBlockState(pos);
                     Block block = blockState.getBlock();
                     schematicBlock.computeRequiredItemsAndFluids(
-                            new SchematicBlockContext(
-                                    world,
-                                    FakeWorld.BLUEPRINT_OFFSET,
-                                    pos,
-                                    blockState,
-                                    block
-                            )
+                        new SchematicBlockContext(
+                            world,
+                            FakeWorld.BLUEPRINT_OFFSET,
+                            pos,
+                            blockState,
+                            block
+                        )
                     );
                 }
             }
@@ -75,11 +75,11 @@ public class SchematicBlockManager {
     public static NBTTagCompound writeToNBT(ISchematicBlock<?> schematicBlock) {
         NBTTagCompound schematicBlockTag = new NBTTagCompound();
         schematicBlockTag.setString(
-                "name",
-                SchematicBlockFactoryRegistry
-                        .getFactoryByInstance(schematicBlock)
-                        .name
-                        .toString()
+            "name",
+            SchematicBlockFactoryRegistry
+                .getFactoryByInstance(schematicBlock)
+                .name
+                .toString()
         );
         schematicBlockTag.setTag("data", schematicBlock.serializeNBT());
         return schematicBlockTag;
@@ -88,9 +88,9 @@ public class SchematicBlockManager {
     @Nonnull
     public static ISchematicBlock<?> readFromNBT(NBTTagCompound schematicBlockTag) {
         ISchematicBlock<?> schematicBlock = SchematicBlockFactoryRegistry
-                .getFactoryByName(new ResourceLocation(schematicBlockTag.getString("name")))
-                .supplier
-                .get();
+            .getFactoryByName(new ResourceLocation(schematicBlockTag.getString("name")))
+            .supplier
+            .get();
         schematicBlock.deserializeNBT(schematicBlockTag.getCompoundTag("data"));
         return schematicBlock;
     }

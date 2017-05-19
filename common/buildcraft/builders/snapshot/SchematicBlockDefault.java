@@ -52,8 +52,8 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         }
         ResourceLocation registryName = context.block.getRegistryName();
         return registryName != null &&
-                RulesLoader.READ_DOMAINS.contains(registryName.getResourceDomain()) &&
-                RulesLoader.getRules(context.blockState).stream().noneMatch(rule -> rule.ignore);
+            RulesLoader.READ_DOMAINS.contains(registryName.getResourceDomain()) &&
+            RulesLoader.getRules(context.blockState).stream().noneMatch(rule -> rule.ignore);
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
@@ -65,31 +65,31 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
     protected void setRequiredBlockOffsets(SchematicBlockContext context, Set<JsonRule> rules) {
         requiredBlockOffsets.clear();
         rules.stream()
-                .map(rule -> rule.requiredBlockOffsets)
-                .filter(Objects::nonNull)
-                .flatMap(Collection::stream)
-                .forEach(requiredBlockOffsets::add);
+            .map(rule -> rule.requiredBlockOffsets)
+            .filter(Objects::nonNull)
+            .flatMap(Collection::stream)
+            .forEach(requiredBlockOffsets::add);
         if (context.block instanceof BlockFalling) {
             requiredBlockOffsets.add(new BlockPos(0, -1, 0));
         }
         rules.stream()
-                .map(rule -> rule.copyOppositeRequiredBlockOffsetFromProperty)
-                .forEach(propertyName ->
-                        context.blockState.getProperties().keySet().stream()
-                                .filter(property -> property.getName().equals(propertyName))
-                                .map(PropertyDirection.class::cast)
-                                .map(context.blockState::getValue)
-                                .map(EnumFacing::getOpposite)
-                                .map(EnumFacing::getDirectionVec)
-                                .map(BlockPos::new)
-                                .forEach(requiredBlockOffsets::add)
-                );
+            .map(rule -> rule.copyOppositeRequiredBlockOffsetFromProperty)
+            .forEach(propertyName ->
+                context.blockState.getProperties().keySet().stream()
+                    .filter(property -> property.getName().equals(propertyName))
+                    .map(PropertyDirection.class::cast)
+                    .map(context.blockState::getValue)
+                    .map(EnumFacing::getOpposite)
+                    .map(EnumFacing::getDirectionVec)
+                    .map(BlockPos::new)
+                    .forEach(requiredBlockOffsets::add)
+            );
         if (rules.stream().anyMatch(rule -> rule.copyRequiredBlockOffsetsFromProperties)) {
             for (EnumFacing side : EnumFacing.values()) {
                 if (context.blockState.getProperties().keySet().stream()
-                        .filter(property -> property.getName().equals(side.getName()))
-                        .map(PropertyBool.class::cast)
-                        .anyMatch(context.blockState::getValue)) {
+                    .filter(property -> property.getName().equals(side.getName()))
+                    .map(PropertyBool.class::cast)
+                    .anyMatch(context.blockState::getValue)) {
                     requiredBlockOffsets.add(new BlockPos(side.getDirectionVec()));
                 }
             }
@@ -105,14 +105,14 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
     protected void setIgnoredProperties(SchematicBlockContext context, Set<JsonRule> rules) {
         ignoredProperties.clear();
         rules.stream()
-                .map(rule -> rule.ignoredProperties)
-                .filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .flatMap(propertyName ->
-                        context.blockState.getProperties().keySet().stream()
-                                .filter(property -> property.getName().equals(propertyName))
-                )
-                .forEach(ignoredProperties::add);
+            .map(rule -> rule.ignoredProperties)
+            .filter(Objects::nonNull)
+            .flatMap(List::stream)
+            .flatMap(propertyName ->
+                context.blockState.getProperties().keySet().stream()
+                    .filter(property -> property.getName().equals(propertyName))
+            )
+            .forEach(ignoredProperties::add);
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
@@ -130,20 +130,20 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
     protected void setIgnoredTags(SchematicBlockContext context, Set<JsonRule> rules) {
         ignoredTags.clear();
         rules.stream()
-                .map(rule -> rule.ignoredTags)
-                .filter(Objects::nonNull)
-                .flatMap(Collection::stream)
-                .forEach(ignoredTags::add);
+            .map(rule -> rule.ignoredTags)
+            .filter(Objects::nonNull)
+            .flatMap(Collection::stream)
+            .forEach(ignoredTags::add);
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
     protected void setPlaceBlock(SchematicBlockContext context, Set<JsonRule> rules) {
         placeBlock = rules.stream()
-                .map(rule -> rule.placeBlock)
-                .filter(Objects::nonNull)
-                .findFirst()
-                .map(Block::getBlockFromName)
-                .orElse(context.block);
+            .map(rule -> rule.placeBlock)
+            .filter(Objects::nonNull)
+            .findFirst()
+            .map(Block::getBlockFromName)
+            .orElse(context.block);
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
@@ -151,15 +151,15 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         updateBlockOffsets.clear();
         if (rules.stream().map(rule -> rule.updateBlockOffsets).anyMatch(Objects::nonNull)) {
             rules.stream()
-                    .map(rule -> rule.updateBlockOffsets)
-                    .filter(Objects::nonNull)
-                    .flatMap(Collection::stream)
-                    .forEach(updateBlockOffsets::add);
+                .map(rule -> rule.updateBlockOffsets)
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .forEach(updateBlockOffsets::add);
         } else {
             Stream.of(EnumFacing.values())
-                    .map(EnumFacing::getDirectionVec)
-                    .map(BlockPos::new)
-                    .forEach(updateBlockOffsets::add);
+                .map(EnumFacing::getDirectionVec)
+                .map(BlockPos::new)
+                .forEach(updateBlockOffsets::add);
             updateBlockOffsets.add(BlockPos.ORIGIN);
         }
     }
@@ -168,11 +168,11 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
     protected void setCanBeReplacedWithBlocks(SchematicBlockContext context, Set<JsonRule> rules) {
         canBeReplacedWithBlocks.clear();
         rules.stream()
-                .map(rule -> rule.canBeReplacedWithBlocks)
-                .filter(Objects::nonNull)
-                .flatMap(Collection::stream)
-                .map(Block::getBlockFromName)
-                .forEach(canBeReplacedWithBlocks::add);
+            .map(rule -> rule.canBeReplacedWithBlocks)
+            .filter(Objects::nonNull)
+            .flatMap(Collection::stream)
+            .map(Block::getBlockFromName)
+            .forEach(canBeReplacedWithBlocks::add);
         canBeReplacedWithBlocks.add(context.block);
         canBeReplacedWithBlocks.add(placeBlock);
     }
@@ -181,21 +181,21 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
     protected void setRequiredItems(SchematicBlockContext context, Set<JsonRule> rules) {
         requiredItems.clear();
         requiredItems.add(
-                context.block.getPickBlock(
-                        context.blockState,
-                        null,
-                        context.world,
-                        context.pos,
-                        null
-                )
+            context.block.getPickBlock(
+                context.blockState,
+                null,
+                context.world,
+                context.pos,
+                null
+            )
         );
         if (rules.stream().anyMatch(rule -> rule.copyRequiredItemsFromDrops)) {
             requiredItems.clear();
             requiredItems.addAll(context.block.getDrops(
-                    context.world,
-                    context.pos,
-                    context.blockState,
-                    0
+                context.world,
+                context.pos,
+                context.blockState,
+                0
             ));
         }
         if (rules.stream().noneMatch(rule -> rule.doNotCopyRequiredItemsFromBreakBlockDrops)) {
@@ -206,38 +206,38 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         if (rules.stream().map(rule -> rule.requiredItems).anyMatch(Objects::nonNull)) {
             requiredItems.clear();
             rules.stream()
-                    .map(rule -> rule.requiredItems)
-                    .filter(Objects::nonNull)
-                    .flatMap(Collection::stream)
-                    .forEach(requiredItems::add);
+                .map(rule -> rule.requiredItems)
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .forEach(requiredItems::add);
         }
         rules.stream()
-                .map(rule -> rule.copyRequiredItemsCountFromProperty)
-                .filter(Objects::nonNull)
-                .forEach(propertyName ->
-                        context.blockState.getProperties().keySet().stream()
-                                .filter(property -> property.getName().equals(propertyName))
-                                .map(PropertyInteger.class::cast)
-                                .map(context.blockState::getValue)
-                                .findFirst()
-                                .ifPresent(value -> requiredItems.forEach(stack -> stack.setCount(stack.getCount() * value)))
-                );
+            .map(rule -> rule.copyRequiredItemsCountFromProperty)
+            .filter(Objects::nonNull)
+            .forEach(propertyName ->
+                context.blockState.getProperties().keySet().stream()
+                    .filter(property -> property.getName().equals(propertyName))
+                    .map(PropertyInteger.class::cast)
+                    .map(context.blockState::getValue)
+                    .findFirst()
+                    .ifPresent(value -> requiredItems.forEach(stack -> stack.setCount(stack.getCount() * value)))
+            );
         if (context.block.hasTileEntity(context.blockState)) {
             TileEntity tileEntity = context.world.getTileEntity(context.pos);
             if (tileEntity != null) {
                 rules.stream()
-                        .map(rule -> rule.copyRequiredItemsFromItemHandlersOnSides)
-                        .filter(Objects::nonNull)
-                        .flatMap(Collection::stream)
-                        .map(EnumFacing::byName)
-                        .filter(side -> tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side))
-                        .map(side -> tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side))
-                        .filter(Objects::nonNull)
-                        .flatMap(itemHandler ->
-                                IntStream.range(0, itemHandler.getSlots()).mapToObj(itemHandler::getStackInSlot)
-                        )
-                        .filter(stack -> !stack.isEmpty())
-                        .forEach(requiredItems::add);
+                    .map(rule -> rule.copyRequiredItemsFromItemHandlersOnSides)
+                    .filter(Objects::nonNull)
+                    .flatMap(Collection::stream)
+                    .map(EnumFacing::byName)
+                    .filter(side -> tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side))
+                    .map(side -> tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side))
+                    .filter(Objects::nonNull)
+                    .flatMap(itemHandler ->
+                        IntStream.range(0, itemHandler.getSlots()).mapToObj(itemHandler::getStackInSlot)
+                    )
+                    .filter(stack -> !stack.isEmpty())
+                    .forEach(requiredItems::add);
             }
         }
         requiredItems.removeIf(ItemStack::isEmpty);
@@ -307,8 +307,8 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         SchematicBlockDefault schematicBlock = new SchematicBlockDefault();
         schematicBlock.level = level;
         requiredBlockOffsets.stream()
-                .map(blockPos -> blockPos.rotate(rotation))
-                .forEach(schematicBlock.requiredBlockOffsets::add);
+            .map(blockPos -> blockPos.rotate(rotation))
+            .forEach(schematicBlock.requiredBlockOffsets::add);
         schematicBlock.blockState = blockState.withRotation(rotation);
         schematicBlock.ignoredProperties.addAll(ignoredProperties);
         schematicBlock.tileNbt = tileNbt;
@@ -316,8 +316,8 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         schematicBlock.tileRotation = tileRotation.add(rotation);
         schematicBlock.placeBlock = placeBlock;
         updateBlockOffsets.stream()
-                .map(blockPos -> blockPos.rotate(rotation))
-                .forEach(schematicBlock.updateBlockOffsets::add);
+            .map(blockPos -> blockPos.rotate(rotation))
+            .forEach(schematicBlock.updateBlockOffsets::add);
         schematicBlock.canBeReplacedWithBlocks.addAll(canBeReplacedWithBlocks);
         schematicBlock.requiredItems.addAll(requiredItems);
         schematicBlock.requiredFluids.addAll(requiredFluids);
@@ -341,35 +341,35 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
             for (IProperty<?> property : blockState.getPropertyKeys()) {
                 if (newBlockState.getPropertyKeys().contains(property)) {
                     newBlockState = BlockUtil.copyProperty(
-                            property,
-                            newBlockState,
-                            blockState
+                        property,
+                        newBlockState,
+                        blockState
                     );
                 }
             }
         }
         for (IProperty<?> property : ignoredProperties) {
             newBlockState = BlockUtil.copyProperty(
-                    property,
-                    newBlockState,
-                    placeBlock.getDefaultState()
+                property,
+                newBlockState,
+                placeBlock.getDefaultState()
             );
         }
         if (world.setBlockState(blockPos, newBlockState, 11)) {
             updateBlockOffsets.stream()
-                    .map(blockPos::add)
-                    .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, placeBlock, false));
+                .map(blockPos::add)
+                .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, placeBlock, false));
             if (tileNbt != null && blockState.getBlock().hasTileEntity(blockState)) {
                 NBTTagCompound newTileNbt = new NBTTagCompound();
                 tileNbt.getKeySet().stream()
-                        .map(key -> Pair.of(key, tileNbt.getTag(key)))
-                        .forEach(kv -> newTileNbt.setTag(kv.getKey(), kv.getValue()));
+                    .map(key -> Pair.of(key, tileNbt.getTag(key)))
+                    .forEach(kv -> newTileNbt.setTag(kv.getKey(), kv.getValue()));
                 newTileNbt.setInteger("x", blockPos.getX());
                 newTileNbt.setInteger("y", blockPos.getY());
                 newTileNbt.setInteger("z", blockPos.getZ());
                 ignoredTags.stream()
-                        .filter(newTileNbt::hasKey)
-                        .forEach(newTileNbt::removeTag);
+                    .filter(newTileNbt::hasKey)
+                    .forEach(newTileNbt::removeTag);
                 TileEntity tileEntity = TileEntity.create(world, newTileNbt);
                 if (tileEntity != null) {
                     tileEntity.setWorld(world);
@@ -391,8 +391,8 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
             if (tileNbt != null && blockState.getBlock().hasTileEntity(blockState)) {
                 NBTTagCompound newTileNbt = new NBTTagCompound();
                 tileNbt.getKeySet().stream()
-                        .map(key -> Pair.of(key, tileNbt.getTag(key)))
-                        .forEach(kv -> newTileNbt.setTag(kv.getKey(), kv.getValue()));
+                    .map(key -> Pair.of(key, tileNbt.getTag(key)))
+                    .forEach(kv -> newTileNbt.setTag(kv.getKey(), kv.getValue()));
                 newTileNbt.setInteger("x", blockPos.getX());
                 newTileNbt.setInteger("y", blockPos.getY());
                 newTileNbt.setInteger("z", blockPos.getZ());
@@ -413,8 +413,8 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
     @Override
     public boolean isBuilt(World world, BlockPos blockPos) {
         return blockState != null &&
-                canBeReplacedWithBlocks.contains(world.getBlockState(blockPos).getBlock()) &&
-                BlockUtil.blockStatesWithoutBlockEqual(blockState, world.getBlockState(blockPos), ignoredProperties);
+            canBeReplacedWithBlocks.contains(world.getBlockState(blockPos).getBlock()) &&
+            BlockUtil.blockStatesWithoutBlockEqual(blockState, world.getBlockState(blockPos), ignoredProperties);
     }
 
     @Override
@@ -422,19 +422,19 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setInteger("level", level);
         nbt.setTag(
-                "requiredBlockOffsets",
-                NBTUtilBC.writeCompoundList(
-                        requiredBlockOffsets.stream()
-                                .map(NBTUtil::createPosTag)
-                )
+            "requiredBlockOffsets",
+            NBTUtilBC.writeCompoundList(
+                requiredBlockOffsets.stream()
+                    .map(NBTUtil::createPosTag)
+            )
         );
         nbt.setTag("blockState", NBTUtil.writeBlockState(new NBTTagCompound(), blockState));
         nbt.setTag(
-                "ignoredProperties",
-                NBTUtilBC.writeStringList(
-                        ignoredProperties.stream()
-                                .map(IProperty::getName)
-                )
+            "ignoredProperties",
+            NBTUtilBC.writeStringList(
+                ignoredProperties.stream()
+                    .map(IProperty::getName)
+            )
         );
         if (tileNbt != null) {
             nbt.setTag("tileNbt", tileNbt);
@@ -443,19 +443,19 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         nbt.setTag("tileRotation", NBTUtilBC.writeEnum(tileRotation));
         nbt.setString("placeBlock", Block.REGISTRY.getNameForObject(placeBlock).toString());
         nbt.setTag(
-                "updateBlockOffsets",
-                NBTUtilBC.writeCompoundList(
-                        updateBlockOffsets.stream()
-                                .map(NBTUtil::createPosTag)
-                )
+            "updateBlockOffsets",
+            NBTUtilBC.writeCompoundList(
+                updateBlockOffsets.stream()
+                    .map(NBTUtil::createPosTag)
+            )
         );
         nbt.setTag(
-                "canBeReplacedWithBlocks",
-                NBTUtilBC.writeStringList(
-                        canBeReplacedWithBlocks.stream()
-                                .map(Block.REGISTRY::getNameForObject)
-                                .map(Object::toString)
-                )
+            "canBeReplacedWithBlocks",
+            NBTUtilBC.writeStringList(
+                canBeReplacedWithBlocks.stream()
+                    .map(Block.REGISTRY::getNameForObject)
+                    .map(Object::toString)
+            )
         );
         return nbt;
     }
@@ -464,17 +464,17 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
     public void deserializeNBT(NBTTagCompound nbt) {
         level = nbt.getInteger("level");
         NBTUtilBC.readCompoundList(nbt.getTagList("requiredBlockOffsets", Constants.NBT.TAG_COMPOUND))
-                .map(NBTUtil::getPosFromTag)
-                .forEach(requiredBlockOffsets::add);
+            .map(NBTUtil::getPosFromTag)
+            .forEach(requiredBlockOffsets::add);
         blockState = NBTUtil.readBlockState(nbt.getCompoundTag("blockState"));
         NBTUtilBC.readStringList(nbt.getTagList("ignoredProperties", Constants.NBT.TAG_STRING))
-                .map(propertyName ->
-                        blockState.getPropertyKeys().stream()
-                                .filter(property -> property.getName().equals(propertyName))
-                                .findFirst()
-                                .orElse(null)
-                )
-                .forEach(ignoredProperties::add);
+            .map(propertyName ->
+                blockState.getPropertyKeys().stream()
+                    .filter(property -> property.getName().equals(propertyName))
+                    .findFirst()
+                    .orElse(null)
+            )
+            .forEach(ignoredProperties::add);
         if (nbt.hasKey("tileNbt")) {
             tileNbt = nbt.getCompoundTag("tileNbt");
         }
@@ -482,11 +482,11 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         tileRotation = NBTUtilBC.readEnum(nbt.getTag("tileRotation"), Rotation.class);
         placeBlock = Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("placeBlock")));
         NBTUtilBC.readCompoundList(nbt.getTagList("updateBlockOffsets", Constants.NBT.TAG_COMPOUND))
-                .map(NBTUtil::getPosFromTag)
-                .forEach(updateBlockOffsets::add);
+            .map(NBTUtil::getPosFromTag)
+            .forEach(updateBlockOffsets::add);
         NBTUtilBC.readStringList(nbt.getTagList("canBeReplacedWithBlocks", Constants.NBT.TAG_STRING))
-                .map(ResourceLocation::new)
-                .map(Block.REGISTRY::getObject)
-                .forEach(canBeReplacedWithBlocks::add);
+            .map(ResourceLocation::new)
+            .map(Block.REGISTRY::getObject)
+            .forEach(canBeReplacedWithBlocks::add);
     }
 }

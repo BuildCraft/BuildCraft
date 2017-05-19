@@ -25,7 +25,7 @@ public class BCFluidBlock extends BlockFluidClassic {
     @Override
     public Boolean isEntityInsideMaterial(IBlockAccess world, BlockPos pos, IBlockState state, Entity entity, double yToTest, Material material, boolean testingHead) {
         if (material == Material.WATER) {
-            return Boolean.TRUE;
+            return true;
         }
         return null;
     }

@@ -22,6 +22,8 @@ public class GuiFiller extends GuiBC8<ContainerFiller> {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
+
+        ledgersRight.ledgers.add(new LedgerCounter(ledgersRight, container.tile));
     }
 
     @Override

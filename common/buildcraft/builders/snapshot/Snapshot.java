@@ -93,15 +93,15 @@ public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
 
         public String getFileName() {
             return Stream.of(
-                    id,
-                    owner,
-                    created,
-                    name
+                id,
+                owner,
+                created,
+                name
             )
-                    .filter(Objects::nonNull)
-                    .map(Object::toString)
-                    .map(StringUtilBC::replaceCharactersForFilename)
-                    .collect(Collectors.joining(";"));
+                .filter(Objects::nonNull)
+                .map(Object::toString)
+                .map(StringUtilBC::replaceCharactersForFilename)
+                .collect(Collectors.joining(";"));
         }
 
         @Override

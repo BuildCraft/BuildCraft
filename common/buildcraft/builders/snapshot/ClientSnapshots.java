@@ -65,8 +65,8 @@ public enum ClientSnapshots {
                         for (int x = 0; x < snapshot.size.getX(); x++) {
                             if (((Template) snapshot).data[x][y][z]) {
                                 localWorld.setBlockState(
-                                        new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET),
-                                        Blocks.QUARTZ_BLOCK.getDefaultState()
+                                    new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET),
+                                    Blocks.QUARTZ_BLOCK.getDefaultState()
                                 );
                             }
                         }
@@ -85,10 +85,10 @@ public enum ClientSnapshots {
         GlStateManager.loadIdentity();
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         GlStateManager.viewport(
-                offsetX * scaledResolution.getScaleFactor(),
-                Minecraft.getMinecraft().displayHeight - (sizeY + offsetY) * scaledResolution.getScaleFactor(),
-                sizeX * scaledResolution.getScaleFactor(),
-                sizeY * scaledResolution.getScaleFactor()
+            offsetX * scaledResolution.getScaleFactor(),
+            Minecraft.getMinecraft().displayHeight - (sizeY + offsetY) * scaledResolution.getScaleFactor(),
+            sizeX * scaledResolution.getScaleFactor(),
+            sizeY * scaledResolution.getScaleFactor()
         );
         GlStateManager.scale(scaledResolution.getScaleFactor(), scaledResolution.getScaleFactor(), 1);
         GLU.gluPerspective(70.0F, (float) sizeX / sizeY, 0.1F, 1000.0F);
@@ -108,15 +108,15 @@ public enum ClientSnapshots {
                 for (int x = 0; x < snapshot.size.getX(); x++) {
                     BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
                     Tessellator.getInstance().getBuffer().setTranslation(
-                            -FakeWorld.BLUEPRINT_OFFSET.getX(),
-                            -FakeWorld.BLUEPRINT_OFFSET.getY(),
-                            -FakeWorld.BLUEPRINT_OFFSET.getZ()
+                        -FakeWorld.BLUEPRINT_OFFSET.getX(),
+                        -FakeWorld.BLUEPRINT_OFFSET.getY(),
+                        -FakeWorld.BLUEPRINT_OFFSET.getZ()
                     );
                     Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlock(
-                            world.getBlockState(pos),
-                            pos,
-                            world,
-                            Tessellator.getInstance().getBuffer()
+                        world.getBlockState(pos),
+                        pos,
+                        world,
+                        Tessellator.getInstance().getBuffer()
                     );
                     Tessellator.getInstance().getBuffer().setTranslation(0, 0, 0);
                 }
@@ -131,11 +131,11 @@ public enum ClientSnapshots {
                     GlStateManager.pushAttrib();
                     // noinspection ConstantConditions
                     TileEntityRendererDispatcher.instance.renderTileEntityAt(
-                            world.getTileEntity(pos),
-                            pos.getX() - FakeWorld.BLUEPRINT_OFFSET.getX(),
-                            pos.getY() - FakeWorld.BLUEPRINT_OFFSET.getY(),
-                            pos.getZ() - FakeWorld.BLUEPRINT_OFFSET.getZ(),
-                            0
+                        world.getTileEntity(pos),
+                        pos.getX() - FakeWorld.BLUEPRINT_OFFSET.getX(),
+                        pos.getY() - FakeWorld.BLUEPRINT_OFFSET.getY(),
+                        pos.getZ() - FakeWorld.BLUEPRINT_OFFSET.getZ(),
+                        0
                     );
                     GlStateManager.popAttrib();
                 }
@@ -147,42 +147,42 @@ public enum ClientSnapshots {
             switch (snapshot.facing) {
                 case NORTH:
                     pos = new Vec3d(
-                            pos.xCoord + snapshot.size.getX() - 1,
-                            pos.yCoord,
-                            pos.zCoord
+                        pos.xCoord + snapshot.size.getX() - 1,
+                        pos.yCoord,
+                        pos.zCoord
                     );
                     break;
                 case SOUTH:
                     pos = new Vec3d(
-                            pos.xCoord + snapshot.size.getX() - 1,
-                            pos.yCoord,
-                            pos.zCoord + snapshot.size.getZ() - 1
+                        pos.xCoord + snapshot.size.getX() - 1,
+                        pos.yCoord,
+                        pos.zCoord + snapshot.size.getZ() - 1
                     );
                     break;
                 case WEST:
                     pos = new Vec3d(
-                            pos.xCoord,
-                            pos.yCoord,
-                            pos.zCoord + snapshot.size.getZ() - 1
+                        pos.xCoord,
+                        pos.yCoord,
+                        pos.zCoord + snapshot.size.getZ() - 1
                     );
                     break;
                 case EAST:
                     pos = new Vec3d(
-                            pos.xCoord + snapshot.size.getX() - 1,
-                            pos.yCoord,
-                            pos.zCoord + snapshot.size.getZ() - 1
+                        pos.xCoord + snapshot.size.getX() - 1,
+                        pos.yCoord,
+                        pos.zCoord + snapshot.size.getZ() - 1
                     );
                     break;
             }
             GlStateManager.pushAttrib();
             Minecraft.getMinecraft().getRenderManager().doRenderEntity(
-                    entity,
-                    pos.xCoord - FakeWorld.BLUEPRINT_OFFSET.getX(),
-                    pos.yCoord - FakeWorld.BLUEPRINT_OFFSET.getY(),
-                    pos.zCoord - FakeWorld.BLUEPRINT_OFFSET.getZ(),
-                    0,
-                    0,
-                    true
+                entity,
+                pos.xCoord - FakeWorld.BLUEPRINT_OFFSET.getX(),
+                pos.yCoord - FakeWorld.BLUEPRINT_OFFSET.getY(),
+                pos.zCoord - FakeWorld.BLUEPRINT_OFFSET.getZ(),
+                0,
+                0,
+                true
             );
             GlStateManager.popAttrib();
         }

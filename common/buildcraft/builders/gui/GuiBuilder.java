@@ -29,6 +29,8 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
         super(container);
         xSize = SIZE_BLUEPRINT_X;
         ySize = SIZE_Y;
+
+        ledgersRight.ledgers.add(new LedgerCounter(ledgersRight, container.tile));
     }
 
     @Override

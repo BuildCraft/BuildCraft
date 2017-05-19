@@ -58,7 +58,7 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
         if (access == EnumAccess.NONE || access == EnumAccess.PHANTOM) {
             external = null;
             if (parts.length > 0) {
-                throw new IllegalArgumentException("Completly useless to not allow access to multiple sides! Just don't pass any sides!");
+                throw new IllegalArgumentException("Completely useless to not allow access to multiple sides! Just don't pass any sides!");
             }
         } else if (access == EnumAccess.EXTRACT) {
             external = new WrappedItemHandlerExtract(handler);

@@ -35,8 +35,8 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
     public static boolean predicate(SchematicEntityContext context) {
         ResourceLocation registryName = EntityList.getKey(context.entity);
         return registryName != null &&
-                RulesLoader.READ_DOMAINS.contains(registryName.getResourceDomain()) &&
-                RulesLoader.getRules(context.entity).stream().anyMatch(rule -> rule.capture);
+            RulesLoader.READ_DOMAINS.contains(registryName.getResourceDomain()) &&
+            RulesLoader.getRules(context.entity).stream().anyMatch(rule -> rule.capture);
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
@@ -64,10 +64,10 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
         if (rules.stream().map(rule -> rule.requiredItems).anyMatch(Objects::nonNull)) {
             requiredItems.clear();
             rules.stream()
-                    .map(rule -> rule.requiredItems)
-                    .filter(Objects::nonNull)
-                    .flatMap(Collection::stream)
-                    .forEach(requiredItems::add);
+                .map(rule -> rule.requiredItems)
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .forEach(requiredItems::add);
         }
     }
 
@@ -117,8 +117,8 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
         BlockPos placeHangingPos = basePos.add(hangingPos);
         NBTTagCompound newEntityNbt = new NBTTagCompound();
         entityNbt.getKeySet().stream()
-                .map(key -> Pair.of(key, entityNbt.getTag(key)))
-                .forEach(kv -> newEntityNbt.setTag(kv.getKey(), kv.getValue()));
+            .map(key -> Pair.of(key, entityNbt.getTag(key)))
+            .forEach(kv -> newEntityNbt.setTag(kv.getKey(), kv.getValue()));
         newEntityNbt.setTag("Pos", NBTUtilBC.writeVec3d(placePos));
         newEntityNbt.setUniqueId("UUID", UUID.randomUUID());
         boolean rotate = false;
@@ -134,11 +134,11 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
         if (entity != null) {
             if (rotate) {
                 entity.setLocationAndAngles(
-                        placePos.xCoord,
-                        placePos.yCoord,
-                        placePos.zCoord,
-                        entity.rotationYaw + (entity.rotationYaw - entity.getRotatedYaw(entityRotation)),
-                        entity.rotationPitch
+                    placePos.xCoord,
+                    placePos.yCoord,
+                    placePos.zCoord,
+                    entity.rotationYaw + (entity.rotationYaw - entity.getRotatedYaw(entityRotation)),
+                    entity.rotationPitch
                 );
             }
             world.spawnEntity(entity);

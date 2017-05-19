@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
 public class GlobalSavedDataSnapshots {
-    public static final Map<Side, GlobalSavedDataSnapshots> instances = new EnumMap<>(Side.class);
+    private static final Map<Side, GlobalSavedDataSnapshots> INSTANCES = new EnumMap<>(Side.class);
     public final List<Snapshot> snapshots = new ArrayList<>();
     private final File snapshotsFile;
 
@@ -33,10 +33,10 @@ public class GlobalSavedDataSnapshots {
     }
 
     public static GlobalSavedDataSnapshots get(Side side) {
-        if (!instances.containsKey(side)) {
-            instances.put(side, new GlobalSavedDataSnapshots(side));
+        if (!INSTANCES.containsKey(side)) {
+            INSTANCES.put(side, new GlobalSavedDataSnapshots(side));
         }
-        return instances.get(side);
+        return INSTANCES.get(side);
     }
 
     public static GlobalSavedDataSnapshots get(World world) {
@@ -58,13 +58,16 @@ public class GlobalSavedDataSnapshots {
     }
 
     private void readSnapshots() {
-        for (File snapshotFile : snapshotsFile.listFiles()) {
-            try {
-                NBTTagCompound nbt = CompressedStreamTools.read(snapshotFile);
-                snapshots.add(Snapshot.readFromNBT(nbt));
-            } catch (IOException io) {
-                IOException ex = new IOException("Failed to read the snapshot file" + snapshotFile, io);
-                ex.printStackTrace();
+        File[] files = snapshotsFile.listFiles();
+        if (files != null) {
+            for (File snapshotFile : files) {
+                try {
+                    NBTTagCompound nbt = CompressedStreamTools.read(snapshotFile);
+                    snapshots.add(Snapshot.readFromNBT(nbt));
+                } catch (IOException io) {
+                    IOException ex = new IOException("Failed to read the snapshot file" + snapshotFile, io);
+                    ex.printStackTrace();
+                }
             }
         }
     }

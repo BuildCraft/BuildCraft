@@ -25,15 +25,15 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     @Override
     protected List<BlockPos> getToBreak() {
         return Optional.ofNullable(getBuildingInfo())
-                .map(buildingInfo -> buildingInfo.toBreak)
-                .orElse(Collections.emptyList());
+            .map(buildingInfo -> buildingInfo.toBreak)
+            .orElse(Collections.emptyList());
     }
 
     @Override
     protected List<BlockPos> getToPlace() {
         return Optional.ofNullable(getBuildingInfo())
-                .map(buildingInfo -> buildingInfo.toPlace)
-                .orElse(Collections.emptyList());
+            .map(buildingInfo -> buildingInfo.toPlace)
+            .orElse(Collections.emptyList());
     }
 
     @Override
@@ -49,20 +49,20 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     @Override
     protected boolean doPlaceTask(PlaceTask placeTask) {
         FakePlayerBC fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer(
-                (WorldServer) tile.getWorldBC(),
-                tile.getBuilderPos(),
-                tile.getOwner()
+            (WorldServer) tile.getWorldBC(),
+            tile.getBuilderPos(),
+            tile.getOwner()
         );
         fakePlayer.setHeldItem(fakePlayer.getActiveHand(), placeTask.items.get(0));
         EnumActionResult result = placeTask.items.get(0).onItemUse(
-                fakePlayer,
-                tile.getWorldBC(),
-                placeTask.pos,
-                fakePlayer.getActiveHand(),
-                EnumFacing.UP,
-                0.5F,
-                0.0F,
-                0.5F
+            fakePlayer,
+            tile.getWorldBC(),
+            placeTask.pos,
+            fakePlayer.getActiveHand(),
+            EnumFacing.UP,
+            0.5F,
+            0.0F,
+            0.5F
         );
         return result == EnumActionResult.SUCCESS;
     }
@@ -78,17 +78,33 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     }
 
     @Override
+    protected int getLeftToBreak() {
+        return !tile.canExcavate()
+            ? 0
+            : (int) getBuildingInfo().toBreak.stream()
+            .filter(blockPos -> !tile.getWorldBC().isAirBlock(blockPos))
+            .count();
+    }
+
+    @Override
+    protected int getLeftToPlace() {
+        return (int) getBuildingInfo().toPlace.stream()
+            .filter(blockPos -> !isBlockCorrect(blockPos))
+            .count();
+    }
+
+    @Override
     public Box getBox() {
         return Optional.ofNullable(getBuildingInfo())
-                .map(Template.BuildingInfo::getBox)
-                .orElse(null);
+            .map(Template.BuildingInfo::getBox)
+            .orElse(null);
     }
 
     @Override
     protected boolean isDone() {
         return getBuildingInfo() != null &&
-                (!tile.canExcavate() || getBuildingInfo().toBreak.stream().allMatch(tile.getWorldBC()::isAirBlock)) &&
-                getBuildingInfo().toPlace.stream().allMatch(this::isBlockCorrect);
+            (!tile.canExcavate() || getBuildingInfo().toBreak.stream().allMatch(tile.getWorldBC()::isAirBlock)) &&
+            getBuildingInfo().toPlace.stream().allMatch(this::isBlockCorrect);
     }
 
 }
