@@ -3,22 +3,23 @@ package buildcraft.builders.gui;
 import buildcraft.builders.snapshot.ITileForSnapshotBuilder;
 import buildcraft.lib.gui.ledger.LedgerManager_Neptune;
 import buildcraft.lib.gui.ledger.Ledger_Neptune;
+import buildcraft.lib.misc.LocaleUtil;
 
 import java.util.Optional;
 
-public class LedgerCounter extends Ledger_Neptune {
+public class LedgerCounters extends Ledger_Neptune {
     private static final int OVERLAY_COLOUR = 0xFF_6C_D4_1F;
     private static final int SUB_HEADER_COLOUR = 0xFF_AA_AF_b8;
     private static final int TEXT_COLOUR = 0xFF_00_00_00;
 
     public final ITileForSnapshotBuilder tile;
 
-    public LedgerCounter(LedgerManager_Neptune manager, ITileForSnapshotBuilder tile) {
+    public LedgerCounters(LedgerManager_Neptune manager, ITileForSnapshotBuilder tile) {
         super(manager);
         this.tile = tile;
-        title = "gui.counter";
+        title = "gui.counters";
 
-        appendText("Block left to break:", SUB_HEADER_COLOUR).setDropShadow(true);
+        appendText(LocaleUtil.localize("gui.leftToBreak") + ":", SUB_HEADER_COLOUR).setDropShadow(true);
         appendText(
             () ->
                 String.valueOf(
@@ -28,7 +29,7 @@ public class LedgerCounter extends Ledger_Neptune {
                 ),
             TEXT_COLOUR
         );
-        appendText("Block left to place:", SUB_HEADER_COLOUR).setDropShadow(true);
+        appendText(LocaleUtil.localize("gui.leftToPlace") + ":", SUB_HEADER_COLOUR).setDropShadow(true);
         appendText(
             () ->
                 String.valueOf(

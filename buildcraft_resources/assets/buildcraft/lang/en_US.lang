@@ -354,6 +354,9 @@ gui.pipes.emzuli.paint=Paint Items %s
 gui.pipes.emzuli.nopaint=Don't Paint Items
 gui.ledger.ownership=Owner
 gui.ledger.help=Help
+gui.counters=Counters
+gui.leftToBreak=Blocks left to break:
+gui.leftToPlace=Blocks left to place:
 
 item.bucketFuel.name=Fuel Bucket
 item.bucketOil.name=Oil Bucket
