@@ -22,7 +22,7 @@ public enum IntegrationRecipeRegistry implements IIntegrationRecipeRegistry {
     private final List<IIntegrationRecipeProvider> providers = new ArrayList<>();
 
     @Override
-    public IntegrationRecipe getRecipeFor(@Nonnull ItemStack target, NonNullList<ItemStack> toIntegrate) {
+    public IntegrationRecipe getRecipeFor(@Nonnull ItemStack target, @Nonnull NonNullList<ItemStack> toIntegrate) {
         for (IntegrationRecipe recipe : recipes.values()) {
             if (matches(recipe, target, toIntegrate)) {
                 return recipe;

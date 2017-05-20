@@ -2,6 +2,7 @@ package buildcraft.lib.gui.elem;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import buildcraft.lib.gui.GuiBC8;
@@ -43,9 +44,7 @@ public class GuiElementContainer implements IGuiElement {
 
     /** Adds all of the given elements, like in {@link #add(IGuiElement)} */
     public void addAll(IGuiElement... elements) {
-        for (IGuiElement e : elements) {
-            internalElements.add(e);
-        }
+        Collections.addAll(internalElements, elements);
         recalcSize();
     }
 

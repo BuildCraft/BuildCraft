@@ -40,7 +40,7 @@ public class GuiFilteredBuffer extends GuiBC8<ContainerFilteredBuffer_BC8> {
             // GL11.glEnable(GL11.GL_BLEND);
             // GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             // GL11.glColor4f(1, 1, 1, 0.5F);
-            if (stack != null) {
+            if (!stack.isEmpty()) {
                 this.itemRender.renderItemAndEffectIntoGUI(this.mc.player, stack, currentX, currentY);
             } else {
                 this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);

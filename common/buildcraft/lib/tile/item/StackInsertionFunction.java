@@ -18,7 +18,7 @@ public interface StackInsertionFunction {
 
     /** Gets a stack insertion function that will insert items up to a given stack size. The stack size of the items
      * themselves IS taken into account, so this has an effective upper limit of 64. */
-    public static StackInsertionFunction getInsertionFunction(int maxStackSize) {
+    static StackInsertionFunction getInsertionFunction(int maxStackSize) {
         return (slot, addingTo, toInsert) -> {
             if (toInsert.isEmpty()) {
                 return new InsertionResult(addingTo, StackUtil.EMPTY);
@@ -54,12 +54,12 @@ public interface StackInsertionFunction {
 
     /** Gets a stack insertion function that will insert up to full stacks into a given slot. This is just
      * {@link #getInsertionFunction(int)} with an argument of 64. */
-    public static StackInsertionFunction getDefaultInserter() {
+    static StackInsertionFunction getDefaultInserter() {
         return getInsertionFunction(64);
     }
 
     /** The result of an attempted insertion. */
-    public static class InsertionResult {
+    class InsertionResult {
         public static final InsertionResult EMPTY_STACKS = new InsertionResult(StackUtil.EMPTY, StackUtil.EMPTY);
 
         @Nonnull

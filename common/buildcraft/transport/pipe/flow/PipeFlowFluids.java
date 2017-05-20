@@ -34,6 +34,8 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.net.cache.NetworkedObjectCache;
 
+import javax.annotation.Nonnull;
+
 public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable {
 
     private static final int DIRECTION_COOLDOWN = 60;
@@ -127,8 +129,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         return oTile.hasCapability(CapUtil.CAP_FLUIDS, face.getOpposite());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == CapUtil.CAP_FLUIDS) {
             return (T) sections.get(EnumPipePart.fromFacing(facing));
         }
@@ -237,35 +240,35 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             if (section == null) {
                 continue;
             }
-            String line = " - " + LocaleUtil.localizeFacing(part.face) + " = ";
+            StringBuilder line = new StringBuilder(" - " + LocaleUtil.localizeFacing(part.face) + " = ");
             int amount = isRemote ? section.target : section.amount;
-            line += (amount > 0 ? TextFormatting.GREEN : "");
-            line += amount + "" + TextFormatting.RESET + "mB";
-            line += " " + section.getCurrentDirection() + " (" + section.ticksInDirection + ")";
+            line.append(amount > 0 ? TextFormatting.GREEN : "");
+            line.append(amount).append("").append(TextFormatting.RESET).append("mB");
+            line.append(" ").append(section.getCurrentDirection()).append(" (").append(section.ticksInDirection).append(")");
 
-            line += " [";
+            line.append(" [");
             int last = -1;
             int skipped = 0;
 
             for (int i : section.incoming) {
                 if (i != last) {
                     if (skipped > 0) {
-                        line += "..." + skipped + "... ";
+                        line.append("...").append(skipped).append("... ");
                         skipped = 0;
                     }
                     last = i;
-                    line += i + ", ";
+                    line.append(i).append(", ");
                 } else {
                     skipped++;
                 }
             }
             if (skipped > 0) {
-                line += "..." + skipped + "... ";
+                line.append("...").append(skipped).append("... ");
                 skipped = 0;
             }
-            line += "0]";
+            line.append("0]");
 
-            left.add(line);
+            left.add(line.toString());
         }
     }
 

@@ -8,7 +8,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -16,15 +15,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.client.RenderTickListener;
-import buildcraft.core.client.render.RenderEngineCreative;
-import buildcraft.core.client.render.RenderEngineWood;
-import buildcraft.core.client.render.RenderMarkerVolume;
 import buildcraft.core.client.render.RenderVolumeInWorld;
 import buildcraft.core.list.ContainerList;
 import buildcraft.core.list.GuiList;
-import buildcraft.core.tile.TileEngineCreative;
-import buildcraft.core.tile.TileEngineRedstone_BC8;
-import buildcraft.core.tile.TileMarkerVolume;
 import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
 

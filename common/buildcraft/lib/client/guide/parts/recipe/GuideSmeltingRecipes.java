@@ -14,11 +14,13 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.misc.StackUtil;
 
+import javax.annotation.Nonnull;
+
 public enum GuideSmeltingRecipes implements IStackRecipes {
     INSTANCE;
 
     @Override
-    public List<GuidePartFactory> getUsages(ItemStack stack) {
+    public List<GuidePartFactory> getUsages(@Nonnull ItemStack stack) {
 
         if (stack.getMetadata() == OreDictionary.WILDCARD_VALUE) {
             List<GuidePartFactory> list = new ArrayList<>();
@@ -41,7 +43,7 @@ public enum GuideSmeltingRecipes implements IStackRecipes {
     }
 
     @Override
-    public List<GuidePartFactory> getRecipes(ItemStack stack) {
+    public List<GuidePartFactory> getRecipes(@Nonnull ItemStack stack) {
         List<GuidePartFactory> list = new ArrayList<>();
 
         for (Entry<ItemStack, ItemStack> entry : FurnaceRecipes.instance().getSmeltingList().entrySet()) {

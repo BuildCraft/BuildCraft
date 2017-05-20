@@ -9,11 +9,13 @@ import net.minecraftforge.client.model.animation.FastTESR;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 
+import javax.annotation.Nonnull;
+
 public abstract class RenderEngine_BC8<T extends TileEngineBase_BC8> extends FastTESR<T> {
     // TODO: Cache the model!
 
     @Override
-    public void renderTileEntityFast(T engine, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
+    public void renderTileEntityFast(@Nonnull T engine, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer vb) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("bc");
         profiler.startSection("engine");

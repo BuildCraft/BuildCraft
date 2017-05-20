@@ -29,6 +29,8 @@ import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.VecUtil;
 
+import javax.annotation.Nonnull;
+
 public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneReceiver {
     private static final double INSERT_SPEED = 0.04;
     private static final int DROP_GAP = 20;
@@ -149,7 +151,7 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
 
         Long tickPickupObj = entityDropTime.get(entity);
         if (tickPickupObj != null) {
-            long tickPickup = tickPickupObj.longValue();
+            long tickPickup = tickPickupObj;
             long tickNow = pipe.getHolder().getPipeWorld().getTotalWorldTime();
             if (tickNow < tickPickup) {
                 return false;
@@ -188,7 +190,7 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
     // IMjRedstoneReceiver
 
     @Override
-    public boolean canConnect(IMjConnector other) {
+    public boolean canConnect(@Nonnull IMjConnector other) {
         return true;
     }
 

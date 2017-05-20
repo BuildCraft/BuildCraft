@@ -47,12 +47,12 @@ public class ItemPluggableGate extends ItemBC_Neptune implements IItemPluggable 
     @Nonnull
     public ItemStack getStack(GateVariant variant) {
         ItemStack stack = new ItemStack(this);
-        NBTUtilBC.getItemData(stack).setTag("gate", variant.writeToNbt());
+        NBTUtilBC.getItemData(stack).setTag("gate", variant.writeToNBT());
         return stack;
     }
 
     @Override
-    public PipePluggable onPlace(ItemStack stack, IPipeHolder holder, EnumFacing side, EntityPlayer player, EnumHand hand) {
+    public PipePluggable onPlace(@Nonnull ItemStack stack, IPipeHolder holder, EnumFacing side, EntityPlayer player, EnumHand hand) {
         GateVariant variant = getVariant(stack);
         SoundUtil.playBlockPlace(holder.getPipeWorld(), holder.getPipePos(), variant.material.block.getDefaultState());
         PluggableDefinition def = BCTransportPlugs.gate;

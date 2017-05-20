@@ -7,6 +7,8 @@ import buildcraft.lib.gui.slot.SlotBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
+
 public class ContainerFiller extends ContainerBCTile<TileFiller> {
     public ContainerFiller(EntityPlayer player, TileFiller tile) {
         super(player, tile);
@@ -17,7 +19,7 @@ public class ContainerFiller extends ContainerBCTile<TileFiller> {
             for (int sx = 0; sx < 9; sx++) {
                 addSlotToContainer(new SlotBase(tile.invResources, sx + sy * 9, 8 + sx * 18, 85 + sy * 18) {
                     @Override
-                    public boolean isItemValid(ItemStack stack) {
+                    public boolean isItemValid(@Nonnull ItemStack stack) {
                         return Filling.INSTANCE.getItemBlocks().contains(stack.getItem());
                     }
                 });

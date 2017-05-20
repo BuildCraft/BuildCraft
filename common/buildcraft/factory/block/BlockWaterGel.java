@@ -37,7 +37,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
         public final boolean spreading;
         public final float hardness;
 
-        private GelStage(float pitch, boolean spreading, float hardness) {
+        GelStage(float pitch, boolean spreading, float hardness) {
             this.soundType = new SoundType(//
                     SoundType.SLIME.volume,//
                     pitch,//
@@ -113,9 +113,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
             Set<BlockPos> closedSet = new HashSet<>();
             List<BlockPos> changable = new ArrayList<>();
             List<EnumFacing> faces = new ArrayList<>();
-            for (EnumFacing face : EnumFacing.VALUES) {
-                faces.add(face);
-            }
+            Collections.addAll(faces, EnumFacing.VALUES);
             Collections.shuffle(faces);
             for (EnumFacing face : faces) {
                 openSet.add(pos.offset(face));
@@ -124,9 +122,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
             int tries = 0;
 
             while (openSet.size() > 0 && changable.size() < 3 && tries < 10_000) {
-                openSet.sort((a, b) -> {
-                    return Double.compare(a.distanceSq(pos), b.distanceSq(pos));
-                });
+                openSet.sort(Comparator.comparingDouble(a -> a.distanceSq(pos)));
 
                 BlockPos test = openSet.remove(0);
                 closedSet.add(test);

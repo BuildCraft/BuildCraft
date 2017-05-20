@@ -12,6 +12,7 @@ public class GenLayerAddOilOcean extends GenLayerBiomeReplacer {
     public static final double NOISE_FIELD_SCALE = 0.0005;
     public static final double NOISE_FIELD_THRESHOLD = 0.9;
 
+    @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
     private static final List<BiomeDictionary.Type> REQUIRED_TYPES = Arrays.asList(
         BiomeDictionary.Type.OCEAN
     );

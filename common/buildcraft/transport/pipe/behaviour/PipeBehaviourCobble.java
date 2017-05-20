@@ -2,11 +2,9 @@ package buildcraft.transport.pipe.behaviour;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventItem;
-import buildcraft.api.transport.pipe.PipeEventPower;
 
 public class PipeBehaviourCobble extends PipeBehaviourSeparate {
     private static final double SPEED_DELTA = 0.03;

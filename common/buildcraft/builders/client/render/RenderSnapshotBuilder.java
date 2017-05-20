@@ -2,7 +2,6 @@ package buildcraft.builders.client.render;
 
 import buildcraft.builders.snapshot.ITileForSnapshotBuilder;
 import buildcraft.builders.snapshot.SnapshotBuilder;
-import buildcraft.builders.snapshot.TemplateBuilder;
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.ItemRenderUtil;
 import buildcraft.lib.client.render.laser.LaserData_BC8;

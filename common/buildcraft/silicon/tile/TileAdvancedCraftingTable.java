@@ -13,7 +13,7 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 public class TileAdvancedCraftingTable extends TileLaserTableBase {
     public final ItemHandlerSimple invBlueprint = itemManager.addInvHandler("blueprint", 3 * 3, ItemHandlerManager.EnumAccess.NONE);
-    public final ItemHandlerSimple invMaterials = itemManager.addInvHandler("materials", 5 * 3, ItemHandlerManager.EnumAccess.INSERT, EnumPipePart.VALUES);;
+    public final ItemHandlerSimple invMaterials = itemManager.addInvHandler("materials", 5 * 3, ItemHandlerManager.EnumAccess.INSERT, EnumPipePart.VALUES);
     public final ItemHandlerSimple invResults = itemManager.addInvHandler("result", 3 * 3, ItemHandlerManager.EnumAccess.EXTRACT, EnumPipePart.VALUES);
 
     public long getTarget() {

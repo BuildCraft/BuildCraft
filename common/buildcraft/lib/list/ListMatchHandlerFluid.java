@@ -15,6 +15,8 @@ import buildcraft.api.lists.ListMatchHandler;
 
 import buildcraft.lib.misc.StackUtil;
 
+import javax.annotation.Nonnull;
+
 public class ListMatchHandlerFluid extends ListMatchHandler {
     private static final List<ItemStack> fluidHoldingItems = new ArrayList<>();
 
@@ -29,7 +31,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
     }
 
     @Override
-    public boolean matches(Type type, ItemStack stack, ItemStack target, boolean precise) {
+    public boolean matches(Type type, @Nonnull ItemStack stack, @Nonnull ItemStack target, boolean precise) {
         if (type == Type.TYPE) {
             IFluidHandlerItem fluidHandlerStack = FluidUtil.getFluidHandler(stack.copy());
             IFluidHandlerItem fluidHandlerTarget = FluidUtil.getFluidHandler(target.copy());
@@ -55,7 +57,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
     }
 
     @Override
-    public boolean isValidSource(Type type, ItemStack stack) {
+    public boolean isValidSource(Type type, @Nonnull ItemStack stack) {
         if (type == Type.TYPE) {
             return FluidUtil.getFluidHandler(stack) != null;
         } else if (type == Type.MATERIAL) {
@@ -65,7 +67,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
     }
 
     @Override
-    public NonNullList<ItemStack> getClientExamples(Type type, ItemStack stack) {
+    public NonNullList<ItemStack> getClientExamples(Type type, @Nonnull ItemStack stack) {
         if (type == Type.MATERIAL) {
             FluidStack fStack = FluidUtil.getFluidContained(stack);
             if (fStack != null) {

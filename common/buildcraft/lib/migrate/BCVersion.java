@@ -10,7 +10,7 @@ public enum BCVersion {
     public final int dataVersion;
     public final String name;
 
-    private BCVersion(int dataTag, String name) {
+    BCVersion(int dataTag, String name) {
         this.dataVersion = dataTag;
         this.name = name;
     }

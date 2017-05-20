@@ -37,8 +37,9 @@ public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeVie
     private static final long MJ_COST = 64 * MjAPI.MJ;
     private static final ChangingObject<Long> MJ_COSTS = new ChangingObject<>(new Long[] { MJ_COST });
 
+    @Nonnull
     @Override
-    public List<AssemblyRecipe> getRecipesFor(NonNullList<ItemStack> possible) {
+    public List<AssemblyRecipe> getRecipesFor(@Nonnull NonNullList<ItemStack> possible) {
         // Require 3 structure pipes -- check for those first as its much cheaper
         if (!StackUtil.contains(new ItemStack(BCTransportItems.pipeStructure, 3), possible)) {
             return ImmutableList.of();

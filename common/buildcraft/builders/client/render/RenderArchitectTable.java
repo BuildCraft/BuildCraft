@@ -5,9 +5,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraftforge.client.model.animation.FastTESR;
 
+import javax.annotation.Nonnull;
+
 public class RenderArchitectTable extends FastTESR<TileArchitectTable> {
     @Override
-    public void renderTileEntityFast(TileArchitectTable te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
+    public void renderTileEntityFast(@Nonnull TileArchitectTable te, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer vb) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("architect");
 

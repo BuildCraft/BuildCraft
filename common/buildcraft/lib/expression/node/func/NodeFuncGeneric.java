@@ -62,16 +62,16 @@ public abstract class NodeFuncGeneric implements INodeFunc {
         }
 
         protected String getArgsToString() {
-            String total = "[";
+            StringBuilder total = new StringBuilder("[");
 
             for (int i = 0; i < realArgs.length; i++) {
                 if (i > 0) {
-                    total += ", (";
+                    total.append(", (");
                 } else {
-                    total += " (";
+                    total.append(" (");
                 }
 
-                total += realArgs[i].toString() + ") ";
+                total.append(realArgs[i].toString()).append(") ");
             }
 
             return total + "]";

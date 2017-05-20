@@ -26,6 +26,8 @@ import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.BCTransportSprites;
 
+import javax.annotation.Nonnull;
+
 public class TriggerParameterSignal implements IStatementParameter {
 
     public boolean active = false;
@@ -38,6 +40,7 @@ public class TriggerParameterSignal implements IStatementParameter {
         this.colour = colour;
     }
 
+    @Nonnull
     @Override
     public ItemStack getItemStack() {
         return StackUtil.EMPTY;

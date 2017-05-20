@@ -14,6 +14,8 @@ import buildcraft.api.transport.pipe.PipeEventStatement;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.transport.BCTransportStatements;
 
+import javax.annotation.Nonnull;
+
 public enum TransportTriggerProvider implements ITriggerProvider {
     INSTANCE;
 
@@ -34,7 +36,7 @@ public enum TransportTriggerProvider implements ITriggerProvider {
     }
 
     @Override
-    public void addInternalSidedTriggers(Collection<ITriggerInternalSided> triggers, IStatementContainer container, EnumFacing side) {
+    public void addInternalSidedTriggers(Collection<ITriggerInternalSided> triggers, IStatementContainer container, @Nonnull EnumFacing side) {
         if (container instanceof IGate) {
             IGate gate = (IGate) container;
             IPipeHolder holder = gate.getPipeHolder();
@@ -43,7 +45,7 @@ public enum TransportTriggerProvider implements ITriggerProvider {
     }
 
     @Override
-    public void addExternalTriggers(Collection<ITriggerExternal> triggers, EnumFacing side, TileEntity tile) {
+    public void addExternalTriggers(Collection<ITriggerExternal> triggers, @Nonnull EnumFacing side, TileEntity tile) {
 
     }
 }

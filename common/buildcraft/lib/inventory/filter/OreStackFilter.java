@@ -13,6 +13,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.recipes.StackDefinition;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -26,7 +27,7 @@ public class OreStackFilter implements IStackFilter {
     }
 
     @Override
-    public boolean matches(ItemStack stack) {
+    public boolean matches(@Nonnull ItemStack stack) {
         int[] ids = OreDictionary.getOreIDs(stack);
 
         if (ids.length == 0) {

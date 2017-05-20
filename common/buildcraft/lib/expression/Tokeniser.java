@@ -24,11 +24,11 @@ public class Tokeniser {
                 int start = contextStart + relStart;
                 int end = contextStart + relEnd;
                 int stringEnd = src.length();
-                String gotten = src.substring(start, Math.min(end, stringEnd));
+                StringBuilder gotten = new StringBuilder(src.substring(start, Math.min(end, stringEnd)));
                 while (gotten.length() < end - start) {
-                    gotten += END_OF_LINE;
+                    gotten.append(END_OF_LINE);
                 }
-                return gotten;
+                return gotten.toString();
             };
             boolean consumed = false;
             for (ITokenizerGobbler token : tokenizers) {
@@ -84,7 +84,7 @@ public class Tokeniser {
 
     public enum ResultSpecific implements TokenResult {
         IGNORE,
-        INVALID;
+        INVALID
     }
 
     public static class ResultInvalid implements TokenResult {

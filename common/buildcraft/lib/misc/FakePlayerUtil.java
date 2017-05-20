@@ -5,7 +5,6 @@ import buildcraft.lib.fake.FakePlayerBC;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.util.FakePlayer;
 
 import java.util.HashMap;
 import java.util.Map;

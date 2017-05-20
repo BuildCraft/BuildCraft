@@ -209,6 +209,7 @@ public class ColourUtil {
         return FACE_TO_FORMAT[face.ordinal()];
     }
 
+    @SuppressWarnings("PointlessBitwiseExpression")
     public static int swapArgbToAbgr(int argb) {
         int a = (argb >> 24) & 0xFF;
         int r = (argb >> 16) & 0xFF;

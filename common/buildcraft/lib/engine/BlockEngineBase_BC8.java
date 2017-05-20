@@ -24,7 +24,6 @@ import net.minecraft.world.World;
 
 import buildcraft.api.blocks.ICustomRotationHandler;
 import buildcraft.api.core.IEngineType;
-import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.misc.EntityUtil;

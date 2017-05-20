@@ -23,14 +23,12 @@ public enum ParticleCountMultiplier implements IParticlePositionPipe {
     }
 
     public static IParticlePositionPipe getOptionProvider() {
-        return (pos) -> {
-            return getForOption().pipe(pos);
-        };
+        return pos -> getForOption().pipe(pos);
     }
 
     private final int numExpanses;
 
-    private ParticleCountMultiplier(int numExpanses) {
+    ParticleCountMultiplier(int numExpanses) {
         this.numExpanses = numExpanses;
     }
 

@@ -7,8 +7,6 @@ import java.util.function.Supplier;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.MathHelper;
@@ -153,12 +151,6 @@ public abstract class Ledger_Neptune implements ITooltipElement {
                 currentHeight = targetHeight;
             }
         }
-
-        return;
-    }
-
-    private static int clamp(int val, int min, int max) {
-        return MathHelper.clamp(val, min, max);
     }
 
     private static int interp(int past, int current, float partialTicks) {

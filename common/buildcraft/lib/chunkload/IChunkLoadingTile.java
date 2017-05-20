@@ -44,13 +44,13 @@ public interface IChunkLoadingTile {
         return list;
     }
 
-    public enum LoadType {
+    enum LoadType {
         /** Softly attempt to chunkload this. If the value of {@link BCLibConfig#chunkLoadingType} is equal to
          * {@link ChunkLoaderLevel#STRICT_TILES} or {@link ChunkLoaderLevel#NONE} then it won't be loaded. */
         SOFT,
         /** If the value of {@link BCLibConfig#chunkLoadingType} is equal to {@link ChunkLoaderLevel#NONE} then it won't
          * be loaded. Generally this should only be enabled for machines that are designed to operate far from a players
          * territory, like a quarry or a pump. */
-        HARD;
+        HARD
     }
 }

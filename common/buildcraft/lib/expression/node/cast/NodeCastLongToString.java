@@ -18,7 +18,7 @@ public class NodeCastLongToString implements INodeString {
 
     @Override
     public INodeString inline() {
-        return NodeInliningHelper.tryInline(this, from, (f) -> new NodeCastLongToString(f), (f) -> new NodeConstantString(Long.toString(f.evaluate())));
+        return NodeInliningHelper.tryInline(this, from, NodeCastLongToString::new, (f) -> new NodeConstantString(Long.toString(f.evaluate())));
     }
 
     @Override

@@ -28,11 +28,7 @@ public enum BCBuildersEventDist {
     private final Map<World, Deque<WeakReference<TileQuarry>>> allQuarries = new WeakHashMap<>();
 
     public void validateQuarry(TileQuarry quarry) {
-        Deque<WeakReference<TileQuarry>> quarries = allQuarries.get(quarry.getWorld());
-        if (quarries == null) {
-            quarries = new LinkedList<>();
-            allQuarries.put(quarry.getWorld(), quarries);
-        }
+        Deque<WeakReference<TileQuarry>> quarries = allQuarries.computeIfAbsent(quarry.getWorld(), k -> new LinkedList<>());
         quarries.add(new WeakReference<>(quarry));
         BCLog.logger.info("Added quarry to checking list");
     }

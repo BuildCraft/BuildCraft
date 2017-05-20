@@ -8,8 +8,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 
-import buildcraft.lib.misc.NBTUtilBC;
-
 public class AxisOrder {
     private static final Table<EnumAxisOrder, Inversion, AxisOrder> allOrders;
 
@@ -99,7 +97,7 @@ public class AxisOrder {
 
         public final AxisDirection first, second, third;
 
-        private Inversion() {
+        Inversion() {
             first = getFor(name().charAt(0));
             second = getFor(name().charAt(1));
             third = getFor(name().charAt(2));

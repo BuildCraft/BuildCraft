@@ -19,6 +19,8 @@ import buildcraft.lib.fluid.TankManager;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.StackUtil;
 
+import javax.annotation.Nonnull;
+
 public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
     private final Tank tank1 = new Tank("tank1", Fluid.BUCKET_VOLUME * 6, this);
     private final Tank tank2 = new Tank("tank2", Fluid.BUCKET_VOLUME * 6, this);
@@ -101,6 +103,7 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
             this.nonBound = from;
         }
 
+        @Nonnull
         @Override
         public ItemStack get() {
             FluidStack drained = tankManager.drain(fluidUsed, false);

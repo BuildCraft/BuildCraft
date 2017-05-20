@@ -23,12 +23,9 @@ public class ItemPluggableSimple extends ItemBC_Neptune implements IItemPluggabl
     @Nonnull
     private final IPluggableCreator creator;
 
-    public ItemPluggableSimple(String id, PluggableDefinition definition, IPluggableCreator creator) {
+    public ItemPluggableSimple(String id, PluggableDefinition definition, @Nonnull IPluggableCreator creator) {
         super(id);
         this.definition = definition;
-        if (creator == null) {
-            throw new NullPointerException("Null creator! (Was given " + definition.identifier + ")");
-        }
         this.creator = creator;
     }
 
@@ -37,7 +34,7 @@ public class ItemPluggableSimple extends ItemBC_Neptune implements IItemPluggabl
     }
 
     @Override
-    public PipePluggable onPlace(ItemStack stack, IPipeHolder holder, EnumFacing side, EntityPlayer player, EnumHand hand) {
+    public PipePluggable onPlace(@Nonnull ItemStack stack, IPipeHolder holder, EnumFacing side, EntityPlayer player, EnumHand hand) {
         SoundUtil.playBlockPlace(holder.getPipeWorld(), holder.getPipePos());
         return creator.createSimplePluggable(definition, holder, side);
     }

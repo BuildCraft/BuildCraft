@@ -35,7 +35,7 @@ public class GateVariant {
         this.hash = Objects.hash(logic, material, modifier);
     }
 
-    public NBTTagCompound writeToNbt() {
+    public NBTTagCompound writeToNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setByte("logic", (byte) logic.ordinal());
         nbt.setByte("material", (byte) material.ordinal());

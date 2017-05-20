@@ -166,7 +166,7 @@ public class JsonUtil {
             String target = in.getAsString();
             JsonObject toInline = inlineMap.get(target);
             if (toInline == null) {
-                throw new JsonSyntaxException("Didn't find the inline " + toInline);
+                throw new JsonSyntaxException("Didn't find the inline " + target);
             }
             for (Entry<String, JsonElement> entry : toInline.entrySet()) {
                 String name = entry.getKey();

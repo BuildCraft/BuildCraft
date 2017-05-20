@@ -56,12 +56,12 @@ public enum FacadeSwapRecipe implements IRecipe, IRecipeViewable.IViewableGrid {
         ItemStack stackIn = StackUtil.EMPTY;
         for (int s = 0; s < inv.getSizeInventory(); s++) {
             ItemStack stack = inv.getStackInSlot(s);
-            if (stack.isEmpty()) {
-                continue;
-            } else if (stackIn.isEmpty()) {
-                stackIn = stack;
-            } else {
-                return StackUtil.EMPTY;
+            if (!stack.isEmpty()) {
+                if (stackIn.isEmpty()) {
+                    stackIn = stack;
+                } else {
+                    return StackUtil.EMPTY;
+                }
             }
         }
         if (stackIn.getItem() != BCTransportItems.plugFacade) {

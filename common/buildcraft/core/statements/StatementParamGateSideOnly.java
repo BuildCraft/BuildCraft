@@ -17,6 +17,8 @@ import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
 
+import javax.annotation.Nonnull;
+
 public class StatementParamGateSideOnly implements IStatementParameter {
 
     @SideOnly(Side.CLIENT)
@@ -32,6 +34,7 @@ public class StatementParamGateSideOnly implements IStatementParameter {
         isOn = def;
     }
 
+    @Nonnull
     @Override
     public ItemStack getItemStack() {
         return StackUtil.EMPTY;

@@ -145,7 +145,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
     }
 
     @Override
-    protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
+    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
         super.onSlotChange(handler, slot, before, after);
         if (handler == invMaterials) {
             ItemStackKey keyBefore = new ItemStackKey(before);
@@ -300,6 +300,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
             super(slot);
         }
 
+        @Nonnull
         @Override
         public ItemStack get() {
             return invBlueprint.getStackInSlot(slot);
@@ -338,6 +339,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
             boundTo = itemStackCache.get(key);
         }
 
+        @Nonnull
         @Override
         public ItemStack get() {
             if (boundTo == null) {

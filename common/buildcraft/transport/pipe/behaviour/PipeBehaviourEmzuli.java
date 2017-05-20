@@ -43,7 +43,7 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
 
         public final EnumDyeColor colour;
 
-        private SlotIndex(EnumDyeColor colour) {
+        SlotIndex(EnumDyeColor colour) {
             this.colour = colour;
         }
 

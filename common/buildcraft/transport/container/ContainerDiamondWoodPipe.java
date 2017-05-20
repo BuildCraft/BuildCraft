@@ -49,9 +49,7 @@ public class ContainerDiamondWoodPipe extends ContainerBC_Neptune {
     }
 
     public void sendNewFilterMode(FilterMode newFilterMode) {
-        this.sendMessage(NET_DATA, (buffer) -> {
-            buffer.writeEnumValue(newFilterMode);
-        });
+        this.sendMessage(NET_DATA, (buffer) -> buffer.writeEnumValue(newFilterMode));
     }
 
     @Override

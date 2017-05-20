@@ -43,11 +43,11 @@ public class EntityUtil {
 
     public static EnumHand getWrenchHand(EntityLivingBase entity) {
         ItemStack stack = entity.getHeldItemMainhand();
-        if (stack != null && stack.getItem() instanceof IToolWrench) {
+        if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {
             return EnumHand.MAIN_HAND;
         }
         stack = entity.getHeldItemOffhand();
-        if (stack != null && stack.getItem() instanceof IToolWrench) {
+        if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {
             return EnumHand.OFF_HAND;
         }
         return null;
@@ -55,13 +55,13 @@ public class EntityUtil {
 
     public static void activateWrench(EntityPlayer player) {
         ItemStack stack = player.getHeldItemMainhand();
-        if (stack != null && stack.getItem() instanceof IToolWrench) {
+        if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {
             IToolWrench wrench = (IToolWrench) stack.getItem();
             wrench.wrenchUsed(player, EnumHand.MAIN_HAND, stack, null);
             return;
         }
         stack = player.getHeldItemOffhand();
-        if (stack != null && stack.getItem() instanceof IToolWrench) {
+        if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {
             IToolWrench wrench = (IToolWrench) stack.getItem();
             wrench.wrenchUsed(player, EnumHand.OFF_HAND, stack, null);
         }

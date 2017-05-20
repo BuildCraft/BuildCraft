@@ -8,6 +8,8 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.tile.item.IItemHandlerAdv;
 
+import javax.annotation.Nonnull;
+
 public class SlotOutput extends SlotBase {
 
     public SlotOutput(IItemHandlerAdv handler, int slotIndex, int posX, int posY) {
@@ -15,7 +17,7 @@ public class SlotOutput extends SlotBase {
     }
 
     @Override
-    public boolean isItemValid(ItemStack itemstack) {
+    public boolean isItemValid(@Nonnull ItemStack itemstack) {
         return false;
     }
 }

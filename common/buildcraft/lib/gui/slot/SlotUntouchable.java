@@ -12,6 +12,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.tile.item.IItemHandlerAdv;
 
+import javax.annotation.Nonnull;
+
 public class SlotUntouchable extends SlotBase implements IPhantomSlot {
 
     public SlotUntouchable(IItemHandlerAdv itemHandler, int slotIndex, int posX, int posY) {
@@ -19,7 +21,7 @@ public class SlotUntouchable extends SlotBase implements IPhantomSlot {
     }
 
     @Override
-    public boolean isItemValid(ItemStack itemstack) {
+    public boolean isItemValid(@Nonnull ItemStack itemstack) {
         return false;
     }
 

@@ -146,7 +146,7 @@ public class ModelHolderVariable extends ModelHolder {
     public MutableQuad[] getCutoutQuads() {
         if (rawModel == null) {
             printNoModelWarning();
-            return new MutableQuad[0];
+            return MutableQuad.EMPTY_ARRAY;
         }
         return bakePart(rawModel.cutoutElements);
     }
@@ -154,7 +154,7 @@ public class ModelHolderVariable extends ModelHolder {
     public MutableQuad[] getTranslucentQuads() {
         if (rawModel == null) {
             printNoModelWarning();
-            return new MutableQuad[0];
+            return MutableQuad.EMPTY_ARRAY;
         }
         return bakePart(rawModel.translucentElements);
     }

@@ -15,7 +15,7 @@ public enum WrittenType {
     public final int numBytes;
     private final int maxStorableValue;
 
-    private WrittenType(int numBytes, int maxStorableValue) {
+    WrittenType(int numBytes, int maxStorableValue) {
         this.maxStorableValue = maxStorableValue;
         this.numBytes = numBytes;
     }

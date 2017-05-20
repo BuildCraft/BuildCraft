@@ -146,9 +146,7 @@ public class DeltaInt {
         staticEndValue = value;
         dynamicValueLast = value;
         dynamicValueThis = value;
-        manager.sendDeltaMessage(EnumDeltaMessage.SET_VALUE, this, (buffer) -> {
-            buffer.writeInt(value);
-        });
+        manager.sendDeltaMessage(EnumDeltaMessage.SET_VALUE, this, (buffer) -> buffer.writeInt(value));
     }
 
     public void readFromNBT(NBTTagCompound nbt) {

@@ -118,11 +118,7 @@ public enum GuideManager {
             }
         }
         // Create a dummy page for the stack
-        GuidePageFactory existing = generatedPages.get(stack);
-        if (existing == null) {
-            existing = GuidePageStandInRecipes.createFactory(stack);
-            generatedPages.put(stack, existing);
-        }
+        GuidePageFactory existing = generatedPages.computeIfAbsent(stack, GuidePageStandInRecipes::createFactory);
         return existing;
     }
 }

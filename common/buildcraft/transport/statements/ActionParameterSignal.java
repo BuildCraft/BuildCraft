@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -32,7 +33,7 @@ public class ActionParameterSignal implements IStatementParameter {
 
     public ActionParameterSignal() {}
 
-    public ActionParameterSignal(EnumDyeColor colour) {
+    public ActionParameterSignal(@Nullable EnumDyeColor colour) {
         this.colour = colour;
     }
 
@@ -108,6 +109,7 @@ public class ActionParameterSignal implements IStatementParameter {
         return this;
     }
 
+    @Nonnull
     @Override
     public ItemStack getItemStack() {
         return StackUtil.EMPTY;

@@ -61,6 +61,7 @@ public enum StripesHandlerDispenser implements IStripesHandlerItem {
             return Blocks.DISPENSER.getDefaultState().withProperty(BlockDispenser.FACING, side);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <T extends TileEntity> T getBlockTileEntity() {
             return (T) world.getTileEntity(pos);

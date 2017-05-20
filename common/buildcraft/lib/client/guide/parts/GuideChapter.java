@@ -19,7 +19,7 @@ public abstract class GuideChapter extends GuidePart {
 
     public enum EnumGuiSide {
         LEFT,
-        RIGHT;
+        RIGHT
     }
 
     public GuideChapter(GuiGuide gui, String chapter) {

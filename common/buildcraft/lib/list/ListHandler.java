@@ -56,7 +56,7 @@ public final class ListHandler {
         }
 
         public void toggleOption(int id) {
-            if (byType == false && byMaterial == false && (id == 1 || id == 2)) {
+            if (!byType && !byMaterial && (id == 1 || id == 2)) {
                 for (int i = 1; i < stacks.size(); i++) {
                     stacks.set(i, StackUtil.EMPTY);
                 }

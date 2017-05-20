@@ -16,10 +16,11 @@ import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.api.statements.*;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
-import buildcraft.api.tiles.IHasWork;
 
 import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.misc.CapUtil;
+
+import javax.annotation.Nonnull;
 
 public enum CoreTriggerProvider implements ITriggerProvider {
     INSTANCE;
@@ -39,10 +40,10 @@ public enum CoreTriggerProvider implements ITriggerProvider {
     }
 
     @Override
-    public void addInternalSidedTriggers(Collection<ITriggerInternalSided> res, IStatementContainer container, EnumFacing side) {}
+    public void addInternalSidedTriggers(Collection<ITriggerInternalSided> res, IStatementContainer container, @Nonnull EnumFacing side) {}
 
     @Override
-    public void addExternalTriggers(Collection<ITriggerExternal> res, EnumFacing side, TileEntity tile) {
+    public void addExternalTriggers(Collection<ITriggerExternal> res, @Nonnull EnumFacing side, TileEntity tile) {
 
         if (TriggerPower.isTriggeringTile(tile, side.getOpposite())) {
             res.add(BCCoreStatements.TRIGGER_POWER_HIGH);

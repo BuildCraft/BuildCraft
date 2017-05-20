@@ -8,6 +8,8 @@ import buildcraft.api.core.IStackFilter;
 
 import buildcraft.lib.misc.StackUtil;
 
+import javax.annotation.Nonnull;
+
 public final class SidedInventoryWrapper extends AbstractInvItemTransactor {
     private final ISidedInventory sided;
     private final InventoryWrapper normal;
@@ -21,8 +23,9 @@ public final class SidedInventoryWrapper extends AbstractInvItemTransactor {
         slots = sided.getSlotsForFace(face);
     }
 
+    @Nonnull
     @Override
-    protected ItemStack insert(int externalSlot, ItemStack stack, boolean simulate) {
+    protected ItemStack insert(int externalSlot, @Nonnull ItemStack stack, boolean simulate) {
         int sidedSlot = slots[externalSlot];
         if (sided.canInsertItem(sidedSlot, stack, face)) {
             // Delegate to the normal inserter - its just easier.
@@ -31,6 +34,7 @@ public final class SidedInventoryWrapper extends AbstractInvItemTransactor {
         return stack;
     }
 
+    @Nonnull
     @Override
     protected ItemStack extract(int externalSlot, IStackFilter filter, int min, int max, boolean simulate) {
         int sidedSlot = slots[externalSlot];

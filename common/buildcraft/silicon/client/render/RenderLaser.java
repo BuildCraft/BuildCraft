@@ -14,11 +14,13 @@ import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.silicon.tile.TileLaser;
 
+import javax.annotation.Nonnull;
+
 public class RenderLaser extends FastTESR<TileLaser> {
     private static final int MAX_POWER = BuildCraftLaserManager.POWERS.length - 1;
 
     @Override
-    public void renderTileEntityFast(TileLaser tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
+    public void renderTileEntityFast(@Nonnull TileLaser tile, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer buffer) {
 
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("laser");

@@ -68,14 +68,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     }
 
     private Deque<BlockPos> getLayerQueue(int layer) {
-        Deque<BlockPos> pumpQueue = layerQueues.get(layer);
-
-        if (pumpQueue == null) {
-            pumpQueue = new LinkedList<>();
-            layerQueues.put(layer, pumpQueue);
-        }
-
-        return pumpQueue;
+        return layerQueues.computeIfAbsent(layer, k -> new LinkedList<>());
     }
 
     private void rebuildQueue() {

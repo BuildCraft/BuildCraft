@@ -1,6 +1,7 @@
 package buildcraft.lib.net.cache;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -61,9 +62,7 @@ public class BuildCraftObjectCaches {
 
     /** Called by BuildCraftLib in the {@link FMLPostInitializationEvent} */
     public static void fmlPostInit() {
-        CACHES.sort((a, b) -> {
-            return a.getClass().getSimpleName().compareTo(b.getClass().getSimpleName());
-        });
+        CACHES.sort(Comparator.comparing(a -> a.getClass().getSimpleName()));
         if (NetworkedObjectCache.DEBUG_LOG) {
             BCLog.logger.info("[lib.net.cache] Sorted list of networked object caches:");
             for (int i = 0; i < CACHES.size(); i++) {

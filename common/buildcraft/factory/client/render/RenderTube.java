@@ -9,6 +9,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.model.animation.FastTESR;
 
+import javax.annotation.Nonnull;
+
 public class RenderTube extends FastTESR<TileMiner> {
     private final LaserType laserType;
 
@@ -17,7 +19,7 @@ public class RenderTube extends FastTESR<TileMiner> {
     }
 
     @Override
-    public void renderTileEntityFast(TileMiner tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
+    public void renderTileEntityFast(@Nonnull TileMiner tile, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer buffer) {
         double tubeY = tile.getPos().getY() - tile.getLength(partialTicks);
         if (tubeY == 0) {
             return;

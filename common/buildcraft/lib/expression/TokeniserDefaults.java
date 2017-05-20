@@ -42,7 +42,6 @@ public class TokeniserDefaults {
                 char c = ctx.getCharAt(size);
                 if ('_' == c || (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
                     size++;
-                    continue;
                 } else {
                     break;
                 }

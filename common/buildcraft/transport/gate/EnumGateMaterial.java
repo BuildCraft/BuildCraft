@@ -18,7 +18,7 @@ public enum EnumGateMaterial {
     public final boolean canBeModified;
     public final String tag = name().toLowerCase(Locale.ROOT);
 
-    private EnumGateMaterial(Block block, int numSlots, boolean canBeModified) {
+    EnumGateMaterial(Block block, int numSlots, boolean canBeModified) {
         this.block = block;
         this.numSlots = numSlots;
         this.canBeModified = canBeModified;

@@ -154,7 +154,7 @@ public class PipeWireRenderer {
                 swapV = fPositive;
             } else if (aAxis == Axis.Y) {
                 rotations = 1;
-                swapU = fAxis == Axis.X ? !fPositive : fPositive;
+                swapU = (fAxis == Axis.X) != fPositive;
                 swapV = fAxis == Axis.Z;
             } else {// aAxis == Axis.Z
                 if (fAxis == Axis.Y) {

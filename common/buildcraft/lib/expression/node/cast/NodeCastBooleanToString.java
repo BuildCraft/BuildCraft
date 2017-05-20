@@ -18,7 +18,7 @@ public class NodeCastBooleanToString implements INodeString {
 
     @Override
     public INodeString inline() {
-        return NodeInliningHelper.tryInline(this, from, (f) -> new NodeCastBooleanToString(f), (f) -> new NodeConstantString(Boolean.toString(f.evaluate())));
+        return NodeInliningHelper.tryInline(this, from, NodeCastBooleanToString::new, (f) -> new NodeConstantString(Boolean.toString(f.evaluate())));
     }
 
     @Override

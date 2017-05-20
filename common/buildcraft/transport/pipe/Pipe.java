@@ -30,6 +30,8 @@ import buildcraft.lib.misc.data.LoadingException;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.client.model.key.PipeModelKey;
 
+import javax.annotation.Nonnull;
+
 public final class Pipe implements IPipe, IDebuggable {
     public final IPipeHolder holder;
     public final PipeDefinition definition;
@@ -180,12 +182,12 @@ public final class Pipe implements IPipe, IDebuggable {
     // Caps
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
         return getCapability(capability, facing) != null;
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         T val = behaviour.getCapability(capability, facing);
         if (val != null) return val;
         return flow.getCapability(capability, facing);

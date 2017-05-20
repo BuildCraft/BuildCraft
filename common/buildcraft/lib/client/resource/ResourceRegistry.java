@@ -22,6 +22,7 @@ public enum ResourceRegistry implements IResourceManagerReloadListener {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends ResourceHolder> T register(T holder, Class<T> wanted) {
         ResourceLocation loc = holder.locationBase;
         if (!holders.containsKey(loc)) {

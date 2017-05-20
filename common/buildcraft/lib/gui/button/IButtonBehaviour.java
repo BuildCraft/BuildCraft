@@ -5,7 +5,7 @@ public interface IButtonBehaviour {
 
     void mouseReleased(GuiAbstractButton button, int bkey);
 
-    public static final IButtonBehaviour DEFAULT = new IButtonBehaviour() {
+    IButtonBehaviour DEFAULT = new IButtonBehaviour() {
         @Override
         public void mousePressed(GuiAbstractButton button, int bkey) {
             button.active = true;
@@ -20,7 +20,7 @@ public interface IButtonBehaviour {
         }
     };
 
-    public static final IButtonBehaviour TOGGLE = new IButtonBehaviour() {
+    IButtonBehaviour TOGGLE = new IButtonBehaviour() {
         @Override
         public void mousePressed(GuiAbstractButton button, int bkey) {
             button.active = !button.active;
@@ -31,7 +31,7 @@ public interface IButtonBehaviour {
         public void mouseReleased(GuiAbstractButton button, int bkey) {}
     };
 
-    public static Radio createAndSetRadioButtons(GuiAbstractButton... buttons) {
+    static Radio createAndSetRadioButtons(GuiAbstractButton... buttons) {
         Radio radio = new Radio(buttons);
         for (GuiAbstractButton button : buttons) {
             button.setBehaviour(radio);
@@ -40,7 +40,7 @@ public interface IButtonBehaviour {
     }
 
     /** A radio button is a button linked to several other buttons, of which only 1 can be pressed at a time. */
-    public static class Radio implements IButtonBehaviour {
+    class Radio implements IButtonBehaviour {
         public final GuiAbstractButton[] buttons;
 
         public Radio(GuiAbstractButton... buttons) {

@@ -40,6 +40,8 @@ import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
+import javax.annotation.Nonnull;
+
 public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     public static final int MAX_FLUID = 10_000;
 
@@ -164,6 +166,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
         }
     }
 
+    @Nonnull
     @Override
     protected IMjConnector createConnector() {
         return new EngineConnector(false);

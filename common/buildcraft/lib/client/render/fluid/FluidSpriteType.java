@@ -12,5 +12,5 @@ public enum FluidSpriteType {
     /** The sprite that {@link Fluid#getStill()} refers to. */
     STILL,
     /** The sprite that {@link Fluid#getFlowing()} refers to. */
-    FLOWING;
+    FLOWING
 }

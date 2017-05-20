@@ -167,12 +167,12 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
     }
 
     @Override
-    public void dropItem(ItemStack stack, EnumFacing direction) {
+    public void dropItem(@Nonnull ItemStack stack, EnumFacing direction) {
         InventoryUtil.drop(pipe.getHolder().getPipeWorld(), pipe.getHolder().getPipePos(), stack);
     }
 
     @Override
-    public boolean sendItem(ItemStack stack, EnumFacing from) {
+    public boolean sendItem(@Nonnull ItemStack stack, EnumFacing from) {
         PipeFlow flow = pipe.getFlow();
         if (flow instanceof IFlowItems) {
             ((IFlowItems) flow).insertItemsForce(stack, from, null, 0.02);

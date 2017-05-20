@@ -18,9 +18,11 @@ import buildcraft.transport.client.PipeRegistryClient;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.tile.TilePipeHolder;
 
+import javax.annotation.Nonnull;
+
 public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
     @Override
-    public void renderTileEntityFast(TilePipeHolder pipe, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
+    public void renderTileEntityFast(@Nonnull TilePipeHolder pipe, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer vb) {
         bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         Minecraft.getMinecraft().mcProfiler.startSection("bc");

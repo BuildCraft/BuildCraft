@@ -25,7 +25,7 @@ public enum GuideCraftingRecipes implements IStackRecipes {
     INSTANCE;
 
     @Override
-    public List<GuidePartFactory> getUsages(ItemStack target) {
+    public List<GuidePartFactory> getUsages(@Nonnull ItemStack target) {
         List<GuidePartFactory> list = new ArrayList<>();
 
         for (IRecipe recipe : CraftingManager.getInstance().getRecipeList()) {

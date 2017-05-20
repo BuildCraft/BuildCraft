@@ -60,6 +60,7 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
         return getStates(facade).type;
     }
 
+    @Nonnull
     @Override
     public ItemStack getFacadeForBlock(IBlockState state) {
         FacadeBlockStateInfo info = FacadeStateManager.validFacadeStates.get(state);
@@ -71,7 +72,7 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
     }
 
     @Override
-    public IBlockState[] getBlockStatesForFacade(ItemStack facade) {
+    public IBlockState[] getBlockStatesForFacade(@Nonnull ItemStack facade) {
         FullFacadeInstance info = getStates(facade);
         IBlockState[] states = new IBlockState[info.phasedStates.length];
         for (int i = 0; i < states.length; i++) {
@@ -150,9 +151,9 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
         } else {
             String propertiesStart = TextFormatting.GRAY + "" + TextFormatting.ITALIC;
             FacadeBlockStateInfo info = states.phasedStates[0].stateInfo;
-            BlockUtil.getPropertiesStringMap(info.state, info.varyingProperties).forEach((name, value) -> {
-                tooltip.add(propertiesStart + name + " = " + value);
-            });
+            BlockUtil.getPropertiesStringMap(info.state, info.varyingProperties).forEach((name, value) ->
+                tooltip.add(propertiesStart + name + " = " + value)
+            );
         }
     }
 }

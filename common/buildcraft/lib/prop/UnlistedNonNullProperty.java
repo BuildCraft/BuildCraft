@@ -19,6 +19,7 @@ public class UnlistedNonNullProperty<V> implements IUnlistedProperty<V> {
         return value != null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Class getType() {
         return Object.class;

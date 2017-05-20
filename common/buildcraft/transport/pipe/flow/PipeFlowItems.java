@@ -162,8 +162,9 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
     // PipeFlow
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == PipeApi.CAP_INJECTABLE) {
             return (T) this;
         } else if (capability == CapUtil.CAP_ITEM_TRANSACTOR) {
@@ -375,6 +376,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         return pipe.isConnected(from);
     }
 
+    @Nonnull
     @Override
     public ItemStack injectItem(@Nonnull ItemStack stack, boolean doAdd, EnumFacing from, EnumDyeColor colour, double speed) {
         if (pipe.getHolder().getPipeWorld().isRemote) {
@@ -410,7 +412,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
     }
 
     @Override
-    public void insertItemsForce(ItemStack stack, EnumFacing from, EnumDyeColor colour, double speed) {
+    public void insertItemsForce(@Nonnull ItemStack stack, EnumFacing from, EnumDyeColor colour, double speed) {
         World world = pipe.getHolder().getPipeWorld();
         if (world.isRemote) {
             throw new IllegalStateException("Cannot inject items on the client side!");

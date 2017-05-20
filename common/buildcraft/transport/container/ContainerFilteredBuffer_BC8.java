@@ -15,6 +15,8 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.tile.TileFilteredBuffer;
 
+import javax.annotation.Nonnull;
+
 public class ContainerFilteredBuffer_BC8 extends ContainerBCTile<TileFilteredBuffer> {
     public ContainerFilteredBuffer_BC8(EntityPlayer player, TileFilteredBuffer tile) {
         super(player, tile);
@@ -37,7 +39,7 @@ public class ContainerFilteredBuffer_BC8 extends ContainerBCTile<TileFilteredBuf
             // Filtered Buffer inventory slots
             addSlotToContainer(new SlotBase(tile.invMain, i, 8 + i * 18, 61) {
                 @Override
-                public boolean isItemValid(ItemStack stack) {
+                public boolean isItemValid(@Nonnull ItemStack stack) {
                     return phantom.getHasStack() && StackUtil.canMerge(phantom.getStack(), stack);
                 }
             });

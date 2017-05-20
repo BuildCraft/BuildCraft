@@ -4,7 +4,6 @@ import java.util.*;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import buildcraft.lib.BCLib;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
@@ -22,8 +21,9 @@ public enum AssemblyRecipeRegistry implements IAssemblyRecipeRegistry {
     private final Map<ResourceLocation, AssemblyRecipe> recipes = new HashMap<>();
     private final List<IAssemblyRecipeProvider> providers = new ArrayList<>();
 
+    @Nonnull
     @Override
-    public List<AssemblyRecipe> getRecipesFor(NonNullList<ItemStack> possibleIn) {
+    public List<AssemblyRecipe> getRecipesFor(@Nonnull NonNullList<ItemStack> possibleIn) {
         List<AssemblyRecipe> all = new ArrayList<>();
         for (AssemblyRecipe ar : recipes.values()) {
             if (ar.requiredStacks.stream().allMatch((definition) -> StackUtil.contains(definition, possibleIn))) {
@@ -37,7 +37,7 @@ public enum AssemblyRecipeRegistry implements IAssemblyRecipeRegistry {
     }
 
     @Override
-    public void addRecipe(AssemblyRecipe recipe) {
+    public void addRecipe(@Nonnull AssemblyRecipe recipe) {
         if (recipes.containsKey(recipe.name)) {
             throw new IllegalStateException("Trying to override assembly recipe with name " + recipe.name + ".\n" +
                     "If you want replace recipe remove old one first.");
@@ -46,7 +46,7 @@ public enum AssemblyRecipeRegistry implements IAssemblyRecipeRegistry {
     }
 
     @Override
-    public void addRecipeProvider(IAssemblyRecipeProvider provider) {
+    public void addRecipeProvider(@Nonnull IAssemblyRecipeProvider provider) {
         providers.add(provider);
     }
 

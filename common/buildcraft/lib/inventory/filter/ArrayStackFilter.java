@@ -16,6 +16,8 @@ import buildcraft.api.recipes.StackDefinition;
 
 import buildcraft.lib.misc.StackUtil;
 
+import javax.annotation.Nonnull;
+
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class ArrayStackFilter implements IStackFilter {
 
@@ -26,7 +28,7 @@ public class ArrayStackFilter implements IStackFilter {
     }
 
     @Override
-    public boolean matches(ItemStack stack) {
+    public boolean matches(@Nonnull ItemStack stack) {
         if (stacks.size() == 0 || !hasFilter()) {
             return true;
         }

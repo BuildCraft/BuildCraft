@@ -13,7 +13,7 @@ import buildcraft.lib.expression.node.binary.NodeBinaryLongToBoolean.BiLongToBoo
 import buildcraft.lib.expression.node.binary.NodeBinaryStringToBoolean.BiStringToBooleanFunction;
 
 public enum BiNodeToBooleanType implements IBinaryNodeType {
-    EQUAL("==", (l, r) -> l == r, (l, r) -> l == r, (l, r) -> l == r, (l, r) -> Objects.equal(l, r)),
+    EQUAL("==", (l, r) -> l == r, (l, r) -> l == r, (l, r) -> l == r, Objects::equal),
     NOT_EQUAL("!=", (l, r) -> l != r, (l, r) -> l != r, (l, r) -> l != r, (l, r) -> !Objects.equal(l, r)),
     LESS_THAN("<", (l, r) -> l < r, (l, r) -> l < r, null, (l, r) -> l.compareTo(r) < 0),
     GREATER_THAN(">", (l, r) -> l > r, (l, r) -> l > r, null, (l, r) -> l.compareTo(r) > 0),
@@ -26,7 +26,7 @@ public enum BiNodeToBooleanType implements IBinaryNodeType {
     public final BiBooleanPredicate booleanFunction;
     public final BiStringToBooleanFunction stringFunc;
 
-    private BiNodeToBooleanType(String op, BiLongToBooleanFunction longFunc, BiDoubleToBooleanFunction doubleFunc, BiBooleanPredicate booleanFunction, BiStringToBooleanFunction stringFunc) {
+    BiNodeToBooleanType(String op, BiLongToBooleanFunction longFunc, BiDoubleToBooleanFunction doubleFunc, BiBooleanPredicate booleanFunction, BiStringToBooleanFunction stringFunc) {
         this.op = op;
         this.longFunc = longFunc;
         this.doubleFunc = doubleFunc;

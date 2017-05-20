@@ -17,6 +17,8 @@ import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.plug.PluggablePulsar;
 import buildcraft.transport.wire.IWireEmitter;
 
+import javax.annotation.Nonnull;
+
 public enum TransportActionProvider implements IActionProvider {
     INSTANCE;
 
@@ -38,7 +40,7 @@ public enum TransportActionProvider implements IActionProvider {
     }
 
     @Override
-    public void addInternalSidedActions(Collection<IActionInternalSided> actions, IStatementContainer container, EnumFacing side) {
+    public void addInternalSidedActions(Collection<IActionInternalSided> actions, IStatementContainer container, @Nonnull EnumFacing side) {
         if (container instanceof IGate) {
             IGate gate = (IGate) container;
             IPipeHolder holder = gate.getPipeHolder();
@@ -52,7 +54,7 @@ public enum TransportActionProvider implements IActionProvider {
     }
 
     @Override
-    public void addExternalActions(Collection<IActionExternal> actions, EnumFacing side, TileEntity tile) {
+    public void addExternalActions(Collection<IActionExternal> actions, @Nonnull EnumFacing side, TileEntity tile) {
 
     }
 }

@@ -14,9 +14,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.lib.client.model.json.JsonModel;
-import buildcraft.lib.client.model.json.JsonVariableModel;
-
 public class ResourceLoaderContext {
     private final Set<ResourceLocation> loaded = new HashSet<>();
     private final Deque<ResourceLocation> loadingStack = new ArrayDeque<>();

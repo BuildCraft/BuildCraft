@@ -17,7 +17,7 @@ public enum UnaryNodeType implements IUnaryNodeType {
     public final LongUnaryOperator longFunc;
     public final DoubleUnaryOperator doubleFunc;
 
-    private UnaryNodeType(String op, LongUnaryOperator longFunc, DoubleUnaryOperator doubleFunc) {
+    UnaryNodeType(String op, LongUnaryOperator longFunc, DoubleUnaryOperator doubleFunc) {
         this.op = op;
         this.longFunc = longFunc;
         this.doubleFunc = doubleFunc;

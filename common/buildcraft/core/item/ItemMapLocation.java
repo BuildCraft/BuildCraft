@@ -256,7 +256,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     }
 
     @Override
-    public IBox getBox(ItemStack item) {
+    public IBox getBox(@Nonnull ItemStack item) {
         MapLocationType type = MapLocationType.getFromStack(item);
 
         switch (type) {
@@ -273,7 +273,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     }
 
     @Override
-    public EnumFacing getPointSide(ItemStack item) {
+    public EnumFacing getPointSide(@Nonnull ItemStack item) {
         NBTTagCompound cpt = NBTUtilBC.getItemData(item);
         MapLocationType type = MapLocationType.getFromStack(item);
 
@@ -285,7 +285,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     }
 
     @Override
-    public BlockPos getPoint(ItemStack item) {
+    public BlockPos getPoint(@Nonnull ItemStack item) {
         NBTTagCompound cpt = NBTUtilBC.getItemData(item);
         MapLocationType type = MapLocationType.getFromStack(item);
 
@@ -297,7 +297,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     }
 
     @Override
-    public IZone getZone(ItemStack item) {
+    public IZone getZone(@Nonnull ItemStack item) {
         NBTTagCompound cpt = NBTUtilBC.getItemData(item);
         MapLocationType type = MapLocationType.getFromStack(item);
         switch (type) {
@@ -320,7 +320,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     }
 
     @Override
-    public List<BlockPos> getPath(ItemStack item) {
+    public List<BlockPos> getPath(@Nonnull ItemStack item) {
         NBTTagCompound cpt = NBTUtilBC.getItemData(item);
         MapLocationType type = MapLocationType.getFromStack(item);
         switch (type) {
@@ -351,12 +351,12 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     }
 
     @Override
-    public String getName(ItemStack item) {
+    public String getName(@Nonnull ItemStack item) {
         return NBTUtilBC.getItemData(item).getString("name");
     }
 
     @Override
-    public boolean setName(ItemStack item, String name) {
+    public boolean setName(@Nonnull ItemStack item, String name) {
         NBTTagCompound cpt = NBTUtilBC.getItemData(item);
         cpt.setString("name", name);
         return true;

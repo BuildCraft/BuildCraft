@@ -10,6 +10,8 @@ import buildcraft.api.inventory.IItemTransactor.IItemExtractable;
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.StackUtil;
 
+import javax.annotation.Nonnull;
+
 public class TransactorEntityArrow implements IItemExtractable {
 
     private final EntityArrow entity;
@@ -18,6 +20,7 @@ public class TransactorEntityArrow implements IItemExtractable {
         this.entity = entity;
     }
 
+    @Nonnull
     @Override
     public ItemStack extract(IStackFilter filter, int min, int max, boolean simulate) {
         if (entity.isDead || entity.pickupStatus != PickupStatus.ALLOWED || min > 1 || max < 1 || max < min) {

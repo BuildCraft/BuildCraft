@@ -13,7 +13,7 @@ public enum ParticleDirectionalSpread implements IParticlePositionPipe {
 
     private final double motionDiff;
 
-    private ParticleDirectionalSpread(double motionDiff) {
+    ParticleDirectionalSpread(double motionDiff) {
         this.motionDiff = motionDiff;
     }
 

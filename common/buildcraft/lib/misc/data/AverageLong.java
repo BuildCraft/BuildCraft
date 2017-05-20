@@ -62,7 +62,7 @@ public class AverageLong {
         int[] ints = new int[precise * 2];
         for (int i = 0; i < precise; i++) {
             long val = data[i];
-            ints[i * 2] = (int) (val & 0xff_ff_ff_ff);
+            ints[i * 2] = (int) val;
             ints[i * 2 + 1] = (int) (val >>> 32);
         }
         nbt.setIntArray(subTag, ints);

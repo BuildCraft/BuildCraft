@@ -10,6 +10,7 @@ import buildcraft.lib.gui.widget.WidgetFluidTank;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +24,7 @@ public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
 
         addSlotToContainer(new SlotBase(tile.invSnapshot, 0, 80, 27) {
             @Override
-            public boolean isItemValid(ItemStack stack) {
+            public boolean isItemValid(@Nonnull ItemStack stack) {
                 return stack.getItem() instanceof ItemSnapshot && ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used;
             }
         });

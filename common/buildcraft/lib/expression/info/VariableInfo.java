@@ -49,7 +49,7 @@ public abstract class VariableInfo<N extends IVariableNode> {
         NEVER,
         MATCHES_EXP,
         IN_SET,
-        ALWAYS;
+        ALWAYS
     }
 
     public static class VariableInfoString extends VariableInfo<NodeVariableString> {
@@ -165,7 +165,7 @@ public abstract class VariableInfo<N extends IVariableNode> {
 
             public final Collection<Boolean> possible;
 
-            private BooleanPosibilities(Boolean... possible) {
+            BooleanPosibilities(Boolean... possible) {
                 this.possible = Arrays.asList(possible);
             }
         }
@@ -192,9 +192,9 @@ public abstract class VariableInfo<N extends IVariableNode> {
                 case IN_SET:
                     switch (possibleValues) {
                         case FALSE:
-                            return node.value == false;
+                            return !node.value;
                         case TRUE:
-                            return node.value == true;
+                            return node.value;
                         default:
                             return true;
                     }

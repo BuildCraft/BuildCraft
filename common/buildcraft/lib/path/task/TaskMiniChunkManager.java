@@ -26,15 +26,11 @@ public class TaskMiniChunkManager implements Callable<MiniChunkGraph> {
 
     @Override
     public MiniChunkGraph call() throws Exception {
-        try {
-            FilledChunk filled = execute(new TaskMiniChunkFiller(world, offset));
-            world = null;// We no longer need this. Let the GC remove this if we are holding the last reference to it.
-            AnalysedChunk analysed = execute(new TaskMiniChunkAnalyser(filled));
-            MiniChunkGraph graph = null;
-            setter.accept(graph);
-            return graph;
-        } catch (InterruptedException ex) {
-            throw ex;
-        }
+        FilledChunk filled = execute(new TaskMiniChunkFiller(world, offset));
+        world = null;// We no longer need this. Let the GC remove this if we are holding the last reference to it.
+        AnalysedChunk analysed = execute(new TaskMiniChunkAnalyser(filled));
+        MiniChunkGraph graph = null;
+        setter.accept(graph);
+        return graph;
     }
 }

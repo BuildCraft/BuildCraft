@@ -18,9 +18,10 @@ public class DelayedList<E> {
     }
 
     public static <E> DelayedList<E> createConcurrent() {
-        return new DelayedList<E>(Collections.synchronizedList(new ArrayList<>()), () -> {
-            return Collections.synchronizedList(new ArrayList<>());
-        }) {
+        return new DelayedList<E>(
+            Collections.synchronizedList(new ArrayList<>()),
+            () -> Collections.synchronizedList(new ArrayList<>())
+        ) {
             @Override
             public List<E> advance() {
                 synchronized (this.elements) {

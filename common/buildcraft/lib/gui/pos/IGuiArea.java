@@ -85,7 +85,7 @@ public interface IGuiArea extends IGuiPosition {
         return create(() -> getX() - dX, () -> getY() - dY, () -> getWidth() + dX * 2, () -> getHeight() + dY * 2);
     }
 
-    public static IGuiArea create(IntSupplier x, IntSupplier y, IntSupplier width, IntSupplier height) {
+    static IGuiArea create(IntSupplier x, IntSupplier y, IntSupplier width, IntSupplier height) {
         return new IGuiArea() {
             @Override
             public int getX() {

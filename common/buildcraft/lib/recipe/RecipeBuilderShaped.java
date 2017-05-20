@@ -33,18 +33,18 @@ public class RecipeBuilderShaped {
     public RecipeBuilderShaped map(char c, Object... values) {
         boolean put = false;
         for (Object v : values) {
-            if (v == null || v == StackUtil.EMPTY) {
-                continue;
-            } else if (v instanceof Item//
-                || v instanceof Block//
-                || v instanceof ItemStack//
-                || v instanceof String) {
-                if (!put) {
-                    objects.put(c, v);
-                    put = true;
+            if (v != null && v != StackUtil.EMPTY) {
+                if (v instanceof Item//
+                    || v instanceof Block//
+                    || v instanceof ItemStack//
+                    || v instanceof String) {
+                    if (!put) {
+                        objects.put(c, v);
+                        put = true;
+                    }
+                } else {
+                    throw new IllegalArgumentException("Invalid " + v.getClass());
                 }
-            } else {
-                throw new IllegalArgumentException("Invalid " + v.getClass());
             }
         }
         if (!put) {
@@ -78,16 +78,15 @@ public class RecipeBuilderShaped {
         for (int toRow = 0; toRow < toRows; toRow++) {
             strings[toRow] = new StringBuilder();
         }
-        for (int fromRow = 0; fromRow < fromRows; fromRow++) {
-            String toAdd = shape.get(fromRow);
+        for (String toAdd : shape) {
             for (int toRow = 0; toRow < toRows; toRow++) {
                 strings[toRow].append(toAdd.charAt(toRow));
             }
         }
         Object[] objs = new Object[toRows + objects.size() * 2];
         int offset = 0;
-        for (int i = 0; i < strings.length; i++) {
-            objs[offset++] = strings[i].toString();
+        for (StringBuilder string : strings) {
+            objs[offset++] = string.toString();
         }
         for (char c : objects.keys()) {
             objs[offset++] = c;

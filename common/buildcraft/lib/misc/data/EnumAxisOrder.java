@@ -32,7 +32,7 @@ public enum EnumAxisOrder {
 
     public final Axis first, second, third;
 
-    private EnumAxisOrder(Axis a, Axis b, Axis c) {
+    EnumAxisOrder(Axis a, Axis b, Axis c) {
         this.first = a;
         this.second = b;
         this.third = c;

@@ -18,7 +18,7 @@ public class NodeCastLongToDouble implements INodeDouble {
 
     @Override
     public INodeDouble inline() {
-        return NodeInliningHelper.tryInline(this, from, (f) -> new NodeCastLongToDouble(f), (f) -> new NodeConstantDouble(f.evaluate()));
+        return NodeInliningHelper.tryInline(this, from, NodeCastLongToDouble::new, (f) -> new NodeConstantDouble(f.evaluate()));
     }
 
     @Override

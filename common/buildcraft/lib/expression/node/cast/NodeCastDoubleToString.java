@@ -18,7 +18,7 @@ public class NodeCastDoubleToString implements INodeString {
 
     @Override
     public INodeString inline() {
-        return NodeInliningHelper.tryInline(this, from, (f) -> new NodeCastDoubleToString(f), (f) -> new NodeConstantString(Double.toString(f.evaluate())));
+        return NodeInliningHelper.tryInline(this, from, NodeCastDoubleToString::new, (f) -> new NodeConstantString(Double.toString(f.evaluate())));
     }
 
     @Override

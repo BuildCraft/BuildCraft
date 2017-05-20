@@ -30,7 +30,7 @@ class InventoryIteratorSided implements Iterable<IInvSlot> {
 
             @Override
             public boolean hasNext() {
-                return slots != null ? index < slots.length : false;
+                return slots != null && index < slots.length;
             }
 
             @Override

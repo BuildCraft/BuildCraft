@@ -4,8 +4,6 @@ import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraftforge.event.terraingen.WorldTypeEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.Arrays;
-
 public class BiomeInitializer {
     @SubscribeEvent
     public void initBiomeGens(WorldTypeEvent.InitBiomeGens event) {

@@ -8,6 +8,8 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.api.core.IStackFilter;
 
+import javax.annotation.Nonnull;
+
 /** Returns true if the stack matches all of the stack filters. */
 public class AggregateFilter implements IStackFilter {
 
@@ -18,7 +20,7 @@ public class AggregateFilter implements IStackFilter {
     }
 
     @Override
-    public boolean matches(ItemStack stack) {
+    public boolean matches(@Nonnull ItemStack stack) {
         for (IStackFilter f : filters) {
             if (!f.matches(stack)) {
                 return false;

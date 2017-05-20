@@ -47,7 +47,7 @@ public class ItemWaterGel extends ItemBC_Neptune {
         }
 
         // Same as ItemSnowball
-        world.playSound((EntityPlayer) null, player.posX, player.posY, player.posZ,//
+        world.playSound(null, player.posX, player.posY, player.posZ,//
                 SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL,//
                 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
 

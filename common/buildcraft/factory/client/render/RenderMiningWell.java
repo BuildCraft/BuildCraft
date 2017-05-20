@@ -15,6 +15,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraftforge.client.model.animation.FastTESR;
 
+import javax.annotation.Nonnull;
+
 public class RenderMiningWell extends FastTESR<TileMiningWell> {
     private static final int[] COLOUR_POWER = new int[16];
     private static final int COLOUR_STATUS_ON = 0xFF_77_DD_77; // a light green
@@ -60,7 +62,7 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
     public RenderMiningWell() {}
 
     @Override
-    public void renderTileEntityFast(TileMiningWell tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
+    public void renderTileEntityFast(@Nonnull TileMiningWell tile, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer buffer) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("miner");
 

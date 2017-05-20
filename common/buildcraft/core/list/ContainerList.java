@@ -84,12 +84,12 @@ public class ContainerList extends ContainerBC_Neptune {
     @Nonnull
     public ItemStack getListItemStack() {
         ItemStack toTry = player.getHeldItemMainhand();
-        if (toTry != null && toTry.getItem() instanceof ItemList_BC8) {
+        if (!toTry.isEmpty() && toTry.getItem() instanceof ItemList_BC8) {
             return toTry;
         }
 
         toTry = player.getHeldItemOffhand();
-        if (toTry != null && toTry.getItem() instanceof ItemList_BC8) {
+        if (!toTry.isEmpty() && toTry.getItem() instanceof ItemList_BC8) {
             return toTry;
         }
         return StackUtil.EMPTY;
@@ -125,9 +125,7 @@ public class ContainerList extends ContainerBC_Neptune {
         BCCoreItems.list.setName(getListItemStack(), text);
 
         if (player.world.isRemote) {
-            sendMessage(ID_LABEL, (buffer) -> {
-                buffer.writeString(text);
-            });
+            sendMessage(ID_LABEL, (buffer) -> buffer.writeString(text));
         }
     }
 

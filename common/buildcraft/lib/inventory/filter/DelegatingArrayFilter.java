@@ -5,6 +5,8 @@ import net.minecraft.util.NonNullList;
 
 import buildcraft.api.core.IStackFilter;
 
+import javax.annotation.Nonnull;
+
 public class DelegatingArrayFilter implements IStackFilter {
     private final ISingleStackFilter perStackFilter;
     private final NonNullList<ItemStack> stacks;
@@ -15,7 +17,7 @@ public class DelegatingArrayFilter implements IStackFilter {
     }
 
     @Override
-    public boolean matches(ItemStack stack) {
+    public boolean matches(@Nonnull ItemStack stack) {
         for (ItemStack possible : stacks) {
             if (perStackFilter.matches(possible, stack)) {
                 return true;

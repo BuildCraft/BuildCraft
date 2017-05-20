@@ -8,6 +8,8 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.misc.StackUtil;
 
+import javax.annotation.Nonnull;
+
 /** Returns true if the stack matches any one one of the filter stacks. Takes into account item lists. */
 public class ArrayStackOrListFilter extends ArrayStackFilter {
 
@@ -16,7 +18,7 @@ public class ArrayStackOrListFilter extends ArrayStackFilter {
     }
 
     @Override
-    public boolean matches(ItemStack stack) {
+    public boolean matches(@Nonnull ItemStack stack) {
         if (stacks.size() == 0 || !hasFilter()) {
             return true;
         }

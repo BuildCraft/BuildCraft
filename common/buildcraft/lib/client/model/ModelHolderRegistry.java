@@ -1,9 +1,6 @@
 package buildcraft.lib.client.model;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
@@ -40,7 +37,7 @@ public class ModelHolderRegistry {
             BCLog.logger.info("[lib.model.holder] List of registered Models:");
             List<ModelHolder> holders = new ArrayList<>();
             holders.addAll(HOLDERS);
-            holders.sort((a, b) -> a.modelLocation.toString().compareTo(b.modelLocation.toString()));
+            holders.sort(Comparator.comparing(a -> a.modelLocation.toString()));
 
             for (ModelHolder holder : holders) {
                 String status = "  ";

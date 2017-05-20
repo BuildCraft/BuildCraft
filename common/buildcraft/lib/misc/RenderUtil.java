@@ -23,6 +23,7 @@ public class RenderUtil {
         GlStateManager.color(red, green, blue, alpha);
     }
 
+    @SuppressWarnings("PointlessBitwiseExpression")
     public static int swapARGBforABGR(int argb) {
         int a = (argb >>> 24) & 255;
         int r = (argb >> 16) & 255;

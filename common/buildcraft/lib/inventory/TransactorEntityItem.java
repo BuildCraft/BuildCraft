@@ -25,7 +25,7 @@ public class TransactorEntityItem implements IItemExtractable {
             return StackUtil.EMPTY;
         }
         ItemStack current = entity.getEntityItem();
-        if (current == null || current.getCount() < min || min > 1 || max < 1 || max < min) {
+        if (current.isEmpty() || current.getCount() < min || min > 1 || max < 1 || max < min) {
             return StackUtil.EMPTY;
         }
         if (filter.matches(current)) {

@@ -10,6 +10,8 @@ import buildcraft.api.transport.IInjectable;
 
 import buildcraft.lib.misc.StackUtil;
 
+import javax.annotation.Nonnull;
+
 public class InjectableWrapper implements IItemTransactor {
     private final IInjectable injectable;
     private final EnumFacing from;
@@ -19,8 +21,9 @@ public class InjectableWrapper implements IItemTransactor {
         this.from = facing;
     }
 
+    @Nonnull
     @Override
-    public ItemStack insert(ItemStack stack, boolean allOrNone, boolean simulate) {
+    public ItemStack insert(@Nonnull ItemStack stack, boolean allOrNone, boolean simulate) {
         if (allOrNone) {
             ItemStack leftOver = injectable.injectItem(stack, false, from, null, 0);
             if (leftOver.isEmpty()) {
@@ -45,6 +48,7 @@ public class InjectableWrapper implements IItemTransactor {
         return ItemTransactorHelper.insertAllBypass(this, stacks, simulate);
     }
 
+    @Nonnull
     @Override
     public ItemStack extract(IStackFilter filter, int min, int max, boolean simulate) {
         return StackUtil.EMPTY;

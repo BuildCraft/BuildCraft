@@ -56,7 +56,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
 
     static {
         putSingle("special.new_page", (after) -> GuidePartNewPage::new);
-        putSingle("special.chapter", (after) -> chapter(after));
+        putSingle("special.chapter", MarkdownPageLoader::chapter);
         putSingle("special.crafting", MarkdownPageLoader::loadCraftingLine);
         putSingle("special.smelting", MarkdownPageLoader::loadSmeltingLine);
         putMulti("special.all_crafting", MarkdownPageLoader::loadAllCrafting);
@@ -267,9 +267,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
     }
 
     public static GuidePartFactory translate(String text) {
-        return (gui) -> {
-            return new GuideText(gui, new PageLine(0, I18n.format(text), false));
-        };
+        return gui -> new GuideText(gui, new PageLine(0, I18n.format(text), false));
     }
 
     public static ItemStack loadItemStack(String line) {

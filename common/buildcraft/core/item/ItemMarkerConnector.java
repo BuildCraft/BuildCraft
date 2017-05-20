@@ -182,7 +182,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                         volumeBoxes.boxes.stream()
                                 .filter(box ->
                                         box.getLockTargetsStream()
-                                                .noneMatch(target -> target instanceof Lock.Target.TargetResize)
+                                                .noneMatch(Lock.Target.TargetResize.class::isInstance)
                                 )
                                 .collect(Collectors.toList())
                         ) {

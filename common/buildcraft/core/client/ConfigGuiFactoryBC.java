@@ -16,7 +16,7 @@ import buildcraft.core.BCCoreConfig;
 public class ConfigGuiFactoryBC implements IModGuiFactory {
     public static class GuiConfigManager extends GuiConfig {
         public GuiConfigManager(GuiScreen parentScreen) {
-            super(parentScreen, new ArrayList<IConfigElement>(), "buildcraftcore", "config", false, false, I18n.format("config.buildcraft"));
+            super(parentScreen, new ArrayList<>(), "buildcraftcore", "config", false, false, I18n.format("config.buildcraft"));
 
             for (String s : BCCoreConfig.config.getCategoryNames()) {
                 if (!s.contains(".")) {

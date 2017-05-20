@@ -37,21 +37,11 @@ public class NodePageLine implements Comparable<NodePageLine> {
     }
 
     public Iterable<NodePageLine> iterateNonNullNodes() {
-        return new Iterable<NodePageLine>() {
-            @Override
-            public Iterator<NodePageLine> iterator() {
-                return new NodePartIterator();
-            }
-        };
+        return NodePartIterator::new;
     }
 
     public Iterable<GuidePart> iterateNonNullLines() {
-        return new Iterable<GuidePart>() {
-            @Override
-            public Iterator<GuidePart> iterator() {
-                return new NodeGuidePartIterator();
-            }
-        };
+        return NodeGuidePartIterator::new;
     }
 
     public List<NodePageLine> getChildren() {

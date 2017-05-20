@@ -12,7 +12,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjConnector;
@@ -27,6 +26,8 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.lib.tile.item.StackInsertionFunction;
 
 import buildcraft.energy.BCEnergyGuis;
+
+import javax.annotation.Nonnull;
 
 public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     private static final long MAX_OUTPUT = MjAPI.MJ;
@@ -83,6 +84,7 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
         return true;
     }
 
+    @Nonnull
     @Override
     protected IMjConnector createConnector() {
         return new EngineConnector(false);

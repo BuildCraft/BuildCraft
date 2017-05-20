@@ -107,11 +107,11 @@ public class BCEnergyModels {
         return model.getCutoutQuads();
     }
 
-    public static final MutableQuad[] getStoneEngineQuads(TileEngineStone_BC8 tile, float partialTicks) {
+    public static MutableQuad[] getStoneEngineQuads(TileEngineStone_BC8 tile, float partialTicks) {
         return getEngineQuads(ENGINE_STONE, tile, partialTicks);
     }
 
-    public static final MutableQuad[] getIronEngineQuads(TileEngineIron_BC8 tile, float partialTicks) {
+    public static MutableQuad[] getIronEngineQuads(TileEngineIron_BC8 tile, float partialTicks) {
         return getEngineQuads(ENGINE_IRON, tile, partialTicks);
     }
 }

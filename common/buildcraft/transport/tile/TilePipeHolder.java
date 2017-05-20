@@ -454,7 +454,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     // Caps
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (facing != null) {
             PipePluggable plug = getPluggable(facing);
             if (plug != null) {

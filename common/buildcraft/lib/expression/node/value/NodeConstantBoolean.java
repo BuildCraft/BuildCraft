@@ -9,7 +9,7 @@ public enum NodeConstantBoolean implements INodeBoolean, IConstantNode {
 
     public final boolean value;
 
-    private NodeConstantBoolean(boolean b) {
+    NodeConstantBoolean(boolean b) {
         this.value = b;
     }
 

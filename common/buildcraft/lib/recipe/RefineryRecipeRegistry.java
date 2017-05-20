@@ -1,15 +1,12 @@
 package buildcraft.lib.recipe;
 
-import java.util.*;
-import java.util.stream.Stream;
-
-import javax.annotation.Nullable;
-
-import com.google.common.base.Predicate;
-
+import buildcraft.api.recipes.IRefineryRecipeManager;
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.api.recipes.IRefineryRecipeManager;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
     INSTANCE;
@@ -53,7 +50,7 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
 
         @Override
         public Stream<R> getRecipes(Predicate<R> filter) {
-            return allRecipes.stream().filter(r -> filter.apply(r));
+            return allRecipes.stream().filter(filter);
         }
 
         @Override
@@ -81,7 +78,7 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
             Iterator<R> iter = allRecipes.iterator();
             while (iter.hasNext()) {
                 R recipe = iter.next();
-                if (toRemove.apply(recipe)) {
+                if (toRemove.test(recipe)) {
                     iter.remove();
                     removed.add(recipe);
                 }

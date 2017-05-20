@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLibrary> {
@@ -33,7 +34,7 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
         });
         addSlotToContainer(new SlotBase(tile.invDownIn, 0, 219, 57) {
             @Override
-            public boolean isItemValid(ItemStack stack) {
+            public boolean isItemValid(@Nonnull ItemStack stack) {
                 return stack.getItem() instanceof ItemSnapshot && ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used;
             }
 
@@ -45,7 +46,7 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
 
         addSlotToContainer(new SlotBase(tile.invUpIn, 0, 175, 79) {
             @Override
-            public boolean isItemValid(ItemStack stack) {
+            public boolean isItemValid(@Nonnull ItemStack stack) {
                 return stack.getItem() instanceof ItemSnapshot;
             }
         });

@@ -16,8 +16,6 @@ public interface IParticlePositionPipe {
     }
 
     default IParticlePositionPipe andThen(IParticlePositionPipe after) {
-        return (pos) -> {
-            return after.pipe(this.pipe(pos));
-        };
+        return (pos) -> after.pipe(pipe(pos));
     }
 }

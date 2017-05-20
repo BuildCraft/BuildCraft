@@ -14,7 +14,7 @@ public enum EnumGateModifier {
     public final int slotDivisor;
     public final String tag = name().toLowerCase(Locale.ROOT);
 
-    private EnumGateModifier(int triggerParams, int actionParams, int slotDivisor) {
+    EnumGateModifier(int triggerParams, int actionParams, int slotDivisor) {
         this.triggerParams = triggerParams;
         this.actionParams = actionParams;
         this.slotDivisor = slotDivisor;

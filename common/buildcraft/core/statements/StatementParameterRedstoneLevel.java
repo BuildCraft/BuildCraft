@@ -22,6 +22,8 @@ import buildcraft.core.BCCoreSprites;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
 
+import javax.annotation.Nonnull;
+
 public class StatementParameterRedstoneLevel implements IStatementParameter {
     public int level;
     private int minLevel, maxLevel;
@@ -40,6 +42,7 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
         maxLevel = max;
     }
 
+    @Nonnull
     @Override
     public ItemStack getItemStack() {
         return StackUtil.EMPTY;

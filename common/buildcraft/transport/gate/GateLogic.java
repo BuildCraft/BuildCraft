@@ -137,7 +137,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
 
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag("variant", variant.writeToNbt());
+        nbt.setTag("variant", variant.writeToNBT());
 
         short c = 0;
         for (int i = 0; i < connections.length; i++) {

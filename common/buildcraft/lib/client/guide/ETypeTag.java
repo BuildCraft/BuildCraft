@@ -8,7 +8,7 @@ public enum ETypeTag {
 
     public final String preText;
 
-    private ETypeTag(String preText) {
+    ETypeTag(String preText) {
         this.preText = "buildcraft.guide.chapter." + preText;
     }
 }

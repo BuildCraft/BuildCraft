@@ -99,7 +99,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
             return super.onPipeActivate(player, trace, hitX, hitY, hitZ, part);
         }
         ItemStack held = player.getHeldItemMainhand();
-        if (held != null) {
+        if (!held.isEmpty()) {
             if (held.getItem() instanceof IItemPluggable) {
                 return false;
             }

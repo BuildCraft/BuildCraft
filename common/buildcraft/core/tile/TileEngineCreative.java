@@ -25,6 +25,8 @@ import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
+import javax.annotation.Nonnull;
+
 public class TileEngineCreative extends TileEngineBase_BC8 {
     public static final long[] outputs = { 1, 2, 4, 8, 16, 32, 64, 128, 256 };
     public int currentOutputIndex = 0;
@@ -56,6 +58,7 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
         }
     }
 
+    @Nonnull
     @Override
     protected IMjConnector createConnector() {
         return new EngineConnector(false);

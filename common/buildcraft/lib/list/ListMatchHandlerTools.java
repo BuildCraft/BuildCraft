@@ -6,9 +6,11 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.api.lists.ListMatchHandler;
 
+import javax.annotation.Nonnull;
+
 public class ListMatchHandlerTools extends ListMatchHandler {
     @Override
-    public boolean matches(Type type, ItemStack stack, ItemStack target, boolean precise) {
+    public boolean matches(Type type, @Nonnull ItemStack stack, @Nonnull ItemStack target, boolean precise) {
         if (type == Type.TYPE) {
             Set<String> toolClassesSource = stack.getItem().getToolClasses(stack);
             Set<String> toolClassesTarget = target.getItem().getToolClasses(stack);
@@ -30,7 +32,7 @@ public class ListMatchHandlerTools extends ListMatchHandler {
     }
 
     @Override
-    public boolean isValidSource(Type type, ItemStack stack) {
+    public boolean isValidSource(Type type, @Nonnull ItemStack stack) {
         return stack.getItem().getToolClasses(stack).size() > 0;
     }
 }

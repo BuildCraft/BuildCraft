@@ -274,6 +274,7 @@ public class NbtSquisherTester {
         return pad(NumberFormat.getInstance().format(name), l) + "ms ";
     }
 
+    @SuppressWarnings("StringConcatenationInLoop")
     private static String pad(String name, int l) {
         while (name.length() < l) {
             name = " " + name;
@@ -340,7 +341,7 @@ public class NbtSquisherTester {
     private static void writeProfilerResults(int indent, String sectionName, Profiler profiler) {
         List<Profiler.Result> list = profiler.getProfilingData(sectionName);
 
-        if (list != null && list.size() >= 3) {
+        if (!list.isEmpty() && list.size() >= 3) {
             for (int i = 1; i < list.size(); ++i) {
                 Profiler.Result profiler$result = list.get(i);
                 StringBuilder builder = new StringBuilder();

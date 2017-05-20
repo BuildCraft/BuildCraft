@@ -13,9 +13,12 @@ import buildcraft.api.statements.StatementMouseClick;
 
 import buildcraft.lib.misc.StackUtil;
 
+import javax.annotation.Nonnull;
+
 public class StatementParameterItemStackExact implements IStatementParameter {
     protected ItemStack stack;
 
+    @Nonnull
     @Override
     public ItemStack getItemStack() {
         return StackUtil.EMPTY;

@@ -47,8 +47,7 @@ public class GuidePageContents extends GuidePageBase {
 
             NodePageLine node = parentNode;
             int indent = 1;
-            for (int i = 0; i < ordered.length; i++) {
-                String line = ordered[i];
+            for (String line : ordered) {
                 String translated = TextFormatting.UNDERLINE + I18n.format(line);
                 boolean notFound = true;
                 for (NodePageLine childNode : node.getChildren()) {

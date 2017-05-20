@@ -14,7 +14,7 @@ public enum EnumTraversalExpense {
 
     public final byte expense;
 
-    private EnumTraversalExpense(byte expense) {
+    EnumTraversalExpense(byte expense) {
         this.expense = expense;
     }
 

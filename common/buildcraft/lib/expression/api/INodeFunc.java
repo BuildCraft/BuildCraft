@@ -11,22 +11,22 @@ public interface INodeFunc {
      * matches. */
     IExpressionNode getNode(INodeStack stack) throws InvalidExpressionException;
 
-    public interface INodeFuncLong extends INodeFunc {
+    interface INodeFuncLong extends INodeFunc {
         @Override
         INodeLong getNode(INodeStack stack) throws InvalidExpressionException;
     }
 
-    public interface INodeFuncDouble extends INodeFunc {
+    interface INodeFuncDouble extends INodeFunc {
         @Override
         INodeDouble getNode(INodeStack stack) throws InvalidExpressionException;
     }
 
-    public interface INodeFuncBoolean extends INodeFunc {
+    interface INodeFuncBoolean extends INodeFunc {
         @Override
         INodeBoolean getNode(INodeStack stack) throws InvalidExpressionException;
     }
 
-    public interface INodeFuncString extends INodeFunc {
+    interface INodeFuncString extends INodeFunc {
         @Override
         INodeString getNode(INodeStack stack) throws InvalidExpressionException;
     }

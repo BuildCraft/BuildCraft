@@ -17,11 +17,13 @@ import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
+import javax.annotation.Nonnull;
+
 public class RenderBuilder extends FastTESR<TileBuilder> {
     private static final double OFFSET = 0.1;
 
     @Override
-    public void renderTileEntityFast(TileBuilder tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
+    public void renderTileEntityFast(@Nonnull TileBuilder tile, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer vb) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("builder");
 

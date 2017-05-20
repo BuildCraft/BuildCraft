@@ -1,12 +1,8 @@
 package buildcraft.lib.client.guide.parts.recipe;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
 
-import buildcraft.api.recipes.StackDefinition;
 import buildcraft.lib.recipe.ChangingObject;
 import net.minecraft.item.ItemStack;
 
@@ -21,11 +17,13 @@ import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.IRecipeViewable.IRecipePowered;
 import net.minecraft.util.NonNullList;
 
+import javax.annotation.Nonnull;
+
 public enum GuideAssemblyRecipes implements IStackRecipes {
     INSTANCE;
 
     @Override
-    public List<GuidePartFactory> getUsages(ItemStack stack) {
+    public List<GuidePartFactory> getUsages(@Nonnull ItemStack stack) {
         List<GuidePartFactory> usages = new ArrayList<>();
         for (AssemblyRecipe recipe : AssemblyRecipeRegistry.INSTANCE.getAllRecipes()) {
             if (recipe.requiredStacks.stream().anyMatch((definition) -> definition.filter.matches(stack))) {
@@ -46,7 +44,7 @@ public enum GuideAssemblyRecipes implements IStackRecipes {
     }
 
     @Override
-    public List<GuidePartFactory> getRecipes(ItemStack stack) {
+    public List<GuidePartFactory> getRecipes(@Nonnull ItemStack stack) {
         List<GuidePartFactory> recipes = new ArrayList<>();
         for (AssemblyRecipe recipe : AssemblyRecipeRegistry.INSTANCE.getAllRecipes()) {
             if (StackUtil.isCraftingEquivalent(recipe.output, stack, false)) {

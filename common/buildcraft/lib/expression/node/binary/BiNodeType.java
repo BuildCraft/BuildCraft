@@ -29,7 +29,7 @@ public enum BiNodeType implements IBinaryNodeType {
     public final BiBooleanPredicate booleanFunction;
     public final BiStringFunction stringFunc;
 
-    private BiNodeType(String op, LongBinaryOperator longFunc, DoubleBinaryOperator doubleFunc, BiBooleanPredicate booleanFunction, BiStringFunction stringFunc) {
+    BiNodeType(String op, LongBinaryOperator longFunc, DoubleBinaryOperator doubleFunc, BiBooleanPredicate booleanFunction, BiStringFunction stringFunc) {
         this.op = op;
         this.longFunc = longFunc;
         this.doubleFunc = doubleFunc;

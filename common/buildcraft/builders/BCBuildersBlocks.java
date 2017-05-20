@@ -6,7 +6,6 @@ package buildcraft.builders;
 
 import buildcraft.builders.block.*;
 import buildcraft.builders.tile.*;
-import buildcraft.lib.BCLib;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.block.material.Material;

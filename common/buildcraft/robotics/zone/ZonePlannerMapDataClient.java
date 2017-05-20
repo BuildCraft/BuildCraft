@@ -1,14 +1,8 @@
 package buildcraft.robotics.zone;
 
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.function.Consumer;
 
-import buildcraft.builders.snapshot.Snapshot;
 import net.minecraft.world.World;
 
 import buildcraft.lib.BCMessageHandler;

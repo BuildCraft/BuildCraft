@@ -130,13 +130,13 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
         return getCapability(capability, facing) != null;
     }
 
     @SuppressWarnings({"Duplicates", "unchecked"})
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == MjAPI.CAP_REDSTONE_RECEIVER) return (T) this;
         else if (capability == MjAPI.CAP_RECEIVER) return (T) this;
         else if (capability == MjAPI.CAP_CONNECTOR) return (T) this;

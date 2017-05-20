@@ -4,6 +4,8 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
+
 public class DelegateItemHandler implements IItemHandlerModifiable {
     private final IItemHandlerModifiable delegate;
 
@@ -22,17 +24,18 @@ public class DelegateItemHandler implements IItemHandlerModifiable {
     }
 
     @Override
-    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         return delegate.insertItem(slot, stack, simulate);
     }
 
+    @Nonnull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         return delegate.extractItem(slot, amount, simulate);
     }
 
     @Override
-    public void setStackInSlot(int slot, ItemStack stack) {
+    public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
         delegate.setStackInSlot(slot, stack);
     }
 

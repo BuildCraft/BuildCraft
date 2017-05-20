@@ -8,6 +8,8 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.api.core.IStackFilter;
 
+import javax.annotation.Nonnull;
+
 public class InvertedStackFilter implements IStackFilter {
 
     private final IStackFilter filter;
@@ -17,10 +19,7 @@ public class InvertedStackFilter implements IStackFilter {
     }
 
     @Override
-    public boolean matches(ItemStack stack) {
-        if (stack == null) {
-            return false;
-        }
-        return !filter.matches(stack);
+    public boolean matches(@Nonnull ItemStack stack) {
+        return !stack.isEmpty() && !filter.matches(stack);
     }
 }

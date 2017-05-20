@@ -66,8 +66,8 @@ public class JsonTypeTags {
 
     private static String firstNonEmpty(String... strings) {
         String current = null;
-        for (int i = 0; i < strings.length; i++) {
-            current = strings[i];
+        for (String string : strings) {
+            current = string;
             if (!StringUtils.isNullOrEmpty(current)) {
                 break;
             }
@@ -76,9 +76,9 @@ public class JsonTypeTags {
     }
 
     public void printContents(int indent) {
-        String f = "";
+        StringBuilder f = new StringBuilder();
         while (indent > 0) {
-            f += "  ";
+            f.append("  ");
             indent--;
         }
         BCLog.logger.info(f + "mod = " + mod + ",");

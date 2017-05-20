@@ -256,25 +256,23 @@ public class ContainerGate extends ContainerBC_Neptune {
 
         public SlotPair(final int slotIndex, GateVariant variant) {
             this.index = slotIndex;
-            trigger = new ForwardingReference<>(() -> logic().triggers[slotIndex], (val) -> {
-                setTrigger(slotIndex, val);
-            });
-            action = new ForwardingReference<>(() -> logic().actions[slotIndex], (val) -> {
-                setAction(slotIndex, val);
-            });
+            trigger = new ForwardingReference<>(() -> logic().triggers[slotIndex], (val) -> setTrigger(slotIndex, val));
+            action = new ForwardingReference<>(() -> logic().actions[slotIndex], (val) -> setAction(slotIndex, val));
             triggerParams = new ParamRef[variant.numTriggerArgs];
             actionParams = new ParamRef[variant.numActionArgs];
             for (int i = 0; i < triggerParams.length; i++) {
                 final int idx = i;
-                triggerParams[i] = new ParamRef(() -> logic().triggerParameters[slotIndex][idx], (val) -> {
-                    setTriggerParam(slotIndex, idx, val);
-                });
+                triggerParams[i] = new ParamRef(
+                    () -> logic().triggerParameters[slotIndex][idx],
+                    val -> setTriggerParam(slotIndex, idx, val)
+                );
             }
             for (int i = 0; i < actionParams.length; i++) {
                 final int idx = i;
-                actionParams[i] = new ParamRef(() -> logic().actionParameters[slotIndex][idx], (val) -> {
-                    setActionParam(slotIndex, idx, val);
-                });
+                actionParams[i] = new ParamRef(
+                    () -> logic().actionParameters[slotIndex][idx],
+                    val -> setActionParam(slotIndex, idx, val)
+                );
             }
         }
 
@@ -295,11 +293,11 @@ public class ContainerGate extends ContainerBC_Neptune {
                 buffer.writeString(wrapper.getUniqueTag());
                 buffer.writeByte(wrapper.sourcePart.getIndex());
             }
-            for (int i = 0; i < triggerParams.length; i++) {
-                triggerParams[i].writeToBuffer(buffer);
+            for (ParamRef triggerParam : triggerParams) {
+                triggerParam.writeToBuffer(buffer);
             }
-            for (int i = 0; i < actionParams.length; i++) {
-                actionParams[i].writeToBuffer(buffer);
+            for (ParamRef actionParam : actionParams) {
+                actionParam.writeToBuffer(buffer);
             }
         }
 
@@ -320,11 +318,11 @@ public class ContainerGate extends ContainerBC_Neptune {
                     gate.setAction(index, wrapper);
                 }
             }
-            for (int i = 0; i < triggerParams.length; i++) {
-                triggerParams[i].readFromBuffer(buffer);
+            for (ParamRef triggerParam : triggerParams) {
+                triggerParam.readFromBuffer(buffer);
             }
-            for (int i = 0; i < actionParams.length; i++) {
-                actionParams[i].readFromBuffer(buffer);
+            for (ParamRef actionParam : actionParams) {
+                actionParam.readFromBuffer(buffer);
             }
         }
 

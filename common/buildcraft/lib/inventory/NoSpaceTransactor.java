@@ -8,11 +8,14 @@ import buildcraft.api.inventory.IItemTransactor;
 
 import buildcraft.lib.misc.StackUtil;
 
+import javax.annotation.Nonnull;
+
 public enum NoSpaceTransactor implements IItemTransactor {
     INSTANCE;
 
+    @Nonnull
     @Override
-    public ItemStack insert(ItemStack stack, boolean allOrNone, boolean simulate) {
+    public ItemStack insert(@Nonnull ItemStack stack, boolean allOrNone, boolean simulate) {
         return stack;
     }
 
@@ -21,6 +24,7 @@ public enum NoSpaceTransactor implements IItemTransactor {
         return stacks;
     }
 
+    @Nonnull
     @Override
     public ItemStack extract(IStackFilter filter, int min, int max, boolean simulate) {
         return StackUtil.EMPTY;

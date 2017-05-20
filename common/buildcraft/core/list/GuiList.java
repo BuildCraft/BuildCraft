@@ -31,6 +31,8 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.StackUtil;
 
+import javax.annotation.Nonnull;
+
 public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventListener {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftcore:textures/gui/list_new.png");
     private static final int SIZE_X = 176, SIZE_Y = 191;
@@ -71,6 +73,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
                         }
                     }
 
+                    @Nonnull
                     @Override
                     public ItemStack getStack() {
                         if (shouldDrawHighlight()) {
@@ -151,7 +154,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
 
     private boolean isCarryingNonEmptyList() {
         ItemStack stack = mc.player.inventory.getItemStack();
-        return stack != null && stack.getItem() instanceof ItemList_BC8 && stack.getTagCompound() != null;
+        return !stack.isEmpty() && stack.getItem() instanceof ItemList_BC8 && stack.getTagCompound() != null;
     }
 
     private boolean hasListEquipped() {
@@ -196,19 +199,17 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
     }
 
     private NonNullList<ItemStack> getExamplesList(int lineId, ListMatchHandler.Type type) {
-        Map<ListMatchHandler.Type, NonNullList<ItemStack>> exampleList = exampleCache.get(lineId);
-        if (exampleList == null) {
-            exampleList = new EnumMap<>(ListMatchHandler.Type.class);
-            exampleCache.put(lineId, exampleList);
-        }
+        Map<ListMatchHandler.Type, NonNullList<ItemStack>> exampleList = exampleCache.computeIfAbsent(
+            lineId,
+            k -> new EnumMap<>(ListMatchHandler.Type.class)
+        );
 
         if (!exampleList.containsKey(type)) {
             NonNullList<ItemStack> examples = container.lines[lineId].getExamples();
             ItemStack input = container.lines[lineId].stacks.get(0);
             if (!input.isEmpty()) {
                 NonNullList<ItemStack> repetitions = NonNullList.create();
-                for (int i = 0; i < examples.size(); i++) {
-                    ItemStack is = examples.get(i);
+                for (ItemStack is : examples) {
                     if (StackUtil.isMatchingItem(input, is, true, false)) {
                         repetitions.add(is);
                     }

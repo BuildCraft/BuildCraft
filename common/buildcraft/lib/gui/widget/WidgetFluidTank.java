@@ -60,9 +60,7 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
         @Override
         public void onMouseClicked(int button) {
             if (contains(gui.mouse)) {
-                WidgetFluidTank.this.sendWidgetData(buffer -> {
-                    buffer.writeByte(NET_CLICK);
-                });
+                WidgetFluidTank.this.sendWidgetData(buffer -> buffer.writeByte(NET_CLICK));
             }
         }
 

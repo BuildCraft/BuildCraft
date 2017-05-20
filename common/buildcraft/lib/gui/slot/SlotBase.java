@@ -10,6 +10,8 @@ import net.minecraftforge.items.SlotItemHandler;
 
 import buildcraft.lib.tile.item.IItemHandlerAdv;
 
+import javax.annotation.Nonnull;
+
 public class SlotBase extends SlotItemHandler {
     public final int handlerIndex;
     public final IItemHandlerAdv itemHandler;
@@ -25,7 +27,7 @@ public class SlotBase extends SlotItemHandler {
     }
 
     @Override
-    public boolean isItemValid(ItemStack stack) {
+    public boolean isItemValid(@Nonnull ItemStack stack) {
         return itemHandler.canSet(handlerIndex, stack);
     }
 

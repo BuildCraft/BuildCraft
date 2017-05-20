@@ -138,6 +138,6 @@ public class NodeStateful implements ITickableNode.Source {
                     }
                 }
             }
-        };
+        }
     }
 }

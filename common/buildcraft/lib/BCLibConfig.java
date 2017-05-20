@@ -11,7 +11,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.lib.chunkload.IChunkLoadingTile;
-import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 
@@ -92,7 +91,7 @@ public class BCLibConfig {
          * using a dedicated server. */
         AUTO,
         /** Automatic chunkloading is DISABLED. Even for strict tiles (like the quarry) */
-        OFF;
+        OFF
     }
 
     public enum ChunkLoaderLevel {

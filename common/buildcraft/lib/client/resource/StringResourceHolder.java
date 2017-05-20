@@ -1,6 +1,7 @@
 package buildcraft.lib.client.resource;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Charsets;
@@ -23,9 +24,7 @@ public class StringResourceHolder extends ResourceHolder {
     protected final void onLoad(byte[] data) {
         String fullData = new String(data, Charsets.UTF_8);
         List<String> newLines = new ArrayList<>();
-        for (String s : fullData.split(REGEX_LINE_END)) {
-            newLines.add(s);
-        }
+        Collections.addAll(newLines, fullData.split(REGEX_LINE_END));
         lines = newLines;
         onStringChange();
     }

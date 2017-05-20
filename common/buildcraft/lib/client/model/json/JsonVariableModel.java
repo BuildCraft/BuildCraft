@@ -12,7 +12,6 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.ResourceLoaderContext;
-import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.InternalCompiler;
 import buildcraft.lib.expression.api.IExpressionNode;

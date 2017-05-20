@@ -26,7 +26,6 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.misc.data.DelayedList;
-import buildcraft.lib.nbt.PrintingByteBuf;
 import buildcraft.lib.net.PacketBufferBC;
 
 import io.netty.buffer.ByteBuf;
@@ -270,7 +269,7 @@ public class MessageUtil {
                 sb.append(h);
             }
             if (readableBytes > 10) {
-                sb.append(" (+" + (readableBytes - 10) + ")");
+                sb.append(" (+").append(readableBytes - 10).append(")");
             }
 
             IllegalStateException ex = new IllegalStateException("Did not fully read the data! [" + extra + "]" + sb);

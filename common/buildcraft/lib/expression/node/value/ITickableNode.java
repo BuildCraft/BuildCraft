@@ -9,7 +9,7 @@ public interface ITickableNode {
     /** Called once every minecraft tick. Used for variables that can changed depending on their previous value. */
     void tick();
 
-    public interface Source {
+    interface Source {
         ITickableNode createTickable();
 
         void setSource(IExpressionNode node);

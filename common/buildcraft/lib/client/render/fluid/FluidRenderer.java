@@ -352,7 +352,7 @@ public class FluidRenderer {
         /** If true, then Y maps to V. Otherwise Z maps to V. */
         private final boolean vy;
 
-        private TexMap(boolean ux, boolean vy) {
+        TexMap(boolean ux, boolean vy) {
             this.ux = ux;
             this.vy = vy;
         }

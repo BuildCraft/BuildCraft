@@ -161,6 +161,7 @@ public abstract class BCLibProxy implements IGuiHandler {
             }
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <T extends TileEntity> T getServerTile(T tile) {
             if (tile != null && tile.hasWorld()) {

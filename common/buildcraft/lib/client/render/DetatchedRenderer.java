@@ -24,7 +24,7 @@ public enum DetatchedRenderer {
         public final IGlPre pre;
         public final IGLPost post;
 
-        private RenderMatrixType(IGlPre pre, IGLPost post) {
+        RenderMatrixType(IGlPre pre, IGLPost post) {
             this.pre = pre;
             this.post = post;
         }
@@ -56,7 +56,7 @@ public enum DetatchedRenderer {
 
     private final Map<RenderMatrixType, List<IDetachedRenderer>> renders = new EnumMap<>(RenderMatrixType.class);
 
-    private DetatchedRenderer() {
+    DetatchedRenderer() {
         for (RenderMatrixType type : RenderMatrixType.values()) {
             renders.put(type, new ArrayList<>());
         }

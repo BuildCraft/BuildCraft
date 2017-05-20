@@ -4,8 +4,6 @@ import javax.vecmath.Point2f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
-import net.minecraft.client.renderer.block.model.ModelRotation;
-
 import buildcraft.lib.client.model.MutableVertex;
 
 public class JsonVertex {

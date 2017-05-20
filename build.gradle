@@ -152,7 +152,7 @@ def createMCModInfo(def id, def taskName)
 
 def parseConfig(File config) {
     if (!config.exists())
-        return null;
+        return null
     config.withReader {
         def prop = new Properties()
         prop.load(it)
@@ -185,8 +185,8 @@ task deobfJar(type: Jar) {
     classifier = 'dev'
 }
 
-def modulesDir = file("build/libs/modules");
-def modulesDirSrc = new File(modulesDir, "src");
+def modulesDir = file("build/libs/modules")
+def modulesDirSrc = new File(modulesDir, "src")
 
 task apiJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = modulesDir
@@ -471,7 +471,7 @@ task upload(dependsOn: build) {
 
 
 if (ext.priv == null)
-    upload.enabled = false;
+    upload.enabled = false
 
 uploadArchives {
     // make sure this happens after reobfuscation

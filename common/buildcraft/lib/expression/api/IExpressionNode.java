@@ -5,28 +5,28 @@ public interface IExpressionNode {
 
     // common expression types
 
-    public interface INodeDouble extends IExpressionNode {
+    interface INodeDouble extends IExpressionNode {
         double evaluate();
 
         @Override
         INodeDouble inline();
     }
 
-    public interface INodeLong extends IExpressionNode {
+    interface INodeLong extends IExpressionNode {
         long evaluate();
 
         @Override
         INodeLong inline();
     }
 
-    public interface INodeBoolean extends IExpressionNode {
+    interface INodeBoolean extends IExpressionNode {
         boolean evaluate();
 
         @Override
         INodeBoolean inline();
     }
 
-    public interface INodeString extends IExpressionNode {
+    interface INodeString extends IExpressionNode {
         String evaluate();
 
         @Override

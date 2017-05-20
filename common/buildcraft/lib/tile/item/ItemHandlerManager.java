@@ -26,6 +26,8 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.InventoryUtil;
 
+import javax.annotation.Nonnull;
+
 public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
     public enum EnumAccess {
         /** An {@link IItemHandler} that shouldn't be accessible by extenral sources. */
@@ -96,7 +98,7 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
         if (capability == CapUtil.CAP_ITEMS) {
             Wrapper wrapper = wrappers.get(EnumPipePart.fromFacing(facing));
             return wrapper.combined != null;
@@ -106,7 +108,7 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
 
     @Override
     @SuppressWarnings("unchecked")// lots of (T) instance -- but we know its safe
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == CapUtil.CAP_ITEMS) {
             Wrapper wrapper = wrappers.get(EnumPipePart.fromFacing(facing));
             return (T) wrapper.combined;

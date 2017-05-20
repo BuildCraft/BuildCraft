@@ -7,7 +7,6 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -20,6 +19,7 @@ public class NBTAwareShapedOreRecipe extends ShapedOreRecipe {
         super(result, recipe);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirror) {
         for (int x = 0; x < MAX_CRAFT_GRID_WIDTH; x++) {

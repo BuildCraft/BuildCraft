@@ -79,34 +79,24 @@ public final class StringUtilBC {
         String[] s = string.split(",");
         try {
             return new BlockPos(Integer.parseInt(s[0]), Integer.parseInt(s[1]), Integer.parseInt(s[2]));
-        } catch (NumberFormatException nfe) {
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException nfe) {
             throw new IllegalArgumentException("The given string \"" + string + "\" was invalid!", nfe);
-        } catch (ArrayIndexOutOfBoundsException aioobe) {
-            throw new IllegalArgumentException("The given string \"" + string + "\" was invalid!", aioobe);
         }
     }
 
     // Displaying objects
     public static String vec3ToDispString(Vec3d vec) {
         if (vec == null) return "null";
-        StringBuilder builder = new StringBuilder();
-        builder.append(displayDecimalFormat.format(vec.xCoord));
-        builder.append(", ");
-        builder.append(displayDecimalFormat.format(vec.yCoord));
-        builder.append(", ");
-        builder.append(displayDecimalFormat.format(vec.zCoord));
-        return builder.toString();
+        return displayDecimalFormat.format(vec.xCoord) + ", " +
+            displayDecimalFormat.format(vec.yCoord) + ", " +
+            displayDecimalFormat.format(vec.zCoord);
     }
 
     public static String vec3ToDispString(Vec3i vec) {
         if (vec == null) return "null";
-        StringBuilder builder = new StringBuilder();
-        builder.append(vec.getX());
-        builder.append(", ");
-        builder.append(vec.getY());
-        builder.append(", ");
-        builder.append(vec.getZ());
-        return builder.toString();
+        return vec.getX() + ", " +
+            vec.getY() + ", " +
+            vec.getZ();
     }
 
     public static String replaceCharactersForFilename(String original) {

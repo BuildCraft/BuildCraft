@@ -9,9 +9,11 @@ import net.minecraftforge.client.model.animation.FastTESR;
 
 import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
 
+import javax.annotation.Nonnull;
+
 public class RenderProgrammingTable extends FastTESR<TileProgrammingTable_Neptune> {
     @Override
-    public void renderTileEntityFast(TileProgrammingTable_Neptune tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
+    public void renderTileEntityFast(@Nonnull TileProgrammingTable_Neptune tile, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer buffer) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("table");
         Minecraft.getMinecraft().mcProfiler.startSection("programming");

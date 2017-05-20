@@ -2,7 +2,6 @@ package buildcraft.transport.pipe.behaviour;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.*;
 
 public class PipeBehaviourGold extends PipeBehaviour {

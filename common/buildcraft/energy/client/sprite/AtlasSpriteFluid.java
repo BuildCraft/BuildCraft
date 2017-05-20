@@ -27,7 +27,7 @@ public class AtlasSpriteFluid extends AtlasSpriteSwappable {
     @Override
     public boolean load(IResourceManager manager, ResourceLocation location) {
         ResourceLocation from = SpriteUtil.transformLocation(fromName);
-        AtlasSpriteDirect sprite = super.loadSprite(manager, from.toString(), from, true);
+        AtlasSpriteDirect sprite = loadSprite(manager, from.toString(), from, true);
         if (sprite == null) {
             BCLog.logger.warn("Unable to recolour " + from + " as it couldn't be loaded!");
             return true;

@@ -11,14 +11,12 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.IPlantable;
 
 import buildcraft.api.crops.ICropHandler;
 
 import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.SoundUtil;
 
 public enum CropHandlerPlantable implements ICropHandler {
     INSTANCE;

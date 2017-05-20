@@ -4,10 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.imageio.ImageIO;
 
@@ -94,7 +91,7 @@ public class SpriteHolderRegistry {
             BCLog.logger.info("[lib.sprite.holder] List of registered sprites:");
             List<ResourceLocation> locations = new ArrayList<>();
             locations.addAll(HOLDER_MAP.keySet());
-            locations.sort((a, b) -> a.toString().compareTo(b.toString()));
+            locations.sort(Comparator.comparing(ResourceLocation::toString));
 
             TextureAtlasSprite missing = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
 

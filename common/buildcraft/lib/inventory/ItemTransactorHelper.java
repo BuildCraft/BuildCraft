@@ -92,8 +92,7 @@ public class ItemTransactorHelper {
      * implementation. */
     public static NonNullList<ItemStack> insertAllBypass(IItemTransactor transactor, NonNullList<ItemStack> stacks, boolean simulate) {
         NonNullList<ItemStack> leftOver = NonNullList.create();
-        for (int i = 0; i < stacks.size(); i++) {
-            ItemStack stack = stacks.get(i);
+        for (ItemStack stack : stacks) {
             ItemStack leftOverStack = transactor.insert(stack, false, simulate);
             if (!leftOverStack.isEmpty()) {
                 leftOver.add(leftOverStack);

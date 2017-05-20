@@ -46,7 +46,7 @@ public abstract class AtlasSpriteSwappable extends TextureAtlasSprite {
     public boolean swapWith(TextureAtlasSprite other) {
         if (current != other && (current == null || other != null)) {
             current = other;
-            if (other != null && width == 0) {
+            if (width == 0) {
                 this.width = other.getIconWidth();
                 this.height = other.getIconHeight();
             }

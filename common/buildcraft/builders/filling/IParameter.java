@@ -1,7 +1,6 @@
 package buildcraft.builders.filling;
 
 import buildcraft.lib.net.PacketBufferBC;
-import com.google.common.collect.Iterables;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 

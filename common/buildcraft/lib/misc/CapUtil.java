@@ -19,7 +19,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.api.inventory.IItemTransactor;
-import buildcraft.api.transport.IInjectable;
 
 /** Provides various @Nonnull static final fields storing various capabilities. */
 public class CapUtil {

@@ -13,6 +13,8 @@ import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.misc.FakePlayerUtil;
 
+import javax.annotation.Nonnull;
+
 public class ListMatchHandlerArmor extends ListMatchHandler {
     private static EnumSet<EntityEquipmentSlot> getArmorTypes(ItemStack stack) {
         EntityPlayer player = BCLibProxy.getProxy().getClientPlayer();
@@ -33,7 +35,7 @@ public class ListMatchHandlerArmor extends ListMatchHandler {
     }
 
     @Override
-    public boolean matches(Type type, ItemStack stack, ItemStack target, boolean precise) {
+    public boolean matches(Type type, @Nonnull ItemStack stack, @Nonnull ItemStack target, boolean precise) {
         if (type == Type.TYPE) {
             EnumSet<EntityEquipmentSlot> armorTypeIDSource = getArmorTypes(stack);
             if (armorTypeIDSource.size() > 0) {
@@ -50,7 +52,7 @@ public class ListMatchHandlerArmor extends ListMatchHandler {
     }
 
     @Override
-    public boolean isValidSource(Type type, ItemStack stack) {
+    public boolean isValidSource(Type type, @Nonnull ItemStack stack) {
         return getArmorTypes(stack).size() > 0;
     }
 }

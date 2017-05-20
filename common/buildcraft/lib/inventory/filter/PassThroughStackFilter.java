@@ -8,12 +8,14 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.api.core.IStackFilter;
 
+import javax.annotation.Nonnull;
+
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class PassThroughStackFilter implements IStackFilter {
 
     @Override
-    public boolean matches(ItemStack stack) {
-        return stack != null && stack.getCount() > 0;
+    public boolean matches(@Nonnull ItemStack stack) {
+        return !stack.isEmpty() && stack.getCount() > 0;
     }
 
 }

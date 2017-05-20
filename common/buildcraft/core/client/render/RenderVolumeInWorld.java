@@ -47,10 +47,10 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
                     box.box,
                     box.isEditingBy(player) ?
                             BuildCraftLaserManager.MARKER_VOLUME_SIGNAL :
-                            box.getLockTargetsStream().anyMatch(target -> target instanceof Lock.Target.TargetUsedByMachine) ?
+                            box.getLockTargetsStream().anyMatch(Lock.Target.TargetUsedByMachine.class::isInstance) ?
                                     box.getLockTargetsStream()
-                                            .filter(target -> target instanceof Lock.Target.TargetUsedByMachine)
-                                            .map(target -> (Lock.Target.TargetUsedByMachine) target)
+                                            .filter(Lock.Target.TargetUsedByMachine.class::isInstance)
+                                            .map(Lock.Target.TargetUsedByMachine.class::cast)
                                             .map(target -> target.type)
                                             .filter(Objects::nonNull)
                                             .findFirst()

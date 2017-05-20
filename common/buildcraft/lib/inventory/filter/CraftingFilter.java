@@ -11,6 +11,8 @@ import buildcraft.api.core.IStackFilter;
 
 import buildcraft.lib.misc.StackUtil;
 
+import javax.annotation.Nonnull;
+
 /** Returns true if the stack matches any one one of the filter stacks. Checks the OreDictionary and wildcards. */
 public class CraftingFilter implements IStackFilter {
 
@@ -21,12 +23,12 @@ public class CraftingFilter implements IStackFilter {
     }
 
     @Override
-    public boolean matches(ItemStack stack) {
+    public boolean matches(@Nonnull ItemStack stack) {
         if (stacks.size() == 0 || !hasFilter()) {
             return true;
         }
-        for (int i = 0; i < stacks.size(); i++) {
-            if (StackUtil.isCraftingEquivalent(stacks.get(i), stack, true)) {
+        for (ItemStack stack1 : stacks) {
+            if (StackUtil.isCraftingEquivalent(stack1, stack, true)) {
                 return true;
             }
         }

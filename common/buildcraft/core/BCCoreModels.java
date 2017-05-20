@@ -5,8 +5,6 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableMap;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -115,11 +113,11 @@ public class BCCoreModels {
         return model.getCutoutQuads();
     }
 
-    public static final MutableQuad[] getRedstoneEngineQuads(TileEngineRedstone_BC8 tile, float partialTicks) {
+    public static MutableQuad[] getRedstoneEngineQuads(TileEngineRedstone_BC8 tile, float partialTicks) {
         return getEngineQuads(ENGINE_REDSTONE, tile, partialTicks);
     }
 
-    public static final MutableQuad[] getCreativeEngineQuads(TileEngineCreative tile, float partialTicks) {
+    public static MutableQuad[] getCreativeEngineQuads(TileEngineCreative tile, float partialTicks) {
         return getEngineQuads(ENGINE_CREATIVE, tile, partialTicks);
     }
 }

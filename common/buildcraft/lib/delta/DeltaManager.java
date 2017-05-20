@@ -18,7 +18,7 @@ public class DeltaManager {
     public enum EnumDeltaMessage {
         ADD_SINGLE,
         SET_VALUE,
-        CURRENT_STATE;
+        CURRENT_STATE
     }
 
     public enum EnumNetworkVisibility {

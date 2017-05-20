@@ -9,7 +9,7 @@ public enum EnumRestartRequirement {
 
     private final boolean restartWorld, restartGame;
 
-    private EnumRestartRequirement(boolean restartWorld, boolean restartGame) {
+    EnumRestartRequirement(boolean restartWorld, boolean restartGame) {
         this.restartWorld = restartWorld;
         this.restartGame = restartGame;
     }

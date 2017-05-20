@@ -17,8 +17,6 @@ import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent.MissingMappin
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry.Type;
 
-import buildcraft.api.core.BCLog;
-
 public enum MigrationManager {
     INSTANCE;
 
@@ -56,13 +54,11 @@ public enum MigrationManager {
                 if (itemMigrations.containsKey(path)) {
                     Item to = itemMigrations.get(path);
                     mapping.remap(to);
-                    continue;
                 }
             } else if (mapping.type == Type.BLOCK) {
                 if (blockMigrations.containsKey(path)) {
                     Block to = blockMigrations.get(path);
                     mapping.remap(to);
-                    continue;
                 }
             }
         }

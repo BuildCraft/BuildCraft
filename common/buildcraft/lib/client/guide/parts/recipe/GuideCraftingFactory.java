@@ -126,8 +126,8 @@ public class GuideCraftingFactory implements GuidePartFactory {
                 inputGrid = new ChangingItemStack[inputGrid.length / width][width];
                 int x = 0;
                 int y = 0;
-                for (int i = 0; i < input.length; i++) {
-                    inputGrid[x][y] = input[i];
+                for (ChangingItemStack anInput : input) {
+                    inputGrid[x][y] = anInput;
                     x++;
                     if (x > width) {
                         x = 0;

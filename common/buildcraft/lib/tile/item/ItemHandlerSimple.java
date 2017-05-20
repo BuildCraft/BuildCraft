@@ -97,7 +97,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     }
 
     @Override
-    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (badSlotIndex(slot)) {
             return stack;
         }
@@ -161,7 +161,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
         if (min <= 0) min = 1;
         if (max < min) return StackUtil.EMPTY;
         ItemStack current = stacks.get(slot);
-        if (current == null || current.getCount() < min) return StackUtil.EMPTY;
+        if (current.isEmpty() || current.getCount() < min) return StackUtil.EMPTY;
         if (filter.matches(asValid(current))) {
             if (simulate) {
                 ItemStack copy = current.copy();

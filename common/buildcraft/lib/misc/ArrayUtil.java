@@ -1,10 +1,7 @@
 package buildcraft.lib.misc;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.function.*;
-
-import net.minecraft.item.ItemStack;
 
 public class ArrayUtil {
     public static <F, T> T[] map(F[] from, Function<F, T> mapper, IntFunction<T[]> arrayConstructor) {
@@ -50,8 +47,7 @@ public class ArrayUtil {
 
     public static <T> boolean manualEquals(T[] a, T[] b, BiPredicate<T, T> equalityChecker) {
         if (a == b) return true;
-        if (a == null) return b == null;
-        if (b == null) return false;
+        if (a == null || b == null) return false;
         if (a.length != b.length) return false;
         int i = a.length;
         while (i-- > 0) {

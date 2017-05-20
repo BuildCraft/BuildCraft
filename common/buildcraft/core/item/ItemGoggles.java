@@ -11,6 +11,8 @@ import net.minecraftforge.common.ISpecialArmor;
 
 import buildcraft.lib.item.IItemBuildCraft;
 
+import javax.annotation.Nonnull;
+
 public class ItemGoggles extends ItemArmor implements IItemBuildCraft, ISpecialArmor {
     private static final ArmorProperties HELMET_PROPERTIES = new ArmorProperties(0, 0, 0);
     private final String id;
@@ -27,17 +29,17 @@ public class ItemGoggles extends ItemArmor implements IItemBuildCraft, ISpecialA
     }
 
     @Override
-    public ArmorProperties getProperties(EntityLivingBase player, ItemStack armor, DamageSource source, double damage, int slot) {
+    public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, int slot) {
         return HELMET_PROPERTIES;
     }
 
     @Override
-    public int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot) {
+    public int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot) {
         return 0;
     }
 
     @Override
-    public void damageArmor(EntityLivingBase entity, ItemStack stack, DamageSource source, int damage, int slot) {
+    public void damageArmor(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, int damage, int slot) {
         // Invulnerable goggles
     }
 }

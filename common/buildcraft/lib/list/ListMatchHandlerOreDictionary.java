@@ -12,6 +12,8 @@ import buildcraft.api.lists.ListMatchHandler;
 
 import buildcraft.lib.misc.StackUtil;
 
+import javax.annotation.Nonnull;
+
 public class ListMatchHandlerOreDictionary extends ListMatchHandler {
     private static int getUppercaseCount(String s) {
         int j = 0;
@@ -24,7 +26,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
     }
 
     @Override
-    public boolean matches(Type type, ItemStack stack, ItemStack target, boolean precise) {
+    public boolean matches(Type type, @Nonnull ItemStack stack, @Nonnull ItemStack target, boolean precise) {
         int[] oreIds = OreDictionary.getOreIDs(stack);
 
         if (oreIds.length == 0) {
@@ -73,7 +75,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
     }
 
     @Override
-    public boolean isValidSource(Type type, ItemStack stack) {
+    public boolean isValidSource(Type type, @Nonnull ItemStack stack) {
         if (OreDictionary.getOreIDs(stack).length > 0) {
             return true;
         }
@@ -97,7 +99,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
     }
 
     @Override
-    public NonNullList<ItemStack> getClientExamples(Type type, ItemStack stack) {
+    public NonNullList<ItemStack> getClientExamples(Type type, @Nonnull ItemStack stack) {
         int[] oreIds = OreDictionary.getOreIDs(stack);
         NonNullList<ItemStack> stacks = NonNullList.create();
 

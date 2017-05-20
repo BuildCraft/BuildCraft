@@ -17,6 +17,8 @@ import buildcraft.api.tiles.IControllable;
 
 import buildcraft.core.BCCoreStatements;
 
+import javax.annotation.Nonnull;
+
 public enum CoreActionProvider implements IActionProvider {
     INSTANCE;
 
@@ -28,10 +30,10 @@ public enum CoreActionProvider implements IActionProvider {
     }
 
     @Override
-    public void addInternalSidedActions(Collection<IActionInternalSided> actions, IStatementContainer container, EnumFacing side) { }
+    public void addInternalSidedActions(Collection<IActionInternalSided> actions, IStatementContainer container, @Nonnull EnumFacing side) { }
 
     @Override
-    public void addExternalActions(Collection<IActionExternal> res, EnumFacing side, TileEntity tile) {
+    public void addExternalActions(Collection<IActionExternal> res, @Nonnull EnumFacing side, TileEntity tile) {
         if (tile.hasCapability(TilesAPI.CAP_CONTROLLABLE, null)) {
             IControllable controllable = tile.getCapability(TilesAPI.CAP_CONTROLLABLE, null);
             Arrays.stream(BCCoreStatements.ACTION_MACHINE_CONTROL)

@@ -3,7 +3,6 @@ package buildcraft.transport.plug;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 
 import buildcraft.api.transport.pipe.IPipeHolder;

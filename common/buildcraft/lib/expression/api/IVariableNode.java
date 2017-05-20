@@ -14,11 +14,11 @@ public interface IVariableNode extends IExpressionNode {
 
     String getName();
 
-    public interface IVariableNodeLong extends IVariableNode, INodeLong {}
+    interface IVariableNodeLong extends IVariableNode, INodeLong {}
 
-    public interface IVariableNodeDouble extends IVariableNode, INodeDouble {}
+    interface IVariableNodeDouble extends IVariableNode, INodeDouble {}
 
-    public interface IVariableNodeBoolean extends IVariableNode, INodeBoolean {}
+    interface IVariableNodeBoolean extends IVariableNode, INodeBoolean {}
 
-    public interface IVariableNodeString extends IVariableNode, INodeString {}
+    interface IVariableNodeString extends IVariableNode, INodeString {}
 }

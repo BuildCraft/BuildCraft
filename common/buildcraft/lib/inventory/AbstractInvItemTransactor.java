@@ -105,6 +105,7 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
         return stacks;
     }
 
+    @Nonnull
     @Override
     public ItemStack extract(IStackFilter filter, int min, int max, boolean simulate) {
         if (min < 1) min = 1;

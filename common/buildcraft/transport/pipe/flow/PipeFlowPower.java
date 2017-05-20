@@ -146,8 +146,9 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         return super.onFlowActivate(player, trace, hitX, hitY, hitZ, part);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (facing == null) {
             return null;
         } else if (capability == MjAPI.CAP_RECEIVER) {

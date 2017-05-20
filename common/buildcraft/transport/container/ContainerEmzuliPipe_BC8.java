@@ -69,9 +69,7 @@ public class ContainerEmzuliPipe_BC8 extends ContainerBC_Neptune {
         }
 
         public void setColour(EnumDyeColor colour) {
-            sendWidgetData((buffer) -> {
-                MessageUtil.writeEnumOrNull(buffer, colour);
-            });
+            sendWidgetData((buffer) -> MessageUtil.writeEnumOrNull(buffer, colour));
         }
 
         @Override

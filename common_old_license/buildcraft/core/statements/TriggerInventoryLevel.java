@@ -82,7 +82,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
             IInventory inventory = (IInventory) tile;
             ItemStack searchStack = parameters[0].getItemStack();
 
-            if (searchStack == null) {
+            if (searchStack.isEmpty()) {
                 return false;
             }
 

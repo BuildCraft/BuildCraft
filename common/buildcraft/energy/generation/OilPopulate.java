@@ -34,7 +34,6 @@ import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.core.BCCoreBlocks;
-import buildcraft.core.BCCoreConfig;
 import buildcraft.energy.BCEnergyFluids;
 
 public final class OilPopulate {
@@ -260,8 +259,8 @@ public final class OilPopulate {
 
     private boolean isReplaceableFluid(World world, BlockPos pos) {
         Block block = world.getBlockState(pos).getBlock();
-        return (block instanceof BlockStaticLiquid || block instanceof BlockFluidBase || block instanceof IFluidBlock) && block
-                .getMaterial(world.getBlockState(pos)) != Material.LAVA;
+        return (block instanceof BlockStaticLiquid || block instanceof BlockFluidBase || block instanceof IFluidBlock)
+            && world.getBlockState(pos).getMaterial() != Material.LAVA;
     }
 
     private boolean isOil(World world, int x, int y, int z) {
@@ -283,7 +282,7 @@ public final class OilPopulate {
             return true;
         }
 
-        if (!block.getMaterial(blockState).blocksMovement()) {
+        if (!blockState.getMaterial().blocksMovement()) {
             return true;
         }
 
@@ -295,7 +294,7 @@ public final class OilPopulate {
             return true;
         }
 
-        if (!block.isOpaqueCube(blockState)) {
+        if (!blockState.isOpaqueCube()) {
             return true;
         }
 

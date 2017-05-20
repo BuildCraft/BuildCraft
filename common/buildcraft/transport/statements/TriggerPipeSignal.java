@@ -8,7 +8,6 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import buildcraft.transport.wire.WireManager;
 import net.minecraft.item.EnumDyeColor;
 
 import buildcraft.api.gates.IGate;

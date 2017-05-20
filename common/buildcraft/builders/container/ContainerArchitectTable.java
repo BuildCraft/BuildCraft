@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 public class ContainerArchitectTable extends ContainerBCTile<TileArchitectTable> {
@@ -27,7 +28,7 @@ public class ContainerArchitectTable extends ContainerBCTile<TileArchitectTable>
 
         addSlotToContainer(new SlotBase(tile.invSnapshotIn, 0, 135, 35) {
             @Override
-            public boolean isItemValid(ItemStack stack) {
+            public boolean isItemValid(@Nonnull ItemStack stack) {
                 return stack.getItem() instanceof ItemSnapshot;
             }
         });

@@ -96,8 +96,6 @@ public class NonNullMatrix<T> extends AbstractList<T> {
 
     @Nonnull
     private T set0(int flatIndex, @Nonnull T element) {
-        T val = internalList.set(flatIndex, element);
-        if (val == null) throw new IllegalStateException("Somehow a value in the internal list was null!");
-        return val;
+        return internalList.set(flatIndex, element);
     }
 }

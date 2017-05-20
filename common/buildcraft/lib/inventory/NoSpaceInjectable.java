@@ -6,6 +6,8 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.IInjectable;
 
+import javax.annotation.Nonnull;
+
 public enum NoSpaceInjectable implements IInjectable {
     INSTANCE;
 
@@ -14,8 +16,9 @@ public enum NoSpaceInjectable implements IInjectable {
         return false;
     }
 
+    @Nonnull
     @Override
-    public ItemStack injectItem(ItemStack stack, boolean doAdd, EnumFacing from, EnumDyeColor color, double speed) {
+    public ItemStack injectItem(@Nonnull ItemStack stack, boolean doAdd, EnumFacing from, EnumDyeColor color, double speed) {
         return stack;
     }
 }

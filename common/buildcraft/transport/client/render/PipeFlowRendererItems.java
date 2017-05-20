@@ -21,7 +21,6 @@ import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.render.ItemRenderUtil;
 import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.pipe.flow.TravellingItem;

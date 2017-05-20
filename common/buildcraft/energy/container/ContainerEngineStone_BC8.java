@@ -8,6 +8,8 @@ import buildcraft.lib.gui.slot.SlotBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 
+import javax.annotation.Nonnull;
+
 public class ContainerEngineStone_BC8 extends ContainerBCTile<TileEngineStone_BC8> {
     public ContainerEngineStone_BC8(EntityPlayer player, TileEngineStone_BC8 engine) {
         super(player, engine);
@@ -15,7 +17,7 @@ public class ContainerEngineStone_BC8 extends ContainerBCTile<TileEngineStone_BC
         addFullPlayerInventory(84);
         addSlotToContainer(new SlotBase(engine.invFuel, 0, 80, 41) {
             @Override
-            public boolean isItemValid(ItemStack stack) {
+            public boolean isItemValid(@Nonnull ItemStack stack) {
                 return TileEntityFurnace.getItemBurnTime(stack) > 0;
             }
         });

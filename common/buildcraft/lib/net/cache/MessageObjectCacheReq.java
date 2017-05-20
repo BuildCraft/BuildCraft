@@ -2,7 +2,6 @@ package buildcraft.lib.net.cache;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import buildcraft.lib.net.PacketBufferBC;
 

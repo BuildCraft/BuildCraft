@@ -29,6 +29,8 @@ import buildcraft.lib.misc.StackUtil;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
+import javax.annotation.Nonnull;
+
 public class ItemList_BC8 extends ItemBC_Neptune implements IList {
     public ItemList_BC8(String id) {
         super(id);
@@ -64,18 +66,18 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList {
     // IList
 
     @Override
-    public String getName(ItemStack stack) {
+    public String getName(@Nonnull ItemStack stack) {
         return NBTUtilBC.getItemData(stack).getString("label");
     }
 
     @Override
-    public boolean setName(ItemStack stack, String name) {
+    public boolean setName(@Nonnull ItemStack stack, String name) {
         NBTUtilBC.getItemData(stack).setString("label", name);
         return true;
     }
 
     @Override
-    public boolean matches(ItemStack stackList, ItemStack item) {
+    public boolean matches(@Nonnull ItemStack stackList, @Nonnull ItemStack item) {
         return ListHandler.matches(stackList, item);
     }
 }

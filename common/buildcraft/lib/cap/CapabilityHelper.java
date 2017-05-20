@@ -64,6 +64,7 @@ public class CapabilityHelper implements ICapabilityProvider {
         return getCapability(capability, facing) != null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         Map<Capability<?>, Supplier<?>> capMap = getCapMap(facing);

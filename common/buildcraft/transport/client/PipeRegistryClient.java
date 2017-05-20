@@ -41,18 +41,22 @@ public enum PipeRegistryClient implements IClientRegistry {
         plugBakerMap.put(keyClass, renderer);
     }
 
+    @SuppressWarnings("unchecked")
     public static <F extends PipeFlow> IPipeFlowRenderer<F> getFlowRenderer(F flow) {
         return (IPipeFlowRenderer<F>) INSTANCE.flowRenderMap.get(flow.getClass());
     }
 
+    @SuppressWarnings("unchecked")
     public static <B extends PipeBehaviour> IPipeBehaviourRenderer<B> getBehaviourRenderer(B behaviour) {
         return (IPipeBehaviourRenderer<B>) INSTANCE.behaviourRenderMap.get(behaviour.getClass());
     }
 
+    @SuppressWarnings("unchecked")
     public static <P extends PipePluggable> IPlugDynamicRenderer<P> getPlugRenderer(P plug) {
         return (IPlugDynamicRenderer<P>) INSTANCE.plugRenderMap.get(plug.getClass());
     }
 
+    @SuppressWarnings("unchecked")
     public static <P extends PluggableModelKey> IPluggableStaticBaker<P> getPlugBaker(P key) {
         return (IPluggableStaticBaker<P>) INSTANCE.plugBakerMap.get(key.getClass());
     }
