@@ -6,6 +6,13 @@ package buildcraft.lib;
 
 import java.util.function.Consumer;
 
+import buildcraft.lib.net.MessageManager;
+import buildcraft.lib.net.MessageContainer;
+import buildcraft.lib.net.MessageMarker;
+import buildcraft.lib.net.MessageUpdateTile;
+import buildcraft.lib.net.cache.MessageObjectCacheReply;
+import buildcraft.lib.net.cache.MessageObjectCacheReq;
+import buildcraft.lib.particle.MessageParticleVanilla;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -30,6 +37,7 @@ import buildcraft.lib.registry.MigrationManager;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
+import net.minecraftforge.fml.relauncher.Side;
 
 //@formatter:off
 @Mod(modid = BCLib.MODID,
@@ -66,8 +74,14 @@ public class BCLib {
         BCLibItems.fmlPreInit();
 
         BuildCraftObjectCaches.fmlPreInit();
-        BCMessageHandler.fmlPreInit();
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCLibProxy.getProxy());
+
+        MessageManager.addMessageType(MessageUpdateTile.class, MessageUpdateTile.HANDLER, Side.CLIENT, Side.SERVER);
+        MessageManager.addMessageType(MessageContainer.class, MessageContainer.HANDLER, Side.CLIENT, Side.SERVER);
+        MessageManager.addMessageType(MessageMarker.class, MessageMarker.HANDLER, Side.CLIENT);
+        MessageManager.addMessageType(MessageParticleVanilla.class, MessageParticleVanilla.HANDLER, Side.CLIENT);
+        MessageManager.addMessageType(MessageObjectCacheReq.class, MessageObjectCacheReq.HANDLER, Side.SERVER);
+        MessageManager.addMessageType(MessageObjectCacheReply.class, MessageObjectCacheReply.HANDLER, Side.CLIENT);
 
         MinecraftForge.EVENT_BUS.register(BCLibEventDist.INSTANCE);
     }
@@ -90,7 +104,7 @@ public class BCLib {
     public static void postInit(FMLPostInitializationEvent evt) {
         BCLibProxy.getProxy().fmlPostInit();
         BuildCraftObjectCaches.fmlPostInit();
-        BCMessageHandler.fmlPostInit();
+        MessageManager.fmlPostInit();
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();
         ListMatchHandlerFluid.fmlPostInit();

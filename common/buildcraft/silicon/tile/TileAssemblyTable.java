@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import buildcraft.lib.net.MessageManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
@@ -22,7 +23,6 @@ import buildcraft.api.recipes.AssemblyRecipe;
 
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
@@ -221,7 +221,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
             buffer.writeCompoundTag(recipe.recipeTag);
             buffer.writeInt(state.ordinal());
         });
-        MessageUtil.getWrapper().sendToServer(message);
+        MessageManager.sendToServer(message);
     }
 
     @Override

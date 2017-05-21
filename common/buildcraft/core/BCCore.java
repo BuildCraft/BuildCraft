@@ -20,7 +20,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
-import buildcraft.lib.BCMessageHandler;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
@@ -74,7 +74,7 @@ public class BCCore {
         OreDictionary.registerOre("craftingTableWood", Blocks.CRAFTING_TABLE);
 
         MinecraftForge.EVENT_BUS.register(BCCoreEventDist.INSTANCE);
-        BCMessageHandler.addMessageType(MessageVolumeBoxes.class, MessageVolumeBoxes.HANDLER, Side.CLIENT);
+        MessageManager.addMessageType(MessageVolumeBoxes.class, MessageVolumeBoxes.HANDLER, Side.CLIENT);
     }
 
     @Mod.EventHandler

@@ -76,8 +76,9 @@ public enum BCBuildersEventDist {
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public void onPostText(RenderTooltipEvent.PostText event) {
-        if (BCBuildersItems.snapshot.getHeader(event.getStack()) != null && ClientSnapshots.INSTANCE.getSnapshot(BCBuildersItems.snapshot.getHeader(event.getStack())) != null) {
+    public void onRenderTooltipPostText(RenderTooltipEvent.PostText event) {
+        if (BCBuildersItems.snapshot.getHeader(event.getStack()) != null &&
+            ClientSnapshots.INSTANCE.getSnapshot(BCBuildersItems.snapshot.getHeader(event.getStack())) != null) {
             int pX = event.getX();
             int pY = event.getY() + event.getHeight() + 10;
             int sX = 100;

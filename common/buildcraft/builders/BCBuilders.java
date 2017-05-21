@@ -11,7 +11,7 @@ import buildcraft.builders.snapshot.*;
 import buildcraft.core.BCCore;
 import buildcraft.core.marker.volume.AddonsRegistry;
 import buildcraft.lib.BCLib;
-import buildcraft.lib.BCMessageHandler;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
@@ -79,8 +79,8 @@ public class BCBuilders {
 
         MinecraftForge.EVENT_BUS.register(BCBuildersEventDist.INSTANCE);
 
-        BCMessageHandler.addMessageType(MessageSnapshotRequest.class, MessageSnapshotRequest.HANDLER, Side.SERVER);
-        BCMessageHandler.addMessageType(MessageSnapshotResponse.class, MessageSnapshotResponse.HANDLER, Side.CLIENT);
+        MessageManager.addMessageType(MessageSnapshotRequest.class, MessageSnapshotRequest.HANDLER, Side.SERVER);
+        MessageManager.addMessageType(MessageSnapshotResponse.class, MessageSnapshotResponse.HANDLER, Side.CLIENT);
     }
 
     @Mod.EventHandler

@@ -165,7 +165,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     private void scanMultipleBlocks() {
-        for (int i = snapshotType.maxPerTick; i > 0; i--) {
+        for (int i = 1000/*snapshotType.maxPerTick*/; i > 0; i--) {
             scanSingleBlock();
             if (!scanning) {
                 break;

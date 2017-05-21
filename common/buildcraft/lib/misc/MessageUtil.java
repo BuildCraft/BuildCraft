@@ -3,6 +3,7 @@ package buildcraft.lib.misc;
 import java.util.EnumSet;
 import java.util.UUID;
 
+import buildcraft.lib.net.MessageManager;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.block.Block;
@@ -19,12 +20,10 @@ import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.BCLibProxy;
-import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.misc.data.DelayedList;
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -32,10 +31,6 @@ import io.netty.buffer.ByteBuf;
 
 public class MessageUtil {
     private static final DelayedList<Runnable> DELAYED_TASKS = DelayedList.createConcurrent();
-
-    public static SimpleNetworkWrapper getWrapper() {
-        return BCMessageHandler.netWrapper;
-    }
 
     public static void doDelayed(Runnable task) {
         doDelayed(1, task);
@@ -61,20 +56,20 @@ public class MessageUtil {
             }
             // Slightly ugly hack to iterate through all players watching the chunk
             playerChunkMap.hasPlayerMatchingInRange(0, player -> {
-                getWrapper().sendTo(message, player);
+                MessageManager.sendTo(message, player);
                 // Always return false so that the iteration doesn't stop early
                 return false;
             });
             // We could just use this instead, but that requires extra packet size as we are wrapping our
             // packet in an FML packet and sending it through the vanilla system, which is not really desired
-            /** playerChunkMap.sendPacket(getWrapper().getPacketFrom(message)); */
+            // playerChunkMap.sendPacket(MessageManager.getPacketFrom(message));
         }
     }
 
     public static void sendToPlayers(Iterable<EntityPlayer> players, IMessage message) {
         for (EntityPlayer player : players) {
             if (player instanceof EntityPlayerMP) {
-                getWrapper().sendTo(message, (EntityPlayerMP) player);
+                MessageManager.sendTo(message, (EntityPlayerMP) player);
             }
         }
     }
@@ -237,9 +232,9 @@ public class MessageUtil {
         EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(context);
         if (player instanceof EntityPlayerMP) {
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
-            BCMessageHandler.netWrapper.sendTo(reply, playerMP);
+            MessageManager.sendTo(reply, playerMP);
         } else if (player != null) {
-            BCMessageHandler.netWrapper.sendToServer(reply);
+            MessageManager.sendToServer(reply);
         }
     }
 

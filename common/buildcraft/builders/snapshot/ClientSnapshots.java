@@ -1,12 +1,14 @@
 package buildcraft.builders.snapshot;
 
 import buildcraft.api.schematics.ISchematicEntity;
-import buildcraft.lib.BCMessageHandler;
+import buildcraft.lib.net.MessageManager;
 import com.google.common.base.Predicates;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.WorldVertexBufferUploader;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -30,12 +32,13 @@ public enum ClientSnapshots {
     private final List<Snapshot> snapshots = new ArrayList<>();
     private final List<Snapshot.Header> pending = new ArrayList<>();
     private final Map<Snapshot.Header, FakeWorld> worlds = new HashMap<>();
+    private final Map<Snapshot.Header, VertexBuffer> buffers = new HashMap<>();
 
     public Snapshot getSnapshot(Snapshot.Header header) {
         Snapshot found = snapshots.stream().filter(snapshot -> snapshot.header.equals(header)).findFirst().orElse(null);
         if (found == null && !pending.contains(header)) {
             pending.add(header);
-            BCMessageHandler.netWrapper.sendToServer(new MessageSnapshotRequest(header));
+            MessageManager.sendToServer(new MessageSnapshotRequest(header));
         }
         return found;
     }
@@ -75,6 +78,35 @@ public enum ClientSnapshots {
             }
             return localWorld;
         });
+        VertexBuffer vertexBuffer = buffers.computeIfAbsent(header, localHeader -> {
+            VertexBuffer localBuffer = new VertexBuffer(1024) {
+                @Override
+                public void reset() {
+                }
+            };
+            localBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+            for (int z = 0; z < snapshot.size.getZ(); z++) {
+                for (int y = 0; y < snapshot.size.getY(); y++) {
+                    for (int x = 0; x < snapshot.size.getX(); x++) {
+                        BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
+                        localBuffer.setTranslation(
+                            -FakeWorld.BLUEPRINT_OFFSET.getX(),
+                            -FakeWorld.BLUEPRINT_OFFSET.getY(),
+                            -FakeWorld.BLUEPRINT_OFFSET.getZ()
+                        );
+                        Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlock(
+                            world.getBlockState(pos),
+                            pos,
+                            world,
+                            localBuffer
+                        );
+                        localBuffer.setTranslation(0, 0, 0);
+                    }
+                }
+            }
+            localBuffer.finishDrawing();
+            return localBuffer;
+        });
         GlStateManager.pushAttrib();
         GlStateManager.enableDepth();
         GlStateManager.enableBlend();
@@ -97,47 +129,29 @@ public enum ClientSnapshots {
         GlStateManager.enableRescaleNormal();
         GlStateManager.pushMatrix();
         int snapshotSize = Math.max(Math.max(snapshot.size.getX(), snapshot.size.getY()), snapshot.size.getY());
-        GlStateManager.translate(0, 0, -snapshotSize * 1.5F - 5);
+        GlStateManager.translate(0, 0, -snapshotSize * 2F - 3);
         GlStateManager.rotate(20, 1, 0, 0);
         GlStateManager.rotate((System.currentTimeMillis() % 3600) / 10F, 0, 1, 0);
         GlStateManager.translate(-snapshot.size.getX() / 2F, -snapshot.size.getY() / 2F, -snapshot.size.getZ() / 2F);
         GlStateManager.translate(0, snapshotSize * 0.1F, 0);
-        Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        for (int z = 0; z < snapshot.size.getZ(); z++) {
-            for (int y = 0; y < snapshot.size.getY(); y++) {
-                for (int x = 0; x < snapshot.size.getX(); x++) {
-                    BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
-                    Tessellator.getInstance().getBuffer().setTranslation(
-                        -FakeWorld.BLUEPRINT_OFFSET.getX(),
-                        -FakeWorld.BLUEPRINT_OFFSET.getY(),
-                        -FakeWorld.BLUEPRINT_OFFSET.getZ()
-                    );
-                    Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlock(
-                        world.getBlockState(pos),
-                        pos,
-                        world,
-                        Tessellator.getInstance().getBuffer()
-                    );
-                    Tessellator.getInstance().getBuffer().setTranslation(0, 0, 0);
-                }
-            }
-        }
         Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        Tessellator.getInstance().draw();
-        for (int z = 0; z < snapshot.size.getZ(); z++) {
-            for (int y = 0; y < snapshot.size.getY(); y++) {
-                for (int x = 0; x < snapshot.size.getX(); x++) {
-                    BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
-                    GlStateManager.pushAttrib();
-                    // noinspection ConstantConditions
-                    TileEntityRendererDispatcher.instance.renderTileEntityAt(
-                        world.getTileEntity(pos),
-                        pos.getX() - FakeWorld.BLUEPRINT_OFFSET.getX(),
-                        pos.getY() - FakeWorld.BLUEPRINT_OFFSET.getY(),
-                        pos.getZ() - FakeWorld.BLUEPRINT_OFFSET.getZ(),
-                        0
-                    );
-                    GlStateManager.popAttrib();
+        new WorldVertexBufferUploader().draw(vertexBuffer);
+        if (snapshotSize < 32) {
+            for (int z = 0; z < snapshot.size.getZ(); z++) {
+                for (int y = 0; y < snapshot.size.getY(); y++) {
+                    for (int x = 0; x < snapshot.size.getX(); x++) {
+                        BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
+                        GlStateManager.pushAttrib();
+                        // noinspection ConstantConditions
+                        TileEntityRendererDispatcher.instance.renderTileEntityAt(
+                            world.getTileEntity(pos),
+                            pos.getX() - FakeWorld.BLUEPRINT_OFFSET.getX(),
+                            pos.getY() - FakeWorld.BLUEPRINT_OFFSET.getY(),
+                            pos.getZ() - FakeWorld.BLUEPRINT_OFFSET.getZ(),
+                            0
+                        );
+                        GlStateManager.popAttrib();
+                    }
                 }
             }
         }

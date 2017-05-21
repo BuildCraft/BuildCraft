@@ -13,9 +13,9 @@ import buildcraft.core.marker.volume.EnumAddonSlot;
 import buildcraft.core.marker.volume.Lock;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.mj.MjBatteryReciver;
@@ -143,7 +143,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     }
 
     public void sendCanExcavate(boolean newValue) {
-        MessageUtil.getWrapper().sendToServer(createMessage(NET_CAN_EXCAVATE, buffer -> buffer.writeBoolean(newValue)));
+        MessageManager.sendToServer(createMessage(NET_CAN_EXCAVATE, buffer -> buffer.writeBoolean(newValue)));
     }
 
     // Read-write

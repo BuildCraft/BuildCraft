@@ -1,7 +1,7 @@
 package buildcraft.builders.snapshot;
 
+import buildcraft.lib.nbt.NbtSquisher;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 
@@ -19,13 +19,21 @@ public class MessageSnapshotResponse implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        new PacketBuffer(buf).writeCompoundTag(Snapshot.writeToNBT(snapshot));
+        byte[] bytes = NbtSquisher.squishBuildCraftV1(Snapshot.writeToNBT(snapshot));
+        buf.writeInt(bytes.length);
+        buf.writeBytes(bytes);
+//        try {
+//            CompressedStreamTools.write(Snapshot.writeToNBT(snapshot), new ByteBufOutputStream(buf));
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         try {
-            snapshot = Snapshot.readFromNBT(new PacketBuffer(buf).readCompoundTag());
+            snapshot = Snapshot.readFromNBT(NbtSquisher.expand(buf.readBytes(buf.readInt()).array()));
+//            snapshot = Snapshot.readFromNBT(CompressedStreamTools.read(new ByteBufInputStream(buf), NBTSizeTracker.INFINITE));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

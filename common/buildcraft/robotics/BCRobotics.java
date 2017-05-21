@@ -2,6 +2,7 @@ package buildcraft.robotics;
 
 import java.util.function.Consumer;
 
+import buildcraft.lib.net.MessageManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -11,7 +12,6 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
-import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
@@ -40,8 +40,8 @@ public class BCRobotics {
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCRoboticsProxy.getProxy());
 
-        BCMessageHandler.addMessageType(MessageZoneMapRequest.class, MessageZoneMapRequest.HANDLER, Side.SERVER);
-        BCMessageHandler.addMessageType(MessageZoneMapResponse.class, MessageZoneMapResponse.HANDLER, Side.CLIENT);
+        MessageManager.addMessageType(MessageZoneMapRequest.class, MessageZoneMapRequest.HANDLER, Side.SERVER);
+        MessageManager.addMessageType(MessageZoneMapResponse.class, MessageZoneMapResponse.HANDLER, Side.CLIENT);
     }
 
     @Mod.EventHandler

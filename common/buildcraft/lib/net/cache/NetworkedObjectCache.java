@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.function.Supplier;
 
+import buildcraft.lib.net.MessageManager;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
@@ -19,7 +20,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
-import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -277,7 +277,7 @@ public abstract class NetworkedObjectCache<T> {
             if (DEBUG_CPLX) {
                 BCLog.logger.info("[lib.net.cache] The cache " + getNameAndId() + " requests ID's " + Arrays.toString(ids));
             }
-            MessageUtil.getWrapper().sendToServer(new MessageObjectCacheReq(this, ids));
+            MessageManager.sendToServer(new MessageObjectCacheReq(this, ids));
         }
     }
 }

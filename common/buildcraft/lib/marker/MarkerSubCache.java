@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import buildcraft.lib.net.MessageManager;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -19,7 +20,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
-import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.net.MessageMarker;
 import buildcraft.lib.tile.TileMarker;
@@ -49,7 +49,7 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
                 message.connection = false;
                 message.cacheId = cacheId;
                 message.positions.addAll(tileCache.keySet());
-                BCMessageHandler.netWrapper.sendTo(message, player);
+                MessageManager.sendTo(message, player);
             }
             // Send ALL connections.
             for (C connection : connectionToPos.keySet()) {
@@ -58,7 +58,7 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
                 message.connection = true;
                 message.cacheId = cacheId;
                 message.positions.addAll(connection.getMarkerPositions());
-                BCMessageHandler.netWrapper.sendTo(message, player);
+                MessageManager.sendTo(message, player);
             }
         }
     }
@@ -91,7 +91,7 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
             message.cacheId = cacheId;
             message.count = 1;
             message.positions.add(pos);
-            BCMessageHandler.netWrapper.sendToDimension(message, dimensionId);
+            MessageManager.sendToDimension(message, dimensionId);
         }
     }
 
@@ -117,7 +117,7 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
             message.cacheId = cacheId;
             message.count = 1;
             message.positions.add(pos);
-            BCMessageHandler.netWrapper.sendToDimension(message, dimensionId);
+            MessageManager.sendToDimension(message, dimensionId);
         }
     }
 
@@ -236,7 +236,7 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
             message.positions.addAll(set);
             message.count = message.positions.size();
             message.multiple = message.count > 1;
-            BCMessageHandler.netWrapper.sendToDimension(message, dimensionId);
+            MessageManager.sendToDimension(message, dimensionId);
         }
     }
 
@@ -264,7 +264,7 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
             message.positions.addAll(connection.getMarkerPositions());
             message.count = message.positions.size();
             message.multiple = message.count > 1;
-            BCMessageHandler.netWrapper.sendToDimension(message, dimensionId);
+            MessageManager.sendToDimension(message, dimensionId);
         }
     }
 

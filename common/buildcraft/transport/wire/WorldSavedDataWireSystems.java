@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import buildcraft.lib.net.MessageManager;
 import com.google.common.base.Predicates;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,7 +24,6 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.EnumWirePart;
 import buildcraft.api.transport.pipe.IPipeHolder;
 
-import buildcraft.lib.BCMessageHandler;
 import buildcraft.transport.plug.PluggableGate;
 
 public class WorldSavedDataWireSystems extends WorldSavedData {
@@ -120,7 +120,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
                     .filter(wireSystem -> wireSystem.isPlayerWatching(player) && (structureChanged || changedPlayers.contains(player)))
                     .collect(Collectors.toMap(WireSystem::getWiresHashCode, Function.identity()));
             if(!wireSystems.isEmpty()) {
-                BCMessageHandler.netWrapper.sendTo(new MessageWireSystems(wireSystems), player);
+                MessageManager.sendTo(new MessageWireSystems(wireSystems), player);
             }
             Map<Integer, Boolean> hashesPowered = this.wireSystems.entrySet().stream()
                     .filter(systemPower ->
@@ -130,7 +130,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
                     .map(systemPowered -> Pair.of(systemPowered.getKey().getWiresHashCode(), systemPowered.getValue()))
                     .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
             if(!hashesPowered.isEmpty()) {
-                BCMessageHandler.netWrapper.sendTo(new MessageWireSystemsPowered(hashesPowered), player);
+                MessageManager.sendTo(new MessageWireSystemsPowered(hashesPowered), player);
             }
         });
         if(structureChanged || !changedSystems.isEmpty()) {

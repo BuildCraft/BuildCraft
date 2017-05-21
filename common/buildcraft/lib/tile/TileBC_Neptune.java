@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import buildcraft.lib.net.MessageManager;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 
@@ -351,7 +352,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             if (message.getPayloadSize() <= Short.BYTES) {
                 return;
             }
-            MessageUtil.getWrapper().sendTo(message, (EntityPlayerMP) player);
+            MessageManager.sendTo(message, (EntityPlayerMP) player);
         }
     }
 
@@ -366,7 +367,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public final void sendNetworkUpdate(int id, EntityPlayer target) {
         if (hasWorld() && target instanceof EntityPlayerMP) {
             MessageUpdateTile message = createNetworkUpdate(id);
-            MessageUtil.getWrapper().sendTo(message, (EntityPlayerMP) target);
+            MessageManager.sendTo(message, (EntityPlayerMP) target);
         }
     }
 

@@ -1,7 +1,7 @@
 package buildcraft.core.marker.volume;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.lib.BCMessageHandler;
+import buildcraft.lib.net.MessageManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -85,7 +85,7 @@ public class WorldSavedDataVolumeBoxes extends WorldSavedData {
     @Override
     public void markDirty() {
         super.markDirty();
-        BCMessageHandler.netWrapper.sendToDimension(new MessageVolumeBoxes(boxes), world.provider.getDimension());
+        MessageManager.sendToDimension(new MessageVolumeBoxes(boxes), world.provider.getDimension());
     }
 
     @Override

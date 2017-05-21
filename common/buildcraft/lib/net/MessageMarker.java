@@ -16,14 +16,13 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import buildcraft.api.core.BCLog;
 
-import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.MessageUtil;
 
 import io.netty.buffer.ByteBuf;
 
 public class MessageMarker implements IMessage {
-    private static final boolean DEBUG = BCMessageHandler.DEBUG;
+    private static final boolean DEBUG = MessageManager.DEBUG;
 
     public boolean add, multiple, connection;
     public int cacheId, count;

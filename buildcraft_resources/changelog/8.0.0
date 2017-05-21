@@ -1,7 +1,7 @@
 Breaking Changes:
 
 * General:
-  * Volume Boxes
+  * Volume Boxes (new):
     * Right-click block with volume box to place in near this block
     * Right-click volume box with wrench to activate editing mode
       * Move and look to change size
@@ -70,8 +70,7 @@ Improvements:
 
 * Factory:
   * Pump, Mining Well:
-    * The frame will break automatically when you break quarry
-    * You can't break the frame manually
+    * Both have tube made with fake unbreakable blocks
 
 * Builders:
   * Quarry:
@@ -84,6 +83,8 @@ Improvements:
   * Builder:
     * Now uses builtin Minecraft methods for rotating blocks (for default schematics)
     * JSON schematics system
+  * Builder, Filler:
+    * Now have counters ledger which shows how many blocks left to place and to break
   * Snapshots (templates + blueprints) items:
     * When hovered display preview (in GUIs)
 

@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.lib.net.MessageManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ITickable;
 
@@ -20,7 +21,6 @@ import buildcraft.api.core.EnumPipePart;
 
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
-import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
@@ -183,7 +183,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                 }
             }
             if (id == NET_UP) {
-                MessageUtil.getWrapper().sendToServer(createNetworkUpdate(NET_UP));
+                MessageManager.sendToServer(createNetworkUpdate(NET_UP));
             }
         }
         if (side == Side.SERVER) {

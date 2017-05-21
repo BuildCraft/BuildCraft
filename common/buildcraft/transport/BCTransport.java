@@ -12,7 +12,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
-import buildcraft.lib.BCMessageHandler;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
@@ -67,8 +67,8 @@ public class BCTransport {
         BCTransportProxy.getProxy().fmlPreInit();
 
         MinecraftForge.EVENT_BUS.register(BCTransportEventDist.INSTANCE);
-        BCMessageHandler.addMessageType(MessageWireSystems.class, MessageWireSystems.HANDLER, Side.CLIENT);
-        BCMessageHandler.addMessageType(MessageWireSystemsPowered.class, MessageWireSystemsPowered.HANDLER, Side.CLIENT);
+        MessageManager.addMessageType(MessageWireSystems.class, MessageWireSystems.HANDLER, Side.CLIENT);
+        MessageManager.addMessageType(MessageWireSystemsPowered.class, MessageWireSystemsPowered.HANDLER, Side.CLIENT);
     }
 
     @Mod.EventHandler
