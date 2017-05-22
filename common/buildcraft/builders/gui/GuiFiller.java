@@ -10,11 +10,11 @@ import java.util.List;
 
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.core.render.ISprite;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IStatementContainer;
 
-import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.client.sprite.SpriteAtlas;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.button.GuiButtonSmall;
@@ -22,6 +22,7 @@ import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.statement.GuiStatementSelector;
+import buildcraft.lib.misc.GuiUtil;
 
 import buildcraft.builders.container.ContainerFiller;
 import buildcraft.core.builders.patterns.PatternNone;
@@ -70,8 +71,8 @@ public class GuiFiller extends GuiStatementSelector<ContainerFiller> {
         int i = (int) ((System.currentTimeMillis() / 1000) % possible.size());
         IFillerPattern pattern = possible.get(i);
 
-        ISprite sprite = new SpriteAtlas(pattern.getGuiSprite());
-        sprite = sprite.subRelative(4, 4, 8, 8, 16);
+        ISprite sprite = pattern.getGuiSprite();
+        sprite = GuiUtil.subRelative(sprite, 4, 4, 8, 8, 16);
         GuiIcon icon = new GuiIcon(sprite, 8);
         GuiRectangle rect = new GuiRectangle(38, 30, 16, 16);
         icon.drawScaledInside(rect.offset(rootElement));

@@ -4,7 +4,8 @@ import java.util.Objects;
 
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.lib.client.sprite.ISprite;
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
 /** Holds information on what a single laser in the world: its {@link LaserType}, is position, its size, and some other

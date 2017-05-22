@@ -1,13 +1,13 @@
 package buildcraft.lib.gui;
 
-import buildcraft.lib.client.sprite.ISprite;
+import buildcraft.api.core.render.ISprite;
 
 /** An {@link ISimpleDrawable} that draws the specified {@link ISprite} as-is into the given width and height. */
 public class GuiSpriteScaled implements ISimpleDrawable {
     public final ISprite sprite;
-    public final int width, height;
+    public final double width, height;
 
-    public GuiSpriteScaled(ISprite sprite, int width, int height) {
+    public GuiSpriteScaled(ISprite sprite, double width, double height) {
         this.sprite = sprite;
         this.width = width;
         this.height = height;

@@ -17,7 +17,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.client.render.fluid.FluidRenderer;
+import buildcraft.lib.client.sprite.SpriteNineSliced;
+import buildcraft.lib.client.sprite.SubSprite;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.elem.ToolTip;
@@ -221,5 +225,33 @@ public class GuiUtil {
         int rx = (int) (x * scaleW);
         int ry = (int) (mc.displayHeight - (y + height) * scaleH);
         GL11.glScissor(rx, ry, (int) (width * scaleW), (int) (height * scaleH));
+    }
+
+    public static ISprite subRelative(ISprite sprite, double u, double v, double width, double height, double size) {
+        return GuiUtil.subRelative(sprite, u / size, v / size, width / size, height / size);
+    }
+
+    public static ISprite subAbsolute(ISprite sprite, double uMin, double vMin, double uMax, double vMax, double spriteSize) {
+        double size = spriteSize;
+        return GuiUtil.subAbsolute(sprite, uMin / size, vMin / size, uMax / size, vMax / size);
+    }
+
+    public static ISprite subRelative(ISprite sprite, double u, double v, double width, double height) {
+        return GuiUtil.subAbsolute(sprite, u, v, u + width, v + height);
+    }
+
+    public static ISprite subAbsolute(ISprite sprite, double uMin, double vMin, double uMax, double vMax) {
+        if (uMin == 0 && vMin == 0 && uMax == 1 && vMax == 1) {
+            return sprite;
+        }
+        return new SubSprite(sprite, uMin, vMin, uMax, vMax);
+    }
+
+    public static SpriteNineSliced slice(ISprite sprite, int uMin, int vMin, int uMax, int vMax, int textureSize) {
+        return new SpriteNineSliced(sprite, uMin, vMin, uMax, vMax, textureSize);
+    }
+
+    public static SpriteNineSliced slice(ISprite sprite, double uMin, double vMin, double uMax, double vMax, double scale) {
+        return new SpriteNineSliced(sprite, uMin, vMin, uMax, vMax, scale);
     }
 }

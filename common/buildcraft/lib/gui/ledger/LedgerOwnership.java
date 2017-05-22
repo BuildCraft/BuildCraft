@@ -2,7 +2,8 @@ package buildcraft.lib.gui.ledger;
 
 import com.mojang.authlib.GameProfile;
 
-import buildcraft.lib.client.sprite.ISprite;
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.misc.SpriteUtil;

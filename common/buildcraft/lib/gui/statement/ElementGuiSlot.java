@@ -5,16 +5,16 @@ import java.util.List;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
+import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IGuiSlot;
 
 import buildcraft.lib.gui.GuiElementSimple;
+import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
-import buildcraft.lib.misc.SpriteUtil;
 import buildcraft.lib.misc.data.IReference;
 
 public abstract class ElementGuiSlot<G extends GuiStatementSelector<?>, T extends IGuiSlot> extends GuiElementSimple<G> {
@@ -93,10 +93,9 @@ public abstract class ElementGuiSlot<G extends GuiStatementSelector<?>, T extend
 
     public static void draw(Gui gui, IGuiSlot slot, IGuiPosition pos) {
         if (slot != null) {
-            TextureAtlasSprite sprite = slot.getGuiSprite();
+            ISprite sprite = slot.getGuiSprite();
             if (sprite != null) {
-                SpriteUtil.bindBlockTextureMap();
-                gui.drawTexturedModalRect(pos.getX() + 1, pos.getY() + 1, sprite, 16, 16);
+                GuiIcon.drawAt(sprite, pos.getX() + 1, pos.getY() + 1, 16, 16);
             }
         }
     }

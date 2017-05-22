@@ -1,10 +1,10 @@
 package buildcraft.builders.gui;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.IBox;
 import buildcraft.api.filler.FilledTemplate;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.containers.IFillerStatementContainer;
 
 import buildcraft.lib.gui.statement.StatementWrapper;
 
@@ -29,7 +29,7 @@ public class FillerWrapper extends StatementWrapper implements IFillerPattern {
     }
 
     @Override
-    public FilledTemplate createTemplate(IBox box, IStatementParameter[] params) {
-        return getDelegate().createTemplate(box, params);
+    public FilledTemplate createTemplate(IFillerStatementContainer filler, IStatementParameter[] params) {
+        return getDelegate().createTemplate(filler, params);
     }
 }

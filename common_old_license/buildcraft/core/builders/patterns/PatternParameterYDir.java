@@ -1,9 +1,12 @@
 package buildcraft.core.builders.patterns;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -67,7 +70,8 @@ public enum PatternParameterYDir implements IStatementParameter {
     }
 
     @Override
-    public TextureAtlasSprite getGuiSprite() {
-        return (up ? BCCoreSprites.PARAM_STAIRS_UP : BCCoreSprites.PARAM_STAIRS_DOWN).getSprite();
+    @SideOnly(Side.CLIENT)
+    public ISprite getGuiSprite() {
+        return up ? BCCoreSprites.PARAM_STAIRS_UP : BCCoreSprites.PARAM_STAIRS_DOWN;
     }
 }

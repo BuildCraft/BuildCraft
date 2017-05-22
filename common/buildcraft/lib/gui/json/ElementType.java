@@ -1,9 +1,7 @@
 package buildcraft.lib.gui.json;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import com.google.gson.JsonSyntaxException;
 
@@ -16,16 +14,15 @@ import buildcraft.lib.expression.InternalCompiler;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeType;
-import buildcraft.lib.gui.ContainerBC_Neptune;
 
-public abstract class ElementType<G extends GuiJson<C>, C extends ContainerBC_Neptune> {
+public abstract class ElementType {
     public final String name;
 
     public ElementType(String name) {
         this.name = name;
     }
 
-    public abstract void addToGui(G gui, JsonGuiInfo info, JsonGuiElement json, Map<String, Supplier<String>> guiProps);
+    public abstract void addToGui(GuiJson<?> gui, JsonGuiInfo info, JsonGuiElement json);
 
     public static FunctionContext createContext(JsonGuiElement json) {
         FunctionContext ctx = DefaultContexts.createWithAll();
@@ -64,7 +61,7 @@ public abstract class ElementType<G extends GuiJson<C>, C extends ContainerBC_Ne
     }
 
     public static void inheritProperty(JsonGuiElement json, String from, String to) {
-        if (!json.properties.containsKey(to)) {
+        if (!json.properties.containsKey(to) && json.properties.containsKey(from)) {
             json.properties.put(to, json.properties.get(from));
         }
     }

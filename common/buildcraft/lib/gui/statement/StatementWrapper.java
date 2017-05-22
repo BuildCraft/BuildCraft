@@ -2,10 +2,10 @@ package buildcraft.lib.gui.statement;
 
 import java.util.Arrays;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.tileentity.TileEntity;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -59,7 +59,7 @@ public abstract class StatementWrapper implements IStatement, Comparable<Stateme
 
     /** @see buildcraft.api.statements.IStatement#getGuiSprite() */
     @Override
-    public TextureAtlasSprite getGuiSprite() {
+    public ISprite getGuiSprite() {
         return this.delegate.getGuiSprite();
     }
 

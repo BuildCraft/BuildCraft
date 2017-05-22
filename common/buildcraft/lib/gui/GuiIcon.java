@@ -8,7 +8,8 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.lib.client.sprite.ISprite;
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.client.sprite.SpriteRaw;
 import buildcraft.lib.gui.pos.IGuiArea;
 

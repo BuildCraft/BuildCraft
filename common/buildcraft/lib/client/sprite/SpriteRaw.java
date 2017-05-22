@@ -3,6 +3,8 @@ package buildcraft.lib.client.sprite;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.core.render.ISprite;
+
 /** Defines a sprite that is taken directly from the given resource location. */
 public class SpriteRaw implements ISprite {
     public final ResourceLocation location;

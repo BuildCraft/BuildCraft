@@ -10,8 +10,10 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.BCCoreSprites;
+
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.BCLibSprites;
-import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.elem.ToolTip;
@@ -56,7 +58,7 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> implement
     }
 
     @Override
-    public void handleButtonClick(IButtonClickEventTrigger button, int buttonId, int buttonKey) {
+    public void handleButtonClick(IButtonClickEventTrigger button, int buttonKey) {
         if (button instanceof GuiPaintButton) {
             GuiPaintButton paint = (GuiPaintButton) button;
             switch (buttonKey) {

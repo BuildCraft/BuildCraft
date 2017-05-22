@@ -88,7 +88,7 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
     }
 
     @Override
-    public void handleButtonClick(IButtonClickEventTrigger sender, int buttonId, int buttonKey) {
+    public void handleButtonClick(IButtonClickEventTrigger sender, int buttonKey) {
         FilterMode newFilterMode = FilterMode.get(buttonId);
         this.pipe.filterMode = newFilterMode;
         container.sendNewFilterMode(newFilterMode);

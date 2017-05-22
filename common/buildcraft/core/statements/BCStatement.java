@@ -4,16 +4,9 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.statements;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
-
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
 public abstract class BCStatement implements IStatement {
 
@@ -75,14 +68,4 @@ public abstract class BCStatement implements IStatement {
         }
         return _default;
     }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public final TextureAtlasSprite getGuiSprite() {
-        SpriteHolder holder = getSpriteHolder();
-        return holder == null ? null : holder.getSprite();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public abstract SpriteHolder getSpriteHolder();
 }

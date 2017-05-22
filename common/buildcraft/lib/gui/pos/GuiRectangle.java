@@ -50,4 +50,13 @@ public final class GuiRectangle implements IGuiArea {
     public String toString() {
         return "Rectangle [x=" + x + ", y=" + y + ", width=" + width + ", height=" + height + "]";
     }
+
+    public GuiRectangle offset(PositionAbsolute by) {
+        return offset(by.getX(), by.getY());
+    }
+
+    @Override
+    public GuiRectangle offset(int dx, int dy) {
+        return new GuiRectangle(x + dx, y + dy, width, height);
+    }
 }

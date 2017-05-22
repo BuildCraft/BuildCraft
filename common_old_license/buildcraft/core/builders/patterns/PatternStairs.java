@@ -23,7 +23,7 @@ public class PatternStairs extends Pattern {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public SpriteHolder getSpriteHolder() {
+    public SpriteHolder getGuiSprite() {
         return BCCoreSprites.FILLER_STAIRS;
     }
 

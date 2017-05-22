@@ -41,7 +41,7 @@ public class PatternPyramid extends Pattern {
     }
 
     @Override
-    public SpriteHolder getSpriteHolder() {
+    public SpriteHolder getGuiSprite() {
         return BCCoreSprites.FILLER_PYRAMID;
     }
 

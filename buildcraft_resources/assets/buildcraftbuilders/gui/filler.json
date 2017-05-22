@@ -19,8 +19,8 @@
 			"size": [16,16],
 			"modes": {
 				"enabled": ["u_start",0],
+				"hovered": ["u_start",16],
 				"active": ["u_start + 16",0],
-				"hovered": ["u_start + 16",16],
 				"active_hovered": ["u_start + 16",16]
 			}
 		}
@@ -51,12 +51,14 @@
 		"button_no_excavate": {
 			"type": "four_button",
 			"source": "filler.no_excavate",
-			"u_start": 192
+			"u_start": 192,
+			"area": [134,30,16,16]
 		},
 		"button_invert": {
 			"type": "four_button",
 			"source": "filler.invert",
-			"u_start": 224
+			"u_start": 224,
+			"area": [152,30,16,16]
 		},
 		"player_inventory": {
 			"type": "buildcraftlib:inventory/player/full",

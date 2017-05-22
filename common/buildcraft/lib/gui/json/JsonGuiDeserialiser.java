@@ -11,10 +11,11 @@ import com.google.gson.JsonObject;
 
 /** Turns several json elements into some functional gui data. */
 public class JsonGuiDeserialiser {
-    public static final Map<String, ElementType<?, ?>> TYPES = new HashMap<>();
+    public static final Map<String, ElementType> TYPES = new HashMap<>();
 
     static {
         TYPES.put(ElementTypeSprite.NAME, ElementTypeSprite.INSTANCE);
+        TYPES.put(ElementTypeButton.NAME, ElementTypeButton.INSTANCE);
     }
 
     public static void main(String[] args) throws IOException {

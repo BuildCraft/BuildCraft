@@ -48,6 +48,10 @@ public interface IGuiArea extends IGuiPosition {
         return new GuiRectangle(getX(), getY(), getWidth(), getHeight());
     }
 
+    default IGuiPosition getCenter() {
+        return new PositionCallable(this::getCenterX, this::getCenterY);
+    }
+
     @Override
     default IGuiArea offset(IGuiPosition by) {
         return offset(by::getX, by::getY);

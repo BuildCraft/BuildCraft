@@ -1,21 +1,19 @@
 package buildcraft.lib.gui.json;
 
-import java.util.Map;
-import java.util.function.Supplier;
-
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.lib.client.sprite.ISprite;
-import buildcraft.lib.client.sprite.SpriteChanging;
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.client.sprite.SpriteRaw;
 import buildcraft.lib.expression.FunctionContext;
-import buildcraft.lib.gui.ContainerBC_Neptune;
-import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.GuiSpriteScaled;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.elem.GuiElementDrawable;
 import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.misc.GuiUtil;
+import buildcraft.lib.misc.SpriteUtil;
 
-public class ElementTypeSprite extends ElementType<GuiJson<ContainerBC_Neptune>, ContainerBC_Neptune> {
+public class ElementTypeSprite extends ElementType {
     public static final String NAME = "buildcraftlib:drawable";
     public static final ElementTypeSprite INSTANCE = new ElementTypeSprite();
 
@@ -32,7 +30,7 @@ public class ElementTypeSprite extends ElementType<GuiJson<ContainerBC_Neptune>,
     }
 
     @Override
-    public void addToGui(GuiJson<ContainerBC_Neptune> gui, JsonGuiInfo info, JsonGuiElement json, Map<String, Supplier<String>> guiProps) {
+    public void addToGui(GuiJson<?> gui, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(json);
         inheritProperty(json, "area[0]", "pos[0]");
         inheritProperty(json, "area[1]", "pos[1]");
@@ -43,6 +41,11 @@ public class ElementTypeSprite extends ElementType<GuiJson<ContainerBC_Neptune>,
         inheritProperty(json, "source.area[1]", "source.pos[1]");
         inheritProperty(json, "source.area[2]", "source.size[0]");
         inheritProperty(json, "source.area[3]", "source.size[1]");
+
+        inheritProperty(json, "pos[0]", "source.pos[0]");
+        inheritProperty(json, "pos[1]", "source.pos[1]");
+        inheritProperty(json, "size[0]", "source.size[0]");
+        inheritProperty(json, "size[1]", "source.size[1]");
 
         int posX = resolveEquationInt(json, "pos[0]", ctx);
         int posY = resolveEquationInt(json, "pos[1]", ctx);
@@ -61,15 +64,15 @@ public class ElementTypeSprite extends ElementType<GuiJson<ContainerBC_Neptune>,
         String origin = tex.origin;
         int texSize = tex.texSize;
 
-        ISprite sprite;
-        if (guiProps.containsKey(origin)) {
-            sprite = new SpriteChanging(guiProps.get(origin), () -> u, () -> v, () -> us, () -> vs);
+        ISprite sprite = gui.sprites.get(origin);
+        if (sprite != null) {
+            sprite = GuiUtil.subRelative(sprite, u, v, us, vs, texSize);
         } else {
-            sprite = new SpriteRaw(new ResourceLocation(origin), u, v, us, vs, texSize);
+            sprite = new SpriteRaw(SpriteUtil.transformLocation(new ResourceLocation(origin)), u, v, us, vs, texSize);
         }
 
         GuiRectangle rect = new GuiRectangle(posX, posY, sizeX, sizeY);
-        ISimpleDrawable icon = new GuiIcon(sprite, texSize);
+        ISimpleDrawable icon = new GuiSpriteScaled(sprite, sizeX, sizeY);
         gui.guiElements.add(new GuiElementDrawable(gui, gui.rootElement, rect, icon, foreground));
     }
 }

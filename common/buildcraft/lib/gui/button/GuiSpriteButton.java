@@ -1,67 +1,51 @@
 package buildcraft.lib.gui.button;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.ISimpleDrawable;
+import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.gui.pos.IGuiPosition;
 
-public class GuiSpriteButton extends GuiAbstractButton {
+public class GuiSpriteButton extends GuiAbstractButton<GuiBC8<?>> {
+    private final ISimpleDrawable drEnabled, drActive, drHovered, drActiveHovered, drDisabled, drDisabledActive;
 
-    private final ISimpleDrawable drEnabled, drActive, drHovered, drActiveHovered, drDisabled;
+    public static class Builder {
+        public final GuiRectangle rect;
+        public final ISimpleDrawable enabled;
+        public ISimpleDrawable active;
+        public ISimpleDrawable hovered;
+        public ISimpleDrawable activeHovered;
+        public ISimpleDrawable disabled;
+        public ISimpleDrawable disabledActive;
 
-    /** @param gui
-     * @param buttonId
-     * @param x
-     * @param y
-     * @param buttonStates The states. 0 should be the default (enabled, not active and not hovered), 1 should be
-     *            active, [2 is hovered and 3 is active and hovered [4 is not enabled]] */
-    public GuiSpriteButton(GuiBC8<?> gui, int buttonId, int x, int y, ISimpleDrawable... buttonStates) {
-        super(gui, buttonId, x, y, "");
-        switch (buttonStates.length) {
-            case 0: {
-                throw new IllegalArgumentException("Not enough states!");
-            }
-            case 1: {
-                drEnabled = buttonStates[0];
-                drHovered = drActive = drActiveHovered = drDisabled = drEnabled;
-                break;
-            }
-            case 2: {
-                drEnabled = drHovered = buttonStates[0];
-                drDisabled = drActiveHovered = drActive = buttonStates[1];
-                break;
-            }
-            case 3: {
-                drEnabled = buttonStates[0];
-                drActive = drActiveHovered = buttonStates[1];
-                drDisabled = drHovered = buttonStates[2];
-                break;
-            }
-            case 4: {
-                drEnabled = buttonStates[0];
-                drActive = buttonStates[1];
-                drHovered = buttonStates[2];
-                drActiveHovered = buttonStates[3];
-                drDisabled = drEnabled;
-                break;
-            }
-            case 5: {
-                drEnabled = buttonStates[0];
-                drActive = buttonStates[1];
-                drHovered = buttonStates[2];
-                drActiveHovered = buttonStates[3];
-                drDisabled = buttonStates[4];
-                break;
-            }
-            default: {
-                throw new IllegalArgumentException("Too many button states! (" + buttonStates.length + ")");
-            }
+        public Builder(GuiRectangle rect, ISimpleDrawable enabled) {
+            this.rect = rect;
+            this.enabled = enabled;
         }
     }
 
+    public GuiSpriteButton(GuiBC8<?> gui, String id, IGuiPosition parent, Builder args) {
+        super(gui, id, args.rect.offset(parent));
+        this.drEnabled = args.enabled;
+        this.drActive = getFirstNonnull(args.active, args.enabled);
+        this.drHovered = getFirstNonnull(args.hovered, args.enabled);
+        this.drActiveHovered = getFirstNonnull(args.activeHovered, args.hovered, args.active, args.enabled);
+        this.drDisabled = getFirstNonnull(args.disabled, args.enabled);
+        this.drDisabledActive = getFirstNonnull(args.disabledActive, args.disabled, args.enabled);
+    }
+
+    private static ISimpleDrawable getFirstNonnull(ISimpleDrawable... of) {
+        for (ISimpleDrawable d : of) {
+            if (d != null) {
+                return d;
+            }
+        }
+        throw new NullPointerException("No non-null elements found!");
+    }
+
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+    public void drawBackground(float partialTicks) {
         if (!visible) {
             return;
         }
@@ -71,19 +55,22 @@ public class GuiSpriteButton extends GuiAbstractButton {
         GlStateManager.disableBlend();
 
         if (enabled) {
+            boolean hovered = isMouseOver();
             if (active) {
                 if (hovered) {
-                    drActiveHovered.drawAt(xPosition, yPosition);
+                    drActiveHovered.drawAt(this);
                 } else {
-                    drActive.drawAt(xPosition, yPosition);
+                    drActive.drawAt(this);
                 }
             } else if (hovered) {
-                drHovered.drawAt(xPosition, yPosition);
+                drHovered.drawAt(this);
             } else {
-                drEnabled.drawAt(xPosition, yPosition);
+                drEnabled.drawAt(this);
             }
+        } else if (active) {
+            drDisabledActive.drawAt(this);
         } else {
-            drDisabled.drawAt(xPosition, yPosition);
+            drDisabled.drawAt(this);
         }
     }
 

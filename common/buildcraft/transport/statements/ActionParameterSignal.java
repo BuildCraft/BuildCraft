@@ -12,13 +12,13 @@ import java.util.Objects;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraftforge.common.util.Constants;
 
+import buildcraft.api.core.render.ISprite;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
@@ -75,12 +75,12 @@ public class ActionParameterSignal implements IStatementParameter {
     }
 
     @Override
-    public TextureAtlasSprite getGuiSprite() {
+    public ISprite getGuiSprite() {
         EnumDyeColor c = colour;
         if (c == null) {
             return null;
         } else {
-            return BCTransportSprites.getPipeSignal(true, c).getSprite();
+            return BCTransportSprites.getPipeSignal(true, c);
         }
     }
 

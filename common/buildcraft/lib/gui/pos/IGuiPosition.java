@@ -2,7 +2,7 @@ package buildcraft.lib.gui.pos;
 
 import java.util.function.IntSupplier;
 
-/** Defines a single point somewhere on the screen.*/
+/** Defines a single point somewhere on the screen. */
 public interface IGuiPosition {
     int getX();
 

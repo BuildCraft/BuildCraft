@@ -42,7 +42,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
     }
 
     @Override
-    public SpriteHolder getSpriteHolder() {
+    public SpriteHolder getGuiSprite() {
         return BCCoreSprites.TRIGGER_INVENTORY.get(state);
     }
 

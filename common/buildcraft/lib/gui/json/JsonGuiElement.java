@@ -40,6 +40,9 @@ public class JsonGuiElement {
         }
         for (Entry<String, JsonElement> entry : json.entrySet()) {
             String key = entry.getKey();
+            if ("type".equals(key) && properties.containsKey("type")) {
+                continue;
+            }
             JsonElement value = entry.getValue();
             putProperties(key, value);
         }

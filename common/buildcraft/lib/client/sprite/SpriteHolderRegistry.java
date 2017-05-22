@@ -28,6 +28,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.misc.SpriteUtil;
 

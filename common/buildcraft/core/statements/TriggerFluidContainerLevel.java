@@ -47,7 +47,7 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
     }
 
     @Override
-    public SpriteHolder getSpriteHolder() {
+    public SpriteHolder getGuiSprite() {
         return BCCoreSprites.TRIGGER_FLUID_LEVEL.get(type);
     }
 

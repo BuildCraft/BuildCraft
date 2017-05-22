@@ -15,7 +15,7 @@ public class TriggerTrue extends BCStatement implements ITriggerInternal {
     }
 
     @Override
-    public SpriteHolder getSpriteHolder() {
+    public SpriteHolder getGuiSprite() {
         return BCCoreSprites.TRIGGER_TRUE;
     }
 

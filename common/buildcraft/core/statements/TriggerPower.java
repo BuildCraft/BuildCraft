@@ -38,7 +38,7 @@ public class TriggerPower extends BCStatement implements ITriggerInternal, ITrig
     }
 
     @Override
-    public SpriteHolder getSpriteHolder() {
+    public SpriteHolder getGuiSprite() {
         return high ? BCCoreSprites.TRIGGER_POWER_HIGH : BCCoreSprites.TRIGGER_POWER_LOW;
     }
 

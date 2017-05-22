@@ -2,31 +2,60 @@ package buildcraft.lib.gui.button;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.IGuiElement;
+import buildcraft.lib.gui.GuiElementSimple;
+import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.gui.pos.IGuiArea;
+import buildcraft.lib.gui.pos.IGuiPosition;
 
-public abstract class GuiAbstractButton extends GuiButton implements IGuiElement, IButtonClickEventTrigger {
-    public final GuiBC8<?> gui;
+/**
+ * If this only has 1 subclass (GuiSpriteButton), then why no merge them?
+ */
+public abstract class GuiAbstractButton<G extends GuiBC8<?>> extends GuiElementSimple<G> implements IButtonClickEventTrigger {
     private final List<IButtonClickEventListener> listeners = new ArrayList<>();
 
-    public boolean active = false;
+    public final String id;
+    public boolean active, enabled = true, visible = true;
     private IButtonBehaviour behaviour = IButtonBehaviour.DEFAULT;
     private ToolTip toolTip;
 
-    public GuiAbstractButton(GuiBC8<?> gui, int buttonId, int x, int y, String buttonText) {
-        super(buttonId, x, y, buttonText);
-        this.gui = gui;
+    public GuiAbstractButton(G gui, String id, IGuiPosition parent, GuiRectangle rect) {
+        super(gui, parent, rect);
+        this.id = id;
     }
 
-    public GuiAbstractButton(GuiBC8<?> gui, int buttonId, int x, int y, int widthIn, int heightIn, String buttonText) {
-        super(buttonId, x, y, widthIn, heightIn, buttonText);
-        this.gui = gui;
+    public GuiAbstractButton(G gui, String id, IGuiArea area) {
+        super(gui, area);
+        this.id = id;
+    }
+
+    public GuiElementText createTextElement(String text) {
+        int width = gui.getFontRenderer().getStringWidth(text);
+        int height = gui.getFontRenderer().FONT_HEIGHT;
+        IGuiPosition pos = getCenter().offset(-width / 2, -height / 2);
+        return new GuiElementText(gui, pos, () -> text, this::getColourForText);
+    }
+
+    public GuiElementText createTextElement(Supplier<String> text) {
+        IntSupplier x = () -> -gui.getFontRenderer().getStringWidth(text.get()) / 2;
+        IntSupplier y = () -> -gui.getFontRenderer().FONT_HEIGHT / 2;
+        IGuiPosition pos = getCenter().offset(x, y);
+        return new GuiElementText(gui, pos, text, this::getColourForText);
+    }
+
+    public int getColourForText() {
+        if (!enabled) {
+            return 0xa0_a0_a0;
+        } else if (isMouseOver()) {
+            return 0xff_ff_a0;
+        } else {
+            return 0xe0_e0_e0;
+        }
     }
 
     // Properties
@@ -35,25 +64,22 @@ public abstract class GuiAbstractButton extends GuiButton implements IGuiElement
         return active;
     }
 
-    public void activate() {
-        active = true;
+    public final void activate() {
+        setActive(true);
     }
 
-    public void deActivate() {
-        active = false;
+    public final void deActivate() {
+        setActive(false);
     }
 
-    public GuiAbstractButton setActive(boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
-        return this;
     }
 
-    @Override
     public boolean isMouseOver() {
-        return getGuiRectangle().contains(gui.mouse);
+        return contains(gui.mouse);
     }
 
-    @Override
     protected int getHoverState(boolean mouseOver) {
         if (!enabled) {
             return 0;
@@ -64,32 +90,14 @@ public abstract class GuiAbstractButton extends GuiButton implements IGuiElement
 
     // Behaviour
 
-    public GuiAbstractButton setBehaviour(IButtonBehaviour behaviour) {
+    public void setBehaviour(IButtonBehaviour behaviour) {
         this.behaviour = behaviour;
-        return this;
-    }
-
-    @Override
-    public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
-        if (super.mousePressed(mc, mouseX, mouseY)) {
-            onMouseClicked(0);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public void mouseReleased(int mouseX, int mouseY) {
-        super.mouseReleased(mouseX, mouseY);
-        onMouseReleased(0);
     }
 
     // Tooltips
 
-    public GuiAbstractButton setToolTip(ToolTip tips) {
+    public void setToolTip(ToolTip tips) {
         this.toolTip = tips;
-        return this;
     }
 
     @Override
@@ -104,20 +112,18 @@ public abstract class GuiAbstractButton extends GuiButton implements IGuiElement
     @Override
     public void notifyButtonClicked(int bkey) {
         for (IButtonClickEventListener listener : listeners) {
-            listener.handleButtonClick(this, id, bkey);
+            listener.handleButtonClick(this, bkey);
         }
     }
 
     @Override
-    public GuiAbstractButton registerListener(IButtonClickEventListener listener) {
+    public void registerListener(IButtonClickEventListener listener) {
         listeners.add(listener);
-        return this;
     }
 
     @Override
-    public GuiAbstractButton removeListener(IButtonClickEventListener listener) {
+    public void removeListener(IButtonClickEventListener listener) {
         listeners.remove(listener);
-        return this;
     }
 
     @Override
@@ -125,43 +131,7 @@ public abstract class GuiAbstractButton extends GuiButton implements IGuiElement
         return this.active;
     }
 
-    // IGuiArea
-
-    @Override
-    public int getX() {
-        return xPosition;
-    }
-
-    @Override
-    public int getY() {
-        return yPosition;
-    }
-
-    @Override
-    public int getWidth() {
-        return width;
-    }
-
-    @Override
-    public int getHeight() {
-        return height;
-    }
-
-    public GuiRectangle getGuiRectangle() {
-        return asImmutable();
-    }
-
     // IGuiElement
-
-    @Override
-    public final void drawBackground(float partialTicks) {
-        drawButton(gui.mc, gui.mouse.getX(), gui.mouse.getY());
-    }
-
-    @Override
-    public final void drawForeground(float partialTicks) {
-        drawButtonForegroundLayer(gui.mouse.getX(), gui.mouse.getY());
-    }
 
     @Override
     public void onMouseClicked(int button) {

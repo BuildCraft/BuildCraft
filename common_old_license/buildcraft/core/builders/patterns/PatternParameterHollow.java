@@ -1,12 +1,12 @@
 package buildcraft.core.builders.patterns;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -46,8 +46,8 @@ public enum PatternParameterHollow implements IStatementParameter {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getGuiSprite() {
-        return (filled ? BCCoreSprites.PARAM_FILLED : BCCoreSprites.PARAM_HOLLOW).getSprite();
+    public ISprite getGuiSprite() {
+        return filled ? BCCoreSprites.PARAM_FILLED : BCCoreSprites.PARAM_HOLLOW;
     }
 
     @Override

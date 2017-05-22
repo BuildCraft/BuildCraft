@@ -2,6 +2,8 @@ package buildcraft.lib.client.sprite;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.misc.SpriteUtil;
 
 public class SpriteAtlas implements ISprite {
