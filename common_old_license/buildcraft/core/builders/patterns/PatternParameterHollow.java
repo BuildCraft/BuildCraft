@@ -1,10 +1,9 @@
 package buildcraft.core.builders.patterns;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -14,27 +13,30 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.StackUtil;
 
-public class PatternParameterHollow implements IStatementParameter {
-    @SideOnly(Side.CLIENT)
-    private static TextureAtlasSprite iconHollow, iconFilled;
+import buildcraft.core.BCCoreSprites;
 
-    public boolean filled = false;
+public enum PatternParameterHollow implements IStatementParameter {
+    FILLED(true),
+    HOLLOW(false);
 
-    public PatternParameterHollow() {
-        super();
+    public final boolean filled;
+
+    PatternParameterHollow(boolean filled) {
+        this.filled = filled;
     }
 
-    public PatternParameterHollow(boolean hollow) {
-        this();
-        this.filled = !hollow;
+    public static PatternParameterHollow readFromNbt(NBTTagCompound nbt) {
+        if (nbt.getBoolean("filled")) {
+            return FILLED;
+        }
+        return HOLLOW;
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureMap map) {
-        iconFilled = map.registerSprite(new ResourceLocation("buildcraftcore:filler/parameters/filled"));
-        iconHollow = map.registerSprite(new ResourceLocation("buildcraftcore:filler/parameters/hollow"));
+    public void writeToNbt(NBTTagCompound compound) {
+        compound.setBoolean("filled", filled);
     }
 
     @Override
@@ -43,13 +45,14 @@ public class PatternParameterHollow implements IStatementParameter {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getGuiSprite() {
-        return filled ? iconFilled : iconHollow;
+        return (filled ? BCCoreSprites.PARAM_FILLED : BCCoreSprites.PARAM_HOLLOW).getSprite();
     }
 
     @Override
     public ItemStack getItemStack() {
-        return null;
+        return StackUtil.EMPTY;
     }
 
     @Override
@@ -58,22 +61,17 @@ public class PatternParameterHollow implements IStatementParameter {
     }
 
     @Override
-    public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
-        filled = !filled;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        filled = compound.getBoolean("filled");
-    }
-
-    @Override
-    public void writeToNBT(NBTTagCompound compound) {
-        compound.setBoolean("filled", filled);
+    public PatternParameterHollow onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+        return null;
     }
 
     @Override
     public IStatementParameter rotateLeft() {
         return this;
+    }
+
+    @Override
+    public PatternParameterHollow[] getPossible(IStatementContainer source, IStatement stmt) {
+        return values();
     }
 }

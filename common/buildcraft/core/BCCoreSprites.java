@@ -4,11 +4,14 @@ import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
 
+import net.minecraft.util.EnumFacing;
+
 import buildcraft.api.tiles.IControllable;
 
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
+import buildcraft.core.builders.patterns.PatternParameterCenter;
 import buildcraft.core.statements.TriggerFluidContainer;
 import buildcraft.core.statements.TriggerFluidContainerLevel;
 import buildcraft.core.statements.TriggerInventory;
@@ -34,6 +37,15 @@ public class BCCoreSprites {
     public static final SpriteHolder FILLER_BOX;
     public static final SpriteHolder FILLER_FLATTEN;
     public static final SpriteHolder FILLER_HORIZON;
+    public static final SpriteHolder FILLER_CYLINDER;
+    public static final SpriteHolder FILLER_PYRAMID;
+    public static final SpriteHolder FILLER_STAIRS;
+
+    public static final SpriteHolder PARAM_HOLLOW;
+    public static final SpriteHolder PARAM_FILLED;
+
+    public static final SpriteHolder PARAM_STAIRS_DOWN;
+    public static final SpriteHolder PARAM_STAIRS_UP;
 
     public static final SpriteHolder[] PARAM_REDSTONE_LEVEL;
 
@@ -42,6 +54,8 @@ public class BCCoreSprites {
     public static final Map<TriggerInventoryLevel.TriggerType, SpriteHolder> TRIGGER_INVENTORY_LEVEL;
     public static final Map<TriggerFluidContainer.State, SpriteHolder> TRIGGER_FLUID;
     public static final Map<TriggerFluidContainerLevel.TriggerType, SpriteHolder> TRIGGER_FLUID_LEVEL;
+    public static final Map<EnumFacing, SpriteHolder> PARAM_XZ_DIR;
+    public static final Map<PatternParameterCenter, SpriteHolder> PARAM_CENTER;
 
     static {
         TRIGGER_TRUE = getHolder("triggers/trigger_true");
@@ -63,6 +77,15 @@ public class BCCoreSprites {
         FILLER_BOX = getHolder("filler/patterns/box");
         FILLER_FLATTEN = getHolder("filler/patterns/flatten");
         FILLER_HORIZON = getHolder("filler/patterns/horizon");
+        FILLER_CYLINDER = getHolder("filler/patterns/cylinder");
+        FILLER_PYRAMID = getHolder("filler/patterns/pyramid");
+        FILLER_STAIRS = getHolder("filler/patterns/stairs");
+
+        PARAM_HOLLOW = getHolder("filler/parameters/hollow");
+        PARAM_FILLED = getHolder("filler/parameters/filled");
+
+        PARAM_STAIRS_UP = getHolder("filler/parameters/stairs_ascend");
+        PARAM_STAIRS_DOWN = getHolder("filler/parameters/stairs_descend");
 
         PARAM_REDSTONE_LEVEL = new SpriteHolder[16];
         for (int i = 0; i < PARAM_REDSTONE_LEVEL.length; i++) {
@@ -97,6 +120,17 @@ public class BCCoreSprites {
         for (TriggerFluidContainerLevel.TriggerType type : TriggerFluidContainerLevel.TriggerType.VALUES) {
             String tex = "triggers/trigger_liquidcontainer_" + type.name().toLowerCase(Locale.ROOT);
             TRIGGER_FLUID_LEVEL.put(type, getHolder(tex));
+        }
+
+        PARAM_XZ_DIR = new EnumMap<>(EnumFacing.class);
+        PARAM_XZ_DIR.put(EnumFacing.WEST, getHolder("filler/parameters/arrow_left"));
+        PARAM_XZ_DIR.put(EnumFacing.EAST, getHolder("filler/parameters/arrow_right"));
+        PARAM_XZ_DIR.put(EnumFacing.NORTH, getHolder("filler/parameters/arrow_up"));
+        PARAM_XZ_DIR.put(EnumFacing.SOUTH, getHolder("filler/parameters/arrow_down"));
+
+        PARAM_CENTER = new EnumMap<>(PatternParameterCenter.class);
+        for (PatternParameterCenter param : PatternParameterCenter.values()) {
+            PARAM_CENTER.put(param, getHolder("filler/parameters/center_" + param.ordinal()));
         }
     }
 

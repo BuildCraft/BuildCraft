@@ -7,28 +7,18 @@ package buildcraft.core.builders.patterns;
 import java.util.Map;
 import java.util.TreeMap;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.blueprints.Blueprint;
-import buildcraft.core.blueprints.BlueprintBase;
-import buildcraft.core.blueprints.BptBuilderTemplate;
-import buildcraft.core.blueprints.SchematicRegistry;
-import buildcraft.core.blueprints.Template;
+
 import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.data.Box;
 
 public abstract class FillerPattern implements IFillerPattern {
 
@@ -81,8 +71,8 @@ public abstract class FillerPattern implements IFillerPattern {
     public String toString() {
         return "Pattern: " + getUniqueTag();
     }
-
-    /** Generates a filling in a given area */
+/*
+    /** Generates a filling in a given area * /
     public static void fill(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
 
         for (int y = yMin; y <= yMax; ++y) {
@@ -96,7 +86,7 @@ public abstract class FillerPattern implements IFillerPattern {
         }
     }
 
-    /** Generates an empty in a given area */
+    /** Generates an empty in a given area * /
     public static void empty(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
         for (int y = yMax; y >= yMin; y--) {
             for (int x = xMin; x <= xMax; ++x) {
@@ -109,7 +99,7 @@ public abstract class FillerPattern implements IFillerPattern {
         }
     }
 
-    /** Generates a flatten in a given area */
+    /** Generates a flatten in a given area * /
     public static void flatten(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
         for (int x = xMin; x <= xMax; ++x) {
             for (int z = zMin; z <= zMax; ++z) {
@@ -155,7 +145,7 @@ public abstract class FillerPattern implements IFillerPattern {
     public void registerIcons(TextureMap map) {
         sprite = map.registerSprite(location);
     }
-
+*/
     @Override
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getGuiSprite() {

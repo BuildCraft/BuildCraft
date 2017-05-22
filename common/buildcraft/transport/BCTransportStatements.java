@@ -6,8 +6,19 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.statements.StatementManager;
 
 import buildcraft.lib.misc.ColourUtil;
+
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli.SlotIndex;
-import buildcraft.transport.statements.*;
+import buildcraft.transport.statements.ActionExtractionPreset;
+import buildcraft.transport.statements.ActionParameterSignal;
+import buildcraft.transport.statements.ActionPipeColor;
+import buildcraft.transport.statements.ActionPipeDirection;
+import buildcraft.transport.statements.ActionPipeSignal;
+import buildcraft.transport.statements.ActionPowerPulsar;
+import buildcraft.transport.statements.TransportActionProvider;
+import buildcraft.transport.statements.TransportTriggerProvider;
+import buildcraft.transport.statements.TriggerLightSensor;
+import buildcraft.transport.statements.TriggerParameterSignal;
+import buildcraft.transport.statements.TriggerPipeSignal;
 
 public class BCTransportStatements {
 
@@ -60,8 +71,8 @@ public class BCTransportStatements {
             ACTION_PIPE_DIRECTION[face.ordinal()] = new ActionPipeDirection(face);
         }
 
-        StatementManager.registerParameterClass(TriggerParameterSignal.class);
-        StatementManager.registerParameterClass(ActionParameterSignal.class);
+        StatementManager.registerParameter(TriggerParameterSignal::readFromNbt);
+        StatementManager.registerParameter(ActionParameterSignal::readFromNbt);
     }
 
     public static void preInit() {

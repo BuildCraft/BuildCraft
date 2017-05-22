@@ -17,6 +17,7 @@ import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IControllable.Mode;
 
 import buildcraft.core.BCCoreSprites;
@@ -39,8 +40,9 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
 
     @Override
     public void actionActivate(TileEntity target, EnumFacing side, IStatementContainer source, IStatementParameter[] parameters) {
-        if (target.hasCapability(TilesAPI.CAP_CONTROLLABLE, null)) {
-            target.getCapability(TilesAPI.CAP_CONTROLLABLE, null).setControlMode(mode, false);
+        IControllable controllable = target.getCapability(TilesAPI.CAP_CONTROLLABLE, side.getOpposite());
+        if (controllable != null) {
+            controllable.setControlMode(mode, false);
         }
     }
 

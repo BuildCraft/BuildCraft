@@ -12,24 +12,34 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
-import buildcraft.core.BCCoreSprites;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
 
-public class StatementParamGateSideOnly implements IStatementParameter {
+import buildcraft.core.BCCoreSprites;
 
-    @SideOnly(Side.CLIENT)
-    public static SpriteHolder sprite;
+public enum StatementParamGateSideOnly implements IStatementParameter {
+    ANY(false),
+    SPECIFIC(true);
 
-    public boolean isOn = false;
+    public final boolean isSpecific;
 
-    public StatementParamGateSideOnly() {
+    private static final StatementParamGateSideOnly[] POSSIBLE_ANY = { ANY, SPECIFIC };
+    private static final StatementParamGateSideOnly[] POSSIBLE_SPECIFIC = { SPECIFIC, ANY };
 
+    StatementParamGateSideOnly(boolean isSpecific) {
+        this.isSpecific = isSpecific;
     }
 
-    StatementParamGateSideOnly(boolean def) {
-        isOn = def;
+    public static StatementParamGateSideOnly readFromNbt(NBTTagCompound nbt) {
+        if (nbt.getBoolean("isOn")) {
+            return SPECIFIC;
+        }
+        return ANY;
+    }
+
+    @Override
+    public void writeToNbt(NBTTagCompound compound) {
+        compound.setBoolean("isOn", isSpecific);
     }
 
     @Override
@@ -40,7 +50,7 @@ public class StatementParamGateSideOnly implements IStatementParameter {
     @Override
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getGuiSprite() {
-        if (isOn) {
+        if (isSpecific) {
             return BCCoreSprites.PARAM_GATE_SIDE_ONLY.getSprite();
         } else {
             return null;
@@ -48,25 +58,13 @@ public class StatementParamGateSideOnly implements IStatementParameter {
     }
 
     @Override
-    public boolean onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
-        return false;
-    }
-
-    @Override
-    public void writeToNBT(NBTTagCompound compound) {
-        compound.setByte("isOn", isOn ? (byte) 1 : (byte) 0);
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        if (compound.hasKey("isOn")) {
-            isOn = compound.getByte("isOn") == 1;
-        }
+    public StatementParamGateSideOnly onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+        return null;
     }
 
     @Override
     public String getDescription() {
-        return isOn ? LocaleUtil.localize("gate.parameter.redstone.gateSideOnly") : "";
+        return isSpecific ? LocaleUtil.localize("gate.parameter.redstone.gateSideOnly") : "";
     }
 
     @Override
@@ -81,9 +79,6 @@ public class StatementParamGateSideOnly implements IStatementParameter {
 
     @Override
     public IStatementParameter[] getPossible(IStatementContainer source, IStatement stmt) {
-        IStatementParameter[] possible = new IStatementParameter[2];
-        possible[0] = isOn ? this : new StatementParamGateSideOnly(true);
-        possible[1] = !isOn ? this : new StatementParamGateSideOnly(false);
-        return possible;
+        return isSpecific ? POSSIBLE_SPECIFIC : POSSIBLE_ANY;
     }
 }

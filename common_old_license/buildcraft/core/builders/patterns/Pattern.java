@@ -6,7 +6,6 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IActionExternal;
-import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IFillerStatementContainer;
@@ -41,7 +40,7 @@ public abstract class Pattern extends BCStatement implements IFillerPattern, IAc
     }
 
     @Override
-    public IStatement[] getPossible() {
+    public IFillerPattern[] getPossible() {
         return BCCoreStatements.PATTERNS;
     }
 }

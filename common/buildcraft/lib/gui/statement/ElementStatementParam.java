@@ -60,9 +60,10 @@ public class ElementStatementParam extends ElementGuiSlot<GuiStatementSelector<?
             }
             ItemStack currentStack = gui.mc.player.inventory.getItemStack();
             StatementMouseClick event = new StatementMouseClick(button, GuiScreen.isShiftKeyDown());
-            if (value.onClick(gui.getStatementContainer(), parent.reference.get(), currentStack, event)) {
+            IStatementParameter newParam = value.onClick(gui.getStatementContainer(), parent.reference.get(), currentStack, event);
+            if (newParam != null) {
                 // update the server with the click
-                reference.set(value);
+                reference.set(newParam);
                 return;
             }
             displayPossible();

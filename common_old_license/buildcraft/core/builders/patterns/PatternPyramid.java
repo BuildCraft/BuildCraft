@@ -4,20 +4,45 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders.patterns;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import java.util.EnumMap;
+import java.util.Map;
 
-import buildcraft.api.blueprints.SchematicMask;
-import buildcraft.api.enums.EnumFillerPattern;
+import buildcraft.api.filler.FilledTemplate;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.blueprints.Template;
-import buildcraft.lib.misc.data.Box;
+import buildcraft.api.statements.containers.IFillerStatementContainer;
 
-public class PatternPyramid extends FillerPattern {
-    private static final int[] MODIFIERS = { 0x0101, 0x1101, 0x1001, 0x0111, 0x1111, 0x1011, 0x0110, 0x1110, 0x1010 };
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+
+import buildcraft.core.BCCoreSprites;
+
+public class PatternPyramid extends Pattern {
+    private static final Map<PatternParameterCenter, PyramidDir> PYRAMID_DIRS = new EnumMap<>(PatternParameterCenter.class);
+
+    private static class PyramidDir {
+        /** Starting from the base of the pyramid, how much to add to the x,z, sizes. */
+        public final int xLowerDiff, xUpperDiff, zLowerDiff, zUpperDiff;
+
+        public PyramidDir(PatternParameterCenter param) {
+            xLowerDiff = param.offsetX >= 0 ? 1 : 0;
+            xUpperDiff = param.offsetX <= 0 ? -1 : 0;
+            zLowerDiff = param.offsetZ >= 0 ? 1 : 0;
+            zUpperDiff = param.offsetZ <= 0 ? -1 : 0;
+        }
+    }
+
+    static {
+        for (PatternParameterCenter param : PatternParameterCenter.values()) {
+            PYRAMID_DIRS.put(param, new PyramidDir(param));
+        }
+    }
 
     public PatternPyramid() {
-        super("pyramid", EnumFillerPattern.PYRAMID);
+        super("pyramid");
+    }
+
+    @Override
+    public SpriteHolder getSpriteHolder() {
+        return BCCoreSprites.FILLER_PYRAMID;
     }
 
     @Override
@@ -32,66 +57,59 @@ public class PatternPyramid extends FillerPattern {
 
     @Override
     public IStatementParameter createParameter(int index) {
-        return index == 1 ? new PatternParameterCenter(4) : new PatternParameterYDir(true);
+        switch (index) {
+            case 0:
+                return PatternParameterYDir.UP;
+            case 1:
+                return PatternParameterCenter.CENTER;
+            default:
+                return null;
+        }
     }
 
     @Override
-    public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
-        int xMin = box.min().getX();
-        int yMin = box.min().getY();
-        int zMin = box.min().getZ();
+    public FilledTemplate createTemplate(IFillerStatementContainer filler, IStatementParameter[] params) {
+        FilledTemplate bpt = new FilledTemplate(filler.getBox());
 
-        int xMax = box.max().getX();
-        int yMax = box.max().getY();
-        int zMax = box.max().getZ();
-
-        Template bpt = new Template(box.size());
-
-        int[] modifiers = new int[4];
-        int height;
+        PyramidDir dir;
         int stepY;
 
-        if (parameters.length >= 1 && parameters[0] != null && !(((PatternParameterYDir) parameters[0]).up)) {
+        if (params.length >= 1 && params[0] != null && !(((PatternParameterYDir) params[0]).up)) {
             stepY = -1;
         } else {
             stepY = 1;
         }
 
-        int center = 4;
-        if (parameters.length >= 2 && parameters[1] != null) {
-            center = ((PatternParameterCenter) parameters[1]).getDirection();
-        }
-
-        modifiers[0] = (MODIFIERS[center] >> 12) & 1;
-        modifiers[1] = (MODIFIERS[center] >> 8) & 1;
-        modifiers[2] = (MODIFIERS[center] >> 4) & 1;
-        modifiers[3] = (MODIFIERS[center]) & 1;
-
-        if (stepY == 1) {
-            height = yMin;
+        if (params.length >= 2 && params[1] != null) {
+            dir = PYRAMID_DIRS.get(params[1]);
         } else {
-            height = yMax;
+            dir = PYRAMID_DIRS.get(PatternParameterCenter.CENTER);
         }
 
-        int x1 = xMin;
-        int x2 = xMax;
-        int z1 = zMin;
-        int z2 = zMax;
+        int y;
+        if (stepY == 1) {
+            y = 0;
+        } else {
+            y = bpt.maxY;
+        }
 
-        while (height >= yMin && height <= yMax) {
-            for (int x = x1; x <= x2; ++x) {
-                for (int z = z1; z <= z2; ++z) {
-                    bpt.set(new BlockPos(x - xMin, height - yMin, z - zMin), new SchematicMask(true));
-                }
+        int xLower = 0;
+        int xUpper = bpt.maxX;
+        int zLower = 0;
+        int zUpper = bpt.maxZ;
+
+        while (y >= 0 && y <= bpt.maxY) {
+            for (int x = xLower; x <= xUpper; ++x) {
+                bpt.fillLineZ(x, y, zLower, zUpper);
             }
 
-            x1 += modifiers[0];
-            x2 -= modifiers[1];
-            z1 += modifiers[2];
-            z2 -= modifiers[3];
-            height += stepY;
+            xLower += dir.xLowerDiff;
+            xUpper += dir.xUpperDiff;
+            zLower += dir.zLowerDiff;
+            zUpper += dir.zUpperDiff;
+            y += stepY;
 
-            if (x1 > x2 || z1 > z2) {
+            if (xLower > xUpper || zLower > zUpper) {
                 break;
             }
         }

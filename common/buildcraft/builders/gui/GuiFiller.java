@@ -4,6 +4,10 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.gui;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.filler.FillerManager;
@@ -20,16 +24,36 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.statement.GuiStatementSelector;
 
 import buildcraft.builders.container.ContainerFiller;
+import buildcraft.core.builders.patterns.PatternNone;
 
 public class GuiFiller extends GuiStatementSelector<ContainerFiller> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftbuilders:textures/gui/filler.png");
     private static final int SIZE_X = GUI_WIDTH, SIZE_Y = 241;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
+    private final List<FillerWrapper> possible = new LinkedList<>();
 
     public GuiFiller(ContainerFiller container) {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
+
+        IFillerPattern patternNone = null;
+        for (IFillerPattern pattern : FillerManager.registry.getPatterns()) {
+            if (pattern instanceof PatternNone && patternNone == null) {
+                patternNone = pattern;
+                continue;
+            }
+            possible.add(new FillerWrapper(pattern));
+        }
+        Collections.sort(possible);
+        if (patternNone != null) {
+            possible.add(0, new FillerWrapper(patternNone));
+        }
+    }
+
+    @Override
+    protected boolean shouldAddHelpLedger() {
+        return false;
     }
 
     @Override
@@ -41,34 +65,30 @@ public class GuiFiller extends GuiStatementSelector<ContainerFiller> {
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
+        super.drawBackgroundLayer(partialTicks);
         ICON_GUI.drawAt(rootElement);
-        IFillerPattern[] patterns = FillerManager.registry.getPatterns().toArray(new IFillerPattern[0]);
-        int i = (int) ((System.currentTimeMillis() / 1000) % patterns.length);
-        IFillerPattern pattern = patterns[i];
+        int i = (int) ((System.currentTimeMillis() / 1000) % possible.size());
+        IFillerPattern pattern = possible.get(i);
 
         ISprite sprite = new SpriteAtlas(pattern.getGuiSprite());
         sprite = sprite.subRelative(4, 4, 8, 8, 16);
         GuiIcon icon = new GuiIcon(sprite, 8);
         GuiRectangle rect = new GuiRectangle(38, 30, 16, 16);
         icon.drawScaledInside(rect.offset(rootElement));
-        // icon.drawAt(0, 0);
     }
 
     @Override
     protected void iteratePossible(OnStatement consumer) {
-        // int tx = 0;
-        // int ty = 0;
-        // EnumPipePart last = null;
-        // consumer.iterate(null, rootElement.offset(-18, 8).resize(18, 18));
-        // for (TriggerWrapper wrapper : container.possibleTriggers) {
-        // tx++;
-        // if (tx > 3 || (last != null && last != wrapper.sourcePart)) {
-        // tx = 0;
-        // ty++;
-        // }
-        // consumer.iterate(wrapper, rootElement.offset(18 * (-1 - tx), ty * 18 + 8).resize(18, 18));
-        // last = wrapper.sourcePart;
-        // }
+        int tx = 0;
+        int ty = 0;
+        for (FillerWrapper wrapper : possible) {
+            consumer.iterate(wrapper, rootElement.offset(18 * (-1 - tx), ty * 18 + 8).resize(18, 18));
+            tx++;
+            if (tx > 3) {
+                tx = 0;
+                ty++;
+            }
+        }
     }
 
     @Override

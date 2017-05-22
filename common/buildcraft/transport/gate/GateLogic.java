@@ -1,6 +1,11 @@
 package buildcraft.transport.gate;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,7 +19,17 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.gates.IGate;
-import buildcraft.api.statements.*;
+import buildcraft.api.statements.IActionExternal;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IActionInternalSided;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.statements.ITriggerInternalSided;
+import buildcraft.api.statements.StatementManager;
+import buildcraft.api.statements.StatementManager.IParameterReader;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.transport.IWireManager;
 import buildcraft.api.transport.pipe.IPipeHolder;
@@ -23,6 +38,7 @@ import buildcraft.api.transport.pipe.PipeEventActionActivate;
 import buildcraft.lib.gui.statement.StatementWrapper;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.IPayloadWriter;
+
 import buildcraft.transport.gate.ActionWrapper.ActionWrapperExternal;
 import buildcraft.transport.gate.ActionWrapper.ActionWrapperInternal;
 import buildcraft.transport.gate.ActionWrapper.ActionWrapperInternalSided;
@@ -99,10 +115,9 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                         continue;
                     }
                     tag = cpt.getString("kind");
-                    IStatementParameter param = StatementManager.createParameter(tag);
-                    if (param != null) {
-                        param.readFromNBT(cpt);
-                        triggerParameters[i][j] = param;
+                    IParameterReader reader = StatementManager.getParameterReader(tag);
+                    if (reader != null) {
+                        triggerParameters[i][j] = reader.readFromNbt(cpt);
                     } else {
                         BCLog.logger.warn("Didn't find an IStatementParamater for " + tag);
                     }
@@ -124,10 +139,9 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                         continue;
                     }
                     tag = cpt.getString("kind");
-                    IStatementParameter param = StatementManager.createParameter(tag);
-                    if (param != null) {
-                        param.readFromNBT(cpt);
-                        actionParameters[i][j] = param;
+                    IParameterReader reader = StatementManager.getParameterReader(tag);
+                    if (reader != null) {
+                        actionParameters[i][j] = reader.readFromNbt(cpt);
                     } else {
                         BCLog.logger.warn("Didn't find an IStatementParamater for " + tag);
                     }
@@ -158,7 +172,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                     IStatementParameter param = triggerParameters[i][j];
                     if (param != null) {
                         NBTTagCompound cpt = new NBTTagCompound();
-                        param.writeToNBT(cpt);
+                        param.writeToNbt(cpt);
                         cpt.setString("kind", param.getUniqueTag());
                         nbt.setTag("triggerParameters[" + i + "][" + j + "]", cpt);
                     }
@@ -177,7 +191,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                 IStatementParameter param = actionParameters[i][j];
                 if (param != null) {
                     NBTTagCompound cpt = new NBTTagCompound();
-                    param.writeToNBT(cpt);
+                    param.writeToNbt(cpt);
                     cpt.setString("kind", param.getUniqueTag());
                     nbt.setTag("actionParameters[" + i + "][" + j + "]", cpt);
                 }

@@ -21,10 +21,15 @@ import buildcraft.api.transport.pipe.IFlowItems;
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 
-import buildcraft.lib.inventory.filter.*;
+import buildcraft.lib.inventory.filter.ArrayFluidFilter;
+import buildcraft.lib.inventory.filter.DelegatingItemHandlerFilter;
+import buildcraft.lib.inventory.filter.InvertedFluidFilter;
+import buildcraft.lib.inventory.filter.InvertedStackFilter;
+import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+
 import buildcraft.transport.BCTransportGuis;
 
 public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
@@ -137,19 +142,19 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
     }
 
     @Override
-    protected int extractItems(IFlowItems flow, EnumFacing dir, int count) {
+    protected int extractItems(IFlowItems flow, EnumFacing dir, int count, boolean simulate) {
         if (filters.getStackInSlot(currentFilter).isEmpty()) {
             advanceFilter();
         }
-        int extracted = flow.tryExtractItems(1, getCurrentDir(), null, getStackFilter(), false);
-        if (extracted > 0 & filterMode == FilterMode.ROUND_ROBIN) {
+        int extracted = flow.tryExtractItems(1, getCurrentDir(), null, getStackFilter(), simulate);
+        if (extracted > 0 & filterMode == FilterMode.ROUND_ROBIN && !simulate) {
             advanceFilter();
         }
         return extracted;
     }
 
     @Override
-    protected FluidStack extractFluid(IFlowFluid flow, EnumFacing dir, int millibuckets) {
+    protected FluidStack extractFluid(IFlowFluid flow, EnumFacing dir, int millibuckets, boolean simulate) {
         if (filters.getStackInSlot(currentFilter).isEmpty()) {
             advanceFilter();
         }
@@ -158,12 +163,12 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
             default:
             case WHITE_LIST:
                 // Firstly try the advanced version - if that fails we will need to try the basic version
-                FluidStack extracted = flow.tryExtractFluidAdv(millibuckets, dir, new ArrayFluidFilter(filters.stacks), false);
+                FluidStack extracted = flow.tryExtractFluidAdv(millibuckets, dir, new ArrayFluidFilter(filters.stacks), simulate);
 
                 if (extracted == null || extracted.amount <= 0) {
                     for (int i = 0; i < filters.getSlots(); i++) {
                         ItemStack stack = filters.getStackInSlot(i);
-                        extracted = flow.tryExtractFluid(millibuckets, dir, FluidUtil.getFluidContained(stack), false);
+                        extracted = flow.tryExtractFluid(millibuckets, dir, FluidUtil.getFluidContained(stack), simulate);
                         if (extracted != null && extracted.amount > 0) {
                             return extracted;
                         }
@@ -172,7 +177,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
                 return null;
             case BLACK_LIST:
                 // We cannot fallback to the basic version - only use the advanced version
-                return flow.tryExtractFluidAdv(millibuckets, dir, new InvertedFluidFilter(new ArrayFluidFilter(filters.stacks)), false);
+                return flow.tryExtractFluidAdv(millibuckets, dir, new InvertedFluidFilter(new ArrayFluidFilter(filters.stacks)), simulate);
             case ROUND_ROBIN:
                 // We can't do this -- amounts might differ and its just ugly
                 return null;

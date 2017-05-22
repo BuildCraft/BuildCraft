@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
+@Deprecated
 public class AddonFillingPlanner extends Addon implements ISingleAddon {
     public List<IParameter> parameters = new ArrayList<>();
     public boolean inverted;

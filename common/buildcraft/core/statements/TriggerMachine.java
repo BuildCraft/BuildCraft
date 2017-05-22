@@ -4,7 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.statements;
 
-import buildcraft.api.tiles.TilesAPI;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
@@ -15,15 +14,18 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.tiles.IHasWork;
+import buildcraft.api.tiles.TilesAPI;
 
-import buildcraft.core.BCCoreSprites;
-import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.LocaleUtil;
 
+import buildcraft.core.BCCoreSprites;
+import buildcraft.core.BCCoreStatements;
+
 public class TriggerMachine extends BCStatement implements ITriggerExternal {
 
-    boolean active;
+    public final boolean active;
 
     public TriggerMachine(boolean active) {
         super("buildcraft:work." + (active ? "scheduled" : "done"), "buildcraft.work." + (active ? "scheduled" : "done"));
@@ -43,8 +45,11 @@ public class TriggerMachine extends BCStatement implements ITriggerExternal {
 
     @Override
     public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer container, IStatementParameter[] parameters) {
-        return tile.hasCapability(TilesAPI.CAP_HAS_WORK, null) &&
-                active == tile.getCapability(TilesAPI.CAP_HAS_WORK, null).hasWork();
+        IHasWork hasWork = tile.getCapability(TilesAPI.CAP_HAS_WORK, side.getOpposite());
+        if (hasWork == null) {
+            return false;
+        }
+        return hasWork.hasWork() == active;
 
     }
 

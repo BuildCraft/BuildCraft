@@ -4,11 +4,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
 /** Defines a sprite that is taken directly from the given resource location. */
-public class RawSprite implements ISprite {
+public class SpriteRaw implements ISprite {
     public final ResourceLocation location;
-    public final float uMin, vMin, width, height;
+    public final double uMin, vMin, width, height;
 
-    public RawSprite(ResourceLocation location, int xMin, int yMin, int width, int height, float textureSize) {
+    public SpriteRaw(ResourceLocation location, double xMin, double yMin, double width, double height, double textureSize) {
         this.location = location;
         this.uMin = xMin / textureSize;
         this.vMin = yMin / textureSize;
@@ -16,7 +16,7 @@ public class RawSprite implements ISprite {
         this.height = height / textureSize;
     }
 
-    public RawSprite(ResourceLocation location, float xMin, float yMin, float width, float height) {
+    public SpriteRaw(ResourceLocation location, double xMin, double yMin, double width, double height) {
         this.location = location;
         this.uMin = xMin;
         this.vMin = yMin;

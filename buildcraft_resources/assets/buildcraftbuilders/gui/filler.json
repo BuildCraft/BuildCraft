@@ -1,0 +1,66 @@
+{
+	"size": [176,241],
+	"texture": "buildcraftbuilders:gui/filler",
+	"types": {
+		"param": {
+			"type": "buildcraftlib:statement/parameter",
+			"args": {
+				"index": 0
+			},
+			"area": ["62 + 18 * index",30,16,16],
+			"source": "filler.param[index]"
+		},
+		"four_button": {
+			"type": "buildcraftlib:button",
+			"behaviour": "toggle",
+			"args": {
+				"u_start": 0
+			},
+			"size": [16,16],
+			"modes": {
+				"enabled": ["u_start",0],
+				"active": ["u_start + 16",0],
+				"hovered": ["u_start + 16",16],
+				"active_hovered": ["u_start + 16",16]
+			}
+		}
+	},
+	"elements": {
+		"background": {
+			"type": "buildcraftlib:drawable",
+			"size": [176,241]
+		},
+		"pattern_drag_target": {
+			"type": "buildcraftlib:statement/filler_pattern",
+			"source": "filler.pattern",
+			"area": [22,26,24,24],
+			"draw": false
+		},
+		"pattern_drawable": {
+			"type": "buildcraftlib:drawable",
+			"source": {
+				"sprite": "filler.pattern.sprite",
+				"area": [4,4,8,8]
+			},
+			"area": [26,30,16,16]
+		},
+		"params": {
+			"iterator": "index = [0, 4)",
+			"type": "param"
+		},
+		"button_no_excavate": {
+			"type": "four_button",
+			"source": "filler.no_excavate",
+			"u_start": 192
+		},
+		"button_invert": {
+			"type": "four_button",
+			"source": "filler.invert",
+			"u_start": 224
+		},
+		"player_inventory": {
+			"type": "buildcraftlib:inventory/player/full",
+			"pos": [8,85]
+		}
+	}
+}

@@ -43,7 +43,7 @@ public class ActionPipeSignal extends BCStatement implements IActionInternal {
 
     @Override
     public IStatementParameter createParameter(int index) {
-        return new ActionParameterSignal();
+        return ActionParameterSignal.EMPTY;
     }
 
     @Override

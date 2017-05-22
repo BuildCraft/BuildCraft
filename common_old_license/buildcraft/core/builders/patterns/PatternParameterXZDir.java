@@ -1,10 +1,14 @@
 package buildcraft.core.builders.patterns;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.EnumFacing;
+
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -14,33 +18,58 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.StackUtil;
 
-public class PatternParameterXZDir implements IStatementParameter {
-    private static final String[] names = { "west", "east", "north", "south" };
-    private static final int[] shiftLeft = { 3, 2, 0, 1 };
-    private static final int[] shiftRight = { 2, 3, 1, 0 };
+import buildcraft.core.BCCoreSprites;
 
-    @SideOnly(Side.CLIENT)
-    private static TextureAtlasSprite[] sprites;
-    private int direction;
+public enum PatternParameterXZDir implements IStatementParameter {
+    WEST(EnumFacing.WEST),
+    EAST(EnumFacing.EAST),
+    NORTH(EnumFacing.NORTH),
+    SOUTH(EnumFacing.SOUTH);
+
+    private static final Map<EnumFacing, PatternParameterXZDir> map;
+
+    static {
+        map = new EnumMap<>(EnumFacing.class);
+        for (PatternParameterXZDir param : values()) {
+            map.put(param.dir, param);
+        }
+    }
+
+    public final EnumFacing dir;
+
+    PatternParameterXZDir(EnumFacing dir) {
+        this.dir = dir;
+    }
+
+    public static PatternParameterXZDir get(EnumFacing face) {
+        PatternParameterXZDir param = map.get(face);
+        if (param == null) {
+            throw new IllegalArgumentException("Can only accept horizontal EnumFacing's (was given " + face + ")");
+        }
+        return param;
+    }
+
+    public static PatternParameterXZDir readFromNbt(NBTTagCompound nbt) {
+        EnumFacing dir;
+        if (nbt.hasKey("dir", Constants.NBT.TAG_ANY_NUMERIC)) {
+            // Older versions
+            int d = nbt.getByte("dir") + 2;
+            dir = EnumFacing.getHorizontal(d);
+        } else {
+            dir = EnumFacing.getHorizontal(nbt.getByte("d"));
+        }
+        PatternParameterXZDir param = map.get(dir);
+        if (param == null) {
+            throw new IllegalStateException("Map lookup failed for " + dir);
+        }
+        return param;
+    }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureMap map) {
-        sprites = new TextureAtlasSprite[4];
-        sprites[0] = map.registerSprite(new ResourceLocation("buildcraftcore:filler/parameters/arrow_left"));
-        sprites[1] = map.registerSprite(new ResourceLocation("buildcraftcore:filler/parameters/arrow_right"));
-        sprites[2] = map.registerSprite(new ResourceLocation("buildcraftcore:filler/parameters/arrow_up"));
-        sprites[3] = map.registerSprite(new ResourceLocation("buildcraftcore:filler/parameters/arrow_down"));
-    }
-
-    public PatternParameterXZDir() {
-        super();
-    }
-
-    public PatternParameterXZDir(int direction) {
-        this();
-        this.direction = direction;
+    public void writeToNbt(NBTTagCompound nbt) {
+        nbt.setByte("d", (byte) dir.getHorizontalIndex());
     }
 
     @Override
@@ -49,41 +78,33 @@ public class PatternParameterXZDir implements IStatementParameter {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getGuiSprite() {
-        return sprites[direction & 3];
+        return BCCoreSprites.PARAM_XZ_DIR.get(dir).getSprite();
     }
 
     @Override
     public ItemStack getItemStack() {
-        return null;
+        return StackUtil.EMPTY;
     }
 
     @Override
     public String getDescription() {
-        return LocaleUtil.localize("direction." + names[direction & 3]);
+        return LocaleUtil.localize("direction." + dir.getName());
     }
 
     @Override
-    public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
-        direction = shiftRight[direction & 3];
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        direction = compound.getByte("dir");
-    }
-
-    @Override
-    public void writeToNBT(NBTTagCompound compound) {
-        compound.setByte("dir", (byte) direction);
+    public PatternParameterXZDir onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+        return null;
     }
 
     @Override
     public IStatementParameter rotateLeft() {
-        return new PatternParameterXZDir(shiftLeft[direction & 3]);
+        return get(dir.rotateY());
     }
 
-    public int getDirection() {
-        return direction;
+    @Override
+    public IStatementParameter[] getPossible(IStatementContainer source, IStatement stmt) {
+        return values();
     }
 }

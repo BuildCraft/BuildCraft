@@ -15,9 +15,10 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.statements.containers.ISidedStatementContainer;
 
-import buildcraft.core.BCCoreSprites;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.LocaleUtil;
+
+import buildcraft.core.BCCoreSprites;
 
 public class ActionRedstoneOutput extends BCStatement implements IActionInternal {
 
@@ -37,13 +38,12 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 
     @Override
     public IStatementParameter createParameter(int index) {
-        IStatementParameter param = null;
-
-        if (index == 0) {
-            param = new StatementParamGateSideOnly();
+        switch (index) {
+            case 0:
+                return StatementParamGateSideOnly.ANY;
+            default:
+                return null;
         }
-
-        return param;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 
     protected boolean isSideOnly(IStatementParameter[] parameters) {
         if (parameters != null && parameters.length >= (getRGSOSlot() + 1) && parameters[getRGSOSlot()] instanceof StatementParamGateSideOnly) {
-            return ((StatementParamGateSideOnly) parameters[getRGSOSlot()]).isOn;
+            return ((StatementParamGateSideOnly) parameters[getRGSOSlot()]).isSpecific;
         }
 
         return false;

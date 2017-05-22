@@ -79,18 +79,18 @@ public class StatementParameterDirection implements IStatementParameter {
     }
 
     @Override
-    public boolean onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
-        return false;
+    public IStatementParameter onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+        return null;
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
+    public void writeToNbt(NBTTagCompound nbt) {
         if (direction != null) {
             nbt.setByte("direction", (byte) direction.ordinal());
         }
     }
 
-    @Override
+//    @Override
     public void readFromNBT(NBTTagCompound nbt) {
         if (nbt.hasKey("direction")) {
             direction = EnumFacing.VALUES[nbt.getByte("direction")];

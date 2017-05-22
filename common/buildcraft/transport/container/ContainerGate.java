@@ -18,6 +18,7 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
+import buildcraft.api.statements.StatementManager.IParameterReader;
 
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.statement.StatementWrapper;
@@ -25,7 +26,11 @@ import buildcraft.lib.misc.data.ForwardingReference;
 import buildcraft.lib.misc.data.IReference;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.transport.gate.*;
+
+import buildcraft.transport.gate.ActionWrapper;
+import buildcraft.transport.gate.GateLogic;
+import buildcraft.transport.gate.GateVariant;
+import buildcraft.transport.gate.TriggerWrapper;
 
 public class ContainerGate extends ContainerBC_Neptune {
     protected static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("gate");
@@ -125,7 +130,11 @@ public class ContainerGate extends ContainerBC_Neptune {
                     }
 
                     if (param != null) {
-                        param.readFromNBT(nbt);
+                        IParameterReader reader = StatementManager.getParameterReader(param.getUniqueTag());
+                        if (reader == null) {
+                            throw new IllegalStateException("The paramater " + param.getUniqueTag() + " isn't registered with the API!");
+                        }
+                        param = reader.readFromNbt(nbt);
                     }
 
                     if (id == ID_TRIGGER_PARAM) {
@@ -222,7 +231,7 @@ public class ContainerGate extends ContainerBC_Neptune {
             } else {
                 buffer.writeBoolean(true);
                 NBTTagCompound nbt = new NBTTagCompound();
-                to.writeToNBT(nbt);
+                to.writeToNbt(nbt);
                 buffer.writeCompoundTag(nbt);
             }
         });
@@ -346,7 +355,7 @@ public class ContainerGate extends ContainerBC_Neptune {
             } else {
                 buffer.writeBoolean(true);
                 NBTTagCompound nbt = new NBTTagCompound();
-                current.writeToNBT(nbt);
+                current.writeToNbt(nbt);
                 buffer.writeCompoundTag(nbt);
             }
         }
@@ -356,7 +365,11 @@ public class ContainerGate extends ContainerBC_Neptune {
                 NBTTagCompound nbt = buffer.readCompoundTag();
                 IStatementParameter param = get();
                 if (param != null) {
-                    param.readFromNBT(nbt);
+                    IParameterReader reader = StatementManager.getParameterReader(param.getUniqueTag());
+                    if (reader == null) {
+                        throw new IllegalStateException("The paramater " + param.getUniqueTag() + " isn't registered with the API!");
+                    }
+                    set(reader.readFromNbt(nbt));
                 }
             }
         }

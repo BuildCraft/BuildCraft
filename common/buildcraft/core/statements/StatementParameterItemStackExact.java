@@ -22,7 +22,7 @@ public class StatementParameterItemStackExact implements IStatementParameter {
     }
 
     @Override
-    public boolean onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+    public StatementParameterItemStackExact onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
         if (stack != null) {
             if (areItemsEqual(this.stack, stack)) {
                 if (mouse.getButton() == 0) {
@@ -54,11 +54,11 @@ public class StatementParameterItemStackExact implements IStatementParameter {
                 }
             }
         }
-        return true;
+        return this;
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound compound) {
+    public void writeToNbt(NBTTagCompound compound) {
         if (stack != null) {
             NBTTagCompound tagCompound = new NBTTagCompound();
             stack.writeToNBT(tagCompound);
@@ -66,9 +66,10 @@ public class StatementParameterItemStackExact implements IStatementParameter {
         }
     }
 
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        stack = new ItemStack(compound.getCompoundTag("stack"));
+    public static StatementParameterItemStackExact readFromNbt(NBTTagCompound nbt) {
+        StatementParameterItemStackExact param = new StatementParameterItemStackExact();
+        param.stack = new ItemStack(nbt.getCompoundTag("stack"));
+        return param;
     }
 
     @Override
@@ -116,7 +117,7 @@ public class StatementParameterItemStackExact implements IStatementParameter {
 
     @Override
     public TextureAtlasSprite getGuiSprite() {
-        // Whats rendered is not a sprite but the actual stack itself
+        // What's rendered is not a sprite but the actual stack itself
         return null;
     }
 

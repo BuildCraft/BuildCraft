@@ -11,10 +11,11 @@ import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.statements.containers.ISidedStatementContainer;
 
-import buildcraft.core.BCCoreSprites;
-import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.LocaleUtil;
+
+import buildcraft.core.BCCoreSprites;
+import buildcraft.core.BCCoreStatements;
 
 public class TriggerRedstoneInput extends BCStatement implements ITriggerInternal {
 
@@ -22,7 +23,7 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
 
     public TriggerRedstoneInput(boolean active) {
         super("buildcraft:redstone.input." + (active ? "active" : "inactive"),//
-                "buildcraft.redtone.input." + (active ? "active" : "inactive"));
+            "buildcraft.redtone.input." + (active ? "active" : "inactive"));
         this.active = active;
     }
 
@@ -38,13 +39,12 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
 
     @Override
     public IStatementParameter createParameter(int index) {
-        IStatementParameter param = null;
-
-        if (index == 0) {
-            param = new StatementParamGateSideOnly();
+        switch (index) {
+            case 0:
+                return StatementParamGateSideOnly.ANY;
+            default:
+                return null;
         }
-
-        return param;
     }
 
     @Override
@@ -56,7 +56,8 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
     public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
         if (container instanceof IRedstoneStatementContainer) {
             int level = ((IRedstoneStatementContainer) container).getRedstoneInput(null);
-            if (parameters.length > 0 && parameters[0] instanceof StatementParamGateSideOnly && ((StatementParamGateSideOnly) parameters[0]).isOn && container instanceof ISidedStatementContainer) {
+            if (parameters.length > 0 && parameters[0] instanceof StatementParamGateSideOnly && ((StatementParamGateSideOnly) parameters[0]).isSpecific
+                && container instanceof ISidedStatementContainer) {
                 level = ((IRedstoneStatementContainer) container).getRedstoneInput(((ISidedStatementContainer) container).getSide());
             }
 

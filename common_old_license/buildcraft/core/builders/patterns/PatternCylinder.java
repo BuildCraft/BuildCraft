@@ -4,17 +4,19 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders.patterns;
 
-import net.minecraft.world.World;
-
-import buildcraft.api.enums.EnumFillerPattern;
+import buildcraft.api.core.IBox;
+import buildcraft.api.filler.FilledTemplate;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.blueprints.Template;
-import buildcraft.lib.misc.data.Box;
+import buildcraft.api.statements.containers.IFillerStatementContainer;
 
-public class PatternCylinder extends FillerPattern {
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+
+import buildcraft.core.BCCoreSprites;
+
+public class PatternCylinder extends Pattern {
 
     public PatternCylinder() {
-        super("cylinder", EnumFillerPattern.CYLINDER);
+        super("cylinder");
     }
 
     @Override
@@ -29,13 +31,19 @@ public class PatternCylinder extends FillerPattern {
 
     @Override
     public IStatementParameter createParameter(int index) {
-        return new PatternParameterHollow(true);
+        return PatternParameterHollow.HOLLOW;
     }
 
     @Override
-    public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
-        Template result = new Template(box.size());
-        boolean filled = parameters.length > 0 && ((PatternParameterHollow) parameters[0]).filled;
+    public SpriteHolder getSpriteHolder() {
+        return BCCoreSprites.FILLER_CYLINDER;
+    }
+
+    @Override
+    public FilledTemplate createTemplate(IFillerStatementContainer filler, IStatementParameter[] params) {
+        IBox box = filler.getBox();
+        FilledTemplate result = new FilledTemplate(box);
+        boolean filled = params.length > 0 && ((PatternParameterHollow) params[0]).filled;
 
         int xMin = 0;
         int yMin = 0;
@@ -55,7 +63,7 @@ public class PatternCylinder extends FillerPattern {
         int zRadius = (zMax - zMin) / 2;
 
         if (xRadius == 0 || zRadius == 0) {
-            fill(xMin, yMin, zMin, xMax, yMax, zMax, result);
+            result.fillVolume(xMin, xMax, yMin, yMax, zMin, zMax);
             return result;
         }
 
@@ -121,7 +129,7 @@ public class PatternCylinder extends FillerPattern {
         return result;
     }
 
-    private boolean fillSquare(int xCenter, int zCenter, int dx, int dz, int xFix, int zFix, int yMin, int yMax, Template template) {
+    private static boolean fillSquare(int xCenter, int zCenter, int dx, int dz, int xFix, int zFix, int yMin, int yMax, FilledTemplate template) {
         int x1, x2, z1, z2;
 
         x1 = xCenter + dx + xFix;
@@ -130,46 +138,45 @@ public class PatternCylinder extends FillerPattern {
         x2 = xCenter - dx;
         z2 = zCenter + dz + zFix;
 
-        fill(x2, yMin, z2, x1, yMax, z1, template);
+        template.fillVolume(x2, x1, yMin, yMax, z2, z1);
 
         x1 = xCenter - dx;
         z1 = zCenter - dz;
 
-        fill(x1, yMin, z1, x2, yMax, z2, template);
+        template.fillVolume(x1, x2, yMin, yMax, z1, z2);
 
         x2 = xCenter + dx + xFix;
         z2 = zCenter - dz;
 
-        fill(x1, yMin, z1, x2, yMax, z2, template);
+        template.fillVolume(x1, x2, yMin, yMax, z1, z2);
 
         x1 = xCenter + dx + xFix;
         z1 = zCenter + dz + zFix;
 
-        fill(x2, yMin, z2, x1, yMax, z1, template);
+        template.fillVolume(x2, x1, yMin, yMax, z2, z1);
 
         return true;
     }
 
-    private boolean fillFourColumns(int xCenter, int zCenter, int dx, int dz, int xFix, int zFix, int yMin, int yMax, Template template) {
+    private static boolean fillFourColumns(int xCenter, int zCenter, int dx, int dz, int xFix, int zFix, int yMin, int yMax, FilledTemplate template) {
         int x, z;
 
         x = xCenter + dx + xFix;
         z = zCenter + dz + zFix;
-        fill(x, yMin, z, x, yMax, z, template);
+        template.fillVolume(x, x, yMin, yMax, z, z);
 
         x = xCenter - dx;
         z = zCenter + dz + zFix;
-        fill(x, yMin, z, x, yMax, z, template);
+        template.fillVolume(x, x, yMin, yMax, z, z);
 
         x = xCenter - dx;
         z = zCenter - dz;
-        fill(x, yMin, z, x, yMax, z, template);
+        template.fillVolume(x, x, yMin, yMax, z, z);
 
         x = xCenter + dx + xFix;
         z = zCenter - dz;
-        fill(x, yMin, z, x, yMax, z, template);
+        template.fillVolume(x, x, yMin, yMax, z, z);
 
         return true;
     }
-
 }

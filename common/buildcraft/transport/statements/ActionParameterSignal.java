@@ -5,7 +5,9 @@
 package buildcraft.transport.statements;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
@@ -14,6 +16,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
+import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatement;
@@ -24,16 +28,45 @@ import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
+
 import buildcraft.transport.BCTransportSprites;
 
 public class ActionParameterSignal implements IStatementParameter {
+
+    public static final ActionParameterSignal EMPTY = new ActionParameterSignal(null);
+    private static final Map<EnumDyeColor, ActionParameterSignal> SIGNALS;
+
+    static {
+        SIGNALS = new EnumMap<>(EnumDyeColor.class);
+        for (EnumDyeColor colour : ColourUtil.COLOURS) {
+            SIGNALS.put(colour, new ActionParameterSignal(colour));
+        }
+    }
+
     @Nullable
-    private EnumDyeColor colour = null;
+    public final EnumDyeColor colour;
 
-    public ActionParameterSignal() {}
-
-    public ActionParameterSignal(EnumDyeColor colour) {
+    private ActionParameterSignal(EnumDyeColor colour) {
         this.colour = colour;
+    }
+
+    public static ActionParameterSignal get(EnumDyeColor colour) {
+        return colour == null ? EMPTY : SIGNALS.get(colour);
+    }
+
+    public static ActionParameterSignal readFromNbt(NBTTagCompound nbt) {
+        if (nbt.hasKey("color", Constants.NBT.TAG_ANY_NUMERIC)) {
+            return get(EnumDyeColor.byMetadata(nbt.getByte("color")));
+        }
+        return EMPTY;
+    }
+
+    @Override
+    public void writeToNbt(NBTTagCompound nbt) {
+        EnumDyeColor c = colour;
+        if (c != null) {
+            nbt.setByte("color", (byte) c.getMetadata());
+        }
     }
 
     @Nullable
@@ -52,23 +85,8 @@ public class ActionParameterSignal implements IStatementParameter {
     }
 
     @Override
-    public boolean onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
-        return false;
-    }
-
-    @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        EnumDyeColor c = colour;
-        if (c != null) {
-            nbt.setByte("color", (byte) c.getMetadata());
-        }
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        if (nbt.hasKey("color")) {
-            this.colour = EnumDyeColor.byMetadata(nbt.getByte("color"));
-        }
+    public ActionParameterSignal onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+        return null;
     }
 
     @Override
@@ -120,10 +138,10 @@ public class ActionParameterSignal implements IStatementParameter {
         }
         IGate gate = (IGate) source;
         List<IStatementParameter> poss = new ArrayList<>(1 + ColourUtil.COLOURS.length);
-        poss.add(new ActionParameterSignal());
+        poss.add(EMPTY);
         for (EnumDyeColor c : ColourUtil.COLOURS) {
             if (TriggerPipeSignal.doesGateHaveColour(gate, c)) {
-                poss.add(new ActionParameterSignal(c));
+                poss.add(get(c));
             }
         }
         return poss.toArray(new IStatementParameter[poss.size()]);

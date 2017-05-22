@@ -4,48 +4,55 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders.patterns;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.blueprints.SchematicMask;
-import buildcraft.api.enums.EnumFillerPattern;
+import buildcraft.api.filler.FilledTemplate;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.blueprints.Template;
-import buildcraft.lib.misc.data.Box;
+import buildcraft.api.statements.containers.IFillerStatementContainer;
 
-public class PatternFrame extends FillerPattern {
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+
+import buildcraft.core.BCCoreSprites;
+
+public class PatternFrame extends Pattern {
 
     public PatternFrame() {
-        super("frame", EnumFillerPattern.FRAME);
+        super("frame");
     }
 
     @Override
-    public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
-        Template template = new Template(box.size());
+    public FilledTemplate createTemplate(IFillerStatementContainer filler, IStatementParameter[] params) {
+        FilledTemplate template = new FilledTemplate(filler.getBox());
 
-        int xMax = box.size().getX() - 1;
-        int zMax = box.size().getZ() - 1;
+        int maxX = template.max.getX();
+        int maxY = template.max.getY();
+        int maxZ = template.max.getZ();
 
-        for (int it = 0; it < 2; it++) {
-            int y = it * (box.size().getY() - 1);
-            for (int i = 0; i < template.size.getX(); ++i) {
-                template.set(new BlockPos(i, y, 0), new SchematicMask(true));
-                template.set(new BlockPos(i, y, zMax), new SchematicMask(true));
-            }
+        // X axis
+        template.fillLineX(1, maxX - 1, 0, 0);
+        template.fillLineX(1, maxX - 1, 0, maxZ - 1);
+        template.fillLineX(1, maxX - 1, maxY - 1, 0);
+        template.fillLineX(1, maxX - 1, maxY - 1, maxZ - 1);
 
-            for (int k = 0; k < template.size.getZ(); ++k) {
-                template.set(new BlockPos(0, y, k), new SchematicMask(true));
-                template.set(new BlockPos(xMax, y, k), new SchematicMask(true));
-            }
-        }
+        // Y axis
+        template.fillLineY(0, 1, maxY - 1, 0);
+        template.fillLineY(0, 1, maxY - 1, maxZ - 1);
+        template.fillLineY(maxX - 1, 1, maxY - 1, 0);
+        template.fillLineY(maxX - 1, 1, maxY - 1, maxZ - 1);
 
-        for (int h = 1; h < box.size().getY(); ++h) {
-            template.set(new BlockPos(0, h, 0), new SchematicMask(true));
-            template.set(new BlockPos(0, h, zMax), new SchematicMask(true));
-            template.set(new BlockPos(xMax, h, 0), new SchematicMask(true));
-            template.set(new BlockPos(xMax, h, zMax), new SchematicMask(true));
-        }
+        // Z axis
+        template.fillAxisZ(0, 0);
+        template.fillAxisZ(0, maxY);
+        template.fillAxisZ(maxX, 0);
+        template.fillAxisZ(maxX, maxY);
 
         return template;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public SpriteHolder getSpriteHolder() {
+        return BCCoreSprites.FILLER_NONE;
     }
 }

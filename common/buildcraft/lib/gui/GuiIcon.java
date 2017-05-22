@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.client.sprite.ISprite;
-import buildcraft.lib.client.sprite.RawSprite;
+import buildcraft.lib.client.sprite.SpriteRaw;
 import buildcraft.lib.gui.pos.IGuiArea;
 
 public class GuiIcon implements ISimpleDrawable {
@@ -24,15 +24,19 @@ public class GuiIcon implements ISimpleDrawable {
         this.height = (int) (Math.abs(sprite.getInterpV(1) - sprite.getInterpV(0)) * textureSize);
     }
 
-    public GuiIcon(ResourceLocation texture, int u, int v, int width, int height) {
-        this(new RawSprite(texture, u, v, width, height, 256), 256);
+    public GuiIcon(ResourceLocation texture, double u, double v, double width, double height, int texSize) {
+        this(new SpriteRaw(texture, u, v, width, height, texSize), texSize);
+    }
+
+    public GuiIcon(ResourceLocation texture, double u, double v, double width, double height) {
+        this(texture, u, v, width, height, 256);
     }
 
     public GuiIcon offset(int u, int v) {
-        RawSprite raw = (RawSprite) sprite;
-        float uMin = raw.uMin + u / (float) textureSize;
-        float vMin = raw.vMin + v / (float) textureSize;
-        return new GuiIcon(new RawSprite(raw.location, uMin, vMin, raw.width, raw.height), textureSize);
+        SpriteRaw raw = (SpriteRaw) sprite;
+        double uMin = raw.uMin + u / (double) textureSize;
+        double vMin = raw.vMin + v / (double) textureSize;
+        return new GuiIcon(new SpriteRaw(raw.location, uMin, vMin, raw.width, raw.height), textureSize);
     }
 
     public DynamicTexture createDynamicTexure(int scale) {

@@ -5,51 +5,48 @@
 package buildcraft.core.builders.patterns;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.world.World;
 
-import buildcraft.api.blueprints.SchematicMask;
-import buildcraft.api.enums.EnumFillerPattern;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import buildcraft.api.core.IBox;
+import buildcraft.api.filler.FilledTemplate;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.blueprints.BptBuilderTemplate;
-import buildcraft.core.blueprints.Template;
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.misc.data.Box;
+import buildcraft.api.statements.containers.IFillerStatementContainer;
 
-public class PatternHorizon extends FillerPattern {
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+
+import buildcraft.core.BCCoreSprites;
+
+public class PatternHorizon extends Pattern {
 
     public PatternHorizon() {
-        super("horizon", EnumFillerPattern.HORIZON);
+        super("horizon");
     }
 
     @Override
-    public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
-        int xMin = box.min().getX();
-        int yMin = box.min().getY() > 0 ? box.min().getY() - 1 : 0;
-        int zMin = box.min().getZ();
+    @SideOnly(Side.CLIENT)
+    public SpriteHolder getSpriteHolder() {
+        return BCCoreSprites.FILLER_HORIZON;
+    }
 
-        int xMax = box.max().getX();
-        int yMax = world.getHeight();
-        int zMax = box.max().getZ();
+    @Override
+    public FilledTemplate createTemplate(IFillerStatementContainer filler, IStatementParameter[] params) {
+        IBox box = filler.getBox();
+        int minX = box.min().getX();
+        int minY = box.min().getY() > 0 ? box.min().getY() - 1 : 0;
+        int minZ = box.min().getZ();
 
-        Template bpt = new Template(VecUtil.replaceValue(box.size(), Axis.Y, yMax - yMin));
+        int maxX = box.max().getX();
+        int maxY = filler.getTile().getWorld().getHeight();
+        int maxZ = box.max().getZ();
+
+        FilledTemplate bpt = new FilledTemplate(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ));
 
         if (box.size().getY() > 0) {
-            for (int x = xMin; x <= xMax; ++x) {
-                for (int z = zMin; z <= zMax; ++z) {
-                    bpt.set(new BlockPos(x - xMin, 0, z - zMin), new SchematicMask(true));
-                }
-            }
+            bpt.fillPlaneXZ(0);
         }
 
         return bpt;
-    }
-
-    @Override
-    public BptBuilderTemplate getTemplateBuilder(Box box, World world, IStatementParameter[] parameters) {
-        int yMin = box.min().getY() > 0 ? box.min().getY() - 1 : 0;
-
-        return new BptBuilderTemplate(getTemplate(box, world, parameters), world, new BlockPos(box.min().getX(), yMin, box.min().getZ()));
     }
 }

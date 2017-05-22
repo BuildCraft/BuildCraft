@@ -19,11 +19,11 @@ public class BCBuildersRecipes {
     public static void init() {
         ItemStack paper = new ItemStack(Items.PAPER);
 
-        if (BCBuildersItems.schematicSingle != null) {
-            ItemStack out = new ItemStack(BCBuildersItems.schematicSingle, 4);
-            ShapelessOreRecipe recipe = new ShapelessOreRecipe(out, paper, paper, "gemLapis");
-            GameRegistry.addRecipe(recipe);
-        }
+//        if (BCBuildersItems.schematicSingle != null) {
+//            ItemStack out = new ItemStack(BCBuildersItems.schematicSingle, 4);
+//            ShapelessOreRecipe recipe = new ShapelessOreRecipe(out, paper, paper, "gemLapis");
+//            GameRegistry.addRecipe(recipe);
+//        }
 
         if (BCBuildersItems.snapshot != null) {
             RecipeBuilderShaped recipe = new RecipeBuilderShaped();

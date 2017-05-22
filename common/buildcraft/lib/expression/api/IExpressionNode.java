@@ -1,35 +1,49 @@
 package buildcraft.lib.expression.api;
 
 public interface IExpressionNode {
-    IExpressionNode inline();
+    default IExpressionNode inline() {
+        return this;
+    }
 
     // common expression types
 
+    @FunctionalInterface
     public interface INodeDouble extends IExpressionNode {
         double evaluate();
 
         @Override
-        INodeDouble inline();
+        default INodeDouble inline() {
+            return this;
+        }
     }
 
+    @FunctionalInterface
     public interface INodeLong extends IExpressionNode {
         long evaluate();
 
         @Override
-        INodeLong inline();
+        default INodeLong inline() {
+            return this;
+        }
     }
 
+    @FunctionalInterface
     public interface INodeBoolean extends IExpressionNode {
         boolean evaluate();
 
         @Override
-        INodeBoolean inline();
+        default INodeBoolean inline() {
+            return this;
+        }
     }
 
+    @FunctionalInterface
     public interface INodeString extends IExpressionNode {
         String evaluate();
 
         @Override
-        INodeString inline();
+        default INodeString inline() {
+            return this;
+        }
     }
 }

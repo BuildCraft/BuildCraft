@@ -13,8 +13,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.client.render.font.SpecialColourFontRenderer;
 
 public class ColourUtil {
+    public static final String COLOUR_SPECIAL_START = "§z§";
+
     public static final Function<TextFormatting, TextFormatting> getTextFormatForBlack = ColourUtil::getTextFormatForBlack;
     public static final Function<TextFormatting, TextFormatting> getTextFormatForWhite = ColourUtil::getTextFormatForWhite;
 
@@ -157,6 +160,20 @@ public class ColourUtil {
         } else {
             return LocaleUtil.localizeColour(colour);
         }
+    }
+
+    /** Similar to {@link #getTextFullTooltip(EnumDyeColor)}, but outputs a string specifically designed for
+     * {@link SpecialColourFontRenderer}. MUST be the first string used! */
+    public static String getTextFullTooltipSpecial(EnumDyeColor colour) {
+        if (colour == EnumDyeColor.BLACK || colour == EnumDyeColor.BLUE) {
+            return getTextFullTooltip(colour);
+        }
+        if (BCLibConfig.useColouredLabels) {
+            TextFormatting formatColour = convertColourToTextFormat(colour);
+            return COLOUR_SPECIAL_START + Integer.toHexString(colour.getMetadata())//
+                + getTextFormatForBlack(formatColour) + LocaleUtil.localizeColour(colour) + TextFormatting.WHITE;
+        }
+        return LocaleUtil.localizeColour(colour);
     }
 
     /** Returns a string formatted for use in a tooltip (or anything else with a black background). If

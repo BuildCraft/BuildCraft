@@ -19,14 +19,19 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IStackFilter;
-import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IFlowItems;
+import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
+import buildcraft.api.transport.pipe.PipeEventActionActivate;
+import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.api.transport.pipe.PipeEventStatement;
 
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+
 import buildcraft.transport.BCTransportGuis;
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.statements.ActionExtractionPreset;
@@ -130,13 +135,13 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
     }
 
     @Override
-    protected int extractItems(IFlowItems flow, EnumFacing dir, int count) {
+    protected int extractItems(IFlowItems flow, EnumFacing dir, int count, boolean simulate) {
         if (currentSlot == null && activeSlots.size() > 0) {
             currentSlot = getNextSlot();
         }
         if (currentSlot == null) return 0;
-        int extracted = flow.tryExtractItems(count, dir, slotColours.get(currentSlot), filter, false);
-        if (extracted > 0) {
+        int extracted = flow.tryExtractItems(count, dir, slotColours.get(currentSlot), filter, simulate);
+        if (extracted > 0 && !simulate) {
             currentSlot = getNextSlot();
             pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
         }

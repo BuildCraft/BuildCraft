@@ -172,6 +172,7 @@ public class Box implements IBox {
         return max;
     }
 
+    @Override
     public BlockPos size() {
         if (!isInitialized()) return BlockPos.ORIGIN;
         return max.subtract(min).add(VecUtil.POS_ONE);

@@ -10,15 +10,21 @@ import buildcraft.api.tiles.IControllable.Mode;
 import buildcraft.core.builders.patterns.Pattern;
 import buildcraft.core.builders.patterns.PatternBox;
 import buildcraft.core.builders.patterns.PatternClear;
+import buildcraft.core.builders.patterns.PatternCylinder;
 import buildcraft.core.builders.patterns.PatternFill;
+import buildcraft.core.builders.patterns.PatternHorizon;
 import buildcraft.core.builders.patterns.PatternNone;
+import buildcraft.core.builders.patterns.PatternParameterCenter;
+import buildcraft.core.builders.patterns.PatternParameterXZDir;
+import buildcraft.core.builders.patterns.PatternParameterYDir;
+import buildcraft.core.builders.patterns.PatternPyramid;
+import buildcraft.core.builders.patterns.PatternStairs;
 import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.statements.ActionRedstoneOutput;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.core.statements.CoreActionProvider;
 import buildcraft.core.statements.CoreTriggerProvider;
 import buildcraft.core.statements.StatementParamGateSideOnly;
-import buildcraft.core.statements.StatementParameterRedstoneLevel;
 import buildcraft.core.statements.TriggerFluidContainer;
 import buildcraft.core.statements.TriggerFluidContainerLevel;
 import buildcraft.core.statements.TriggerInventory;
@@ -89,9 +95,14 @@ public class BCCoreStatements {
     public static final PatternClear PATTERN_CLEAR = new PatternClear();
     public static final PatternFill PATTERN_FILL = new PatternFill();
     public static final PatternBox PATTERN_BOX = new PatternBox();
+    public static final PatternCylinder PATTERN_CYLINDER = new PatternCylinder();
+    public static final PatternHorizon PATTERN_HORIZON = new PatternHorizon();
+    public static final PatternPyramid PATTERN_PYRAMID = new PatternPyramid();
+    public static final PatternStairs PATTERN_STAIRS = new PatternStairs();
 
     public static final Pattern[] PATTERNS = {//
-        PATTERN_NONE, PATTERN_CLEAR, PATTERN_FILL, PATTERN_BOX//
+        PATTERN_NONE, PATTERN_CLEAR, PATTERN_FILL, PATTERN_BOX,//
+        PATTERN_CYLINDER, PATTERN_HORIZON, PATTERN_PYRAMID, PATTERN_STAIRS,//
     };
 
     static {
@@ -103,8 +114,10 @@ public class BCCoreStatements {
         System.arraycopy(TRIGGER_FLUID, 0, TRIGGER_FLUID_ALL, 0, 4);
         System.arraycopy(TRIGGER_FLUID_LEVEL, 0, TRIGGER_FLUID_ALL, 4, 3);
 
-        StatementManager.registerParameterClass(StatementParamGateSideOnly.class);
-        StatementManager.registerParameterClass(StatementParameterRedstoneLevel.class);
+        StatementManager.registerParameter(StatementParamGateSideOnly::readFromNbt);
+        StatementManager.registerParameter(PatternParameterXZDir::readFromNbt);
+        StatementManager.registerParameter(PatternParameterYDir::readFromNbt);
+        StatementManager.registerParameter(PatternParameterCenter::readFromNbt);
     }
 
     public static void preInit() {
