@@ -2,6 +2,10 @@ package buildcraft.builders.snapshot;
 
 import buildcraft.lib.nbt.NbtSquisher;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 
@@ -19,21 +23,28 @@ public class MessageSnapshotResponse implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        byte[] bytes = NbtSquisher.squishBuildCraftV1(Snapshot.writeToNBT(snapshot));
-        buf.writeInt(bytes.length);
-        buf.writeBytes(bytes);
+
+//        byte[] bytes = NbtSquisher.squishBuildCraftV1(Snapshot.writeToNBT(snapshot));
+//        buf.writeInt(bytes.length);
+//        buf.writeBytes(bytes);
 //        try {
 //            CompressedStreamTools.write(Snapshot.writeToNBT(snapshot), new ByteBufOutputStream(buf));
 //        } catch (IOException e) {
 //            throw new RuntimeException(e);
 //        }
+        try {
+            CompressedStreamTools.writeCompressed(Snapshot.writeToNBT(snapshot), new ByteBufOutputStream(buf));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         try {
-            snapshot = Snapshot.readFromNBT(NbtSquisher.expand(buf.readBytes(buf.readInt()).array()));
+//            snapshot = Snapshot.readFromNBT(NbtSquisher.expand(buf.readBytes(buf.readInt()).array()));
 //            snapshot = Snapshot.readFromNBT(CompressedStreamTools.read(new ByteBufInputStream(buf), NBTSizeTracker.INFINITE));
+            snapshot = Snapshot.readFromNBT(CompressedStreamTools.readCompressed(new ByteBufInputStream(buf)));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -128,7 +128,7 @@ public class FakeWorld extends World {
                         z == blueprint.size.getZ()) {
                         setBlockState(pos, useStone ? Blocks.STONE.getDefaultState() : Blocks.AIR.getDefaultState());
                     } else {
-                        ISchematicBlock<?> schematicBlock = blueprint.data[x][y][z];
+                        ISchematicBlock<?> schematicBlock = blueprint.palette.get(blueprint.data[x][y][z]);
                         schematicBlock.buildWithoutChecks(this, pos);
                     }
                 }

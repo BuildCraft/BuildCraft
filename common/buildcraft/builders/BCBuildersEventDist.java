@@ -102,4 +102,5 @@ public enum BCBuildersEventDist {
             ClientSnapshots.INSTANCE.renderSnapshot(BCBuildersItems.snapshot.getHeader(event.getStack()), pX, pY, sX, sY);
         }
     }
+
 }

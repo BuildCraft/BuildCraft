@@ -45,7 +45,7 @@ public class PipeEventBus {
 
                 Parameter[] params = m.getParameters();
                 if (params.length != 1) {
-                    throw new IllegalStateException("Cannot annotate " + m + " with @PipeEventHandler as it had an incorrect number of paramaters (" + Arrays.toString(params) + ")");
+                    throw new IllegalStateException("Cannot annotate " + m + " with @PipeEventHandler as it had an incorrect number of parameters (" + Arrays.toString(params) + ")");
                 }
                 Parameter p = params[0];
                 if (!PipeEvent.class.isAssignableFrom(p.getType())) {

@@ -6,12 +6,18 @@ import buildcraft.api.schematics.SchematicEntityFactory;
 import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class SchematicEntityManager {
     public static ISchematicEntity<?> getSchematicEntity(SchematicEntityContext context) {
@@ -36,19 +42,36 @@ public class SchematicEntityManager {
         return null;
     }
 
-    public static void computeRequired(Blueprint blueprint) {
+    public static Pair<List<List<ItemStack>>, List<List<FluidStack>>> computeRequired(Blueprint blueprint) {
+        List<List<ItemStack>> requiredItems = new ArrayList<>(
+            Collections.nCopies(
+                blueprint.entities.size(),
+                Collections.emptyList()
+            )
+        );
+        List<List<FluidStack>> requiredFluids = new ArrayList<>(
+            Collections.nCopies(
+                blueprint.entities.size(),
+                Collections.emptyList()
+            )
+        );
         FakeWorld world = FakeWorld.INSTANCE;
         world.uploadBlueprint(blueprint, true);
+        int i = 0;
         for (ISchematicEntity<?> schematicEntity : blueprint.entities) {
             Entity entity = schematicEntity.buildWithoutChecks(world, FakeWorld.BLUEPRINT_OFFSET);
             if (entity != null) {
                 world.editable = false;
-                schematicEntity.computeRequiredItemsAndFluids(new SchematicEntityContext(world, FakeWorld.BLUEPRINT_OFFSET, entity));
+                SchematicEntityContext schematicEntityContext = new SchematicEntityContext(world, FakeWorld.BLUEPRINT_OFFSET, entity);
+                requiredItems.set(i, schematicEntity.computeRequiredItems(schematicEntityContext));
+                requiredFluids.set(i, schematicEntity.computeRequiredFluids(schematicEntityContext));
                 world.editable = true;
                 world.removeEntity(entity);
             }
+            i++;
         }
         world.clear();
+        return Pair.of(requiredItems, requiredFluids);
     }
 
     @Nonnull

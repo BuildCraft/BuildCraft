@@ -2,11 +2,7 @@ package buildcraft.builders.snapshot;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,6 +26,10 @@ public class GlobalSavedDataSnapshots {
             throw new IllegalStateException("The snapshots directory was a file! We can't use this!\n\tfile = " + snapshotsFile);
         }
         readSnapshots();
+    }
+
+    public static void reInit(Side side) {
+        INSTANCES.put(side, new GlobalSavedDataSnapshots(side));
     }
 
     public static GlobalSavedDataSnapshots get(Side side) {

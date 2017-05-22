@@ -75,7 +75,8 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     private EnumSnapshotType snapshotType = EnumSnapshotType.BLUEPRINT;
     private final Box box = new Box();
     private boolean[][][] templateScannedBlocks;
-    private ISchematicBlock<?>[][][] blueprintScannedBlocks;
+    private final List<ISchematicBlock<?>> blueprintScannedPalette = new ArrayList<>();
+    private int[][][] blueprintScannedData;
     private final List<ISchematicEntity<?>> blueprintScannedEntities = new ArrayList<>();
     private BoxIterator boxIterator;
     private boolean isValid = false;
@@ -114,8 +115,13 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             box.setMin(volumeBox.box.min());
             box.setMax(volumeBox.box.max());
             isValid = true;
-            volumeBox.locks.add(new Lock(new Lock.Cause.CauseBlock(pos, blockState.getBlock()), new Lock.Target.TargetResize(), new Lock.Target.TargetUsedByMachine(
-                Lock.Target.TargetUsedByMachine.EnumType.STRIPES_READ)));
+            volumeBox.locks.add(
+                new Lock(
+                    new Lock.Cause.CauseBlock(pos, blockState.getBlock()),
+                    new Lock.Target.TargetResize(),
+                    new Lock.Target.TargetUsedByMachine(Lock.Target.TargetUsedByMachine.EnumType.STRIPES_READ)
+                )
+            );
             volumeBoxes.markDirty();
             sendNetworkUpdate(NET_BOX);
         } else if (tile instanceof IAreaProvider) {
@@ -165,7 +171,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     private void scanMultipleBlocks() {
-        for (int i = 1000/*snapshotType.maxPerTick*/; i > 0; i--) {
+        for (int i = 10000/*snapshotType.maxPerTick*/; i > 0; i--) {
             scanSingleBlock();
             if (!scanning) {
                 break;
@@ -175,10 +181,10 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
 
     private void scanSingleBlock() {
         BlockPos size = box.size();
-        if (templateScannedBlocks == null || blueprintScannedBlocks == null) {
+        if (templateScannedBlocks == null || blueprintScannedData == null) {
             boxIterator = new BoxIterator(box, EnumAxisOrder.XZY.getMinToMaxOrder(), true);
-            blueprintScannedBlocks = new ISchematicBlock<?>[size.getX()][size.getY()][size.getZ()];
             templateScannedBlocks = new boolean[size.getX()][size.getY()][size.getZ()];
+            blueprintScannedData = new int[size.getX()][size.getY()][size.getZ()];
         }
 
         // Read from world
@@ -189,8 +195,13 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             templateScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = solid;
         }
         if (snapshotType == EnumSnapshotType.BLUEPRINT) {
-            ISchematicBlock<?> schematic = readSchematicForBlock(worldScanPos);
-            blueprintScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = schematic;
+            ISchematicBlock<?> schematicBlock = readSchematicBlock(worldScanPos);
+            int index = blueprintScannedPalette.indexOf(schematicBlock);
+            if (index == -1) {
+                index = blueprintScannedPalette.size();
+                blueprintScannedPalette.add(schematicBlock);
+            }
+            blueprintScannedData[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = index;
         }
 
         createAndSendMessage(NET_SCAN, buffer -> buffer.writeBlockPos(worldScanPos));
@@ -206,15 +217,25 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         }
     }
 
-    private ISchematicBlock<?> readSchematicForBlock(BlockPos worldScanPos) {
-        return SchematicBlockManager.getSchematicBlock(world, pos.offset(world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite()), worldScanPos, world.getBlockState(
-            worldScanPos), world.getBlockState(worldScanPos).getBlock());
+    private ISchematicBlock<?> readSchematicBlock(BlockPos worldScanPos) {
+        return SchematicBlockManager.getSchematicBlock(
+            world,
+            pos.offset(world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite()),
+            worldScanPos,
+            world.getBlockState(worldScanPos),
+            world.getBlockState(worldScanPos).getBlock()
+        );
     }
 
     private void scanEntities() {
         BlockPos basePos = pos.offset(world.getBlockState(pos).getValue(BlockArchitectTable.PROP_FACING).getOpposite());
-        world.getEntitiesWithinAABB(Entity.class, box.getBoundingBox()).stream().map(entity -> SchematicEntityManager.getSchematicEntity(world, basePos, entity)).filter(Objects::nonNull).forEach(
-            blueprintScannedEntities::add);
+        world.getEntitiesWithinAABB(
+            Entity.class,
+            box.getBoundingBox()
+        ).stream()
+            .map(entity -> SchematicEntityManager.getSchematicEntity(world, basePos, entity))
+            .filter(Objects::nonNull)
+            .forEach(blueprintScannedEntities::add);
     }
 
     private void finishScanning() {
@@ -229,7 +250,9 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         }
         if (snapshotType == EnumSnapshotType.BLUEPRINT) {
             // noinspection ConstantConditions
-            ((Blueprint) snapshot).data = blueprintScannedBlocks;
+            ((Blueprint) snapshot).palette = blueprintScannedPalette;
+            // noinspection ConstantConditions
+            ((Blueprint) snapshot).data = blueprintScannedData;
             // noinspection ConstantConditions
             ((Blueprint) snapshot).entities = new ArrayList<>(blueprintScannedEntities);
         }
@@ -247,7 +270,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         invSnapshotIn.setStackInSlot(0, stackIn);
         invSnapshotOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshotType, snapshot.header));
         templateScannedBlocks = null;
-        blueprintScannedBlocks = null;
+        blueprintScannedData = null;
         blueprintScannedEntities.clear();
         boxIterator = null;
         sendNetworkUpdate(NET_RENDER_DATA);

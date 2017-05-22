@@ -22,6 +22,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -92,7 +93,11 @@ public class BCBuilders {
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
         RulesLoader.loadAll();
-        GlobalSavedDataSnapshots.get(evt.getSide());
+    }
+
+    @Mod.EventHandler
+    public void onServerStarting(FMLServerStartingEvent event) {
+        GlobalSavedDataSnapshots.reInit(Side.SERVER);
     }
 
     static {

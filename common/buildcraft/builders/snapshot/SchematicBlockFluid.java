@@ -21,7 +21,6 @@ import java.util.stream.Stream;
 public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid> {
     private IBlockState blockState;
     private boolean isFlowing;
-    private final List<FluidStack> requiredFluids = new ArrayList<>();
 
     @SuppressWarnings("unused")
     public static boolean predicate(SchematicBlockContext context) {
@@ -53,23 +52,19 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
             .collect(Collectors.toSet());
     }
 
-    @Override
-    public void computeRequiredItemsAndFluids(SchematicBlockContext context) {
-        requiredFluids.clear();
-        if (BlockUtil.drainBlock(context.world, context.pos, false) != null) {
-            requiredFluids.add(BlockUtil.drainBlock(context.world, context.pos, false));
-        }
-    }
-
     @Nonnull
     @Override
-    public List<ItemStack> getRequiredItems() {
+    public List<ItemStack> computeRequiredItems(SchematicBlockContext context) {
         return Collections.emptyList();
     }
 
     @Nonnull
     @Override
-    public List<FluidStack> getRequiredFluids() {
+    public List<FluidStack> computeRequiredFluids(SchematicBlockContext context) {
+        List<FluidStack> requiredFluids = new ArrayList<>();
+        if (BlockUtil.drainBlock(context.world, context.pos, false) != null) {
+            requiredFluids.add(BlockUtil.drainBlock(context.world, context.pos, false));
+        }
         return requiredFluids;
     }
 
@@ -78,7 +73,6 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
         SchematicBlockFluid schematicBlock = new SchematicBlockFluid();
         schematicBlock.blockState = blockState;
         schematicBlock.isFlowing = isFlowing;
-        schematicBlock.requiredFluids.addAll(requiredFluids);
         return schematicBlock;
     }
 
@@ -130,5 +124,26 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
     public void deserializeNBT(NBTTagCompound nbt) {
         blockState = NBTUtil.readBlockState(nbt.getCompoundTag("blockState"));
         isFlowing = nbt.getBoolean("isFlowing");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        SchematicBlockFluid that = (SchematicBlockFluid) o;
+
+        return isFlowing == that.isFlowing && blockState.equals(that.blockState);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = blockState.hashCode();
+        result = 31 * result + (isFlowing ? 1 : 0);
+        return result;
     }
 }

@@ -42,8 +42,6 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
     private Block placeBlock;
     private final Set<BlockPos> updateBlockOffsets = new HashSet<>();
     private final Set<Block> canBeReplacedWithBlocks = new HashSet<>();
-    private final List<ItemStack> requiredItems = new ArrayList<>();
-    private final List<FluidStack> requiredFluids = new ArrayList<>();
 
     @SuppressWarnings("unused")
     public static boolean predicate(SchematicBlockContext context) {
@@ -179,7 +177,49 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
 
     @SuppressWarnings({"unused", "WeakerAccess"})
     protected void setRequiredItems(SchematicBlockContext context, Set<JsonRule> rules) {
-        requiredItems.clear();
+    }
+
+    @SuppressWarnings({"unused", "WeakerAccess"})
+    protected void setRequiredFluids(SchematicBlockContext context, Set<JsonRule> rules) {
+    }
+
+    @Override
+    public void init(SchematicBlockContext context) {
+        Set<JsonRule> rules = RulesLoader.getRules(context.blockState);
+        setLevel /*                  */(context, rules);
+        setRequiredBlockOffsets /*   */(context, rules);
+        setBlockState /*             */(context, rules);
+        setIgnoredProperties /*      */(context, rules);
+        setTileNbt /*                */(context, rules);
+        setIgnoredTags /*            */(context, rules);
+        setPlaceBlock /*             */(context, rules);
+        setUpdateBlockOffsets /*     */(context, rules);
+        setCanBeReplacedWithBlocks /**/(context, rules);
+        setRequiredItems /*          */(context, rules);
+        setRequiredFluids /*         */(context, rules);
+    }
+
+    @Override
+    public int getLevel() {
+        return level;
+    }
+
+    @Override
+    public boolean isAir() {
+        return false;
+    }
+
+    @Nonnull
+    @Override
+    public Set<BlockPos> getRequiredBlockOffsets() {
+        return requiredBlockOffsets;
+    }
+
+    @Nonnull
+    @Override
+    public List<ItemStack> computeRequiredItems(SchematicBlockContext context) {
+        Set<JsonRule> rules = RulesLoader.getRules(context.blockState);
+        List<ItemStack> requiredItems = new ArrayList<>();
         requiredItems.add(
             context.block.getPickBlock(
                 context.blockState,
@@ -241,64 +281,16 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
             }
         }
         requiredItems.removeIf(ItemStack::isEmpty);
-    }
-
-    @SuppressWarnings({"unused", "WeakerAccess"})
-    protected void setRequiredFluids(SchematicBlockContext context, Set<JsonRule> rules) {
-        requiredFluids.clear();
-        if (BlockUtil.drainBlock(context.world, context.pos, false) != null) {
-            requiredFluids.add(BlockUtil.drainBlock(context.world, context.pos, false));
-        }
-    }
-
-    @Override
-    public void init(SchematicBlockContext context) {
-        Set<JsonRule> rules = RulesLoader.getRules(context.blockState);
-        setLevel /*                  */(context, rules);
-        setRequiredBlockOffsets /*   */(context, rules);
-        setBlockState /*             */(context, rules);
-        setIgnoredProperties /*      */(context, rules);
-        setTileNbt /*                */(context, rules);
-        setIgnoredTags /*            */(context, rules);
-        setPlaceBlock /*             */(context, rules);
-        setUpdateBlockOffsets /*     */(context, rules);
-        setCanBeReplacedWithBlocks /**/(context, rules);
-        setRequiredItems /*          */(context, rules);
-        setRequiredFluids /*         */(context, rules);
-    }
-
-    @Override
-    public int getLevel() {
-        return level;
-    }
-
-    @Override
-    public boolean isAir() {
-        return false;
-    }
-
-    @Nonnull
-    @Override
-    public Set<BlockPos> getRequiredBlockOffsets() {
-        return requiredBlockOffsets;
-    }
-
-    @Override
-    public void computeRequiredItemsAndFluids(SchematicBlockContext context) {
-        Set<JsonRule> rules = RulesLoader.getRules(context.blockState);
-        setRequiredItems(context, rules);
-        setRequiredFluids(context, rules);
-    }
-
-    @Nonnull
-    @Override
-    public List<ItemStack> getRequiredItems() {
         return requiredItems;
     }
 
     @Nonnull
     @Override
-    public List<FluidStack> getRequiredFluids() {
+    public List<FluidStack> computeRequiredFluids(SchematicBlockContext context) {
+        List<FluidStack> requiredFluids = new ArrayList<>();
+        if (BlockUtil.drainBlock(context.world, context.pos, false) != null) {
+            requiredFluids.add(BlockUtil.drainBlock(context.world, context.pos, false));
+        }
         return requiredFluids;
     }
 
@@ -319,8 +311,6 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
             .map(blockPos -> blockPos.rotate(rotation))
             .forEach(schematicBlock.updateBlockOffsets::add);
         schematicBlock.canBeReplacedWithBlocks.addAll(canBeReplacedWithBlocks);
-        schematicBlock.requiredItems.addAll(requiredItems);
-        schematicBlock.requiredFluids.addAll(requiredFluids);
         return schematicBlock;
     }
 
@@ -488,5 +478,43 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
             .map(ResourceLocation::new)
             .map(Block.REGISTRY::getObject)
             .forEach(canBeReplacedWithBlocks::add);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        SchematicBlockDefault that = (SchematicBlockDefault) o;
+
+        return level == that.level &&
+            requiredBlockOffsets.equals(that.requiredBlockOffsets) &&
+            blockState.equals(that.blockState) &&
+            ignoredProperties.equals(that.ignoredProperties) &&
+            (tileNbt != null ? tileNbt.equals(that.tileNbt) : that.tileNbt == null) &&
+            ignoredTags.equals(that.ignoredTags) &&
+            tileRotation == that.tileRotation &&
+            placeBlock.equals(that.placeBlock) &&
+            updateBlockOffsets.equals(that.updateBlockOffsets) &&
+            canBeReplacedWithBlocks.equals(that.canBeReplacedWithBlocks);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = level;
+        result = 31 * result + requiredBlockOffsets.hashCode();
+        result = 31 * result + blockState.hashCode();
+        result = 31 * result + ignoredProperties.hashCode();
+        result = 31 * result + (tileNbt != null ? tileNbt.hashCode() : 0);
+        result = 31 * result + ignoredTags.hashCode();
+        result = 31 * result + tileRotation.hashCode();
+        result = 31 * result + placeBlock.hashCode();
+        result = 31 * result + updateBlockOffsets.hashCode();
+        result = 31 * result + canBeReplacedWithBlocks.hashCode();
+        return result;
     }
 }

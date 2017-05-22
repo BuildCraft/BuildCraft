@@ -40,19 +40,15 @@ public final class SchematicBlockAir implements ISchematicBlock<SchematicBlockAi
         return Collections.emptySet();
     }
 
-    @Override
-    public void computeRequiredItemsAndFluids(SchematicBlockContext context) {
-    }
-
     @Nonnull
     @Override
-    public List<ItemStack> getRequiredItems() {
+    public List<ItemStack> computeRequiredItems(SchematicBlockContext context) {
         return Collections.emptyList();
     }
 
     @Nonnull
     @Override
-    public List<FluidStack> getRequiredFluids() {
+    public List<FluidStack> computeRequiredFluids(SchematicBlockContext context) {
         return Collections.emptyList();
     }
 
@@ -88,5 +84,15 @@ public final class SchematicBlockAir implements ISchematicBlock<SchematicBlockAi
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || !(o == null || getClass() != o.getClass());
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
     }
 }

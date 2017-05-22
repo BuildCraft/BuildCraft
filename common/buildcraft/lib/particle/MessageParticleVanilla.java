@@ -19,7 +19,7 @@ public class MessageParticleVanilla implements IMessage {
     public double x, y, z;
     public double dx, dy, dz;
     public boolean ignoreRange;
-    public int[] paramaters;
+    public int[] parameters;
 
     @Override
     public void fromBytes(ByteBuf buf) {
@@ -31,9 +31,9 @@ public class MessageParticleVanilla implements IMessage {
         dy = buf.readDouble();
         dz = buf.readDouble();
         ignoreRange = buf.readBoolean();
-        paramaters = new int[type.getArgumentCount()];
-        for (int i = 0; i < paramaters.length; i++) {
-            paramaters[i] = buf.readInt();
+        parameters = new int[type.getArgumentCount()];
+        for (int i = 0; i < parameters.length; i++) {
+            parameters[i] = buf.readInt();
         }
     }
 
@@ -48,17 +48,17 @@ public class MessageParticleVanilla implements IMessage {
         buf.writeDouble(dz);
         buf.writeBoolean(ignoreRange);
         for (int i = 0; i < type.getArgumentCount(); i++) {
-            if (paramaters == null || paramaters.length <= i) {
+            if (parameters == null || parameters.length <= i) {
                 buf.writeInt(0);
             } else {
-                buf.writeInt(paramaters[i]);
+                buf.writeInt(parameters[i]);
             }
         }
     }
 
     @SideOnly(Side.CLIENT)
     private void spawn(World world) {
-        world.spawnParticle(type, ignoreRange, x, y, z, dx, dy, dz, paramaters);
+        world.spawnParticle(type, ignoreRange, x, y, z, dx, dy, dz, parameters);
     }
 
     private static final BiConsumer<MessageParticleVanilla, MessageContext> HANDLER_CLIENT = (message, ctx) ->

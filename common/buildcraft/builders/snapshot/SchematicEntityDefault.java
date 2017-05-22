@@ -29,8 +29,6 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
     private BlockPos hangingPos;
     private EnumFacing hangingFacing;
     private Rotation entityRotation = Rotation.NONE;
-    private final List<ItemStack> requiredItems = new ArrayList<>();
-    private final List<FluidStack> requiredFluids = new ArrayList<>();
 
     public static boolean predicate(SchematicEntityContext context) {
         ResourceLocation registryName = EntityList.getKey(context.entity);
@@ -39,8 +37,8 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
             RulesLoader.getRules(context.entity).stream().anyMatch(rule -> rule.capture);
     }
 
-    @SuppressWarnings({"unused", "WeakerAccess"})
-    private void setInit(SchematicEntityContext context, Set<JsonRule> rules) {
+    @Override
+    public void init(SchematicEntityContext context) {
         entityNbt = context.entity.serializeNBT();
         pos = context.entity.getPositionVector().subtract(new Vec3d(context.basePos));
         if (context.entity instanceof EntityHanging) {
@@ -53,9 +51,16 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
         }
     }
 
-    @SuppressWarnings({"unused", "WeakerAccess"})
-    protected void setRequired(SchematicEntityContext context, Set<JsonRule> rules) {
-        requiredItems.clear();
+    @Override
+    public Vec3d getPos() {
+        return pos;
+    }
+
+    @Nonnull
+    @Override
+    public List<ItemStack> computeRequiredItems(SchematicEntityContext context) {
+        Set<JsonRule> rules = RulesLoader.getRules(context.entity);
+        List<ItemStack> requiredItems = new ArrayList<>();
         if (rules.stream().noneMatch(rule -> rule.doNotCopyRequiredItemsFromBreakBlockDrops)) {
             if (context.world instanceof FakeWorld) {
                 requiredItems.addAll(((FakeWorld) context.world).killEntityAndGetDrops(context.entity));
@@ -69,33 +74,13 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
                 .flatMap(Collection::stream)
                 .forEach(requiredItems::add);
         }
-    }
-
-    @Override
-    public void init(SchematicEntityContext context) {
-        setInit(context, RulesLoader.getRules(context.entity));
-    }
-
-    @Override
-    public Vec3d getPos() {
-        return pos;
-    }
-
-    @Override
-    public void computeRequiredItemsAndFluids(SchematicEntityContext context) {
-        setRequired(context, RulesLoader.getRules(context.entity));
-    }
-
-    @Nonnull
-    @Override
-    public List<ItemStack> getRequiredItems() {
         return requiredItems;
     }
 
     @Nonnull
     @Override
-    public List<FluidStack> getRequiredFluids() {
-        return requiredFluids;
+    public List<FluidStack> computeRequiredFluids(SchematicEntityContext context) {
+        return Collections.emptyList();
     }
 
     @Override
@@ -106,8 +91,6 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
         schematicEntity.hangingPos = hangingPos.rotate(rotation);
         schematicEntity.hangingFacing = rotation.rotate(hangingFacing);
         schematicEntity.entityRotation = entityRotation.add(rotation);
-        schematicEntity.requiredItems.addAll(requiredItems);
-        schematicEntity.requiredFluids.addAll(requiredFluids);
         return schematicEntity;
     }
 
@@ -169,5 +152,33 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
         hangingPos = NBTUtil.getPosFromTag(nbt.getCompoundTag("hangingPos"));
         hangingFacing = NBTUtilBC.readEnum(nbt.getTag("hangingFacing"), EnumFacing.class);
         entityRotation = NBTUtilBC.readEnum(nbt.getTag("entityRotation"), Rotation.class);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        SchematicEntityDefault that = (SchematicEntityDefault) o;
+
+        return entityNbt.equals(that.entityNbt) &&
+            pos.equals(that.pos) &&
+            hangingPos.equals(that.hangingPos) &&
+            hangingFacing == that.hangingFacing &&
+            entityRotation == that.entityRotation;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = entityNbt.hashCode();
+        result = 31 * result + pos.hashCode();
+        result = 31 * result + hangingPos.hashCode();
+        result = 31 * result + hangingFacing.hashCode();
+        result = 31 * result + entityRotation.hashCode();
+        return result;
     }
 }
