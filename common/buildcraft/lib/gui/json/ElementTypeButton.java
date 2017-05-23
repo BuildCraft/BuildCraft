@@ -8,7 +8,7 @@ import buildcraft.lib.client.sprite.SpriteRaw;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.GuiSpriteScaled;
 import buildcraft.lib.gui.ISimpleDrawable;
-import buildcraft.lib.gui.button.GuiSpriteButton;
+import buildcraft.lib.gui.button.GuiButtonDrawable;
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.GuiUtil;
@@ -71,7 +71,7 @@ public class ElementTypeButton extends ElementType {
 
         ISimpleDrawable drEnabled = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.enabled");
         GuiRectangle rect = new GuiRectangle(posX, posY, sizeX, sizeY);
-        GuiSpriteButton.Builder buttonBuilder = new GuiSpriteButton.Builder(rect, drEnabled);
+        GuiButtonDrawable.Builder buttonBuilder = new GuiButtonDrawable.Builder(rect, drEnabled);
 
         buttonBuilder.active = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.active");
         buttonBuilder.hovered = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.hovered");
@@ -79,7 +79,7 @@ public class ElementTypeButton extends ElementType {
         buttonBuilder.disabled = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.disabled");
         buttonBuilder.disabledActive = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.active_disabled");
 
-        GuiSpriteButton button = new GuiSpriteButton(gui, json.name, gui.rootElement, buttonBuilder);
+        GuiButtonDrawable button = new GuiButtonDrawable(gui, json.name, gui.rootElement, buttonBuilder);
         String behaviour = json.properties.get("behaviour");
         if ("toggle".equalsIgnoreCase(behaviour)) {
             button.setBehaviour(IButtonBehaviour.TOGGLE);

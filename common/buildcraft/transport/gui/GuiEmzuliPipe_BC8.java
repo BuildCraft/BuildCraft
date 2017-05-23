@@ -32,7 +32,7 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> implement
     private static final GuiIcon ICON_BUTTON_DOWN = new GuiIcon(TEXTURE, SIZE_X, 20, 20, 20);
     private static final GuiIcon ICON_NO_PAINT = new GuiIcon(TEXTURE, SIZE_X, 40, 16, 16);
 
-    private final EnumMap<SlotIndex, GuiSpriteButton> colourButtons = new EnumMap<>(SlotIndex.class);
+    private final EnumMap<SlotIndex, GuiButtonDrawable> colourButtons = new EnumMap<>(SlotIndex.class);
 
     public GuiEmzuliPipe_BC8(EntityPlayer player, PipeBehaviourEmzuli behaviour) {
         super(new ContainerEmzuliPipe_BC8(player, behaviour));
@@ -51,7 +51,7 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> implement
     }
 
     private void addButton(SlotIndex index, int x, int y) {
-        GuiSpriteButton button = new GuiPaintButton(this, index.ordinal(), x + rootElement.getX(), y + rootElement.getY(), index);
+        GuiButtonDrawable button = new GuiPaintButton(this, index.ordinal(), x + rootElement.getX(), y + rootElement.getY(), index);
         button.registerListener(this);
         colourButtons.put(index, button);
         guiElements.add(button);
@@ -102,7 +102,7 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> implement
         fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), rootElement.getX() + 8, rootElement.getY() + ySize - 93, 0x404040);
     }
 
-    public final class GuiPaintButton extends GuiSpriteButton {
+    public final class GuiPaintButton extends GuiButtonDrawable {
         private final SlotIndex index;
 
         public GuiPaintButton(GuiBC8<?> gui, int buttonId, int x, int y, SlotIndex index) {

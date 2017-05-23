@@ -7,7 +7,7 @@ import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
-public class GuiSpriteButton extends GuiAbstractButton<GuiBC8<?>> {
+public class GuiButtonDrawable extends GuiAbstractButton<GuiBC8<?>> {
     private final ISimpleDrawable drEnabled, drActive, drHovered, drActiveHovered, drDisabled, drDisabledActive;
 
     public static class Builder {
@@ -25,7 +25,7 @@ public class GuiSpriteButton extends GuiAbstractButton<GuiBC8<?>> {
         }
     }
 
-    public GuiSpriteButton(GuiBC8<?> gui, String id, IGuiPosition parent, Builder args) {
+    public GuiButtonDrawable(GuiBC8<?> gui, String id, IGuiPosition parent, Builder args) {
         super(gui, id, args.rect.offset(parent));
         this.drEnabled = args.enabled;
         this.drActive = getFirstNonnull(args.active, args.enabled);
