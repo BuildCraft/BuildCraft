@@ -17,6 +17,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.lib.misc.data.InvalidInputDataException;
+
 public class GlobalSavedDataSnapshots {
     private static final Map<Side, GlobalSavedDataSnapshots> INSTANCES = new EnumMap<>(Side.class);
     public final List<Snapshot> snapshots = new ArrayList<>();
@@ -70,8 +72,8 @@ public class GlobalSavedDataSnapshots {
                 try {
                     NBTTagCompound nbt = CompressedStreamTools.read(snapshotFile);
                     snapshots.add(Snapshot.readFromNBT(nbt));
-                } catch (IOException io) {
-                    IOException ex = new IOException("Failed to read the snapshot file" + snapshotFile, io);
+                } catch (IOException e) {
+                    IOException ex = new IOException("Failed to read the snapshot " + snapshotFile, e);
                     ex.printStackTrace();
                 }
             }

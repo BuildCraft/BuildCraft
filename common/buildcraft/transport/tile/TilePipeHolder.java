@@ -34,7 +34,7 @@ import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.misc.data.IdAllocator;
-import buildcraft.lib.misc.data.LoadingException;
+import buildcraft.lib.misc.data.InvalidInputDataException;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.transport.pipe.Pipe;
@@ -125,7 +125,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                 if (pipe.flow instanceof IFlowItems) {
                     eventBus.registerHandler(FilterEventHandler.class);
                 }
-            } catch (LoadingException e) {
+            } catch (InvalidInputDataException e) {
                 // Unfortunately we can't throw an exception because then this tile won't persist :/
                 e.printStackTrace();
             }

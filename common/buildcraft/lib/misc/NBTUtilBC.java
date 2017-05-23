@@ -34,7 +34,7 @@ import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCLog;
 
-import buildcraft.lib.misc.data.LoadingException;
+import buildcraft.lib.misc.data.InvalidInputDataException;
 
 public final class NBTUtilBC {
     /** Deactivate constructor */
@@ -230,13 +230,13 @@ public final class NBTUtilBC {
     }
 
     /** @deprecated Use {@link NBTUtil#readBlockState(NBTTagCompound)} instead! */
-    public static IBlockState readEntireBlockState(NBTTagCompound nbt) throws LoadingException {
+    public static IBlockState readEntireBlockState(NBTTagCompound nbt) throws InvalidInputDataException {
         if (nbt.hasNoTags()) {
             return Blocks.AIR.getDefaultState();
         }
         Block block = Block.getBlockFromName(nbt.getString("block"));
         if (block == null || block == Blocks.AIR) {
-            throw new LoadingException("Unknown block " + nbt.getString("block"));
+            throw new InvalidInputDataException("Unknown block " + nbt.getString("block"));
         }
         return readBlockStateProperties(block.getDefaultState(), nbt.getCompoundTag("state"));
     }

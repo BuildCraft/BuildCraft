@@ -22,7 +22,7 @@ import buildcraft.api.transport.pipe.IPipeRegistry;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.item.ItemManager;
-import buildcraft.lib.misc.data.LoadingException;
+import buildcraft.lib.misc.data.InvalidInputDataException;
 import buildcraft.transport.item.ItemPipeHolder;
 
 public enum PipeRegistry implements IPipeRegistry {
@@ -67,10 +67,10 @@ public enum PipeRegistry implements IPipeRegistry {
     }
 
     @Nonnull
-    public PipeDefinition loadDefinition(String identifier) throws LoadingException {
+    public PipeDefinition loadDefinition(String identifier) throws InvalidInputDataException {
         PipeDefinition def = getDefinition(new ResourceLocation(identifier));
         if (def == null) {
-            throw new LoadingException("Unknown pipe defintion " + identifier);
+            throw new InvalidInputDataException("Unknown pipe defintion " + identifier);
         }
         return def;
     }

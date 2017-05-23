@@ -9,6 +9,8 @@ import buildcraft.builders.snapshot.SchematicBlockManager;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.data.InvalidInputDataException;
+
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
@@ -100,15 +102,23 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
                 player.sendMessage(new TextComponentString("Not an air block @" + placePos));
                 return EnumActionResult.FAIL;
             }
-            ISchematicBlock<?> schematicBlock = SchematicBlockManager.readFromNBT(
-                    NBTUtilBC.getItemData(stack).getCompoundTag("schematic")
-            );
-            // TODO: extract required items and fluids from player's inventory
-            if (!schematicBlock.isBuilt(world, placePos) &&
-                    schematicBlock.canBuild(world, placePos) &&
-                    schematicBlock.build(world, placePos)) {
-                return EnumActionResult.SUCCESS;
-            } else {
+            ISchematicBlock<?> schematicBlock;
+            try {
+                schematicBlock = SchematicBlockManager.readFromNBT(
+                        NBTUtilBC.getItemData(stack).getCompoundTag("schematic")
+                );
+
+                // TODO: extract required items and fluids from player's inventory
+                if (!schematicBlock.isBuilt(world, placePos) &&
+                        schematicBlock.canBuild(world, placePos) &&
+                        schematicBlock.build(world, placePos)) {
+                    return EnumActionResult.SUCCESS;
+                } else {
+                    return EnumActionResult.FAIL;
+                } 
+            } catch (InvalidInputDataException e) {
+                player.sendMessage(new TextComponentString("Invalid schematic: " + e.getMessage()));
+                e.printStackTrace();
                 return EnumActionResult.FAIL;
             }
         }

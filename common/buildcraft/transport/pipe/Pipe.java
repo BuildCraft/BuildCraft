@@ -32,7 +32,7 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.data.LoadingException;
+import buildcraft.lib.misc.data.InvalidInputDataException;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.client.model.key.PipeModelKey;
 
@@ -61,7 +61,7 @@ public final class Pipe implements IPipe, IDebuggable {
 
     // read + write
 
-    public Pipe(IPipeHolder holder, NBTTagCompound nbt) throws LoadingException {
+    public Pipe(IPipeHolder holder, NBTTagCompound nbt) throws InvalidInputDataException {
         this.holder = holder;
         this.colour = NBTUtilBC.readEnum(nbt.getTag("col"), EnumDyeColor.class);
         this.definition = PipeRegistry.INSTANCE.loadDefinition(nbt.getString("def"));
@@ -84,7 +84,7 @@ public final class Pipe implements IPipe, IDebuggable {
         this.holder = holder;
         try {
             this.definition = PipeRegistry.INSTANCE.loadDefinition(buffer.readString(256));
-        } catch (LoadingException e) {
+        } catch (InvalidInputDataException e) {
             throw new IOException(e);
         }
         this.behaviour = definition.logicConstructor.createBehaviour(this);

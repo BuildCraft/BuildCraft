@@ -6,11 +6,14 @@
 
 package buildcraft.builders.snapshot;
 
-import buildcraft.api.schematics.ISchematicBlock;
-import buildcraft.api.schematics.SchematicBlockContext;
-import buildcraft.api.schematics.SchematicBlockFactory;
-import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Lists;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -18,11 +21,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import java.util.List;
+import net.minecraftforge.fluids.FluidStack;
+
+import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.api.schematics.SchematicBlockContext;
+import buildcraft.api.schematics.SchematicBlockFactory;
+import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
+
+import buildcraft.lib.misc.data.InvalidInputDataException;
 
 public class SchematicBlockManager {
     public static ISchematicBlock<?> getSchematicBlock(SchematicBlockContext context) {
@@ -109,12 +116,19 @@ public class SchematicBlockManager {
     }
 
     @Nonnull
-    public static ISchematicBlock<?> readFromNBT(NBTTagCompound schematicBlockTag) {
-        ISchematicBlock<?> schematicBlock = SchematicBlockFactoryRegistry
-            .getFactoryByName(new ResourceLocation(schematicBlockTag.getString("name")))
-            .supplier
-            .get();
-        schematicBlock.deserializeNBT(schematicBlockTag.getCompoundTag("data"));
-        return schematicBlock;
+    public static ISchematicBlock<?> readFromNBT(NBTTagCompound schematicBlockTag) throws InvalidInputDataException {
+        ResourceLocation name = new ResourceLocation(schematicBlockTag.getString("name"));
+        SchematicBlockFactory<?> factory = SchematicBlockFactoryRegistry.getFactoryByName(name);
+        if (factory == null) {
+            throw new InvalidInputDataException("Unknown schematic type " + name);
+        }
+        ISchematicBlock<?> schematicBlock = factory.supplier.get();
+        NBTTagCompound data = schematicBlockTag.getCompoundTag("data");
+        try {
+            schematicBlock.deserializeNBT(data);
+            return schematicBlock;
+        } catch (Exception e) {
+            throw new InvalidInputDataException("Failed to load the schematic from " + data, e);
+        }
     }
 }

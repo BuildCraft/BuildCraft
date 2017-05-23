@@ -6,20 +6,23 @@
 
 package buildcraft.lib.misc.data;
 
-public class LoadingException extends Exception {
+import java.io.IOException;
+
+/** Indicates that we failed to load from NBT or some other file. */
+public class InvalidInputDataException extends IOException {
     private static final long serialVersionUID = -3439641111545783074L;
 
-    public LoadingException() {}
+    public InvalidInputDataException() {}
 
-    public LoadingException(String message) {
+    public InvalidInputDataException(String message) {
         super(message);
     }
 
-    public LoadingException(Throwable cause) {
+    public InvalidInputDataException(Throwable cause) {
         super(cause);
     }
 
-    public LoadingException(String message, Throwable cause) {
+    public InvalidInputDataException(String message, Throwable cause) {
         super(message, cause);
     }
 }

@@ -6,11 +6,14 @@
 
 package buildcraft.builders.snapshot;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.data.InvalidInputDataException;
 import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
@@ -24,7 +27,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
+public abstract class Snapshot {
     public Header header = new Snapshot.Header();
     public BlockPos size;
     public EnumFacing facing;
@@ -55,13 +58,17 @@ public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
         return nbt;
     }
 
-    public static Snapshot readFromNBT(NBTTagCompound nbt) {
-        Snapshot snapshot = Snapshot.create(NBTUtilBC.readEnum(nbt.getTag("type"), EnumSnapshotType.class));
+    public static Snapshot readFromNBT(NBTTagCompound nbt) throws InvalidInputDataException {
+        NBTBase tag = nbt.getTag("type");
+        EnumSnapshotType type = NBTUtilBC.readEnum(tag, EnumSnapshotType.class);
+        if (type == null) {
+            throw new InvalidInputDataException("Unknown snapshot type " + tag);
+        }
+        Snapshot snapshot = Snapshot.create(type);
         snapshot.deserializeNBT(nbt);
         return snapshot;
     }
 
-    @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag("header", header.serializeNBT());
@@ -71,8 +78,7 @@ public abstract class Snapshot implements INBTSerializable<NBTTagCompound> {
         return nbt;
     }
 
-    @Override
-    public void deserializeNBT(NBTTagCompound nbt) {
+    public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
         header.deserializeNBT(nbt.getCompoundTag("header"));
         size = NBTUtil.getPosFromTag(nbt.getCompoundTag("size"));
         facing = NBTUtilBC.readEnum(nbt.getTag("facing"), EnumFacing.class);
