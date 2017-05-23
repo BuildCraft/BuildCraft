@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.BCItems;
@@ -245,6 +246,7 @@ public class BCTransportRecipes {
 
         if (BCTransportItems.plugFacade != null) {
             AssemblyRecipeRegistry.INSTANCE.addRecipeProvider(FacadeAssemblyRecipes.INSTANCE);
+            RecipeSorter.register("buildcraftlib:facade_swap", FacadeSwapRecipe.class, RecipeSorter.Category.SHAPELESS, "before:minecraft:shapeless");
             GameRegistry.addRecipe(FacadeSwapRecipe.INSTANCE);
         }
     }
