@@ -1,8 +1,6 @@
-/*
- * Copyright (c) 2017 SpaceToad and the BuildCraft team
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
- */
+/* Copyright (c) 2017 SpaceToad and the BuildCraft team This Source Code Form is subject to the terms of the Mozilla
+ * Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at
+ * https://mozilla.org/MPL/2.0/ */
 
 package buildcraft.transport.block;
 
@@ -300,7 +298,12 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         if (tile == null) {
             return null;
         }
-        int part = Minecraft.getMinecraft().objectMouseOver.subHit;
+        RayTraceResult trace = Minecraft.getMinecraft().objectMouseOver;
+        if (trace == null || trace.subHit < 0 || !pos.equals(trace.getBlockPos())) {
+            // Perhaps we aren't the object the mouse is over
+            return FULL_BLOCK_AABB;
+        }
+        int part = trace.subHit;
         AxisAlignedBB aabb = null;
         if (part == 0) {
             aabb = BOX_CENTER;
