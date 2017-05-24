@@ -9,6 +9,7 @@ package buildcraft.builders.snapshot;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.FakePlayerUtil;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.item.ItemStack;
@@ -287,7 +288,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         }
 
         public BreakTask(PacketBufferBC buffer) {
-            pos = buffer.readBlockPos();
+            pos = MessageUtil.readBlockPos(buffer);
             power = buffer.readLong();
         }
 
@@ -312,7 +313,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         }
 
         public void writePayload(PacketBufferBC buffer) {
-            buffer.writeBlockPos(pos);
+            MessageUtil.writeBlockPos(buffer, pos);
             buffer.writeLong(power);
         }
     }
@@ -329,7 +330,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         }
 
         public PlaceTask(PacketBufferBC buffer) {
-            pos = buffer.readBlockPos();
+            pos = MessageUtil.readBlockPos(buffer);
             items = IntStream.range(0, buffer.readInt()).mapToObj(j -> {
                 try {
                     return buffer.readItemStack();
@@ -369,7 +370,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         }
 
         public void writePayload(PacketBufferBC buffer) {
-            buffer.writeBlockPos(pos);
+            MessageUtil.writeBlockPos(buffer, pos);
             buffer.writeInt(items.size());
             items.forEach(buffer::writeItemStack);
             buffer.writeLong(power);

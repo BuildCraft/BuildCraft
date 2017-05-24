@@ -49,6 +49,7 @@ import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.fluid.TankManager;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.Box;
@@ -220,7 +221,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
             if (id == NET_RENDER_DATA) {
                 buffer.writeInt(path == null ? 0 : path.size());
                 if (path != null) {
-                    path.forEach(buffer::writeBlockPos);
+                    path.forEach((p) -> MessageUtil.writeBlockPos(buffer, p));
                 }
                 buffer.writeBoolean(snapshotType != null);
                 if (snapshotType != null) {
@@ -252,7 +253,9 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                 path = new ArrayList<>();
                 int pathSize = buffer.readInt();
                 if (pathSize != 0) {
-                    Stream.generate(buffer::readBlockPos).limit(pathSize).forEach(path::add);
+                    for (int i =0; i < pathSize; i++) {
+                        path.add(MessageUtil.readBlockPos(buffer));
+                    }
                 } else {
                     path = null;
                 }

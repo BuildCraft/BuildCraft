@@ -9,7 +9,6 @@ package buildcraft.lib.misc;
 import java.util.EnumSet;
 import java.util.UUID;
 
-import buildcraft.lib.net.MessageManager;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.block.Block;
@@ -19,7 +18,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -31,6 +29,7 @@ import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.misc.data.DelayedList;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
 
 import io.netty.buffer.ByteBuf;
@@ -81,15 +80,9 @@ public class MessageUtil {
     }
 
     public static void writeBooleanArray(PacketBuffer buf, boolean[] bool) {
-        int byteLength = MathHelper.ceil(bool.length / 8.0);
-        for (int b = 0; b < byteLength; b++) {
-            short total = 0;
-            for (int i = 0; i < 8 && i + b * 8 < bool.length; i++) {
-                if (bool[i + b * 8]) {
-                    total |= 1 << i;
-                }
-            }
-            buf.writeByte(total);
+        PacketBufferBC bufBc = PacketBufferBC.asPacketBufferBc(buf);
+        for (boolean b : bool) {
+            bufBc.writeBoolean(b);
         }
     }
 
@@ -100,27 +93,9 @@ public class MessageUtil {
     }
 
     public static void readBooleanArray(PacketBuffer buf, boolean[] into) {
-        int bytes = MathHelper.ceil(into.length / 8.0);
-        for (int b = 0; b < bytes; b++) {
-            short packed = buf.readUnsignedByte();
-            for (int i = 0; i < 8 && i + b * 8 < into.length; i++) {
-                int mask = 1 << i;
-                into[i + b * 8] = (packed & mask) == mask;
-            }
-        }
-    }
-
-    public static void writeNullableBlockPos(PacketBuffer buffer, BlockPos pos) {
-        if (pos != null) {
-            buffer.writeBlockPos(pos);
-        }
-    }
-
-    public static BlockPos readNullableBlockPos(PacketBuffer buffer, boolean exists) {
-        if (exists) {
-            return buffer.readBlockPos();
-        } else {
-            return null;
+        PacketBufferBC bufBc = PacketBufferBC.asPacketBufferBc(buf);
+        for (int i = 0; i < into.length; i++) {
+            into[i] = bufBc.readBoolean();
         }
     }
 
@@ -131,7 +106,9 @@ public class MessageUtil {
         }
         writeBooleanArray(buffer, existsArray);
         for (BlockPos pos : arr) {
-            writeNullableBlockPos(buffer, pos);
+            if (pos != null) {
+                MessageUtil.writeBlockPos(buffer, pos);
+            }
         }
     }
 
@@ -139,9 +116,21 @@ public class MessageUtil {
         BlockPos[] arr = new BlockPos[length];
         boolean[] existsArray = readBooleanArray(buffer, length);
         for (int i = 0; i < length; i++) {
-            arr[i] = readNullableBlockPos(buffer, existsArray[i]);
+            if (existsArray[i]) {
+                arr[i] = MessageUtil.readBlockPos(buffer);
+            }
         }
         return arr;
+    }
+
+    public static void writeBlockPos(PacketBuffer buffer, BlockPos pos) {
+        buffer.writeVarInt(pos.getX());
+        buffer.writeVarInt(pos.getY());
+        buffer.writeVarInt(pos.getZ());
+    }
+
+    public static BlockPos readBlockPos(PacketBuffer buffer) {
+        return new BlockPos(buffer.readVarInt(), buffer.readVarInt(), buffer.readVarInt());
     }
 
     public static void writeVec3d(PacketBuffer buffer, Vec3d vec) {

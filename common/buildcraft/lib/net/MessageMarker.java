@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import buildcraft.lib.BCLibProxy;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -22,6 +21,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import buildcraft.api.core.BCLog;
 
+import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.MessageUtil;
 
@@ -39,11 +39,10 @@ public class MessageMarker implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        PacketBuffer packet = new PacketBuffer(buf);
-        boolean[] flags = MessageUtil.readBooleanArray(packet, 3);
-        add = flags[0];
-        multiple = flags[1];
-        connection = flags[2];
+        PacketBufferBC packet = PacketBufferBC.asPacketBufferBc(buf);
+        add = packet.readBoolean();
+        multiple = packet.readBoolean();
+        connection = packet.readBoolean();
         cacheId = packet.readShort();
         if (multiple) {
             count = packet.readShort();
@@ -51,7 +50,7 @@ public class MessageMarker implements IMessage {
             count = 1;
         }
         for (int i = 0; i < count; i++) {
-            positions.add(packet.readBlockPos());
+            positions.add(MessageUtil.readBlockPos(packet));
         }
     }
 
@@ -60,14 +59,15 @@ public class MessageMarker implements IMessage {
         count = positions.size();
         multiple = count != 1;
         PacketBuffer packet = new PacketBuffer(buf);
-        boolean[] flags = {add, multiple, connection};
-        MessageUtil.writeBooleanArray(packet, flags);
+        packet.writeBoolean(add);
+        packet.writeBoolean(multiple);
+        packet.writeBoolean(connection);
         packet.writeShort(cacheId);
         if (multiple) {
             packet.writeShort(count);
         }
-        for (int i = 0; i < count; i++) {
-            packet.writeBlockPos(positions.get(i));
+        for (BlockPos pos : positions) {
+            MessageUtil.writeBlockPos(packet, pos);
         }
     }
 

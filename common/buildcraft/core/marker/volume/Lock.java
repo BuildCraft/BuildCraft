@@ -8,6 +8,7 @@ package buildcraft.core.marker.volume;
 
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.block.Block;
@@ -138,13 +139,13 @@ public class Lock {
 
             @Override
             public void toBytes(PacketBuffer buf) {
-                buf.writeBlockPos(pos);
+                MessageUtil.writeBlockPos(buf, pos);
                 buf.writeString(Block.REGISTRY.getNameForObject(block).toString());
             }
 
             @Override
             public void fromBytes(PacketBuffer buf) {
-                pos = buf.readBlockPos();
+                pos = MessageUtil.readBlockPos(buf);
                 block = Block.REGISTRY.getObject(new ResourceLocation(buf.readString(1024)));
             }
 

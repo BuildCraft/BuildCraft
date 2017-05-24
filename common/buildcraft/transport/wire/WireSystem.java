@@ -33,6 +33,8 @@ import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeApi;
 
+import buildcraft.lib.compat.CompatManager;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.transport.plug.PluggableGate;
 
@@ -230,9 +232,9 @@ public class WireSystem {
             this.emitterSide = emitterSide;
         }
 
-        public WireElement(ByteBuf buf) {
+        public WireElement(PacketBuffer buf) {
             type = Type.values()[buf.readInt()];
-            blockPos = new PacketBuffer(buf).readBlockPos();
+            blockPos = MessageUtil.readBlockPos(buf);
             if (type == Type.WIRE_PART) {
                 wirePart = EnumWirePart.VALUES[buf.readInt()];
                 this.emitterSide = null;
@@ -260,9 +262,9 @@ public class WireSystem {
             }
         }
 
-        public void toBytes(ByteBuf buf) {
+        public void toBytes(PacketBuffer buf) {
             buf.writeInt(type.ordinal());
-            new PacketBuffer(buf).writeBlockPos(blockPos);
+            MessageUtil.writeBlockPos(buf, blockPos);
             if (type == Type.WIRE_PART) {
                 assert wirePart != null;
                 buf.writeInt(wirePart.ordinal());

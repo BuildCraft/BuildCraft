@@ -39,6 +39,7 @@ import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.BoxIterator;
@@ -204,7 +205,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             blueprintScannedData[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = index;
         }
 
-        createAndSendMessage(NET_SCAN, buffer -> buffer.writeBlockPos(worldScanPos));
+        createAndSendMessage(NET_SCAN, buffer -> MessageUtil.writeBlockPos(buffer, worldScanPos));
 
         sendNetworkUpdate(NET_RENDER_DATA);
 
@@ -300,7 +301,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             } else if (id == NET_BOX) {
                 box.readData(buffer);
             } else if (id == NET_SCAN) {
-                BlockPos pos = buffer.readBlockPos();
+                BlockPos pos = MessageUtil.readBlockPos(buffer);
                 double x = pos.getX() + 0.5;
                 double y = pos.getY() + 0.5;
                 double z = pos.getZ() + 0.5;

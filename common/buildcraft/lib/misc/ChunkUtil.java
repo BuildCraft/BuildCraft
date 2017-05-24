@@ -6,6 +6,7 @@
 
 package buildcraft.lib.misc;
 
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -13,11 +14,15 @@ import net.minecraft.world.chunk.Chunk;
 public class ChunkUtil {
     private static final ThreadLocal<Chunk> lastChunk = new ThreadLocal<>();
 
-    public static Chunk getChunk(World world, ChunkPos pos) {
-        return getChunk(world, pos.chunkXPos, pos.chunkZPos);
+    public static Chunk getChunk(World world, BlockPos pos, boolean force) {
+        return getChunk(world, pos.getX() >> 4, pos.getZ() >> 4, force);
     }
 
-    public static Chunk getChunk(World world, int x, int z) {
+    public static Chunk getChunk(World world, ChunkPos pos, boolean force) {
+        return getChunk(world, pos.chunkXPos, pos.chunkZPos, force);
+    }
+
+    public static Chunk getChunk(World world, int x, int z, boolean force) {
         Chunk chunk = lastChunk.get();
 
         if (chunk != null) {
@@ -30,7 +35,11 @@ public class ChunkUtil {
             }
         }
 
-        chunk = world.getChunkProvider().getLoadedChunk(x, z);
+        if (force) {
+            chunk = world.getChunkProvider().provideChunk(x, z);
+        } else {
+            chunk = world.getChunkProvider().getLoadedChunk(x, z);
+        }
 
         if (chunk != null) {
             lastChunk.set(chunk);

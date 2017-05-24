@@ -184,7 +184,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
                 battery.writeToBuffer(buffer);
                 buffer.writeBoolean(targetPos != null);
                 if (targetPos != null) {
-                    buffer.writeBlockPos(targetPos);
+                    MessageUtil.writeBlockPos(buffer, targetPos);
                 }
                 buffer.writeBoolean(laserPos != null);
                 if (laserPos != null) {
@@ -202,7 +202,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             if (id == NET_RENDER_DATA) {
                 battery.readFromBuffer(buffer);
                 if (buffer.readBoolean()) {
-                    targetPos = buffer.readBlockPos();
+                    targetPos = MessageUtil.readBlockPos(buffer);
                 } else {
                     targetPos = null;
                 }

@@ -21,6 +21,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.BCLibProxy;
+import buildcraft.lib.compat.CompatManager;
+import buildcraft.lib.misc.MessageUtil;
 
 import io.netty.buffer.ByteBuf;
 
@@ -42,19 +44,17 @@ public class MessageUpdateTile implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        PacketBuffer buffer = new PacketBuffer(buf);
-        this.pos = buffer.readBlockPos();
-        int size = buffer.readUnsignedShort();
-        payload = new PacketBufferBC(buffer.readBytes(size));
+        this.pos = MessageUtil.readBlockPos(new PacketBuffer(buf));
+        int size = buf.readUnsignedShort();
+        payload = new PacketBufferBC(buf.readBytes(size));
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        PacketBuffer buffer = new PacketBuffer(buf);
-        buffer.writeBlockPos(pos);
+        MessageUtil.writeBlockPos(new PacketBuffer(buf), pos);
         int length = payload.readableBytes();
-        buffer.writeShort(length);
-        buffer.writeBytes(payload, 0, length);
+        buf.writeShort(length);
+        buf.writeBytes(payload, 0, length);
     }
 
     public static final IMessageHandler<MessageUpdateTile, IMessage> HANDLER = (message, ctx) -> {
