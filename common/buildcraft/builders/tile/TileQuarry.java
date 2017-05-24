@@ -351,7 +351,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         if ((boxIterator == null || drillPos == null) && miningBox.isInitialized()) {
             boxIterator = new BoxIterator(miningBox, AxisOrder.getFor(EnumAxisOrder.XZY, AxisOrder.Inversion.NNN), true);
             while (world.isAirBlock(boxIterator.getCurrent()) || canSkip(boxIterator.getCurrent())) {
-                boxIterator.advance();
+               if (boxIterator.advance() == null) {
+                   break;
+               }
             }
             drillPos = new Vec3d(miningBox.closestInsideTo(pos));
         }
@@ -369,7 +371,12 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 }
             } else {
                 found = true;
-                currentTask = new TaskMoveDrill(drillPos, new Vec3d(boxIterator.advance()));
+                BlockPos next = boxIterator.advance();
+                if (next == null) {
+                    currentTask = null;
+                } else {
+                    currentTask = new TaskMoveDrill(drillPos, new Vec3d(next));
+                }
             }
 
             if (found) {

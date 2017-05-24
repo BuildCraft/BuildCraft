@@ -9,6 +9,7 @@ package buildcraft.lib.misc.data;
 import java.util.Iterator;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -109,6 +110,8 @@ public class BoxIterator implements Iterator<BlockPos> {
         return order;
     }
 
+    /** Moves on to the next block. Unlike {@link #next()} this returns the one AFTER that one, so you cannot use
+     * {@link #hasNext()}! */
     public BlockPos advance() {
         if (current == null) {
             current = getStart();
