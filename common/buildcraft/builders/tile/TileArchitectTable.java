@@ -251,11 +251,11 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         }
         if (snapshotType == EnumSnapshotType.BLUEPRINT) {
             // noinspection ConstantConditions
-            ((Blueprint) snapshot).palette = blueprintScannedPalette;
+            ((Blueprint) snapshot).palette.addAll(blueprintScannedPalette);
             // noinspection ConstantConditions
             ((Blueprint) snapshot).data = blueprintScannedData;
             // noinspection ConstantConditions
-            ((Blueprint) snapshot).entities = new ArrayList<>(blueprintScannedEntities);
+            ((Blueprint) snapshot).entities.addAll(blueprintScannedEntities);
         }
         snapshot.header.id = UUID.randomUUID();
         snapshot.header.owner = getOwner().getId();

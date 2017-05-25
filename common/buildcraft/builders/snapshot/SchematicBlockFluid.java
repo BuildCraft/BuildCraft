@@ -6,6 +6,7 @@
 
 package buildcraft.builders.snapshot;
 
+import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.SchematicBlockContext;
 import buildcraft.lib.misc.BlockUtil;
@@ -127,7 +128,7 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) {
+    public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
         blockState = NBTUtil.readBlockState(nbt.getCompoundTag("blockState"));
         isFlowing = nbt.getBoolean("isFlowing");
     }

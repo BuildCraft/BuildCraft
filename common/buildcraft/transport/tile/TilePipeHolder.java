@@ -34,7 +34,7 @@ import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.misc.data.IdAllocator;
-import buildcraft.lib.misc.data.InvalidInputDataException;
+import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.transport.pipe.Pipe;

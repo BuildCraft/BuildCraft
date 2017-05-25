@@ -9,7 +9,7 @@ import buildcraft.builders.snapshot.SchematicBlockManager;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.data.InvalidInputDataException;
+import buildcraft.api.core.InvalidInputDataException;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

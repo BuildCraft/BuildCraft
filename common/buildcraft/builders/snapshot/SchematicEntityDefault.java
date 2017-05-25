@@ -6,6 +6,7 @@
 
 package buildcraft.builders.snapshot;
 
+import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicEntity;
 import buildcraft.api.schematics.SchematicEntityContext;
 import buildcraft.lib.misc.NBTUtilBC;
@@ -152,7 +153,7 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) {
+    public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
         entityNbt = nbt.getCompoundTag("entityNbt");
         pos = NBTUtilBC.readVec3d(nbt.getTag("pos"));
         hangingPos = NBTUtil.getPosFromTag(nbt.getCompoundTag("hangingPos"));

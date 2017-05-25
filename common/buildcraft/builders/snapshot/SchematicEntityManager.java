@@ -6,6 +6,7 @@
 
 package buildcraft.builders.snapshot;
 
+import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicEntity;
 import buildcraft.api.schematics.SchematicEntityContext;
 import buildcraft.api.schematics.SchematicEntityFactory;
@@ -95,12 +96,19 @@ public class SchematicEntityManager {
     }
 
     @Nonnull
-    public static ISchematicEntity<?> readFromNBT(NBTTagCompound schematicEntityTag) {
-        ISchematicEntity<?> schematicEntity = SchematicEntityFactoryRegistry
-            .getFactoryByName(new ResourceLocation(schematicEntityTag.getString("name")))
-            .supplier
-            .get();
-        schematicEntity.deserializeNBT(schematicEntityTag.getCompoundTag("data"));
-        return schematicEntity;
+    public static ISchematicEntity<?> readFromNBT(NBTTagCompound schematicEntityTag) throws InvalidInputDataException {
+        ResourceLocation name = new ResourceLocation(schematicEntityTag.getString("name"));
+        SchematicEntityFactory<?> factory = SchematicEntityFactoryRegistry.getFactoryByName(name);
+        if (factory == null) {
+            throw new InvalidInputDataException("Unknown schematic type " + name);
+        }
+        ISchematicEntity<?> schematicEntity = factory.supplier.get();
+        NBTTagCompound data = schematicEntityTag.getCompoundTag("data");
+        try {
+            schematicEntity.deserializeNBT(data);
+            return schematicEntity;
+        } catch (InvalidInputDataException e) {
+            throw new InvalidInputDataException("Failed to load the schematic from " + data, e);
+        }
     }
 }

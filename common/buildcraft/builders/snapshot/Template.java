@@ -6,10 +6,9 @@
 
 package buildcraft.builders.snapshot;
 
+import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.lib.misc.data.Box;
-import buildcraft.lib.misc.data.InvalidInputDataException;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -48,6 +47,12 @@ public class Template extends Snapshot {
         super.deserializeNBT(nbt);
         data = new boolean[size.getX()][size.getY()][size.getZ()];
         byte[] serializedData = nbt.getByteArray("data");
+        if (serializedData.length != size.getX() * size.getY() * size.getZ()) {
+            throw new InvalidInputDataException(
+                "Serialized data has length of " + serializedData.length +
+                    ", but we expected " + size.getX() * size.getY() * size.getZ() + size.toString()
+            );
+        }
         int i = 0;
         for (int z = 0; z < size.getZ(); z++) {
             for (int y = 0; y < size.getY(); y++) {

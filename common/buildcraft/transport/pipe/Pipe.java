@@ -32,7 +32,7 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.data.InvalidInputDataException;
+import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.client.model.key.PipeModelKey;
 

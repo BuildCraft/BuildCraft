@@ -6,11 +6,10 @@
 
 package buildcraft.builders.snapshot;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StringUtilBC;
-import buildcraft.lib.misc.data.InvalidInputDataException;
+import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
@@ -163,16 +162,10 @@ public abstract class Snapshot {
 
             Header header = (Header) o;
 
-            if (!id.equals(header.id)) {
-                return false;
-            }
-            if (!owner.equals(header.owner)) {
-                return false;
-            }
-            if (!created.equals(header.created)) {
-                return false;
-            }
-            return name.equals(header.name);
+            return id.equals(header.id) &&
+                owner.equals(header.owner) &&
+                created.equals(header.created) &&
+                name.equals(header.name);
         }
 
         @Override

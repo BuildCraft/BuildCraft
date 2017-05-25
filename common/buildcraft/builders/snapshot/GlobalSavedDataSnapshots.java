@@ -17,8 +17,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.lib.misc.data.InvalidInputDataException;
-
 public class GlobalSavedDataSnapshots {
     private static final Map<Side, GlobalSavedDataSnapshots> INSTANCES = new EnumMap<>(Side.class);
     public final List<Snapshot> snapshots = new ArrayList<>();

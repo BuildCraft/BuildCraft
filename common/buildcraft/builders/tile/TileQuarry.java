@@ -318,7 +318,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
 
         if (breakPoses.size() > 0) {
-            double closestDistance = Integer.MAX_VALUE;
+            double closestDistance = Double.MAX_VALUE;
             BlockPos closestPos = null;
 
             for (BlockPos breakPos : breakPoses) {

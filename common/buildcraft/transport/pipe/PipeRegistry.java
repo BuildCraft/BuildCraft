@@ -22,7 +22,7 @@ import buildcraft.api.transport.pipe.IPipeRegistry;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.item.ItemManager;
-import buildcraft.lib.misc.data.InvalidInputDataException;
+import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.transport.item.ItemPipeHolder;
 
 public enum PipeRegistry implements IPipeRegistry {
