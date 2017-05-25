@@ -58,12 +58,12 @@ public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune implements
     @Override
     public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
         TileEntity tile = world.getTileEntity(pos);
+        NonNullList<ItemStack> toDrop = NonNullList.create();
         if (tile instanceof TileBC_Neptune) {
             TileBC_Neptune tileBC = (TileBC_Neptune) tile;
-            NonNullList<ItemStack> toDrop = NonNullList.create();
             tileBC.addDrops(toDrop, fortune);
-            return toDrop;
         }
-       return super.getDrops(world, pos, state, fortune);
+        toDrop.addAll(super.getDrops(world, pos, state, fortune));
+        return toDrop;
     }
 }
