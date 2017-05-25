@@ -26,7 +26,12 @@ public enum StripesHandlerShears implements IStripesHandlerItem {
     INSTANCE;
 
     @Override
-    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+    public boolean handle(World world,
+                          BlockPos pos,
+                          EnumFacing direction,
+                          ItemStack stack,
+                          EntityPlayer player,
+                          IStripesActivator activator) {
         if (!(stack.getItem() instanceof ItemShears)) {
             return false;
         }

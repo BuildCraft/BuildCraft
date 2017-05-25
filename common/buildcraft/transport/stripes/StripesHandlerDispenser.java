@@ -28,8 +28,8 @@ import buildcraft.api.transport.IStripesHandlerItem;
 public enum StripesHandlerDispenser implements IStripesHandlerItem {
     INSTANCE;
 
-    public static final List<Item> items = new ArrayList<>();
-    public static final List<Class<? extends Item>> itemClasses = new ArrayList<>();
+    public static final List<Item> ITEMS = new ArrayList<>();
+    public static final List<Class<? extends Item>> ITEM_CLASSES = new ArrayList<>();
 
     public class Source implements IBlockSource {
         private final World world;
@@ -80,13 +80,13 @@ public enum StripesHandlerDispenser implements IStripesHandlerItem {
     }
 
     private static boolean shouldHandle(ItemStack stack) {
-        if (items.contains(stack.getItem())) {
+        if (ITEMS.contains(stack.getItem())) {
             return true;
         }
 
         Class<?> c = stack.getItem().getClass();
         while (c != Item.class) {
-            if (items.contains(c)) {
+            if (ITEMS.contains(c)) {
                 return true;
             }
             c = c.getSuperclass();
@@ -95,7 +95,12 @@ public enum StripesHandlerDispenser implements IStripesHandlerItem {
     }
 
     @Override
-    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+    public boolean handle(World world,
+                          BlockPos pos,
+                          EnumFacing direction,
+                          ItemStack stack,
+                          EntityPlayer player,
+                          IStripesActivator activator) {
         if (!BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.containsKey(stack.getItem())) {
             return false;
         }

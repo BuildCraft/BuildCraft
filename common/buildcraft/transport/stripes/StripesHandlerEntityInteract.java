@@ -25,13 +25,18 @@ public enum StripesHandlerEntityInteract implements IStripesHandlerItem {
     INSTANCE;
 
     @Override
-    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        pos = pos.offset(direction);
-        AxisAlignedBB box = new AxisAlignedBB(pos, pos.add(1, 1, 1));
-        List<EntityLivingBase> livingEntities = world.getEntitiesWithinAABB(EntityLivingBase.class, box);
-        Collections.shuffle(livingEntities);
-        while (livingEntities.size() > 0) {
-            EntityLivingBase entity = livingEntities.remove(0);
+    public boolean handle(World world,
+                          BlockPos pos,
+                          EnumFacing direction,
+                          ItemStack stack,
+                          EntityPlayer player,
+                          IStripesActivator activator) {
+        List<EntityLivingBase> entities = world.getEntitiesWithinAABB(
+            EntityLivingBase.class,
+            new AxisAlignedBB(pos.offset(direction))
+        );
+        Collections.shuffle(entities);
+        for (EntityLivingBase entity : entities) {
             if (player.interactOn(entity, EnumHand.MAIN_HAND) == EnumActionResult.SUCCESS) {
                 return true;
             }

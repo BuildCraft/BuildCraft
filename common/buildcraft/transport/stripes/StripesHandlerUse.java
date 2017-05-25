@@ -24,13 +24,22 @@ import buildcraft.lib.misc.BlockUtil;
 public enum StripesHandlerUse implements IStripesHandlerItem {
     INSTANCE;
 
-    public static final List<Item> items = new ArrayList<>();
+    public static final List<Item> ITEMS = new ArrayList<>();
 
     @Override
-    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        if (!items.contains(stack.getItem())) {
-            return false;
-        }
-        return BlockUtil.useItemOnBlock(world, player, stack, pos.offset(direction), direction.getOpposite());
+    public boolean handle(World world,
+                          BlockPos pos,
+                          EnumFacing direction,
+                          ItemStack stack,
+                          EntityPlayer player,
+                          IStripesActivator activator) {
+        return ITEMS.contains(stack.getItem()) &&
+            BlockUtil.useItemOnBlock(
+                world,
+                player,
+                stack,
+                pos.offset(direction),
+                direction.getOpposite()
+            );
     }
 }

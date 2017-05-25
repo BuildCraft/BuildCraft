@@ -57,7 +57,12 @@ public enum StripesRegistry implements IStripesRegistry {
 
     /** @return True if a handler handled the itemstack, false otherwise (and so nothing has been done) */
     @Override
-    public boolean handleItem(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+    public boolean handleItem(World world,
+                              BlockPos pos,
+                              EnumFacing direction,
+                              ItemStack stack,
+                              EntityPlayer player,
+                              IStripesActivator activator) {
         for (HandlerPriority priority : PRIORITIES) {
             for (IStripesHandlerItem handler : itemHandlers.get(priority)) {
                 if (handler.handle(world, pos, direction, stack, player, activator)) {
@@ -70,7 +75,11 @@ public enum StripesRegistry implements IStripesRegistry {
 
     /** @return True if a handler broke a block, false otherwise (and so nothing has been done) */
     @Override
-    public boolean handleBlock(World world, BlockPos pos, EnumFacing direction, EntityPlayer player, IStripesActivator activator) {
+    public boolean handleBlock(World world,
+                               BlockPos pos,
+                               EnumFacing direction,
+                               EntityPlayer player,
+                               IStripesActivator activator) {
         for (HandlerPriority priority : PRIORITIES) {
             for (IStripesHandlerBlock handler : blockHandlers.get(priority)) {
                 if (handler.handle(world, pos, direction, player, activator)) {

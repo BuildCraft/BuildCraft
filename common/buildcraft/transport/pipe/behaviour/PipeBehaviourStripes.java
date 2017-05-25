@@ -6,21 +6,6 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
@@ -29,15 +14,35 @@ import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 import buildcraft.api.transport.pluggable.PipePluggable;
-
 import buildcraft.lib.misc.*;
 import buildcraft.transport.BCTransportStatements;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActivator, IMjRedstoneReceiver {
-    private final MjBattery mjBattery = new MjBattery(2 * MjAPI.MJ);
+    private final MjBattery battery = new MjBattery(256 * MjAPI.MJ);
 
     @Nullable
-    protected EnumFacing currentDir = null;
+    public EnumFacing direction = null;
+    private int progress;
 
     public PipeBehaviourStripes(IPipe pipe) {
         super(pipe);
@@ -45,40 +50,35 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
 
     public PipeBehaviourStripes(IPipe pipe, NBTTagCompound nbt) {
         super(pipe, nbt);
-        mjBattery.deserializeNBT(nbt.getCompoundTag("mjBattery"));
-        setCurrentDir(NBTUtilBC.readEnum(nbt.getTag("currentDir"), EnumFacing.class));
+        battery.deserializeNBT(nbt.getCompoundTag("battery"));
+        setDirection(NBTUtilBC.readEnum(nbt.getTag("direction"), EnumFacing.class));
     }
 
     @Override
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = super.writeToNbt();
-        nbt.setTag("mjBattery", mjBattery.serializeNBT());
-        nbt.setTag("currentDir", NBTUtilBC.writeEnum(getCurrentDir()));
+        nbt.setTag("battery", battery.serializeNBT());
+        nbt.setTag("direction", NBTUtilBC.writeEnum(direction));
         return nbt;
     }
 
     @Override
     public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) {
         super.readPayload(buffer, side, ctx);
-        currentDir = MessageUtil.readEnumOrNull(buffer, EnumFacing.class);
+        direction = MessageUtil.readEnumOrNull(buffer, EnumFacing.class);
     }
 
     @Override
     public void writePayload(PacketBuffer buffer, Side side) {
         super.writePayload(buffer, side);
-        MessageUtil.writeEnumOrNull(buffer, currentDir);
+        MessageUtil.writeEnumOrNull(buffer, direction);
     }
 
     // Sides
 
-    @Nullable
-    public EnumFacing getCurrentDir() {
-        return currentDir;
-    }
-
-    protected void setCurrentDir(@Nullable EnumFacing setTo) {
-        if (currentDir != setTo) {
-            this.currentDir = setTo;
+    private void setDirection(@Nullable EnumFacing newValue) {
+        if (direction != newValue) {
+            direction = newValue;
             if (!pipe.getHolder().getPipeWorld().isRemote) {
                 pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
             }
@@ -87,6 +87,7 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
 
     // Actions
 
+    @SuppressWarnings("unused")
     @PipeEventHandler
     public void addInternalActions(PipeEventStatement.AddActionInternal event) {
         for (EnumFacing face : EnumFacing.VALUES) {
@@ -108,12 +109,12 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
 
     @Override
     public long getPowerRequested() {
-        return MjAPI.MJ;
+        return battery.getCapacity() - battery.getStored();
     }
 
     @Override
     public long receivePower(long microJoules, boolean simulate) {
-        return mjBattery.addPowerChecking(microJoules, simulate);
+        return battery.addPowerChecking(microJoules, simulate);
     }
 
     // Stripes
@@ -125,33 +126,64 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
 
     @Override
     public void onTick() {
-        if (pipe.getHolder().getPipeWorld().isRemote) {
+        World world = pipe.getHolder().getPipeWorld();
+        BlockPos pos = pipe.getHolder().getPipePos();
+        if (world.isRemote) {
             return;
         }
-        int sides = 0;
-        EnumFacing dir = null;
-        for (EnumFacing face : EnumFacing.VALUES) {
-            if (pipe.isConnected(face)) {
-                sides++;
-                dir = face;
+        List<EnumFacing> connected = Arrays.stream(EnumFacing.VALUES)
+            .filter(pipe::isConnected)
+            .collect(Collectors.toList());
+        setDirection(connected.size() == 1 ? connected.get(0).getOpposite() : null);
+        battery.tick(world, pipe.getHolder().getPipePos());
+        if (direction != null && !world.isAirBlock(pos.offset(direction))) {
+            long target = BlockUtil.computeBlockBreakPower(world, pos.offset(direction));
+            if (progress < target) {
+                progress += battery.extractPower(
+                    0,
+                    Math.min(target - progress, MjAPI.MJ * 10)
+                );
+                if (progress > 0) {
+                    world.sendBlockBreakProgress(
+                        pos.offset(direction).hashCode(),
+                        pos.offset(direction),
+                        (int) (progress * 9 / target)
+                    );
+                }
+            } else {
+                BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(
+                    world,
+                    pos.offset(direction),
+                    world.getBlockState(pos.offset(direction)),
+                    FakePlayerUtil.INSTANCE.getFakePlayer(
+                        (WorldServer) world,
+                        pos,
+                        pipe.getHolder().getOwner()
+                    )
+                );
+                MinecraftForge.EVENT_BUS.post(breakEvent);
+                if (!breakEvent.isCanceled()) {
+                    Optional.ofNullable(
+                        BlockUtil.getItemStackFromBlock(
+                            (WorldServer) world,
+                            pos.offset(direction),
+                            pipe.getHolder().getOwner()
+                        )
+                    ).ifPresent(stacks -> stacks.forEach(stack -> sendItem(stack, direction)));
+                    world.sendBlockBreakProgress(pos.offset(direction).hashCode(), pos.offset(direction), -1);
+                    world.destroyBlock(pos.offset(direction), false);
+                }
+                progress = 0;
             }
-        }
-        if (sides == 1 && dir != null) {
-            setCurrentDir(dir.getOpposite());
         } else {
-            setCurrentDir(null);
-        }
-
-        mjBattery.tick(pipe.getHolder().getPipeWorld(), pipe.getHolder().getPipePos());
-        long potential = mjBattery.getStored();
-        if (potential > 0) {
-            // TODO: Break the block!
+            progress = 0;
         }
     }
 
+    @SuppressWarnings("unused")
     @PipeEventHandler
     public void onDrop(PipeEventItem.Drop event) {
-        if (currentDir == null) {
+        if (direction == null) {
             return;
         }
         IPipeHolder holder = pipe.getHolder();
@@ -161,12 +193,12 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
         player.inventory.clear();
         // set the main hand of the fake player to the stack
         player.inventory.setInventorySlotContents(player.inventory.currentItem, event.getStack());
-        if (PipeApi.stripeRegistry.handleItem(world, pos, currentDir, event.getStack(), player, this)) {
+        if (PipeApi.stripeRegistry.handleItem(world, pos, direction, event.getStack(), player, this)) {
             event.setStack(StackUtil.EMPTY);
             for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
                 ItemStack stack = player.inventory.removeStackFromSlot(i);
                 if (!stack.isEmpty()) {
-                    sendItem(stack, currentDir);
+                    sendItem(stack, direction);
                 }
             }
         }
@@ -186,5 +218,20 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
         } else {
             return false;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+        if (capability == MjAPI.CAP_REDSTONE_RECEIVER) {
+            return (T) this;
+        }
+        if (capability == MjAPI.CAP_RECEIVER) {
+            return (T) this;
+        }
+        if (capability == MjAPI.CAP_CONNECTOR) {
+            return (T) this;
+        }
+        return super.getCapability(capability, facing);
     }
 }

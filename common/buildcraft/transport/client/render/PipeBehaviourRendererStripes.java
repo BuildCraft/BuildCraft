@@ -20,7 +20,7 @@ public enum PipeBehaviourRendererStripes implements IPipeBehaviourRenderer<PipeB
 
     @Override
     public void render(PipeBehaviourStripes stripes, double x, double y, double z, float partialTicks, VertexBuffer vb) {
-        EnumFacing dir = stripes.getCurrentDir();
+        EnumFacing dir = stripes.direction;
         if (dir == null) return;
         MutableQuad[] quads = BCTransportModels.getStripesDynQuads(dir);
         vb.setTranslation(x, y, z);

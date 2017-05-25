@@ -19,18 +19,28 @@ public enum StripesHandlerPlaceBlock implements IStripesHandlerItem {
     INSTANCE;
 
     @Override
-    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+    public boolean handle(World world,
+                          BlockPos pos,
+                          EnumFacing direction,
+                          ItemStack stack,
+                          EntityPlayer player,
+                          IStripesActivator activator) {
         if (!(stack.getItem() instanceof ItemBlock)) {
             return false;
         }
-        pos = pos.offset(direction);
-        if (!world.isAirBlock(pos)) {
+        if (!world.isAirBlock(pos.offset(direction))) {
             return false;
         }
-
-        ItemBlock ib = (ItemBlock) stack.getItem();
-        ib.onItemUse(player, world, pos, EnumHand.MAIN_HAND, direction, 0.5f, 0.5f, 0.5f);
-
+        stack.getItem().onItemUse(
+            player,
+            world,
+            pos.offset(direction),
+            EnumHand.MAIN_HAND,
+            direction,
+            0.5f,
+            0.5f,
+            0.5f
+        );
         return true;
     }
 }

@@ -20,8 +20,13 @@ public enum StripesHandlerPlant implements IStripesHandlerItem {
     INSTANCE;
 
     @Override
-    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        return CropManager.plantCrop(world, player, stack, pos.offset(direction).down())//
+    public boolean handle(World world,
+                          BlockPos pos,
+                          EnumFacing direction,
+                          ItemStack stack,
+                          EntityPlayer player,
+                          IStripesActivator activator) {
+        return CropManager.plantCrop(world, player, stack, pos.offset(direction).down())
             || CropManager.plantCrop(world, player, stack, pos.offset(direction));
     }
 }
