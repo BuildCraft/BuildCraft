@@ -136,44 +136,46 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
             .collect(Collectors.toList());
         setDirection(connected.size() == 1 ? connected.get(0).getOpposite() : null);
         battery.tick(world, pipe.getHolder().getPipePos());
-        if (direction != null && !world.isAirBlock(pos.offset(direction))) {
+        if (direction != null) {
             long target = BlockUtil.computeBlockBreakPower(world, pos.offset(direction));
-            if (progress < target) {
-                progress += battery.extractPower(
-                    0,
-                    Math.min(target - progress, MjAPI.MJ * 10)
-                );
-                if (progress > 0) {
-                    world.sendBlockBreakProgress(
-                        pos.offset(direction).hashCode(),
-                        pos.offset(direction),
-                        (int) (progress * 9 / target)
+            if (target > 0) {
+                if (progress < target) {
+                    progress += battery.extractPower(
+                        0,
+                        Math.min(target - progress, MjAPI.MJ * 10)
                     );
-                }
-            } else {
-                BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(
-                    world,
-                    pos.offset(direction),
-                    world.getBlockState(pos.offset(direction)),
-                    FakePlayerUtil.INSTANCE.getFakePlayer(
-                        (WorldServer) world,
-                        pos,
-                        pipe.getHolder().getOwner()
-                    )
-                );
-                MinecraftForge.EVENT_BUS.post(breakEvent);
-                if (!breakEvent.isCanceled()) {
-                    Optional.ofNullable(
-                        BlockUtil.getItemStackFromBlock(
-                            (WorldServer) world,
+                    if (progress > 0) {
+                        world.sendBlockBreakProgress(
+                            pos.offset(direction).hashCode(),
                             pos.offset(direction),
+                            (int) (progress * 9 / target)
+                        );
+                    }
+                } else {
+                    BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(
+                        world,
+                        pos.offset(direction),
+                        world.getBlockState(pos.offset(direction)),
+                        FakePlayerUtil.INSTANCE.getFakePlayer(
+                            (WorldServer) world,
+                            pos,
                             pipe.getHolder().getOwner()
                         )
-                    ).ifPresent(stacks -> stacks.forEach(stack -> sendItem(stack, direction)));
-                    world.sendBlockBreakProgress(pos.offset(direction).hashCode(), pos.offset(direction), -1);
-                    world.destroyBlock(pos.offset(direction), false);
+                    );
+                    MinecraftForge.EVENT_BUS.post(breakEvent);
+                    if (!breakEvent.isCanceled()) {
+                        Optional.ofNullable(
+                            BlockUtil.getItemStackFromBlock(
+                                (WorldServer) world,
+                                pos.offset(direction),
+                                pipe.getHolder().getOwner()
+                            )
+                        ).ifPresent(stacks -> stacks.forEach(stack -> sendItem(stack, direction)));
+                        world.sendBlockBreakProgress(pos.offset(direction).hashCode(), pos.offset(direction), -1);
+                        world.destroyBlock(pos.offset(direction), false);
+                    }
+                    progress = 0;
                 }
-                progress = 0;
             }
         } else {
             progress = 0;
