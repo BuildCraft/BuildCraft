@@ -58,7 +58,7 @@ public class MessageMarker implements IMessage {
     public void toBytes(ByteBuf buf) {
         count = positions.size();
         multiple = count != 1;
-        PacketBuffer packet = new PacketBuffer(buf);
+        PacketBufferBC packet = PacketBufferBC.asPacketBufferBc(buf);
         packet.writeBoolean(add);
         packet.writeBoolean(multiple);
         packet.writeBoolean(connection);
