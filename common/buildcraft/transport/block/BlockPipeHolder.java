@@ -538,7 +538,10 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         for (EnumDyeColor color : tile.wireManager.parts.values()) {
             toDrop.add(new ItemStack(BCTransportItems.wire, 1, color.getMetadata()));
         }
-        tile.getPipe().getDrops(toDrop);
+        Pipe pipe = tile.getPipe();
+        if (pipe != null) {
+            pipe.getDrops(toDrop);
+        }
         return toDrop;
     }
 
