@@ -9,7 +9,7 @@ package buildcraft.factory.tile;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.lib.fluid.SingleUseTank;
+import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;
@@ -33,7 +33,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class TilePump extends TileMiner {
-    private final SingleUseTank tank = new SingleUseTank("tank", 16 * Fluid.BUCKET_VOLUME, this);
+    private final Tank tank = new Tank("tank", 16 * Fluid.BUCKET_VOLUME, this);
     private boolean queueBuilt = false;
     private Queue<BlockPos> queue = new PriorityQueue<>(
             Comparator.<BlockPos, Integer>comparing(blockPos ->
@@ -127,7 +127,7 @@ public class TilePump extends TileMiner {
 
     private boolean canDrain(BlockPos blockPos) {
         Fluid fluid = BlockUtil.getFluid(world, blockPos);
-        return tank.isEmpty() ? fluid != null : fluid == tank.getAcceptedFluid();
+        return tank.isEmpty() ? fluid != null : fluid == tank.getFluidType();
     }
 
     private void nextPos() {
