@@ -14,6 +14,7 @@ import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.Box;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
@@ -59,28 +60,21 @@ public class Blueprint extends Snapshot {
     @Override
     public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
         super.deserializeNBT(nbt);
-        for (NBTTagCompound schematicBlockTag :
-            NBTUtilBC.readCompoundList(nbt.getTagList("entities", Constants.NBT.TAG_COMPOUND))
-                .collect(Collectors.toList())) {
+        palette.clear();
+        NBTTagList palleteListNbt = nbt.getTagList("palette", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < palleteListNbt.tagCount(); i++) {
+            NBTTagCompound tag = palleteListNbt.getCompoundTagAt(i);
             // TODO: Allow reading blueprints partially - invalid elements should be replaced with air
             // (Although this needs to add a "pass-through" ISchematicBlock that will store the
             // invalid NBTTagCompound and show up in the tooltip as an error, so that we can migrate
             // schematics through mod additions/deletions)
-            ISchematicBlock<?> schematicBlock;
-            try {
-                schematicBlock = SchematicBlockManager.readFromNBT(schematicBlockTag);
-            } catch (InvalidInputDataException e) {
-                schematicBlock = new SchematicBlockAir();
-            }
-            palette.add(schematicBlock);
+            palette.add(SchematicBlockManager.readFromNBT(tag));
         }
         data = new int[size.getX()][size.getY()][size.getZ()];
         int[] serializedData = nbt.getIntArray("data");
         if (serializedData.length != size.getX() * size.getY() * size.getZ()) {
-            throw new InvalidInputDataException(
-                "Serialized data has length of " + serializedData.length +
-                    ", but we expected " + size.getX() * size.getY() * size.getZ() + size.toString()
-            );
+            throw new InvalidInputDataException("Serialized data has length of " + serializedData.length
+                + ", but we expected " + size.getX() * size.getY() * size.getZ() + size.toString());
         }
         int i = 0;
         for (int z = 0; z < size.getZ(); z++) {
@@ -90,9 +84,8 @@ public class Blueprint extends Snapshot {
                 }
             }
         }
-        for (NBTTagCompound schematicEntityTag :
-            NBTUtilBC.readCompoundList(nbt.getTagList("entities", Constants.NBT.TAG_COMPOUND))
-                .collect(Collectors.toList())) {
+        for (NBTTagCompound schematicEntityTag : NBTUtilBC.readCompoundList(nbt.getTagList("entities",
+            Constants.NBT.TAG_COMPOUND)).collect(Collectors.toList())) {
             entities.add(SchematicEntityManager.readFromNBT(schematicEntityTag));
         }
     }
