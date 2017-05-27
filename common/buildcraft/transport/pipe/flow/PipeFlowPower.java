@@ -179,10 +179,6 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         left.add("- power: OFFERED " + arrayToString(s -> s.debugPowerOffered));
     }
 
-    interface ISectionPropertyGetter {
-        long get(Section s);
-    }
-
     private String arrayToString(ToLongFunction<Section> getter) {
         long[] arr = new long[6];
         for (EnumFacing face : EnumFacing.VALUES) {
