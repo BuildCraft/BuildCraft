@@ -59,10 +59,6 @@ public class SpriteFluidFrozen extends TextureAtlasSprite {
                 }
             }
         }
-        
-        if (location.toString().contains("water")) {
-            BCLog.logger.info(src);
-        }
 
         if (src.getFrameCount() > 0) {
             int widthOld = src.getIconWidth();
