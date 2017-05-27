@@ -33,16 +33,12 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
     private final TankManager<Tank> tankManager = new TankManager<>(tank1, tank2);
 
     public TileAutoWorkbenchFluids() {
-        super(4);
+        super(2, 2);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankManager, EnumPipePart.CENTER);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank1, EnumPipePart.DOWN, EnumPipePart.NORTH, EnumPipePart.WEST);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank2, EnumPipePart.UP, EnumPipePart.SOUTH, EnumPipePart.EAST);
     }
 
-    @Override
-    protected WorkbenchCrafting createCrafting() {
-        return new WorkbenchCraftingFluids(2, 2);
-    }
 
     @Override
     @SideOnly(Side.CLIENT)
@@ -54,86 +50,10 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
 
     }
 
-    // #############################
-    //
-    // Sub-classes for crafting
-    //
-    // #############################
-
-    public class WorkbenchCraftingFluids extends WorkbenchCrafting {
-        public WorkbenchCraftingFluids(int width, int height) {
-            super(width, height);
-            for (int i = 0; i < this.craftingSlots.length; i++) {
-                this.craftingSlots[i] = new CraftSlotFluid(i);
-            }
-        }
-    }
-
-    public class CraftSlotFluid extends CraftSlotItem {
-        public CraftSlotFluid(int slot) {
-            super(slot);
-        }
-
-        @Override
-        public CraftingSlot getBoundVersion() {
-            ItemStack stack = get();
-            if (stack.isEmpty()) {
-                return super.getBoundVersion();
-            }
-            ItemStack copied = stack.copy();
-            if (copied.getCount() != 1) {
-                copied.setCount(1);
-            }
-            IFluidHandlerItem fluidHandlerItem = FluidUtil.getFluidHandler(stack.copy());
-            if (fluidHandlerItem != null) {
-                FluidStack fluid = fluidHandlerItem.drain(Integer.MAX_VALUE, true);
-                if (fluid != null) {
-                    if (fluidHandlerItem.getContainer().isEmpty()) {
-                        /* We removed an itemstack -- perhaps the container itself was used up in crafting */
-                    } else {
-                        return new CraftSlotFluidBound(this, fluid);
-                    }
-                }
-            }
-            return super.getBoundVersion();
-        }
-    }
-
-    public class CraftSlotFluidBound extends CraftingSlot {
-        protected final CraftSlotFluid nonBound;
-        protected final FluidStack fluidUsed;
-
-        public CraftSlotFluidBound(CraftSlotFluid from, FluidStack fluidUsed) {
-            super(-1);
-            this.fluidUsed = fluidUsed;
-            this.nonBound = from;
-        }
-
-        @Nonnull
-        @Override
-        public ItemStack get() {
-            FluidStack drained = tankManager.drain(fluidUsed, false);
-            if (drained != null && drained.amount == fluidUsed.amount) {
-                return nonBound.get().copy();
-            }
-            return StackUtil.EMPTY;
-        }
-
-        @Override
-        public void use(int count) {
-            if (count == 1) {
-                tankManager.drain(fluidUsed, true);
-            }
-        }
-
-        @Override
-        public CraftingSlot getBoundVersion() {
-            return nonBound.getBoundVersion();
-        }
-
-        @Override
-        public CraftingSlot getUnboundVersion() {
-            return nonBound;
-        }
+    @Override
+    protected boolean canWork() {
+        return false;
     }
 }
+
+

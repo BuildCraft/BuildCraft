@@ -10,18 +10,35 @@ import net.minecraft.entity.player.EntityPlayer;
 import buildcraft.lib.tile.item.IItemHandlerAdv;
 
 public class SlotPhantom extends SlotBase implements IPhantomSlot {
+    private final boolean canAdjustCount;
+
+    public SlotPhantom(IItemHandlerAdv itemHandler, int slotIndex, int posX, int posY, boolean adjustableCount) {
+        super(itemHandler, slotIndex, posX, posY);
+        this.canAdjustCount = adjustableCount;
+    }
+
 
     public SlotPhantom(IItemHandlerAdv itemHandler, int slotIndex, int posX, int posY) {
-        super(itemHandler, slotIndex, posX, posY);
+        this(itemHandler, slotIndex, posX, posY, true);
     }
 
     @Override
     public boolean canAdjustCount() {
-        return true;
+        return canAdjustCount;
     }
 
     @Override
     public boolean canTakeStack(EntityPlayer par1EntityPlayer) {
         return false;
+    }
+
+    @Override
+    public boolean canShift() {
+        return false;
+    }
+
+    @Override
+    public int getSlotStackLimit() {
+        return 0;
     }
 }

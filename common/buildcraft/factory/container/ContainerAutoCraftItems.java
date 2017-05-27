@@ -23,7 +23,7 @@ public class ContainerAutoCraftItems extends ContainerBCTile<TileAutoWorkbenchIt
 
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {
-                addSlotToContainer(new SlotPhantom(tile.invBlueprint, x + y * 3, 30 + x * 18, 17 + y * 18));
+                addSlotToContainer(new SlotPhantom(tile.invBlueprint, x + y * 3, 30 + x * 18, 17 + y * 18, false));
             }
         }
 
