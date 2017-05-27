@@ -42,6 +42,8 @@ public class BCTransportSprites {
     private static final EnumMap<EnumDyeColor, SpriteHolder> PIPE_SIGNAL_OFF;
     private static final EnumMap<EnumFacing, SpriteHolder> ACTION_PIPE_DIRECTION;
 
+    public static final SpriteHolder POWER_FLOW;
+
     static {
         EMPTY_FILTERED_BUFFER_SLOT = getHolder("gui/empty_filtered_buffer_slot");
         NOTHING_FILTERED_BUFFER_SLOT = getHolder("gui/nothing_filtered_buffer_slot");
@@ -76,6 +78,8 @@ public class BCTransportSprites {
         for (EnumFacing face : EnumFacing.VALUES) {
             ACTION_PIPE_DIRECTION.put(face, getHolder("core", "triggers/trigger_dir_" + face.getName().toLowerCase(Locale.ROOT)));
         }
+
+        POWER_FLOW = getHolder("core", "blocks/misc/texture_cyan");
     }
 
     private static SpriteHolder getHolder(String loc) {

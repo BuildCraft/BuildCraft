@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.function.ToLongFunction;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -100,11 +101,12 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     public boolean canConnect(EnumFacing face, TileEntity oTile) {
         if (isReceiver) {
             IMjPassiveProvider provider = oTile.getCapability(MjAPI.CAP_PASSIVE_PROVIDER, face.getOpposite());
-            if (provider != null) return true;
+            if (provider != null) {
+                return true;
+            }
         }
-        IMjConnector reciever = oTile.getCapability(MjAPI.CAP_CONNECTOR, face.getOpposite());
-        if (reciever == null) return false;
-        return reciever.canConnect(sections.get(face));
+        IMjConnector receiver = oTile.getCapability(MjAPI.CAP_CONNECTOR, face.getOpposite());
+        return receiver != null && receiver.canConnect(sections.get(face));
     }
 
     @Override
@@ -181,10 +183,10 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         long get(Section s);
     }
 
-    private String arrayToString(ISectionPropertyGetter getter) {
+    private String arrayToString(ToLongFunction<Section> getter) {
         long[] arr = new long[6];
         for (EnumFacing face : EnumFacing.VALUES) {
-            arr[face.ordinal()] = getter.get(sections.get(face)) / MjAPI.MJ;
+            arr[face.ordinal()] = getter.applyAsLong(sections.get(face)) / MjAPI.MJ;
         }
         return Arrays.toString(arr);
     }
