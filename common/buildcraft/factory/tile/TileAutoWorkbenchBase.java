@@ -41,7 +41,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
     public IRecipe currentRecipe;
     private List<ItemStack> requirements = null;
 
-    public final DeltaInt deltaProgress = deltaManager.addDelta("progress", DeltaManager.EnumNetworkVisibility.NONE);
+    public final DeltaInt deltaProgress = deltaManager.addDelta("progress", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
 
     public TileAutoWorkbenchBase(int width, int height) {
         int slots = width * height;
@@ -125,7 +125,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
     }
 
     protected boolean canWork() {
-        return currentRecipe != null && hasMaterials() && StackUtil.canMerge(currentRecipe.getCraftingResult(crafting), invResult.getStackInSlot(0));
+        return currentRecipe != null && hasMaterials() && (invResult.getStackInSlot(0).isEmpty() || StackUtil.canMerge(currentRecipe.getCraftingResult(crafting), invResult.getStackInSlot(0)));
     }
 
     public ItemStack getOutput() {
