@@ -51,7 +51,7 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
     }
 
     @Override
-    protected boolean canWork() {
+    public boolean canWork() {
         return false;
     }
 }

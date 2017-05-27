@@ -9,6 +9,8 @@ package buildcraft.factory.tile;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.TilesAPI;
+import buildcraft.factory.util.IAutoCraft;
+import buildcraft.factory.util.WorkbenchCrafting;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.inventory.filter.ArrayStackFilter;
@@ -31,7 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements ITickable, IDebuggable {
+public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements ITickable, IDebuggable, IAutoCraft {
     public final ItemHandlerSimple invBlueprint;
     public final ItemHandlerSimple invMaterials;
     public final ItemHandlerSimple invResult;
@@ -49,13 +51,8 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
         invMaterials = itemManager.addInvHandler("materials", slots, ItemHandlerManager.EnumAccess.INSERT, EnumPipePart.VALUES);
         invResult = itemManager.addInvHandler("result", 1, ItemHandlerManager.EnumAccess.EXTRACT, EnumPipePart.VALUES);
         invOverflow = itemManager.addInvHandler("overflow", slots, ItemHandlerManager.EnumAccess.EXTRACT, EnumPipePart.VALUES);
-        crafting = new WorkbenchCrafting(width, height);
+        crafting = new WorkbenchCrafting(width, height, invBlueprint);
         caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, this::hasWork, EnumPipePart.VALUES);
-    }
-
-    @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-
     }
 
     @Override
@@ -65,8 +62,6 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
         if (getWorld().isRemote) {
             return;
         }
-
-
         if (canWork()) {
             if (progress == 0) {
                 deltaProgress.addDelta(0, 200, 1);
@@ -86,61 +81,63 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
         }
     }
 
-    private void updateRecipe() {
-        IRecipe old = currentRecipe;
-        this.currentRecipe = CraftingUtil.findMatchingRecipe(crafting, getWorld());
-        if (currentRecipe == null || old != this.currentRecipe) {
-            requirements = null;
-        }
-        if (requirements == null && currentRecipe != null) {
-            requirements = StackUtil.mergeSameItems(invBlueprint.stacks);
-        }
+    @Override
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+
     }
 
-    private void craft() {
-        ItemStack out = currentRecipe.getCraftingResult(crafting);
-        ItemStack leftOver = invResult.insertItem(0, out, false);
-        InventoryUtil.drop(getWorld(), getPos(), leftOver);
-        for (ItemStack input: requirements) {
-            ItemStack toExtract = input.copy();
-            for (int i = 0; i < invMaterials.getSlots(); i++) {
-                if (StackUtil.canMerge(toExtract, invMaterials.getStackInSlot(i))) {
-                    ItemStack extracted = invMaterials.extractItem(i, toExtract.getCount(), false);
-                    if (extracted.getCount() == toExtract.getCount()) {
-                        break;
-                    } else {
-                        toExtract.setCount(toExtract.getCount() - extracted.getCount());
-                    }
-                }
-            }
-        }
+    @Override
+    public ItemHandlerSimple getInvBlueprint() {
+        return invBlueprint;
     }
 
-    private boolean hasMaterials() {
-        return currentRecipe.matches(crafting, getWorld()) && StackUtil.containsAll(requirements, StackUtil.mergeSameItems(invMaterials.stacks));
+    @Override
+    public ItemHandlerSimple getInvMaterials() {
+        return invMaterials;
     }
+
+    @Override
+    public ItemHandlerSimple getInvResult() {
+        return invResult;
+    }
+
+    @Override
+    public WorkbenchCrafting getWorkbenchCrafting() {
+        return crafting;
+    }
+
+    @Override
+    public int getProgress() {
+        return progress;
+    }
+
+    @Override
+    public IRecipe getCurrentRecipe() {
+        return currentRecipe;
+    }
+
+    @Override
+    public void setCurrentRecipe(IRecipe recipe) {
+        currentRecipe = recipe;
+    }
+
+
+
+    @Override
+    public void setRequirements(List<ItemStack> stacks) {
+        requirements = stacks;
+    }
+
+    @Override
+    public List<ItemStack> getRequirements() {
+        return requirements;
+    }
+
 
     public boolean hasWork() {
         return progress >= 0;
     }
 
-    protected boolean canWork() {
-        return currentRecipe != null && hasMaterials() && (invResult.getStackInSlot(0).isEmpty() || StackUtil.canMerge(currentRecipe.getCraftingResult(crafting), invResult.getStackInSlot(0)));
-    }
 
-    public ItemStack getOutput() {
-        return currentRecipe.getCraftingResult(crafting);
-    }
 
-    protected class WorkbenchCrafting extends InventoryCrafting{
-
-        public WorkbenchCrafting(int width, int height) {
-            super(null, width, height);
-        }
-
-        @Override
-        public ItemStack getStackInSlot(int index) {
-            return invBlueprint.getStackInSlot(index);
-        }
-    }
 }
