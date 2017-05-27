@@ -78,7 +78,7 @@ public interface IAutoCraft {
     }
 
     default boolean canWork() {
-        return getCurrentRecipe() != null && hasMaterials() && (getInvMaterials().getStackInSlot(0).isEmpty() || StackUtil.canMerge(getCurrentRecipe().getCraftingResult(getWorkbenchCrafting()), getInvResult().getStackInSlot(0)));
+        return getCurrentRecipe() != null && hasMaterials() && (getInvResult().getStackInSlot(0).isEmpty() || StackUtil.canMerge(getCurrentRecipe().getCraftingResult(getWorkbenchCrafting()), getInvResult().getStackInSlot(0)));
     }
 
     default ItemStack getOutput() {
