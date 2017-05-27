@@ -43,11 +43,11 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
     INSTANCE;
 
     // Textures
-    private static final Map<PipeDefinition, TextureAtlasSprite[]> sprites = new IdentityHashMap<>();
+    private static final Map<PipeDefinition, TextureAtlasSprite[]> SPRITES = new IdentityHashMap<>();
 
     @Override
     public void onTextureStitchPre(TextureMap map) {
-        sprites.clear();
+        SPRITES.clear();
         for (PipeDefinition def : PipeApi.pipeRegistry.getAllRegisteredPipes()) {
             TextureAtlasSprite[] array = new TextureAtlasSprite[def.textures.length];
             for (int i = 0; i < array.length; i++) {
@@ -59,13 +59,13 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
                     BCLog.logger.warn("Couldn't override " + def.textures[i] + ", using existing sprite " + array[i].getClass());
                 }
             }
-            sprites.put(def, array);
+            SPRITES.put(def, array);
         }
     }
 
     @Override
     public TextureAtlasSprite getItemSprite(PipeDefinition def, int index) {
-        return getSprite(sprites.get(def), index);
+        return getSprite(SPRITES.get(def), index);
     }
 
     // Models
@@ -185,8 +185,8 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
     public List<BakedQuad> generateCutout(PipeBaseCutoutKey key) {
         List<MutableQuad> quads = new ArrayList<>();
 
-        TextureAtlasSprite[] spriteArray = sprites.get(key.definition);
-        for (EnumFacing face : EnumFacing.values()) {
+        TextureAtlasSprite[] spriteArray = SPRITES.get(key.definition);
+        for (EnumFacing face : EnumFacing.VALUES) {
             float size = key.connections[face.ordinal()];
             if (size > 0) {
                 addQuads(QUADS[1][face.ordinal()], quads, getSprite(spriteArray, key.sideSprites[face.ordinal()]));
@@ -214,7 +214,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         List<MutableQuad> quads = new ArrayList<>();
         TextureAtlasSprite sprite = BCTransportSprites.PIPE_COLOUR.getSprite();
 
-        for (EnumFacing face : EnumFacing.values()) {
+        for (EnumFacing face : EnumFacing.VALUES) {
             float size = key.connections[face.ordinal()];
             if (size > 0) {
                 addQuads(QUADS_COLOURED[1][face.ordinal()], quads, sprite);

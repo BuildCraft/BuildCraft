@@ -121,7 +121,7 @@ public class WireManager implements IWireManager {
         });
 
         if (!recursive) {
-            for (EnumFacing side : EnumFacing.values()) {
+            for (EnumFacing side : EnumFacing.VALUES) {
                 TileEntity tile = holder.getPipeWorld().getTileEntity(holder.getPipePos().offset(side));
                 if (tile instanceof IPipeHolder) {
                     IPipeHolder holder = (IPipeHolder) tile;

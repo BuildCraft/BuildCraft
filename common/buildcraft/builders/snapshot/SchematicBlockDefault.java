@@ -90,7 +90,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
                     .forEach(requiredBlockOffsets::add)
             );
         if (rules.stream().anyMatch(rule -> rule.copyRequiredBlockOffsetsFromProperties)) {
-            for (EnumFacing side : EnumFacing.values()) {
+            for (EnumFacing side : EnumFacing.VALUES) {
                 if (context.blockState.getProperties().keySet().stream()
                     .filter(property -> property.getName().equals(side.getName()))
                     .map(PropertyBool.class::cast)
@@ -161,7 +161,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
                 .flatMap(Collection::stream)
                 .forEach(updateBlockOffsets::add);
         } else {
-            Stream.of(EnumFacing.values())
+            Stream.of(EnumFacing.VALUES)
                 .map(EnumFacing::getDirectionVec)
                 .map(BlockPos::new)
                 .forEach(updateBlockOffsets::add);

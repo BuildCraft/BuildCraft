@@ -65,7 +65,7 @@ public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing 
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        for (EnumFacing side : EnumFacing.values()) {
+        for (EnumFacing side : EnumFacing.VALUES) {
             state = state.withProperty(CONNECTED_MAP.get(side), side != state.getValue(getFacingProperty()) && TileChute.hasInventoryAtPosition(world, pos.offset(side), side));
         }
         return state;

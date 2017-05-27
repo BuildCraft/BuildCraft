@@ -138,7 +138,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             for (BlockPos blockPos : framePositions) {
                 if (!framePositionsSorted.contains(blockPos)) {
                     if (framePositionsSorted.stream()
-                        .flatMap(blockPosLocal -> Arrays.stream(EnumFacing.values()).map(blockPosLocal::offset))
+                        .flatMap(blockPosLocal -> Arrays.stream(EnumFacing.VALUES).map(blockPosLocal::offset))
                         .anyMatch(Predicate.isEqual(blockPos))) {
                         framePositionsSorted.add(blockPos);
                         break;

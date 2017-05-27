@@ -72,7 +72,7 @@ public enum RenderTickListener {
             { { 0.5, 0.9, 0.5 }, { 0.5, 1.2, 0.2 } }, // Forth arrow part (-Z)
         };
 
-        for (EnumFacing face : EnumFacing.values()) {
+        for (EnumFacing face : EnumFacing.VALUES) {
             Matrix4f matrix = MatrixUtil.rotateTowardsFace(EnumFacing.UP, face);
             Vec3d[][] arr = new Vec3d[5][2];
             for (int i = 0; i < 5; i++) {

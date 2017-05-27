@@ -22,7 +22,7 @@ public class MatrixUtil {
 
     static {
         ImmutableMap.Builder<EnumFacing, Matrix4f> builder = ImmutableMap.builder();
-        for (EnumFacing face : EnumFacing.values()) {
+        for (EnumFacing face : EnumFacing.VALUES) {
             Matrix4f mat = new Matrix4f();
             mat.setIdentity();
 

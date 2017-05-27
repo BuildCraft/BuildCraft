@@ -127,7 +127,7 @@ public class WireSystem {
                             wireSystems.getWireSystemsWithElement(element).stream().filter(wireSystem -> wireSystem != this && wireSystem.color == this.color).forEach(wireSystems::removeWireSystem);
                             elements.add(element);
                             queue.addAll(getConnectedElementsOfElement(wireSystems.world, element));
-                            Arrays.stream(EnumFacing.values()).forEach(side -> queue.add(new WireElement(element.blockPos, side)));
+                            Arrays.stream(EnumFacing.VALUES).forEach(side -> queue.add(new WireElement(element.blockPos, side)));
                         }
                     } else if (element.type == WireElement.Type.EMITTER_SIDE) {
                         if (holder.getPluggable(element.emitterSide) instanceof PluggableGate) {

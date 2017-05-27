@@ -82,7 +82,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                     int x = cpt.getInteger("x");
                     int y = cpt.getInteger("y");
                     int z = cpt.getInteger("z");
-                    EnumFacing side = EnumFacing.values()[cpt.getByte("side")];
+                    EnumFacing side = EnumFacing.VALUES[cpt.getByte("side")];
 
                     strings.add(LocaleUtil.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
                 }
@@ -279,7 +279,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
         MapLocationType type = MapLocationType.getFromStack(item);
 
         if (type == MapLocationType.SPOT) {
-            return EnumFacing.values()[cpt.getByte("side")];
+            return EnumFacing.VALUES[cpt.getByte("side")];
         } else {
             return null;
         }

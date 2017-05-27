@@ -79,7 +79,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
     }
 
     private void putInNearInventories(EnumFacing currentSide) {
-        List<EnumFacing> sides = new ArrayList<>(Arrays.asList(EnumFacing.values()));
+        List<EnumFacing> sides = new ArrayList<>(Arrays.asList(EnumFacing.VALUES));
         Collections.shuffle(sides, new Random());
         sides.removeIf(Predicate.isEqual(currentSide));
         Stream.<Pair<EnumFacing, ICapabilityProvider>>concat(

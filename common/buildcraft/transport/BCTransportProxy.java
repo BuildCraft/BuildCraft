@@ -149,7 +149,7 @@ public abstract class BCTransportProxy implements IGuiHandler {
                     TileEntity tile = world.getTileEntity(pos);
                     if (tile instanceof TilePipeHolder) {
                         TilePipeHolder tilePipeHolder = (TilePipeHolder) tile;
-                        EnumFacing side = EnumFacing.getFront(tintIndex % EnumFacing.values().length);
+                        EnumFacing side = EnumFacing.getFront(tintIndex % EnumFacing.VALUES.length);
                         PipePluggable pluggable = tilePipeHolder.getPluggable(side);
                         if (pluggable != null) {
                             return pluggable.getBlockColor(tintIndex / 6);

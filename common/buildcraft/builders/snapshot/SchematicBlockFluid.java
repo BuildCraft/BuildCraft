@@ -97,7 +97,7 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
         }
         if (world.setBlockState(blockPos, blockState, 11)) {
             Stream.concat(
-                Stream.of(EnumFacing.values())
+                Stream.of(EnumFacing.VALUES)
                     .map(EnumFacing::getDirectionVec)
                     .map(BlockPos::new),
                 Stream.of(BlockPos.ORIGIN)

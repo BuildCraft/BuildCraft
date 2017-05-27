@@ -55,7 +55,7 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
         Set<Axis> taken = volume == null ? ImmutableSet.of() : volume.getConnectedAxis();
 
         Vec3d start = VecUtil.add(VEC_HALF, marker.getPos());
-        for (EnumFacing face : EnumFacing.values()) {
+        for (EnumFacing face : EnumFacing.VALUES) {
             if (taken.contains(face.getAxis())) {
                 continue;
             }

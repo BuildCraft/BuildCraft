@@ -445,7 +445,11 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                     attachTile = getPipe(world, node.pos, false);
                 }
             } else {
-                wirePart = EnumWirePart.get((trace.hitVec.xCoord % 1 + 1) % 1 > 0.5, (trace.hitVec.yCoord % 1 + 1) % 1 > 0.5, (trace.hitVec.zCoord % 1 + 1) % 1 > 0.5);
+                wirePart = EnumWirePart.get(
+                    (trace.hitVec.xCoord % 1 + 1) % 1 > 0.5,
+                    (trace.hitVec.yCoord % 1 + 1) % 1 > 0.5,
+                    (trace.hitVec.zCoord % 1 + 1) % 1 > 0.5
+                );
             }
             if (wirePart != null && attachTile != null) {
                 attachTile.getWireManager().addPart(wirePart, EnumDyeColor.byMetadata(held.getMetadata()));
@@ -549,8 +553,13 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     public float getExplosionResistance(World world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
         if (exploder != null) {
             Vec3d subtract = exploder.getPositionVector().subtract(new Vec3d(pos).add(VecUtil.VEC_HALF)).normalize();
-            EnumFacing side = Arrays.stream(EnumFacing.values()).min(Comparator.comparing(facing -> new Vec3d(facing.getDirectionVec()).distanceTo(subtract))).orElseThrow(
-                IllegalArgumentException::new);
+            EnumFacing side = Arrays.stream(EnumFacing.VALUES)
+                .min(
+                    Comparator.comparing(
+                        facing -> new Vec3d(facing.getDirectionVec()).distanceTo(subtract)
+                    )
+                )
+                .orElseThrow(IllegalArgumentException::new);
             TilePipeHolder tile = getPipe(world, pos, true);
             if (tile != null) {
                 PipePluggable pluggable = tile.getPluggable(side);

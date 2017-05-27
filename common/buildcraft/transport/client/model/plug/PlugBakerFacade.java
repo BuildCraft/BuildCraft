@@ -234,7 +234,7 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
             }
         }
         if (key.isHollow) {
-            for (EnumFacing facing : EnumFacing.values()) {
+            for (EnumFacing facing : EnumFacing.VALUES) {
                 if (facing.getAxis() != key.side.getAxis()) {
                     boolean positive = key.side.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE;
                     if (key.side.getAxis() == EnumFacing.Axis.Z && facing.getAxis() == EnumFacing.Axis.X ||
@@ -262,7 +262,7 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
         for (MutableQuad quad : quads) {
             int tint = quad.getTint();
             if (tint != -1) {
-                quad.setTint(tint * EnumFacing.values().length + key.side.ordinal());
+                quad.setTint(tint * EnumFacing.VALUES.length + key.side.ordinal());
             }
         }
         return quads;
