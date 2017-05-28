@@ -7,11 +7,7 @@
 package buildcraft.silicon.tile;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 import buildcraft.lib.net.MessageManager;
 import net.minecraft.nbt.NBTTagCompound;
@@ -131,8 +127,9 @@ public class TileAssemblyTable extends TileLaserTableBase {
         }
     }
 
+    @Override
     public long getTarget() {
-        return getActiveRecipe() == null ? 0 : getActiveRecipe().requiredMicroJoules;
+        return Optional.ofNullable(getActiveRecipe()).map(recipe -> recipe.requiredMicroJoules).orElse(0L);
     }
 
     @Override
@@ -145,7 +142,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
 
         updateRecipes();
 
-        if (power >= getTarget() && getTarget() != 0) {
+        if (getTarget() > 0 && power >= getTarget()) {
             AssemblyRecipe recipe = getActiveRecipe();
             extract(inv, recipe.requiredStacks, false, false);
 
@@ -235,11 +232,6 @@ public class TileAssemblyTable extends TileLaserTableBase {
         super.getDebugInfo(left, right, side);
         left.add("recipes - " + recipesStates.size());
         left.add("target - " + LocaleUtil.localizeMj(getTarget()));
-    }
-
-    @Override
-    public boolean hasWork() {
-        return getActiveRecipe() != null;
     }
 
     private AssemblyRecipe lookupRecipe(String name, NBTTagCompound recipeTag) {

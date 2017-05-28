@@ -57,8 +57,9 @@ public class TileIntegrationTable extends TileLaserTableBase {
         recipe = IntegrationRecipeRegistry.INSTANCE.getRecipeFor(invTarget.getStackInSlot(0), invToIntegrate.stacks);
     }
 
+    @Override
     public long getTarget() {
-        return recipe == null ? 0 : recipe.requiredMicroJoules;
+        return recipe != null && isSpaceEnough(recipe.output) ? recipe.requiredMicroJoules : 0;
     }
 
     @Override
@@ -71,7 +72,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
 
         updateRecipe();
 
-        if (recipe != null && power >= getTarget() && isSpaceEnough(recipe.output)) {
+        if (getTarget() > 0 && power >= getTarget()) {
             extract(recipe.target, recipe.toIntegrate, false);
             ItemStack result = invResult.getStackInSlot(0);
             if (!result.isEmpty()) {
@@ -140,11 +141,6 @@ public class TileIntegrationTable extends TileLaserTableBase {
         super.getDebugInfo(left, right, side);
         left.add("recipe - " + recipe);
         left.add("target - " + getTarget());
-    }
-
-    @Override
-    public boolean hasWork() {
-        return recipe != null && isSpaceEnough(recipe.output);
     }
 
     private IntegrationRecipe lookupRecipe(String name, NBTTagCompound recipeTag) {

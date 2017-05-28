@@ -22,6 +22,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase {
     public final ItemHandlerSimple invMaterials = itemManager.addInvHandler("materials", 5 * 3, ItemHandlerManager.EnumAccess.INSERT, EnumPipePart.VALUES);
     public final ItemHandlerSimple invResults = itemManager.addInvHandler("result", 3 * 3, ItemHandlerManager.EnumAccess.EXTRACT, EnumPipePart.VALUES);
 
+    @Override
     public long getTarget() {
         return 40 * MjAPI.MJ;
     }
@@ -41,10 +42,5 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase {
         }
 
         sendNetworkGuiUpdate(NET_GUI_DATA);
-    }
-
-    @Override
-    public boolean hasWork() {
-        return true;
     }
 }

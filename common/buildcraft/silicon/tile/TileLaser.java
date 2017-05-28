@@ -72,7 +72,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
                 TileEntity tileAt = world.getTileEntity(p);
                 if (tileAt instanceof ILaserTarget) {
                     ILaserTarget targetAt = (ILaserTarget) tileAt;
-                    if (targetAt.requiresLaserPower()) {
+                    if (targetAt.getRequiredLaserPower() > 0) {
                         possible.add(p);
                     }
                 }
@@ -92,7 +92,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             TileEntity tile = world.getTileEntity(targetPos);
             if (tile instanceof ILaserTarget) {
                 ILaserTarget target = (ILaserTarget) tile;
-                return !target.isInvalidTarget() && target.requiresLaserPower() ? target : null;
+                return target.getRequiredLaserPower() > 0 ? target : null;
             } else {
                 return null;
             }
@@ -103,7 +103,12 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
 
     private void updateLaser() {
         if (getTarget() != null) {
-            laserPos = new Vec3d(targetPos).addVector((5 + world.rand.nextInt(6) + 0.5) / 16D, 9 / 16D, (5 + world.rand.nextInt(6) + 0.5) / 16D);
+            laserPos = new Vec3d(targetPos)
+                .addVector(
+                    (5 + world.rand.nextInt(6) + 0.5) / 16D,
+                    9 / 16D,
+                    (5 + world.rand.nextInt(6) + 0.5) / 16D
+                );
         } else {
             laserPos = null;
         }
@@ -142,10 +147,13 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             long max = getMaxPowerPerTick();
             max *= battery.getStored() + max;
             max /= battery.getCapacity() / 2;
-            max = Math.min(max, getMaxPowerPerTick());
+            max = Math.min(Math.min(max, getMaxPowerPerTick()), target.getRequiredLaserPower());
             long power = battery.extractPower(0, max);
-            avgPower.push(power);
-            target.receiveLaserPower(power);
+            long excess = target.receiveLaserPower(power);
+            if (excess > 0) {
+                battery.addPowerChecking(excess, false);
+            }
+            avgPower.push(power - excess);
         } else {
             avgPower.clear();
         }
