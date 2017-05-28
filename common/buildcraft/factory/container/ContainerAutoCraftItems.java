@@ -29,7 +29,7 @@ public class ContainerAutoCraftItems extends ContainerBCTile<TileAutoWorkbenchIt
         }
 
         addSlotToContainer(new SlotOutput(tile.invResult, 0, 124, 35));
-        addSlotToContainer(new SlotDisplay(i->tile.getOutput(), 0, 93, 27));
+        addSlotToContainer(new SlotDisplay(i -> tile.getOutput(), 0, 93, 27));
     }
 
     @Override

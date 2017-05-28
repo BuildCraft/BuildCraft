@@ -117,6 +117,7 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
         left.add("power - " + LocaleUtil.localizeMj(power));
+        left.add("target - " + LocaleUtil.localizeMj(getTarget()));
     }
 
     protected boolean extract(ItemHandlerSimple inv, ImmutableCollection<StackDefinition> items, boolean simulate, boolean precise) {
