@@ -28,7 +28,7 @@ public interface IAutoCraft {
 
     WorkbenchCrafting getWorkbenchCrafting();
 
-    int getProgress();
+    long getProgress();
 
     IRecipe getCurrentRecipe();
 
@@ -36,7 +36,7 @@ public interface IAutoCraft {
 
     default void updateRecipe() {
         IRecipe old = getCurrentRecipe();
-        IRecipe newRecipe = CraftingUtil.findMatchingRecipe(getWorkbenchCrafting(), getWorld());
+        IRecipe newRecipe = CraftingUtil.findMatchingRecipe(getWorkbenchCrafting(), getWorldForAutocrafting());
         setCurrentRecipe(newRecipe);
         if (newRecipe == null || old != newRecipe) {
             setRequirements(null);
@@ -46,7 +46,7 @@ public interface IAutoCraft {
         }
     }
 
-    World getWorld();
+    World getWorldForAutocrafting();
 
     void setRequirements(List<ItemStack> stacks);
 
@@ -54,9 +54,9 @@ public interface IAutoCraft {
 
     default void craft() {
         ItemStack out = getCurrentRecipe().getCraftingResult(getWorkbenchCrafting());
-        InventoryUtil.drop(getWorld(), getPos(), insertInInventory(getInvResult(), out));
+        InventoryUtil.drop(getWorldForAutocrafting(), getPosForAutocrafting(), insertInInventory(getInvResult(), out));
         for (ItemStack stack: getCurrentRecipe().getRemainingItems(getWorkbenchCrafting())) {
-            InventoryUtil.drop(getWorld(), getPos(), insertInInventory(getInvResult(), stack));
+            InventoryUtil.drop(getWorldForAutocrafting(), getPosForAutocrafting(), insertInInventory(getInvResult(), stack));
         }
         for (ItemStack input: getRequirements()) {
             ItemStack toExtract = input.copy();
@@ -84,10 +84,10 @@ public interface IAutoCraft {
         return leftOver;
     }
 
-    BlockPos getPos();
+    BlockPos getPosForAutocrafting();
 
     default boolean hasMaterials() {
-        return getCurrentRecipe() != null && getCurrentRecipe().matches(getWorkbenchCrafting(), getWorld()) && StackUtil.containsAll(getRequirements(), StackUtil.mergeSameItems(getInvMaterials().stacks));
+        return getCurrentRecipe() != null && getCurrentRecipe().matches(getWorkbenchCrafting(), getWorldForAutocrafting()) && StackUtil.containsAll(getRequirements(), StackUtil.mergeSameItems(getInvMaterials().stacks));
     }
 
     default boolean canWork() {

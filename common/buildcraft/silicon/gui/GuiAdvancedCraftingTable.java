@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.silicon.gui;
 
+import buildcraft.silicon.tile.TileAdvancedCraftingTable;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
@@ -31,7 +32,7 @@ public class GuiAdvancedCraftingTable extends GuiBC8<ContainerAdvancedCraftingTa
 
         long target = container.tile.getTarget();
         if(target != 0) {
-            double v = (double) container.tile.power / target;
+            double v = container.tile.deltaProgress.getDynamic(partialTicks) / 100;
             ICON_PROGRESS.drawCutInside(
                     new GuiRectangle(
                             RECT_PROGRESS.x,
@@ -41,10 +42,6 @@ public class GuiAdvancedCraftingTable extends GuiBC8<ContainerAdvancedCraftingTa
                     ).offset(rootElement)
             );
         }
-//
-//        if(container.tile.recipe != null) {
-//            drawItemStackAt(container.tile.recipe.output, rootElement.getX() + 101, rootElement.getY() + 36);
-//        }
     }
 
     @Override

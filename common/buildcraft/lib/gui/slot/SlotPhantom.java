@@ -8,6 +8,9 @@ package buildcraft.lib.gui.slot;
 import net.minecraft.entity.player.EntityPlayer;
 
 import buildcraft.lib.tile.item.IItemHandlerAdv;
+import net.minecraft.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 public class SlotPhantom extends SlotBase implements IPhantomSlot {
     private final boolean canAdjustCount;
@@ -33,12 +36,7 @@ public class SlotPhantom extends SlotBase implements IPhantomSlot {
     }
 
     @Override
-    public boolean canShift() {
+    public boolean isItemValid(@Nonnull ItemStack stack) {
         return false;
-    }
-
-    @Override
-    public int getSlotStackLimit() {
-        return 0;
     }
 }

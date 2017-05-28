@@ -6,23 +6,23 @@
 
 package buildcraft.silicon.container;
 
+import buildcraft.lib.gui.slot.SlotDisplay;
 import buildcraft.lib.gui.slot.SlotPhantom;
 import net.minecraft.entity.player.EntityPlayer;
 
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.silicon.tile.TileAdvancedCraftingTable;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class ContainerAdvancedCraftingTable extends ContainerBCTile<TileAdvancedCraftingTable> {
     public ContainerAdvancedCraftingTable(EntityPlayer player, TileAdvancedCraftingTable tile) {
         super(player, tile);
         addFullPlayerInventory(153);
 
-        for(int y = 0; y < 3; y++) {
-            for(int x = 0; x < 3; x++) {
-                addSlotToContainer(new SlotPhantom(tile.invBlueprint, x + y * 3, 33 + x * 18, 16 + y * 18, false));
-            }
-        }
+        addSlotToContainer(new SlotDisplay(this::getOutput, 0, 127, 33));
 
         for(int y = 0; y < 3; y++) {
             for(int x = 0; x < 5; x++) {
@@ -35,10 +35,20 @@ public class ContainerAdvancedCraftingTable extends ContainerBCTile<TileAdvanced
                 addSlotToContainer(new SlotBase(tile.invResults, x + y * 3, 109 + x * 18, 85 + y * 18));
             }
         }
+
+        for(int y = 0; y < 3; y++) {
+            for(int x = 0; x < 3; x++) {
+                addSlotToContainer(new SlotPhantom(tile.invBlueprint, x + y * 3, 33 + x * 18, 16 + y * 18, false));
+            }
+        }
     }
 
     @Override
     public boolean canInteractWith(EntityPlayer player) {
         return true;
+    }
+
+    private ItemStack getOutput(int slot) {
+        return tile.getOutput();
     }
 }

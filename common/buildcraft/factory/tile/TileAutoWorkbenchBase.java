@@ -28,6 +28,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -107,7 +109,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
     }
 
     @Override
-    public int getProgress() {
+    public long getProgress() {
         return progress;
     }
 
@@ -138,6 +140,13 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
         return progress >= 0;
     }
 
+    @Override
+    public World getWorldForAutocrafting() {
+        return getWorld();
+    }
 
-
+    @Override
+    public BlockPos getPosForAutocrafting() {
+        return getPos();
+    }
 }
