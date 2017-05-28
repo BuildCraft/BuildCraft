@@ -37,15 +37,5 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> {
                 container.tile.deltaProgress.getDynamic(partialTicks),
                 1
         );
-
-        if (container.tile.currentRecipe != null) {
-            RenderHelper.enableGUIStandardItemLighting();
-            ItemStack output = container.tile.getOutput();
-            int x = rootElement.getX() + 93;
-            int y = rootElement.getY() + 27;
-            this.itemRender.renderItemAndEffectIntoGUI(this.mc.player, output, x, y);
-            this.itemRender.renderItemOverlayIntoGUI(this.mc.fontRenderer, output, x, y, null);
-            RenderHelper.disableStandardItemLighting();
-        }
     }
 }
