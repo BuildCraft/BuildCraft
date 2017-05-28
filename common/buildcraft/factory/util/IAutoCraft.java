@@ -35,10 +35,10 @@ public interface IAutoCraft {
     void setCurrentRecipe(IRecipe recipe);
 
     default void updateRecipe() {
-        IRecipe old = getCurrentRecipe();
+        ItemStack old = getOutput();
         IRecipe newRecipe = CraftingUtil.findMatchingRecipe(getWorkbenchCrafting(), getWorldForAutocrafting());
         setCurrentRecipe(newRecipe);
-        if (newRecipe == null || old != newRecipe) {
+        if (newRecipe == null || StackUtil.canMerge(old, getOutput())) {
             setRequirements(null);
         }
         if (getRequirements() == null && getCurrentRecipe() != null) {
@@ -55,10 +55,10 @@ public interface IAutoCraft {
     default void craft() {
         ItemStack out = getCurrentRecipe().getCraftingResult(getWorkbenchCrafting());
         InventoryUtil.drop(getWorldForAutocrafting(), getPosForAutocrafting(), insertInInventory(getInvResult(), out));
-        for (ItemStack stack: getCurrentRecipe().getRemainingItems(getWorkbenchCrafting())) {
+        for (ItemStack stack : getCurrentRecipe().getRemainingItems(getWorkbenchCrafting())) {
             InventoryUtil.drop(getWorldForAutocrafting(), getPosForAutocrafting(), insertInInventory(getInvResult(), stack));
         }
-        for (ItemStack input: getRequirements()) {
+        for (ItemStack input : getRequirements()) {
             ItemStack toExtract = input.copy();
             for (int i = 0; i < getInvMaterials().getSlots(); i++) {
                 if (StackUtil.canMerge(toExtract, getInvMaterials().getStackInSlot(i))) {
