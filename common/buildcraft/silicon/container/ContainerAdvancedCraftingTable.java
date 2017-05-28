@@ -14,16 +14,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.silicon.tile.TileAdvancedCraftingTable;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 
 public class ContainerAdvancedCraftingTable extends ContainerBCTile<TileAdvancedCraftingTable> {
     public ContainerAdvancedCraftingTable(EntityPlayer player, TileAdvancedCraftingTable tile) {
         super(player, tile);
         addFullPlayerInventory(153);
 
-        addSlotToContainer(new SlotDisplay(this::getOutput, 0, 127, 33));
+        addSlotToContainer(new SlotDisplay(i -> tile.getOutput(), 0, 127, 33));
 
         for(int y = 0; y < 3; y++) {
             for(int x = 0; x < 5; x++) {
@@ -47,9 +44,5 @@ public class ContainerAdvancedCraftingTable extends ContainerBCTile<TileAdvanced
     @Override
     public boolean canInteractWith(EntityPlayer player) {
         return true;
-    }
-
-    private ItemStack getOutput(int slot) {
-        return tile.getOutput();
     }
 }

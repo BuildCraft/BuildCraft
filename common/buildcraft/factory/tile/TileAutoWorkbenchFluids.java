@@ -47,7 +47,6 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
         left.add("Tanks:");
         left.add("  " + tank1.getContentsString());
         left.add("  " + tank2.getContentsString());
-
     }
 
     @Override

@@ -13,26 +13,16 @@ import buildcraft.factory.util.IAutoCraft;
 import buildcraft.factory.util.WorkbenchCrafting;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
-import buildcraft.lib.inventory.filter.ArrayStackFilter;
-import buildcraft.lib.misc.CraftingUtil;
-import buildcraft.lib.misc.InventoryUtil;
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements ITickable, IDebuggable, IAutoCraft {
@@ -54,7 +44,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
         invResult = itemManager.addInvHandler("result", 1, ItemHandlerManager.EnumAccess.EXTRACT, EnumPipePart.VALUES);
         invOverflow = itemManager.addInvHandler("overflow", slots, ItemHandlerManager.EnumAccess.EXTRACT, EnumPipePart.VALUES);
         crafting = new WorkbenchCrafting(width, height, invBlueprint);
-        caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, this::hasWork, EnumPipePart.VALUES);
+        caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, () -> progress >= 0, EnumPipePart.VALUES);
     }
 
     @Override
@@ -85,7 +75,8 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-
+        left.add("");
+        left.add(currentRecipe.toString());
     }
 
     @Override
@@ -109,11 +100,6 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
     }
 
     @Override
-    public long getProgress() {
-        return progress;
-    }
-
-    @Override
     public IRecipe getCurrentRecipe() {
         return currentRecipe;
     }
@@ -122,8 +108,6 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
     public void setCurrentRecipe(IRecipe recipe) {
         currentRecipe = recipe;
     }
-
-
 
     @Override
     public void setRequirements(List<ItemStack> stacks) {
@@ -135,18 +119,13 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
         return requirements;
     }
 
-
-    public boolean hasWork() {
-        return progress >= 0;
-    }
-
     @Override
-    public World getWorldForAutocrafting() {
+    public World getWorldForAutoCrafting() {
         return getWorld();
     }
 
     @Override
-    public BlockPos getPosForAutocrafting() {
+    public BlockPos getPosForAutoCrafting() {
         return getPos();
     }
 }
