@@ -37,7 +37,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
 
     @Override
     public long getTarget() {
-        return canWork() > 0 ? POWER_REQ : 0;
+        return canWork() ? POWER_REQ : 0;
     }
 
     @Override
@@ -113,10 +113,5 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
     @Override
     public BlockPos getPosForAutocrafting() {
         return getPos();
-    }
-
-    @Override
-    public void receiveLaserPower(long microJoules) {
-        super.receiveLaserPower(microJoules);
     }
 }
