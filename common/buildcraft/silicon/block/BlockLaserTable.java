@@ -25,8 +25,6 @@ import buildcraft.silicon.BCSiliconGuis;
 import buildcraft.silicon.tile.*;
 
 public class BlockLaserTable extends BlockBCTile_Neptune implements ILaserTargetBlock {
-    private final AxisAlignedBB AABB = new AxisAlignedBB(0, 0, 0, 1, 9 / 16D, 1);
-
     private final EnumLaserTableType type;
 
     public BlockLaserTable(EnumLaserTableType type, Material material, String id) {
@@ -67,26 +65,27 @@ public class BlockLaserTable extends BlockBCTile_Neptune implements ILaserTarget
     }
 
     @Override
-    public int damageDropped(IBlockState state) {
-        return type.ordinal();
-    }
-
-    @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return AABB;
+        return new AxisAlignedBB(0 / 16D, 0 / 16D, 0 / 16D, 16 / 16D, 9 / 16D, 16 / 16D);
     }
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         switch(type) {
             case ASSEMBLY_TABLE:
-                BCSiliconGuis.ASSEMBLY_TABLE.openGUI(player, pos);
+                if (!world.isRemote) {
+                    BCSiliconGuis.ASSEMBLY_TABLE.openGUI(player, pos);
+                }
                 return true;
             case ADVANCED_CRAFTING_TABLE:
-                BCSiliconGuis.ADVANCED_CRAFTING_TABLE.openGUI(player, pos);
+                if (!world.isRemote) {
+                    BCSiliconGuis.ADVANCED_CRAFTING_TABLE.openGUI(player, pos);
+                }
                 return true;
             case INTEGRATION_TABLE:
-                BCSiliconGuis.INTEGRATION_TABLE.openGUI(player, pos);
+                if (!world.isRemote) {
+                    BCSiliconGuis.INTEGRATION_TABLE.openGUI(player, pos);
+                }
                 return true;
             case CHARGING_TABLE:
             case PROGRAMMING_TABLE:
