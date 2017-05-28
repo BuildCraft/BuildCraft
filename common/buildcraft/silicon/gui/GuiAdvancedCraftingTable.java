@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.silicon.gui;
 
+import buildcraft.lib.registry.TagManager;
 import buildcraft.silicon.tile.TileAdvancedCraftingTable;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
@@ -46,7 +47,7 @@ public class GuiAdvancedCraftingTable extends GuiBC8<ContainerAdvancedCraftingTa
 
     @Override
     protected void drawForegroundLayer() {
-        String title = I18n.format("tile.advancedCraftingTableBlock.name");
+        String title = I18n.format("tile." + TagManager.getTag("block.advanced_crafting_table", TagManager.EnumTagType.UNLOCALIZED_NAME) + ".name");
         fontRenderer.drawString(title, guiLeft + (xSize - fontRenderer.getStringWidth(title)) / 2, guiTop + 5, 0x404040);
     }
 }
