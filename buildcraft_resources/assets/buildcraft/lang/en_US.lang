@@ -478,7 +478,7 @@ itemGroup.buildcraft.plugs=BuildCraft Pluggables
 
 tile.architectBlock.name=Architect Table
 tile.assemblyTableBlock.name=Assembly Table
-tile.assemblyWorkbenchBlock.name=Advanced Crafting Table
+tile.advancedCraftingTableBlock.name=Advanced Crafting Table
 tile.autoWorkbenchBlock.name=Auto Workbench
 tile.blockFuel.name=Fuel
 tile.chuteBlock.name=Chute
