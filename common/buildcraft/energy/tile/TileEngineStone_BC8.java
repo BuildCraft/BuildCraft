@@ -6,6 +6,8 @@ package buildcraft.energy.tile;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,13 +23,12 @@ import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
 import buildcraft.lib.engine.EngineConnector;
 import buildcraft.lib.engine.TileEngineBase_BC8;
+import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.lib.tile.item.StackInsertionFunction;
 
 import buildcraft.energy.BCEnergyGuis;
-
-import javax.annotation.Nonnull;
 
 public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     private static final long MAX_OUTPUT = MjAPI.MJ;
@@ -112,14 +113,17 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
                 deltaFuelLeft.setValue(100);
                 deltaFuelLeft.addDelta(0, totalBurnTime, -100);
 
-                invFuel.extractItem(0, 1, false);
+                ItemStack fuel = invFuel.extractItem(0, 1, false);
+                ItemStack container = fuel.getItem().getContainerItem(fuel);
+                if (!container.isEmpty()) {
+                    ItemStack leftover = invFuel.insert(container, false, false);
+                    InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, leftover);
+                }
             }
         }
     }
 
     private static int getItemBurnTime(ItemStack itemstack) {
-        if (itemstack == null) return 0;
-
         return TileEntityFurnace.getItemBurnTime(itemstack);
     }
 
