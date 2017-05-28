@@ -6,7 +6,6 @@
 
 package buildcraft.factory.util;
 
-import buildcraft.factory.tile.TileAutoWorkbenchBase;
 import buildcraft.lib.misc.CraftingUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.StackUtil;
@@ -91,7 +90,7 @@ public interface IAutoCraft {
     }
 
     default boolean canWork() {
-        return getCurrentRecipe() != null && hasMaterials() && getInvResult().hasRoomFor(getOutput());
+        return getCurrentRecipe() != null && hasMaterials() && getInvResult().insert(getOutput(), true, true).isEmpty();
     }
 
     default ItemStack getOutput() {

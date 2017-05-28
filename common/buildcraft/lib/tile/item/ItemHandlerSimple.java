@@ -239,19 +239,5 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     }
 
 
-    public boolean hasRoomFor(ItemStack stack) {
-        int amount = stack.getCount();
-        for (int i = 0; i < getSlots(); i++) {
-            ItemStack stored = getStackInSlot(i);
-            if (stored.isEmpty())
-                return true;
-            if (StackUtil.canMerge(stored, stack)){
-                amount -= stored.getMaxStackSize() - stored.getCount();
-                if (amount <= 0) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+
 }

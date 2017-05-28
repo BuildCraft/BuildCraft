@@ -8,7 +8,6 @@ package buildcraft.lib.gui.slot;
 import net.minecraft.entity.player.EntityPlayer;
 
 import buildcraft.lib.tile.item.IItemHandlerAdv;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
