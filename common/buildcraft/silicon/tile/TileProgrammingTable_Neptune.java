@@ -8,8 +8,8 @@ package buildcraft.silicon.tile;
 
 public class TileProgrammingTable_Neptune extends TileLaserTableBase {
     @Override
-    public boolean hasWork() {
-        return true;
+    public long getTarget() {
+        return 0;
     }
 
     @Override

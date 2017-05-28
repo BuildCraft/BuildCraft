@@ -35,9 +35,9 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
     private List<ItemStack> requirements = null;
     public static final long POWER_REQ = 500 * MjAPI.MJ;
 
-
+    @Override
     public long getTarget() {
-        return POWER_REQ;
+        return canWork() > 0 ? POWER_REQ : 0;
     }
 
     @Override
@@ -58,11 +58,6 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
             craft();
         }
         sendNetworkGuiUpdate(NET_GUI_DATA);
-    }
-
-    @Override
-    public boolean hasWork() {
-        return canWork();
     }
 
     @Override
