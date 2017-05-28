@@ -54,8 +54,10 @@ public interface IAutoCraft {
 
     default void craft() {
         ItemStack out = getCurrentRecipe().getCraftingResult(getWorkbenchCrafting());
-        ItemStack leftOver = getInvResult().insertItem(0, out, false);
-        InventoryUtil.drop(getWorld(), getPos(), leftOver);
+        InventoryUtil.drop(getWorld(), getPos(), insertInInventory(getInvResult(), out));
+        for (ItemStack stack: getCurrentRecipe().getRemainingItems(getWorkbenchCrafting())) {
+            InventoryUtil.drop(getWorld(), getPos(), insertInInventory(getInvResult(), stack));
+        }
         for (ItemStack input: getRequirements()) {
             ItemStack toExtract = input.copy();
             for (int i = 0; i < getInvMaterials().getSlots(); i++) {
@@ -71,6 +73,17 @@ public interface IAutoCraft {
         }
     }
 
+    default ItemStack insertInInventory(ItemHandlerSimple handler, ItemStack stack) {
+        ItemStack leftOver = stack;
+        for (int i = 0; i < handler.getSlots(); i++) {
+            leftOver = handler.insertItem(i, leftOver, false);
+            if (leftOver.isEmpty()) {
+                break;
+            }
+        }
+        return leftOver;
+    }
+
     BlockPos getPos();
 
     default boolean hasMaterials() {
@@ -78,7 +91,7 @@ public interface IAutoCraft {
     }
 
     default boolean canWork() {
-        return getCurrentRecipe() != null && hasMaterials() && (getInvResult().getStackInSlot(0).isEmpty() || StackUtil.canMerge(getCurrentRecipe().getCraftingResult(getWorkbenchCrafting()), getInvResult().getStackInSlot(0)));
+        return getCurrentRecipe() != null && hasMaterials() && getInvResult().hasRoomFor(getOutput());
     }
 
     default ItemStack getOutput() {

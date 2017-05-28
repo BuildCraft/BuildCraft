@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -103,6 +104,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     }
 
     @Override
+    @Nonnull
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (badSlotIndex(slot)) {
             return stack;
@@ -234,5 +236,22 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     @Override
     public int getSlotLimit(int slot) {
         return 64;
+    }
+
+
+    public boolean hasRoomFor(ItemStack stack) {
+        int amount = stack.getCount();
+        for (int i = 0; i < getSlots(); i++) {
+            ItemStack stored = getStackInSlot(i);
+            if (stored.isEmpty())
+                return true;
+            if (StackUtil.canMerge(stored, stack)){
+                amount -= stored.getMaxStackSize() - stored.getCount();
+                if (amount <= 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
