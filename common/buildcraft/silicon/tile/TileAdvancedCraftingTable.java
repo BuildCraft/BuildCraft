@@ -31,15 +31,13 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
     public final ItemHandlerSimple invMaterials = itemManager.addInvHandler("materials", 5 * 3, ItemHandlerManager.EnumAccess.INSERT, EnumPipePart.VALUES);
     public final ItemHandlerSimple invResults = itemManager.addInvHandler("result", 3 * 3, ItemHandlerManager.EnumAccess.EXTRACT, EnumPipePart.VALUES);
     private final WorkbenchCrafting crafting = new WorkbenchCrafting(3, 3, invBlueprint);
-    private long progress = -1;
     public IRecipe currentRecipe;
     private List<ItemStack> requirements = null;
     public static final long POWER_REQ = 500 * MjAPI.MJ;
 
-    public final DeltaInt deltaProgress = deltaManager.addDelta("progress", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
 
     public long getTarget() {
-        return 40 * MjAPI.MJ;
+        return POWER_REQ;
     }
 
     @Override
@@ -55,23 +53,10 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
         if (world.isRemote) {
             return;
         }
-        if (canWork()) {
-            if (progress == 0) {
-                deltaProgress.addDelta(0, 100, 1);
-            }
-            if (progress < POWER_REQ) {
-                progress += power;
-                deltaProgress.setValue((int) ((progress * 100) /POWER_REQ));
-                power = 0;
-                return;
-            }
-            progress -= POWER_REQ;
+        if (power > POWER_REQ) {
+            power -= POWER_REQ;
             craft();
-        } else if (progress != -1) {
-            progress = -1;
-            deltaProgress.setValue(0);
         }
-
         sendNetworkGuiUpdate(NET_GUI_DATA);
     }
 
@@ -102,7 +87,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
 
     @Override
     public long getProgress() {
-        return progress;
+        return power / POWER_REQ;
     }
 
     @Override

@@ -31,8 +31,8 @@ public class GuiAdvancedCraftingTable extends GuiBC8<ContainerAdvancedCraftingTa
         ICON_GUI.drawAt(rootElement);
 
         long target = container.tile.getTarget();
-        if(target != 0) {
-            double v = container.tile.deltaProgress.getDynamic(partialTicks) / 100;
+        if (target != 0) {
+            double v = (double) container.tile.power / target;
             ICON_PROGRESS.drawCutInside(
                     new GuiRectangle(
                             RECT_PROGRESS.x,
