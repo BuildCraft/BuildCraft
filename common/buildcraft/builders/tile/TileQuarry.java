@@ -635,17 +635,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 List<ItemStack> stacks = new ArrayList<>();
                 // The drill pos will be null if we are making the frame: this is when we want to destroy the block, not
                 // drop its contents
-                if (drillPos != null) {
-                    Optional.ofNullable(
-                        BlockUtil.getItemStackFromBlock(
-                            (WorldServer) world,
-                            breakPos,
-                            getOwner()
-                        )
-                    ).ifPresent(stacks::addAll);
-                }
                 world.sendBlockBreakProgress(breakPos.hashCode(), breakPos, -1);
-                world.destroyBlock(breakPos, false);
+                world.destroyBlock(breakPos, true);
                 if (drillPos != null) {
                     world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(breakPos)).stream()
                         .map(entity -> ItemTransactorHelper.getTransactorForEntity(entity, EnumFacing.UP))
