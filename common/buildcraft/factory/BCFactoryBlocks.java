@@ -29,9 +29,7 @@ public class BCFactoryBlocks {
 
     public static void preInit() {
         // plastic = BlockBuildCraftBase_BC8.register(new BlockPlastic("block.plastic"), ItemPlastic::new);
-        if (BCLib.DEV) {
-            autoWorkbenchItems = BlockBCBase_Neptune.register(new BlockAutoWorkbenchItems(Material.ROCK, "block.autoworkbench.item"));
-        }
+        autoWorkbenchItems = BlockBCBase_Neptune.register(new BlockAutoWorkbenchItems(Material.ROCK, "block.autoworkbench.item"));
         miningWell = BlockBCBase_Neptune.register(new BlockMiningWell(Material.ROCK, "block.mining_well"));
         pump = BlockBCBase_Neptune.register(new BlockPump(Material.ROCK, "block.pump"));
         tube = BlockBCBase_Neptune.register(new BlockTube(Material.IRON, "block.tube"), null);
@@ -48,9 +46,7 @@ public class BCFactoryBlocks {
             waterGel = BlockBCBase_Neptune.register(new BlockWaterGel(Material.CLAY, "block.water_gel"), null);
         }
 
-        if (BCLib.DEV) {
-            TileBC_Neptune.registerTile(TileAutoWorkbenchItems.class, "tile.autoworkbench.item");
-        }
+        TileBC_Neptune.registerTile(TileAutoWorkbenchItems.class, "tile.autoworkbench.item");
         TileBC_Neptune.registerTile(TileMiningWell.class, "tile.mining_well");
         TileBC_Neptune.registerTile(TilePump.class, "tile.pump");
         TileBC_Neptune.registerTile(TileFloodGate.class, "tile.flood_gate");
