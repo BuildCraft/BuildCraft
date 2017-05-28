@@ -7,6 +7,7 @@
 package buildcraft.silicon.container;
 
 import buildcraft.lib.gui.slot.SlotDisplay;
+import buildcraft.lib.gui.slot.SlotOutput;
 import buildcraft.lib.gui.slot.SlotPhantom;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -32,7 +33,7 @@ public class ContainerAdvancedCraftingTable extends ContainerBCTile<TileAdvanced
 
         for(int y = 0; y < 3; y++) {
             for(int x = 0; x < 3; x++) {
-                addSlotToContainer(new SlotBase(tile.invResults, x + y * 3, 109 + x * 18, 85 + y * 18));
+                addSlotToContainer(new SlotOutput(tile.invResults, x + y * 3, 109 + x * 18, 85 + y * 18));
             }
         }
 
