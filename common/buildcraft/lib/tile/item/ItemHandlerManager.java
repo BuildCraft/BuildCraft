@@ -36,7 +36,7 @@ import javax.annotation.Nonnull;
 
 public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
     public enum EnumAccess {
-        /** An {@link IItemHandler} that shouldn't be accessible by extenral sources. */
+        /** An {@link IItemHandler} that shouldn't be accessible by external sources. */
         NONE,
         /** Same as {@link #NONE}, but the contents of this inventory won't be dropped when the block is removed. */
         PHANTOM,

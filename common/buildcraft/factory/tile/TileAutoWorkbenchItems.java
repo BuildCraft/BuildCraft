@@ -6,20 +6,7 @@ package buildcraft.factory.tile;
 
 public class TileAutoWorkbenchItems extends TileAutoWorkbenchBase {
     public TileAutoWorkbenchItems() {
-        super(9);
-    }
-
-    @Override
-    protected WorkbenchCrafting createCrafting() {
-        return new WorkbenchCraftingItems(3, 3);
-    }
-
-    public class WorkbenchCraftingItems extends WorkbenchCrafting {
-        public WorkbenchCraftingItems(int width, int height) {
-            super(width, height);
-            for (int i = 0; i < this.craftingSlots.length; i++) {
-                this.craftingSlots[i] = new CraftSlotItem(i);
-            }
-        }
+        super(3, 3);
     }
 }
+

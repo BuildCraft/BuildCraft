@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory.container;
 
+import buildcraft.lib.gui.slot.SlotDisplay;
 import net.minecraft.entity.player.EntityPlayer;
 
 import buildcraft.factory.tile.TileAutoWorkbenchItems;
@@ -23,11 +24,12 @@ public class ContainerAutoCraftItems extends ContainerBCTile<TileAutoWorkbenchIt
 
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {
-                addSlotToContainer(new SlotPhantom(tile.invBlueprint, x + y * 3, 30 + x * 18, 17 + y * 18));
+                addSlotToContainer(new SlotPhantom(tile.invBlueprint, x + y * 3, 30 + x * 18, 17 + y * 18, false));
             }
         }
 
         addSlotToContainer(new SlotOutput(tile.invResult, 0, 124, 35));
+        addSlotToContainer(new SlotDisplay(i->tile.getOutput(), 0, 93, 27));
     }
 
     @Override

@@ -4,6 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.silicon.gui;
 
+import buildcraft.lib.registry.TagManager;
+import buildcraft.silicon.tile.TileAdvancedCraftingTable;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
@@ -30,7 +32,7 @@ public class GuiAdvancedCraftingTable extends GuiBC8<ContainerAdvancedCraftingTa
         ICON_GUI.drawAt(rootElement);
 
         long target = container.tile.getTarget();
-        if(target != 0) {
+        if (target != 0) {
             double v = (double) container.tile.power / target;
             ICON_PROGRESS.drawCutInside(
                     new GuiRectangle(
@@ -41,15 +43,11 @@ public class GuiAdvancedCraftingTable extends GuiBC8<ContainerAdvancedCraftingTa
                     ).offset(rootElement)
             );
         }
-//
-//        if(container.tile.recipe != null) {
-//            drawItemStackAt(container.tile.recipe.output, rootElement.getX() + 101, rootElement.getY() + 36);
-//        }
     }
 
     @Override
     protected void drawForegroundLayer() {
-        String title = I18n.format("tile.advancedCraftingTableBlock.name");
+        String title = I18n.format("tile." + TagManager.getTag("block.advanced_crafting_table", TagManager.EnumTagType.UNLOCALIZED_NAME) + ".name");
         fontRenderer.drawString(title, guiLeft + (xSize - fontRenderer.getStringWidth(title)) / 2, guiTop + 5, 0x404040);
     }
 }

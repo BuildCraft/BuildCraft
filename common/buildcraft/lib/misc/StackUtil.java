@@ -112,6 +112,7 @@ public class StackUtil {
                 // Use an explicit null check here as the collection doesn't have @Nonnull applied to its type
                 throw new NullPointerException("Found a null itemstack in " + containers);
             }
+            if (req.isEmpty()) continue;
             if (!contains(req, containers)) {
                 return false;
             }
