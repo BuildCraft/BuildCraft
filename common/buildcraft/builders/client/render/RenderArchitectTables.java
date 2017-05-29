@@ -19,12 +19,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Point3f;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 public enum RenderArchitectTables implements DetatchedRenderer.IDetachedRenderer {
     INSTANCE;
@@ -33,8 +35,14 @@ public enum RenderArchitectTables implements DetatchedRenderer.IDetachedRenderer
     public void render(EntityPlayer player, float partialTicks) {
         List<AxisAlignedBB> boxes = new ArrayList<>(ClientArchitectTables.BOXES.keySet());
         boxes.sort(
-            Comparator.<AxisAlignedBB>comparingDouble(box ->
-                box.getCenter().distanceTo(player.getPositionVector())
+            Comparator.<AxisAlignedBB>comparingDouble(bb ->
+                bb.getCenter().distanceTo(player.getPositionVector())
+            ).reversed()
+        );
+        List<BlockPos> poses = new ArrayList<>(ClientArchitectTables.SCANNED_BLOCKS.keySet());
+        poses.sort(
+            Comparator.<BlockPos>comparingDouble(pos ->
+                new Vec3d(pos).distanceTo(player.getPositionVector())
             ).reversed()
         );
         for (AxisAlignedBB bb : boxes) {
@@ -91,7 +99,7 @@ public enum RenderArchitectTables implements DetatchedRenderer.IDetachedRenderer
                 )
             );
             vb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-            for (BlockPos pos : ClientArchitectTables.SCANNED_BLOCKS.keySet()) {
+            for (BlockPos pos : poses) {
                 if (!bb.intersectsWith(new AxisAlignedBB(pos))) {
                     continue;
                 }
@@ -103,11 +111,12 @@ public enum RenderArchitectTables implements DetatchedRenderer.IDetachedRenderer
                         new ModelUtil.UvFaceData(0, 0, 1, 1)
                     )
                         .lighti(15, 15)
-                        .colourf(
-                            1,
-                            1,
-                            1,
-                            (float) ClientArchitectTables.SCANNED_BLOCKS.get(pos)
+                        .colouri(
+                            255,
+                            255,
+                            255,
+                            ClientArchitectTables.SCANNED_BLOCKS.get(pos)
+                                * 50
                                 / ClientArchitectTables.START_SCANNED_BLOCK_VALUE
                         )
                         .render(vb);

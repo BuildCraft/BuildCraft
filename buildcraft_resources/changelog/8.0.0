@@ -80,6 +80,8 @@ Improvements:
   * Filling planner (new):
     * It's addon for volume boxes that shows blocks which belongs to specified pattern (you a set its parameters in GUI)
     * You can build these blocks manually or place builder near
+  * Architect Table
+    * Now has scanning animation
   * Builder:
     * Now uses builtin Minecraft methods for rotating blocks (for default schematics)
     * JSON schematics system
