@@ -25,23 +25,20 @@ public enum OilGenerator implements IWorldGenerator {
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator gen,
         IChunkProvider provider) {
-        int cx = chunkX * 16 + 8;
-        int cz = chunkZ * 16 + 8;
-        BlockPos min = new BlockPos(cx, 0, cz);
+        int x = chunkX * 16 + 8;
+        int z = chunkZ * 16 + 8;
+        BlockPos min = new BlockPos(x, 0, z);
         Box box = new Box(min, min.add(15, world.getHeight(), 15));
         for (int cdx = -MAX_CHUNK_RADIUS; cdx <= MAX_CHUNK_RADIUS; cdx++) {
             for (int cdz = -MAX_CHUNK_RADIUS; cdz <= MAX_CHUNK_RADIUS; cdz++) {
-                cx = chunkX + cdx;
-                cz = chunkZ + cdz;
+                int cx = chunkX + cdx;
+                int cz = chunkZ + cdz;
                 for (OilGenStructure struct : getStructuresFor(world, cx, cz)) {
                     struct.generate(world, box);
                 }
             }
         }
     }
-
-    private static final byte LARGE_WELL_HEIGHT = 16;
-    private static final byte MEDIUM_WELL_HEIGHT = 6;
 
     public static List<OilGenStructure> getStructuresFor(World world, int cx, int cz) {
         // Ensure we have the same seed for the sane chunk
@@ -116,8 +113,12 @@ public enum OilGenerator implements IWorldGenerator {
                 radius = 0;
                 height = 68 + rand.nextInt(7);
             }
-            structures.add(OilGenUtil.createTubeY(new BlockPos(x, wellY, z), height, radius));
+            structures.add(OilGenUtil.createTubeY(new BlockPos(x, wellY, z), height - wellY, radius));
 
+            // Generate a spring at the very bottom
+            if (type == GenType.LARGE || rand.nextFloat() < 0.2) {
+                structures.add(OilGenUtil.createTubeY(new BlockPos(x, 1, z), wellY, radius));
+            }
         }
 
         int lakeRadius;
