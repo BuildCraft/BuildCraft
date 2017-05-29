@@ -18,6 +18,7 @@ import java.util.TreeMap;
 
 import javax.annotation.Nullable;
 
+import buildcraft.api.core.BCLog;
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.block.Block;
@@ -104,6 +105,11 @@ public class FacadeStateManager {
             Map<IBlockState, ItemStack> usedStates = new HashMap<>();
             Map<ItemStackKey, Map<IProperty<?>, Comparable<?>>> varyingProperties = new HashMap<>();
             for (IBlockState state : block.getBlockState().getValidStates()) {
+                // noinspection ConstantConditions
+                if (state.getBlock() == null) {
+                    BCLog.logger.warn("Block of state " + state + " was null");
+                    continue;
+                }
                 state = block.getStateFromMeta(block.getMetaFromState(state));
                 if (usedStates.containsKey(state)) {
                     continue;
