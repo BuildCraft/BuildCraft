@@ -56,6 +56,7 @@ public enum DetatchedRenderer {
         void glPost();
     }
 
+    @FunctionalInterface
     public interface IDetachedRenderer {
         void render(EntityPlayer player, float partialTicks);
     }

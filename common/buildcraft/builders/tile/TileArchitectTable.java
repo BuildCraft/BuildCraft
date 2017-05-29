@@ -5,12 +5,9 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
+import buildcraft.builders.client.ClientArchitectTables;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -18,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -74,7 +70,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     public final ItemHandlerSimple invSnapshotOut = itemManager.addInvHandler("out", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
 
     private EnumSnapshotType snapshotType = EnumSnapshotType.BLUEPRINT;
-    private final Box box = new Box();
+    public final Box box = new Box();
     private boolean[][][] templateScannedBlocks;
     private final List<ISchematicBlock<?>> blueprintScannedPalette = new ArrayList<>();
     private int[][][] blueprintScannedData;
@@ -145,6 +141,12 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         deltaManager.tick();
 
         if (world.isRemote) {
+            if (box.isInitialized()) {
+                ClientArchitectTables.BOXES.put(
+                    box.getBoundingBox(),
+                    ClientArchitectTables.START_BOX_VALUE
+                );
+            }
             return;
         }
 
@@ -172,7 +174,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     private void scanMultipleBlocks() {
-        for (int i = 10000/*snapshotType.maxPerTick*/; i > 0; i--) {
+        for (int i = snapshotType.maxPerTick; i > 0; i--) {
             scanSingleBlock();
             if (!scanning) {
                 break;
@@ -298,14 +300,15 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             if (id == NET_RENDER_DATA) {
                 readPayload(NET_BOX, buffer, side, ctx);
                 name = buffer.readString();
-            } else if (id == NET_BOX) {
+            }
+            if (id == NET_BOX) {
                 box.readData(buffer);
-            } else if (id == NET_SCAN) {
-                BlockPos pos = MessageUtil.readBlockPos(buffer);
-                double x = pos.getX() + 0.5;
-                double y = pos.getY() + 0.5;
-                double z = pos.getZ() + 0.5;
-                world.spawnParticle(EnumParticleTypes.CLOUD, x, y, z, 0, 0, 0);
+            }
+            if (id == NET_SCAN) {
+                ClientArchitectTables.SCANNED_BLOCKS.put(
+                    MessageUtil.readBlockPos(buffer),
+                    ClientArchitectTables.START_SCANNED_BLOCK_VALUE
+                );
             }
         }
     }
@@ -349,12 +352,6 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     // Rendering
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean hasFastRenderer() {
-        return true;
-    }
 
     @Override
     @SideOnly(Side.CLIENT)

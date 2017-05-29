@@ -13,6 +13,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import buildcraft.builders.client.ClientArchitectTables;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 
@@ -20,6 +22,7 @@ import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -109,4 +112,11 @@ public enum BCBuildersEventDist {
         }
     }
 
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void onTickClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.END && !Minecraft.getMinecraft().isGamePaused()) {
+            ClientArchitectTables.tick();
+        }
+    }
 }

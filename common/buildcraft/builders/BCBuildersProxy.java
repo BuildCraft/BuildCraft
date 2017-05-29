@@ -4,6 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
+import buildcraft.lib.client.render.DetatchedRenderer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -15,7 +17,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.builders.client.render.RenderArchitectTable;
+import buildcraft.builders.client.render.RenderArchitectTables;
 import buildcraft.builders.client.render.RenderBuilder;
 import buildcraft.builders.client.render.RenderFiller;
 import buildcraft.builders.client.render.RenderQuarry;
@@ -132,16 +134,22 @@ public abstract class BCBuildersProxy implements IGuiHandler {
 
         @Override
         public void fmlPreInit() {
+            if (!Minecraft.getMinecraft().getFramebuffer().isStencilEnabled()) {
+                Minecraft.getMinecraft().getFramebuffer().enableStencil();
+            }
             BCBuildersSprites.fmlPreInit();
         }
 
         @Override
         public void fmlInit() {
             super.fmlInit();
-            ClientRegistry.bindTileEntitySpecialRenderer(TileArchitectTable.class, new RenderArchitectTable());
             ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilder());
             ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderFiller());
             ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderQuarry());
+            DetatchedRenderer.INSTANCE.addRenderer(
+                DetatchedRenderer.RenderMatrixType.FROM_WORLD_ORIGIN,
+                RenderArchitectTables.INSTANCE
+            );
         }
     }
 }

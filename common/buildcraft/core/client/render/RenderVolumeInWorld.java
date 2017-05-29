@@ -11,7 +11,7 @@ import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.ClientVolumeBoxes;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
 import buildcraft.core.marker.volume.Lock;
-import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
+import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
@@ -33,7 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public enum RenderVolumeInWorld implements IDetachedRenderer {
+public enum RenderVolumeInWorld implements DetatchedRenderer.IDetachedRenderer {
     INSTANCE;
 
     private static final double OFFSET_BY = 2 / 16.0;
@@ -69,7 +69,9 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
             Arrays.stream(box.box.laserData).forEach(data -> LaserRenderer_BC8.renderLaserDynamic(data, vb));
 
             // noinspection unchecked
-            box.addons.values().forEach(addon -> ((IFastAddonRenderer<Addon>) addon.getRenderer()).renderAddonFast(addon, player, partialTicks, vb));
+            box.addons.values().forEach(addon ->
+                ((IFastAddonRenderer<Addon>) addon.getRenderer()).renderAddonFast(addon, player, partialTicks, vb)
+            );
         });
 
         Tessellator.getInstance().draw();
