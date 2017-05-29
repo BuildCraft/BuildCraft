@@ -1,8 +1,6 @@
-/*
- * Copyright (c) 2017 SpaceToad and the BuildCraft team
+/* Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
- */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/ */
 
 package buildcraft.transport.plug;
 
@@ -26,6 +24,8 @@ import net.minecraft.block.BlockSlime;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -34,6 +34,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ReportedException;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 
@@ -54,7 +55,8 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.builders.snapshot.FakeWorld;
 
 public class FacadeStateManager {
-    public static final SortedMap<IBlockState, FacadeBlockStateInfo> validFacadeStates = new TreeMap<>(BlockUtil.blockStateComparator());
+    public static final SortedMap<IBlockState, FacadeBlockStateInfo> validFacadeStates = new TreeMap<>(BlockUtil
+        .blockStateComparator());
     public static final Map<ItemStackKey, List<FacadeBlockStateInfo>> stackFacades = new HashMap<>();
     public static FacadeBlockStateInfo defaultState, previewState;
 
@@ -81,7 +83,8 @@ public class FacadeStateManager {
         world.setBlockState(BlockPos.ORIGIN, state);
         ItemStack stack = ItemStack.EMPTY;
         try {
-            stack = state.getBlock().getPickBlock(state, new RayTraceResult(VecUtil.VEC_HALF, null, BlockPos.ORIGIN), world, BlockPos.ORIGIN, null);
+            stack = state.getBlock().getPickBlock(state, new RayTraceResult(VecUtil.VEC_HALF, null, BlockPos.ORIGIN),
+                world, BlockPos.ORIGIN, null);
         } catch (Exception ignored) {
             /* Some mods require a non-null player, but we don't have one to give. If a mod's block does require a
              * player entity then we won't support it, as it may require a different stack depending on the player. */
@@ -97,49 +100,59 @@ public class FacadeStateManager {
     public static void postInit() {
         defaultState = new FacadeBlockStateInfo(Blocks.AIR.getDefaultState(), StackUtil.EMPTY, ImmutableSet.of());
         for (Block block : ForgeRegistries.BLOCKS) {
-            EnumActionResult result = isValidFacadeBlock(block);
-            if (result == EnumActionResult.FAIL) {
-                continue;
-            }
-            Map<IBlockState, ItemStack> usedStates = new HashMap<>();
-            Map<ItemStackKey, Map<IProperty<?>, Comparable<?>>> varyingProperties = new HashMap<>();
-            for (IBlockState state : block.getBlockState().getValidStates()) {
-                state = block.getStateFromMeta(block.getMetaFromState(state));
-                if (usedStates.containsKey(state)) {
+            try {
+                EnumActionResult result = isValidFacadeBlock(block);
+                if (result == EnumActionResult.FAIL) {
                     continue;
                 }
-                if (result == EnumActionResult.PASS && !isValidFacadeState(state)) {
-                    continue;
-                }
-                ItemStack stack = getRequiredStack(state);
-                usedStates.put(state, stack);
-                ItemStackKey stackKey = new ItemStackKey(stack);
-                Map<IProperty<?>, Comparable<?>> vars = varyingProperties.get(stackKey);
-                if (vars == null) {
-                    vars = new HashMap<>();
-                    vars.putAll(state.getProperties());
-                    varyingProperties.put(stackKey, vars);
-                } else {
-                    for (Entry<IProperty<?>, Comparable<?>> entry : state.getProperties().entrySet()) {
-                        IProperty prop = entry.getKey();
-                        Comparable<?> value = entry.getValue();
-                        if (vars.get(prop) != value) {
-                            vars.put(prop, null);
+                Map<IBlockState, ItemStack> usedStates = new HashMap<>();
+                Map<ItemStackKey, Map<IProperty<?>, Comparable<?>>> varyingProperties = new HashMap<>();
+                for (IBlockState state : block.getBlockState().getValidStates()) {
+                    state = block.getStateFromMeta(block.getMetaFromState(state));
+                    if (usedStates.containsKey(state)) {
+                        continue;
+                    }
+                    if (result == EnumActionResult.PASS && !isValidFacadeState(state)) {
+                        continue;
+                    }
+                    ItemStack stack = getRequiredStack(state);
+                    usedStates.put(state, stack);
+                    ItemStackKey stackKey = new ItemStackKey(stack);
+                    Map<IProperty<?>, Comparable<?>> vars = varyingProperties.get(stackKey);
+                    if (vars == null) {
+                        vars = new HashMap<>();
+                        vars.putAll(state.getProperties());
+                        varyingProperties.put(stackKey, vars);
+                    } else {
+                        for (Entry<IProperty<?>, Comparable<?>> entry : state.getProperties().entrySet()) {
+                            IProperty prop = entry.getKey();
+                            Comparable<?> value = entry.getValue();
+                            if (vars.get(prop) != value) {
+                                vars.put(prop, null);
+                            }
                         }
                     }
                 }
-            }
-            for (Entry<IBlockState, ItemStack> entry : usedStates.entrySet()) {
-                IBlockState state = entry.getKey();
-                ItemStack stack = entry.getValue();
-                Map<IProperty<?>, Comparable<?>> vars = varyingProperties.get(new ItemStackKey(stack));
-                vars.values().removeIf(Objects::nonNull);
-                FacadeBlockStateInfo info = new FacadeBlockStateInfo(state, stack, ImmutableSet.copyOf(vars.keySet()));
-                validFacadeStates.put(state, info);
-                if (!info.requiredStack.isEmpty()) {
-                    ItemStackKey stackKey = new ItemStackKey(info.requiredStack);
-                    stackFacades.computeIfAbsent(stackKey, k -> new ArrayList<>()).add(info);
+                for (Entry<IBlockState, ItemStack> entry : usedStates.entrySet()) {
+                    IBlockState state = entry.getKey();
+                    ItemStack stack = entry.getValue();
+                    Map<IProperty<?>, Comparable<?>> vars = varyingProperties.get(new ItemStackKey(stack));
+                    vars.values().removeIf(Objects::nonNull);
+                    FacadeBlockStateInfo info = new FacadeBlockStateInfo(state, stack, ImmutableSet.copyOf(vars
+                        .keySet()));
+                    validFacadeStates.put(state, info);
+                    if (!info.requiredStack.isEmpty()) {
+                        ItemStackKey stackKey = new ItemStackKey(info.requiredStack);
+                        stackFacades.computeIfAbsent(stackKey, k -> new ArrayList<>()).add(info);
+                    }
                 }
+            } catch (RuntimeException e) {
+                CrashReport cr = new CrashReport("Getting info for facade", e);
+                CrashReportCategory cat = cr.makeCategory("Block source");
+                cat.addCrashSection("registry name", block.getRegistryName());
+                cat.addCrashSection("class", block.getClass());
+                cat.addCrashSection("state class", block.getDefaultState().getClass());
+                throw new ReportedException(cr);
             }
         }
         previewState = validFacadeStates.get(Blocks.BRICK_BLOCK.getDefaultState());
@@ -153,7 +166,10 @@ public class FacadeStateManager {
         public final boolean isVisible;
         public final boolean[] isSideSolid = new boolean[6];
 
-        public FacadeBlockStateInfo(IBlockState state, ItemStack requiredStack, ImmutableSet<IProperty<?>> varyingProperties) {
+        public FacadeBlockStateInfo(
+            IBlockState state,
+            ItemStack requiredStack,
+            ImmutableSet<IProperty<?>> varyingProperties) {
             this.state = state;
             this.requiredStack = requiredStack;
             this.varyingProperties = varyingProperties;
@@ -262,7 +278,8 @@ public class FacadeStateManager {
         public static FullFacadeInstance readFromNbt(NBTTagCompound nbt, String subTag) {
             NBTTagList list = nbt.getTagList(subTag, Constants.NBT.TAG_COMPOUND);
             if (list.hasNoTags()) {
-                return new FullFacadeInstance(new FacadePhasedState[] { new FacadePhasedState(defaultState, false, null) });
+                return new FullFacadeInstance(new FacadePhasedState[] { new FacadePhasedState(defaultState, false,
+                    null) });
             }
             FacadePhasedState[] states = new FacadePhasedState[list.tagCount()];
             for (int i = 0; i < list.tagCount(); i++) {
