@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import buildcraft.lib.misc.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockFlower;
@@ -28,6 +29,8 @@ import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -259,9 +262,8 @@ public final class OilPopulate {
     }
 
     private boolean isReplaceableFluid(World world, BlockPos pos) {
-        Block block = world.getBlockState(pos).getBlock();
-        return (block instanceof BlockStaticLiquid || block instanceof BlockFluidBase || block instanceof IFluidBlock || block instanceof BlockDynamicLiquid)
-            && world.getBlockState(pos).getMaterial() != Material.LAVA || block.isAir(world.getBlockState(pos), world, pos);
+        Fluid fluid = BlockUtil.getFluidWithFlowing(world, pos);
+        return (fluid != null && fluid != FluidRegistry.LAVA) || world.isAirBlock(pos);
     }
 
     private boolean isOil(World world, int x, int y, int z) {
