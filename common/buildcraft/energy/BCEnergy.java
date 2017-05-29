@@ -20,6 +20,8 @@ import buildcraft.core.BCCore;
 import buildcraft.energy.generation.BiomeInitializer;
 import buildcraft.energy.generation.BiomeOilDesert;
 import buildcraft.energy.generation.BiomeOilOcean;
+import buildcraft.energy.generation.OilGenStructure;
+import buildcraft.energy.generation.OilGenerator;
 import buildcraft.energy.generation.OilPopulate;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.MigrationManager;
@@ -51,6 +53,8 @@ public class BCEnergy {
         BCEnergyBlocks.preInit();
         BCEnergyEntities.preInit();
 
+        GameRegistry.registerWorldGenerator(OilGenerator.INSTANCE, 0);
+
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCEnergyProxy.getProxy());
         GameRegistry.register(BiomeOilOcean.INSTANCE);
         GameRegistry.register(BiomeOilDesert.INSTANCE);
@@ -77,7 +81,7 @@ public class BCEnergy {
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
-        MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
+//        MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
         BCEnergyProxy.getProxy().fmlPostInit();
         registerMigrations();
     }
