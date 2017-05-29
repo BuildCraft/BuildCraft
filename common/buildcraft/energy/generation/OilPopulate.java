@@ -10,7 +10,9 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import buildcraft.lib.misc.BlockUtil;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.material.Material;
@@ -27,6 +29,8 @@ import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -219,7 +223,6 @@ public final class OilPopulate {
 
     private void generateSurfaceDeposit(World world, Random rand, Biome biome, int x, int y, int z, int radius) {
         int depth = rand.nextDouble() < 0.5 ? 1 : 2;
-
         // Center
         setOilColumnForLake(world, biome, x, y, z, depth, 2);
 
@@ -259,9 +262,8 @@ public final class OilPopulate {
     }
 
     private boolean isReplaceableFluid(World world, BlockPos pos) {
-        Block block = world.getBlockState(pos).getBlock();
-        return (block instanceof BlockStaticLiquid || block instanceof BlockFluidBase || block instanceof IFluidBlock)
-            && world.getBlockState(pos).getMaterial() != Material.LAVA;
+        Fluid fluid = BlockUtil.getFluidWithFlowing(world, pos);
+        return (fluid != null && fluid != FluidRegistry.LAVA) || world.isAirBlock(pos);
     }
 
     private boolean isOil(World world, int x, int y, int z) {
@@ -335,7 +337,7 @@ public final class OilPopulate {
 
             for (int d = 1; d <= depth - 1; d++) {
                 BlockPos down = pos.down(d);
-                if (isReplaceableFluid(world, down) || !world.isSideSolid(down.down(), EnumFacing.UP)) {
+                if (!isReplaceableFluid(world, down) || world.isSideSolid(down.down(), EnumFacing.UP)) {
                     return;
                 }
                 world.setBlockState(down, BCEnergyFluids.crudeOil[0].getBlock().getDefaultState(), 2);
