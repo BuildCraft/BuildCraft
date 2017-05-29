@@ -11,6 +11,7 @@ import java.util.Random;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.material.Material;
@@ -219,7 +220,6 @@ public final class OilPopulate {
 
     private void generateSurfaceDeposit(World world, Random rand, Biome biome, int x, int y, int z, int radius) {
         int depth = rand.nextDouble() < 0.5 ? 1 : 2;
-
         // Center
         setOilColumnForLake(world, biome, x, y, z, depth, 2);
 
@@ -260,8 +260,8 @@ public final class OilPopulate {
 
     private boolean isReplaceableFluid(World world, BlockPos pos) {
         Block block = world.getBlockState(pos).getBlock();
-        return (block instanceof BlockStaticLiquid || block instanceof BlockFluidBase || block instanceof IFluidBlock)
-            && world.getBlockState(pos).getMaterial() != Material.LAVA;
+        return (block instanceof BlockStaticLiquid || block instanceof BlockFluidBase || block instanceof IFluidBlock || block instanceof BlockDynamicLiquid)
+            && world.getBlockState(pos).getMaterial() != Material.LAVA || block.isAir(world.getBlockState(pos), world, pos);
     }
 
     private boolean isOil(World world, int x, int y, int z) {
@@ -335,7 +335,7 @@ public final class OilPopulate {
 
             for (int d = 1; d <= depth - 1; d++) {
                 BlockPos down = pos.down(d);
-                if (isReplaceableFluid(world, down) || !world.isSideSolid(down.down(), EnumFacing.UP)) {
+                if (!isReplaceableFluid(world, down) || world.isSideSolid(down.down(), EnumFacing.UP)) {
                     return;
                 }
                 world.setBlockState(down, BCEnergyFluids.crudeOil[0].getBlock().getDefaultState(), 2);
