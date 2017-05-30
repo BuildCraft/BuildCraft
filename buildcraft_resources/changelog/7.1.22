@@ -1,0 +1,4 @@
+Bugs fixed:
+
+* [#3542] Fix crash when a machine clicks on a gate (piotrekli)
+* [#3611] Concurrent exception thrown when wiring or updating MapWorld (AlexIIL)
