@@ -2,12 +2,14 @@ package buildcraft.energy.generation;
 
 import java.util.function.Predicate;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.BCLog;
 
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
@@ -117,29 +119,44 @@ public abstract class OilGenStructure {
         public final int height;
 
         public Spout(BlockPos start, ReplaceType replaceType, int radius, int height) {
-            super(createBox(start, radius), replaceType);
+            super(createBox(start), replaceType);
             this.start = start;
             this.radius = radius;
             this.height = height;
         }
 
-        private static Box createBox(BlockPos start, int radius) {
-            BlockPos min = start.add(-radius, 0, -radius);
+        private static Box createBox(BlockPos start) {
+            // Only a block 1 x 256 x 1 -- that way we area only called once.
             // FIXME: This 256 will need to be rethought for cubic chunk support
-            BlockPos max = new BlockPos(start.getX() + radius, 256, start.getZ() + radius);
-            return new Box(min, max);
+            return new Box(start, VecUtil.replaceValue(start, Axis.Y, 256));
         }
 
         @Override
         protected void generateWithin(World world, Box intersect) {
             int segment = world.getChunkFromBlockCoords(start).getTopFilledSegment();
-            BlockPos worldTop = world.getTopSolidOrLiquidBlock(start);
-            BCLog.logger.info("worldTop = " + worldTop + ", segment = " + segment);
-            BlockPos ourTop = worldTop.add(0, height, 0);
-            if (ourTop.getY() >= world.getHeight()) {
-                ourTop = VecUtil.replaceValue(ourTop, Axis.Y, world.getHeight());
+            BlockPos worldTop = new BlockPos(start.getX(), segment + 16, start.getZ());
+            for (int y = segment; y >= start.getY(); y--) {
+                worldTop = worldTop.down();
+                IBlockState state = world.getBlockState(worldTop);
+                if (state.getBlock().isAir(state, world, worldTop)) {
+                    continue;
+                }
+                if (BlockUtil.getFluidWithFlowing(state.getBlock()) != null) {
+                    break;
+                }
+                if (state.getMaterial().blocksMovement()) {
+                    break;
+                }
             }
-            OilGenerator.createTubeY(start, height, radius).generate(world, intersect);
+            OilGenStructure tubeY = OilGenerator.createTubeY(start, worldTop.getY() - start.getY(), radius);
+            tubeY.generate(world, tubeY.box);
+            BlockPos base = worldTop;
+            for (int r = radius; r >= 0; r--) {
+                BCLog.logger.info(" - " + base + " = " + r);
+                OilGenStructure struct = OilGenerator.createTubeY(base, height, r);
+                struct.generate(world, struct.box);
+                base = base.add(0, height, 0);
+            }
         }
     }
 }

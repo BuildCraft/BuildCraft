@@ -135,6 +135,7 @@ public class BCEnergyFluids {
         FluidManager.register(def, true);
 
         BCFluidBlock block = (BCFluidBlock) def.getBlock();
+        block.setLightOpacity(3);
         // Distance that the fluid will travel: 1->16
         // Higher heat values travel a little further
         block.setQuantaPerBlock(baseQuanta + (baseQuanta > 6 ? heat : heat / 2));

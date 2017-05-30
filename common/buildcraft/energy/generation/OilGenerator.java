@@ -108,18 +108,18 @@ public enum OilGenerator implements IWorldGenerator {
 
             // Generate a spout
 
-            int heightThin;
+            int height;
             if (type == GenType.LARGE) {
-                int heightWide = 10 + rand.nextInt(7);
-                heightThin = heightWide * 2;
-                structures.add(createSpout(new BlockPos(x, wellY, z), heightWide, 1));
+                height = 5 + rand.nextInt(6);
+                radius = 1;
             } else {
-                heightThin = 8 + rand.nextInt(9);
+                height = 4 + rand.nextInt(4);
+                radius = 0;
             }
-            structures.add(createSpout(new BlockPos(x, wellY, z), heightThin, 0));
+            structures.add(createSpout(new BlockPos(x, wellY, z), height, radius));
 
             // Generate a spring at the very bottom
-            if (type == GenType.LARGE || rand.nextFloat() < 0.2) {
+            if (type == GenType.LARGE) {
                 structures.add(createTubeY(new BlockPos(x, 1, z), wellY, radius));
             }
         }
@@ -159,7 +159,7 @@ public enum OilGenerator implements IWorldGenerator {
         int valForAxis = VecUtil.getValue(center, axis);
         BlockPos min = VecUtil.replaceValue(center.add(-radius, -radius, -radius), axis, valForAxis);
         BlockPos max = VecUtil.replaceValue(center.add(radius, radius, radius), axis, valForAxis + length);
-        double radiusSq = radius * radius + 0.01;
+        double radiusSq = radius * radius;
         int toReplace = valForAxis;
         Predicate<BlockPos> tester = p -> {
             return VecUtil.replaceValue(p, axis, toReplace).distanceSq(center) <= radiusSq;
