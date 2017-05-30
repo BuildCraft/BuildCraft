@@ -2,10 +2,13 @@ package buildcraft.energy.generation;
 
 import java.util.function.Predicate;
 
-import net.minecraft.init.Blocks;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import buildcraft.api.core.BCLog;
+
+import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
 import buildcraft.energy.BCEnergyFluids;
@@ -104,6 +107,39 @@ public abstract class OilGenStructure {
                     setOilIfCanReplace(world, pos);
                 }
             }
+        }
+    }
+
+    public static class Spout extends OilGenStructure {
+        // FIXME (AlexIIL): This won't support cubic chunks - we'll have to do this differently in compat
+        public final BlockPos start;
+        public final int radius;
+        public final int height;
+
+        public Spout(BlockPos start, ReplaceType replaceType, int radius, int height) {
+            super(createBox(start, radius), replaceType);
+            this.start = start;
+            this.radius = radius;
+            this.height = height;
+        }
+
+        private static Box createBox(BlockPos start, int radius) {
+            BlockPos min = start.add(-radius, 0, -radius);
+            // FIXME: This 256 will need to be rethought for cubic chunk support
+            BlockPos max = new BlockPos(start.getX() + radius, 256, start.getZ() + radius);
+            return new Box(min, max);
+        }
+
+        @Override
+        protected void generateWithin(World world, Box intersect) {
+            int segment = world.getChunkFromBlockCoords(start).getTopFilledSegment();
+            BlockPos worldTop = world.getTopSolidOrLiquidBlock(start);
+            BCLog.logger.info("worldTop = " + worldTop + ", segment = " + segment);
+            BlockPos ourTop = worldTop.add(0, height, 0);
+            if (ourTop.getY() >= world.getHeight()) {
+                ourTop = VecUtil.replaceValue(ourTop, Axis.Y, world.getHeight());
+            }
+            OilGenerator.createTubeY(start, height, radius).generate(world, intersect);
         }
     }
 }

@@ -1,7 +1,6 @@
 package buildcraft.energy.generation;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
@@ -15,6 +14,7 @@ import net.minecraft.world.chunk.IChunkProvider;
 
 import net.minecraftforge.fml.common.IWorldGenerator;
 
+import buildcraft.lib.misc.RandUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
@@ -25,48 +25,52 @@ import buildcraft.energy.generation.OilPopulate.GenType;
 public enum OilGenerator implements IWorldGenerator {
     INSTANCE;
 
+    /** Random number, used to differentiate generators */
+    private static final long MAGIC_GEN_NUMBER = 0xD0_46_B4_E4_0C_7D_07_CFl;
+
+    /** The distance that oil generation will be checked to see if their structures overlap with the currently
+     * generating chunk. This should be large enough that all oil generation can fit inside this radius. If this number
+     * is too big then oil generation will be slightly slower */
     private static final int MAX_CHUNK_RADIUS = 5;
 
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator gen,
         IChunkProvider provider) {
+        world.profiler.startSection("bc_oil");
         int x = chunkX * 16 + 8;
         int z = chunkZ * 16 + 8;
         BlockPos min = new BlockPos(x, 0, z);
         Box box = new Box(min, min.add(15, world.getHeight(), 15));
+        List<OilGenStructure> structures = new ArrayList<>();
+
+        world.profiler.startSection("scan");
         for (int cdx = -MAX_CHUNK_RADIUS; cdx <= MAX_CHUNK_RADIUS; cdx++) {
             for (int cdz = -MAX_CHUNK_RADIUS; cdz <= MAX_CHUNK_RADIUS; cdz++) {
                 int cx = chunkX + cdx;
                 int cz = chunkZ + cdz;
-                for (OilGenStructure struct : getStructuresFor(world, cx, cz)) {
-                    struct.generate(world, box);
-                }
+                addStructures(structures, world, cx, cz);
             }
         }
+        world.profiler.endStartSection("gen");
+        for (OilGenStructure struct : structures) {
+            struct.generate(world, box);
+        }
+        world.profiler.endSection();
+        world.profiler.endSection();
     }
 
-    public static List<OilGenStructure> getStructuresFor(World world, int cx, int cz) {
-        // Ensure we have the same seed for the sane chunk
-        long worldSeed = world.getSeed();
-        Random worldRandom = new Random(worldSeed);
-        long xSeed = worldRandom.nextLong() >> 2 + 1L;
-        long zSeed = worldRandom.nextLong() >> 2 + 1L;
-        long chunkSeed = (xSeed * cx + zSeed * cz) ^ worldSeed;
-        Random rand = new Random(chunkSeed);
+    public static void addStructures(List<OilGenStructure> structures, World world, int cx, int cz) {
+        Random rand = RandUtil.createRandomForChunk(world, cx, cz, MAGIC_GEN_NUMBER);
 
         // shift to world coordinates
         int x = cx * 16 + 8 + rand.nextInt(16);
         int z = cz * 16 + 8 + rand.nextInt(16);
 
-        // Biome biome = world.getBiome(new BlockPos(x, 0, z));
-
-        // TODO: Check validity of this block
-
         Biome biome = world.getBiome(new BlockPos(x, 0, z));
 
         // Do not generate oil in the End or Nether
         if (OilPopulate.INSTANCE.excludedBiomeNames.contains(biome.getBiomeName())) {
-            return Collections.emptyList();
+            return;
         }
 
         boolean oilBiome = OilPopulate.INSTANCE.surfaceDepositBiomeNames.contains(biome.getBiomeName());
@@ -75,7 +79,7 @@ public enum OilGenerator implements IWorldGenerator {
         if (OilPopulate.INSTANCE.excessiveBiomeNames.contains(biome.getBiomeName())) {
             bonus *= 30.0;
         }
-        GenType type = GenType.NONE;
+        final GenType type;
         if (rand.nextDouble() <= 0.0004 * bonus) {
             // 0.04%
             type = GenType.LARGE;
@@ -85,14 +89,9 @@ public enum OilGenerator implements IWorldGenerator {
         } else if (oilBiome && rand.nextDouble() <= 0.02 * bonus) {
             // 2%
             type = GenType.LAKE;
+        } else {
+            return;
         }
-
-        if (type == GenType.NONE) {
-            return Collections.emptyList();
-        }
-
-        // TEMP
-        List<OilGenStructure> structures = new ArrayList<>();
 
         if (type != GenType.LAKE) {
             // Generate a spherical cave deposit
@@ -109,16 +108,15 @@ public enum OilGenerator implements IWorldGenerator {
 
             // Generate a spout
 
-            int height;
+            int heightThin;
             if (type == GenType.LARGE) {
-                radius = 1;
-                height = 70 + rand.nextInt(7);
-                structures.add(createTubeY(new BlockPos(x, height, z), 5 + rand.nextInt(5), 0));
+                int heightWide = 10 + rand.nextInt(7);
+                heightThin = heightWide * 2;
+                structures.add(createSpout(new BlockPos(x, wellY, z), heightWide, 1));
             } else {
-                radius = 0;
-                height = 68 + rand.nextInt(7);
+                heightThin = 8 + rand.nextInt(9);
             }
-            structures.add(createTubeY(new BlockPos(x, wellY, z), height - wellY, radius));
+            structures.add(createSpout(new BlockPos(x, wellY, z), heightThin, 0));
 
             // Generate a spring at the very bottom
             if (type == GenType.LARGE || rand.nextFloat() < 0.2) {
@@ -139,8 +137,10 @@ public enum OilGenerator implements IWorldGenerator {
             tendrilRadius = 5 + rand.nextInt(10);
         }
         structures.add(createTendril(new BlockPos(x, 62, z), lakeRadius, tendrilRadius, rand));
+    }
 
-        return structures;
+    private static OilGenStructure createSpout(BlockPos start, int height, int radius) {
+        return new OilGenStructure.Spout(start, ReplaceType.ALWAYS, radius, height);
     }
 
     public static OilGenStructure createTubeY(BlockPos base, int height, int radius) {
