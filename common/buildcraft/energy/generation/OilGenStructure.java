@@ -47,7 +47,7 @@ public abstract class OilGenStructure {
         ALWAYS {
             @Override
             public boolean canReplace(World world, BlockPos pos) {
-                return world.getBlockState(pos).getBlock() != Blocks.BEDROCK;
+                return true;
             }
         },
         IS_FOR_LAKE {
