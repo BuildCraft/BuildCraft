@@ -83,7 +83,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
         ItemStack stack = player.getHeldItem(hand);
         if (player.isSneaking()) {
             NBTTagCompound itemData = NBTUtilBC.getItemData(StackUtil.asNonNull(stack));
-            itemData.removeTag("schematic");
+            itemData.removeTag(NBT_KEY);
             if (itemData.hasNoTags()) {
                 stack.setTagCompound(null);
             }
@@ -103,7 +103,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
         } else {
             BlockPos placePos = pos.offset(side);
             if (!world.isAirBlock(placePos)) {
-                player.sendMessage(new TextComponentString("Not an air block @" + placePos));
+                player.sendStatusMessage(new TextComponentString("Not an air block @" + placePos), true);
                 return EnumActionResult.FAIL;
             }
             try {
@@ -118,7 +118,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
                     return EnumActionResult.FAIL;
                 }
             } catch (InvalidInputDataException e) {
-                player.sendMessage(new TextComponentString("Invalid schematic: " + e.getMessage()));
+                player.sendStatusMessage(new TextComponentString("Invalid schematic: " + e.getMessage()), true);
                 e.printStackTrace();
                 return EnumActionResult.FAIL;
             }
