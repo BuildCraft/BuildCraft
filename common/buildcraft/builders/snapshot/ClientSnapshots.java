@@ -63,7 +63,12 @@ public enum ClientSnapshots {
         if (snapshot == null) {
             return;
         }
-        FakeWorld world = worlds.computeIfAbsent(header, localHeader -> {
+        renderSnapshot(snapshot, offsetX, offsetY, sizeX, sizeY);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void renderSnapshot(Snapshot snapshot, int offsetX, int offsetY, int sizeX, int sizeY) {
+        FakeWorld world = worlds.computeIfAbsent(snapshot.header, localHeader -> {
             FakeWorld localWorld = new FakeWorld();
             if (snapshot instanceof Blueprint) {
                 localWorld.uploadBlueprint((Blueprint) snapshot, false);
@@ -87,7 +92,7 @@ public enum ClientSnapshots {
             }
             return localWorld;
         });
-        VertexBuffer vertexBuffer = buffers.computeIfAbsent(header, localHeader -> {
+        VertexBuffer vertexBuffer = buffers.computeIfAbsent(snapshot.header, localHeader -> {
             VertexBuffer localBuffer = new VertexBuffer(1024) {
                 @Override
                 public void reset() {
