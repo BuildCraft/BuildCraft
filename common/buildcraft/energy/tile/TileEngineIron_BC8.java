@@ -15,7 +15,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 
-import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -143,12 +142,16 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
                 return false;
             }
             if (!world.isRemote) {
-                FluidActionResult result = FluidUtil.interactWithFluidHandler(current, fluidHandler, player);
-                if (result.isSuccess()) {
-                    player.setHeldItem(hand, result.result);
+                if (FluidUtil.interactWithFluidHandler(
+                    player,
+                    hand,
+                    world,
+                    pos,
+                    side
+                )) {
+                    return true;
                 }
             }
-            return true;
         }
         if (!world.isRemote) {
             BCEnergyGuis.ENGINE_IRON.openGUI(player, getPos());
@@ -348,7 +351,9 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
 
     private boolean isResidue(FluidStack fluid) {
         // If this is the client then we don't have a current fuel- just trust the server that its correct
-        if (world != null && world.isRemote) return true;
+        if (world != null && world.isRemote) {
+            return true;
+        }
         if (currentFuel instanceof IDirtyFuel) {
             return fluid.isFluidEqual(((IDirtyFuel) currentFuel).getResidue());
         }
