@@ -25,6 +25,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.mj.MjAPI;
 
 import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.BCLibConfig.TimeGap;
 
 /** The central class for localizing objects. */
 public class LocaleUtil {
@@ -36,6 +37,7 @@ public class LocaleUtil {
 
     private static String localeKeyFluidStatic, localeKeyFluidFlow;
     private static String localeKeyFluidStaticCap, localeKeyFluidStaticEmpty, localeKeyFluidStaticFull;
+    private static String localeKeyMjStatic, localeKeyMjFlow;
 
     static {
         onConfigChanged();
@@ -46,12 +48,15 @@ public class LocaleUtil {
     public static void onConfigChanged() {
         boolean bucketStatic = BCLibConfig.useBucketsStatic;
         boolean bucketFlow = BCLibConfig.useBucketsFlow;
-        boolean longName = BCLibConfig.useLongLocalizedName;
-        localeKeyFluidStatic = "buildcraft.fluid.static." + (bucketStatic ? "bucket." : "milli.") + (longName ? "long" : "short");
-        localeKeyFluidFlow = "buildcraft.fluid.flow." + (bucketFlow ? "bucket." : "milli.") + (longName ? "long" : "short");
-        localeKeyFluidStaticCap = "buildcraft.fluid.static.cap." + (bucketStatic ? "bucket." : "milli.") + (longName ? "long" : "short");
-        localeKeyFluidStaticEmpty = "buildcraft.fluid.empty." + (bucketFlow ? "bucket." : "milli.") + (longName ? "long" : "short");
-        localeKeyFluidStaticFull = "buildcraft.fluid.full." + (bucketFlow ? "bucket." : "milli.") + (longName ? "long" : "short");
+        String longName = BCLibConfig.useLongLocalizedName ? "long" : "short";
+        String timeGap = BCLibConfig.displayTimeGap == TimeGap.SECONDS ? "seconds." : "";
+        localeKeyFluidStatic = "buildcraft.fluid.static." + (bucketStatic ? "bucket." : "milli.") + longName;
+        localeKeyFluidFlow = "buildcraft.fluid.flow." + (bucketFlow ? "bucket." : "milli.") + longName;
+        localeKeyFluidStaticCap = "buildcraft.fluid.static.cap." + (bucketStatic ? "bucket." : "milli.") + longName;
+        localeKeyFluidStaticEmpty = "buildcraft.fluid.empty." + (bucketFlow ? "bucket." : "milli.") + longName;
+        localeKeyFluidStaticFull = "buildcraft.fluid.full." + (bucketFlow ? "bucket." : "milli.") + longName;
+        localeKeyMjStatic = "buildcraft.mj.static." + longName;
+        localeKeyFluidFlow = "buildcraft.mj.flow." + timeGap + longName;
     }
 
     /** Localizes the give key to the current locale.
@@ -160,19 +165,12 @@ public class LocaleUtil {
     }
 
     public static String localizeMj(long mj) {
-        if (BCLibConfig.useLongLocalizedName) {
-            return localize("buildcraft.mj.static.long", MjAPI.formatMj(mj));
-        } else {
-            return MjAPI.formatMjShort(mj);
-        }
+        return localize(localeKeyMjStatic, MjAPI.formatMj(mj));
     }
 
     public static String localizeMjFlow(long mj) {
-        if (BCLibConfig.useLongLocalizedName) {
-            return localize("buildcraft.mj.flow.long", MjAPI.formatMj(mj));
-        } else {
-            return MjAPI.formatMjShort(mj) + "/t";
-        }
+        mj = BCLibConfig.displayTimeGap.convertTicksToGap(mj);
+        return localize(localeKeyMjFlow, MjAPI.formatMj(mj));
     }
 
     public static String localizeHeat(double heat) {

@@ -6,9 +6,17 @@
 
 package buildcraft.lib.misc;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Queue;
+
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
+import buildcraft.api.core.BCLog;
 
 public class ConfigUtil {
     /** Sets a good default language key for all of the properties contained in the given configuration */
@@ -24,5 +32,46 @@ public class ConfigUtil {
                 prop.setLanguageKey(cat.getLanguagekey() + "." + prop.getName());
             }
         }
+    }
+
+    public static <E extends Enum<E>> void setEnumProperty(Property prop, E[] possible) {
+        String[] validValues = new String[possible.length];
+        for (int i = 0; i < possible.length; i++) {
+            validValues[i] = possible[i].name().toLowerCase(Locale.ROOT);
+        }
+        prop.setValidValues(validValues);
+    }
+
+    public static <E extends Enum<E>> E parseEnumForConfig(String cfgValue, E[] possible, E defaultOption) {
+        Queue<E> match = new LinkedList<>();
+        Collections.addAll(match, possible);
+        Queue<char[]> lowerCaseNames = new LinkedList<>();
+        for (E val : match) {
+            lowerCaseNames.add(val.name().toLowerCase(Locale.ROOT).toCharArray());
+        }
+        char[] chars = cfgValue.toLowerCase(Locale.ROOT).toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            Iterator<E> iter = match.iterator();
+            Iterator<char[]> iterNames = lowerCaseNames.iterator();
+            while (iter.hasNext()) {
+                iter.next();
+                char[] name = iterNames.next();
+                if (name.length < i || name[i] != chars[i]) {
+                    iter.remove();
+                    iterNames.remove();
+                }
+            }
+            if (match.size() == 1) {
+                return getAssumingEqual(cfgValue, match.peek());
+            }
+        }
+        return getAssumingEqual(cfgValue, defaultOption);
+    }
+
+    private static <E extends Enum<E>> E getAssumingEqual(String value, E mode) {
+        if (!mode.name().equalsIgnoreCase(value)) {
+            BCLog.logger.warn("[transport.config] Unknown PowerLossMode '" + value + "', assuming " + mode.name());
+        }
+        return mode;
     }
 }

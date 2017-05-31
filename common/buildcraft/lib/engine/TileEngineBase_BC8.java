@@ -580,10 +580,10 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         left.add("");
         left.add("facing = " + currentDirection);
         left.add("heat = " + LocaleUtil.localizeHeat(heat) + " -- " + String.format("%.2f %%", getHeatLevel()));
-        left.add("power = " + MjAPI.formatMjShort(power));
+        left.add("power = " + LocaleUtil.localizeMj(power));
         left.add("stage = " + powerStage);
         left.add("progress = " + progress);
-        left.add("last = +" + MjAPI.formatMjShort(lastPower));
+        left.add("last = " + LocaleUtil.localizeMjFlow(lastPower));
         if (world.isRemote) {
             left.add("Current Model Variables:");
             clientModelData.addDebugInfo(left);

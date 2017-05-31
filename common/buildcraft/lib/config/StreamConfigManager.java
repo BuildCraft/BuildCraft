@@ -14,6 +14,7 @@ import java.util.TreeSet;
 
 import buildcraft.api.core.BCLog;
 
+@Deprecated
 public abstract class StreamConfigManager {
     @SuppressWarnings("serial")
     private final Properties properties = new Properties() {

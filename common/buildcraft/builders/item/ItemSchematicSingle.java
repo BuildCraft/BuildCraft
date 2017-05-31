@@ -25,9 +25,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.api.schematics.SchematicBlockContext;
 
 import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.StackUtil;
 
 import buildcraft.builders.snapshot.SchematicBlockManager;
@@ -119,6 +122,8 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
                 if (!schematicBlock.isBuilt(world, placePos)//
                     && schematicBlock.canBuild(world, placePos)//
                     && schematicBlock.build(world, placePos)) {
+                    SoundUtil.playBlockPlace(world, placePos);
+                    player.swingArm(hand);
                     return EnumActionResult.SUCCESS;
                 } else {
                     return EnumActionResult.FAIL;

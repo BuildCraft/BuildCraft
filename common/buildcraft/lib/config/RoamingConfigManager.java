@@ -6,6 +6,7 @@
 
 package buildcraft.lib.config;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.BCLibProxy;
 
+@Deprecated
 public class RoamingConfigManager extends StreamConfigManager {
     private static final Map<ResourceLocation, RoamingConfigManager> instances = new HashMap<>();
     private final ResourceLocation identifier;
@@ -37,10 +39,14 @@ public class RoamingConfigManager extends StreamConfigManager {
         try (InputStream stream = BCLibProxy.getProxy().getStreamForIdentifier(identifier)) {
             read(stream);
             cacheExists = Boolean.TRUE;
+        } catch (FileNotFoundException fnfe) {
+            // We can safely ignore this
         } catch (IOException io) {
-            // ignore the error, the stream probably didn't exist
+            throw new Error("Failed to read from " + identifier, io);
         }
-        if (cacheExists == null) cacheExists = Boolean.FALSE;
+        if (cacheExists == null) {
+            cacheExists = Boolean.FALSE;
+        }
     }
 
     public boolean exists() {

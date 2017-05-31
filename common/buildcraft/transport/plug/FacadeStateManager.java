@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
@@ -42,6 +43,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.facades.FacadeType;
 
 import buildcraft.lib.misc.BlockUtil;
@@ -77,17 +79,23 @@ public class FacadeStateManager {
         return state.isFullCube();
     }
 
+    @Nonnull
     private static ItemStack getRequiredStack(IBlockState state) {
         FakeWorld world = FakeWorld.INSTANCE;
         world.clear();
         world.setBlockState(BlockPos.ORIGIN, state);
         ItemStack stack = ItemStack.EMPTY;
+        Block block = state.getBlock();
         try {
-            stack = state.getBlock().getPickBlock(state, new RayTraceResult(VecUtil.VEC_HALF, null, BlockPos.ORIGIN),
-                world, BlockPos.ORIGIN, null);
+            stack = block.getPickBlock(state, new RayTraceResult(VecUtil.VEC_HALF, null, BlockPos.ORIGIN), world,
+                BlockPos.ORIGIN, null);
         } catch (Exception ignored) {
             /* Some mods require a non-null player, but we don't have one to give. If a mod's block does require a
              * player entity then we won't support it, as it may require a different stack depending on the player. */
+            stack = block.getItem(world, BlockPos.ORIGIN, state);
+            if (stack.isEmpty()) {
+                BCLog.logger.info("[transport.facade] Couldn't get item for " + block + " because " + ignored.getMessage());
+            }
         }
         world.clear();
         if (stack.isEmpty()) {
@@ -125,7 +133,7 @@ public class FacadeStateManager {
                         varyingProperties.put(stackKey, vars);
                     } else {
                         for (Entry<IProperty<?>, Comparable<?>> entry : state.getProperties().entrySet()) {
-                            IProperty prop = entry.getKey();
+                            IProperty<?> prop = entry.getKey();
                             Comparable<?> value = entry.getValue();
                             if (vars.get(prop) != value) {
                                 vars.put(prop, null);
@@ -147,12 +155,12 @@ public class FacadeStateManager {
                     }
                 }
             } catch (RuntimeException e) {
-                CrashReport cr = new CrashReport("Getting info for facade", e);
-                CrashReportCategory cat = cr.makeCategory("Block source");
-                cat.addCrashSection("registry name", block.getRegistryName());
-                cat.addCrashSection("class", block.getClass());
-                cat.addCrashSection("state class", block.getDefaultState().getClass());
-                throw new ReportedException(cr);
+                BCLog.logger.error("[facades] Crashed while scanning blocks for facades!");
+                BCLog.logger.error("[facades]   block = " + block.getRegistryName());
+                BCLog.logger.error("[facades]   block = " + block.getClass());
+                BCLog.logger.error("[facades]   state = " + block.getDefaultState());
+                BCLog.logger.error("[facades]   state = " + block.getDefaultState().getClass());
+                throw e;
             }
         }
         previewState = validFacadeStates.get(Blocks.BRICK_BLOCK.getDefaultState());

@@ -190,7 +190,11 @@ buildcraft.fluid.flow.milli.long=%s milli buckets per tick
 buildcraft.fluid.flow.bucket.long=%s buckets per second
 
 buildcraft.mj.static.long=%s Minecraft Joules
+buildcraft.mj.static.short=%s MJ
 buildcraft.mj.flow.long=%s Minecraft Joules per tick
+buildcraft.mj.flow.short=%s MJ/t
+buildcraft.mj.flow.second.long=%s Minecraft Joules per second
+buildcraft.mj.flow.second.short=%s MJ/s
 
 fillerpattern.clear=Clear
 fillerpattern.fill=Fill
@@ -384,6 +388,7 @@ item.redstone_board.name=Redstone Board
 item.robot.name=Robot
 item.tablet.name=Tablet
 item.blueprintItem.name=Blueprint
+item.schematicSingle.name=Single Block Schematic
 item.list.name=List
 item.blueprint.unnamed=<unnamed>
 item.blueprint.author=by

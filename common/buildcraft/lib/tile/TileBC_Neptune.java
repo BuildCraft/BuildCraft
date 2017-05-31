@@ -1,7 +1,9 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
+/*
+ * Copyright (c) 2016 SpaceToad and the BuildCraft team
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 package buildcraft.lib.tile;
 
 import java.io.IOException;
@@ -10,7 +12,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import buildcraft.lib.net.MessageManager;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 
@@ -45,7 +46,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.permission.IPlayerOwned;
+import buildcraft.api.core.IPlayerOwned;
 
 import buildcraft.lib.cap.CapabilityHelper;
 import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
@@ -62,6 +63,7 @@ import buildcraft.lib.misc.PermissionUtil.PermissionBlock;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.IPayloadReceiver;
 import buildcraft.lib.net.IPayloadWriter;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.MessageUpdateTile;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.registry.TagManager;
@@ -188,8 +190,8 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     private boolean isInThisChunk(BlockPos other) {
-        return pos.getX() / 16 == other.getX() / 16//
-            && pos.getZ() / 16 == other.getZ() / 16;
+        return pos.getX() >> 4 == other.getX() >> 4//
+            && pos.getZ() >> 4 == other.getZ() >> 4;
     }
 
     // ##################
@@ -273,7 +275,8 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     // Item caps
-    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
+    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before,
+        @Nonnull ItemStack after) {
         if (world.isBlockLoaded(pos)) {
             markDirty();
         }
@@ -295,7 +298,8 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     public boolean canEditOther(BlockPos other) {
-        return PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, getPermBlock(), PermissionUtil.createFrom(world, other));
+        return PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, getPermBlock(), PermissionUtil.createFrom(world,
+            other));
     }
 
     public boolean canPlayerEdit(EntityPlayer player) {
@@ -511,9 +515,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) deltaManager.receiveDeltaData(false, EnumDeltaMessage.CURRENT_STATE, buffer);
             else if (id == NET_GUI_DATA) deltaManager.receiveDeltaData(true, EnumDeltaMessage.CURRENT_STATE, buffer);
-            else if (id == NET_REN_DELTA_SINGLE) deltaManager.receiveDeltaData(false, EnumDeltaMessage.ADD_SINGLE, buffer);
-            else if (id == NET_GUI_DELTA_SINGLE) deltaManager.receiveDeltaData(true, EnumDeltaMessage.ADD_SINGLE, buffer);
-            else if (id == NET_REN_DELTA_CLEAR) deltaManager.receiveDeltaData(false, EnumDeltaMessage.SET_VALUE, buffer);
+            else if (id == NET_REN_DELTA_SINGLE) deltaManager.receiveDeltaData(false, EnumDeltaMessage.ADD_SINGLE,
+                buffer);
+            else if (id == NET_GUI_DELTA_SINGLE) deltaManager.receiveDeltaData(true, EnumDeltaMessage.ADD_SINGLE,
+                buffer);
+            else if (id == NET_REN_DELTA_CLEAR) deltaManager.receiveDeltaData(false, EnumDeltaMessage.SET_VALUE,
+                buffer);
             else if (id == NET_GUI_DELTA_CLEAR) deltaManager.receiveDeltaData(true, EnumDeltaMessage.SET_VALUE, buffer);
             else if (id == NET_REDRAW) redrawBlock();
             else if (id == NET_ADV_DEBUG) {

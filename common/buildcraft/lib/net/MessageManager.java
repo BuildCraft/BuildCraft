@@ -105,7 +105,7 @@ public class MessageManager {
      * The {@link IMessageHandler} for this message type should be on the CLIENT side.
      *
      * @param message The message to send
-     * @param point   The {@link NetworkRegistry.TargetPoint} around which to send
+     * @param point   The {@link net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint} around which to send
      */
     @SuppressWarnings("unused")
     public static void sendToAllAround(IMessage message, NetworkRegistry.TargetPoint point) {

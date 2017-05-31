@@ -17,6 +17,9 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.core.BCCore;
+
+import buildcraft.api.BCBlocks;
+
 import buildcraft.lib.BCLib;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.config.EnumRestartRequirement;

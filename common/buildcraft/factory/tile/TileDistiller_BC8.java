@@ -1,9 +1,8 @@
 /*
- * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * Copyright (c) 2016 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-
 package buildcraft.factory.tile;
 
 import java.io.IOException;
@@ -164,7 +163,8 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         }
     }
 
-    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY,
+        float hitZ) {
         return false;
     }
 
@@ -179,7 +179,8 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         powerAvg.tick();
         changedSinceNetUpdate |= avgNow / MjAPI.MJ != powerAvg.getAverageLong() / MjAPI.MJ;
 
-        currentRecipe = BuildcraftRecipeRegistry.refineryRecipes.getDistilationRegistry().getRecipeForInput(tankIn.getFluid());
+        currentRecipe = BuildcraftRecipeRegistry.refineryRecipes.getDistilationRegistry().getRecipeForInput(tankIn
+            .getFluid());
         if (currentRecipe == null) {
             mjBattery.addPowerChecking(distillPower, false);
             distillPower = 0;

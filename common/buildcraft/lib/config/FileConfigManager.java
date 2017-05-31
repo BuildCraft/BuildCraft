@@ -10,6 +10,7 @@ import java.io.*;
 
 import buildcraft.api.core.BCLog;
 
+@Deprecated
 public class FileConfigManager extends StreamConfigManager {
     private final String comment;
     private File file;

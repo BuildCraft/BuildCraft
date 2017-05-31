@@ -151,6 +151,7 @@ public enum ClientSnapshots {
         Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         new WorldVertexBufferUploader().draw(vertexBuffer);
         if (snapshotSize < 32) {
+            TileEntityRendererDispatcher.instance.preDrawBatch();
             for (int z = 0; z < snapshot.size.getZ(); z++) {
                 for (int y = 0; y < snapshot.size.getY(); y++) {
                     for (int x = 0; x < snapshot.size.getX(); x++) {
@@ -168,6 +169,7 @@ public enum ClientSnapshots {
                     }
                 }
             }
+            TileEntityRendererDispatcher.instance.drawBatch(1);
         }
         // noinspection Guava
         for (Entity entity : world.getEntities(Entity.class, Predicates.alwaysTrue())) {

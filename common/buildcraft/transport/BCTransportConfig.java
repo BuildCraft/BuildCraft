@@ -25,6 +25,7 @@ import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.config.EnumRestartRequirement;
+import buildcraft.lib.misc.ConfigUtil;
 import buildcraft.lib.misc.MathUtil;
 
 public class BCTransportConfig {
@@ -35,31 +36,6 @@ public class BCTransportConfig {
 
         public static final PowerLossMode DEFAULT = LOSSLESS;
         public static final PowerLossMode[] VALUES = values();
-
-        public final String configName = name().toLowerCase(Locale.ROOT);
-
-        public static PowerLossMode get(String value, boolean warn) {
-            char c = value.length() == 0 ? ' ' : value.charAt(0);
-            switch (c) {
-                case 'l':
-                case 'L':
-                    return getAssumingEqual(value, LOSSLESS, warn);
-                case 'p':
-                case 'P':
-                    return getAssumingEqual(value, PERCENTAGE, warn);
-                case 'a':
-                case 'A':
-                    return getAssumingEqual(value, ABSOLUTE, warn);
-            }
-            return getAssumingEqual(value, DEFAULT, warn);
-        }
-
-        private static PowerLossMode getAssumingEqual(String value, PowerLossMode mode, boolean warn) {
-            if (warn && !mode.configName.equalsIgnoreCase(value)) {
-                BCLog.logger.warn("[transport.config] Unknown PowerLossMode '" + value + "', assuming " + mode.configName);
-            }
-            return mode;
-        }
     }
 
     private static final long MJ_REQ_MILLIBUCKET_MIN = 100;
@@ -87,7 +63,7 @@ public class BCTransportConfig {
         EnumRestartRequirement.WORLD.setTo(propBaseFlowRate);
 
         propLossMode = config.get("experimental", "kinesisLossMode", "lossless");
-        propLossMode.setValidValues(new String[] { PowerLossMode.LOSSLESS.configName, PowerLossMode.ABSOLUTE.configName, PowerLossMode.PERCENTAGE.configName });
+        ConfigUtil.setEnumProperty(propLossMode, PowerLossMode.VALUES);
         EnumRestartRequirement.WORLD.setTo(propLossMode);
 
         MinecraftForge.EVENT_BUS.register(BCTransportConfig.class);
@@ -108,7 +84,7 @@ public class BCTransportConfig {
             baseFlowRate = MathUtil.clamp(propBaseFlowRate.getInt(), 1, 40);
             int basePowerRate = 4;
 
-            lossMode = PowerLossMode.get(propLossMode.getString(), true);
+            lossMode = ConfigUtil.parseEnumForConfig(propLossMode.getString(), PowerLossMode.VALUES, PowerLossMode.DEFAULT);
 
             fluidTransfer(BCTransportPipes.cobbleFluid, baseFlowRate, 10);
             fluidTransfer(BCTransportPipes.woodFluid, baseFlowRate, 10);

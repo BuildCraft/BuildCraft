@@ -13,7 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.permission.IPlayerOwned;
+import buildcraft.api.core.IPlayerOwned;
 
 /** Future class for checking to see if a given player can actually do something. */
 public class PermissionUtil {
