@@ -41,11 +41,6 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
     }
 
     @Override
-    public int getLevel() {
-        return BLOCK_LEVEL;
-    }
-
-    @Override
     public boolean isAir() {
         return false;
     }

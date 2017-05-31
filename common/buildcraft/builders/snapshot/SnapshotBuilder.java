@@ -71,13 +71,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
      */
     protected abstract boolean isBlockCorrect(BlockPos blockPos);
 
-    protected abstract int getLeftToBreak();
-
-    protected abstract int getLeftToPlace();
-
     public abstract Box getBox();
-
-    protected abstract boolean isDone();
 
     /**
      * @return Pos where flying item should be rendered
@@ -131,8 +125,10 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         breakTasks.removeIf(breakTask -> tile.getWorldBC().isAirBlock(breakTask.pos) || isBlockCorrect(breakTask.pos));
         placeTasks.removeIf(placeTask -> isBlockCorrect(placeTask.pos));
 
-        if (tile.canExcavate() && breakTasks.size() < MAX_QUEUE_SIZE) {
-            Stream.concat(getToBreak().stream(), getToPlace().stream())
+        boolean isDone = true;
+
+        if (tile.canExcavate()) {
+            List<BlockPos> blocks = Stream.concat(getToBreak().stream(), getToPlace().stream())
                 .sorted(Comparator.comparing(blockPos ->
                     Math.pow(blockPos.getX() - getBox().center().getX(), 2) +
                         Math.pow(blockPos.getZ() - getBox().center().getZ(), 2) +
@@ -142,6 +138,12 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                 .filter(blockPos -> !tile.getWorldBC().isAirBlock(blockPos))
                 .filter(blockPos -> !isBlockCorrect(blockPos))
                 .filter(blockPos -> BlockUtil.getFluidWithFlowing(tile.getWorldBC(), blockPos) == null)
+                .collect(Collectors.toList());
+            leftToBreak = blocks.size();
+            if (!blocks.isEmpty()) {
+                isDone = false;
+            }
+            blocks.stream()
                 .map(blockPos ->
                     new BreakTask(
                         blockPos,
@@ -152,8 +154,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                 .forEach(breakTasks::add);
         }
 
-        if ((!tile.canExcavate() || breakTasks.isEmpty()) && placeTasks.size() < MAX_QUEUE_SIZE) {
-            getToPlace().stream()
+        {
+            List<BlockPos> blocks = getToPlace().stream()
                 .sorted(Comparator.comparing(blockPos ->
                     100_000 - (Math.pow(blockPos.getX() - tile.getBuilderPos().getX(), 2) +
                         Math.pow(blockPos.getZ() - tile.getBuilderPos().getZ(), 2)) +
@@ -162,17 +164,25 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                 .filter(blockPos -> placeTasks.stream().map(PlaceTask::getPos).noneMatch(Predicate.isEqual(blockPos)))
                 .filter(blockPos -> !isBlockCorrect(blockPos))
                 .filter(this::canPlace)
-                .map(blockPos ->
-                    new PlaceTask(
-                        blockPos,
-                        getToPlaceItems(blockPos),
-                        0
+                .collect(Collectors.toList());
+            leftToPlace = blocks.size();
+            if ((!tile.canExcavate() || breakTasks.isEmpty())) {
+                if (!blocks.isEmpty()) {
+                    isDone = false;
+                }
+                blocks.stream()
+                    .map(blockPos ->
+                        new PlaceTask(
+                            blockPos,
+                            getToPlaceItems(blockPos),
+                            0
+                        )
                     )
-                )
-                .filter(placeTask -> placeTask.items != null)
-                .filter(placeTask -> !placeTask.items.contains(ItemStack.EMPTY))
-                .limit(MAX_QUEUE_SIZE - placeTasks.size())
-                .forEach(placeTasks::add);
+                    .filter(placeTask -> placeTask.items != null)
+                    .filter(placeTask -> !placeTask.items.contains(ItemStack.EMPTY))
+                    .limit(MAX_QUEUE_SIZE - placeTasks.size())
+                    .forEach(placeTasks::add);
+            }
         }
 
         if (!breakTasks.isEmpty()) {
@@ -240,9 +250,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             }
         }
 
-        leftToBreak = getLeftToBreak();
-        leftToPlace = getLeftToPlace();
-        return isDone();
+        return isDone;
     }
 
     public void writeToByteBuf(PacketBufferBC buffer) {

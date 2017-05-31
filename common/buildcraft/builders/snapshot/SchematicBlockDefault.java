@@ -39,7 +39,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefault> {
-    private int level;
     private final Set<BlockPos> requiredBlockOffsets = new HashSet<>();
     private IBlockState blockState;
     private final List<IProperty<?>> ignoredProperties = new ArrayList<>();
@@ -59,11 +58,6 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         return registryName != null &&
             RulesLoader.READ_DOMAINS.contains(registryName.getResourceDomain()) &&
             RulesLoader.getRules(context.blockState).stream().noneMatch(rule -> rule.ignore);
-    }
-
-    @SuppressWarnings({"unused", "WeakerAccess"})
-    protected void setLevel(SchematicBlockContext context, Set<JsonRule> rules) {
-        level = BLOCK_LEVEL;
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
@@ -193,7 +187,6 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
     @Override
     public void init(SchematicBlockContext context) {
         Set<JsonRule> rules = RulesLoader.getRules(context.blockState);
-        setLevel /*                  */(context, rules);
         setRequiredBlockOffsets /*   */(context, rules);
         setBlockState /*             */(context, rules);
         setIgnoredProperties /*      */(context, rules);
@@ -204,11 +197,6 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         setCanBeReplacedWithBlocks /**/(context, rules);
         setRequiredItems /*          */(context, rules);
         setRequiredFluids /*         */(context, rules);
-    }
-
-    @Override
-    public int getLevel() {
-        return level;
     }
 
     @Override
@@ -304,7 +292,6 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
     @Override
     public SchematicBlockDefault getRotated(Rotation rotation) {
         SchematicBlockDefault schematicBlock = new SchematicBlockDefault();
-        schematicBlock.level = level;
         requiredBlockOffsets.stream()
             .map(blockPos -> blockPos.rotate(rotation))
             .forEach(schematicBlock.requiredBlockOffsets::add);
@@ -417,7 +404,6 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setInteger("level", level);
         nbt.setTag(
             "requiredBlockOffsets",
             NBTUtilBC.writeCompoundList(
@@ -459,7 +445,6 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
-        level = nbt.getInteger("level");
         NBTUtilBC.readCompoundList(nbt.getTagList("requiredBlockOffsets", Constants.NBT.TAG_COMPOUND))
             .map(NBTUtil::getPosFromTag)
             .forEach(requiredBlockOffsets::add);
@@ -498,8 +483,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
 
         SchematicBlockDefault that = (SchematicBlockDefault) o;
 
-        return level == that.level &&
-            requiredBlockOffsets.equals(that.requiredBlockOffsets) &&
+        return requiredBlockOffsets.equals(that.requiredBlockOffsets) &&
             blockState.equals(that.blockState) &&
             ignoredProperties.equals(that.ignoredProperties) &&
             (tileNbt != null ? tileNbt.equals(that.tileNbt) : that.tileNbt == null) &&
@@ -512,8 +496,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
 
     @Override
     public int hashCode() {
-        int result = level;
-        result = 31 * result + requiredBlockOffsets.hashCode();
+        int result = requiredBlockOffsets.hashCode();
         result = 31 * result + blockState.hashCode();
         result = 31 * result + ignoredProperties.hashCode();
         result = 31 * result + (tileNbt != null ? tileNbt.hashCode() : 0);

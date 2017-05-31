@@ -121,7 +121,6 @@ public class Blueprint extends Snapshot {
         public final List<ISchematicEntity<?>> entities = new ArrayList<>();
         public final Map<ISchematicEntity<?>, List<ItemStack>> entitiesRequiredItems = new HashMap<>();
         public final Map<ISchematicEntity<?>, List<FluidStack>> entitiesRequiredFluids = new HashMap<>();
-        public final int maxLevel;
 
         public BuildingInfo(BlockPos basePos, Rotation rotation) {
             this.basePos = basePos;
@@ -157,7 +156,6 @@ public class Blueprint extends Snapshot {
             }
             box = new Box();
             Stream.concat(toBreak.stream(), toPlace.keySet().stream()).forEach(box::extendToEncompass);
-            maxLevel = toPlace.values().stream().mapToInt(ISchematicBlock::getLevel).max().orElse(0);
         }
 
         public Blueprint getSnapshot() {
