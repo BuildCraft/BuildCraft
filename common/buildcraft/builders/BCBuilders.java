@@ -111,6 +111,7 @@ public class BCBuilders {
         registerTag("item.block.builder").reg("builder").locale("builderBlock").model("builder");
         registerTag("item.block.filler").reg("filler").locale("fillerBlock").model("filler");
         registerTag("item.block.library").reg("library").locale("libraryBlock").model("library");
+        registerTag("item.block.replacer").reg("replacer").locale("replacerBlock").model("replacer");
         registerTag("item.block.frame").reg("frame").locale("frameBlock").model("frame");
         registerTag("item.block.quarry").reg("quarry").locale("quarryBlock").model("quarry");
         // Blocks
@@ -118,12 +119,14 @@ public class BCBuilders {
         registerTag("block.builder").reg("builder").locale("builderBlock").model("builder");
         registerTag("block.filler").reg("filler").locale("fillerBlock").model("filler");
         registerTag("block.library").reg("library").locale("libraryBlock").model("library");
+        registerTag("block.replacer").reg("replacer").locale("replacerBlock").model("replacer");
         registerTag("block.frame").reg("frame").locale("frameBlock").model("frame");
         registerTag("block.quarry").reg("quarry").locale("quarryBlock").model("quarry");
         // Tiles
         registerTag("tile.architect").reg("architect");
-        registerTag("tile.library").reg("library");
         registerTag("tile.builder").reg("builder");
+        registerTag("tile.library").reg("library");
+        registerTag("tile.replacer").reg("replacer");
         registerTag("tile.filler").reg("filler");
         registerTag("tile.quarry").reg("quarry");
 

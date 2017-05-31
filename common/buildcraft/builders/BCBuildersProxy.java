@@ -4,6 +4,9 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
+import buildcraft.builders.container.*;
+import buildcraft.builders.gui.*;
+import buildcraft.builders.tile.*;
 import buildcraft.lib.client.render.DetatchedRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,21 +24,6 @@ import buildcraft.builders.client.render.RenderArchitectTables;
 import buildcraft.builders.client.render.RenderBuilder;
 import buildcraft.builders.client.render.RenderFiller;
 import buildcraft.builders.client.render.RenderQuarry;
-import buildcraft.builders.container.ContainerArchitectTable;
-import buildcraft.builders.container.ContainerBuilder;
-import buildcraft.builders.container.ContainerElectronicLibrary;
-import buildcraft.builders.container.ContainerFiller;
-import buildcraft.builders.container.ContainerFillingPlanner;
-import buildcraft.builders.gui.GuiArchitectTable;
-import buildcraft.builders.gui.GuiBuilder;
-import buildcraft.builders.gui.GuiElectronicLibrary;
-import buildcraft.builders.gui.GuiFiller;
-import buildcraft.builders.gui.GuiFillingPlanner;
-import buildcraft.builders.tile.TileArchitectTable;
-import buildcraft.builders.tile.TileBuilder;
-import buildcraft.builders.tile.TileElectronicLibrary;
-import buildcraft.builders.tile.TileFiller;
-import buildcraft.builders.tile.TileQuarry;
 
 public abstract class BCBuildersProxy implements IGuiHandler {
     @SidedProxy
@@ -70,6 +58,12 @@ public abstract class BCBuildersProxy implements IGuiHandler {
             if (tile instanceof TileArchitectTable) {
                 TileArchitectTable architectTable = (TileArchitectTable) tile;
                 return new ContainerArchitectTable(player, architectTable);
+            }
+        }
+        if (id == BCBuildersGuis.REPLACER.ordinal()) {
+            if (tile instanceof TileReplacer) {
+                TileReplacer replacer = (TileReplacer) tile;
+                return new ContainerReplacer(player, replacer);
             }
         }
         if (id == BCBuildersGuis.FILLING_PLANNER.ordinal()) {
@@ -122,8 +116,14 @@ public abstract class BCBuildersProxy implements IGuiHandler {
             }
             if (id == BCBuildersGuis.ARCHITECT.ordinal()) {
                 if (tile instanceof TileArchitectTable) {
-                    TileArchitectTable library = (TileArchitectTable) tile;
-                    return new GuiArchitectTable(new ContainerArchitectTable(player, library));
+                    TileArchitectTable architectTable = (TileArchitectTable) tile;
+                    return new GuiArchitectTable(new ContainerArchitectTable(player, architectTable));
+                }
+            }
+            if (id == BCBuildersGuis.REPLACER.ordinal()) {
+                if (tile instanceof TileReplacer) {
+                    TileReplacer replacer = (TileReplacer) tile;
+                    return new GuiReplacer(new ContainerReplacer(player, replacer));
                 }
             }
             if (id == BCBuildersGuis.FILLING_PLANNER.ordinal()) {

@@ -49,13 +49,15 @@ public class ItemSnapshot extends ItemBC_Neptune {
     }
 
     public Snapshot.Header getHeader(ItemStack stack) {
-        if (EnumItemSnapshotType.getFromStack(stack).used) {
-            NBTTagCompound nbt = stack.getTagCompound();
-            if (nbt != null) {
-                if (nbt.hasKey("header")) {
-                    Snapshot.Header header = new Snapshot.Header();
-                    header.deserializeNBT(nbt.getCompoundTag("header"));
-                    return header;
+        if (stack.getItem() instanceof ItemSnapshot) {
+            if (EnumItemSnapshotType.getFromStack(stack).used) {
+                NBTTagCompound nbt = stack.getTagCompound();
+                if (nbt != null) {
+                    if (nbt.hasKey("header")) {
+                        Snapshot.Header header = new Snapshot.Header();
+                        header.deserializeNBT(nbt.getCompoundTag("header"));
+                        return header;
+                    }
                 }
             }
         }

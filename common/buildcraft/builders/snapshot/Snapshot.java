@@ -49,8 +49,6 @@ public abstract class Snapshot {
         throw new UnsupportedOperationException();
     }
 
-    public abstract <T extends ITileForSnapshotBuilder> SnapshotBuilder<T> createBuilder(T tile);
-
     public static NBTTagCompound writeToNBT(Snapshot snapshot) {
         NBTTagCompound nbt = snapshot.serializeNBT();
         nbt.setTag("type", NBTUtilBC.writeEnum(snapshot.getType()));
@@ -100,6 +98,15 @@ public abstract class Snapshot {
         }
 
         public Header() {
+        }
+
+        public Header copy() {
+            return new Header(
+                id,
+                owner,
+                created,
+                name
+            );
         }
 
         public String getFileName() {

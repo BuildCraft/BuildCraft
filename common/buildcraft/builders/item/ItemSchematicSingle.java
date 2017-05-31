@@ -27,8 +27,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemSchematicSingle extends ItemBC_Neptune {
-    private static final int DAMAGE_CLEAN = 0;
-    private static final int DAMAGE_USED = 1;
+    public static final int DAMAGE_CLEAN = 0;
+    public static final int DAMAGE_USED = 1;
+    public static final String NBT_KEY = "schematic";
 
     public ItemSchematicSingle(String id) {
         super(id);
@@ -56,7 +57,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
         }
         if (player.isSneaking()) {
             NBTTagCompound itemData = NBTUtilBC.getItemData(stack);
-            itemData.removeTag("schematic");
+            itemData.removeTag(NBT_KEY);
             if (itemData.hasNoTags()) {
                 stack.setTagCompound(null);
             }
@@ -93,7 +94,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
             if (schematicBlock.isAir()) {
                 return EnumActionResult.FAIL;
             }
-            NBTUtilBC.getItemData(stack).setTag("schematic", SchematicBlockManager.writeToNBT(schematicBlock));
+            NBTUtilBC.getItemData(stack).setTag(NBT_KEY, SchematicBlockManager.writeToNBT(schematicBlock));
             stack.setItemDamage(DAMAGE_USED);
             return EnumActionResult.SUCCESS;
         } else {
@@ -105,7 +106,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
             ISchematicBlock<?> schematicBlock;
             try {
                 schematicBlock = SchematicBlockManager.readFromNBT(
-                        NBTUtilBC.getItemData(stack).getCompoundTag("schematic")
+                        NBTUtilBC.getItemData(stack).getCompoundTag(NBT_KEY)
                 );
 
                 // TODO: extract required items and fluids from player's inventory

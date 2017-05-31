@@ -56,6 +56,9 @@ public enum ClientSnapshots {
 
     @SideOnly(Side.CLIENT)
     public void renderSnapshot(Snapshot.Header header, int offsetX, int offsetY, int sizeX, int sizeY) {
+        if (header == null) {
+            return;
+        }
         Snapshot snapshot = getSnapshot(header);
         if (snapshot == null) {
             return;
