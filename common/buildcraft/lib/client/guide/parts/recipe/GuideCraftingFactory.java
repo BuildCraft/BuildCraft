@@ -1,8 +1,6 @@
-/*
- * Copyright (c) 2017 SpaceToad and the BuildCraft team
+/* Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
- */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/ */
 
 package buildcraft.lib.client.guide.parts.recipe;
 
@@ -70,7 +68,8 @@ public class GuideCraftingFactory implements GuidePartFactory {
                 if (val != null) {
                     return val;
                 } else {
-                    BCLog.logger.warn("[lib.guide.crafting] Found a matching recipe, but of an unknown " + recipe.getClass() + " for " + stack.getDisplayName());
+                    BCLog.logger.warn("[lib.guide.crafting] Found a matching recipe, but of an unknown " + recipe
+                        .getClass() + " for " + stack.getDisplayName());
                 }
             }
         }
@@ -189,14 +188,12 @@ public class GuideCraftingFactory implements GuidePartFactory {
                 return StackUtil.EMPTY;
             }
             if (first instanceof ItemStack) {
-                // Technically a safe cast as the first one WAS an Item Stack and we never add to the list
-                @SuppressWarnings("unchecked")
-                NonNullList<ItemStack> stacks = (NonNullList<ItemStack>) list;
-                if (stacks.size() == 0) {
-                    return StackUtil.EMPTY;
-                }
-                ItemStack best = stacks.get(0);
-                for (ItemStack stack : stacks) {
+                ItemStack best = (ItemStack) first;
+                for (Object obj : list) {
+                    if (!(obj instanceof ItemStack)) {
+                        continue;
+                    }
+                    ItemStack stack = (ItemStack) obj;
                     // The lower the ID of an item, the closer it is to minecraft. Hmmm.
                     if (Item.getIdFromItem(stack.getItem()) < Item.getIdFromItem(best.getItem())) {
                         best = stack;

@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.parts.GuidePartItem;
-import buildcraft.lib.client.guide.parts.GuidePart.PagePosition;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.data.NonNullMatrix;
