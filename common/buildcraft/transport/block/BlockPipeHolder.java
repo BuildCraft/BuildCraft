@@ -122,6 +122,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn, boolean isPistonMoving) {
         TilePipeHolder tile = getPipe(world, pos, false);
         if (tile == null) {
+            addCollisionBoxToList(pos, entityBox, collidingBoxes, FULL_BLOCK_AABB);
             return;
         }
         Pipe pipe = tile.getPipe();
