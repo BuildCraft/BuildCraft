@@ -101,10 +101,16 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
             stack.setItemDamage(DAMAGE_USED);
             return EnumActionResult.SUCCESS;
         } else {
-            BlockPos placePos = pos.offset(side);
-            if (!world.isAirBlock(placePos)) {
-                player.sendStatusMessage(new TextComponentString("Not an air block @" + placePos), true);
+            BlockPos placePos = pos;
+            boolean replaceable = world.getBlockState(pos).getBlock().isReplaceable(world, pos);
+            if (!replaceable) {
+                placePos = placePos.offset(side);
+            }
+            if (!world.mayPlace(world.getBlockState(pos).getBlock(), placePos, false, side, null)) {
                 return EnumActionResult.FAIL;
+            }
+            if (replaceable && !world.isAirBlock(placePos)) {
+                world.setBlockToAir(placePos);
             }
             try {
                 ISchematicBlock<?> schematicBlock = getSchematic(stack);
