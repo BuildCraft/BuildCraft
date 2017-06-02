@@ -2,8 +2,14 @@ language: java
 jdk:
   - oraclejdk8
 
-install: ./gradlew setupCiWorkspace -S
-script: ./gradlew build -S
+install: ./gradlew setupCiWorkspace
+
+jobs:
+  include:
+    - stage: build
+      script: ./gradlew build 
+    - stage: checkstyle
+      script: ./gradlew checkstyle 
 
 env:
   global:
