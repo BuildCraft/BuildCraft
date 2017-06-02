@@ -64,11 +64,11 @@ public class MessageContainer implements IMessage {
 
     public static final IMessageHandler<MessageContainer, IMessage> HANDLER = (message, ctx) -> {
         try {
-            int windowId = message.windowId;
+            int id = message.windowId;
             EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
             if (player != null &&
                     player.openContainer instanceof ContainerBC_Neptune &&
-                    player.openContainer.windowId == windowId) {
+                    player.openContainer.windowId == id) {
                 ContainerBC_Neptune container = (ContainerBC_Neptune) player.openContainer;
                 container.readMessage(message.msgId, message.payload, ctx.side, ctx);
 
