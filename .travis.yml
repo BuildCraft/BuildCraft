@@ -9,7 +9,6 @@ jobs:
       install: ./gradlew setupCiWorkspace
       script: ./gradlew build 
     - stage: checkstyle
-      install: ls .
       script: ./gradlew checkstyle 
 
 env:
