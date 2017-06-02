@@ -29,6 +29,7 @@ import buildcraft.api.enums.EnumSnapshotType;
 
 import buildcraft.lib.misc.HashUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.nbt.NbtSquisher;
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -103,9 +104,9 @@ public abstract class Snapshot {
     private static byte[] computeHash(NBTTagCompound nbt) {
         NBTTagCompound nbtHeader = null;
         if (nbt.hasKey(NBT_HEADER, Constants.NBT.TAG_COMPOUND)) {
+            // Don't let the hash depend on the header
             nbtHeader = nbt.getCompoundTag(NBT_HEADER);
             nbt.removeTag(NBT_HEADER);
-            // Don't let the hash depend on itself
         }
         try (DigestOutputStream dos = HashUtil.createDigestStream()) {
             NbtSquisher.squishVanillaUncompressed(nbt, new DataOutputStream(dos));
@@ -119,6 +120,11 @@ public abstract class Snapshot {
                 nbt.setTag(NBT_HEADER, nbtHeader);
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return getType() + " - " + StringUtilBC.blockPosToShortString(size).replace(',', 'x') + " = " + header;
     }
 
     public static class Header {
@@ -173,6 +179,11 @@ public abstract class Snapshot {
         }
 
         @Override
+        public String toString() {
+            return name + " {" + HashUtil.convertHashToString(hash) + "}";
+        }
+
+        @Override
         public boolean equals(Object o) {
             if (this == o) {
                 return true;
@@ -183,15 +194,12 @@ public abstract class Snapshot {
 
             Header header = (Header) o;
 
-            return Arrays.equals(hash, header.hash)//
-                && owner.equals(header.owner)//
-                && created.equals(header.created)//
-                && name.equals(header.name);
+            return Arrays.equals(hash, header.hash);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(Arrays.hashCode(hash), owner, created, name);
+            return Arrays.hashCode(hash);
         }
     }
 }
