@@ -5,11 +5,11 @@
  */
 package buildcraft.lib.inventory.filter;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.core.IStackFilter;
-
-import javax.annotation.Nonnull;
 
 /** Returns true if the stack matches all of the stack filters. */
 public class AggregateFilter implements IStackFilter {

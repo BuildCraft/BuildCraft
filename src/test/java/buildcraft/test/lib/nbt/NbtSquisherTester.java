@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Stopwatch;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import net.minecraft.nbt.NBTBase;
@@ -20,9 +21,16 @@ import net.minecraft.profiler.Profiler;
 
 import buildcraft.lib.nbt.NbtSquisher;
 
+import buildcraft.test.lib.net.PrintingByteBuf;
+
 public class NbtSquisherTester {
-    private final NBTTagCompound nbt = genNbt(64 * 64 * 64);
-    private final NBTTagCompound nbtSmall = genNbt(10);
+    private static final String[] IDS = { //
+        "minecraft:dirt", "minecraft:cooked_steak", "minecraft:cooked_beef", "minecraft:stick",//
+        "minecraft:diamond", "buildcraftcore:gear_wood", "buildcraftcore:gear_stone"//
+    };
+
+    public static final NBTTagCompound nbt = genNbt(64 * 64 * 64);
+    public static final NBTTagCompound nbtSmall = genNbt(10);
 
     @Test
     public void testSimpleNBT() throws IOException {
@@ -146,7 +154,7 @@ public class NbtSquisherTester {
         }
         watch.reset();
 
-        NbtSquisher.debug = false;
+        NbtSquisher.debugBuffer = null;
 
         to = NbtSquisher.expand(bytes.clone());
         checkEquality(nbt, to);
@@ -166,65 +174,63 @@ public class NbtSquisherTester {
     }
 
     public static void checkEquality(NBTTagCompound from, NBTTagCompound to) {
-        if (!checkEquality("", from, to)) {
-            // Assert.fail("Tags were not equal!");
+        String error = compoundEqual(from, to);
+        if (!error.isEmpty()) {
+            System.out.println(error);
+            Assert.fail("Tags were not equal! (" + error + ")");
         }
     }
 
-    private static boolean checkEquality(String start, NBTTagCompound from, NBTTagCompound to) {
+    private static String compoundEqual(NBTTagCompound from, NBTTagCompound to) {
         Set<String> keysFrom = from.getKeySet();
         Set<String> keysTo = to.getKeySet();
         if (!keysFrom.equals(keysTo)) {
-            System.out.println(start + "Differing keys!");
-            System.out.println(start + "  from = " + keysFrom);
-            System.out.println(start + "    to = " + keysTo);
-            return false;
+            return "keys " + keysFrom + " -> " + keysTo;
         } else {
-            boolean wasEqual = false;
-            start = "  " + start;
             for (String key : keysFrom) {
-                String start2 = start + key + ":";
                 NBTBase valFrom = from.getTag(key);
                 NBTBase valTo = to.getTag(key);
-                wasEqual &= checkEquality(start2, valFrom, valTo);
+                String err = nbtEquals(valFrom, valTo);
+                if (!err.isEmpty()) {
+                    return key + " = " + err;
+                }
             }
-            return wasEqual;
+            return "";
         }
     }
 
-    private static boolean checkEquality(String start, NBTTagList from, NBTTagList to) {
+    private static String listEquals(NBTTagList from, NBTTagList to) {
         int l1 = from.tagCount();
         int l2 = to.tagCount();
         if (l1 != l2) {
-            System.out.println(start + "Differing lengths!");
-            System.out.println(start + "  from = " + l1);
-            System.out.println(start + "    to = " + l2);
-            return false;
+            System.out.println("Differing lengths!");
+            System.out.println("  from = " + l1);
+            System.out.println("    to = " + l2);
+            return "";
         } else {
-            boolean wasEqual = true;
-            start = "  " + start;
             for (int i = 0; i < l1; i++) {
-                String start2 = start + i + ":";
                 NBTBase valFrom = from.get(i);
                 NBTBase valTo = to.get(i);
-                wasEqual &= checkEquality(start2, valFrom, valTo);
+                String err = nbtEquals(valFrom, valTo);
+                if (!err.isEmpty()) {
+                    return "[" + i + "] = " + err;
+                }
             }
-            return wasEqual;
+            return "";
         }
     }
 
-    private static boolean checkEquality(String start, NBTBase valFrom, NBTBase valTo) {
+    private static String nbtEquals(NBTBase valFrom, NBTBase valTo) {
         if (valFrom instanceof NBTTagCompound && valTo instanceof NBTTagCompound) {
-            return checkEquality(start, (NBTTagCompound) valFrom, (NBTTagCompound) valTo);
+            return compoundEqual((NBTTagCompound) valFrom, (NBTTagCompound) valTo);
         }
         if (valFrom instanceof NBTTagList && valTo instanceof NBTTagList) {
-            return checkEquality(start, (NBTTagList) valFrom, (NBTTagList) valTo);
+            return listEquals((NBTTagList) valFrom, (NBTTagList) valTo);
         }
         if (!valFrom.equals(valTo)) {
-            System.out.println(start + " were not equal!");
-            return false;
+            return valFrom + " -> " + valTo;
         }
-        return true;
+        return "";
     }
 
     private static NBTTagCompound genRandomChest(Random rand) {
@@ -246,11 +252,6 @@ public class NbtSquisherTester {
         chest.setTag("items", chestItems);
         return chest;
     }
-
-    private static final String[] IDS = { //
-        "minecraft:dirt", "minecraft:cooked_steak", "minecraft:cooked_beef", "minecraft:stick",//
-        "minecraft:diamond", "buildcraftcore:gear_wood", "buildcraftcore:gear_stone"//
-    };
 
     private static NBTTagCompound genRandomItem(Random rand) {
         NBTTagCompound item = new NBTTagCompound();
@@ -305,19 +306,19 @@ public class NbtSquisherTester {
         }
         watch.reset();
 
-        NbtSquisher.profiler.profilingEnabled = true;
+        // NbtSquisher.profiler.profilingEnabled = true;
         NbtSquisher.profiler.startSection("root");
 
         final int times = 100;
         long[][] all = new long[times][];
 
         System.in.read();
-        NbtSquisher.debug = true;
+        NbtSquisher.debugBuffer = PrintingByteBuf::new;
         for (int i = 0; i < 100; i++) {
             System.out.println("Starting test " + (i + 1));
             all[i] = test(true, tester.nbt);
             System.out.println("Finished test " + (i + 1));
-            NbtSquisher.debug = false;
+            NbtSquisher.debugBuffer = null;
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {

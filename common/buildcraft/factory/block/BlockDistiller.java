@@ -19,9 +19,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.factory.tile.TileDistiller_BC8;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
+
+import buildcraft.factory.tile.TileDistiller_BC8;
 
 public class BlockDistiller extends BlockBCTile_Neptune implements IBlockWithFacing {
     public BlockDistiller(Material material, String id) {

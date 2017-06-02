@@ -11,6 +11,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import gnu.trove.map.hash.TCharObjectHashMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -19,8 +21,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import buildcraft.lib.misc.StackUtil;
-
-import gnu.trove.map.hash.TCharObjectHashMap;
 
 public class RecipeBuilderShaped {
     @Nonnull

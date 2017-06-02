@@ -27,6 +27,7 @@ import net.minecraft.world.World;
 import buildcraft.lib.client.model.ModelItemSimple;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.StackUtil;
+
 import buildcraft.transport.BCTransportModels;
 import buildcraft.transport.gate.GateVariant;
 import buildcraft.transport.item.ItemPluggableGate;
@@ -91,7 +92,7 @@ public enum ModelGateItem implements IBakedModel {
         return GateOverride.GATE_OVERRIDE;
     }
 
-    public static class GateOverride extends ItemOverrideList {
+    public static final class GateOverride extends ItemOverrideList {
         public static final GateOverride GATE_OVERRIDE = new GateOverride();
 
         private GateOverride() {

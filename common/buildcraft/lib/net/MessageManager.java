@@ -4,22 +4,26 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.net;
 
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
-import buildcraft.lib.BCLibProxy;
-import buildcraft.lib.misc.MessageUtil;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.TreeSet;
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
+
+import buildcraft.lib.BCLibProxy;
+import buildcraft.lib.misc.MessageUtil;
 
 public class MessageManager {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.messages");

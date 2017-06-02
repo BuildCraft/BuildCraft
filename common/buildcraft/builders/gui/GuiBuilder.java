@@ -6,14 +6,16 @@
 
 package buildcraft.builders.gui;
 
-import buildcraft.builders.container.ContainerBuilder;
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.button.GuiButtonSmall;
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
-import net.minecraft.util.ResourceLocation;
+
+import buildcraft.builders.container.ContainerBuilder;
 
 public class GuiBuilder extends GuiBC8<ContainerBuilder> {
     private static final ResourceLocation TEXTURE_BASE =

@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -31,8 +33,6 @@ import buildcraft.api.core.EnumPipePart;
 
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.InventoryUtil;
-
-import javax.annotation.Nonnull;
 
 public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
     public enum EnumAccess {

@@ -9,7 +9,6 @@ package buildcraft.builders.block;
 import java.util.Arrays;
 import java.util.List;
 
-import buildcraft.builders.BCBuildersBlocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -21,10 +20,12 @@ import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
 
-import buildcraft.builders.tile.TileQuarry;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
 import buildcraft.lib.misc.CapUtil;
+
+import buildcraft.builders.BCBuildersBlocks;
+import buildcraft.builders.tile.TileQuarry;
 
 public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing {
     public BlockQuarry(Material material, String id) {

@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
+
 import buildcraft.silicon.tile.TileLaser;
 
 public class BlockLaser extends BlockBCTile_Neptune implements IBlockWithFacing {

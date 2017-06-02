@@ -28,7 +28,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.enums.EnumPowerStage;
-import buildcraft.api.mj.*;
+import buildcraft.api.mj.IMjConnector;
+import buildcraft.api.mj.IMjReceiver;
+import buildcraft.api.mj.IMjRedstoneReceiver;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.VanillaRotationHandlers;

@@ -1,8 +1,15 @@
 package buildcraft.factory.tile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -21,8 +28,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.factory.block.BlockFloodGate;
-import buildcraft.factory.client.render.AdvDebuggerFloodGate;
 import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
 import buildcraft.lib.debug.IAdvDebugTarget;
 import buildcraft.lib.fluid.Tank;
@@ -32,6 +37,9 @@ import buildcraft.lib.misc.FluidUtilBC;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+
+import buildcraft.factory.block.BlockFloodGate;
+import buildcraft.factory.client.render.AdvDebuggerFloodGate;
 
 public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final EnumFacing[] SIDE_INDEXES = new EnumFacing[] { EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST };

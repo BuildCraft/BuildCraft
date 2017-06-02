@@ -4,25 +4,28 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
 
-package buildcraft.lib.nbt;
+package buildcraft.test.lib.net;
 
+import java.io.PrintStream;
+
+import io.netty.buffer.ByteBuf;
+
+import net.minecraft.init.Bootstrap;
 import net.minecraft.network.PacketBuffer;
 
 import buildcraft.lib.net.PacketBufferBC;
 
-import io.netty.buffer.ByteBuf;
-
 public final class PrintingByteBuf extends PacketBufferBC {
-    private final PacketBufferBC wrapped;
+    private static final PrintStream SYSOUT = Bootstrap.SYSOUT;
 
     public PrintingByteBuf(ByteBuf wrapped) {
         super(wrapped);
-        this.wrapped = PacketBufferBC.asPacketBufferBc(wrapped);
+        // this.wrapped = PacketBufferBC.asPacketBufferBc(wrapped);
     }
 
     @Override
     public ByteBuf writeByte(int val) {
-        System.out.print(padLength(2, val));
+        SYSOUT.print(padLength(2, val));
         super.writeByte(val);
         return this;
     }
@@ -67,65 +70,68 @@ public final class PrintingByteBuf extends PacketBufferBC {
 
     @Override
     public PacketBuffer writeVarInt(int value) {
-        System.out.print(" _var[" + value + "] (");
+        SYSOUT.print(" _var[" + value + "] (");
         super.writeVarInt(value);
-        System.out.print(" )");
+        SYSOUT.print(" )");
         return this;
     }
 
     @Override
     public PacketBuffer writeVarLong(long value) {
-        System.out.print(" _var[" + value + "L](");
+        SYSOUT.print(" _var[" + value + "L](");
         super.writeVarLong(value);
-        System.out.print(" )");
+        SYSOUT.print(" )");
         return this;
     }
 
     @Override
     public ByteBuf writeShort(int val) {
-        System.out.print(padLength(4, val));
+        SYSOUT.print(padLength(4, val));
         super.writeShort(val);
         return this;
     }
 
     @Override
     public ByteBuf writeInt(int val) {
-        System.out.print(padLength(8, val));
+        SYSOUT.print(padLength(8, val));
         super.writeInt(val);
         return this;
     }
 
     @Override
     public ByteBuf writeLong(long val) {
-        System.out.print(padLength(16, val));
+        SYSOUT.print(padLength(16, val));
         super.writeLong(val);
         return this;
     }
 
     @Override
     public ByteBuf writeFloat(float val) {
-        System.out.print(padLength(8, Float.floatToRawIntBits(val)));
+        SYSOUT.print(padLength(8, Float.floatToRawIntBits(val)));
         super.writeFloat(val);
         return this;
     }
 
     @Override
     public ByteBuf writeDouble(double val) {
-        System.out.print(padLength(16, Double.doubleToRawLongBits(val)));
+        SYSOUT.print(padLength(16, Double.doubleToRawLongBits(val)));
         super.writeDouble(val);
         return this;
     }
 
     @Override
     public ByteBuf setByte(int index, int value) {
-        System.out.println("\n  Set " + index + " (" + new String(padLength(2, getByte(index)))//
+        SYSOUT.println("\n  Set " + index + " (" + new String(padLength(2, getByte(index)))//
             + " ) to" + new String(padLength(2, value)));
         super.setByte(index, value);
         return this;
     }
 
     private static char[] padLength(int length, long val) {
-        String s = Long.toHexString(val);
+        String s = Long.toUnsignedString(val, 16);
+        if (s.length() > length) {
+            s = s.substring(s.length() - length);
+        }
         char[] chars = new char[length + 1];
         chars[0] = ' ';
         int diff = length - s.length();
@@ -142,14 +148,14 @@ public final class PrintingByteBuf extends PacketBufferBC {
 
     @Override
     public PacketBufferBC writeFixedBits(int value, int length) throws IllegalArgumentException {
-        System.out.println("Writing " + length + " fixed bits ( " + new String(padLength(length, value)) + " )");
+        SYSOUT.println("Writing " + length + " fixed bits ( " + new String(padLength(length, value)) + " )");
         super.writeFixedBits(value, length);
         return this;
     }
 
     @Override
     public PacketBufferBC writeEnumValue(Enum<?> value) {
-        System.out.println("Writing " + value + " from " + value.getClass());
+        SYSOUT.println("Writing " + value + " from " + value.getClass());
         super.writeEnumValue(value);
         return this;
     }

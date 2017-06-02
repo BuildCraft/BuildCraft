@@ -8,7 +8,13 @@ package buildcraft.lib.client.guide.loader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -30,7 +36,13 @@ import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.client.guide.PageEntry;
 import buildcraft.lib.client.guide.PageLine;
-import buildcraft.lib.client.guide.parts.*;
+import buildcraft.lib.client.guide.parts.GuideChapterWithin;
+import buildcraft.lib.client.guide.parts.GuidePage;
+import buildcraft.lib.client.guide.parts.GuidePageFactory;
+import buildcraft.lib.client.guide.parts.GuidePart;
+import buildcraft.lib.client.guide.parts.GuidePartFactory;
+import buildcraft.lib.client.guide.parts.GuidePartNewPage;
+import buildcraft.lib.client.guide.parts.GuideText;
 import buildcraft.lib.client.guide.parts.recipe.GuideCraftingFactory;
 import buildcraft.lib.client.guide.parts.recipe.GuideSmeltingFactory;
 import buildcraft.lib.client.guide.parts.recipe.RecipeLookupHelper;

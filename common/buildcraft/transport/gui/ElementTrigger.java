@@ -11,6 +11,7 @@ import java.util.List;
 
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.data.IReference;
+
 import buildcraft.transport.gate.TriggerWrapper;
 
 public class ElementTrigger extends ElementStatement<TriggerWrapper> {

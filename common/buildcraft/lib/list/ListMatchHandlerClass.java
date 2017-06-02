@@ -6,12 +6,12 @@
 
 package buildcraft.lib.list;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.api.lists.ListRegistry;
-
-import javax.annotation.Nonnull;
 
 public class ListMatchHandlerClass extends ListMatchHandler {
     @Override

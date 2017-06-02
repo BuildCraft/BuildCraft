@@ -6,14 +6,16 @@
 
 package buildcraft.silicon.container;
 
-import buildcraft.lib.gui.ContainerBCTile;
-import buildcraft.lib.gui.slot.SlotBase;
-import buildcraft.lib.gui.slot.SlotDisplay;
-import buildcraft.silicon.tile.TileAssemblyTable;
+import java.util.ArrayList;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
-import java.util.ArrayList;
+import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.lib.gui.slot.SlotBase;
+import buildcraft.lib.gui.slot.SlotDisplay;
+
+import buildcraft.silicon.tile.TileAssemblyTable;
 
 public class ContainerAssemblyTable extends ContainerBCTile<TileAssemblyTable> {
     public ContainerAssemblyTable(EntityPlayer player, TileAssemblyTable tile) {

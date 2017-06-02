@@ -16,17 +16,18 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import buildcraft.core.BCCore;
-import buildcraft.energy.generation.BiomeInitializer;
-import buildcraft.energy.generation.BiomeOilDesert;
-import buildcraft.energy.generation.BiomeOilOcean;
-import buildcraft.energy.generation.OilPopulate;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.MigrationManager;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
+
+import buildcraft.core.BCCore;
+import buildcraft.energy.generation.BiomeInitializer;
+import buildcraft.energy.generation.BiomeOilDesert;
+import buildcraft.energy.generation.BiomeOilOcean;
+import buildcraft.energy.generation.OilPopulate;
 
 //@formatter:off
 @Mod(modid = BCEnergy.MODID,

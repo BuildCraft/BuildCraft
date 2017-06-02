@@ -15,6 +15,7 @@ import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.misc.LocaleUtil;
+
 import buildcraft.transport.container.ContainerDiamondPipe;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
 

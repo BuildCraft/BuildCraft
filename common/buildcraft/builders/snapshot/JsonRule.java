@@ -6,10 +6,10 @@
 
 package buildcraft.builders.snapshot;
 
+import java.util.List;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-
-import java.util.List;
 
 public class JsonRule {
     public List<String> selectors = null;

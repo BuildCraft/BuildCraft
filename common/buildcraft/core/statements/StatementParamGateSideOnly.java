@@ -6,6 +6,8 @@
 
 package buildcraft.core.statements;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,12 +20,11 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
-import buildcraft.core.BCCoreSprites;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
 
-import javax.annotation.Nonnull;
+import buildcraft.core.BCCoreSprites;
 
 public class StatementParamGateSideOnly implements IStatementParameter {
 

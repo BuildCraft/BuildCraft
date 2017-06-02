@@ -6,7 +6,17 @@
 
 package buildcraft.transport.wire;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Queue;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -33,12 +43,10 @@ import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeApi;
 
-import buildcraft.lib.compat.CompatManager;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.transport.plug.PluggableGate;
 
-import io.netty.buffer.ByteBuf;
+import buildcraft.transport.plug.PluggableGate;
 
 public class WireSystem {
     public final List<WireElement> elements = new ArrayList<>();

@@ -8,6 +8,8 @@ package buildcraft.transport.pipe.behaviour;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
@@ -21,13 +23,17 @@ import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IFlowFluid;
+import buildcraft.api.transport.pipe.IFlowItems;
+import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipe.ConnectedType;
+import buildcraft.api.transport.pipe.PipeBehaviour;
+import buildcraft.api.transport.pipe.PipeEventFluid;
+import buildcraft.api.transport.pipe.PipeEventHandler;
 
 import buildcraft.lib.inventory.filter.StackFilter;
-import buildcraft.transport.BCTransportConfig;
 
-import javax.annotation.Nonnull;
+import buildcraft.transport.BCTransportConfig;
 
 public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRedstoneReceiver, IDebuggable {
 

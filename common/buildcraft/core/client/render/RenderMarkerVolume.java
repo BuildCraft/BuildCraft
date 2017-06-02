@@ -16,15 +16,16 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.core.BCCoreConfig;
-import buildcraft.core.client.BuildCraftLaserManager;
-import buildcraft.core.marker.VolumeConnection;
-import buildcraft.core.tile.TileMarkerVolume;
 import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.misc.VecUtil;
+
+import buildcraft.core.BCCoreConfig;
+import buildcraft.core.client.BuildCraftLaserManager;
+import buildcraft.core.marker.VolumeConnection;
+import buildcraft.core.tile.TileMarkerVolume;
 
 public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolume> {
     private static final double SCALE = 1 / 16.2; // smaller than normal lasers

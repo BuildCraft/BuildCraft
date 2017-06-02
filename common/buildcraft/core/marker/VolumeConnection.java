@@ -16,12 +16,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.core.BCCoreConfig;
-import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
 import buildcraft.lib.marker.MarkerConnection;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.Box;
+
+import buildcraft.core.BCCoreConfig;
+import buildcraft.core.client.BuildCraftLaserManager;
 
 public class VolumeConnection extends MarkerConnection<VolumeConnection> {
     private static final double RENDER_SCALE = 1 / 16.05;

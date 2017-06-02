@@ -7,12 +7,17 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
-import buildcraft.lib.inventory.ItemTransactorHelper;
-import buildcraft.lib.inventory.filter.StackFilter;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.Block;
@@ -48,6 +53,8 @@ import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.inventory.AutomaticProvidingTransactor;
+import buildcraft.lib.inventory.ItemTransactorHelper;
+import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.CapUtil;

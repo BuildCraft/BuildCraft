@@ -8,22 +8,27 @@ package buildcraft.transport.statements;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.gates.IGate;
-import buildcraft.api.statements.*;
+import buildcraft.api.statements.IActionExternal;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IActionInternalSided;
+import buildcraft.api.statements.IActionProvider;
+import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeEventStatement;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.misc.ColourUtil;
+
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.plug.PluggablePulsar;
 import buildcraft.transport.wire.IWireEmitter;
-
-import javax.annotation.Nonnull;
 
 public enum TransportActionProvider implements IActionProvider {
     INSTANCE;

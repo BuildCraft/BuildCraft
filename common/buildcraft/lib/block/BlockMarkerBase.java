@@ -7,7 +7,6 @@ package buildcraft.lib.block;
 import java.util.EnumMap;
 import java.util.Map;
 
-import buildcraft.lib.misc.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -30,6 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.blocks.ICustomRotationHandler;
 import buildcraft.api.properties.BuildCraftProperties;
 
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.tile.TileMarker;
 
 public abstract class BlockMarkerBase extends BlockBCTile_Neptune implements ICustomRotationHandler {

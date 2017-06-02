@@ -6,9 +6,10 @@
 
 package buildcraft.factory;
 
-import buildcraft.factory.tile.TileDistiller_BC8;
 import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.expression.FunctionContext;
+
+import buildcraft.factory.tile.TileDistiller_BC8;
 
 public class BCFactoryModels {
     public static final ModelHolderVariable DISTILLER;

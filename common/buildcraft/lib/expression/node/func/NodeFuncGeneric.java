@@ -6,7 +6,13 @@
 
 package buildcraft.lib.expression.node.func;
 
-import buildcraft.lib.expression.api.*;
+import buildcraft.lib.expression.api.IConstantNode;
+import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.api.INodeFunc;
+import buildcraft.lib.expression.api.INodeStack;
+import buildcraft.lib.expression.api.IVariableNode;
+import buildcraft.lib.expression.api.InvalidExpressionException;
+import buildcraft.lib.expression.api.NodeType;
 
 public abstract class NodeFuncGeneric implements INodeFunc {
 

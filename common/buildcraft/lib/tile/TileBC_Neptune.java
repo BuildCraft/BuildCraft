@@ -15,6 +15,9 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -70,9 +73,6 @@ import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.EnumTagTypeMulti;
 import buildcraft.lib.tile.item.ItemHandlerManager;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 public abstract class TileBC_Neptune extends TileEntity implements IPayloadReceiver, IAdvDebugTarget, IPlayerOwned {
     public static final boolean DEBUG_PARTICLES = BCDebugging.shouldDebugLog("tile.debug.particles");

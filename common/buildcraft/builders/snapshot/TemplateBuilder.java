@@ -6,18 +6,19 @@
 
 package buildcraft.builders.snapshot;
 
-import buildcraft.lib.fake.FakePlayerBC;
-import buildcraft.lib.misc.FakePlayerUtil;
-import buildcraft.lib.misc.data.Box;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import buildcraft.lib.fake.FakePlayerBC;
+import buildcraft.lib.misc.FakePlayerUtil;
+import buildcraft.lib.misc.data.Box;
 
 public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     public TemplateBuilder(ITileForTemplateBuilder tile) {

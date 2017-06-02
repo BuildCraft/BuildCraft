@@ -16,19 +16,17 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.core.BCCore;
-
-import buildcraft.api.BCBlocks;
-
 import buildcraft.lib.BCLib;
-import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.config.EnumRestartRequirement;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
+
+import buildcraft.core.BCCore;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
 import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;

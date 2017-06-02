@@ -7,9 +7,13 @@
 package buildcraft.silicon.tile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import buildcraft.lib.net.MessageManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
@@ -26,6 +30,7 @@ import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.data.IdAllocator;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.tile.TileBC_Neptune;

@@ -6,6 +6,8 @@
 
 package buildcraft.transport.client.render;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -23,8 +25,6 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.transport.client.PipeRegistryClient;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.tile.TilePipeHolder;
-
-import javax.annotation.Nonnull;
 
 public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
     @Override

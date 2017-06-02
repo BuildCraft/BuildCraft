@@ -1,16 +1,11 @@
 package buildcraft.lib.compat;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.Loader;
-
-import buildcraft.lib.misc.MessageUtil;
-
-import io.netty.buffer.ByteBuf;
 
 public class CompatManager {
     public static ISoftBlockAccessor blockAccessor = DefaultBlockAccessor.VIA_CHUNK;

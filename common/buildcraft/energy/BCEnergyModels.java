@@ -25,8 +25,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumPowerStage;
 
-import buildcraft.energy.tile.TileEngineIron_BC8;
-import buildcraft.energy.tile.TileEngineStone_BC8;
 import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.ModelItemSimple;
 import buildcraft.lib.client.model.MutableQuad;
@@ -37,6 +35,9 @@ import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableString;
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.misc.data.ModelVariableData;
+
+import buildcraft.energy.tile.TileEngineIron_BC8;
+import buildcraft.energy.tile.TileEngineStone_BC8;
 
 public class BCEnergyModels {
 

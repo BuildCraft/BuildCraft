@@ -5,12 +5,12 @@
  */
 package buildcraft.lib.gui.slot;
 
-import net.minecraft.entity.player.EntityPlayer;
+import javax.annotation.Nonnull;
 
-import buildcraft.lib.tile.item.IItemHandlerAdv;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
+import buildcraft.lib.tile.item.IItemHandlerAdv;
 
 public class SlotPhantom extends SlotBase implements IPhantomSlot {
     private final boolean canAdjustCount;

@@ -28,21 +28,21 @@ public class JsonEntry {
     }
 
     public JsonEntry inherit(JsonTypeTags parent, String entryMask) {
-        JsonTypeTags typeTags;
+        JsonTypeTags tags;
         if (this.typeTags == null) {
-            typeTags = parent;
+            tags = parent;
         } else {
-            typeTags = this.typeTags.inheritMissingTags(parent);
+            tags = this.typeTags.inheritMissingTags(parent);
         }
 
         // apply mask
-        String page = this.page;
-        page = entryMask.replaceAll("<page>", page);
-        page = page.replaceAll("<mod>", typeTags.mod);
-        page = page.replaceAll("<type>", typeTags.type);
-        page = page.replaceAll("<sub_mod>", typeTags.subMod);
-        page = page.replaceAll("<sub_type>", typeTags.subType);
-        return new JsonEntry(title, page, itemStack, typeTags);
+        String realPage = this.page;
+        realPage = entryMask.replaceAll("<page>", realPage);
+        realPage = realPage.replaceAll("<mod>", tags.mod);
+        realPage = realPage.replaceAll("<type>", tags.type);
+        realPage = realPage.replaceAll("<sub_mod>", tags.subMod);
+        realPage = realPage.replaceAll("<sub_type>", tags.subType);
+        return new JsonEntry(title, realPage, itemStack, tags);
     }
 
     public void printContents() {

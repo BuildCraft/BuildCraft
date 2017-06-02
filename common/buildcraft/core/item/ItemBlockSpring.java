@@ -6,10 +6,13 @@
 
 package buildcraft.core.item;
 
-import buildcraft.core.block.BlockSpring;
-import buildcraft.lib.item.ItemBlockBCMulti;
 import gnu.trove.map.hash.TIntObjectHashMap;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+
+import buildcraft.lib.item.ItemBlockBCMulti;
+
+import buildcraft.core.block.BlockSpring;
 
 public class ItemBlockSpring extends ItemBlockBCMulti {
     private static final String[] NAMES = { "water", "oil" };

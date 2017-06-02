@@ -6,10 +6,16 @@
 
 package buildcraft.builders.snapshot;
 
-import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.schematics.ISchematicBlock;
-import buildcraft.api.schematics.SchematicBlockContext;
-import buildcraft.lib.misc.BlockUtil;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,12 +24,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.api.schematics.SchematicBlockContext;
+
+import buildcraft.lib.misc.BlockUtil;
 
 public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid> {
     private IBlockState blockState;

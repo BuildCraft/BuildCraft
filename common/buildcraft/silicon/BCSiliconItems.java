@@ -7,6 +7,7 @@
 package buildcraft.silicon;
 
 import buildcraft.lib.item.ItemManager;
+
 import buildcraft.silicon.item.ItemRedstoneChipset;
 
 public class BCSiliconItems {

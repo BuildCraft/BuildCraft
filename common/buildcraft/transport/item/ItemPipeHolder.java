@@ -8,6 +8,8 @@ package buildcraft.transport.item;
 
 import java.util.List;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
@@ -28,9 +30,8 @@ import buildcraft.api.transport.pipe.PipeDefinition;
 import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.transport.BCTransportBlocks;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import buildcraft.transport.BCTransportBlocks;
 
 public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemPipe {
     public final PipeDefinition definition;

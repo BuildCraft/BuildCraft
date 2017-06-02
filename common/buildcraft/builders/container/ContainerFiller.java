@@ -6,14 +6,16 @@
 
 package buildcraft.builders.container;
 
-import buildcraft.builders.filling.Filling;
-import buildcraft.builders.tile.TileFiller;
-import buildcraft.lib.gui.ContainerBCTile;
-import buildcraft.lib.gui.slot.SlotBase;
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
+import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.lib.gui.slot.SlotBase;
+
+import buildcraft.builders.filling.Filling;
+import buildcraft.builders.tile.TileFiller;
 
 public class ContainerFiller extends ContainerBCTile<TileFiller> {
     public ContainerFiller(EntityPlayer player, TileFiller tile) {

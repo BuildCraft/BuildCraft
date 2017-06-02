@@ -15,7 +15,11 @@ import javax.vecmath.Tuple3f;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.item.EnumDyeColor;
@@ -34,6 +38,7 @@ import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.VecUtil;
+
 import buildcraft.transport.tile.TilePipeHolder;
 import buildcraft.transport.wire.EnumWireBetween;
 

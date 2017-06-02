@@ -17,6 +17,7 @@ import net.minecraftforge.common.ForgeHooks;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.IRecipeViewable;
+
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.item.ItemPluggableFacade;
 import buildcraft.transport.plug.FacadeStateManager;

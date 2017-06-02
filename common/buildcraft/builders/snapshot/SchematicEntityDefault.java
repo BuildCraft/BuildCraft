@@ -6,11 +6,19 @@
 
 package buildcraft.builders.snapshot;
 
-import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.schematics.ISchematicEntity;
-import buildcraft.api.schematics.SchematicEntityContext;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.RotationUtil;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.EntityList;
@@ -23,12 +31,15 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import java.util.*;
-import java.util.stream.Stream;
+import net.minecraftforge.fluids.FluidStack;
+
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.schematics.ISchematicEntity;
+import buildcraft.api.schematics.SchematicEntityContext;
+
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.RotationUtil;
 
 public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityDefault> {
     private NBTTagCompound entityNbt;

@@ -10,6 +10,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,14 +34,13 @@ import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.StackUtil;
+
 import buildcraft.transport.BCTransportPlugs;
 import buildcraft.transport.gate.EnumGateLogic;
 import buildcraft.transport.gate.EnumGateMaterial;
 import buildcraft.transport.gate.EnumGateModifier;
 import buildcraft.transport.gate.GateVariant;
 import buildcraft.transport.plug.PluggableGate;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class ItemPluggableGate extends ItemBC_Neptune implements IItemPluggable {
     public ItemPluggableGate(String id) {

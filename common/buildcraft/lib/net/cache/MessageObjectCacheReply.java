@@ -8,13 +8,13 @@ package buildcraft.lib.net.cache;
 
 import java.io.IOException;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 
 import buildcraft.lib.net.PacketBufferBC;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 public class MessageObjectCacheReply implements IMessage {
 

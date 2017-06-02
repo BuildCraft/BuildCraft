@@ -13,10 +13,11 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.builders.BCBuildersGuis;
-import buildcraft.builders.tile.TileElectronicLibrary;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
+
+import buildcraft.builders.BCBuildersGuis;
+import buildcraft.builders.tile.TileElectronicLibrary;
 
 public class BlockElectronicLibrary extends BlockBCTile_Neptune implements IBlockWithFacing {
     public BlockElectronicLibrary(Material material, String id) {

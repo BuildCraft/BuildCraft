@@ -6,23 +6,26 @@
 
 package buildcraft.builders.container;
 
-import buildcraft.builders.item.ItemSnapshot;
-import buildcraft.lib.gui.ContainerBC_Neptune;
-import buildcraft.lib.misc.data.IdAllocator;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBC_Neptune;
-import net.minecraft.entity.player.EntityPlayer;
+import java.io.IOException;
 
-import buildcraft.builders.tile.TileArchitectTable;
-import buildcraft.lib.gui.ContainerBCTile;
-import buildcraft.lib.gui.slot.SlotBase;
-import buildcraft.lib.gui.slot.SlotOutput;
+import javax.annotation.Nonnull;
+
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nonnull;
-import java.io.IOException;
+import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.lib.gui.ContainerBC_Neptune;
+import buildcraft.lib.gui.slot.SlotBase;
+import buildcraft.lib.gui.slot.SlotOutput;
+import buildcraft.lib.misc.data.IdAllocator;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
+
+import buildcraft.builders.item.ItemSnapshot;
+import buildcraft.builders.tile.TileArchitectTable;
 
 public class ContainerArchitectTable extends ContainerBCTile<TileArchitectTable> {
     private static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("architect_table");

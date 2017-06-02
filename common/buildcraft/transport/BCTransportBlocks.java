@@ -10,6 +10,7 @@ import net.minecraft.block.material.Material;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.tile.TileBC_Neptune;
+
 import buildcraft.transport.block.BlockFilteredBuffer;
 import buildcraft.transport.block.BlockPipeHolder;
 import buildcraft.transport.tile.TileFilteredBuffer;

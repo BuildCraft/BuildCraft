@@ -4,11 +4,24 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import buildcraft.builders.block.*;
-import buildcraft.builders.tile.*;
+import net.minecraft.block.material.Material;
+
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.tile.TileBC_Neptune;
-import net.minecraft.block.material.Material;
+
+import buildcraft.builders.block.BlockArchitectTable;
+import buildcraft.builders.block.BlockBuilder;
+import buildcraft.builders.block.BlockElectronicLibrary;
+import buildcraft.builders.block.BlockFiller;
+import buildcraft.builders.block.BlockFrame;
+import buildcraft.builders.block.BlockQuarry;
+import buildcraft.builders.block.BlockReplacer;
+import buildcraft.builders.tile.TileArchitectTable;
+import buildcraft.builders.tile.TileBuilder;
+import buildcraft.builders.tile.TileElectronicLibrary;
+import buildcraft.builders.tile.TileFiller;
+import buildcraft.builders.tile.TileQuarry;
+import buildcraft.builders.tile.TileReplacer;
 
 public class BCBuildersBlocks {
     public static BlockArchitectTable architect;

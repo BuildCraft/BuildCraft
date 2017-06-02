@@ -4,6 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.item;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
@@ -12,8 +14,6 @@ import buildcraft.api.core.IEngineType;
 
 import buildcraft.lib.engine.BlockEngineBase_BC8;
 import buildcraft.lib.item.ItemBlockBCMulti;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class ItemEngine_BC8<E extends Enum<E> & IEngineType> extends ItemBlockBCMulti {
     private final BlockEngineBase_BC8<E> engineBlock;

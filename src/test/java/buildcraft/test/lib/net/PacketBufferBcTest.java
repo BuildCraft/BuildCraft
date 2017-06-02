@@ -6,7 +6,6 @@ import org.junit.Test;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.lib.nbt.PrintingByteBuf;
 import buildcraft.lib.net.PacketBufferBC;
 
 import io.netty.buffer.Unpooled;

@@ -11,6 +11,8 @@ import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,8 +33,6 @@ import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.misc.data.DelayedList;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
-
-import io.netty.buffer.ByteBuf;
 
 public class MessageUtil {
     private static final DelayedList<Runnable> DELAYED_TASKS = DelayedList.createConcurrent();

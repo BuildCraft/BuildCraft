@@ -40,11 +40,11 @@ class InventoryIteratorHandler implements Iterable<IInvSlot> {
         };
     }
 
-    private class InvSlot implements IInvSlot {
+    class InvSlot implements IInvSlot {
 
         private int slot;
 
-        public InvSlot(int slot) {
+        InvSlot(int slot) {
             this.slot = slot;
         }
 

@@ -6,10 +6,8 @@
 
 package buildcraft.builders.block;
 
-import buildcraft.builders.BCBuildersGuis;
-import buildcraft.builders.tile.TileReplacer;
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.block.IBlockWithFacing;
+import javax.annotation.Nullable;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,7 +17,11 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithFacing;
+
+import buildcraft.builders.BCBuildersGuis;
+import buildcraft.builders.tile.TileReplacer;
 
 public class BlockReplacer extends BlockBCTile_Neptune implements IBlockWithFacing {
     public BlockReplacer(Material material, String id) {

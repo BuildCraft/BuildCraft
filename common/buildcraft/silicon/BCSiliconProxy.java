@@ -25,7 +25,11 @@ import buildcraft.silicon.container.ContainerIntegrationTable;
 import buildcraft.silicon.gui.GuiAdvancedCraftingTable;
 import buildcraft.silicon.gui.GuiAssemblyTable;
 import buildcraft.silicon.gui.GuiIntegrationTable;
-import buildcraft.silicon.tile.*;
+import buildcraft.silicon.tile.TileAdvancedCraftingTable;
+import buildcraft.silicon.tile.TileAssemblyTable;
+import buildcraft.silicon.tile.TileIntegrationTable;
+import buildcraft.silicon.tile.TileLaser;
+import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
 
 public abstract class BCSiliconProxy implements IGuiHandler {
     @SidedProxy(modId = BCSilicon.MODID)

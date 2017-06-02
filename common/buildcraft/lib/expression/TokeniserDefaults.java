@@ -9,7 +9,11 @@ package buildcraft.lib.expression;
 import java.util.ArrayList;
 import java.util.List;
 
-import buildcraft.lib.expression.Tokeniser.*;
+import buildcraft.lib.expression.Tokeniser.ITokenizerGobbler;
+import buildcraft.lib.expression.Tokeniser.ResultConsume;
+import buildcraft.lib.expression.Tokeniser.ResultDiscard;
+import buildcraft.lib.expression.Tokeniser.ResultInvalid;
+import buildcraft.lib.expression.Tokeniser.ResultSpecific;
 
 public class TokeniserDefaults {
     // Lots of gobblers.

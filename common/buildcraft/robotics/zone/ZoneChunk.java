@@ -10,12 +10,13 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
 
+import javax.vecmath.Point2i;
+
 import com.google.common.collect.ImmutableList;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-
-import javax.vecmath.Point2i;
 
 public class ZoneChunk {
     public BitSet property;

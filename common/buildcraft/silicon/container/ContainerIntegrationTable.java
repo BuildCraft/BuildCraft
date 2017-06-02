@@ -6,14 +6,15 @@
 
 package buildcraft.silicon.container;
 
-import buildcraft.lib.gui.slot.SlotDisplay;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
+import buildcraft.lib.gui.slot.SlotDisplay;
 import buildcraft.lib.gui.slot.SlotOutput;
+
 import buildcraft.silicon.tile.TileIntegrationTable;
-import net.minecraft.item.ItemStack;
 
 public class ContainerIntegrationTable extends ContainerBCTile<TileIntegrationTable> {
     public ContainerIntegrationTable(EntityPlayer player, TileIntegrationTable tile) {

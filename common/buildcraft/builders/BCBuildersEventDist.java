@@ -44,7 +44,7 @@ import buildcraft.builders.tile.TileQuarry;
 public enum BCBuildersEventDist {
     INSTANCE;
 
-    private static final UUID UUID_SINGLE_SCHEMATIC = new UUID(0xfd3b8c59b0a8b191l, 0x772ec006c1b0ffaal);
+    private static final UUID UUID_SINGLE_SCHEMATIC = new UUID(0xfd3b8c59b0a8b191L, 0x772ec006c1b0ffaaL);
     private final Map<World, Deque<WeakReference<TileQuarry>>> allQuarries = new WeakHashMap<>();
 
     public void validateQuarry(TileQuarry quarry) {
@@ -108,14 +108,11 @@ public enum BCBuildersEventDist {
             if (schematic != null) {
                 // Create a blueprint specific for this given item
                 Blueprint bpt = new Blueprint();
-                bpt.header.created = Date.from(Instant.EPOCH);
-                bpt.header.id = UUID_SINGLE_SCHEMATIC;
-                bpt.header.owner = UUID_SINGLE_SCHEMATIC;
-                bpt.header.name = schematic.serializeNBT().toString();
                 bpt.size = new BlockPos(1, 1, 1);
                 bpt.offset = BlockPos.ORIGIN;
                 bpt.data = new int[][][] { { { 0 } } };
                 bpt.palette.add(schematic);
+                bpt.header = new Header(bpt.computeHash(), UUID_SINGLE_SCHEMATIC, Date.from(Instant.EPOCH), "_item");
                 snapshot = bpt;
             }
         }

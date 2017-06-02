@@ -6,23 +6,33 @@
 
 package buildcraft.builders.snapshot;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.tuple.Pair;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.Rotation;
+import net.minecraft.util.math.BlockPos;
+
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.FluidStack;
+
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.ISchematicEntity;
+
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.Box;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.FluidStack;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Blueprint extends Snapshot {
     public final List<ISchematicBlock<?>> palette = new ArrayList<>();
@@ -31,7 +41,6 @@ public class Blueprint extends Snapshot {
 
     public Blueprint copy() {
         Blueprint blueprint = new Blueprint();
-        blueprint.header = header.copy();
         blueprint.size = size;
         blueprint.facing = facing;
         blueprint.offset = offset;
@@ -45,6 +54,7 @@ public class Blueprint extends Snapshot {
             }
         }
         blueprint.entities.addAll(entities);
+        blueprint.header = header.withHash(blueprint.computeHash());
         return blueprint;
     }
 
@@ -57,16 +67,15 @@ public class Blueprint extends Snapshot {
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = super.serializeNBT();
         nbt.setTag("palette", NBTUtilBC.writeCompoundList(palette.stream().map(SchematicBlockManager::writeToNBT)));
-        int[] serializedData = new int[size.getX() * size.getY() * size.getZ()];
-        int i = 0;
+        NBTTagList list = new NBTTagList();
         for (int z = 0; z < size.getZ(); z++) {
             for (int y = 0; y < size.getY(); y++) {
                 for (int x = 0; x < size.getX(); x++) {
-                    serializedData[i++] = data[x][y][z];
+                    list.appendTag(new NBTTagInt(data[x][y][z]));
                 }
             }
         }
-        nbt.setIntArray("data", serializedData);
+        nbt.setTag("data", list);
         nbt.setTag("entities", NBTUtilBC.writeCompoundList(entities.stream().map(SchematicEntityManager::writeToNBT)));
         return nbt;
     }
@@ -75,9 +84,8 @@ public class Blueprint extends Snapshot {
     public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
         super.deserializeNBT(nbt);
         palette.clear();
-        for (NBTTagCompound schematicBlockTag :
-            NBTUtilBC.readCompoundList(nbt.getTagList("palette", Constants.NBT.TAG_COMPOUND))
-                .collect(Collectors.toList())) {
+        for (NBTTagCompound schematicBlockTag : NBTUtilBC.readCompoundList(nbt.getTagList("palette",
+            Constants.NBT.TAG_COMPOUND)).collect(Collectors.toList())) {
             // TODO: Allow reading blueprints partially - invalid elements should be replaced with air
             // (Although this needs to add a "pass-through" ISchematicBlock that will store the
             // invalid NBTTagCompound and show up in the tooltip as an error, so that we can migrate
@@ -85,22 +93,29 @@ public class Blueprint extends Snapshot {
             palette.add(SchematicBlockManager.readFromNBT(schematicBlockTag));
         }
         data = new int[size.getX()][size.getY()][size.getZ()];
-        int[] serializedData = nbt.getIntArray("data");
-        if (serializedData.length != size.getX() * size.getY() * size.getZ()) {
-            throw new InvalidInputDataException("Serialized data has length of " + serializedData.length
+
+        NBTTagList list = nbt.hasKey("data", Constants.NBT.TAG_LIST) ? nbt.getTagList("data", Constants.NBT.TAG_INT)
+            : null;
+        int[] serializedData = nbt.hasKey("data", Constants.NBT.TAG_INT_ARRAY) ? nbt.getIntArray("data") : new int[0];
+        if (serializedData == null && list == null) {
+            throw new InvalidInputDataException("Can't read a blueprint with no data!");
+        }
+        int len = list == null ? serializedData.length : list.tagCount();
+        if (len != size.getX() * size.getY() * size.getZ()) {
+            throw new InvalidInputDataException("Pallette has length of " + len
                 + ", but we expected " + size.getX() * size.getY() * size.getZ() + size.toString());
         }
         int i = 0;
         for (int z = 0; z < size.getZ(); z++) {
             for (int y = 0; y < size.getY(); y++) {
                 for (int x = 0; x < size.getX(); x++) {
-                    data[x][y][z] = serializedData[i++];
+                    data[x][y][z] = list == null ? serializedData[i] : list.getIntAt(i);
+                    i++;
                 }
             }
         }
-        for (NBTTagCompound schematicEntityTag :
-            NBTUtilBC.readCompoundList(nbt.getTagList("entities", Constants.NBT.TAG_COMPOUND))
-                .collect(Collectors.toList())) {
+        for (NBTTagCompound schematicEntityTag : NBTUtilBC.readCompoundList(nbt.getTagList("entities",
+            Constants.NBT.TAG_COMPOUND)).collect(Collectors.toList())) {
             entities.add(SchematicEntityManager.readFromNBT(schematicEntityTag));
         }
     }
@@ -125,17 +140,16 @@ public class Blueprint extends Snapshot {
         public BuildingInfo(BlockPos basePos, Rotation rotation) {
             this.basePos = basePos;
             this.rotation = rotation;
-            Pair<List<ItemStack>[][][], List<FluidStack>[][][]> required =
-                SchematicBlockManager.computeRequired(getSnapshot());
-            Pair<List<List<ItemStack>>, List<List<FluidStack>>> requiredEntities =
-                SchematicEntityManager.computeRequired(getSnapshot());
+            Pair<List<ItemStack>[][][], List<FluidStack>[][][]> required = SchematicBlockManager.computeRequired(
+                getSnapshot());
+            Pair<List<List<ItemStack>>, List<List<FluidStack>>> requiredEntities = SchematicEntityManager
+                .computeRequired(getSnapshot());
             for (int z = 0; z < getSnapshot().size.getZ(); z++) {
                 for (int y = 0; y < getSnapshot().size.getY(); y++) {
                     for (int x = 0; x < getSnapshot().size.getX(); x++) {
                         ISchematicBlock<?> schematicBlock = palette.get(data[x][y][z]);
-                        BlockPos blockPos = new BlockPos(x, y, z).rotate(rotation)
-                            .add(basePos)
-                            .add(offset.rotate(rotation));
+                        BlockPos blockPos = new BlockPos(x, y, z).rotate(rotation).add(basePos).add(offset.rotate(
+                            rotation));
                         if (schematicBlock.isAir()) {
                             toBreak.add(blockPos);
                         } else {

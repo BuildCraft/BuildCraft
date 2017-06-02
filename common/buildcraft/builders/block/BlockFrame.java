@@ -6,9 +6,13 @@
 
 package buildcraft.builders.block;
 
-import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.misc.RotationUtil;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -22,11 +26,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
+import buildcraft.api.properties.BuildCraftProperties;
+
+import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.misc.RotationUtil;
 
 public class BlockFrame extends BlockBCBase_Neptune {
     public static final Map<EnumFacing, IProperty<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;

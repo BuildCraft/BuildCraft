@@ -31,6 +31,7 @@ import buildcraft.lib.client.reload.SourceType;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.ITickableNode;
 import buildcraft.lib.misc.SpriteUtil;
+
 import buildcraft.transport.BCTransportModels;
 
 /** Holds a model that can be changed by variables. Models are defined in this way by firstly creating a

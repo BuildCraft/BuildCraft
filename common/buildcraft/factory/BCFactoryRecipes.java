@@ -4,12 +4,14 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory;
 
-import buildcraft.api.BCBlocks;
-import buildcraft.lib.recipe.OredictionaryNames;
-import buildcraft.lib.recipe.RecipeBuilderShaped;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+
+import buildcraft.api.BCBlocks;
+
+import buildcraft.lib.recipe.OredictionaryNames;
+import buildcraft.lib.recipe.RecipeBuilderShaped;
 
 public class BCFactoryRecipes {
     public static void init() {

@@ -12,7 +12,15 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.statements.*;
+import buildcraft.api.statements.IAction;
+import buildcraft.api.statements.IActionExternal;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IActionInternalSided;
+import buildcraft.api.statements.IActionReceptor;
+import buildcraft.api.statements.IActionSingle;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
 
 public abstract class ActionWrapper extends StatementWrapper implements IActionInternal {
 

@@ -6,11 +6,11 @@
 
 package buildcraft.lib.client.render.laser;
 
-import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-
 import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.list.array.TIntArrayList;
+
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 public class LaserCompiledBuffer {
     private static final int DOUBLE_STRIDE = 5;

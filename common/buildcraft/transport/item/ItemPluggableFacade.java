@@ -10,7 +10,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import buildcraft.lib.misc.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,6 +33,12 @@ import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.SoundUtil;
+import buildcraft.lib.misc.StackUtil;
+
 import buildcraft.transport.BCTransportPlugs;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;

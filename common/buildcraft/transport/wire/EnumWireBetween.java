@@ -109,8 +109,8 @@ public enum EnumWireBetween {
 
     private EnumWirePart[] getParts() {
         Function<AxisDirection[], EnumWirePart> getPartFromDirections = directions -> Arrays.stream(EnumWirePart.VALUES).filter(part -> part.x == directions[0] && part.y == directions[1] && part.z == directions[2]).findFirst().orElse(null);
-        EnumWirePart[] parts = new EnumWirePart[2];
-        for(int i = 0; i < parts.length; i++) {
+        EnumWirePart[] arr = new EnumWirePart[2];
+        for(int i = 0; i < arr.length; i++) {
             AxisDirection[] directions = new AxisDirection[3];
             boolean found = false;
             for(int j = 0; j < directions.length; j++) {
@@ -127,8 +127,8 @@ public enum EnumWireBetween {
                     directions[j] = yz ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE;
                 }
             }
-            parts[i] = getPartFromDirections.apply(directions);
+            arr[i] = getPartFromDirections.apply(directions);
         }
-        return parts;
+        return arr;
     }
 }

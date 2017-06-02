@@ -24,7 +24,6 @@ import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.StackDefinition;
 
-import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.lib.inventory.filter.ArrayStackFilter;
 import buildcraft.lib.inventory.filter.OreStackFilter;
 import buildcraft.lib.misc.ColourUtil;
@@ -32,6 +31,8 @@ import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
+
+import buildcraft.core.item.ItemPaintbrush_BC8;
 
 public class BCCoreRecipes {
     public static void init() {

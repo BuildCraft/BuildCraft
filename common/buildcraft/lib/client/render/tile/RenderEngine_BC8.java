@@ -6,6 +6,8 @@
 
 package buildcraft.lib.client.render.tile;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.profiler.Profiler;
@@ -14,8 +16,6 @@ import net.minecraftforge.client.model.animation.FastTESR;
 
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.engine.TileEngineBase_BC8;
-
-import javax.annotation.Nonnull;
 
 public abstract class RenderEngine_BC8<T extends TileEngineBase_BC8> extends FastTESR<T> {
     // TODO: Cache the model!

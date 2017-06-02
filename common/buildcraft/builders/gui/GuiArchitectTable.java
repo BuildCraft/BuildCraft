@@ -4,15 +4,16 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.gui;
 
+import java.io.IOException;
+
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.builders.container.ContainerArchitectTable;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
 
-import java.io.IOException;
+import buildcraft.builders.container.ContainerArchitectTable;
 
 public class GuiArchitectTable extends GuiBC8<ContainerArchitectTable> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftbuilders:textures/gui/architect.png");

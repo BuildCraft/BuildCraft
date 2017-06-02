@@ -30,8 +30,6 @@ import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IRefineryRecipeManager.IDistillationRecipe;
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.core.BCCoreConfig;
-import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
@@ -47,6 +45,9 @@ import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+
+import buildcraft.core.BCCoreConfig;
+import buildcraft.factory.BCFactoryBlocks;
 
 public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final FunctionContext MODEL_FUNC_CTX;

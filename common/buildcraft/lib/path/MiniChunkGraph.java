@@ -39,11 +39,11 @@ public class MiniChunkGraph {
         this.type = type;
         this.expenseArray = expenseArray;
         this.graphArray = graphArray;
-        ImmutableList.Builder<MiniChunkNode> nodes = ImmutableList.builder();
+        ImmutableList.Builder<MiniChunkNode> builder = ImmutableList.builder();
         for (int i = 0; i < numNodes; i++) {
-            nodes.add(new MiniChunkNode(i));
+            builder.add(new MiniChunkNode(i));
         }
-        this.nodes = nodes.build();
+        this.nodes = builder.build();
     }
 
     public MiniChunkNode getFor(BlockPos pos) {

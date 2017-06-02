@@ -6,10 +6,12 @@
 
 package buildcraft.robotics.zone;
 
-import buildcraft.lib.misc.MessageUtil;
 import io.netty.buffer.ByteBuf;
+
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+
+import buildcraft.lib.misc.MessageUtil;
 
 public class MessageZoneMapRequest implements IMessage {
     private ZonePlannerMapChunkKey key;

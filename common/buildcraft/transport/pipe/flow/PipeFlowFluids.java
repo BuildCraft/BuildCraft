@@ -7,7 +7,16 @@
 package buildcraft.transport.pipe.flow;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -24,14 +33,21 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.*;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.IFluidFilter;
+import buildcraft.api.core.IFluidHandlerAdv;
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IFlowFluid;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeApi.FluidTransferInfo;
+import buildcraft.api.transport.pipe.PipeEventFluid;
 import buildcraft.api.transport.pipe.PipeEventFluid.OnMoveToCentre;
 import buildcraft.api.transport.pipe.PipeEventFluid.PreMoveToCentre;
+import buildcraft.api.transport.pipe.PipeFlow;
 
-import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MathUtil;
@@ -40,7 +56,7 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.net.cache.NetworkedObjectCache;
 
-import javax.annotation.Nonnull;
+import buildcraft.core.BCCoreConfig;
 
 public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable {
 

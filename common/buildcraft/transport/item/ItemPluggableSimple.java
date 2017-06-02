@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 
 import buildcraft.api.transport.IItemPluggable;
 import buildcraft.api.transport.pipe.IPipeHolder;
@@ -20,7 +21,6 @@ import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableCreator;
 
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.SoundUtil;
-import net.minecraft.util.EnumHand;
 
 public class ItemPluggableSimple extends ItemBC_Neptune implements IItemPluggable {
 

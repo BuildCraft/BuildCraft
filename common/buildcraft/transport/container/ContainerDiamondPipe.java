@@ -11,6 +11,7 @@ import net.minecraft.inventory.Slot;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.slot.SlotPhantom;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
 
 public class ContainerDiamondPipe extends ContainerBC_Neptune {

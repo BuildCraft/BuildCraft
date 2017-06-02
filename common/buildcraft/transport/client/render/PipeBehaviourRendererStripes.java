@@ -12,6 +12,7 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.transport.pipe.IPipeBehaviourRenderer;
 
 import buildcraft.lib.client.model.MutableQuad;
+
 import buildcraft.transport.BCTransportModels;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourStripes;
 

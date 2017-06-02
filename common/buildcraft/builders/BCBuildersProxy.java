@@ -4,10 +4,6 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import buildcraft.builders.container.*;
-import buildcraft.builders.gui.*;
-import buildcraft.builders.tile.*;
-import buildcraft.lib.client.render.DetatchedRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -20,10 +16,30 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.lib.client.render.DetatchedRenderer;
+
 import buildcraft.builders.client.render.RenderArchitectTables;
 import buildcraft.builders.client.render.RenderBuilder;
 import buildcraft.builders.client.render.RenderFiller;
 import buildcraft.builders.client.render.RenderQuarry;
+import buildcraft.builders.container.ContainerArchitectTable;
+import buildcraft.builders.container.ContainerBuilder;
+import buildcraft.builders.container.ContainerElectronicLibrary;
+import buildcraft.builders.container.ContainerFiller;
+import buildcraft.builders.container.ContainerFillingPlanner;
+import buildcraft.builders.container.ContainerReplacer;
+import buildcraft.builders.gui.GuiArchitectTable;
+import buildcraft.builders.gui.GuiBuilder;
+import buildcraft.builders.gui.GuiElectronicLibrary;
+import buildcraft.builders.gui.GuiFiller;
+import buildcraft.builders.gui.GuiFillingPlanner;
+import buildcraft.builders.gui.GuiReplacer;
+import buildcraft.builders.tile.TileArchitectTable;
+import buildcraft.builders.tile.TileBuilder;
+import buildcraft.builders.tile.TileElectronicLibrary;
+import buildcraft.builders.tile.TileFiller;
+import buildcraft.builders.tile.TileQuarry;
+import buildcraft.builders.tile.TileReplacer;
 
 public abstract class BCBuildersProxy implements IGuiHandler {
     @SidedProxy

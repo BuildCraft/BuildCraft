@@ -12,6 +12,8 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.function.ToLongFunction;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -31,16 +33,19 @@ import buildcraft.api.mj.IMjPassiveProvider;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IFlowPower;
+import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipe.ConnectedType;
+import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeApi.PowerTransferInfo;
+import buildcraft.api.transport.pipe.PipeEventPower;
+import buildcraft.api.transport.pipe.PipeFlow;
 
-import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.data.AverageInt;
 
-import javax.annotation.Nonnull;
+import buildcraft.core.BCCoreConfig;
 
 public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 

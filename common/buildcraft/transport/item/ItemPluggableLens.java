@@ -8,6 +8,8 @@ package buildcraft.transport.item;
 
 import javax.annotation.Nonnull;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,10 +35,9 @@ import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.SoundUtil;
+
 import buildcraft.transport.BCTransportPlugs;
 import buildcraft.transport.plug.PluggableLens;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class ItemPluggableLens extends ItemBC_Neptune implements IItemPluggable {
     public ItemPluggableLens(String id) {

@@ -17,12 +17,13 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.transport.pipe.IItemPipe;
 import buildcraft.api.transport.pipe.IPipeRegistry;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.item.ItemManager;
-import buildcraft.api.core.InvalidInputDataException;
+
 import buildcraft.transport.item.ItemPipeHolder;
 
 public enum PipeRegistry implements IPipeRegistry {

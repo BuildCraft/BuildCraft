@@ -9,6 +9,8 @@ package buildcraft.lib.item;
 import java.util.ArrayList;
 import java.util.List;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -25,8 +27,6 @@ import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.EnumTagTypeMulti;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class ItemManager {
     static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.item");

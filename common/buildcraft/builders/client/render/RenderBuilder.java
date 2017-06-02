@@ -8,6 +8,8 @@ package buildcraft.builders.client.render;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -15,15 +17,14 @@ import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.client.model.animation.FastTESR;
 
-import buildcraft.builders.tile.TileBuilder;
-import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
-import javax.annotation.Nonnull;
+import buildcraft.builders.tile.TileBuilder;
+import buildcraft.core.client.BuildCraftLaserManager;
 
 public class RenderBuilder extends FastTESR<TileBuilder> {
     private static final double OFFSET = 0.1;

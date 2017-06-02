@@ -13,8 +13,9 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.energy.client.sprite.AtlasSpriteFluid;
 import buildcraft.lib.fluid.BCFluid;
+
+import buildcraft.energy.client.sprite.AtlasSpriteFluid;
 
 public class BCEnergySprites {
     public static void fmlPreInit() {

@@ -6,7 +6,14 @@
 
 package buildcraft.lib.client.model;
 
-import javax.vecmath.*;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Point2f;
+import javax.vecmath.Point3f;
+import javax.vecmath.Point4f;
+import javax.vecmath.Tuple2f;
+import javax.vecmath.Tuple3f;
+import javax.vecmath.Tuple4f;
+import javax.vecmath.Vector3f;
 
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;

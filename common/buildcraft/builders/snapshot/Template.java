@@ -6,23 +6,25 @@
 
 package buildcraft.builders.snapshot;
 
-import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.enums.EnumSnapshotType;
-import buildcraft.lib.misc.data.Box;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.enums.EnumSnapshotType;
+
+import buildcraft.lib.misc.data.Box;
 
 public class Template extends Snapshot {
     public boolean[][][] data;
 
     public Template copy() {
         Template template = new Template();
-        template.header = header.copy();
+        template.header = header;
         template.size = size;
         template.facing = facing;
         template.offset = offset;

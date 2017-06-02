@@ -6,22 +6,22 @@
 
 package buildcraft.lib.nbt;
 
-import static buildcraft.api.data.NBTSquishConstants.*;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+
+import gnu.trove.list.array.TByteArrayList;
+import gnu.trove.list.array.TIntArrayList;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 
-import buildcraft.lib.misc.data.DecompactingBitSet;
+import buildcraft.api.data.NBTSquishConstants;
 
-import gnu.trove.list.array.TByteArrayList;
-import gnu.trove.list.array.TIntArrayList;
+import buildcraft.lib.misc.data.DecompactingBitSet;
 
 class NBTSquishMapReader {
     private final NBTSquishMap map = new NBTSquishMap();
@@ -34,49 +34,49 @@ class NBTSquishMapReader {
         WrittenType type = WrittenType.readType(buf);
         int flags = buf.readInt();
 
-        if (isFlag(flags, FLAG_HAS_BYTES)) {
+        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_BYTES)) {
             int count = buf.readVarInt();
             for (int i = 0; i < count; i++) {
                 map.bytes.add(buf.readByte());
             }
         }
 
-        if (isFlag(flags, FLAG_HAS_SHORTS)) {
+        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_SHORTS)) {
             int count = buf.readVarInt();
             for (int i = 0; i < count; i++) {
                 map.shorts.add(buf.readShort());
             }
         }
 
-        if (isFlag(flags, FLAG_HAS_INTS)) {
+        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_INTS)) {
             int count = buf.readVarInt();
             for (int i = 0; i < count; i++) {
                 map.ints.add(buf.readInt());
             }
         }
 
-        if (isFlag(flags, FLAG_HAS_LONGS)) {
+        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_LONGS)) {
             int count = buf.readVarInt();
             for (int i = 0; i < count; i++) {
                 map.longs.add(buf.readLong());
             }
         }
 
-        if (isFlag(flags, FLAG_HAS_FLOATS)) {
+        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_FLOATS)) {
             int count = buf.readVarInt();
             for (int i = 0; i < count; i++) {
                 map.floats.add(buf.readFloat());
             }
         }
 
-        if (isFlag(flags, FLAG_HAS_DOUBLES)) {
+        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_DOUBLES)) {
             int count = buf.readVarInt();
             for (int i = 0; i < count; i++) {
                 map.doubles.add(buf.readDouble());
             }
         }
 
-        if (isFlag(flags, FLAG_HAS_BYTE_ARRAYS)) {
+        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_BYTE_ARRAYS)) {
             int count = buf.readVarInt();
             for (int i = 0; i < count; i++) {
                 int arraySize = buf.readUnsignedShort();
@@ -88,7 +88,7 @@ class NBTSquishMapReader {
             }
         }
 
-        if (isFlag(flags, FLAG_HAS_INT_ARRAYS)) {
+        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_INT_ARRAYS)) {
             int count = buf.readVarInt();
             for (int i = 0; i < count; i++) {
                 int arraySize = buf.readUnsignedShort();
@@ -100,7 +100,7 @@ class NBTSquishMapReader {
             }
         }
 
-        if (isFlag(flags, FLAG_HAS_STRINGS)) {
+        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_STRINGS)) {
             int count = buf.readVarInt();
             for (int i = 0; i < count; i++) {
                 int length = buf.readUnsignedShort();
@@ -110,15 +110,15 @@ class NBTSquishMapReader {
             }
         }
 
-        if (isFlag(flags, FLAG_HAS_COMPLEX)) {
+        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_COMPLEX)) {
             int count = buf.readVarInt();
             for (int i = 0; i < count; i++) {
                 int complexType = buf.readUnsignedByte();
-                if (complexType == COMPLEX_COMPOUND) {
+                if (complexType == NBTSquishConstants.COMPLEX_COMPOUND) {
                     map.complex.add(readCompound(type, buf));
-                } else if (complexType == COMPLEX_LIST) {
+                } else if (complexType == NBTSquishConstants.COMPLEX_LIST) {
                     map.complex.add(readNormalList(type, buf));
-                } else if (complexType == COMPLEX_LIST_PACKED) {
+                } else if (complexType == NBTSquishConstants.COMPLEX_LIST_PACKED) {
                     map.complex.add(readPackedList(type, buf));
                 } else {
                     throw new IOException("Unknown complex type " + complexType);
@@ -140,7 +140,7 @@ class NBTSquishMapReader {
         for (int i = 0; i < count; i++) {
             String key = map.getStringForReading(stringType.readIndex(buf));
             NBTBase value = map.getTagForReading(type.readIndex(buf));
-            nbt.setTag(key, value);
+            nbt.setTag(key, value.copy());
         }
         return nbt;
     }

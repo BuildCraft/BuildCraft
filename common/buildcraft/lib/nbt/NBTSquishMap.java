@@ -10,34 +10,33 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.nbt.*;
+import gnu.trove.list.array.TByteArrayList;
+import gnu.trove.list.array.TDoubleArrayList;
+import gnu.trove.list.array.TFloatArrayList;
+import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.list.array.TLongArrayList;
+import gnu.trove.list.array.TShortArrayList;
+
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagByte;
+import net.minecraft.nbt.NBTTagByteArray;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagDouble;
+import net.minecraft.nbt.NBTTagFloat;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.NBTTagIntArray;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagLong;
+import net.minecraft.nbt.NBTTagShort;
+import net.minecraft.nbt.NBTTagString;
 
 import net.minecraftforge.common.util.Constants;
-
-import gnu.trove.list.array.*;
 
 /** Defines a map of commonly used tags. */
 public class NBTSquishMap {
     // TODO: Try adding "ImmutableTagCompound" and "ImmutableTagList" to see if the equals() and hashCode() of compounds
     // is a problem atm
     // perhaps use "TCustomHashSet" with a simalir deduplicating functionality of FoamFix?
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
     // I'm not completely convinced that this one is necessary.
     // However it completes the set so, meh
@@ -298,7 +297,8 @@ public class NBTSquishMap {
         return total;
     }
 
-    private static boolean isFlag(int flags, int flag) {
+    private static boolean isFlag(int flags, int val) {
+        int flag = 1 << val;
         return (flags & flag) == flag;
     }
 

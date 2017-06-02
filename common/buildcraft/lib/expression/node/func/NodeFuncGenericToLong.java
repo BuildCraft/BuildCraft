@@ -6,9 +6,13 @@
 
 package buildcraft.lib.expression.node.func;
 
-import buildcraft.lib.expression.api.*;
+import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
+import buildcraft.lib.expression.api.INodeStack;
+import buildcraft.lib.expression.api.IVariableNode;
+import buildcraft.lib.expression.api.InvalidExpressionException;
+import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 
 public class NodeFuncGenericToLong extends NodeFuncGeneric implements INodeFuncLong {

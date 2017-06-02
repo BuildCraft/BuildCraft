@@ -9,7 +9,9 @@ package buildcraft.builders.client.render;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemStack;
@@ -20,15 +22,16 @@ import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.properties.BuildCraftProperties;
 
-import buildcraft.builders.BCBuildersBlocks;
-import buildcraft.builders.tile.TileQuarry;
-import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.misc.SpriteUtil;
 import buildcraft.lib.misc.VecUtil;
+
+import buildcraft.builders.BCBuildersBlocks;
+import buildcraft.builders.tile.TileQuarry;
+import buildcraft.core.client.BuildCraftLaserManager;
 
 public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
     public static final LaserData_BC8.LaserType FRAME;

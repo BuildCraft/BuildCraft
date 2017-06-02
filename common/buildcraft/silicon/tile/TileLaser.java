@@ -23,7 +23,11 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.mj.*;
+import buildcraft.api.mj.ILaserTarget;
+import buildcraft.api.mj.ILaserTargetBlock;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjBattery;
+import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IDebuggable;
 
@@ -37,6 +41,7 @@ import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+
 import buildcraft.silicon.BCSiliconBlocks;
 import buildcraft.silicon.client.render.AdvDebuggerLaser;
 

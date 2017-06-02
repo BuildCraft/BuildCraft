@@ -13,12 +13,17 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjReadable;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.statements.*;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.ITriggerInternal;
+
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.lib.misc.LocaleUtil;
 
 import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.LocaleUtil;
 
 public class TriggerPower extends BCStatement implements ITriggerInternal, ITriggerExternal {
     public static class Neighbor {

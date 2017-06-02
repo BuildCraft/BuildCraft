@@ -11,6 +11,8 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -38,9 +40,8 @@ import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.Box;
-import buildcraft.robotics.zone.ZonePlan;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import buildcraft.robotics.zone.ZonePlan;
 
 public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     private static final String[] STORAGE_TAGS = "x,y,z,side,xMin,xMax,yMin,yMax,zMin,zMax,path,chunkMapping,name".split(",");

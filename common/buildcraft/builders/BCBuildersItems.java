@@ -4,12 +4,12 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
+import buildcraft.lib.BCLib;
+import buildcraft.lib.item.ItemManager;
+
 import buildcraft.builders.item.ItemFillingPlanner;
 import buildcraft.builders.item.ItemSchematicSingle;
 import buildcraft.builders.item.ItemSnapshot;
-import buildcraft.lib.item.ItemManager;
-
-import buildcraft.lib.BCLib;
 
 public class BCBuildersItems {
     public static ItemSchematicSingle schematicSingle;

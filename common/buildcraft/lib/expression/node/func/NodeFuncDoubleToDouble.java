@@ -7,10 +7,10 @@
 package buildcraft.lib.expression.node.func;
 
 import buildcraft.lib.expression.NodeInliningHelper;
-import buildcraft.lib.expression.api.INodeStack;
-import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
+import buildcraft.lib.expression.api.INodeStack;
+import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 
 public class NodeFuncDoubleToDouble implements INodeFuncDouble {

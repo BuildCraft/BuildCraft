@@ -37,7 +37,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.EnumWirePart;
 import buildcraft.api.transport.pipe.IFlowItems;
 import buildcraft.api.transport.pipe.IItemPipe;
 import buildcraft.api.transport.pipe.IPipe;

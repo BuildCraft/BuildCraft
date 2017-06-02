@@ -16,10 +16,11 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.transport.IWireManager;
 
-import buildcraft.core.statements.BCStatement;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
+
+import buildcraft.core.statements.BCStatement;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.BCTransportStatements;
 

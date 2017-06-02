@@ -7,6 +7,7 @@
 package buildcraft.energy.generation;
 
 import net.minecraft.world.gen.layer.GenLayer;
+
 import net.minecraftforge.event.terraingen.WorldTypeEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 

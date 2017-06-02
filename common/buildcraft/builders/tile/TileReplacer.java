@@ -6,25 +6,28 @@
 
 package buildcraft.builders.tile;
 
+import java.util.Date;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ITickable;
+
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.api.schematics.ISchematicBlock;
+
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.data.IdAllocator;
+import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.item.ItemHandlerManager;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
+
 import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.item.ItemSchematicSingle;
 import buildcraft.builders.snapshot.Blueprint;
 import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
 import buildcraft.builders.snapshot.SchematicBlockManager;
 import buildcraft.builders.snapshot.Snapshot;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.data.IdAllocator;
-import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.lib.tile.item.ItemHandlerManager;
-import buildcraft.lib.tile.item.ItemHandlerSimple;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ITickable;
-
-import java.util.Date;
-import java.util.UUID;
+import buildcraft.builders.snapshot.Snapshot.Header;
 
 public class TileReplacer extends TileBC_Neptune implements ITickable {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("replacer");
@@ -41,28 +44,27 @@ public class TileReplacer extends TileBC_Neptune implements ITickable {
         if (!invSnapshot.getStackInSlot(0).isEmpty() &&
             !invSchematicFrom.getStackInSlot(0).isEmpty() &&
             !invSchematicTo.getStackInSlot(0).isEmpty()) {
-            Snapshot.Header header = BCBuildersItems.snapshot.getHeader(invSnapshot.getStackInSlot(0));
+            Header header = BCBuildersItems.snapshot.getHeader(invSnapshot.getStackInSlot(0));
             if (header != null) {
-                Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(header);
+                GlobalSavedDataSnapshots store = GlobalSavedDataSnapshots.get(world);
+                Snapshot snapshot = store.getSnapshotByHeader(header);
                 if (snapshot instanceof Blueprint) {
                     Blueprint blueprint = (Blueprint) snapshot;
                     try {
-                        ISchematicBlock from = SchematicBlockManager.readFromNBT(
+                        ISchematicBlock<?> from = SchematicBlockManager.readFromNBT(
                             NBTUtilBC.getItemData(invSchematicFrom.getStackInSlot(0))
                                 .getCompoundTag(ItemSchematicSingle.NBT_KEY)
                         );
-                        ISchematicBlock to = SchematicBlockManager.readFromNBT(
+                        ISchematicBlock<?> to = SchematicBlockManager.readFromNBT(
                             NBTUtilBC.getItemData(invSchematicTo.getStackInSlot(0))
                                 .getCompoundTag(ItemSchematicSingle.NBT_KEY)
                         );
                         Blueprint newBlueprint = blueprint.copy();
                         newBlueprint.replace(from, to);
-                        newBlueprint.header.id = UUID.randomUUID();
-                        newBlueprint.header.owner = getOwner().getId();
-                        newBlueprint.header.created = new Date();
-//                        newBlueprint.header.name = name;
-                        GlobalSavedDataSnapshots.get(world).snapshots.add(newBlueprint);
-                        GlobalSavedDataSnapshots.get(world).markDirty();
+                        Header nHeader = new Header(newBlueprint.computeHash(), getOwner().getId(), new Date(), header.name);
+                        newBlueprint.header = nHeader;
+                        store.snapshots.add(newBlueprint);
+                        store.markDirty();
                         invSnapshot.setStackInSlot(
                             0,
                             BCBuildersItems.snapshot.getUsed(

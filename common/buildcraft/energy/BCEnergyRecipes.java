@@ -20,9 +20,10 @@ import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IRefineryRecipeManager.IDistillationRecipe;
 
-import buildcraft.core.BCCoreBlocks;
 import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
+
+import buildcraft.core.BCCoreBlocks;
 
 public class BCEnergyRecipes {
     public static void init() {

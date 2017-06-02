@@ -6,6 +6,8 @@ package buildcraft.builders.item;
 
 import javax.annotation.Nonnull;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,17 +27,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
-import buildcraft.api.schematics.SchematicBlockContext;
 
 import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.StackUtil;
 
 import buildcraft.builders.snapshot.SchematicBlockManager;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class ItemSchematicSingle extends ItemBC_Neptune {
     public static final int DAMAGE_CLEAN = 0;

@@ -6,8 +6,6 @@
 
 package buildcraft.transport;
 
-import java.util.Locale;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -17,16 +15,16 @@ import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.BCModules;
-import buildcraft.api.core.BCLog;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeApi.PowerTransferInfo;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
-import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.misc.ConfigUtil;
 import buildcraft.lib.misc.MathUtil;
+
+import buildcraft.core.BCCoreConfig;
 
 public class BCTransportConfig {
     public enum PowerLossMode {

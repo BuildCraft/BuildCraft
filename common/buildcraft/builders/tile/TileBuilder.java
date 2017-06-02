@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import buildcraft.lib.net.MessageManager;
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.EntityLivingBase;
@@ -54,6 +55,7 @@ import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.mj.MjBatteryReciver;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
@@ -70,8 +72,6 @@ import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.builders.snapshot.SnapshotBuilder;
 import buildcraft.builders.snapshot.Template;
 import buildcraft.builders.snapshot.TemplateBuilder;
-
-import javax.annotation.Nonnull;
 
 public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("builder");

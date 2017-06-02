@@ -8,6 +8,8 @@ package buildcraft.lib.net;
 
 import java.io.IOException;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.entity.player.EntityPlayer;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -17,8 +19,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.misc.MessageUtil;
-
-import io.netty.buffer.ByteBuf;
 
 public class MessageContainer implements IMessage {
 
