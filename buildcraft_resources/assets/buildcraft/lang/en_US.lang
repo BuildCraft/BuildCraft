@@ -521,6 +521,9 @@ tile.distiller.name=Distiller
 tile.heat_exchange_start.name=Heat Exchange (start)
 tile.heat_exchange_middle.name=Heat Exchange (middle)
 tile.heat_exchange_end.name=Heat Exchange (end)
+tile.decorated.blueprint.name=Blueprint (Decoration)
+tile.decorated.template.name=Template (Decoration)
+tile.decorated.laser_back.name=Laser (Decoration)
 
 tile.architect.rotate=Rotate: On
 tile.architect.norotate=Rotate: Off
