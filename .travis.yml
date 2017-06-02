@@ -2,7 +2,6 @@ language: java
 jdk:
   - oraclejdk8
 
-
 jobs:
   include:
     - stage: build
@@ -10,7 +9,7 @@ jobs:
       script: ./gradlew build 
     - stage: checkstyle
       install: echo "skipping default ./gradlew assemble"
-      script: ./gradlew checkstyle 
+      script: ./gradlew checkstyle
 
 env:
   global:
