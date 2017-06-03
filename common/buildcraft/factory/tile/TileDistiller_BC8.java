@@ -158,7 +158,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         MODEL_POWER_MAX.value = MAX_MJ_PER_TICK / MjAPI.MJ;
         MODEL_FACING.value = "west";
 
-        IBlockState state = world.getBlockState(getPos());
+        IBlockState state = world.getBlockState(pos);
         if (state.getBlock() == BCFactoryBlocks.distiller) {
             MODEL_FACING.value = state.getValue(BlockBCBase_Neptune.PROP_FACING).getName();
         }
@@ -222,7 +222,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
             }
         }
 
-        if (updateTracker.markTimeIfDelay(getWorld())) {
+        if (updateTracker.markTimeIfDelay(world)) {
             sendNetworkUpdate(NET_RENDER_DATA);
         }
     }

@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.ToLongFunction;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
@@ -20,7 +22,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -33,44 +34,41 @@ import buildcraft.api.mj.IMjPassiveProvider;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.pipe.IFlowPower;
-import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pipe.IPipe.ConnectedType;
-import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeApi.PowerTransferInfo;
-import buildcraft.api.transport.pipe.PipeEventPower;
-import buildcraft.api.transport.pipe.PipeFlow;
 
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.data.AverageInt;
 
-import buildcraft.core.BCCoreConfig;
-
 public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
+    public static final long DEFAULT_MAX_POWER = MjAPI.MJ * 10;
+    public static final int NET_POWER_AMOUNTS = 2;
 
-    private static final long DEFAULT_MAX_POWER = MjAPI.MJ * 10;
-
-    public Vec3d clientFlowCenter;
-
-    long maxPower = -1;
-    long powerLoss = -1;
-    long powerResistance = -1;
+    private long maxPower = -1;
+    private long powerLoss = -1;
+    private long powerResistance = -1;
 
     private long currentWorldTime;
 
-    boolean isReceiver = false;
-    final EnumMap<EnumFacing, Section> sections = createSections();
+    private boolean isReceiver = false;
+    private final EnumMap<EnumFacing, Section> sections = Arrays.stream(EnumFacing.VALUES)
+        .collect(Collectors.toMap(
+            Function.identity(),
+            Section::new,
+            (u, v) -> u,
+            () -> new EnumMap<>(EnumFacing.class)
+        ));
+    public final EnumMap<EnumFacing, Double> clientPowerAmounts = Arrays.stream(EnumFacing.VALUES)
+        .collect(Collectors.toMap(
+            Function.identity(),
+            f -> 0D,
+            (u, v) -> u,
+            () -> new EnumMap<>(EnumFacing.class)
+        ));
 
-    final SafeTimeTracker tracker = new SafeTimeTracker(2 * BCCoreConfig.networkUpdateRate);
-
-    private EnumMap<EnumFacing, Section> createSections() {
-        EnumMap<EnumFacing, Section> map = new EnumMap<>(EnumFacing.class);
-        for (EnumFacing face : EnumFacing.VALUES) {
-            map.put(face, new Section(face));
-        }
-        return map;
-    }
+    private final SafeTimeTracker tracker = new SafeTimeTracker(1);
 
     public PipeFlowPower(IPipe pipe) {
         super(pipe);
@@ -88,13 +86,29 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
-        super.readPayload(id, buffer, side);
+    public void writePayload(int id, PacketBuffer buffer, Side side) {
+        super.writePayload(id, buffer, side);
+        if (side == Side.SERVER) {
+            if (id == NET_POWER_AMOUNTS || id == NET_ID_FULL_STATE) {
+                for (EnumFacing face : EnumFacing.VALUES) {
+                    buffer.writeDouble(
+                        sections.get(face).displayPower
+                    );
+                }
+            }
+        }
     }
 
     @Override
-    public void writePayload(int id, PacketBuffer buffer, Side side) {
-        super.writePayload(id, buffer, side);
+    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
+        super.readPayload(id, buffer, side);
+        if (side == Side.CLIENT) {
+            if (id == NET_POWER_AMOUNTS || id == NET_ID_FULL_STATE) {
+                for (EnumFacing face : EnumFacing.VALUES) {
+                    clientPowerAmounts.put(face, buffer.readDouble());
+                }
+            }
+        }
     }
 
     @Override
@@ -144,11 +158,17 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
     @Override
     public long tryExtractPower(long maxExtracted, EnumFacing from) {
-        if (!isReceiver) return 0;
+        if (!isReceiver) {
+            return 0;
+        }
         TileEntity tile = pipe.getConnectedTile(from);
-        if (tile == null) return 0;
+        if (tile == null) {
+            return 0;
+        }
         IMjPassiveProvider reciever = tile.getCapability(MjAPI.CAP_PASSIVE_PROVIDER, from.getOpposite());
-        if (reciever == null) return 0;
+        if (reciever == null) {
+            return 0;
+        }
 
         // TODO!
         return 0;
@@ -242,6 +262,8 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
                             s.powerAverage.push((int) used);
                             s2.powerAverage.push((int) used);
+                            s.displayPower = (long) (Math.random() * DEFAULT_MAX_POWER);
+                            s2.displayPower = (long) (Math.random() * DEFAULT_MAX_POWER);
                         }
                     }
                 }
@@ -291,6 +313,10 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
             oFlow.requestPower(face.getOpposite(), transferQuery[face.ordinal()]);
         }
         // Networking
+
+        if (tracker.markTimeIfDelay(pipe.getHolder().getPipeWorld())) {
+            sendPayload(NET_POWER_AMOUNTS);
+        }
     }
 
     private void step() {
@@ -333,7 +359,9 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         long powerQuery;
         long internalPower;
 
-        /** Debugging fields */
+        /**
+         * Debugging fields
+         */
         long debugPowerInput, debugPowerOutput, debugPowerOffered;
 
         public Section(EnumFacing side) {

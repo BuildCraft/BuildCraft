@@ -569,34 +569,6 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buf, Side side) throws IOException {
-        PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(buf);
-        if (side == Side.CLIENT) {
-            if (id == NET_FLUID_AMOUNTS || id == NET_ID_FULL_STATE) {
-                boolean full = id == NET_ID_FULL_STATE;
-                if (buffer.readBoolean()) {
-                    int fluidId = buffer.readInt();
-                    clientFluid = BuildCraftObjectCaches.CACHE_FLUIDS.client().retrieve(fluidId);
-                }
-                for (EnumPipePart part : EnumPipePart.VALUES) {
-                    Section section = sections.get(part);
-                    if (full || buffer.readBoolean()) {
-                        section.target = buffer.readShort();
-                        if (full) {
-                            section.clientAmountLast = section.clientAmountThis = section.target;
-                        }
-                    }
-
-                    Dir dir = buffer.readEnumValue(Dir.class);
-                    section.ticksInDirection = dir == Dir.NONE ? 0 : dir == Dir.IN ? COOLDOWN_INPUT : COOLDOWN_OUTPUT;
-                }
-                lastMessageMinus1 = lastMessage;
-                lastMessage = pipe.getHolder().getPipeWorld().getTotalWorldTime();
-            }
-        }
-    }
-
-    @Override
     public void writePayload(int id, PacketBuffer buf, Side side) {
         PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(buf);
         if (side == Side.SERVER) {
@@ -623,6 +595,34 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                     buffer.writeEnumValue(should); // This writes out 2 bits so don't bother with a boolean flag
                     section.lastSentDirection = should;
                 }
+            }
+        }
+    }
+
+    @Override
+    public void readPayload(int id, PacketBuffer buf, Side side) throws IOException {
+        PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(buf);
+        if (side == Side.CLIENT) {
+            if (id == NET_FLUID_AMOUNTS || id == NET_ID_FULL_STATE) {
+                boolean full = id == NET_ID_FULL_STATE;
+                if (buffer.readBoolean()) {
+                    int fluidId = buffer.readInt();
+                    clientFluid = BuildCraftObjectCaches.CACHE_FLUIDS.client().retrieve(fluidId);
+                }
+                for (EnumPipePart part : EnumPipePart.VALUES) {
+                    Section section = sections.get(part);
+                    if (full || buffer.readBoolean()) {
+                        section.target = buffer.readShort();
+                        if (full) {
+                            section.clientAmountLast = section.clientAmountThis = section.target;
+                        }
+                    }
+
+                    Dir dir = buffer.readEnumValue(Dir.class);
+                    section.ticksInDirection = dir == Dir.NONE ? 0 : dir == Dir.IN ? COOLDOWN_INPUT : COOLDOWN_OUTPUT;
+                }
+                lastMessageMinus1 = lastMessage;
+                lastMessage = pipe.getHolder().getPipeWorld().getTotalWorldTime();
             }
         }
     }
