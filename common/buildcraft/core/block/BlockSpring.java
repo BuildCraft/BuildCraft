@@ -6,6 +6,7 @@
 package buildcraft.core.block;
 
 import java.util.Random;
+import java.util.function.Supplier;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -15,6 +16,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -81,6 +83,20 @@ public class BlockSpring extends BlockBCBase_Neptune {
         generateSpringBlock(world, pos, state);
     }
 
+    @Override
+    public boolean hasTileEntity(IBlockState state) {
+        return state.getValue(SPRING_TYPE).tileConstructor != null;
+    }
+
+    @Override
+    public TileEntity createTileEntity(World world, IBlockState state) {
+        Supplier<TileEntity> constructor = state.getValue(SPRING_TYPE).tileConstructor;
+        if (constructor != null) {
+            return constructor.get();
+        }
+        return null;
+    }
+    
     // @Override
     // public void onNeighborBlockChange(World world, int x, int y, int z, int blockid) {
     // assertSpring(world, x, y, z);
