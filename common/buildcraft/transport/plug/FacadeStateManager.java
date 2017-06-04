@@ -1,16 +1,19 @@
-/* Copyright (c) 2017 SpaceToad and the BuildCraft team
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/ */
-
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 package buildcraft.transport.plug;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -21,7 +24,7 @@ import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGlass;
-import net.minecraft.block.BlockSlime;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -31,16 +34,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.facades.FacadeType;
 
 import buildcraft.lib.misc.BlockUtil;
@@ -48,116 +54,197 @@ import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
 import buildcraft.builders.snapshot.FakeWorld;
 
 public class FacadeStateManager {
-    public static final SortedMap<IBlockState, FacadeBlockStateInfo> validFacadeStates = new TreeMap<>(BlockUtil
-        .blockStateComparator());
-    public static final Map<ItemStackKey, List<FacadeBlockStateInfo>> stackFacades = new HashMap<>();
+    public static final boolean DEBUG = BCDebugging.shouldDebugLog("transport.facade");
+    public static final SortedMap<IBlockState, FacadeBlockStateInfo> validFacadeStates;
+    public static final Map<ItemStackKey, List<FacadeBlockStateInfo>> stackFacades;
     public static FacadeBlockStateInfo defaultState, previewState;
 
-    private static EnumActionResult isValidFacadeBlock(Block block) {
-        if (block instanceof IFluidBlock || block instanceof BlockSlime) {
-            return EnumActionResult.FAIL;
-        }
-        if (block instanceof BlockGlass || block instanceof BlockStainedGlass) {
-            return EnumActionResult.SUCCESS;
-        }
-        return EnumActionResult.PASS;
+    private static final String STR_SUCCESS = "success";
+    private static final String STR_PASS = "pass";
+
+    private static final Map<Block, String> disabledBlocks = new HashMap<>();
+    private static final Map<IBlockState, ItemStack> customBlocks = new HashMap<>();
+
+    static {
+        validFacadeStates = new TreeMap<>(BlockUtil.blockStateComparator());
+        stackFacades = new HashMap<>();
     }
 
-    private static boolean isValidFacadeState(IBlockState state) {
-        if (state.getBlock().hasTileEntity(state)) {
-            return false;
+    public static void receiveInterModComms(IMCMessage message) {
+        String id = message.key;
+        if (FacadeAPI.IMC_FACADE_DISABLE.equals(id)) {
+            if (!message.isResourceLocationMessage()) {
+                BCLog.logger.warn("[facade.imc] Received an invalid IMC message from " + message.getSender() + " - "
+                    + id + " should have a resourcelocation value, not a " + message);
+                return;
+            }
+            ResourceLocation loc = message.getResourceLocationValue();
+            Block block = Block.REGISTRY.getObject(loc);
+            if (block == Blocks.AIR) {
+                BCLog.logger.warn("[facade.imc] Received an invalid IMC message from " + message.getSender() + " - "
+                    + id + " should have a valid block target, not " + block + " (" + message + ")");
+                return;
+            }
+            disabledBlocks.put(block, message.getSender());
+        } else if (FacadeAPI.IMC_FACADE_CUSTOM.equals(id)) {
+            if (!message.isNBTMessage()) {
+                BCLog.logger.warn("[facade.imc] Received an invalid IMC message from " + message.getSender() + " - "
+                    + id + " should have an nbt value, not a " + message);
+                return;
+            }
+            NBTTagCompound nbt = message.getNBTValue();
+            String regName = nbt.getString(FacadeAPI.NBT_CUSTOM_BLOCK_REG_KEY);
+            int meta = nbt.getInteger(FacadeAPI.NBT_CUSTOM_BLOCK_META);
+            ItemStack stack = new ItemStack(nbt.getCompoundTag(FacadeAPI.NBT_CUSTOM_ITEM_STACK));
+            if (regName.isEmpty()) {
+                BCLog.logger.warn("[facade.imc] Received an invalid IMC message from " + message.getSender() + " - "
+                    + id + " should have a registry name for the block, stored as "
+                    + FacadeAPI.NBT_CUSTOM_BLOCK_REG_KEY);
+                return;
+            }
+            if (stack.isEmpty()) {
+                BCLog.logger.warn("[facade.imc] Received an invalid IMC message from " + message.getSender() + " - "
+                    + id + " should have a valid ItemStack stored in " + FacadeAPI.NBT_CUSTOM_ITEM_STACK);
+                return;
+            }
+            Block block = Block.REGISTRY.getObject(new ResourceLocation(regName));
+            if (block == Blocks.AIR) {
+                BCLog.logger.warn("[facade.imc] Received an invalid IMC message from " + message.getSender() + " - "
+                    + id + " should have a valid block target, not " + block + " (" + message + ")");
+                return;
+            }
+            IBlockState state = block.getStateFromMeta(meta);
+            customBlocks.put(state, stack);
         }
-        return state.isFullCube();
+    }
+
+    /** @return One of:
+     *         <ul>
+     *         <li>A string describing the problem with this block (if it is not valid for a facade)</li>
+     *         <li>OR {@link #STR_PASS} if every metadata needs to be checked by
+     *         {@link #isValidFacadeState(IBlockState)}</li>
+     *         <li>OR {@link #STR_SUCCESS} if every state of the block is valid for a facade.
+     *         </ul>
+    */
+    private static String isValidFacadeBlock(Block block) {
+        String disablingMod = disabledBlocks.get(block);
+        if (disablingMod != null) {
+            return "it has been disabled by " + disablingMod;
+        }
+        if (block instanceof IFluidBlock || block instanceof BlockLiquid) {
+            return "it is a fluid block";
+        }
+        // if (block instanceof BlockSlime) {
+        // return "it is a slime block";
+        // }
+        if (block instanceof BlockGlass || block instanceof BlockStainedGlass) {
+            return STR_SUCCESS;
+        }
+        return STR_PASS;
+    }
+
+    /** @return Any of:
+     *         <ul>
+     *         <li>A string describing the problem with this state (if it is not valid for a facade)
+     *         </li>
+     *         <li>OR {@link #STR_SUCCESS} if this state is valid for a facade.
+     *         </ul>
+    */
+    private static String isValidFacadeState(IBlockState state) {
+        if (state.getBlock().hasTileEntity(state)) {
+            return "it has a tile entity";
+        }
+        if (state.getRenderType() != EnumBlockRenderType.MODEL) {
+            return "it doesn't have a normal model";
+        }
+        if (!state.isFullCube()) {
+            return "it isn't a full cube";
+        }
+        return STR_SUCCESS;
     }
 
     @Nonnull
     private static ItemStack getRequiredStack(IBlockState state) {
-        FakeWorld world = FakeWorld.INSTANCE;
-        world.clear();
-        world.setBlockState(BlockPos.ORIGIN, state);
-        ItemStack stack = ItemStack.EMPTY;
-        Block block = state.getBlock();
-        try {
-            stack = block.getPickBlock(state, new RayTraceResult(VecUtil.VEC_HALF, null, BlockPos.ORIGIN), world,
-                BlockPos.ORIGIN, null);
-        } catch (Exception ignored) {
-            /* Some mods require a non-null player, but we don't have one to give. If a mod's block does require a
-             * player entity then we won't support it, as it may require a different stack depending on the player. */
-            stack = block.getItem(world, BlockPos.ORIGIN, state);
-            if (stack.isEmpty()) {
-                BCLog.logger.info("[transport.facade] Couldn't get item for " + block + " because " + ignored.getMessage());
-            }
-        }
-        world.clear();
-        if (stack.isEmpty()) {
-            return StackUtil.EMPTY;
-        } else {
+        ItemStack stack = customBlocks.get(state);
+        if (stack != null) {
             return stack;
         }
+        Block block = state.getBlock();
+        // Inlined block.getPickStack(), but this doesn't require a world
+        return new ItemStack(block, 1, block.damageDropped(state));
     }
 
     public static void postInit() {
         defaultState = new FacadeBlockStateInfo(Blocks.AIR.getDefaultState(), StackUtil.EMPTY, ImmutableSet.of());
         for (Block block : ForgeRegistries.BLOCKS) {
-            try {
-                EnumActionResult result = isValidFacadeBlock(block);
-                if (result == EnumActionResult.FAIL) {
+            String result = isValidFacadeBlock(block);
+            // These strings are hardcoded, so we can get away with not needing the .equals check
+            if (result != STR_PASS && result != STR_SUCCESS) {
+                if (DEBUG) {
+                    BCLog.logger.info("[transport.facade] Disallowed block " + block.getRegistryName() + " because "
+                        + result);
+                }
+                continue;
+            } else if (DEBUG) {
+                if (result == STR_SUCCESS) {
+                    BCLog.logger.info("[transport.facade] Allowed block " + block.getRegistryName());
+                }
+            }
+            Set<IBlockState> checkedStates = new HashSet<>();
+            Map<IBlockState, ItemStack> usedStates = new HashMap<>();
+            Map<ItemStackKey, Map<IProperty<?>, Comparable<?>>> varyingProperties = new HashMap<>();
+            for (IBlockState state : block.getBlockState().getValidStates()) {
+                state = block.getStateFromMeta(block.getMetaFromState(state));
+                if (!checkedStates.add(state)) {
                     continue;
                 }
-                Map<IBlockState, ItemStack> usedStates = new HashMap<>();
-                Map<ItemStackKey, Map<IProperty<?>, Comparable<?>>> varyingProperties = new HashMap<>();
-                for (IBlockState state : block.getBlockState().getValidStates()) {
-                    state = block.getStateFromMeta(block.getMetaFromState(state));
-                    if (usedStates.containsKey(state)) {
-                        continue;
-                    }
-                    if (result == EnumActionResult.PASS && !isValidFacadeState(state)) {
-                        continue;
-                    }
-                    ItemStack stack = getRequiredStack(state);
-                    usedStates.put(state, stack);
-                    ItemStackKey stackKey = new ItemStackKey(stack);
-                    Map<IProperty<?>, Comparable<?>> vars = varyingProperties.get(stackKey);
-                    if (vars == null) {
-                        vars = new HashMap<>();
-                        vars.putAll(state.getProperties());
-                        varyingProperties.put(stackKey, vars);
+                if (result != STR_SUCCESS) {
+                    result = isValidFacadeState(state);
+                    if (result == STR_SUCCESS) {
+                        if (DEBUG) {
+                            BCLog.logger.info("[transport.facade] Allowed state " + state);
+                        }
                     } else {
-                        for (Entry<IProperty<?>, Comparable<?>> entry : state.getProperties().entrySet()) {
-                            IProperty<?> prop = entry.getKey();
-                            Comparable<?> value = entry.getValue();
-                            if (vars.get(prop) != value) {
-                                vars.put(prop, null);
-                            }
+                        if (DEBUG) {
+                            BCLog.logger.info("[transport.facade] Disallowed state " + state + " because " + result);
+                        }
+                        continue;
+                    }
+                }
+                ItemStack stack = getRequiredStack(state);
+                usedStates.put(state, stack);
+                ItemStackKey stackKey = new ItemStackKey(stack);
+                Map<IProperty<?>, Comparable<?>> vars = varyingProperties.get(stackKey);
+                if (vars == null) {
+                    vars = new HashMap<>();
+                    vars.putAll(state.getProperties());
+                    varyingProperties.put(stackKey, vars);
+                } else {
+                    for (Entry<IProperty<?>, Comparable<?>> entry : state.getProperties().entrySet()) {
+                        IProperty<?> prop = entry.getKey();
+                        Comparable<?> value = entry.getValue();
+                        if (vars.get(prop) != value) {
+                            vars.put(prop, null);
                         }
                     }
                 }
-                for (Entry<IBlockState, ItemStack> entry : usedStates.entrySet()) {
-                    IBlockState state = entry.getKey();
-                    ItemStack stack = entry.getValue();
-                    Map<IProperty<?>, Comparable<?>> vars = varyingProperties.get(new ItemStackKey(stack));
-                    vars.values().removeIf(Objects::nonNull);
-                    FacadeBlockStateInfo info = new FacadeBlockStateInfo(state, stack, ImmutableSet.copyOf(vars
-                        .keySet()));
-                    validFacadeStates.put(state, info);
-                    if (!info.requiredStack.isEmpty()) {
-                        ItemStackKey stackKey = new ItemStackKey(info.requiredStack);
-                        stackFacades.computeIfAbsent(stackKey, k -> new ArrayList<>()).add(info);
-                    }
+            }
+            for (Entry<IBlockState, ItemStack> entry : usedStates.entrySet()) {
+                IBlockState state = entry.getKey();
+                ItemStack stack = entry.getValue();
+                Map<IProperty<?>, Comparable<?>> vars = varyingProperties.get(new ItemStackKey(stack));
+                vars.values().removeIf(Objects::nonNull);
+                FacadeBlockStateInfo info = new FacadeBlockStateInfo(state, stack, ImmutableSet.copyOf(vars.keySet()));
+                validFacadeStates.put(state, info);
+                if (!info.requiredStack.isEmpty()) {
+                    ItemStackKey stackKey = new ItemStackKey(info.requiredStack);
+                    stackFacades.computeIfAbsent(stackKey, k -> new ArrayList<>()).add(info);
                 }
-            } catch (RuntimeException e) {
-                BCLog.logger.error("[facades] Crashed while scanning blocks for facades!");
-                BCLog.logger.error("[facades]   block = " + block.getRegistryName());
-                BCLog.logger.error("[facades]   block = " + block.getClass());
-                BCLog.logger.error("[facades]   state = " + block.getDefaultState());
-                BCLog.logger.error("[facades]   state = " + block.getDefaultState().getClass());
-                throw e;
             }
         }
         previewState = validFacadeStates.get(Blocks.BRICK_BLOCK.getDefaultState());

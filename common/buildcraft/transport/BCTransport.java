@@ -11,6 +11,8 @@ import java.util.function.Consumer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -81,19 +83,26 @@ public class BCTransport {
     @Mod.EventHandler
     public static void init(FMLInitializationEvent evt) {
         BCTransportProxy.getProxy().fmlInit();
+        BCTransportRegistries.init();
+        BCTransportRecipes.init();
+    }
+
+    @Mod.EventHandler
+    public static void onImcEvent(IMCEvent imc) {
+        for (IMCMessage message : imc.getMessages()) {
+            FacadeStateManager.receiveInterModComms(message);
+        }
+    }
+
+    @Mod.EventHandler
+    public static void postInit(FMLPostInitializationEvent evt) {
+        BCTransportProxy.getProxy().fmlPostInit();
         FacadeStateManager.postInit();
         if (BCTransportItems.plugFacade != null) {
             FacadeBlockStateInfo state = FacadeStateManager.previewState;
             FullFacadeInstance inst = FullFacadeInstance.createSingle(state, false);
             tabFacades.setItem(BCTransportItems.plugFacade.createItemStack(inst));
         }
-        BCTransportRegistries.init();
-        BCTransportRecipes.init();
-    }
-
-    @Mod.EventHandler
-    public static void postInit(FMLPostInitializationEvent evt) {
-        BCTransportProxy.getProxy().fmlPostInit();
     }
 
     static {
