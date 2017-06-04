@@ -104,7 +104,7 @@ public enum ModelFacadeItem implements IBakedModel {
 
         @Override
         public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
-            FullFacadeInstance inst = ItemPluggableFacade.getStates(stack);
+            FullFacadeInstance inst = ItemPluggableFacade.getInstance(stack);
             FacadePhasedState state = inst.getCurrentStateForStack();
             return cache.getUnchecked(new KeyPlugFacade(BlockRenderLayer.TRANSLUCENT, EnumFacing.WEST, state.stateInfo.state, state.isHollow));
         }

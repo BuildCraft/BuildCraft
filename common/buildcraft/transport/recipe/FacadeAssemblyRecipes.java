@@ -44,7 +44,7 @@ public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeVie
 
     private static final int TIME_GAP = 500;
     private static final long MJ_COST = 64 * MjAPI.MJ;
-    private static final ChangingObject<Long> MJ_COSTS = new ChangingObject<>(new Long[] { MJ_COST });
+    private static final ChangingObject<Long> MJ_COSTS = new ChangingObject<>(new Long[] {MJ_COST});
 
     @Nonnull
     @Override
@@ -57,20 +57,19 @@ public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeVie
         for (ItemStack stack : possible) {
             stack = stack.copy();
             stack.setCount(1);
-            List<FacadeBlockStateInfo> infos = FacadeStateManager.stackFacades.get(new ItemStackKey(stack));
-            if (infos == null || infos.isEmpty()) {
-                continue;
-            }
-            for (FacadeBlockStateInfo info : infos) {
-                addRecipe(recipes, stack, info);
+            FacadeBlockStateInfo stateInfo = FacadeStateManager.getStateInfo(stack);
+            if (stateInfo != null) {
+                addRecipe(recipes, stack, stateInfo);
             }
         }
         return recipes;
     }
 
     private static void addRecipe(List<AssemblyRecipe> recipes, ItemStack from, FacadeBlockStateInfo info) {
-        ImmutableSet<StackDefinition> stacks = ImmutableSet.of(ArrayStackFilter.definition(from),
-                ArrayStackFilter.definition(3, BCTransportItems.pipeStructure));
+        ImmutableSet<StackDefinition> stacks = ImmutableSet.of(
+            ArrayStackFilter.definition(from),
+            ArrayStackFilter.definition(3, BCTransportItems.pipeStructure)
+        );
 
         NBTTagCompound recipeTag = new NBTTagCompound();
         recipeTag.setTag("stack", from.serializeNBT());
@@ -92,11 +91,9 @@ public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeVie
         ChangingItemStack[] inputs = new ChangingItemStack[2];
         inputs[0] = ChangingItemStack.create(new ItemStack(BCTransportItems.pipeStructure, 3));
         NonNullList<ItemStack> list = NonNullList.create();
-        for (FacadeBlockStateInfo info : FacadeStateManager.validFacadeStates.values()) {
-            if (info.isVisible) {
-                list.add(info.requiredStack);
-                list.add(info.requiredStack);
-            }
+        for (FacadeBlockStateInfo info : FacadeStateManager.PREVIEW_STATE_INFOS) {
+            list.add(info.requiredStack);
+            list.add(info.requiredStack);
         }
         inputs[1] = new ChangingItemStack(list);
         inputs[1].setTimeGap(TIME_GAP);
@@ -106,11 +103,9 @@ public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeVie
     @Override
     public ChangingItemStack getRecipeOutputs() {
         NonNullList<ItemStack> list = NonNullList.create();
-        for (FacadeBlockStateInfo info : FacadeStateManager.validFacadeStates.values()) {
-            if (info.isVisible) {
-                list.add(createFacadeStack(info, false));
-                list.add(createFacadeStack(info, true));
-            }
+        for (FacadeBlockStateInfo info : FacadeStateManager.PREVIEW_STATE_INFOS) {
+            list.add(createFacadeStack(info, false));
+            list.add(createFacadeStack(info, true));
         }
         ChangingItemStack changing = new ChangingItemStack(list);
         changing.setTimeGap(TIME_GAP);
@@ -124,19 +119,19 @@ public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeVie
 
     @Override
     public Optional<AssemblyRecipe> getRecipe(@Nonnull ResourceLocation name, @Nullable NBTTagCompound recipeTag) {
-        if (!name.getResourceDomain().equals(BCTransport.MODID) || !name.getResourcePath().startsWith("facade-") ||
-                recipeTag == null || !recipeTag.hasKey("stack")) return Optional.empty();
-        ItemStack stack = new ItemStack(recipeTag.getCompoundTag("stack"));
-        List<FacadeBlockStateInfo> infos = FacadeStateManager.stackFacades.get(new ItemStackKey(stack));
-        if (infos == null || infos.isEmpty()) {
+        if (!name.getResourceDomain().equals(BCTransport.MODID) ||
+            !name.getResourcePath().startsWith("facade-") ||
+            recipeTag == null ||
+            !recipeTag.hasKey("stack")) {
             return Optional.empty();
         }
-        for (FacadeBlockStateInfo info : infos) {
-            List<AssemblyRecipe> recipes = new ArrayList<>();
-            addRecipe(recipes, stack, info);
-            Optional<AssemblyRecipe> recipe = recipes.stream().filter(r -> name.equals(r.name)).findFirst();
-            if (recipe.isPresent()) return recipe;
+        ItemStack stack = new ItemStack(recipeTag.getCompoundTag("stack"));
+        FacadeBlockStateInfo stateInfo = FacadeStateManager.getStateInfo(stack);
+        if (stateInfo == null) {
+            return Optional.empty();
         }
-        return Optional.empty();
+        List<AssemblyRecipe> recipes = new ArrayList<>();
+        addRecipe(recipes, stack, stateInfo);
+        return recipes.stream().filter(r -> name.equals(r.name)).findFirst();
     }
 }

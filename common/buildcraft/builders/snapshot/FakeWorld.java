@@ -56,6 +56,7 @@ public class FakeWorld extends World {
     public static final BlockPos BLUEPRINT_OFFSET = new BlockPos(0, 127, 0);
 
     public static FakeWorld INSTANCE = new FakeWorld();
+    public static boolean isInited = false;
 
     private final List<ItemStack> drops = new ArrayList<>();
     public boolean editable = true;

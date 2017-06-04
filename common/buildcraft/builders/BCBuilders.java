@@ -10,10 +10,7 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -28,14 +25,7 @@ import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
 
 import buildcraft.builders.addon.AddonFillingPlanner;
-import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
-import buildcraft.builders.snapshot.MessageSnapshotRequest;
-import buildcraft.builders.snapshot.MessageSnapshotResponse;
-import buildcraft.builders.snapshot.RulesLoader;
-import buildcraft.builders.snapshot.SchematicBlockAir;
-import buildcraft.builders.snapshot.SchematicBlockDefault;
-import buildcraft.builders.snapshot.SchematicBlockFluid;
-import buildcraft.builders.snapshot.SchematicEntityDefault;
+import buildcraft.builders.snapshot.*;
 import buildcraft.core.BCCore;
 import buildcraft.core.marker.volume.AddonsRegistry;
 
@@ -109,6 +99,11 @@ public class BCBuilders {
     @Mod.EventHandler
     public void onServerStarting(FMLServerStartingEvent event) {
         GlobalSavedDataSnapshots.reInit(Side.SERVER);
+    }
+
+    @Mod.EventHandler
+    public void onServerStarted(FMLServerStartedEvent event) {
+        FakeWorld.isInited = true;
     }
 
     static {

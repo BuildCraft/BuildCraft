@@ -36,15 +36,13 @@ public enum FacadeSwapRecipe implements IRecipe, IRecipeViewable.IViewableGrid {
         INPUTS = new ChangingItemStack[1];
         NonNullList<ItemStack> list1 = NonNullList.create();
         NonNullList<ItemStack> list2 = NonNullList.create();
-        for (FacadeBlockStateInfo info : FacadeStateManager.validFacadeStates.values()) {
-            if (info.isVisible) {
-                ItemStack stack = createFacade(info, false);
-                ItemStack stackHollow = createFacade(info, true);
-                list1.add(stack);
-                list1.add(stackHollow);
-                list2.add(stackHollow);
-                list2.add(stack);
-            }
+        for (FacadeBlockStateInfo stateInfo : FacadeStateManager.PREVIEW_STATE_INFOS) {
+            ItemStack stack = createFacade(stateInfo, false);
+            ItemStack stackHollow = createFacade(stateInfo, true);
+            list1.add(stack);
+            list1.add(stackHollow);
+            list2.add(stackHollow);
+            list2.add(stack);
         }
         INPUTS[0] = new ChangingItemStack(list1);
         INPUTS[0].setTimeGap(TIME_GAP);
@@ -74,7 +72,7 @@ public enum FacadeSwapRecipe implements IRecipe, IRecipeViewable.IViewableGrid {
         if (stackIn.getItem() != BCTransportItems.plugFacade) {
             return StackUtil.EMPTY;
         }
-        FullFacadeInstance states = ItemPluggableFacade.getStates(stackIn);
+        FullFacadeInstance states = ItemPluggableFacade.getInstance(stackIn);
         states = states.withSwappedIsHollow();
         return BCTransportItems.plugFacade.createItemStack(states);
     }

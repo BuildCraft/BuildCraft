@@ -170,7 +170,7 @@ public abstract class BCTransportProxy implements IGuiHandler {
                 return -1;
             }, BCTransportBlocks.pipeHolder);
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler((item, tintIndex) -> {
-                FullFacadeInstance states = ItemPluggableFacade.getStates(item);
+                FullFacadeInstance states = ItemPluggableFacade.getInstance(item);
                 FacadePhasedState state = states.getCurrentStateForStack();
                 return Minecraft.getMinecraft().getBlockColors().getColor(state.stateInfo.state);
             }, BCTransportItems.plugFacade);

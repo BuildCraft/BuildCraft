@@ -173,7 +173,9 @@ public final class BlockUtil {
     }
 
     public static boolean canChangeBlock(IBlockState state, World world, BlockPos pos, GameProfile owner) {
-        if (state == null) return true;
+        if (state == null) {
+            return true;
+        }
 
         Block block = state.getBlock();
         if (block.isAir(state, world, pos)) {
@@ -216,7 +218,9 @@ public final class BlockUtil {
         return isUnbreakableBlock(world, pos, world.getBlockState(pos), owner);
     }
 
-    /** Returns true if a block cannot be harvested without a tool. */
+    /**
+     * Returns true if a block cannot be harvested without a tool.
+     */
     public static boolean isToughBlock(World world, BlockPos pos) {
         return !world.getBlockState(pos).getMaterial().isToolNotRequired();
     }
@@ -286,7 +290,9 @@ public final class BlockUtil {
         }
     }
 
-    /** Create an explosion which only affects a single block. */
+    /**
+     * Create an explosion which only affects a single block.
+     */
     public static void explodeBlock(World world, BlockPos pos) {
         if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             return;
@@ -317,7 +323,9 @@ public final class BlockUtil {
         return (long) Math.floor(16 * MjAPI.MJ * ((hardness + 1) * 2));
     }
 
-    /** The following functions let you avoid unnecessary chunk loads, which is nice. */
+    /**
+     * The following functions let you avoid unnecessary chunk loads, which is nice.
+     */
     public static TileEntity getTileEntity(World world, BlockPos pos) {
         return getTileEntity(world, pos, false);
     }
@@ -408,8 +416,8 @@ public final class BlockUtil {
                 return blockA.getRegistryName().toString().compareTo(blockB.getRegistryName().toString());
             }
             for (IProperty<?> property : Sets.intersection(
-                    new HashSet<>(blockStateA.getPropertyKeys()),
-                    new HashSet<>(blockStateB.getPropertyKeys())
+                new HashSet<>(blockStateA.getPropertyKeys()),
+                new HashSet<>(blockStateB.getPropertyKeys())
             )) {
                 int compareResult = BlockUtil.compareProperty(property, blockStateA, blockStateB);
                 if (compareResult != 0) {
@@ -420,33 +428,44 @@ public final class BlockUtil {
         };
     }
 
+    public static Comparator<IBlockState> blockStateComparatorMetaEqual() {
+        Comparator<IBlockState> parent = blockStateComparator();
+        return (blockStateA, blockStateB) -> {
+            Block blockA = blockStateA.getBlock();
+            Block blockB = blockStateB.getBlock();
+            return blockA == blockB && blockA.getMetaFromState(blockStateA) == blockB.getMetaFromState(blockStateB)
+                ? 0
+                : parent.compare(blockStateA, blockStateB);
+        };
+    }
+
     public static boolean blockStatesWithoutBlockEqual(IBlockState a, IBlockState b, Collection<IProperty<?>> ignoredProperties) {
         return Sets.union(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
-                .filter(property -> !ignoredProperties.contains(property))
-                .allMatch(property -> Objects.equals(a.getValue(property), b.getValue(property)));
+            .filter(property -> !ignoredProperties.contains(property))
+            .allMatch(property -> Objects.equals(a.getValue(property), b.getValue(property)));
     }
 
     public static boolean blockStatesWithoutBlockEqual(IBlockState a, IBlockState b) {
         return Sets.union(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
-                .allMatch(property -> Objects.equals(a.getValue(property), b.getValue(property)));
+            .allMatch(property -> Objects.equals(a.getValue(property), b.getValue(property)));
     }
 
     public static boolean blockStatesEqual(IBlockState a, IBlockState b, Collection<IProperty<?>> ignoredProperties) {
         return a.getBlock() == b.getBlock() &&
-                Sets.union(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
+            Sets.union(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
                 .filter(property -> !ignoredProperties.contains(property))
                 .allMatch(property -> Objects.equals(a.getValue(property), b.getValue(property)));
     }
 
     public static boolean blockStatesEqual(IBlockState a, IBlockState b) {
         return a.getBlock() == b.getBlock() &&
-                Sets.union(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
+            Sets.union(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
                 .allMatch(property -> Objects.equals(a.getValue(property), b.getValue(property)));
     }
 
     public static TileEntity getTileEntityForGetActualState(IBlockAccess world, BlockPos pos) {
         return world instanceof ChunkCache
-                ? ((ChunkCache) world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK)
-                : world.getTileEntity(pos);
+            ? ((ChunkCache) world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK)
+            : world.getTileEntity(pos);
     }
 }
