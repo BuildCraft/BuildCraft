@@ -75,6 +75,14 @@ public class FacadeStateManager {
         stackFacades = new HashMap<>();
     }
 
+    public static FacadeBlockStateInfo getInfoForBlock(Block block) {
+        return getInfoForState(block.getDefaultState());
+    }
+
+    private static FacadeBlockStateInfo getInfoForState(IBlockState state) {
+        return validFacadeStates.get(state);
+    }
+
     public static void receiveInterModComms(IMCMessage message) {
         String id = message.key;
         if (FacadeAPI.IMC_FACADE_DISABLE.equals(id)) {
@@ -186,8 +194,8 @@ public class FacadeStateManager {
             // These strings are hardcoded, so we can get away with not needing the .equals check
             if (result != STR_PASS && result != STR_SUCCESS) {
                 if (DEBUG) {
-                    BCLog.logger.info("[transport.facade] Disallowed block " + block.getRegistryName() + " because "
-                        + result);
+                    BCLog.logger
+                        .info("[transport.facade] Disallowed block " + block.getRegistryName() + " because " + result);
                 }
                 continue;
             } else if (DEBUG) {
@@ -273,6 +281,12 @@ public class FacadeStateManager {
             for (EnumFacing side : EnumFacing.VALUES) {
                 isSideSolid[side.ordinal()] = state.isSideSolid(world, BlockPos.ORIGIN, side);
             }
+        }
+
+        // Helper methods
+
+        public FacadePhasedState createPhased(boolean isHollow, EnumDyeColor activeColour) {
+            return new FacadePhasedState(this, isHollow, activeColour);
         }
     }
 
@@ -370,8 +384,8 @@ public class FacadeStateManager {
         public static FullFacadeInstance readFromNbt(NBTTagCompound nbt, String subTag) {
             NBTTagList list = nbt.getTagList(subTag, Constants.NBT.TAG_COMPOUND);
             if (list.hasNoTags()) {
-                return new FullFacadeInstance(new FacadePhasedState[] { new FacadePhasedState(defaultState, false,
-                    null) });
+                return new FullFacadeInstance(
+                    new FacadePhasedState[] { new FacadePhasedState(defaultState, false, null) });
             }
             FacadePhasedState[] states = new FacadePhasedState[list.tagCount()];
             for (int i = 0; i < list.tagCount(); i++) {

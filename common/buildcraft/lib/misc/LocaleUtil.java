@@ -56,7 +56,7 @@ public class LocaleUtil {
         localeKeyFluidStaticEmpty = "buildcraft.fluid.empty." + (bucketFlow ? "bucket." : "milli.") + longName;
         localeKeyFluidStaticFull = "buildcraft.fluid.full." + (bucketFlow ? "bucket." : "milli.") + longName;
         localeKeyMjStatic = "buildcraft.mj.static." + longName;
-        localeKeyMjFlow = "buildcraft.mj.flow." + timeGap + longName;
+        localeKeyFluidFlow = "buildcraft.mj.flow." + timeGap + longName;
     }
 
     /** Localizes the give key to the current locale.

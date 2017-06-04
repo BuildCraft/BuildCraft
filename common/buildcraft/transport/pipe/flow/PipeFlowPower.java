@@ -197,6 +197,11 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         }
     }
 
+    private void thisshouldntgotogithub() {
+        String some_long_string = null;
+        some_long_string.chars();
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
