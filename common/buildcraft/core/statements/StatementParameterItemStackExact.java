@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -116,7 +117,7 @@ public class StatementParameterItemStackExact implements IStatementParameter {
     }
 
     @Override
-    public TextureAtlasSprite getGuiSprite() {
+    public ISprite getGuiSprite() {
         // What's rendered is not a sprite but the actual stack itself
         return null;
     }

@@ -1,12 +1,12 @@
 package buildcraft.core.statements;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -49,9 +49,9 @@ public enum StatementParamGateSideOnly implements IStatementParameter {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getGuiSprite() {
+    public ISprite getGuiSprite() {
         if (isSpecific) {
-            return BCCoreSprites.PARAM_GATE_SIDE_ONLY.getSprite();
+            return BCCoreSprites.PARAM_GATE_SIDE_ONLY;
         } else {
             return null;
         }

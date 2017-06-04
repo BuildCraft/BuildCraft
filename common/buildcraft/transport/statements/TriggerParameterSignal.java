@@ -11,7 +11,6 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,6 +19,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.render.ISprite;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
@@ -89,11 +89,11 @@ public class TriggerParameterSignal implements IStatementParameter {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getGuiSprite() {
+    public ISprite getGuiSprite() {
         if (colour == null) {
             return null;
         }
-        return BCTransportSprites.getPipeSignal(active, colour).getSprite();
+        return BCTransportSprites.getPipeSignal(active, colour);
     }
 
     @Override

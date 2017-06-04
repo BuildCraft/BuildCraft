@@ -55,7 +55,7 @@ public interface StackInsertionFunction {
     /** Gets a stack insertion function that will insert up to full stacks into a given slot. This is just
      * {@link #getInsertionFunction(int)} with an argument of 64. */
     public static StackInsertionFunction getDefaultInserter() {
-        return getInsertionFunction(64);
+        return getInsertionFunction(Integer.MAX_VALUE);
     }
 
     /** The result of an attempted insertion. */

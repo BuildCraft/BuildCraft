@@ -19,6 +19,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.IBox;
 import buildcraft.api.filler.FilledTemplate;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.inventory.IItemTransactor;
@@ -40,6 +41,7 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.lib.tile.item.StackInsertionChecker;
 import buildcraft.lib.tile.item.StackInsertionFunction;
 
 import buildcraft.builders.BCBuildersBlocks;
@@ -52,12 +54,12 @@ import buildcraft.core.BCCoreStatements;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 
-public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder, IFillerStatementContainer {
+public class TileFiller extends TileBC_Neptune
+    implements ITickable, IDebuggable, ITileForTemplateBuilder, IFillerStatementContainer {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("filler");
     public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
 
-    public final ItemHandlerSimple invResources = itemManager.addInvHandler("resources", new ItemHandlerSimple(27, (slot, stack) -> Filling.INSTANCE.getItemBlocks().contains(stack.getItem()),
-        StackInsertionFunction.getDefaultInserter(), this::onSlotChange), EnumAccess.BOTH, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invResources;
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
     public TemplateBuilder builder = new TemplateBuilder(this);
     private boolean canExcavate = true;
@@ -77,6 +79,10 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(battery)));
         pattern = BCCoreStatements.PATTERN_NONE;
         params = new IStatementParameter[0];
+        StackInsertionChecker checker = (slot, stack) -> Filling.INSTANCE.getItemBlocks().contains(stack.getItem());
+        StackInsertionFunction insertor = StackInsertionFunction.getDefaultInserter();
+        ItemHandlerSimple handler = new ItemHandlerSimple(27, checker, insertor, this::onSlotChange);
+        invResources = itemManager.addInvHandler("resources", handler, EnumAccess.BOTH, EnumPipePart.VALUES);
     }
 
     @Override
@@ -257,10 +263,15 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     }
 
     @Override
+    public IBox getBox() {
+        return box;
+    }
+
+    @Override
     public void setPattern(IFillerPattern pattern, IStatementParameter[] params) {
         this.pattern = pattern;
         this.params = params;
-        template = pattern.createTemplate(box, params);
+        template = pattern.createTemplate(this, params);
         // buildingInfo = new BuildingInfo(template.min, Rotation.NONE);
     }
 }
