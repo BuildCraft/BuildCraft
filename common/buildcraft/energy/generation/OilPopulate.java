@@ -10,12 +10,9 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import buildcraft.lib.misc.BlockUtil;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockStaticLiquid;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
@@ -37,6 +34,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.properties.BuildCraftProperties;
+
+import buildcraft.lib.misc.BlockUtil;
 
 import buildcraft.core.BCCoreBlocks;
 import buildcraft.energy.BCEnergyFluids;

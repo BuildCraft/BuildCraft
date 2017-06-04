@@ -6,6 +6,8 @@
 
 package buildcraft.lib.inventory;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.items.IItemHandler;
@@ -13,8 +15,6 @@ import net.minecraftforge.items.IItemHandler;
 import buildcraft.api.core.IStackFilter;
 
 import buildcraft.lib.misc.StackUtil;
-
-import javax.annotation.Nonnull;
 
 public final class ItemHandlerWrapper extends AbstractInvItemTransactor {
     private final IItemHandler wrapped;

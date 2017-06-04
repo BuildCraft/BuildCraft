@@ -14,7 +14,12 @@ import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableCreator;
 import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableNbtReader;
 import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableNetLoader;
 
-import buildcraft.transport.plug.*;
+import buildcraft.transport.plug.PluggableBlocker;
+import buildcraft.transport.plug.PluggableFacade;
+import buildcraft.transport.plug.PluggableGate;
+import buildcraft.transport.plug.PluggableLens;
+import buildcraft.transport.plug.PluggableLightSensor;
+import buildcraft.transport.plug.PluggablePulsar;
 
 public class BCTransportPlugs {
 

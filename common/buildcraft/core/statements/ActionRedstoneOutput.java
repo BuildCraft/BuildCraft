@@ -16,9 +16,10 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.statements.containers.ISidedStatementContainer;
 
-import buildcraft.core.BCCoreSprites;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.LocaleUtil;
+
+import buildcraft.core.BCCoreSprites;
 
 public class ActionRedstoneOutput extends BCStatement implements IActionInternal {
 

@@ -11,21 +11,24 @@ import java.util.function.Consumer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
-import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.config.EnumRestartRequirement;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
+
+import buildcraft.core.BCCore;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
 import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
@@ -80,19 +83,26 @@ public class BCTransport {
     @Mod.EventHandler
     public static void init(FMLInitializationEvent evt) {
         BCTransportProxy.getProxy().fmlInit();
+        BCTransportRegistries.init();
+        BCTransportRecipes.init();
+    }
+
+    @Mod.EventHandler
+    public static void onImcEvent(IMCEvent imc) {
+        for (IMCMessage message : imc.getMessages()) {
+            FacadeStateManager.receiveInterModComms(message);
+        }
+    }
+
+    @Mod.EventHandler
+    public static void postInit(FMLPostInitializationEvent evt) {
+        BCTransportProxy.getProxy().fmlPostInit();
         FacadeStateManager.postInit();
         if (BCTransportItems.plugFacade != null) {
             FacadeBlockStateInfo state = FacadeStateManager.previewState;
             FullFacadeInstance inst = FullFacadeInstance.createSingle(state, false);
             tabFacades.setItem(BCTransportItems.plugFacade.createItemStack(inst));
         }
-        BCTransportRegistries.init();
-        BCTransportRecipes.init();
-    }
-
-    @Mod.EventHandler
-    public static void postInit(FMLPostInitializationEvent evt) {
-        BCTransportProxy.getProxy().fmlPostInit();
     }
 
     static {

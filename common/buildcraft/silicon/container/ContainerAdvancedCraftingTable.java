@@ -6,13 +6,14 @@
 
 package buildcraft.silicon.container;
 
-import buildcraft.lib.gui.slot.SlotDisplay;
-import buildcraft.lib.gui.slot.SlotOutput;
-import buildcraft.lib.gui.slot.SlotPhantom;
 import net.minecraft.entity.player.EntityPlayer;
 
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
+import buildcraft.lib.gui.slot.SlotDisplay;
+import buildcraft.lib.gui.slot.SlotOutput;
+import buildcraft.lib.gui.slot.SlotPhantom;
+
 import buildcraft.silicon.tile.TileAdvancedCraftingTable;
 
 public class ContainerAdvancedCraftingTable extends ContainerBCTile<TileAdvancedCraftingTable> {

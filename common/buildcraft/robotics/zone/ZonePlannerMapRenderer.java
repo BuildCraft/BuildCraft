@@ -6,7 +6,7 @@
 
 package buildcraft.robotics.zone;
 
-import java.util.*;
+import java.util.OptionalInt;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.Cache;
@@ -21,6 +21,7 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 import buildcraft.lib.client.model.MutableVertex;
+
 import buildcraft.robotics.zone.ZonePlannerMapChunk.MapColourData;
 
 public enum ZonePlannerMapRenderer {

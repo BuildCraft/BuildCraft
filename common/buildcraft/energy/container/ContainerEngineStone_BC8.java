@@ -6,15 +6,16 @@
 
 package buildcraft.energy.container;
 
-import net.minecraft.entity.player.EntityPlayer;
+import javax.annotation.Nonnull;
 
-import buildcraft.energy.tile.TileEngineStone_BC8;
-import buildcraft.lib.gui.ContainerBCTile;
-import buildcraft.lib.gui.slot.SlotBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 
-import javax.annotation.Nonnull;
+import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.lib.gui.slot.SlotBase;
+
+import buildcraft.energy.tile.TileEngineStone_BC8;
 
 public class ContainerEngineStone_BC8 extends ContainerBCTile<TileEngineStone_BC8> {
     public ContainerEngineStone_BC8(EntityPlayer player, TileEngineStone_BC8 engine) {

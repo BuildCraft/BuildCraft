@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.config.DetailedConfigOption;
+
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;
 

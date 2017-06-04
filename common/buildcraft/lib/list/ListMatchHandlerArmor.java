@@ -8,6 +8,8 @@ package buildcraft.lib.list;
 
 import java.util.EnumSet;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -18,8 +20,6 @@ import buildcraft.api.lists.ListMatchHandler;
 
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.misc.FakePlayerUtil;
-
-import javax.annotation.Nonnull;
 
 public class ListMatchHandlerArmor extends ListMatchHandler {
     private static EnumSet<EntityEquipmentSlot> getArmorTypes(ItemStack stack) {

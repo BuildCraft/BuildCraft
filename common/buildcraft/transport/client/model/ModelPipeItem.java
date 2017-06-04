@@ -38,6 +38,7 @@ import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.ColourUtil;
+
 import buildcraft.transport.BCTransportSprites;
 
 public enum ModelPipeItem implements IBakedModel {

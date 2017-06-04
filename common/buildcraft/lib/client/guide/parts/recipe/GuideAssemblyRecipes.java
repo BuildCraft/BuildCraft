@@ -9,8 +9,10 @@ package buildcraft.lib.client.guide.parts.recipe;
 import java.util.ArrayList;
 import java.util.List;
 
-import buildcraft.lib.recipe.ChangingObject;
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.IAssemblyRecipeProvider;
@@ -20,10 +22,8 @@ import buildcraft.lib.misc.ArrayUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.ChangingItemStack;
+import buildcraft.lib.recipe.ChangingObject;
 import buildcraft.lib.recipe.IRecipeViewable.IRecipePowered;
-import net.minecraft.util.NonNullList;
-
-import javax.annotation.Nonnull;
 
 public enum GuideAssemblyRecipes implements IStackRecipes {
     INSTANCE;

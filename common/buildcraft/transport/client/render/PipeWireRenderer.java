@@ -15,8 +15,13 @@ import javax.vecmath.Tuple3f;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
@@ -33,6 +38,7 @@ import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.VecUtil;
+
 import buildcraft.transport.tile.TilePipeHolder;
 import buildcraft.transport.wire.EnumWireBetween;
 
@@ -189,9 +195,10 @@ public class PipeWireRenderer {
     }
 
     private static void renderQuads(MutableQuad[] quads, ISprite sprite, int level) {
-        Tessellator tessellator = Tessellator.getInstance();
+        VertexFormat vf = DefaultVertexFormats.POSITION_TEX;
+        Tessellator tessellator = new Tessellator(quads.length * vf.getNextOffset());
         VertexBuffer vb = tessellator.getBuffer();
-        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        vb.begin(GL11.GL_QUADS, vf);
 
         float vOffset = (level & 0xF) / 16f;
         for (MutableQuad q : quads) {

@@ -15,6 +15,7 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
+
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.container.ContainerFilteredBuffer_BC8;
 

@@ -7,12 +7,17 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
-import buildcraft.lib.inventory.ItemTransactorHelper;
-import buildcraft.lib.inventory.filter.StackFilter;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.Block;
@@ -48,11 +53,14 @@ import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.inventory.AutomaticProvidingTransactor;
+import buildcraft.lib.inventory.ItemTransactorHelper;
+import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.misc.InventoryUtil;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.VecUtil;
@@ -488,8 +496,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         if (currentTask != null) {
             left.add("task:");
             left.add(" - class = " + currentTask.getClass().getName());
-            left.add(" - power = " + MjAPI.formatMjShort(currentTask.getPower()));
-            left.add(" - target = " + MjAPI.formatMjShort(currentTask.getTarget()));
+            left.add(" - power = " + LocaleUtil.localizeMj(currentTask.getPower()));
+            left.add(" - target = " + LocaleUtil.localizeMj(currentTask.getTarget()));
         } else {
             left.add("task = null");
         }

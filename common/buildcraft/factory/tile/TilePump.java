@@ -6,31 +6,45 @@
 
 package buildcraft.factory.tile;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.mj.IMjReceiver;
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.FluidUtilBC;
-import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
-import buildcraft.lib.net.PacketBufferBC;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.concurrent.TimeUnit;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.math.IntMath;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.mj.IMjReceiver;
+
+import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.FluidUtilBC;
+import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
+import buildcraft.lib.net.PacketBufferBC;
+
+import buildcraft.factory.BCFactoryBlocks;
 
 public class TilePump extends TileMiner {
     private final Tank tank = new Tank("tank", 16 * Fluid.BUCKET_VOLUME, this);

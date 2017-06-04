@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.network.PacketBuffer;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-
-import io.netty.buffer.ByteBuf;
 
 public class MessageWireSystems implements IMessage {
     private Map<Integer, WireSystem> wireSystems = new HashMap<>();

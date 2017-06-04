@@ -6,8 +6,6 @@
 
 package buildcraft.factory.block;
 
-import buildcraft.factory.tile.TileMiner;
-import buildcraft.lib.block.BlockBCBase_Neptune;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +13,10 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import buildcraft.lib.block.BlockBCBase_Neptune;
+
+import buildcraft.factory.tile.TileMiner;
 
 public class BlockTube extends BlockBCBase_Neptune {
     private static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(4 / 16D, 0 / 16D, 4 / 16D, 12 / 16D, 16 / 16D, 12 / 16D);

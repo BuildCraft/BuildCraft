@@ -17,10 +17,13 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.MathHelper;
 
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.BCLibSprites;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
-import buildcraft.lib.gui.*;
+import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.IGuiElement;
+import buildcraft.lib.gui.ISimpleDrawable;
+import buildcraft.lib.gui.ITooltipElement;
 import buildcraft.lib.gui.elem.GuiElementDrawable;
 import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.elem.ToolTip;

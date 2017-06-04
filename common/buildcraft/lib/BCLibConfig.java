@@ -51,6 +51,8 @@ public class BCLibConfig {
      * than "60mB/t") */
     public static boolean useLongLocalizedName = false;
 
+    public static TimeGap displayTimeGap = TimeGap.SECONDS;
+
     /** If true then ItemRenderUtil.renderItemStack will use the facing parameter to rotate the item */
     public static RenderRotation rotateTravelingItems = RenderRotation.ENABLED;
 
@@ -64,6 +66,33 @@ public class BCLibConfig {
     public static void refreshConfigs() {
         for (Runnable r : configChangeListeners) {
             r.run();
+        }
+    }
+    
+    public enum TimeGap {
+        TICKS(1),
+        SECONDS(20);
+
+        private final int ticksInGap;
+
+        TimeGap(int ticksInGap) {
+            this.ticksInGap = ticksInGap;
+        }
+
+        public int convertTicksToGap(int ticks) {
+            return ticks / ticksInGap;
+        }
+
+        public long convertTicksToGap(long ticks) {
+            return ticks / ticksInGap;
+        }
+
+        public float convertTicksToGap(float ticks) {
+            return ticks / ticksInGap;
+        }
+
+        public double convertTicksToGap(double ticks) {
+            return ticks / ticksInGap;
         }
     }
 

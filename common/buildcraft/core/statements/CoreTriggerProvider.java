@@ -7,7 +7,8 @@ package buildcraft.core.statements;
 
 import java.util.Collection;
 
-import buildcraft.api.tiles.TilesAPI;
+import javax.annotation.Nonnull;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
@@ -15,13 +16,17 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
 
-import buildcraft.api.statements.*;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.statements.ITriggerInternalSided;
+import buildcraft.api.statements.ITriggerProvider;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
+import buildcraft.api.tiles.TilesAPI;
 
-import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.misc.CapUtil;
 
-import javax.annotation.Nonnull;
+import buildcraft.core.BCCoreStatements;
 
 public enum CoreTriggerProvider implements ITriggerProvider {
     INSTANCE;

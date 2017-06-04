@@ -6,15 +6,17 @@
 
 package buildcraft.core.item;
 
-import buildcraft.core.marker.volume.VolumeBox;
-import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
-import buildcraft.lib.item.ItemBC_Neptune;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import buildcraft.lib.item.ItemBC_Neptune;
+
+import buildcraft.core.marker.volume.VolumeBox;
+import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 
 public class ItemVolumeBox extends ItemBC_Neptune {
     public ItemVolumeBox(String id) {

@@ -6,30 +6,11 @@
 
 package buildcraft.builders.tile;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.inventory.IItemTransactor;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjBattery;
-import buildcraft.api.mj.MjCapabilityHelper;
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.builders.addon.AddonFillingPlanner;
-import buildcraft.builders.filling.Filling;
-import buildcraft.builders.snapshot.*;
-import buildcraft.core.marker.volume.EnumAddonSlot;
-import buildcraft.core.marker.volume.Lock;
-import buildcraft.core.marker.volume.VolumeBox;
-import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
-import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.data.IdAllocator;
-import buildcraft.lib.mj.MjBatteryReciver;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
-import buildcraft.lib.tile.item.ItemHandlerSimple;
-import buildcraft.lib.tile.item.StackInsertionFunction;
+import java.io.IOException;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -39,13 +20,40 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.util.*;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.inventory.IItemTransactor;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjBattery;
+import buildcraft.api.mj.MjCapabilityHelper;
+import buildcraft.api.tiles.IDebuggable;
+
+import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.data.IdAllocator;
+import buildcraft.lib.mj.MjBatteryReciver;
+import buildcraft.lib.net.MessageManager;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.lib.tile.item.StackInsertionFunction;
+
+import buildcraft.builders.addon.AddonFillingPlanner;
+import buildcraft.builders.filling.Filling;
+import buildcraft.builders.snapshot.ITileForTemplateBuilder;
+import buildcraft.builders.snapshot.SnapshotBuilder;
+import buildcraft.builders.snapshot.Template;
+import buildcraft.builders.snapshot.TemplateBuilder;
+import buildcraft.core.marker.volume.EnumAddonSlot;
+import buildcraft.core.marker.volume.Lock;
+import buildcraft.core.marker.volume.VolumeBox;
+import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 
 public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("filler");

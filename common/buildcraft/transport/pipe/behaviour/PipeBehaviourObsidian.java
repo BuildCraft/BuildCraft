@@ -9,6 +9,8 @@ package buildcraft.transport.pipe.behaviour;
 import java.util.List;
 import java.util.WeakHashMap;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -34,8 +36,6 @@ import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.VecUtil;
-
-import javax.annotation.Nonnull;
 
 public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneReceiver {
     private static final double INSERT_SPEED = 0.04;

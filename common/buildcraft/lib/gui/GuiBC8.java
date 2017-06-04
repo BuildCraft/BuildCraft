@@ -17,6 +17,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.gui.ledger.LedgerHelp;
@@ -26,7 +27,6 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.MousePosition;
 import buildcraft.lib.gui.pos.PositionCallable;
-import net.minecraft.util.math.MathHelper;
 
 public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer {
     /**

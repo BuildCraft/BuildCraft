@@ -8,9 +8,10 @@ package buildcraft.energy.container;
 
 import net.minecraft.entity.player.EntityPlayer;
 
-import buildcraft.energy.tile.TileEngineIron_BC8;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.widget.WidgetFluidTank;
+
+import buildcraft.energy.tile.TileEngineIron_BC8;
 
 public class ContainerEngineIron_BC8 extends ContainerBCTile<TileEngineIron_BC8> {
     public final WidgetFluidTank widgetTankFuel;

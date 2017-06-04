@@ -6,6 +6,8 @@
 
 package buildcraft.silicon.item;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -18,8 +20,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.enums.EnumRedstoneChipset;
 
 import buildcraft.lib.item.ItemBC_Neptune;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class ItemRedstoneChipset extends ItemBC_Neptune {
     public ItemRedstoneChipset(String id) {

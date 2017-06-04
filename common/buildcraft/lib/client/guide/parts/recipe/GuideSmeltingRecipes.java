@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.item.ItemStack;
@@ -19,8 +21,6 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.misc.StackUtil;
-
-import javax.annotation.Nonnull;
 
 public enum GuideSmeltingRecipes implements IStackRecipes {
     INSTANCE;

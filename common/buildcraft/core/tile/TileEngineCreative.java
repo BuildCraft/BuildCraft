@@ -6,6 +6,8 @@ package buildcraft.core.tile;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -24,8 +26,6 @@ import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.net.PacketBufferBC;
-
-import javax.annotation.Nonnull;
 
 public class TileEngineCreative extends TileEngineBase_BC8 {
     public static final long[] outputs = { 1, 2, 4, 8, 16, 32, 64, 128, 256 };

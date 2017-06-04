@@ -6,10 +6,6 @@
 
 package buildcraft.transport;
 
-import buildcraft.api.recipes.BuildcraftRecipeRegistry;
-import buildcraft.api.recipes.StackDefinition;
-import buildcraft.lib.inventory.filter.ArrayStackFilter;
-import buildcraft.lib.inventory.filter.OreStackFilter;
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.init.Blocks;
@@ -28,13 +24,18 @@ import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.api.recipes.StackDefinition;
 
-import buildcraft.core.BCCoreBlocks;
-import buildcraft.core.BCCoreItems;
+import buildcraft.lib.inventory.filter.ArrayStackFilter;
+import buildcraft.lib.inventory.filter.OreStackFilter;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.NBTAwareShapedOreRecipe;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
+
+import buildcraft.core.BCCoreBlocks;
+import buildcraft.core.BCCoreItems;
 import buildcraft.transport.gate.EnumGateLogic;
 import buildcraft.transport.gate.EnumGateMaterial;
 import buildcraft.transport.gate.EnumGateModifier;

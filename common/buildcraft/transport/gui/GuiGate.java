@@ -27,8 +27,13 @@ import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
+
 import buildcraft.transport.container.ContainerGate;
-import buildcraft.transport.gate.*;
+import buildcraft.transport.gate.ActionWrapper;
+import buildcraft.transport.gate.GateLogic;
+import buildcraft.transport.gate.GateVariant;
+import buildcraft.transport.gate.StatementWrapper;
+import buildcraft.transport.gate.TriggerWrapper;
 
 public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
 

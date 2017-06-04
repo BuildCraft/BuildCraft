@@ -12,6 +12,7 @@ import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.ledger.LedgerManager_Neptune;
 import buildcraft.lib.gui.ledger.Ledger_Neptune;
 import buildcraft.lib.misc.LocaleUtil;
+
 import buildcraft.silicon.tile.TileAssemblyTable;
 import buildcraft.silicon.tile.TileLaserTableBase;
 

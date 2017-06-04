@@ -13,9 +13,10 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.core.tile.TileMarkerPath;
 import buildcraft.lib.block.BlockMarkerBase;
 import buildcraft.lib.misc.PermissionUtil;
+
+import buildcraft.core.tile.TileMarkerPath;
 
 public class BlockMarkerPath extends BlockMarkerBase {
     public BlockMarkerPath(Material material, String id) {

@@ -6,6 +6,10 @@ package buildcraft.core.item;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -21,15 +25,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.items.IList;
 
-import buildcraft.core.BCCoreGuis;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
-
-import javax.annotation.Nonnull;
+import buildcraft.core.BCCoreGuis;
 
 public class ItemList_BC8 extends ItemBC_Neptune implements IList {
     public ItemList_BC8(String id) {

@@ -6,13 +6,6 @@ package buildcraft.lib;
 
 import java.util.function.Consumer;
 
-import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.net.MessageContainer;
-import buildcraft.lib.net.MessageMarker;
-import buildcraft.lib.net.MessageUpdateTile;
-import buildcraft.lib.net.cache.MessageObjectCacheReply;
-import buildcraft.lib.net.cache.MessageObjectCacheReq;
-import buildcraft.lib.particle.MessageParticleVanilla;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -21,6 +14,7 @@ import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
@@ -32,12 +26,18 @@ import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.list.ListMatchHandlerFluid;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.net.MessageContainer;
+import buildcraft.lib.net.MessageManager;
+import buildcraft.lib.net.MessageMarker;
+import buildcraft.lib.net.MessageUpdateTile;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
+import buildcraft.lib.net.cache.MessageObjectCacheReply;
+import buildcraft.lib.net.cache.MessageObjectCacheReq;
+import buildcraft.lib.particle.MessageParticleVanilla;
 import buildcraft.lib.registry.MigrationManager;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
-import net.minecraftforge.fml.relauncher.Side;
 
 //@formatter:off
 @Mod(modid = BCLib.MODID,

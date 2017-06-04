@@ -6,13 +6,19 @@
 
 package buildcraft.builders.snapshot;
 
-import buildcraft.api.schematics.ISchematicEntity;
-import buildcraft.lib.net.MessageManager;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Predicates;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.WorldVertexBufferUploader;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -22,15 +28,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.GLU;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import buildcraft.api.schematics.ISchematicEntity;
+
+import buildcraft.lib.net.MessageManager;
 
 public enum ClientSnapshots {
     INSTANCE;
@@ -56,11 +60,19 @@ public enum ClientSnapshots {
 
     @SideOnly(Side.CLIENT)
     public void renderSnapshot(Snapshot.Header header, int offsetX, int offsetY, int sizeX, int sizeY) {
+        if (header == null) {
+            return;
+        }
         Snapshot snapshot = getSnapshot(header);
         if (snapshot == null) {
             return;
         }
-        FakeWorld world = worlds.computeIfAbsent(header, localHeader -> {
+        renderSnapshot(snapshot, offsetX, offsetY, sizeX, sizeY);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void renderSnapshot(Snapshot snapshot, int offsetX, int offsetY, int sizeX, int sizeY) {
+        FakeWorld world = worlds.computeIfAbsent(snapshot.header, localHeader -> {
             FakeWorld localWorld = new FakeWorld();
             if (snapshot instanceof Blueprint) {
                 localWorld.uploadBlueprint((Blueprint) snapshot, false);
@@ -84,7 +96,7 @@ public enum ClientSnapshots {
             }
             return localWorld;
         });
-        VertexBuffer vertexBuffer = buffers.computeIfAbsent(header, localHeader -> {
+        VertexBuffer vertexBuffer = buffers.computeIfAbsent(snapshot.header, localHeader -> {
             VertexBuffer localBuffer = new VertexBuffer(1024) {
                 @Override
                 public void reset() {
@@ -143,6 +155,7 @@ public enum ClientSnapshots {
         Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         new WorldVertexBufferUploader().draw(vertexBuffer);
         if (snapshotSize < 32) {
+            TileEntityRendererDispatcher.instance.preDrawBatch();
             for (int z = 0; z < snapshot.size.getZ(); z++) {
                 for (int y = 0; y < snapshot.size.getY(); y++) {
                     for (int x = 0; x < snapshot.size.getX(); x++) {
@@ -160,6 +173,7 @@ public enum ClientSnapshots {
                     }
                 }
             }
+            TileEntityRendererDispatcher.instance.drawBatch(1);
         }
         // noinspection Guava
         for (Entity entity : world.getEntities(Entity.class, Predicates.alwaysTrue())) {

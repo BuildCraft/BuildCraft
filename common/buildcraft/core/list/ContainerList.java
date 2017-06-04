@@ -18,14 +18,15 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.api.lists.ListMatchHandler.Type;
 
-import buildcraft.core.BCCoreItems;
-import buildcraft.core.item.ItemList_BC8;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.widget.WidgetPhantomSlot;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
+
+import buildcraft.core.BCCoreItems;
+import buildcraft.core.item.ItemList_BC8;
 
 public class ContainerList extends ContainerBC_Neptune {
     // Network ID's

@@ -5,11 +5,11 @@
  */
 package buildcraft.lib.gui.slot;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.tile.item.IItemHandlerAdv;
-
-import javax.annotation.Nonnull;
 
 public class SlotOutput extends SlotBase {
 

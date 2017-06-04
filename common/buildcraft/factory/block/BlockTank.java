@@ -29,9 +29,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.transport.pipe.ICustomPipeConnection;
 
-import buildcraft.factory.tile.TileTank;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.tile.TileBC_Neptune;
+
+import buildcraft.factory.tile.TileTank;
 
 public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnection {
     private static final IProperty<Boolean> JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;

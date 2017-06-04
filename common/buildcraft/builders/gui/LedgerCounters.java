@@ -6,12 +6,13 @@
 
 package buildcraft.builders.gui;
 
-import buildcraft.builders.snapshot.ITileForSnapshotBuilder;
+import java.util.Optional;
+
 import buildcraft.lib.gui.ledger.LedgerManager_Neptune;
 import buildcraft.lib.gui.ledger.Ledger_Neptune;
 import buildcraft.lib.misc.LocaleUtil;
 
-import java.util.Optional;
+import buildcraft.builders.snapshot.ITileForSnapshotBuilder;
 
 public class LedgerCounters extends Ledger_Neptune {
     private static final int OVERLAY_COLOUR = 0xFF_6C_D4_1F;

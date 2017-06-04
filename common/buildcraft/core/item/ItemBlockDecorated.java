@@ -4,6 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.item;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -13,8 +15,6 @@ import buildcraft.api.enums.EnumDecoratedBlock;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.item.ItemBlockBCMulti;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class ItemBlockDecorated extends ItemBlockBCMulti {
 

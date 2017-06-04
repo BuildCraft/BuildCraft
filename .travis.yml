@@ -2,8 +2,14 @@ language: java
 jdk:
   - oraclejdk8
 
-install: ./gradlew setupCiWorkspace -S
-script: ./gradlew build -S
+jobs:
+  include:
+    - stage: build
+      install: ./gradlew setupCiWorkspace
+      script: ./gradlew build 
+    - stage: checkstyle
+      install: echo "skipping default ./gradlew assemble"
+      script: ./gradlew checkstyle
 
 env:
   global:

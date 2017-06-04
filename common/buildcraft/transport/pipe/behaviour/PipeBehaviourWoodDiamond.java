@@ -27,10 +27,15 @@ import buildcraft.api.transport.pipe.IFlowItems;
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 
-import buildcraft.lib.inventory.filter.*;
+import buildcraft.lib.inventory.filter.ArrayFluidFilter;
+import buildcraft.lib.inventory.filter.DelegatingItemHandlerFilter;
+import buildcraft.lib.inventory.filter.InvertedFluidFilter;
+import buildcraft.lib.inventory.filter.InvertedStackFilter;
+import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+
 import buildcraft.transport.BCTransportGuis;
 
 public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {

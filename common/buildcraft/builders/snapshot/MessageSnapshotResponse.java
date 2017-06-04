@@ -6,16 +6,16 @@
 
 package buildcraft.builders.snapshot;
 
-import buildcraft.lib.nbt.NbtSquisher;
+import java.io.IOException;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
+
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTSizeTracker;
+
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-
-import java.io.IOException;
 
 public class MessageSnapshotResponse implements IMessage {
     private Snapshot snapshot;

@@ -10,6 +10,8 @@ import java.io.IOException;
 
 import com.google.common.base.Throwables;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -21,21 +23,20 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.BCLibProxy;
-import buildcraft.lib.compat.CompatManager;
 import buildcraft.lib.misc.MessageUtil;
-
-import io.netty.buffer.ByteBuf;
 
 public class MessageUpdateTile implements IMessage {
     private BlockPos pos;
     private PacketBufferBC payload;
 
-    public MessageUpdateTile() {
-    }
+    public MessageUpdateTile() {}
 
     public MessageUpdateTile(BlockPos pos, PacketBufferBC payload) {
         this.pos = pos;
         this.payload = payload;
+        if (getPayloadSize() > 1 << 24) {
+            throw new IllegalStateException("Can't write out " + getPayloadSize() + "bytes!");
+        }
     }
 
     public int getPayloadSize() {
@@ -45,7 +46,7 @@ public class MessageUpdateTile implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
         this.pos = MessageUtil.readBlockPos(new PacketBuffer(buf));
-        int size = buf.readUnsignedShort();
+        int size = buf.readUnsignedMedium();
         payload = new PacketBufferBC(buf.readBytes(size));
     }
 
@@ -53,7 +54,7 @@ public class MessageUpdateTile implements IMessage {
     public void toBytes(ByteBuf buf) {
         MessageUtil.writeBlockPos(new PacketBuffer(buf), pos);
         int length = payload.readableBytes();
-        buf.writeShort(length);
+        buf.writeMedium(length);
         buf.writeBytes(payload, 0, length);
     }
 
@@ -70,7 +71,8 @@ public class MessageUpdateTile implements IMessage {
                 throw Throwables.propagate(io);
             }
         } else {
-            BCLog.logger.warn("Dropped message for player " + player.getName() + " for tile at " + message.pos);
+            BCLog.logger.warn("Dropped message for player " + player.getName() + " for tile at " + message.pos
+                + " (found " + tile + ")");
         }
         return null;
     };

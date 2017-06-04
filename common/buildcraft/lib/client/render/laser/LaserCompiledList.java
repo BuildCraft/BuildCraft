@@ -8,7 +8,11 @@ package buildcraft.lib.client.render.laser;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
 
 public abstract class LaserCompiledList {
     public abstract void render();

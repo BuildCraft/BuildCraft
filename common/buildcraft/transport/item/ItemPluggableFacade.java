@@ -10,7 +10,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import buildcraft.lib.misc.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,6 +33,12 @@ import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.SoundUtil;
+import buildcraft.lib.misc.StackUtil;
+
 import buildcraft.transport.BCTransportPlugs;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
@@ -88,7 +93,8 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
     }
 
     @Override
-    public PipePluggable onPlace(@Nonnull ItemStack stack, IPipeHolder holder, EnumFacing side, EntityPlayer player, EnumHand hand) {
+    public PipePluggable onPlace(@Nonnull ItemStack stack, IPipeHolder holder, EnumFacing side, EntityPlayer player,
+        EnumHand hand) {
         FullFacadeInstance fullState = getStates(stack);
         SoundUtil.playBlockPlace(holder.getPipeWorld(), holder.getPipePos(), fullState.phasedStates[0].stateInfo.state);
         return new PluggableFacade(BCTransportPlugs.facade, holder, side, fullState);
@@ -99,9 +105,9 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
     public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> subItems) {
         // Add a single phased facade as a default
         FacadePhasedState[] states = {//
-            new FacadePhasedState(FacadeStateManager.validFacadeStates.get(Blocks.STONE.getDefaultState()), false, null),//
-            new FacadePhasedState(FacadeStateManager.validFacadeStates.get(Blocks.PLANKS.getDefaultState()), false, EnumDyeColor.RED),//
-            new FacadePhasedState(FacadeStateManager.validFacadeStates.get(Blocks.LOG.getDefaultState()), false, EnumDyeColor.CYAN),//
+            FacadeStateManager.getInfoForBlock(Blocks.STONE).createPhased(false, null),//
+            FacadeStateManager.getInfoForBlock(Blocks.PLANKS).createPhased(false, EnumDyeColor.RED),//
+            FacadeStateManager.getInfoForBlock(Blocks.LOG).createPhased(false, EnumDyeColor.CYAN),//
         };
         FullFacadeInstance inst = new FullFacadeInstance(states);
         subItems.add(createItemStack(inst));
@@ -137,10 +143,6 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
         FullFacadeInstance states = getStates(stack);
-        // for (FacadePhasedState state : states.phasedStates) {
-        // ItemStack requiredStack = state.stateInfo.requiredStack;
-        // requiredStack.getItem().addInformation(requiredStack, player, tooltip, advanced);
-        // }
         if (states.type == FacadeType.Phased) {
             String stateString = LocaleUtil.localize("item.FacadePhased.state");
             FacadePhasedState defaultState = null;
@@ -149,17 +151,18 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
                     defaultState = state;
                     continue;
                 }
-                tooltip.add(String.format(stateString, LocaleUtil.localizeColour(state.activeColour), getFacadeStateDisplayName(state)));
+                tooltip.add(String.format(stateString, LocaleUtil.localizeColour(state.activeColour),
+                    getFacadeStateDisplayName(state)));
             }
             if (defaultState != null) {
-                tooltip.add(1, String.format(LocaleUtil.localize("item.FacadePhased.state_default"), getFacadeStateDisplayName(defaultState)));
+                tooltip.add(1, String.format(LocaleUtil.localize("item.FacadePhased.state_default"),
+                    getFacadeStateDisplayName(defaultState)));
             }
         } else {
             String propertiesStart = TextFormatting.GRAY + "" + TextFormatting.ITALIC;
             FacadeBlockStateInfo info = states.phasedStates[0].stateInfo;
-            BlockUtil.getPropertiesStringMap(info.state, info.varyingProperties).forEach((name, value) ->
-                tooltip.add(propertiesStart + name + " = " + value)
-            );
+            BlockUtil.getPropertiesStringMap(info.state, info.varyingProperties)
+                .forEach((name, value) -> tooltip.add(propertiesStart + name + " = " + value));
         }
     }
 }

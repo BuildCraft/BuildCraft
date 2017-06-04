@@ -30,7 +30,12 @@ import buildcraft.lib.misc.data.ForwardingReference;
 import buildcraft.lib.misc.data.IReference;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.transport.gate.*;
+
+import buildcraft.transport.gate.ActionWrapper;
+import buildcraft.transport.gate.GateLogic;
+import buildcraft.transport.gate.GateVariant;
+import buildcraft.transport.gate.StatementWrapper;
+import buildcraft.transport.gate.TriggerWrapper;
 
 public class ContainerGate extends ContainerBC_Neptune {
     protected static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("gate");

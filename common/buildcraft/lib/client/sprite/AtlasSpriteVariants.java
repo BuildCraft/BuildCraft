@@ -20,7 +20,11 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.BCLibConfig;
-import buildcraft.lib.client.reload.*;
+import buildcraft.lib.client.reload.IReloadable;
+import buildcraft.lib.client.reload.ReloadManager;
+import buildcraft.lib.client.reload.ReloadSource;
+import buildcraft.lib.client.reload.ReloadUtil;
+import buildcraft.lib.client.reload.SourceType;
 import buildcraft.lib.misc.SpriteUtil;
 
 /** A type of {@link AtlasSpriteSwappable} that will switch between multiple different */

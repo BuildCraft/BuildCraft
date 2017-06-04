@@ -4,14 +4,15 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory.container;
 
-import buildcraft.lib.gui.slot.SlotDisplay;
 import net.minecraft.entity.player.EntityPlayer;
 
-import buildcraft.factory.tile.TileAutoWorkbenchItems;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
+import buildcraft.lib.gui.slot.SlotDisplay;
 import buildcraft.lib.gui.slot.SlotOutput;
 import buildcraft.lib.gui.slot.SlotPhantom;
+
+import buildcraft.factory.tile.TileAutoWorkbenchItems;
 
 public class ContainerAutoCraftItems extends ContainerBCTile<TileAutoWorkbenchItems> {
     public ContainerAutoCraftItems(EntityPlayer player, TileAutoWorkbenchItems tile) {

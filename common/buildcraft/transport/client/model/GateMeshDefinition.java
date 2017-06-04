@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.misc.StackUtil;
+
 import buildcraft.transport.gate.GateVariant;
 import buildcraft.transport.item.ItemPluggableGate;
 

@@ -6,16 +6,8 @@
 
 package buildcraft.factory.tile;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.tiles.TilesAPI;
-import buildcraft.factory.util.IAutoCraft;
-import buildcraft.factory.util.WorkbenchCrafting;
-import buildcraft.lib.delta.DeltaInt;
-import buildcraft.lib.delta.DeltaManager;
-import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.lib.tile.item.ItemHandlerManager;
-import buildcraft.lib.tile.item.ItemHandlerSimple;
+import java.util.List;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.EnumFacing;
@@ -23,7 +15,18 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.List;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.tiles.TilesAPI;
+
+import buildcraft.lib.delta.DeltaInt;
+import buildcraft.lib.delta.DeltaManager;
+import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.item.ItemHandlerManager;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
+
+import buildcraft.factory.util.IAutoCraft;
+import buildcraft.factory.util.WorkbenchCrafting;
 
 public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements ITickable, IDebuggable, IAutoCraft {
     public final ItemHandlerSimple invBlueprint;

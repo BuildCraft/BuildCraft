@@ -9,11 +9,11 @@ package buildcraft.lib.expression.node.unary;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.LongUnaryOperator;
 
-import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.InvalidExpressionException;
 
 public enum UnaryNodeType implements IUnaryNodeType {
     NEGATE("-", n -> -n, n -> -n),

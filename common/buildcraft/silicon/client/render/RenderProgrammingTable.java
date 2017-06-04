@@ -6,6 +6,8 @@
 
 package buildcraft.silicon.client.render;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -14,8 +16,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.animation.FastTESR;
 
 import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
-
-import javax.annotation.Nonnull;
 
 public class RenderProgrammingTable extends FastTESR<TileProgrammingTable_Neptune> {
     @Override

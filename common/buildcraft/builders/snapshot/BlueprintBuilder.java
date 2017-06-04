@@ -6,25 +6,34 @@
 
 package buildcraft.builders.snapshot;
 
-import buildcraft.api.schematics.ISchematicEntity;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.FluidUtilBC;
-import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.data.Box;
-import buildcraft.lib.net.PacketBufferBC;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.fluids.FluidStack;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import net.minecraftforge.fluids.FluidStack;
+
+import buildcraft.api.schematics.ISchematicEntity;
+
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.FluidUtilBC;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.net.PacketBufferBC;
 
 public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> {
     private static final double MAX_ENTITY_DISTANCE = 0.1D;
@@ -36,30 +45,6 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     private Blueprint.BuildingInfo getBuildingInfo() {
         return tile.getBlueprintBuildingInfo();
-    }
-
-    private int getBuiltLevel() {
-        return Optional.ofNullable(getBuildingInfo())
-            .map(buildingInfo ->
-                Stream.concat(
-                    buildingInfo.toBreak.stream()
-                        .filter(pos -> tile.canExcavate() && !tile.getWorldBC().isAirBlock(pos))
-                        .map(i -> 0),
-                    buildingInfo.toPlace.entrySet().stream()
-                        .filter(entry -> !isBlockCorrect(entry.getKey()))
-                        .map(entry -> entry.getValue().getLevel())
-                )
-                    .min(Integer::compare)
-                    .map(i -> i - 1)
-                    .orElse(getBuildingInfo().maxLevel)
-            )
-            .orElse(-1);
-    }
-
-    private int getMaxLevel() {
-        return Optional.ofNullable(getBuildingInfo())
-            .map(buildingInfo -> buildingInfo.maxLevel)
-            .orElse(0);
     }
 
     private Stream<ItemStack> getDisplayRequired(List<ItemStack> requiredItems, List<FluidStack> requiredFluids) {
@@ -145,7 +130,6 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                     ? isBlockCorrect(pos)
                     : !getToBreak().contains(pos) || tile.getWorldBC().isAirBlock(pos)
             ) &&
-            getBuildingInfo().toPlace.get(blockPos).getLevel() == getBuiltLevel() + 1 &&
             !getBuildingInfo().toPlace.get(blockPos).isAir() &&
             getBuildingInfo().toPlace.get(blockPos).canBuild(tile.getWorldBC(), blockPos);
     }
@@ -188,26 +172,6 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     }
 
     @Override
-    protected int getLeftToBreak() {
-        return Optional.ofNullable(getBuildingInfo())
-            .map(buildingInfo ->
-                (int) buildingInfo.toBreak.stream()
-                    .filter(pos -> tile.canExcavate() && !tile.getWorldBC().isAirBlock(pos))
-                    .count()
-            ).orElse(0);
-    }
-
-    @Override
-    protected int getLeftToPlace() {
-        return Optional.ofNullable(getBuildingInfo())
-            .map(buildingInfo ->
-                (int) buildingInfo.toPlace.keySet().stream()
-                    .filter(blockPos -> !isBlockCorrect(blockPos))
-                    .count()
-            ).orElse(0);
-    }
-
-    @Override
     protected boolean doPlaceTask(PlaceTask placeTask) {
         return getBuildingInfo() != null &&
             getBuildingInfo().toPlace.get(placeTask.pos) != null &&
@@ -219,11 +183,6 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         return Optional.ofNullable(getBuildingInfo())
             .map(Blueprint.BuildingInfo::getBox)
             .orElse(null);
-    }
-
-    @Override
-    protected boolean isDone() {
-        return getBuiltLevel() == getMaxLevel();
     }
 
     @Override

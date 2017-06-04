@@ -6,9 +6,10 @@
 
 package buildcraft.factory.util;
 
-import buildcraft.lib.tile.item.ItemHandlerSimple;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+
+import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 public class WorkbenchCrafting extends InventoryCrafting {
     private final ItemHandlerSimple invBlueprint;

@@ -6,17 +6,19 @@
 
 package buildcraft.builders.addon;
 
-import buildcraft.core.marker.volume.IFastAddonRenderer;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+
 import net.minecraftforge.client.model.ModelLoader;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import buildcraft.core.marker.volume.IFastAddonRenderer;
 
 public class AddonRendererFillingPlanner implements IFastAddonRenderer<AddonFillingPlanner> {
     @Override

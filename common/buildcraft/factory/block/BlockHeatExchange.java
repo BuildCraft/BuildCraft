@@ -30,9 +30,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.pipe.ICustomPipeConnection;
 
+import buildcraft.lib.block.BlockBCTile_Neptune;
+
 import buildcraft.factory.tile.TileHeatExchangeEnd;
 import buildcraft.factory.tile.TileHeatExchangeStart;
-import buildcraft.lib.block.BlockBCTile_Neptune;
 
 public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPipeConnection {
     public enum Part {

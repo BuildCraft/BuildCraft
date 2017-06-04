@@ -9,8 +9,12 @@ package buildcraft.transport.pipe.behaviour;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipe.ConnectedType;
+import buildcraft.api.transport.pipe.PipeBehaviour;
+import buildcraft.api.transport.pipe.PipeEventFluid;
+import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.api.transport.pipe.PipeEventItem;
 
 public class PipeBehaviourClay extends PipeBehaviour {
     public PipeBehaviourClay(IPipe pipe) {

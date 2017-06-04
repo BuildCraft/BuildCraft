@@ -35,6 +35,7 @@ import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.sprite.AtlasSpriteVariants;
 import buildcraft.lib.misc.ColourUtil;
+
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;

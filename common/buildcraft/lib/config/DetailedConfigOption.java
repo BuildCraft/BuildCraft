@@ -17,11 +17,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
 
-import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.InternalCompiler;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
+
+import buildcraft.core.BCCoreConfig;
 
 public class DetailedConfigOption {
     private static final Set<DetailedConfigOption> allRegistered = new HashSet<>();

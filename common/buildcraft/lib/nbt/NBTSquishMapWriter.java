@@ -6,25 +6,31 @@
 
 package buildcraft.lib.nbt;
 
-import static buildcraft.api.data.NBTSquishConstants.*;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import gnu.trove.list.array.TByteArrayList;
+import gnu.trove.list.array.TDoubleArrayList;
+import gnu.trove.list.array.TFloatArrayList;
+import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.list.array.TLongArrayList;
+import gnu.trove.list.array.TShortArrayList;
+import gnu.trove.map.hash.TIntIntHashMap;
+import gnu.trove.set.hash.TIntHashSet;
+
+import net.minecraft.init.Bootstrap;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.profiler.Profiler;
 
-import buildcraft.lib.misc.data.CompactingBitSet;
+import buildcraft.api.data.NBTSquishConstants;
 
-import gnu.trove.list.array.*;
-import gnu.trove.map.hash.TIntIntHashMap;
-import gnu.trove.set.hash.TIntHashSet;
+import buildcraft.lib.misc.data.CompactingBitSet;
 
 class NBTSquishMapWriter {
     static boolean debug;
@@ -35,7 +41,7 @@ class NBTSquishMapWriter {
 
     private static void log(String string) {
         if (debug) {
-            System.out.println(string);
+            Bootstrap.SYSOUT.print(string + "\n");
         } else {
             throw new IllegalArgumentException("Don't allocate a string if we aren't debugging!");
         }
@@ -68,16 +74,16 @@ class NBTSquishMapWriter {
         List<NBTBase> complex = map.complex;
 
         int flags = 0;
-        if (!bytes.isEmpty()) flags |= FLAG_HAS_BYTES;
-        if (!shorts.isEmpty()) flags |= FLAG_HAS_SHORTS;
-        if (!ints.isEmpty()) flags |= FLAG_HAS_INTS;
-        if (!longs.isEmpty()) flags |= FLAG_HAS_LONGS;
-        if (!floats.isEmpty()) flags |= FLAG_HAS_FLOATS;
-        if (!doubles.isEmpty()) flags |= FLAG_HAS_DOUBLES;
-        if (!byteArrays.isEmpty()) flags |= FLAG_HAS_BYTE_ARRAYS;
-        if (!intArrays.isEmpty()) flags |= FLAG_HAS_INT_ARRAYS;
-        if (!strings.isEmpty()) flags |= FLAG_HAS_STRINGS;
-        if (!complex.isEmpty()) flags |= FLAG_HAS_COMPLEX;
+        if (!bytes.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_BYTES;
+        if (!shorts.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_SHORTS;
+        if (!ints.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_INTS;
+        if (!longs.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_LONGS;
+        if (!floats.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_FLOATS;
+        if (!doubles.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_DOUBLES;
+        if (!byteArrays.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_BYTE_ARRAYS;
+        if (!intArrays.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_INT_ARRAYS;
+        if (!strings.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_STRINGS;
+        if (!complex.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_COMPLEX;
 
         if (debug) log("\nUsed flags = " + Integer.toBinaryString(flags));
         buf.writeInt(flags);
@@ -214,7 +220,7 @@ class NBTSquishMapWriter {
         profiler.startSection("compound");
         WrittenType stringType = WrittenType.getForSize(map.strings.size());
         if (debug) log("\n  Compound tag count = " + compound.getSize());
-        buf.writeByte(COMPLEX_COMPOUND);
+        buf.writeByte(NBTSquishConstants.COMPLEX_COMPOUND);
         buf.writeVarInt(compound.getSize());
         for (String key : compound.getKeySet()) {
             profiler.startSection("entry");
@@ -234,7 +240,7 @@ class NBTSquishMapWriter {
 
     private void writeListNormal(WrittenType type, PacketBuffer buf, NBTTagList list) {
         profiler.startSection("list_normal");
-        buf.writeByte(COMPLEX_LIST);
+        buf.writeByte(NBTSquishConstants.COMPLEX_LIST);
         buf.writeVarInt(list.tagCount());
         for (int i = 0; i < list.tagCount(); i++) {
             profiler.startSection("entry");
@@ -252,7 +258,7 @@ class NBTSquishMapWriter {
 
     private void writeListPacked(WrittenType type, PacketBuffer buf, NBTTagList list) {
         profiler.startSection("list_packed");
-        buf.writeByte(COMPLEX_LIST_PACKED);
+        buf.writeByte(NBTSquishConstants.COMPLEX_LIST_PACKED);
         profiler.startSection("header");
         profiler.startSection("init");
         int[] data = new int[list.tagCount()];

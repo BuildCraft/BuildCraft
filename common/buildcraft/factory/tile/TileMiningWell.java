@@ -6,20 +6,32 @@
 
 package buildcraft.factory.tile;
 
-import buildcraft.api.mj.IMjReceiver;
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.FakePlayerUtil;
-import buildcraft.lib.misc.InventoryUtil;
-import buildcraft.lib.mj.MjBatteryReciver;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent;
 
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.mj.IMjReceiver;
+
+import buildcraft.lib.inventory.AutomaticProvidingTransactor;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.FakePlayerUtil;
+import buildcraft.lib.misc.InventoryUtil;
+import buildcraft.lib.mj.MjBatteryReciver;
+
+import buildcraft.factory.BCFactoryBlocks;
+
 public class TileMiningWell extends TileMiner {
+    public TileMiningWell() {
+        super();
+        caps.addCapabilityInstance(CapUtil.CAP_ITEM_TRANSACTOR, AutomaticProvidingTransactor.INSTANCE, EnumPipePart.VALUES);
+    }
+
     @Override
     protected void mine() {
         if (currentPos != null && canBreak()) {
@@ -27,14 +39,14 @@ public class TileMiningWell extends TileMiner {
             progress += battery.extractPower(0, target - progress);
             if (progress >= target) {
                 progress = 0;
-                EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, getPos(), getOwner());
+                EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, pos, getOwner());
                 BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, currentPos, world.getBlockState(currentPos), fakePlayer);
                 MinecraftForge.EVENT_BUS.post(breakEvent);
                 if (!breakEvent.isCanceled()) {
                     NonNullList<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) world, currentPos, getOwner());
                     if (stacks != null) {
                         for (ItemStack stack : stacks) {
-                            InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, stack);
+                            InventoryUtil.addToBestAcceptor(world, pos, null, stack);
                         }
                     }
                     world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
@@ -54,7 +66,7 @@ public class TileMiningWell extends TileMiner {
     }
 
     private boolean canBreak() {
-        return !world.isAirBlock(currentPos) && !BlockUtil.isUnbreakableBlock(getWorld(), currentPos, getOwner());
+        return !world.isAirBlock(currentPos) && !BlockUtil.isUnbreakableBlock(world, currentPos, getOwner());
     }
 
     private void nextPos() {

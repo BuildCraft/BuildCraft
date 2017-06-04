@@ -6,16 +6,17 @@
 
 package buildcraft.core.marker.volume;
 
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
 
 public enum EnumAddonSlot {
     EAST_UP_SOUTH(EnumFacing.AxisDirection.POSITIVE, EnumFacing.AxisDirection.POSITIVE, EnumFacing.AxisDirection.POSITIVE),

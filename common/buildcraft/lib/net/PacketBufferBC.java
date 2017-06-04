@@ -7,11 +7,12 @@
 package buildcraft.lib.net;
 
 import com.google.common.base.Charsets;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.MathHelper;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.MathHelper;
 
 /** Special {@link PacketBuffer} class that provides methods specific to "offset" reading and writing - like writing a
  * single bit to the stream, and auto-compacting it with simalir bits into a single byte. */

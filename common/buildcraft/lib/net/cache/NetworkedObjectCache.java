@@ -12,7 +12,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.function.Supplier;
 
-import buildcraft.lib.net.MessageManager;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
@@ -26,6 +25,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;

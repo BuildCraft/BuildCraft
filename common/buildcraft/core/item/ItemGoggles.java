@@ -6,6 +6,8 @@
 
 package buildcraft.core.item;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -16,8 +18,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.ISpecialArmor;
 
 import buildcraft.lib.item.IItemBuildCraft;
-
-import javax.annotation.Nonnull;
 
 public class ItemGoggles extends ItemArmor implements IItemBuildCraft, ISpecialArmor {
     private static final ArmorProperties HELMET_PROPERTIES = new ArmorProperties(0, 0, 0);

@@ -8,7 +8,11 @@ package buildcraft.lib.misc;
 
 import java.util.Map;
 
-import javax.vecmath.*;
+import javax.vecmath.AxisAngle4f;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
 
 import com.google.common.collect.ImmutableMap;
 

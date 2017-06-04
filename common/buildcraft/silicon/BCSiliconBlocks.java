@@ -13,6 +13,7 @@ import buildcraft.api.enums.EnumLaserTableType;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.tile.TileBC_Neptune;
+
 import buildcraft.silicon.block.BlockLaser;
 import buildcraft.silicon.block.BlockLaserTable;
 import buildcraft.silicon.tile.TileAdvancedCraftingTable;

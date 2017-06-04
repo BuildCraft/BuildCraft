@@ -6,12 +6,13 @@
 
 package buildcraft.transport.client.model.key;
 
-import buildcraft.api.transport.pluggable.PluggableModelKey;
+import java.util.Objects;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 
-import java.util.Objects;
+import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 public class KeyPlugFacade extends PluggableModelKey {
     public final IBlockState state;

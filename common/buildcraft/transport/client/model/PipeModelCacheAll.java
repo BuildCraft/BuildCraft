@@ -16,6 +16,7 @@ import net.minecraft.util.BlockRenderLayer;
 import buildcraft.lib.client.model.IModelCache;
 import buildcraft.lib.client.model.ModelCacheJoiner;
 import buildcraft.lib.client.model.ModelCacheJoiner.ModelKeyWrapper;
+
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;
 import buildcraft.transport.client.model.PipeModelCachePluggable.PluggableKey;

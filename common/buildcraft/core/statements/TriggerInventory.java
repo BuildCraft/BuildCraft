@@ -14,14 +14,19 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.api.items.IList;
-import buildcraft.api.statements.*;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.StatementParameterItemStack;
 
-import buildcraft.core.BCCoreSprites;
-import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
+
+import buildcraft.core.BCCoreSprites;
+import buildcraft.core.BCCoreStatements;
 
 public class TriggerInventory extends BCStatement implements ITriggerExternal {
 

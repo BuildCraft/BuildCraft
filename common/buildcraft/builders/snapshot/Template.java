@@ -6,24 +6,37 @@
 
 package buildcraft.builders.snapshot;
 
-import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.enums.EnumSnapshotType;
-import buildcraft.lib.misc.data.Box;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Rotation;
+import net.minecraft.util.math.BlockPos;
+
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.enums.EnumSnapshotType;
+
+import buildcraft.lib.misc.data.Box;
+
 public class Template extends Snapshot {
     public boolean[][][] data;
 
-    @Override
-    public <T extends ITileForSnapshotBuilder> SnapshotBuilder<T> createBuilder(T tile) {
-        // noinspection unchecked
-        return (SnapshotBuilder<T>) new TemplateBuilder((ITileForTemplateBuilder) tile);
+    public Template copy() {
+        Template template = new Template();
+        template.header = header;
+        template.size = size;
+        template.facing = facing;
+        template.offset = offset;
+        template.data = new boolean[size.getX()][size.getY()][size.getZ()];
+        for (int z = 0; z < size.getZ(); z++) {
+            for (int y = 0; y < size.getY(); y++) {
+                for (int x = 0; x < size.getX(); x++) {
+                    template.data[x][y][z] = data[x][y][z];
+                }
+            }
+        }
+        return template;
     }
 
     @Override

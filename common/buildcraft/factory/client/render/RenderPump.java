@@ -6,21 +6,24 @@
 
 package buildcraft.factory.client.render;
 
-import buildcraft.factory.tile.TilePump;
-import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
-import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
-import buildcraft.lib.client.render.tile.RenderPartCube;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
+
 import net.minecraftforge.client.model.animation.FastTESR;
 
-import javax.annotation.Nonnull;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
+import buildcraft.lib.client.render.tile.RenderPartCube;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+
+import buildcraft.factory.tile.TilePump;
 
 public class RenderPump extends FastTESR<TilePump> {
     private static final int[] COLOUR_POWER = new int[16];

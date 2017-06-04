@@ -10,7 +10,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.IntBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -155,13 +159,13 @@ public class SpriteHolderRegistry {
         @Override
         public double getInterpU(double u) {
             TextureAtlasSprite s = getSpriteChecking();
-            return s == null ? u : s.getInterpolatedU(u * 16);
+            return s == null ? u : s.getMinU() + u * (s.getMaxU() - s.getMinU());
         }
 
         @Override
         public double getInterpV(double v) {
             TextureAtlasSprite s = getSpriteChecking();
-            return s == null ? v : s.getInterpolatedV(v * 16);
+            return s == null ? v : s.getMinV() + v * (s.getMaxV() - s.getMinV());
         }
 
         @Override

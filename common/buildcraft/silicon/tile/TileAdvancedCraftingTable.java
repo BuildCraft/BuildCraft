@@ -6,18 +6,21 @@
 
 package buildcraft.silicon.tile;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.factory.util.IAutoCraft;
-import buildcraft.factory.util.WorkbenchCrafting;
-import buildcraft.lib.tile.item.ItemHandlerManager;
-import buildcraft.lib.tile.item.ItemHandlerSimple;
+import java.util.List;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.List;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.mj.MjAPI;
+
+import buildcraft.lib.tile.item.ItemHandlerManager;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
+
+import buildcraft.factory.util.IAutoCraft;
+import buildcraft.factory.util.WorkbenchCrafting;
 
 public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAutoCraft {
     private static final long POWER_REQ = 500 * MjAPI.MJ;

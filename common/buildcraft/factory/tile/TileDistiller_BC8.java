@@ -1,9 +1,8 @@
 /*
- * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * Copyright (c) 2016 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-
 package buildcraft.factory.tile;
 
 import java.io.IOException;
@@ -31,8 +30,6 @@ import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IRefineryRecipeManager.IDistillationRecipe;
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.core.BCCoreConfig;
-import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
@@ -48,6 +45,9 @@ import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+
+import buildcraft.core.BCCoreConfig;
+import buildcraft.factory.BCFactoryBlocks;
 
 public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final FunctionContext MODEL_FUNC_CTX;
@@ -158,13 +158,14 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         MODEL_POWER_MAX.value = MAX_MJ_PER_TICK / MjAPI.MJ;
         MODEL_FACING.value = "west";
 
-        IBlockState state = world.getBlockState(getPos());
+        IBlockState state = world.getBlockState(pos);
         if (state.getBlock() == BCFactoryBlocks.distiller) {
             MODEL_FACING.value = state.getValue(BlockBCBase_Neptune.PROP_FACING).getName();
         }
     }
 
-    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY,
+        float hitZ) {
         return false;
     }
 
@@ -179,7 +180,8 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         powerAvg.tick();
         changedSinceNetUpdate |= avgNow / MjAPI.MJ != powerAvg.getAverageLong() / MjAPI.MJ;
 
-        currentRecipe = BuildcraftRecipeRegistry.refineryRecipes.getDistilationRegistry().getRecipeForInput(tankIn.getFluid());
+        currentRecipe = BuildcraftRecipeRegistry.refineryRecipes.getDistilationRegistry().getRecipeForInput(tankIn
+            .getFluid());
         if (currentRecipe == null) {
             mjBattery.addPowerChecking(distillPower, false);
             distillPower = 0;
@@ -220,7 +222,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
             }
         }
 
-        if (updateTracker.markTimeIfDelay(getWorld())) {
+        if (updateTracker.markTimeIfDelay(world)) {
             sendNetworkUpdate(NET_RENDER_DATA);
         }
     }

@@ -28,15 +28,16 @@ import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.factory.BCFactoryModels;
-import buildcraft.factory.tile.TileDistiller_BC8;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.render.fluid.FluidSpriteType;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.VecUtil;
+
+import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.factory.BCFactoryModels;
+import buildcraft.factory.tile.TileDistiller_BC8;
 
 public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8> {
     private static final Map<EnumFacing, TankRenderSizes> TANK_SIZES = new EnumMap<>(EnumFacing.class);

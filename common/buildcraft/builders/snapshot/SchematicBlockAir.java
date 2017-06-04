@@ -6,20 +6,23 @@
 
 package buildcraft.builders.snapshot;
 
-import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.schematics.ISchematicBlock;
-import buildcraft.api.schematics.SchematicBlockContext;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.api.schematics.SchematicBlockContext;
 
 public final class SchematicBlockAir implements ISchematicBlock<SchematicBlockAir> {
     @SuppressWarnings("unused")
@@ -29,11 +32,6 @@ public final class SchematicBlockAir implements ISchematicBlock<SchematicBlockAi
 
     @Override
     public void init(SchematicBlockContext context) {
-    }
-
-    @Override
-    public int getLevel() {
-        return BLOCK_LEVEL;
     }
 
     @Override

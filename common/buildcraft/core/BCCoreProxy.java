@@ -13,13 +13,14 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.lib.client.render.DetatchedRenderer;
+import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
+
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.client.RenderTickListener;
 import buildcraft.core.client.render.RenderVolumeInWorld;
 import buildcraft.core.list.ContainerList;
 import buildcraft.core.list.GuiList;
-import buildcraft.lib.client.render.DetatchedRenderer;
-import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
 
 public abstract class BCCoreProxy implements IGuiHandler {
     @SidedProxy(modId = BCCore.MODID)

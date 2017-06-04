@@ -6,18 +6,21 @@
 
 package buildcraft.transport.wire;
 
-import buildcraft.api.transport.IWireManager;
-import buildcraft.api.transport.pipe.IPipeHolder;
-
-import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import io.netty.buffer.ByteBuf;
+
+import org.apache.commons.lang3.tuple.Pair;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.tileentity.TileEntity;
+
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+
+import buildcraft.api.transport.IWireManager;
+import buildcraft.api.transport.pipe.IPipeHolder;
 
 public class MessageWireSystemsPowered implements IMessage {
     private Map<Integer, Boolean> hashesPowered = new HashMap<>();

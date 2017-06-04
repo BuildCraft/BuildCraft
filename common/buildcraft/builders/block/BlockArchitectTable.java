@@ -18,10 +18,11 @@ import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
 
-import buildcraft.builders.BCBuildersGuis;
-import buildcraft.builders.tile.TileArchitectTable;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
+
+import buildcraft.builders.BCBuildersGuis;
+import buildcraft.builders.tile.TileArchitectTable;
 
 public class BlockArchitectTable extends BlockBCTile_Neptune implements IBlockWithFacing {
     public static final IProperty<Boolean> PROP_VALID = BuildCraftProperties.VALID;

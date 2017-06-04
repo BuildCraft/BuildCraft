@@ -10,9 +10,10 @@ import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.core.IPathProvider;
 
+import buildcraft.lib.tile.TileMarker;
+
 import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.PathConnection;
-import buildcraft.lib.tile.TileMarker;
 
 public class TileMarkerPath extends TileMarker<PathConnection> implements IPathProvider {
 

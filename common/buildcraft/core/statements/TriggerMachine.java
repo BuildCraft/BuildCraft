@@ -5,7 +5,6 @@
  */
 package buildcraft.core.statements;
 
-import buildcraft.api.tiles.TilesAPI;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
@@ -16,11 +15,13 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.tiles.TilesAPI;
+
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.lib.misc.LocaleUtil;
 
 import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.LocaleUtil;
 
 public class TriggerMachine extends BCStatement implements ITriggerExternal {
 

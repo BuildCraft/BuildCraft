@@ -6,14 +6,18 @@
 
 package buildcraft.lib.marker;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import buildcraft.lib.net.MessageManager;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -27,6 +31,7 @@ import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.MessageMarker;
 import buildcraft.lib.tile.TileMarker;
 

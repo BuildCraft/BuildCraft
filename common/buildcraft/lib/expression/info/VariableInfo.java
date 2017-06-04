@@ -17,13 +17,16 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
-import buildcraft.lib.expression.api.IVariableNode;
-import buildcraft.lib.expression.node.value.*;
-
 import gnu.trove.list.TDoubleList;
 import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.list.array.TLongArrayList;
+
+import buildcraft.lib.expression.api.IVariableNode;
+import buildcraft.lib.expression.node.value.NodeVariableBoolean;
+import buildcraft.lib.expression.node.value.NodeVariableDouble;
+import buildcraft.lib.expression.node.value.NodeVariableLong;
+import buildcraft.lib.expression.node.value.NodeVariableString;
 
 public abstract class VariableInfo<N extends IVariableNode> {
     public final N node;

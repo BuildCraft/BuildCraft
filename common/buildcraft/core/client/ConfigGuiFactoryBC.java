@@ -15,7 +15,6 @@ import net.minecraft.client.resources.I18n;
 
 import net.minecraftforge.fml.client.IModGuiFactory;
 import net.minecraftforge.fml.client.config.GuiConfig;
-import net.minecraftforge.fml.client.config.IConfigElement;
 
 import buildcraft.core.BCCoreConfig;
 

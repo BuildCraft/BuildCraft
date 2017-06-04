@@ -12,7 +12,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.statements.*;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.ITriggerExternalOverride;
+import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.statements.ITriggerInternalSided;
 
 /** Wrapper class around ITriggerInternal to allow for treating all triggers as internal triggers. It also provides the
  * background colour for sides. */

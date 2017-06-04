@@ -8,13 +8,18 @@ package buildcraft.transport.statements;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.gates.IGate;
-import buildcraft.api.statements.*;
+import buildcraft.api.statements.IActionInternalSided;
+import buildcraft.api.statements.IActionSingle;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
-import buildcraft.core.statements.BCStatement;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.LocaleUtil;
+
+import buildcraft.core.statements.BCStatement;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.plug.PluggablePulsar;

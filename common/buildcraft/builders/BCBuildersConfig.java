@@ -8,8 +8,9 @@ package buildcraft.builders;
 
 import net.minecraftforge.common.config.Property;
 
-import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.config.EnumRestartRequirement;
+
+import buildcraft.core.BCCoreConfig;
 
 public class BCBuildersConfig {
     /** Blueprints that save larger than this are stored externally, smaller ones are stored directly in the item. */

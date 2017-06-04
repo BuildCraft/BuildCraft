@@ -9,6 +9,8 @@ package buildcraft.lib.list;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -20,8 +22,6 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import buildcraft.api.lists.ListMatchHandler;
 
 import buildcraft.lib.misc.StackUtil;
-
-import javax.annotation.Nonnull;
 
 public class ListMatchHandlerFluid extends ListMatchHandler {
     private static final List<ItemStack> fluidHoldingItems = new ArrayList<>();

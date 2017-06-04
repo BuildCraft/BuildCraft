@@ -22,10 +22,11 @@ import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
 
-import buildcraft.factory.BCFactoryGuis;
-import buildcraft.factory.tile.TileChute;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
+
+import buildcraft.factory.BCFactoryGuis;
+import buildcraft.factory.tile.TileChute;
 
 public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing {
     public static final Map<EnumFacing, IProperty<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;

@@ -12,8 +12,8 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
-import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
+import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.data.IReference;
 
 public class ElementStatementParam extends ElementGuiSlot<IStatementParameter> {

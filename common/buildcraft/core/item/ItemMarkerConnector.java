@@ -1,18 +1,18 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
+/*
+ * Copyright (c) 2016 SpaceToad and the BuildCraft team
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 package buildcraft.core.item;
 
-import buildcraft.core.marker.volume.*;
-import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.marker.MarkerSubCache;
-import buildcraft.lib.misc.PositionUtil;
-import buildcraft.lib.misc.PositionUtil.Line;
-import buildcraft.lib.misc.PositionUtil.LineSkewResult;
-import buildcraft.lib.misc.VecUtil;
+import java.util.Iterator;
+import java.util.stream.Collectors;
+
 import com.google.common.collect.ImmutableList;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -24,10 +24,20 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.Iterator;
-import java.util.stream.Collectors;
+import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.marker.MarkerSubCache;
+import buildcraft.lib.misc.PositionUtil;
+import buildcraft.lib.misc.PositionUtil.Line;
+import buildcraft.lib.misc.PositionUtil.LineSkewResult;
+import buildcraft.lib.misc.VecUtil;
+
+import buildcraft.core.marker.volume.Addon;
+import buildcraft.core.marker.volume.EnumAddonSlot;
+import buildcraft.core.marker.volume.Lock;
+import buildcraft.core.marker.volume.VolumeBox;
+import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 
 public class ItemMarkerConnector extends ItemBC_Neptune {
     public ItemMarkerConnector(String id) {
@@ -61,13 +71,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
             }
         }
         if (best != null) {
-            if (cache.tryConnect(best.marker1, best.marker2)) {
-                return true;
-            } else if (cache.tryConnect(best.marker2, best.marker1)) {
-                return true;
-            } else {
-                return false;
-            }
+            return cache.tryConnect(best.marker1, best.marker2) || cache.tryConnect(best.marker2, best.marker1);
         }
         return false;
     }
@@ -122,7 +126,8 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
     //
     // ##################################
 
-    private ActionResult<ItemStack> newVolumeCacheStuff_onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    private ActionResult<ItemStack> newVolumeCacheStuff_onItemRightClick(ItemStack stack, World world,
+        EntityPlayer player, EnumHand hand) {
         if (world.isRemote) {
             // only run this on the client
             return new ActionResult<>(EnumActionResult.PASS, stack);
@@ -139,13 +144,9 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
         VolumeBox addonBox = selectingBoxAndSlot.getLeft();
         EnumAddonSlot addonSlot = selectingBoxAndSlot.getRight();
         if (addonBox != null && addonSlot != null) {
-            if (
-                    addonBox.addons.containsKey(addonSlot) &&
-                            addonBox.getLockTargetsStream()
-                                    .noneMatch(target ->
-                                            target instanceof Lock.Target.TargetAddon &&
-                                                    ((Lock.Target.TargetAddon) target).slot == addonSlot)
-                    ) {
+            if (addonBox.addons.containsKey(addonSlot) && addonBox.getLockTargetsStream().noneMatch(
+                target -> target instanceof Lock.Target.TargetAddon
+                    && ((Lock.Target.TargetAddon) target).slot == addonSlot)) {
                 if (player.isSneaking()) {
                     addonBox.addons.get(addonSlot).onRemoved();
                     addonBox.addons.remove(addonSlot);
@@ -157,7 +158,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
             }
         } else if (player.isSneaking()) {
             if (currentEditing == null) {
-                for (Iterator<VolumeBox> iterator = volumeBoxes.boxes.iterator(); iterator.hasNext(); ) {
+                for (Iterator<VolumeBox> iterator = volumeBoxes.boxes.iterator(); iterator.hasNext();) {
                     VolumeBox box = iterator.next();
                     if (box.box.getBoundingBox().calculateIntercept(start, end) != null) {
                         box.addons.values().forEach(Addon::onRemoved);
@@ -177,15 +178,8 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                 double bestDist = 10000;
                 BlockPos editing = null;
 
-                for (
-                        VolumeBox box :
-                        volumeBoxes.boxes.stream()
-                                .filter(box ->
-                                        box.getLockTargetsStream()
-                                                .noneMatch(Lock.Target.TargetResize.class::isInstance)
-                                )
-                                .collect(Collectors.toList())
-                        ) {
+                for (VolumeBox box : volumeBoxes.boxes.stream().filter(box -> box.getLockTargetsStream().noneMatch(
+                    Lock.Target.TargetResize.class::isInstance)).collect(Collectors.toList())) {
                     for (BlockPos p : PositionUtil.getCorners(box.box.min(), box.box.max())) {
                         RayTraceResult ray = new AxisAlignedBB(p).calculateIntercept(start, end);
                         if (ray != null) {
@@ -215,7 +209,8 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                     if (editing.getZ() == min.getZ()) {
                         held = VecUtil.replaceValue(held, EnumFacing.Axis.Z, max.getZ());
                     }
-                    bestBox.setHeldDistOldMinOldMax(held, Math.max(1.5, bestDist + 0.5), bestBox.box.min(), bestBox.box.max());
+                    bestBox.setHeldDistOldMinOldMax(held, Math.max(1.5, bestDist + 0.5), bestBox.box.min(), bestBox.box
+                        .max());
                     volumeBoxes.markDirty();
                     return new ActionResult<>(EnumActionResult.SUCCESS, stack);
                 }

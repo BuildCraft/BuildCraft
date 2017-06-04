@@ -1,6 +1,8 @@
-/* Copyright (c) 2017 SpaceToad and the BuildCraft team This Source Code Form is subject to the terms of the Mozilla
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team This Source Code Form is subject to the terms of the Mozilla
  * Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at
- * https://mozilla.org/MPL/2.0/ */
+ * https://mozilla.org/MPL/2.0/
+ */
 
 package buildcraft.transport.block;
 
@@ -70,7 +72,8 @@ import buildcraft.transport.tile.TilePipeHolder;
 import buildcraft.transport.wire.EnumWireBetween;
 
 public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaintHandler {
-    public static final IUnlistedProperty<WeakReference<TilePipeHolder>> PROP_TILE = new UnlistedNonNullProperty<>("tile");
+    public static final IUnlistedProperty<WeakReference<TilePipeHolder>> PROP_TILE = new UnlistedNonNullProperty<>(
+        "tile");
 
     private static final AxisAlignedBB BOX_CENTER = new AxisAlignedBB(0.25, 0.25, 0.25, 0.75, 0.75, 0.75);
     private static final AxisAlignedBB BOX_DOWN = new AxisAlignedBB(0.25, 0, 0.25, 0.75, 0.25, 0.75);
@@ -119,14 +122,18 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     // Collisions
 
     @Override
-    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn, boolean isPistonMoving) {
+    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<
+        AxisAlignedBB> collidingBoxes, Entity entityIn, boolean isPistonMoving) {
         TilePipeHolder tile = getPipe(world, pos, false);
         if (tile == null) {
+            addCollisionBoxToList(pos, entityBox, collidingBoxes, FULL_BLOCK_AABB);
             return;
         }
+        boolean added = false;
         Pipe pipe = tile.getPipe();
         if (pipe != null) {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, BOX_CENTER);
+            added = true;
             for (EnumFacing face : EnumFacing.VALUES) {
                 float conSize = pipe.getConnectedDist(face);
                 if (conSize > 0) {
@@ -148,13 +155,19 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             if (pluggable != null) {
                 AxisAlignedBB bb = pluggable.getBoundingBox();
                 addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
+                added = true;
             }
         }
         for (EnumWirePart part : tile.getWireManager().parts.keySet()) {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, part.boundingBox);
+            added = true;
         }
         for (EnumWireBetween between : tile.getWireManager().betweens.keySet()) {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, between.boundingBox);
+            added = true;
+        }
+        if (!added) {
+            addCollisionBoxToList(pos, entityBox, collidingBoxes, FULL_BLOCK_AABB);
         }
     }
 
@@ -179,11 +192,13 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     public RayTraceResult rayTrace(World world, BlockPos pos, Vec3d start, Vec3d end) {
         TilePipeHolder tile = getPipe(world, pos, false);
         if (tile == null) {
-            return null;
+            return computeTrace(null, pos, start, end, FULL_BLOCK_AABB, 400);
         }
         RayTraceResult best = null;
         Pipe pipe = tile.getPipe();
+        boolean computed = false;
         if (pipe != null) {
+            computed = true;
             best = computeTrace(best, pos, start, end, BOX_CENTER, 0);
             for (EnumFacing face : EnumFacing.VALUES) {
                 float conSize = pipe.getConnectedDist(face);
@@ -206,13 +221,19 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             if (pluggable != null) {
                 AxisAlignedBB bb = pluggable.getBoundingBox();
                 best = computeTrace(best, pos, start, end, bb, face.ordinal() + 1 + 6);
+                computed = true;
             }
         }
         for (EnumWirePart part : tile.getWireManager().parts.keySet()) {
             best = computeTrace(best, pos, start, end, part.boundingBox, part.ordinal() + 1 + 6 + 6);
+            computed = true;
         }
         for (EnumWireBetween between : tile.getWireManager().betweens.keySet()) {
             best = computeTrace(best, pos, start, end, between.boundingBox, between.ordinal() + 1 + 6 + 6 + 8);
+            computed = true;
+        }
+        if (!computed) {
+            return computeTrace(null, pos, start, end, FULL_BLOCK_AABB, 400);
         }
         return best;
     }
@@ -241,7 +262,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         return best;
     }
 
-    private RayTraceResult computeTrace(RayTraceResult lastBest, BlockPos pos, Vec3d start, Vec3d end, AxisAlignedBB aabb, int part) {
+    private RayTraceResult computeTrace(RayTraceResult lastBest, BlockPos pos, Vec3d start, Vec3d end,
+        AxisAlignedBB aabb, int part) {
         RayTraceResult next = super.rayTrace(pos, start, end, aabb);
         if (next == null) {
             return lastBest;
@@ -257,7 +279,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
 
     @Nullable
     public static EnumFacing getPartSideHit(RayTraceResult trace) {
-        if (trace.subHit == 0) {
+        if (trace.subHit <= 0) {
             return trace.sideHit;
         }
         if (trace.subHit <= 6) {
@@ -296,7 +318,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World world, BlockPos pos) {
         TilePipeHolder tile = getPipe(world, pos, false);
         if (tile == null) {
-            return null;
+            return FULL_BLOCK_AABB;
         }
         RayTraceResult trace = Minecraft.getMinecraft().objectMouseOver;
         if (trace == null || trace.subHit < 0 || !pos.equals(trace.getBlockPos())) {
@@ -304,7 +326,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             return FULL_BLOCK_AABB;
         }
         int part = trace.subHit;
-        AxisAlignedBB aabb = null;
+        AxisAlignedBB aabb = FULL_BLOCK_AABB;
         if (part == 0) {
             aabb = BOX_CENTER;
         } else if (part < 1 + 6) {
@@ -336,9 +358,9 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             aabb = wireBetween.boundingBox;
         }
         if (part >= 1 + 6 + 6) {
-            return aabb == null ? null : aabb.offset(pos);
+            return aabb.offset(pos);
         } else {
-            return aabb == null ? null : aabb.expandXyz(1 / 32.0).offset(pos);
+            return (aabb == FULL_BLOCK_AABB ? aabb : aabb.expandXyz(1 / 32.0)).offset(pos);
         }
     }
 
@@ -354,7 +376,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     }
 
     @Override
-    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos,
+        EntityPlayer player) {
         TilePipeHolder tile = getPipe(world, pos, false);
         if (tile == null || target == null) {
             return ItemStack.EMPTY;
@@ -388,14 +411,16 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             if (part != null && tile.wireManager.getColorOfPart(part) != null) {
                 return new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(part).getMetadata());
             } else if (between != null && tile.wireManager.getColorOfPart(between.parts[0]) != null) {
-                return new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(between.parts[0]).getMetadata());
+                return new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(between.parts[0])
+                    .getMetadata());
             }
         }
         return null;
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+        EnumFacing side, float hitX, float hitY, float hitZ) {
         TilePipeHolder tile = getPipe(world, pos, false);
         if (tile == null) {
             return false;
@@ -445,11 +470,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                     attachTile = getPipe(world, node.pos, false);
                 }
             } else {
-                wirePart = EnumWirePart.get(
-                    (trace.hitVec.xCoord % 1 + 1) % 1 > 0.5,
-                    (trace.hitVec.yCoord % 1 + 1) % 1 > 0.5,
-                    (trace.hitVec.zCoord % 1 + 1) % 1 > 0.5
-                );
+                wirePart = EnumWirePart.get((trace.hitVec.xCoord % 1 + 1) % 1 > 0.5, (trace.hitVec.yCoord % 1 + 1)
+                    % 1 > 0.5, (trace.hitVec.zCoord % 1 + 1) % 1 > 0.5);
             }
             if (wirePart != null && attachTile != null) {
                 attachTile.getWireManager().addPart(wirePart, EnumDyeColor.byMetadata(held.getMetadata()));
@@ -469,7 +491,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     }
 
     @Override
-    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
+    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player,
+        boolean willHarvest) {
         if (world.isRemote) {
             return false;
         }
@@ -506,7 +529,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             tile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
             return false;
         } else if (between != null) {
-            toDrop.add(new ItemStack(BCTransportItems.wire, between.to == null ? 2 : 1, tile.wireManager.getColorOfPart(between.parts[0]).getMetadata()));
+            toDrop.add(new ItemStack(BCTransportItems.wire, between.to == null ? 2 : 1, tile.wireManager.getColorOfPart(
+                between.parts[0]).getMetadata()));
             if (between.to == null) {
                 tile.wireManager.removeParts(Arrays.asList(between.parts));
             } else {
@@ -553,13 +577,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     public float getExplosionResistance(World world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
         if (exploder != null) {
             Vec3d subtract = exploder.getPositionVector().subtract(new Vec3d(pos).add(VecUtil.VEC_HALF)).normalize();
-            EnumFacing side = Arrays.stream(EnumFacing.VALUES)
-                .min(
-                    Comparator.comparing(
-                        facing -> new Vec3d(facing.getDirectionVec()).distanceTo(subtract)
-                    )
-                )
-                .orElseThrow(IllegalArgumentException::new);
+            EnumFacing side = Arrays.stream(EnumFacing.VALUES).min(Comparator.comparing(facing -> new Vec3d(facing
+                .getDirectionVec()).distanceTo(subtract))).orElseThrow(IllegalArgumentException::new);
             TilePipeHolder tile = getPipe(world, pos, true);
             if (tile != null) {
                 PipePluggable pluggable = tile.getPluggable(side);
@@ -587,7 +606,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     }
 
     @Override
-    public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {
+    public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te,
+        ItemStack stack) {
         player.addStat(StatList.getBlockStats(this));
         player.addExhaustion(0.005F);
     }
@@ -648,7 +668,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     // Block overrides
 
     @Override
-    public boolean addLandingEffects(IBlockState state, WorldServer worldObj, BlockPos blockPosition, IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles) {
+    public boolean addLandingEffects(IBlockState state, WorldServer worldObj, BlockPos blockPosition,
+        IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles) {
         return super.addLandingEffects(state, worldObj, blockPosition, iblockstate, entity, numberOfParticles);
     }
 
@@ -667,7 +688,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     // paint
 
     @Override
-    public EnumActionResult attemptPaint(World world, BlockPos pos, IBlockState state, Vec3d hitPos, EnumFacing hitSide, EnumDyeColor paintColour) {
+    public EnumActionResult attemptPaint(World world, BlockPos pos, IBlockState state, Vec3d hitPos, EnumFacing hitSide,
+        EnumDyeColor paintColour) {
         TilePipeHolder tile = getPipe(world, pos, true);
         if (tile == null) {
             return EnumActionResult.PASS;
