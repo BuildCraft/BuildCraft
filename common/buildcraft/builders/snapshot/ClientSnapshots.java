@@ -34,6 +34,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.schematics.ISchematicEntity;
 
+import buildcraft.lib.dimension.FakeWorldClient;
+import buildcraft.lib.dimension.FakeWorldServer;
 import buildcraft.lib.net.MessageManager;
 
 public enum ClientSnapshots {
@@ -41,7 +43,7 @@ public enum ClientSnapshots {
 
     private final List<Snapshot> snapshots = new ArrayList<>();
     private final List<Snapshot.Header> pending = new ArrayList<>();
-    private final Map<Snapshot.Header, FakeWorld> worlds = new HashMap<>();
+    private final Map<Snapshot.Header, FakeWorldClient> worlds = new HashMap<>();
     private final Map<Snapshot.Header, VertexBuffer> buffers = new HashMap<>();
 
     public Snapshot getSnapshot(Snapshot.Header header) {
@@ -72,12 +74,12 @@ public enum ClientSnapshots {
 
     @SideOnly(Side.CLIENT)
     public void renderSnapshot(Snapshot snapshot, int offsetX, int offsetY, int sizeX, int sizeY) {
-        FakeWorld world = worlds.computeIfAbsent(snapshot.header, localHeader -> {
-            FakeWorld localWorld = new FakeWorld();
+        FakeWorldClient world = worlds.computeIfAbsent(snapshot.header, localHeader -> {
+            FakeWorldClient localWorld = new FakeWorldClient();
             if (snapshot instanceof Blueprint) {
                 localWorld.uploadBlueprint((Blueprint) snapshot, false);
                 for (ISchematicEntity<?> schematicEntity : ((Blueprint) snapshot).entities) {
-                    schematicEntity.build(localWorld, FakeWorld.BLUEPRINT_OFFSET);
+                    schematicEntity.build(localWorld, FakeWorldServer.BLUEPRINT_OFFSET);
                 }
             }
             if (snapshot instanceof Template) {
@@ -86,7 +88,7 @@ public enum ClientSnapshots {
                         for (int x = 0; x < snapshot.size.getX(); x++) {
                             if (((Template) snapshot).data[x][y][z]) {
                                 localWorld.setBlockState(
-                                    new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET),
+                                    new BlockPos(x, y, z).add(FakeWorldServer.BLUEPRINT_OFFSET),
                                     Blocks.QUARTZ_BLOCK.getDefaultState()
                                 );
                             }
@@ -106,11 +108,11 @@ public enum ClientSnapshots {
             for (int z = 0; z < snapshot.size.getZ(); z++) {
                 for (int y = 0; y < snapshot.size.getY(); y++) {
                     for (int x = 0; x < snapshot.size.getX(); x++) {
-                        BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
+                        BlockPos pos = new BlockPos(x, y, z).add(FakeWorldServer.BLUEPRINT_OFFSET);
                         localBuffer.setTranslation(
-                            -FakeWorld.BLUEPRINT_OFFSET.getX(),
-                            -FakeWorld.BLUEPRINT_OFFSET.getY(),
-                            -FakeWorld.BLUEPRINT_OFFSET.getZ()
+                            -FakeWorldServer.BLUEPRINT_OFFSET.getX(),
+                            -FakeWorldServer.BLUEPRINT_OFFSET.getY(),
+                            -FakeWorldServer.BLUEPRINT_OFFSET.getZ()
                         );
                         Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlock(
                             world.getBlockState(pos),
@@ -159,14 +161,14 @@ public enum ClientSnapshots {
             for (int z = 0; z < snapshot.size.getZ(); z++) {
                 for (int y = 0; y < snapshot.size.getY(); y++) {
                     for (int x = 0; x < snapshot.size.getX(); x++) {
-                        BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
+                        BlockPos pos = new BlockPos(x, y, z).add(FakeWorldServer.BLUEPRINT_OFFSET);
                         GlStateManager.pushAttrib();
                         // noinspection ConstantConditions
                         TileEntityRendererDispatcher.instance.renderTileEntityAt(
                             world.getTileEntity(pos),
-                            pos.getX() - FakeWorld.BLUEPRINT_OFFSET.getX(),
-                            pos.getY() - FakeWorld.BLUEPRINT_OFFSET.getY(),
-                            pos.getZ() - FakeWorld.BLUEPRINT_OFFSET.getZ(),
+                            pos.getX() - FakeWorldServer.BLUEPRINT_OFFSET.getX(),
+                            pos.getY() - FakeWorldServer.BLUEPRINT_OFFSET.getY(),
+                            pos.getZ() - FakeWorldServer.BLUEPRINT_OFFSET.getZ(),
                             0
                         );
                         GlStateManager.popAttrib();
@@ -211,9 +213,9 @@ public enum ClientSnapshots {
             GlStateManager.pushAttrib();
             Minecraft.getMinecraft().getRenderManager().doRenderEntity(
                 entity,
-                pos.xCoord - FakeWorld.BLUEPRINT_OFFSET.getX(),
-                pos.yCoord - FakeWorld.BLUEPRINT_OFFSET.getY(),
-                pos.zCoord - FakeWorld.BLUEPRINT_OFFSET.getZ(),
+                pos.xCoord - FakeWorldServer.BLUEPRINT_OFFSET.getX(),
+                pos.yCoord - FakeWorldServer.BLUEPRINT_OFFSET.getY(),
+                pos.zCoord - FakeWorldServer.BLUEPRINT_OFFSET.getZ(),
                 0,
                 0,
                 true

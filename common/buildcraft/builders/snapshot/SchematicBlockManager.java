@@ -7,7 +7,6 @@
 package buildcraft.builders.snapshot;
 
 import java.util.List;
-
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.Lists;
@@ -29,6 +28,8 @@ import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.SchematicBlockContext;
 import buildcraft.api.schematics.SchematicBlockFactory;
 import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
+
+import buildcraft.lib.dimension.FakeWorldServer;
 
 public class SchematicBlockManager {
     public static ISchematicBlock<?> getSchematicBlock(SchematicBlockContext context) {
@@ -66,24 +67,24 @@ public class SchematicBlockManager {
             [blueprint.size.getX()]
             [blueprint.size.getY()]
             [blueprint.size.getZ()];
-        FakeWorld world = FakeWorld.INSTANCE;
+        FakeWorldServer world = FakeWorldServer.INSTANCE;
         world.uploadBlueprint(blueprint, true);
         world.editable = false;
         for (int z = 0; z < blueprint.size.getZ(); z++) {
             for (int y = 0; y < blueprint.size.getY(); y++) {
                 for (int x = 0; x < blueprint.size.getX(); x++) {
-                    BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
+                    BlockPos pos = new BlockPos(x, y, z).add(FakeWorldServer.BLUEPRINT_OFFSET);
                     ISchematicBlock<?> schematicBlock = blueprint.palette.get(
                         blueprint.data
-                            [pos.getX() - FakeWorld.BLUEPRINT_OFFSET.getX()]
-                            [pos.getY() - FakeWorld.BLUEPRINT_OFFSET.getY()]
-                            [pos.getZ() - FakeWorld.BLUEPRINT_OFFSET.getZ()]
+                            [pos.getX() - FakeWorldServer.BLUEPRINT_OFFSET.getX()]
+                            [pos.getY() - FakeWorldServer.BLUEPRINT_OFFSET.getY()]
+                            [pos.getZ() - FakeWorldServer.BLUEPRINT_OFFSET.getZ()]
                     );
                     IBlockState blockState = world.getBlockState(pos);
                     Block block = blockState.getBlock();
                     SchematicBlockContext schematicBlockContext = new SchematicBlockContext(
                         world,
-                        FakeWorld.BLUEPRINT_OFFSET,
+                            FakeWorldServer.BLUEPRINT_OFFSET,
                         pos,
                         blockState,
                         block

@@ -14,7 +14,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -45,6 +44,7 @@ import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.SchematicBlockContext;
 
+import buildcraft.lib.dimension.FakeWorldServer;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 
@@ -244,8 +244,8 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
             ));
         }
         if (rules.stream().noneMatch(rule -> rule.doNotCopyRequiredItemsFromBreakBlockDrops)) {
-            if (context.world instanceof FakeWorld) {
-                requiredItems.addAll(((FakeWorld) context.world).breakBlockAndGetDrops(context.pos));
+            if (context.world instanceof FakeWorldServer) {
+                requiredItems.addAll(((FakeWorldServer) context.world).breakBlockAndGetDrops(context.pos));
             }
         }
         if (rules.stream().map(rule -> rule.requiredItems).anyMatch(Objects::nonNull)) {

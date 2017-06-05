@@ -13,7 +13,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -43,6 +42,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.facades.FacadeType;
 
+import buildcraft.lib.dimension.FakeWorldServer;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.misc.MessageUtil;
@@ -51,7 +51,6 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
-import buildcraft.builders.snapshot.FakeWorld;
 
 public class FacadeStateManager {
     public static final SortedMap<IBlockState, FacadeBlockStateInfo> validFacadeStates = new TreeMap<>(BlockUtil
@@ -180,7 +179,7 @@ public class FacadeStateManager {
             this.varyingProperties = varyingProperties;
             this.isTransparent = !state.isOpaqueCube();
             this.isVisible = !requiredStack.isEmpty();
-            FakeWorld world = FakeWorld.INSTANCE;
+            FakeWorldServer world = FakeWorldServer.INSTANCE;
             world.clear();
             world.setBlockState(BlockPos.ORIGIN, state);
             for (EnumFacing side : EnumFacing.VALUES) {

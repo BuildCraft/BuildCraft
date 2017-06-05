@@ -4,22 +4,23 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
 
-package buildcraft.builders.snapshot;
+package buildcraft.lib.dimension;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 
+
 public class FakeChunkProvider implements IChunkProvider {
-    private final FakeWorld world;
+    private final World world;
     public final Map<ChunkPos, Chunk> chunks = new HashMap<>();
 
-    public FakeChunkProvider(FakeWorld world) {
+    public FakeChunkProvider(World world) {
         this.world = world;
     }
 
@@ -28,11 +29,18 @@ public class FakeChunkProvider implements IChunkProvider {
     public Chunk getLoadedChunk(int x, int z) {
         ChunkPos chunkPos = new ChunkPos(x, z);
         if (!chunks.containsKey(chunkPos)) {
-            chunks.put(chunkPos, new Chunk(world, x, z) {
+            Chunk chunk = new Chunk(world, x, z) {
                 @Override
                 public void generateSkylightMap() {
                 }
-            });
+
+                @Override
+                public boolean isEmpty() {
+                    return super.isEmpty();
+                }
+            };
+            chunk.onChunkLoad();
+            chunks.put(chunkPos, chunk);
         }
         return chunks.get(chunkPos);
     }

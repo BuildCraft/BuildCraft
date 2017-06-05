@@ -9,7 +9,6 @@ package buildcraft.builders.snapshot;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.Lists;
@@ -30,6 +29,8 @@ import buildcraft.api.schematics.ISchematicEntity;
 import buildcraft.api.schematics.SchematicEntityContext;
 import buildcraft.api.schematics.SchematicEntityFactory;
 import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
+
+import buildcraft.lib.dimension.FakeWorldServer;
 
 public class SchematicEntityManager {
     public static ISchematicEntity<?> getSchematicEntity(SchematicEntityContext context) {
@@ -67,14 +68,14 @@ public class SchematicEntityManager {
                 Collections.emptyList()
             )
         );
-        FakeWorld world = FakeWorld.INSTANCE;
+        FakeWorldServer world = FakeWorldServer.INSTANCE;
         world.uploadBlueprint(blueprint, true);
         int i = 0;
         for (ISchematicEntity<?> schematicEntity : blueprint.entities) {
-            Entity entity = schematicEntity.buildWithoutChecks(world, FakeWorld.BLUEPRINT_OFFSET);
+            Entity entity = schematicEntity.buildWithoutChecks(world, FakeWorldServer.BLUEPRINT_OFFSET);
             if (entity != null) {
                 world.editable = false;
-                SchematicEntityContext schematicEntityContext = new SchematicEntityContext(world, FakeWorld.BLUEPRINT_OFFSET, entity);
+                SchematicEntityContext schematicEntityContext = new SchematicEntityContext(world, FakeWorldServer.BLUEPRINT_OFFSET, entity);
                 requiredItems.set(i, schematicEntity.computeRequiredItems(schematicEntityContext));
                 requiredFluids.set(i, schematicEntity.computeRequiredFluids(schematicEntityContext));
                 world.editable = true;
