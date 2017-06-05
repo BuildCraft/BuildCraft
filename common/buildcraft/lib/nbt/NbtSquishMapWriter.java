@@ -34,12 +34,12 @@ import buildcraft.api.data.NbtSquishConstants;
 
 import buildcraft.lib.misc.data.CompactingBitSet;
 
-class NBTSquishMapWriter {
+class NbtSquishMapWriter {
     static boolean debug;
     static final boolean sort = true;
     static final Boolean packList = null;
     static final Profiler profiler = NbtSquisher.profiler;
-    private final NBTSquishMap map;
+    private final NbtSquishMap map;
 
     private static void log(String string) {
         if (debug) {
@@ -49,12 +49,12 @@ class NBTSquishMapWriter {
         }
     }
 
-    public NBTSquishMapWriter(NBTSquishMap map) {
+    public NbtSquishMapWriter(NbtSquishMap map) {
         this.map = map;
     }
 
-    public static void write(NBTSquishMap map, DataOutput to) throws IOException {
-        new NBTSquishMapWriter(map).write(to);
+    public static void write(NbtSquishMap map, DataOutput to) throws IOException {
+        new NbtSquishMapWriter(map).write(to);
     }
 
     private void write(DataOutput to) throws IOException {

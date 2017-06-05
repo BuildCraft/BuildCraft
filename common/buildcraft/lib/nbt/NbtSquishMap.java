@@ -35,7 +35,7 @@ import net.minecraftforge.common.util.Constants;
 import buildcraft.api.core.InvalidInputDataException;
 
 /** Defines a map of commonly used tags. */
-public class NBTSquishMap {
+public class NbtSquishMap {
     // TODO: Try adding "ImmutableTagCompound" and "ImmutableTagList" to see if the equals() and hashCode() of compounds
     // is a problem atm
     // perhaps use "TCustomHashSet" with a simalir deduplicating functionality of FoamFix?
@@ -56,7 +56,7 @@ public class NBTSquishMap {
     final List<String> strings = new ArrayList<>();
     final List<NBTBase> complex = new ArrayList<>();
 
-    public NBTSquishMap() {}
+    public NbtSquishMap() {}
 
     public void addTag(NBTBase nbt) {
         if (nbt instanceof NBTTagString) {

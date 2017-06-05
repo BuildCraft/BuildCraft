@@ -25,14 +25,14 @@ import buildcraft.api.data.NbtSquishConstants;
 
 import buildcraft.lib.misc.data.DecompactingBitSet;
 
-class NBTSquishMapReader {
-    private final NBTSquishMap map = new NBTSquishMap();
+class NbtSquishMapReader {
+    private final NbtSquishMap map = new NbtSquishMap();
 
-    public static NBTSquishMap read(DataInput in) throws IOException {
-        return new NBTSquishMapReader().readInternal(in);
+    public static NbtSquishMap read(DataInput in) throws IOException {
+        return new NbtSquishMapReader().readInternal(in);
     }
 
-    private NBTSquishMap readInternal(DataInput in) throws IOException {
+    private NbtSquishMap readInternal(DataInput in) throws IOException {
         WrittenType type = WrittenType.readType(in);
         int flags = in.readInt();
 

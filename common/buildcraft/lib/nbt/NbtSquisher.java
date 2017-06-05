@@ -171,17 +171,17 @@ public class NbtSquisher {
     }
 
     private static NBTTagCompound readBuildCraftV1Direct(DataInput in) throws IOException {
-        NBTSquishMap map = NBTSquishMapReader.read(in);
+        NbtSquishMap map = NbtSquishMapReader.read(in);
         WrittenType type = map.getWrittenType();
         int index = type.readIndex(in);
         return map.getFullyReadComp(index);
     }
 
     private static void squishBuildCraftV1Direct(NBTTagCompound nbt, DataOutput to) throws IOException {
-        NBTSquishMap map = new NBTSquishMap();
+        NbtSquishMap map = new NbtSquishMap();
         map.addTag(nbt);
-        NBTSquishMapWriter.debug = debugBuffer != null;
-        NBTSquishMapWriter.write(map, to);
+        NbtSquishMapWriter.debug = debugBuffer != null;
+        NbtSquishMapWriter.write(map, to);
         WrittenType type = map.getWrittenType();
         type.writeIndex(to, map.indexOfTag(nbt));
     }
