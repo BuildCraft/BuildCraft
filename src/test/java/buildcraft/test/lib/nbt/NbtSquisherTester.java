@@ -3,6 +3,7 @@ package buildcraft.test.lib.nbt;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -19,6 +20,8 @@ import net.minecraft.nbt.NBTTagFloat;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.profiler.Profiler;
 
+import buildcraft.api.data.NbtSquishConstants;
+
 import buildcraft.lib.misc.HashUtil;
 import buildcraft.lib.nbt.NbtSquisher;
 
@@ -30,6 +33,38 @@ public class NbtSquisherTester {
 
     public static final NBTTagCompound nbt = genNbt(64 * 64 * 64);
     public static final NBTTagCompound nbtSmall = genNbt(10);
+
+    @Test
+    public void printSimpleBytes() {
+        byte[] bytes = NbtSquisher.squish(nbtSmall, NbtSquishConstants.BUILDCRAFT_V1);
+        char[] chars = new char[32];
+        int len = bytes.length / 32;
+        if (len * 32 < bytes.length) {
+            len++;
+        }
+        for (int y = 0; y < len; y++) {
+            for (int x = 0; x < 32; x++) {
+                int idx = y * 32 + x;
+                if (idx >= bytes.length) {
+                    Arrays.fill(chars, x, 32, ' ');
+                    break;
+                }
+                byte val = bytes[idx];
+                int ubyte = Byte.toUnsignedInt(val);
+                char c = (char) ubyte;
+                if (!Character.isDefined(c) || Character.isISOControl(c)) {
+                    c = '.';
+                }
+                chars[x] = c;
+                String hex = Integer.toHexString(ubyte);
+                if (hex.length() < 2) {
+                    hex = " " + hex;
+                }
+                System.out.print(hex + " ");
+            }
+            System.out.println("|" + new String(chars));
+        }
+    }
 
     @Test
     public void testSimpleNBT() throws IOException {
@@ -122,7 +157,7 @@ public class NbtSquisherTester {
         long[] times = new long[8];
 
         Stopwatch watch = Stopwatch.createStarted();
-        byte[] bytes = NbtSquisher.squishVanillaUncompressed(nbt);
+        byte[] bytes = NbtSquisher.squish(nbt, NbtSquishConstants.VANILLA);
         watch.stop();
         TimeUnit timeUnit = TimeUnit.MICROSECONDS;
         if (print) {
@@ -130,6 +165,9 @@ public class NbtSquisherTester {
             printBytesData("vanilla   [un|wr] took " + padMicroseconds(times[0], msPadLength), bytes);
         }
         watch.reset();
+
+        NBTTagCompound to = NbtSquisher.expand(bytes.clone());
+        checkEquality(nbt, to);
 
         watch.start();
         byte[] hash = HashUtil.computeHash(bytes);
@@ -140,11 +178,8 @@ public class NbtSquisherTester {
         }
         watch.reset();
 
-        NBTTagCompound to = NbtSquisher.expand(bytes.clone());
-        checkEquality(nbt, to);
-
         watch.start();
-        bytes = NbtSquisher.squishVanilla(nbt);
+        bytes = NbtSquisher.squish(nbt, NbtSquishConstants.VANILLA_COMPRESSED);
         watch.stop();
         if (print) {
             times[1] = watch.elapsed(timeUnit);
@@ -165,13 +200,16 @@ public class NbtSquisherTester {
         watch.reset();
 
         watch.start();
-        bytes = NbtSquisher.squishBuildCraftV1Uncompressed(nbt);
+        bytes = NbtSquisher.squish(nbt, NbtSquishConstants.BUILDCRAFT_V1);
         watch.stop();
         if (print) {
             times[2] = watch.elapsed(timeUnit);
             printBytesData("buildcraft[un|wr] took " + padMicroseconds(times[2], msPadLength), bytes);
         }
         watch.reset();
+
+        to = NbtSquisher.expand(bytes.clone());
+        checkEquality(nbt, to);
 
         watch.start();
         hash = HashUtil.computeHash(bytes);
@@ -184,11 +222,8 @@ public class NbtSquisherTester {
 
         NbtSquisher.debugBuffer = null;
 
-        to = NbtSquisher.expand(bytes.clone());
-        checkEquality(nbt, to);
-
         watch.start();
-        bytes = NbtSquisher.squishBuildCraftV1(nbt);
+        bytes = NbtSquisher.squish(nbt, NbtSquishConstants.BUILDCRAFT_V1_COMPRESSED);
         watch.stop();
         if (print) {
             times[3] = watch.elapsed(timeUnit);
@@ -350,7 +385,10 @@ public class NbtSquisherTester {
         final int times = 100;
         long[][] all = new long[times][];
 
+        watchWhole.stop();
         System.in.read();
+        watchWhole.start();
+
         // NbtSquisher.profiler.profilingEnabled = true;
         NbtSquisher.profiler.startSection("root");
         // NbtSquisher.debugBuffer = PrintingByteBuf::new;
@@ -372,15 +410,15 @@ public class NbtSquisherTester {
             long total = 0;
             for (int j = 20; j < times; j++)
                 total += all[j][i];
-            long average = total * 100 / (times - 20);
+            long average = total / (times - 20);
             System.out.println(types[i] + " took (on average) " + padMicroseconds(average, 10));
         }
 
         NbtSquisher.profiler.endSection();
         writeProfilerResults(0, "root.write", NbtSquisher.profiler);
         watchWhole.stop();
-        System.out.println("Whole test took " + watchWhole.elapsed(TimeUnit.MINUTES) + "m, " + watchWhole.elapsed(
-            TimeUnit.SECONDS) % 60 + "s");
+        System.out.println("Whole test took " + watchWhole.elapsed(TimeUnit.MINUTES) + "m, "
+            + watchWhole.elapsed(TimeUnit.SECONDS) % 60 + "s");
     }
 
     private static void writeProfilerResults(int indent, String sectionName, Profiler profiler) {
