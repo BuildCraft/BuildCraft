@@ -32,6 +32,8 @@ import net.minecraft.nbt.NBTTagString;
 
 import net.minecraftforge.common.util.Constants;
 
+import buildcraft.api.core.InvalidInputDataException;
+
 /** Defines a map of commonly used tags. */
 public class NBTSquishMap {
     // TODO: Try adding "ImmutableTagCompound" and "ImmutableTagList" to see if the equals() and hashCode() of compounds
@@ -253,11 +255,15 @@ public class NBTSquishMap {
     }
 
     public NBTBase getTagForReading(int index) throws IOException {
-        NBTBase value = getTagAt(index);
-        if (value == null) {
-            throw new IOException("Cannot handle index " + index);
+        try {
+            NBTBase value = getTagAt(index);
+            if (value == null) {
+                throw new IOException("Cannot handle index " + index);
+            }
+            return value;
+        } catch (IndexOutOfBoundsException ioobe) {
+            throw new InvalidInputDataException(ioobe);
         }
-        return value;
     }
 
     public NBTTagCompound getFullyReadComp(int index) throws IOException {

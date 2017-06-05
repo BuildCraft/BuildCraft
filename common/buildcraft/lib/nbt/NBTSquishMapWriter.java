@@ -6,6 +6,8 @@
 
 package buildcraft.lib.nbt;
 
+import java.io.DataOutput;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +30,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.profiler.Profiler;
 
-import buildcraft.api.data.NBTSquishConstants;
+import buildcraft.api.data.NbtSquishConstants;
 
 import buildcraft.lib.misc.data.CompactingBitSet;
 
@@ -51,16 +53,16 @@ class NBTSquishMapWriter {
         this.map = map;
     }
 
-    public static void write(NBTSquishMap map, PacketBuffer buf) {
-        new NBTSquishMapWriter(map).write(buf);
+    public static void write(NBTSquishMap map, DataOutput to) throws IOException {
+        new NBTSquishMapWriter(map).write(to);
     }
 
-    private void write(PacketBuffer buf) {
+    private void write(DataOutput to) throws IOException {
         profiler.startSection("write");
         profiler.startSection("flags");
         WrittenType type = map.getWrittenType();
 
-        type.writeType(buf);
+        type.writeType(to);
 
         TByteArrayList bytes = map.bytes;
         TShortArrayList shorts = map.shorts;
@@ -74,93 +76,93 @@ class NBTSquishMapWriter {
         List<NBTBase> complex = map.complex;
 
         int flags = 0;
-        if (!bytes.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_BYTES;
-        if (!shorts.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_SHORTS;
-        if (!ints.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_INTS;
-        if (!longs.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_LONGS;
-        if (!floats.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_FLOATS;
-        if (!doubles.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_DOUBLES;
-        if (!byteArrays.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_BYTE_ARRAYS;
-        if (!intArrays.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_INT_ARRAYS;
-        if (!strings.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_STRINGS;
-        if (!complex.isEmpty()) flags |= NBTSquishConstants.FLAG_HAS_COMPLEX;
+        if (!bytes.isEmpty()) flags |= NbtSquishConstants.FLAG_HAS_BYTES;
+        if (!shorts.isEmpty()) flags |= NbtSquishConstants.FLAG_HAS_SHORTS;
+        if (!ints.isEmpty()) flags |= NbtSquishConstants.FLAG_HAS_INTS;
+        if (!longs.isEmpty()) flags |= NbtSquishConstants.FLAG_HAS_LONGS;
+        if (!floats.isEmpty()) flags |= NbtSquishConstants.FLAG_HAS_FLOATS;
+        if (!doubles.isEmpty()) flags |= NbtSquishConstants.FLAG_HAS_DOUBLES;
+        if (!byteArrays.isEmpty()) flags |= NbtSquishConstants.FLAG_HAS_BYTE_ARRAYS;
+        if (!intArrays.isEmpty()) flags |= NbtSquishConstants.FLAG_HAS_INT_ARRAYS;
+        if (!strings.isEmpty()) flags |= NbtSquishConstants.FLAG_HAS_STRINGS;
+        if (!complex.isEmpty()) flags |= NbtSquishConstants.FLAG_HAS_COMPLEX;
 
         if (debug) log("\nUsed flags = " + Integer.toBinaryString(flags));
-        buf.writeInt(flags);
+        to.writeInt(flags);
 
         profiler.endStartSection("bytes");
         if (!bytes.isEmpty()) {
             if (debug) log("\nByte dictionary size = " + bytes.size());
             if (sort) bytes.sort();
-            buf.writeVarInt(bytes.size());
+            writeVarInt(to, bytes.size());
             for (byte b : bytes.toArray()) {
-                buf.writeByte(b);
+                to.writeByte(b);
             }
         }
         profiler.endStartSection("shorts");
         if (!shorts.isEmpty()) {
             if (debug) log("\nShort dictionary size = " + shorts.size());
             if (sort) shorts.sort();
-            buf.writeVarInt(shorts.size());
+            writeVarInt(to, shorts.size());
             for (short s : shorts.toArray()) {
-                buf.writeShort(s);
+                to.writeShort(s);
             }
         }
         profiler.endStartSection("integers");
         if (!ints.isEmpty()) {
             if (debug) log("\nInt dictionary size = " + ints.size());
             if (sort) ints.sort();
-            buf.writeVarInt(ints.size());
+            writeVarInt(to, ints.size());
             for (int i : ints.toArray()) {
-                buf.writeInt(i);
+                to.writeInt(i);
             }
         }
         profiler.endStartSection("longs");
         if (!longs.isEmpty()) {
             if (debug) log("\nLong dictionary size = " + longs.size());
             if (sort) longs.sort();
-            buf.writeVarInt(longs.size());
+            writeVarInt(to, longs.size());
             for (long l : longs.toArray()) {
-                buf.writeLong(l);
+                to.writeLong(l);
             }
         }
         profiler.endStartSection("floats");
         if (!floats.isEmpty()) {
             if (debug) log("\nFloat dictionary size = " + floats.size());
             if (sort) floats.sort();
-            buf.writeVarInt(floats.size());
+            writeVarInt(to, floats.size());
             for (float f : floats.toArray()) {
-                buf.writeFloat(f);
+                to.writeFloat(f);
             }
         }
         profiler.endStartSection("doubles");
         if (!doubles.isEmpty()) {
             if (debug) log("\nDouble dictionary size = " + doubles.size());
             if (sort) doubles.sort();
-            buf.writeVarInt(doubles.size());
+            writeVarInt(to, doubles.size());
             for (double d : doubles.toArray()) {
-                buf.writeDouble(d);
+                to.writeDouble(d);
             }
         }
         profiler.endStartSection("byte_arrays");
         if (!byteArrays.isEmpty()) {
             if (debug) log("\nByte Array dictionary size = " + byteArrays.size());
-            buf.writeVarInt(byteArrays.size());
+            writeVarInt(to, byteArrays.size());
             for (TByteArrayList ba : byteArrays) {
-                buf.writeShort(ba.size());
+                to.writeShort(ba.size());
                 for (byte b : ba.toArray()) {
-                    buf.writeByte(b);
+                    to.writeByte(b);
                 }
             }
         }
         profiler.endStartSection("int_arrays");
         if (!intArrays.isEmpty()) {
             if (debug) log("\nInt Array dictionary size = " + intArrays.size());
-            buf.writeVarInt(intArrays.size());
+            writeVarInt(to, intArrays.size());
             for (TIntArrayList ia : intArrays) {
-                buf.writeShort(ia.size());
+                to.writeShort(ia.size());
                 for (int i : ia.toArray()) {
-                    buf.writeInt(i);
+                    to.writeInt(i);
                 }
             }
         }
@@ -168,26 +170,26 @@ class NBTSquishMapWriter {
         if (!strings.isEmpty()) {
             if (debug) log("\nString dictionary size = " + strings.size());
             if (sort) Collections.sort(strings);
-            buf.writeVarInt(strings.size());
+            writeVarInt(to, strings.size());
             for (int i = 0; i < strings.size(); i++) {
                 String s = strings.get(i);
                 if (debug) log("\n   String " + i + " = " + s);
                 byte[] stringBytes = s.getBytes(StandardCharsets.UTF_8);
-                buf.writeShort(stringBytes.length);
-                buf.writeBytes(stringBytes);
+                to.writeShort(stringBytes.length);
+                to.write(stringBytes);
             }
         }
         profiler.endStartSection("complex");
         if (!complex.isEmpty()) {
             if (debug) log("\nComplex dictionary size = " + complex.size());
-            buf.writeVarInt(complex.size());
+            writeVarInt(to, complex.size());
             for (NBTBase nbt : complex) {
                 if (nbt instanceof NBTTagList) {
                     NBTTagList list = (NBTTagList) nbt;
-                    writeList(type, list, buf);
+                    writeList(type, list, to);
                 } else {
                     NBTTagCompound compound = (NBTTagCompound) nbt;
-                    writeCompound(type, compound, buf);
+                    writeCompound(type, compound, to);
                 }
             }
         }
@@ -195,13 +197,22 @@ class NBTSquishMapWriter {
         profiler.endSection();
     }
 
-    private void writeList(WrittenType type, NBTTagList list, PacketBuffer buf) {
+    /** Similar to {@link PacketBuffer#writeVarInt(int)} */
+    private static void writeVarInt(DataOutput to, int input) throws IOException {
+        while ((input & -128) != 0) {
+            to.writeByte((input & 0x7f) | 0x80);
+            input >>>= 7;
+        }
+        to.writeByte(input);
+    }
+
+    private void writeList(WrittenType type, NBTTagList list, DataOutput to) throws IOException {
         boolean pack = shouldPackList(list);
         if (debug) log("\n  List tag count = " + list.tagCount() + ", writing it " + (pack ? "PACKED" : "NORMAL"));
         if (pack) {
-            writeListPacked(type, buf, list);
+            writeListPacked(type, to, list);
         } else {
-            writeListNormal(type, buf, list);
+            writeListNormal(type, to, list);
         }
     }
 
@@ -216,12 +227,12 @@ class NBTSquishMapWriter {
         return indexes.size() * 2 < list.tagCount();
     }
 
-    private void writeCompound(WrittenType type, NBTTagCompound compound, PacketBuffer buf) {
+    private void writeCompound(WrittenType type, NBTTagCompound compound, DataOutput to) throws IOException {
         profiler.startSection("compound");
         WrittenType stringType = WrittenType.getForSize(map.strings.size());
         if (debug) log("\n  Compound tag count = " + compound.getSize());
-        buf.writeByte(NBTSquishConstants.COMPLEX_COMPOUND);
-        buf.writeVarInt(compound.getSize());
+        to.writeByte(NbtSquishConstants.COMPLEX_COMPOUND);
+        writeVarInt(to, compound.getSize());
         for (String key : compound.getKeySet()) {
             profiler.startSection("entry");
             NBTBase nbt = compound.getTag(key);
@@ -230,18 +241,18 @@ class NBTSquishMapWriter {
             profiler.endSection();
             if (debug) log("\n             \"" + key + "\" -> " + index + " (" + safeToString(nbt) + ")");
             profiler.startSection("index_key");
-            stringType.writeIndex(buf, map.strings.indexOf(key));
+            stringType.writeIndex(to, map.strings.indexOf(key));
             profiler.endSection();
-            type.writeIndex(buf, index);
+            type.writeIndex(to, index);
             profiler.endSection();
         }
         profiler.endSection();
     }
 
-    private void writeListNormal(WrittenType type, PacketBuffer buf, NBTTagList list) {
+    private void writeListNormal(WrittenType type, DataOutput to, NBTTagList list) throws IOException {
         profiler.startSection("list_normal");
-        buf.writeByte(NBTSquishConstants.COMPLEX_LIST);
-        buf.writeVarInt(list.tagCount());
+        to.writeByte(NbtSquishConstants.COMPLEX_LIST);
+        writeVarInt(to, list.tagCount());
         for (int i = 0; i < list.tagCount(); i++) {
             profiler.startSection("entry");
             if (i % 100 == 0) {
@@ -250,15 +261,15 @@ class NBTSquishMapWriter {
             profiler.startSection("index");
             int index = map.indexOfTag(list.get(i));
             profiler.endSection();
-            type.writeIndex(buf, index);
+            type.writeIndex(to, index);
             profiler.endSection();
         }
         profiler.endSection();
     }
 
-    private void writeListPacked(WrittenType type, PacketBuffer buf, NBTTagList list) {
+    private void writeListPacked(WrittenType type, DataOutput to, NBTTagList list) throws IOException {
         profiler.startSection("list_packed");
-        buf.writeByte(NBTSquishConstants.COMPLEX_LIST_PACKED);
+        to.writeByte(NbtSquishConstants.COMPLEX_LIST_PACKED);
         profiler.startSection("header");
         profiler.startSection("init");
         int[] data = new int[list.tagCount()];
@@ -286,7 +297,7 @@ class NBTSquishMapWriter {
         }
         entries.sort(Comparator.reverseOrder());
         if (debug) log("\n " + entries.size() + " List entries");
-        buf.writeVarInt(entries.size());
+        writeVarInt(to, entries.size());
         profiler.endStartSection("write");
 
         TIntArrayList sortedIndexes = new TIntArrayList();
@@ -299,13 +310,13 @@ class NBTSquishMapWriter {
             if (debug) log("\n List entry #" + j + " = " + entry.count + "x" + entry.index + " (" + n + ")");
 
             sortedIndexes.add(entry.index);
-            type.writeIndex(buf, entry.index);
+            type.writeIndex(to, entry.index);
             i++;
         }
 
         TIntArrayList nextData = new TIntArrayList();
         nextData.add(data);
-        buf.writeVarInt(data.length);
+        writeVarInt(to, data.length);
         profiler.endSection();
         profiler.endStartSection("contents");
         for (int b = 1; !nextData.isEmpty(); b++) {
@@ -337,8 +348,8 @@ class NBTSquishMapWriter {
             sortedIndexes.remove(0, Math.min(sortedIndexes.size(), maxVal));
             byte[] bitsetBytes = bitset.getBytes();
             if (debug) log("\n List bitset #" + (bitset.bits - 1));
-            buf.writeVarInt(bitsetBytes.length);
-            buf.writeBytes(bitsetBytes);
+            writeVarInt(to, bitsetBytes.length);
+            to.write(bitsetBytes);
             nextData = nextNextData;
             profiler.endSection();
         }

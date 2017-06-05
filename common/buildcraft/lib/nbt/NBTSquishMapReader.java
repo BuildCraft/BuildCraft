@@ -6,6 +6,7 @@
 
 package buildcraft.lib.nbt;
 
+import java.io.DataInput;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -19,107 +20,108 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 
-import buildcraft.api.data.NBTSquishConstants;
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.data.NbtSquishConstants;
 
 import buildcraft.lib.misc.data.DecompactingBitSet;
 
 class NBTSquishMapReader {
     private final NBTSquishMap map = new NBTSquishMap();
 
-    public static NBTSquishMap read(PacketBuffer buf) throws IOException {
-        return new NBTSquishMapReader().readInternal(buf);
+    public static NBTSquishMap read(DataInput in) throws IOException {
+        return new NBTSquishMapReader().readInternal(in);
     }
 
-    private NBTSquishMap readInternal(PacketBuffer buf) throws IOException {
-        WrittenType type = WrittenType.readType(buf);
-        int flags = buf.readInt();
+    private NBTSquishMap readInternal(DataInput in) throws IOException {
+        WrittenType type = WrittenType.readType(in);
+        int flags = in.readInt();
 
-        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_BYTES)) {
-            int count = buf.readVarInt();
+        if (isFlag(flags, NbtSquishConstants.FLAG_HAS_BYTES)) {
+            int count = readVarInt(in);
             for (int i = 0; i < count; i++) {
-                map.bytes.add(buf.readByte());
+                map.bytes.add(in.readByte());
             }
         }
 
-        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_SHORTS)) {
-            int count = buf.readVarInt();
+        if (isFlag(flags, NbtSquishConstants.FLAG_HAS_SHORTS)) {
+            int count = readVarInt(in);
             for (int i = 0; i < count; i++) {
-                map.shorts.add(buf.readShort());
+                map.shorts.add(in.readShort());
             }
         }
 
-        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_INTS)) {
-            int count = buf.readVarInt();
+        if (isFlag(flags, NbtSquishConstants.FLAG_HAS_INTS)) {
+            int count = readVarInt(in);
             for (int i = 0; i < count; i++) {
-                map.ints.add(buf.readInt());
+                map.ints.add(in.readInt());
             }
         }
 
-        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_LONGS)) {
-            int count = buf.readVarInt();
+        if (isFlag(flags, NbtSquishConstants.FLAG_HAS_LONGS)) {
+            int count = readVarInt(in);
             for (int i = 0; i < count; i++) {
-                map.longs.add(buf.readLong());
+                map.longs.add(in.readLong());
             }
         }
 
-        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_FLOATS)) {
-            int count = buf.readVarInt();
+        if (isFlag(flags, NbtSquishConstants.FLAG_HAS_FLOATS)) {
+            int count = readVarInt(in);
             for (int i = 0; i < count; i++) {
-                map.floats.add(buf.readFloat());
+                map.floats.add(in.readFloat());
             }
         }
 
-        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_DOUBLES)) {
-            int count = buf.readVarInt();
+        if (isFlag(flags, NbtSquishConstants.FLAG_HAS_DOUBLES)) {
+            int count = readVarInt(in);
             for (int i = 0; i < count; i++) {
-                map.doubles.add(buf.readDouble());
+                map.doubles.add(in.readDouble());
             }
         }
 
-        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_BYTE_ARRAYS)) {
-            int count = buf.readVarInt();
+        if (isFlag(flags, NbtSquishConstants.FLAG_HAS_BYTE_ARRAYS)) {
+            int count = readVarInt(in);
             for (int i = 0; i < count; i++) {
-                int arraySize = buf.readUnsignedShort();
+                int arraySize = in.readUnsignedShort();
                 TByteArrayList list = new TByteArrayList();
                 for (int j = 0; j < arraySize; j++) {
-                    list.add(buf.readByte());
+                    list.add(in.readByte());
                 }
                 map.byteArrays.add(list);
             }
         }
 
-        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_INT_ARRAYS)) {
-            int count = buf.readVarInt();
+        if (isFlag(flags, NbtSquishConstants.FLAG_HAS_INT_ARRAYS)) {
+            int count = readVarInt(in);
             for (int i = 0; i < count; i++) {
-                int arraySize = buf.readUnsignedShort();
+                int arraySize = in.readUnsignedShort();
                 TIntArrayList list = new TIntArrayList();
                 for (int j = 0; j < arraySize; j++) {
-                    list.add(buf.readInt());
+                    list.add(in.readInt());
                 }
                 map.intArrays.add(list);
             }
         }
 
-        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_STRINGS)) {
-            int count = buf.readVarInt();
+        if (isFlag(flags, NbtSquishConstants.FLAG_HAS_STRINGS)) {
+            int count = readVarInt(in);
             for (int i = 0; i < count; i++) {
-                int length = buf.readUnsignedShort();
+                int length = in.readUnsignedShort();
                 byte[] bytes = new byte[length];
-                buf.readBytes(bytes);
+                in.readFully(bytes);
                 map.strings.add(new String(bytes, StandardCharsets.UTF_8));
             }
         }
 
-        if (isFlag(flags, NBTSquishConstants.FLAG_HAS_COMPLEX)) {
-            int count = buf.readVarInt();
+        if (isFlag(flags, NbtSquishConstants.FLAG_HAS_COMPLEX)) {
+            int count = readVarInt(in);
             for (int i = 0; i < count; i++) {
-                int complexType = buf.readUnsignedByte();
-                if (complexType == NBTSquishConstants.COMPLEX_COMPOUND) {
-                    map.complex.add(readCompound(type, buf));
-                } else if (complexType == NBTSquishConstants.COMPLEX_LIST) {
-                    map.complex.add(readNormalList(type, buf));
-                } else if (complexType == NBTSquishConstants.COMPLEX_LIST_PACKED) {
-                    map.complex.add(readPackedList(type, buf));
+                int complexType = in.readUnsignedByte();
+                if (complexType == NbtSquishConstants.COMPLEX_COMPOUND) {
+                    map.complex.add(readCompound(type, in));
+                } else if (complexType == NbtSquishConstants.COMPLEX_LIST) {
+                    map.complex.add(readNormalList(type, in));
+                } else if (complexType == NbtSquishConstants.COMPLEX_LIST_PACKED) {
+                    map.complex.add(readPackedList(type, in));
                 } else {
                     throw new IOException("Unknown complex type " + complexType);
                 }
@@ -129,47 +131,66 @@ class NBTSquishMapReader {
         return map;
     }
 
+    /** Similar to {@link PacketBuffer#readVarInt()} */
+    private static int readVarInt(DataInput in) throws IOException {
+        int value = 0;
+        int bytesRead = 0;
+
+        while (true) {
+            int b = in.readUnsignedByte();
+            value |= (b & 0x7f) << bytesRead * 7;
+            bytesRead++;
+            if (bytesRead > 5) {
+                throw new InvalidInputDataException("VarInt can only be up to 5 bytes long!");
+            }
+            if ((b & 0x80) == 0) {
+                // End of number
+                return value;
+            }
+        }
+    }
+
     private static boolean isFlag(int flags, int flag) {
         return (flags & flag) == flag;
     }
 
-    private NBTTagCompound readCompound(WrittenType type, PacketBuffer buf) throws IOException {
+    private NBTTagCompound readCompound(WrittenType type, DataInput in) throws IOException {
         WrittenType stringType = WrittenType.getForSize(map.stringSize());
-        int count = buf.readVarInt();
+        int count = readVarInt(in);
         NBTTagCompound nbt = new NBTTagCompound();
         for (int i = 0; i < count; i++) {
-            String key = map.getStringForReading(stringType.readIndex(buf));
-            NBTBase value = map.getTagForReading(type.readIndex(buf));
+            String key = map.getStringForReading(stringType.readIndex(in));
+            NBTBase value = map.getTagForReading(type.readIndex(in));
             nbt.setTag(key, value.copy());
         }
         return nbt;
     }
 
-    private NBTTagList readNormalList(WrittenType type, PacketBuffer buf) throws IOException {
-        int count = buf.readVarInt();
+    private NBTTagList readNormalList(WrittenType type, DataInput in) throws IOException {
+        int count = readVarInt(in);
         NBTTagList list = new NBTTagList();
 
         for (int i = 0; i < count; i++) {
-            int index = type.readIndex(buf);
+            int index = type.readIndex(in);
             list.appendTag(map.getTagForReading(index));
         }
 
         return list;
     }
 
-    private NBTTagList readPackedList(WrittenType type, PacketBuffer buf) throws IOException {
+    private NBTTagList readPackedList(WrittenType type, DataInput in) throws IOException {
         // First make the dictionary
-        int count = buf.readVarInt();
+        int count = readVarInt(in);
         List<NBTBase> dictionary = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            int index = type.readIndex(buf);
+            int index = type.readIndex(in);
             NBTBase nbt = map.getTagForReading(index);
             dictionary.add(nbt);
         }
         List<NBTBase> list = new ArrayList<>();
         TIntArrayList left = new TIntArrayList();
         int bits = 1;
-        int entries = buf.readVarInt();
+        int entries = readVarInt(in);
 
         for (int i = 0; i < entries; i++) {
             list.add(null);
@@ -177,9 +198,9 @@ class NBTSquishMapReader {
         }
 
         while (!dictionary.isEmpty()) {
-            int bitsetSize = buf.readVarInt();
+            int bitsetSize = readVarInt(in);
             byte[] bitsetData = new byte[bitsetSize];
-            buf.readBytes(bitsetData);
+            in.readFully(bitsetData);
             DecompactingBitSet decompactor = new DecompactingBitSet(bits, bitsetData);
 
             TIntArrayList nextLeft = new TIntArrayList();
