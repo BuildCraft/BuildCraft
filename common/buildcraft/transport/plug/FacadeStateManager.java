@@ -38,6 +38,7 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -55,8 +56,7 @@ import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
-
-import buildcraft.builders.snapshot.FakeWorld;
+import buildcraft.lib.world.SingleBlockAccess;
 
 public class FacadeStateManager {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("transport.facade");
@@ -275,11 +275,9 @@ public class FacadeStateManager {
             this.varyingProperties = varyingProperties;
             this.isTransparent = !state.isOpaqueCube();
             this.isVisible = !requiredStack.isEmpty();
-            FakeWorld world = FakeWorld.INSTANCE;
-            world.clear();
-            world.setBlockState(BlockPos.ORIGIN, state);
+            IBlockAccess access = new SingleBlockAccess(state);
             for (EnumFacing side : EnumFacing.VALUES) {
-                isSideSolid[side.ordinal()] = state.isSideSolid(world, BlockPos.ORIGIN, side);
+                isSideSolid[side.ordinal()] = state.isSideSolid(access, BlockPos.ORIGIN, side);
             }
         }
 

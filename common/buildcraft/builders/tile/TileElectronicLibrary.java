@@ -17,6 +17,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.data.NbtSquishConstants;
 
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
@@ -135,7 +136,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                     Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(header);
                     if (snapshot != null) {
                         buffer.writeBoolean(true);
-                        NbtSquisher.squishBuildCraftV1(Snapshot.writeToNBT(snapshot), buffer);
+                        NbtSquisher.squish(Snapshot.writeToNBT(snapshot), NbtSquishConstants.BUILDCRAFT_V1_COMPRESSED, buffer);
                     } else {
                         buffer.writeBoolean(false);
                     }
@@ -152,7 +153,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                     Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(selected);
                     if (snapshot != null) {
                         buffer.writeBoolean(true);
-                        NbtSquisher.squishBuildCraftV1(Snapshot.writeToNBT(snapshot), buffer);
+                        NbtSquisher.squish(Snapshot.writeToNBT(snapshot), NbtSquishConstants.BUILDCRAFT_V1_COMPRESSED, buffer);
                     } else {
                         buffer.writeBoolean(false);
                     }

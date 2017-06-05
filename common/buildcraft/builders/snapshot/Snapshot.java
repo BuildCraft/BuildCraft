@@ -6,12 +6,8 @@
 
 package buildcraft.builders.snapshot;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.security.DigestOutputStream;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Objects;
 import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,7 +26,6 @@ import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.lib.misc.HashUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StringUtilBC;
-import buildcraft.lib.nbt.NbtSquisher;
 import buildcraft.lib.net.PacketBufferBC;
 
 public abstract class Snapshot {
@@ -108,12 +103,8 @@ public abstract class Snapshot {
             nbtHeader = nbt.getCompoundTag(NBT_HEADER);
             nbt.removeTag(NBT_HEADER);
         }
-        try (DigestOutputStream dos = HashUtil.createDigestStream()) {
-            NbtSquisher.squishVanillaUncompressed(nbt, new DataOutputStream(dos));
-            return dos.getMessageDigest().digest();
-        } catch (IOException io) {
-            // Shouldn't happen - the digest stream never throws an exception
-            throw new RuntimeException(io);
+        try {
+            return HashUtil.computeHash(nbt);
         } finally {
             // Re-add the header nbt - callers probably expect the header tag to still be there
             if (nbtHeader != null) {

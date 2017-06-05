@@ -1,9 +1,12 @@
 package buildcraft.test.lib.misc;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import buildcraft.api.data.NbtSquishConstants;
 
 import buildcraft.lib.misc.HashUtil;
 import buildcraft.lib.nbt.NbtSquisher;
@@ -14,10 +17,16 @@ public class HashUtilTester {
     private static final byte[] HASH = { 0, 1, 5, 9, (byte) 0xff, (byte) 0xbc };
     private static final String STR = "00010509ffbc";
 
-    private static final byte[] DATA = NbtSquisher.squishVanillaUncompressed(NbtSquisherTester.nbtSmall);
+    private static final byte[] DATA;
     // Hardcoded hash value from previous runs
-    private static final byte[] DATA_HASH = HashUtil.convertStringToHash(
-        "f320c7fd475d4e59b116256575e17cd2ea5c792936536a5b12b21dbf05dcab77");
+    private static final byte[] DATA_HASH;
+
+    static {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        NbtSquisher.squish(NbtSquisherTester.nbtSmall, NbtSquishConstants.VANILLA);
+        DATA = baos.toByteArray();
+        DATA_HASH = HashUtil.convertStringToHash("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+    }
 
     @Test
     public void testStringToHash() {
@@ -36,6 +45,7 @@ public class HashUtilTester {
         System.out.println(Arrays.toString(DATA));
         // We can't test this hash against anything -- the bpt format itself
         byte[] hash = HashUtil.computeHash(DATA);
+        System.out.println(HashUtil.convertHashToString(hash));
         Assert.assertArrayEquals(DATA_HASH, hash);
     }
 }

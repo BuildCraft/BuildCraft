@@ -6,8 +6,10 @@
 
 package buildcraft.lib.nbt;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
@@ -21,17 +23,16 @@ import java.util.zip.GZIPOutputStream;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
-import io.netty.buffer.Unpooled;
-
-import org.apache.commons.io.IOUtils;
 
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.profiler.Profiler;
 
+import net.minecraftforge.common.util.Constants;
+
 import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.data.NBTSquishConstants;
+import buildcraft.api.data.NbtSquishConstants;
 
 public class NbtSquisher {
     public static final Profiler profiler = new Profiler();
@@ -39,26 +40,27 @@ public class NbtSquisher {
      * class in main because it makes checkstyle complain. */
     public static Function<ByteBuf, PacketBuffer> debugBuffer = null;
 
-    private static final int TYPE_MC_GZIP = NBTSquishConstants.VANILLA_COMPRESSED;
-    private static final int TYPE_MC = NBTSquishConstants.VANILLA;
-    private static final int TYPE_BC_1_GZIP = NBTSquishConstants.BUILDCRAFT_V1_COMPRESSED;
-    private static final int TYPE_BC_1 = NBTSquishConstants.BUILDCRAFT_V1;
-
-    /*
-     * Defines a compression program that can turn large, mostly-similar, dense, NBTTagCompounds into much smaller
-     * variants.
-     * 
-     * Compression has the following steps:
-     * 
-     * - 1:
-     */
+    private static final int TYPE_MC_GZIP = NbtSquishConstants.VANILLA_COMPRESSED;
+    private static final int TYPE_MC = NbtSquishConstants.VANILLA;
+    private static final int TYPE_BC_1_GZIP = NbtSquishConstants.BUILDCRAFT_V1_COMPRESSED;
+    private static final int TYPE_BC_1 = NbtSquishConstants.BUILDCRAFT_V1;
 
     public static byte[] squish(NBTTagCompound nbt, int type) {
-        ByteBuf buf = Unpooled.buffer();
-        squish(nbt, type, buf);
-        byte[] bytes = new byte[buf.readableBytes()];
-        buf.readBytes(bytes);
-        return bytes;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            squish(nbt, type, baos);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to write to a perfectly good ByteArrayOutputStream", e);
+        }
+        return baos.toByteArray();
+    }
+
+    public static void squish(NBTTagCompound nbt, int type, ByteBuf buf) {
+        try (ByteBufOutputStream bbos = new ByteBufOutputStream(buf)) {
+            squish(nbt, type, bbos);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to write to a perfectly good ByteBufOutputStream", e);
+        }
     }
 
     public static void squish(NBTTagCompound nbt, int type, OutputStream stream) throws IOException {
@@ -70,7 +72,7 @@ public class NbtSquisher {
                 squishVanilla(nbt, stream);
                 return;
             case TYPE_BC_1:
-                squishBuildCraftV1Uncompressed(nbt, stream);
+                squishBuildCraftV1Uncompressed(nbt, new DataOutputStream(stream));
                 return;
             case TYPE_BC_1_GZIP:
                 squishBuildCraftV1(nbt, stream);
@@ -80,139 +82,34 @@ public class NbtSquisher {
         }
     }
 
-    public static void squish(NBTTagCompound nbt, int type, ByteBuf buf) {
-        switch (type) {
-            case TYPE_MC:
-                squishVanillaUncompressed(nbt, buf);
-                return;
-            case TYPE_MC_GZIP:
-                squishVanilla(nbt, buf);
-                return;
-            case TYPE_BC_1:
-                squishBuildCraftV1Uncompressed(nbt, buf);
-                return;
-            case TYPE_BC_1_GZIP:
-                squishBuildCraftV1(nbt, buf);
-                return;
-            default:
-                throw new IllegalArgumentException("Unknown type " + type);
-        }
-    }
-
-    /*
-     * Vanilla compressed
-     */
-
-    public static void squishVanilla(NBTTagCompound nbt, ByteBuf buf) {
-        try {
-            squishVanilla(nbt, new ByteBufOutputStream(buf));
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to write a safe NBTTagCompound!", e);
-        }
-    }
-
-    public static byte[] squishVanilla(NBTTagCompound nbt) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            squishVanilla(nbt, baos);
-            return baos.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to write a safe NBTTagCompound!", e);
-        }
-    }
-
     public static void squishVanilla(NBTTagCompound nbt, OutputStream to) throws IOException {
+        to.write(NbtSquishConstants.BUILDCRAFT_MAGIC_1);
+        to.write(NbtSquishConstants.BUILDCRAFT_MAGIC_2);
         to.write(TYPE_MC_GZIP);
         CompressedStreamTools.writeCompressed(nbt, to);
     }
 
-    /*
-     * Vanilla uncompressed
-     */
-
-    public static void squishVanillaUncompressed(NBTTagCompound nbt, ByteBuf buf) {
-        squishVanillaUncompressed(nbt, new ByteBufOutputStream(buf));
+    public static void squishVanillaUncompressed(NBTTagCompound nbt, DataOutput to) throws IOException {
+        to.writeShort(NbtSquishConstants.BUILDCRAFT_MAGIC);
+        to.write(TYPE_MC);
+        CompressedStreamTools.write(nbt, to);
     }
 
-    public static byte[] squishVanillaUncompressed(NBTTagCompound nbt) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        squishVanillaUncompressed(nbt, new DataOutputStream(baos));
-        return baos.toByteArray();
-    }
-
-    public static void squishVanillaUncompressed(NBTTagCompound nbt, DataOutput to) {
-        try {
-            to.write(TYPE_MC);
-            CompressedStreamTools.write(nbt, to);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to write a safe NBTTagCompound!", e);
+    public static void squishBuildCraftV1(NBTTagCompound nbt, OutputStream to) throws IOException {
+        to.write(NbtSquishConstants.BUILDCRAFT_MAGIC_1);
+        to.write(NbtSquishConstants.BUILDCRAFT_MAGIC_2);
+        to.write(TYPE_BC_1_GZIP);
+        try (GZIPOutputStream gzip = new GZIPOutputStream(to, true)) {
+            squishBuildCraftV1Direct(nbt, new DataOutputStream(gzip));
         }
     }
 
-    /*
-     * BuildCraft V1 compressed
-     */
-
-    public static byte[] squishBuildCraftV1(NBTTagCompound nbt) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            squishBuildCraftV1(nbt, baos);
-            return baos.toByteArray();
-        } catch (IOException io) {
-            throw new RuntimeException("Failed to write to a perfectly good ByteArrayOutputStream!", io);
-        }
+    public static void squishBuildCraftV1Uncompressed(NBTTagCompound nbt, DataOutput to) throws IOException {
+        to.write(NbtSquishConstants.BUILDCRAFT_MAGIC_1);
+        to.write(NbtSquishConstants.BUILDCRAFT_MAGIC_2);
+        to.write(TYPE_BC_1);
+        squishBuildCraftV1Direct(nbt, to);
     }
-
-    public static void squishBuildCraftV1(NBTTagCompound nbt, ByteBuf buf) {
-        try (ByteBufOutputStream bbos = new ByteBufOutputStream(buf)) {
-            squishBuildCraftV1(nbt, bbos);
-        } catch (IOException io) {
-            throw new RuntimeException("Failed to write to a perfectly good ByteBufOutputStream!", io);
-        }
-    }
-
-    public static void squishBuildCraftV1(NBTTagCompound nbt, OutputStream stream) throws IOException {
-        stream.write(TYPE_BC_1_GZIP);
-        PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-        int len = squishBuildCraftV1Direct(nbt, buffer);
-        new DataOutputStream(stream).writeInt(len);
-        try (GZIPOutputStream def = new GZIPOutputStream(stream, true)) {
-            writeBufToStream(buffer, def);
-            def.close();
-        }
-    }
-
-    /*
-     * BuildCraft V1 uncompressed
-     */
-
-    public static byte[] squishBuildCraftV1Uncompressed(NBTTagCompound nbt) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            squishBuildCraftV1Uncompressed(nbt, baos);
-            return baos.toByteArray();
-        } catch (IOException io) {
-            throw new RuntimeException("Failed to write to a perfectly good ByteArrayOutputStream!", io);
-        }
-    }
-
-    public static void squishBuildCraftV1Uncompressed(NBTTagCompound nbt, OutputStream stream) throws IOException {
-        PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
-        squishBuildCraftV1Uncompressed(nbt, buf);
-        writeBufToStream(buf, stream);
-    }
-
-    public static void squishBuildCraftV1Uncompressed(NBTTagCompound nbt, ByteBuf buf) {
-        buf.writeByte(TYPE_BC_1);
-        int idx = buf.writerIndex();
-        buf.writeInt(0);// length
-        int len = squishBuildCraftV1Direct(nbt, new PacketBuffer(buf));
-        buf.setInt(idx, len);
-    }
-
-    /*
-     * Expanding
-     */
 
     public static NBTTagCompound expand(byte[] bytes) throws IOException {
         return expand(new ByteArrayInputStream(bytes));
@@ -223,96 +120,69 @@ public class NbtSquisher {
     }
 
     public static NBTTagCompound expand(InputStream stream) throws IOException {
-        int type = stream.read();
-        switch (type) {
-            case TYPE_MC: {
+        if (!stream.markSupported()) {
+            stream = new BufferedInputStream(stream);
+        }
+        stream.mark(5);
+        int byte1 = stream.read();
+        int byte2 = stream.read();
+
+        if (byte1 == NbtSquishConstants.BUILDCRAFT_MAGIC_1 && byte2 == NbtSquishConstants.BUILDCRAFT_MAGIC_2) {
+            // Defiantly a BC stream
+            int type = stream.read();
+            if (type == TYPE_MC) {
                 return CompressedStreamTools.read(new DataInputStream(stream));
-            }
-            case TYPE_MC_GZIP: {
+            } else if (type == TYPE_MC_GZIP) {
                 return CompressedStreamTools.readCompressed(stream);
+            } else if (type == TYPE_BC_1) {
+                return readBuildCraftV1Direct(new DataInputStream(stream));
+            } else if (type == TYPE_BC_1_GZIP) {
+                return readBuildCraftV1Direct(new DataInputStream(new GZIPInputStream(stream)));
+            } else {
+                throw new InvalidInputDataException("Cannot handle BuildCraft saved NBT type " + type);
             }
-            case TYPE_BC_1_GZIP:
-                int len = new DataInputStream(stream).readInt();
-                return readBuildCraftV1Direct(new GZIPInputStream(stream), len);
-            case TYPE_BC_1: {
-                len = new DataInputStream(stream).readInt();
-                return readBuildCraftV1Direct(stream, len);
-            }
-            case GZIPInputStream.GZIP_MAGIC >> 8: {
-                // Looks like we're reading an older style of stream
-                int rest = stream.read();
-                if (rest == (GZIPInputStream.GZIP_MAGIC & 0xff)) {
-                    // We exactly match the GZIP header-- try reading it as if it was one
-                    final int[] read = { 0 };
-                    InputStream s2 = new InputStream() {
-                        @Override
-                        public int read() throws IOException {
-                            int r = read[0];
-                            switch (r) {
-                                case 0: {
-                                    read[0] = 1;
-                                    return type;
-                                }
-                                case 1: {
-                                    read[0] = 2;
-                                    return rest;
-                                }
-                                default: {
-                                    return stream.read();
-                                }
-                            }
-                        }
-                    };
-                    return CompressedStreamTools.readCompressed(s2);
-                } else {
-                    throw new InvalidInputDataException("Unknown type " + type + ", and not a gzip stream (2nd = "
-                        + rest + ")");
-                }
-            }
-            default: {
-                throw new InvalidInputDataException("Unknown type " + type);
-            }
+        } else if (byte1 == NbtSquishConstants.GZIP_MAGIC_1 && byte2 == NbtSquishConstants.GZIP_MAGIC_2) {
+            // Defiantly a GZIP stream
+            // Assume its a vanilla file
+            stream.reset();
+            return CompressedStreamTools.readCompressed(stream);
+        }
+        // Its not a new BC style nbt, try to red it as if it was an older style nbt
+        // Reset + mark the same point, this time we only want to reset back 1 or 2 bytes
+        stream.reset();
+        stream.mark(5);
+        int type = stream.read();
+
+        if (type == TYPE_MC) {
+            return CompressedStreamTools.read(new DataInputStream(stream));
+        } else if (type == TYPE_MC_GZIP) {
+            return CompressedStreamTools.readCompressed(stream);
+        } else if (type == TYPE_BC_1) {
+            return readBuildCraftV1Direct(new DataInputStream(stream));
+        } else if (type == TYPE_BC_1_GZIP) {
+            return readBuildCraftV1Direct(new DataInputStream(new GZIPInputStream(stream)));
+        } else if (type == Constants.NBT.TAG_COMPOUND) {
+            // Assume vanilla, but reset back to the first byte as vanilla needs
+            stream.reset();
+            return CompressedStreamTools.read(new DataInputStream(stream));
+        } else {
+            throw new InvalidInputDataException("Cannot handle unknown saved NBT type " + type);
         }
     }
 
-    /*
-     * Util
-     */
-
-    private static NBTTagCompound readBuildCraftV1Direct(InputStream stream, int length) throws IOException {
-        byte[] bytes = new byte[length];
-        IOUtils.read(stream, bytes);
-        PacketBuffer buf = new PacketBuffer(Unpooled.wrappedBuffer(bytes));
-        try {
-            NBTSquishMap map = NBTSquishMapReader.read(buf);
-            WrittenType width = map.getWrittenType();
-            int index = width.readIndex(buf);
-            return map.getFullyReadComp(index);
-        } catch (IndexOutOfBoundsException ioobe) {
-            throw new IOException("The byte buf was not big enough!", ioobe);
-        }
-    }
-
-    private static int squishBuildCraftV1Direct(NBTTagCompound nbt, PacketBuffer buf) {
-        buf = createBuffer(buf);
-        int start = buf.writerIndex();
-        NBTSquishMap map = new NBTSquishMap();
-        map.addTag(nbt);
-        NBTSquishMapWriter.debug = debugBuffer != null;
-        NBTSquishMapWriter.write(map, buf);
+    private static NBTTagCompound readBuildCraftV1Direct(DataInput in) throws IOException {
+        NbtSquishMap map = NbtSquishMapReader.read(in);
         WrittenType type = map.getWrittenType();
-        type.writeIndex(buf, map.indexOfTag(nbt));
-        return buf.writerIndex() - start;
+        int index = type.readIndex(in);
+        return map.getFullyReadComp(index);
     }
 
-    private static PacketBuffer createBuffer(ByteBuf buf) {
-        if (debugBuffer == null) {
-            return new PacketBuffer(buf);
-        }
-        return debugBuffer.apply(buf);
-    }
-
-    private static void writeBufToStream(PacketBuffer buffer, OutputStream stream) throws IOException {
-        stream.write(buffer.array(), 0, buffer.readableBytes());
+    private static void squishBuildCraftV1Direct(NBTTagCompound nbt, DataOutput to) throws IOException {
+        NbtSquishMap map = new NbtSquishMap();
+        map.addTag(nbt);
+        NbtSquishMapWriter.debug = debugBuffer != null;
+        NbtSquishMapWriter.write(map, to);
+        WrittenType type = map.getWrittenType();
+        type.writeIndex(to, map.indexOfTag(nbt));
     }
 }
