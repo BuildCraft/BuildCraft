@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.ChunkProviderServer;
 
 import net.minecraftforge.fml.common.IWorldGenerator;
 
@@ -91,6 +92,25 @@ public enum OilGenerator implements IWorldGenerator {
             type = GenType.LAKE;
         } else {
             return;
+        }
+
+        // FIXME: Half implemented!
+        int[][] heights;
+        IChunkProvider provider = world.getChunkProvider();
+        if (provider instanceof IHeightFunction) {
+            heights = ((IHeightFunction) provider).genHeights(cx, cz);
+        } else if (provider instanceof ChunkProviderServer) {
+            IChunkGenerator gen = ((ChunkProviderServer) provider).chunkGenerator;
+            if (gen instanceof IHeightFunction) {
+                heights = ((IHeightFunction) gen).genHeights(cx, cz);
+            } else {
+                heights = new int[16][16];
+                for (int hx = 0; hx < 16; hx++) {
+                    for (int hz = 0; hz < 16; hz++) {
+                        heights[hx][hz] = world.getSeaLevel();
+                    }    
+                }
+            }
         }
 
         if (type != GenType.LAKE) {

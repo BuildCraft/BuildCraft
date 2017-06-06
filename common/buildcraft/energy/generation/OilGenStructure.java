@@ -114,6 +114,8 @@ public abstract class OilGenStructure {
 
     public static class Spout extends OilGenStructure {
         // FIXME (AlexIIL): This won't support cubic chunks - we'll have to do this differently in compat
+        // TODO: Use a terrain generator from mc terrain generation to get the height of the world
+        // A hook will go in compat for help when using cubic chunks or a different type of terrain generator
         public final BlockPos start;
         public final int radius;
         public final int height;
