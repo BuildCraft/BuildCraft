@@ -114,16 +114,17 @@ public class BCTransportRecipes {
 
         if (BCTransportItems.plugPulsar != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
-            builder.add("rer");
-            builder.add("gpg");
+            builder.add(" e ");
+            builder.add("rpr");
+            builder.add(" l ");
             if (BCCoreBlocks.engine != null && BCCoreBlocks.engine.isRegistered(EnumEngineType.WOOD)) {
                 builder.map('e', BCCoreBlocks.engine.getStack(EnumEngineType.WOOD));
             } else {
                 builder.map('e', Blocks.REDSTONE_BLOCK);
             }
             builder.map('p', BCTransportItems.plugBlocker, Blocks.COBBLESTONE);
-            builder.map('g', "gearIron");
             builder.map('r', "dustRedstone");
+            builder.map('l', Blocks.LEVER);
             builder.setResult(new ItemStack(BCTransportItems.plugPulsar));
             builder.register();
         }
