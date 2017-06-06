@@ -57,6 +57,7 @@ import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.mj.MjAPI;
 
 import buildcraft.lib.BCLibConfig;
@@ -71,7 +72,7 @@ public final class BlockUtil {
         }
 
         List<ItemStack> dropsList = block.getDrops(world, pos, state, 0);
-        EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer(world, pos, owner);
+        EntityPlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner, pos);
         float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, pos, state, 0, 1.0F, false, fakePlayer);
 
         NonNullList<ItemStack> returnList = NonNullList.create();
@@ -101,7 +102,7 @@ public final class BlockUtil {
     }
 
     public static boolean harvestBlock(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, BlockPos ownerPos, GameProfile owner) {
-        FakePlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer(world, ownerPos, owner);
+        FakePlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner, ownerPos);
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), fakePlayer);
         MinecraftForge.EVENT_BUS.post(breakEvent);
 
@@ -123,7 +124,7 @@ public final class BlockUtil {
     }
 
     public static FakePlayer getFakePlayerWithTool(WorldServer world, @Nonnull ItemStack tool, GameProfile owner) {
-        FakePlayer player = FakePlayerUtil.INSTANCE.getFakePlayer(world, owner);
+        FakePlayer player = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner);
         int i = 0;
 
         while (player.getHeldItemMainhand() != tool && i < 9) {
@@ -139,7 +140,7 @@ public final class BlockUtil {
     }
 
     public static boolean breakBlock(WorldServer world, BlockPos pos, NonNullList<ItemStack> drops, BlockPos ownerPos, GameProfile owner) {
-        FakePlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer(world, ownerPos, owner);
+        FakePlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner, ownerPos);
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), fakePlayer);
         MinecraftForge.EVENT_BUS.post(breakEvent);
 
@@ -198,7 +199,7 @@ public final class BlockUtil {
 
     public static float getBlockHardnessMining(World world, BlockPos pos, IBlockState state, GameProfile owner) {
         if (world instanceof WorldServer) {
-            EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, owner);
+            EntityPlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) world, owner);
             float relativeHardness = state.getPlayerRelativeBlockHardness(fakePlayer, world, pos);
             if (relativeHardness <= 0.0F) {
                 // Forge's getPlayerRelativeBlockHardness hook returns 0.0F if the hardness is < 0.0F.

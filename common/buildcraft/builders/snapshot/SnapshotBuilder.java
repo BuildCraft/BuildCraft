@@ -25,10 +25,11 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent;
 
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.mj.MjAPI;
 
 import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.FakePlayerUtil;
+import buildcraft.lib.misc.FakePlayerProvider;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.net.PacketBufferBC;
@@ -205,10 +206,10 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                         tile.getWorldBC(),
                         breakTask.pos,
                         tile.getWorldBC().getBlockState(breakTask.pos),
-                        FakePlayerUtil.INSTANCE.getFakePlayer(
+                        BuildCraftAPI.fakePlayerProvider.getFakePlayer(
                             (WorldServer) tile.getWorldBC(),
-                            tile.getBuilderPos(),
-                            tile.getOwner()
+                            tile.getOwner(),
+                            tile.getBuilderPos()
                         )
                     );
                     MinecraftForge.EVENT_BUS.post(breakEvent);

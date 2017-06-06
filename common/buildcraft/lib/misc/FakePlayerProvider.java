@@ -15,30 +15,33 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 
-import buildcraft.api.core.IBCFakePlayer;
+import buildcraft.api.core.IFakePlayerProvider;
 
 import buildcraft.lib.fake.FakePlayerBC;
 
-public enum FakePlayerUtil implements IBCFakePlayer {
+public enum FakePlayerProvider implements IFakePlayerProvider {
     INSTANCE;
 
     private final Map<GameProfile, FakePlayerBC> players = new HashMap<>();
 
-    @Deprecated
-    public final GameProfile gameProfile = new GameProfile(UUID.nameUUIDFromBytes("buildcraft.core".getBytes()), "[BuildCraft]");
+    private final GameProfile gameProfile = new GameProfile(
+        UUID.nameUUIDFromBytes("buildcraft.core".getBytes()),
+        "[BuildCraft]"
+    );
 
     @Override
     @Deprecated
     public FakePlayerBC getBuildCraftPlayer(WorldServer world) {
-        return getFakePlayer(world, BlockPos.ORIGIN, gameProfile);
+        return getFakePlayer(world, gameProfile, BlockPos.ORIGIN);
     }
 
     @Override
     public FakePlayerBC getFakePlayer(WorldServer world, GameProfile profile) {
-        return getFakePlayer(world, BlockPos.ORIGIN, profile);
+        return getFakePlayer(world, profile, BlockPos.ORIGIN);
     }
 
-    public FakePlayerBC getFakePlayer(WorldServer world, BlockPos pos, GameProfile profile) {
+    @Override
+    public FakePlayerBC getFakePlayer(WorldServer world, GameProfile profile, BlockPos pos) {
         players.computeIfAbsent(profile, p -> new FakePlayerBC(world, profile));
         FakePlayerBC player = players.get(profile);
         player.world = world;

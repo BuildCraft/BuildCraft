@@ -11,13 +11,14 @@ import java.util.List;
 import java.util.Optional;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 
-import buildcraft.lib.fake.FakePlayerBC;
-import buildcraft.lib.misc.FakePlayerUtil;
+import net.minecraftforge.common.util.FakePlayer;
+
+import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.template.TemplateApi;
+
 import buildcraft.lib.misc.data.Box;
 
 public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
@@ -55,23 +56,18 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
 
     @Override
     protected boolean doPlaceTask(PlaceTask placeTask) {
-        FakePlayerBC fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer(
+        FakePlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(
             (WorldServer) tile.getWorldBC(),
-            tile.getBuilderPos(),
-            tile.getOwner()
+            tile.getOwner(),
+            tile.getBuilderPos()
         );
         fakePlayer.setHeldItem(fakePlayer.getActiveHand(), placeTask.items.get(0));
-        EnumActionResult result = placeTask.items.get(0).onItemUse(
-            fakePlayer,
+        return TemplateApi.templateRegistry.handle(
             tile.getWorldBC(),
             placeTask.pos,
-            fakePlayer.getActiveHand(),
-            EnumFacing.UP,
-            0.5F,
-            0.0F,
-            0.5F
+            fakePlayer,
+            placeTask.items.get(0)
         );
-        return result == EnumActionResult.SUCCESS;
     }
 
     @Override
