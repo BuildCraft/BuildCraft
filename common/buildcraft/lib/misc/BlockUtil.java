@@ -246,16 +246,13 @@ public final class BlockUtil {
     public static Fluid getFluidWithFlowing(World world, BlockPos pos) {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
-        Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
-        if (fluid == null) {
-            if (block == Blocks.FLOWING_WATER) {
-                fluid = FluidRegistry.WATER;
-            }
-            if (block == Blocks.FLOWING_LAVA) {
-                fluid = FluidRegistry.LAVA;
-            }
+        if (block == Blocks.FLOWING_WATER) {
+            return FluidRegistry.WATER;
         }
-        return fluid;
+        if (block == Blocks.FLOWING_LAVA) {
+            return FluidRegistry.LAVA;
+        }
+        return FluidRegistry.lookupFluidForBlock(block);
     }
 
     public static Fluid getFluid(Block block) {
