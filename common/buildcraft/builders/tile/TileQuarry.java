@@ -44,6 +44,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.mj.MjAPI;
@@ -58,7 +59,6 @@ import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
@@ -630,7 +630,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
         @Override
         protected boolean finish() {
-            EntityPlayer fake = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, pos, getOwner());
+            EntityPlayer fake = BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) world, getOwner(), pos);
 
             IBlockState state = world.getBlockState(breakPos);
             if (state.getBlockHardness(world, breakPos) < 0) {

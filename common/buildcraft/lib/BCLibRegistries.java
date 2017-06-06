@@ -15,7 +15,7 @@ import buildcraft.lib.crops.CropHandlerPlantable;
 import buildcraft.lib.crops.CropHandlerReeds;
 import buildcraft.lib.fluid.CoolantRegistry;
 import buildcraft.lib.fluid.FuelRegistry;
-import buildcraft.lib.misc.FakePlayerUtil;
+import buildcraft.lib.misc.FakePlayerProvider;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 import buildcraft.lib.recipe.RefineryRecipeRegistry;
@@ -27,7 +27,7 @@ public class BCLibRegistries {
         BuildcraftRecipeRegistry.refineryRecipes = RefineryRecipeRegistry.INSTANCE;
         BuildcraftFuelRegistry.fuel = FuelRegistry.INSTANCE;
         BuildcraftFuelRegistry.coolant = CoolantRegistry.INSTANCE;
-        BuildCraftAPI.fakePlayerProvider = FakePlayerUtil.INSTANCE;
+        BuildCraftAPI.fakePlayerProvider = FakePlayerProvider.INSTANCE;
 
         CropManager.setDefaultHandler(CropHandlerPlantable.INSTANCE);
         CropManager.registerHandler(CropHandlerReeds.INSTANCE);

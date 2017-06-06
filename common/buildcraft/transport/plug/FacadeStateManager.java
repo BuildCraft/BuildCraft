@@ -138,7 +138,7 @@ public class FacadeStateManager {
      *         {@link #isValidFacadeState(IBlockState)}</li>
      *         <li>OR {@link #STR_SUCCESS} if every state of the block is valid for a facade.
      *         </ul>
-    */
+     */
     private static String isValidFacadeBlock(Block block) {
         String disablingMod = disabledBlocks.get(block);
         if (disablingMod != null) {
@@ -162,7 +162,7 @@ public class FacadeStateManager {
      *         </li>
      *         <li>OR {@link #STR_SUCCESS} if this state is valid for a facade.
      *         </ul>
-    */
+     */
     private static String isValidFacadeState(IBlockState state) {
         if (state.getBlock().hasTileEntity(state)) {
             return "it has a tile entity";
