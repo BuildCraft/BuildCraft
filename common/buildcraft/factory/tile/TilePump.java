@@ -73,12 +73,13 @@ public class TilePump extends TileMiner {
         Fluid fluid = null;
         for (BlockPos posToCheck = pos.down(); posToCheck.getY() > 0; posToCheck = posToCheck.down()) {
             if (BlockUtil.getFluidWithFlowing(world, posToCheck) != null) {
-                if (!queue.contains(posToCheck)) {
-                    fluid = BlockUtil.getFluidWithFlowing(world, posToCheck);
-                    nextPosesToCheck.add(posToCheck);
-                    paths.put(posToCheck, Collections.singletonList(posToCheck));
-                    break;
+                fluid = BlockUtil.getFluidWithFlowing(world, posToCheck);
+                nextPosesToCheck.add(posToCheck);
+                paths.put(posToCheck, Collections.singletonList(posToCheck));
+                if (BlockUtil.getFluid(world, posToCheck) != null) {
+                    queue.add(posToCheck);
                 }
+                break;
             } else if (!world.isAirBlock(posToCheck) && world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.tube) {
                 break;
             }
@@ -110,8 +111,8 @@ public class TilePump extends TileMiner {
                             pathBuilder.addAll(paths.get(posToCheck));
                             pathBuilder.add(offsetPos);
                             paths.put(offsetPos, pathBuilder.build());
-                            if (BlockUtil.getFluid(world, posToCheck) != null) {
-                                queue.add(posToCheck);
+                            if (BlockUtil.getFluid(world, offsetPos) != null) {
+                                queue.add(offsetPos);
                             }
                             nextPosesToCheck.add(offsetPos);
                         }
