@@ -32,6 +32,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjReceiver;
+import buildcraft.api.mj.MjAPI;
 
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.BlockUtil;
@@ -166,7 +167,7 @@ public class TilePump extends TileMiner {
             if (tank.isFull()) {
                 return;
             }
-            long target = 10000000;
+            long target = 10 * MjAPI.MJ;
             if (currentPos != null && paths.containsKey(currentPos)) {
                 progress += battery.extractPower(0, target - progress);
                 if (progress >= target) {
