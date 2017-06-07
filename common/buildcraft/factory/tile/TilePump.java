@@ -11,14 +11,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -66,13 +67,13 @@ public class TilePump extends TileMiner {
         world.profiler.startSection("prepare");
         queue.clear();
         paths.clear();
+        Set<BlockPos> checked = new HashSet<>();
         List<BlockPos> nextPosesToCheck = new ArrayList<>();
-        List<BlockPos> checkedButFlowingPoses = new ArrayList<>();
-        Block block = null;
+        Fluid fluid = null;
         for (BlockPos posToCheck = pos.down(); posToCheck.getY() > 0; posToCheck = posToCheck.down()) {
             if (BlockUtil.getFluidWithFlowing(world, posToCheck) != null) {
                 if (!queue.contains(posToCheck)) {
-                    block = world.getBlockState(posToCheck).getBlock();
+                    fluid = BlockUtil.getFluidWithFlowing(world, posToCheck);
                     nextPosesToCheck.add(posToCheck);
                     paths.put(posToCheck, Collections.singletonList(posToCheck));
                     break;
@@ -82,6 +83,7 @@ public class TilePump extends TileMiner {
             }
         }
         if (nextPosesToCheck.isEmpty()) {
+            world.profiler.endSection();
             return;
         }
         world.profiler.endStartSection("build");
@@ -97,24 +99,22 @@ public class TilePump extends TileMiner {
                     EnumFacing.EAST
                 }) {
                     BlockPos offsetPos = posToCheck.offset(side);
-                    if (Math.pow(offsetPos.getX() - pos.getX(), 2) + Math.pow(offsetPos.getZ() - pos.getZ(), 2) > Math.pow(64, 2)) {
+                    if ((offsetPos.getX() - pos.getX()) * (offsetPos.getX() - pos.getX()) +
+                        (offsetPos.getZ() - pos.getZ()) * (offsetPos.getZ() - pos.getZ()) > 64 * 64) {
                         continue;
                     }
-                    if (!queue.contains(offsetPos) &&
-                        !checkedButFlowingPoses.contains(offsetPos) &&
-                        !nextPosesToCheck.contains(offsetPos) &&
-                        !nextPosesToCheckCopy.contains(offsetPos) &&
-                        getLocalState(offsetPos).getBlock() == block) {
-                        ImmutableList.Builder<BlockPos> pathBuilder = new ImmutableList.Builder<>();
-                        pathBuilder.addAll(paths.get(posToCheck));
-                        pathBuilder.add(offsetPos);
-                        paths.put(offsetPos, pathBuilder.build());
-                        if (true || BlockUtil.getFluid(world, posToCheck) != null) {
-                            queue.add(posToCheck);
-                        } else {
-                            checkedButFlowingPoses.add(posToCheck);
+                    if (!checked.contains(offsetPos)) {
+                        if (BlockUtil.getFluidWithFlowing(world, offsetPos) == fluid) {
+                            ImmutableList.Builder<BlockPos> pathBuilder = new ImmutableList.Builder<>();
+                            pathBuilder.addAll(paths.get(posToCheck));
+                            pathBuilder.add(offsetPos);
+                            paths.put(offsetPos, pathBuilder.build());
+                            if (BlockUtil.getFluid(world, posToCheck) != null) {
+                                queue.add(posToCheck);
+                            }
+                            nextPosesToCheck.add(offsetPos);
                         }
-                        nextPosesToCheck.add(offsetPos);
+                        checked.add(offsetPos);
                     }
                 }
             }
