@@ -22,6 +22,7 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
@@ -32,6 +33,8 @@ import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.chunk.Chunk;
 
 import net.minecraftforge.common.DimensionManager;
+
+import buildcraft.api.schematics.SchematicBlockContext;
 
 import buildcraft.lib.BCLib;
 
@@ -86,6 +89,36 @@ public class FakeWorldServer extends WorldServerMulti implements IFakeWorld {
         List<ItemStack> dropsCopy = new ArrayList<>(drops);
         drops.clear();
         return dropsCopy;
+    }
+
+    public boolean isAcceptableForBlueprint(SchematicBlockContext context) {
+        BlockPos testPos = new BlockPos(-100, 5, -100);
+        boolean oldEditable = editable;
+        editable = true;
+        setBlockState(testPos, context.blockState);
+        TileEntity te = context.block.createTileEntity(this, context.blockState);
+        TileEntity original = context.world.getTileEntity(context.pos);
+        if (te == null || original == null) {
+            return false;
+        }
+        addTileEntity(te);
+        NBTTagCompound compound = te.serializeNBT();
+        compound.removeTag("x");
+        compound.removeTag("y");
+        compound.removeTag("z");
+        compound.removeTag("id");
+
+        NBTTagCompound toCompare = original.serializeNBT();
+        toCompare.removeTag("x");
+        toCompare.removeTag("y");
+        toCompare.removeTag("z");
+        toCompare.removeTag("id");
+
+        boolean equals = compound.equals(toCompare);
+        setBlockToAir(testPos);
+        removeTileEntity(testPos);
+        editable = oldEditable;
+        return equals;
     }
 
     @Override

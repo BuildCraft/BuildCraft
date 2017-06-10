@@ -91,7 +91,7 @@ public class BCBuilders {
 
         SchematicBlockFactoryRegistry.registerFactory(
                 "defaultState",
-                300,
+                99,
                 SchematicBlockDefaultState::predicate,
                 SchematicBlockDefaultState::new
         );

@@ -64,7 +64,6 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         ResourceLocation registryName = context.block.getRegistryName();
         return registryName != null &&
             RulesLoader.READ_DOMAINS.contains(registryName.getResourceDomain()) &&
-            !context.block.hasTileEntity(context.blockState) &&
             RulesLoader.getRules(context.blockState).stream().noneMatch(rule -> rule.ignore);
     }
 
@@ -337,7 +336,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
                 placeBlock.getDefaultState()
             );
         }
-        if (world.setBlockState(blockPos, newBlockState, 11)) {
+        if (world.setBlockState(blockPos, newBlockState, 3)) {
             updateBlockOffsets.stream()
                 .map(blockPos::add)
                 .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, placeBlock, false));
