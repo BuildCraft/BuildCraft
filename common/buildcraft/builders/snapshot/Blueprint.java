@@ -31,6 +31,7 @@ import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.ISchematicEntity;
 
+import buildcraft.lib.dimension.DimensionRunner;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.Box;
 
@@ -97,9 +98,6 @@ public class Blueprint extends Snapshot {
         NBTTagList list = nbt.hasKey("data", Constants.NBT.TAG_LIST) ? nbt.getTagList("data", Constants.NBT.TAG_INT)
             : null;
         int[] serializedData = nbt.hasKey("data", Constants.NBT.TAG_INT_ARRAY) ? nbt.getIntArray("data") : new int[0];
-        if (serializedData == null && list == null) {
-            throw new InvalidInputDataException("Can't read a blueprint with no data!");
-        }
         int len = list == null ? serializedData.length : list.tagCount();
         if (len != size.getX() * size.getY() * size.getZ()) {
             throw new InvalidInputDataException("Pallette has length of " + len
@@ -128,7 +126,7 @@ public class Blueprint extends Snapshot {
     public class BuildingInfo {
         public final BlockPos basePos;
         public final Rotation rotation;
-        private final Box box;
+        public final Box box;
         public final List<BlockPos> toBreak = new ArrayList<>();
         public final Map<BlockPos, ISchematicBlock<?>> toPlace = new HashMap<>();
         public final Map<BlockPos, List<ItemStack>> toPlaceRequiredItems = new HashMap<>();
@@ -137,19 +135,24 @@ public class Blueprint extends Snapshot {
         public final Map<ISchematicEntity<?>, List<ItemStack>> entitiesRequiredItems = new HashMap<>();
         public final Map<ISchematicEntity<?>, List<FluidStack>> entitiesRequiredFluids = new HashMap<>();
 
+        public boolean finishedComputing = false;
+
         public BuildingInfo(BlockPos basePos, Rotation rotation) {
             this.basePos = basePos;
             this.rotation = rotation;
-            Pair<List<ItemStack>[][][], List<FluidStack>[][][]> required = SchematicBlockManager.computeRequired(
-                getSnapshot());
-            Pair<List<List<ItemStack>>, List<List<FluidStack>>> requiredEntities = SchematicEntityManager
-                .computeRequired(getSnapshot());
+            box = new Box();
+            DimensionRunner.addToQueue(Blueprint.this, this::receiveData);
+        }
+
+        public void receiveData(DimensionRunner.BuildingInfoData data) {
+            Pair<List<ItemStack>[][][], List<FluidStack>[][][]> required = data.blockRequirements;
+            Pair<List<List<ItemStack>>, List<List<FluidStack>>> requiredEntities = data.entityRequirements;
             for (int z = 0; z < getSnapshot().size.getZ(); z++) {
                 for (int y = 0; y < getSnapshot().size.getY(); y++) {
                     for (int x = 0; x < getSnapshot().size.getX(); x++) {
-                        ISchematicBlock<?> schematicBlock = palette.get(data[x][y][z]);
+                        ISchematicBlock<?> schematicBlock = palette.get(Blueprint.this.data[x][y][z]);
                         BlockPos blockPos = new BlockPos(x, y, z).rotate(rotation).add(basePos).add(offset.rotate(
-                            rotation));
+                                rotation));
                         if (schematicBlock.isAir()) {
                             toBreak.add(blockPos);
                         } else {
@@ -168,8 +171,9 @@ public class Blueprint extends Snapshot {
                 entitiesRequiredFluids.put(rotatedSchematicEntity, requiredEntities.getRight().get(i));
                 i++;
             }
-            box = new Box();
             Stream.concat(toBreak.stream(), toPlace.keySet().stream()).forEach(box::extendToEncompass);
+
+            finishedComputing = true;
         }
 
         public Blueprint getSnapshot() {

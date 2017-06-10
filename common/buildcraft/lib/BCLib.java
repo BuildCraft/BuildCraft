@@ -27,6 +27,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.dimension.BlankWorldProvider;
+import buildcraft.lib.dimension.DimensionRunner;
 import buildcraft.lib.dimension.FakeWorldServer;
 import buildcraft.lib.expression.ExpressionDebugManager;
 import buildcraft.lib.item.ItemManager;
@@ -65,6 +66,8 @@ public class BCLib {
 
     public static final boolean DEV = VERSION.startsWith("$") || Boolean.getBoolean("buildcraft.dev");
 
+    public static DimensionRunner dimensionRunner;
+
     @Instance(MODID)
     public static BCLib INSTANCE;
 
@@ -96,7 +99,6 @@ public class BCLib {
         MinecraftForge.EVENT_BUS.register(BCLibEventDist.INSTANCE);
         blueprintDimensionType = DimensionType.register("The dimension of blueprints", "", DIMENSION_ID, BlankWorldProvider.class, true);
         DimensionManager.registerDimension(DIMENSION_ID, blueprintDimensionType);
-
     }
 
     @Mod.EventHandler
@@ -104,11 +106,14 @@ public class BCLib {
         FakeWorldServer fake = new FakeWorldServer(event.getServer());
         fake.init();
         DimensionManager.setWorld(DIMENSION_ID, fake, event.getServer());
+        dimensionRunner = new DimensionRunner(fake);
+        dimensionRunner.start();
     }
 
     @Mod.EventHandler
     public static void serverStop(FMLServerStoppedEvent event) {
         FakeWorldServer.INSTANCE = null;
+        dimensionRunner.terminate();
     }
 
     @Mod.EventHandler

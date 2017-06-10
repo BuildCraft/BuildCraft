@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.ImmutableList;
@@ -246,6 +245,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);

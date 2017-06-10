@@ -49,24 +49,22 @@ import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 
 public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefault> {
-    private final Set<BlockPos> requiredBlockOffsets = new HashSet<>();
-    private IBlockState blockState;
-    private final List<IProperty<?>> ignoredProperties = new ArrayList<>();
-    private NBTTagCompound tileNbt;
-    private final List<String> ignoredTags = new ArrayList<>();
-    private Rotation tileRotation = Rotation.NONE;
-    private Block placeBlock;
-    private final Set<BlockPos> updateBlockOffsets = new HashSet<>();
-    private final Set<Block> canBeReplacedWithBlocks = new HashSet<>();
+    protected final Set<BlockPos> requiredBlockOffsets = new HashSet<>();
+    protected IBlockState blockState;
+    protected final List<IProperty<?>> ignoredProperties = new ArrayList<>();
+    protected NBTTagCompound tileNbt;
+    protected final List<String> ignoredTags = new ArrayList<>();
+    protected Rotation tileRotation = Rotation.NONE;
+    protected Block placeBlock;
+    protected final Set<BlockPos> updateBlockOffsets = new HashSet<>();
+    protected final Set<Block> canBeReplacedWithBlocks = new HashSet<>();
 
     @SuppressWarnings("unused")
     public static boolean predicate(SchematicBlockContext context) {
-        if (context.blockState.getBlock().isAir(context.blockState, null, null)) {
-            return false;
-        }
         ResourceLocation registryName = context.block.getRegistryName();
         return registryName != null &&
             RulesLoader.READ_DOMAINS.contains(registryName.getResourceDomain()) &&
+            !context.block.hasTileEntity(context.blockState) &&
             RulesLoader.getRules(context.blockState).stream().noneMatch(rule -> rule.ignore);
     }
 

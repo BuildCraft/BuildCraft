@@ -34,6 +34,7 @@ import buildcraft.builders.snapshot.MessageSnapshotResponse;
 import buildcraft.builders.snapshot.RulesLoader;
 import buildcraft.builders.snapshot.SchematicBlockAir;
 import buildcraft.builders.snapshot.SchematicBlockDefault;
+import buildcraft.builders.snapshot.SchematicBlockDefaultState;
 import buildcraft.builders.snapshot.SchematicBlockFluid;
 import buildcraft.builders.snapshot.SchematicEntityDefault;
 import buildcraft.core.BCCore;
@@ -86,6 +87,13 @@ public class BCBuilders {
                 100,
                 SchematicEntityDefault::predicate,
                 SchematicEntityDefault::new
+        );
+
+        SchematicBlockFactoryRegistry.registerFactory(
+                "defaultState",
+                300,
+                SchematicBlockDefaultState::predicate,
+                SchematicBlockDefaultState::new
         );
 
         BCBuildersProxy.getProxy().fmlPreInit();
