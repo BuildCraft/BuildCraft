@@ -16,6 +16,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import buildcraft.api.core.EnumHandlerPriority;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandlerBlock;
 import buildcraft.api.transport.IStripesHandlerItem;
@@ -24,34 +25,23 @@ import buildcraft.api.transport.IStripesRegistry;
 public enum StripesRegistry implements IStripesRegistry {
     INSTANCE;
 
-    private final HandlerPriority[] PRIORITIES = HandlerPriority.values();
-    private final EnumMap<HandlerPriority, List<IStripesHandlerItem>> itemHandlers = new EnumMap<>(HandlerPriority.class);
-    private final EnumMap<HandlerPriority, List<IStripesHandlerBlock>> blockHandlers = new EnumMap<>(HandlerPriority.class);
+    private final EnumMap<EnumHandlerPriority, List<IStripesHandlerItem>> itemHandlers = new EnumMap<>(EnumHandlerPriority.class);
+    private final EnumMap<EnumHandlerPriority, List<IStripesHandlerBlock>> blockHandlers = new EnumMap<>(EnumHandlerPriority.class);
 
     StripesRegistry() {
-        for (HandlerPriority priority : PRIORITIES) {
+        for (EnumHandlerPriority priority : EnumHandlerPriority.VALUES) {
             itemHandlers.put(priority, new ArrayList<>());
             blockHandlers.put(priority, new ArrayList<>());
         }
     }
 
     @Override
-    public void addHandler(IStripesHandlerItem handler) {
-        addHandler(handler, HandlerPriority.NORMAL);
-    }
-
-    @Override
-    public void addHandler(IStripesHandlerItem handler, HandlerPriority priority) {
+    public void addHandler(IStripesHandlerItem handler, EnumHandlerPriority priority) {
         itemHandlers.get(priority).add(handler);
     }
 
     @Override
-    public void addHandler(IStripesHandlerBlock handler) {
-        addHandler(handler, HandlerPriority.NORMAL);
-    }
-
-    @Override
-    public void addHandler(IStripesHandlerBlock handler, HandlerPriority priority) {
+    public void addHandler(IStripesHandlerBlock handler, EnumHandlerPriority priority) {
         blockHandlers.get(priority).add(handler);
     }
 
@@ -63,7 +53,7 @@ public enum StripesRegistry implements IStripesRegistry {
                               ItemStack stack,
                               EntityPlayer player,
                               IStripesActivator activator) {
-        for (HandlerPriority priority : PRIORITIES) {
+        for (EnumHandlerPriority priority : EnumHandlerPriority.VALUES) {
             for (IStripesHandlerItem handler : itemHandlers.get(priority)) {
                 if (handler.handle(world, pos, direction, stack, player, activator)) {
                     return true;
@@ -80,7 +70,7 @@ public enum StripesRegistry implements IStripesRegistry {
                                EnumFacing direction,
                                EntityPlayer player,
                                IStripesActivator activator) {
-        for (HandlerPriority priority : PRIORITIES) {
+        for (EnumHandlerPriority priority : EnumHandlerPriority.VALUES) {
             for (IStripesHandlerBlock handler : blockHandlers.get(priority)) {
                 if (handler.handle(world, pos, direction, player, activator)) {
                     return true;

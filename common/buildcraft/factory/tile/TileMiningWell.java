@@ -14,13 +14,13 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent;
 
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjReceiver;
 
 import buildcraft.lib.inventory.AutomaticProvidingTransactor;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.mj.MjBatteryReciver;
 
@@ -39,7 +39,7 @@ public class TileMiningWell extends TileMiner {
             progress += battery.extractPower(0, target - progress);
             if (progress >= target) {
                 progress = 0;
-                EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, pos, getOwner());
+                EntityPlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) world, getOwner(), pos);
                 BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, currentPos, world.getBlockState(currentPos), fakePlayer);
                 MinecraftForge.EVENT_BUS.post(breakEvent);
                 if (!breakEvent.isCanceled()) {

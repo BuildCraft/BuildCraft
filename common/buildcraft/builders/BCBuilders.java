@@ -55,6 +55,7 @@ public class BCBuilders {
     public static void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
+        BCBuildersRegistries.preInit();
         BCBuildersItems.preInit();
         BCBuildersBlocks.preInit();
 
@@ -98,6 +99,7 @@ public class BCBuilders {
     @Mod.EventHandler
     public static void init(FMLInitializationEvent evt) {
         BCBuildersProxy.getProxy().fmlInit();
+        BCBuildersRegistries.init();
         BCBuildersRecipes.init();
     }
 
