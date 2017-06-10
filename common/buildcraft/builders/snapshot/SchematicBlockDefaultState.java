@@ -20,7 +20,8 @@ public class SchematicBlockDefaultState extends SchematicBlockDefault {
     public static boolean predicate(SchematicBlockContext context) {
         ResourceLocation registryName = context.block.getRegistryName();
         return registryName != null && RulesLoader.getRules(context.blockState).stream().noneMatch(rule -> rule.ignore) &&
-                context.block.hasTileEntity(context.blockState) && FakeWorldServer.INSTANCE.isAcceptableForBlueprint(context);
+                context.block.hasTileEntity(context.blockState) && FakeWorldServer.INSTANCE.isAcceptableForBlueprint(context) &&
+                !context.world.isAirBlock(context.pos);
     }
 
     @Override

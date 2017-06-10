@@ -69,31 +69,33 @@ public class BCBuilders {
                 SchematicBlockAir::predicate,
                 SchematicBlockAir::new
         );
+
         SchematicBlockFactoryRegistry.registerFactory(
-                "default",
+                "defaultState",
                 100,
-                SchematicBlockDefault::predicate,
-                SchematicBlockDefault::new
-        );
-        SchematicBlockFactoryRegistry.registerFactory(
-                "fluid",
-                200,
-                SchematicBlockFluid::predicate,
-                SchematicBlockFluid::new
+                SchematicBlockDefaultState::predicate,
+                SchematicBlockDefaultState::new
         );
 
         SchematicEntityFactoryRegistry.registerFactory(
                 "default",
-                100,
+                200,
                 SchematicEntityDefault::predicate,
                 SchematicEntityDefault::new
         );
 
         SchematicBlockFactoryRegistry.registerFactory(
-                "defaultState",
-                99,
-                SchematicBlockDefaultState::predicate,
-                SchematicBlockDefaultState::new
+                "default",
+                300,
+                SchematicBlockDefault::predicate,
+                SchematicBlockDefault::new
+        );
+
+        SchematicBlockFactoryRegistry.registerFactory(
+                "fluid",
+                400,
+                SchematicBlockFluid::predicate,
+                SchematicBlockFluid::new
         );
 
         BCBuildersProxy.getProxy().fmlPreInit();

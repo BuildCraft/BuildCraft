@@ -199,12 +199,6 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     public void update() {
         battery.tick(getWorld(), getPos());
         battery.addPowerChecking(64 * MjAPI.MJ, false);
-        if (invSnapshot.getStackInSlot(0).isEmpty() && blueprintBuildingInfo != null) {
-            currentBasePosIndex = 0;
-            snapshot = null;
-            blueprintBuildingInfo = null;
-            updateSnapshot();
-        }
         if (getBuilder() != null) {
             if (isDone = getBuilder().tick()) {
                 if (currentBasePosIndex < basePoses.size() - 1) {

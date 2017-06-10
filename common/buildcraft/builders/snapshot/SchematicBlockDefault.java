@@ -64,7 +64,8 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         ResourceLocation registryName = context.block.getRegistryName();
         return registryName != null &&
             RulesLoader.READ_DOMAINS.contains(registryName.getResourceDomain()) &&
-            RulesLoader.getRules(context.blockState).stream().noneMatch(rule -> rule.ignore);
+            RulesLoader.getRules(context.blockState).stream().noneMatch(rule -> rule.ignore) &&
+                context.world.isAirBlock(context.basePos);
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
