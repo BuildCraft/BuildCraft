@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.model;
 
 import java.io.IOException;
@@ -25,6 +31,7 @@ import buildcraft.lib.client.reload.SourceType;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.ITickableNode;
 import buildcraft.lib.misc.SpriteUtil;
+
 import buildcraft.transport.BCTransportModels;
 
 /** Holds a model that can be changed by variables. Models are defined in this way by firstly creating a
@@ -146,7 +153,7 @@ public class ModelHolderVariable extends ModelHolder {
     public MutableQuad[] getCutoutQuads() {
         if (rawModel == null) {
             printNoModelWarning();
-            return new MutableQuad[0];
+            return MutableQuad.EMPTY_ARRAY;
         }
         return bakePart(rawModel.cutoutElements);
     }
@@ -154,7 +161,7 @@ public class ModelHolderVariable extends ModelHolder {
     public MutableQuad[] getTranslucentQuads() {
         if (rawModel == null) {
             printNoModelWarning();
-            return new MutableQuad[0];
+            return MutableQuad.EMPTY_ARRAY;
         }
         return bakePart(rawModel.translucentElements);
     }

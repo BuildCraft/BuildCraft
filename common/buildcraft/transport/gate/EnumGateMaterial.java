@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.gate;
 
 import java.util.Locale;
@@ -18,7 +24,7 @@ public enum EnumGateMaterial {
     public final boolean canBeModified;
     public final String tag = name().toLowerCase(Locale.ROOT);
 
-    private EnumGateMaterial(Block block, int numSlots, boolean canBeModified) {
+    EnumGateMaterial(Block block, int numSlots, boolean canBeModified) {
         this.block = block;
         this.numSlots = numSlots;
         this.canBeModified = canBeModified;

@@ -6,6 +6,10 @@ package buildcraft.core.item;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -21,13 +25,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.items.IList;
 
-import buildcraft.core.BCCoreGuis;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import buildcraft.core.BCCoreGuis;
 
 public class ItemList_BC8 extends ItemBC_Neptune implements IList {
     public ItemList_BC8(String id) {
@@ -64,18 +67,18 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList {
     // IList
 
     @Override
-    public String getName(ItemStack stack) {
+    public String getName(@Nonnull ItemStack stack) {
         return NBTUtilBC.getItemData(stack).getString("label");
     }
 
     @Override
-    public boolean setName(ItemStack stack, String name) {
+    public boolean setName(@Nonnull ItemStack stack, String name) {
         NBTUtilBC.getItemData(stack).setString("label", name);
         return true;
     }
 
     @Override
-    public boolean matches(ItemStack stackList, ItemStack item) {
+    public boolean matches(@Nonnull ItemStack stackList, @Nonnull ItemStack item) {
         return ListHandler.matches(stackList, item);
     }
 }

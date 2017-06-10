@@ -6,10 +6,11 @@ package buildcraft.energy;
 
 import buildcraft.api.enums.EnumEngineType;
 
+import buildcraft.lib.tile.TileBC_Neptune;
+
 import buildcraft.core.BCCoreBlocks;
 import buildcraft.energy.tile.TileEngineIron_BC8;
 import buildcraft.energy.tile.TileEngineStone_BC8;
-import buildcraft.lib.tile.TileBC_Neptune;
 
 public class BCEnergyBlocks {
     public static void preInit() {

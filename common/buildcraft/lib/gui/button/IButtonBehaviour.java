@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.gui.button;
 
 public interface IButtonBehaviour {
@@ -5,7 +11,7 @@ public interface IButtonBehaviour {
 
     void mouseReleased(GuiAbstractButton button, int bkey);
 
-    public static final IButtonBehaviour DEFAULT = new IButtonBehaviour() {
+    IButtonBehaviour DEFAULT = new IButtonBehaviour() {
         @Override
         public void mousePressed(GuiAbstractButton button, int bkey) {
             button.active = true;
@@ -20,7 +26,7 @@ public interface IButtonBehaviour {
         }
     };
 
-    public static final IButtonBehaviour TOGGLE = new IButtonBehaviour() {
+    IButtonBehaviour TOGGLE = new IButtonBehaviour() {
         @Override
         public void mousePressed(GuiAbstractButton button, int bkey) {
             button.active = !button.active;
@@ -31,7 +37,7 @@ public interface IButtonBehaviour {
         public void mouseReleased(GuiAbstractButton button, int bkey) {}
     };
 
-    public static Radio createAndSetRadioButtons(GuiAbstractButton... buttons) {
+    static Radio createAndSetRadioButtons(GuiAbstractButton... buttons) {
         Radio radio = new Radio(buttons);
         for (GuiAbstractButton button : buttons) {
             button.setBehaviour(radio);
@@ -40,7 +46,7 @@ public interface IButtonBehaviour {
     }
 
     /** A radio button is a button linked to several other buttons, of which only 1 can be pressed at a time. */
-    public static class Radio implements IButtonBehaviour {
+    class Radio implements IButtonBehaviour {
         public final GuiAbstractButton[] buttons;
 
         public Radio(GuiAbstractButton... buttons) {

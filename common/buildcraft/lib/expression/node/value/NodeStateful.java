@@ -1,12 +1,18 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.expression.node.value;
 
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.NodeStack;
 import buildcraft.lib.expression.api.IExpressionNode;
-import buildcraft.lib.expression.api.IVariableNode;
-import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
+import buildcraft.lib.expression.api.IVariableNode;
+import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.node.binary.BiNodeType;
 import buildcraft.lib.expression.node.cast.NodeCastLongToDouble;
@@ -138,6 +144,6 @@ public class NodeStateful implements ITickableNode.Source {
                     }
                 }
             }
-        };
+        }
     }
 }

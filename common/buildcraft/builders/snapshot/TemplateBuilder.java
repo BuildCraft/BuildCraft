@@ -1,17 +1,25 @@
-package buildcraft.builders.snapshot;
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 
-import buildcraft.lib.fake.FakePlayerBC;
-import buildcraft.lib.misc.FakePlayerUtil;
-import buildcraft.lib.misc.data.Box;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
+package buildcraft.builders.snapshot;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldServer;
+
+import net.minecraftforge.common.util.FakePlayer;
+
+import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.template.TemplateApi;
+
+import buildcraft.lib.misc.data.Box;
 
 public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     public TemplateBuilder(ITileForTemplateBuilder tile) {
@@ -25,15 +33,15 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     @Override
     protected List<BlockPos> getToBreak() {
         return Optional.ofNullable(getBuildingInfo())
-                .map(buildingInfo -> buildingInfo.toBreak)
-                .orElse(Collections.emptyList());
+            .map(buildingInfo -> buildingInfo.toBreak)
+            .orElse(Collections.emptyList());
     }
 
     @Override
     protected List<BlockPos> getToPlace() {
         return Optional.ofNullable(getBuildingInfo())
-                .map(buildingInfo -> buildingInfo.toPlace)
-                .orElse(Collections.emptyList());
+            .map(buildingInfo -> buildingInfo.toPlace)
+            .orElse(Collections.emptyList());
     }
 
     @Override
@@ -48,23 +56,18 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
 
     @Override
     protected boolean doPlaceTask(PlaceTask placeTask) {
-        FakePlayerBC fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer(
-                (WorldServer) tile.getWorldBC(),
-                tile.getBuilderPos(),
-                tile.getOwner()
+        FakePlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(
+            (WorldServer) tile.getWorldBC(),
+            tile.getOwner(),
+            tile.getBuilderPos()
         );
         fakePlayer.setHeldItem(fakePlayer.getActiveHand(), placeTask.items.get(0));
-        EnumActionResult result = placeTask.items.get(0).onItemUse(
-                fakePlayer,
-                tile.getWorldBC(),
-                placeTask.pos,
-                fakePlayer.getActiveHand(),
-                EnumFacing.UP,
-                0.5F,
-                0.0F,
-                0.5F
+        return TemplateApi.templateRegistry.handle(
+            tile.getWorldBC(),
+            placeTask.pos,
+            fakePlayer,
+            placeTask.items.get(0)
         );
-        return result == EnumActionResult.SUCCESS;
     }
 
     @Override
@@ -80,15 +83,7 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     @Override
     public Box getBox() {
         return Optional.ofNullable(getBuildingInfo())
-                .map(Template.BuildingInfo::getBox)
-                .orElse(null);
+            .map(Template.BuildingInfo::getBox)
+            .orElse(null);
     }
-
-    @Override
-    protected boolean isDone() {
-        return getBuildingInfo() != null &&
-                (!tile.canExcavate() || getBuildingInfo().toBreak.stream().allMatch(tile.getWorldBC()::isAirBlock)) &&
-                getBuildingInfo().toPlace.stream().allMatch(this::isBlockCorrect);
-    }
-
 }

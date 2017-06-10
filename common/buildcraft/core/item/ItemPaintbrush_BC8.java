@@ -6,6 +6,8 @@ package buildcraft.core.item;
 
 import javax.annotation.Nonnull;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -35,8 +37,6 @@ import buildcraft.lib.misc.ParticleUtil;
 import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.VecUtil;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
     private static final String DAMAGE = "damage";

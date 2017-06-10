@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.path;
 
 import java.util.Collections;
@@ -33,11 +39,11 @@ public class MiniChunkGraph {
         this.type = type;
         this.expenseArray = expenseArray;
         this.graphArray = graphArray;
-        ImmutableList.Builder<MiniChunkNode> nodes = ImmutableList.builder();
+        ImmutableList.Builder<MiniChunkNode> builder = ImmutableList.builder();
         for (int i = 0; i < numNodes; i++) {
-            nodes.add(new MiniChunkNode(i));
+            builder.add(new MiniChunkNode(i));
         }
-        this.nodes = nodes.build();
+        this.nodes = builder.build();
     }
 
     public MiniChunkNode getFor(BlockPos pos) {

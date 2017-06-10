@@ -1,16 +1,18 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.core.client.render;
 
-import buildcraft.core.client.BuildCraftLaserManager;
-import buildcraft.core.marker.volume.Addon;
-import buildcraft.core.marker.volume.ClientVolumeBoxes;
-import buildcraft.core.marker.volume.IFastAddonRenderer;
-import buildcraft.core.marker.volume.Lock;
-import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
-import buildcraft.lib.client.render.laser.LaserData_BC8;
-import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
-import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.misc.data.Box;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -20,14 +22,21 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import buildcraft.lib.client.render.DetatchedRenderer;
+import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.misc.data.Box;
 
-public enum RenderVolumeInWorld implements IDetachedRenderer {
+import buildcraft.core.client.BuildCraftLaserManager;
+import buildcraft.core.marker.volume.Addon;
+import buildcraft.core.marker.volume.ClientVolumeBoxes;
+import buildcraft.core.marker.volume.IFastAddonRenderer;
+import buildcraft.core.marker.volume.Lock;
+
+public enum RenderVolumeInWorld implements DetatchedRenderer.IDetachedRenderer {
     INSTANCE;
 
     private static final double OFFSET_BY = 2 / 16.0;
@@ -47,10 +56,10 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
                     box.box,
                     box.isEditingBy(player) ?
                             BuildCraftLaserManager.MARKER_VOLUME_SIGNAL :
-                            box.getLockTargetsStream().anyMatch(target -> target instanceof Lock.Target.TargetUsedByMachine) ?
+                            box.getLockTargetsStream().anyMatch(Lock.Target.TargetUsedByMachine.class::isInstance) ?
                                     box.getLockTargetsStream()
-                                            .filter(target -> target instanceof Lock.Target.TargetUsedByMachine)
-                                            .map(target -> (Lock.Target.TargetUsedByMachine) target)
+                                            .filter(Lock.Target.TargetUsedByMachine.class::isInstance)
+                                            .map(Lock.Target.TargetUsedByMachine.class::cast)
                                             .map(target -> target.type)
                                             .filter(Objects::nonNull)
                                             .findFirst()
@@ -63,7 +72,9 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
             Arrays.stream(box.box.laserData).forEach(data -> LaserRenderer_BC8.renderLaserDynamic(data, vb));
 
             // noinspection unchecked
-            box.addons.values().forEach(addon -> ((IFastAddonRenderer<Addon>) addon.getRenderer()).renderAddonFast(addon, player, partialTicks, vb));
+            box.addons.values().forEach(addon ->
+                ((IFastAddonRenderer<Addon>) addon.getRenderer()).renderAddonFast(addon, player, partialTicks, vb)
+            );
         });
 
         Tessellator.getInstance().draw();

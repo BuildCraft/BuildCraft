@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.expression;
 
 import java.util.function.Consumer;
@@ -10,7 +16,7 @@ public class ExpressionDebugManager {
 
     /** Customisable logger to use instead of {@link System#out}. Set by BCLib automatically to
      * <code>BCLog.logger::info</code> */
-    public static Consumer<String> logger = null;
+    public static Consumer<String> logger = System.out::println;
 
     private static String debugIndentCache = "";
 
@@ -34,12 +40,7 @@ public class ExpressionDebugManager {
 
     public static void debugPrintln(String text) {
         if (debug) {
-            if (logger != null) {
-                logger.accept(debugIndentCache + text);
-            } else {
-                // When using a test
-                System.out.println(debugIndentCache + text);
-            }
+            logger.accept(debugIndentCache + text);
         }
     }
 

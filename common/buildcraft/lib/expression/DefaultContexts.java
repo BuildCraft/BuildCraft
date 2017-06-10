@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.expression;
 
 import net.minecraft.item.EnumDyeColor;
@@ -26,7 +32,7 @@ public class DefaultContexts {
     static {
         // STRINGS.put_s_s("lowercase", (a) -> a.toLowerCase(Locale.ROOT));
         // STRINGS.put_s_s("uppercase", (a) -> a.toUpperCase(Locale.ROOT));
-        STRINGS.put_s_l("length", (a) -> a.length());
+        STRINGS.put_s_l("length", String::length);
         // STRINGS.put_sl_s("string_at", (a, b) -> Character.toString(a.charAt(b)));
         // STRINGS.put_sl_s("substring", (a, b) -> a.substring(b));
         // STRINGS.put_sll_s("substring", (a, b, c) -> a.substring(b, c));
@@ -35,41 +41,41 @@ public class DefaultContexts {
         MATH_SCALAR.putConstantDouble("pi", Math.PI);
         MATH_SCALAR.putConstantDouble("e", Math.E);
 
-        MATH_SCALAR.put_l_l("abs_long", (a) -> Math.abs(a));
-        MATH_SCALAR.put_d_d("abs_double", (a) -> Math.abs(a));
+        MATH_SCALAR.put_l_l("abs_long", Math::abs);
+        MATH_SCALAR.put_d_d("abs_double", Math::abs);
 
-        MATH_SCALAR_FUNC_ROUND = MATH_SCALAR.put_d_l("round", (a) -> Math.round(a));
+        MATH_SCALAR_FUNC_ROUND = MATH_SCALAR.put_d_l("round", Math::round);
         MATH_SCALAR.put_d_l("floor", (a) -> (long) Math.floor(a));
         MATH_SCALAR.put_d_l("ceil", (a) -> (long) Math.ceil(a));
         MATH_SCALAR.put_d_l("sign", (a) -> a == 0 ? 0 : a < 0 ? -1 : 1);
 
-        MATH_SCALAR.put_d_d("log", (a) -> Math.log(a));
-        MATH_SCALAR.put_d_d("log10", (a) -> Math.log10(a));
-        MATH_SCALAR.put_d_d("sqrt", (a) -> Math.sqrt(a));
-        MATH_SCALAR.put_d_d("cbrt", (a) -> Math.cbrt(a));
+        MATH_SCALAR.put_d_d("log", Math::log);
+        MATH_SCALAR.put_d_d("log10", Math::log10);
+        MATH_SCALAR.put_d_d("sqrt", Math::sqrt);
+        MATH_SCALAR.put_d_d("cbrt", Math::cbrt);
 
-        MATH_SCALAR.put_d_d("degrees", (a) -> Math.toDegrees(a));
-        MATH_SCALAR.put_d_d("radians", (a) -> Math.toRadians(a));
+        MATH_SCALAR.put_d_d("degrees", Math::toDegrees);
+        MATH_SCALAR.put_d_d("radians", Math::toRadians);
         MATH_SCALAR.put_d_d("round_float", (a) -> Math.round(a * 1e10) / 1e10);
 
-        MATH_SCALAR.put_d_d("sin", (a) -> Math.sin(a));
-        MATH_SCALAR.put_d_d("cos", (a) -> Math.cos(a));
-        MATH_SCALAR.put_d_d("tan", (a) -> Math.tan(a));
+        MATH_SCALAR.put_d_d("sin", Math::sin);
+        MATH_SCALAR.put_d_d("cos", Math::cos);
+        MATH_SCALAR.put_d_d("tan", Math::tan);
 
-        MATH_SCALAR.put_d_d("asin", (a) -> Math.asin(a));
-        MATH_SCALAR.put_d_d("acos", (a) -> Math.acos(a));
-        MATH_SCALAR.put_d_d("atan", (a) -> Math.atan(a));
-        MATH_SCALAR.put_dd_d("atan2", (a, b) -> Math.atan2(a, b));
+        MATH_SCALAR.put_d_d("asin", Math::asin);
+        MATH_SCALAR.put_d_d("acos", Math::acos);
+        MATH_SCALAR.put_d_d("atan", Math::atan);
+        MATH_SCALAR.put_dd_d("atan2", Math::atan2);
 
-        MATH_SCALAR.put_d_d("sinh", (a) -> Math.sinh(a));
-        MATH_SCALAR.put_d_d("cosh", (a) -> Math.cosh(a));
-        MATH_SCALAR.put_d_d("tanh", (a) -> Math.tanh(a));
+        MATH_SCALAR.put_d_d("sinh", Math::sinh);
+        MATH_SCALAR.put_d_d("cosh", Math::cosh);
+        MATH_SCALAR.put_d_d("tanh", Math::tanh);
 
-        MATH_SCALAR.put_ll_l("min_long", (a, b) -> Math.min(a, b));
-        MATH_SCALAR.put_ll_l("max_long", (a, b) -> Math.max(a, b));
-        MATH_SCALAR.put_dd_d("min_double", (a, b) -> Math.min(a, b));
-        MATH_SCALAR.put_dd_d("max_double", (a, b) -> Math.max(a, b));
-        MATH_SCALAR.put_dd_d("pow", (a, b) -> Math.pow(a, b));
+        MATH_SCALAR.put_ll_l("min_long", Math::min);
+        MATH_SCALAR.put_ll_l("max_long", Math::max);
+        MATH_SCALAR.put_dd_d("min_double", Math::min);
+        MATH_SCALAR.put_dd_d("max_double", Math::max);
+        MATH_SCALAR.put_dd_d("pow", Math::pow);
 
         // MATH_VECTOR.putConstantVecLong("origin", VecLong.ZERO);
         // MATH_VECTOR.putConstantVecLong("vec_zero", VecLong.ZERO);

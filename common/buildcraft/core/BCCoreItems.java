@@ -4,12 +4,19 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core;
 
-import buildcraft.core.item.*;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.registry.CreativeTabManager;
+
+import buildcraft.core.item.ItemGoggles;
+import buildcraft.core.item.ItemList_BC8;
+import buildcraft.core.item.ItemMapLocation;
+import buildcraft.core.item.ItemMarkerConnector;
+import buildcraft.core.item.ItemPaintbrush_BC8;
+import buildcraft.core.item.ItemVolumeBox;
+import buildcraft.core.item.ItemWrench_Neptune;
 
 public class BCCoreItems {
 

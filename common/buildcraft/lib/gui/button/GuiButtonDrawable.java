@@ -7,7 +7,7 @@ import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
-public class GuiButtonDrawable extends GuiAbstractButton<GuiBC8<?>> {
+public final class GuiButtonDrawable extends GuiAbstractButton<GuiBC8<?>> {
     private final ISimpleDrawable drEnabled, drActive, drHovered, drActiveHovered, drDisabled, drDisabledActive;
 
     public static class Builder {

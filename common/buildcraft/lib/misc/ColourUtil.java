@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.misc;
 
 import java.util.Arrays;
@@ -226,6 +232,7 @@ public class ColourUtil {
         return FACE_TO_FORMAT[face.ordinal()];
     }
 
+    @SuppressWarnings("PointlessBitwiseExpression")
     public static int swapArgbToAbgr(int argb) {
         int a = (argb >> 24) & 0xFF;
         int r = (argb >> 16) & 0xFF;

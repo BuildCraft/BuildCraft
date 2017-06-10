@@ -1,19 +1,24 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.net;
 
 import java.io.IOException;
+
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.misc.MessageUtil;
-
-import io.netty.buffer.ByteBuf;
 
 public class MessageContainer implements IMessage {
 
@@ -59,11 +64,11 @@ public class MessageContainer implements IMessage {
 
     public static final IMessageHandler<MessageContainer, IMessage> HANDLER = (message, ctx) -> {
         try {
-            int windowId = message.windowId;
+            int id = message.windowId;
             EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
             if (player != null &&
                     player.openContainer instanceof ContainerBC_Neptune &&
-                    player.openContainer.windowId == windowId) {
+                    player.openContainer.windowId == id) {
                 ContainerBC_Neptune container = (ContainerBC_Neptune) player.openContainer;
                 container.readMessage(message.msgId, message.payload, ctx.side, ctx);
 

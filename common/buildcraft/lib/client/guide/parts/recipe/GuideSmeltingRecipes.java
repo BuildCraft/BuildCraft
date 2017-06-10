@@ -1,8 +1,16 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.guide.parts.recipe;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+
+import javax.annotation.Nonnull;
 
 import com.google.common.collect.ImmutableList;
 
@@ -18,7 +26,7 @@ public enum GuideSmeltingRecipes implements IStackRecipes {
     INSTANCE;
 
     @Override
-    public List<GuidePartFactory> getUsages(ItemStack stack) {
+    public List<GuidePartFactory> getUsages(@Nonnull ItemStack stack) {
 
         if (stack.getMetadata() == OreDictionary.WILDCARD_VALUE) {
             List<GuidePartFactory> list = new ArrayList<>();
@@ -41,7 +49,7 @@ public enum GuideSmeltingRecipes implements IStackRecipes {
     }
 
     @Override
-    public List<GuidePartFactory> getRecipes(ItemStack stack) {
+    public List<GuidePartFactory> getRecipes(@Nonnull ItemStack stack) {
         List<GuidePartFactory> list = new ArrayList<>();
 
         for (Entry<ItemStack, ItemStack> entry : FurnaceRecipes.instance().getSmeltingList().entrySet()) {

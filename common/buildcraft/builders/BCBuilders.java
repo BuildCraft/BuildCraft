@@ -4,28 +4,40 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
-import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
-import buildcraft.builders.addon.AddonFillingPlanner;
-import buildcraft.builders.snapshot.*;
-import buildcraft.core.BCCore;
-import buildcraft.core.marker.volume.AddonsRegistry;
-import buildcraft.lib.BCLib;
-import buildcraft.lib.BCMessageHandler;
-import buildcraft.lib.registry.RegistryHelper;
-import buildcraft.lib.registry.TagManager;
-import buildcraft.lib.registry.TagManager.EnumTagType;
-import buildcraft.lib.registry.TagManager.TagEntry;
+import java.util.function.Consumer;
+
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.util.function.Consumer;
+import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
+import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
+
+import buildcraft.lib.BCLib;
+import buildcraft.lib.net.MessageManager;
+import buildcraft.lib.registry.RegistryHelper;
+import buildcraft.lib.registry.TagManager;
+import buildcraft.lib.registry.TagManager.EnumTagType;
+import buildcraft.lib.registry.TagManager.TagEntry;
+
+import buildcraft.builders.addon.AddonFillingPlanner;
+import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
+import buildcraft.builders.snapshot.MessageSnapshotRequest;
+import buildcraft.builders.snapshot.MessageSnapshotResponse;
+import buildcraft.builders.snapshot.RulesLoader;
+import buildcraft.builders.snapshot.SchematicBlockAir;
+import buildcraft.builders.snapshot.SchematicBlockDefault;
+import buildcraft.builders.snapshot.SchematicBlockFluid;
+import buildcraft.builders.snapshot.SchematicEntityDefault;
+import buildcraft.core.BCCore;
+import buildcraft.core.marker.volume.AddonsRegistry;
 
 //@formatter:off
 @Mod(modid = BCBuilders.MODID,
@@ -43,6 +55,7 @@ public class BCBuilders {
     public static void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
+        BCBuildersRegistries.preInit();
         BCBuildersItems.preInit();
         BCBuildersBlocks.preInit();
 
@@ -79,20 +92,25 @@ public class BCBuilders {
 
         MinecraftForge.EVENT_BUS.register(BCBuildersEventDist.INSTANCE);
 
-        BCMessageHandler.addMessageType(MessageSnapshotRequest.class, MessageSnapshotRequest.HANDLER, Side.SERVER);
-        BCMessageHandler.addMessageType(MessageSnapshotResponse.class, MessageSnapshotResponse.HANDLER, Side.CLIENT);
+        MessageManager.addMessageType(MessageSnapshotRequest.class, MessageSnapshotRequest.HANDLER, Side.SERVER);
+        MessageManager.addMessageType(MessageSnapshotResponse.class, MessageSnapshotResponse.HANDLER, Side.CLIENT);
     }
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent evt) {
         BCBuildersProxy.getProxy().fmlInit();
+        BCBuildersRegistries.init();
         BCBuildersRecipes.init();
     }
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
         RulesLoader.loadAll();
-        GlobalSavedDataSnapshots.get(evt.getSide());
+    }
+
+    @Mod.EventHandler
+    public void onServerStarting(FMLServerStartingEvent event) {
+        GlobalSavedDataSnapshots.reInit(Side.SERVER);
     }
 
     static {
@@ -106,6 +124,7 @@ public class BCBuilders {
         registerTag("item.block.builder").reg("builder").locale("builderBlock").model("builder");
         registerTag("item.block.filler").reg("filler").locale("fillerBlock").model("filler");
         registerTag("item.block.library").reg("library").locale("libraryBlock").model("library");
+        registerTag("item.block.replacer").reg("replacer").locale("replacerBlock").model("replacer");
         registerTag("item.block.frame").reg("frame").locale("frameBlock").model("frame");
         registerTag("item.block.quarry").reg("quarry").locale("quarryBlock").model("quarry");
         // Blocks
@@ -113,12 +132,14 @@ public class BCBuilders {
         registerTag("block.builder").reg("builder").locale("builderBlock").model("builder");
         registerTag("block.filler").reg("filler").locale("fillerBlock").model("filler");
         registerTag("block.library").reg("library").locale("libraryBlock").model("library");
+        registerTag("block.replacer").reg("replacer").locale("replacerBlock").model("replacer");
         registerTag("block.frame").reg("frame").locale("frameBlock").model("frame");
         registerTag("block.quarry").reg("quarry").locale("quarryBlock").model("quarry");
         // Tiles
         registerTag("tile.architect").reg("architect");
-        registerTag("tile.library").reg("library");
         registerTag("tile.builder").reg("builder");
+        registerTag("tile.library").reg("library");
+        registerTag("tile.replacer").reg("replacer");
         registerTag("tile.filler").reg("filler");
         registerTag("tile.quarry").reg("quarry");
 

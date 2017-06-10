@@ -1,4 +1,12 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.tile.item;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
 
@@ -22,17 +30,18 @@ public class DelegateItemHandler implements IItemHandlerModifiable {
     }
 
     @Override
-    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         return delegate.insertItem(slot, stack, simulate);
     }
 
+    @Nonnull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         return delegate.extractItem(slot, amount, simulate);
     }
 
     @Override
-    public void setStackInSlot(int slot, ItemStack stack) {
+    public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
         delegate.setStackInSlot(slot, stack);
     }
 

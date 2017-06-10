@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.recipe;
 
 import net.minecraft.inventory.InventoryCrafting;
@@ -11,6 +17,7 @@ import net.minecraftforge.common.ForgeHooks;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.IRecipeViewable;
+
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.item.ItemPluggableFacade;
 import buildcraft.transport.plug.FacadeStateManager;
@@ -56,12 +63,12 @@ public enum FacadeSwapRecipe implements IRecipe, IRecipeViewable.IViewableGrid {
         ItemStack stackIn = StackUtil.EMPTY;
         for (int s = 0; s < inv.getSizeInventory(); s++) {
             ItemStack stack = inv.getStackInSlot(s);
-            if (stack.isEmpty()) {
-                continue;
-            } else if (stackIn.isEmpty()) {
-                stackIn = stack;
-            } else {
-                return StackUtil.EMPTY;
+            if (!stack.isEmpty()) {
+                if (stackIn.isEmpty()) {
+                    stackIn = stack;
+                } else {
+                    return StackUtil.EMPTY;
+                }
             }
         }
         if (stackIn.getItem() != BCTransportItems.plugFacade) {

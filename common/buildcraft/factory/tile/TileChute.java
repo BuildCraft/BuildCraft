@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.factory.tile;
 
 import java.util.ArrayList;
@@ -73,7 +79,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
     }
 
     private void putInNearInventories(EnumFacing currentSide) {
-        List<EnumFacing> sides = new ArrayList<>(Arrays.asList(EnumFacing.values()));
+        List<EnumFacing> sides = new ArrayList<>(Arrays.asList(EnumFacing.VALUES));
         Collections.shuffle(sides, new Random());
         sides.removeIf(Predicate.isEqual(currentSide));
         Stream.<Pair<EnumFacing, ICapabilityProvider>>concat(

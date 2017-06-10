@@ -1,4 +1,12 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.item;
+
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -14,8 +22,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.lib.client.render.font.SpecialColourFontRenderer;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.ColourUtil;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class ItemWire extends ItemBC_Neptune {
     public ItemWire(String id) {

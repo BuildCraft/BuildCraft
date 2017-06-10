@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.engine;
 
 import java.io.IOException;
@@ -22,7 +28,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.enums.EnumPowerStage;
-import buildcraft.api.mj.*;
+import buildcraft.api.mj.IMjConnector;
+import buildcraft.api.mj.IMjReceiver;
+import buildcraft.api.mj.IMjRedstoneReceiver;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.VanillaRotationHandlers;
@@ -522,7 +532,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (facing == currentDirection) {
             return mjCaps.getCapability(capability, facing);
         } else {
@@ -574,10 +584,10 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         left.add("");
         left.add("facing = " + currentDirection);
         left.add("heat = " + LocaleUtil.localizeHeat(heat) + " -- " + String.format("%.2f %%", getHeatLevel()));
-        left.add("power = " + MjAPI.formatMjShort(power));
+        left.add("power = " + LocaleUtil.localizeMj(power));
         left.add("stage = " + powerStage);
         left.add("progress = " + progress);
-        left.add("last = +" + MjAPI.formatMjShort(lastPower));
+        left.add("last = " + LocaleUtil.localizeMjFlow(lastPower));
         if (world.isRemote) {
             left.add("Current Model Variables:");
             clientModelData.addDebugInfo(left);

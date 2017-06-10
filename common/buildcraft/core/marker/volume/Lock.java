@@ -1,9 +1,16 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.core.marker.volume;
 
-import buildcraft.core.client.BuildCraftLaserManager;
-import buildcraft.lib.client.render.laser.LaserData_BC8;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.net.PacketBufferBC;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.IntStream;
+
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -11,12 +18,15 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.Constants;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.IntStream;
+import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.net.PacketBufferBC;
+
+import buildcraft.core.client.BuildCraftLaserManager;
 
 public class Lock {
     public Cause cause;
@@ -132,13 +142,13 @@ public class Lock {
 
             @Override
             public void toBytes(PacketBuffer buf) {
-                buf.writeBlockPos(pos);
+                MessageUtil.writeBlockPos(buf, pos);
                 buf.writeString(Block.REGISTRY.getNameForObject(block).toString());
             }
 
             @Override
             public void fromBytes(PacketBuffer buf) {
-                pos = buf.readBlockPos();
+                pos = MessageUtil.readBlockPos(buf);
                 block = Block.REGISTRY.getObject(new ResourceLocation(buf.readString(1024)));
             }
 

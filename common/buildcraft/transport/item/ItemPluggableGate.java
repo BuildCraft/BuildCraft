@@ -1,8 +1,16 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.item;
 
 import java.util.List;
 
 import javax.annotation.Nonnull;
+
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -26,14 +34,13 @@ import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.StackUtil;
+
 import buildcraft.transport.BCTransportPlugs;
 import buildcraft.transport.gate.EnumGateLogic;
 import buildcraft.transport.gate.EnumGateMaterial;
 import buildcraft.transport.gate.EnumGateModifier;
 import buildcraft.transport.gate.GateVariant;
 import buildcraft.transport.plug.PluggableGate;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class ItemPluggableGate extends ItemBC_Neptune implements IItemPluggable {
     public ItemPluggableGate(String id) {
@@ -47,12 +54,12 @@ public class ItemPluggableGate extends ItemBC_Neptune implements IItemPluggable 
     @Nonnull
     public ItemStack getStack(GateVariant variant) {
         ItemStack stack = new ItemStack(this);
-        NBTUtilBC.getItemData(stack).setTag("gate", variant.writeToNbt());
+        NBTUtilBC.getItemData(stack).setTag("gate", variant.writeToNBT());
         return stack;
     }
 
     @Override
-    public PipePluggable onPlace(ItemStack stack, IPipeHolder holder, EnumFacing side, EntityPlayer player, EnumHand hand) {
+    public PipePluggable onPlace(@Nonnull ItemStack stack, IPipeHolder holder, EnumFacing side, EntityPlayer player, EnumHand hand) {
         GateVariant variant = getVariant(stack);
         SoundUtil.playBlockPlace(holder.getPipeWorld(), holder.getPipePos(), variant.material.block.getDefaultState());
         PluggableDefinition def = BCTransportPlugs.gate;

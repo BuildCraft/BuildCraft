@@ -1,7 +1,8 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 package buildcraft.lib.misc.data;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 
 import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;
@@ -90,8 +92,6 @@ public class Box implements IBox {
 
     public void initialize(NBTTagCompound nbt) {
         reset();
-        BlockPos min;
-        BlockPos max;
         if (nbt.hasKey("xMin")) {
             min = new BlockPos(nbt.getInteger("xMin"), nbt.getInteger("yMin"), nbt.getInteger("zMin"));
             max = new BlockPos(nbt.getInteger("xMax"), nbt.getInteger("yMax"), nbt.getInteger("zMax"));
@@ -249,8 +249,8 @@ public class Box implements IBox {
 
     public void readData(PacketBuffer stream) {
         if (stream.readBoolean()) {
-            min = stream.readBlockPos();
-            max = stream.readBlockPos();
+            min = MessageUtil.readBlockPos(stream);
+            max = MessageUtil.readBlockPos(stream);
         } else {
             min = null;
             max = null;
@@ -261,8 +261,8 @@ public class Box implements IBox {
         boolean isValid = isInitialized();
         stream.writeBoolean(isValid);
         if (isValid) {
-            stream.writeBlockPos(min);
-            stream.writeBlockPos(max);
+            MessageUtil.writeBlockPos(stream, min);
+            MessageUtil.writeBlockPos(stream, max);
         }
     }
 

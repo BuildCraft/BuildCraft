@@ -15,7 +15,6 @@ import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IStatementContainer;
 
-import buildcraft.lib.client.sprite.SpriteAtlas;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.button.GuiButtonSmall;
 import buildcraft.lib.gui.button.IButtonBehaviour;

@@ -1,8 +1,13 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.energy.client.gui;
 
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.energy.container.ContainerEngineStone_BC8;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.help.DummyHelpElement;
@@ -11,6 +16,8 @@ import buildcraft.lib.gui.ledger.LedgerEngine;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.LocaleUtil;
+
+import buildcraft.energy.container.ContainerEngineStone_BC8;
 
 public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftenergy:textures/gui/steam_engine_gui.png");

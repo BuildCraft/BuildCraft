@@ -1,4 +1,25 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.builders.addon;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+
+import io.netty.buffer.ByteBuf;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Rotation;
+import net.minecraft.util.math.BlockPos;
+
+import net.minecraftforge.common.util.Constants;
+
+import buildcraft.lib.misc.NBTUtilBC;
 
 import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.BCBuildersSprites;
@@ -9,18 +30,6 @@ import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.AddonDefaultRenderer;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
 import buildcraft.core.marker.volume.ISingleAddon;
-import buildcraft.lib.misc.NBTUtilBC;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.util.Constants;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
 
 @Deprecated
 public class AddonFillingPlanner extends Addon implements ISingleAddon {

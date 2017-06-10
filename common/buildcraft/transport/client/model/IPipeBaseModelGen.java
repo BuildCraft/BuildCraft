@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.client.model;
 
 import java.util.List;
@@ -9,11 +15,12 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.config.DetailedConfigOption;
+
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;
 
 public interface IPipeBaseModelGen {
-    public static final DetailedConfigOption OPTION_INSIDE_COLOUR_MULT = new DetailedConfigOption("render.pipe.misc.inside.shade", "0.725");
+    DetailedConfigOption OPTION_INSIDE_COLOUR_MULT = new DetailedConfigOption("render.pipe.misc.inside.shade", "0.725");
 
     List<BakedQuad> generateCutout(PipeBaseCutoutKey key);
 

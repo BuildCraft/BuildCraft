@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.factory.client.render;
 
 import org.lwjgl.opengl.GL11;
@@ -19,10 +25,11 @@ import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.factory.tile.TileTank;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.render.fluid.FluidSpriteType;
 import buildcraft.lib.fluid.Tank;
+
+import buildcraft.factory.tile.TileTank;
 
 public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
     private static final Vec3d MIN = new Vec3d(0.13, 0.01, 0.13);

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.config;
 
 import java.util.HashSet;
@@ -11,11 +17,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
 
-import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.InternalCompiler;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
+
+import buildcraft.core.BCCoreConfig;
 
 public class DetailedConfigOption {
     private static final Set<DetailedConfigOption> allRegistered = new HashSet<>();

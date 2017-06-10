@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.expression.info;
 
 import java.util.ArrayList;
@@ -11,13 +17,16 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
-import buildcraft.lib.expression.api.IVariableNode;
-import buildcraft.lib.expression.node.value.*;
-
 import gnu.trove.list.TDoubleList;
 import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.list.array.TLongArrayList;
+
+import buildcraft.lib.expression.api.IVariableNode;
+import buildcraft.lib.expression.node.value.NodeVariableBoolean;
+import buildcraft.lib.expression.node.value.NodeVariableDouble;
+import buildcraft.lib.expression.node.value.NodeVariableLong;
+import buildcraft.lib.expression.node.value.NodeVariableString;
 
 public abstract class VariableInfo<N extends IVariableNode> {
     public final N node;
@@ -49,7 +58,7 @@ public abstract class VariableInfo<N extends IVariableNode> {
         NEVER,
         MATCHES_EXP,
         IN_SET,
-        ALWAYS;
+        ALWAYS
     }
 
     public static class VariableInfoString extends VariableInfo<NodeVariableString> {
@@ -165,7 +174,7 @@ public abstract class VariableInfo<N extends IVariableNode> {
 
             public final Collection<Boolean> possible;
 
-            private BooleanPosibilities(Boolean... possible) {
+            BooleanPosibilities(Boolean... possible) {
                 this.possible = Arrays.asList(possible);
             }
         }
@@ -192,9 +201,9 @@ public abstract class VariableInfo<N extends IVariableNode> {
                 case IN_SET:
                     switch (possibleValues) {
                         case FALSE:
-                            return node.value == false;
+                            return !node.value;
                         case TRUE:
-                            return node.value == true;
+                            return node.value;
                         default:
                             return true;
                     }

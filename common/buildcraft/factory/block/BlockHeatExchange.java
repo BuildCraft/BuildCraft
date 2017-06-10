@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.factory.block;
 
 import java.util.List;
@@ -24,9 +30,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.pipe.ICustomPipeConnection;
 
+import buildcraft.lib.block.BlockBCTile_Neptune;
+
 import buildcraft.factory.tile.TileHeatExchangeEnd;
 import buildcraft.factory.tile.TileHeatExchangeStart;
-import buildcraft.lib.block.BlockBCTile_Neptune;
 
 public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPipeConnection {
     public enum Part {

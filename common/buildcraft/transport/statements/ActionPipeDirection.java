@@ -1,7 +1,8 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 package buildcraft.transport.statements;
 
 import java.util.Locale;
@@ -17,10 +18,11 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 
-import buildcraft.core.statements.BCStatement;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
+
+import buildcraft.core.statements.BCStatement;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.BCTransportStatements;
 

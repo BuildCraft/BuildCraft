@@ -1,6 +1,22 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.wire;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Queue;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -21,17 +37,16 @@ import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.EnumWirePart;
 import buildcraft.api.transport.WireNode;
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeApi;
 
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.transport.plug.PluggableGate;
 
-import io.netty.buffer.ByteBuf;
+import buildcraft.transport.plug.PluggableGate;
 
 public class WireSystem {
     public final List<WireElement> elements = new ArrayList<>();
@@ -120,7 +135,7 @@ public class WireSystem {
                             wireSystems.getWireSystemsWithElement(element).stream().filter(wireSystem -> wireSystem != this && wireSystem.color == this.color).forEach(wireSystems::removeWireSystem);
                             elements.add(element);
                             queue.addAll(getConnectedElementsOfElement(wireSystems.world, element));
-                            Arrays.stream(EnumFacing.values()).forEach(side -> queue.add(new WireElement(element.blockPos, side)));
+                            Arrays.stream(EnumFacing.VALUES).forEach(side -> queue.add(new WireElement(element.blockPos, side)));
                         }
                     } else if (element.type == WireElement.Type.EMITTER_SIDE) {
                         if (holder.getPluggable(element.emitterSide) instanceof PluggableGate) {
@@ -225,9 +240,9 @@ public class WireSystem {
             this.emitterSide = emitterSide;
         }
 
-        public WireElement(ByteBuf buf) {
+        public WireElement(PacketBuffer buf) {
             type = Type.values()[buf.readInt()];
-            blockPos = new PacketBuffer(buf).readBlockPos();
+            blockPos = MessageUtil.readBlockPos(buf);
             if (type == Type.WIRE_PART) {
                 wirePart = EnumWirePart.VALUES[buf.readInt()];
                 this.emitterSide = null;
@@ -255,9 +270,9 @@ public class WireSystem {
             }
         }
 
-        public void toBytes(ByteBuf buf) {
+        public void toBytes(PacketBuffer buf) {
             buf.writeInt(type.ordinal());
-            new PacketBuffer(buf).writeBlockPos(blockPos);
+            MessageUtil.writeBlockPos(buf, blockPos);
             if (type == Type.WIRE_PART) {
                 assert wirePart != null;
                 buf.writeInt(wirePart.ordinal());

@@ -1,37 +1,44 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.nbt;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.nbt.*;
+import gnu.trove.list.array.TByteArrayList;
+import gnu.trove.list.array.TDoubleArrayList;
+import gnu.trove.list.array.TFloatArrayList;
+import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.list.array.TLongArrayList;
+import gnu.trove.list.array.TShortArrayList;
+
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagByte;
+import net.minecraft.nbt.NBTTagByteArray;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagDouble;
+import net.minecraft.nbt.NBTTagFloat;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.NBTTagIntArray;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagLong;
+import net.minecraft.nbt.NBTTagShort;
+import net.minecraft.nbt.NBTTagString;
 
 import net.minecraftforge.common.util.Constants;
 
-import gnu.trove.list.array.*;
+import buildcraft.api.core.InvalidInputDataException;
 
 /** Defines a map of commonly used tags. */
-public class NBTSquishMap {
+public class NbtSquishMap {
     // TODO: Try adding "ImmutableTagCompound" and "ImmutableTagList" to see if the equals() and hashCode() of compounds
     // is a problem atm
     // perhaps use "TCustomHashSet" with a simalir deduplicating functionality of FoamFix?
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
     // I'm not completely convinced that this one is necessary.
     // However it completes the set so, meh
@@ -49,7 +56,7 @@ public class NBTSquishMap {
     final List<String> strings = new ArrayList<>();
     final List<NBTBase> complex = new ArrayList<>();
 
-    public NBTSquishMap() {}
+    public NbtSquishMap() {}
 
     public void addTag(NBTBase nbt) {
         if (nbt instanceof NBTTagString) {
@@ -248,11 +255,15 @@ public class NBTSquishMap {
     }
 
     public NBTBase getTagForReading(int index) throws IOException {
-        NBTBase value = getTagAt(index);
-        if (value == null) {
-            throw new IOException("Cannot handle index " + index);
+        try {
+            NBTBase value = getTagAt(index);
+            if (value == null) {
+                throw new IOException("Cannot handle index " + index);
+            }
+            return value;
+        } catch (IndexOutOfBoundsException ioobe) {
+            throw new InvalidInputDataException(ioobe);
         }
-        return value;
     }
 
     public NBTTagCompound getFullyReadComp(int index) throws IOException {
@@ -292,7 +303,8 @@ public class NBTSquishMap {
         return total;
     }
 
-    private static boolean isFlag(int flags, int flag) {
+    private static boolean isFlag(int flags, int val) {
+        int flag = 1 << val;
         return (flags & flag) == flag;
     }
 

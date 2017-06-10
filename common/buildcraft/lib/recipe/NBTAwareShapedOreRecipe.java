@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.recipe;
 
 import java.util.Iterator;
@@ -7,7 +13,6 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -19,7 +24,7 @@ public class NBTAwareShapedOreRecipe extends ShapedOreRecipe {
     public NBTAwareShapedOreRecipe(@Nonnull ItemStack result, Object... recipe) {
         super(result, recipe);
     }
-    
+
     @Override
     protected boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirror) {
         for (int x = 0; x < MAX_CRAFT_GRID_WIDTH; x++) {

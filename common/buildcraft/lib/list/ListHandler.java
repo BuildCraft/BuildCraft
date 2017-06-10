@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.list;
 
 import java.util.ArrayList;
@@ -56,7 +62,7 @@ public final class ListHandler {
         }
 
         public void toggleOption(int id) {
-            if (byType == false && byMaterial == false && (id == 1 || id == 2)) {
+            if (!byType && !byMaterial && (id == 1 || id == 2)) {
                 for (int i = 1; i < stacks.size(); i++) {
                     stacks.set(i, StackUtil.EMPTY);
                 }

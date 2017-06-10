@@ -1,7 +1,8 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 package buildcraft.energy.generation;
 
 import java.util.Arrays;
@@ -12,7 +13,6 @@ import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockStaticLiquid;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
@@ -26,6 +26,8 @@ import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -33,8 +35,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.properties.BuildCraftProperties;
 
+import buildcraft.lib.misc.BlockUtil;
+
 import buildcraft.core.BCCoreBlocks;
-import buildcraft.core.BCCoreConfig;
 import buildcraft.energy.BCEnergyFluids;
 
 public final class OilPopulate {
@@ -219,7 +222,6 @@ public final class OilPopulate {
 
     private void generateSurfaceDeposit(World world, Random rand, Biome biome, int x, int y, int z, int radius) {
         int depth = rand.nextDouble() < 0.5 ? 1 : 2;
-
         // Center
         setOilColumnForLake(world, biome, x, y, z, depth, 2);
 
@@ -259,9 +261,8 @@ public final class OilPopulate {
     }
 
     private boolean isReplaceableFluid(World world, BlockPos pos) {
-        Block block = world.getBlockState(pos).getBlock();
-        return (block instanceof BlockStaticLiquid || block instanceof BlockFluidBase || block instanceof IFluidBlock) && block
-                .getMaterial(world.getBlockState(pos)) != Material.LAVA;
+        Fluid fluid = BlockUtil.getFluidWithFlowing(world, pos);
+        return (fluid != null && fluid != FluidRegistry.LAVA) || world.isAirBlock(pos);
     }
 
     private boolean isOil(World world, int x, int y, int z) {
@@ -283,7 +284,7 @@ public final class OilPopulate {
             return true;
         }
 
-        if (!block.getMaterial(blockState).blocksMovement()) {
+        if (!blockState.getMaterial().blocksMovement()) {
             return true;
         }
 
@@ -295,7 +296,7 @@ public final class OilPopulate {
             return true;
         }
 
-        if (!block.isOpaqueCube(blockState)) {
+        if (!blockState.isOpaqueCube()) {
             return true;
         }
 
@@ -335,7 +336,7 @@ public final class OilPopulate {
 
             for (int d = 1; d <= depth - 1; d++) {
                 BlockPos down = pos.down(d);
-                if (isReplaceableFluid(world, down) || !world.isSideSolid(down.down(), EnumFacing.UP)) {
+                if (!isReplaceableFluid(world, down) || world.isSideSolid(down.down(), EnumFacing.UP)) {
                     return;
                 }
                 world.setBlockState(down, BCEnergyFluids.crudeOil[0].getBlock().getDefaultState(), 2);

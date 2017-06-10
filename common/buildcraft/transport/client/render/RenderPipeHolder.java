@@ -1,4 +1,12 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.client.render;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -20,7 +28,7 @@ import buildcraft.transport.tile.TilePipeHolder;
 
 public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
     @Override
-    public void renderTileEntityFast(TilePipeHolder pipe, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
+    public void renderTileEntityFast(@Nonnull TilePipeHolder pipe, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer vb) {
         bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         Minecraft.getMinecraft().mcProfiler.startSection("bc");

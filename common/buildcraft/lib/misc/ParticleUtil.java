@@ -1,8 +1,13 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.misc;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
@@ -27,8 +32,6 @@ public class ParticleUtil {
     }
 
     public static void showTempPower(World world, BlockPos pos, EnumFacing face, long microJoules) {
-        world = Minecraft.getMinecraft().world;
-
         double x = pos.getX() + 0.5 + face.getFrontOffsetX() * 0.5;
         double y = pos.getY() + 0.5 + face.getFrontOffsetY() * 0.5;
         double z = pos.getZ() + 0.5 + face.getFrontOffsetZ() * 0.5;

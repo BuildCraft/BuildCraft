@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.tile.item;
 
 import javax.annotation.Nonnull;
@@ -97,7 +103,8 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     }
 
     @Override
-    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+    @Nonnull
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (badSlotIndex(slot)) {
             return stack;
         }
@@ -161,7 +168,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
         if (min <= 0) min = 1;
         if (max < min) return StackUtil.EMPTY;
         ItemStack current = stacks.get(slot);
-        if (current == null || current.getCount() < min) return StackUtil.EMPTY;
+        if (current.isEmpty() || current.getCount() < min) return StackUtil.EMPTY;
         if (filter.matches(asValid(current))) {
             if (simulate) {
                 ItemStack copy = current.copy();
@@ -229,4 +236,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     public int getSlotLimit(int slot) {
         return 64;
     }
+
+
+
 }

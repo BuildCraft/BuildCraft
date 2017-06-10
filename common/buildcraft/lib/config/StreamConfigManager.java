@@ -1,6 +1,18 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.config;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -8,6 +20,7 @@ import java.util.TreeSet;
 
 import buildcraft.api.core.BCLog;
 
+@Deprecated
 public abstract class StreamConfigManager {
     @SuppressWarnings("serial")
     private final Properties properties = new Properties() {

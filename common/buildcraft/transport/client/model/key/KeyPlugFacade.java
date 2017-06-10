@@ -1,11 +1,18 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.client.model.key;
 
-import buildcraft.api.transport.pluggable.PluggableModelKey;
+import java.util.Objects;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 
-import java.util.Objects;
+import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 public class KeyPlugFacade extends PluggableModelKey {
     public final IBlockState state;

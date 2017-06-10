@@ -1,12 +1,20 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.energy.generation;
 
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
-import buildcraft.lib.misc.data.SimplexNoise;
+import java.util.Random;
+
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
 
-import java.util.Random;
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
+
+import buildcraft.lib.misc.data.SimplexNoise;
 
 @SuppressWarnings("Duplicates")
 public abstract class GenLayerBiomeReplacer extends GenLayer {

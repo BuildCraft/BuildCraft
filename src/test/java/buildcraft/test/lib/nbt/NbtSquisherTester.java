@@ -3,6 +3,7 @@ package buildcraft.test.lib.nbt;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -10,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Stopwatch;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import net.minecraft.nbt.NBTBase;
@@ -18,11 +20,51 @@ import net.minecraft.nbt.NBTTagFloat;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.profiler.Profiler;
 
+import buildcraft.api.data.NbtSquishConstants;
+
+import buildcraft.lib.misc.HashUtil;
 import buildcraft.lib.nbt.NbtSquisher;
 
 public class NbtSquisherTester {
-    private final NBTTagCompound nbt = genNbt(64 * 64 * 64);
-    private final NBTTagCompound nbtSmall = genNbt(10);
+    private static final String[] IDS = { //
+        "minecraft:dirt", "minecraft:cooked_steak", "minecraft:cooked_beef", "minecraft:stick",//
+        "minecraft:diamond", "buildcraftcore:gear_wood", "buildcraftcore:gear_stone"//
+    };
+
+    public static final NBTTagCompound nbt = genNbt(64 * 64 * 64);
+    public static final NBTTagCompound nbtSmall = genNbt(10);
+
+    @Test
+    public void printSimpleBytes() {
+        byte[] bytes = NbtSquisher.squish(nbtSmall, NbtSquishConstants.BUILDCRAFT_V1);
+        char[] chars = new char[32];
+        int len = bytes.length / 32;
+        if (len * 32 < bytes.length) {
+            len++;
+        }
+        for (int y = 0; y < len; y++) {
+            for (int x = 0; x < 32; x++) {
+                int idx = y * 32 + x;
+                if (idx >= bytes.length) {
+                    Arrays.fill(chars, x, 32, ' ');
+                    break;
+                }
+                byte val = bytes[idx];
+                int ubyte = Byte.toUnsignedInt(val);
+                char c = (char) ubyte;
+                if (!Character.isDefined(c) || Character.isISOControl(c)) {
+                    c = '.';
+                }
+                chars[x] = c;
+                String hex = Integer.toHexString(ubyte);
+                if (hex.length() < 2) {
+                    hex = " " + hex;
+                }
+                System.out.print(hex + " ");
+            }
+            System.out.println("|" + new String(chars));
+        }
+    }
 
     @Test
     public void testSimpleNBT() throws IOException {
@@ -111,14 +153,16 @@ public class NbtSquisherTester {
     }
 
     public static long[] test(boolean print, NBTTagCompound nbt) throws IOException {
-        long[] times = new long[4];
+        int msPadLength = 10;
+        long[] times = new long[8];
 
         Stopwatch watch = Stopwatch.createStarted();
-        byte[] bytes = NbtSquisher.squishVanillaUncompressed(nbt);
+        byte[] bytes = NbtSquisher.squish(nbt, NbtSquishConstants.VANILLA);
         watch.stop();
+        TimeUnit timeUnit = TimeUnit.MICROSECONDS;
         if (print) {
-            times[0] = watch.elapsed(TimeUnit.MILLISECONDS);
-            printBytesData("vanilla   [un] took " + padMilliseconds(times[0], 8), bytes);
+            times[0] = watch.elapsed(timeUnit);
+            printBytesData("vanilla   [un|wr] took " + padMicroseconds(times[0], msPadLength), bytes);
         }
         watch.reset();
 
@@ -126,11 +170,20 @@ public class NbtSquisherTester {
         checkEquality(nbt, to);
 
         watch.start();
-        bytes = NbtSquisher.squishVanilla(nbt);
+        byte[] hash = HashUtil.computeHash(bytes);
         watch.stop();
         if (print) {
-            times[1] = watch.elapsed(TimeUnit.MILLISECONDS);
-            printBytesData("vanilla   [cp] took " + padMilliseconds(times[1], 8), bytes);
+            times[4] = watch.elapsed(timeUnit);
+            printBytesData("vanilla   [un|hs] took " + padMicroseconds(times[4], msPadLength), hash);
+        }
+        watch.reset();
+
+        watch.start();
+        bytes = NbtSquisher.squish(nbt, NbtSquishConstants.VANILLA_COMPRESSED);
+        watch.stop();
+        if (print) {
+            times[1] = watch.elapsed(timeUnit);
+            printBytesData("vanilla   [cp|wr] took " + padMicroseconds(times[1], msPadLength), bytes);
         }
         watch.reset();
 
@@ -138,93 +191,119 @@ public class NbtSquisherTester {
         checkEquality(nbt, to);
 
         watch.start();
-        bytes = NbtSquisher.squishBuildCraftV1Uncompressed(nbt);
+        hash = HashUtil.computeHash(bytes);
         watch.stop();
         if (print) {
-            times[2] = watch.elapsed(TimeUnit.MILLISECONDS);
-            printBytesData("buildcraft[un] took " + padMilliseconds(times[2], 8), bytes);
+            times[5] = watch.elapsed(timeUnit);
+            printBytesData("vanilla   [cp|hs] took " + padMicroseconds(times[5], msPadLength), hash);
         }
         watch.reset();
 
-        NbtSquisher.debug = false;
+        watch.start();
+        bytes = NbtSquisher.squish(nbt, NbtSquishConstants.BUILDCRAFT_V1);
+        watch.stop();
+        if (print) {
+            times[2] = watch.elapsed(timeUnit);
+            printBytesData("buildcraft[un|wr] took " + padMicroseconds(times[2], msPadLength), bytes);
+        }
+        watch.reset();
 
         to = NbtSquisher.expand(bytes.clone());
         checkEquality(nbt, to);
 
         watch.start();
-        bytes = NbtSquisher.squishBuildCraftV1(nbt);
+        hash = HashUtil.computeHash(bytes);
         watch.stop();
         if (print) {
-            times[3] = watch.elapsed(TimeUnit.MILLISECONDS);
-            printBytesData("buildcraft[cp] took " + padMilliseconds(times[3], 8), bytes);
+            times[6] = watch.elapsed(timeUnit);
+            printBytesData("buildcraft[un|hs] took " + padMicroseconds(times[6], msPadLength), hash);
         }
+        watch.reset();
+
+        NbtSquisher.debugBuffer = null;
+
+        watch.start();
+        bytes = NbtSquisher.squish(nbt, NbtSquishConstants.BUILDCRAFT_V1_COMPRESSED);
+        watch.stop();
+        if (print) {
+            times[3] = watch.elapsed(timeUnit);
+            printBytesData("buildcraft[cp|wr] took " + padMicroseconds(times[3], msPadLength), bytes);
+        }
+        watch.reset();
 
         to = NbtSquisher.expand(bytes.clone());
         checkEquality(nbt, to);
+
+        watch.start();
+        hash = HashUtil.computeHash(bytes);
+        watch.stop();
+        if (print) {
+            times[7] = watch.elapsed(timeUnit);
+            printBytesData("buildcraft[cp|hs] took " + padMicroseconds(times[7], msPadLength), hash);
+        }
+        watch.reset();
 
         return times;
     }
 
     public static void checkEquality(NBTTagCompound from, NBTTagCompound to) {
-        if (!checkEquality("", from, to)) {
-            // Assert.fail("Tags were not equal!");
+        String error = compoundEqual(from, to);
+        if (!error.isEmpty()) {
+            System.out.println(error);
+            Assert.fail("Tags were not equal! (" + error + ")");
         }
     }
 
-    private static boolean checkEquality(String start, NBTTagCompound from, NBTTagCompound to) {
+    private static String compoundEqual(NBTTagCompound from, NBTTagCompound to) {
         Set<String> keysFrom = from.getKeySet();
         Set<String> keysTo = to.getKeySet();
         if (!keysFrom.equals(keysTo)) {
-            System.out.println(start + "Differing keys!");
-            System.out.println(start + "  from = " + keysFrom);
-            System.out.println(start + "    to = " + keysTo);
-            return false;
+            return "keys " + keysFrom + " -> " + keysTo;
         } else {
-            boolean wasEqual = false;
-            start = "  " + start;
             for (String key : keysFrom) {
-                String start2 = start + key + ":";
                 NBTBase valFrom = from.getTag(key);
                 NBTBase valTo = to.getTag(key);
-                wasEqual &= checkEquality(start2, valFrom, valTo);
+                String err = nbtEquals(valFrom, valTo);
+                if (!err.isEmpty()) {
+                    return key + " = " + err;
+                }
             }
-            return wasEqual;
+            return "";
         }
     }
 
-    private static boolean checkEquality(String start, NBTTagList from, NBTTagList to) {
+    private static String listEquals(NBTTagList from, NBTTagList to) {
         int l1 = from.tagCount();
         int l2 = to.tagCount();
         if (l1 != l2) {
-            System.out.println(start + "Differing lengths!");
-            System.out.println(start + "  from = " + l1);
-            System.out.println(start + "    to = " + l2);
-            return false;
+            System.out.println("Differing lengths!");
+            System.out.println("  from = " + l1);
+            System.out.println("    to = " + l2);
+            return "";
         } else {
-            boolean wasEqual = true;
-            start = "  " + start;
             for (int i = 0; i < l1; i++) {
-                String start2 = start + i + ":";
                 NBTBase valFrom = from.get(i);
                 NBTBase valTo = to.get(i);
-                wasEqual &= checkEquality(start2, valFrom, valTo);
+                String err = nbtEquals(valFrom, valTo);
+                if (!err.isEmpty()) {
+                    return "[" + i + "] = " + err;
+                }
             }
-            return wasEqual;
+            return "";
         }
     }
 
-    private static boolean checkEquality(String start, NBTBase valFrom, NBTBase valTo) {
+    private static String nbtEquals(NBTBase valFrom, NBTBase valTo) {
         if (valFrom instanceof NBTTagCompound && valTo instanceof NBTTagCompound) {
-            return checkEquality(start, (NBTTagCompound) valFrom, (NBTTagCompound) valTo);
+            return compoundEqual((NBTTagCompound) valFrom, (NBTTagCompound) valTo);
         }
         if (valFrom instanceof NBTTagList && valTo instanceof NBTTagList) {
-            return checkEquality(start, (NBTTagList) valFrom, (NBTTagList) valTo);
+            return listEquals((NBTTagList) valFrom, (NBTTagList) valTo);
         }
         if (!valFrom.equals(valTo)) {
-            System.out.println(start + " were not equal!");
-            return false;
+            return valFrom + " -> " + valTo;
         }
-        return true;
+        return "";
     }
 
     private static NBTTagCompound genRandomChest(Random rand) {
@@ -247,11 +326,6 @@ public class NbtSquisherTester {
         return chest;
     }
 
-    private static final String[] IDS = { //
-        "minecraft:dirt", "minecraft:cooked_steak", "minecraft:cooked_beef", "minecraft:stick",//
-        "minecraft:diamond", "buildcraftcore:gear_wood", "buildcraftcore:gear_stone"//
-    };
-
     private static NBTTagCompound genRandomItem(Random rand) {
         NBTTagCompound item = new NBTTagCompound();
         item.setString("id", IDS[rand.nextInt(IDS.length)]);
@@ -270,10 +344,11 @@ public class NbtSquisherTester {
         System.out.println();
     }
 
-    private static String padMilliseconds(long name, int l) {
-        return pad(NumberFormat.getInstance().format(name), l) + "ms ";
+    private static String padMicroseconds(long name, int l) {
+        return pad(NumberFormat.getInstance().format(name), l) + "ųs ";
     }
 
+    @SuppressWarnings("StringConcatenationInLoop")
     private static String pad(String name, int l) {
         while (name.length() < l) {
             name = " " + name;
@@ -292,6 +367,9 @@ public class NbtSquisherTester {
 
     public static void main(String[] args) throws IOException {
         System.in.read();
+
+        Stopwatch watchWhole = Stopwatch.createStarted();
+
         NbtSquisherTester tester = new NbtSquisherTester();
         Stopwatch watch = Stopwatch.createStarted();
         for (int i = 1; i <= 100_000; i++) {
@@ -304,19 +382,21 @@ public class NbtSquisherTester {
         }
         watch.reset();
 
-        NbtSquisher.profiler.profilingEnabled = true;
-        NbtSquisher.profiler.startSection("root");
-
         final int times = 100;
         long[][] all = new long[times][];
 
+        watchWhole.stop();
         System.in.read();
-        NbtSquisher.debug = true;
+        watchWhole.start();
+
+        // NbtSquisher.profiler.profilingEnabled = true;
+        NbtSquisher.profiler.startSection("root");
+        // NbtSquisher.debugBuffer = PrintingByteBuf::new;
         for (int i = 0; i < 100; i++) {
             System.out.println("Starting test " + (i + 1));
             all[i] = test(true, tester.nbt);
             System.out.println("Finished test " + (i + 1));
-            NbtSquisher.debug = false;
+            // NbtSquisher.debugBuffer = null;
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -324,23 +404,27 @@ public class NbtSquisherTester {
                 return;
             }
         }
-        String[] types = { "vanilla   [un]", "vanilla   [cp]", "buildcraft[un]", "buildcraft[cp]" };
-        for (int i = 0; i < 4; i++) {
+        String[] types = { "vanilla   [un|wr]", "vanilla   [cp|wr]", "buildcraft[un|wr]", "buildcraft[cp|wr]",
+            "vanilla   [un|hs]", "vanilla   [cp|hs]", "buildcraft[un|hs]", "buildcraft[cp|hs]" };
+        for (int i = 0; i < 8; i++) {
             long total = 0;
             for (int j = 20; j < times; j++)
                 total += all[j][i];
-            long average = total * 100 / (times - 20);
-            System.out.println(types[i] + " took (on average) " + (average / 100) + "." + (average % 100) + "ms");
+            long average = total / (times - 20);
+            System.out.println(types[i] + " took (on average) " + padMicroseconds(average, 10));
         }
 
         NbtSquisher.profiler.endSection();
         writeProfilerResults(0, "root.write", NbtSquisher.profiler);
+        watchWhole.stop();
+        System.out.println("Whole test took " + watchWhole.elapsed(TimeUnit.MINUTES) + "m, "
+            + watchWhole.elapsed(TimeUnit.SECONDS) % 60 + "s");
     }
 
     private static void writeProfilerResults(int indent, String sectionName, Profiler profiler) {
         List<Profiler.Result> list = profiler.getProfilingData(sectionName);
 
-        if (list != null && list.size() >= 3) {
+        if (!list.isEmpty() && list.size() >= 3) {
             for (int i = 1; i < list.size(); ++i) {
                 Profiler.Result profiler$result = list.get(i);
                 StringBuilder builder = new StringBuilder();

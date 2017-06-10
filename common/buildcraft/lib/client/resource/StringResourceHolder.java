@@ -1,6 +1,13 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.resource;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Charsets;
@@ -23,9 +30,7 @@ public class StringResourceHolder extends ResourceHolder {
     protected final void onLoad(byte[] data) {
         String fullData = new String(data, Charsets.UTF_8);
         List<String> newLines = new ArrayList<>();
-        for (String s : fullData.split(REGEX_LINE_END)) {
-            newLines.add(s);
-        }
+        Collections.addAll(newLines, fullData.split(REGEX_LINE_END));
         lines = newLines;
         onStringChange();
     }

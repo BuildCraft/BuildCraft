@@ -23,7 +23,6 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -40,7 +39,7 @@ import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.debug.BCAdvDebugging;
 import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.misc.FakePlayerUtil;
+import buildcraft.lib.misc.FakePlayerProvider;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
@@ -62,7 +61,7 @@ public enum BCLibEventDist {
     public void onWorldUnload(WorldEvent.Unload event) {
         MarkerCache.onWorldUnload(event.getWorld());
         if (event.getWorld() instanceof WorldServer) {
-            FakePlayerUtil.INSTANCE.unloadWorld((WorldServer) event.getWorld());
+            FakePlayerProvider.INSTANCE.unloadWorld((WorldServer) event.getWorld());
         }
     }
 

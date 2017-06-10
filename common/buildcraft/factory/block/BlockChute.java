@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.factory.block;
 
 import java.util.List;
@@ -16,10 +22,11 @@ import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
 
-import buildcraft.factory.BCFactoryGuis;
-import buildcraft.factory.tile.TileChute;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
+
+import buildcraft.factory.BCFactoryGuis;
+import buildcraft.factory.tile.TileChute;
 
 public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing {
     public static final Map<EnumFacing, IProperty<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;
@@ -59,7 +66,7 @@ public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing 
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        for (EnumFacing side : EnumFacing.values()) {
+        for (EnumFacing side : EnumFacing.VALUES) {
             state = state.withProperty(CONNECTED_MAP.get(side), side != state.getValue(getFacingProperty()) && TileChute.hasInventoryAtPosition(world, pos.offset(side), side));
         }
         return state;

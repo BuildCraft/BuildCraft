@@ -1,34 +1,43 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.recipe;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-import buildcraft.api.recipes.StackDefinition;
-import buildcraft.lib.inventory.filter.ArrayStackFilter;
-import buildcraft.transport.BCTransport;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.IAssemblyRecipeProvider;
+import buildcraft.api.recipes.StackDefinition;
 
+import buildcraft.lib.inventory.filter.ArrayStackFilter;
 import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.ChangingObject;
 import buildcraft.lib.recipe.IRecipeViewable;
+
+import buildcraft.transport.BCTransport;
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
 import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
-import net.minecraft.util.ResourceLocation;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeViewable.IRecipePowered {
     INSTANCE;
@@ -37,8 +46,9 @@ public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeVie
     private static final long MJ_COST = 64 * MjAPI.MJ;
     private static final ChangingObject<Long> MJ_COSTS = new ChangingObject<>(new Long[] { MJ_COST });
 
+    @Nonnull
     @Override
-    public List<AssemblyRecipe> getRecipesFor(NonNullList<ItemStack> possible) {
+    public List<AssemblyRecipe> getRecipesFor(@Nonnull NonNullList<ItemStack> possible) {
         // Require 3 structure pipes -- check for those first as its much cheaper
         if (!StackUtil.contains(new ItemStack(BCTransportItems.pipeStructure, 3), possible)) {
             return ImmutableList.of();

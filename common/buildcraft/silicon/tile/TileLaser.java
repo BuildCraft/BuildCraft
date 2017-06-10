@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.silicon.tile;
 
 import java.io.IOException;
@@ -17,7 +23,11 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.mj.*;
+import buildcraft.api.mj.ILaserTarget;
+import buildcraft.api.mj.ILaserTargetBlock;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjBattery;
+import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IDebuggable;
 
@@ -31,6 +41,7 @@ import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+
 import buildcraft.silicon.BCSiliconBlocks;
 import buildcraft.silicon.client.render.AdvDebuggerLaser;
 
@@ -66,7 +77,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
                 TileEntity tileAt = world.getTileEntity(p);
                 if (tileAt instanceof ILaserTarget) {
                     ILaserTarget targetAt = (ILaserTarget) tileAt;
-                    if (targetAt.requiresLaserPower()) {
+                    if (targetAt.getRequiredLaserPower() > 0) {
                         possible.add(p);
                     }
                 }
@@ -86,7 +97,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             TileEntity tile = world.getTileEntity(targetPos);
             if (tile instanceof ILaserTarget) {
                 ILaserTarget target = (ILaserTarget) tile;
-                return !target.isInvalidTarget() && target.requiresLaserPower() ? target : null;
+                return target.getRequiredLaserPower() > 0 ? target : null;
             } else {
                 return null;
             }
@@ -97,7 +108,12 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
 
     private void updateLaser() {
         if (getTarget() != null) {
-            laserPos = new Vec3d(targetPos).addVector((5 + world.rand.nextInt(6) + 0.5) / 16D, 9 / 16D, (5 + world.rand.nextInt(6) + 0.5) / 16D);
+            laserPos = new Vec3d(targetPos)
+                .addVector(
+                    (5 + world.rand.nextInt(6) + 0.5) / 16D,
+                    9 / 16D,
+                    (5 + world.rand.nextInt(6) + 0.5) / 16D
+                );
         } else {
             laserPos = null;
         }
@@ -136,10 +152,13 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             long max = getMaxPowerPerTick();
             max *= battery.getStored() + max;
             max /= battery.getCapacity() / 2;
-            max = Math.min(max, getMaxPowerPerTick());
+            max = Math.min(Math.min(max, getMaxPowerPerTick()), target.getRequiredLaserPower());
             long power = battery.extractPower(0, max);
-            avgPower.push(power);
-            target.receiveLaserPower(power);
+            long excess = target.receiveLaserPower(power);
+            if (excess > 0) {
+                battery.addPowerChecking(excess, false);
+            }
+            avgPower.push(power - excess);
         } else {
             avgPower.clear();
         }
@@ -178,7 +197,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
                 battery.writeToBuffer(buffer);
                 buffer.writeBoolean(targetPos != null);
                 if (targetPos != null) {
-                    buffer.writeBlockPos(targetPos);
+                    MessageUtil.writeBlockPos(buffer, targetPos);
                 }
                 buffer.writeBoolean(laserPos != null);
                 if (laserPos != null) {
@@ -196,7 +215,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             if (id == NET_RENDER_DATA) {
                 battery.readFromBuffer(buffer);
                 if (buffer.readBoolean()) {
-                    targetPos = buffer.readBlockPos();
+                    targetPos = MessageUtil.readBlockPos(buffer);
                 } else {
                     targetPos = null;
                 }

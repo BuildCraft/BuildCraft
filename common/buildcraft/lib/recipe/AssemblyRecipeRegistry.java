@@ -1,20 +1,31 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.recipe;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import buildcraft.lib.BCLib;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.IAssemblyRecipeProvider;
 import buildcraft.api.recipes.IAssemblyRecipeRegistry;
 
 import buildcraft.lib.misc.StackUtil;
-import net.minecraft.util.ResourceLocation;
 
 public enum AssemblyRecipeRegistry implements IAssemblyRecipeRegistry {
     INSTANCE;
@@ -22,8 +33,9 @@ public enum AssemblyRecipeRegistry implements IAssemblyRecipeRegistry {
     private final Map<ResourceLocation, AssemblyRecipe> recipes = new HashMap<>();
     private final List<IAssemblyRecipeProvider> providers = new ArrayList<>();
 
+    @Nonnull
     @Override
-    public List<AssemblyRecipe> getRecipesFor(NonNullList<ItemStack> possibleIn) {
+    public List<AssemblyRecipe> getRecipesFor(@Nonnull NonNullList<ItemStack> possibleIn) {
         List<AssemblyRecipe> all = new ArrayList<>();
         for (AssemblyRecipe ar : recipes.values()) {
             if (ar.requiredStacks.stream().allMatch((definition) -> StackUtil.contains(definition, possibleIn))) {
@@ -37,7 +49,7 @@ public enum AssemblyRecipeRegistry implements IAssemblyRecipeRegistry {
     }
 
     @Override
-    public void addRecipe(AssemblyRecipe recipe) {
+    public void addRecipe(@Nonnull AssemblyRecipe recipe) {
         if (recipes.containsKey(recipe.name)) {
             throw new IllegalStateException("Trying to override assembly recipe with name " + recipe.name + ".\n" +
                     "If you want replace recipe remove old one first.");
@@ -46,7 +58,7 @@ public enum AssemblyRecipeRegistry implements IAssemblyRecipeRegistry {
     }
 
     @Override
-    public void addRecipeProvider(IAssemblyRecipeProvider provider) {
+    public void addRecipeProvider(@Nonnull IAssemblyRecipeProvider provider) {
         providers.add(provider);
     }
 

@@ -1,28 +1,43 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.robotics.client.render;
 
-import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.lib.client.model.MutableVertex;
-import buildcraft.lib.client.sprite.DynamicTextureBC;
-import buildcraft.lib.misc.data.WorldPos;
-import buildcraft.robotics.BCRoboticsBlocks;
-import buildcraft.robotics.tile.TileZonePlanner;
-import buildcraft.robotics.zone.ZonePlannerMapChunk;
-import buildcraft.robotics.zone.ZonePlannerMapChunkKey;
-import buildcraft.robotics.zone.ZonePlannerMapDataClient;
+import java.util.concurrent.TimeUnit;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalNotification;
+
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.opengl.GL11;
 
-import java.util.concurrent.TimeUnit;
+import buildcraft.api.properties.BuildCraftProperties;
+
+import buildcraft.lib.client.model.MutableVertex;
+import buildcraft.lib.client.sprite.DynamicTextureBC;
+import buildcraft.lib.misc.data.WorldPos;
+
+import buildcraft.robotics.BCRoboticsBlocks;
+import buildcraft.robotics.tile.TileZonePlanner;
+import buildcraft.robotics.zone.ZonePlannerMapChunk;
+import buildcraft.robotics.zone.ZonePlannerMapChunkKey;
+import buildcraft.robotics.zone.ZonePlannerMapDataClient;
 
 public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner> {
     private static final Cache<WorldPos, DynamicTextureBC> TEXTURES = CacheBuilder.newBuilder()

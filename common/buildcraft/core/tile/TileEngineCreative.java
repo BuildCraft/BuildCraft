@@ -6,6 +6,8 @@ package buildcraft.core.tile;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -56,6 +58,7 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
         }
     }
 
+    @Nonnull
     @Override
     protected IMjConnector createConnector() {
         return new EngineConnector(false);

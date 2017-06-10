@@ -1,4 +1,12 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.inventory;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
 
@@ -15,11 +23,13 @@ public final class ItemHandlerWrapper extends AbstractInvItemTransactor {
         this.wrapped = handler;
     }
 
+    @Nonnull
     @Override
-    protected ItemStack insert(int slot, ItemStack stack, boolean simulate) {
+    protected ItemStack insert(int slot, @Nonnull ItemStack stack, boolean simulate) {
         return wrapped.insertItem(slot, stack, simulate);
     }
 
+    @Nonnull
     @Override
     protected ItemStack extract(int slot, IStackFilter filter, int min, int max, boolean simulate) {
         if (min <= 0) min = 1;

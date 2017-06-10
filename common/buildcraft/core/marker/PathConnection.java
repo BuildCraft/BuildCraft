@@ -17,12 +17,13 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.marker.MarkerConnection;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.VecUtil;
+
+import buildcraft.core.client.BuildCraftLaserManager;
 
 public class PathConnection extends MarkerConnection<PathConnection> {
     private static final double RENDER_SCALE = 1 / 16.05;
@@ -176,18 +177,9 @@ public class PathConnection extends MarkerConnection<PathConnection> {
         if (loop || conTo.loop) {
             return false;
         } else if (conTo == this) {
-            if (positions.size() <= 2) {
-                return false;
-            }
-            if (positions.getFirst().equals(to) && positions.getLast().equals(from)) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (positions.getLast().equals(from) && conTo.positions.getFirst().equals(to)) {
-            return true;
+            return positions.size() > 2 && positions.getFirst().equals(to) && positions.getLast().equals(from);
         } else {
-            return false;
+            return positions.getLast().equals(from) && conTo.positions.getFirst().equals(to);
         }
     }
 
@@ -208,9 +200,7 @@ public class PathConnection extends MarkerConnection<PathConnection> {
             list.addFirst(positions.removeFirst());
         }
         positions.clear();
-        for (BlockPos pos : list) {
-            positions.add(pos);
-        }
+        positions.addAll(list);
         subCache.refreshConnection(this);
     }
 

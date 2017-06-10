@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport;
 
 import buildcraft.api.transport.pipe.PipeDefinition;
@@ -5,7 +11,14 @@ import buildcraft.api.transport.pipe.PipeDefinition;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemManager;
-import buildcraft.transport.item.*;
+
+import buildcraft.transport.item.ItemPipeHolder;
+import buildcraft.transport.item.ItemPluggableFacade;
+import buildcraft.transport.item.ItemPluggableGate;
+import buildcraft.transport.item.ItemPluggableLens;
+import buildcraft.transport.item.ItemPluggablePulsar;
+import buildcraft.transport.item.ItemPluggableSimple;
+import buildcraft.transport.item.ItemWire;
 
 public class BCTransportItems {
     public static ItemBC_Neptune waterproof;

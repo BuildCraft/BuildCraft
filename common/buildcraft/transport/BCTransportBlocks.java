@@ -1,9 +1,16 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport;
 
 import net.minecraft.block.material.Material;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.tile.TileBC_Neptune;
+
 import buildcraft.transport.block.BlockFilteredBuffer;
 import buildcraft.transport.block.BlockPipeHolder;
 import buildcraft.transport.tile.TileFilteredBuffer;

@@ -1,6 +1,18 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.recipe;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,7 +34,7 @@ public enum IntegrationRecipeRegistry implements IIntegrationRecipeRegistry {
     private final List<IIntegrationRecipeProvider> providers = new ArrayList<>();
 
     @Override
-    public IntegrationRecipe getRecipeFor(@Nonnull ItemStack target, NonNullList<ItemStack> toIntegrate) {
+    public IntegrationRecipe getRecipeFor(@Nonnull ItemStack target, @Nonnull NonNullList<ItemStack> toIntegrate) {
         for (IntegrationRecipe recipe : recipes.values()) {
             if (matches(recipe, target, toIntegrate)) {
                 return recipe;

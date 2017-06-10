@@ -1,10 +1,13 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 package buildcraft.lib.inventory.filter;
 
 import java.util.Arrays;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -26,7 +29,7 @@ public class ArrayStackFilter implements IStackFilter {
     }
 
     @Override
-    public boolean matches(ItemStack stack) {
+    public boolean matches(@Nonnull ItemStack stack) {
         if (stacks.size() == 0 || !hasFilter()) {
             return true;
         }

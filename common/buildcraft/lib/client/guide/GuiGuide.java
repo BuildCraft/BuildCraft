@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.guide;
 
 import java.io.IOException;
@@ -28,12 +34,12 @@ import buildcraft.lib.gui.pos.MousePosition;
 
 public class GuiGuide extends GuiScreen {
     public static final ResourceLocation ICONS_1 = Gui.ICONS;
-    public static final ResourceLocation ICONS_2 = new ResourceLocation("buildcraftcore:textures/gui/guide/icons.png");
-    public static final ResourceLocation COVER = new ResourceLocation("buildcraftcore:textures/gui/guide/cover.png");
-    public static final ResourceLocation LEFT_PAGE = new ResourceLocation("buildcraftcore:textures/gui/guide/left_page.png");
-    public static final ResourceLocation RIGHT_PAGE = new ResourceLocation("buildcraftcore:textures/gui/guide/right_page.png");
-    public static final ResourceLocation LEFT_PAGE_BACK = new ResourceLocation("buildcraftcore:textures/gui/guide/left_page_back.png");
-    public static final ResourceLocation RIGHT_PAGE_BACK = new ResourceLocation("buildcraftcore:textures/gui/guide/right_page_back.png");
+    public static final ResourceLocation ICONS_2 = new ResourceLocation("buildcraftlib:textures/gui/guide/icons.png");
+    public static final ResourceLocation COVER = new ResourceLocation("buildcraftlib:textures/gui/guide/cover.png");
+    public static final ResourceLocation LEFT_PAGE = new ResourceLocation("buildcraftlib:textures/gui/guide/left_page.png");
+    public static final ResourceLocation RIGHT_PAGE = new ResourceLocation("buildcraftlib:textures/gui/guide/right_page.png");
+    public static final ResourceLocation LEFT_PAGE_BACK = new ResourceLocation("buildcraftlib:textures/gui/guide/left_page_back.png");
+    public static final ResourceLocation RIGHT_PAGE_BACK = new ResourceLocation("buildcraftlib:textures/gui/guide/right_page_back.png");
 
     public static final GuiIcon BOOK_COVER = new GuiIcon(COVER, 0, 0, 202, 248);
     public static final GuiIcon BOOK_BINDING = new GuiIcon(COVER, 204, 0, 11, 248);

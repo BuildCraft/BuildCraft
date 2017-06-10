@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.energy;
 
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -7,8 +13,9 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.energy.client.sprite.AtlasSpriteFluid;
 import buildcraft.lib.fluid.BCFluid;
+
+import buildcraft.energy.client.sprite.AtlasSpriteFluid;
 
 public class BCEnergySprites {
     public static void fmlPreInit() {

@@ -7,8 +7,6 @@ package buildcraft.silicon.gui;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import buildcraft.lib.gui.pos.IGuiPosition;
-import buildcraft.lib.gui.pos.PositionAbsolute;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
@@ -18,6 +16,9 @@ import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
+import buildcraft.lib.gui.pos.IGuiPosition;
+import buildcraft.lib.gui.pos.PositionAbsolute;
+
 import buildcraft.silicon.EnumAssemblyRecipeState;
 import buildcraft.silicon.container.ContainerAssemblyTable;
 import buildcraft.transport.gui.LedgerTablePower;

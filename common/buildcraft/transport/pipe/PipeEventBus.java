@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.pipe;
 
 import java.lang.invoke.MethodHandle;
@@ -5,7 +11,12 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.transport.pipe.PipeEvent;
@@ -45,7 +56,7 @@ public class PipeEventBus {
 
                 Parameter[] params = m.getParameters();
                 if (params.length != 1) {
-                    throw new IllegalStateException("Cannot annotate " + m + " with @PipeEventHandler as it had an incorrect number of paramaters (" + Arrays.toString(params) + ")");
+                    throw new IllegalStateException("Cannot annotate " + m + " with @PipeEventHandler as it had an incorrect number of parameters (" + Arrays.toString(params) + ")");
                 }
                 Parameter p = params[0];
                 if (!PipeEvent.class.isAssignableFrom(p.getType())) {

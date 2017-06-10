@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport;
 
 import net.minecraft.init.Blocks;
@@ -6,7 +12,7 @@ import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemMinecart;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.transport.IStripesRegistry.HandlerPriority;
+import buildcraft.api.core.EnumHandlerPriority;
 import buildcraft.api.transport.pipe.ICustomPipeConnection;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeConnectionAPI;
@@ -19,7 +25,14 @@ import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.pipe.flow.PipeFlowStructure;
 import buildcraft.transport.plug.PluggableRegistry;
-import buildcraft.transport.stripes.*;
+import buildcraft.transport.stripes.StripesHandlerDispenser;
+import buildcraft.transport.stripes.StripesHandlerEntityInteract;
+import buildcraft.transport.stripes.StripesHandlerHoe;
+import buildcraft.transport.stripes.StripesHandlerMinecartDestroy;
+import buildcraft.transport.stripes.StripesHandlerPlaceBlock;
+import buildcraft.transport.stripes.StripesHandlerPlant;
+import buildcraft.transport.stripes.StripesHandlerShears;
+import buildcraft.transport.stripes.StripesHandlerUse;
 
 public class BCTransportRegistries {
     public static void preInit() {
@@ -44,19 +57,19 @@ public class BCTransportRegistries {
         PipeApi.stripeRegistry.addHandler(StripesHandlerShears.INSTANCE);
         // PipeApi.stripeRegistry.addHandler(new StripesHandlerPipes());
         // PipeApi.stripeRegistry.addHandler(new StripesHandlerPipeWires());
-        PipeApi.stripeRegistry.addHandler(StripesHandlerEntityInteract.INSTANCE, HandlerPriority.LOW);
+        PipeApi.stripeRegistry.addHandler(StripesHandlerEntityInteract.INSTANCE, EnumHandlerPriority.LOW);
         PipeApi.stripeRegistry.addHandler(StripesHandlerHoe.INSTANCE);
-        // PipeApi.stripeRegistry.addHandler(new StripesHandlerRightClick(), HandlerPriority.LOW);
-        PipeApi.stripeRegistry.addHandler(StripesHandlerDispenser.INSTANCE, HandlerPriority.LOW);
-        PipeApi.stripeRegistry.addHandler(StripesHandlerPlaceBlock.INSTANCE, HandlerPriority.LOW);
-        PipeApi.stripeRegistry.addHandler(StripesHandlerUse.INSTANCE, HandlerPriority.LOW);
+        // PipeApi.stripeRegistry.addHandler(new StripesHandlerRightClick(), EnumHandlerPriority.LOW);
+        PipeApi.stripeRegistry.addHandler(StripesHandlerDispenser.INSTANCE, EnumHandlerPriority.LOW);
+        PipeApi.stripeRegistry.addHandler(StripesHandlerPlaceBlock.INSTANCE, EnumHandlerPriority.LOW);
+        PipeApi.stripeRegistry.addHandler(StripesHandlerUse.INSTANCE, EnumHandlerPriority.LOW);
 
-        StripesHandlerDispenser.itemClasses.add(ItemBucket.class);
-        StripesHandlerDispenser.itemClasses.add(ItemMinecart.class);
+        StripesHandlerDispenser.ITEM_CLASSES.add(ItemBucket.class);
+        StripesHandlerDispenser.ITEM_CLASSES.add(ItemMinecart.class);
         // StripesHandlerRightClick.items.add(Items.EGG);
         // StripesHandlerRightClick.items.add(Items.SNOWBALL);
         // StripesHandlerRightClick.items.add(Items.EXPERIENCE_BOTTLE);
-        StripesHandlerUse.items.add(Items.FIREWORKS);
+        StripesHandlerUse.ITEMS.add(Items.FIREWORKS);
 
         // Block breaking stripes handlers
         PipeApi.stripeRegistry.addHandler(StripesHandlerMinecartDestroy.INSTANCE);

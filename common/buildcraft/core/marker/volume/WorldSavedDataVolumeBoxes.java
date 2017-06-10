@@ -1,7 +1,18 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.core.marker.volume;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.lib.BCMessageHandler;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -10,14 +21,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
+
 import net.minecraftforge.common.util.Constants;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import buildcraft.api.core.BCLog;
+
+import buildcraft.lib.net.MessageManager;
 
 public class WorldSavedDataVolumeBoxes extends WorldSavedData {
     public static final String DATA_NAME = "buildcraft_volume_boxes";
@@ -85,7 +94,7 @@ public class WorldSavedDataVolumeBoxes extends WorldSavedData {
     @Override
     public void markDirty() {
         super.markDirty();
-        BCMessageHandler.netWrapper.sendToDimension(new MessageVolumeBoxes(boxes), world.provider.getDimension());
+        MessageManager.sendToDimension(new MessageVolumeBoxes(boxes), world.provider.getDimension());
     }
 
     @Override

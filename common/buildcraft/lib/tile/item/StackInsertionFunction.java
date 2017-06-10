@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.tile.item;
 
 import javax.annotation.Nonnull;
@@ -18,7 +24,7 @@ public interface StackInsertionFunction {
 
     /** Gets a stack insertion function that will insert items up to a given stack size. The stack size of the items
      * themselves IS taken into account, so this has an effective upper limit of 64. */
-    public static StackInsertionFunction getInsertionFunction(int maxStackSize) {
+    static StackInsertionFunction getInsertionFunction(int maxStackSize) {
         return (slot, addingTo, toInsert) -> {
             if (toInsert.isEmpty()) {
                 return new InsertionResult(addingTo, StackUtil.EMPTY);
@@ -53,13 +59,13 @@ public interface StackInsertionFunction {
     }
 
     /** Gets a stack insertion function that will insert up to full stacks into a given slot. This is just
-     * {@link #getInsertionFunction(int)} with an argument of 64. */
+     * {@link #getInsertionFunction(int)} with an argument of {@link Integer#MAX_VALUE}. */
     public static StackInsertionFunction getDefaultInserter() {
         return getInsertionFunction(Integer.MAX_VALUE);
     }
 
     /** The result of an attempted insertion. */
-    public static class InsertionResult {
+    class InsertionResult {
         public static final InsertionResult EMPTY_STACKS = new InsertionResult(StackUtil.EMPTY, StackUtil.EMPTY);
 
         @Nonnull

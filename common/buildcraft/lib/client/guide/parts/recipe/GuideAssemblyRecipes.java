@@ -1,14 +1,18 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.guide.parts.recipe;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
 
-import buildcraft.api.recipes.StackDefinition;
-import buildcraft.lib.recipe.ChangingObject;
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.IAssemblyRecipeProvider;
@@ -18,14 +22,14 @@ import buildcraft.lib.misc.ArrayUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.ChangingItemStack;
+import buildcraft.lib.recipe.ChangingObject;
 import buildcraft.lib.recipe.IRecipeViewable.IRecipePowered;
-import net.minecraft.util.NonNullList;
 
 public enum GuideAssemblyRecipes implements IStackRecipes {
     INSTANCE;
 
     @Override
-    public List<GuidePartFactory> getUsages(ItemStack stack) {
+    public List<GuidePartFactory> getUsages(@Nonnull ItemStack stack) {
         List<GuidePartFactory> usages = new ArrayList<>();
         for (AssemblyRecipe recipe : AssemblyRecipeRegistry.INSTANCE.getAllRecipes()) {
             if (recipe.requiredStacks.stream().anyMatch((definition) -> definition.filter.matches(stack))) {
@@ -46,7 +50,7 @@ public enum GuideAssemblyRecipes implements IStackRecipes {
     }
 
     @Override
-    public List<GuidePartFactory> getRecipes(ItemStack stack) {
+    public List<GuidePartFactory> getRecipes(@Nonnull ItemStack stack) {
         List<GuidePartFactory> recipes = new ArrayList<>();
         for (AssemblyRecipe recipe : AssemblyRecipeRegistry.INSTANCE.getAllRecipes()) {
             if (StackUtil.isCraftingEquivalent(recipe.output, stack, false)) {

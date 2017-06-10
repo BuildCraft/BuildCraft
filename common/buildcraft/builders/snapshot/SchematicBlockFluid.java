@@ -1,8 +1,21 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.builders.snapshot;
 
-import buildcraft.api.schematics.ISchematicBlock;
-import buildcraft.api.schematics.SchematicBlockContext;
-import buildcraft.lib.misc.BlockUtil;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,17 +24,18 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.api.schematics.SchematicBlockContext;
+
+import buildcraft.lib.misc.BlockUtil;
 
 public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid> {
     private IBlockState blockState;
     private boolean isFlowing;
-    private final List<FluidStack> requiredFluids = new ArrayList<>();
 
     @SuppressWarnings("unused")
     public static boolean predicate(SchematicBlockContext context) {
@@ -35,11 +49,6 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
     }
 
     @Override
-    public int getLevel() {
-        return BLOCK_LEVEL;
-    }
-
-    @Override
     public boolean isAir() {
         return false;
     }
@@ -48,28 +57,24 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
     @Override
     public Set<BlockPos> getRequiredBlockOffsets() {
         return Stream.concat(Arrays.stream(EnumFacing.HORIZONTALS), Stream.of(EnumFacing.DOWN))
-                .map(EnumFacing::getDirectionVec)
-                .map(BlockPos::new)
-                .collect(Collectors.toSet());
-    }
-
-    @Override
-    public void computeRequiredItemsAndFluids(SchematicBlockContext context) {
-        requiredFluids.clear();
-        if (BlockUtil.drainBlock(context.world, context.pos, false) != null) {
-            requiredFluids.add(BlockUtil.drainBlock(context.world, context.pos, false));
-        }
+            .map(EnumFacing::getDirectionVec)
+            .map(BlockPos::new)
+            .collect(Collectors.toSet());
     }
 
     @Nonnull
     @Override
-    public List<ItemStack> getRequiredItems() {
+    public List<ItemStack> computeRequiredItems(SchematicBlockContext context) {
         return Collections.emptyList();
     }
 
     @Nonnull
     @Override
-    public List<FluidStack> getRequiredFluids() {
+    public List<FluidStack> computeRequiredFluids(SchematicBlockContext context) {
+        List<FluidStack> requiredFluids = new ArrayList<>();
+        if (BlockUtil.drainBlock(context.world, context.pos, false) != null) {
+            requiredFluids.add(BlockUtil.drainBlock(context.world, context.pos, false));
+        }
         return requiredFluids;
     }
 
@@ -78,15 +83,14 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
         SchematicBlockFluid schematicBlock = new SchematicBlockFluid();
         schematicBlock.blockState = blockState;
         schematicBlock.isFlowing = isFlowing;
-        schematicBlock.requiredFluids.addAll(requiredFluids);
         return schematicBlock;
     }
 
     @Override
     public boolean canBuild(World world, BlockPos blockPos) {
         return world.isAirBlock(blockPos) ||
-                BlockUtil.getFluidWithFlowing(world, blockPos) != BlockUtil.getFluidWithFlowing(blockState.getBlock()) &&
-                        BlockUtil.getFluid(world, blockPos) == null;
+            BlockUtil.getFluidWithFlowing(world, blockPos) != BlockUtil.getFluidWithFlowing(blockState.getBlock()) &&
+                BlockUtil.getFluid(world, blockPos) == null;
     }
 
     @Override
@@ -96,13 +100,13 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
         }
         if (world.setBlockState(blockPos, blockState, 11)) {
             Stream.concat(
-                    Stream.of(EnumFacing.values())
-                            .map(EnumFacing::getDirectionVec)
-                            .map(BlockPos::new),
-                    Stream.of(BlockPos.ORIGIN)
+                Stream.of(EnumFacing.VALUES)
+                    .map(EnumFacing::getDirectionVec)
+                    .map(BlockPos::new),
+                Stream.of(BlockPos.ORIGIN)
             )
-                    .map(blockPos::add)
-                    .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, blockState.getBlock(), false));
+                .map(blockPos::add)
+                .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, blockState.getBlock(), false));
             return true;
         }
         return false;
@@ -127,8 +131,29 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) {
+    public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
         blockState = NBTUtil.readBlockState(nbt.getCompoundTag("blockState"));
         isFlowing = nbt.getBoolean("isFlowing");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        SchematicBlockFluid that = (SchematicBlockFluid) o;
+
+        return isFlowing == that.isFlowing && blockState.equals(that.blockState);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = blockState.hashCode();
+        result = 31 * result + (isFlowing ? 1 : 0);
+        return result;
     }
 }

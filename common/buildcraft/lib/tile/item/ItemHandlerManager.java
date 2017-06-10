@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.tile.item;
 
 import java.util.ArrayList;
@@ -8,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,7 +36,7 @@ import buildcraft.lib.misc.InventoryUtil;
 
 public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
     public enum EnumAccess {
-        /** An {@link IItemHandler} that shouldn't be accessible by extenral sources. */
+        /** An {@link IItemHandler} that shouldn't be accessible by external sources. */
         NONE,
         /** Same as {@link #NONE}, but the contents of this inventory won't be dropped when the block is removed. */
         PHANTOM,
@@ -58,7 +66,7 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
         if (access == EnumAccess.NONE || access == EnumAccess.PHANTOM) {
             external = null;
             if (parts.length > 0) {
-                throw new IllegalArgumentException("Completly useless to not allow access to multiple sides! Just don't pass any sides!");
+                throw new IllegalArgumentException("Completely useless to not allow access to multiple sides! Just don't pass any sides!");
             }
         } else if (access == EnumAccess.EXTRACT) {
             external = new WrappedItemHandlerExtract(handler);
@@ -96,7 +104,7 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
         if (capability == CapUtil.CAP_ITEMS) {
             Wrapper wrapper = wrappers.get(EnumPipePart.fromFacing(facing));
             return wrapper.combined != null;
@@ -105,8 +113,8 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
     }
 
     @Override
-    @SuppressWarnings("unchecked")// lots of (T) instance -- but we know its safe
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    @SuppressWarnings("unchecked")
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == CapUtil.CAP_ITEMS) {
             Wrapper wrapper = wrappers.get(EnumPipePart.fromFacing(facing));
             return (T) wrapper.combined;

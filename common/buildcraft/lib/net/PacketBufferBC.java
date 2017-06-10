@@ -1,12 +1,18 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.net;
 
 import com.google.common.base.Charsets;
-import io.netty.handler.codec.DecoderException;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.MathHelper;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.MathHelper;
 
 /** Special {@link PacketBuffer} class that provides methods specific to "offset" reading and writing - like writing a
  * single bit to the stream, and auto-compacting it with simalir bits into a single byte. */

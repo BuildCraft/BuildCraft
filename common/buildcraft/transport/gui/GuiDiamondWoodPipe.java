@@ -1,10 +1,10 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 package buildcraft.transport.gui;
 
-import buildcraft.lib.gui.button.*;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -13,8 +13,13 @@ import buildcraft.api.transport.pipe.IFlowItems;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.button.GuiImageButton;
+import buildcraft.lib.gui.button.IButtonBehaviour;
+import buildcraft.lib.gui.button.IButtonClickEventListener;
+import buildcraft.lib.gui.button.IButtonClickEventTrigger;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.misc.LocaleUtil;
+
 import buildcraft.transport.container.ContainerDiamondWoodPipe;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond.FilterMode;
@@ -49,24 +54,22 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
     public void initGui() {
         super.initGui();
 
-        this.buttonList.clear();
-
         this.whiteListButton = new GuiImageButton(this, WHITE_LIST_BUTTON_ID, this.guiLeft + 7, this.guiTop + 41, 18, TEXTURE_BUTTON, 19, 19);
         this.whiteListButton.setToolTip(ToolTip.createLocalized("tip.PipeItemsEmerald.whitelist"));
         this.whiteListButton.registerListener(this);
-        this.buttonList.add(this.whiteListButton);
+        this.guiElements.add(this.whiteListButton);
 
         this.blackListButton = new GuiImageButton(this, BLACK_LIST_BUTTON_ID, this.guiLeft + 7 + 18, this.guiTop + 41, 18, TEXTURE_BUTTON, 37, 19);
         this.blackListButton.setToolTip(ToolTip.createLocalized("tip.PipeItemsEmerald.blacklist"));
         this.blackListButton.registerListener(this);
-        this.buttonList.add(this.blackListButton);
+        this.guiElements.add(this.blackListButton);
 
         if (pipe.pipe.getFlow() instanceof IFlowItems) {
             // Don't show round robin for the fluid pipe - its not yet implemented
             this.roundRobinButton = new GuiImageButton(this, ROUND_ROBIN_BUTTON_ID, this.guiLeft + 7 + 36, this.guiTop + 41, 18, TEXTURE_BUTTON, 55, 19);
             this.roundRobinButton.setToolTip(ToolTip.createLocalized("tip.PipeItemsEmerald.roundrobin"));
             this.roundRobinButton.registerListener(this);
-            this.buttonList.add(this.roundRobinButton);
+            this.guiElements.add(this.roundRobinButton);
             IButtonBehaviour.createAndSetRadioButtons(whiteListButton, blackListButton, roundRobinButton);
         } else {
             IButtonBehaviour.createAndSetRadioButtons(whiteListButton, blackListButton);
@@ -89,7 +92,11 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
 
     @Override
     public void handleButtonClick(IButtonClickEventTrigger sender, int buttonKey) {
-        FilterMode newFilterMode = FilterMode.get(buttonId);
+        if (!(sender instanceof GuiImageButton)) {
+            return;
+        }
+        int id = Integer.parseInt(((GuiImageButton) sender).id);
+        FilterMode newFilterMode = FilterMode.get(id);
         this.pipe.filterMode = newFilterMode;
         container.sendNewFilterMode(newFilterMode);
     }

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.sprite;
 
 import java.io.IOException;
@@ -9,6 +15,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -32,21 +39,30 @@ public abstract class AtlasSpriteSwappable extends TextureAtlasSprite {
         if (current == null) {
             return;
         }
+        Profiler p = Minecraft.getMinecraft().mcProfiler;
+        p.startSection(getClass());
         if (needsSwapping) {
+            p.startSection("copy");
             current.copyFrom(this);
+            p.endSection();
         }
         if (current.hasAnimationMetadata()) {
+            p.startSection("update");
             current.updateAnimation();
+            p.endSection();
         } else if (needsSwapping) {
+            p.startSection("swap");
             TextureUtil.uploadTextureMipmap(current.getFrameTextureData(0), current.getIconWidth(), current.getIconHeight(), current.getOriginX(), current.getOriginY(), false, false);
+            p.endSection();
         }
         needsSwapping = false;
+        p.endSection();
     }
 
     public boolean swapWith(TextureAtlasSprite other) {
         if (current != other && (current == null || other != null)) {
             current = other;
-            if (other != null && width == 0) {
+            if (width == 0) {
                 this.width = other.getIconWidth();
                 this.height = other.getIconHeight();
             }

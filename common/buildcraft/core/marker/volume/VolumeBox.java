@@ -1,9 +1,22 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.core.marker.volume;
 
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.data.Box;
-import buildcraft.lib.net.PacketBufferBC;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
 import io.netty.buffer.UnpooledByteBufAllocator;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -12,11 +25,12 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.Constants;
 
-import java.util.*;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.net.PacketBufferBC;
 
 public class VolumeBox {
     public UUID id;

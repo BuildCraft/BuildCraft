@@ -12,6 +12,7 @@ public enum BCBuildersGuis {
     BUILDER,
     FILLER,
     LIBRARY,
+    REPLACER,
     FILLING_PLANNER;
 
     public void openGUI(EntityPlayer player) {

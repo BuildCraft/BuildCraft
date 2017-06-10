@@ -1,13 +1,21 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.builders.gui;
 
-import buildcraft.builders.container.ContainerBuilder;
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.button.GuiButtonSmall;
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
-import net.minecraft.util.ResourceLocation;
+
+import buildcraft.builders.container.ContainerBuilder;
 
 public class GuiBuilder extends GuiBC8<ContainerBuilder> {
     private static final ResourceLocation TEXTURE_BASE =
@@ -29,6 +37,8 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
         super(container);
         xSize = SIZE_BLUEPRINT_X;
         ySize = SIZE_Y;
+
+        ledgersRight.ledgers.add(new LedgerCounters(ledgersRight, container.tile));
     }
 
     @Override

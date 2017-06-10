@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.guide.parts;
 
 import java.util.List;
@@ -101,9 +107,8 @@ public abstract class GuidePageBase extends GuidePart {
             // Page index
             String text = (index + 1) + " / " + numPages;
             getFontRenderer().drawString(text, x + GuiGuide.PAGE_LEFT_TEXT.width / 2 - getFontRenderer().getStringWidth(text) / 2, y + height + 6, 0);
-        }
-        // Odd => second page, draw forward button and second page index
-        else {
+        } else {
+            // Odd => second page, draw forward button and second page index
             // Back page button
             if (index + 1 < numPages) {
                 GuiIcon icon = GuiGuide.TURN_FORWARDS;
@@ -137,9 +142,8 @@ public abstract class GuidePageBase extends GuidePart {
                     lastPage();
                 }
             }
-        }
-        // Odd => second page, test forward page button
-        else {
+        } else {
+            // Odd => second page, test forward page button
             if (index + 1 < numPages) {
                 GuiIcon icon = GuiGuide.TURN_FORWARDS;
                 GuiRectangle turnBox = new GuiRectangle(x + width - icon.width, y + height, icon.width, icon.height);

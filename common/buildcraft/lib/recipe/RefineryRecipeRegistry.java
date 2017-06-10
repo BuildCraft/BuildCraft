@@ -1,11 +1,21 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.recipe;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
-
-import com.google.common.base.Predicate;
 
 import net.minecraftforge.fluids.FluidStack;
 
@@ -53,7 +63,7 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
 
         @Override
         public Stream<R> getRecipes(Predicate<R> filter) {
-            return allRecipes.stream().filter(r -> filter.apply(r));
+            return allRecipes.stream().filter(filter);
         }
 
         @Override
@@ -81,7 +91,7 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
             Iterator<R> iter = allRecipes.iterator();
             while (iter.hasNext()) {
                 R recipe = iter.next();
-                if (toRemove.apply(recipe)) {
+                if (toRemove.test(recipe)) {
                     iter.remove();
                     removed.add(recipe);
                 }

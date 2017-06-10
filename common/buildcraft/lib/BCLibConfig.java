@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib;
 
 import java.util.ArrayList;
@@ -11,7 +17,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.lib.chunkload.IChunkLoadingTile;
-import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 
@@ -46,6 +51,8 @@ public class BCLibConfig {
      * than "60mB/t") */
     public static boolean useLongLocalizedName = false;
 
+    public static TimeGap displayTimeGap = TimeGap.SECONDS;
+
     /** If true then ItemRenderUtil.renderItemStack will use the facing parameter to rotate the item */
     public static RenderRotation rotateTravelingItems = RenderRotation.ENABLED;
 
@@ -59,6 +66,33 @@ public class BCLibConfig {
     public static void refreshConfigs() {
         for (Runnable r : configChangeListeners) {
             r.run();
+        }
+    }
+    
+    public enum TimeGap {
+        TICKS(1),
+        SECONDS(20);
+
+        private final int ticksInGap;
+
+        TimeGap(int ticksInGap) {
+            this.ticksInGap = ticksInGap;
+        }
+
+        public int convertTicksToGap(int ticks) {
+            return ticks / ticksInGap;
+        }
+
+        public long convertTicksToGap(long ticks) {
+            return ticks / ticksInGap;
+        }
+
+        public float convertTicksToGap(float ticks) {
+            return ticks / ticksInGap;
+        }
+
+        public double convertTicksToGap(double ticks) {
+            return ticks / ticksInGap;
         }
     }
 
@@ -92,7 +126,7 @@ public class BCLibConfig {
          * using a dedicated server. */
         AUTO,
         /** Automatic chunkloading is DISABLED. Even for strict tiles (like the quarry) */
-        OFF;
+        OFF
     }
 
     public enum ChunkLoaderLevel {

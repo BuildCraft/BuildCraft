@@ -1,6 +1,14 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.item;
 
 import javax.annotation.Nonnull;
+
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -33,8 +41,6 @@ import buildcraft.lib.misc.SoundUtil;
 import buildcraft.transport.BCTransportPlugs;
 import buildcraft.transport.plug.PluggableLens;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
-
 public class ItemPluggableLens extends ItemBC_Neptune implements IItemPluggable {
     public ItemPluggableLens(String id) {
         super(id);
@@ -59,7 +65,7 @@ public class ItemPluggableLens extends ItemBC_Neptune implements IItemPluggable 
     }
 
     @Override
-    public PipePluggable onPlace(ItemStack stack, IPipeHolder holder, EnumFacing side, EntityPlayer player, EnumHand hand) {
+    public PipePluggable onPlace(@Nonnull ItemStack stack, IPipeHolder holder, EnumFacing side, EntityPlayer player, EnumHand hand) {
         IPipe pipe = holder.getPipe();
         if (pipe == null || !(pipe.getFlow() instanceof IFlowItems)) {
             return null;

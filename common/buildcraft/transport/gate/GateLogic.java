@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.gate;
 
 import java.util.ArrayList;
@@ -152,7 +158,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
 
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag("variant", variant.writeToNbt());
+        nbt.setTag("variant", variant.writeToNBT());
 
         short c = 0;
         for (int i = 0; i < connections.length; i++) {

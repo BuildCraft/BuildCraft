@@ -1,7 +1,15 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.list;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -29,7 +37,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
     }
 
     @Override
-    public boolean matches(Type type, ItemStack stack, ItemStack target, boolean precise) {
+    public boolean matches(Type type, @Nonnull ItemStack stack, @Nonnull ItemStack target, boolean precise) {
         if (type == Type.TYPE) {
             IFluidHandlerItem fluidHandlerStack = FluidUtil.getFluidHandler(stack.copy());
             IFluidHandlerItem fluidHandlerTarget = FluidUtil.getFluidHandler(target.copy());
@@ -55,7 +63,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
     }
 
     @Override
-    public boolean isValidSource(Type type, ItemStack stack) {
+    public boolean isValidSource(Type type, @Nonnull ItemStack stack) {
         if (type == Type.TYPE) {
             return FluidUtil.getFluidHandler(stack) != null;
         } else if (type == Type.MATERIAL) {
@@ -65,7 +73,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
     }
 
     @Override
-    public NonNullList<ItemStack> getClientExamples(Type type, ItemStack stack) {
+    public NonNullList<ItemStack> getClientExamples(Type type, @Nonnull ItemStack stack) {
         if (type == Type.MATERIAL) {
             FluidStack fStack = FluidUtil.getFluidContained(stack);
             if (fStack != null) {

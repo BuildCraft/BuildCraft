@@ -1,4 +1,12 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.inventory;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -19,8 +27,9 @@ public class InjectableWrapper implements IItemTransactor {
         this.from = facing;
     }
 
+    @Nonnull
     @Override
-    public ItemStack insert(ItemStack stack, boolean allOrNone, boolean simulate) {
+    public ItemStack insert(@Nonnull ItemStack stack, boolean allOrNone, boolean simulate) {
         if (allOrNone) {
             ItemStack leftOver = injectable.injectItem(stack, false, from, null, 0);
             if (leftOver.isEmpty()) {
@@ -45,6 +54,7 @@ public class InjectableWrapper implements IItemTransactor {
         return ItemTransactorHelper.insertAllBypass(this, stacks, simulate);
     }
 
+    @Nonnull
     @Override
     public ItemStack extract(IStackFilter filter, int min, int max, boolean simulate) {
         return StackUtil.EMPTY;

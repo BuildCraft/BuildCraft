@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport;
 
 import net.minecraft.util.ResourceLocation;
@@ -8,7 +14,12 @@ import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableCreator;
 import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableNbtReader;
 import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableNetLoader;
 
-import buildcraft.transport.plug.*;
+import buildcraft.transport.plug.PluggableBlocker;
+import buildcraft.transport.plug.PluggableFacade;
+import buildcraft.transport.plug.PluggableGate;
+import buildcraft.transport.plug.PluggableLens;
+import buildcraft.transport.plug.PluggableLightSensor;
+import buildcraft.transport.plug.PluggablePulsar;
 
 public class BCTransportPlugs {
 

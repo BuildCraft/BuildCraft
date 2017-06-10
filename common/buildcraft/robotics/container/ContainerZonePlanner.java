@@ -4,15 +4,18 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.robotics.container;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.core.item.ItemMapLocation;
-import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.lib.gui.slot.SlotOutput;
+
+import buildcraft.core.item.ItemMapLocation;
+import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.robotics.tile.TileZonePlanner;
 
 public class ContainerZonePlanner extends ContainerBCTile<TileZonePlanner> {
@@ -24,7 +27,7 @@ public class ContainerZonePlanner extends ContainerBCTile<TileZonePlanner> {
             for (int y = 0; y < 4; y++) {
                 addSlotToContainer(new SlotBase(tile.invPaintbrushes, x * 4 + y, 8 + x * 18, 146 + y * 18) {
                     @Override
-                    public boolean isItemValid(ItemStack stack) {
+                    public boolean isItemValid(@Nonnull ItemStack stack) {
                         return stack.getItem() instanceof ItemPaintbrush_BC8;
                     }
                 });
@@ -32,13 +35,13 @@ public class ContainerZonePlanner extends ContainerBCTile<TileZonePlanner> {
         }
         addSlotToContainer(new SlotBase(tile.invInputPaintbrush, 0, 8, 125) {
             @Override
-            public boolean isItemValid(ItemStack stack) {
+            public boolean isItemValid(@Nonnull ItemStack stack) {
                 return stack.getItem() instanceof ItemPaintbrush_BC8;
             }
         });
         addSlotToContainer(new SlotBase(tile.invInputMapLocation, 0, 26, 125) {
             @Override
-            public boolean isItemValid(ItemStack stack) {
+            public boolean isItemValid(@Nonnull ItemStack stack) {
                 NBTTagCompound stackTag = stack.getTagCompound();
                 return stack.getItem() instanceof ItemMapLocation &&
                         stackTag != null &&
@@ -49,13 +52,13 @@ public class ContainerZonePlanner extends ContainerBCTile<TileZonePlanner> {
         addSlotToContainer(new SlotOutput(tile.invInputResult, 0, 74, 125));
         addSlotToContainer(new SlotBase(tile.invOutputPaintbrush, 0, 233, 9) {
             @Override
-            public boolean isItemValid(ItemStack stack) {
+            public boolean isItemValid(@Nonnull ItemStack stack) {
                 return stack.getItem() instanceof ItemPaintbrush_BC8;
             }
         });
         addSlotToContainer(new SlotBase(tile.invOutputMapLocation, 0, 233, 27) {
             @Override
-            public boolean isItemValid(ItemStack stack) {
+            public boolean isItemValid(@Nonnull ItemStack stack) {
                 return stack.getItem() instanceof ItemMapLocation && stack.getCount() == 1;
             }
         });

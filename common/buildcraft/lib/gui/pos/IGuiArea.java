@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.gui.pos;
 
 import java.util.function.IntSupplier;
@@ -89,7 +95,7 @@ public interface IGuiArea extends IGuiPosition {
         return create(() -> getX() - dX, () -> getY() - dY, () -> getWidth() + dX * 2, () -> getHeight() + dY * 2);
     }
 
-    public static IGuiArea create(IntSupplier x, IntSupplier y, IntSupplier width, IntSupplier height) {
+    static IGuiArea create(IntSupplier x, IntSupplier y, IntSupplier width, IntSupplier height) {
         return new IGuiArea() {
             @Override
             public int getX() {

@@ -1,8 +1,16 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.nbt;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 
-import io.netty.buffer.ByteBuf;
+import buildcraft.api.core.InvalidInputDataException;
 
 public enum WrittenType {
     BYTE(1, (1 << 8) - 1),
@@ -15,7 +23,7 @@ public enum WrittenType {
     public final int numBytes;
     private final int maxStorableValue;
 
-    private WrittenType(int numBytes, int maxStorableValue) {
+    WrittenType(int numBytes, int maxStorableValue) {
         this.maxStorableValue = maxStorableValue;
         this.numBytes = numBytes;
     }
@@ -29,56 +37,60 @@ public enum WrittenType {
         throw new IllegalArgumentException("Waaaaay too big index list (" + size + ")");
     }
 
-    public void writeType(ByteBuf bytes) {
-        bytes.writeByte(numBytes - 1);
+    public void writeType(DataOutput to) throws IOException {
+        to.writeByte(numBytes - 1);
     }
 
-    public static WrittenType readType(ByteBuf bytes) throws IOException {
-        byte val = bytes.readByte();
+    public static WrittenType readType(DataInput in) throws IOException {
+        byte val = in.readByte();
         for (WrittenType type : ORDERED_VALUES) {
             if (val == type.numBytes - 1) {
                 return type;
             }
         }
-        throw new IOException("Incorrect size given, expected any of [0, 1, 2, 3] but got " + val);
+        throw new InvalidInputDataException("Incorrect size given, expected any of [0, 1, 2, 3] but got " + val);
     }
 
-    public void writeIndex(ByteBuf bytes, int index) {
+    public void writeIndex(DataOutput out, int index) throws IOException {
         if (index > maxStorableValue) {
-            throw new IllegalArgumentException("Tried to write a value that was too large! (" + index + " > " + maxStorableValue + " for " + this + ")");
+            throw new IllegalArgumentException("Tried to write a value that was too large! (" + index + " > "
+                + maxStorableValue + " for " + this + ")");
         }
         switch (this) {
             case BYTE: {
-                bytes.writeByte(index);
+                out.writeByte(index);
                 break;
             }
             case SHORT: {
-                bytes.writeShort(index);
+                out.writeShort(index);
                 break;
             }
             case MEDIUM: {
-                bytes.writeMedium(index);
+                out.writeByte(index & 0xff);
+                out.writeShort(index >> 8);
                 break;
             }
             default:
             case INT: {
-                bytes.writeInt(index);
+                out.writeInt(index);
                 break;
             }
         }
     }
 
-    public int readIndex(ByteBuf bytes) {
+    public int readIndex(DataInput in) throws IOException {
         switch (this) {
             case BYTE:
-                return bytes.readUnsignedByte();
+                return in.readUnsignedByte();
             case SHORT:
-                return bytes.readUnsignedShort();
+                return in.readUnsignedShort();
             case MEDIUM:
-                return bytes.readUnsignedMedium();
+                int val = in.readUnsignedByte();
+                val |= in.readUnsignedShort() << 8;
+                return val;
             default:
             case INT:
-                return bytes.readInt();
+                return in.readInt();
         }
     }
 }

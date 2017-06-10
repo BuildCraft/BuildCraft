@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.gui.widget;
 
 import java.io.IOException;
@@ -9,7 +15,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.gui.*;
+import buildcraft.lib.gui.ContainerBC_Neptune;
+import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.GuiElementSimple;
+import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.IGuiElement;
+import buildcraft.lib.gui.Widget_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.GuiRectangle;
@@ -60,9 +71,7 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
         @Override
         public void onMouseClicked(int button) {
             if (contains(gui.mouse)) {
-                WidgetFluidTank.this.sendWidgetData(buffer -> {
-                    buffer.writeByte(NET_CLICK);
-                });
+                WidgetFluidTank.this.sendWidgetData(buffer -> buffer.writeByte(NET_CLICK));
             }
         }
 

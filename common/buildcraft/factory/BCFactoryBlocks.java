@@ -6,11 +6,29 @@ package buildcraft.factory;
 
 import net.minecraft.block.material.Material;
 
-import buildcraft.factory.block.*;
-import buildcraft.factory.tile.*;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.tile.TileBC_Neptune;
+
+import buildcraft.factory.block.BlockAutoWorkbenchItems;
+import buildcraft.factory.block.BlockChute;
+import buildcraft.factory.block.BlockDistiller;
+import buildcraft.factory.block.BlockFloodGate;
+import buildcraft.factory.block.BlockHeatExchange;
+import buildcraft.factory.block.BlockMiningWell;
+import buildcraft.factory.block.BlockPump;
+import buildcraft.factory.block.BlockTank;
+import buildcraft.factory.block.BlockTube;
+import buildcraft.factory.block.BlockWaterGel;
+import buildcraft.factory.tile.TileAutoWorkbenchItems;
+import buildcraft.factory.tile.TileChute;
+import buildcraft.factory.tile.TileDistiller_BC8;
+import buildcraft.factory.tile.TileFloodGate;
+import buildcraft.factory.tile.TileHeatExchangeEnd;
+import buildcraft.factory.tile.TileHeatExchangeStart;
+import buildcraft.factory.tile.TileMiningWell;
+import buildcraft.factory.tile.TilePump;
+import buildcraft.factory.tile.TileTank;
 
 public class BCFactoryBlocks {
     public static BlockAutoWorkbenchItems autoWorkbenchItems;
@@ -29,9 +47,7 @@ public class BCFactoryBlocks {
 
     public static void preInit() {
         // plastic = BlockBuildCraftBase_BC8.register(new BlockPlastic("block.plastic"), ItemPlastic::new);
-        if (BCLib.DEV) {
-            autoWorkbenchItems = BlockBCBase_Neptune.register(new BlockAutoWorkbenchItems(Material.ROCK, "block.autoworkbench.item"));
-        }
+        autoWorkbenchItems = BlockBCBase_Neptune.register(new BlockAutoWorkbenchItems(Material.ROCK, "block.autoworkbench.item"));
         miningWell = BlockBCBase_Neptune.register(new BlockMiningWell(Material.ROCK, "block.mining_well"));
         pump = BlockBCBase_Neptune.register(new BlockPump(Material.ROCK, "block.pump"));
         tube = BlockBCBase_Neptune.register(new BlockTube(Material.IRON, "block.tube"), null);
@@ -48,9 +64,7 @@ public class BCFactoryBlocks {
             waterGel = BlockBCBase_Neptune.register(new BlockWaterGel(Material.CLAY, "block.water_gel"), null);
         }
 
-        if (BCLib.DEV) {
-            TileBC_Neptune.registerTile(TileAutoWorkbenchItems.class, "tile.autoworkbench.item");
-        }
+        TileBC_Neptune.registerTile(TileAutoWorkbenchItems.class, "tile.autoworkbench.item");
         TileBC_Neptune.registerTile(TileMiningWell.class, "tile.mining_well");
         TileBC_Neptune.registerTile(TilePump.class, "tile.pump");
         TileBC_Neptune.registerTile(TileFloodGate.class, "tile.flood_gate");

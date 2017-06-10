@@ -1,10 +1,15 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.factory.block;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import buildcraft.lib.misc.BlockUtil;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -20,8 +25,10 @@ import net.minecraft.world.World;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tools.IToolWrench;
 
-import buildcraft.factory.tile.TileFloodGate;
 import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.misc.BlockUtil;
+
+import buildcraft.factory.tile.TileFloodGate;
 
 public class BlockFloodGate extends BlockBCTile_Neptune {
     public static final Map<EnumFacing, IProperty<Boolean>> CONNECTED_MAP;

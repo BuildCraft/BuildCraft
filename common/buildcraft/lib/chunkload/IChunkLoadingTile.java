@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.chunkload;
 
 import java.util.ArrayList;
@@ -44,13 +50,13 @@ public interface IChunkLoadingTile {
         return list;
     }
 
-    public enum LoadType {
+    enum LoadType {
         /** Softly attempt to chunkload this. If the value of {@link BCLibConfig#chunkLoadingType} is equal to
          * {@link ChunkLoaderLevel#STRICT_TILES} or {@link ChunkLoaderLevel#NONE} then it won't be loaded. */
         SOFT,
         /** If the value of {@link BCLibConfig#chunkLoadingType} is equal to {@link ChunkLoaderLevel#NONE} then it won't
          * be loaded. Generally this should only be enabled for machines that are designed to operate far from a players
          * territory, like a quarry or a pump. */
-        HARD;
+        HARD
     }
 }

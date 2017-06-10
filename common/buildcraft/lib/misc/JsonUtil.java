@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.misc;
 
 import java.util.ArrayList;
@@ -7,7 +13,12 @@ import java.util.Map.Entry;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 public class JsonUtil {
@@ -166,7 +177,7 @@ public class JsonUtil {
             String target = in.getAsString();
             JsonObject toInline = inlineMap.get(target);
             if (toInline == null) {
-                throw new JsonSyntaxException("Didn't find the inline " + toInline);
+                throw new JsonSyntaxException("Didn't find the inline " + target);
             }
             for (Entry<String, JsonElement> entry : toInline.entrySet()) {
                 String name = entry.getKey();

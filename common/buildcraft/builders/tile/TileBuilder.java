@@ -10,7 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
 
 import com.google.common.collect.ImmutableList;
 
@@ -54,6 +55,7 @@ import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.mj.MjBatteryReciver;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
@@ -96,6 +98,8 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     public BlueprintBuilder blueprintBuilder = new BlueprintBuilder(this);
     private Box currentBox = new Box();
 
+    private boolean isDone = false;
+
     public TileBuilder() {
         for (int i = 1; i <= 4; i++) {
             tankManager.add(new Tank("fluid" + i, Fluid.BUCKET_VOLUME * 8, this));
@@ -110,7 +114,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     }
 
     @Override
-    protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, ItemStack before, ItemStack after) {
+    protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
         if (itemHandler == invSnapshot) {
             currentBasePosIndex = 0;
             snapshot = null;
@@ -175,16 +179,6 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
         return currentBasePosIndex < basePoses.size() ? basePoses.get(currentBasePosIndex) : null;
     }
 
-    public SnapshotBuilder<?> getBuilder() {
-        if (snapshotType == EnumSnapshotType.TEMPLATE) {
-            return templateBuilder;
-        }
-        if (snapshotType == EnumSnapshotType.BLUEPRINT) {
-            return blueprintBuilder;
-        }
-        return null;
-    }
-
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
@@ -206,7 +200,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
         battery.tick(getWorld(), getPos());
         battery.addPowerChecking(64 * MjAPI.MJ, false);
         if (getBuilder() != null) {
-            if (getBuilder().tick()) {
+            if (isDone = getBuilder().tick()) {
                 if (currentBasePosIndex < basePoses.size() - 1) {
                     currentBasePosIndex++;
                     if (currentBasePosIndex >= basePoses.size()) {
@@ -228,7 +222,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
             if (id == NET_RENDER_DATA) {
                 buffer.writeInt(path == null ? 0 : path.size());
                 if (path != null) {
-                    path.forEach(buffer::writeBlockPos);
+                    path.forEach((p) -> MessageUtil.writeBlockPos(buffer, p));
                 }
                 buffer.writeBoolean(snapshotType != null);
                 if (snapshotType != null) {
@@ -260,7 +254,9 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                 path = new ArrayList<>();
                 int pathSize = buffer.readInt();
                 if (pathSize != 0) {
-                    Stream.generate(buffer::readBlockPos).limit(pathSize).forEach(path::add);
+                    for (int i =0; i < pathSize; i++) {
+                        path.add(MessageUtil.readBlockPos(buffer));
+                    }
                 } else {
                     path = null;
                 }
@@ -296,7 +292,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     }
 
     public void sendCanExcavate(boolean newValue) {
-        MessageUtil.getWrapper().sendToServer(createMessage(NET_CAN_EXCAVATE, buffer -> buffer.writeBoolean(newValue)));
+        MessageManager.sendToServer(createMessage(NET_CAN_EXCAVATE, buffer -> buffer.writeBoolean(newValue)));
     }
 
     // Read-write
@@ -354,6 +350,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
         left.add("battery = " + battery.getDebugString());
         left.add("basePoses = " + (basePoses == null ? "null" : basePoses.size()));
         left.add("currentBasePosIndex = " + currentBasePosIndex);
+        left.add("isDone = " + isDone);
     }
 
     @Override
@@ -374,6 +371,17 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     @Override
     public boolean canExcavate() {
         return canExcavate;
+    }
+
+    @Override
+    public SnapshotBuilder<?> getBuilder() {
+        if (snapshotType == EnumSnapshotType.TEMPLATE) {
+            return templateBuilder;
+        }
+        if (snapshotType == EnumSnapshotType.BLUEPRINT) {
+            return blueprintBuilder;
+        }
+        return null;
     }
 
     @Override

@@ -1,19 +1,31 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.factory.client.render;
 
-import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.factory.tile.TileMiningWell;
-import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
-import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
-import buildcraft.lib.client.render.tile.RenderPartCube;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+
 import net.minecraftforge.client.model.animation.FastTESR;
+
+import buildcraft.api.properties.BuildCraftProperties;
+
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
+import buildcraft.lib.client.render.tile.RenderPartCube;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+
+import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.factory.tile.TileMiningWell;
 
 public class RenderMiningWell extends FastTESR<TileMiningWell> {
     private static final int[] COLOUR_POWER = new int[16];
@@ -60,7 +72,7 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
     public RenderMiningWell() {}
 
     @Override
-    public void renderTileEntityFast(TileMiningWell tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
+    public void renderTileEntityFast(@Nonnull TileMiningWell tile, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer buffer) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("miner");
 

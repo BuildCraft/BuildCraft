@@ -1,17 +1,22 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.silicon.tile;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.util.Constants;
@@ -24,8 +29,8 @@ import buildcraft.api.recipes.AssemblyRecipe;
 
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.data.IdAllocator;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -127,8 +132,9 @@ public class TileAssemblyTable extends TileLaserTableBase {
         }
     }
 
+    @Override
     public long getTarget() {
-        return getActiveRecipe() == null ? 0 : getActiveRecipe().requiredMicroJoules;
+        return Optional.ofNullable(getActiveRecipe()).map(recipe -> recipe.requiredMicroJoules).orElse(0L);
     }
 
     @Override
@@ -141,7 +147,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
 
         updateRecipes();
 
-        if (power >= getTarget() && getTarget() != 0) {
+        if (getTarget() > 0 && power >= getTarget()) {
             AssemblyRecipe recipe = getActiveRecipe();
             extract(inv, recipe.requiredStacks, false, false);
 
@@ -223,7 +229,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
             buffer.writeCompoundTag(recipe.recipeTag);
             buffer.writeInt(state.ordinal());
         });
-        MessageUtil.getWrapper().sendToServer(message);
+        MessageManager.sendToServer(message);
     }
 
     @Override
@@ -231,11 +237,6 @@ public class TileAssemblyTable extends TileLaserTableBase {
         super.getDebugInfo(left, right, side);
         left.add("recipes - " + recipesStates.size());
         left.add("target - " + LocaleUtil.localizeMj(getTarget()));
-    }
-
-    @Override
-    public boolean hasWork() {
-        return getActiveRecipe() != null;
     }
 
     private AssemblyRecipe lookupRecipe(String name, NBTTagCompound recipeTag) {

@@ -38,10 +38,6 @@ import buildcraft.api.core.IBox;
 import buildcraft.api.items.IMapLocation.MapLocationType;
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.core.BCCoreConfig;
-import buildcraft.core.BCCoreItems;
-import buildcraft.core.item.ItemMapLocation;
-import buildcraft.core.item.ItemMarkerConnector;
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
@@ -54,6 +50,11 @@ import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
+
+import buildcraft.core.BCCoreConfig;
+import buildcraft.core.BCCoreItems;
+import buildcraft.core.item.ItemMapLocation;
+import buildcraft.core.item.ItemMarkerConnector;
 
 public enum RenderTickListener {
     INSTANCE;
@@ -72,7 +73,7 @@ public enum RenderTickListener {
             { { 0.5, 0.9, 0.5 }, { 0.5, 1.2, 0.2 } }, // Forth arrow part (-Z)
         };
 
-        for (EnumFacing face : EnumFacing.values()) {
+        for (EnumFacing face : EnumFacing.VALUES) {
             Matrix4f matrix = MatrixUtil.rotateTowardsFace(EnumFacing.UP, face);
             Vec3d[][] arr = new Vec3d[5][2];
             for (int i = 0; i < 5; i++) {

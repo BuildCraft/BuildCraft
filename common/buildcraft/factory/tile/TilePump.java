@@ -1,39 +1,56 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.factory.tile;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.mj.IMjReceiver;
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.lib.fluid.SingleUseTank;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.FluidUtilBC;
-import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
-import buildcraft.lib.net.PacketBufferBC;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.math.IntMath;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.capabilities.Capability;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.mj.IMjReceiver;
+import buildcraft.api.mj.MjAPI;
+
+import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.FluidUtilBC;
+import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
+import buildcraft.lib.net.PacketBufferBC;
+
+import buildcraft.factory.BCFactoryBlocks;
 
 public class TilePump extends TileMiner {
-    private final SingleUseTank tank = new SingleUseTank("tank", 16 * Fluid.BUCKET_VOLUME, this);
+    private final Tank tank = new Tank("tank", 16 * Fluid.BUCKET_VOLUME, this);
     private boolean queueBuilt = false;
     private Queue<BlockPos> queue = new PriorityQueue<>(
-            Comparator.<BlockPos, Integer>comparing(blockPos ->
-                    IntMath.pow(blockPos.getX() - pos.getX(), 2) + IntMath.pow(blockPos.getZ() - pos.getZ(), 2)
-            ).reversed()
+        Comparator.<BlockPos, Integer>comparing(blockPos ->
+            (blockPos.getX() - pos.getX()) * (blockPos.getX() - pos.getX()) +
+                (blockPos.getZ() - pos.getZ()) * (blockPos.getZ() - pos.getZ())
+        ).reversed()
     );
     private Map<BlockPos, List<BlockPos>> paths = new HashMap<>();
 
@@ -48,81 +65,68 @@ public class TilePump extends TileMiner {
     }
 
     private void buildQueue() {
+        world.profiler.startSection("prepare");
         queue.clear();
         paths.clear();
+        Set<BlockPos> checked = new HashSet<>();
         List<BlockPos> nextPosesToCheck = new ArrayList<>();
-        List<List<BlockPos>> nextPaths = new ArrayList<>();
-        List<BlockPos> checkedButFlowingPoses = new ArrayList<>();
-        LoadingCache<BlockPos, Optional<Fluid>> fluidCache = CacheBuilder.newBuilder()
-                .expireAfterAccess(10, TimeUnit.SECONDS)
-                .build(CacheLoader.from(blockPos -> Optional.ofNullable(BlockUtil.getFluidWithFlowing(world, blockPos))));
-        int y = pos.getY() - 1;
-        if (nextPosesToCheck.isEmpty()) {
-            for (; y >= 0; y--) {
-                BlockPos posToCheck = new BlockPos(pos.getX(), y, pos.getZ());
-                if (fluidCache.getUnchecked(posToCheck).isPresent()) {
-                    if (!queue.contains(posToCheck)) {
-                        nextPosesToCheck.add(posToCheck);
-                        nextPaths.add(new ArrayList<>(Collections.singletonList(posToCheck)));
-                        break;
-                    }
-                } else if (!world.isAirBlock(posToCheck) && world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.tube) {
-                    break;
+        Fluid fluid = null;
+        for (BlockPos posToCheck = pos.down(); posToCheck.getY() > 0; posToCheck = posToCheck.down()) {
+            if (BlockUtil.getFluidWithFlowing(world, posToCheck) != null) {
+                fluid = BlockUtil.getFluidWithFlowing(world, posToCheck);
+                nextPosesToCheck.add(posToCheck);
+                paths.put(posToCheck, Collections.singletonList(posToCheck));
+                if (BlockUtil.getFluid(world, posToCheck) != null) {
+                    queue.add(posToCheck);
                 }
-            }
-            if (nextPosesToCheck.isEmpty()) {
-                return;
+                break;
+            } else if (!world.isAirBlock(posToCheck) && world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.tube) {
+                break;
             }
         }
+        if (nextPosesToCheck.isEmpty()) {
+            world.profiler.endSection();
+            return;
+        }
+        world.profiler.endStartSection("build");
         while (!nextPosesToCheck.isEmpty()) {
             List<BlockPos> nextPosesToCheckCopy = new ArrayList<>(nextPosesToCheck);
             nextPosesToCheck.clear();
-            List<List<BlockPos>> nextPathsCopy = new ArrayList<>(nextPaths);
-            nextPaths.clear();
-            int i = 0;
             for (BlockPos posToCheck : nextPosesToCheckCopy) {
-                List<BlockPos> path = nextPathsCopy.get(i);
-                if (!queue.contains(posToCheck)) {
-                    if (BlockUtil.getFluid(world, posToCheck) != null) {
-                        queue.add(posToCheck);
-                        paths.put(posToCheck, path);
-                    } else {
-                        checkedButFlowingPoses.add(posToCheck);
-                    }
-                }
-
                 for (EnumFacing side : new EnumFacing[] {
-                        EnumFacing.UP,
-                        EnumFacing.NORTH,
-                        EnumFacing.SOUTH,
-                        EnumFacing.WEST,
-                        EnumFacing.EAST
+                    EnumFacing.UP,
+                    EnumFacing.NORTH,
+                    EnumFacing.SOUTH,
+                    EnumFacing.WEST,
+                    EnumFacing.EAST
                 }) {
                     BlockPos offsetPos = posToCheck.offset(side);
-                    if (Math.pow(offsetPos.getX() - pos.getX(), 2) + Math.pow(offsetPos.getZ() - pos.getZ(), 2) > Math.pow(64, 2)) {
+                    if ((offsetPos.getX() - pos.getX()) * (offsetPos.getX() - pos.getX()) +
+                        (offsetPos.getZ() - pos.getZ()) * (offsetPos.getZ() - pos.getZ()) > 64 * 64) {
                         continue;
                     }
-                    if (fluidCache.getUnchecked(posToCheck).isPresent()
-                            && Objects.equals(fluidCache.getUnchecked(offsetPos), fluidCache.getUnchecked(posToCheck))
-                            && !queue.contains(offsetPos)
-                            && !checkedButFlowingPoses.contains(offsetPos)) {
-                        List<BlockPos> currentPath = new ArrayList<>(path);
-                        currentPath.add(offsetPos);
-                        if (!nextPosesToCheck.contains(offsetPos) && !nextPosesToCheckCopy.contains(offsetPos)) {
+                    if (!checked.contains(offsetPos)) {
+                        if (BlockUtil.getFluidWithFlowing(world, offsetPos) == fluid) {
+                            ImmutableList.Builder<BlockPos> pathBuilder = new ImmutableList.Builder<>();
+                            pathBuilder.addAll(paths.get(posToCheck));
+                            pathBuilder.add(offsetPos);
+                            paths.put(offsetPos, pathBuilder.build());
+                            if (BlockUtil.getFluid(world, offsetPos) != null) {
+                                queue.add(offsetPos);
+                            }
                             nextPosesToCheck.add(offsetPos);
-                            nextPaths.add(currentPath);
                         }
+                        checked.add(offsetPos);
                     }
                 }
-
-                i++;
             }
         }
+        world.profiler.endSection();
     }
 
     private boolean canDrain(BlockPos blockPos) {
         Fluid fluid = BlockUtil.getFluid(world, blockPos);
-        return tank.isEmpty() ? fluid != null : fluid == tank.getAcceptedFluid();
+        return tank.isEmpty() ? fluid != null : fluid == tank.getFluidType();
     }
 
     private void nextPos() {
@@ -164,15 +168,15 @@ public class TilePump extends TileMiner {
             if (tank.isFull()) {
                 return;
             }
-            long target = 10000000;
+            long target = 10 * MjAPI.MJ;
             if (currentPos != null && paths.containsKey(currentPos)) {
                 progress += battery.extractPower(0, target - progress);
                 if (progress >= target) {
                     FluidStack drain = BlockUtil.drainBlock(world, currentPos, false);
                     if (drain != null &&
-                            paths.get(currentPos).stream()
-                                    .allMatch(blockPos -> BlockUtil.getFluidWithFlowing(world, blockPos) != null) &&
-                            canDrain(currentPos)) {
+                        paths.get(currentPos).stream()
+                            .allMatch(blockPos -> BlockUtil.getFluidWithFlowing(world, blockPos) != null) &&
+                        canDrain(currentPos)) {
                         tank.fillInternal(drain, true);
                         progress = 0;
                         int count = 0;

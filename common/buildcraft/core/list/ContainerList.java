@@ -1,7 +1,8 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 package buildcraft.core.list;
 
 import java.io.IOException;
@@ -17,14 +18,15 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.api.lists.ListMatchHandler.Type;
 
-import buildcraft.core.BCCoreItems;
-import buildcraft.core.item.ItemList_BC8;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.widget.WidgetPhantomSlot;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
+
+import buildcraft.core.BCCoreItems;
+import buildcraft.core.item.ItemList_BC8;
 
 public class ContainerList extends ContainerBC_Neptune {
     // Network ID's
@@ -84,12 +86,12 @@ public class ContainerList extends ContainerBC_Neptune {
     @Nonnull
     public ItemStack getListItemStack() {
         ItemStack toTry = player.getHeldItemMainhand();
-        if (toTry != null && toTry.getItem() instanceof ItemList_BC8) {
+        if (!toTry.isEmpty() && toTry.getItem() instanceof ItemList_BC8) {
             return toTry;
         }
 
         toTry = player.getHeldItemOffhand();
-        if (toTry != null && toTry.getItem() instanceof ItemList_BC8) {
+        if (!toTry.isEmpty() && toTry.getItem() instanceof ItemList_BC8) {
             return toTry;
         }
         return StackUtil.EMPTY;
@@ -125,9 +127,7 @@ public class ContainerList extends ContainerBC_Neptune {
         BCCoreItems.list.setName(getListItemStack(), text);
 
         if (player.world.isRemote) {
-            sendMessage(ID_LABEL, (buffer) -> {
-                buffer.writeString(text);
-            });
+            sendMessage(ID_LABEL, (buffer) -> buffer.writeString(text));
         }
     }
 

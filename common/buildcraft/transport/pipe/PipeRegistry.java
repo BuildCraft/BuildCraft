@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.pipe;
 
 import java.util.HashMap;
@@ -11,12 +17,13 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.transport.pipe.IItemPipe;
 import buildcraft.api.transport.pipe.IPipeRegistry;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.item.ItemManager;
-import buildcraft.lib.misc.data.LoadingException;
+
 import buildcraft.transport.item.ItemPipeHolder;
 
 public enum PipeRegistry implements IPipeRegistry {
@@ -61,10 +68,10 @@ public enum PipeRegistry implements IPipeRegistry {
     }
 
     @Nonnull
-    public PipeDefinition loadDefinition(String identifier) throws LoadingException {
+    public PipeDefinition loadDefinition(String identifier) throws InvalidInputDataException {
         PipeDefinition def = getDefinition(new ResourceLocation(identifier));
         if (def == null) {
-            throw new LoadingException("Unknown pipe defintion " + identifier);
+            throw new InvalidInputDataException("Unknown pipe defintion " + identifier);
         }
         return def;
     }

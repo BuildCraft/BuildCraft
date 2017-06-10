@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.pipe.behaviour;
 
 import java.util.Collections;
@@ -13,11 +19,17 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
+import buildcraft.api.transport.pipe.PipeBehaviour;
+import buildcraft.api.transport.pipe.PipeEventActionActivate;
+import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.api.transport.pipe.PipeEventItem;
+import buildcraft.api.transport.pipe.PipeEventStatement;
 
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.statements.ActionPipeColor;
 

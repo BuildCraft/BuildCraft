@@ -1,11 +1,13 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 package buildcraft.core.statements;
 
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -41,13 +43,14 @@ public class StatementParameterDirection implements IStatementParameter {
 
     @SideOnly(Side.CLIENT)
     public void registerIcons(TextureMap map) {
-        sprites = new TextureAtlasSprite[6];
-        sprites[0] = map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_down"));
-        sprites[1] = map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_up"));
-        sprites[2] = map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_north"));
-        sprites[3] = map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_south"));
-        sprites[4] = map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_west"));
-        sprites[5] = map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_east"));
+        sprites = new TextureAtlasSprite[] {
+            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_down")),
+            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_up")),
+            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_north")),
+            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_south")),
+            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_west")),
+            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_east"))
+        };
     }
 
     public StatementParameterDirection() {
@@ -63,6 +66,7 @@ public class StatementParameterDirection implements IStatementParameter {
         return direction;
     }
 
+    @Nonnull
     @Override
     public ItemStack getItemStack() {
         return StackUtil.EMPTY;

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.factory.block;
 
 import java.util.List;
@@ -23,9 +29,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.transport.pipe.ICustomPipeConnection;
 
-import buildcraft.factory.tile.TileTank;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.tile.TileBC_Neptune;
+
+import buildcraft.factory.tile.TileTank;
 
 public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnection {
     private static final IProperty<Boolean> JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;

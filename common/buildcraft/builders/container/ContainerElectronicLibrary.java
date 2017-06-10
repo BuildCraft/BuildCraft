@@ -1,8 +1,21 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.builders.container;
 
-import buildcraft.builders.item.ItemSnapshot;
-import buildcraft.builders.snapshot.Snapshot;
-import buildcraft.builders.tile.TileElectronicLibrary;
+import java.io.IOException;
+
+import javax.annotation.Nonnull;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.slot.SlotBase;
@@ -10,12 +23,10 @@ import buildcraft.lib.gui.slot.SlotOutput;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
 
-import java.io.IOException;
+import buildcraft.builders.item.ItemSnapshot;
+import buildcraft.builders.snapshot.Snapshot;
+import buildcraft.builders.tile.TileElectronicLibrary;
 
 public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLibrary> {
     private static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("electronic_library");
@@ -33,7 +44,7 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
         });
         addSlotToContainer(new SlotBase(tile.invDownIn, 0, 219, 57) {
             @Override
-            public boolean isItemValid(ItemStack stack) {
+            public boolean isItemValid(@Nonnull ItemStack stack) {
                 return stack.getItem() instanceof ItemSnapshot && ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used;
             }
 
@@ -45,7 +56,7 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
 
         addSlotToContainer(new SlotBase(tile.invUpIn, 0, 175, 79) {
             @Override
-            public boolean isItemValid(ItemStack stack) {
+            public boolean isItemValid(@Nonnull ItemStack stack) {
                 return stack.getItem() instanceof ItemSnapshot;
             }
         });
@@ -82,8 +93,7 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
         if (side == Side.SERVER) {
             if (id == ID_SELECTED) {
                 if (buffer.readBoolean()) {
-                    tile.selected = new Snapshot.Header();
-                    tile.selected.readFromByteBuf(buffer);
+                    tile.selected = new Snapshot.Header(buffer);
                 } else {
                     tile.selected = null;
                 }

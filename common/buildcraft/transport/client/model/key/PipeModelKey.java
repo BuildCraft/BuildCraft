@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.client.model.key;
 
 import java.util.Arrays;
@@ -17,7 +23,7 @@ public final class PipeModelKey {
     static {
         int sprite = -1;
         int[] sides = { sprite, sprite, sprite, sprite, sprite, sprite };
-        float[] connected = { 0.25f, 0.25f, 0, 0, 0, 0 };
+        float[] connected = { 0, 0, 0, 0, 0, 0 };
         DEFAULT_KEY = new PipeModelKey(null, sprite, sides, connected, null);
     }
 

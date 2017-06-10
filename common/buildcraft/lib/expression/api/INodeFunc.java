@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.expression.api;
 
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
@@ -11,22 +17,22 @@ public interface INodeFunc {
      * matches. */
     IExpressionNode getNode(INodeStack stack) throws InvalidExpressionException;
 
-    public interface INodeFuncLong extends INodeFunc {
+    interface INodeFuncLong extends INodeFunc {
         @Override
         INodeLong getNode(INodeStack stack) throws InvalidExpressionException;
     }
 
-    public interface INodeFuncDouble extends INodeFunc {
+    interface INodeFuncDouble extends INodeFunc {
         @Override
         INodeDouble getNode(INodeStack stack) throws InvalidExpressionException;
     }
 
-    public interface INodeFuncBoolean extends INodeFunc {
+    interface INodeFuncBoolean extends INodeFunc {
         @Override
         INodeBoolean getNode(INodeStack stack) throws InvalidExpressionException;
     }
 
-    public interface INodeFuncString extends INodeFunc {
+    interface INodeFuncString extends INodeFunc {
         @Override
         INodeString getNode(INodeStack stack) throws InvalidExpressionException;
     }

@@ -7,11 +7,18 @@ package buildcraft.lib.block;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import net.minecraft.block.*;
-import net.minecraft.block.BlockBed.EnumPartType;
+import net.minecraft.block.BlockButton;
+import net.minecraft.block.BlockChest;
+import net.minecraft.block.BlockDirectional;
+import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockDoor.EnumDoorHalf;
 import net.minecraft.block.BlockDoor.EnumHingePosition;
+import net.minecraft.block.BlockFenceGate;
+import net.minecraft.block.BlockLever;
 import net.minecraft.block.BlockLever.EnumOrientation;
+import net.minecraft.block.BlockPistonBase;
+import net.minecraft.block.BlockRedstoneDiode;
+import net.minecraft.block.BlockTorch;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumActionResult;
@@ -33,9 +40,9 @@ public class VanillaRotationHandlers {
         EnumFacing e = EnumFacing.EAST, w = EnumFacing.WEST;
         EnumFacing u = EnumFacing.UP, d = EnumFacing.DOWN;
         EnumFacing n = EnumFacing.NORTH, s = EnumFacing.SOUTH;
-        ROTATE_HORIZONTAL = new OrderedEnumMap<>(EnumFacing.class, new EnumFacing[] { e, s, w, n });
-        ROTATE_FACING = new OrderedEnumMap<>(EnumFacing.class, new EnumFacing[] { e, s, d, w, n, u });
-        ROTATE_TORCH = new OrderedEnumMap<>(EnumFacing.class, new EnumFacing[] { e, s, w, n, u });
+        ROTATE_HORIZONTAL = new OrderedEnumMap<>(EnumFacing.class, e, s, w, n);
+        ROTATE_FACING = new OrderedEnumMap<>(EnumFacing.class, e, s, d, w, n, u);
+        ROTATE_TORCH = new OrderedEnumMap<>(EnumFacing.class, e, s, w, n, u);
 
         EnumOrientation[] leverFaces = new EnumOrientation[8];
         int index = 0;

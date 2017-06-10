@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.gui;
 
 import java.io.IOException;
@@ -11,6 +17,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.gui.ledger.LedgerHelp;
@@ -20,7 +27,6 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.MousePosition;
 import buildcraft.lib.gui.pos.PositionCallable;
-import net.minecraft.util.math.MathHelper;
 
 public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer {
     /**

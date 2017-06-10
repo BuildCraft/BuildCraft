@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.pipe.flow;
 
 import java.io.IOException;
@@ -9,6 +15,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -144,8 +152,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         return oTile.hasCapability(CapUtil.CAP_FLUIDS, face.getOpposite());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == CapUtil.CAP_FLUIDS) {
             return (T) sections.get(EnumPipePart.fromFacing(facing));
         }
@@ -240,35 +249,35 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             if (section == null) {
                 continue;
             }
-            String line = " - " + LocaleUtil.localizeFacing(part.face) + " = ";
+            StringBuilder line = new StringBuilder(" - " + LocaleUtil.localizeFacing(part.face) + " = ");
             int amount = isRemote ? section.target : section.amount;
-            line += (amount > 0 ? TextFormatting.GREEN : "");
-            line += amount + "" + TextFormatting.RESET + "mB";
-            line += " " + section.getCurrentDirection() + " (" + section.ticksInDirection + ")";
+            line.append(amount > 0 ? TextFormatting.GREEN : "");
+            line.append(amount).append("").append(TextFormatting.RESET).append("mB");
+            line.append(" ").append(section.getCurrentDirection()).append(" (").append(section.ticksInDirection).append(")");
 
-            line += " [";
+            line.append(" [");
             int last = -1;
             int skipped = 0;
 
             for (int i : section.incoming) {
                 if (i != last) {
                     if (skipped > 0) {
-                        line += "..." + skipped + "... ";
+                        line.append("...").append(skipped).append("... ");
                         skipped = 0;
                     }
                     last = i;
-                    line += i + ", ";
+                    line.append(i).append(", ");
                 } else {
                     skipped++;
                 }
             }
             if (skipped > 0) {
-                line += "..." + skipped + "... ";
+                line.append("...").append(skipped).append("... ");
                 skipped = 0;
             }
-            line += "0]";
+            line.append("0]");
 
-            left.add(line);
+            left.add(line.toString());
         }
     }
 
@@ -547,34 +556,6 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buf, Side side) throws IOException {
-        PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(buf);
-        if (side == Side.CLIENT) {
-            if (id == NET_FLUID_AMOUNTS || id == NET_ID_FULL_STATE) {
-                boolean full = id == NET_ID_FULL_STATE;
-                if (buffer.readBoolean()) {
-                    int fluidId = buffer.readInt();
-                    clientFluid = BuildCraftObjectCaches.CACHE_FLUIDS.client().retrieve(fluidId);
-                }
-                for (EnumPipePart part : EnumPipePart.VALUES) {
-                    Section section = sections.get(part);
-                    if (full || buffer.readBoolean()) {
-                        section.target = buffer.readShort();
-                        if (full) {
-                            section.clientAmountLast = section.clientAmountThis = section.target;
-                        }
-                    }
-
-                    Dir dir = buffer.readEnumValue(Dir.class);
-                    section.ticksInDirection = dir == Dir.NONE ? 0 : dir == Dir.IN ? COOLDOWN_INPUT : COOLDOWN_OUTPUT;
-                }
-                lastMessageMinus1 = lastMessage;
-                lastMessage = pipe.getHolder().getPipeWorld().getTotalWorldTime();
-            }
-        }
-    }
-
-    @Override
     public void writePayload(int id, PacketBuffer buf, Side side) {
         PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(buf);
         if (side == Side.SERVER) {
@@ -601,6 +582,34 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                     buffer.writeEnumValue(should); // This writes out 2 bits so don't bother with a boolean flag
                     section.lastSentDirection = should;
                 }
+            }
+        }
+    }
+
+    @Override
+    public void readPayload(int id, PacketBuffer buf, Side side) throws IOException {
+        PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(buf);
+        if (side == Side.CLIENT) {
+            if (id == NET_FLUID_AMOUNTS || id == NET_ID_FULL_STATE) {
+                boolean full = id == NET_ID_FULL_STATE;
+                if (buffer.readBoolean()) {
+                    int fluidId = buffer.readInt();
+                    clientFluid = BuildCraftObjectCaches.CACHE_FLUIDS.client().retrieve(fluidId);
+                }
+                for (EnumPipePart part : EnumPipePart.VALUES) {
+                    Section section = sections.get(part);
+                    if (full || buffer.readBoolean()) {
+                        section.target = buffer.readShort();
+                        if (full) {
+                            section.clientAmountLast = section.clientAmountThis = section.target;
+                        }
+                    }
+
+                    Dir dir = buffer.readEnumValue(Dir.class);
+                    section.ticksInDirection = dir == Dir.NONE ? 0 : dir == Dir.IN ? COOLDOWN_INPUT : COOLDOWN_OUTPUT;
+                }
+                lastMessageMinus1 = lastMessage;
+                lastMessage = pipe.getHolder().getPipeWorld().getTotalWorldTime();
             }
         }
     }

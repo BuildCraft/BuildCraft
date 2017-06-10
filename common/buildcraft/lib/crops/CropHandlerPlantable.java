@@ -1,6 +1,19 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.crops;
 
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockCrops;
+import net.minecraft.block.BlockDoublePlant;
+import net.minecraft.block.BlockFlower;
+import net.minecraft.block.BlockMelon;
+import net.minecraft.block.BlockMushroom;
+import net.minecraft.block.BlockNetherWart;
+import net.minecraft.block.BlockTallGrass;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -11,14 +24,12 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.IPlantable;
 
 import buildcraft.api.crops.ICropHandler;
 
 import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.SoundUtil;
 
 public enum CropHandlerPlantable implements ICropHandler {
     INSTANCE;

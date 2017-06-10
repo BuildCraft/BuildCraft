@@ -1,6 +1,19 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.factory.block;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
+import java.util.Set;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -16,9 +29,10 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.factory.BCFactoryItems;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.SoundUtil;
+
+import buildcraft.factory.BCFactoryItems;
 
 public class BlockWaterGel extends BlockBCBase_Neptune {
     public enum GelStage implements IStringSerializable {
@@ -37,7 +51,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
         public final boolean spreading;
         public final float hardness;
 
-        private GelStage(float pitch, boolean spreading, float hardness) {
+        GelStage(float pitch, boolean spreading, float hardness) {
             this.soundType = new SoundType(//
                     SoundType.SLIME.volume,//
                     pitch,//
@@ -113,9 +127,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
             Set<BlockPos> closedSet = new HashSet<>();
             List<BlockPos> changable = new ArrayList<>();
             List<EnumFacing> faces = new ArrayList<>();
-            for (EnumFacing face : EnumFacing.VALUES) {
-                faces.add(face);
-            }
+            Collections.addAll(faces, EnumFacing.VALUES);
             Collections.shuffle(faces);
             for (EnumFacing face : faces) {
                 openSet.add(pos.offset(face));
@@ -124,9 +136,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
             int tries = 0;
 
             while (openSet.size() > 0 && changable.size() < 3 && tries < 10_000) {
-                openSet.sort((a, b) -> {
-                    return Double.compare(a.distanceSq(pos), b.distanceSq(pos));
-                });
+                openSet.sort(Comparator.comparingDouble(a -> a.distanceSq(pos)));
 
                 BlockPos test = openSet.remove(0);
                 closedSet.add(test);

@@ -1,4 +1,12 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.render.tile;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -13,7 +21,7 @@ public abstract class RenderEngine_BC8<T extends TileEngineBase_BC8> extends Fas
     // TODO: Cache the model!
 
     @Override
-    public void renderTileEntityFast(T engine, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
+    public void renderTileEntityFast(@Nonnull T engine, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer vb) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("bc");
         profiler.startSection("engine");

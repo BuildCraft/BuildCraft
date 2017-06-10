@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.silicon;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,7 +25,11 @@ import buildcraft.silicon.container.ContainerIntegrationTable;
 import buildcraft.silicon.gui.GuiAdvancedCraftingTable;
 import buildcraft.silicon.gui.GuiAssemblyTable;
 import buildcraft.silicon.gui.GuiIntegrationTable;
-import buildcraft.silicon.tile.*;
+import buildcraft.silicon.tile.TileAdvancedCraftingTable;
+import buildcraft.silicon.tile.TileAssemblyTable;
+import buildcraft.silicon.tile.TileIntegrationTable;
+import buildcraft.silicon.tile.TileLaser;
+import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
 
 public abstract class BCSiliconProxy implements IGuiHandler {
     @SidedProxy(modId = BCSilicon.MODID)

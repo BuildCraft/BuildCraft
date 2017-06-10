@@ -6,7 +6,6 @@ package buildcraft.core.block;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.item.ItemStack;
 
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.properties.BuildCraftProperties;

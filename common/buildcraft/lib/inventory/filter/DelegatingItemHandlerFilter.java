@@ -1,4 +1,12 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.inventory.filter;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
 
@@ -16,7 +24,7 @@ public class DelegatingItemHandlerFilter implements IStackFilter {
     }
 
     @Override
-    public boolean matches(ItemStack stack) {
+    public boolean matches(@Nonnull ItemStack stack) {
         for (int slot = 0; slot < handler.getSlots(); slot++) {
             if (perStackFilter.matches(handler.getStackInSlot(slot), stack)) {
                 return true;

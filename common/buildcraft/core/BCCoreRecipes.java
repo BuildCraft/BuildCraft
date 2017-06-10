@@ -1,7 +1,9 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
+/*
+ * Copyright (c) 2016 SpaceToad and the BuildCraft team
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 package buildcraft.core;
 
 import com.google.common.collect.ImmutableSet;
@@ -18,13 +20,13 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.BCBlocks;
 import buildcraft.api.BCItems;
+import buildcraft.api.enums.EnumDecoratedBlock;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.StackDefinition;
 
-import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.lib.inventory.filter.ArrayStackFilter;
 import buildcraft.lib.inventory.filter.OreStackFilter;
 import buildcraft.lib.misc.ColourUtil;
@@ -32,6 +34,8 @@ import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
+
+import buildcraft.core.item.ItemPaintbrush_BC8;
 
 public class BCCoreRecipes {
     public static void init() {
@@ -77,7 +81,8 @@ public class BCCoreRecipes {
 
         if (BCItems.CORE_PAINTBRUSH != null) {
             ItemStack cleanPaintbrush = new ItemStack(BCItems.CORE_PAINTBRUSH);
-            Object[] input = { " iw", " gi", "s  ", 's', "stickWood", 'g', "gearWood", 'w', new ItemStack(Blocks.WOOL, 1, 0), 'i', Items.STRING };
+            Object[] input = { " iw", " gi", "s  ", 's', "stickWood", 'g', "gearWood", 'w', new ItemStack(Blocks.WOOL,
+                1, 0), 'i', Items.STRING };
             GameRegistry.addRecipe(new ShapedOreRecipe(cleanPaintbrush, input));
 
             for (EnumDyeColor colour : EnumDyeColor.values()) {
@@ -95,7 +100,8 @@ public class BCCoreRecipes {
                     OreStackFilter.definition(ColourUtil.getDyeName(EnumDyeColor.GREEN)),//
                     OreStackFilter.definition("dustRedstone")//
                 );
-                BuildcraftRecipeRegistry.assemblyRecipes.addRecipe(new AssemblyRecipe("list", mjCost, required, new ItemStack(BCItems.CORE_LIST)));
+                BuildcraftRecipeRegistry.assemblyRecipes.addRecipe(new AssemblyRecipe("list", mjCost, required,
+                    new ItemStack(BCItems.CORE_LIST)));
             } else {
                 RecipeBuilderShaped recipe = new RecipeBuilderShaped();
                 recipe.add("pRp");
@@ -137,6 +143,29 @@ public class BCCoreRecipes {
                 arr = new Object[] { " o ", "oio", " o ", 'o', outer, 'i', inner };
             }
             GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(gear), arr));
+        }
+
+        if (BCBlocks.CORE_DECORATED != null) {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
+            builder.add("sss");
+            builder.add("scs");
+            builder.add("sss");
+
+            if (BCItems.BUILDERS_SNAPSHOT != null) {
+                builder.map('s', "stone");
+                builder.map('c', new ItemStack(BCItems.BUILDERS_SNAPSHOT, 1, 2));
+                builder.setResult(new ItemStack(BCBlocks.CORE_DECORATED, 16, EnumDecoratedBlock.BLUEPRINT.ordinal()));
+                builder.register();
+
+                builder.map('c', new ItemStack(BCItems.BUILDERS_SNAPSHOT, 1, 0));
+                builder.setResult(new ItemStack(BCBlocks.CORE_DECORATED, 16, EnumDecoratedBlock.TEMPLATE.ordinal()));
+                builder.register();
+            }
+
+            builder.map('s', Blocks.OBSIDIAN);
+            builder.map('c', Blocks.REDSTONE_BLOCK);
+            builder.setResult(new ItemStack(BCBlocks.CORE_DECORATED, 32, EnumDecoratedBlock.LASER_BACK.ordinal()));
+            builder.register();
         }
     }
 }

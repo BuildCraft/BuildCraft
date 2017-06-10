@@ -1,7 +1,8 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 package buildcraft.transport.stripes;
 
 import java.util.Collections;
@@ -24,13 +25,18 @@ public enum StripesHandlerEntityInteract implements IStripesHandlerItem {
     INSTANCE;
 
     @Override
-    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        pos = pos.offset(direction);
-        AxisAlignedBB box = new AxisAlignedBB(pos, pos.add(1, 1, 1));
-        List<EntityLivingBase> livingEntities = world.getEntitiesWithinAABB(EntityLivingBase.class, box);
-        Collections.shuffle(livingEntities);
-        while (livingEntities.size() > 0) {
-            EntityLivingBase entity = livingEntities.remove(0);
+    public boolean handle(World world,
+                          BlockPos pos,
+                          EnumFacing direction,
+                          ItemStack stack,
+                          EntityPlayer player,
+                          IStripesActivator activator) {
+        List<EntityLivingBase> entities = world.getEntitiesWithinAABB(
+            EntityLivingBase.class,
+            new AxisAlignedBB(pos.offset(direction))
+        );
+        Collections.shuffle(entities);
+        for (EntityLivingBase entity : entities) {
             if (player.interactOn(entity, EnumHand.MAIN_HAND) == EnumActionResult.SUCCESS) {
                 return true;
             }

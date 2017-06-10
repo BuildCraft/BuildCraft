@@ -1,8 +1,20 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.guide.loader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -24,7 +36,13 @@ import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.client.guide.PageEntry;
 import buildcraft.lib.client.guide.PageLine;
-import buildcraft.lib.client.guide.parts.*;
+import buildcraft.lib.client.guide.parts.GuideChapterWithin;
+import buildcraft.lib.client.guide.parts.GuidePage;
+import buildcraft.lib.client.guide.parts.GuidePageFactory;
+import buildcraft.lib.client.guide.parts.GuidePart;
+import buildcraft.lib.client.guide.parts.GuidePartFactory;
+import buildcraft.lib.client.guide.parts.GuidePartNewPage;
+import buildcraft.lib.client.guide.parts.GuideText;
 import buildcraft.lib.client.guide.parts.recipe.GuideCraftingFactory;
 import buildcraft.lib.client.guide.parts.recipe.GuideSmeltingFactory;
 import buildcraft.lib.client.guide.parts.recipe.RecipeLookupHelper;
@@ -56,7 +74,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
 
     static {
         putSingle("special.new_page", (after) -> GuidePartNewPage::new);
-        putSingle("special.chapter", (after) -> chapter(after));
+        putSingle("special.chapter", MarkdownPageLoader::chapter);
         putSingle("special.crafting", MarkdownPageLoader::loadCraftingLine);
         putSingle("special.smelting", MarkdownPageLoader::loadSmeltingLine);
         putMulti("special.all_crafting", MarkdownPageLoader::loadAllCrafting);
@@ -267,9 +285,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
     }
 
     public static GuidePartFactory translate(String text) {
-        return (gui) -> {
-            return new GuideText(gui, new PageLine(0, I18n.format(text), false));
-        };
+        return gui -> new GuideText(gui, new PageLine(0, I18n.format(text), false));
     }
 
     public static ItemStack loadItemStack(String line) {

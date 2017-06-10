@@ -1,7 +1,8 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 package buildcraft.lib.misc;
 
 import java.text.DecimalFormat;
@@ -79,34 +80,24 @@ public final class StringUtilBC {
         String[] s = string.split(",");
         try {
             return new BlockPos(Integer.parseInt(s[0]), Integer.parseInt(s[1]), Integer.parseInt(s[2]));
-        } catch (NumberFormatException nfe) {
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException nfe) {
             throw new IllegalArgumentException("The given string \"" + string + "\" was invalid!", nfe);
-        } catch (ArrayIndexOutOfBoundsException aioobe) {
-            throw new IllegalArgumentException("The given string \"" + string + "\" was invalid!", aioobe);
         }
     }
 
     // Displaying objects
     public static String vec3ToDispString(Vec3d vec) {
         if (vec == null) return "null";
-        StringBuilder builder = new StringBuilder();
-        builder.append(displayDecimalFormat.format(vec.xCoord));
-        builder.append(", ");
-        builder.append(displayDecimalFormat.format(vec.yCoord));
-        builder.append(", ");
-        builder.append(displayDecimalFormat.format(vec.zCoord));
-        return builder.toString();
+        return displayDecimalFormat.format(vec.xCoord) + ", " +
+            displayDecimalFormat.format(vec.yCoord) + ", " +
+            displayDecimalFormat.format(vec.zCoord);
     }
 
     public static String vec3ToDispString(Vec3i vec) {
         if (vec == null) return "null";
-        StringBuilder builder = new StringBuilder();
-        builder.append(vec.getX());
-        builder.append(", ");
-        builder.append(vec.getY());
-        builder.append(", ");
-        builder.append(vec.getZ());
-        return builder.toString();
+        return vec.getX() + ", " +
+            vec.getY() + ", " +
+            vec.getZ();
     }
 
     public static String replaceCharactersForFilename(String original) {

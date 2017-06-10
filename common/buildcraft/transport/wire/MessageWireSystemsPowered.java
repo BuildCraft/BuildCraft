@@ -1,18 +1,26 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.wire;
-
-import buildcraft.api.transport.IWireManager;
-import buildcraft.api.transport.pipe.IPipeHolder;
-
-import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import io.netty.buffer.ByteBuf;
+
+import org.apache.commons.lang3.tuple.Pair;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.tileentity.TileEntity;
+
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+
+import buildcraft.api.transport.IWireManager;
+import buildcraft.api.transport.pipe.IPipeHolder;
 
 public class MessageWireSystemsPowered implements IMessage {
     private Map<Integer, Boolean> hashesPowered = new HashMap<>();

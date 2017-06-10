@@ -1,6 +1,19 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.model;
 
-import javax.vecmath.*;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Point2f;
+import javax.vecmath.Point3f;
+import javax.vecmath.Point4f;
+import javax.vecmath.Tuple2f;
+import javax.vecmath.Tuple3f;
+import javax.vecmath.Tuple4f;
+import javax.vecmath.Vector3f;
 
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -215,6 +228,7 @@ public class MutableVertex {
         return this;
     }
 
+    @SuppressWarnings("PointlessBitwiseExpression")
     public MutableVertex normali(int combined) {
         normal_x = ((combined >> 0) & 0xFF) / 0x7f;
         normal_y = ((combined >> 8) & 0xFF) / 0x7f;
@@ -244,7 +258,7 @@ public class MutableVertex {
 
     public MutableVertex colourv(Tuple4f vec) {
         return colourf(vec.x, vec.y, vec.z, vec.w);
-    };
+    }
 
     public MutableVertex colourf(float r, float g, float b, float a) {
         return colouri((int) (r * 0xFF), (int) (g * 0xFF), (int) (b * 0xFF), (int) (a * 0xFF));
@@ -266,6 +280,7 @@ public class MutableVertex {
         return new Point4f(colour_r / 255f, colour_g / 255f, colour_b / 255f, colour_a / 255f);
     }
 
+    @SuppressWarnings("PointlessBitwiseExpression")
     public int colourRGBA() {
         int rgba = 0;
         rgba |= (colour_r & 0xFF) << 0;
@@ -275,6 +290,7 @@ public class MutableVertex {
         return rgba;
     }
 
+    @SuppressWarnings("PointlessBitwiseExpression")
     public int colourABGR() {
         int rgba = 0;
         rgba |= (colour_r & 0xFF) << 24;
@@ -362,7 +378,7 @@ public class MutableVertex {
 
     public int[] lighti() {
         return new int[] { light_block, light_sky };
-    };
+    }
 
     public MutableVertex transform(Matrix4f matrix) {
         Point3f point = positionvf();

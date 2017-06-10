@@ -6,8 +6,6 @@ package buildcraft.builders.block;
 
 import java.util.List;
 
-import buildcraft.api.enums.EnumOptionalSnapshotType;
-import buildcraft.lib.misc.BlockUtil;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -19,12 +17,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import buildcraft.api.enums.EnumOptionalSnapshotType;
 import buildcraft.api.properties.BuildCraftProperties;
+
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithFacing;
+import buildcraft.lib.misc.BlockUtil;
 
 import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileBuilder;
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.block.IBlockWithFacing;
 
 public class BlockBuilder extends BlockBCTile_Neptune implements IBlockWithFacing {
     public static final IProperty<EnumOptionalSnapshotType> SNAPSHOT_TYPE = BuildCraftProperties.SNAPSHOT_TYPE;

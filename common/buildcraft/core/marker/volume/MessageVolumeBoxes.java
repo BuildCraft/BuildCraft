@@ -1,17 +1,22 @@
-package buildcraft.core.marker.volume;
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
-import io.netty.buffer.UnpooledByteBufAllocator;
-import io.netty.buffer.UnpooledDirectByteBuf;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+package buildcraft.core.marker.volume;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.UnpooledByteBufAllocator;
+
+import net.minecraft.network.PacketBuffer;
+
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 
 public class MessageVolumeBoxes implements IMessage {
     public List<VolumeBox> boxes = new ArrayList<>();

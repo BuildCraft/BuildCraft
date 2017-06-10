@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.robotics.tile;
 
 import java.io.IOException;
@@ -19,9 +25,9 @@ import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
-import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.IdAllocator;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
@@ -123,7 +129,7 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
             buffer.writeShort(index);
             layers[index].writeToByteBuf(buffer);
         });
-        MessageUtil.getWrapper().sendToServer(message);
+        MessageManager.sendToServer(message);
     }
 
     @Override

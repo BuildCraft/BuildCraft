@@ -1,6 +1,14 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.energy.tile;
 
 import java.io.IOException;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -9,7 +17,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 
-import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -28,7 +35,6 @@ import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.IItemPipe;
 
-import buildcraft.energy.BCEnergyGuis;
 import buildcraft.lib.engine.EngineConnector;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.fluid.Tank;
@@ -39,6 +45,8 @@ import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
+
+import buildcraft.energy.BCEnergyGuis;
 
 public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     public static final int MAX_FLUID = 10_000;
@@ -135,12 +143,16 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
                 return false;
             }
             if (!world.isRemote) {
-                FluidActionResult result = FluidUtil.interactWithFluidHandler(current, fluidHandler, player);
-                if (result.isSuccess()) {
-                    player.setHeldItem(hand, result.result);
+                if (FluidUtil.interactWithFluidHandler(
+                    player,
+                    hand,
+                    world,
+                    pos,
+                    side
+                )) {
+                    return true;
                 }
             }
-            return true;
         }
         if (!world.isRemote) {
             BCEnergyGuis.ENGINE_IRON.openGUI(player, getPos());
@@ -164,6 +176,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
         }
     }
 
+    @Nonnull
     @Override
     protected IMjConnector createConnector() {
         return new EngineConnector(false);
@@ -339,7 +352,9 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
 
     private boolean isResidue(FluidStack fluid) {
         // If this is the client then we don't have a current fuel- just trust the server that its correct
-        if (world != null && world.isRemote) return true;
+        if (world != null && world.isRemote) {
+            return true;
+        }
         if (currentFuel instanceof IDirtyFuel) {
             return fluid.isFluidEqual(((IDirtyFuel) currentFuel).getResidue());
         }

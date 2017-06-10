@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.model.json;
 
 import java.util.Arrays;
@@ -13,11 +19,11 @@ import buildcraft.lib.client.model.ResourceLoaderContext;
 import buildcraft.lib.client.model.json.JsonVariableModel.ITextureGetter;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
-import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.misc.JsonUtil;
 
 /** {@link JsonModelPart} but with can be animated */

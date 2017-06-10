@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.guide.data;
 
 import java.util.HashMap;
@@ -57,17 +63,17 @@ public class JsonTypeTags {
     }
 
     public JsonTypeTags inheritMissingTags(JsonTypeTags parent) {
-        String mod = firstNonEmpty(this.mod, parent.mod, "unknown");
-        String subMod = firstNonEmpty(this.subMod, parent.subMod);
-        String type = firstNonEmpty(this.type, parent.type, "unknown");
-        String subType = firstNonEmpty(this.subType, parent.subType, "unknown");
-        return new JsonTypeTags(mod, subMod, type, subType);
+        String m = firstNonEmpty(this.mod, parent.mod, "unknown");
+        String sm = firstNonEmpty(this.subMod, parent.subMod);
+        String t = firstNonEmpty(this.type, parent.type, "unknown");
+        String st = firstNonEmpty(this.subType, parent.subType, "unknown");
+        return new JsonTypeTags(m, sm, t, st);
     }
 
     private static String firstNonEmpty(String... strings) {
         String current = null;
-        for (int i = 0; i < strings.length; i++) {
-            current = strings[i];
+        for (String string : strings) {
+            current = string;
             if (!StringUtils.isNullOrEmpty(current)) {
                 break;
             }
@@ -76,9 +82,9 @@ public class JsonTypeTags {
     }
 
     public void printContents(int indent) {
-        String f = "";
+        StringBuilder f = new StringBuilder();
         while (indent > 0) {
-            f += "  ";
+            f.append("  ");
             indent--;
         }
         BCLog.logger.info(f + "mod = " + mod + ",");

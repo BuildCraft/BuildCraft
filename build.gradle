@@ -25,6 +25,10 @@ apply plugin: "net.minecraftforge.gradle.forge" // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
 apply plugin: 'maven-publish' // for uploading to a maven repo
 
+if (gradle.startParameter.taskNames.contains("checkstyle")) {
+	apply plugin: "checkstyle"
+}
+
 ext.configFile = file "build.properties"
 configFile.withReader {
     // Load config. It shall from now be referenced as simply config or project.config
@@ -96,6 +100,20 @@ sourceSets {
     }
 }
 
+
+if (gradle.startParameter.taskNames.contains("checkstyle")) {
+	checkstyle {
+		configFile = file("guidelines/buildcraft.checkstyle")
+	}
+
+	task checkstyle {}
+	tasks["checkstyle"].dependsOn checkstyleApi
+	tasks["checkstyle"].dependsOn checkstyleMain
+
+	tasks["checkstyleApi"].enabled = gradle.startParameter.taskNames.contains("checkstyle")
+	tasks["checkstyleMain"].enabled = gradle.startParameter.taskNames.contains("checkstyle")
+}
+
 runClient.jvmArgs += "-Dbuildcraft.dev=true"
 for (String s :"-XX:+UseG1GC -Xmx2G -Xms2G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M".split(" ")) {
     runClient.jvmArgs += s
@@ -152,7 +170,7 @@ def createMCModInfo(def id, def taskName)
 
 def parseConfig(File config) {
     if (!config.exists())
-        return null;
+        return null
     config.withReader {
         def prop = new Properties()
         prop.load(it)
@@ -185,8 +203,8 @@ task deobfJar(type: Jar) {
     classifier = 'dev'
 }
 
-def modulesDir = file("build/libs/modules");
-def modulesDirSrc = new File(modulesDir, "src");
+def modulesDir = file("build/libs/modules")
+def modulesDirSrc = new File(modulesDir, "src")
 
 task apiJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = modulesDir
@@ -471,7 +489,7 @@ task upload(dependsOn: build) {
 
 
 if (ext.priv == null)
-    upload.enabled = false;
+    upload.enabled = false
 
 uploadArchives {
     // make sure this happens after reobfuscation

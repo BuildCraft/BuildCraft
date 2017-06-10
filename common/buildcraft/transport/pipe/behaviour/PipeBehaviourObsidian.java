@@ -1,7 +1,15 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.pipe.behaviour;
 
 import java.util.List;
 import java.util.WeakHashMap;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -125,7 +133,7 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
 
         Long tickPickupObj = entityDropTime.get(entity);
         if (tickPickupObj != null) {
-            long tickPickup = tickPickupObj.longValue();
+            long tickPickup = tickPickupObj;
             long tickNow = pipe.getHolder().getPipeWorld().getTotalWorldTime();
             if (tickNow < tickPickup) {
                 return power;
@@ -168,7 +176,7 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
     // IMjRedstoneReceiver
 
     @Override
-    public boolean canConnect(IMjConnector other) {
+    public boolean canConnect(@Nonnull IMjConnector other) {
         return true;
     }
 

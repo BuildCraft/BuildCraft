@@ -1,9 +1,19 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.expression;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import buildcraft.lib.expression.Tokeniser.*;
+import buildcraft.lib.expression.Tokeniser.ITokenizerGobbler;
+import buildcraft.lib.expression.Tokeniser.ResultConsume;
+import buildcraft.lib.expression.Tokeniser.ResultDiscard;
+import buildcraft.lib.expression.Tokeniser.ResultInvalid;
+import buildcraft.lib.expression.Tokeniser.ResultSpecific;
 
 public class TokeniserDefaults {
     // Lots of gobblers.
@@ -42,7 +52,6 @@ public class TokeniserDefaults {
                 char c = ctx.getCharAt(size);
                 if ('_' == c || (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
                     size++;
-                    continue;
                 } else {
                     break;
                 }

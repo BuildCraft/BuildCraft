@@ -4,19 +4,22 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.gui;
 
-import buildcraft.builders.container.ContainerFillingPlanner;
-import buildcraft.builders.filling.Filling;
-import buildcraft.builders.filling.IParameter;
-import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.button.*;
-import buildcraft.lib.gui.elem.ToolTip;
-import net.minecraft.util.ResourceLocation;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
+
+import net.minecraft.util.ResourceLocation;
+
+import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.button.GuiButtonSmall;
+import buildcraft.lib.gui.button.IButtonBehaviour;
+import buildcraft.lib.gui.elem.ToolTip;
+
+import buildcraft.builders.container.ContainerFillingPlanner;
+import buildcraft.builders.filling.Filling;
+import buildcraft.builders.filling.IParameter;
 
 public class GuiFillingPlanner extends GuiBC8<ContainerFillingPlanner> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftbuilders:textures/gui/filling_planner.png");

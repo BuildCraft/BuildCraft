@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.energy.client.sprite;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -27,7 +33,7 @@ public class AtlasSpriteFluid extends AtlasSpriteSwappable {
     @Override
     public boolean load(IResourceManager manager, ResourceLocation location) {
         ResourceLocation from = SpriteUtil.transformLocation(fromName);
-        AtlasSpriteDirect sprite = super.loadSprite(manager, from.toString(), from, true);
+        AtlasSpriteDirect sprite = loadSprite(manager, from.toString(), from, true);
         if (sprite == null) {
             BCLog.logger.warn("Unable to recolour " + from + " as it couldn't be loaded!");
             return true;

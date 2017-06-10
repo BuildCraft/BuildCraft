@@ -1,15 +1,24 @@
-package buildcraft.energy.generation;
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.layer.GenLayer;
-import net.minecraftforge.common.BiomeDictionary;
+package buildcraft.energy.generation;
 
 import java.util.Arrays;
 import java.util.List;
 
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.layer.GenLayer;
+
+import net.minecraftforge.common.BiomeDictionary;
+
+import buildcraft.api.core.BCLog;
+
 public class GenLayerAddOilDesert extends GenLayerBiomeReplacer {
-    protected static final double NOISE_FIELD_SCALE = 0.001;
-    protected static final double NOISE_FIELD_THRESHOLD = 0.7;
+    private static final double NOISE_FIELD_SCALE = 0.001;
+    private static final double NOISE_FIELD_THRESHOLD = 0.7;
     
     private static final List<BiomeDictionary.Type> REQUIRED_TYPES = Arrays.asList(
         BiomeDictionary.Type.HOT,
@@ -25,7 +34,8 @@ public class GenLayerAddOilDesert extends GenLayerBiomeReplacer {
     protected boolean canReplaceBiome(int biomeId) {
         Biome biome = Biome.getBiomeForId(biomeId);
         if (biome == null) {
-            throw new IllegalArgumentException("Couldn't find a biome with an ID of " + biomeId);
+            BCLog.logger.warn("Couldn't find a biome with an ID of " + biomeId);
+            return false;
         }
         return BiomeDictionary.getTypes(biome).containsAll(REQUIRED_TYPES);
     }

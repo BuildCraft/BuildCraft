@@ -1,13 +1,20 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.energy.client.gui;
 
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.energy.container.ContainerEngineIron_BC8;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.ledger.LedgerEngine;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.LocaleUtil;
+
+import buildcraft.energy.container.ContainerEngineIron_BC8;
 
 public class GuiEngineIron_BC8 extends GuiBC8<ContainerEngineIron_BC8> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftenergy:textures/gui/combustion_engine_gui.png");

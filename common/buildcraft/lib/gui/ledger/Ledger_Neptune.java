@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.gui.ledger;
 
 import java.util.ArrayList;
@@ -7,16 +13,17 @@ import java.util.function.Supplier;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.MathHelper;
 
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.BCLibSprites;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
-import buildcraft.lib.gui.*;
+import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.IGuiElement;
+import buildcraft.lib.gui.ISimpleDrawable;
+import buildcraft.lib.gui.ITooltipElement;
 import buildcraft.lib.gui.elem.GuiElementDrawable;
 import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.elem.ToolTip;
@@ -153,12 +160,6 @@ public abstract class Ledger_Neptune implements ITooltipElement {
                 currentHeight = targetHeight;
             }
         }
-
-        return;
-    }
-
-    private static int clamp(int val, int min, int max) {
-        return MathHelper.clamp(val, min, max);
     }
 
     private static int interp(int past, int current, float partialTicks) {

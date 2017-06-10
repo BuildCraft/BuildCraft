@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.client.model;
 
 import java.util.ArrayList;
@@ -10,6 +16,7 @@ import net.minecraft.util.BlockRenderLayer;
 import buildcraft.lib.client.model.IModelCache;
 import buildcraft.lib.client.model.ModelCacheJoiner;
 import buildcraft.lib.client.model.ModelCacheJoiner.ModelKeyWrapper;
+
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;
 import buildcraft.transport.client.model.PipeModelCachePluggable.PluggableKey;

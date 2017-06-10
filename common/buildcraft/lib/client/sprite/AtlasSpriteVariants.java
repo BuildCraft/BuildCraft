@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.sprite;
 
 import java.util.List;
@@ -14,7 +20,11 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.BCLibConfig;
-import buildcraft.lib.client.reload.*;
+import buildcraft.lib.client.reload.IReloadable;
+import buildcraft.lib.client.reload.ReloadManager;
+import buildcraft.lib.client.reload.ReloadSource;
+import buildcraft.lib.client.reload.ReloadUtil;
+import buildcraft.lib.client.reload.SourceType;
 import buildcraft.lib.misc.SpriteUtil;
 
 /** A type of {@link AtlasSpriteSwappable} that will switch between multiple different */

@@ -1,13 +1,16 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 package buildcraft.core.list;
 
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
 
 import org.lwjgl.input.Keyboard;
 
@@ -75,6 +78,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
                         }
                     }
 
+                    @Nonnull
                     @Override
                     public ItemStack getStack() {
                         if (shouldDrawHighlight()) {
@@ -161,7 +165,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
 
     private boolean isCarryingNonEmptyList() {
         ItemStack stack = mc.player.inventory.getItemStack();
-        return stack != null && stack.getItem() instanceof ItemList_BC8 && stack.getTagCompound() != null;
+        return !stack.isEmpty() && stack.getItem() instanceof ItemList_BC8 && stack.getTagCompound() != null;
     }
 
     private boolean hasListEquipped() {
@@ -210,19 +214,17 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
     }
 
     private NonNullList<ItemStack> getExamplesList(int lineId, ListMatchHandler.Type type) {
-        Map<ListMatchHandler.Type, NonNullList<ItemStack>> exampleList = exampleCache.get(lineId);
-        if (exampleList == null) {
-            exampleList = new EnumMap<>(ListMatchHandler.Type.class);
-            exampleCache.put(lineId, exampleList);
-        }
+        Map<ListMatchHandler.Type, NonNullList<ItemStack>> exampleList = exampleCache.computeIfAbsent(
+            lineId,
+            k -> new EnumMap<>(ListMatchHandler.Type.class)
+        );
 
         if (!exampleList.containsKey(type)) {
             NonNullList<ItemStack> examples = container.lines[lineId].getExamples();
             ItemStack input = container.lines[lineId].stacks.get(0);
             if (!input.isEmpty()) {
                 NonNullList<ItemStack> repetitions = NonNullList.create();
-                for (int i = 0; i < examples.size(); i++) {
-                    ItemStack is = examples.get(i);
+                for (ItemStack is : examples) {
                     if (StackUtil.isMatchingItem(input, is, true, false)) {
                         repetitions.add(is);
                     }

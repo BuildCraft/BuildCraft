@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.render.fluid;
 
 import net.minecraftforge.fluids.Fluid;
@@ -12,5 +18,5 @@ public enum FluidSpriteType {
     /** The sprite that {@link Fluid#getStill()} refers to. */
     STILL,
     /** The sprite that {@link Fluid#getFlowing()} refers to. */
-    FLOWING;
+    FLOWING
 }

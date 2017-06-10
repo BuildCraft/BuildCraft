@@ -1,4 +1,13 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.misc;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -9,9 +18,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import buildcraft.lib.fluid.Tank;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class FluidUtilBC {
     public static void pushFluidAround(IBlockAccess world, BlockPos pos, Tank tank) {

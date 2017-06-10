@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.builders.tile;
 
 import java.io.IOException;
@@ -33,10 +39,10 @@ import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.api.tiles.TilesAPI;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.mj.MjBatteryReciver;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
@@ -47,6 +53,7 @@ import buildcraft.lib.tile.item.StackInsertionFunction;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.filling.Filling;
 import buildcraft.builders.snapshot.ITileForTemplateBuilder;
+import buildcraft.builders.snapshot.SnapshotBuilder;
 import buildcraft.builders.snapshot.Template;
 import buildcraft.builders.snapshot.Template.BuildingInfo;
 import buildcraft.builders.snapshot.TemplateBuilder;
@@ -161,7 +168,7 @@ public class TileFiller extends TileBC_Neptune
     }
 
     public void sendCanExcavate(boolean newValue) {
-        MessageUtil.getWrapper().sendToServer(createMessage(NET_CAN_EXCAVATE, buffer -> buffer.writeBoolean(newValue)));
+        MessageManager.sendToServer(createMessage(NET_CAN_EXCAVATE, buffer -> buffer.writeBoolean(newValue)));
     }
 
     // Read-write
@@ -243,6 +250,11 @@ public class TileFiller extends TileBC_Neptune
     @Override
     public boolean canExcavate() {
         return canExcavate;
+    }
+
+    @Override
+    public SnapshotBuilder getBuilder() {
+        return builder;
     }
 
     @Override

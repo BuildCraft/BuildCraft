@@ -280,8 +280,6 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
                         } else if (!result.itemStack.isEmpty()) {
                             player.inventory.addItemStackToInventory(result.itemStack);
                             player.inventoryContainer.detectAndSendChanges();
-                        } else {
-                            continue;
                         }
                     } else if (held.isEmpty()) {
                         break;

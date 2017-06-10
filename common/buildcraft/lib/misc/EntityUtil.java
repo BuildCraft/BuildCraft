@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.misc;
 
 import javax.annotation.Nonnull;
@@ -43,11 +49,11 @@ public class EntityUtil {
 
     public static EnumHand getWrenchHand(EntityLivingBase entity) {
         ItemStack stack = entity.getHeldItemMainhand();
-        if (stack != null && stack.getItem() instanceof IToolWrench) {
+        if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {
             return EnumHand.MAIN_HAND;
         }
         stack = entity.getHeldItemOffhand();
-        if (stack != null && stack.getItem() instanceof IToolWrench) {
+        if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {
             return EnumHand.OFF_HAND;
         }
         return null;
@@ -55,13 +61,13 @@ public class EntityUtil {
 
     public static void activateWrench(EntityPlayer player) {
         ItemStack stack = player.getHeldItemMainhand();
-        if (stack != null && stack.getItem() instanceof IToolWrench) {
+        if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {
             IToolWrench wrench = (IToolWrench) stack.getItem();
             wrench.wrenchUsed(player, EnumHand.MAIN_HAND, stack, null);
             return;
         }
         stack = player.getHeldItemOffhand();
-        if (stack != null && stack.getItem() instanceof IToolWrench) {
+        if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {
             IToolWrench wrench = (IToolWrench) stack.getItem();
             wrench.wrenchUsed(player, EnumHand.OFF_HAND, stack, null);
         }

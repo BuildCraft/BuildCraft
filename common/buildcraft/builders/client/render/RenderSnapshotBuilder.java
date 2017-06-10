@@ -1,14 +1,13 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.builders.client.render;
 
-import buildcraft.builders.snapshot.ITileForSnapshotBuilder;
-import buildcraft.builders.snapshot.SnapshotBuilder;
-import buildcraft.builders.snapshot.TemplateBuilder;
-import buildcraft.core.client.BuildCraftLaserManager;
-import buildcraft.lib.client.render.ItemRenderUtil;
-import buildcraft.lib.client.render.laser.LaserData_BC8;
-import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
-import buildcraft.lib.misc.MathUtil;
-import buildcraft.lib.misc.VecUtil;
+import java.util.Collections;
+
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.entity.RenderEntity;
 import net.minecraft.item.ItemStack;
@@ -18,7 +17,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import java.util.Collections;
+import buildcraft.lib.client.render.ItemRenderUtil;
+import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import buildcraft.lib.misc.MathUtil;
+import buildcraft.lib.misc.VecUtil;
+
+import buildcraft.builders.snapshot.ITileForSnapshotBuilder;
+import buildcraft.builders.snapshot.SnapshotBuilder;
+import buildcraft.core.client.BuildCraftLaserManager;
 
 public class RenderSnapshotBuilder {
     public static <T extends ITileForSnapshotBuilder> void render(

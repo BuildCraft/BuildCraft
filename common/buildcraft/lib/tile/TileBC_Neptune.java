@@ -1,7 +1,9 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
+/*
+ * Copyright (c) 2016 SpaceToad and the BuildCraft team
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 package buildcraft.lib.tile;
 
 import java.io.IOException;
@@ -12,6 +14,9 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -44,7 +49,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.permission.IPlayerOwned;
+import buildcraft.api.core.IPlayerOwned;
 
 import buildcraft.lib.cap.CapabilityHelper;
 import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
@@ -61,15 +66,13 @@ import buildcraft.lib.misc.PermissionUtil.PermissionBlock;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.IPayloadReceiver;
 import buildcraft.lib.net.IPayloadWriter;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.MessageUpdateTile;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.EnumTagTypeMulti;
 import buildcraft.lib.tile.item.ItemHandlerManager;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 public abstract class TileBC_Neptune extends TileEntity implements IPayloadReceiver, IAdvDebugTarget, IPlayerOwned {
     public static final boolean DEBUG_PARTICLES = BCDebugging.shouldDebugLog("tile.debug.particles");
@@ -118,9 +121,9 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             throw new IllegalArgumentException("Unknown delta message type " + type);
         }
         if (gui) {
-            this.createAndSendGuiMessage(id, writer);
+            createAndSendGuiMessage(id, writer);
         } else {
-            this.createAndSendMessage(id, writer);
+            createAndSendMessage(id, writer);
         }
     });
 
@@ -145,7 +148,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     // ##################################################
 
     public final IBlockState getCurrentState() {
-        return BlockUtil.getBlockState(getWorld(), getPos());
+        return BlockUtil.getBlockState(world, pos);
     }
 
     @Nullable
@@ -163,12 +166,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     /** @param offset The position of the {@link IBlockState}, <i>relative</i> to this {@link TileEntity#getPos()} . */
     public final IBlockState getOffsetState(Vec3i offset) {
-        return getLocalState(getPos().add(offset));
+        return getLocalState(pos.add(offset));
     }
 
     /** @param pos The <i>absolute</i> position of the {@link IBlockState} . */
     public final IBlockState getLocalState(BlockPos pos) {
-        return BlockUtil.getBlockState(getWorld(), pos, isInThisChunk(pos));
+        return BlockUtil.getBlockState(world, pos, isInThisChunk(pos));
     }
 
     public final TileEntity getNeighbourTile(EnumFacing offset) {
@@ -178,17 +181,17 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     /** @param offset The position of the {@link TileEntity} to retrieve, <i>relative</i> to this
      *            {@link TileEntity#getPos()} . */
     public final TileEntity getOffsetTile(Vec3i offset) {
-        return getLocalTile(getPos().add(offset));
+        return getLocalTile(pos.add(offset));
     }
 
     /** @param pos The <i>absolute</i> position of the {@link TileEntity} . */
     public final TileEntity getLocalTile(BlockPos pos) {
-        return BlockUtil.getTileEntity(getWorld(), pos, isInThisChunk(pos));
+        return BlockUtil.getTileEntity(world, pos, isInThisChunk(pos));
     }
 
     private boolean isInThisChunk(BlockPos other) {
-        return pos.getX() / 16 == other.getX() / 16//
-            && pos.getZ() / 16 == other.getZ() / 16;
+        return pos.getX() >> 4 == other.getX() >> 4//
+            && pos.getZ() >> 4 == other.getZ() >> 4;
     }
 
     // ##################
@@ -225,7 +228,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public void onRemove() {
         NonNullList<ItemStack> toDrop = NonNullList.create();
         addDrops(toDrop, 0);
-        InventoryUtil.dropAll(getWorld(), getPos(), toDrop);
+        InventoryUtil.dropAll(world, pos, toDrop);
     }
 
     /** Called whenever {@link Block#getDrops(net.minecraft.world.IBlockAccess, BlockPos, IBlockState, int)}, or
@@ -238,7 +241,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (!placer.world.isRemote) {
             if (placer instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) placer;
-                this.owner = player.getGameProfile();
+                owner = player.getGameProfile();
                 if (!owner.isComplete()) {
                     throw new IllegalArgumentException("Incomplete owner! ( " + placer + " -> " + owner + " )");
                 }
@@ -262,18 +265,19 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     @Override
-    public final boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public final boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
         return getCapability(capability, facing) != null;
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         return caps.getCapability(capability, facing);
     }
 
     // Item caps
-    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
-        if (world.isBlockLoaded(getPos())) {
+    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before,
+        @Nonnull ItemStack after) {
+        if (world.isBlockLoaded(pos)) {
             markDirty();
         }
     }
@@ -290,11 +294,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     public PermissionUtil.PermissionBlock getPermBlock() {
-        return new PermissionBlock(this, getPos());
+        return new PermissionBlock(this, pos);
     }
 
     public boolean canEditOther(BlockPos other) {
-        return PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, getPermBlock(), PermissionUtil.createFrom(getWorld(), other));
+        return PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, getPermBlock(), PermissionUtil.createFrom(world,
+            other));
     }
 
     public boolean canPlayerEdit(EntityPlayer player) {
@@ -302,10 +307,10 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     public boolean canInteractWith(EntityPlayer player) {
-        if (world.getTileEntity(getPos()) != this) {
+        if (world.getTileEntity(pos) != this) {
             return false;
         }
-        if (player.getDistanceSq(this.pos.getX() + 0.5D, this.pos.getY() + 0.5D, this.pos.getZ() + 0.5D) > 64.0D) {
+        if (player.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) > 64.0D) {
             return false;
         }
         // edit rather than view because you can normally change the contents from gui interaction
@@ -326,9 +331,9 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
                 world.notifyBlockUpdate(pos, state, state, 0);
 
                 if (DEBUG_PARTICLES) {
-                    double x = getPos().getX() + 0.5;
-                    double y = getPos().getY() + 0.5;
-                    double z = getPos().getZ() + 0.5;
+                    double x = pos.getX() + 0.5;
+                    double y = pos.getY() + 0.5;
+                    double z = pos.getZ() + 0.5;
                     world.spawnParticle(EnumParticleTypes.HEART, x, y, z, 0, 0, 0);
                 }
             } else {
@@ -341,7 +346,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public final void sendNetworkUpdate(int id) {
         if (hasWorld()) {
             MessageUpdateTile message = createNetworkUpdate(id);
-            MessageUtil.sendToAllWatching(this.world, this.getPos(), message);
+            MessageUtil.sendToAllWatching(world, pos, message);
         }
     }
 
@@ -351,7 +356,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             if (message.getPayloadSize() <= Short.BYTES) {
                 return;
             }
-            MessageUtil.getWrapper().sendTo(message, (EntityPlayerMP) player);
+            MessageManager.sendTo(message, (EntityPlayerMP) player);
         }
     }
 
@@ -366,7 +371,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public final void sendNetworkUpdate(int id, EntityPlayer target) {
         if (hasWorld() && target instanceof EntityPlayerMP) {
             MessageUpdateTile message = createNetworkUpdate(id);
-            MessageUtil.getWrapper().sendTo(message, (EntityPlayerMP) target);
+            MessageManager.sendTo(message, (EntityPlayerMP) target);
         }
     }
 
@@ -375,7 +380,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             final Side side = world.isRemote ? Side.CLIENT : Side.SERVER;
             return createMessage(id, (buffer) -> writePayload(id, buffer, side));
         } else {
-            BCLog.logger.warn("Did not have a world at " + getPos() + "!");
+            BCLog.logger.warn("Did not have a world at " + pos + "!");
         }
         return null;
     }
@@ -383,7 +388,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public final void createAndSendMessage(int id, IPayloadWriter writer) {
         if (hasWorld()) {
             IMessage message = createMessage(id, writer);
-            MessageUtil.sendToAllWatching(this.world, this.getPos(), message);
+            MessageUtil.sendToAllWatching(world, pos, message);
         }
     }
 
@@ -398,7 +403,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         PacketBufferBC buffer = new PacketBufferBC(Unpooled.buffer());
         buffer.writeShort(id);
         writer.write(buffer);
-        return new MessageUpdateTile(getPos(), buffer);
+        return new MessageUpdateTile(pos, buffer);
     }
 
     @Override
@@ -408,9 +413,9 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
-        IBlockState state = getWorld().getBlockState(getPos());
+        IBlockState state = world.getBlockState(pos);
         int meta = state.getBlock().getMetaFromState(state);
-        return new SPacketUpdateTileEntity(getPos(), meta, getUpdateTag());
+        return new SPacketUpdateTileEntity(pos, meta, getUpdateTag());
     }
 
     @Override
@@ -446,9 +451,9 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     private void spawnReceiveParticles() {
         if (DEBUG_PARTICLES) {
             if (world != null) {
-                double x = getPos().getX() + 0.5;
-                double y = getPos().getY() + 0.5;
-                double z = getPos().getZ() + 0.5;
+                double x = pos.getX() + 0.5;
+                double y = pos.getY() + 0.5;
+                double z = pos.getZ() + 0.5;
                 double dx = Math.random() - 0.5;
                 double dy = Math.random() - 1;
                 double dz = Math.random() - 0.5;
@@ -510,9 +515,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) deltaManager.receiveDeltaData(false, EnumDeltaMessage.CURRENT_STATE, buffer);
             else if (id == NET_GUI_DATA) deltaManager.receiveDeltaData(true, EnumDeltaMessage.CURRENT_STATE, buffer);
-            else if (id == NET_REN_DELTA_SINGLE) deltaManager.receiveDeltaData(false, EnumDeltaMessage.ADD_SINGLE, buffer);
-            else if (id == NET_GUI_DELTA_SINGLE) deltaManager.receiveDeltaData(true, EnumDeltaMessage.ADD_SINGLE, buffer);
-            else if (id == NET_REN_DELTA_CLEAR) deltaManager.receiveDeltaData(false, EnumDeltaMessage.SET_VALUE, buffer);
+            else if (id == NET_REN_DELTA_SINGLE) deltaManager.receiveDeltaData(false, EnumDeltaMessage.ADD_SINGLE,
+                buffer);
+            else if (id == NET_GUI_DELTA_SINGLE) deltaManager.receiveDeltaData(true, EnumDeltaMessage.ADD_SINGLE,
+                buffer);
+            else if (id == NET_REN_DELTA_CLEAR) deltaManager.receiveDeltaData(false, EnumDeltaMessage.SET_VALUE,
+                buffer);
             else if (id == NET_GUI_DELTA_CLEAR) deltaManager.receiveDeltaData(true, EnumDeltaMessage.SET_VALUE, buffer);
             else if (id == NET_REDRAW) redrawBlock();
             else if (id == NET_ADV_DEBUG) {
@@ -581,7 +589,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     public void enableDebugging() {
-        if (getWorld() == null || getWorld().isRemote) {
+        if (world.isRemote) {
             return;
         }
         BCAdvDebugging.setCurrentDebugTarget(this);
@@ -594,7 +602,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     @Override
     public boolean doesExistInWorld() {
-        return hasWorld() && getWorld().getTileEntity(getPos()) == this;
+        return hasWorld() && world.getTileEntity(pos) == this;
     }
 
     @Override

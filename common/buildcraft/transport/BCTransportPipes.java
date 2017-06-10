@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport;
 
 import java.util.Arrays;
@@ -14,7 +20,25 @@ import buildcraft.api.transport.pipe.PipeDefinition.PipeDefinitionBuilder;
 import buildcraft.api.transport.pipe.PipeFlowType;
 
 import buildcraft.transport.pipe.PipeRegistry;
-import buildcraft.transport.pipe.behaviour.*;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourClay;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourCobble;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourDaizuli;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamondFluid;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamondItem;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourGold;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourIron;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourLapis;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourObsidian;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourQuartz;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourSandstone;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourStone;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourStripes;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourStructure;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourVoid;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourWood;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodPower;
 
 public class BCTransportPipes {
     public static PipeDefinition structure;

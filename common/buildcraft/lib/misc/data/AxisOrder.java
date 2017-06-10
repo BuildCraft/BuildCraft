@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.misc.data;
 
 import com.google.common.collect.ImmutableTable;
@@ -7,8 +13,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
-
-import buildcraft.lib.misc.NBTUtilBC;
 
 public class AxisOrder {
     private static final Table<EnumAxisOrder, Inversion, AxisOrder> allOrders;
@@ -99,7 +103,7 @@ public class AxisOrder {
 
         public final AxisDirection first, second, third;
 
-        private Inversion() {
+        Inversion() {
             first = getFor(name().charAt(0));
             second = getFor(name().charAt(1));
             third = getFor(name().charAt(2));

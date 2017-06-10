@@ -1,26 +1,24 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.gui;
 
 import java.io.IOException;
-import java.util.List;
 
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.statements.IStatementContainer;
 
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.IGuiElement;
-import buildcraft.lib.gui.ITooltipElement;
-import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
-import buildcraft.lib.gui.statement.ElementStatement;
 import buildcraft.lib.gui.statement.ElementStatementParam;
 import buildcraft.lib.gui.statement.GuiStatementSelector;
-import buildcraft.lib.gui.statement.StatementWrapper;
-import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
 

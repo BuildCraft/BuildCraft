@@ -1,14 +1,23 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 package buildcraft.lib.misc;
 
-import buildcraft.api.mj.MjAPI;
-import buildcraft.lib.BCLibConfig;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.properties.IProperty;
@@ -26,20 +35,33 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.*;
+import net.minecraft.world.ChunkCache;
+import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
+
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
-import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import javax.annotation.Nonnull;
-import java.util.*;
+import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.mj.MjAPI;
+
+import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.compat.CompatManager;
 
 public final class BlockUtil {
     public static NonNullList<ItemStack> getItemStackFromBlock(WorldServer world, BlockPos pos, GameProfile owner) {
@@ -50,7 +72,7 @@ public final class BlockUtil {
         }
 
         List<ItemStack> dropsList = block.getDrops(world, pos, state, 0);
-        EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer(world, pos, owner);
+        EntityPlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner, pos);
         float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, pos, state, 0, 1.0F, false, fakePlayer);
 
         NonNullList<ItemStack> returnList = NonNullList.create();
@@ -80,7 +102,7 @@ public final class BlockUtil {
     }
 
     public static boolean harvestBlock(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, BlockPos ownerPos, GameProfile owner) {
-        FakePlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer(world, ownerPos, owner);
+        FakePlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner, ownerPos);
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), fakePlayer);
         MinecraftForge.EVENT_BUS.post(breakEvent);
 
@@ -102,7 +124,7 @@ public final class BlockUtil {
     }
 
     public static FakePlayer getFakePlayerWithTool(WorldServer world, @Nonnull ItemStack tool, GameProfile owner) {
-        FakePlayer player = FakePlayerUtil.INSTANCE.getFakePlayer(world, owner);
+        FakePlayer player = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner);
         int i = 0;
 
         while (player.getHeldItemMainhand() != tool && i < 9) {
@@ -118,7 +140,7 @@ public final class BlockUtil {
     }
 
     public static boolean breakBlock(WorldServer world, BlockPos pos, NonNullList<ItemStack> drops, BlockPos ownerPos, GameProfile owner) {
-        FakePlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer(world, ownerPos, owner);
+        FakePlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner, ownerPos);
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), fakePlayer);
         MinecraftForge.EVENT_BUS.post(breakEvent);
 
@@ -177,7 +199,7 @@ public final class BlockUtil {
 
     public static float getBlockHardnessMining(World world, BlockPos pos, IBlockState state, GameProfile owner) {
         if (world instanceof WorldServer) {
-            EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, owner);
+            EntityPlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) world, owner);
             float relativeHardness = state.getPlayerRelativeBlockHardness(fakePlayer, world, pos);
             if (relativeHardness <= 0.0F) {
                 // Forge's getPlayerRelativeBlockHardness hook returns 0.0F if the hardness is < 0.0F.
@@ -224,16 +246,13 @@ public final class BlockUtil {
     public static Fluid getFluidWithFlowing(World world, BlockPos pos) {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
-        Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
-        if (fluid == null) {
-            if (block == Blocks.FLOWING_WATER) {
-                fluid = FluidRegistry.WATER;
-            }
-            if (block == Blocks.FLOWING_LAVA) {
-                fluid = FluidRegistry.LAVA;
-            }
+        if (block == Blocks.FLOWING_WATER) {
+            return FluidRegistry.WATER;
         }
-        return fluid;
+        if (block == Blocks.FLOWING_LAVA) {
+            return FluidRegistry.LAVA;
+        }
+        return FluidRegistry.lookupFluidForBlock(block);
     }
 
     public static Fluid getFluid(Block block) {
@@ -302,15 +321,7 @@ public final class BlockUtil {
     }
 
     public static TileEntity getTileEntity(World world, BlockPos pos, boolean force) {
-        if (!force) {
-            if (pos.getY() < 0 || pos.getY() > 255) {
-                return null;
-            }
-            Chunk chunk = ChunkUtil.getChunk(world, pos.getX() >> 4, pos.getZ() >> 4);
-            return chunk != null ? chunk.getTileEntity(pos, EnumCreateEntityType.CHECK) : null;
-        } else {
-            return world.getTileEntity(pos);
-        }
+        return CompatManager.getTile(world, pos, force);
     }
 
     public static IBlockState getBlockState(World world, BlockPos pos) {
@@ -318,19 +329,7 @@ public final class BlockUtil {
     }
 
     public static IBlockState getBlockState(World world, BlockPos pos, boolean force) {
-        if (!force) {
-            if (pos.getY() < 0 || pos.getY() >= world.getHeight()) {
-                return Blocks.AIR.getDefaultState();
-            }
-            Chunk chunk = ChunkUtil.getChunk(world, pos.getX() >> 4, pos.getZ() >> 4);
-            return chunk != null ? chunk.getBlockState(pos) : Blocks.AIR.getDefaultState();
-        } else {
-            if (pos.getY() < 0 || pos.getY() > 255) {
-                return Blocks.AIR.getDefaultState();
-            }
-            Chunk chunk = ChunkUtil.getChunk(world, pos.getX() >> 4, pos.getZ() >> 4);
-            return chunk != null ? chunk.getBlockState(pos) : Blocks.AIR.getDefaultState();
-        }
+        return CompatManager.getState(world, pos, force);
     }
 
     public static boolean useItemOnBlock(World world, EntityPlayer player, ItemStack stack, BlockPos pos, EnumFacing direction) {

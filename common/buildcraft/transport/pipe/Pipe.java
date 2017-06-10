@@ -1,8 +1,16 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.pipe;
 
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.EnumDyeColor;
@@ -19,15 +27,23 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.ICustomPipeConnection;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.api.transport.pipe.PipeBehaviour;
+import buildcraft.api.transport.pipe.PipeConnectionAPI;
+import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.api.transport.pipe.PipeFlow;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.data.LoadingException;
 import buildcraft.lib.net.PacketBufferBC;
+
 import buildcraft.transport.client.model.key.PipeModelKey;
 
 public final class Pipe implements IPipe, IDebuggable {
@@ -53,7 +69,7 @@ public final class Pipe implements IPipe, IDebuggable {
 
     // read + write
 
-    public Pipe(IPipeHolder holder, NBTTagCompound nbt) throws LoadingException {
+    public Pipe(IPipeHolder holder, NBTTagCompound nbt) throws InvalidInputDataException {
         this.holder = holder;
         this.colour = NBTUtilBC.readEnum(nbt.getTag("col"), EnumDyeColor.class);
         this.definition = PipeRegistry.INSTANCE.loadDefinition(nbt.getString("def"));
@@ -76,7 +92,7 @@ public final class Pipe implements IPipe, IDebuggable {
         this.holder = holder;
         try {
             this.definition = PipeRegistry.INSTANCE.loadDefinition(buffer.readString(256));
-        } catch (LoadingException e) {
+        } catch (InvalidInputDataException e) {
             throw new IOException(e);
         }
         this.behaviour = definition.logicConstructor.createBehaviour(this);
@@ -180,12 +196,12 @@ public final class Pipe implements IPipe, IDebuggable {
     // Caps
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
         return getCapability(capability, facing) != null;
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         T val = behaviour.getCapability(capability, facing);
         if (val != null) return val;
         return flow.getCapability(capability, facing);

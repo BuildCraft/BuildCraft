@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.misc.data;
 
 import java.util.ArrayList;
@@ -18,9 +24,10 @@ public class DelayedList<E> {
     }
 
     public static <E> DelayedList<E> createConcurrent() {
-        return new DelayedList<E>(Collections.synchronizedList(new ArrayList<>()), () -> {
-            return Collections.synchronizedList(new ArrayList<>());
-        }) {
+        return new DelayedList<E>(
+            Collections.synchronizedList(new ArrayList<>()),
+            () -> Collections.synchronizedList(new ArrayList<>())
+        ) {
             @Override
             public List<E> advance() {
                 synchronized (this.elements) {

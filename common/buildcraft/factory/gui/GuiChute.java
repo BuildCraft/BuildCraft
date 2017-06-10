@@ -6,9 +6,10 @@ package buildcraft.factory.gui;
 
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.factory.container.ContainerChute;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
+
+import buildcraft.factory.container.ContainerChute;
 
 public class GuiChute extends GuiBC8<ContainerChute> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftfactory:textures/gui/chute.png");

@@ -1,6 +1,18 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.expression.node.func;
 
-import buildcraft.lib.expression.api.*;
+import buildcraft.lib.expression.api.IConstantNode;
+import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.api.INodeFunc;
+import buildcraft.lib.expression.api.INodeStack;
+import buildcraft.lib.expression.api.IVariableNode;
+import buildcraft.lib.expression.api.InvalidExpressionException;
+import buildcraft.lib.expression.api.NodeType;
 
 public abstract class NodeFuncGeneric implements INodeFunc {
 
@@ -62,16 +74,16 @@ public abstract class NodeFuncGeneric implements INodeFunc {
         }
 
         protected String getArgsToString() {
-            String total = "[";
+            StringBuilder total = new StringBuilder("[");
 
             for (int i = 0; i < realArgs.length; i++) {
                 if (i > 0) {
-                    total += ", (";
+                    total.append(", (");
                 } else {
-                    total += " (";
+                    total.append(" (");
                 }
 
-                total += realArgs[i].toString() + ") ";
+                total.append(realArgs[i].toString()).append(") ");
             }
 
             return total + "]";

@@ -1,17 +1,28 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.builders.container;
 
-import buildcraft.builders.item.ItemSnapshot;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+
 import buildcraft.api.enums.EnumSnapshotType;
-import buildcraft.builders.tile.TileBuilder;
+
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.lib.gui.slot.SlotDisplay;
 import buildcraft.lib.gui.widget.WidgetFluidTank;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import buildcraft.builders.item.ItemSnapshot;
+import buildcraft.builders.tile.TileBuilder;
 
 public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
     public final List<WidgetFluidTank> widgetTanks;
@@ -23,7 +34,7 @@ public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
 
         addSlotToContainer(new SlotBase(tile.invSnapshot, 0, 80, 27) {
             @Override
-            public boolean isItemValid(ItemStack stack) {
+            public boolean isItemValid(@Nonnull ItemStack stack) {
                 return stack.getItem() instanceof ItemSnapshot && ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used;
             }
         });

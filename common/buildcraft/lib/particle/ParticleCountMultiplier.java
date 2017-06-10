@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.particle;
 
 import java.util.ArrayList;
@@ -23,14 +29,12 @@ public enum ParticleCountMultiplier implements IParticlePositionPipe {
     }
 
     public static IParticlePositionPipe getOptionProvider() {
-        return (pos) -> {
-            return getForOption().pipe(pos);
-        };
+        return pos -> getForOption().pipe(pos);
     }
 
     private final int numExpanses;
 
-    private ParticleCountMultiplier(int numExpanses) {
+    ParticleCountMultiplier(int numExpanses) {
         this.numExpanses = numExpanses;
     }
 

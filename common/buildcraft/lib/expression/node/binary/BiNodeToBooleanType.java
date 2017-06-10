@@ -1,19 +1,25 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.expression.node.binary;
 
 import com.google.common.base.Objects;
 
-import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.node.binary.NodeBinaryBoolean.BiBooleanPredicate;
 import buildcraft.lib.expression.node.binary.NodeBinaryDoubleToBoolean.BiDoubleToBooleanFunction;
 import buildcraft.lib.expression.node.binary.NodeBinaryLongToBoolean.BiLongToBooleanFunction;
 import buildcraft.lib.expression.node.binary.NodeBinaryStringToBoolean.BiStringToBooleanFunction;
 
 public enum BiNodeToBooleanType implements IBinaryNodeType {
-    EQUAL("==", (l, r) -> l == r, (l, r) -> l == r, (l, r) -> l == r, (l, r) -> Objects.equal(l, r)),
+    EQUAL("==", (l, r) -> l == r, (l, r) -> l == r, (l, r) -> l == r, Objects::equal),
     NOT_EQUAL("!=", (l, r) -> l != r, (l, r) -> l != r, (l, r) -> l != r, (l, r) -> !Objects.equal(l, r)),
     LESS_THAN("<", (l, r) -> l < r, (l, r) -> l < r, null, (l, r) -> l.compareTo(r) < 0),
     GREATER_THAN(">", (l, r) -> l > r, (l, r) -> l > r, null, (l, r) -> l.compareTo(r) > 0),
@@ -26,7 +32,7 @@ public enum BiNodeToBooleanType implements IBinaryNodeType {
     public final BiBooleanPredicate booleanFunction;
     public final BiStringToBooleanFunction stringFunc;
 
-    private BiNodeToBooleanType(String op, BiLongToBooleanFunction longFunc, BiDoubleToBooleanFunction doubleFunc, BiBooleanPredicate booleanFunction, BiStringToBooleanFunction stringFunc) {
+    BiNodeToBooleanType(String op, BiLongToBooleanFunction longFunc, BiDoubleToBooleanFunction doubleFunc, BiBooleanPredicate booleanFunction, BiStringToBooleanFunction stringFunc) {
         this.op = op;
         this.longFunc = longFunc;
         this.doubleFunc = doubleFunc;

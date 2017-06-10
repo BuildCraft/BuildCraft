@@ -1,4 +1,12 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.inventory;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -21,8 +29,9 @@ public final class SidedInventoryWrapper extends AbstractInvItemTransactor {
         slots = sided.getSlotsForFace(face);
     }
 
+    @Nonnull
     @Override
-    protected ItemStack insert(int externalSlot, ItemStack stack, boolean simulate) {
+    protected ItemStack insert(int externalSlot, @Nonnull ItemStack stack, boolean simulate) {
         int sidedSlot = slots[externalSlot];
         if (sided.canInsertItem(sidedSlot, stack, face)) {
             // Delegate to the normal inserter - its just easier.
@@ -31,6 +40,7 @@ public final class SidedInventoryWrapper extends AbstractInvItemTransactor {
         return stack;
     }
 
+    @Nonnull
     @Override
     protected ItemStack extract(int externalSlot, IStackFilter filter, int min, int max, boolean simulate) {
         int sidedSlot = slots[externalSlot];

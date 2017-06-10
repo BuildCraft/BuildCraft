@@ -1,13 +1,19 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.expression.node.binary;
 
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.LongBinaryOperator;
 
-import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.node.binary.NodeBinaryBoolean.BiBooleanPredicate;
 import buildcraft.lib.expression.node.binary.NodeBinaryString.BiStringFunction;
 
@@ -29,7 +35,7 @@ public enum BiNodeType implements IBinaryNodeType {
     public final BiBooleanPredicate booleanFunction;
     public final BiStringFunction stringFunc;
 
-    private BiNodeType(String op, LongBinaryOperator longFunc, DoubleBinaryOperator doubleFunc, BiBooleanPredicate booleanFunction, BiStringFunction stringFunc) {
+    BiNodeType(String op, LongBinaryOperator longFunc, DoubleBinaryOperator doubleFunc, BiBooleanPredicate booleanFunction, BiStringFunction stringFunc) {
         this.op = op;
         this.longFunc = longFunc;
         this.doubleFunc = doubleFunc;

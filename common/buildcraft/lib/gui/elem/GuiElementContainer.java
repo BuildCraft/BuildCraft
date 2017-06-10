@@ -1,7 +1,14 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.gui.elem;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import buildcraft.lib.gui.GuiBC8;
@@ -43,9 +50,7 @@ public class GuiElementContainer implements IGuiElement {
 
     /** Adds all of the given elements, like in {@link #add(IGuiElement)} */
     public void addAll(IGuiElement... elements) {
-        for (IGuiElement e : elements) {
-            internalElements.add(e);
-        }
+        Collections.addAll(internalElements, elements);
         recalcSize();
     }
 

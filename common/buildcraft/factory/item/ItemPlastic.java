@@ -6,17 +6,18 @@ package buildcraft.factory.item;
 
 import java.util.Locale;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.EnumDyeColor;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.factory.block.BlockPlastic;
 import buildcraft.lib.item.ItemBlockBCMulti;
 import buildcraft.lib.misc.ColourUtil;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import buildcraft.factory.block.BlockPlastic;
 
 public class ItemPlastic extends ItemBlockBCMulti {
     public ItemPlastic(BlockPlastic block) {

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.robotics;
 
 import java.util.function.Consumer;
@@ -9,13 +15,14 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
-import buildcraft.lib.BCMessageHandler;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
+
+import buildcraft.core.BCCore;
 import buildcraft.robotics.zone.MessageZoneMapRequest;
 import buildcraft.robotics.zone.MessageZoneMapResponse;
 
@@ -40,8 +47,8 @@ public class BCRobotics {
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCRoboticsProxy.getProxy());
 
-        BCMessageHandler.addMessageType(MessageZoneMapRequest.class, MessageZoneMapRequest.HANDLER, Side.SERVER);
-        BCMessageHandler.addMessageType(MessageZoneMapResponse.class, MessageZoneMapResponse.HANDLER, Side.CLIENT);
+        MessageManager.addMessageType(MessageZoneMapRequest.class, MessageZoneMapRequest.HANDLER, Side.SERVER);
+        MessageManager.addMessageType(MessageZoneMapResponse.class, MessageZoneMapResponse.HANDLER, Side.CLIENT);
     }
 
     @Mod.EventHandler

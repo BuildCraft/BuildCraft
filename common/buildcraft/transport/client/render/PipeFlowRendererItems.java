@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.client.render;
 
 import java.util.List;
@@ -21,7 +27,7 @@ import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.render.ItemRenderUtil;
 import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.StackUtil;
+
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.pipe.flow.TravellingItem;

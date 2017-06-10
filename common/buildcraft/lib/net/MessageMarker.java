@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.net;
 
 import java.util.ArrayList;
@@ -5,8 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import buildcraft.lib.BCLibProxy;
-import net.minecraft.network.PacketBuffer;
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -16,14 +22,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import buildcraft.api.core.BCLog;
 
-import buildcraft.lib.BCMessageHandler;
+import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.MessageUtil;
 
-import io.netty.buffer.ByteBuf;
-
 public class MessageMarker implements IMessage {
-    private static final boolean DEBUG = BCMessageHandler.DEBUG;
+    private static final boolean DEBUG = MessageManager.DEBUG;
 
     public boolean add, multiple, connection;
     public int cacheId, count;
@@ -34,11 +38,10 @@ public class MessageMarker implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        PacketBuffer packet = new PacketBuffer(buf);
-        boolean[] flags = MessageUtil.readBooleanArray(packet, 3);
-        add = flags[0];
-        multiple = flags[1];
-        connection = flags[2];
+        PacketBufferBC packet = PacketBufferBC.asPacketBufferBc(buf);
+        add = packet.readBoolean();
+        multiple = packet.readBoolean();
+        connection = packet.readBoolean();
         cacheId = packet.readShort();
         if (multiple) {
             count = packet.readShort();
@@ -46,7 +49,7 @@ public class MessageMarker implements IMessage {
             count = 1;
         }
         for (int i = 0; i < count; i++) {
-            positions.add(packet.readBlockPos());
+            positions.add(MessageUtil.readBlockPos(packet));
         }
     }
 
@@ -54,15 +57,16 @@ public class MessageMarker implements IMessage {
     public void toBytes(ByteBuf buf) {
         count = positions.size();
         multiple = count != 1;
-        PacketBuffer packet = new PacketBuffer(buf);
-        boolean[] flags = {add, multiple, connection};
-        MessageUtil.writeBooleanArray(packet, flags);
+        PacketBufferBC packet = PacketBufferBC.asPacketBufferBc(buf);
+        packet.writeBoolean(add);
+        packet.writeBoolean(multiple);
+        packet.writeBoolean(connection);
         packet.writeShort(cacheId);
         if (multiple) {
             packet.writeShort(count);
         }
-        for (int i = 0; i < count; i++) {
-            packet.writeBlockPos(positions.get(i));
+        for (BlockPos pos : positions) {
+            MessageUtil.writeBlockPos(packet, pos);
         }
     }
 

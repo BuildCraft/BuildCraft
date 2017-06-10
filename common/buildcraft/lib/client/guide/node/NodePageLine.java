@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.guide.node;
 
 import java.util.Collections;
@@ -21,8 +27,8 @@ public class NodePageLine implements Comparable<NodePageLine> {
         this.part = part;
     }
 
-    public NodePageLine addChild(GuidePart part) {
-        NodePageLine node = new NodePageLine(this, part);
+    public NodePageLine addChild(GuidePart child) {
+        NodePageLine node = new NodePageLine(this, child);
         children.add(node);
         return node;
     }
@@ -37,21 +43,11 @@ public class NodePageLine implements Comparable<NodePageLine> {
     }
 
     public Iterable<NodePageLine> iterateNonNullNodes() {
-        return new Iterable<NodePageLine>() {
-            @Override
-            public Iterator<NodePageLine> iterator() {
-                return new NodePartIterator();
-            }
-        };
+        return NodePartIterator::new;
     }
 
     public Iterable<GuidePart> iterateNonNullLines() {
-        return new Iterable<GuidePart>() {
-            @Override
-            public Iterator<GuidePart> iterator() {
-                return new NodeGuidePartIterator();
-            }
-        };
+        return NodeGuidePartIterator::new;
     }
 
     public List<NodePageLine> getChildren() {
@@ -108,25 +104,24 @@ public class NodePageLine implements Comparable<NodePageLine> {
         }
 
         private NodePageLine next(boolean simulate) {
-            NodePageLine current = this.current;
-            int childrenDone = this.childrenDone;
-            while (childrenDone == current.getChildren().size()) {
+            NodePageLine next = this.current;
+            int visited = this.childrenDone;
+            while (visited == next.getChildren().size()) {
                 // Go to the parent
-                NodePageLine child = current;
-                current = current.parent;
-                if (current == null) {
+                NodePageLine child = next;
+                next = next.parent;
+                if (next == null) {
                     return null;
                 }
-                childrenDone = current.getChildren().indexOf(child) + 1;
+                visited = next.getChildren().indexOf(child) + 1;
             }
-            NodePageLine parent = current;
-            current = parent.getChildren().get(childrenDone++);
-            childrenDone = 0;
+            next = next.getChildren().get(visited++);
+            visited = 0;
             if (!simulate) {
-                this.current = current;
-                this.childrenDone = childrenDone;
+                this.current = next;
+                this.childrenDone = visited;
             }
-            return current;
+            return next;
         }
 
         @Override

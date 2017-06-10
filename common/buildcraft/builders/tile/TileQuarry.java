@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.builders.tile;
 
 import java.io.IOException;
@@ -16,6 +22,7 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -25,7 +32,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -38,6 +44,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.mj.MjAPI;
@@ -47,11 +54,13 @@ import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.inventory.AutomaticProvidingTransactor;
+import buildcraft.lib.inventory.ItemTransactorHelper;
+import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.misc.InventoryUtil;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.VecUtil;
@@ -76,7 +85,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     public Vec3d drillPos;
     public Vec3d clientDrillPos;
     public Vec3d prevClientDrillPos;
-    /** Recent power input, in MJ (not micro) */
+    /**
+     * Recent power input, in MJ (not micro)
+     */
     private final AverageInt recentPowerAverage = new AverageInt(200);
 
     public TileQuarry() {
@@ -123,9 +134,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         framePositions = new ArrayList<>(new HashSet<>(framePositions));
 
         framePositions.sort(Comparator.comparing(blockPos ->
-                Math.pow(blockPos.getX() - pos.getX(), 2) +
-                        Math.pow(blockPos.getY() - pos.getY(), 2) +
-                        Math.pow(blockPos.getZ() - pos.getZ(), 2)
+            Math.pow(blockPos.getX() - pos.getX(), 2) +
+                Math.pow(blockPos.getY() - pos.getY(), 2) +
+                Math.pow(blockPos.getZ() - pos.getZ(), 2)
         ));
 
         List<BlockPos> framePositionsSorted = new ArrayList<>();
@@ -135,8 +146,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             for (BlockPos blockPos : framePositions) {
                 if (!framePositionsSorted.contains(blockPos)) {
                     if (framePositionsSorted.stream()
-                            .flatMap(blockPosLocal -> Arrays.stream(EnumFacing.values()).map(blockPosLocal::offset))
-                            .anyMatch(Predicate.isEqual(blockPos))) {
+                        .flatMap(blockPosLocal -> Arrays.stream(EnumFacing.VALUES).map(blockPosLocal::offset))
+                        .anyMatch(Predicate.isEqual(blockPos))) {
                         framePositionsSorted.add(blockPos);
                         break;
                     }
@@ -285,10 +296,10 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         if (currentTask != null) {
             long maxToExtract = MjAPI.MJ * 10;
             if (currentTask.addPower(
-                    battery.extractPower(
-                            0,
-                            Math.min(currentTask.getTarget() - currentTask.getPower(), maxToExtract)
-                    )
+                battery.extractPower(
+                    0,
+                    Math.min(currentTask.getTarget() - currentTask.getPower(), maxToExtract)
+                )
             )) {
                 currentTask = null;
             }
@@ -303,11 +314,11 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 for (int z = min.getZ(); z <= max.getZ(); z++) {
                     BlockPos framePos = new BlockPos(x, y, z);
                     boolean shouldBeFrame = ((x == min.getX() || x == max.getX()) && (y == min.getY() || y == max.getY())) ||
-                            ((y == min.getY() || y == max.getY()) && (z == min.getZ() || z == max.getZ())) ||
-                            ((z == min.getZ() || z == max.getZ()) && (x == min.getX() || x == max.getX()));
+                        ((y == min.getY() || y == max.getY()) && (z == min.getZ() || z == max.getZ())) ||
+                        ((z == min.getZ() || z == max.getZ()) && (x == min.getX() || x == max.getX()));
                     Block block = world.getBlockState(framePos).getBlock();
                     if (((block != Blocks.AIR && !shouldBeFrame) ||
-                            (block != BCBuildersBlocks.frame && block != Blocks.AIR && shouldBeFrame)) && !canSkip(framePos)) {
+                        (block != BCBuildersBlocks.frame && block != Blocks.AIR && shouldBeFrame)) && !canSkip(framePos)) {
                         breakPoses.add(framePos);
                     }
                 }
@@ -315,7 +326,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
 
         if (breakPoses.size() > 0) {
-            double closestDistance = Integer.MAX_VALUE;
+            double closestDistance = Double.MAX_VALUE;
             BlockPos closestPos = null;
 
             for (BlockPos breakPos : breakPoses) {
@@ -348,7 +359,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         if ((boxIterator == null || drillPos == null) && miningBox.isInitialized()) {
             boxIterator = new BoxIterator(miningBox, AxisOrder.getFor(EnumAxisOrder.XZY, AxisOrder.Inversion.NNN), true);
             while (world.isAirBlock(boxIterator.getCurrent()) || canSkip(boxIterator.getCurrent())) {
-                boxIterator.advance();
+               if (boxIterator.advance() == null) {
+                   break;
+               }
             }
             drillPos = new Vec3d(miningBox.closestInsideTo(pos));
         }
@@ -366,7 +379,12 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 }
             } else {
                 found = true;
-                currentTask = new TaskMoveDrill(drillPos, new Vec3d(boxIterator.advance()));
+                BlockPos next = boxIterator.advance();
+                if (next == null) {
+                    currentTask = null;
+                } else {
+                    currentTask = new TaskMoveDrill(drillPos, new Vec3d(next));
+                }
             }
 
             if (found) {
@@ -462,7 +480,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         list.add(BoundingBoxUtil.makeFrom(minYAdj, maxYAdj, 0.25));
         return list;
     }
-    
+
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
@@ -478,8 +496,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         if (currentTask != null) {
             left.add("task:");
             left.add(" - class = " + currentTask.getClass().getName());
-            left.add(" - power = " + MjAPI.formatMjShort(currentTask.getPower()));
-            left.add(" - target = " + MjAPI.formatMjShort(currentTask.getTarget()));
+            left.add(" - power = " + LocaleUtil.localizeMj(currentTask.getPower()));
+            left.add(" - target = " + LocaleUtil.localizeMj(currentTask.getTarget()));
         } else {
             left.add("task = null");
         }
@@ -527,7 +545,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     private abstract class Task {
         protected long power;
 
-        public Task() {}
+        public Task() {
+        }
 
         public Task(NBTTagCompound nbt) {
             power = nbt.getLong("power");
@@ -543,7 +562,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
         public abstract long getTarget();
 
-        /** @return True if this task has been completed, or cancelled. */
+        /**
+         * @return True if this task has been completed, or cancelled.
+         */
         protected abstract boolean onReceivePower();
 
         protected abstract boolean finish();
@@ -552,7 +573,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             return power;
         }
 
-        /** @return True if this task has been completed, or cancelled. */
+        /**
+         * @return True if this task has been completed, or cancelled.
+         */
         public final boolean addPower(long microJoules) {
             power += microJoules;
             if (power >= getTarget()) {
@@ -607,7 +630,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
         @Override
         protected boolean finish() {
-            EntityPlayer fake = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, pos, getOwner());
+            EntityPlayer fake = BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) world, getOwner(), pos);
 
             IBlockState state = world.getBlockState(breakPos);
             if (state.getBlockHardness(world, breakPos) < 0) {
@@ -617,19 +640,30 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, breakPos, state, fake);
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if (!breakEvent.isCanceled()) {
-                boolean put = TileQuarry.this.drillPos != null;
+                List<ItemStack> stacks = new ArrayList<>();
                 // The drill pos will be null if we are making the frame: this is when we want to destroy the block, not
                 // drop its contents
-                if (put) {
-                    NonNullList<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) world, breakPos, getOwner());
-                    if (stacks != null) {
-                        for (ItemStack stack : stacks) {
-                            InventoryUtil.addToBestAcceptor(world, pos, null, stack);
-                        }
-                    }
-                }
                 world.sendBlockBreakProgress(breakPos.hashCode(), breakPos, -1);
-                world.destroyBlock(breakPos, false);
+                world.destroyBlock(breakPos, true);
+                if (drillPos != null) {
+                    world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(breakPos)).stream()
+                        .map(entity -> ItemTransactorHelper.getTransactorForEntity(entity, EnumFacing.UP))
+                        .forEach(transactor -> {
+                            ItemStack stack;
+                            while (!(stack = transactor.extract(
+                                StackFilter.ALL,
+                                0,
+                                Integer.MAX_VALUE,
+                                false
+                            )).isEmpty()) {
+                                stacks.add(stack);
+                            }
+                        });
+
+                }
+                for (ItemStack stack : stacks) {
+                    InventoryUtil.addToBestAcceptor(world, pos, null, stack);
+                }
                 return true;
             } else {
                 return false;
@@ -640,8 +674,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     public class TaskAddFrame extends Task {
         public final BlockPos framePos;
 
-        TaskAddFrame(BlockPos pos) {
-            this.framePos = pos;
+        TaskAddFrame(BlockPos framePos) {
+            this.framePos = framePos;
         }
 
         public TaskAddFrame(NBTTagCompound nbt) {

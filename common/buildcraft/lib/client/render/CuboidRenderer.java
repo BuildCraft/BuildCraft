@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.render;
 
 import net.minecraft.client.renderer.VertexBuffer;
@@ -154,7 +160,7 @@ public class CuboidRenderer {
         /** If true, then Y maps to V. Otherwise Z maps to V. */
         private final boolean vy;
 
-        private TexMap(boolean ux, boolean vy) {
+        TexMap(boolean ux, boolean vy) {
             this.ux = ux;
             this.vy = vy;
         }

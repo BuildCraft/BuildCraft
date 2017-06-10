@@ -1,7 +1,24 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.misc;
 
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import com.google.common.base.Throwables;
 
@@ -32,10 +49,10 @@ public class WorkerThreadUtil {
                 })//
                 .build();
         RejectedExecutionHandler rejectHandler = new CallerRunsPolicy();
-        WORKING_POOL = new ThreadPoolExecutor(0, max, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), factory, rejectHandler);
+        WORKING_POOL = new ThreadPoolExecutor(0, max, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), factory, rejectHandler);
 
         factory = new BasicThreadFactory.Builder().daemon(false).namingPattern("BuildCraft Dependant Worker Thread %d").build();
-        DEPENDANT_WORKING_POOL = new ThreadPoolExecutor(0, max, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), factory, rejectHandler);
+        DEPENDANT_WORKING_POOL = new ThreadPoolExecutor(0, max, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), factory, rejectHandler);
 
         if (DEBUG) {
             factory = new BasicThreadFactory.Builder().daemon(false).namingPattern("BuildCraft Monitoring Thread %d").build();

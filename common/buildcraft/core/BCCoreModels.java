@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.core;
 
 import java.util.ArrayList;
@@ -5,8 +11,6 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableMap;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -115,11 +119,11 @@ public class BCCoreModels {
         return model.getCutoutQuads();
     }
 
-    public static final MutableQuad[] getRedstoneEngineQuads(TileEngineRedstone_BC8 tile, float partialTicks) {
+    public static MutableQuad[] getRedstoneEngineQuads(TileEngineRedstone_BC8 tile, float partialTicks) {
         return getEngineQuads(ENGINE_REDSTONE, tile, partialTicks);
     }
 
-    public static final MutableQuad[] getCreativeEngineQuads(TileEngineCreative tile, float partialTicks) {
+    public static MutableQuad[] getCreativeEngineQuads(TileEngineCreative tile, float partialTicks) {
         return getEngineQuads(ENGINE_CREATIVE, tile, partialTicks);
     }
 }

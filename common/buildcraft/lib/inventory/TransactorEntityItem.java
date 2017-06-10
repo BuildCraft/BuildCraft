@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.inventory;
 
 import javax.annotation.Nonnull;
@@ -25,7 +31,7 @@ public class TransactorEntityItem implements IItemExtractable {
             return StackUtil.EMPTY;
         }
         ItemStack current = entity.getEntityItem();
-        if (current == null || current.getCount() < min || max < 1 || max < min) {
+        if (current.isEmpty() || current.getCount() < min || min < 1 || max < min) {
             return StackUtil.EMPTY;
         }
         if (filter.matches(current)) {

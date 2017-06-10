@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.energy;
 
 import java.util.ArrayList;
@@ -129,6 +135,7 @@ public class BCEnergyFluids {
         FluidManager.register(def, true);
 
         BCFluidBlock block = (BCFluidBlock) def.getBlock();
+        block.setLightOpacity(3);
         // Distance that the fluid will travel: 1->16
         // Higher heat values travel a little further
         block.setQuantaPerBlock(baseQuanta + (baseQuanta > 6 ? heat : heat / 2));

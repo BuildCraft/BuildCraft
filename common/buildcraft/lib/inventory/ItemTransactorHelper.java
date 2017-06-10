@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.inventory;
 
 import javax.annotation.Nonnull;
@@ -92,8 +98,7 @@ public class ItemTransactorHelper {
      * implementation. */
     public static NonNullList<ItemStack> insertAllBypass(IItemTransactor transactor, NonNullList<ItemStack> stacks, boolean simulate) {
         NonNullList<ItemStack> leftOver = NonNullList.create();
-        for (int i = 0; i < stacks.size(); i++) {
-            ItemStack stack = stacks.get(i);
+        for (ItemStack stack : stacks) {
             ItemStack leftOverStack = transactor.insert(stack, false, simulate);
             if (!leftOverStack.isEmpty()) {
                 leftOver.add(leftOverStack);

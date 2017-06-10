@@ -1,22 +1,42 @@
-package buildcraft.builders.snapshot;
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 
-import buildcraft.api.enums.EnumSnapshotType;
-import buildcraft.lib.misc.data.Box;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
+package buildcraft.builders.snapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Rotation;
+import net.minecraft.util.math.BlockPos;
+
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.enums.EnumSnapshotType;
+
+import buildcraft.lib.misc.data.Box;
+
 public class Template extends Snapshot {
     public boolean[][][] data;
 
-    @Override
-    public <T extends ITileForSnapshotBuilder> SnapshotBuilder<T> createBuilder(T tile) {
-        // noinspection unchecked
-        return (SnapshotBuilder<T>) new TemplateBuilder((ITileForTemplateBuilder) tile);
+    public Template copy() {
+        Template template = new Template();
+        template.header = header;
+        template.size = size;
+        template.facing = facing;
+        template.offset = offset;
+        template.data = new boolean[size.getX()][size.getY()][size.getZ()];
+        for (int z = 0; z < size.getZ(); z++) {
+            for (int y = 0; y < size.getY(); y++) {
+                for (int x = 0; x < size.getX(); x++) {
+                    template.data[x][y][z] = data[x][y][z];
+                }
+            }
+        }
+        return template;
     }
 
     @Override
@@ -36,10 +56,16 @@ public class Template extends Snapshot {
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) {
+    public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
         super.deserializeNBT(nbt);
         data = new boolean[size.getX()][size.getY()][size.getZ()];
         byte[] serializedData = nbt.getByteArray("data");
+        if (serializedData.length != size.getX() * size.getY() * size.getZ()) {
+            throw new InvalidInputDataException(
+                "Serialized data has length of " + serializedData.length +
+                    ", but we expected " + size.getX() * size.getY() * size.getZ() + size.toString()
+            );
+        }
         int i = 0;
         for (int z = 0; z < size.getZ(); z++) {
             for (int y = 0; y < size.getY(); y++) {
@@ -69,8 +95,8 @@ public class Template extends Snapshot {
                 for (int y = 0; y < getSnapshot().size.getY(); y++) {
                     for (int x = 0; x < getSnapshot().size.getX(); x++) {
                         BlockPos blockPos = new BlockPos(x, y, z).rotate(rotation)
-                                .add(basePos)
-                                .add(offset.rotate(rotation));
+                            .add(basePos)
+                            .add(offset.rotate(rotation));
                         if (!data[x][y][z]) {
                             toBreak.add(blockPos);
                         } else {

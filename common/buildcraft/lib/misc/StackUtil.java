@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.misc;
 
 import java.util.ArrayList;
@@ -9,7 +15,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import buildcraft.api.recipes.StackDefinition;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -19,6 +24,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.items.IList;
+import buildcraft.api.recipes.StackDefinition;
 
 /** Provides various utils for interacting with {@link ItemStack}, and multiples. */
 public class StackUtil {
@@ -106,6 +112,7 @@ public class StackUtil {
                 // Use an explicit null check here as the collection doesn't have @Nonnull applied to its type
                 throw new NullPointerException("Found a null itemstack in " + containers);
             }
+            if (req.isEmpty()) continue;
             if (!contains(req, containers)) {
                 return false;
             }

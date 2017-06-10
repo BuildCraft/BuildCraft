@@ -1,18 +1,28 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.builders.snapshot;
 
-import buildcraft.api.schematics.ISchematicBlock;
-import buildcraft.api.schematics.SchematicBlockContext;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.api.schematics.SchematicBlockContext;
 
 public final class SchematicBlockAir implements ISchematicBlock<SchematicBlockAir> {
     @SuppressWarnings("unused")
@@ -22,11 +32,6 @@ public final class SchematicBlockAir implements ISchematicBlock<SchematicBlockAi
 
     @Override
     public void init(SchematicBlockContext context) {
-    }
-
-    @Override
-    public int getLevel() {
-        return BLOCK_LEVEL;
     }
 
     @Override
@@ -40,19 +45,15 @@ public final class SchematicBlockAir implements ISchematicBlock<SchematicBlockAi
         return Collections.emptySet();
     }
 
-    @Override
-    public void computeRequiredItemsAndFluids(SchematicBlockContext context) {
-    }
-
     @Nonnull
     @Override
-    public List<ItemStack> getRequiredItems() {
+    public List<ItemStack> computeRequiredItems(SchematicBlockContext context) {
         return Collections.emptyList();
     }
 
     @Nonnull
     @Override
-    public List<FluidStack> getRequiredFluids() {
+    public List<FluidStack> computeRequiredFluids(SchematicBlockContext context) {
         return Collections.emptyList();
     }
 
@@ -87,6 +88,16 @@ public final class SchematicBlockAir implements ISchematicBlock<SchematicBlockAi
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) {
+    public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || !(o == null || getClass() != o.getClass());
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
     }
 }

@@ -1,8 +1,19 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.wire;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
@@ -74,15 +85,15 @@ public class WireManager implements IWireManager {
         }
     }
 
-    public void removeParts(Collection<EnumWirePart> parts) {
-        parts.forEach(this.parts::remove);
+    public void removeParts(Collection<EnumWirePart> toRemove) {
+        toRemove.forEach(this.parts::remove);
         if (!holder.getPipeWorld().isRemote) {
-            parts.stream()
+            toRemove.stream()
                     .map(part -> new WireSystem.WireElement(holder.getPipePos(), part))
                     .flatMap(element -> WireSystem.getConnectedElementsOfElement(holder, element).stream())
                     .distinct()
                     .forEach(getWireSystems()::buildAndAddWireSystem);
-            parts.stream()
+            toRemove.stream()
                     .map(part -> new WireSystem.WireElement(holder.getPipePos(), part))
                     .flatMap(element -> getWireSystems().getWireSystemsWithElement(element).stream()).
                     forEach(getWireSystems()::removeWireSystem);
@@ -104,8 +115,7 @@ public class WireManager implements IWireManager {
                 } else if (WireSystem.canWireConnect(holder, between.to)) {
                     IPipe pipe = holder.getNeighbourPipe(between.to);
                     if (pipe != null) {
-                        IPipeHolder holder = pipe.getHolder();
-                        IWireManager wireManager = holder.getWireManager();
+                        IWireManager wireManager = pipe.getHolder().getWireManager();
                         if (betweenParts[0] == part && wireManager.getColorOfPart(betweenParts[1]) == color) {
                             betweens.put(between, color);
                         }
@@ -115,11 +125,10 @@ public class WireManager implements IWireManager {
         });
 
         if (!recursive) {
-            for (EnumFacing side : EnumFacing.values()) {
+            for (EnumFacing side : EnumFacing.VALUES) {
                 TileEntity tile = holder.getPipeWorld().getTileEntity(holder.getPipePos().offset(side));
                 if (tile instanceof IPipeHolder) {
-                    IPipeHolder holder = (IPipeHolder) tile;
-                    holder.getWireManager().updateBetweens(true);
+                    ((IPipeHolder) tile).getWireManager().updateBetweens(true);
                 }
             }
         }

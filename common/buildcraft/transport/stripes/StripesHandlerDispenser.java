@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.stripes;
 
 import java.util.ArrayList;
@@ -22,8 +28,8 @@ import buildcraft.api.transport.IStripesHandlerItem;
 public enum StripesHandlerDispenser implements IStripesHandlerItem {
     INSTANCE;
 
-    public static final List<Item> items = new ArrayList<>();
-    public static final List<Class<? extends Item>> itemClasses = new ArrayList<>();
+    public static final List<Item> ITEMS = new ArrayList<>();
+    public static final List<Class<? extends Item>> ITEM_CLASSES = new ArrayList<>();
 
     public class Source implements IBlockSource {
         private final World world;
@@ -61,6 +67,7 @@ public enum StripesHandlerDispenser implements IStripesHandlerItem {
             return Blocks.DISPENSER.getDefaultState().withProperty(BlockDispenser.FACING, side);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <T extends TileEntity> T getBlockTileEntity() {
             return (T) world.getTileEntity(pos);
@@ -73,13 +80,13 @@ public enum StripesHandlerDispenser implements IStripesHandlerItem {
     }
 
     private static boolean shouldHandle(ItemStack stack) {
-        if (items.contains(stack.getItem())) {
+        if (ITEMS.contains(stack.getItem())) {
             return true;
         }
 
         Class<?> c = stack.getItem().getClass();
         while (c != Item.class) {
-            if (items.contains(c)) {
+            if (ITEMS.contains(c)) {
                 return true;
             }
             c = c.getSuperclass();
@@ -88,7 +95,12 @@ public enum StripesHandlerDispenser implements IStripesHandlerItem {
     }
 
     @Override
-    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+    public boolean handle(World world,
+                          BlockPos pos,
+                          EnumFacing direction,
+                          ItemStack stack,
+                          EntityPlayer player,
+                          IStripesActivator activator) {
         if (!BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.containsKey(stack.getItem())) {
             return false;
         }

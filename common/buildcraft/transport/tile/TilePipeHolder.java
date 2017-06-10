@@ -1,8 +1,20 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.tile;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -23,14 +35,22 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IFlowItems;
+import buildcraft.api.transport.pipe.IItemPipe;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.api.transport.pipe.PipeEvent;
+import buildcraft.api.transport.pipe.PipeFlow;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.misc.data.IdAllocator;
-import buildcraft.lib.misc.data.LoadingException;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.PipeEventBus;
 import buildcraft.transport.pipe.PluggableHolder;
@@ -76,6 +96,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     private final Set<PipeMessageReceiver> networkUpdates = EnumSet.noneOf(PipeMessageReceiver.class);
     private final Set<PipeMessageReceiver> networkGuiUpdates = EnumSet.noneOf(PipeMessageReceiver.class);
     private final Map<EnumFacing, WeakReference<TileEntity>> neighbourTiles = new EnumMap<>(EnumFacing.class);
+    private NBTTagCompound unknownData;
 
     public TilePipeHolder() {
         for (EnumFacing side : EnumFacing.VALUES) {
@@ -119,9 +140,10 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                 if (pipe.flow instanceof IFlowItems) {
                     eventBus.registerHandler(FilterEventHandler.class);
                 }
-            } catch (LoadingException e) {
+            } catch (InvalidInputDataException e) {
                 // Unfortunately we can't throw an exception because then this tile won't persist :/
                 e.printStackTrace();
+                unknownData = nbt.copy();
             }
         }
         NBTTagCompound plugs = nbt.getCompoundTag("plugs");
@@ -454,7 +476,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     // Caps
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (facing != null) {
             PipePluggable plug = getPluggable(facing);
             if (plug != null) {
@@ -485,8 +507,13 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             pipe.getDebugInfo(left, right, side);
         }
         left.add("Parts:");
-        wireManager.parts.forEach((part, color) -> left.add(" - " + part + " = " + color + " = " + wireManager.isPowered(part)));
-        left.add("All wire systems in world count = " + (world.isRemote ? 0 : wireManager.getWireSystems().wireSystems.size()));
+        wireManager.parts.forEach((part, color) -> left.add(" - " + part + " = " + color + " = " + wireManager
+            .isPowered(part)));
+        left.add("All wire systems in world count = " + (world.isRemote ? 0 : wireManager.getWireSystems().wireSystems
+            .size()));
+        if (unknownData != null) {
+            left.add(unknownData.toString());
+        }
     }
 
     @Override

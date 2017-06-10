@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.expression;
 
 import java.util.ArrayList;
@@ -24,11 +30,11 @@ public class Tokeniser {
                 int start = contextStart + relStart;
                 int end = contextStart + relEnd;
                 int stringEnd = src.length();
-                String gotten = src.substring(start, Math.min(end, stringEnd));
+                StringBuilder gotten = new StringBuilder(src.substring(start, Math.min(end, stringEnd)));
                 while (gotten.length() < end - start) {
-                    gotten += END_OF_LINE;
+                    gotten.append(END_OF_LINE);
                 }
-                return gotten;
+                return gotten.toString();
             };
             boolean consumed = false;
             for (ITokenizerGobbler token : tokenizers) {
@@ -84,7 +90,7 @@ public class Tokeniser {
 
     public enum ResultSpecific implements TokenResult {
         IGNORE,
-        INVALID;
+        INVALID
     }
 
     public static class ResultInvalid implements TokenResult {

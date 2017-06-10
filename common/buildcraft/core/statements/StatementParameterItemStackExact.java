@@ -1,6 +1,14 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.core.statements;
 
 import java.util.Objects;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
@@ -17,6 +25,7 @@ import buildcraft.lib.misc.StackUtil;
 public class StatementParameterItemStackExact implements IStatementParameter {
     protected ItemStack stack;
 
+    @Nonnull
     @Override
     public ItemStack getItemStack() {
         return StackUtil.EMPTY;

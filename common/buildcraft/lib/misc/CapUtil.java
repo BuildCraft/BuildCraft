@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.misc;
 
 import java.util.concurrent.Callable;
@@ -19,7 +25,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.api.inventory.IItemTransactor;
-import buildcraft.api.transport.IInjectable;
 
 /** Provides various @Nonnull static final fields storing various capabilities. */
 public class CapUtil {

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.factory.tile;
 
 import java.io.IOException;
@@ -183,12 +189,12 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
 
     @SideOnly(Side.CLIENT)
     public double getFluidAmountForRender(float partialTicks) {
-        float amount = amountLast * (1 - partialTicks) + this.amount * partialTicks;
+        float interpAmount = amountLast * (1 - partialTicks) + this.amount * partialTicks;
         Tank other = getTank(pos.up());
         if (other != null && !other.isEmpty()) {
-            amount = tank.getCapacity();
+            interpAmount = tank.getCapacity();
         }
-        return amount;
+        return interpAmount;
     }
 
     // Tank helper methods

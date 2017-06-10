@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.marker;
 
 import java.util.ArrayList;
@@ -68,8 +74,7 @@ public abstract class MarkerCache<S extends MarkerSubCache<?>> {
 
     private void onWorldUnloadImpl(World world) {
         Map<Integer, S> cache = world.isRemote ? cacheClient : cacheServer;
-        int dimId = world.provider.getDimension();
-        Integer key = dimId;
+        Integer key = world.provider.getDimension();
         cache.remove(key);
     }
 
@@ -77,13 +82,7 @@ public abstract class MarkerCache<S extends MarkerSubCache<?>> {
 
     public S getSubCache(World world) {
         Map<Integer, S> cache = world.isRemote ? cacheClient : cacheServer;
-        int dimId = world.provider.getDimension();
-        Integer key = dimId;
-        S sub = cache.get(key);
-        if (sub == null) {
-            sub = createSubCache(world);
-            cache.put(key, sub);
-        }
-        return sub;
+        Integer key = world.provider.getDimension();
+        return cache.computeIfAbsent(key, k -> createSubCache(world));
     }
 }

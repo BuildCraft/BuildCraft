@@ -1,16 +1,24 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.builders.addon;
 
-import buildcraft.core.marker.volume.IFastAddonRenderer;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+
 import net.minecraftforge.client.model.ModelLoader;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import buildcraft.core.marker.volume.IFastAddonRenderer;
 
 public class AddonRendererFillingPlanner implements IFastAddonRenderer<AddonFillingPlanner> {
     @Override

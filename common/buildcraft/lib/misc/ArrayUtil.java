@@ -1,10 +1,17 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.misc;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.function.*;
-
-import net.minecraft.item.ItemStack;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 
 public class ArrayUtil {
     public static <F, T> T[] map(F[] from, Function<F, T> mapper, IntFunction<T[]> arrayConstructor) {
@@ -50,8 +57,7 @@ public class ArrayUtil {
 
     public static <T> boolean manualEquals(T[] a, T[] b, BiPredicate<T, T> equalityChecker) {
         if (a == b) return true;
-        if (a == null) return b == null;
-        if (b == null) return false;
+        if (a == null || b == null) return false;
         if (a.length != b.length) return false;
         int i = a.length;
         while (i-- > 0) {

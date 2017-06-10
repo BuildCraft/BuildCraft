@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.client.model;
 
 import java.util.List;
@@ -17,6 +23,7 @@ import buildcraft.api.transport.pluggable.PluggableModelKey;
 import buildcraft.lib.client.model.IModelCache;
 import buildcraft.lib.client.model.ModelCache;
 import buildcraft.lib.client.model.ModelCacheMultipleSame;
+
 import buildcraft.transport.client.PipeRegistryClient;
 
 public class PipeModelCachePluggable {

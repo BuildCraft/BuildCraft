@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.gate;
 
 import javax.annotation.Nonnull;
@@ -6,7 +12,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.statements.*;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.ITriggerExternalOverride;
+import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.statements.ITriggerInternalSided;
 
 import buildcraft.lib.gui.statement.StatementWrapper;
 

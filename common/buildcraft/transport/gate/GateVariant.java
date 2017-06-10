@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.gate;
 
 import java.util.Objects;
@@ -35,7 +41,7 @@ public class GateVariant {
         this.hash = Objects.hash(logic, material, modifier);
     }
 
-    public NBTTagCompound writeToNbt() {
+    public NBTTagCompound writeToNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setByte("logic", (byte) logic.ordinal());
         nbt.setByte("material", (byte) material.ordinal());

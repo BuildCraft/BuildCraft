@@ -1,17 +1,17 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.robotics.zone;
 
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.function.Consumer;
 
-import buildcraft.builders.snapshot.Snapshot;
 import net.minecraft.world.World;
 
-import buildcraft.lib.BCMessageHandler;
+import buildcraft.lib.net.MessageManager;
 
 public class ZonePlannerMapDataClient extends ZonePlannerMapData {
     public static final ZonePlannerMapDataClient INSTANCE = new ZonePlannerMapDataClient();
@@ -22,7 +22,7 @@ public class ZonePlannerMapDataClient extends ZonePlannerMapData {
     public ZonePlannerMapChunk loadChunk(World world, ZonePlannerMapChunkKey key) {
         if (!pending.contains(key)) {
             pending.add(key);
-            BCMessageHandler.netWrapper.sendToServer(new MessageZoneMapRequest(key));
+            MessageManager.sendToServer(new MessageZoneMapRequest(key));
         }
         return null;
     }

@@ -1,6 +1,16 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.cap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -64,6 +74,7 @@ public class CapabilityHelper implements ICapabilityProvider {
         return getCapability(capability, facing) != null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         Map<Capability<?>, Supplier<?>> capMap = getCapMap(facing);

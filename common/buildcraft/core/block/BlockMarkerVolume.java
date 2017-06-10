@@ -16,8 +16,9 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.core.tile.TileMarkerVolume;
 import buildcraft.lib.block.BlockMarkerBase;
+
+import buildcraft.core.tile.TileMarkerVolume;
 
 public class BlockMarkerVolume extends BlockMarkerBase {
     public BlockMarkerVolume(Material material, String id) {

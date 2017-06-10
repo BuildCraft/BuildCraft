@@ -4,6 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.tile;
 
+import javax.annotation.Nonnull;
+
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
 
@@ -13,6 +15,7 @@ import buildcraft.lib.engine.TileEngineBase_BC8;
 public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
     public TileEngineRedstone_BC8() {}
 
+    @Nonnull
     @Override
     protected IMjConnector createConnector() {
         return new EngineConnector(true);

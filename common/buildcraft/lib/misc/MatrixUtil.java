@@ -1,8 +1,18 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.misc;
 
 import java.util.Map;
 
-import javax.vecmath.*;
+import javax.vecmath.AxisAngle4f;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -16,7 +26,7 @@ public class MatrixUtil {
 
     static {
         ImmutableMap.Builder<EnumFacing, Matrix4f> builder = ImmutableMap.builder();
-        for (EnumFacing face : EnumFacing.values()) {
+        for (EnumFacing face : EnumFacing.VALUES) {
             Matrix4f mat = new Matrix4f();
             mat.setIdentity();
 

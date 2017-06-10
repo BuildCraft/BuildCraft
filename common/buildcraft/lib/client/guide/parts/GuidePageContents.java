@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.guide.parts;
 
 import java.util.ArrayList;
@@ -47,8 +53,7 @@ public class GuidePageContents extends GuidePageBase {
 
             NodePageLine node = parentNode;
             int indent = 1;
-            for (int i = 0; i < ordered.length; i++) {
-                String line = ordered[i];
+            for (String line : ordered) {
                 String translated = TextFormatting.UNDERLINE + I18n.format(line);
                 boolean notFound = true;
                 for (NodePageLine childNode : node.getChildren()) {

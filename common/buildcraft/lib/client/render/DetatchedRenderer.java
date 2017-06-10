@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.render;
 
 import java.util.ArrayList;
@@ -24,7 +30,7 @@ public enum DetatchedRenderer {
         public final IGlPre pre;
         public final IGLPost post;
 
-        private RenderMatrixType(IGlPre pre, IGLPost post) {
+        RenderMatrixType(IGlPre pre, IGLPost post) {
             this.pre = pre;
             this.post = post;
         }
@@ -50,13 +56,14 @@ public enum DetatchedRenderer {
         void glPost();
     }
 
+    @FunctionalInterface
     public interface IDetachedRenderer {
         void render(EntityPlayer player, float partialTicks);
     }
 
     private final Map<RenderMatrixType, List<IDetachedRenderer>> renders = new EnumMap<>(RenderMatrixType.class);
 
-    private DetatchedRenderer() {
+    DetatchedRenderer() {
         for (RenderMatrixType type : RenderMatrixType.values()) {
             renders.put(type, new ArrayList<>());
         }

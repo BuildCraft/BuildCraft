@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.misc.data;
 
 import java.util.Iterator;
@@ -103,6 +109,8 @@ public class BoxIterator implements Iterator<BlockPos> {
         return order;
     }
 
+    /** Moves on to the next block. Unlike {@link #next()} this returns the one AFTER that one, so you cannot use
+     * {@link #hasNext()}! */
     public BlockPos advance() {
         if (current == null) {
             current = getStart();

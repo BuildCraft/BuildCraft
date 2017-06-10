@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.factory.item;
 
 import net.minecraft.block.Block;
@@ -13,10 +19,11 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import buildcraft.lib.item.ItemBC_Neptune;
+
 import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.block.BlockWaterGel;
 import buildcraft.factory.block.BlockWaterGel.GelStage;
-import buildcraft.lib.item.ItemBC_Neptune;
 
 public class ItemWaterGel extends ItemBC_Neptune {
 
@@ -47,7 +54,7 @@ public class ItemWaterGel extends ItemBC_Neptune {
         }
 
         // Same as ItemSnowball
-        world.playSound((EntityPlayer) null, player.posX, player.posY, player.posZ,//
+        world.playSound(null, player.posX, player.posY, player.posZ,//
                 SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL,//
                 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
 

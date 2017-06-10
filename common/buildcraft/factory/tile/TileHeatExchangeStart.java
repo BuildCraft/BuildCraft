@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.factory.tile;
 
 import java.io.IOException;
@@ -19,14 +25,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.factory.block.BlockHeatExchange;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.fluid.TankManager;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+
+import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.factory.block.BlockHeatExchange;
 
 public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, IDebuggable {
     public final Tank tankHeatableIn = new Tank("heatable_in", 2 * Fluid.BUCKET_VOLUME, this);

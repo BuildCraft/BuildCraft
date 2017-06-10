@@ -1,6 +1,14 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.list;
 
 import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
@@ -24,7 +32,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
     }
 
     @Override
-    public boolean matches(Type type, ItemStack stack, ItemStack target, boolean precise) {
+    public boolean matches(Type type, @Nonnull ItemStack stack, @Nonnull ItemStack target, boolean precise) {
         int[] oreIds = OreDictionary.getOreIDs(stack);
 
         if (oreIds.length == 0) {
@@ -73,7 +81,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
     }
 
     @Override
-    public boolean isValidSource(Type type, ItemStack stack) {
+    public boolean isValidSource(Type type, @Nonnull ItemStack stack) {
         if (OreDictionary.getOreIDs(stack).length > 0) {
             return true;
         }
@@ -97,7 +105,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
     }
 
     @Override
-    public NonNullList<ItemStack> getClientExamples(Type type, ItemStack stack) {
+    public NonNullList<ItemStack> getClientExamples(Type type, @Nonnull ItemStack stack) {
         int[] oreIds = OreDictionary.getOreIDs(stack);
         NonNullList<ItemStack> stacks = NonNullList.create();
 

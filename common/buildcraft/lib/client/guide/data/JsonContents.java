@@ -1,7 +1,14 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.client.guide.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
@@ -33,8 +40,7 @@ public class JsonContents {
 
         JsonEntry[] entries = new JsonEntry[contents.length];
         int j = 0;
-        for (int i = 0; i < contents.length; i++) {
-            JsonEntry entry = contents[i];
+        for (JsonEntry entry : contents) {
             if (entry != null) {
                 entries[j] = entry.inherit(tags, entryMask);
                 j++;
@@ -52,9 +58,7 @@ public class JsonContents {
                 continue;
             }
             contents = contents.inheritMissingTags();
-            for (JsonEntry entry : contents.contents) {
-                entries.add(entry);
-            }
+            Collections.addAll(entries, contents.contents);
         }
 
         return entries;

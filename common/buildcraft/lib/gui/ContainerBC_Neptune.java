@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.gui;
 
 import java.io.IOException;
@@ -22,12 +28,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
-import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.gui.slot.IPhantomSlot;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.MessageContainer;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
 
 public abstract class ContainerBC_Neptune extends Container {
@@ -182,9 +188,9 @@ public abstract class ContainerBC_Neptune extends Container {
         PacketBufferBC payload = PacketBufferBC.write(writer);
         MessageContainer message = new MessageContainer(windowId, id, payload);
         if (player.world.isRemote) {
-            BCMessageHandler.netWrapper.sendToServer(message);
+            MessageManager.sendToServer(message);
         } else {
-            BCMessageHandler.netWrapper.sendTo(message, (EntityPlayerMP) player);
+            MessageManager.sendTo(message, (EntityPlayerMP) player);
         }
     }
 

@@ -13,8 +13,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
@@ -26,7 +26,14 @@ import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.list.ListMatchHandlerFluid;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.net.MessageContainer;
+import buildcraft.lib.net.MessageManager;
+import buildcraft.lib.net.MessageMarker;
+import buildcraft.lib.net.MessageUpdateTile;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
+import buildcraft.lib.net.cache.MessageObjectCacheReply;
+import buildcraft.lib.net.cache.MessageObjectCacheReq;
+import buildcraft.lib.particle.MessageParticleVanilla;
 import buildcraft.lib.registry.MigrationManager;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
@@ -67,8 +74,14 @@ public class BCLib {
         BCLibItems.fmlPreInit();
 
         BuildCraftObjectCaches.fmlPreInit();
-        BCMessageHandler.fmlPreInit();
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCLibProxy.getProxy());
+
+        MessageManager.addMessageType(MessageUpdateTile.class, MessageUpdateTile.HANDLER, Side.CLIENT, Side.SERVER);
+        MessageManager.addMessageType(MessageContainer.class, MessageContainer.HANDLER, Side.CLIENT, Side.SERVER);
+        MessageManager.addMessageType(MessageMarker.class, MessageMarker.HANDLER, Side.CLIENT);
+        MessageManager.addMessageType(MessageParticleVanilla.class, MessageParticleVanilla.HANDLER, Side.CLIENT);
+        MessageManager.addMessageType(MessageObjectCacheReq.class, MessageObjectCacheReq.HANDLER, Side.SERVER);
+        MessageManager.addMessageType(MessageObjectCacheReply.class, MessageObjectCacheReply.HANDLER, Side.CLIENT);
 
         MinecraftForge.EVENT_BUS.register(BCLibEventDist.INSTANCE);
     }
@@ -91,7 +104,7 @@ public class BCLib {
     public static void postInit(FMLPostInitializationEvent evt) {
         BCLibProxy.getProxy().fmlPostInit();
         BuildCraftObjectCaches.fmlPostInit();
-        BCMessageHandler.fmlPostInit();
+        MessageManager.fmlPostInit();
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();
         ListMatchHandlerFluid.fmlPostInit();

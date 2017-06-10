@@ -1,6 +1,10 @@
-package buildcraft.lib.misc.data;
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 
-import static net.minecraft.util.EnumFacing.Axis.*;
+package buildcraft.lib.misc.data;
 
 import java.util.Map;
 
@@ -11,12 +15,12 @@ import net.minecraft.util.EnumFacing.Axis;
 import buildcraft.lib.misc.data.AxisOrder.Inversion;
 
 public enum EnumAxisOrder {
-    XYZ(X, Y, Z),
-    XZY(X, Z, Y),
-    YXZ(Y, X, Z),
-    YZX(Y, Z, X),
-    ZXY(Z, X, Y),
-    ZYX(Z, Y, X);
+    XYZ(Axis.X, Axis.Y, Axis.Z),
+    XZY(Axis.X, Axis.Z, Axis.Y),
+    YXZ(Axis.Y, Axis.X, Axis.Z),
+    YZX(Axis.Y, Axis.Z, Axis.X),
+    ZXY(Axis.Z, Axis.X, Axis.Y),
+    ZYX(Axis.Z, Axis.Y, Axis.X);
 
     public static final EnumAxisOrder[] VALUES = values();
 
@@ -32,7 +36,7 @@ public enum EnumAxisOrder {
 
     public final Axis first, second, third;
 
-    private EnumAxisOrder(Axis a, Axis b, Axis c) {
+    EnumAxisOrder(Axis a, Axis b, Axis c) {
         this.first = a;
         this.second = b;
         this.third = c;
@@ -47,12 +51,12 @@ public enum EnumAxisOrder {
     }
 
     public static EnumAxisOrder getOrder(Axis first, Axis b) {
-        if (first == X) {
-            return b == Y ? XYZ : XZY;
-        } else if (first == Y) {
-            return b == X ? YXZ : YZX;
+        if (first == Axis.X) {
+            return b == Axis.Y ? XYZ : XZY;
+        } else if (first == Axis.Y) {
+            return b == Axis.X ? YXZ : YZX;
         } else {
-            return b == X ? ZXY : ZYX;
+            return b == Axis.X ? ZXY : ZYX;
         }
     }
 

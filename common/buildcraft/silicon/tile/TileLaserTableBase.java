@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.silicon.tile;
 
 import java.io.IOException;
@@ -19,7 +25,6 @@ import buildcraft.api.mj.ILaserTarget;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.StackDefinition;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.tiles.TilesAPI;
 
 import buildcraft.lib.misc.LocaleUtil;
@@ -28,30 +33,34 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
-public abstract class TileLaserTableBase extends TileBC_Neptune implements ILaserTarget, IHasWork, ITickable, IDebuggable {
+public abstract class TileLaserTableBase extends TileBC_Neptune implements ILaserTarget, ITickable, IDebuggable {
     private static final long MJ_FLOW_ROUND = MjAPI.MJ / 10;
     private final AverageLong avgPower = new AverageLong(120);
     public long avgPowerClient;
     public long power;
 
-    public TileLaserTableBase() {
-        caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, this, EnumPipePart.VALUES);
+    protected TileLaserTableBase() {
+        caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, () -> getTarget() > 0, EnumPipePart.VALUES);
+    }
+
+    protected abstract long getTarget();
+
+    @Override
+    public long getRequiredLaserPower() {
+        return getTarget() - power;
     }
 
     @Override
-    public boolean requiresLaserPower() {
-        return hasWork();
-    }
-
-    @Override
-    public void receiveLaserPower(long microJoules) {
-        power += microJoules;
-        avgPower.push(microJoules);
+    public long receiveLaserPower(long microJoules) {
+        long received = Math.min(microJoules, getRequiredLaserPower());
+        power += received;
+        avgPower.push(received);
+        return microJoules - received;
     }
 
     @Override
     public boolean isInvalidTarget() {
-        return !hasWork();
+        return isInvalid();
     }
 
     @Override
@@ -61,11 +70,12 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
             return;
         }
 
-        if (!hasWork()) {
+        if (getTarget() <= 0) {
             power = 0;
             avgPower.clear();
         }
     }
+
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
@@ -107,6 +117,7 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
         left.add("power - " + LocaleUtil.localizeMj(power));
+        left.add("target - " + LocaleUtil.localizeMj(getTarget()));
     }
 
     protected boolean extract(ItemHandlerSimple inv, ImmutableCollection<StackDefinition> items, boolean simulate, boolean precise) {

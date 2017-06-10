@@ -1,12 +1,19 @@
-package buildcraft.builders.filling;
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 
-import buildcraft.lib.net.PacketBufferBC;
-import com.google.common.collect.Iterables;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
+package buildcraft.builders.filling;
 
 import java.util.Arrays;
 import java.util.Locale;
+
+import io.netty.buffer.ByteBuf;
+
+import net.minecraft.nbt.NBTTagCompound;
+
+import buildcraft.lib.net.PacketBufferBC;
 
 public interface IParameter {
     default String getParameterName() {

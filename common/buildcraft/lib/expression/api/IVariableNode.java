@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.expression.api;
 
 public interface IVariableNode extends IExpressionNode {
@@ -14,11 +20,11 @@ public interface IVariableNode extends IExpressionNode {
 
     String getName();
 
-    public interface IVariableNodeLong extends IVariableNode, INodeLong {}
+    interface IVariableNodeLong extends IVariableNode, INodeLong {}
 
-    public interface IVariableNodeDouble extends IVariableNode, INodeDouble {}
+    interface IVariableNodeDouble extends IVariableNode, INodeDouble {}
 
-    public interface IVariableNodeBoolean extends IVariableNode, INodeBoolean {}
+    interface IVariableNodeBoolean extends IVariableNode, INodeBoolean {}
 
-    public interface IVariableNodeString extends IVariableNode, INodeString {}
+    interface IVariableNodeString extends IVariableNode, INodeString {}
 }

@@ -1,7 +1,21 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.world.gen;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+
+import gnu.trove.list.array.TByteArrayList;
+import gnu.trove.map.hash.TObjectByteHashMap;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -13,9 +27,6 @@ import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
-
-import gnu.trove.list.array.TByteArrayList;
-import gnu.trove.map.hash.TObjectByteHashMap;
 
 public class RetroGenData extends WorldSavedData {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.gen.retro");

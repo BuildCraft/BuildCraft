@@ -1,7 +1,8 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 package buildcraft.core.item;
 
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
+
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,9 +40,8 @@ import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.Box;
-import buildcraft.robotics.zone.ZonePlan;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import buildcraft.robotics.zone.ZonePlan;
 
 public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     private static final String[] STORAGE_TAGS = "x,y,z,side,xMin,xMax,yMin,yMax,zMin,zMax,path,chunkMapping,name".split(",");
@@ -81,7 +83,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                     int x = cpt.getInteger("x");
                     int y = cpt.getInteger("y");
                     int z = cpt.getInteger("z");
-                    EnumFacing side = EnumFacing.values()[cpt.getByte("side")];
+                    EnumFacing side = EnumFacing.VALUES[cpt.getByte("side")];
 
                     strings.add(LocaleUtil.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
                 }
@@ -256,7 +258,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     }
 
     @Override
-    public IBox getBox(ItemStack item) {
+    public IBox getBox(@Nonnull ItemStack item) {
         MapLocationType type = MapLocationType.getFromStack(item);
 
         switch (type) {
@@ -273,19 +275,19 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     }
 
     @Override
-    public EnumFacing getPointSide(ItemStack item) {
+    public EnumFacing getPointSide(@Nonnull ItemStack item) {
         NBTTagCompound cpt = NBTUtilBC.getItemData(item);
         MapLocationType type = MapLocationType.getFromStack(item);
 
         if (type == MapLocationType.SPOT) {
-            return EnumFacing.values()[cpt.getByte("side")];
+            return EnumFacing.VALUES[cpt.getByte("side")];
         } else {
             return null;
         }
     }
 
     @Override
-    public BlockPos getPoint(ItemStack item) {
+    public BlockPos getPoint(@Nonnull ItemStack item) {
         NBTTagCompound cpt = NBTUtilBC.getItemData(item);
         MapLocationType type = MapLocationType.getFromStack(item);
 
@@ -297,7 +299,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     }
 
     @Override
-    public IZone getZone(ItemStack item) {
+    public IZone getZone(@Nonnull ItemStack item) {
         NBTTagCompound cpt = NBTUtilBC.getItemData(item);
         MapLocationType type = MapLocationType.getFromStack(item);
         switch (type) {
@@ -320,7 +322,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     }
 
     @Override
-    public List<BlockPos> getPath(ItemStack item) {
+    public List<BlockPos> getPath(@Nonnull ItemStack item) {
         NBTTagCompound cpt = NBTUtilBC.getItemData(item);
         MapLocationType type = MapLocationType.getFromStack(item);
         switch (type) {
@@ -351,12 +353,12 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     }
 
     @Override
-    public String getName(ItemStack item) {
+    public String getName(@Nonnull ItemStack item) {
         return NBTUtilBC.getItemData(item).getString("name");
     }
 
     @Override
-    public boolean setName(ItemStack item, String name) {
+    public boolean setName(@Nonnull ItemStack item, String name) {
         NBTTagCompound cpt = NBTUtilBC.getItemData(item);
         cpt.setString("name", name);
         return true;

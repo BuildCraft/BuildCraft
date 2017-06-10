@@ -1,12 +1,14 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 package buildcraft.core.statements;
 
 import java.util.Collection;
 
-import buildcraft.api.tiles.TilesAPI;
+import javax.annotation.Nonnull;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
@@ -14,12 +16,17 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
 
-import buildcraft.api.statements.*;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.statements.ITriggerInternalSided;
+import buildcraft.api.statements.ITriggerProvider;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
-import buildcraft.api.tiles.IHasWork;
+import buildcraft.api.tiles.TilesAPI;
+
+import buildcraft.lib.misc.CapUtil;
 
 import buildcraft.core.BCCoreStatements;
-import buildcraft.lib.misc.CapUtil;
 
 public enum CoreTriggerProvider implements ITriggerProvider {
     INSTANCE;
@@ -39,10 +46,10 @@ public enum CoreTriggerProvider implements ITriggerProvider {
     }
 
     @Override
-    public void addInternalSidedTriggers(Collection<ITriggerInternalSided> res, IStatementContainer container, EnumFacing side) {}
+    public void addInternalSidedTriggers(Collection<ITriggerInternalSided> res, IStatementContainer container, @Nonnull EnumFacing side) {}
 
     @Override
-    public void addExternalTriggers(Collection<ITriggerExternal> res, EnumFacing side, TileEntity tile) {
+    public void addExternalTriggers(Collection<ITriggerExternal> res, @Nonnull EnumFacing side, TileEntity tile) {
 
         if (TriggerPower.isTriggeringTile(tile, side.getOpposite())) {
             res.add(BCCoreStatements.TRIGGER_POWER_HIGH);

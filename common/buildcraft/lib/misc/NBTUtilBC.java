@@ -1,7 +1,8 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 package buildcraft.lib.misc;
 
 import java.io.ByteArrayInputStream;
@@ -24,16 +25,23 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagByte;
+import net.minecraft.nbt.NBTTagByteArray;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagDouble;
+import net.minecraft.nbt.NBTTagIntArray;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.misc.data.LoadingException;
+import buildcraft.api.core.InvalidInputDataException;
 
 public final class NBTUtilBC {
     /** Deactivate constructor */
@@ -199,76 +207,6 @@ public final class NBTUtilBC {
         }
     }
 
-    /** Please tell me this was never used :/ */
-    @Deprecated
-    public static NBTBase writeObject(Object obj) {
-        if (obj == null) throw new NullPointerException("obj");
-        if (obj instanceof Byte) return new NBTTagByte((Byte) obj);
-        if (obj instanceof Short) return new NBTTagShort((Short) obj);
-        if (obj instanceof Integer) return new NBTTagInt((Integer) obj);
-        if (obj instanceof Long) return new NBTTagLong((Long) obj);
-        if (obj instanceof Float) return new NBTTagFloat((Float) obj);
-        if (obj instanceof Double) return new NBTTagDouble((Double) obj);
-        if (obj instanceof Boolean) {
-            NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setBoolean("boolean", (Boolean) obj);
-            return nbt;
-        }
-        if (obj instanceof EnumFacing) {
-            NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setString("type", "minecraft:enumfacing");
-            nbt.setTag("value", writeEnum((EnumFacing) obj));
-            return nbt;
-        }
-        if (obj instanceof Enum<?>) {
-            NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setString("type", "enum:" + obj.getClass().getName());
-            nbt.setTag("value", writeEnum((Enum) obj));
-            return nbt;
-        }
-        throw new IllegalArgumentException("Cannot write class " + obj.getClass() + " directly to NBT!");
-    }
-
-    /** This is never used right? RIGHT?
-     * 
-     * @param nbt
-     * @return */
-    @Deprecated
-    public static Object readObject(NBTBase nbt) {
-        if (nbt == null) return null;
-        if (nbt instanceof NBTPrimitive) {
-            NBTPrimitive prim = (NBTPrimitive) nbt;
-            if (prim instanceof NBTTagByte) return prim.getByte();
-            if (prim instanceof NBTTagShort) return prim.getShort();
-            if (prim instanceof NBTTagInt) return prim.getInt();
-            if (prim instanceof NBTTagLong) return prim.getLong();
-            if (prim instanceof NBTTagFloat) return prim.getFloat();
-            if (prim instanceof NBTTagDouble) return prim.getDouble();
-            else throw new Error("Seriously what? When was a new primitive NBT class added?");
-        }
-        if (nbt instanceof NBTTagString) return ((NBTTagString) nbt).getString();
-        if (nbt instanceof NBTTagCompound) {
-            NBTTagCompound comp = (NBTTagCompound) nbt;
-            if (comp.hasKey("boolean")) return comp.getBoolean("boolean");
-            if (comp.hasKey("type", Constants.NBT.TAG_STRING) && comp.hasKey("value")) {
-                String type = ((NBTTagCompound) nbt).getString("type");
-                NBTBase valueTag = comp.getTag("value");
-                if ("minecraft:enumfacing".equals(type)) return readEnum(valueTag, EnumFacing.class);
-                if (type.startsWith("enum:")) try {
-                    Class<?> clazz = Class.forName(type.replace("enum:", ""));
-                    if (clazz.isEnum()) {
-                        return readEnum(valueTag, (Class<Enum>) clazz);
-                    } else {
-                        BCLog.logger.warn("The type " + type + " refered to a class that was not an enum type!");
-                    }
-                } catch (ClassNotFoundException e) {
-                    BCLog.logger.warn("Tried to load " + type + " but couldn't find the enum class!");
-                }
-            }
-        }
-        throw new Error("Tried to load an object from an unknown tag! " + nbt);
-    }
-
     public static NBTBase writeDoubleArray(double[] data) {
         NBTTagList list = new NBTTagList();
         for (double d : data) {
@@ -299,13 +237,13 @@ public final class NBTUtilBC {
     }
 
     /** @deprecated Use {@link NBTUtil#readBlockState(NBTTagCompound)} instead! */
-    public static IBlockState readEntireBlockState(NBTTagCompound nbt) throws LoadingException {
+    public static IBlockState readEntireBlockState(NBTTagCompound nbt) throws InvalidInputDataException {
         if (nbt.hasNoTags()) {
             return Blocks.AIR.getDefaultState();
         }
         Block block = Block.getBlockFromName(nbt.getString("block"));
         if (block == null || block == Blocks.AIR) {
-            throw new LoadingException("Unknown block " + nbt.getString("block"));
+            throw new InvalidInputDataException("Unknown block " + nbt.getString("block"));
         }
         return readBlockStateProperties(block.getDefaultState(), nbt.getCompoundTag("state"));
     }

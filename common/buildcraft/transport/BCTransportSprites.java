@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport;
 
 import java.util.EnumMap;
@@ -14,6 +20,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.ColourUtil;
+
 import buildcraft.transport.client.model.PipeModelCacheAll;
 import buildcraft.transport.client.model.PipeModelCacheBase;
 import buildcraft.transport.client.render.PipeFlowRendererItems;
@@ -35,6 +42,8 @@ public class BCTransportSprites {
     private static final EnumMap<EnumDyeColor, SpriteHolder> PIPE_SIGNAL_ON;
     private static final EnumMap<EnumDyeColor, SpriteHolder> PIPE_SIGNAL_OFF;
     private static final EnumMap<EnumFacing, SpriteHolder> ACTION_PIPE_DIRECTION;
+
+    public static final SpriteHolder POWER_FLOW;
 
     static {
         EMPTY_FILTERED_BUFFER_SLOT = getHolder("gui/empty_filtered_buffer_slot");
@@ -70,6 +79,8 @@ public class BCTransportSprites {
         for (EnumFacing face : EnumFacing.VALUES) {
             ACTION_PIPE_DIRECTION.put(face, getHolder("core", "triggers/trigger_dir_" + face.getName().toLowerCase(Locale.ROOT)));
         }
+
+        POWER_FLOW = getHolder("core", "blocks/misc/texture_cyan");
     }
 
     private static SpriteHolder getHolder(String loc) {
