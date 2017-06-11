@@ -14,7 +14,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
-
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -38,6 +37,7 @@ import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicEntity;
 import buildcraft.api.schematics.SchematicEntityContext;
 
+import buildcraft.lib.dimension.FakeWorldServer;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.RotationUtil;
 
@@ -80,8 +80,8 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
         Set<JsonRule> rules = RulesLoader.getRules(context.entity);
         List<ItemStack> requiredItems = new ArrayList<>();
         if (rules.stream().noneMatch(rule -> rule.doNotCopyRequiredItemsFromBreakBlockDrops)) {
-            if (context.world instanceof FakeWorld) {
-                requiredItems.addAll(((FakeWorld) context.world).killEntityAndGetDrops(context.entity));
+            if (context.world instanceof FakeWorldServer) {
+                requiredItems.addAll(((FakeWorldServer) context.world).killEntityAndGetDrops(context.entity));
             }
         }
         if (rules.stream().map(rule -> rule.requiredItems).anyMatch(Objects::nonNull)) {

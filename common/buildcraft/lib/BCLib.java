@@ -6,6 +6,9 @@ package buildcraft.lib;
 
 import java.util.function.Consumer;
 
+import net.minecraft.world.DimensionType;
+
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -13,6 +16,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -21,6 +26,9 @@ import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
+import buildcraft.lib.dimension.BlankWorldProvider;
+import buildcraft.lib.dimension.BlueprintLocationManager;
+import buildcraft.lib.dimension.FakeWorldServer;
 import buildcraft.lib.expression.ExpressionDebugManager;
 import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.list.ListMatchHandlerFluid;
@@ -53,6 +61,9 @@ public class BCLib {
     public static final String GIT_COMMIT_HASH = "${git_commit_hash}";
     public static final String GIT_BRANCH = "${git_branch}";
 
+    public static DimensionType blueprintDimensionType;
+    public static final int DIMENSION_ID = -26042011;
+
     public static final boolean DEV = VERSION.startsWith("$") || Boolean.getBoolean("buildcraft.dev");
 
     @Instance(MODID)
@@ -84,6 +95,21 @@ public class BCLib {
         MessageManager.addMessageType(MessageObjectCacheReply.class, MessageObjectCacheReply.HANDLER, Side.CLIENT);
 
         MinecraftForge.EVENT_BUS.register(BCLibEventDist.INSTANCE);
+        blueprintDimensionType = DimensionType.register("The dimension of blueprints", "", DIMENSION_ID, BlankWorldProvider.class, true);
+        DimensionManager.registerDimension(DIMENSION_ID, blueprintDimensionType);
+    }
+
+    @Mod.EventHandler
+    public static void serverStart(FMLServerStartingEvent event) {
+        FakeWorldServer fake = new FakeWorldServer(event.getServer());
+        fake.init();
+        DimensionManager.setWorld(DIMENSION_ID, fake, event.getServer());
+    }
+
+    @Mod.EventHandler
+    public static void serverStop(FMLServerStoppedEvent event) {
+        FakeWorldServer.INSTANCE = null;
+        BlueprintLocationManager.locations.clear();
     }
 
     @Mod.EventHandler

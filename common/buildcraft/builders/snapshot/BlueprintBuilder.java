@@ -191,6 +191,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             return super.tick();
         }
         return Optional.ofNullable(getBuildingInfo()).map(buildingInfo -> {
+            if (!buildingInfo.hasFinishedComputing())
+                return false;
             List<Entity> entitiesWithinBox = tile.getWorldBC().getEntitiesWithinAABB(
                 Entity.class,
                 buildingInfo.getBox().getBoundingBox(),

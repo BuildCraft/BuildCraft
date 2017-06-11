@@ -66,13 +66,13 @@ public class WorkerThreadUtil {
      * gone wrong, and will notify the log that a task took too long. If it goes on for longer than 10s then it will
      * make a big error in the log. */
     public static void executeWorkTask(Runnable task) {
-        executeWorkTask(new CallableDelegate(task));
+        executeWorkTask(new CallableDelegate(task), true);
     }
 
     /** Executes a task. If this is in debug mode then If this takes longer than 30ms the it assumes that something has
      * gone wrong, and will notify the log that a task took too long. If it goes on for longer than 10s then it will
      * make a big error in the log. */
-    public static <T> Future<T> executeWorkTask(Callable<T> task) {
+    public static <T> Future<T> executeWorkTask(Callable<T> task, boolean shouldMonitor) {
         Class<?> taskClass = task.getClass();
         if (task instanceof CallableDelegate) {
             taskClass = ((CallableDelegate) task).getRealClass();
@@ -80,7 +80,7 @@ public class WorkerThreadUtil {
         String taskType = taskClass.getSimpleName();
         Task<T> taskMonitor = new Task<>(task, taskType);
         Future<T> future = WORKING_POOL.submit(taskMonitor);
-        if (!future.isDone()) {
+        if (!future.isDone() && shouldMonitor) {
             executeMonitoringTask(new MonitorTask(taskMonitor, future));
         }
         return future;
@@ -88,7 +88,7 @@ public class WorkerThreadUtil {
 
     public static <T> T executeWorkTaskWaiting(Callable<T> task) throws InterruptedException {
         try {
-            return executeWorkTask(task).get();
+            return executeWorkTask(task, true).get();
         } catch (ExecutionException e) {
             // Something went wrong- this is NOT meant to happen.
             throw Throwables.propagate(e);

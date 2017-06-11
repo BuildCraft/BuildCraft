@@ -11,10 +11,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,7 +31,9 @@ import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.ISchematicEntity;
 
+import buildcraft.lib.dimension.BlueprintCalculator;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.WorkerThreadUtil;
 import buildcraft.lib.misc.data.Box;
 
 public class Blueprint extends Snapshot {
@@ -97,7 +99,8 @@ public class Blueprint extends Snapshot {
         NBTTagList list = nbt.hasKey("data", Constants.NBT.TAG_LIST) ? nbt.getTagList("data", Constants.NBT.TAG_INT)
             : null;
         int[] serializedData = nbt.hasKey("data", Constants.NBT.TAG_INT_ARRAY) ? nbt.getIntArray("data") : new int[0];
-        if (serializedData == null && list == null) {
+
+        if (serializedData.length == 0) {
             throw new InvalidInputDataException("Can't read a blueprint with no data!");
         }
         int len = list == null ? serializedData.length : list.tagCount();
@@ -128,7 +131,8 @@ public class Blueprint extends Snapshot {
     public class BuildingInfo {
         public final BlockPos basePos;
         public final Rotation rotation;
-        private final Box box;
+        public final Box box;
+
         public final List<BlockPos> toBreak = new ArrayList<>();
         public final Map<BlockPos, ISchematicBlock<?>> toPlace = new HashMap<>();
         public final Map<BlockPos, List<ItemStack>> toPlaceRequiredItems = new HashMap<>();
@@ -137,25 +141,42 @@ public class Blueprint extends Snapshot {
         public final Map<ISchematicEntity<?>, List<ItemStack>> entitiesRequiredItems = new HashMap<>();
         public final Map<ISchematicEntity<?>, List<FluidStack>> entitiesRequiredFluids = new HashMap<>();
 
+        private boolean finishedComputing = false;
+        private final Future<BlueprintCalculator.BuildingInfoData> future;
+
         public BuildingInfo(BlockPos basePos, Rotation rotation) {
             this.basePos = basePos;
             this.rotation = rotation;
-            Pair<List<ItemStack>[][][], List<FluidStack>[][][]> required = SchematicBlockManager.computeRequired(
-                getSnapshot());
-            Pair<List<List<ItemStack>>, List<List<FluidStack>>> requiredEntities = SchematicEntityManager
-                .computeRequired(getSnapshot());
+            box = new Box();
+            future = WorkerThreadUtil.executeWorkTask(new BlueprintCalculator(Blueprint.this), false);
+        }
+
+        private void processData() {
+            BlueprintCalculator.BuildingInfoData infoData = null;
+            try {
+                infoData = future.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                throw new RuntimeException("Something went wrong during blueprint requirement calculations!", e);
+            }
+            List<ItemStack>[][][] blockRequirementsItems = infoData.blockRequirementsItems;
+            List<FluidStack>[][][] blockRequirmentsFluids = infoData.blockRequirementsFluids;
+            List<List<ItemStack>> entityRequirementsItems = infoData.entityRequirementsItems;
+            List<List<FluidStack>> entityRequirementsFluids = infoData.entityRequiremntsFluids;
+
             for (int z = 0; z < getSnapshot().size.getZ(); z++) {
                 for (int y = 0; y < getSnapshot().size.getY(); y++) {
                     for (int x = 0; x < getSnapshot().size.getX(); x++) {
-                        ISchematicBlock<?> schematicBlock = palette.get(data[x][y][z]);
+                        ISchematicBlock<?> schematicBlock = palette.get(Blueprint.this.data[x][y][z]);
                         BlockPos blockPos = new BlockPos(x, y, z).rotate(rotation).add(basePos).add(offset.rotate(
-                            rotation));
+                                rotation));
                         if (schematicBlock.isAir()) {
                             toBreak.add(blockPos);
                         } else {
                             toPlace.put(blockPos, schematicBlock.getRotated(rotation));
-                            toPlaceRequiredItems.put(blockPos, required.getLeft()[x][y][z]);
-                            toPlaceRequiredFluids.put(blockPos, required.getRight()[x][y][z]);
+                            toPlaceRequiredItems.put(blockPos, blockRequirementsItems[x][y][z]);
+                            toPlaceRequiredFluids.put(blockPos, blockRequirmentsFluids[x][y][z]);
                         }
                     }
                 }
@@ -164,12 +185,20 @@ public class Blueprint extends Snapshot {
             for (ISchematicEntity<?> schematicEntity : getSnapshot().entities) {
                 ISchematicEntity<?> rotatedSchematicEntity = schematicEntity.getRotated(rotation);
                 entities.add(rotatedSchematicEntity);
-                entitiesRequiredItems.put(rotatedSchematicEntity, requiredEntities.getLeft().get(i));
-                entitiesRequiredFluids.put(rotatedSchematicEntity, requiredEntities.getRight().get(i));
+                entitiesRequiredItems.put(rotatedSchematicEntity, entityRequirementsItems.get(i));
+                entitiesRequiredFluids.put(rotatedSchematicEntity, entityRequirementsFluids.get(i));
                 i++;
             }
-            box = new Box();
             Stream.concat(toBreak.stream(), toPlace.keySet().stream()).forEach(box::extendToEncompass);
+
+            finishedComputing = true;
+        }
+
+        public boolean hasFinishedComputing() {
+            if (!finishedComputing && future.isDone()) {
+                processData();
+            }
+            return finishedComputing;
         }
 
         public Blueprint getSnapshot() {

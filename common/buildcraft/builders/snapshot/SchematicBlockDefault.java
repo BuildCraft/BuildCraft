@@ -14,7 +14,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -45,29 +44,28 @@ import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.SchematicBlockContext;
 
+import buildcraft.lib.dimension.FakeWorldServer;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 
 public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefault> {
-    private final Set<BlockPos> requiredBlockOffsets = new HashSet<>();
-    private IBlockState blockState;
-    private final List<IProperty<?>> ignoredProperties = new ArrayList<>();
-    private NBTTagCompound tileNbt;
-    private final List<String> ignoredTags = new ArrayList<>();
-    private Rotation tileRotation = Rotation.NONE;
-    private Block placeBlock;
-    private final Set<BlockPos> updateBlockOffsets = new HashSet<>();
-    private final Set<Block> canBeReplacedWithBlocks = new HashSet<>();
+    protected final Set<BlockPos> requiredBlockOffsets = new HashSet<>();
+    protected IBlockState blockState;
+    protected final List<IProperty<?>> ignoredProperties = new ArrayList<>();
+    protected NBTTagCompound tileNbt;
+    protected final List<String> ignoredTags = new ArrayList<>();
+    protected Rotation tileRotation = Rotation.NONE;
+    protected Block placeBlock;
+    protected final Set<BlockPos> updateBlockOffsets = new HashSet<>();
+    protected final Set<Block> canBeReplacedWithBlocks = new HashSet<>();
 
     @SuppressWarnings("unused")
     public static boolean predicate(SchematicBlockContext context) {
-        if (context.blockState.getBlock().isAir(context.blockState, null, null)) {
-            return false;
-        }
         ResourceLocation registryName = context.block.getRegistryName();
         return registryName != null &&
             RulesLoader.READ_DOMAINS.contains(registryName.getResourceDomain()) &&
-            RulesLoader.getRules(context.blockState).stream().noneMatch(rule -> rule.ignore);
+            RulesLoader.getRules(context.blockState).stream().noneMatch(rule -> rule.ignore) &&
+                context.world.isAirBlock(context.basePos);
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
@@ -234,8 +232,8 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
             ));
         }
         if (rules.stream().noneMatch(rule -> rule.doNotCopyRequiredItemsFromBreakBlockDrops)) {
-            if (context.world instanceof FakeWorld) {
-                requiredItems.addAll(((FakeWorld) context.world).breakBlockAndGetDrops(context.pos));
+            if (context.world instanceof FakeWorldServer) {
+                requiredItems.addAll(((FakeWorldServer) context.world).breakBlockAndGetDrops(context.pos));
             }
         }
         if (rules.stream().map(rule -> rule.requiredItems).anyMatch(Objects::nonNull)) {
@@ -339,7 +337,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
                 placeBlock.getDefaultState()
             );
         }
-        if (world.setBlockState(blockPos, newBlockState, 11)) {
+        if (world.setBlockState(blockPos, newBlockState, 3)) {
             updateBlockOffsets.stream()
                 .map(blockPos::add)
                 .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, placeBlock, false));
