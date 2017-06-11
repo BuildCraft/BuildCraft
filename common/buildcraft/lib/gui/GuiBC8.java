@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 
 import buildcraft.lib.BCLibSprites;
+import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.ledger.LedgerHelp;
 import buildcraft.lib.gui.ledger.LedgerManager_Neptune;
 import buildcraft.lib.gui.ledger.LedgerOwnership;
@@ -27,6 +28,7 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.MousePosition;
 import buildcraft.lib.gui.pos.PositionCallable;
+import buildcraft.lib.misc.GuiUtil;
 
 public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer {
     /**
@@ -43,7 +45,6 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
     public final List<IGuiElement> guiElements = new ArrayList<>();
     public final LedgerManager_Neptune ledgersLeft, ledgersRight;
     protected final LedgerHelp ledgerHelp;
-    private final GuiElementToolTips tooltips = new GuiElementToolTips(this);
     private float lastPartialTicks;
 
     public GuiBC8(C container) {
@@ -73,7 +74,6 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
     @Override
     public void initGui() {
         super.initGui();
-        guiElements.clear();
     }
 
     // Protected -> Public
@@ -168,9 +168,31 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         ledgersLeft.drawForeground(lastPartialTicks);
         ledgersRight.drawForeground(lastPartialTicks);
 
-        tooltips.drawForeground(lastPartialTicks);
+        drawTooltips();
 
         GlStateManager.translate(guiLeft, guiTop, 0);
+    }
+    
+    private void drawTooltips() {
+        List<ToolTip> tooltips = new ArrayList<>();
+        if (this instanceof ITooltipElement) {
+            ((ITooltipElement) this).addToolTips(tooltips);
+        }
+        for (IGuiElement elem : guiElements) {
+            elem.addToolTips(tooltips);
+        }
+        ledgersLeft.addToolTips(tooltips);
+        ledgersRight.addToolTips(tooltips);
+        for (GuiButton button : getButtonList()) {
+            if (button instanceof ITooltipElement) {
+                ((ITooltipElement) button).addToolTips(tooltips);
+            }
+        }
+        GuiUtil.drawVerticallyAppending(mouse, tooltips, this::drawTooltip);
+    }
+
+    private int drawTooltip(ToolTip tooltip, int x, int y) {
+        return 4 + GuiUtil.drawHoveringText(tooltip, x, y, width, height, -1, mc.fontRenderer);
     }
 
     public void drawProgress(GuiRectangle rect, GuiIcon icon, double widthPercent, double heightPercent) {

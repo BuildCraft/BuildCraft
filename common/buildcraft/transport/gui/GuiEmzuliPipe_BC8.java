@@ -17,10 +17,13 @@ import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.GuiElementToolTip;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.ISimpleDrawable;
+import buildcraft.lib.gui.ITooltipElement;
 import buildcraft.lib.gui.button.GuiButtonDrawable;
 import buildcraft.lib.gui.elem.GuiElementDrawable;
+import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
@@ -43,7 +46,7 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
 
     static {
         GuiRectangle rect = new GuiRectangle(20, 20);
-        GuiIcon enabled = new GuiIcon(TEXTURE, 175, 0, 20, 20, 256);
+        GuiIcon enabled = new GuiIcon(TEXTURE, 176, 0, 20, 20, 256);
         PAINT_BUTTON_BUILDER = new GuiButtonDrawable.Builder(rect, enabled);
         PAINT_BUTTON_BUILDER.active = enabled.offset(0, 20);
     }
@@ -64,42 +67,58 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
     }
 
     private void addButton(SlotIndex index, int x, int y) {
-        Supplier<EnumDyeColor> getter = () -> null;
+        Supplier<EnumDyeColor> getter = () -> container.behaviour.slotColours.get(index);
         Consumer<EnumDyeColor> setter = c -> container.paintWidgets.get(index).setColour(c);
 
         IGuiPosition elem = rootElement.offset(x, y);
         GuiButtonDrawable button = new GuiButtonDrawable(this, index.name(), elem, PAINT_BUTTON_BUILDER);
         button.registerListener((b, key) -> {
+            final EnumDyeColor old = getter.get();
+            EnumDyeColor nColour;
             switch (key) {
                 case 0: {
-                    EnumDyeColor colour = getter.get();
-                    setter.accept(ColourUtil.getNextOrNull(colour));
+                    nColour = ColourUtil.getNextOrNull(old);
                     break;
                 }
                 case 1: {
-                    EnumDyeColor colour = getter.get();
-                    setter.accept(ColourUtil.getPrevOrNull(colour));
+                    nColour = ColourUtil.getPrevOrNull(old);
                     break;
                 }
                 case 2: {
-                    setter.accept(null);
+                    nColour = null;
+                    break;
+                }
+                default: {
+                    return;
                 }
             }
+            setter.accept(nColour);
         });
         guiElements.add(button);
 
         // Button paintbrush
         IGuiArea area = new GuiRectangle(20, 20).offset(elem);
         ISimpleDrawable paintIcon = (px, py) -> {
-            EnumDyeColor colour = container.behaviour.slotColours.get(index);
+            EnumDyeColor colour = getter.get();
             if (colour == null) {
                 ICON_NO_PAINT.drawAt(px + 2, py + 2);
             } else {
                 ISprite sprite = BCTransportSprites.ACTION_PIPE_COLOUR[colour.ordinal()];
-                GuiIcon.drawAt(sprite, px, py, 16);
+                GuiIcon.drawAt(sprite, px + 2, py + 2, 16);
             }
         };
         guiElements.add(new GuiElementDrawable(this, area, paintIcon, false));
+        ITooltipElement tooltips = list -> {
+            EnumDyeColor colour = getter.get();
+            String line;
+            if (colour == null) {
+                line = LocaleUtil.localize("gui.pipes.emzuli.nopaint");
+            } else {
+                line = LocaleUtil.localize("gui.pipes.emzuli.paint", ColourUtil.getTextFullTooltip(colour));
+            }
+            list.add(new ToolTip(line));
+        };
+        guiElements.add(new GuiElementToolTip(this, area, tooltips));
     }
 
     @Override
@@ -124,45 +143,45 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
         fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), rootElement.getX() + 8,
             rootElement.getY() + ySize - 93, 0x404040);
     }
-/*
-    public final class GuiPaintButton extends GuiButtonDrawable {
-        private final SlotIndex index;
-
-        public GuiPaintButton(GuiBC8<?> gui, int buttonId, int x, int y, SlotIndex index) {
-            super(gui, buttonId, x, y, ICON_BUTTON_UP, ICON_BUTTON_DOWN);
-            this.index = index;
-            this.width = 20;
-            this.height = 20;
-            setBehaviour(IButtonBehaviour.DEFAULT);
-        }
-
-        private EnumDyeColor getCurrentColour() {
-            return container.behaviour.slotColours.get(index);
-        }
-
-        @Override
-        public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-            super.drawButton(mc, mouseX, mouseY);
-            EnumDyeColor colour = getCurrentColour();
-            if (colour == null) {
-                ICON_NO_PAINT.drawAt(getX() + 2, getY() + 2);
-            } else {
-                GuiIcon.drawAt(BCTransportSprites.ACTION_PIPE_COLOUR[colour.ordinal()], getX() + 2, getY() + 2, 16);
-            }
-        }
-
-        @Override
-        public void addToolTips(List<ToolTip> tooltips) {
-            if (contains(gui.mouse)) {
-                EnumDyeColor color = getCurrentColour();
-                if (color != null) {
-                    tooltips.add(new ToolTip(
-                        LocaleUtil.localize("gui.pipes.emzuli.paint", ColourUtil.getTextFullTooltip(color))));
-                } else {
-                    tooltips.add(new ToolTip(LocaleUtil.localize("gui.pipes.emzuli.nopaint")));
-                }
-            }
-        }
-    }
-*/
+    /*
+     * public final class GuiPaintButton extends GuiButtonDrawable {
+     * private final SlotIndex index;
+     * 
+     * public GuiPaintButton(GuiBC8<?> gui, int buttonId, int x, int y, SlotIndex index) {
+     * super(gui, buttonId, x, y, ICON_BUTTON_UP, ICON_BUTTON_DOWN);
+     * this.index = index;
+     * this.width = 20;
+     * this.height = 20;
+     * setBehaviour(IButtonBehaviour.DEFAULT);
+     * }
+     * 
+     * private EnumDyeColor getCurrentColour() {
+     * return container.behaviour.slotColours.get(index);
+     * }
+     * 
+     * @Override
+     * public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+     * super.drawButton(mc, mouseX, mouseY);
+     * EnumDyeColor colour = getCurrentColour();
+     * if (colour == null) {
+     * ICON_NO_PAINT.drawAt(getX() + 2, getY() + 2);
+     * } else {
+     * GuiIcon.drawAt(BCTransportSprites.ACTION_PIPE_COLOUR[colour.ordinal()], getX() + 2, getY() + 2, 16);
+     * }
+     * }
+     * 
+     * @Override
+     * public void addToolTips(List<ToolTip> tooltips) {
+     * if (contains(gui.mouse)) {
+     * EnumDyeColor color = getCurrentColour();
+     * if (color != null) {
+     * tooltips.add(new ToolTip(
+     * LocaleUtil.localize("gui.pipes.emzuli.paint", ColourUtil.getTextFullTooltip(color))));
+     * } else {
+     * tooltips.add(new ToolTip(LocaleUtil.localize("gui.pipes.emzuli.nopaint")));
+     * }
+     * }
+     * }
+     * }
+     */
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import com.google.gson.Gson;
@@ -33,15 +34,19 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
 
     @Override
     public void initGui() {
+        load();
         super.initGui();
-        reload();
     }
 
-    private void reload() {
+    protected final void load() {
         try (IResource res = Minecraft.getMinecraft().getResourceManager().getResource(guiDefinition)) {
             JsonObject obj = new Gson().fromJson(new InputStreamReader(res.getInputStream()), JsonObject.class);
 
+            preLoad();
+
             JsonGuiInfo info = new JsonGuiInfo(obj);
+            xSize = info.sizeX;
+            ySize = info.sizeY;
 
             for (JsonGuiElement elem : info.elements) {
                 String typeName = elem.properties.get("type");
@@ -52,8 +57,26 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
                     type.addToGui(this, info, elem);
                 }
             }
+            postLoad();
         } catch (IOException e) {
             throw new Error(e);
+        }
+    }
+
+    /** Add to {@link #sprites}, {@link #properties} */
+    protected void preLoad() {}
+
+    /** Setup {@link #buttons} */
+    protected void postLoad() {}
+
+    /** Helper method for setting up buttons in {@link #postLoad()}.
+     * 
+     * @param name The identifier for the button
+     * @param ifNonNull Code to be run if the button was defined in the JSON file, and so is not null */
+    protected final void setupButton(String name, Consumer<GuiAbstractButton<?>> ifNonNull) {
+        GuiAbstractButton<?> button = buttons.get(name);
+        if (button != null) {
+            ifNonNull.accept(button);
         }
     }
 }

@@ -6,7 +6,7 @@ import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IFillerStatementContainer;
 
-import buildcraft.lib.gui.statement.StatementWrapper;
+import buildcraft.lib.statement.StatementWrapper;
 
 public class FillerWrapper extends StatementWrapper implements IFillerPattern {
 

@@ -20,6 +20,7 @@ import buildcraft.lib.gui.pos.IGuiPosition;
 public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {
     public boolean dropShadow = false;
     public boolean foreground = true;
+    public boolean centered = false;
 
     private final Supplier<String> text;
     private final IntSupplier colour;
@@ -41,6 +42,11 @@ public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {
 
     public GuiElementText setForeground(boolean value) {
         foreground = value;
+        return this;
+    }
+
+    public GuiElementText setCentered(boolean centered) {
+        this.centered = centered;
         return this;
     }
 
@@ -72,6 +78,13 @@ public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {
 
     private void draw() {
         FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
-        fr.drawString(text.get(), getX(), getY(), colour.getAsInt(), dropShadow);
+        if (centered) {
+            String str = text.get();
+            int width = fr.getStringWidth(str);
+            int x = getX() - width / 2;
+            fr.drawString(str, x, getY(), colour.getAsInt(), dropShadow);
+        } else {
+            fr.drawString(text.get(), getX(), getY(), colour.getAsInt(), dropShadow);
+        }
     }
 }

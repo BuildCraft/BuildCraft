@@ -576,6 +576,9 @@ tip.gate.nocharge=No Charge
 tip.filler.excavate.on=Excavate
 tip.filler.excavate.off=Do Not Excavate
 
+tip.filler.invert.on=Invert
+tip.filler.invert.off=Do Not Invert
+
 tip.list.matches=Matches
 
 tip.shift.PipeFluidsDiamond=GUI accepts any fluid containers

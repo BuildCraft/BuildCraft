@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.statements.IStatementContainer;
 
-import buildcraft.lib.client.sprite.SpriteRaw;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
+import buildcraft.lib.client.sprite.SpriteRaw;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
@@ -20,9 +20,11 @@ import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.statement.StatementWrapper;
 
 public abstract class GuiStatementSelector<C extends ContainerBC_Neptune> extends GuiBC8<C> implements ITooltipElement {
-    public static final ResourceLocation TEXTURE_SELECTOR = new ResourceLocation("buildcraftlib:textures/gui/statement_selector.png");
+    public static final ResourceLocation TEXTURE_SELECTOR =
+        new ResourceLocation("buildcraftlib:textures/gui/statement_selector.png");
 
     public static final int GUI_WIDTH = 176;
 
@@ -34,6 +36,7 @@ public abstract class GuiStatementSelector<C extends ContainerBC_Neptune> extend
     public static final SpriteNineSliced SELECTION_HOVER = new SpriteNineSliced(ICON_SELECT_HOVER, 8, 8, 28, 28, 36);
 
     public ElementGuiSlot<?, ?> currentHover = null;
+    public boolean isDragging;
     public StatementWrapper draggingElement;
 
     public GuiStatementSelector(C container) {
@@ -47,7 +50,8 @@ public abstract class GuiStatementSelector<C extends ContainerBC_Neptune> extend
         iteratePossible((wrapper, pos) -> {
             ElementStatement.draw(this, wrapper, pos);
             if (currentHover != null) {
-                drawGradientRect(pos.getX(), pos.getY(), pos.getX() + 18, pos.getY() + 18, 0x55_00_00_00, 0x55_00_00_00);
+                drawGradientRect(pos.getX(), pos.getY(), pos.getX() + 18, pos.getY() + 18, 0x55_00_00_00,
+                    0x55_00_00_00);
             }
         });
     }
@@ -56,11 +60,12 @@ public abstract class GuiStatementSelector<C extends ContainerBC_Neptune> extend
     protected void drawForegroundLayer() {
         if (currentHover != null) {
             GlStateManager.disableDepth();
-            drawGradientRect(rootElement.getX(), rootElement.getY(), rootElement.getX() + GUI_WIDTH, rootElement.getY() + ySize, 0x55_00_00_00, 0x55_00_00_00);
+            drawGradientRect(rootElement.getX(), rootElement.getY(), rootElement.getX() + GUI_WIDTH,
+                rootElement.getY() + ySize, 0x55_00_00_00, 0x55_00_00_00);
             GlStateManager.enableDepth();
         }
 
-        if (draggingElement != null) {
+        if (isDragging) {
             ElementStatement.draw(this, draggingElement, mouse.offset(-9, -9));
         }
     }
@@ -93,6 +98,7 @@ public abstract class GuiStatementSelector<C extends ContainerBC_Neptune> extend
         iteratePossible((wrapper, pos) -> {
             if (pos.contains(mouse)) {
                 draggingElement = wrapper;
+                isDragging = true;
             }
         });
     }
@@ -102,7 +108,7 @@ public abstract class GuiStatementSelector<C extends ContainerBC_Neptune> extend
         super.mouseReleased(mouseX, mouseY, state);
 
         // Test for dragging statements from the side contexts
-        if (draggingElement != null) {
+        if (isDragging) {
             for (IGuiElement elem : guiElements) {
                 if (elem instanceof ElementStatement<?, ?>) {
                     ElementStatement<?, ?> element = (ElementStatement<?, ?>) elem;
@@ -113,6 +119,7 @@ public abstract class GuiStatementSelector<C extends ContainerBC_Neptune> extend
                 }
             }
             draggingElement = null;
+            isDragging = false;
         }
     }
 

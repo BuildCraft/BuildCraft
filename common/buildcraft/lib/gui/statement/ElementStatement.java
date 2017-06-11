@@ -19,6 +19,7 @@ import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.data.IReference;
+import buildcraft.lib.statement.StatementWrapper;
 
 public abstract class ElementStatement<G extends GuiStatementSelector<?>, T extends StatementWrapper> extends ElementGuiSlot<G, T> {
 

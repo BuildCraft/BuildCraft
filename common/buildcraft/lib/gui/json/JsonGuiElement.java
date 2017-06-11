@@ -34,8 +34,6 @@ public class JsonGuiElement {
             JsonGuiElement parent = typeLookup.get(str);
             if (parent != null) {
                 properties.putAll(parent.properties);
-            } else {
-                // throw new JsonSyntaxException("Unknown parent " + str);
             }
         }
         for (Entry<String, JsonElement> entry : json.entrySet()) {

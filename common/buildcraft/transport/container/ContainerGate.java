@@ -27,11 +27,11 @@ import buildcraft.api.statements.StatementManager;
 import buildcraft.api.statements.StatementManager.IParameterReader;
 
 import buildcraft.lib.gui.ContainerBC_Neptune;
-import buildcraft.lib.gui.statement.StatementWrapper;
 import buildcraft.lib.misc.data.ForwardingReference;
 import buildcraft.lib.misc.data.IReference;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.statement.StatementWrapper;
 
 import buildcraft.transport.gate.ActionWrapper;
 import buildcraft.transport.gate.GateLogic;

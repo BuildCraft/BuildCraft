@@ -6,9 +6,12 @@
 
 package buildcraft.lib.gui;
 
+import java.util.List;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
 
@@ -27,6 +30,9 @@ public interface IGuiElement extends IGuiArea, ITooltipElement {
 
     /** This is called EVEN IF the mouse is not inside your width and height! */
     default void onMouseReleased(int button) {}
+
+    @Override
+    default void addToolTips(List<ToolTip> tooltips) {}
 
     /** @return The {@link HelpPosition} pair, or null if this element shouldn't display help right now. */
     default HelpPosition getHelpInfo() {

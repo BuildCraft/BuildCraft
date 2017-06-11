@@ -9,7 +9,6 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.GuiSpriteScaled;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.button.GuiButtonDrawable;
-import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.SpriteUtil;
@@ -79,16 +78,15 @@ public class ElementTypeButton extends ElementType {
         buttonBuilder.disabled = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.disabled");
         buttonBuilder.disabledActive = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.active_disabled");
 
+        String source = json.properties.getOrDefault("source", "_fail_");
+
         GuiButtonDrawable button = new GuiButtonDrawable(gui, json.name, gui.rootElement, buttonBuilder);
-        String behaviour = json.properties.get("behaviour");
-        if ("toggle".equalsIgnoreCase(behaviour)) {
-            button.setBehaviour(IButtonBehaviour.TOGGLE);
-        }
         gui.guiElements.add(button);
-        gui.buttons.put(json.name, button);
+        gui.buttons.put(source, button);
     }
 
-    private static ISimpleDrawable resolveDrawable(FunctionContext ctx, JsonGuiInfo guiInfo, JsonGuiElement json, GuiJson<?> gui, int sizeX, int sizeY, String key) {
+    private static ISimpleDrawable resolveDrawable(FunctionContext ctx, JsonGuiInfo guiInfo, JsonGuiElement json,
+        GuiJson<?> gui, int sizeX, int sizeY, String key) {
         double[] uvs = new double[4];
         for (int i = 0; i < 4; i++) {
             uvs[i] = resolveEquationDouble(json, key + "[" + i + "]", ctx);

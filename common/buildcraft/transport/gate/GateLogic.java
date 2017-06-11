@@ -41,9 +41,9 @@ import buildcraft.api.transport.IWireManager;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeEventActionActivate;
 
-import buildcraft.lib.gui.statement.StatementWrapper;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.IPayloadWriter;
+import buildcraft.lib.statement.StatementWrapper;
 
 import buildcraft.transport.gate.ActionWrapper.ActionWrapperExternal;
 import buildcraft.transport.gate.ActionWrapper.ActionWrapperInternal;
@@ -58,6 +58,7 @@ import buildcraft.transport.wire.WorldSavedDataWireSystems;
 public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContainer {
     public static final int NET_ID_RESOLVE = 3;
 
+    @Deprecated
     public final PluggableGate pluggable;
     public final GateVariant variant;
 
@@ -354,7 +355,8 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
     }
 
     /** Sets up the given trigger or action statements to the given ones. */
-    private static void setStatementInternal(int index, StatementWrapper[] array, IStatementParameter[][] parameters, StatementWrapper statement) {
+    private static void setStatementInternal(int index, StatementWrapper[] array, IStatementParameter[][] parameters,
+        StatementWrapper statement) {
         StatementWrapper old = array[index];
         array[index] = statement;
         if (statement == null) {
@@ -420,7 +422,8 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                 }
             }
             if (connections.length == triggerIndex || !connections[triggerIndex]) {
-                boolean allActionsActive = variant.logic == EnumGateLogic.AND ? groupActive == groupCount : groupActive > 0;
+                boolean allActionsActive =
+                    variant.logic == EnumGateLogic.AND ? groupActive == groupCount : groupActive > 0;
                 for (int i = groupCount - 1; i >= 0; i--) {
                     int actionIndex = triggerIndex - i;
                     ActionWrapper action = actions[actionIndex];
@@ -433,7 +436,8 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                             slot.part = action.sourcePart;
                             activeActions.add(slot);
                             action.actionActivate(this, actionParameters[actionIndex]);
-                            getPipeHolder().fireEvent(new PipeEventActionActivate(getPipeHolder(), action.getDelegate(), actionParameters[actionIndex], action.sourcePart));
+                            getPipeHolder().fireEvent(new PipeEventActionActivate(getPipeHolder(), action.getDelegate(),
+                                actionParameters[actionIndex], action.sourcePart));
                         } else {
                             action.actionDeactivated(this, actionParameters[actionIndex]);
                         }

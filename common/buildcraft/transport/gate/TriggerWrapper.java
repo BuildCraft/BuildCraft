@@ -20,7 +20,7 @@ import buildcraft.api.statements.ITriggerExternalOverride;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.ITriggerInternalSided;
 
-import buildcraft.lib.gui.statement.StatementWrapper;
+import buildcraft.lib.statement.StatementWrapper;
 
 /** Wrapper class around ITriggerInternal to allow for treating all triggers as internal triggers. It also provides the
  * background colour for sides. */

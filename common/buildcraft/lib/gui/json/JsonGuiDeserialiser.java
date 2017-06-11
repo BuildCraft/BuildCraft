@@ -16,6 +16,8 @@ public class JsonGuiDeserialiser {
     static {
         TYPES.put(ElementTypeSprite.NAME, ElementTypeSprite.INSTANCE);
         TYPES.put(ElementTypeButton.NAME, ElementTypeButton.INSTANCE);
+        TYPES.put(ElementTypeHelp.NAME, ElementTypeHelp.INSTANCE);
+        TYPES.put(ElementTypeText.NAME, ElementTypeText.INSTANCE);
     }
 
     public static void main(String[] args) throws IOException {

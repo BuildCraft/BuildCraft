@@ -9,6 +9,9 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 
+import buildcraft.lib.gui.button.IButtonBehaviour;
+import buildcraft.lib.gui.button.IButtonClickEventListener;
+import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.gui.json.SpriteDelegate;
 
@@ -24,6 +27,10 @@ public class GuiFiller2 extends GuiJson<ContainerFiller> {
 
     public GuiFiller2(ContainerFiller container) {
         super(container, LOCATION);
+    }
+
+    @Override
+    protected void preLoad() {
         sprites.put("filler.pattern.sprite", SPRITE_PATTERN);
 
         IFillerPattern patternNone = null;
@@ -41,10 +48,34 @@ public class GuiFiller2 extends GuiJson<ContainerFiller> {
     }
 
     @Override
+    protected void postLoad() {
+        setupButton("filler.no_excavate", b -> {
+            b.setBehaviour(IButtonBehaviour.TOGGLE);
+            final ToolTip active = ToolTip.createLocalized("tip.filler.excavate.off");
+            final ToolTip inactive = ToolTip.createLocalized("tip.filler.excavate.on");
+            b.setActive(!container.tile.canExcavate());
+            IButtonClickEventListener listener = (b2, k) -> {
+                b.setToolTip(b.active ? active : inactive);
+                container.tile.sendCanExcavate(!b.active);
+            };
+            listener.handleButtonClick(b, 0);
+            b.registerListener(listener);
+        });
+        setupButton("filler.invert", b -> {
+            b.setBehaviour(IButtonBehaviour.TOGGLE);
+            final ToolTip on = ToolTip.createLocalized("tip.filler.invert.on");
+            final ToolTip off = ToolTip.createLocalized("tip.filler.invert.off");
+            IButtonClickEventListener listener = (b2, k) -> {
+                b.setToolTip(b.active ? on : off);
+            };
+            listener.handleButtonClick(b, 0);
+            b.registerListener(listener);
+        });
+    }
+
+    @Override
     public void updateScreen() {
         super.updateScreen();
-        int i = (int) ((System.currentTimeMillis() / 2000) % possible.size());
-        IFillerPattern pattern = possible.get(i);
-        SPRITE_PATTERN.delegate = pattern.getGuiSprite();
+        SPRITE_PATTERN.delegate = container.tile.pattern.getGuiSprite();
     }
 }

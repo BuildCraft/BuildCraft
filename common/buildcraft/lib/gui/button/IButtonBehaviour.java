@@ -19,9 +19,11 @@ public interface IButtonBehaviour {
 
         @Override
         public void mouseReleased(GuiAbstractButton button, int bkey) {
-            button.active = false;
-            if (button.contains(button.gui.mouse)) {
-                button.notifyButtonClicked(bkey);
+            if (button.active) {
+                button.active = false;
+                if (button.contains(button.gui.mouse)) {
+                    button.notifyButtonClicked(bkey);
+                }
             }
         }
     };

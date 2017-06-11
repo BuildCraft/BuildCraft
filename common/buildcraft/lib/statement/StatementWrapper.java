@@ -3,7 +3,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
-package buildcraft.lib.gui.statement;
+package buildcraft.lib.statement;
 
 import java.util.Arrays;
 

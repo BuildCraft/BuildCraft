@@ -73,5 +73,4 @@ public final class GuiButtonDrawable extends GuiAbstractButton<GuiBC8<?>> {
             drDisabled.drawAt(this);
         }
     }
-
 }

@@ -22,7 +22,7 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 
-import buildcraft.lib.gui.statement.StatementWrapper;
+import buildcraft.lib.statement.StatementWrapper;
 
 public abstract class ActionWrapper extends StatementWrapper implements IActionInternal {
 

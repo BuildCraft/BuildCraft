@@ -27,6 +27,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IBox;
 import buildcraft.api.filler.FilledTemplate;
+import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.mj.MjAPI;
@@ -139,10 +140,11 @@ public class TileFiller extends TileBC_Neptune
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
                 builder.writeToByteBuf(buffer);
-                writePayload(NET_CAN_EXCAVATE, buffer, side);
-            }
-            if (id == NET_CAN_EXCAVATE) {
+            } else if (id == NET_CAN_EXCAVATE) {
                 buffer.writeBoolean(canExcavate);
+            } else if (id == NET_GUI_DATA) {
+                writePayload(NET_CAN_EXCAVATE, buffer, side);
+                buffer.writeString(pattern.getUniqueTag());
             }
         }
     }
@@ -153,10 +155,15 @@ public class TileFiller extends TileBC_Neptune
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 builder.readFromByteBuf(buffer);
-                readPayload(NET_CAN_EXCAVATE, buffer, side, ctx);
-            }
-            if (id == NET_CAN_EXCAVATE) {
+            } else if (id == NET_CAN_EXCAVATE) {
                 canExcavate = buffer.readBoolean();
+            } else if (id == NET_GUI_DATA) {
+                readPayload(NET_CAN_EXCAVATE, buffer, side, ctx);
+                String uniqueTag = buffer.readString();
+                IFillerPattern p = FillerManager.registry.getPattern(uniqueTag);
+                if (p != null) {
+                    pattern = p;
+                }
             }
         }
         if (side == Side.SERVER) {
@@ -275,7 +282,15 @@ public class TileFiller extends TileBC_Neptune
     }
 
     @Override
+    public boolean hasBox() {
+        return box.isInitialized();
+    }
+
+    @Override
     public IBox getBox() {
+        if (!hasBox()) {
+            throw new IllegalStateException("Called getBox() when hasBox() returned false!");
+        }
         return box;
     }
 
@@ -283,7 +298,9 @@ public class TileFiller extends TileBC_Neptune
     public void setPattern(IFillerPattern pattern, IStatementParameter[] params) {
         this.pattern = pattern;
         this.params = params;
-        template = pattern.createTemplate(this, params);
-        // buildingInfo = new BuildingInfo(template.min, Rotation.NONE);
+        if (hasBox()) {
+            template = pattern.createTemplate(this, params);
+            // buildingInfo = new BuildingInfo(template.min, Rotation.NONE);
+        }
     }
 }

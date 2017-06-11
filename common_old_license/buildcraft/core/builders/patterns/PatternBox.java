@@ -7,6 +7,7 @@ package buildcraft.core.builders.patterns;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.IBox;
 import buildcraft.api.filler.FilledTemplate;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IFillerStatementContainer;
@@ -29,7 +30,11 @@ public class PatternBox extends Pattern {
 
     @Override
     public FilledTemplate createTemplate(IFillerStatementContainer filler, IStatementParameter[] params) {
-        FilledTemplate template = new FilledTemplate(filler.getBox());
+        IBox box = filler.getBox();
+        if (box == null) {
+            return null;
+        }
+        FilledTemplate template = new FilledTemplate(box);
         int mx = template.size.getX() - 1;
         int my = template.size.getY() - 1;
         int mz = template.size.getZ() - 1;
