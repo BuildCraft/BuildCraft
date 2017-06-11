@@ -11,8 +11,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -111,16 +109,20 @@ public class BlueprintCalculator implements Callable<BlueprintCalculator.Buildin
 
         fakeServer.clear(location);
         BlueprintLocationManager.releaseLocation(location);
-        return new BuildingInfoData(Pair.of(requiredItems, requiredFluids), Pair.of(requiredItemsForEntities, requiredFluidsForEntities));
+        return new BuildingInfoData(requiredItems, requiredFluids, requiredItemsForEntities, requiredFluidsForEntities);
     }
 
     public static class BuildingInfoData {
-        public final Pair<List<ItemStack>[][][], List<FluidStack>[][][]> blockRequirements;
-        public final Pair<List<List<ItemStack>>, List<List<FluidStack>>> entityRequirements;
+        public final List<ItemStack>[][][] blockRequirementsItems;
+        public final List<FluidStack>[][][] blockRequirementsFluids;
+        public final List<List<ItemStack>> entityRequirementsItems;
+        public final List<List<FluidStack>> entityRequiremntsFluids;
 
-        public BuildingInfoData(Pair<List<ItemStack>[][][], List<FluidStack>[][][]> blockRequirements, Pair<List<List<ItemStack>>, List<List<FluidStack>>> entityRequirements) {
-            this.blockRequirements = blockRequirements;
-            this.entityRequirements = entityRequirements;
+        public BuildingInfoData(List<ItemStack>[][][] blockRequirementsItems, List<FluidStack>[][][] blockRequirementsFluids, List<List<ItemStack>> entityRequirementsItems, List<List<FluidStack>> entityRequiremntsFluids) {
+            this.blockRequirementsItems = blockRequirementsItems;
+            this.blockRequirementsFluids = blockRequirementsFluids;
+            this.entityRequirementsItems = entityRequirementsItems;
+            this.entityRequiremntsFluids = entityRequiremntsFluids;
         }
     }
 }

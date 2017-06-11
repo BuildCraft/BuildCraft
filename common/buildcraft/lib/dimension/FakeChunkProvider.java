@@ -6,8 +6,8 @@
 
 package buildcraft.lib.dimension;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 
 import net.minecraft.util.math.ChunkPos;
@@ -18,7 +18,7 @@ import net.minecraft.world.chunk.IChunkProvider;
 
 public class FakeChunkProvider implements IChunkProvider {
     private final World world;
-    public final Map<ChunkPos, Chunk> chunks = new HashMap<>();
+    public final Map<ChunkPos, Chunk> chunks = new ConcurrentHashMap<>();
 
     public FakeChunkProvider(World world) {
         this.world = world;

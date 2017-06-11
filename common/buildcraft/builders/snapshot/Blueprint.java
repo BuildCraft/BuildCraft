@@ -16,8 +16,6 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
@@ -101,6 +99,10 @@ public class Blueprint extends Snapshot {
         NBTTagList list = nbt.hasKey("data", Constants.NBT.TAG_LIST) ? nbt.getTagList("data", Constants.NBT.TAG_INT)
             : null;
         int[] serializedData = nbt.hasKey("data", Constants.NBT.TAG_INT_ARRAY) ? nbt.getIntArray("data") : new int[0];
+
+        if (serializedData.length == 0) {
+            throw new InvalidInputDataException("Can't read a blueprint with no data!");
+        }
         int len = list == null ? serializedData.length : list.tagCount();
         if (len != size.getX() * size.getY() * size.getZ()) {
             throw new InvalidInputDataException("Pallette has length of " + len
@@ -153,12 +155,16 @@ public class Blueprint extends Snapshot {
             BlueprintCalculator.BuildingInfoData infoData = null;
             try {
                 infoData = future.get();
-            } catch (InterruptedException | ExecutionException e) {
-                //Future reported to be done and we are not canceling so this should never heapen
+            } catch (InterruptedException e) {
                 e.printStackTrace();
+            } catch (ExecutionException e) {
+                throw new RuntimeException("Something went wrong during blueprint requirement calculations!", e);
             }
-            Pair<List<ItemStack>[][][], List<FluidStack>[][][]> required = infoData.blockRequirements;
-            Pair<List<List<ItemStack>>, List<List<FluidStack>>> requiredEntities = infoData.entityRequirements;
+            List<ItemStack>[][][] blockRequirementsItems = infoData.blockRequirementsItems;
+            List<FluidStack>[][][] blockRequirmentsFluids = infoData.blockRequirementsFluids;
+            List<List<ItemStack>> entityRequirementsItems = infoData.entityRequirementsItems;
+            List<List<FluidStack>> entityRequirementsFluids = infoData.entityRequiremntsFluids;
+
             for (int z = 0; z < getSnapshot().size.getZ(); z++) {
                 for (int y = 0; y < getSnapshot().size.getY(); y++) {
                     for (int x = 0; x < getSnapshot().size.getX(); x++) {
@@ -169,8 +175,8 @@ public class Blueprint extends Snapshot {
                             toBreak.add(blockPos);
                         } else {
                             toPlace.put(blockPos, schematicBlock.getRotated(rotation));
-                            toPlaceRequiredItems.put(blockPos, required.getLeft()[x][y][z]);
-                            toPlaceRequiredFluids.put(blockPos, required.getRight()[x][y][z]);
+                            toPlaceRequiredItems.put(blockPos, blockRequirementsItems[x][y][z]);
+                            toPlaceRequiredFluids.put(blockPos, blockRequirmentsFluids[x][y][z]);
                         }
                     }
                 }
@@ -179,8 +185,8 @@ public class Blueprint extends Snapshot {
             for (ISchematicEntity<?> schematicEntity : getSnapshot().entities) {
                 ISchematicEntity<?> rotatedSchematicEntity = schematicEntity.getRotated(rotation);
                 entities.add(rotatedSchematicEntity);
-                entitiesRequiredItems.put(rotatedSchematicEntity, requiredEntities.getLeft().get(i));
-                entitiesRequiredFluids.put(rotatedSchematicEntity, requiredEntities.getRight().get(i));
+                entitiesRequiredItems.put(rotatedSchematicEntity, entityRequirementsItems.get(i));
+                entitiesRequiredFluids.put(rotatedSchematicEntity, entityRequirementsFluids.get(i));
                 i++;
             }
             Stream.concat(toBreak.stream(), toPlace.keySet().stream()).forEach(box::extendToEncompass);

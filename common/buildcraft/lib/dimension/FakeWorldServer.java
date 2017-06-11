@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.annotation.Nullable;
 
 import com.mojang.authlib.GameProfile;
@@ -23,6 +24,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
@@ -40,13 +42,13 @@ import buildcraft.lib.BCLib;
 import buildcraft.lib.misc.data.Box;
 
 public class FakeWorldServer extends WorldServerMulti implements IFakeWorld {
-    private List<ItemStack> drops = new ArrayList<>();
+    private List<ItemStack> drops = new CopyOnWriteArrayList<>();
     public static FakeWorldServer INSTANCE;
     private FakeChunkProvider provider;
-    private List<Box> locks = new ArrayList<>();
+    private List<Box> locks = new CopyOnWriteArrayList<>();
 
     public FakeWorldServer(MinecraftServer server) {
-        super(server, DimensionManager.getWorld(0).getSaveHandler(), BCLib.DIMENSION_ID, DimensionManager.getWorld(0), server.profiler);
+        super(server, DimensionManager.getWorld(0).getSaveHandler(), BCLib.DIMENSION_ID, DimensionManager.getWorld(0), new Profiler());
         provider = new FakeChunkProvider(this);
         INSTANCE = this;
     }
@@ -287,7 +289,7 @@ public class FakeWorldServer extends WorldServerMulti implements IFakeWorld {
 
     @Override
     public File getChunkSaveLocation() {
-        return new File("Wherever");
+        return new File("BC_DIM_BP");
     }
 
     @Override
@@ -298,5 +300,10 @@ public class FakeWorldServer extends WorldServerMulti implements IFakeWorld {
     @Override
     public int countEntities(Class<?> entityType) {
         return 0;
+    }
+
+    @Override
+    public void tick() {
+
     }
 }

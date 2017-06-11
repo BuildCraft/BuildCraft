@@ -247,7 +247,6 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
         }
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
