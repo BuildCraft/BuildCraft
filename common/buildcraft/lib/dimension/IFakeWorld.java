@@ -20,22 +20,26 @@ import buildcraft.builders.snapshot.Blueprint;
  */
 public interface IFakeWorld {
 
-    public static final BlockPos BLUEPRINT_OFFSET = new BlockPos(0, 127, 0);
-
 
     FakeChunkProvider getFakeChunkProvider();
 
-    default void clear() {
-        getFakeChunkProvider().chunks.clear();
+    default void clear(BlueprintLocationManager.BlueprintLocation location) {
+        for (int z = -1; z <= location.size.getZ() + 1; z++) {
+            for (int y = -1; y <= location.size.getY() + 1; y++) {
+                for (int x = -1; x <= location.size.getX() + 1; x++) {
+                    setBlockState(new BlockPos(x, y, z).add(location.startPos), Blocks.AIR.getDefaultState());
+                }
+            }
+        }
     }
 
     boolean setBlockState(BlockPos pos, IBlockState state);
 
-    default void uploadBlueprint(Blueprint blueprint, boolean useStone) {
+    default void uploadBlueprint(Blueprint blueprint, BlueprintLocationManager.BlueprintLocation location, boolean useStone) {
         for (int z = -1; z <= blueprint.size.getZ(); z++) {
             for (int y = -1; y <= blueprint.size.getY(); y++) {
                 for (int x = -1; x <= blueprint.size.getX(); x++) {
-                    BlockPos pos = new BlockPos(x, y, z).add(BLUEPRINT_OFFSET);
+                    BlockPos pos = new BlockPos(x, y, z).add(location.startPos);
                     if (x == -1 || y == -1 || z == -1 ||
                             x == blueprint.size.getX() ||
                             y == blueprint.size.getY() ||

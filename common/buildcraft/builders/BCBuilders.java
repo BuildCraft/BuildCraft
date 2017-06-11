@@ -77,13 +77,6 @@ public class BCBuilders {
                 SchematicBlockDefaultState::new
         );
 
-        SchematicEntityFactoryRegistry.registerFactory(
-                "default",
-                200,
-                SchematicEntityDefault::predicate,
-                SchematicEntityDefault::new
-        );
-
         SchematicBlockFactoryRegistry.registerFactory(
                 "default",
                 300,
@@ -96,6 +89,13 @@ public class BCBuilders {
                 400,
                 SchematicBlockFluid::predicate,
                 SchematicBlockFluid::new
+        );
+
+        SchematicEntityFactoryRegistry.registerFactory(
+                "default",
+                100,
+                SchematicEntityDefault::predicate,
+                SchematicEntityDefault::new
         );
 
         BCBuildersProxy.getProxy().fmlPreInit();

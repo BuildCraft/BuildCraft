@@ -118,6 +118,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
             currentBasePosIndex = 0;
             snapshot = null;
             blueprintBuildingInfo = null;
+            blueprintBuilder.remainingDisplayRequired.clear();
             if (after.getItem() instanceof ItemSnapshot) {
                 Snapshot.Header header = BCBuildersItems.snapshot.getHeader(after);
                 if (header != null) {

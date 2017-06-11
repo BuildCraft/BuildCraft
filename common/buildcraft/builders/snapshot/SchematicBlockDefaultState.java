@@ -8,7 +8,6 @@ package buildcraft.builders.snapshot;
 
 import java.util.Set;
 
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.schematics.SchematicBlockContext;
@@ -26,7 +25,7 @@ public class SchematicBlockDefaultState extends SchematicBlockDefault {
 
     @Override
     protected void setTileNbt(SchematicBlockContext context, Set<JsonRule> rules) {
-        tileNbt = new NBTTagCompound();
+        tileNbt = null;
     }
 
 

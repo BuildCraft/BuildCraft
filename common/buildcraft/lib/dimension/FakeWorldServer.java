@@ -37,12 +37,13 @@ import net.minecraftforge.common.DimensionManager;
 import buildcraft.api.schematics.SchematicBlockContext;
 
 import buildcraft.lib.BCLib;
+import buildcraft.lib.misc.data.Box;
 
 public class FakeWorldServer extends WorldServerMulti implements IFakeWorld {
     private List<ItemStack> drops = new ArrayList<>();
     public static FakeWorldServer INSTANCE;
-    public boolean editable = true;
     private FakeChunkProvider provider;
+    private List<Box> locks = new ArrayList<>();
 
     public FakeWorldServer(MinecraftServer server) {
         super(server, DimensionManager.getWorld(0).getSaveHandler(), BCLib.DIMENSION_ID, DimensionManager.getWorld(0), server.profiler);
@@ -93,8 +94,6 @@ public class FakeWorldServer extends WorldServerMulti implements IFakeWorld {
 
     public boolean isAcceptableForBlueprint(SchematicBlockContext context) {
         BlockPos testPos = new BlockPos(-100, 5, -100);
-        boolean oldEditable = editable;
-        editable = true;
         setBlockState(testPos, context.blockState);
         TileEntity te = context.block.createTileEntity(this, context.blockState);
         TileEntity original = context.world.getTileEntity(context.pos);
@@ -117,13 +116,24 @@ public class FakeWorldServer extends WorldServerMulti implements IFakeWorld {
         boolean equals = compound.equals(toCompare);
         setBlockToAir(testPos);
         removeTileEntity(testPos);
-        editable = oldEditable;
         return equals;
+    }
+
+    private boolean isLocked(BlockPos pos) {
+        return locks.stream().anyMatch(lock-> lock.contains(pos));
+    }
+
+    public void lock(Box box) {
+        locks.add(box);
+    }
+
+    public void unlock(Box box) {
+        locks.remove(box);
     }
 
     @Override
     public boolean setBlockState(BlockPos pos, IBlockState newState, int flags) {
-        if (editable) {
+        if (!isLocked(pos)) {
             captureBlockSnapshots = true;
             if (pos.getY() < 0 || pos.getY() >= 256) {
                 return false;
@@ -138,68 +148,64 @@ public class FakeWorldServer extends WorldServerMulti implements IFakeWorld {
 
     @Override
     public void updateBlockTick(BlockPos pos, Block block, int delay, int priority) {
-        if (editable) {
+        if (!isLocked(pos)) {
             super.updateBlockTick(pos, block, delay, priority);
         }
     }
 
     @Override
     public void scheduleBlockUpdate(BlockPos pos, Block block, int delay, int priority) {
-        if (editable) {
+        if (!isLocked(pos)) {
             super.scheduleBlockUpdate(pos, block, delay, priority);
         }
     }
 
     @Override
     protected void updateBlocks() {
-        if (editable) {
-            super.updateBlocks();
-        }
+
     }
 
     @Override
     public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress) {
-        if (editable) {
+        if (!isLocked(pos)) {
             super.sendBlockBreakProgress(breakerId, pos, progress);
         }
     }
 
     @Override
     public boolean addTileEntity(TileEntity tile) {
-        return !editable || super.addTileEntity(tile);
+        return isLocked(tile.getPos()) || super.addTileEntity(tile);
     }
 
     @Override
     public void addTileEntities(Collection<TileEntity> tileEntityCollection) {
-        if (editable) {
-            super.addTileEntities(tileEntityCollection);
-        }
+        tileEntityCollection.forEach(this::addTileEntity);
     }
 
     @Override
     public void setTileEntity(BlockPos pos, @Nullable TileEntity tileEntity) {
-        if (editable) {
+        if (!isLocked(pos)) {
             super.setTileEntity(pos, tileEntity);
         }
     }
 
     @Override
     public void removeTileEntity(BlockPos pos) {
-        if (editable) {
+        if (!isLocked(pos)) {
             super.removeTileEntity(pos);
         }
     }
 
     @Override
     public void markTileEntityForRemoval(TileEntity tileEntity) {
-        if (editable) {
+        if (!isLocked(tileEntity.getPos())) {
             super.markTileEntityForRemoval(tileEntity);
         }
     }
 
     @Override
     public boolean spawnEntity(Entity entity) {
-        if (editable) {
+        if (!isLocked(entity.getPosition())) {
             return super.spawnEntity(entity);
         } else {
             if (entity instanceof EntityItem) {
@@ -211,56 +217,52 @@ public class FakeWorldServer extends WorldServerMulti implements IFakeWorld {
 
     @Override
     public void removeEntity(Entity entity) {
-        if (editable) {
+        if (!isLocked(entity.getPosition())) {
             super.removeEntity(entity);
         }
     }
 
     @Override
     public void setEntityState(Entity entity, byte state) {
-        if (editable) {
+        if (!isLocked(entity.getPosition())) {
             super.setEntityState(entity, state);
         }
     }
 
     @Override
     public void removeEntityDangerously(Entity entity) {
-        if (editable) {
+        if (isLocked(entity.getPosition())) {
             super.removeEntityDangerously(entity);
         }
     }
 
     @Override
     public void updateEntity(Entity entity) {
-        if (editable) {
+        if (!isLocked(entity.getPosition())) {
             super.updateEntity(entity);
         }
     }
 
     @Override
     public void updateEntityWithOptionalForce(Entity entity, boolean forceUpdate) {
-        if (editable) {
+        if (!isLocked(entity.getPosition())) {
             super.updateEntityWithOptionalForce(entity, forceUpdate);
         }
     }
 
     @Override
     public void loadEntities(Collection<Entity> entityCollection) {
-        if (editable) {
-            super.loadEntities(entityCollection);
-        }
+        entityCollection.forEach(this::spawnEntity);
     }
 
     @Override
     public void unloadEntities(Collection<Entity> entityCollection) {
-        if (editable) {
-            super.unloadEntities(entityCollection);
-        }
+       entityCollection.forEach(this::removeEntity);
     }
 
     @Override
     public BlockPos getSpawnPoint() {
-        return BLUEPRINT_OFFSET;
+        return new BlockPos(-100, 100, -100);
     }
 
     @Override
@@ -291,5 +293,10 @@ public class FakeWorldServer extends WorldServerMulti implements IFakeWorld {
     @Override
     public FakeChunkProvider getFakeChunkProvider() {
         return provider;
+    }
+
+    @Override
+    public int countEntities(Class<?> entityType) {
+        return 0;
     }
 }
