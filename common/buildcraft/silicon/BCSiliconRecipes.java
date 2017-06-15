@@ -36,13 +36,14 @@ public class BCSiliconRecipes {
         if (BCBlocks.SILICON_LASER != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("rro");
-            builder.add("rdo");
+            builder.add("rdd");
             builder.add("rro");
             builder.map('r', "dustRedstone");
             builder.map('o', Blocks.OBSIDIAN);
             builder.map('d', "gemDiamond");
             builder.setResult(new ItemStack(BCBlocks.SILICON_LASER));
             builder.register();
+            builder.registerRotated();
         }
 
         if (BCItems.SILICON_REDSTONE_CLIPSET != null) {
