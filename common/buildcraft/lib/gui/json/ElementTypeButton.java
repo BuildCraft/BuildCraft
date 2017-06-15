@@ -81,8 +81,9 @@ public class ElementTypeButton extends ElementType {
         String source = json.properties.getOrDefault("source", "_fail_");
 
         GuiButtonDrawable button = new GuiButtonDrawable(gui, json.name, gui.rootElement, buttonBuilder);
-        gui.guiElements.add(button);
-        gui.buttons.put(source, button);
+        gui.shownElements.add(button);
+        gui.miscProperties.put(source, button);
+        gui.miscProperties.put(json.name, button);
     }
 
     private static ISimpleDrawable resolveDrawable(FunctionContext ctx, JsonGuiInfo guiInfo, JsonGuiElement json,
@@ -92,7 +93,7 @@ public class ElementTypeButton extends ElementType {
             uvs[i] = resolveEquationDouble(json, key + "[" + i + "]", ctx);
         }
         SrcTexture texture = resolveTexture(guiInfo, json, key);
-        ISprite sprite = gui.sprites.get(texture.origin);
+        ISprite sprite = gui.miscProperties.get(texture.origin, ISprite.class);
         if (sprite != null) {
             sprite = GuiUtil.subRelative(sprite, uvs[0], uvs[1], uvs[2], uvs[3], texture.texSize);
         } else {

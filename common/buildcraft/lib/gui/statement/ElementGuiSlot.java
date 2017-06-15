@@ -17,15 +17,17 @@ import buildcraft.api.statements.IGuiSlot;
 
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.IInteractionElement;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.data.IReference;
 
-public abstract class ElementGuiSlot<G extends GuiStatementSelector<?>, T extends IGuiSlot> extends GuiElementSimple<G> {
+public abstract class ElementGuiSlot<G extends GuiStatementSelector<?>, T extends IGuiSlot> extends GuiElementSimple<G>
+    implements IInteractionElement {
 
-    /** An array containing [offset][X|Y] */
+    /** An array containing [offset][X,Y] */
     private static final int[][] OFFSET_HOVER = {
         // First 8
         { -1, -1 }, { 0, -1 }, { 1, -1 }, { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 1 }, { -1, 0 },
@@ -99,7 +101,7 @@ public abstract class ElementGuiSlot<G extends GuiStatementSelector<?>, T extend
 
     public static void draw(Gui gui, IGuiSlot slot, IGuiPosition pos) {
         if (slot != null) {
-            ISprite sprite = slot.getGuiSprite();
+            ISprite sprite = slot.getSprite();
             if (sprite != null) {
                 GuiIcon.drawAt(sprite, pos.getX() + 1, pos.getY() + 1, 16, 16);
             }

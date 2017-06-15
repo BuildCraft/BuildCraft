@@ -67,7 +67,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
 
     @Override
     @SideOnly(Side.CLIENT)
-    public SpriteHolder getGuiSprite() {
+    public SpriteHolder getSprite() {
         return BCCoreSprites.TRIGGER_INVENTORY_LEVEL.get(type);
     }
 

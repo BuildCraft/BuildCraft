@@ -65,7 +65,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
                 final WidgetListSlot listSlot = arr[slot];
                 GuiRectangle rectangle = new GuiRectangle(8 + slot * 18, 32 + line * 34, 16, 16);
 
-                guiElements.add(listSlot.new GuiElementPhantomSlot<GuiList>(this, rootElement, rectangle) {
+                shownElements.add(listSlot.new GuiElementPhantomSlot<GuiList>(this, rootElement, rectangle) {
                     @Override
                     protected boolean shouldDrawHighlight() {
                         return listSlot.slotIndex == 0 || !gui.container.lines[listSlot.lineIndex].isOneStackMode();
@@ -114,20 +114,20 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
             GuiImageButton buttonPrecise = new GuiImageButton(this, bOff + 0, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28);
             buttonPrecise.setToolTip(ToolTip.createLocalized("gui.list.nbt"));
             buttonPrecise.setBehaviour(IButtonBehaviour.TOGGLE);
-            guiElements.add(buttonPrecise);
+            shownElements.add(buttonPrecise);
 
             GuiImageButton buttonType = new GuiImageButton(this, bOff + 1, bOffX + 11, bOffY, 11, TEXTURE_BASE, 176, 16, 185, 28);
             buttonType.setToolTip(ToolTip.createLocalized("gui.list.metadata"));
             buttonType.setBehaviour(IButtonBehaviour.TOGGLE);
-            guiElements.add(buttonType);
+            shownElements.add(buttonType);
 
             GuiImageButton buttonMaterial = new GuiImageButton(this, bOff + 2, bOffX + 22, bOffY, 11, TEXTURE_BASE, 176, 16, 194, 28);
             buttonMaterial.setToolTip(ToolTip.createLocalized("gui.list.oredict"));
             buttonMaterial.setBehaviour(IButtonBehaviour.TOGGLE);
-            guiElements.add(buttonMaterial);
+            shownElements.add(buttonMaterial);
         }
 
-        for (IGuiElement elem : guiElements) {
+        for (IGuiElement elem : shownElements) {
             if (elem instanceof GuiImageButton) {
                 GuiImageButton b = (GuiImageButton) elem;
                 int id = Integer.parseInt(b.id);

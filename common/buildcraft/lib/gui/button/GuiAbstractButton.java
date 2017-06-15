@@ -13,16 +13,16 @@ import java.util.function.Supplier;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiElementSimple;
+import buildcraft.lib.gui.IInteractionElement;
 import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
-/**
- * If this only has 1 subclass (GuiSpriteButton), then why no merge them?
- */
-public abstract class GuiAbstractButton<G extends GuiBC8<?>> extends GuiElementSimple<G> implements IButtonClickEventTrigger {
+/** If this only has 1 subclass (GuiSpriteButton), then why no merge them? */
+public abstract class GuiAbstractButton<G extends GuiBC8<?>> extends GuiElementSimple<G>
+    implements IButtonClickEventTrigger, IInteractionElement {
     private final List<IButtonClickEventListener> listeners = new ArrayList<>();
 
     public final String id;

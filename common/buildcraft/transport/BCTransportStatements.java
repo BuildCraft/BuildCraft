@@ -77,7 +77,7 @@ public class BCTransportStatements {
             ACTION_PIPE_DIRECTION[face.ordinal()] = new ActionPipeDirection(face);
         }
 
-        StatementManager.registerParameter(TriggerParameterSignal::readFromNbt);
+        StatementManager.registerParameter(TriggerParameterSignal::readFromNbt, TriggerParameterSignal::readFromBuf);
         StatementManager.registerParameter(ActionParameterSignal::readFromNbt);
     }
 

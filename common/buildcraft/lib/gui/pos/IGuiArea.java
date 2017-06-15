@@ -58,6 +58,19 @@ public interface IGuiArea extends IGuiPosition {
         return new PositionCallable(this::getCenterX, this::getCenterY);
     }
 
+    default IGuiPosition getEnd() {
+        return new PositionCallable(this::getEndX, this::getEndY);
+    }
+
+    /** @param partX -1, 0 or 1. -1 equals the start, 0 equals the centre and 1 equals the end
+     * @param partY -1, 0 or 1. -1 equals the start, 0 equals the centre and 1 equals the end
+     * @return */
+    default IGuiPosition getPosition(int partX, int partY) {
+        IntSupplier x = partX < 0 ? this::getX : partX > 0 ? this::getEndX : this::getCenterX;
+        IntSupplier y = partY < 0 ? this::getY : partY > 0 ? this::getEndY : this::getCenterY;
+        return new PositionCallable(x, y);
+    }
+
     @Override
     default IGuiArea offset(IGuiPosition by) {
         return offset(by::getX, by::getY);

@@ -20,6 +20,7 @@ import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
+import buildcraft.lib.gui.IInteractionElement;
 import buildcraft.lib.gui.Widget_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
@@ -52,7 +53,7 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
         return new GuiElementFluidTank(gui, parent, position, overlay);
     }
 
-    private final class GuiElementFluidTank extends GuiElementSimple<GuiBC8<?>> {
+    private final class GuiElementFluidTank extends GuiElementSimple<GuiBC8<?>> implements IInteractionElement {
         private final GuiIcon overlay;
 
         public GuiElementFluidTank(GuiBC8<?> gui, IGuiPosition parent, GuiRectangle position, GuiIcon overlay) {

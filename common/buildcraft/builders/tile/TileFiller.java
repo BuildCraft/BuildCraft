@@ -7,13 +7,13 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -27,7 +27,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IBox;
 import buildcraft.api.filler.FilledTemplate;
-import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.mj.MjAPI;
@@ -45,6 +44,7 @@ import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.statement.FullStatement;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
@@ -53,12 +53,12 @@ import buildcraft.lib.tile.item.StackInsertionFunction;
 
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.filling.Filling;
+import buildcraft.builders.patterns.FillerType;
 import buildcraft.builders.snapshot.ITileForTemplateBuilder;
 import buildcraft.builders.snapshot.SnapshotBuilder;
 import buildcraft.builders.snapshot.Template;
 import buildcraft.builders.snapshot.Template.BuildingInfo;
 import buildcraft.builders.snapshot.TemplateBuilder;
-import buildcraft.core.BCCoreStatements;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 
@@ -78,15 +78,12 @@ public class TileFiller extends TileBC_Neptune
     public boolean placedWithVolume = false;
     public boolean placedWithVolumeType = false;
 
-    public IFillerPattern pattern;
-    public IStatementParameter[] params;
+    public final FullStatement<IFillerPattern> pattern = new FullStatement<>(FillerType.INSTANCE, 4);
     private FilledTemplate template;
     private BuildingInfo buildingInfo;
 
     public TileFiller() {
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(battery)));
-        pattern = BCCoreStatements.PATTERN_NONE;
-        params = new IStatementParameter[0];
         StackInsertionChecker checker = (slot, stack) -> Filling.INSTANCE.getItemBlocks().contains(stack.getItem());
         StackInsertionFunction insertor = StackInsertionFunction.getDefaultInserter();
         ItemHandlerSimple handler = new ItemHandlerSimple(27, checker, insertor, this::onSlotChange);
@@ -144,7 +141,7 @@ public class TileFiller extends TileBC_Neptune
                 buffer.writeBoolean(canExcavate);
             } else if (id == NET_GUI_DATA) {
                 writePayload(NET_CAN_EXCAVATE, buffer, side);
-                buffer.writeString(pattern.getUniqueTag());
+                pattern.writeToBuffer(buffer);
             }
         }
     }
@@ -159,11 +156,7 @@ public class TileFiller extends TileBC_Neptune
                 canExcavate = buffer.readBoolean();
             } else if (id == NET_GUI_DATA) {
                 readPayload(NET_CAN_EXCAVATE, buffer, side, ctx);
-                String uniqueTag = buffer.readString();
-                IFillerPattern p = FillerManager.registry.getPattern(uniqueTag);
-                if (p != null) {
-                    pattern = p;
-                }
+                pattern.readFromBuffer(buffer);
             }
         }
         if (side == Side.SERVER) {
@@ -184,19 +177,7 @@ public class TileFiller extends TileBC_Neptune
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         nbt.setTag("battery", battery.serializeNBT());
-        if (pattern != null && pattern != BCCoreStatements.PATTERN_NONE) {
-            nbt.setString("pattern", pattern.getUniqueTag());
-            NBTTagList paramList = new NBTTagList();
-            for (IStatementParameter param : params) {
-                NBTTagCompound cpt = new NBTTagCompound();
-                if (param != null) {
-                    param.writeToNbt(cpt);
-                    cpt.setString("kind", param.getUniqueTag());
-                }
-                paramList.appendTag(cpt);
-            }
-            nbt.setTag("params", paramList);
-        }
+        nbt.setTag("pattern", pattern.writeToNbt());
         nbt.setBoolean("canExcavate", canExcavate);
         nbt.setBoolean("invertPattern", invertPattern);
         return nbt;
@@ -208,6 +189,7 @@ public class TileFiller extends TileBC_Neptune
         battery.deserializeNBT(nbt.getCompoundTag("battery"));
         invertPattern = nbt.getBoolean("invertPattern");
         canExcavate = nbt.getBoolean("canExcavate");
+        pattern.readFromNbt(nbt.getCompoundTag("pattern"));
     }
 
     // Rendering
@@ -296,8 +278,11 @@ public class TileFiller extends TileBC_Neptune
 
     @Override
     public void setPattern(IFillerPattern pattern, IStatementParameter[] params) {
-        this.pattern = pattern;
-        this.params = params;
+        this.pattern.set(pattern);
+        params = Arrays.copyOf(params, this.pattern.maxParams);
+        for (int i = 0; i < this.pattern.maxParams; i++) {
+            this.pattern.set(i, params[i]);
+        }
         if (hasBox()) {
             template = pattern.createTemplate(this, params);
             // buildingInfo = new BuildingInfo(template.min, Rotation.NONE);

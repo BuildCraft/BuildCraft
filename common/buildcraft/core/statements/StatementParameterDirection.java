@@ -74,7 +74,7 @@ public class StatementParameterDirection implements IStatementParameter {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public ISprite getGuiSprite() {
+    public ISprite getSprite() {
         EnumFacing dir = getDirection();
         if (dir == null) {
             return null;
@@ -144,7 +144,7 @@ public class StatementParameterDirection implements IStatementParameter {
     }
 
     @Override
-    public IStatementParameter[] getPossible(IStatementContainer source, IStatement stmt) {
+    public IStatementParameter[] getPossible(IStatementContainer source) {
         IStatementParameter[] possible = new IStatementParameter[7];
         for (EnumPipePart part : EnumPipePart.VALUES) {
             if (part.face == direction) {

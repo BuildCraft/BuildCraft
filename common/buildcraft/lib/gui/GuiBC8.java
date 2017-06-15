@@ -9,7 +9,6 @@ package buildcraft.lib.gui;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -26,14 +25,13 @@ import buildcraft.lib.gui.ledger.LedgerManager_Neptune;
 import buildcraft.lib.gui.ledger.LedgerOwnership;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
+import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.MousePosition;
 import buildcraft.lib.gui.pos.PositionCallable;
 import buildcraft.lib.misc.GuiUtil;
 
 public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer {
-    /**
-     * Used to control if this gui should show debugging lines, and other oddities that help development.
-     */
+    /** Used to control if this gui should show debugging lines, and other oddities that help development. */
     public static boolean debugging = false;
 
     public static final GuiSpriteScaled SPRITE_DEBUG = new GuiSpriteScaled(BCLibSprites.DEBUG, 16, 16);
@@ -42,7 +40,9 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
     public final MousePosition mouse = new MousePosition();
     public final RootPosition rootElement = new RootPosition(this);
 
-    public final List<IGuiElement> guiElements = new ArrayList<>();
+    /** All of the {@link IGuiElement} which will be drawn by this gui. */
+    public final List<IGuiElement> shownElements = new ArrayList<>();
+    /** @deprecated As this can be done through json with parents, rather than with a specialised manager */
     public final LedgerManager_Neptune ledgersLeft, ledgersRight;
     protected final LedgerHelp ledgerHelp;
     private float lastPartialTicks;
@@ -51,7 +51,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         super(container);
         this.container = container;
         ledgersLeft = new LedgerManager_Neptune(this, rootElement.offset(0, 5), false);
-        IGuiArea rightPos = rootElement.offset(new PositionCallable(rootElement::getWidth, 5));
+        IGuiPosition rightPos = rootElement.getPosition(1, -1).offset(0, 5);
         ledgersRight = new LedgerManager_Neptune(this, rightPos, true);
 
         if (container instanceof ContainerBCTile<?>) {
@@ -64,9 +64,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         }
     }
 
-    /**
-     * Checks to see if the main
-     */
+    /** Checks to see if the main */
     protected boolean shouldAddHelpLedger() {
         return true;
     }
@@ -97,8 +95,12 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     // Other
 
-    public Stream<IGuiElement> getElementAt(int x, int y) {
-        return guiElements.stream().filter(elem -> elem.contains(x, y));
+    public List<IGuiElement> getElementsAt(int x, int y) {
+        List<IGuiElement> elements = new ArrayList<>();
+        for (IGuiElement elem : shownElements) {
+            elements.addAll(elem.getThisAndChildrenAt(x, y));
+        }
+        return elements;
     }
 
     public void drawItemStackAt(ItemStack stack, int x, int y) {
@@ -146,7 +148,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
         drawBackgroundLayer(partialTicks);
 
-        for (IGuiElement element : guiElements) {
+        for (IGuiElement element : shownElements) {
             element.drawBackground(partialTicks);
         }
 
@@ -161,7 +163,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
         drawForegroundLayer();
 
-        for (IGuiElement element : guiElements) {
+        for (IGuiElement element : shownElements) {
             element.drawForeground(lastPartialTicks);
         }
 
@@ -172,13 +174,16 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
         GlStateManager.translate(guiLeft, guiTop, 0);
     }
-    
+
     private void drawTooltips() {
         List<ToolTip> tooltips = new ArrayList<>();
+
+        // iterateAllElements(e -> e.addToolTips(tooltips));
+
         if (this instanceof ITooltipElement) {
             ((ITooltipElement) this).addToolTips(tooltips);
         }
-        for (IGuiElement elem : guiElements) {
+        for (IGuiElement elem : shownElements) {
             elem.addToolTips(tooltips);
         }
         ledgersLeft.addToolTips(tooltips);
@@ -198,19 +203,9 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
     public void drawProgress(GuiRectangle rect, GuiIcon icon, double widthPercent, double heightPercent) {
         int nWidth = MathHelper.ceil(rect.width * Math.abs(widthPercent));
         int nHeight = MathHelper.ceil(rect.height * Math.abs(heightPercent));
-        icon
-                .offset(
-                        widthPercent > 0 ? 0 : rect.width - nWidth,
-                        heightPercent > 0 ? 0 : rect.height - nHeight
-                )
-                .drawCutInside(
-                        new GuiRectangle(
-                                widthPercent > 0 ? rect.x : rect.x + (rect.width - nWidth),
-                                heightPercent > 0 ? rect.y : rect.y + (rect.height - nHeight),
-                                nWidth,
-                                nHeight
-                        ).offset(rootElement)
-                );
+        icon.offset(widthPercent > 0 ? 0 : rect.width - nWidth, heightPercent > 0 ? 0 : rect.height - nHeight)
+            .drawCutInside(new GuiRectangle(widthPercent > 0 ? rect.x : rect.x + (rect.width - nWidth),
+                heightPercent > 0 ? rect.y : rect.y + (rect.height - nHeight), nWidth, nHeight).offset(rootElement));
     }
 
     @Override
@@ -224,8 +219,10 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
             debugging = !debugging;
         }
 
-        for (IGuiElement element : guiElements) {
-            element.onMouseClicked(mouseButton);
+        for (IGuiElement element : shownElements) {
+            if (element instanceof IInteractionElement) {
+                ((IInteractionElement) element).onMouseClicked(mouseButton);
+            }
         }
 
         ledgersLeft.onMouseClicked(mouseButton);
@@ -238,8 +235,10 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
         mouse.setMousePosition(mouseX, mouseY);
 
-        for (IGuiElement element : guiElements) {
-            element.onMouseDragged(clickedMouseButton, timeSinceLastClick);
+        for (IGuiElement element : shownElements) {
+            if (element instanceof IInteractionElement) {
+                ((IInteractionElement) element).onMouseDragged(clickedMouseButton, timeSinceLastClick);
+            }
         }
 
         ledgersLeft.onMouseDragged(clickedMouseButton, timeSinceLastClick);
@@ -252,19 +251,19 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
         mouse.setMousePosition(mouseX, mouseY);
 
-        for (IGuiElement element : guiElements) {
-            element.onMouseReleased(state);
+        for (IGuiElement element : shownElements) {
+            if (element instanceof IInteractionElement) {
+                ((IInteractionElement) element).onMouseReleased(state);
+            }
         }
 
         ledgersLeft.onMouseReleased(state);
         ledgersRight.onMouseReleased(state);
     }
 
-    protected void drawBackgroundLayer(float partialTicks) {
-    }
+    protected void drawBackgroundLayer(float partialTicks) {}
 
-    protected void drawForegroundLayer() {
-    }
+    protected void drawForegroundLayer() {}
 
     public static final class RootPosition implements IGuiArea {
         public final GuiBC8<?> gui;
@@ -292,5 +291,13 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         public int getHeight() {
             return gui.ySize;
         }
+    }
+
+    /** The layer of a GUI defines which part of the gu we are working in. If the current layer is NORMAL then nothing
+     * is different, however for every menu that opens the previous layers are drawn with a darker overlay */
+    public enum Layer {
+        NORMAL,
+        MENU_1,
+        MENU_2;
     }
 }

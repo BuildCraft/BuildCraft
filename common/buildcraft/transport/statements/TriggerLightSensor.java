@@ -53,7 +53,7 @@ public class TriggerLightSensor extends BCStatement implements ITriggerInternalS
 
     @Override
     @SideOnly(Side.CLIENT)
-    public SpriteHolder getGuiSprite() {
+    public SpriteHolder getSprite() {
         return bright ? BCTransportSprites.TRIGGER_LIGHT_HIGH : BCTransportSprites.TRIGGER_LIGHT_LOW;
     }
 }

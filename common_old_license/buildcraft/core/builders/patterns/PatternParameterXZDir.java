@@ -79,7 +79,7 @@ public enum PatternParameterXZDir implements IStatementParameter {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public ISprite getGuiSprite() {
+    public ISprite getSprite() {
         return BCCoreSprites.PARAM_XZ_DIR.get(dir);
     }
 
@@ -104,7 +104,7 @@ public enum PatternParameterXZDir implements IStatementParameter {
     }
 
     @Override
-    public IStatementParameter[] getPossible(IStatementContainer source, IStatement stmt) {
+    public IStatementParameter[] getPossible(IStatementContainer source) {
         return values();
     }
 }

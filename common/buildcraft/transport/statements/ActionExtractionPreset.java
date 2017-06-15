@@ -49,7 +49,7 @@ public class ActionExtractionPreset extends BCStatement implements IActionIntern
 
     @Override
     @SideOnly(Side.CLIENT)
-    public SpriteHolder getGuiSprite() {
+    public SpriteHolder getSprite() {
         return BCTransportSprites.ACTION_EXTRACTION_PRESET.get(index);
     }
 }

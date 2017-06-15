@@ -81,7 +81,7 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 
     @Override
     @SideOnly(Side.CLIENT)
-    public SpriteHolder getGuiSprite() {
+    public SpriteHolder getSprite() {
         return BCCoreSprites.ACTION_REDSTONE;
     }
 }

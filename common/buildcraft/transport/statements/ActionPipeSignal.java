@@ -68,7 +68,7 @@ public class ActionPipeSignal extends BCStatement implements IActionInternal {
     }
 
     @Override
-    public SpriteHolder getGuiSprite() {
+    public SpriteHolder getSprite() {
         return BCTransportSprites.getPipeSignal(true, colour);
     }
 

@@ -8,6 +8,8 @@ package buildcraft.lib.gui;
 
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -15,27 +17,30 @@ import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
 
-/** Defines an element that can be interacted with, that exists inside of a rectangle. */
+/** Defines an element that can be irendered, that exists inside of a rectangle. */
 @SideOnly(Side.CLIENT)
 public interface IGuiElement extends IGuiArea, ITooltipElement {
     default void drawBackground(float partialTicks) {}
 
     default void drawForeground(float partialTicks) {}
 
-    /** This is called EVEN IF the mouse is not inside your width and height! */
-    default void onMouseClicked(int button) {}
-
-    /** This is called EVEN IF the mouse is not inside your width and height! */
-    default void onMouseDragged(int button, long ticksSinceClick) {}
-
-    /** This is called EVEN IF the mouse is not inside your width and height! */
-    default void onMouseReleased(int button) {}
-
+    /** {@inheritDoc}
+     * <p>
+     * This is called EVEN IF the mouse is not inside your width and height! */
     @Override
     default void addToolTips(List<ToolTip> tooltips) {}
 
-    /** @return The {@link HelpPosition} pair, or null if this element shouldn't display help right now. */
+    /** @return The {@link HelpPosition} pair, or null if this element shouldn't display help right now.
+     * @deprecated This should be like {@link ITooltipElement} where it adds to a list rather than returning values. */
     default HelpPosition getHelpInfo() {
         return null;
+    }
+
+    default List<IGuiElement> getThisAndChildrenAt(int x, int y) {
+        if (contains(x, y)) {
+            return ImmutableList.of(this);
+        } else {
+            return ImmutableList.of();
+        }
     }
 }

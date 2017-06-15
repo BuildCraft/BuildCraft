@@ -109,11 +109,11 @@ public abstract class GuiStatementSelector<C extends ContainerBC_Neptune> extend
 
         // Test for dragging statements from the side contexts
         if (isDragging) {
-            for (IGuiElement elem : guiElements) {
+            for (IGuiElement elem : shownElements) {
                 if (elem instanceof ElementStatement<?, ?>) {
                     ElementStatement<?, ?> element = (ElementStatement<?, ?>) elem;
                     if (element.contains(mouse)) {
-                        element.reference.setifCan(draggingElement);
+                        element.reference.setIfCan(draggingElement);
                         break;
                     }
                 }

@@ -64,7 +64,7 @@ public class ElementTypeSprite extends ElementType {
         String origin = tex.origin;
         int texSize = tex.texSize;
 
-        ISprite sprite = gui.sprites.get(origin);
+        ISprite sprite = gui.miscProperties.get(origin, ISprite.class);
         if (sprite != null) {
             sprite = GuiUtil.subRelative(sprite, u, v, us, vs, texSize);
         } else {
@@ -73,6 +73,6 @@ public class ElementTypeSprite extends ElementType {
 
         GuiRectangle rect = new GuiRectangle(posX, posY, sizeX, sizeY);
         ISimpleDrawable icon = new GuiSpriteScaled(sprite, sizeX, sizeY);
-        gui.guiElements.add(new GuiElementDrawable(gui, gui.rootElement, rect, icon, foreground));
+        gui.shownElements.add(new GuiElementDrawable(gui, gui.rootElement, rect, icon, foreground));
     }
 }

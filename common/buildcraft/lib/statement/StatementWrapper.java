@@ -7,6 +7,7 @@ package buildcraft.lib.statement;
 
 import java.util.Arrays;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
 import buildcraft.api.core.EnumPipePart;
@@ -14,6 +15,8 @@ import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
+
+import buildcraft.lib.net.PacketBufferBC;
 
 public abstract class StatementWrapper implements IStatement, Comparable<StatementWrapper> {
     public final IStatement delegate;
@@ -25,6 +28,10 @@ public abstract class StatementWrapper implements IStatement, Comparable<Stateme
         this.delegate = delegate;
         this.sourcePart = sourcePart;
     }
+
+    public abstract NBTTagCompound writeToNbt();
+
+    public abstract void writeToBuf(PacketBufferBC buf);
 
     /** @see buildcraft.api.statements.IStatement#getUniqueTag() */
     @Override
@@ -62,10 +69,10 @@ public abstract class StatementWrapper implements IStatement, Comparable<Stateme
         return this.delegate.rotateLeft();
     }
 
-    /** @see buildcraft.api.statements.IStatement#getGuiSprite() */
+    /** @see buildcraft.api.statements.IStatement#getSprite() */
     @Override
-    public ISprite getGuiSprite() {
-        return this.delegate.getGuiSprite();
+    public ISprite getSprite() {
+        return this.delegate.getSprite();
     }
 
     public TileEntity getNeighbourTile(IStatementContainer source) {

@@ -43,6 +43,7 @@ public class BCSiliconRecipes {
             builder.map('d', "gemDiamond");
             builder.setResult(new ItemStack(BCBlocks.SILICON_LASER));
             builder.register();
+            builder.registerRotated();
         }
 
         if (BCItems.SILICON_REDSTONE_CLIPSET != null) {

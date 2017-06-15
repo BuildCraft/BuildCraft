@@ -77,7 +77,7 @@ public class ActionParameterSignal implements IStatementParameter {
     }
 
     @Override
-    public ISprite getGuiSprite() {
+    public ISprite getSprite() {
         EnumDyeColor c = colour;
         if (c == null) {
             return null;
@@ -136,7 +136,7 @@ public class ActionParameterSignal implements IStatementParameter {
     }
 
     @Override
-    public IStatementParameter[] getPossible(IStatementContainer source, IStatement stmt) {
+    public IStatementParameter[] getPossible(IStatementContainer source) {
         if (!(source instanceof IGate)) {
             return null;
         }

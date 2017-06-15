@@ -22,8 +22,8 @@ import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IGuiElement;
+import buildcraft.lib.gui.IInteractionElement;
 import buildcraft.lib.gui.ISimpleDrawable;
-import buildcraft.lib.gui.ITooltipElement;
 import buildcraft.lib.gui.elem.GuiElementDrawable;
 import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.elem.ToolTip;
@@ -33,7 +33,7 @@ import buildcraft.lib.gui.pos.PositionCallable;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.RenderUtil;
 
-public abstract class Ledger_Neptune implements ITooltipElement {
+public abstract class Ledger_Neptune implements IInteractionElement {
     public static final SpriteHolder SPRITE_EXP_NEG = BCLibSprites.LEDGER_LEFT;
     public static final SpriteHolder SPRITE_EXP_POS = BCLibSprites.LEDGER_RIGHT;
 
@@ -226,10 +226,8 @@ public abstract class Ledger_Neptune implements ITooltipElement {
 
     public void drawForeground(int x, int y, float partialTicks) {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GuiUtil.scissor(positionLedgerIconStart.getX(),
-                        positionLedgerIconStart.getY(),
-                        interpWidth - 8,
-                        interpHeight - 8);
+        GuiUtil.scissor(positionLedgerIconStart.getX(), positionLedgerIconStart.getY(), interpWidth - 8,
+            interpHeight - 8);
 
         for (IGuiElement element : closedElements) {
             element.drawForeground(partialTicks);
@@ -242,6 +240,7 @@ public abstract class Ledger_Neptune implements ITooltipElement {
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
+    @Override
     public void onMouseClicked(int button) {
         if (getEnclosingRectangle().contains(manager.gui.mouse)) {
             if (currentDifference == 1) {
@@ -250,12 +249,24 @@ public abstract class Ledger_Neptune implements ITooltipElement {
                 currentDifference = 1;
             }
         }
+        for (IGuiElement elem : openElements) {
+            if (elem instanceof IInteractionElement) {
+                ((IInteractionElement) elem).onMouseClicked(button);
+            }
+        }
+        for (IGuiElement elem : closedElements) {
+            if (elem instanceof IInteractionElement) {
+                ((IInteractionElement) elem).onMouseClicked(button);
+            }
+        }
     }
 
+    @Override
     public void onMouseDragged(int button, long ticksSinceClick) {
 
     }
 
+    @Override
     public void onMouseReleased(int button) {
 
     }
@@ -267,10 +278,12 @@ public abstract class Ledger_Neptune implements ITooltipElement {
     /** @return The colour of this ledger, in ARGB */
     public abstract int getColour();
 
+    @Override
     public int getX() {
         return startX;
     }
 
+    @Override
     public int getY() {
         return startY;
     }

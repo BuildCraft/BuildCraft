@@ -58,7 +58,7 @@ public enum StatementParamGateSideOnly implements IStatementParameter {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public ISprite getGuiSprite() {
+    public ISprite getSprite() {
         if (isSpecific) {
             return BCCoreSprites.PARAM_GATE_SIDE_ONLY;
         } else {
@@ -87,7 +87,7 @@ public enum StatementParamGateSideOnly implements IStatementParameter {
     }
 
     @Override
-    public IStatementParameter[] getPossible(IStatementContainer source, IStatement stmt) {
+    public IStatementParameter[] getPossible(IStatementContainer source) {
         return isSpecific ? POSSIBLE_SPECIFIC : POSSIBLE_ANY;
     }
 }

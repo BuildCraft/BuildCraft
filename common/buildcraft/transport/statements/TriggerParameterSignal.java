@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
@@ -29,7 +30,9 @@ import buildcraft.api.statements.StatementMouseClick;
 
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.net.PacketBufferBC;
 
 import buildcraft.transport.BCTransportSprites;
 
@@ -73,6 +76,24 @@ public class TriggerParameterSignal implements IStatementParameter {
         }
     }
 
+    public static TriggerParameterSignal readFromBuf(PacketBuffer buffer) {
+        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
+        EnumDyeColor colour = MessageUtil.readEnumOrNull(buf, EnumDyeColor.class);
+        if (colour == null) {
+            return EMPTY;
+        } else {
+            return get(buf.readBoolean(), colour);
+        }
+    }
+
+    @Override
+    public void writeToBuf(PacketBuffer buffer) {
+        MessageUtil.writeEnumOrNull(buffer, colour);
+        if (colour != null) {
+            buffer.writeBoolean(active);
+        }
+    }
+
     public final boolean active;
 
     @Nullable
@@ -90,7 +111,7 @@ public class TriggerParameterSignal implements IStatementParameter {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public ISprite getGuiSprite() {
+    public ISprite getSprite() {
         if (colour == null) {
             return null;
         }
@@ -98,7 +119,8 @@ public class TriggerParameterSignal implements IStatementParameter {
     }
 
     @Override
-    public TriggerParameterSignal onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+    public TriggerParameterSignal onClick(IStatementContainer source, IStatement stmt, ItemStack stack,
+        StatementMouseClick mouse) {
         return null;
     }
 
@@ -107,7 +129,8 @@ public class TriggerParameterSignal implements IStatementParameter {
         if (colour == null) {
             return null;
         }
-        return String.format(LocaleUtil.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), ColourUtil.getTextFullTooltip(colour));
+        return String.format(LocaleUtil.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")),
+            ColourUtil.getTextFullTooltip(colour));
     }
 
     @Override
@@ -121,7 +144,7 @@ public class TriggerParameterSignal implements IStatementParameter {
     }
 
     @Override
-    public TriggerParameterSignal[] getPossible(IStatementContainer source, IStatement stmt) {
+    public TriggerParameterSignal[] getPossible(IStatementContainer source) {
         if (!(source instanceof IGate)) {
             return null;
         }

@@ -148,7 +148,7 @@ public abstract class FillerPattern implements IFillerPattern {
 */
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getGuiSprite() {
+    public TextureAtlasSprite getSprite() {
         return sprite;
     }
 }

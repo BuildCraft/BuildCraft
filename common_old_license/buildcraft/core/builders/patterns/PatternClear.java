@@ -22,7 +22,7 @@ public class PatternClear extends Pattern {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public SpriteHolder getGuiSprite() {
+    public SpriteHolder getSprite() {
         return BCCoreSprites.FILLER_CLEAR;
     }
 

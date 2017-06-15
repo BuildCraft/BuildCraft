@@ -63,7 +63,7 @@ public class LedgerHelp extends Ledger_Neptune {
     protected void drawIcon(int x, int y) {
         if (!init) {
             init = true;
-            for (IGuiElement element : manager.gui.guiElements) {
+            for (IGuiElement element : manager.gui.shownElements) {
                 HelpPosition info = element.getHelpInfo();
                 if (info == null) continue;
                 foundAny = true;
@@ -81,7 +81,7 @@ public class LedgerHelp extends Ledger_Neptune {
             return;
         }
         boolean set = false;
-        for (IGuiElement element : manager.gui.guiElements) {
+        for (IGuiElement element : manager.gui.shownElements) {
             HelpPosition info = element.getHelpInfo();
             if (info == null) continue;
             foundAny = true;

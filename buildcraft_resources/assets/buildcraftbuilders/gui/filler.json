@@ -8,7 +8,7 @@
 				"index": 0
 			},
 			"area": ["53 + 18 * index",30,16,16],
-			"source": "filler.param[index]"
+			"source": "filler.pattern"
 		},
 		"four_button": {
 			"type": "buildcraftlib:button",
@@ -32,7 +32,7 @@
 		"title": {
 			"type": "buildcraftlib:text",
 			"text": "tile.fillerBlock.name",
-			"pos": [88, 10],
+			"pos": [88,10],
 			"colour": "0x40_40_40",
 			"centered": true
 		},
@@ -40,16 +40,16 @@
 			"type": "buildcraftlib:text",
 			"text": "gui.filling.resources",
 			"colour": "0x40_40_40",
-			"pos": [7, 74]
+			"pos": [7,74]
 		},
 		"player_inv_title": {
 			"type": "buildcraftlib:text",
 			"text": "gui.inventory",
 			"colour": "0x40_40_40",
-			"pos": [7, 141]
+			"pos": [7,141]
 		},
 		"pattern_drag_target": {
-			"type": "buildcraftlib:statement/filler_pattern",
+			"type": "buildcraftlib:statement/slot",
 			"source": "filler.pattern",
 			"area": [16,26,24,24],
 			"draw": false
@@ -65,6 +65,11 @@
 		"params": {
 			"iterator": "index = [0, 4)",
 			"type": "param"
+		},
+		"pattern_possible": {
+			"type": "buildcraftlib:statement/source",
+			"pos[1]":"32",
+			"source": "filler.possible"
 		},
 		"button_no_excavate": {
 			"type": "four_button",

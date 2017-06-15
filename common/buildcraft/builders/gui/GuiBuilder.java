@@ -46,7 +46,7 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
         super.initGui();
 
         for (int i = 0; i < container.widgetTanks.size(); i++) {
-            guiElements.add(
+            shownElements.add(
                     container.widgetTanks
                             .get(i)
                             .createGuiElement(

@@ -57,19 +57,19 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
         this.whiteListButton = new GuiImageButton(this, WHITE_LIST_BUTTON_ID, this.guiLeft + 7, this.guiTop + 41, 18, TEXTURE_BUTTON, 19, 19);
         this.whiteListButton.setToolTip(ToolTip.createLocalized("tip.PipeItemsEmerald.whitelist"));
         this.whiteListButton.registerListener(this);
-        this.guiElements.add(this.whiteListButton);
+        this.shownElements.add(this.whiteListButton);
 
         this.blackListButton = new GuiImageButton(this, BLACK_LIST_BUTTON_ID, this.guiLeft + 7 + 18, this.guiTop + 41, 18, TEXTURE_BUTTON, 37, 19);
         this.blackListButton.setToolTip(ToolTip.createLocalized("tip.PipeItemsEmerald.blacklist"));
         this.blackListButton.registerListener(this);
-        this.guiElements.add(this.blackListButton);
+        this.shownElements.add(this.blackListButton);
 
         if (pipe.pipe.getFlow() instanceof IFlowItems) {
             // Don't show round robin for the fluid pipe - its not yet implemented
             this.roundRobinButton = new GuiImageButton(this, ROUND_ROBIN_BUTTON_ID, this.guiLeft + 7 + 36, this.guiTop + 41, 18, TEXTURE_BUTTON, 55, 19);
             this.roundRobinButton.setToolTip(ToolTip.createLocalized("tip.PipeItemsEmerald.roundrobin"));
             this.roundRobinButton.registerListener(this);
-            this.guiElements.add(this.roundRobinButton);
+            this.shownElements.add(this.roundRobinButton);
             IButtonBehaviour.createAndSetRadioButtons(whiteListButton, blackListButton, roundRobinButton);
         } else {
             IButtonBehaviour.createAndSetRadioButtons(whiteListButton, blackListButton);

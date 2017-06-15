@@ -25,6 +25,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiElementSimple;
+import buildcraft.lib.gui.IInteractionElement;
 import buildcraft.lib.gui.Widget_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
@@ -123,7 +124,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
     protected void onSetStack() {}
 
     @SideOnly(Side.CLIENT)
-    public class GuiElementPhantomSlot<G extends GuiBC8<?>> extends GuiElementSimple<G> {
+    public class GuiElementPhantomSlot<G extends GuiBC8<?>> extends GuiElementSimple<G> implements IInteractionElement {
         private final ToolTip tooltip = GuiUtil.createToolTip(gui, this::getStack);
 
         public GuiElementPhantomSlot(G gui, IGuiPosition parent, GuiRectangle position) {
@@ -136,7 +137,8 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
             gui.mc.getRenderItem().renderItemAndEffectIntoGUI(getStack(), getX(), getY());
             RenderHelper.disableStandardItemLighting();
             if (contains(gui.mouse) && shouldDrawHighlight()) {
-                gui.drawGradientRect(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 0x70_FF_FF_FF, 0x70_FF_FF_FF);
+                gui.drawGradientRect(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 0x70_FF_FF_FF,
+                    0x70_FF_FF_FF);
             }
         }
 

@@ -14,7 +14,7 @@ public interface IReference<T> {
 
     boolean canSet(Object value);
 
-    default void setifCan(Object value) {
+    default void setIfCan(Object value) {
         if (canSet(value)) {
             set((T) value);
         }

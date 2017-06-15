@@ -2,29 +2,30 @@ package buildcraft.lib.statement;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+import buildcraft.api.statements.IGuiSlot;
+
+import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.net.PacketBufferBC;
 
-public class StatementType<S extends StatementWrapper> {
+public abstract class StatementType<S extends IGuiSlot> {
 
     public final Class<S> clazz;
     public final S defaultStatement;
-    public final NbtReader<S> nbtRreader;
-    public final BufReader<S> bufReader;
 
-    public StatementType(Class<S> clazz, S defaultStatement, NbtReader<S> nbtRreader, BufReader<S> bufReader) {
+    public StatementType(Class<S> clazz, S defaultStatement) {
         this.clazz = clazz;
         this.defaultStatement = defaultStatement;
-        this.nbtRreader = nbtRreader;
-        this.bufReader = bufReader;
     }
 
-    @FunctionalInterface
-    public interface NbtReader<S extends StatementWrapper> {
-        S readFromNbt(NBTTagCompound nbt);
-    }
+    /** Reads a {@link StatementWrapper} from the given {@link NBTTagCompound}. The tag compound will be equal to
+     * the one returned by {@link StatementWrapper#writeToNbt()} */
+    public abstract S readFromNbt(NBTTagCompound nbt);
 
-    @FunctionalInterface
-    public interface BufReader<S extends StatementWrapper> {
-        S readFromBuffer(PacketBufferBC buffer);
-    }
+    public abstract NBTTagCompound writeToNbt(S slot);
+
+    /** Reads a {@link StatementWrapper} from the given {@link PacketBufferBC}. The buffer will return the data
+     * written to a different buffer by {@link StatementWrapper#writeToBuf(PacketBufferBC)}. */
+    public abstract S readFromBuffer(PacketBufferBC buffer);
+
+    public abstract void writeToBuffer(PacketBufferBC buffer, S slot);
 }

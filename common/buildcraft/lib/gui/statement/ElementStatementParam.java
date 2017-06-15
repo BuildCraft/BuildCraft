@@ -81,6 +81,6 @@ public class ElementStatementParam extends ElementGuiSlot<GuiStatementSelector<?
         if (value == null) {
             return null;
         }
-        return value.getPossible(gui.getStatementContainer(), parent.reference.get());
+        return value.getPossible(gui.getStatementContainer());
     }
 }

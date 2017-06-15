@@ -90,7 +90,7 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
     }
 
     @Override
-    public SpriteHolder getGuiSprite() {
+    public SpriteHolder getSprite() {
         return BCTransportSprites.getPipeSignal(active, colour);
     }
 

@@ -46,7 +46,7 @@ public enum PatternParameterHollow implements IStatementParameter {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public ISprite getGuiSprite() {
+    public ISprite getSprite() {
         return filled ? BCCoreSprites.PARAM_FILLED : BCCoreSprites.PARAM_HOLLOW;
     }
 
@@ -71,7 +71,7 @@ public enum PatternParameterHollow implements IStatementParameter {
     }
 
     @Override
-    public PatternParameterHollow[] getPossible(IStatementContainer source, IStatement stmt) {
+    public PatternParameterHollow[] getPossible(IStatementContainer source) {
         return values();
     }
 }

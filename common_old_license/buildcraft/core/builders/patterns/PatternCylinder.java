@@ -35,7 +35,7 @@ public class PatternCylinder extends Pattern {
     }
 
     @Override
-    public SpriteHolder getGuiSprite() {
+    public SpriteHolder getSprite() {
         return BCCoreSprites.FILLER_CYLINDER;
     }
 

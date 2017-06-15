@@ -57,6 +57,6 @@ public class ElementTypeHelp extends ElementType {
         int sizeX = resolveEquationInt(json, "size[0]", ctx);
         int sizeY = resolveEquationInt(json, "size[1]", ctx);
         GuiRectangle rect = new GuiRectangle(posX, posY, sizeX, sizeY);
-        gui.guiElements.add(new DummyHelpElement(rect.offset(gui.rootElement), help));
+        gui.shownElements.add(new DummyHelpElement(rect.offset(gui.rootElement), help));
     }
 }

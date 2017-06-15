@@ -35,6 +35,6 @@ public class ElementTypeText extends ElementType {
         GuiElementText element = new GuiElementText(gui, gui.rootElement.offset(posX, posY), text, colour);
         element.setCentered("true".equals(json.properties.get("centered")));
         element.setDropShadow("true".equals(json.properties.get("shadow")));
-        gui.guiElements.add(element);
+        gui.shownElements.add(element);
     }
 }

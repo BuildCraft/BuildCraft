@@ -60,7 +60,7 @@ public enum PatternParameterCenter implements IStatementParameter {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public ISprite getGuiSprite() {
+    public ISprite getSprite() {
         return BCCoreSprites.PARAM_CENTER.get(this);
     }
 
@@ -86,7 +86,7 @@ public enum PatternParameterCenter implements IStatementParameter {
     }
 
     @Override
-    public IStatementParameter[] getPossible(IStatementContainer source, IStatement stmt) {
+    public IStatementParameter[] getPossible(IStatementContainer source) {
         return POSSIBLE_ORDER;
     }
 }

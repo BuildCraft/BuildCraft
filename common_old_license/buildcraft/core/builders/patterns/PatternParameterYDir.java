@@ -60,7 +60,7 @@ public enum PatternParameterYDir implements IStatementParameter {
     }
 
     @Override
-    public IStatementParameter[] getPossible(IStatementContainer source, IStatement stmt) {
+    public IStatementParameter[] getPossible(IStatementContainer source) {
         return values();
     }
 
@@ -71,7 +71,7 @@ public enum PatternParameterYDir implements IStatementParameter {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public ISprite getGuiSprite() {
+    public ISprite getSprite() {
         return up ? BCCoreSprites.PARAM_STAIRS_UP : BCCoreSprites.PARAM_STAIRS_DOWN;
     }
 }

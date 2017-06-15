@@ -111,15 +111,15 @@ public class GuiGate extends GuiStatementSelector<ContainerGate> {
             IGuiArea actionPos = positionSlotPair[i].offset(18 * (2 + variant.numTriggerArgs), 0);
             ElementTrigger trigger = new ElementTrigger(this, positionSlotPair[i].resize(18, 18), container.pairs[i].trigger);
             ElementAction action = new ElementAction(this, actionPos.resize(18, 18), container.pairs[i].action);
-            guiElements.add(trigger);
-            guiElements.add(action);
+            shownElements.add(trigger);
+            shownElements.add(action);
             for (int p = 0; p < variant.numTriggerArgs; p++) {
                 IGuiArea pos = positionSlotPair[i].offset(18 * (p + 1), 0).resize(18, 18);
-                guiElements.add(new ElementStatementParam(this, pos, container.pairs[i].triggerParams[p], p, trigger));
+                shownElements.add(new ElementStatementParam(this, pos, container.pairs[i].triggerParams[p], p, trigger));
             }
             for (int p = 0; p < variant.numActionArgs; p++) {
                 IGuiArea pos = actionPos.offset(18 * (p + 1), 0).resize(18, 18);
-                guiElements.add(new ElementStatementParam(this, pos, container.pairs[i].actionParams[p], p, action));
+                shownElements.add(new ElementStatementParam(this, pos, container.pairs[i].actionParams[p], p, action));
             }
         }
     }

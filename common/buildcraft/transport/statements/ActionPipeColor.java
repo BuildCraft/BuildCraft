@@ -50,7 +50,7 @@ public class ActionPipeColor extends BCStatement implements IActionInternal {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public SpriteHolder getGuiSprite() {
+    public SpriteHolder getSprite() {
         return BCTransportSprites.ACTION_PIPE_COLOUR[color.ordinal()];
     }
 }

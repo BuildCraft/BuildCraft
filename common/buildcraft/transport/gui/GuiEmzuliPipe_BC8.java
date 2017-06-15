@@ -94,7 +94,7 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
             }
             setter.accept(nColour);
         });
-        guiElements.add(button);
+        shownElements.add(button);
 
         // Button paintbrush
         IGuiArea area = new GuiRectangle(20, 20).offset(elem);
@@ -107,7 +107,7 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
                 GuiIcon.drawAt(sprite, px + 2, py + 2, 16);
             }
         };
-        guiElements.add(new GuiElementDrawable(this, area, paintIcon, false));
+        shownElements.add(new GuiElementDrawable(this, area, paintIcon, false));
         ITooltipElement tooltips = list -> {
             EnumDyeColor colour = getter.get();
             String line;
@@ -118,7 +118,7 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
             }
             list.add(new ToolTip(line));
         };
-        guiElements.add(new GuiElementToolTip(this, area, tooltips));
+        shownElements.add(new GuiElementToolTip(this, area, tooltips));
     }
 
     @Override

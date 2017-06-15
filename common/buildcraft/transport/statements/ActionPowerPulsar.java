@@ -61,7 +61,7 @@ public class ActionPowerPulsar extends BCStatement implements IActionInternalSid
     }
 
     @Override
-    public SpriteHolder getGuiSprite() {
+    public SpriteHolder getSprite() {
         return constant ? BCTransportSprites.ACTION_PULSAR_CONSTANT : BCTransportSprites.ACTION_PULSAR_SINGLE;
     }
 

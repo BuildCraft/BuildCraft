@@ -70,7 +70,7 @@ public class GuiFiller extends GuiStatementSelector<ContainerFiller> {
         int i = (int) ((System.currentTimeMillis() / 1000) % possible.size());
         IFillerPattern pattern = possible.get(i);
 
-        ISprite sprite = pattern.getGuiSprite();
+        ISprite sprite = pattern.getSprite();
         sprite = GuiUtil.subRelative(sprite, 4, 4, 8, 8, 16);
         GuiIcon icon = new GuiIcon(sprite, 8);
         GuiRectangle rect = new GuiRectangle(38, 30, 16, 16);

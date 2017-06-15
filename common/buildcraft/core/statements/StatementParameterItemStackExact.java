@@ -126,13 +126,13 @@ public class StatementParameterItemStackExact implements IStatementParameter {
     }
 
     @Override
-    public ISprite getGuiSprite() {
+    public ISprite getSprite() {
         // What's rendered is not a sprite but the actual stack itself
         return null;
     }
 
     @Override
-    public IStatementParameter[] getPossible(IStatementContainer source, IStatement stmt) {
+    public IStatementParameter[] getPossible(IStatementContainer source) {
         return null;
     }
 }

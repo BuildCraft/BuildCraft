@@ -41,8 +41,8 @@ public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
     @Override
     public void initGui() {
         super.initGui();
-        guiElements.add(new DummyHelpElement(flameRect.expand(2), helpFlame));
-        guiElements.add(new DummyHelpElement(fuelSlotRect, helpFuel));
+        shownElements.add(new DummyHelpElement(flameRect.expand(2), helpFlame));
+        shownElements.add(new DummyHelpElement(fuelSlotRect, helpFuel));
     }
 
     @Override

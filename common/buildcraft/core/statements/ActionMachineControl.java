@@ -50,7 +50,7 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
 
     @Override
     @SideOnly(Side.CLIENT)
-    public SpriteHolder getGuiSprite() {
+    public SpriteHolder getSprite() {
         return BCCoreSprites.ACTION_MACHINE_CONTROL.get(mode);
     }
 
