@@ -36,7 +36,7 @@ public class BCSiliconRecipes {
         if (BCBlocks.SILICON_LASER != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("rro");
-            builder.add("rdo");
+            builder.add("rdd");
             builder.add("rro");
             builder.map('r', "dustRedstone");
             builder.map('o', Blocks.OBSIDIAN);

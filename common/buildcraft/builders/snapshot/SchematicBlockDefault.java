@@ -186,14 +186,6 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         canBeReplacedWithBlocks.add(placeBlock);
     }
 
-    @SuppressWarnings({"unused", "WeakerAccess"})
-    protected void setRequiredItems(SchematicBlockContext context, Set<JsonRule> rules) {
-    }
-
-    @SuppressWarnings({"unused", "WeakerAccess"})
-    protected void setRequiredFluids(SchematicBlockContext context, Set<JsonRule> rules) {
-    }
-
     @Override
     public void init(SchematicBlockContext context) {
         Set<JsonRule> rules = RulesLoader.getRules(context.blockState);
@@ -205,8 +197,6 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         setPlaceBlock /*             */(context, rules);
         setUpdateBlockOffsets /*     */(context, rules);
         setCanBeReplacedWithBlocks /**/(context, rules);
-        setRequiredItems /*          */(context, rules);
-        setRequiredFluids /*         */(context, rules);
     }
 
     @Override

@@ -327,9 +327,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         long now = pipe.getHolder().getPipeWorld().getTotalWorldTime();
         if (currentWorldTime != now) {
             currentWorldTime = now;
-            for (EnumFacing face : EnumFacing.VALUES) {
-                sections.get(face).step();
-            }
+            sections.values().forEach(Section::step);
         }
     }
 

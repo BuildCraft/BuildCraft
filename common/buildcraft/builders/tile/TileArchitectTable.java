@@ -225,16 +225,21 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     private ISchematicBlock<?> readSchematicBlock(BlockPos worldScanPos) {
-        return SchematicBlockManager.getSchematicBlock(world, pos.offset(world.getBlockState(pos).getValue(
-            BlockBCBase_Neptune.PROP_FACING).getOpposite()), worldScanPos, world.getBlockState(worldScanPos), world
-                .getBlockState(worldScanPos).getBlock());
+        return SchematicBlockManager.getSchematicBlock(
+            world,
+            pos.offset(world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite()),
+            worldScanPos,
+            world.getBlockState(worldScanPos),
+            world.getBlockState(worldScanPos).getBlock()
+        );
     }
 
     private void scanEntities() {
         BlockPos basePos = pos.offset(world.getBlockState(pos).getValue(BlockArchitectTable.PROP_FACING).getOpposite());
-        world.getEntitiesWithinAABB(Entity.class, box.getBoundingBox()).stream().map(entity -> SchematicEntityManager
-            .getSchematicEntity(world, basePos, entity)).filter(Objects::nonNull).forEach(
-                blueprintScannedEntities::add);
+        world.getEntitiesWithinAABB(Entity.class, box.getBoundingBox()).stream()
+            .map(entity -> SchematicEntityManager.getSchematicEntity(world, basePos, entity))
+            .filter(Objects::nonNull)
+            .forEach(blueprintScannedEntities::add);
     }
 
     private void finishScanning() {
