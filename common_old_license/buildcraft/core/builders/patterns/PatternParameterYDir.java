@@ -21,6 +21,8 @@ public enum PatternParameterYDir implements IStatementParameter {
     UP(true),
     DOWN(false);
 
+    private static final PatternParameterYDir[] POSSIBLE_ORDER = { null, null, UP, null, null, null, DOWN };
+
     public final boolean up;
 
     PatternParameterYDir(boolean up) {
@@ -55,13 +57,19 @@ public enum PatternParameterYDir implements IStatementParameter {
     }
 
     @Override
-    public PatternParameterYDir onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+    public PatternParameterYDir onClick(IStatementContainer source, IStatement stmt, ItemStack stack,
+        StatementMouseClick mouse) {
         return null;
     }
 
     @Override
     public IStatementParameter[] getPossible(IStatementContainer source) {
-        return values();
+        return POSSIBLE_ORDER;
+    }
+
+    @Override
+    public boolean isPossibleOrdered() {
+        return true;
     }
 
     @Override

@@ -5,7 +5,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 
-import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.StatementType;
 
@@ -16,11 +15,6 @@ public class FillerType extends StatementType<IFillerPattern> {
 
     private FillerType() {
         super(IFillerPattern.class, BCCoreStatements.PATTERN_NONE);
-    }
-
-    @Override
-    public IFillerPattern[] getPossible(IFillerPattern slot, GuiJson<?> gui) {
-        return slot.getPossible();
     }
 
     @Override

@@ -17,8 +17,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.MathHelper;
 
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.BCLibSprites;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IGuiElement;
@@ -34,8 +35,8 @@ import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.RenderUtil;
 
 public abstract class Ledger_Neptune implements IInteractionElement {
-    public static final SpriteHolder SPRITE_EXP_NEG = BCLibSprites.LEDGER_LEFT;
-    public static final SpriteHolder SPRITE_EXP_POS = BCLibSprites.LEDGER_RIGHT;
+    public static final ISprite SPRITE_EXP_NEG = BCLibSprites.LEDGER_LEFT;
+    public static final ISprite SPRITE_EXP_POS = BCLibSprites.LEDGER_RIGHT;
 
     public static final SpriteNineSliced SPRITE_SPLIT_NEG = new SpriteNineSliced(SPRITE_EXP_NEG, 4, 4, 12, 12, 16);
     public static final SpriteNineSliced SPRITE_SPLIT_POS = new SpriteNineSliced(SPRITE_EXP_POS, 4, 4, 12, 12, 16);

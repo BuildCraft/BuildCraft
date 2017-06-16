@@ -34,11 +34,11 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
     public GuiJson(C container, ResourceLocation guiDefinition) {
         super(container);
         this.guiDefinition = guiDefinition;
+        load();
     }
 
     @Override
     public void initGui() {
-        load();
         super.initGui();
     }
 

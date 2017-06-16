@@ -298,8 +298,8 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     public boolean canEditOther(BlockPos other) {
-        return PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, getPermBlock(), PermissionUtil.createFrom(world,
-            other));
+        return PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, getPermBlock(),
+            PermissionUtil.createFrom(world, other));
     }
 
     public boolean canPlayerEdit(EntityPlayer player) {
@@ -346,7 +346,11 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public final void sendNetworkUpdate(int id) {
         if (hasWorld()) {
             MessageUpdateTile message = createNetworkUpdate(id);
-            MessageUtil.sendToAllWatching(world, pos, message);
+            if (world.isRemote) {
+                MessageManager.sendToServer(message);
+            } else {
+                MessageUtil.sendToAllWatching(world, pos, message);
+            }
         }
     }
 
@@ -388,14 +392,22 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public final void createAndSendMessage(int id, IPayloadWriter writer) {
         if (hasWorld()) {
             IMessage message = createMessage(id, writer);
-            MessageUtil.sendToAllWatching(world, pos, message);
+            if (world.isRemote) {
+                MessageManager.sendToServer(message);
+            } else {
+                MessageUtil.sendToAllWatching(world, pos, message);
+            }
         }
     }
 
     public final void createAndSendGuiMessage(int id, IPayloadWriter writer) {
         if (hasWorld()) {
             IMessage message = createMessage(id, writer);
-            MessageUtil.sendToPlayers(usingPlayers, message);
+            if (world.isRemote) {
+                MessageManager.sendToServer(message);
+            } else {
+                MessageUtil.sendToPlayers(usingPlayers, message);
+            }
         }
     }
 
@@ -515,12 +527,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) deltaManager.receiveDeltaData(false, EnumDeltaMessage.CURRENT_STATE, buffer);
             else if (id == NET_GUI_DATA) deltaManager.receiveDeltaData(true, EnumDeltaMessage.CURRENT_STATE, buffer);
-            else if (id == NET_REN_DELTA_SINGLE) deltaManager.receiveDeltaData(false, EnumDeltaMessage.ADD_SINGLE,
-                buffer);
-            else if (id == NET_GUI_DELTA_SINGLE) deltaManager.receiveDeltaData(true, EnumDeltaMessage.ADD_SINGLE,
-                buffer);
-            else if (id == NET_REN_DELTA_CLEAR) deltaManager.receiveDeltaData(false, EnumDeltaMessage.SET_VALUE,
-                buffer);
+            else if (id == NET_REN_DELTA_SINGLE)
+                deltaManager.receiveDeltaData(false, EnumDeltaMessage.ADD_SINGLE, buffer);
+            else if (id == NET_GUI_DELTA_SINGLE)
+                deltaManager.receiveDeltaData(true, EnumDeltaMessage.ADD_SINGLE, buffer);
+            else if (id == NET_REN_DELTA_CLEAR)
+                deltaManager.receiveDeltaData(false, EnumDeltaMessage.SET_VALUE, buffer);
             else if (id == NET_GUI_DELTA_CLEAR) deltaManager.receiveDeltaData(true, EnumDeltaMessage.SET_VALUE, buffer);
             else if (id == NET_REDRAW) redrawBlock();
             else if (id == NET_ADV_DEBUG) {

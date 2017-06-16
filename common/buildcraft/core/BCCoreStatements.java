@@ -15,6 +15,7 @@ import buildcraft.core.builders.patterns.PatternFill;
 import buildcraft.core.builders.patterns.PatternHorizon;
 import buildcraft.core.builders.patterns.PatternNone;
 import buildcraft.core.builders.patterns.PatternParameterCenter;
+import buildcraft.core.builders.patterns.PatternParameterHollow;
 import buildcraft.core.builders.patterns.PatternParameterXZDir;
 import buildcraft.core.builders.patterns.PatternParameterYDir;
 import buildcraft.core.builders.patterns.PatternPyramid;
@@ -118,6 +119,7 @@ public class BCCoreStatements {
         StatementManager.registerParameter(PatternParameterXZDir::readFromNbt);
         StatementManager.registerParameter(PatternParameterYDir::readFromNbt);
         StatementManager.registerParameter(PatternParameterCenter::readFromNbt);
+        StatementManager.registerParameter(PatternParameterHollow::readFromNbt);
     }
 
     public static void preInit() {

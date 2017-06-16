@@ -29,8 +29,8 @@ public enum PatternParameterCenter implements IStatementParameter {
     SOUTH_EAST(1, 1);
 
     public static final PatternParameterCenter[] POSSIBLE_ORDER = {//
-        CENTER, NORTH, NORTH_EAST, EAST,//
-        SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST//
+        CENTER, NORTH_WEST, NORTH, NORTH_EAST, EAST,//
+        SOUTH_EAST, SOUTH, SOUTH_WEST, WEST//
     };
 
     public final int offsetX, offsetZ;
@@ -75,7 +75,8 @@ public enum PatternParameterCenter implements IStatementParameter {
     }
 
     @Override
-    public PatternParameterCenter onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+    public PatternParameterCenter onClick(IStatementContainer source, IStatement stmt, ItemStack stack,
+        StatementMouseClick mouse) {
         return null;
     }
 
@@ -88,5 +89,10 @@ public enum PatternParameterCenter implements IStatementParameter {
     @Override
     public IStatementParameter[] getPossible(IStatementContainer source) {
         return POSSIBLE_ORDER;
+    }
+
+    @Override
+    public boolean isPossibleOrdered() {
+        return true;
     }
 }

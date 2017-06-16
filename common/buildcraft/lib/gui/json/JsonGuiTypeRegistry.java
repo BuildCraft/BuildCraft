@@ -19,6 +19,7 @@ public class JsonGuiTypeRegistry {
         registerType(ElementTypeSprite.NAME, ElementTypeSprite.INSTANCE);
         registerType(ElementTypeButton.NAME, ElementTypeButton.INSTANCE);
         registerType(ElementTypeStatementSlot.NAME, ElementTypeStatementSlot.INSTANCE);
+        registerType(ElementTypeStatementParam.NAME, ElementTypeStatementParam.INSTANCE);
         registerType(ElementTypeStatementSource.NAME, ElementTypeStatementSource.INSTANCE);
     }
 

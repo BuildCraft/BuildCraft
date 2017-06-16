@@ -120,8 +120,8 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
     public void onMouseReleased(int button) {
         if (isSelected) {
             for (IGuiElement e : gui.getElementsAt(gui.mouse.getX(), gui.mouse.getY())) {
-                if (e instanceof GuiElementStatement<?>) {
-                    GuiElementStatement<?> elem = (GuiElementStatement<?>) e;
+                if (e instanceof IReference<?>) {
+                    IReference<?> elem = (IReference<?>) e;
                     elem.setIfCan(selected);
                 }
             }

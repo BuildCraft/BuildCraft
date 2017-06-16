@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -27,7 +29,6 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.MousePosition;
-import buildcraft.lib.gui.pos.PositionCallable;
 import buildcraft.lib.misc.GuiUtil;
 
 public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer {
@@ -42,6 +43,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     /** All of the {@link IGuiElement} which will be drawn by this gui. */
     public final List<IGuiElement> shownElements = new ArrayList<>();
+    public IMenuElement currentMenu;
     /** @deprecated As this can be done through json with parents, rather than with a specialised manager */
     public final LedgerManager_Neptune ledgersLeft, ledgersRight;
     protected final LedgerHelp ledgerHelp;
@@ -97,6 +99,11 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     public List<IGuiElement> getElementsAt(int x, int y) {
         List<IGuiElement> elements = new ArrayList<>();
+        IMenuElement m = currentMenu;
+        if (m != null) {
+            elements.addAll(m.getThisAndChildrenAt(x, y));
+            return elements;
+        }
         for (IGuiElement elem : shownElements) {
             elements.addAll(elem.getThisAndChildrenAt(x, y));
         }
@@ -170,15 +177,33 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         ledgersLeft.drawForeground(lastPartialTicks);
         ledgersRight.drawForeground(lastPartialTicks);
 
-        drawTooltips();
+        IMenuElement m = currentMenu;
+        if (m != null) {
+            if (m.shouldFullyOverride()) {
+                int c = 0x20_00_00_00;
+                GlStateManager.disableDepth();
+                drawGradientRect(0, 0, this.width, this.height, c, c);
+                GlStateManager.enableDepth();
+            }
+            m.drawBackground(lastPartialTicks);
+            m.drawForeground(lastPartialTicks);
+        }
+
+        GuiUtil.drawVerticallyAppending(mouse, getAllTooltips(), this::drawTooltip);
 
         GlStateManager.translate(guiLeft, guiTop, 0);
     }
 
-    private void drawTooltips() {
+    private List<ToolTip> getAllTooltips() {
         List<ToolTip> tooltips = new ArrayList<>();
 
-        // iterateAllElements(e -> e.addToolTips(tooltips));
+        IMenuElement m = currentMenu;
+        if (m != null) {
+            m.addToolTips(tooltips);
+            if (m.shouldFullyOverride()) {
+                return tooltips;
+            }
+        }
 
         if (this instanceof ITooltipElement) {
             ((ITooltipElement) this).addToolTips(tooltips);
@@ -193,7 +218,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
                 ((ITooltipElement) button).addToolTips(tooltips);
             }
         }
-        GuiUtil.drawVerticallyAppending(mouse, tooltips, this::drawTooltip);
+        return tooltips;
     }
 
     private int drawTooltip(ToolTip tooltip, int x, int y) {
@@ -219,6 +244,14 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
             debugging = !debugging;
         }
 
+        IMenuElement m = currentMenu;
+        if (m != null) {
+            m.onMouseClicked(mouseButton);
+            if (m.shouldFullyOverride()) {
+                return;
+            }
+        }
+
         for (IGuiElement element : shownElements) {
             if (element instanceof IInteractionElement) {
                 ((IInteractionElement) element).onMouseClicked(mouseButton);
@@ -235,6 +268,14 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
         mouse.setMousePosition(mouseX, mouseY);
 
+        IMenuElement m = currentMenu;
+        if (m != null) {
+            m.onMouseDragged(clickedMouseButton, timeSinceLastClick);
+            if (m.shouldFullyOverride()) {
+                return;
+            }
+        }
+
         for (IGuiElement element : shownElements) {
             if (element instanceof IInteractionElement) {
                 ((IInteractionElement) element).onMouseDragged(clickedMouseButton, timeSinceLastClick);
@@ -250,6 +291,14 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         super.mouseReleased(mouseX, mouseY, state);
 
         mouse.setMousePosition(mouseX, mouseY);
+
+        IMenuElement m = currentMenu;
+        if (m != null) {
+            m.onMouseReleased(state);
+            if (m.shouldFullyOverride()) {
+                return;
+            }
+        }
 
         for (IGuiElement element : shownElements) {
             if (element instanceof IInteractionElement) {
@@ -291,13 +340,5 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         public int getHeight() {
             return gui.ySize;
         }
-    }
-
-    /** The layer of a GUI defines which part of the gu we are working in. If the current layer is NORMAL then nothing
-     * is different, however for every menu that opens the previous layers are drawn with a darker overlay */
-    public enum Layer {
-        NORMAL,
-        MENU_1,
-        MENU_2;
     }
 }

@@ -28,6 +28,9 @@ public enum PatternParameterXZDir implements IStatementParameter {
     NORTH(EnumFacing.NORTH),
     SOUTH(EnumFacing.SOUTH);
 
+    private static final PatternParameterXZDir[] POSSIBLE_ORDER =
+        { null, null, NORTH, null, EAST, null, SOUTH, null, WEST };
+
     private static final Map<EnumFacing, PatternParameterXZDir> map;
 
     static {
@@ -94,7 +97,8 @@ public enum PatternParameterXZDir implements IStatementParameter {
     }
 
     @Override
-    public PatternParameterXZDir onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+    public PatternParameterXZDir onClick(IStatementContainer source, IStatement stmt, ItemStack stack,
+        StatementMouseClick mouse) {
         return null;
     }
 
@@ -105,6 +109,11 @@ public enum PatternParameterXZDir implements IStatementParameter {
 
     @Override
     public IStatementParameter[] getPossible(IStatementContainer source) {
-        return values();
+        return POSSIBLE_ORDER;
+    }
+
+    @Override
+    public boolean isPossibleOrdered() {
+        return true;
     }
 }

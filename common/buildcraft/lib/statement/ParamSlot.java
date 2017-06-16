@@ -13,19 +13,21 @@ public class ParamSlot implements IReference<IStatementParameter> {
         return param;
     }
 
-    /** Sets this parameter DIRECTLY, without updating clients or the server. */
-    void setWithoutUpdating(IStatementParameter to) {
-        this.param = to;
+    @Override
+    public void set(IStatementParameter to) {
+        param = to;
     }
 
     @Override
-    public void set(IStatementParameter to) {
-        setWithoutUpdating(to);
-        // TODO: Property updating
+    public boolean canSet(Object value) {
+        return value instanceof IStatementParameter;
     }
 
     void onSetMain(IStatement statement, int paramIndex) {
         if (param == null) {
+            if (paramIndex < statement.maxParameters()) {
+                set(statement.createParameter(paramIndex));
+            }
             return;
         }
         if (paramIndex > statement.maxParameters()) {
@@ -33,10 +35,5 @@ public class ParamSlot implements IReference<IStatementParameter> {
         } else {
             set(param.convertForNewStatement(statement, paramIndex));
         }
-    }
-
-    @Override
-    public boolean canSet(Object value) {
-        return value instanceof IStatementParameter;
     }
 }

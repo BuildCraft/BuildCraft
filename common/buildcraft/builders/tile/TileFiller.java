@@ -66,6 +66,7 @@ public class TileFiller extends TileBC_Neptune
     implements ITickable, IDebuggable, ITileForTemplateBuilder, IFillerStatementContainer {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("filler");
     public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
+    public static final int NET_PATTERN = IDS.allocId("NET_PATTERN");
 
     public final ItemHandlerSimple invResources;
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
@@ -78,7 +79,8 @@ public class TileFiller extends TileBC_Neptune
     public boolean placedWithVolume = false;
     public boolean placedWithVolumeType = false;
 
-    public final FullStatement<IFillerPattern> pattern = new FullStatement<>(FillerType.INSTANCE, 4);
+    public final FullStatement<IFillerPattern> pattern =
+        new FullStatement<>(FillerType.INSTANCE, 4, this::onStatementChange);
     private FilledTemplate template;
     private BuildingInfo buildingInfo;
 
@@ -128,7 +130,6 @@ public class TileFiller extends TileBC_Neptune
         if (pattern != null || world.isRemote) {
             // builder.tick();
         }
-        sendNetworkUpdate(NET_RENDER_DATA); // FIXME
     }
 
     @Override
@@ -137,10 +138,12 @@ public class TileFiller extends TileBC_Neptune
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
                 builder.writeToByteBuf(buffer);
-            } else if (id == NET_CAN_EXCAVATE) {
-                buffer.writeBoolean(canExcavate);
             } else if (id == NET_GUI_DATA) {
                 writePayload(NET_CAN_EXCAVATE, buffer, side);
+                writePayload(NET_PATTERN, buffer, side);
+            } else if (id == NET_CAN_EXCAVATE) {
+                buffer.writeBoolean(canExcavate);
+            } else if (id == NET_PATTERN) {
                 pattern.writeToBuffer(buffer);
             }
         }
@@ -152,23 +155,32 @@ public class TileFiller extends TileBC_Neptune
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 builder.readFromByteBuf(buffer);
-            } else if (id == NET_CAN_EXCAVATE) {
-                canExcavate = buffer.readBoolean();
             } else if (id == NET_GUI_DATA) {
                 readPayload(NET_CAN_EXCAVATE, buffer, side, ctx);
+                readPayload(NET_PATTERN, buffer, side, ctx);
+            } else if (id == NET_CAN_EXCAVATE) {
+                canExcavate = buffer.readBoolean();
+            } else if (id == NET_PATTERN) {
                 pattern.readFromBuffer(buffer);
             }
         }
         if (side == Side.SERVER) {
             if (id == NET_CAN_EXCAVATE) {
                 canExcavate = buffer.readBoolean();
-                sendNetworkUpdate(NET_CAN_EXCAVATE);
+                sendNetworkGuiUpdate(NET_CAN_EXCAVATE);
+            } else if (id == NET_PATTERN) {
+                pattern.readFromBuffer(buffer);
+                sendNetworkUpdate(NET_PATTERN);
             }
         }
     }
 
     public void sendCanExcavate(boolean newValue) {
         MessageManager.sendToServer(createMessage(NET_CAN_EXCAVATE, buffer -> buffer.writeBoolean(newValue)));
+    }
+
+    private void onStatementChange(FullStatement<?> stmnt, int paramIndex) {
+        createAndSendMessage(NET_PATTERN, b -> pattern.writeToBuffer(b));
     }
 
     // Read-write

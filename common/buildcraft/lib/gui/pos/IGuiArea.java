@@ -31,8 +31,12 @@ public interface IGuiArea extends IGuiPosition {
     }
 
     default boolean contains(int x, int y) {
-        if (x < getX() || x >= getEndX()) return false;
-        if (y < getY() || y >= getEndY()) return false;
+        int tx = getX();
+        int ty = getY();
+        int w = getWidth();
+        int h = getHeight();
+        if (x < tx || x >= tx + w) return false;
+        if (y < ty || y >= ty + h) return false;
         return true;
     }
 

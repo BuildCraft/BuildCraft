@@ -1,22 +1,25 @@
 package buildcraft.lib.gui.json;
 
+import buildcraft.api.statements.IStatementContainer;
+
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
-import buildcraft.lib.gui.statement.GuiElementStatement;
+import buildcraft.lib.gui.statement.GuiElementStatementParam;
 import buildcraft.lib.statement.FullStatement;
 
-public class ElementTypeStatementSlot extends ElementType {
-    public static final String NAME = "buildcraftlib:statement/slot";
-    public static final ElementTypeStatementSlot INSTANCE = new ElementTypeStatementSlot();
+public class ElementTypeStatementParam extends ElementType {
+    public static final String NAME = "buildcraftlib:statement/parameter";
+    public static final ElementTypeStatementParam INSTANCE = new ElementTypeStatementParam();
 
     // - pos[0], pos[1]: the position of the sprite (where it will be drawn, relative to the root of the gui).
     // - size[0], size[1]: the size of the slot area.
     // - area[0-3]: mapping for pos[0], pos[1], size[0], size[1]
     // - source: The FullStatement reference
     // - draw: If false then the element won't be drawn, but will be a surface for placing statements into.
+    // - index: The parameter index
 
-    private ElementTypeStatementSlot() {
+    private ElementTypeStatementParam() {
         super(NAME);
     }
 
@@ -38,9 +41,12 @@ public class ElementTypeStatementSlot extends ElementType {
 
         boolean draw = !"false".equals(json.properties.get("draw"));
 
+        int index = resolveEquationInt(json, "index", ctx);
+
         FullStatement<?> stmnt = gui.miscProperties.get(source, FullStatement.class);
         IGuiArea area = new GuiRectangle(posX, posY, sizeX, sizeY).offset(gui.rootElement);
-        GuiElementStatement<?> elem = new GuiElementStatement<>(gui, area, stmnt, draw);
+        IStatementContainer stmntContainer = gui.miscProperties.get("statement.container", IStatementContainer.class);
+        GuiElementStatementParam elem = new GuiElementStatementParam(gui, area, stmntContainer, stmnt, index, draw);
         gui.shownElements.add(elem);
     }
 }

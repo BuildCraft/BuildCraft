@@ -19,12 +19,14 @@ import buildcraft.lib.net.PacketBufferBC;
 public class FullStatement<S extends IStatement> implements IReference<S> {
     public final StatementType<S> type;
     public final int maxParams;
+    private final IStatementChangeListener listener;
     private final ParamSlot[] params;
     private S statement;
 
-    public FullStatement(StatementType<S> type, int maxParams) {
+    public FullStatement(StatementType<S> type, int maxParams, IStatementChangeListener listener) {
         this.type = type;
         this.statement = type.defaultStatement;
+        this.listener = listener;
         this.maxParams = maxParams;
         this.params = new ParamSlot[maxParams];
         for (int i = 0; i < maxParams; i++) {
@@ -38,7 +40,7 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
         statement = type.readFromNbt(nbt.getCompoundTag("s"));
         if (statement == null) {
             for (ParamSlot p : params) {
-                p.setWithoutUpdating(null);
+                p.set(null);
             }
         } else {
             for (int p = 0; p < params.length; p++) {
@@ -47,9 +49,9 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
                 String kind = pNbt.getString("kind");
                 IParameterReader reader = StatementManager.getParameterReader(kind);
                 if (reader == null) {
-                    slot.setWithoutUpdating(null);
+                    slot.set(null);
                 } else {
-                    slot.setWithoutUpdating(reader.readFromNbt(pNbt));
+                    slot.set(reader.readFromNbt(pNbt));
                 }
             }
         }
@@ -84,14 +86,14 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
                     if (reader == null) {
                         throw new InvalidInputDataException("Unknown paramater type " + tag);
                     }
-                    params[p].setWithoutUpdating(reader.readFromBuf(buffer));
+                    params[p].set(reader.readFromBuf(buffer));
                 } else {
-                    params[p].setWithoutUpdating(null);
+                    params[p].set(null);
                 }
             }
         } else {
             for (ParamSlot p : params) {
-                p.setWithoutUpdating(null);
+                p.set(null);
             }
         }
     }
@@ -147,5 +149,25 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
 
     public void set(int index, IStatementParameter param) {
         getParamRef(index).set(param);
+    }
+
+    public boolean canSet(int index, Object param) {
+        return getParamRef(index).canSet(param);
+    }
+
+    // Gui change listeners
+
+    /** Gui elements should call this after calling {@link #set(IStatement)} or {@link #set(int, IStatementParameter)},
+     * with either -1 or the param index respectively. */
+    public void postSetFromGui(int paramIndex) {
+        if (listener != null) {
+            listener.onChange(this, paramIndex);
+        }
+    }
+
+    public interface IStatementChangeListener {
+        /** @param stmnt The statement that changed
+         * @param paramIndex The index of the parameter that changed, or -1 if the main {@link IStatement} changed. */
+        void onChange(FullStatement<?> stmnt, int paramIndex);
     }
 }

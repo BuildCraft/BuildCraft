@@ -25,6 +25,7 @@ public class GuiFiller2 extends GuiJson<ContainerFiller> {
         miscProperties.put("filler.pattern.sprite", SPRITE_PATTERN);
         miscProperties.put("filler.possible", FillerStatementContext.CONTEXT_ALL);
         miscProperties.put("filler.pattern", container.tile.pattern);
+        miscProperties.put("statement.container", container.tile);
     }
 
     @Override

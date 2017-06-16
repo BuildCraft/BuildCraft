@@ -7,7 +7,7 @@
 			"args": {
 				"index": 0
 			},
-			"area": ["53 + 18 * index",30,16,16],
+			"area": ["53 + 18 * index",29,18,18],
 			"source": "filler.pattern"
 		},
 		"four_button": {
