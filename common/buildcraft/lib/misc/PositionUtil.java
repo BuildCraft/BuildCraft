@@ -8,7 +8,6 @@ package buildcraft.lib.misc;
 
 import java.util.Random;
 import java.util.Set;
-
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -121,9 +120,9 @@ public class PositionUtil {
     public static Vec3d rotateVec(Vec3d from, Axis axis, Rotation rotation) {
         Vec3d rotated = new Vec3d(0, 0, 0);
 
-        double numEast = from.xCoord;
-        double numUp = from.yCoord;
-        double numSouth = from.zCoord;
+        double numEast = from.x;
+        double numUp = from.y;
+        double numSouth = from.z;
 
         EnumFacing newEast = PositionUtil.rotateFacing(EnumFacing.EAST, axis, rotation);
         EnumFacing newUp = PositionUtil.rotateFacing(EnumFacing.UP, axis, rotation);

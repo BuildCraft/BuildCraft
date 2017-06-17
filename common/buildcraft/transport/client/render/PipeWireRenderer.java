@@ -9,17 +9,16 @@ package buildcraft.transport.client.render;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
-
 import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.item.EnumDyeColor;
@@ -27,6 +26,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.Vec3d;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.EnumWirePart;
 
@@ -42,6 +44,7 @@ import buildcraft.lib.misc.VecUtil;
 import buildcraft.transport.tile.TilePipeHolder;
 import buildcraft.transport.wire.EnumWireBetween;
 
+@SideOnly(Side.CLIENT)
 public class PipeWireRenderer {
 
     private static final Map<EnumWirePart, MutableQuad[]> partQuads = new EnumMap<>(EnumWirePart.class);
@@ -197,25 +200,25 @@ public class PipeWireRenderer {
     private static void renderQuads(MutableQuad[] quads, ISprite sprite, int level) {
         VertexFormat vf = DefaultVertexFormats.POSITION_TEX;
         Tessellator tessellator = new Tessellator(quads.length * vf.getNextOffset());
-        VertexBuffer vb = tessellator.getBuffer();
-        vb.begin(GL11.GL_QUADS, vf);
+        BufferBuilder bb = tessellator.getBuffer();
+        bb.begin(GL11.GL_QUADS, vf);
 
         float vOffset = (level & 0xF) / 16f;
         for (MutableQuad q : quads) {
-            renderVertex(vb, q.vertex_0, sprite, vOffset);
-            renderVertex(vb, q.vertex_1, sprite, vOffset);
-            renderVertex(vb, q.vertex_2, sprite, vOffset);
-            renderVertex(vb, q.vertex_3, sprite, vOffset);
+            renderVertex(bb, q.vertex_0, sprite, vOffset);
+            renderVertex(bb, q.vertex_1, sprite, vOffset);
+            renderVertex(bb, q.vertex_2, sprite, vOffset);
+            renderVertex(bb, q.vertex_3, sprite, vOffset);
         }
         tessellator.draw();
     }
 
-    private static void renderVertex(VertexBuffer vb, MutableVertex vertex, ISprite sprite, float vOffset) {
-        vertex.renderPosition(vb);
+    private static void renderVertex(BufferBuilder bb, MutableVertex vertex, ISprite sprite, float vOffset) {
+        vertex.renderPosition(bb);
         double u = sprite.getInterpU(vertex.tex_u);
         double v = sprite.getInterpV(vertex.tex_v + vOffset);
-        vb.tex(u, v);
-        vb.endVertex();
+        bb.tex(u, v);
+        bb.endVertex();
     }
 
     private static int compileQuads(MutableQuad[] quads, EnumDyeColor colour, boolean isOn) {
@@ -248,7 +251,7 @@ public class PipeWireRenderer {
         return compileQuads(getQuads(between), colour, isOn);
     }
 
-    public static void renderWires(TilePipeHolder pipe, double x, double y, double z, VertexBuffer vb) {
+    public static void renderWires(TilePipeHolder pipe, double x, double y, double z, BufferBuilder bb) {
         int combinedLight = pipe.getWorld().getCombinedLight(pipe.getPipePos(), 0);
         int skyLight = combinedLight >> 16 & 0xFFFF;
         int blockLight = combinedLight & 0xFFFF;

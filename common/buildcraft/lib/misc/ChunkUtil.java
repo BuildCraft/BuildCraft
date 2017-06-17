@@ -19,7 +19,7 @@ public class ChunkUtil {
     }
 
     public static Chunk getChunk(World world, ChunkPos pos, boolean force) {
-        return getChunk(world, pos.chunkXPos, pos.chunkZPos, force);
+        return getChunk(world, pos.x, pos.z, force);
     }
 
     public static Chunk getChunk(World world, int x, int z, boolean force) {
@@ -27,7 +27,7 @@ public class ChunkUtil {
 
         if (chunk != null) {
             if (chunk.isLoaded()) {
-                if (chunk.getWorld() == world && chunk.xPosition == x && chunk.zPosition == z) {
+                if (chunk.getWorld() == world && chunk.x == x && chunk.z == z) {
                     return chunk;
                 }
             } else {

@@ -9,15 +9,14 @@ package buildcraft.builders.client.render;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
 import javax.vecmath.Point3f;
 
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
@@ -26,11 +25,15 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.render.DetatchedRenderer;
 
 import buildcraft.builders.client.ClientArchitectTables;
 
+@SideOnly(Side.CLIENT)
 public enum RenderArchitectTables implements DetatchedRenderer.IDetachedRenderer {
     INSTANCE;
 
@@ -59,33 +62,33 @@ public enum RenderArchitectTables implements DetatchedRenderer.IDetachedRenderer
             GL11.glStencilMask(0xFF);
             GL11.glDepthMask(false);
             GL11.glColorMask(false, false, false, false);
-            VertexBuffer vb = Tessellator.getInstance().getBuffer();
-            vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            bb = bb.expandXyz(0.01);
-            vb.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
-            vb.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
-            vb.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
-            vb.pos(bb.minX, bb.minY, bb.minZ).endVertex();
-            vb.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
-            vb.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
-            vb.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
-            vb.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
-            vb.pos(bb.minX, bb.minY, bb.minZ).endVertex();
-            vb.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
-            vb.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
-            vb.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
-            vb.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
-            vb.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
-            vb.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
-            vb.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
-            vb.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
-            vb.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
-            vb.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
-            vb.pos(bb.minX, bb.minY, bb.minZ).endVertex();
-            vb.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
-            vb.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
-            vb.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
-            vb.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
+            BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            bb = bb.expand(0.01, 0.01, 0.01);
+            buffer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
+            buffer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
+            buffer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
+            buffer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
+            buffer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
+            buffer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
+            buffer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
+            buffer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
+            buffer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
+            buffer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
+            buffer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
+            buffer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
+            buffer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
+            buffer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
+            buffer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
+            buffer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
+            buffer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
+            buffer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
+            buffer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
+            buffer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
+            buffer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
+            buffer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
+            buffer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
+            buffer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
             Tessellator.getInstance().draw();
             GL11.glStencilMask(0x00);
             GL11.glDepthMask(true);
@@ -101,9 +104,9 @@ public enum RenderArchitectTables implements DetatchedRenderer.IDetachedRenderer
                     "textures/blocks/scan.png"
                 )
             );
-            vb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
             for (BlockPos pos : poses) {
-                if (!bb.intersectsWith(new AxisAlignedBB(pos))) {
+                if (!bb.intersects(new AxisAlignedBB(pos))) {
                     continue;
                 }
                 for (EnumFacing face : EnumFacing.VALUES) {
@@ -122,7 +125,7 @@ public enum RenderArchitectTables implements DetatchedRenderer.IDetachedRenderer
                                 * 50
                                 / ClientArchitectTables.START_SCANNED_BLOCK_VALUE
                         )
-                        .render(vb);
+                        .render(buffer);
                 }
             }
             Tessellator.getInstance().draw();

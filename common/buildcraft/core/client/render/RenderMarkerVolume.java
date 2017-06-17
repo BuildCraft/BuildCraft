@@ -41,7 +41,7 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
     }
 
     @Override
-    public void renderTileEntityAt(TileMarkerVolume marker, double tileX, double tileY, double tileZ, float partialTicks, int destroyStage) {
+    public void render(TileMarkerVolume marker, double tileX, double tileY, double tileZ, float partialTicks, int destroyStage, float alpha) {
         if (marker == null || !marker.isShowingSignals()) return;
 
         Minecraft.getMinecraft().mcProfiler.startSection("bc");

@@ -7,7 +7,6 @@
 package buildcraft.lib.misc;
 
 import java.util.Collection;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.util.math.AxisAlignedBB;
@@ -48,11 +47,11 @@ public class BoundingBoxUtil {
     }
 
     public static AxisAlignedBB makeFrom(Vec3d from, Vec3d to) {
-        return new AxisAlignedBB(from.xCoord, from.yCoord, from.zCoord, to.xCoord, to.yCoord, to.zCoord);
+        return new AxisAlignedBB(from.x, from.y, from.z, to.x, to.y, to.z);
     }
 
     public static AxisAlignedBB makeFrom(Vec3d from, Vec3d to, double radius) {
-        return makeFrom(from, to).expandXyz(radius);
+        return makeFrom(from, to).expand(radius, radius, radius);
     }
 
     public static AxisAlignedBB makeAround(Vec3d around, double radius) {

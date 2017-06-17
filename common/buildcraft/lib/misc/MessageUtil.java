@@ -134,9 +134,9 @@ public class MessageUtil {
     }
 
     public static void writeVec3d(PacketBuffer buffer, Vec3d vec) {
-        buffer.writeDouble(vec.xCoord);
-        buffer.writeDouble(vec.yCoord);
-        buffer.writeDouble(vec.zCoord);
+        buffer.writeDouble(vec.x);
+        buffer.writeDouble(vec.y);
+        buffer.writeDouble(vec.z);
     }
 
     public static Vec3d readVec3d(PacketBuffer buffer) {

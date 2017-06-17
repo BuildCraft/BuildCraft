@@ -82,7 +82,6 @@ public class BCCore {
         BCCoreProxy.getProxy().fmlInit();
 
         BCCoreRecipes.init();
-        BCAchievements.init();
 
         MarkerCache.registerCache(VolumeCache.INSTANCE);
         MarkerCache.registerCache(PathCache.INSTANCE);

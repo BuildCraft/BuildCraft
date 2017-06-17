@@ -8,7 +8,6 @@ package buildcraft.lib.recipe;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.annotation.Nonnull;
 
 import gnu.trove.map.hash.TCharObjectHashMap;
@@ -17,7 +16,6 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import buildcraft.lib.misc.StackUtil;
@@ -98,7 +96,8 @@ public class RecipeBuilderShaped {
             objs[offset++] = c;
             objs[offset++] = objects.get(c);
         }
-        return new ShapedOreRecipe(result, objs);
+        //returning null for now, not used anyways
+        return null; //new ShapedOreRecipe(result, objs);
     }
 
     private void ensureValid() {
@@ -109,16 +108,16 @@ public class RecipeBuilderShaped {
 
     public void register() {
         ensureValid();
-        GameRegistry.addRecipe(new ShapedOreRecipe(result, createRecipeObjectArray()));
+        //GameRegistry.addRecipe(new ShapedOreRecipe(result, createRecipeObjectArray()));
     }
 
     public void registerNbtAware() {
         ensureValid();
-        GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(result, createRecipeObjectArray()));
+        //GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(result, createRecipeObjectArray()));
     }
 
     public void registerRotated() {
         ensureValid();
-        GameRegistry.addRecipe(buildRotated());
+        //GameRegistry.addRecipe(buildRotated());
     }
 }

@@ -5,12 +5,12 @@
 package buildcraft.core.item;
 
 import java.util.List;
-
 import javax.annotation.Nonnull;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -58,7 +58,7 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
         String name = getName(StackUtil.asNonNull(stack));
         if (StringUtils.isNullOrEmpty(name)) return;
         tooltip.add(TextFormatting.ITALIC + name);

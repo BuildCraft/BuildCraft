@@ -64,16 +64,16 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
     private void pickupItems(EnumFacing currentSide) {
         world.getEntitiesWithinAABB(
                 EntityItem.class,
-                new AxisAlignedBB(pos.offset(currentSide, PICKUP_RADIUS)).expandXyz(PICKUP_RADIUS)
+                new AxisAlignedBB(pos.offset(currentSide, PICKUP_RADIUS)).expand(PICKUP_RADIUS, PICKUP_RADIUS, PICKUP_RADIUS)
         ).stream()
                 .limit(PICKUP_MAX)
                 .forEach(entityItem -> {
-                    ItemStack stack = entityItem.getEntityItem();
+                    ItemStack stack = entityItem.getItem();
                     stack = inv.insert(stack, false, false);
                     if (stack.isEmpty()) {
                         entityItem.setDead();
                     } else {
-                        entityItem.setEntityItemStack(stack);
+                        entityItem.setItem(stack);
                     }
                 });
     }

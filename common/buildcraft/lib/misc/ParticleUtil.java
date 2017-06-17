@@ -22,8 +22,6 @@ public class ParticleUtil {
     public static void showChangeColour(World world, Vec3d pos, @Nullable EnumDyeColor colour) {
         if (colour == null) {
             showWaterParticles(world, pos);
-        } else {
-
         }
     }
 
@@ -42,7 +40,7 @@ public class ParticleUtil {
         ParticlePosition nPos = new ParticlePosition(new Vec3d(x, y, z), startingMotion);
 
         for (ParticlePosition pp : ParticlePipes.DUPLICATE_SPREAD.pipe(nPos)) {
-            world.spawnParticle(EnumParticleTypes.FLAME, x, y, z, pp.motion.xCoord, pp.motion.yCoord, pp.motion.zCoord);
+            world.spawnParticle(EnumParticleTypes.FLAME, x, y, z, pp.motion.x, pp.motion.y, pp.motion.z);
         }
     }
 }

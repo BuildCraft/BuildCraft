@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Supplier;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -370,7 +369,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         PipeEventItem.Drop drop = new PipeEventItem.Drop(holder, this, ent);
         holder.fireEvent(drop);
-        if (ent.getEntityItem().isEmpty() || ent.isDead) {
+        if (ent.getItem().isEmpty() || ent.isDead) {
             return;
         }
 

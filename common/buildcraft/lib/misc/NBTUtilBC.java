@@ -17,7 +17,6 @@ import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
@@ -149,9 +148,9 @@ public final class NBTUtilBC {
 
     public static NBTTagList writeVec3d(Vec3d vec3) {
         NBTTagList list = new NBTTagList();
-        list.appendTag(new NBTTagDouble(vec3.xCoord));
-        list.appendTag(new NBTTagDouble(vec3.yCoord));
-        list.appendTag(new NBTTagDouble(vec3.zCoord));
+        list.appendTag(new NBTTagDouble(vec3.x));
+        list.appendTag(new NBTTagDouble(vec3.y));
+        list.appendTag(new NBTTagDouble(vec3.z));
         return list;
     }
 

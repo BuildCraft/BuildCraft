@@ -152,9 +152,9 @@ public class Box implements IBox {
     @Override
     public boolean contains(Vec3d p) {
         AxisAlignedBB bb = getBoundingBox();
-        if (p.xCoord < bb.minX || p.xCoord >= bb.maxX) return false;
-        if (p.yCoord < bb.minY || p.yCoord >= bb.maxY) return false;
-        if (p.zCoord < bb.minZ || p.zCoord >= bb.maxZ) return false;
+        if (p.x < bb.minX || p.x >= bb.maxX) return false;
+        if (p.y < bb.minY || p.y >= bb.maxY) return false;
+        if (p.z < bb.minZ || p.z >= bb.maxZ) return false;
         return true;
     }
 

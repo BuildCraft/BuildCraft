@@ -8,14 +8,16 @@ package buildcraft.transport.client.render;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.vecmath.Point3f;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.EnumFacing;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.pipe.IPipeFlowRenderer;
 
@@ -24,11 +26,12 @@ import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
 
+@SideOnly(Side.CLIENT)
 public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
     INSTANCE;
 
     @Override
-    public void render(PipeFlowPower flow, double x, double y, double z, float partialTicks, VertexBuffer vb) {
+    public void render(PipeFlowPower flow, double x, double y, double z, float partialTicks, BufferBuilder vb) {
         float r = (float) flow.clientPowerAmounts.values().stream()
             .mapToDouble(Double::valueOf)
             .average()

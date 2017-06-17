@@ -258,15 +258,15 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             Map<BlockPos, EnumFacing.Axis> entityPoses = new HashMap<>();
 
             for (int x = min.getX(); x <= max.getX(); x++) {
-                entityPoses.put(new BlockPos(x, max.getY(), drillPos.zCoord + 0.5), EnumFacing.Axis.X);
+                entityPoses.put(new BlockPos(x, max.getY(), drillPos.z + 0.5), EnumFacing.Axis.X);
             }
 
-            for (int y = (int) drillPos.yCoord; y < max.getY(); y++) {
-                entityPoses.put(new BlockPos(drillPos.xCoord + 0.5, y, drillPos.zCoord + 0.5), EnumFacing.Axis.Y);
+            for (int y = (int) drillPos.y; y < max.getY(); y++) {
+                entityPoses.put(new BlockPos(drillPos.x + 0.5, y, drillPos.z + 0.5), EnumFacing.Axis.Y);
             }
 
             for (int z = min.getZ(); z <= max.getZ(); z++) {
-                entityPoses.put(new BlockPos(drillPos.xCoord + 0.5, max.getY(), z), EnumFacing.Axis.Z);
+                entityPoses.put(new BlockPos(drillPos.x + 0.5, max.getY(), z), EnumFacing.Axis.Z);
             }
 
             /*
@@ -464,19 +464,19 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         List<AxisAlignedBB> list = new ArrayList<>(3);
         Vec3d min = VecUtil.convertCenter(frameBox.min());
         Vec3d max = VecUtil.convertCenter(frameBox.max());
-        min = VecUtil.replaceValue(min, Axis.Y, max.yCoord);
+        min = VecUtil.replaceValue(min, Axis.Y, max.y);
 
-        Vec3d minXAdj = VecUtil.replaceValue(min, Axis.X, drillPos.xCoord + 0.5);
-        Vec3d maxXAdj = VecUtil.replaceValue(max, Axis.X, drillPos.xCoord + 0.5);
+        Vec3d minXAdj = VecUtil.replaceValue(min, Axis.X, drillPos.x + 0.5);
+        Vec3d maxXAdj = VecUtil.replaceValue(max, Axis.X, drillPos.x + 0.5);
         list.add(BoundingBoxUtil.makeFrom(minXAdj, maxXAdj, 0.25));
 
-        Vec3d minZAdj = VecUtil.replaceValue(min, Axis.Z, drillPos.zCoord + 0.5);
-        Vec3d maxZAdj = VecUtil.replaceValue(max, Axis.Z, drillPos.zCoord + 0.5);
+        Vec3d minZAdj = VecUtil.replaceValue(min, Axis.Z, drillPos.z + 0.5);
+        Vec3d maxZAdj = VecUtil.replaceValue(max, Axis.Z, drillPos.z + 0.5);
         list.add(BoundingBoxUtil.makeFrom(minZAdj, maxZAdj, 0.25));
 
         Vec3d realDrillPos = drillPos.addVector(0.5, 0, 0.5);
         Vec3d minYAdj = realDrillPos;
-        Vec3d maxYAdj = VecUtil.replaceValue(realDrillPos, Axis.Y, max.yCoord);
+        Vec3d maxYAdj = VecUtil.replaceValue(realDrillPos, Axis.Y, max.y);
         list.add(BoundingBoxUtil.makeFrom(minYAdj, maxYAdj, 0.25));
         return list;
     }
@@ -748,7 +748,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
 
         private void moveEntities(Vec3d oldDrillPos) {
-            if (drillPos.yCoord < oldDrillPos.yCoord) {
+            if (drillPos.y < oldDrillPos.y) {
                 return;
             }
             /*
@@ -765,7 +765,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                     )) {
                         if (!moved.contains(entity)) {
                             Vec3d newPos = entity.getPositionVector().add(drillPos.subtract(oldDrillPos));
-                            entity.setPositionAndUpdate(newPos.xCoord, newPos.yCoord, newPos.zCoord);
+                            entity.setPositionAndUpdate(newPos.x, newPos.y, newPos.z);
                             moved.add(entity);
                         }
                     }

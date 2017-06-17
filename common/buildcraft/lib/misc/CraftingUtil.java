@@ -5,13 +5,9 @@
  */
 package buildcraft.lib.misc;
 
-import java.util.List;
-
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.world.World;
 
 public final class CraftingUtil {
@@ -52,17 +48,17 @@ public final class CraftingUtil {
                 newDamage = 0;
             }
 
-            return new ShapelessRecipes(new ItemStack(item1.getItem(), 1, newDamage), StackUtil.listOf(item1, item2));
+            return null; //new ShapelessRecipes(new ItemStack(item1.getItem(), 1, newDamage), StackUtil.listOf(item1, item2));
         } else if (itemNum > 0) {
             // End repair recipe handler
 
-            List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
+            /*List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
             for (IRecipe recipe : recipes) {
 
                 if (recipe.matches(par1InventoryCrafting, par2World)) {
                     return recipe;
                 }
-            }
+            }*/
 
             return null;
         } else {

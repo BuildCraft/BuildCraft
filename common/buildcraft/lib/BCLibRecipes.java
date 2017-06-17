@@ -12,10 +12,8 @@ import java.util.List;
 
 import net.minecraft.init.Items;
 
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.RecipeSorter.Category;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.BCItems;
 
@@ -33,7 +31,7 @@ public class BCLibRecipes {
                 input.add(Items.STICK);
             }
             Collections.addAll(input, Items.PAPER, Items.PAPER, Items.PAPER);
-            GameRegistry.addRecipe(new ShapelessOreRecipe(BCItems.LIB_GUIDE, input.toArray()));
+            //GameRegistry.addRecipe(new ShapelessOreRecipe(BCItems.LIB_GUIDE, input.toArray()));
         }
     }
 }

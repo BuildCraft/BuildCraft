@@ -37,7 +37,7 @@ public class EntityUtil {
         for (EntityItem ent : world.getEntitiesWithinAABB(EntityItem.class, aabb)) {
             if (!ent.isDead) {
                 ent.isDead = true;
-                stacks.add(ent.getEntityItem());
+                stacks.add(ent.getItem());
             }
         }
         return stacks;

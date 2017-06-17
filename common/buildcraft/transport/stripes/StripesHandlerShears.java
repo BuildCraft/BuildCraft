@@ -11,6 +11,7 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -43,7 +44,7 @@ public enum StripesHandlerShears implements IStripesHandlerItem {
             IShearable shearableBlock = (IShearable) block;
             if (shearableBlock.isShearable(stack, world, pos)) {
                 List<ItemStack> drops = shearableBlock.onSheared(stack, world, pos, 0);
-                if (stack.attemptDamageItem(1, player.getRNG())) {
+                if (stack.attemptDamageItem(1, player.getRNG(), player instanceof EntityPlayerMP ? (EntityPlayerMP) player : null)) {
                     stack.shrink(1);
                 }
                 for (ItemStack dropStack : drops) {

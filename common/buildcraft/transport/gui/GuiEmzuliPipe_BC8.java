@@ -126,8 +126,8 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> implement
         }
 
         @Override
-        public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-            super.drawButton(mc, mouseX, mouseY);
+        public void drawButton(Minecraft mc, int mouseX, int mouseY, float partial) {
+            super.drawButton(mc, mouseX, mouseY, partial);
             EnumDyeColor colour = getCurrentColour();
             if (colour == null) {
                 ICON_NO_PAINT.drawAt(getX() + 2, getY() + 2);

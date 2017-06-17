@@ -13,12 +13,12 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -27,6 +27,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.client.model.MutableQuad;
@@ -39,6 +41,7 @@ import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.BCFactoryModels;
 import buildcraft.factory.tile.TileDistiller_BC8;
 
+@SideOnly(Side.CLIENT)
 public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8> {
     private static final Map<EnumFacing, TankRenderSizes> TANK_SIZES = new EnumMap<>(EnumFacing.class);
 
@@ -55,9 +58,10 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         }
     }
 
+
     @Override
-    public void renderTileEntityAt(TileDistiller_BC8 tile, double x, double y, double z, float partialTicks, int destroyStage) {
-        super.renderTileEntityAt(tile, x, y, z, partialTicks, destroyStage);
+    public void render(TileDistiller_BC8 tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        super.render(tile, x, y, z, partialTicks, destroyStage, alpha);
 
         IBlockState state = tile.getWorld().getBlockState(tile.getPos());
         if (state.getBlock() != BCFactoryBlocks.distiller) {
@@ -79,9 +83,9 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 
         // buffer setup
-        VertexBuffer vb = Tessellator.getInstance().getBuffer();
-        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        vb.setTranslation(x, y, z);
+        BufferBuilder bb = Tessellator.getInstance().getBuffer();
+        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        bb.setTranslation(x, y, z);
 
         profiler.startSection("model");
         profiler.startSection("compute");
@@ -101,18 +105,18 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
             copy.copyFrom(q);
             copy.maxLighti(light_block, light_sky);
             copy.multShade();
-            copy.render(vb);
+            copy.render(bb);
         }
 
         profiler.endSection();
         profiler.endStartSection("fluid");
 
-        renderTank(sizes.tankIn, tile.tankIn, combinedLight, vb);
-        renderTank(sizes.tankOutGas, tile.tankOutGas, combinedLight, vb);
-        renderTank(sizes.tankOutLiquid, tile.tankOutLiquid, combinedLight, vb);
+        renderTank(sizes.tankIn, tile.tankIn, combinedLight, bb);
+        renderTank(sizes.tankOutGas, tile.tankOutGas, combinedLight, bb);
+        renderTank(sizes.tankOutLiquid, tile.tankOutLiquid, combinedLight, bb);
 
         // buffer finish
-        vb.setTranslation(0, 0, 0);
+        bb.setTranslation(0, 0, 0);
         profiler.endStartSection("draw");
         Tessellator.getInstance().draw();
 
@@ -124,7 +128,7 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         profiler.endSection();
     }
 
-    private static void renderTank(Size size, Tank tank, int combinedLight, VertexBuffer vb) {
+    private static void renderTank(Size size, Tank tank, int combinedLight, BufferBuilder bb) {
         FluidStack fluid = tank.getFluidForRender();
         if (fluid == null || fluid.amount <= 0) {
             return;
@@ -132,7 +136,7 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         int blockLight = fluid.getFluid().getLuminosity(fluid) & 0xF;
         combinedLight |= blockLight << 4;
         FluidRenderer.vertex.lighti(combinedLight);
-        FluidRenderer.renderFluid(FluidSpriteType.STILL, fluid, tank.getCapacity(), size.min, size.max, vb, null);
+        FluidRenderer.renderFluid(FluidSpriteType.STILL, fluid, tank.getCapacity(), size.min, size.max, bb, null);
     }
 
     static class TankRenderSizes {
@@ -173,9 +177,9 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
 
         private static Vec3d rotateY(Vec3d vec) {
             return new Vec3d(//
-                1 - vec.zCoord,//
-                vec.yCoord,//
-                vec.xCoord//
+                1 - vec.z,//
+                vec.y,//
+                vec.x//
             );
         }
     }

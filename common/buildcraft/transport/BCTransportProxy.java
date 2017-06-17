@@ -172,7 +172,13 @@ public abstract class BCTransportProxy implements IGuiHandler {
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler((item, tintIndex) -> {
                 FullFacadeInstance states = ItemPluggableFacade.getStates(item);
                 FacadePhasedState state = states.getCurrentStateForStack();
-                return Minecraft.getMinecraft().getBlockColors().getColor(state.stateInfo.state);
+                int color = -1;
+                try {
+                    color = Minecraft.getMinecraft().getBlockColors().getColor(state.stateInfo.state, null, null);
+                } catch (NullPointerException ex) {
+                    //the block didn't like the null world or player
+                }
+                return color;
             }, BCTransportItems.plugFacade);
         }
 

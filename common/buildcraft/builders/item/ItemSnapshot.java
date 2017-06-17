@@ -12,13 +12,14 @@ import java.util.Locale;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
+import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
@@ -71,9 +72,9 @@ public class ItemSnapshot extends ItemBC_Neptune {
     }
 
     @Override
-    public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> subItems) {
-        subItems.add(new ItemStack(item, 1, 2));// clean blueprint
-        subItems.add(new ItemStack(item, 1));// clean template
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        subItems.add(new ItemStack(this, 1, 2));// clean blueprint
+        subItems.add(new ItemStack(this, 1));// clean template
     }
 
     @Override
@@ -93,18 +94,19 @@ public class ItemSnapshot extends ItemBC_Neptune {
         return "item.templateItem";
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
         Snapshot.Header header = getHeader(stack);
         if (header == null) {
             tooltip.add(LocaleUtil.localize("item.blueprint.blank"));
         } else {
             tooltip.add(header.name);
-            EntityPlayer author = header.getOwnerPlayer(player.world);
+            EntityPlayer author = header.getOwnerPlayer(world);
             if (author != null) {
                 tooltip.add(LocaleUtil.localize("item.blueprint.author") + " " + author.getName());
             }
-            if (advanced) {
+            if (flag.isAdvanced()) {
                 tooltip.add("Hash: " + HashUtil.convertHashToString(header.hash));
                 tooltip.add("Date: " + header.created);
                 tooltip.add("AuthorId: " + header.owner);

@@ -29,7 +29,6 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.mj.MjAPI;
 
 import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.FakePlayerProvider;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.net.PacketBufferBC;
@@ -89,7 +88,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         double progress = placeTask.power * 1D / placeTask.getTarget();
         return new Vec3d(tile.getBuilderPos())
             .add(height.scale(progress))
-            .add(new Vec3d(0, Math.sin(progress * Math.PI) * (height.yCoord + 1), 0))
+            .add(new Vec3d(0, Math.sin(progress * Math.PI) * (height.y + 1), 0))
             .add(new Vec3d(0.5, 1, 0.5));
     }
 
@@ -114,9 +113,9 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                     .reduce(Vec3d.ZERO, Vec3d::add)
                     .scale(1D / breakTasks.size());
                 newRobotPos = new Vec3d(
-                    newRobotPos.xCoord,
-                    breakTasks.stream().map(BreakTask::getPos).mapToDouble(BlockPos::getY).max().orElse(newRobotPos.yCoord),
-                    newRobotPos.zCoord
+                    newRobotPos.x,
+                    breakTasks.stream().map(BreakTask::getPos).mapToDouble(BlockPos::getY).max().orElse(newRobotPos.y),
+                    newRobotPos.z
                 );
                 newRobotPos = newRobotPos.add(new Vec3d(0, 3, 0));
                 Vec3d oldRobotPos = robotPos;

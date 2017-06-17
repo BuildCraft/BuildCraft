@@ -9,16 +9,20 @@ package buildcraft.lib.client.render.laser;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
+@SideOnly(Side.CLIENT)
 public class LaserBoxRenderer {
     private static final double RENDER_SCALE = 1 / 16.05;
     private static final Vec3d VEC_HALF = new Vec3d(0.5, 0.5, 0.5);
@@ -33,13 +37,13 @@ public class LaserBoxRenderer {
         }
     }
 
-    public static void renderLaserBoxDynamic(Box box, LaserType type, VertexBuffer vb) {
+    public static void renderLaserBoxDynamic(Box box, LaserType type, BufferBuilder bb) {
         if (box == null || box.min() == null || box.max() == null) return;
 
         makeLaserBox(box, type);
 
         for (LaserData_BC8 data : box.laserData) {
-            LaserRenderer_BC8.renderLaserDynamic(data, vb);
+            LaserRenderer_BC8.renderLaserDynamic(data, bb);
         }
     }
 

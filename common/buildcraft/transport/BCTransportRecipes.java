@@ -17,10 +17,8 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.BCBlocks;
 import buildcraft.api.BCItems;
@@ -35,7 +33,6 @@ import buildcraft.lib.inventory.filter.ArrayStackFilter;
 import buildcraft.lib.inventory.filter.OreStackFilter;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
-import buildcraft.lib.recipe.NBTAwareShapedOreRecipe;
 import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 
@@ -52,7 +49,7 @@ import buildcraft.transport.recipe.FacadeSwapRecipe;
 public class BCTransportRecipes {
     public static void init() {
         if (BCTransportItems.waterproof != null) {
-            GameRegistry.addShapelessRecipe(new ItemStack(BCTransportItems.waterproof), new ItemStack(Items.DYE, 1, 2));
+            //GameRegistry.addShapelessRecipe(new ItemStack(BCTransportItems.waterproof), new ItemStack(Items.DYE, 1, 2));
         }
 
         if (BCTransportBlocks.filteredBuffer != null) {
@@ -201,8 +198,8 @@ public class BCTransportRecipes {
                     GateVariant varOr = new GateVariant(EnumGateLogic.OR, material, modifier);
                     ItemStack resultOr = BCTransportItems.plugGate.getStack(varOr);
 
-                    GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(resultAnd, "i", 'i', resultOr));
-                    GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(resultOr, "i", 'i', resultAnd));
+                    //GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(resultAnd, "i", 'i', resultOr));
+                    //GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(resultOr, "i", 'i', resultAnd));
                 }
             }
             StackDefinition lapis = OreStackFilter.definition("gemLapis");
@@ -275,7 +272,7 @@ public class BCTransportRecipes {
             AssemblyRecipeRegistry.INSTANCE.addRecipeProvider(FacadeAssemblyRecipes.INSTANCE);
             RecipeSorter.register("buildcraftlib:facade_swap", FacadeSwapRecipe.class, RecipeSorter.Category.SHAPELESS,
                 "before:minecraft:shapeless");
-            GameRegistry.addRecipe(FacadeSwapRecipe.INSTANCE);
+            //GameRegistry.addRecipe(FacadeSwapRecipe.INSTANCE);
         }
     }
 
@@ -351,14 +348,14 @@ public class BCTransportRecipes {
 
         // TODO: Use RecipePipeColour instead!
 
-        GameRegistry.addShapelessRecipe(new ItemStack(from), new ItemStack(to));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(to), new ItemStack(from), additional));
+        //GameRegistry.addShapelessRecipe(new ItemStack(from), new ItemStack(to));
+        //GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(to), new ItemStack(from), additional));
 
         for (EnumDyeColor colour : ColourUtil.COLOURS) {
             ItemStack f = new ItemStack(from, 1, colour.getMetadata() + 1);
             ItemStack t = new ItemStack(to, 1, colour.getMetadata() + 1);
-            GameRegistry.addShapelessRecipe(f, t);
-            GameRegistry.addRecipe(new ShapelessOreRecipe(t, f, additional));
+            //GameRegistry.addShapelessRecipe(f, t);
+            //GameRegistry.addRecipe(new ShapelessOreRecipe(t, f, additional));
         }
     }
 }

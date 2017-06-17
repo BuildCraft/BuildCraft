@@ -7,7 +7,6 @@
 package buildcraft.lib.client.guide.world;
 
 import java.util.List;
-
 import javax.vecmath.Vector3f;
 
 import com.google.common.collect.ImmutableList;
@@ -31,9 +30,9 @@ public class WorldState {
         this.labels = ImmutableList.copyOf(info.labels);
         this.cameraPos = null;// TODO Utils.convertFloat(info.cameraPos);
 
-        double xDiff = cameraPos.x - info.cameraFacing.xCoord;
-        double yDiff = cameraPos.y - info.cameraFacing.yCoord;
-        double zDiff = cameraPos.z - info.cameraFacing.zCoord;
+        double xDiff = cameraPos.x - info.cameraFacing.x;
+        double yDiff = cameraPos.y - info.cameraFacing.y;
+        double zDiff = cameraPos.z - info.cameraFacing.z;
 
         double opposite = Math.abs(yDiff);
         double adjacent = Math.sqrt(xDiff * xDiff + zDiff * zDiff);

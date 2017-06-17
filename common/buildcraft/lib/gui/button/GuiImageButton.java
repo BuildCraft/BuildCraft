@@ -40,7 +40,7 @@ public class GuiImageButton extends GuiAbstractButton {
     }
 
     @Override
-    public void drawButton(Minecraft minecraft, int x, int y) {
+    public void drawButton(Minecraft minecraft, int x, int y, float partial) {
         if (!visible) {
             return;
         }
@@ -53,8 +53,8 @@ public class GuiImageButton extends GuiAbstractButton {
 
         int buttonState = getButtonState();
 
-        drawTexturedModalRect(xPosition, yPosition, baseU + buttonState * size, baseV, size, size);
-        drawTexturedModalRect(xPosition + 1, yPosition + 1, u, v, size - 2, size - 2);
+        drawTexturedModalRect(x, y, baseU + buttonState * size, baseV, size, size);
+        drawTexturedModalRect(x + 1, y + 1, u, v, size - 2, size - 2);
     }
 
     private int getButtonState() {

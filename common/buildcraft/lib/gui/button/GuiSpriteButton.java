@@ -67,7 +67,7 @@ public class GuiSpriteButton extends GuiAbstractButton {
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partial) {
         if (!visible) {
             return;
         }
@@ -79,17 +79,17 @@ public class GuiSpriteButton extends GuiAbstractButton {
         if (enabled) {
             if (active) {
                 if (hovered) {
-                    drActiveHovered.drawAt(xPosition, yPosition);
+                    drActiveHovered.drawAt(x, y);
                 } else {
-                    drActive.drawAt(xPosition, yPosition);
+                    drActive.drawAt(x, y);
                 }
             } else if (hovered) {
-                drHovered.drawAt(xPosition, yPosition);
+                drHovered.drawAt(x, y);
             } else {
-                drEnabled.drawAt(xPosition, yPosition);
+                drEnabled.drawAt(x, y);
             }
         } else {
-            drDisabled.drawAt(xPosition, yPosition);
+            drDisabled.drawAt(x, y);
         }
     }
 

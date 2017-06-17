@@ -18,8 +18,8 @@ import org.lwjgl.util.glu.GLU;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.WorldVertexBufferUploader;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -42,7 +42,7 @@ public enum ClientSnapshots {
     private final List<Snapshot> snapshots = new ArrayList<>();
     private final List<Snapshot.Header> pending = new ArrayList<>();
     private final Map<Snapshot.Header, FakeWorld> worlds = new HashMap<>();
-    private final Map<Snapshot.Header, VertexBuffer> buffers = new HashMap<>();
+    private final Map<Snapshot.Header, BufferBuilder> buffers = new HashMap<>();
 
     public Snapshot getSnapshot(Snapshot.Header header) {
         Snapshot found = snapshots.stream().filter(snapshot -> snapshot.header.equals(header)).findFirst().orElse(null);
@@ -96,8 +96,8 @@ public enum ClientSnapshots {
             }
             return localWorld;
         });
-        VertexBuffer vertexBuffer = buffers.computeIfAbsent(snapshot.header, localHeader -> {
-            VertexBuffer localBuffer = new VertexBuffer(1024) {
+        BufferBuilder bufferBuilder = buffers.computeIfAbsent(snapshot.header, localHeader -> {
+            BufferBuilder localBuffer = new BufferBuilder(1024) {
                 @Override
                 public void reset() {
                 }
@@ -153,7 +153,7 @@ public enum ClientSnapshots {
         GlStateManager.translate(-snapshot.size.getX() / 2F, -snapshot.size.getY() / 2F, -snapshot.size.getZ() / 2F);
         GlStateManager.translate(0, snapshotSize * 0.1F, 0);
         Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        new WorldVertexBufferUploader().draw(vertexBuffer);
+        new WorldVertexBufferUploader().draw(bufferBuilder);
         if (snapshotSize < 32) {
             TileEntityRendererDispatcher.instance.preDrawBatch();
             for (int z = 0; z < snapshot.size.getZ(); z++) {
@@ -162,7 +162,7 @@ public enum ClientSnapshots {
                         BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
                         GlStateManager.pushAttrib();
                         // noinspection ConstantConditions
-                        TileEntityRendererDispatcher.instance.renderTileEntityAt(
+                        TileEntityRendererDispatcher.instance.render(
                             world.getTileEntity(pos),
                             pos.getX() - FakeWorld.BLUEPRINT_OFFSET.getX(),
                             pos.getY() - FakeWorld.BLUEPRINT_OFFSET.getY(),
@@ -181,39 +181,39 @@ public enum ClientSnapshots {
             switch (snapshot.facing) {
                 case NORTH:
                     pos = new Vec3d(
-                        pos.xCoord + snapshot.size.getX() - 1,
-                        pos.yCoord,
-                        pos.zCoord
+                        pos.x + snapshot.size.getX() - 1,
+                        pos.y,
+                        pos.z
                     );
                     break;
                 case SOUTH:
                     pos = new Vec3d(
-                        pos.xCoord + snapshot.size.getX() - 1,
-                        pos.yCoord,
-                        pos.zCoord + snapshot.size.getZ() - 1
+                        pos.x + snapshot.size.getX() - 1,
+                        pos.y,
+                        pos.z + snapshot.size.getZ() - 1
                     );
                     break;
                 case WEST:
                     pos = new Vec3d(
-                        pos.xCoord,
-                        pos.yCoord,
-                        pos.zCoord + snapshot.size.getZ() - 1
+                        pos.x,
+                        pos.y,
+                        pos.z + snapshot.size.getZ() - 1
                     );
                     break;
                 case EAST:
                     pos = new Vec3d(
-                        pos.xCoord + snapshot.size.getX() - 1,
-                        pos.yCoord,
-                        pos.zCoord + snapshot.size.getZ() - 1
+                        pos.x + snapshot.size.getX() - 1,
+                        pos.y,
+                        pos.z + snapshot.size.getZ() - 1
                     );
                     break;
             }
             GlStateManager.pushAttrib();
             Minecraft.getMinecraft().getRenderManager().doRenderEntity(
                 entity,
-                pos.xCoord - FakeWorld.BLUEPRINT_OFFSET.getX(),
-                pos.yCoord - FakeWorld.BLUEPRINT_OFFSET.getY(),
-                pos.zCoord - FakeWorld.BLUEPRINT_OFFSET.getZ(),
+                pos.x - FakeWorld.BLUEPRINT_OFFSET.getX(),
+                pos.y - FakeWorld.BLUEPRINT_OFFSET.getY(),
+                pos.z - FakeWorld.BLUEPRINT_OFFSET.getZ(),
                 0,
                 0,
                 true

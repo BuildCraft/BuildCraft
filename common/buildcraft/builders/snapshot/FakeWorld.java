@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-
 import javax.annotation.Nullable;
 
 import com.mojang.authlib.GameProfile;
@@ -274,7 +273,7 @@ public class FakeWorld extends World {
             return super.spawnEntity(entity);
         } else {
             if (entity instanceof EntityItem) {
-                drops.add(((EntityItem) entity).getEntityItem());
+                drops.add(((EntityItem) entity).getItem());
             }
             return true;
         }

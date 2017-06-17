@@ -52,7 +52,7 @@ public class GuiBetterButton extends GuiAbstractButton {
     }
 
     @Override
-    public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
+    public void drawButton(Minecraft minecraft, int mouseX, int mouseY, float partial) {
         if (!visible) {
             return;
         }
@@ -66,9 +66,9 @@ public class GuiBetterButton extends GuiAbstractButton {
         int w = texture.getWidth();
         boolean mouseOver = isMouseOver();
         int hoverState = getHoverState(mouseOver);
-        drawTexturedModalRect(xPosition, yPosition, xOffset, yOffset + hoverState * h, width / 2, h);
-        drawTexturedModalRect(xPosition + width / 2, yPosition, xOffset + w - width / 2, yOffset + hoverState * h, width / 2, h);
+        drawTexturedModalRect(x, y, xOffset, yOffset + hoverState * h, width / 2, h);
+        drawTexturedModalRect(x + width / 2, y, xOffset + w - width / 2, yOffset + hoverState * h, width / 2, h);
         mouseDragged(minecraft, mouseX, mouseY);
-        drawCenteredString(fontrenderer, displayString, xPosition + width / 2, yPosition + (h - 8) / 2, getTextColor(mouseOver));
+        drawCenteredString(fontrenderer, displayString, x + width / 2, y + (h - 8) / 2, getTextColor(mouseOver));
     }
 }

@@ -11,6 +11,8 @@ import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.lib.misc.ArrayUtil;
@@ -27,16 +29,19 @@ public final class ChangingItemStack extends ChangingObject<ItemStack>{
         super(stacks.toArray(new ItemStack[0]));
     }
 
-    /** Creates a changing item stack that iterates through all sub-item variants of the specified stack, if its
+    /**
+     * Creates a changing item stack that iterates through all sub-item variants of the specified stack, if its
      * metadata is equal to {@link OreDictionary#WILDCARD_VALUE}
      * 
-     * @param stack the stack to check. */
+     * @param stack the stack to check.
+     */
+    @SideOnly(Side.CLIENT)
     public static ChangingItemStack create(@Nonnull ItemStack stack) {
         if (stack.isEmpty()) {
             return new ChangingItemStack(StackUtil.listOf(StackUtil.EMPTY));
         } else if (stack.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
             NonNullList<ItemStack> subs = NonNullList.create();
-            stack.getItem().getSubItems(stack.getItem(), null, subs);
+            stack.getItem().getSubItems( null, subs);
             return new ChangingItemStack(subs);
         } else {
             return new ChangingItemStack(StackUtil.listOf(stack));

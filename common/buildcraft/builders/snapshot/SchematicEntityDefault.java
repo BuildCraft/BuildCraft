@@ -14,7 +14,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
-
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -135,9 +134,9 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
         if (entity != null) {
             if (rotate) {
                 entity.setLocationAndAngles(
-                    placePos.xCoord,
-                    placePos.yCoord,
-                    placePos.zCoord,
+                    placePos.x,
+                    placePos.y,
+                    placePos.z,
                     entity.rotationYaw + (entity.rotationYaw - entity.getRotatedYaw(entityRotation)),
                     entity.rotationPitch
                 );

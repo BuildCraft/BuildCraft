@@ -7,11 +7,10 @@
 package buildcraft.builders.client.render;
 
 import java.util.List;
-
 import javax.annotation.Nonnull;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -30,15 +29,15 @@ public class RenderBuilder extends FastTESR<TileBuilder> {
     private static final double OFFSET = 0.1;
 
     @Override
-    public void renderTileEntityFast(@Nonnull TileBuilder tile, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer vb) {
+    public void renderTileEntityFast(@Nonnull TileBuilder tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("builder");
 
-        vb.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
+        buffer.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
 
         Minecraft.getMinecraft().mcProfiler.startSection("box");
         Box box = tile.getBox();
-        LaserBoxRenderer.renderLaserBoxDynamic(box, BuildCraftLaserManager.STRIPES_WRITE, vb);
+        LaserBoxRenderer.renderLaserBoxDynamic(box, BuildCraftLaserManager.STRIPES_WRITE, buffer);
 
         Minecraft.getMinecraft().mcProfiler.endStartSection("path");
 
@@ -52,7 +51,7 @@ public class RenderBuilder extends FastTESR<TileBuilder> {
                     Vec3d one = offset(from, to);
                     Vec3d two = offset(to, from);
                     LaserData_BC8 data = new LaserData_BC8(BuildCraftLaserManager.STRIPES_WRITE_DIRECTION, one, two, 1 / 16.1);
-                    LaserRenderer_BC8.renderLaserDynamic(data, vb);
+                    LaserRenderer_BC8.renderLaserDynamic(data, buffer);
                 }
                 last = p;
             }
@@ -60,10 +59,10 @@ public class RenderBuilder extends FastTESR<TileBuilder> {
 
         Minecraft.getMinecraft().mcProfiler.endSection();
 
-        vb.setTranslation(0, 0, 0);
+        buffer.setTranslation(0, 0, 0);
 
         if (tile.getBuilder() != null) {
-            RenderSnapshotBuilder.render(tile.getBuilder(), tile.getWorld(), tile.getPos(), x, y, z, partialTicks, vb);
+            RenderSnapshotBuilder.render(tile.getBuilder(), tile.getWorld(), tile.getPos(), x, y, z, partialTicks, buffer);
         }
 
         Minecraft.getMinecraft().mcProfiler.endSection();

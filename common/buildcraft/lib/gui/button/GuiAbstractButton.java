@@ -135,12 +135,12 @@ public abstract class GuiAbstractButton extends GuiButton implements IGuiElement
 
     @Override
     public int getX() {
-        return xPosition;
+        return x;
     }
 
     @Override
     public int getY() {
-        return yPosition;
+        return y;
     }
 
     @Override
@@ -161,7 +161,7 @@ public abstract class GuiAbstractButton extends GuiButton implements IGuiElement
 
     @Override
     public final void drawBackground(float partialTicks) {
-        drawButton(gui.mc, gui.mouse.getX(), gui.mouse.getY());
+        drawButton(gui.mc, gui.mouse.getX(), gui.mouse.getY(), partialTicks);
     }
 
     @Override

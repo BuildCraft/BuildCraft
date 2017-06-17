@@ -12,11 +12,14 @@ import java.util.TreeMap;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
 import buildcraft.lib.debug.DebugRenderHelper;
@@ -30,10 +33,11 @@ public class AdvDebuggerFloodGate implements IDetachedRenderer {
         this.target = target;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void render(EntityPlayer player, float partialTicks) {
-        VertexBuffer vb = Tessellator.getInstance().getBuffer();
-        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        BufferBuilder bb = Tessellator.getInstance().getBuffer();
+        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 
         TreeMap<Integer, Deque<BlockPos>> queues = target.clientLayerQueues;
 
@@ -44,7 +48,7 @@ public class AdvDebuggerFloodGate implements IDetachedRenderer {
             Deque<BlockPos> positions = entry.getValue();
             for (BlockPos p : positions) {
                 int colour = 0xFF_00_00_00 | (r << 16) | (g << 8) | b;
-                DebugRenderHelper.renderSmallCuboid(vb, p, colour);
+                DebugRenderHelper.renderSmallCuboid(bb, p, colour);
                 r -= 16;
                 if (r < 0) {
                     r = 256;
