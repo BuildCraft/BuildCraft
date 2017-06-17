@@ -6,9 +6,6 @@
 
 package buildcraft.lib.net;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.base.Charsets;
 
 import io.netty.buffer.ByteBuf;
@@ -287,11 +284,10 @@ public class PacketBufferBC extends PacketBuffer {
      * Reads string of any possible length
      */
     public String readString() {
-        List<Byte> bytes = new ArrayList<>();
-        readBytes(readVarInt()).forEachByte(bytes::add);
-        byte[] array = new byte[bytes.size()];
-        for (int i =0; i < bytes.size(); i++) {
-            array[i] = bytes.get(i);
+        int length = readVarInt();
+        byte[] array = new byte[length];
+        for (int i =0; i < length; i++) {
+            array[i] = readByte();
         }
         return new String(array, Charsets.UTF_8);
     }
