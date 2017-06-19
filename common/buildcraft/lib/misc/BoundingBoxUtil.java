@@ -56,7 +56,14 @@ public class BoundingBoxUtil {
     }
 
     public static AxisAlignedBB makeAround(Vec3d around, double radius) {
-        return new AxisAlignedBB(around.subtract(radius, radius, radius), around.addVector(radius, radius, radius));
+        return new AxisAlignedBB(
+            around.xCoord,
+            around.yCoord,
+            around.zCoord,
+            around.xCoord,
+            around.yCoord,
+            around.zCoord
+        ).expandXyz(radius);
     }
 
     public static AxisAlignedBB makeFrom(BlockPos pos, @Nullable IBox box, @Nullable Collection<BlockPos> additional) {
