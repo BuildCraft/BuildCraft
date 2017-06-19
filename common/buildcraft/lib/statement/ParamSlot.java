@@ -24,16 +24,14 @@ public class ParamSlot implements IReference<IStatementParameter> {
     }
 
     void onSetMain(IStatement statement, int paramIndex) {
-        if (param == null) {
-            if (paramIndex < statement.maxParameters()) {
-                set(statement.createParameter(paramIndex));
-            }
+        if (statement == null) {
+            param = null;
             return;
         }
-        if (paramIndex > statement.maxParameters()) {
-            set(null);
+        if (paramIndex < statement.maxParameters()) {
+            param = statement.createParameter(param, paramIndex);
         } else {
-            set(param.convertForNewStatement(statement, paramIndex));
+            param = null;
         }
     }
 }

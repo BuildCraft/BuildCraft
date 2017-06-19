@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
@@ -92,6 +93,7 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
                 }
             }
         } else {
+            statement = type.defaultStatement;
             for (ParamSlot p : params) {
                 p.set(null);
             }
