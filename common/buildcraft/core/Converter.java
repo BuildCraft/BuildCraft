@@ -115,7 +115,7 @@ public class Converter {
 
 
         try (FileWriter w = new FileWriter(f)) {
-            GSON.toJson(json, w);
+            //GSON.toJson(json, w);
         } catch (IOException e) {
             e.printStackTrace();
         }

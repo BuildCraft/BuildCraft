@@ -18,6 +18,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -44,14 +45,23 @@ public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemP
         super(BCTransportBlocks.pipeHolder);
         this.definition = definition;
         this.id = "item.pipe." + definition.identifier.getResourceDomain() + "." + definition.identifier.getResourcePath();
-        this.setMaxDamage(0);
-        this.setHasSubtypes(true);
+        //this.setMaxDamage(0);
+        //this.setHasSubtypes(true);
         init();
     }
 
     public ItemPipeHolder registerWithPipeApi() {
         PipeApi.pipeRegistry.setItemForPipe(definition, this);
         return this;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (this.isInCreativeTab(tab))
+        {
+         items.add(new ItemStack(this));
+        }
     }
 
     @Override

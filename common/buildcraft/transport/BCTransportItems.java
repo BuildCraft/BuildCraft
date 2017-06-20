@@ -127,7 +127,7 @@ public class BCTransportItems {
             pipePowerQuartz = makePipeItem(BCTransportPipes.quartzPower);
             pipePowerGold = makePipeItem(BCTransportPipes.goldPower);
             // pipePowerIron = makePipeItem(BCTransportPipes.ironPower);
-            pipePowerSandstone = makePipeItem(BCTransportPipes.sandstonePower);
+            //pipePowerSandstone = makePipeItem(BCTransportPipes.sandstonePower);
         }
 
         plugBlocker = ItemManager.register(new ItemPluggableSimple("item.plug.blocker", BCTransportPlugs.blocker));
