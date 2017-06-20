@@ -1,0 +1,26 @@
+{
+  "result": {
+    "item": "buildcraftlib:guide"
+  },
+  "pattern": [
+    "www",
+    " g ",
+    "GpG"
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "gearWood"
+    },
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "item": "minecraft:paper"
+    }
+  ]
+}

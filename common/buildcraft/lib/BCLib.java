@@ -96,8 +96,6 @@ public class BCLib {
         VanillaRotationHandlers.fmlInit();
 
         ItemManager.fmlInit();
-
-        BCLibRecipes.fmlInit();
     }
 
     @Mod.EventHandler

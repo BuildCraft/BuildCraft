@@ -20,6 +20,8 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import buildcraft.lib.misc.StackUtil;
 
+import buildcraft.core.Converter;
+
 public class RecipeBuilderShaped {
     @Nonnull
     private ItemStack result = StackUtil.EMPTY;
@@ -108,12 +110,12 @@ public class RecipeBuilderShaped {
 
     public void register() {
         ensureValid();
-        //GameRegistry.addRecipe(new ShapedOreRecipe(result, createRecipeObjectArray()));
+        Converter.addShapedRecipe(result, createRecipeObjectArray());
     }
 
     public void registerNbtAware() {
         ensureValid();
-        //GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(result, createRecipeObjectArray()));
+        Converter.addShapedRecipe(result, createRecipeObjectArray());
     }
 
     public void registerRotated() {

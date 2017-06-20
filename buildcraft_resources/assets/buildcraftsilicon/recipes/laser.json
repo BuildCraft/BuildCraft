@@ -1,0 +1,23 @@
+{
+  "result": {
+    "item": "buildcraftsilicon:laser"
+  },
+  "pattern": [
+    "rro",
+    "rdd",
+    "rro"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "#dustRedstone"
+    },
+    "d": {
+      "type": "forge:ore_dict",
+      "ore": "gemDiamond"
+    },
+    "o": {
+      "item": "minecraft:obsidian"
+    }
+  }
+}

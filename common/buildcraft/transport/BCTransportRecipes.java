@@ -14,14 +14,12 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 
 import buildcraft.api.BCBlocks;
-import buildcraft.api.BCItems;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.mj.MjAPI;
@@ -48,32 +46,6 @@ import buildcraft.transport.recipe.FacadeSwapRecipe;
 
 public class BCTransportRecipes {
     public static void init() {
-        if (BCTransportItems.waterproof != null) {
-            //GameRegistry.addShapelessRecipe(new ItemStack(BCTransportItems.waterproof), new ItemStack(Items.DYE, 1, 2));
-        }
-
-        if (BCTransportBlocks.filteredBuffer != null) {
-            RecipeBuilderShaped builder = new RecipeBuilderShaped();
-            builder.add("wdw");
-            builder.add("wcw");
-            builder.add("wpw");
-            builder.map('w', "plankWood");
-            builder.map('p', Blocks.PISTON);
-            builder.map('c', Blocks.CHEST);
-            builder.map('d', BCItems.TRANSPORT_PIPE_DIAMOND_ITEM, Items.DIAMOND);
-            builder.setResult(new ItemStack(BCTransportBlocks.filteredBuffer));
-            builder.register();
-        }
-
-        if (BCTransportItems.pipeStructure != null) {
-            RecipeBuilderShaped builder = new RecipeBuilderShaped();
-            builder.add("cgc");
-            builder.map('c', "cobblestone");
-            builder.map('g', Blocks.GRAVEL);
-            builder.setResult(new ItemStack(BCTransportItems.pipeStructure, 8));
-            builder.register();
-        }
-
         addPipeRecipe(BCTransportItems.pipeItemWood, "plankWood");
         addPipeRecipe(BCTransportItems.pipeItemCobble, "cobblestone");
         addPipeRecipe(BCTransportItems.pipeItemStone, "stone");
@@ -90,12 +62,7 @@ public class BCTransportRecipes {
         addPipeRecipe(BCTransportItems.pipeItemLapis, Blocks.LAPIS_BLOCK);
         addPipeRecipe(BCTransportItems.pipeItemDaizuli, Blocks.LAPIS_BLOCK, Items.DIAMOND);
         addPipeRecipe(BCTransportItems.pipeItemDiaWood, "plankWood", Items.DIAMOND);
-
-        Item waterproof = BCTransportItems.waterproof;
-        if (waterproof == null) {
-            waterproof = Items.SLIME_BALL;
-        }
-        addPipeUpgradeRecipe(BCTransportItems.pipeItemWood, BCTransportItems.pipeFluidWood, waterproof);
+        /*addPipeUpgradeRecipe(BCTransportItems.pipeItemWood, BCTransportItems.pipeFluidWood, waterproof);
         addPipeUpgradeRecipe(BCTransportItems.pipeItemCobble, BCTransportItems.pipeFluidCobble, waterproof);
         addPipeUpgradeRecipe(BCTransportItems.pipeItemStone, BCTransportItems.pipeFluidStone, waterproof);
         addPipeUpgradeRecipe(BCTransportItems.pipeItemQuartz, BCTransportItems.pipeFluidQuartz, waterproof);
@@ -107,14 +74,7 @@ public class BCTransportRecipes {
         addPipeUpgradeRecipe(BCTransportItems.pipeItemObsidian, BCTransportItems.pipeFluidObsidian, waterproof);
         addPipeUpgradeRecipe(BCTransportItems.pipeItemDiamond, BCTransportItems.pipeFluidDiamond, waterproof);
         addPipeUpgradeRecipe(BCTransportItems.pipeItemDiaWood, BCTransportItems.pipeFluidDiaWood, waterproof);
-
-        if (BCTransportItems.plugBlocker != null) {
-            RecipeBuilderShaped builder = new RecipeBuilderShaped();
-            builder.add("s");
-            builder.map('s', BCTransportItems.pipeStructure);
-            builder.setResult(new ItemStack(BCTransportItems.plugBlocker, 4));
-            builder.register();
-        }
+        */
 
         if (BCTransportItems.plugPulsar != null) {
             ItemStack output = new ItemStack(BCTransportItems.plugPulsar);

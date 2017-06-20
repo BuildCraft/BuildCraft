@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "buildcrafttransport:pipe_structure",
+    "data": 0,
+    "count": 8
+  },
+  "pattern": [
+    "cgc"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "c": {
+      "item": "#cobblestone"
+    },
+    "g": {
+      "item": "minecraft:gravel"
+    }
+  }
+}

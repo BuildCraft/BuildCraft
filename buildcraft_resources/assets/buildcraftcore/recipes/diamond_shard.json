@@ -1,0 +1,15 @@
+{
+  "result": {
+    "item": "buildcraftcore:diamond_shard",
+    "count": 4
+  },
+  "pattern": [
+    "D"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    }
+  }
+}

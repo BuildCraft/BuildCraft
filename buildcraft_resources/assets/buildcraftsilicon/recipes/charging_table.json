@@ -1,0 +1,27 @@
+{
+  "result": {
+    "item": "buildcraftsilicon:charging_table"
+  },
+  "pattern": [
+    "OdO",
+    "OrO",
+    "OgO"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "buildcraftsilicon:redstone_chipset",
+      "data": 0
+    },
+    "d": {
+      "item": "#dustRedstone"
+    },
+    "g": {
+      "type": "forge:ore_dict",
+      "ore": "gearGold"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    }
+  }
+}

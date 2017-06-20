@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "buildcraftcore:marker_path"
+  },
+  "pattern": [
+    "g",
+    "t"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "t": {
+      "item": "minecraft:redstone_torch"
+    },
+    "g": {
+      "item": "minecraft:dye",
+      "data": 2
+    }
+  }
+}

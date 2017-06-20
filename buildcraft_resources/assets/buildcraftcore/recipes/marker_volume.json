@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "buildcraftcore:marker_volume"
+  },
+  "pattern": [
+    "l",
+    "t"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "t": {
+      "item": "minecraft:redstone_torch"
+    },
+    "l": {
+      "item": "minecraft:dye",
+      "data": 4
+    }
+  }
+}

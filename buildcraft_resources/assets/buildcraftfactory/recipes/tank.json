@@ -1,0 +1,16 @@
+{
+  "result": {
+    "item": "buildcraftfactory:tank"
+  },
+  "pattern": [
+    "ggg",
+    "g g",
+    "ggg"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "g": {
+      "item": "#blockGlassColorless"
+    }
+  }
+}

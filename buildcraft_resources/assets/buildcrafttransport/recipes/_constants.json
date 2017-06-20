@@ -1,0 +1,32 @@
+[
+  {
+    "name": "plankWood",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "plankWood"
+      }
+    ]
+  },
+  {
+    "name": "cobblestone",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "cobblestone"
+      }
+    ]
+  },
+  {
+    "name": "sealant",
+    "ingredient": [
+      {
+        "item": "minecraft:dye",
+        "data": 2
+      },
+      {
+        "item": "minecraft:slime_ball"
+      }
+    ]
+  }
+]

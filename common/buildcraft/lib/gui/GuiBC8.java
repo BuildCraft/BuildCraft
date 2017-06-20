@@ -170,6 +170,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
         tooltips.drawForeground(lastPartialTicks);
 
+        renderHoveredToolTip(mouseX, mouseY);
         GlStateManager.translate(guiLeft, guiTop, 0);
     }
 

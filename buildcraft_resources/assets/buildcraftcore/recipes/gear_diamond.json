@@ -1,0 +1,20 @@
+{
+  "result": {
+    "item": "buildcraftcore:gear_diamond"
+  },
+  "pattern": [
+    " o ",
+    "oio",
+    " o "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "i": {
+      "type": "forge:ore_dict",
+      "ore": "gearGold"
+    },
+    "o": {
+      "item": "minecraft:diamond"
+    }
+  }
+}

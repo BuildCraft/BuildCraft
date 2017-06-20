@@ -48,7 +48,6 @@ public class BCFactory {
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
         BCFactoryProxy.getProxy().fmlInit();
-        BCFactoryRecipes.init();
     }
 
     @Mod.EventHandler
