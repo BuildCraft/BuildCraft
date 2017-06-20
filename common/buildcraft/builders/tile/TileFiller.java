@@ -113,6 +113,18 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     }
 
     @Override
+    public void validate() {
+        super.validate();
+        builder.validate();
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        builder.invalidate();
+    }
+
+    @Override
     public void update() {
         battery.tick(getWorld(), getPos());
         battery.addPowerChecking(64 * MjAPI.MJ, false);

@@ -135,6 +135,20 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
         super.onSlotChange(itemHandler, slot, before, after);
     }
 
+    @Override
+    public void validate() {
+        super.validate();
+        templateBuilder.validate();
+        blueprintBuilder.validate();
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        templateBuilder.invalidate();
+        blueprintBuilder.invalidate();
+    }
+
     private void updateSnapshot() {
         Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::cancel);
         if (snapshot != null && getCurrentBasePos() != null) {
