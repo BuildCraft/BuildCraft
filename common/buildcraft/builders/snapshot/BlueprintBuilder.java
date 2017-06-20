@@ -127,7 +127,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             .map(blockPos::add)
             .allMatch(pos ->
                 getBuildingInfo().toPlace.containsKey(pos)
-                    ? isBlockCorrect(pos)
+                    ? checkResults.get(pos) == CheckResult.CORRECT
                     : !getToBreak().contains(pos) || tile.getWorldBC().isAirBlock(pos)
             ) &&
             !getBuildingInfo().toPlace.get(blockPos).isAir() &&
@@ -209,7 +209,10 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             remainingDisplayRequired.addAll(StackUtil.mergeSameItems(
                 Stream.concat(
                     getToPlace().stream()
-                        .filter(blockPos -> !isBlockCorrect(blockPos))
+                        .filter(blockPos ->
+                            checkResults.get(blockPos) != CheckResult.UNKNOWN &&
+                                checkResults.get(blockPos) != CheckResult.CORRECT
+                        )
                         .flatMap(blockPos ->
                             getDisplayRequired(
                                 buildingInfo.toPlaceRequiredItems.get(blockPos),

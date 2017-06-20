@@ -46,7 +46,7 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
 
     @Override
     protected boolean canPlace(BlockPos blockPos) {
-        return tile.getWorldBC().isAirBlock(blockPos);
+        return true;
     }
 
     @Override
