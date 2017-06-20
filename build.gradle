@@ -426,21 +426,21 @@ def sftp(String subPath, Closure antFileset = {}) {
 publishing {
     repositories {
         maven {
-            url "build/maven"
+            url System.getenv("MAVEN_DIR") ?: "build/maven"
         }
     }
     publications {
         pub_apiJar(MavenPublication) {
             groupId "com.mod-buildcraft"
             artifactId "buildcraft-api"
-            version "8.0"
+            version "7.99"
 
             artifact apiJar
         }
         pub_apiSrcJar(MavenPublication) {
             groupId "com.mod-buildcraft"
             artifactId "buildcraft-api"
-            version "8.0"
+            version "7.99"
 
             artifact apiSrcJar
         }
