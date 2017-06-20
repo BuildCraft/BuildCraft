@@ -151,11 +151,10 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         return oTile.hasCapability(CapUtil.CAP_FLUIDS, face.getOpposite());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == CapUtil.CAP_FLUIDS) {
-            return (T) sections.get(EnumPipePart.fromFacing(facing));
+            return CapUtil.CAP_FLUIDS.cast(sections.get(EnumPipePart.fromFacing(facing)));
         }
         return super.getCapability(capability, facing);
     }
