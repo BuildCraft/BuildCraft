@@ -425,9 +425,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
-        IBlockState state = world.getBlockState(pos);
-        int meta = state.getBlock().getMetaFromState(state);
-        return new SPacketUpdateTileEntity(pos, meta, getUpdateTag());
+        return new SPacketUpdateTileEntity(pos, 0, getUpdateTag());
     }
 
     @Override
