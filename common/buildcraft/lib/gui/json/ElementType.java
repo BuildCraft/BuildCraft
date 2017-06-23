@@ -14,6 +14,8 @@ import buildcraft.lib.expression.InternalCompiler;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeType;
+import buildcraft.lib.gui.IGuiElement;
+import buildcraft.lib.gui.pos.IGuiPosition;
 
 public abstract class ElementType {
     public final String name;
@@ -22,7 +24,8 @@ public abstract class ElementType {
         this.name = name;
     }
 
-    public abstract void addToGui(GuiJson<?> gui, JsonGuiInfo info, JsonGuiElement json);
+    // TODO: Add a "IGuiPosition parent" arg! (refactor tool broken atm)
+    public abstract IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json);
 
     public static FunctionContext createContext(JsonGuiElement json) {
         FunctionContext ctx = DefaultContexts.createWithAll();
@@ -30,7 +33,7 @@ public abstract class ElementType {
         Set<String> args = new HashSet<>();
         // Put in args first
         for (String key : json.properties.keySet()) {
-            if (key.startsWith("args")) {
+            if (key.startsWith("args.")) {
                 String argName = key.substring("args.".length());
                 args.add(argName);
                 String value = json.properties.get(key);
@@ -54,7 +57,7 @@ public abstract class ElementType {
                 ctx.putVariable(key, NodeType.createConstantNode(node));
             } catch (InvalidExpressionException e) {
                 // Ignore the error
-                BCLog.logger.info("Failed to compile expression for " + key + " because " + e.getMessage());
+//                BCLog.logger.info("Failed to compile expression for " + key + " because " + e.getMessage());
             }
         }
         return ctx;
@@ -102,7 +105,8 @@ public abstract class ElementType {
         }
     }
 
-    public static boolean resolveEquationBool(JsonGuiElement json, String member, FunctionContext ctx, boolean _default) {
+    public static boolean resolveEquationBool(JsonGuiElement json, String member, FunctionContext ctx,
+        boolean _default) {
         String eqn = json.properties.get(member);
         if (eqn == null) {
             return _default;

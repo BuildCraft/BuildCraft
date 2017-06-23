@@ -157,7 +157,7 @@ public class TileFiller extends TileBC_Neptune
                 for (int x = 0; x < sx; x++) {
                     for (int y = 0; y < sy; y++) {
                         for (int z = 0; z < sz; z++) {
-                            blueprintTemplate.data[x][y][z] = patternTemplate.get(x, y, z);
+                            blueprintTemplate.data[x][y][z] = patternTemplate.get(x, y, z) ^ invertPattern;
                         }
                     }
                 }

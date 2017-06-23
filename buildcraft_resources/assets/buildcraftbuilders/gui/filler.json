@@ -4,9 +4,6 @@
 	"types": {
 		"param": {
 			"type": "buildcraftlib:statement/parameter",
-			"args": {
-				"index": 0
-			},
 			"area": ["53 + 18 * index",29,18,18],
 			"source": "filler.pattern"
 		},
@@ -48,6 +45,35 @@
 			"colour": "0x40_40_40",
 			"pos": [7,141]
 		},
+		"ledger_buttons": {
+			"type": "buildcraftlib:ledger",
+			"title": "buttons",
+			"side": "left",
+			"colour": "0xFF_6C_D4_1F",
+			"closed": [
+				{
+					"type":"buildcraftlib:drawable",
+					"source": {
+						"sprite": "minecraft:items/iron_ingot",
+						"area": [0, 0, 16, 16]
+					},
+					"area": [0,0, 16, 16]
+				}
+			],
+			"children": [
+				{
+					"type": "four_button",
+					"u_start": 192,
+					"area": [0, 20, 16, 16]
+				},
+				{
+					"type": "buildcraftlib:text",
+					"text": "gui.inventory",
+					"colour": "0xFF_FF_FF",
+					"pos": [30, 20]
+				}
+			]
+		},
 		"pattern_drag_target": {
 			"type": "buildcraftlib:statement/slot",
 			"source": "filler.pattern",
@@ -68,8 +94,30 @@
 		},
 		"pattern_possible": {
 			"type": "buildcraftlib:statement/source",
-			"pos[1]":"32",
 			"source": "filler.possible"
+		},
+		"ledger_test": {
+			"type": "buildcraftlib:ledger",
+			"title": "test",
+			"colour": "0xFF_D4_6C_1F",
+			"closed": [
+				{
+					"type": "buildcraftlib:drawable",
+					"source": {
+						"sprite": "minecraft:items/diamond",
+						"area": [0, 0, 16, 16]
+					},
+					"area": [0,0,16,16]
+				}
+			],
+			"children": [
+				{
+					"type": "buildcraftlib:text",
+					"text": "gui.inventory",
+					"colour": "0xFF_FF_FF",
+					"pos": [4, 20]
+				}
+			]
 		},
 		"button_no_excavate": {
 			"type": "four_button",

@@ -20,13 +20,21 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
     public final GuiJson<?> gui;
     public final IGuiPosition position;
     public final StatementContext<S> ctx;
+    private final boolean left;
     private boolean isSelected = false;
     private S selected;
 
-    public GuiElementStatementSource(GuiJson<?> gui, IGuiPosition position, StatementContext<S> ctx) {
+    public GuiElementStatementSource(GuiJson<?> gui, boolean left, StatementContext<S> ctx) {
         this.gui = gui;
-        this.position = position;
+        this.left = left;
         this.ctx = ctx;
+        if (left) {
+            position = gui.lowerLeftLedgerPos.offset(-getWidth(), 0);
+            gui.lowerLeftLedgerPos = getPosition(1, 1);
+        } else {
+            position = gui.lowerRightLedgerPos;
+            gui.lowerRightLedgerPos = getPosition(-1, 1);
+        }
     }
 
     @Override
@@ -41,12 +49,16 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
 
     @Override
     public int getWidth() {
-        return 10;
+        return 4 * 18;
     }
 
     @Override
     public int getHeight() {
-        return 10;
+        int size = 0;
+        for (StatementGroup<S> group : ctx.getAllPossible()) {
+            size += group.getValues().size();
+        }
+        return size / 4 * 18 + 4;
     }
 
     private void iterateSlots(ISlotIter<S> iter) {
@@ -55,7 +67,7 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
         for (StatementGroup<S> group : ctx.getAllPossible()) {
             int visited = 0;
             for (S slot : group.getValues()) {
-                int px = getX() - x * 18 - 18;
+                int px = getX() + x * 18;
                 int py = getY() + y * 18;
                 iter.iterate(slot, new GuiRectangle(px, py, 18, 18));
                 visited++;

@@ -32,7 +32,7 @@ public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
-        ledgersRight.ledgers.add(new LedgerEngine(ledgersRight, container.tile));
+        shownElements.add(new LedgerEngine(this, true));
         helpFlame = new ElementHelpInfo("buildcraft.help.stone_engine.flame.title", 0xFF_FF_FF_1F, "buildcraft.help.stone_engine.flame");
         // TODO: Auto list of example fuels!
         helpFuel = new ElementHelpInfo("buildcraft.help.stone_engine.fuel.title", 0xFF_AA_33_33, "buildcraft.help.stone_engine.fuel");

@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.help.DummyHelpElement;
 import buildcraft.lib.gui.help.ElementHelpInfo;
 import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.gui.pos.IGuiPosition;
 
 public class ElementTypeHelp extends ElementType {
     public static final String NAME = "buildcraftlib:help";
@@ -25,7 +27,7 @@ public class ElementTypeHelp extends ElementType {
     // - title: The name of the help element
 
     @Override
-    public void addToGui(GuiJson<?> gui, JsonGuiInfo info, JsonGuiElement json) {
+    public IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(json);
 
         String title = json.properties.get("title");
@@ -57,6 +59,6 @@ public class ElementTypeHelp extends ElementType {
         int sizeX = resolveEquationInt(json, "size[0]", ctx);
         int sizeY = resolveEquationInt(json, "size[1]", ctx);
         GuiRectangle rect = new GuiRectangle(posX, posY, sizeX, sizeY);
-        gui.shownElements.add(new DummyHelpElement(rect.offset(gui.rootElement), help));
+        return new DummyHelpElement(rect.offset(parent), help);
     }
 }

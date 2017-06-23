@@ -20,6 +20,8 @@ import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.IContainingElement;
+import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.button.GuiAbstractButton;
 import buildcraft.lib.misc.collect.TypedKeyMap;
 
@@ -35,6 +37,11 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
         super(container);
         this.guiDefinition = guiDefinition;
         load();
+    }
+
+    @Override
+    protected boolean shouldAddHelpLedger() {
+        return false;
     }
 
     @Override
@@ -60,7 +67,15 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
                 if (type == null) {
                     BCLog.logger.warn("Unknown type " + typeName);
                 } else {
-                    type.addToGui(this, info, elem);
+                    IGuiElement e = type.deserialize(this, rootElement, info, elem);
+                    String parent = elem.properties.get("parent");
+                    IContainingElement p = miscProperties.get("custom." + parent, IContainingElement.class);
+                    miscProperties.put("custom." + elem.name, e);
+                    if (p == null) {
+                        shownElements.add(e);
+                    } else {
+                        p.getChildElements().add(e);
+                    }
                 }
             }
             postLoad();

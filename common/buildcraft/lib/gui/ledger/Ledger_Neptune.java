@@ -22,6 +22,7 @@ import buildcraft.api.core.render.ISprite;
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.IContainingElement;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.IInteractionElement;
 import buildcraft.lib.gui.ISimpleDrawable;
@@ -30,11 +31,13 @@ import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
-import buildcraft.lib.gui.pos.PositionCallable;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.RenderUtil;
 
-public abstract class Ledger_Neptune implements IInteractionElement {
+// TODO: Json "parent" and "parent position" - useful for ledgers, and where ledgers begin and end.
+// Or that could be done in-code, rather than in json.
+
+public class Ledger_Neptune implements IInteractionElement, IContainingElement {
     public static final ISprite SPRITE_EXP_NEG = BCLibSprites.LEDGER_LEFT;
     public static final ISprite SPRITE_EXP_POS = BCLibSprites.LEDGER_RIGHT;
 
@@ -47,11 +50,13 @@ public abstract class Ledger_Neptune implements IInteractionElement {
     public static final int CLOSED_WIDTH = 2 + 16 + LEDGER_GAP;
     public static final int CLOSED_HEIGHT = LEDGER_GAP + 16 + LEDGER_GAP;
 
-    public final LedgerManager_Neptune manager;
+    public final GuiBC8<?> gui;
+    public final int colour;
+    public final boolean expandPositive;
 
-    public final IGuiPosition positionLedgerStart = new PositionCallable(this::getX, this::getY);
-    public final IGuiPosition positionLedgerIconStart = positionLedgerStart.offset(2, LEDGER_GAP);
-    public final IGuiPosition positionLedgerInnerStart = positionLedgerIconStart.offset(16 + LEDGER_GAP, 0);
+    public final IGuiPosition positionLedgerStart;
+    public final IGuiPosition positionLedgerIconStart;
+    public final IGuiPosition positionLedgerInnerStart;
 
     protected int maxWidth = 96, maxHeight = 48;
 
@@ -65,19 +70,30 @@ public abstract class Ledger_Neptune implements IInteractionElement {
     protected final List<IGuiElement> closedElements = new ArrayList<>();
     protected final List<IGuiElement> openElements = new ArrayList<>();
 
-    protected IGuiPosition positionAppending = positionLedgerInnerStart.offset(0, 3);
+    protected IGuiPosition positionAppending;
     protected String title = "unknown";
 
     /** -1 means shrinking, 0 no change, 1 expanding */
     private int currentDifference = 0;
-    private int startX, startY;
 
-    public Ledger_Neptune(LedgerManager_Neptune manager) {
-        this.manager = manager;
+    public Ledger_Neptune(GuiBC8<?> gui, int colour, boolean expandPositive) {
+        this.gui = gui;
+        this.colour = colour;
+        this.expandPositive = expandPositive;
+        if (expandPositive) {
+            positionLedgerStart = gui.lowerRightLedgerPos;
+            gui.lowerRightLedgerPos = getPosition(-1, 1).offset(0, 5);
+            positionLedgerIconStart = positionLedgerStart.offset(2, LEDGER_GAP);
+        } else {
+            positionLedgerStart = gui.lowerLeftLedgerPos.offset(() -> -getWidth(), 0);
+            gui.lowerLeftLedgerPos = getPosition(1, 1).offset(0, 5);
+            positionLedgerIconStart = positionLedgerStart.offset(LEDGER_GAP, LEDGER_GAP);
+        }
+        positionLedgerInnerStart = positionLedgerIconStart.offset(16 + LEDGER_GAP, 0);
+        positionAppending = positionLedgerInnerStart.offset(0, 3);
 
         GuiRectangle iconRect = new GuiRectangle(0, 0, 16, 16);
         ISimpleDrawable drawable = this::drawIcon;
-        GuiBC8<?> gui = manager.gui;
         closedElements.add(new GuiElementDrawable(gui, positionLedgerIconStart, iconRect, drawable, false));
         appendText(this::getTitle, this::getTitleColour).setDropShadow(true);
         calculateMaxSize();
@@ -92,7 +108,7 @@ public abstract class Ledger_Neptune implements IInteractionElement {
     }
 
     protected GuiElementText appendText(Supplier<String> text, IntSupplier colour) {
-        return append(new GuiElementText(manager.gui, positionAppending, text, colour));
+        return append(new GuiElementText(gui, positionAppending, text, colour));
     }
 
     protected <T extends IGuiElement> T append(T element) {
@@ -101,8 +117,12 @@ public abstract class Ledger_Neptune implements IInteractionElement {
         return element;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     /** The default implementation only works if all the elements are based around {@link #positionLedgerStart} */
-    protected void calculateMaxSize() {
+    public void calculateMaxSize() {
         int w = CLOSED_WIDTH;
         int h = CLOSED_HEIGHT;
 
@@ -117,7 +137,8 @@ public abstract class Ledger_Neptune implements IInteractionElement {
         maxHeight = h + LEDGER_GAP * 2;
     }
 
-    public void update() {
+    @Override
+    public void tick() {
         lastWidth = currentWidth;
         lastHeight = currentHeight;
 
@@ -176,36 +197,46 @@ public abstract class Ledger_Neptune implements IInteractionElement {
         return (int) (past * (1 - partialTicks) + current * partialTicks);
     }
 
+    @Deprecated
     public GuiRectangle getEnclosingRectangle() {
-        return new GuiRectangle(startX, startY, currentWidth, currentHeight);
+        return asImmutable();
     }
 
     public final boolean shouldDrawOpen() {
         return currentWidth > CLOSED_WIDTH || currentHeight > CLOSED_HEIGHT;
     }
 
-    public void drawBackground(int x, int y, float partialTicks) {
-        startY = y;
+    @Override
+    public List<IGuiElement> getChildElements() {
+        return openElements;
+    }
+
+    public List<IGuiElement> getClosedElements() {
+        return closedElements;
+    }
+
+    @Override
+    public void drawBackground(float partialTicks) {
+        int startX = getX();
+        int startY = getY();
         final SpriteNineSliced split;
 
         interpWidth = interp(lastWidth, currentWidth, partialTicks);
         interpHeight = interp(lastHeight, currentHeight, partialTicks);
 
-        if (manager.expandPositive) {
-            startX = x;
+        if (expandPositive) {
             split = SPRITE_SPLIT_POS;
         } else {
-            startX = x - interpWidth;
             split = SPRITE_SPLIT_NEG;
         }
 
-        RenderUtil.setGLColorFromIntPlusAlpha(getColour());
+        RenderUtil.setGLColorFromIntPlusAlpha(colour);
         split.draw(startX, startY, interpWidth, interpHeight);
         GlStateManager.color(1, 1, 1, 1);
 
         IGuiPosition pos2;
 
-        if (manager.expandPositive) {
+        if (expandPositive) {
             pos2 = positionLedgerIconStart;
         } else {
             pos2 = positionLedgerIconStart;
@@ -225,7 +256,8 @@ public abstract class Ledger_Neptune implements IInteractionElement {
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
-    public void drawForeground(int x, int y, float partialTicks) {
+    @Override
+    public void drawForeground(float partialTicks) {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GuiUtil.scissor(positionLedgerIconStart.getX(), positionLedgerIconStart.getY(), interpWidth - 8,
             interpHeight - 8);
@@ -243,53 +275,82 @@ public abstract class Ledger_Neptune implements IInteractionElement {
 
     @Override
     public void onMouseClicked(int button) {
-        if (getEnclosingRectangle().contains(manager.gui.mouse)) {
+        boolean childClicked = false;
+        for (IGuiElement elem : openElements) {
+            if (elem instanceof IInteractionElement) {
+                ((IInteractionElement) elem).onMouseClicked(button);
+                childClicked |= elem.contains(gui.mouse);
+            }
+        }
+        for (IGuiElement elem : closedElements) {
+            if (elem instanceof IInteractionElement) {
+                ((IInteractionElement) elem).onMouseClicked(button);
+                childClicked |= elem.contains(gui.mouse);
+            }
+        }
+        if (!childClicked && contains(gui.mouse)) {
             if (currentDifference == 1) {
                 currentDifference = -1;
             } else {
                 currentDifference = 1;
             }
         }
-        for (IGuiElement elem : openElements) {
-            if (elem instanceof IInteractionElement) {
-                ((IInteractionElement) elem).onMouseClicked(button);
-            }
-        }
-        for (IGuiElement elem : closedElements) {
-            if (elem instanceof IInteractionElement) {
-                ((IInteractionElement) elem).onMouseClicked(button);
-            }
-        }
     }
 
     @Override
     public void onMouseDragged(int button, long ticksSinceClick) {
-
+        for (IGuiElement elem : openElements) {
+            if (elem instanceof IInteractionElement) {
+                ((IInteractionElement) elem).onMouseDragged(button, ticksSinceClick);
+            }
+        }
+        for (IGuiElement elem : closedElements) {
+            if (elem instanceof IInteractionElement) {
+                ((IInteractionElement) elem).onMouseDragged(button, ticksSinceClick);
+            }
+        }
     }
 
     @Override
     public void onMouseReleased(int button) {
-
+        for (IGuiElement elem : openElements) {
+            if (elem instanceof IInteractionElement) {
+                ((IInteractionElement) elem).onMouseReleased(button);
+            }
+        }
+        for (IGuiElement elem : closedElements) {
+            if (elem instanceof IInteractionElement) {
+                ((IInteractionElement) elem).onMouseReleased(button);
+            }
+        }
     }
 
     protected void drawIcon(int x, int y) {
 
     }
 
-    /** @return The colour of this ledger, in ARGB */
-    public abstract int getColour();
-
     @Override
     public int getX() {
-        return startX;
+        return positionLedgerStart.getX();
     }
 
     @Override
     public int getY() {
-        return startY;
+        return positionLedgerStart.getY();
     }
 
-    public int getHeight(float partialTicks) {
+    @Override
+    public int getWidth() {
+        float partialTicks = gui.getLastPartialTicks();
+        if (lastWidth == currentWidth) return currentWidth;
+        else if (partialTicks <= 0) return lastWidth;
+        else if (partialTicks >= 1) return currentWidth;
+        else return (int) (lastWidth * (1 - partialTicks) + currentWidth * partialTicks);
+    }
+
+    @Override
+    public int getHeight() {
+        float partialTicks = gui.getLastPartialTicks();
         if (lastHeight == currentHeight) return currentHeight;
         else if (partialTicks <= 0) return lastHeight;
         else if (partialTicks >= 1) return currentHeight;
@@ -315,7 +376,7 @@ public abstract class Ledger_Neptune implements IInteractionElement {
             }
         }
         if (currentWidth != maxWidth || currentHeight != maxHeight) {
-            if (getEnclosingRectangle().contains(manager.gui.mouse)) {
+            if (getEnclosingRectangle().contains(gui.mouse)) {
                 tooltips.add(new ToolTip(getTitle()));
             }
         }

@@ -3,6 +3,7 @@ package buildcraft.lib.gui.json;
 import com.google.gson.JsonSyntaxException;
 
 import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.statement.GuiElementStatementSource;
 import buildcraft.lib.statement.StatementContext;
@@ -20,25 +21,21 @@ public class ElementTypeStatementSource extends ElementType {
     }
 
     @Override
-    public void addToGui(GuiJson<?> gui, JsonGuiInfo info, JsonGuiElement json) {
+    public IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(json);
 
-        String parent = json.properties.get("parent");
         String source = json.properties.get("source");
-
-        int posX = resolveEquationInt(json, "pos[0]", ctx);
-        int posY = resolveEquationInt(json, "pos[1]", ctx);
 
         StatementContext<?> ctxSource = gui.miscProperties.get(source, StatementContext.class);
 
-        String layout = json.properties.getOrDefault("layout", "flat.left");
-        if ("flat.left".equals(layout) || "flat.right".equals(layout)) {
-            IGuiPosition pos = gui.rootElement.offset(posX, posY);
-            gui.shownElements.add(new GuiElementStatementSource<>(gui, pos, ctxSource));
+        String side = json.properties.get("side");
+        String style = json.properties.get("style");
+        if (style == null || "flat".equals(style)) {
+            return new GuiElementStatementSource<>(gui, !"right".equals(side), ctxSource);
             // } else if ("ledger.left".equals(layout) || "ledger.right".equals(layout)) {
             // TODO!
         } else {
-            throw new JsonSyntaxException("Unknown layout '" + layout + "'");
+            throw new JsonSyntaxException("Unknown style '" + style + "'");
         }
     }
 }

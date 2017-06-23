@@ -26,7 +26,7 @@ public class GuiEngineIron_BC8 extends GuiBC8<ContainerEngineIron_BC8> {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
-        ledgersRight.ledgers.add(new LedgerEngine(ledgersRight, container.tile));
+        shownElements.add(new LedgerEngine(this, true));
     }
 
     @Override

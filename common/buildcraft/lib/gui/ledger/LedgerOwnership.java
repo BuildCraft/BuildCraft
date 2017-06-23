@@ -11,16 +11,19 @@ import com.mojang.authlib.GameProfile;
 import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.misc.SpriteUtil;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 public class LedgerOwnership extends Ledger_Neptune {
-    private final ContainerBCTile<?> container;
 
-    public LedgerOwnership(LedgerManager_Neptune manager, ContainerBCTile<?> container) {
-        super(manager);
-        this.container = container;
+    private final TileBC_Neptune tile;
+
+    public LedgerOwnership(GuiBC8<? extends ContainerBCTile<?>> gui, boolean expandPositive) {
+        super(gui, 0xFF_E0_F0_FF, expandPositive);
         this.title = "gui.ledger.ownership";
+        this.tile = gui.container.tile;
 
         appendText(this::getOwnerName, 0);
 
@@ -28,18 +31,13 @@ public class LedgerOwnership extends Ledger_Neptune {
     }
 
     @Override
-    public int getColour() {
-        return 0xFF_E0_F0_FF;
-    }
-
-    @Override
     protected void drawIcon(int x, int y) {
-        ISprite sprite = SpriteUtil.getFaceSprite(container.tile.getOwner());
+        ISprite sprite = SpriteUtil.getFaceSprite(tile.getOwner());
         GuiIcon.draw(sprite, x, y, x + 16, y + 16);
     }
 
     private String getOwnerName() {
-        GameProfile owner = container.tile.getOwner();
+        GameProfile owner = tile.getOwner();
         if (owner == null) {
             return "no-one";
         }

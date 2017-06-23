@@ -12,6 +12,7 @@ import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
+import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.elem.GuiElementContainer;
@@ -26,24 +27,28 @@ public class LedgerHelp extends Ledger_Neptune {
     private static final SpriteNineSliced[][] SPRITE_HELP_SPLIT = new SpriteNineSliced[2][2];
 
     static {
-        SPRITE_HELP_SPLIT[0][0] = GuiUtil.slice(GuiUtil.subRelative(BCLibSprites.HELP_SPLIT, 0, 0, 8, 8, 16), 2, 2, 6, 6, 8);
-        SPRITE_HELP_SPLIT[0][1] = GuiUtil.slice(GuiUtil.subRelative(BCLibSprites.HELP_SPLIT, 0, 8, 8, 8, 16), 2, 2, 6, 6, 8);
-        SPRITE_HELP_SPLIT[1][0] = GuiUtil.slice(GuiUtil.subRelative(BCLibSprites.HELP_SPLIT, 8, 0, 8, 8, 16), 2, 2, 6, 6, 8);
-        SPRITE_HELP_SPLIT[1][1] = GuiUtil.slice(GuiUtil.subRelative(BCLibSprites.HELP_SPLIT, 8, 8, 8, 8, 16), 2, 2, 6, 6, 8);
+        SPRITE_HELP_SPLIT[0][0] =
+            GuiUtil.slice(GuiUtil.subRelative(BCLibSprites.HELP_SPLIT, 0, 0, 8, 8, 16), 2, 2, 6, 6, 8);
+        SPRITE_HELP_SPLIT[0][1] =
+            GuiUtil.slice(GuiUtil.subRelative(BCLibSprites.HELP_SPLIT, 0, 8, 8, 8, 16), 2, 2, 6, 6, 8);
+        SPRITE_HELP_SPLIT[1][0] =
+            GuiUtil.slice(GuiUtil.subRelative(BCLibSprites.HELP_SPLIT, 8, 0, 8, 8, 16), 2, 2, 6, 6, 8);
+        SPRITE_HELP_SPLIT[1][1] =
+            GuiUtil.slice(GuiUtil.subRelative(BCLibSprites.HELP_SPLIT, 8, 8, 8, 8, 16), 2, 2, 6, 6, 8);
     }
 
     private IGuiElement selected = null;
     private boolean foundAny = false, init = false;
 
-    public LedgerHelp(LedgerManager_Neptune manager) {
-        super(manager);
+    public LedgerHelp(GuiBC8<?> gui, boolean expandPositive) {
+        super(gui, 0xFF_CC_99_FF, expandPositive);
         title = LocaleUtil.localize("gui.ledger.help");
         calculateMaxSize();
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void tick() {
+        super.tick();
         if (currentWidth == CLOSED_WIDTH && currentHeight == CLOSED_HEIGHT) {
             selected = null;
             if (openElements.size() == 2) {
@@ -55,15 +60,10 @@ public class LedgerHelp extends Ledger_Neptune {
     }
 
     @Override
-    public int getColour() {
-        return 0xFF_CC_99_FF;// light blue -- temp
-    }
-
-    @Override
     protected void drawIcon(int x, int y) {
         if (!init) {
             init = true;
-            for (IGuiElement element : manager.gui.shownElements) {
+            for (IGuiElement element : gui.shownElements) {
                 HelpPosition info = element.getHelpInfo();
                 if (info == null) continue;
                 foundAny = true;
@@ -75,22 +75,22 @@ public class LedgerHelp extends Ledger_Neptune {
     }
 
     @Override
-    public void drawForeground(int x, int y, float partialTicks) {
-        super.drawForeground(x, y, partialTicks);
+    public void drawForeground(float partialTicks) {
+        super.drawForeground(partialTicks);
         if (!shouldDrawOpen()) {
             return;
         }
         boolean set = false;
-        for (IGuiElement element : manager.gui.shownElements) {
+        for (IGuiElement element : gui.shownElements) {
             HelpPosition info = element.getHelpInfo();
             if (info == null) continue;
             foundAny = true;
             IGuiArea rect = info.target;
-            boolean isHovered = rect.contains(manager.gui.mouse);
+            boolean isHovered = rect.contains(gui.mouse);
             if (isHovered) {
                 if (selected != element && !set) {
                     selected = element;
-                    GuiElementContainer container = new GuiElementContainer(manager.gui, positionLedgerInnerStart);
+                    GuiElementContainer container = new GuiElementContainer(gui, positionLedgerInnerStart);
                     info.info.addGuiElements(container);
                     if (openElements.size() == 2) {
                         openElements.remove(1);

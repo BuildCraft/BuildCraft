@@ -1,6 +1,7 @@
 package buildcraft.lib.gui.json;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ public class JsonGuiElement {
      * {"prop": "" */
     public final Map<String, String> properties = new LinkedHashMap<>();
 
-    public JsonGuiElement(String name, Map<String, String> properties) {
+    private JsonGuiElement(String name, Map<String, String> properties) {
         this.name = name;
         this.properties.putAll(properties);
     }
@@ -84,6 +85,40 @@ public class JsonGuiElement {
                     list.add(elem);
                 }
             }
+        }
+        return list;
+    }
+
+    public List<JsonGuiElement> getChildren(JsonGuiInfo info, String subName) {
+        List<JsonGuiElement> list = new ArrayList<>();
+        for (int i = 0;; i++) {
+            String propName = subName + "[" + i + "].";
+            boolean found = false;
+            Map<String, String> subProperties = new HashMap<>();
+            for (Entry<String, String> entry : properties.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                subProperties.put("parent." + key, value);
+                if (!key.startsWith(propName)) {
+                    continue;
+                }
+                found = true;
+                String subKey = key.substring(propName.length());
+                subProperties.put(subKey, value);
+            }
+            if (!found) {
+                break;
+            }
+            String type = subProperties.get("type");
+            JsonGuiElement parent = info.types.get(type);
+            if (parent != null) {
+                Map<String, String> props2 = new HashMap<>();
+                props2.putAll(parent.properties);
+                props2.putAll(subProperties);
+                props2.put("type", parent.properties.get("type"));
+                subProperties = props2;
+            }
+            list.add(new JsonGuiElement(propName, subProperties));
         }
         return list;
     }

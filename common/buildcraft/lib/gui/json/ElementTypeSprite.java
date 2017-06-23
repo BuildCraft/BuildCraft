@@ -7,9 +7,11 @@ import buildcraft.api.core.render.ISprite;
 import buildcraft.lib.client.sprite.SpriteRaw;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.GuiSpriteScaled;
+import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.elem.GuiElementDrawable;
 import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.SpriteUtil;
 
@@ -30,7 +32,7 @@ public class ElementTypeSprite extends ElementType {
     }
 
     @Override
-    public void addToGui(GuiJson<?> gui, JsonGuiInfo info, JsonGuiElement json) {
+    public IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(json);
         inheritProperty(json, "area[0]", "pos[0]");
         inheritProperty(json, "area[1]", "pos[1]");
@@ -73,6 +75,6 @@ public class ElementTypeSprite extends ElementType {
 
         GuiRectangle rect = new GuiRectangle(posX, posY, sizeX, sizeY);
         ISimpleDrawable icon = new GuiSpriteScaled(sprite, sizeX, sizeY);
-        gui.shownElements.add(new GuiElementDrawable(gui, gui.rootElement, rect, icon, foreground));
+        return new GuiElementDrawable(gui, parent, rect, icon, foreground);
     }
 }

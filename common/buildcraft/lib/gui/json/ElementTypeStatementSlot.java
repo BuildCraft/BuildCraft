@@ -1,8 +1,10 @@
 package buildcraft.lib.gui.json;
 
 import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
+import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.statement.GuiElementStatement;
 import buildcraft.lib.statement.FullStatement;
 
@@ -21,7 +23,7 @@ public class ElementTypeStatementSlot extends ElementType {
     }
 
     @Override
-    public void addToGui(GuiJson<?> gui, JsonGuiInfo info, JsonGuiElement json) {
+    public IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(json);
 
         inheritProperty(json, "area[0]", "pos[0]");
@@ -39,8 +41,7 @@ public class ElementTypeStatementSlot extends ElementType {
         boolean draw = !"false".equals(json.properties.get("draw"));
 
         FullStatement<?> stmnt = gui.miscProperties.get(source, FullStatement.class);
-        IGuiArea area = new GuiRectangle(posX, posY, sizeX, sizeY).offset(gui.rootElement);
-        GuiElementStatement<?> elem = new GuiElementStatement<>(gui, area, stmnt, draw);
-        gui.shownElements.add(elem);
+        IGuiArea area = new GuiRectangle(posX, posY, sizeX, sizeY).offset(parent);
+        return new GuiElementStatement<>(gui, area, stmnt, draw);
     }
 }

@@ -2,14 +2,17 @@ package buildcraft.lib.gui.json;
 
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.client.sprite.SpriteRaw;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.GuiSpriteScaled;
+import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.button.GuiButtonDrawable;
 import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.SpriteUtil;
 
@@ -31,7 +34,7 @@ public class ElementTypeButton extends ElementType {
     }
 
     @Override
-    public void addToGui(GuiJson<?> gui, JsonGuiInfo info, JsonGuiElement json) {
+    public IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(json);
         inheritProperty(json, "area[0]", "pos[0]");
         inheritProperty(json, "area[1]", "pos[1]");
@@ -71,19 +74,16 @@ public class ElementTypeButton extends ElementType {
         ISimpleDrawable drEnabled = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.enabled");
         GuiRectangle rect = new GuiRectangle(posX, posY, sizeX, sizeY);
         GuiButtonDrawable.Builder buttonBuilder = new GuiButtonDrawable.Builder(rect, drEnabled);
+        String src = json.properties.get("source");
 
         buttonBuilder.active = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.active");
         buttonBuilder.hovered = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.hovered");
         buttonBuilder.activeHovered = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.active_hovered");
         buttonBuilder.disabled = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.disabled");
         buttonBuilder.disabledActive = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.active_disabled");
-
-        String source = json.properties.getOrDefault("source", "_fail_");
-
-        GuiButtonDrawable button = new GuiButtonDrawable(gui, json.name, gui.rootElement, buttonBuilder);
-        gui.shownElements.add(button);
-        gui.miscProperties.put(source, button);
-        gui.miscProperties.put(json.name, button);
+        GuiButtonDrawable button = new GuiButtonDrawable(gui, json.name, parent, buttonBuilder);
+        gui.miscProperties.put(src, button);
+        return button;
     }
 
     private static ISimpleDrawable resolveDrawable(FunctionContext ctx, JsonGuiInfo guiInfo, JsonGuiElement json,

@@ -45,6 +45,8 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
 
     protected abstract long getTarget();
 
+    public final long getTarget2() {return getTarget();}
+
     @Override
     public long getRequiredLaserPower() {
         return getTarget() - power;

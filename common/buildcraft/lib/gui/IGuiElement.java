@@ -24,6 +24,8 @@ public interface IGuiElement extends IGuiArea, ITooltipElement {
 
     default void drawForeground(float partialTicks) {}
 
+    default void tick() {}
+
     /** {@inheritDoc}
      * <p>
      * This is called EVEN IF the mouse is not inside your width and height! */
