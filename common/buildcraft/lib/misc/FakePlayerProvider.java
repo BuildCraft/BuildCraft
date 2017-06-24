@@ -42,7 +42,10 @@ public enum FakePlayerProvider implements IFakePlayerProvider {
 
     @Override
     public FakePlayerBC getFakePlayer(WorldServer world, GameProfile profile, BlockPos pos) {
-        players.computeIfAbsent(profile, p -> new FakePlayerBC(world, profile));
+        if (profile == null) {
+            profile = gameProfile;
+        }
+        players.computeIfAbsent(profile, p -> new FakePlayerBC(world, p));
         FakePlayerBC player = players.get(profile);
         player.world = world;
         player.posX = pos.getX();
