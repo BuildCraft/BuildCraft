@@ -192,14 +192,14 @@ public class FacadeStateManager {
         for (Block block : ForgeRegistries.BLOCKS) {
             String result = isValidFacadeBlock(block);
             // These strings are hardcoded, so we can get away with not needing the .equals check
-            if (result != STR_PASS && result != STR_SUCCESS) {
+            if (!Objects.equals(result, STR_PASS) && !Objects.equals(result, STR_SUCCESS)) {
                 if (DEBUG) {
                     BCLog.logger
                         .info("[transport.facade] Disallowed block " + block.getRegistryName() + " because " + result);
                 }
                 continue;
             } else if (DEBUG) {
-                if (result == STR_SUCCESS) {
+                if (Objects.equals(result, STR_SUCCESS)) {
                     BCLog.logger.info("[transport.facade] Allowed block " + block.getRegistryName());
                 }
             }
@@ -211,9 +211,9 @@ public class FacadeStateManager {
                 if (!checkedStates.add(state)) {
                     continue;
                 }
-                if (result != STR_SUCCESS) {
+                if (!Objects.equals(result, STR_SUCCESS)) {
                     result = isValidFacadeState(state);
-                    if (result == STR_SUCCESS) {
+                    if (Objects.equals(result, STR_SUCCESS)) {
                         if (DEBUG) {
                             BCLog.logger.info("[transport.facade] Allowed state " + state);
                         }
