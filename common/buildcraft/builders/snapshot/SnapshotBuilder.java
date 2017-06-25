@@ -8,10 +8,7 @@ package buildcraft.builders.snapshot;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -190,9 +187,9 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         }
     }
 
-    protected abstract List<BlockPos> getToBreak();
+    protected abstract Set<BlockPos> getToBreak();
 
-    protected abstract List<BlockPos> getToPlace();
+    protected abstract Set<BlockPos> getToPlace();
 
     protected abstract boolean canPlace(BlockPos blockPos);
 
@@ -485,7 +482,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
     }
 
     protected void check(BlockPos blockPos) {
-        checkResults.values().forEach(set -> set.removeIf(Predicate.isEqual(blockPos)));
+        checkResults.values().forEach(set -> set.remove(blockPos));
         if (getToBreak().contains(blockPos)) {
             if (tile.getWorldBC().isAirBlock(blockPos)) {
                 checkResults.get(CheckResult.CORRECT).add(blockPos);

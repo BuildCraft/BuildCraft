@@ -9,8 +9,10 @@ package buildcraft.builders.snapshot;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -129,11 +131,11 @@ public class Blueprint extends Snapshot {
         public final BlockPos basePos;
         public final Rotation rotation;
         private final Box box;
-        public final List<BlockPos> toBreak = new ArrayList<>();
+        public final Set<BlockPos> toBreak = new HashSet<>();
         public final Map<BlockPos, ISchematicBlock<?>> toPlace = new HashMap<>();
         public final Map<BlockPos, List<ItemStack>> toPlaceRequiredItems = new HashMap<>();
         public final Map<BlockPos, List<FluidStack>> toPlaceRequiredFluids = new HashMap<>();
-        public final List<ISchematicEntity<?>> entities = new ArrayList<>();
+        public final Set<ISchematicEntity<?>> entities = new HashSet<>();
         public final Map<ISchematicEntity<?>, List<ItemStack>> entitiesRequiredItems = new HashMap<>();
         public final Map<ISchematicEntity<?>, List<FluidStack>> entitiesRequiredFluids = new HashMap<>();
 
