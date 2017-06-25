@@ -28,13 +28,13 @@ public interface IBlockWithFacing extends ICustomRotationHandler {
         return this.canPlacedVertical() ? BlockBCBase_Neptune.BLOCK_FACING_6 : BlockBCBase_Neptune.PROP_FACING;
     }
 
-    default boolean canBeRotated(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+    default boolean canBeRotated(World world, BlockPos pos, IBlockState state) {
         return true;
     }
 
     @Override
     default EnumActionResult attemptRotation(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
-        if (!canBeRotated(world, pos, state, sideWrenched)) {
+        if (!canBeRotated(world, pos, state)) {
             return EnumActionResult.FAIL;
         }
         EnumFacing currentFacing = state.getValue(getFacingProperty());

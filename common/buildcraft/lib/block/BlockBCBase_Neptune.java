@@ -16,6 +16,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
@@ -145,6 +146,16 @@ public class BlockBCBase_Neptune extends Block {
             state = state.withProperty(((IBlockWithFacing) this).getFacingProperty(), orientation.getOpposite());
         }
         return state;
+    }
+
+    @Override
+    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
+        if (this instanceof IBlockWithFacing) {
+            if (!((IBlockWithFacing) this).canBeRotated(world, pos, world.getBlockState(pos))) {
+                return false;
+            }
+        }
+        return super.rotateBlock(world, pos, axis);
     }
 
     public static <B extends BlockBCBase_Neptune> B register(B block) {
