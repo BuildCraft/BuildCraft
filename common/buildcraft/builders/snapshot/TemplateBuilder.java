@@ -72,6 +72,7 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
 
     @Override
     protected void cancelPlaceTask(PlaceTask placeTask) {
+        super.cancelPlaceTask(placeTask);
         tile.getInvResources().insert(placeTask.items.get(0), false, false);
     }
 

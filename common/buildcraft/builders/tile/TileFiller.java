@@ -110,6 +110,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                 volumeBoxes.markDirty();
             }
         }
+        builder.updateSnapshot();
     }
 
     @Override
