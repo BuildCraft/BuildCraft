@@ -209,8 +209,12 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                     if (editing.getZ() == min.getZ()) {
                         held = VecUtil.replaceValue(held, EnumFacing.Axis.Z, max.getZ());
                     }
-                    bestBox.setHeldDistOldMinOldMax(held, Math.max(1.5, bestDist + 0.5), bestBox.box.min(), bestBox.box
-                        .max());
+                    bestBox.setHeldDistOldMinOldMax(
+                        held,
+                        Math.max(1.5, bestDist + 0.5),
+                        bestBox.box.min(),
+                        bestBox.box.max()
+                    );
                     volumeBoxes.markDirty();
                     return new ActionResult<>(EnumActionResult.SUCCESS, stack);
                 }

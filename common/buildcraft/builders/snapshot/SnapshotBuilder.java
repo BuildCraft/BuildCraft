@@ -238,7 +238,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         double progress = placeTask.power * 1D / placeTask.getTarget();
         return new Vec3d(tile.getBuilderPos())
             .add(height.scale(progress))
-            .add(new Vec3d(0, Math.sin(progress * Math.PI) * (height.yCoord + 1), 0))
+            .add(new Vec3d(0, Math.sin(progress * Math.PI) * (Math.abs(height.yCoord) + 1), 0))
             .add(new Vec3d(0.5, 1, 0.5));
     }
 

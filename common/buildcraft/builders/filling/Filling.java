@@ -14,6 +14,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
+import javax.vecmath.Point2d;
 import javax.vecmath.Point2i;
 
 import net.minecraft.init.Items;
@@ -23,17 +24,44 @@ import net.minecraft.item.ItemBlockSpecial;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.lib.misc.DrawingUtil;
+@SuppressWarnings("WeakerAccess")
+public class Filling {
+    private static List<Item> itemBlocks = new ArrayList<>();
+    private static final List<Point2d> TRIANGLE_POINTS = Arrays.asList(
+        new Point2d(1, 0.5),
+        new Point2d(0.2500000000000001, 0.9330127018922194),
+        new Point2d(0.24999999999999978, 0.06698729810778076)
+    );
+    private static final List<Point2d> PENTAGON_POINTS = Arrays.asList(
+        new Point2d(1, 0.5),
+        new Point2d(0.6545084971874737, 0.9755282581475768),
+        new Point2d(0.09549150281252633, 0.7938926261462367),
+        new Point2d(0.09549150281252627, 0.2061073738537635),
+        new Point2d(0.6545084971874736, 0.02447174185242318)
+    );
+    private static final List<Point2d> HEXAGON_POINTS = Arrays.asList(
+        new Point2d(1, 0.5),
+        new Point2d(0.75, 0.9330127018922193),
+        new Point2d(0.2500000000000001, 0.9330127018922194),
+        new Point2d(0, 0.5000000000000001),
+        new Point2d(0.24999999999999978, 0.06698729810778076),
+        new Point2d(0.7499999999999997, 0.06698729810778048)
+    );
+    private static final List<Point2d> OCTAGON_POINTS = Arrays.asList(
+        new Point2d(1, 0.5),
+        new Point2d(0.8535533905932737, 0.8535533905932737),
+        new Point2d(0.5, 1),
+        new Point2d(0.14644660940672627, 0.8535533905932737),
+        new Point2d(0, 0.5),
+        new Point2d(0.14644660940672616, 0.14644660940672627),
+        new Point2d(0.5, 0),
+        new Point2d(0.8535533905932737, 0.14644660940672616)
+    );
 
-public enum Filling {
-    INSTANCE;
-
-    private List<Item> itemBlocks = new ArrayList<>();
-
-    Filling() {
+    static {
         StreamSupport.stream(Item.REGISTRY.spliterator(), false)
             .filter(item -> item instanceof ItemBlock || item instanceof ItemBlockSpecial)
-            .forEach(this::addItemBlock);
+            .forEach(Filling::addItemBlock);
         addItemBlock(
             Items.BED,
             Items.OAK_DOOR,
@@ -48,22 +76,25 @@ public enum Filling {
         );
     }
 
-    public void addItemBlock(Item... items) {
+    public static void addItemBlock(Item... items) {
         itemBlocks.addAll(Arrays.asList(items));
     }
 
-    public List<Item> getItemBlocks() {
+    public static List<Item> getItemBlocks() {
         return new ArrayList<>(itemBlocks);
     }
 
-    public Class<? extends IParameter> getNextParameterClass(List<IParameter> parameters) {
+    public static Class<? extends IParameter> getNextParameterClass(List<IParameter> parameters) {
         if (parameters.size() == 0) {
             return EnumParameterPattern.class;
         }
         EnumParameterPattern parameterPattern = (EnumParameterPattern) parameters.get(0);
-        if (parameterPattern == EnumParameterPattern.FRAME) {
+        if (parameterPattern == EnumParameterPattern.TRIANGLE) {
             if (parameters.size() == 1) {
                 return EnumParameterType.class;
+            }
+            if (parameters.size() == 2) {
+                return EnumParameterAxis.class;
             }
         }
         if (parameterPattern == EnumParameterPattern.SQUARE) {
@@ -77,9 +108,28 @@ public enum Filling {
                 }
             }
         }
-        if (parameterPattern == EnumParameterPattern.SPHERE) {
+        if (parameterPattern == EnumParameterPattern.PENTAGON) {
             if (parameters.size() == 1) {
                 return EnumParameterType.class;
+            }
+            if (parameters.size() == 2) {
+                return EnumParameterAxis.class;
+            }
+        }
+        if (parameterPattern == EnumParameterPattern.HEXAGON) {
+            if (parameters.size() == 1) {
+                return EnumParameterType.class;
+            }
+            if (parameters.size() == 2) {
+                return EnumParameterAxis.class;
+            }
+        }
+        if (parameterPattern == EnumParameterPattern.OCTAGON) {
+            if (parameters.size() == 1) {
+                return EnumParameterType.class;
+            }
+            if (parameters.size() == 2) {
+                return EnumParameterAxis.class;
             }
         }
         if (parameterPattern == EnumParameterPattern.CIRCLE) {
@@ -90,10 +140,20 @@ public enum Filling {
                 return EnumParameterAxis.class;
             }
         }
+        if (parameterPattern == EnumParameterPattern.FRAME) {
+            if (parameters.size() == 1) {
+                return EnumParameterType.class;
+            }
+        }
+        if (parameterPattern == EnumParameterPattern.SPHERE) {
+            if (parameters.size() == 1) {
+                return EnumParameterType.class;
+            }
+        }
         return null;
     }
 
-    public boolean[][][] generateFillingPlanByFunction(BlockPos size,
+    public static boolean[][][] generateFillingPlanByFunction(BlockPos size,
                                                        Function<BlockPos, Boolean> function) {
         boolean[][][] fillingPlan = new boolean[size.getX()][size.getY()][size.getZ()];
         for (int z = 0; z < size.getZ(); z++) {
@@ -106,7 +166,7 @@ public enum Filling {
         return fillingPlan;
     }
 
-    public boolean[][][] generateFillingPlanByFunctionInAxis(BlockPos size,
+    public static boolean[][][] generateFillingPlanByFunctionInAxis(BlockPos size,
                                                              EnumFacing.Axis axis,
                                                              BiFunction<Point2i, Point2i, Boolean> function) {
         switch (axis) {
@@ -130,7 +190,7 @@ public enum Filling {
         }
     }
 
-    public boolean[][][] generateFillingPlanByFunctionInAxis(BlockPos size,
+    public static boolean[][][] generateFillingPlanByFunctionInAxis(BlockPos size,
                                                              EnumFacing.Axis axis,
                                                              BiConsumer<Point2i, boolean[][]> function) {
         Point2i flatSize;
@@ -161,80 +221,48 @@ public enum Filling {
         }
     }
 
-    public boolean[][][] getFillingPlan(BlockPos size, List<IParameter> parameters) {
+    public static boolean[][][] getFillingPlan(BlockPos size, List<IParameter> parameters) {
         EnumParameterPattern parameterPattern = (EnumParameterPattern) parameters.get(0);
-        BlockPos sizeS = size.add(-1, -1, -1);
-        if (parameterPattern == EnumParameterPattern.FRAME) {
+        if (parameterPattern == EnumParameterPattern.TRIANGLE) {
             EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
-            return generateFillingPlanByFunction(size, pos ->
-                parameterType == EnumParameterType.FILLED ?
-                    pos.getX() == 0 || pos.getX() == sizeS.getX() ||
-                        pos.getY() == 0 || pos.getY() == sizeS.getY() ||
-                        pos.getZ() == 0 || pos.getZ() == sizeS.getZ() :
-                    ((pos.getX() == 0 || pos.getX() == sizeS.getX()) && (pos.getY() == 0 || pos.getY() == sizeS.getY())) ||
-                        ((pos.getY() == 0 || pos.getY() == sizeS.getY()) && (pos.getZ() == 0 || pos.getZ() == sizeS.getZ())) ||
-                        ((pos.getZ() == 0 || pos.getZ() == sizeS.getZ()) && (pos.getX() == 0 || pos.getX() == sizeS.getX()))
-            );
+            EnumParameterAxis parameterAxis = (EnumParameterAxis) parameters.get(2);
+            return FillingPolygon.get(size, parameterType, parameterAxis, TRIANGLE_POINTS);
         }
         if (parameterPattern == EnumParameterPattern.SQUARE) {
             EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
-            if (parameterType == EnumParameterType.FILLED) {
-                return generateFillingPlanByFunction(size, pos -> true);
-            } else {
-                EnumParameterAxis parameterAxis = (EnumParameterAxis) parameters.get(2);
-                return generateFillingPlanByFunctionInAxis(size, parameterAxis.axis, (pos, flatSize) ->
-                    pos.getX() == 0 || pos.getX() == flatSize.getX() - 1 ||
-                        pos.getY() == 0 || pos.getY() == flatSize.getY() - 1
-                );
-            }
+            EnumParameterAxis parameterAxis = parameterType == EnumParameterType.EMPTY
+                ? (EnumParameterAxis) parameters.get(2)
+                : null;
+            return FillingSquare.get(size, parameterType, parameterAxis);
+        }
+        if (parameterPattern == EnumParameterPattern.PENTAGON) {
+            EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
+            EnumParameterAxis parameterAxis = (EnumParameterAxis) parameters.get(2);
+            return FillingPolygon.get(size, parameterType, parameterAxis, PENTAGON_POINTS);
+        }
+        if (parameterPattern == EnumParameterPattern.HEXAGON) {
+            EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
+            EnumParameterAxis parameterAxis = (EnumParameterAxis) parameters.get(2);
+            return FillingPolygon.get(size, parameterType, parameterAxis, HEXAGON_POINTS);
+        }
+        if (parameterPattern == EnumParameterPattern.OCTAGON) {
+            EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
+            EnumParameterAxis parameterAxis = (EnumParameterAxis) parameters.get(2);
+            return FillingPolygon.get(size, parameterType, parameterAxis, OCTAGON_POINTS);
         }
         if (parameterPattern == EnumParameterPattern.CIRCLE) {
             EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
             EnumParameterAxis parameterAxis = (EnumParameterAxis) parameters.get(2);
-            return generateFillingPlanByFunctionInAxis(size, parameterAxis.axis, (flatSize, flatFillingPlan) -> {
-                DrawingUtil.drawEllipse(
-                    flatSize.x % 2 == 0 ? flatSize.x / 2 - 1 : flatSize.x / 2,
-                    flatSize.y % 2 == 0 ? flatSize.y / 2 - 1 : flatSize.y / 2,
-                    flatSize.x % 2 == 0 ? flatSize.x / 2 - 1 : flatSize.x / 2,
-                    flatSize.y % 2 == 0 ? flatSize.y / 2 - 1 : flatSize.y / 2,
-                    parameterType == EnumParameterType.FILLED,
-                    (x, y) -> {
-                        List<Point2i> positions = new ArrayList<>();
-                        positions.add(
-                            new Point2i(
-                                flatSize.x % 2 == 0 && x > flatSize.x / 2 ? x + 1 : x,
-                                flatSize.y % 2 == 0 && y > flatSize.y / 2 ? y + 1 : y
-                            )
-                        );
-                        if (flatSize.x % 2 == 0 && x == flatSize.x / 2) {
-                            positions.add(
-                                new Point2i(
-                                    x + 1,
-                                    flatSize.y % 2 == 0 && y > flatSize.y / 2 ? y + 1 : y
-                                )
-                            );
-                        }
-                        if (flatSize.y % 2 == 0 && y == flatSize.y / 2) {
-                            positions.add(
-                                new Point2i(
-                                    flatSize.x % 2 == 0 && x > flatSize.x / 2 ? x + 1 : x,
-                                    y + 1
-                                )
-                            );
-                        }
-                        for (Point2i p : positions) {
-                            if (p.x >= 0 && p.y >= 0 && p.x < flatSize.x && p.y < flatSize.y) {
-                                flatFillingPlan[p.x][p.y] = true;
-                            }
-                        }
-                    }
-                );
-            });
+            return FillingCircle.get(size, parameterType, parameterAxis);
+        }
+        if (parameterPattern == EnumParameterPattern.FRAME) {
+            EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
+            return FillingFrame.get(size, parameterType);
         }
         return generateFillingPlanByFunction(size, pos -> false);
     }
 
-    public boolean[][][] invertFillingPlan(BlockPos size, boolean[][][] fillingPlan) {
+    public static boolean[][][] invertFillingPlan(BlockPos size, boolean[][][] fillingPlan) {
         return generateFillingPlanByFunction(size, pos -> !fillingPlan[pos.getX()][pos.getY()][pos.getZ()]);
     }
 }

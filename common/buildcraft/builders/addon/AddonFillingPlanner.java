@@ -38,19 +38,24 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon {
 
     public boolean[][][] getFillingPlan() {
         BlockPos size = box.box.size();
-        boolean[][][] fillingPlan = Filling.INSTANCE.getFillingPlan(size, parameters);
+        boolean[][][] fillingPlan = Filling.getFillingPlan(size, parameters);
         if (inverted) {
-            fillingPlan = Filling.INSTANCE.invertFillingPlan(size, fillingPlan);
+            fillingPlan = Filling.invertFillingPlan(size, fillingPlan);
         }
         return fillingPlan;
     }
 
-    public void markDirty() {
+    public void updateBuildingInfo() {
         Template template = new Template();
         template.size = box.box.size();
         template.offset = BlockPos.ORIGIN;
         template.data = getFillingPlan();
         buildingInfo = template.new BuildingInfo(box.box.min(), Rotation.NONE);
+    }
+
+    @Override
+    public void onBoxSizeChange() {
+        updateBuildingInfo();
     }
 
     @Override
@@ -62,7 +67,7 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon {
     @Override
     public void onAdded() {
         while (true) {
-            Class<? extends IParameter> nextParameterClass = Filling.INSTANCE.getNextParameterClass(parameters);
+            Class<? extends IParameter> nextParameterClass = Filling.getNextParameterClass(parameters);
             if (nextParameterClass != null) {
                 // noinspection ConstantConditions
                 parameters.add(nextParameterClass.getEnumConstants()[0]);
@@ -70,7 +75,7 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon {
                 break;
             }
         }
-        markDirty();
+        updateBuildingInfo();
     }
 
     @Override
@@ -100,7 +105,7 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon {
         )
                 .map(IParameter::readFromNBT)
                 .forEach(parameters::add);
-        markDirty();
+        updateBuildingInfo();
     }
 
     @Override
@@ -115,6 +120,6 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon {
         parameters.clear();
         IntStream.range(0, buf.readInt()).mapToObj(i -> IParameter.fromBytes(buf)).forEach(parameters::add);
         inverted = buf.readBoolean();
-        markDirty();
+        updateBuildingInfo();
     }
 }

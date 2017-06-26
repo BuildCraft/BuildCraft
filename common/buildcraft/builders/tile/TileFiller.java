@@ -63,7 +63,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                     "resources",
                     new ItemHandlerSimple(
                             27,
-                            (slot, stack) -> Filling.INSTANCE.getItemBlocks().contains(stack.getItem()),
+                            (slot, stack) -> Filling.getItemBlocks().contains(stack.getItem()),
                             StackInsertionFunction.getDefaultInserter(),
                             this::onSlotChange
                     ),
