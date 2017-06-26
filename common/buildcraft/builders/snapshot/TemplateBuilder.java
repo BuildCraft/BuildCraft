@@ -9,6 +9,7 @@ package buildcraft.builders.snapshot;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -31,17 +32,17 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     }
 
     @Override
-    protected List<BlockPos> getToBreak() {
+    protected Set<BlockPos> getToBreak() {
         return Optional.ofNullable(getBuildingInfo())
             .map(buildingInfo -> buildingInfo.toBreak)
-            .orElse(Collections.emptyList());
+            .orElse(Collections.emptySet());
     }
 
     @Override
-    protected List<BlockPos> getToPlace() {
+    protected Set<BlockPos> getToPlace() {
         return Optional.ofNullable(getBuildingInfo())
             .map(buildingInfo -> buildingInfo.toPlace)
-            .orElse(Collections.emptyList());
+            .orElse(Collections.emptySet());
     }
 
     @Override
@@ -72,6 +73,7 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
 
     @Override
     protected void cancelPlaceTask(PlaceTask placeTask) {
+        super.cancelPlaceTask(placeTask);
         tile.getInvResources().insert(placeTask.items.get(0), false, false);
     }
 

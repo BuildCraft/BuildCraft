@@ -28,7 +28,7 @@ public class ContainerFiller extends ContainerBCTile<TileFiller> {
                 addSlotToContainer(new SlotBase(tile.invResources, sx + sy * 9, 8 + sx * 18, 85 + sy * 18) {
                     @Override
                     public boolean isItemValid(@Nonnull ItemStack stack) {
-                        return Filling.INSTANCE.getItemBlocks().contains(stack.getItem());
+                        return Filling.getItemBlocks().contains(stack.getItem());
                     }
                 });
             }

@@ -51,7 +51,7 @@ public class RenderSnapshotBuilder {
                         y - tilePos.getY() + pos.yCoord,
                         z - tilePos.getZ() + pos.zCoord,
                         item,
-                        world.getCombinedLight(tilePos, 0),
+                        world.getCombinedLight(new BlockPos(pos), 0),
                         EnumFacing.SOUTH,
                         vb
                 );
@@ -87,7 +87,7 @@ public class RenderSnapshotBuilder {
                                                 1D
                                         ) * (BuildCraftLaserManager.POWERS.length - 1)
                                 )],
-                                robotPos,
+                                robotPos.subtract(new Vec3d(0, 0.4, 0)),
                                 new Vec3d(breakTask.pos).add(VecUtil.VEC_HALF),
                                 1 / 16D
                         ),

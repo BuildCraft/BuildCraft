@@ -99,7 +99,7 @@ public class GuiFillingPlanner extends GuiBC8<ContainerFillingPlanner> {
                 container.parameters.set(i, values[(parameter.getOrdinal() + values.length + (mouseButton == 1 ? -1 : 1)) % values.length]);
                 int j = i + 1;
                 while (true) {
-                    Class<? extends IParameter> nextParameterClass = Filling.INSTANCE.getNextParameterClass(container.parameters.subList(0, Math.min(j, container.parameters.size())));
+                    Class<? extends IParameter> nextParameterClass = Filling.getNextParameterClass(container.parameters.subList(0, Math.min(j, container.parameters.size())));
                     if (j < container.parameters.size()) {
                         if (container.parameters.get(j).getClass().equals(nextParameterClass)) {
                             j++;

@@ -110,6 +110,7 @@ public class VolumeBox {
     public void confirmEditing() {
         player = null;
         resetEditing();
+        addons.values().forEach(Addon::onBoxSizeChange);
     }
 
     public void pauseEditing() {

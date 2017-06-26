@@ -72,8 +72,8 @@ public class ItemSnapshot extends ItemBC_Neptune {
 
     @Override
     public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> subItems) {
-        subItems.add(new ItemStack(item, 1, 2));// clean blueprint
-        subItems.add(new ItemStack(item, 1));// clean template
+        subItems.add(getClean(EnumSnapshotType.TEMPLATE));
+        subItems.add(getClean(EnumSnapshotType.BLUEPRINT));
     }
 
     @Override

@@ -316,10 +316,13 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                     boolean shouldBeFrame = ((x == min.getX() || x == max.getX()) && (y == min.getY() || y == max.getY())) ||
                         ((y == min.getY() || y == max.getY()) && (z == min.getZ() || z == max.getZ())) ||
                         ((z == min.getZ() || z == max.getZ()) && (x == min.getX() || x == max.getX()));
-                    Block block = world.getBlockState(framePos).getBlock();
-                    if (((block != Blocks.AIR && !shouldBeFrame) ||
-                        (block != BCBuildersBlocks.frame && block != Blocks.AIR && shouldBeFrame)) && !canSkip(framePos)) {
-                        breakPoses.add(framePos);
+                    boolean isAir = world.isAirBlock(framePos);
+                    if (shouldBeFrame
+                        ? !isAir && world.getBlockState(framePos).getBlock() != BCBuildersBlocks.frame
+                        : !isAir) {
+                        if (!canSkip(framePos)) {
+                            breakPoses.add(framePos);
+                        }
                     }
                 }
             }
@@ -347,8 +350,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
 
         for (BlockPos framePos : getFramePositions()) {
-            Block block = world.getBlockState(framePos).getBlock();
-            if (block == Blocks.AIR) {
+            if (world.isAirBlock(framePos)) {
                 drillPos = null;
                 currentTask = new TaskAddFrame(framePos);
                 sendNetworkUpdate(NET_RENDER_DATA);
@@ -359,9 +361,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         if ((boxIterator == null || drillPos == null) && miningBox.isInitialized()) {
             boxIterator = new BoxIterator(miningBox, AxisOrder.getFor(EnumAxisOrder.XZY, AxisOrder.Inversion.NNN), true);
             while (world.isAirBlock(boxIterator.getCurrent()) || canSkip(boxIterator.getCurrent())) {
-               if (boxIterator.advance() == null) {
-                   break;
-               }
+                if (boxIterator.advance() == null) {
+                    break;
+                }
             }
             drillPos = new Vec3d(miningBox.closestInsideTo(pos));
         }

@@ -447,4 +447,21 @@ public final class BlockUtil {
                 ? ((ChunkCache) world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK)
                 : world.getTileEntity(pos);
     }
+
+    public static Comparator<BlockPos> uniqueBlockPosComparator(Comparator<BlockPos> parent) {
+        return (a, b) -> {
+            int parentValue = parent.compare(a, b);
+            if (parentValue != 0) {
+                return parentValue;
+            } else if (a.getX() != b.getX()) {
+                return Integer.compare(a.getX(), b.getX());
+            } else if (a.getY() != b.getY()) {
+                return Integer.compare(a.getY(), b.getY());
+            } else if (a.getZ() != b.getZ()) {
+                return Integer.compare(a.getZ(), b.getZ());
+            } else {
+                return 0;
+            }
+        };
+    }
 }

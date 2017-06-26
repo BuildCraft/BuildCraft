@@ -10,9 +10,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -106,19 +106,17 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     }
 
     @Override
-    protected List<BlockPos> getToBreak() {
+    protected Set<BlockPos> getToBreak() {
         return Optional.ofNullable(getBuildingInfo())
             .map(buildingInfo -> buildingInfo.toBreak)
-            .orElse(Collections.emptyList());
+            .orElse(Collections.emptySet());
     }
 
     @Override
-    protected List<BlockPos> getToPlace() {
+    protected Set<BlockPos> getToPlace() {
         return Optional.ofNullable(getBuildingInfo())
-            .map(buildingInfo -> getBuildingInfo().toPlace)
-            .map(Map::keySet)
-            .<List<BlockPos>>map(ArrayList::new)
-            .orElse(Collections.emptyList());
+            .map(buildingInfo -> getBuildingInfo().toPlace.keySet())
+            .orElse(Collections.emptySet());
     }
 
     @Override
@@ -127,7 +125,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             .map(blockPos::add)
             .allMatch(pos ->
                 getBuildingInfo().toPlace.containsKey(pos)
-                    ? checkResults.get(pos) == CheckResult.CORRECT
+                    ? checkResults.get(CheckResult.CORRECT).contains(pos)
                     : !getToBreak().contains(pos) || tile.getWorldBC().isAirBlock(pos)
             ) &&
             !getBuildingInfo().toPlace.get(blockPos).isAir() &&
@@ -146,6 +144,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     protected void cancelPlaceTask(PlaceTask placeTask) {
+        super.cancelPlaceTask(placeTask);
         // noinspection ConstantConditions
         placeTask.items.stream()
             .filter(stack -> !stack.hasTagCompound() || !stack.getTagCompound().hasKey("BuilderFluidStack"))
@@ -209,10 +208,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             remainingDisplayRequired.addAll(StackUtil.mergeSameItems(
                 Stream.concat(
                     getToPlace().stream()
-                        .filter(blockPos ->
-                            checkResults.get(blockPos) != CheckResult.UNKNOWN &&
-                                checkResults.get(blockPos) != CheckResult.CORRECT
-                        )
+                        .filter(blockPos -> !checkResults.get(CheckResult.CORRECT).contains(blockPos))
                         .flatMap(blockPos ->
                             getDisplayRequired(
                                 buildingInfo.toPlaceRequiredItems.get(blockPos),
