@@ -6,25 +6,49 @@
 
 package buildcraft.transport;
 
-import net.minecraft.block.material.Material;
+import java.util.ArrayList;
 
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.item.Item;
+
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import buildcraft.lib.item.IItemBuildCraft;
+import buildcraft.lib.registry.RegistryHelper;
 
 import buildcraft.transport.block.BlockFilteredBuffer;
 import buildcraft.transport.block.BlockPipeHolder;
-import buildcraft.transport.tile.TileFilteredBuffer;
-import buildcraft.transport.tile.TilePipeHolder;
 
+@Mod.EventBusSubscriber(modid = BCTransport.MODID)
+@GameRegistry.ObjectHolder(BCTransport.MODID)
 public class BCTransportBlocks {
-    public static BlockFilteredBuffer filteredBuffer;
-    public static BlockPipeHolder pipeHolder;
+    @GameRegistry.ObjectHolder("filtered_buffer")
+    public static final BlockFilteredBuffer filteredBuffer = null;
+    @GameRegistry.ObjectHolder("pipe_holder")
+    public static final BlockPipeHolder pipeHolder = null;
 
-    public static void preInit() {
-        filteredBuffer = BlockBCBase_Neptune.register(new BlockFilteredBuffer(Material.ROCK, "block.filtered_buffer"));
-        pipeHolder = BlockBCBase_Neptune.register(new BlockPipeHolder(Material.IRON, "block.pipe_holder"), null);
+    private static ArrayList<IItemBuildCraft> items = new ArrayList<>();
 
-        TileBC_Neptune.registerTile(TileFilteredBuffer.class, "tile.filtered_buffer");
-        TileBC_Neptune.registerTile(TilePipeHolder.class, "tile.pipe_holder");
+    @SubscribeEvent
+    public static void registerBlocks(RegistryEvent.Register<Block> event) {
+        event.getRegistry().registerAll(
+            new BlockFilteredBuffer(Material.ROCK, "block.filtered_buffer"),
+            new BlockPipeHolder(Material.IRON, "block.pipe_holder")
+        );
+    }
+
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event) {
+        RegistryHelper.listAndRegister(event, items, filteredBuffer);
+    }
+
+    @SubscribeEvent
+    public static void modelRegisterEvent(ModelRegistryEvent event) {
+        items.forEach(IItemBuildCraft::registerVariants);
     }
 }

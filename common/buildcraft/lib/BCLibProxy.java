@@ -26,7 +26,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.reload.LibConfigChangeListener;
@@ -37,7 +36,6 @@ import buildcraft.lib.client.resource.ResourceRegistry;
 import buildcraft.lib.debug.DebugRenderHelper;
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.fluid.FluidManager;
-import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.item.ItemManager;
 
 public abstract class BCLibProxy implements IGuiHandler {
@@ -47,10 +45,6 @@ public abstract class BCLibProxy implements IGuiHandler {
     public static BCLibProxy getProxy() {
         return proxy;
     }
-
-    public void postRegisterItem(IItemBuildCraft item) {}
-
-    public void postRegisterBlock(BlockBCBase_Neptune block) {}
 
     public void postRegisterFluid(BCFluid fluid) {}
 
@@ -99,10 +93,6 @@ public abstract class BCLibProxy implements IGuiHandler {
 
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends BCLibProxy {
-        @Override
-        public void postRegisterItem(IItemBuildCraft item) {
-            item.postRegisterClient();
-        }
 
         @Override
         public void postRegisterFluid(BCFluid fluid) {

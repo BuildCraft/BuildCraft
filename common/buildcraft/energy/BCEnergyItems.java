@@ -4,16 +4,34 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.energy;
 
+import net.minecraft.item.Item;
+
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
 import buildcraft.lib.BCLib;
 import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.item.ItemManager;
 
+@Mod.EventBusSubscriber(modid = BCEnergy.MODID)
+@GameRegistry.ObjectHolder(BCEnergy.MODID)
 public class BCEnergyItems {
-    public static ItemBC_Neptune globOfOil;
+    @GameRegistry.ObjectHolder("glob_oil")
+    public static final ItemBC_Neptune globOfOil = null;
 
-    public static void preInit() {
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event) {
         if (BCLib.DEV) {
-            globOfOil = ItemManager.register(new ItemBC_Neptune("item.glob.oil"));
+            event.getRegistry().register(new ItemBC_Neptune("item.glob.oil"));
+        }
+    }
+
+    @SubscribeEvent
+    public static void modelRegisterEvent(ModelRegistryEvent event) {
+        if (BCLib.DEV) {
+            globOfOil.registerVariants();
         }
     }
 }

@@ -46,7 +46,7 @@ public class BCEnergyFluids {
 
     public static final List<BCFluid> allFluids = new ArrayList<>();
 
-    public static void preInit() {
+    public static void register() {
         int[][] data = { //@formatter:off
             // Tabular form of all the fluid values
             // density, viscosity, boil, spread,  tex_light, tex_dark
@@ -132,7 +132,7 @@ public class BCEnergyFluids {
         def.setGaseous(def.getDensity() < 0);
         def.setColour(texLight, texDark);
         def.setHeatable(true);
-        FluidManager.register(def, true);
+        FluidManager.register(def);
 
         BCFluidBlock block = (BCFluidBlock) def.getBlock();
         block.setLightOpacity(3);

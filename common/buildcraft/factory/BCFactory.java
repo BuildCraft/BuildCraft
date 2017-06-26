@@ -18,8 +18,18 @@ import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.core.BCCore;
+import buildcraft.factory.tile.TileAutoWorkbenchItems;
+import buildcraft.factory.tile.TileChute;
+import buildcraft.factory.tile.TileDistiller_BC8;
+import buildcraft.factory.tile.TileFloodGate;
+import buildcraft.factory.tile.TileHeatExchangeEnd;
+import buildcraft.factory.tile.TileHeatExchangeStart;
+import buildcraft.factory.tile.TileMiningWell;
+import buildcraft.factory.tile.TilePump;
+import buildcraft.factory.tile.TileTank;
 
 //@formatter:off
 @Mod(modid = BCFactory.MODID,
@@ -37,9 +47,6 @@ public class BCFactory {
     public void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
-        BCFactoryItems.preInit();
-        BCFactoryBlocks.preInit();
-
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCFactoryProxy.getProxy());
 
         MinecraftForge.EVENT_BUS.register(BCFactoryEventDist.INSTANCE);
@@ -48,6 +55,17 @@ public class BCFactory {
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
         BCFactoryProxy.getProxy().fmlInit();
+        TileBC_Neptune.registerTile(TileAutoWorkbenchItems.class, "tile.autoworkbench.item");
+        TileBC_Neptune.registerTile(TileMiningWell.class, "tile.mining_well");
+        TileBC_Neptune.registerTile(TilePump.class, "tile.pump");
+        TileBC_Neptune.registerTile(TileFloodGate.class, "tile.flood_gate");
+        TileBC_Neptune.registerTile(TileTank.class, "tile.tank");
+        TileBC_Neptune.registerTile(TileChute.class, "tile.chute");
+        TileBC_Neptune.registerTile(TileDistiller_BC8.class, "tile.distiller");
+        if (BCLib.DEV) {
+            TileBC_Neptune.registerTile(TileHeatExchangeStart.class, "tile.heat_exchange.start");
+            TileBC_Neptune.registerTile(TileHeatExchangeEnd.class, "tile.heat_exchange.end");
+        }
     }
 
     @Mod.EventHandler

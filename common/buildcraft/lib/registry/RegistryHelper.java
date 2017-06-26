@@ -5,23 +5,23 @@
 package buildcraft.lib.registry;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 
-import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.api.transport.pipe.IItemPipe;
 
-import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.item.IItemBuildCraft;
+import buildcraft.lib.item.ItemBlockBC_Neptune;
 
 public class RegistryHelper {
     private static final Map<ModContainer, Configuration> modObjectConfigs = new IdentityHashMap<>();
@@ -57,36 +57,22 @@ public class RegistryHelper {
     //
     // #######################
 
-    public static boolean registerItem(Item item) {
-        return registerItem(item, false);
-    }
-
-    public static boolean registerItem(Item item, boolean forced) {
-        if (forced || isEnabled(getCategory(item), item.getRegistryName().getResourcePath(), item.getUnlocalizedName() + ".name")) {
-            GameRegistry.register(item);
-            if (item instanceof IItemBuildCraft) {
-                IItemBuildCraft itemBc = (IItemBuildCraft) item;
-                BCLibProxy.getProxy().postRegisterItem(itemBc);
-            }
-            return true;
+    public static void listAndRegister(RegistryEvent.Register<Item> event, List<? super ItemBlockBC_Neptune> list, ItemBlockBC_Neptune...blocks) {
+        list.clear();
+        for (ItemBlockBC_Neptune block: blocks) {
+            event.getRegistry().register(block);
+            list.add(block);
         }
-        return false;
     }
 
-    public static boolean registerBlock(Block block) {
-        return registerBlock(block, false);
-    }
-
-    public static boolean registerBlock(Block block, boolean forced) {
-        if (forced || isEnabled("blocks", block.getRegistryName().getResourcePath(), block.getUnlocalizedName() + ".name")) {
-            GameRegistry.register(block);
-            if (block instanceof BlockBCBase_Neptune) {
-                BlockBCBase_Neptune blockBc = (BlockBCBase_Neptune) block;
-                BCLibProxy.getProxy().postRegisterBlock(blockBc);
-            }
-            return true;
+    public static void listAndRegister(RegistryEvent.Register<Item> event, List<? super ItemBlockBC_Neptune> list, BlockBCBase_Neptune...blocks) {
+        ArrayList<ItemBlockBC_Neptune> itemBlocks = new ArrayList<>();
+        for (BlockBCBase_Neptune block: blocks) {
+            if (block == null)
+                continue;
+            itemBlocks.add(new ItemBlockBC_Neptune(block));
         }
-        return false;
+        listAndRegister(event, list, itemBlocks.toArray(new ItemBlockBC_Neptune[itemBlocks.size()]));
     }
 
     public static boolean isEnabled(String category, String resourcePath, String langKey) {

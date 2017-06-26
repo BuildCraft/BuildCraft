@@ -25,27 +25,22 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.lib.BCLibProxy;
 
 public class FluidManager {
+    //should only ever be called during block registration phase
     public static <F extends BCFluid> F register(F fluid) {
-        return register(fluid, false);
+        FluidRegistry.registerFluid(fluid);
+
+        Material material = new BCMaterialFluid(fluid.getMapColour(), fluid.isFlammable());
+        Block block = new BCFluidBlock(fluid, material);
+        block.setRegistryName(Loader.instance().activeModContainer().getModId(), "fluid_block_" + fluid.getBlockName());
+        block.setUnlocalizedName("blockFluid_" + fluid.getBlockName());
+        block.setLightOpacity(fluid.getLightOpacity());
+        GameRegistry.findRegistry(Block.class).register(block);
+        fluid.setBlock(block);
+        FluidRegistry.addBucketForFluid(fluid);
+        BCLibProxy.getProxy().postRegisterFluid(fluid);
+        return fluid;
     }
 
-    public static <F extends BCFluid> F register(F fluid, boolean force) {
-        if (force || true) {// TODO: Replace with config check for registration
-            FluidRegistry.registerFluid(fluid);
-
-            Material material = new BCMaterialFluid(fluid.getMapColour(), fluid.isFlammable());
-            Block block = new BCFluidBlock(fluid, material);
-            block.setRegistryName(Loader.instance().activeModContainer().getModId(), "fluid_block_" + fluid.getBlockName());
-            block.setUnlocalizedName("blockFluid_" + fluid.getBlockName());
-            block.setLightOpacity(fluid.getLightOpacity());
-            GameRegistry.register(block);
-            fluid.setBlock(block);
-            FluidRegistry.addBucketForFluid(fluid);
-            BCLibProxy.getProxy().postRegisterFluid(fluid);
-            return fluid;
-        }
-        return null;
-    }
 
     @SideOnly(Side.CLIENT)
     public static void postRegisterFluid(BCFluid fluid) {

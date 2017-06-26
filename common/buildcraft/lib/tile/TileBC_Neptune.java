@@ -8,7 +8,6 @@ package buildcraft.lib.tile;
 
 import java.io.IOException;
 import java.util.Set;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -134,7 +133,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public static <T extends TileBC_Neptune> void registerTile(Class<T> tileClass, String id) {
         String regName = TagManager.getTag(id, EnumTagType.REGISTRY_NAME);
         String[] alternatives = TagManager.getMultiTag(id, EnumTagTypeMulti.OLD_REGISTRY_NAME);
-        GameRegistry.registerTileEntityWithAlternatives(tileClass, regName, alternatives);
+        GameRegistry.registerTileEntity(tileClass, regName);
     }
 
     // ##################################################

@@ -6,14 +6,29 @@
 
 package buildcraft.silicon;
 
-import buildcraft.lib.item.ItemManager;
+import net.minecraft.item.Item;
+
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.silicon.item.ItemRedstoneChipset;
 
+@Mod.EventBusSubscriber(modid = BCSilicon.MODID)
+@GameRegistry.ObjectHolder(BCSilicon.MODID)
 public class BCSiliconItems {
-    public static ItemRedstoneChipset redstoneChipset;
+    @GameRegistry.ObjectHolder("redstone_chipset")
+    public static final ItemRedstoneChipset redstoneChipset = null;
 
-    public static void preInit() {
-        redstoneChipset = ItemManager.register(new ItemRedstoneChipset("item.redstone_chipset"));
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event) {
+        event.getRegistry().register(new ItemRedstoneChipset("item.redstone_chipset"));
+    }
+
+    @SubscribeEvent
+    public static void modelRegisterEvent(ModelRegistryEvent event) {
+        redstoneChipset.registerVariants();
     }
 }

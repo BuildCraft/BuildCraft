@@ -6,13 +6,17 @@ package buildcraft.lib;
 
 import java.util.function.Consumer;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -59,7 +63,7 @@ public class BCLib {
     public static BCLib INSTANCE;
 
     @Mod.EventHandler
-    public static void preInit(FMLPreInitializationEvent evt) {
+    public void preInit(FMLPreInitializationEvent evt) {
         BCLog.logger.info("");
         BCLog.logger.info("Starting BuildCraft " + BCLib.VERSION);
         BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2017");
@@ -71,7 +75,6 @@ public class BCLib {
         BCModules.fmlPreInit();
         BCLibRegistries.fmlPreInit();
         BCLibProxy.getProxy().fmlPreInit();
-        BCLibItems.fmlPreInit();
 
         BuildCraftObjectCaches.fmlPreInit();
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCLibProxy.getProxy());
@@ -84,10 +87,11 @@ public class BCLib {
         MessageManager.addMessageType(MessageObjectCacheReply.class, MessageObjectCacheReply.HANDLER, Side.CLIENT);
 
         MinecraftForge.EVENT_BUS.register(BCLibEventDist.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Mod.EventHandler
-    public static void init(FMLInitializationEvent evt) {
+    public void init(FMLInitializationEvent evt) {
         BCLibProxy.getProxy().fmlInit();
 
         BCLibRegistries.fmlInit();
@@ -99,7 +103,7 @@ public class BCLib {
     }
 
     @Mod.EventHandler
-    public static void postInit(FMLPostInitializationEvent evt) {
+    public void postInit(FMLPostInitializationEvent evt) {
         BCLibProxy.getProxy().fmlPostInit();
         BuildCraftObjectCaches.fmlPostInit();
         MessageManager.fmlPostInit();
@@ -108,10 +112,6 @@ public class BCLib {
         ListMatchHandlerFluid.fmlPostInit();
     }
 
-    @Mod.EventHandler
-    public static void missingMappings(FMLMissingMappingsEvent evt) {
-        MigrationManager.INSTANCE.missingMappingEvent(evt);
-    }
 
     static {
         startBatch();
@@ -130,5 +130,17 @@ public class BCLib {
 
     private static void endBatch(Consumer<TagEntry> consumer) {
         TagManager.endBatch(consumer);
+    }
+
+
+    @SubscribeEvent
+    public static void missingMappingsBlocks(RegistryEvent.MissingMappings<Block> evt) {
+        MigrationManager.INSTANCE.missingMappingEventBlocks(evt);
+    }
+
+    @SubscribeEvent
+    public static void missingMappingsItems(RegistryEvent.MissingMappings<Item> evt) {
+        MigrationManager.INSTANCE.missingMappingEventItems(evt);
+
     }
 }

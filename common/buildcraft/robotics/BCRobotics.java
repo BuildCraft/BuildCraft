@@ -21,8 +21,10 @@ import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.core.BCCore;
+import buildcraft.robotics.tile.TileZonePlanner;
 import buildcraft.robotics.zone.MessageZoneMapRequest;
 import buildcraft.robotics.zone.MessageZoneMapResponse;
 
@@ -42,8 +44,6 @@ public class BCRobotics {
     public static void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
-        BCRoboticsItems.preInit();
-        BCRoboticsBlocks.preInit();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCRoboticsProxy.getProxy());
 
@@ -55,6 +55,7 @@ public class BCRobotics {
     public static void init(FMLInitializationEvent evt) {
         BCRoboticsProxy.getProxy().fmlInit();
         BCRoboticsRecipes.init();
+        TileBC_Neptune.registerTile(TileZonePlanner.class, "tile.zone_planner");
     }
 
     @Mod.EventHandler

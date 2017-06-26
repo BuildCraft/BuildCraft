@@ -18,6 +18,8 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 
+import buildcraft.api.enums.EnumEngineType;
+
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
 import buildcraft.lib.marker.MarkerCache;
@@ -27,11 +29,17 @@ import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
+import buildcraft.lib.tile.TileBC_Neptune;
 
+import buildcraft.core.block.BlockEngine_BC8;
 import buildcraft.core.list.ListTooltipHandler;
 import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.VolumeCache;
 import buildcraft.core.marker.volume.MessageVolumeBoxes;
+import buildcraft.core.tile.TileEngineCreative;
+import buildcraft.core.tile.TileEngineRedstone_BC8;
+import buildcraft.core.tile.TileMarkerPath;
+import buildcraft.core.tile.TileMarkerVolume;
 
 @Mod(//
     modid = BCCore.MODID,//
@@ -59,8 +67,7 @@ public class BCCore {
 
         CreativeTabBC tab = CreativeTabManager.createTab("buildcraft.main");
 
-        BCCoreItems.preInit();
-        BCCoreBlocks.preInit();
+
         BCCoreStatements.preInit();
 
         BCCoreProxy.getProxy().fmlPreInit();
@@ -75,16 +82,28 @@ public class BCCore {
 
         MinecraftForge.EVENT_BUS.register(BCCoreEventDist.INSTANCE);
         MessageManager.addMessageType(MessageVolumeBoxes.class, MessageVolumeBoxes.HANDLER, Side.CLIENT);
+
+        TileBC_Neptune.registerTile(TileMarkerVolume.class, "tile.marker.volume");
+        TileBC_Neptune.registerTile(TileMarkerPath.class, "tile.marker.path");
+        TileBC_Neptune.registerTile(TileEngineRedstone_BC8.class, "tile.engine.wood");
+        TileBC_Neptune.registerTile(TileEngineCreative.class, "tile.engine.creative");
     }
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
+        BlockEngine_BC8 engine = (BlockEngine_BC8) BCCoreBlocks.engine;
+        engine.registerEngine(EnumEngineType.WOOD, TileEngineRedstone_BC8::new);
+        engine.registerEngine(EnumEngineType.CREATIVE, TileEngineCreative::new);
+        BCLibItems.guide.setCreativeTab(CreativeTabManager.getTab("buildcraft.main"));
+
         BCCoreProxy.getProxy().fmlInit();
 
         BCCoreRecipes.init();
 
         MarkerCache.registerCache(VolumeCache.INSTANCE);
         MarkerCache.registerCache(PathCache.INSTANCE);
+
+        ((CreativeTabBC) CreativeTabManager.getTab("buildcraft.main")).setItem(BCCoreItems.wrench);
     }
 
     @Mod.EventHandler
@@ -92,6 +111,7 @@ public class BCCore {
         BCCoreProxy.getProxy().fmlPostInit();
         BCCoreConfig.postInit();
     }
+
 
     static {
         startBatch();

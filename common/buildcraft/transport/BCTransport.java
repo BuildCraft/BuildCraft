@@ -18,6 +18,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.transport.pipe.PipeApi;
+
 import buildcraft.lib.BCLib;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.net.MessageManager;
@@ -27,11 +29,14 @@ import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.core.BCCore;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
 import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
+import buildcraft.transport.tile.TileFilteredBuffer;
+import buildcraft.transport.tile.TilePipeHolder;
 import buildcraft.transport.wire.MessageWireSystems;
 import buildcraft.transport.wire.MessageWireSystemsPowered;
 
@@ -47,23 +52,17 @@ public class BCTransport {
     @Mod.Instance(MODID)
     public static BCTransport INSTANCE = null;
 
+    private static CreativeTabBC tabPipes;
+    private static CreativeTabBC tabPlugs;
     private static CreativeTabBC tabFacades;
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
-        CreativeTabBC tabPipes = CreativeTabManager.createTab("buildcraft.pipes");
-        CreativeTabBC tabPlugs = CreativeTabManager.createTab("buildcraft.plugs");
-        tabFacades = CreativeTabManager.createTab("buildcraft.facades");
-
-        BCTransportRegistries.preInit();
         BCTransportConfig.preInit();
-        BCTransportBlocks.preInit();
-        BCTransportPipes.preInit();
-        BCTransportPlugs.preInit();
-        BCTransportItems.preInit();
         BCTransportStatements.preInit();
+        PipeApi.initCapabilites();
 
         // Reload after all of the pipe defs have been created.
         BCTransportConfig.reloadConfig(EnumRestartRequirement.GAME);
@@ -85,6 +84,9 @@ public class BCTransport {
         BCTransportProxy.getProxy().fmlInit();
         BCTransportRegistries.init();
         BCTransportRecipes.init();
+
+        TileBC_Neptune.registerTile(TileFilteredBuffer.class, "tile.filtered_buffer");
+        TileBC_Neptune.registerTile(TilePipeHolder.class, "tile.pipe_holder");
     }
 
     @Mod.EventHandler
@@ -170,6 +172,12 @@ public class BCTransport {
         registerTag("tile.pipe_holder").reg("pipe_holder");
 
         endBatch(TagManager.prependTags("buildcrafttransport:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(TagManager.setTab("buildcraft.main")));
+
+        tabPipes = CreativeTabManager.createTab("buildcraft.pipes");
+        tabPlugs = CreativeTabManager.createTab("buildcraft.plugs");
+        tabFacades = CreativeTabManager.createTab("buildcraft.facades");
+
+        BCTransportRegistries.preInit();
     }
 
     private static TagEntry registerTag(String id) {

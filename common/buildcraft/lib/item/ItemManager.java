@@ -23,7 +23,6 @@ import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.registry.MigrationManager;
-import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.EnumTagTypeMulti;
@@ -32,17 +31,11 @@ public class ItemManager {
     static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.item");
     private static List<IItemBuildCraft> registeredItems = new ArrayList<>();
 
-    public static <I extends Item & IItemBuildCraft> I register(I item) {
-        return register(item, false);
-    }
-
     public static <I extends Item & IItemBuildCraft> I register(I item, boolean force) {
-        if (RegistryHelper.registerItem(item, force)) {
+        //if (RegistryHelper.registerItem(item, force)) {
             registeredItems.add(item);
             MigrationManager.INSTANCE.addItemMigration(item, TagManager.getMultiTag(item.id(), EnumTagTypeMulti.OLD_REGISTRY_NAME));
             return item;
-        }
-        return null;
     }
 
     public static void fmlInit() {

@@ -4,13 +4,21 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core;
 
-import net.minecraft.block.material.Material;
+import java.util.ArrayList;
 
-import buildcraft.api.enums.EnumEngineType;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.item.Item;
+
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.lib.BCLib;
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.item.IItemBuildCraft;
+import buildcraft.lib.item.ItemBlockBC_Neptune;
 
 import buildcraft.core.block.BlockDecoration;
 import buildcraft.core.block.BlockEngine_BC8;
@@ -20,33 +28,58 @@ import buildcraft.core.block.BlockSpring;
 import buildcraft.core.item.ItemBlockDecorated;
 import buildcraft.core.item.ItemBlockSpring;
 import buildcraft.core.item.ItemEngine_BC8;
-import buildcraft.core.tile.TileEngineCreative;
-import buildcraft.core.tile.TileEngineRedstone_BC8;
-import buildcraft.core.tile.TileMarkerPath;
-import buildcraft.core.tile.TileMarkerVolume;
 
+@Mod.EventBusSubscriber(modid = BCCore.MODID)
+@GameRegistry.ObjectHolder(BCCore.MODID)
 public class BCCoreBlocks {
-    public static BlockEngine_BC8 engine;
-    public static BlockSpring spring;
-    public static BlockDecoration decorated;
-    public static BlockMarkerVolume markerVolume;
-    public static BlockMarkerPath markerPath;
+    public static final BlockEngine_BC8 engine = null;
+    public static final BlockSpring spring = null;
+    public static final BlockDecoration decorated = null;
+    @GameRegistry.ObjectHolder("marker_volume")
+    public static final BlockMarkerVolume markerVolume = null;
+    @GameRegistry.ObjectHolder("marker_path")
+    public static final BlockMarkerPath markerPath = null;
 
-    public static void preInit() {
-        spring = BlockBCBase_Neptune.register(new BlockSpring("block.spring"), ItemBlockSpring::new);
-        markerVolume = BlockBCBase_Neptune.register(new BlockMarkerVolume(Material.CIRCUITS, "block.marker.volume"));
-        markerPath = BlockBCBase_Neptune.register(new BlockMarkerPath(Material.CIRCUITS, "block.marker.path"));
+    private static ArrayList<IItemBuildCraft> items = new ArrayList<>();
+
+    @SubscribeEvent
+    public static void registerBlocks(RegistryEvent.Register<Block> event) {
+        event.getRegistry().registerAll(
+            new BlockSpring("block.spring"),
+            new BlockMarkerVolume(Material.CIRCUITS, "block.marker.volume"),
+            new BlockMarkerPath(Material.CIRCUITS, "block.marker.path"),
+            new BlockEngine_BC8(Material.IRON, "block.engine.bc")
+        );
+
         if (BCLib.DEV) {
-            decorated = BlockBCBase_Neptune.register(new BlockDecoration("block.decorated"), ItemBlockDecorated::new);
+            event.getRegistry().register(new BlockDecoration("block.decorated"));
+        }
+    }
+
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event) {
+        items.clear();
+        ItemBlockBC_Neptune[] blocks = {
+            new ItemBlockSpring(spring),
+            new ItemEngine_BC8<>(engine),
+            new ItemBlockBC_Neptune(markerPath),
+            new ItemBlockBC_Neptune(markerVolume)
+        };
+        for (ItemBlockBC_Neptune itemblock: blocks) {
+            items.add(itemblock);
+            event.getRegistry().register(itemblock);
         }
 
-        engine = BlockBCBase_Neptune.register(new BlockEngine_BC8(Material.IRON, "block.engine.bc"), ItemEngine_BC8::new);
-        engine.registerEngine(EnumEngineType.WOOD, TileEngineRedstone_BC8::new);
-        engine.registerEngine(EnumEngineType.CREATIVE, TileEngineCreative::new);
-
-        TileBC_Neptune.registerTile(TileMarkerVolume.class, "tile.marker.volume");
-        TileBC_Neptune.registerTile(TileMarkerPath.class, "tile.marker.path");
-        TileBC_Neptune.registerTile(TileEngineRedstone_BC8.class, "tile.engine.wood");
-        TileBC_Neptune.registerTile(TileEngineCreative.class, "tile.engine.creative");
+        if (BCLib.DEV) {
+            ItemBlockBC_Neptune itemblock = new ItemBlockDecorated(decorated);
+            items.add(itemblock);
+            event.getRegistry().register(itemblock);
+        }
     }
+
+    @SubscribeEvent
+    public static void registerVariants(ModelRegistryEvent event) {
+        items.forEach(IItemBuildCraft::registerVariants);
+    }
+
 }

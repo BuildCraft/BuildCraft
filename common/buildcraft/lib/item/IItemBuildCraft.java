@@ -6,10 +6,10 @@ package buildcraft.lib.item;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
-import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -43,7 +43,7 @@ public interface IItemBuildCraft {
     }
 
     @SideOnly(Side.CLIENT)
-    default void postRegisterClient() {
+    default void registerVariants() {
         Item thisItem = (Item) this;
         TIntObjectHashMap<ModelResourceLocation> variants = new TIntObjectHashMap<>();
         addModelVariants(variants);
@@ -52,7 +52,8 @@ public interface IItemBuildCraft {
             if (ItemManager.DEBUG) {
                 BCLog.logger.info("[lib.item][" + thisItem.getRegistryName() + "] Registering a variant " + variant + " for damage " + key);
             }
-            ModelBakery.registerItemVariants(thisItem, variant);
+            //ModelBakery.registerItemVariants(thisItem, variant);
+            ModelLoader.setCustomModelResourceLocation(thisItem, key, variant);
         }
     }
 }

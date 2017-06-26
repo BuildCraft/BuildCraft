@@ -4,11 +4,21 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory;
 
+import java.util.ArrayList;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.item.Item;
+
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.lib.BCLib;
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.item.IItemBuildCraft;
+import buildcraft.lib.registry.RegistryHelper;
 
 import buildcraft.factory.block.BlockAutoWorkbenchItems;
 import buildcraft.factory.block.BlockChute;
@@ -20,60 +30,77 @@ import buildcraft.factory.block.BlockPump;
 import buildcraft.factory.block.BlockTank;
 import buildcraft.factory.block.BlockTube;
 import buildcraft.factory.block.BlockWaterGel;
-import buildcraft.factory.tile.TileAutoWorkbenchItems;
-import buildcraft.factory.tile.TileChute;
-import buildcraft.factory.tile.TileDistiller_BC8;
-import buildcraft.factory.tile.TileFloodGate;
-import buildcraft.factory.tile.TileHeatExchangeEnd;
-import buildcraft.factory.tile.TileHeatExchangeStart;
-import buildcraft.factory.tile.TileMiningWell;
-import buildcraft.factory.tile.TilePump;
-import buildcraft.factory.tile.TileTank;
 
+@Mod.EventBusSubscriber(modid = BCFactory.MODID)
+@GameRegistry.ObjectHolder(BCFactory.MODID)
 public class BCFactoryBlocks {
-    public static BlockAutoWorkbenchItems autoWorkbenchItems;
-    public static BlockMiningWell miningWell;
-    public static BlockPump pump;
-    public static BlockTube tube;
-    public static BlockFloodGate floodGate;
-    public static BlockTank tank;
-    public static BlockChute chute;
-    public static BlockDistiller distiller;
-    public static BlockHeatExchange heatExchangeStart, heatExchangeMiddle, heatExchangeEnd;
+    @GameRegistry.ObjectHolder("autoworkbench_item")
+    public static final BlockAutoWorkbenchItems autoWorkbenchItems = null;
+    @GameRegistry.ObjectHolder("mining_well")
+    public static final BlockMiningWell miningWell = null;
+    public static final BlockPump pump = null;
+    public static final BlockTube tube = null;
+    @GameRegistry.ObjectHolder("flood_gate")
+    public static final BlockFloodGate floodGate = null;
+    public static final BlockTank tank = null;
+    public static final BlockChute chute = null;
+    public static final BlockDistiller distiller = null;
+    @GameRegistry.ObjectHolder("heat_exchange_start")
+    public static final BlockHeatExchange heatExchangeStart = null;
+    @GameRegistry.ObjectHolder("heat_exchange_middle")
+    public static final BlockHeatExchange heatExchangeMiddle = null;
+    @GameRegistry.ObjectHolder("heat_exchange_end")
+    public static final BlockHeatExchange heatExchangeEnd = null;
 
-    // public static BlockAutoWorkbenchFluids autoWorkbenchFluids;
+    // public static Block autoWorkbenchFluids;
     // public static BlockPlastic plastic;
     public static BlockWaterGel waterGel;
 
-    public static void preInit() {
-        // plastic = BlockBuildCraftBase_BC8.register(new BlockPlastic("block.plastic"), ItemPlastic::new);
-        autoWorkbenchItems = BlockBCBase_Neptune.register(new BlockAutoWorkbenchItems(Material.ROCK, "block.autoworkbench.item"));
-        miningWell = BlockBCBase_Neptune.register(new BlockMiningWell(Material.ROCK, "block.mining_well"));
-        pump = BlockBCBase_Neptune.register(new BlockPump(Material.ROCK, "block.pump"));
-        tube = BlockBCBase_Neptune.register(new BlockTube(Material.IRON, "block.tube"), null);
-        floodGate = BlockBCBase_Neptune.register(new BlockFloodGate(Material.ROCK, "block.flood_gate"));
-        tank = BlockBCBase_Neptune.register(new BlockTank(Material.ROCK, "block.tank"));
-        chute = BlockBCBase_Neptune.register(new BlockChute(Material.ROCK, "block.chute"));
-        distiller = BlockBCBase_Neptune.register(new BlockDistiller(Material.IRON, "block.distiller"));
-        if (BCLib.DEV) {
-            heatExchangeStart = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.start", BlockHeatExchange.Part.START));
-            heatExchangeMiddle = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.middle", BlockHeatExchange.Part.MIDDLE));
-            heatExchangeEnd = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.end", BlockHeatExchange.Part.END));
-        }
-        if (BCLib.DEV) {
-            waterGel = BlockBCBase_Neptune.register(new BlockWaterGel(Material.CLAY, "block.water_gel"), null);
-        }
+    private static ArrayList<IItemBuildCraft> items = new ArrayList<>();
 
-        TileBC_Neptune.registerTile(TileAutoWorkbenchItems.class, "tile.autoworkbench.item");
-        TileBC_Neptune.registerTile(TileMiningWell.class, "tile.mining_well");
-        TileBC_Neptune.registerTile(TilePump.class, "tile.pump");
-        TileBC_Neptune.registerTile(TileFloodGate.class, "tile.flood_gate");
-        TileBC_Neptune.registerTile(TileTank.class, "tile.tank");
-        TileBC_Neptune.registerTile(TileChute.class, "tile.chute");
-        TileBC_Neptune.registerTile(TileDistiller_BC8.class, "tile.distiller");
+    @SubscribeEvent
+    public static void registerBlocks(RegistryEvent.Register<Block> event) {
+        event.getRegistry().registerAll(
+            new BlockAutoWorkbenchItems(Material.ROCK, "block.autoworkbench.item"),
+            new BlockMiningWell(Material.ROCK, "block.mining_well"),
+            new BlockPump(Material.ROCK, "block.pump"),
+            new BlockTube(Material.IRON, "block.tube"),
+            new BlockFloodGate(Material.ROCK, "block.flood_gate"),
+            new BlockTank(Material.ROCK, "block.tank"),
+            new BlockChute(Material.ROCK, "block.chute"),
+            new BlockDistiller(Material.IRON, "block.distiller")
+            //new BlockPlastic("block.plastic")
+        );
+
         if (BCLib.DEV) {
-            TileBC_Neptune.registerTile(TileHeatExchangeStart.class, "tile.heat_exchange.start");
-            TileBC_Neptune.registerTile(TileHeatExchangeEnd.class, "tile.heat_exchange.end");
+            event.getRegistry().registerAll(
+                new BlockHeatExchange(Material.IRON, "block.heat_exchange.start", BlockHeatExchange.Part.START),
+                new BlockHeatExchange(Material.IRON, "block.heat_exchange.middle", BlockHeatExchange.Part.MIDDLE),
+                new BlockHeatExchange(Material.IRON, "block.heat_exchange.end", BlockHeatExchange.Part.END),
+                new BlockWaterGel(Material.CLAY, "block.water_gel")
+
+            );
         }
+    }
+
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event) {
+        RegistryHelper.listAndRegister(event, items,
+            autoWorkbenchItems,
+            miningWell,
+            pump,
+            floodGate,
+            tank,
+            chute,
+            distiller,
+            heatExchangeStart,
+            heatExchangeMiddle,
+            heatExchangeEnd
+        );
+    }
+
+    @SubscribeEvent
+    public static void modelRegisterEvent(ModelRegistryEvent event) {
+        items.forEach(IItemBuildCraft::registerVariants);
     }
 }

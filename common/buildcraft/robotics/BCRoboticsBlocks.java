@@ -6,20 +6,45 @@
 
 package buildcraft.robotics;
 
-import net.minecraft.block.material.Material;
+import java.util.ArrayList;
 
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.item.Item;
+
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import buildcraft.lib.item.IItemBuildCraft;
+import buildcraft.lib.item.ItemBlockBC_Neptune;
 
 import buildcraft.robotics.block.BlockZonePlanner;
-import buildcraft.robotics.tile.TileZonePlanner;
 
+@Mod.EventBusSubscriber(modid = BCRobotics.MODID)
+@GameRegistry.ObjectHolder(BCRobotics.MODID)
 public class BCRoboticsBlocks {
-    public static BlockZonePlanner zonePlanner;
+    @GameRegistry.ObjectHolder("zone_planner")
+    public static final BlockZonePlanner zonePlanner = null;
 
-    public static void preInit() {
-        zonePlanner = BlockBCBase_Neptune.register(new BlockZonePlanner(Material.ROCK, "block.zone_planner"));
+    private static ArrayList<IItemBuildCraft> items = new ArrayList<>();
 
-        TileBC_Neptune.registerTile(TileZonePlanner.class, "tile.zone_planner");
+    @SubscribeEvent
+    public static void registerBlocks(RegistryEvent.Register<Block> event) {
+        event.getRegistry().register(new BlockZonePlanner(Material.ROCK, "block.zone_planner"));
+    }
+
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event) {
+        items.clear();
+        ItemBlockBC_Neptune itemblock = new ItemBlockBC_Neptune(zonePlanner);
+        event.getRegistry().register(itemblock);
+    }
+
+    @SubscribeEvent
+    public static void modelRegisterEvent(ModelRegistryEvent event) {
+        items.forEach(IItemBuildCraft::registerVariants);
     }
 }

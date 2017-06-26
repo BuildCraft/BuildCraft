@@ -19,8 +19,15 @@ import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.core.BCCore;
+import buildcraft.silicon.tile.TileAdvancedCraftingTable;
+import buildcraft.silicon.tile.TileAssemblyTable;
+import buildcraft.silicon.tile.TileChargingTable;
+import buildcraft.silicon.tile.TileIntegrationTable;
+import buildcraft.silicon.tile.TileLaser;
+import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
 
 //@formatter:off
 @Mod(modid = BCSilicon.MODID,
@@ -38,9 +45,6 @@ public class BCSilicon {
     public void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
-        BCSiliconItems.preInit();
-        BCSiliconBlocks.preInit();
-
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCSiliconProxy.getProxy());
 
         BCSiliconProxy.getProxy().fmlPreInit();
@@ -50,6 +54,15 @@ public class BCSilicon {
     public void init(FMLInitializationEvent evt) {
         BCSiliconProxy.getProxy().fmlInit();
         BCSiliconRecipes.init();
+
+        TileBC_Neptune.registerTile(TileLaser.class, "tile.laser");
+        TileBC_Neptune.registerTile(TileAssemblyTable.class, "tile.assembly_table");
+        TileBC_Neptune.registerTile(TileAdvancedCraftingTable.class, "tile.advanced_crafting_table");
+        TileBC_Neptune.registerTile(TileIntegrationTable.class, "tile.integration_table");
+        if (BCLib.DEV) {
+            TileBC_Neptune.registerTile(TileChargingTable.class, "tile.charging_table");
+            TileBC_Neptune.registerTile(TileProgrammingTable_Neptune.class, "tile.programming_table");
+        }
     }
 
     @Mod.EventHandler
