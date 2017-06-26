@@ -29,8 +29,8 @@ public class Filling {
     private static List<Item> itemBlocks = new ArrayList<>();
     private static final List<Point2d> TRIANGLE_POINTS = Arrays.asList(
         new Point2d(1, 0.5),
-        new Point2d(0.2500000000000001, 0.9330127018922194),
-        new Point2d(0.24999999999999978, 0.06698729810778076)
+        new Point2d(0.25, 0.9330127018922194),
+        new Point2d(0.25, 0.06698729810778076)
     );
     private static final List<Point2d> PENTAGON_POINTS = Arrays.asList(
         new Point2d(1, 0.5),
@@ -42,10 +42,10 @@ public class Filling {
     private static final List<Point2d> HEXAGON_POINTS = Arrays.asList(
         new Point2d(1, 0.5),
         new Point2d(0.75, 0.9330127018922193),
-        new Point2d(0.2500000000000001, 0.9330127018922194),
-        new Point2d(0, 0.5000000000000001),
-        new Point2d(0.24999999999999978, 0.06698729810778076),
-        new Point2d(0.7499999999999997, 0.06698729810778048)
+        new Point2d(0.25, 0.9330127018922194),
+        new Point2d(0, 0.5),
+        new Point2d(0.25, 0.06698729810778076),
+        new Point2d(0.75, 0.06698729810778048)
     );
     private static final List<Point2d> OCTAGON_POINTS = Arrays.asList(
         new Point2d(1, 0.5),
