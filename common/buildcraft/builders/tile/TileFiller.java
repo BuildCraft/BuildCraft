@@ -33,7 +33,6 @@ import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.mj.MjBatteryReciver;
@@ -212,7 +211,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     @Nonnull
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        return addon == null ? super.getRenderBoundingBox() : BoundingBoxUtil.makeFrom(pos, addon.box.box);
+        return INFINITE_EXTENT_AABB;
     }
 
     @Override

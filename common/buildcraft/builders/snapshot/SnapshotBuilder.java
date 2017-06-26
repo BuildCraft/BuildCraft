@@ -417,7 +417,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                             target - breakTask.power,
                             tile.getBattery().getStored() / breakTasks.size()
                         ),
-                        MjAPI.MJ / 10
+                        10 * MjAPI.MJ
                     )
                 );
                 if (breakTask.power >= target) {
@@ -464,7 +464,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                             target - placeTask.power,
                             tile.getBattery().getStored() / placeTasks.size()
                         ),
-                        MjAPI.MJ / 10
+                        10 * MjAPI.MJ
                     )
                 );
                 if (placeTask.power >= target) {
@@ -567,7 +567,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         }
 
         public long getTarget() {
-            return (long) (Math.min(10, Math.sqrt(pos.distanceSq(tile.getBuilderPos()))) * MjAPI.MJ);
+            return (long) (Math.sqrt(pos.distanceSq(tile.getBuilderPos())) * 10 * MjAPI.MJ);
         }
 
         public void writePayload(PacketBufferBC buffer) {
