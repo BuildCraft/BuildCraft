@@ -359,8 +359,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         if (part >= 1 + 6 + 6) {
             return aabb.offset(pos);
         } else {
-            double expand = 1 / 32.0;
-            return (aabb == FULL_BLOCK_AABB ? aabb : aabb.expand(expand, expand, expand)).offset(pos);
+            return (aabb == FULL_BLOCK_AABB ? aabb : aabb.grow(1 / 32.0)).offset(pos);
         }
     }
 

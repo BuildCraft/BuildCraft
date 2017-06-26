@@ -51,7 +51,7 @@ public class BoundingBoxUtil {
     }
 
     public static AxisAlignedBB makeFrom(Vec3d from, Vec3d to, double radius) {
-        return makeFrom(from, to).expand(radius, radius, radius);
+        return makeFrom(from, to).grow(radius);
     }
 
     public static AxisAlignedBB makeAround(Vec3d around, double radius) {

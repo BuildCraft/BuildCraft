@@ -64,7 +64,7 @@ public enum RenderArchitectTables implements DetatchedRenderer.IDetachedRenderer
             GL11.glColorMask(false, false, false, false);
             BufferBuilder buffer = Tessellator.getInstance().getBuffer();
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            bb = bb.expand(0.01, 0.01, 0.01);
+            bb = bb.grow(0.01);
             buffer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
             buffer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
             buffer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
