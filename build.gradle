@@ -178,6 +178,11 @@ def parseConfig(File config) {
     }
 }
 
+def libsDir = new File(file(System.getenv("LIBS_DIR") ?: "build/libs/"), version)
+def modulesDir = new File(libsDir, "modules")
+def modulesDirSrc = new File(modulesDir, "src")
+System.out.println(libsDir)
+
 // add a source jar
 //task sourceJar(type: Jar) {
 //    from sourceSets.main.allSource
@@ -192,22 +197,21 @@ javadoc {
 
 // add a javadoc jar
 task javadocJar(type: Jar, dependsOn: javadoc) {
+    destinationDir = libsDir
     classifier = 'javadoc'
     from 'build/docs/javadoc'
 }
 
 // because the normal output has been made to be obfuscated
 task deobfJar(type: Jar) {
+    destinationDir = libsDir
     from sourceSets.main.output
     from sourceSets.api.output
     classifier = 'dev'
 }
 
-def modulesDir = file("build/libs/modules")
-def modulesDirSrc = new File(modulesDir, "src")
-
 task apiJar(type: Jar, dependsOn: reobfJar) {
-    destinationDir = modulesDir
+    destinationDir = libsDir
     appendix = "api"
 
     doFirst {
@@ -343,7 +347,7 @@ task roboticsJar(type: Jar, dependsOn: reobfJar) {
 }
 
 task allJar(type: Jar, dependsOn:reobfJar) {
-    destinationDir = modulesDir
+    destinationDir = libsDir
 
     doFirst {
         from(project.ext.jarFile) {
@@ -353,7 +357,7 @@ task allJar(type: Jar, dependsOn:reobfJar) {
 }
 
 task allSrcJar(type: Jar, dependsOn:reobfJar) {
-    destinationDir = modulesDir
+    destinationDir = libsDir
     classifier = "sources"
 
     doFirst {
