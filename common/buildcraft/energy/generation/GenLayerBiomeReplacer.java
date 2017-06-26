@@ -16,7 +16,6 @@ import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.misc.data.SimplexNoise;
 
-@SuppressWarnings("Duplicates")
 public abstract class GenLayerBiomeReplacer extends GenLayer {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("energy.generation");
 
@@ -71,9 +70,6 @@ public abstract class GenLayerBiomeReplacer extends GenLayer {
                                 (zIter + z + zOffset) * noiseScale
                         ) > noiseThreshold) {
                     outputBiomeIDs[xIter + zIter * width] = newBiomeId;
-                    if (DEBUG) {
-                        BCLog.logger.info("Replaced Biome at " + (xIter + x) + ", " + (zIter + z));
-                    }
                 } else {
                     outputBiomeIDs[xIter + zIter * width] = currentBiomeId;
                 }

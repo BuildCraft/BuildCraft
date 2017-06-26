@@ -21,6 +21,7 @@ import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.data.IReference;
 import buildcraft.lib.statement.StatementWrapper;
 
+@Deprecated
 public abstract class ElementStatement<G extends GuiStatementSelector<?>, T extends StatementWrapper> extends ElementGuiSlot<G, T> {
 
     public ElementStatement(G gui, IGuiArea element, IReference<T> reference) {

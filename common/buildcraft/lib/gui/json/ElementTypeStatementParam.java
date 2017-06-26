@@ -27,7 +27,7 @@ public class ElementTypeStatementParam extends ElementType {
 
     @Override
     public IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
-        FunctionContext ctx = createContext(json);
+        FunctionContext ctx = createContext(gui, json);
 
         inheritProperty(json, "area[0]", "pos[0]");
         inheritProperty(json, "area[1]", "pos[1]");
@@ -45,9 +45,9 @@ public class ElementTypeStatementParam extends ElementType {
 
         int index = resolveEquationInt(json, "index", ctx);
 
-        FullStatement<?> stmnt = gui.miscProperties.get(source, FullStatement.class);
+        FullStatement<?> stmnt = gui.properties.get(source, FullStatement.class);
         IGuiArea area = new GuiRectangle(posX, posY, sizeX, sizeY).offset(parent);
-        IStatementContainer stmntContainer = gui.miscProperties.get("statement.container", IStatementContainer.class);
+        IStatementContainer stmntContainer = gui.properties.get("statement.container", IStatementContainer.class);
         return new GuiElementStatementParam(gui, area, stmntContainer, stmnt, index, draw);
     }
 }

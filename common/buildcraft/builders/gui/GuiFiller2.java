@@ -2,6 +2,7 @@ package buildcraft.builders.gui;
 
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.button.IButtonClickEventListener;
 import buildcraft.lib.gui.elem.ToolTip;
@@ -22,10 +23,12 @@ public class GuiFiller2 extends GuiJson<ContainerFiller> {
 
     @Override
     protected void preLoad() {
-        miscProperties.put("filler.pattern.sprite", SPRITE_PATTERN);
-        miscProperties.put("filler.possible", FillerStatementContext.CONTEXT_ALL);
-        miscProperties.put("filler.pattern", container.tile.pattern);
-        miscProperties.put("statement.container", container.tile);
+        properties.put("filler.pattern.sprite", SPRITE_PATTERN);
+        properties.put("filler.possible", FillerStatementContext.CONTEXT_ALL);
+        properties.put("filler.pattern", container.tile.pattern);
+        properties.put("statement.container", container.tile);
+        properties.put("filler.to_break", (INodeLong) container.tile::getCountToBreak);
+        properties.put("filler.to_place", (INodeLong) container.tile::getCountToPlace);
     }
 
     @Override

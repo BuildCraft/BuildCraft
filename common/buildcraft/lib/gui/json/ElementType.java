@@ -16,6 +16,7 @@ import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import buildcraft.lib.misc.collect.TypedMap;
 
 public abstract class ElementType {
     public final String name;
@@ -27,8 +28,19 @@ public abstract class ElementType {
     // TODO: Add a "IGuiPosition parent" arg! (refactor tool broken atm)
     public abstract IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json);
 
-    public static FunctionContext createContext(JsonGuiElement json) {
+    public static FunctionContext createContext(GuiJson<?> gui, JsonGuiElement json) {
         FunctionContext ctx = DefaultContexts.createWithAll();
+
+        for (String key : gui.properties.getKeys()) {
+            TypedMap<Object> map = gui.properties.getAll(key);
+            IExpressionNode node = map.get(IExpressionNode.class);
+            if (node != null) {
+                ctx.putVariable(key, node);
+            }
+        }
+
+        // if json overrides variables then its ok
+        ctx = new FunctionContext(ctx);
 
         Set<String> args = new HashSet<>();
         // Put in args first
@@ -57,7 +69,7 @@ public abstract class ElementType {
                 ctx.putVariable(key, NodeType.createConstantNode(node));
             } catch (InvalidExpressionException e) {
                 // Ignore the error
-//                BCLog.logger.info("Failed to compile expression for " + key + " because " + e.getMessage());
+                // BCLog.logger.info("Failed to compile expression for " + key + " because " + e.getMessage());
             }
         }
         return ctx;

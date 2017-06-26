@@ -2,6 +2,7 @@ package buildcraft.lib.misc.collect;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
@@ -33,5 +34,13 @@ public class TypedKeyMap<K, V> {
             return null;
         }
         return m.get(clazz);
+    }
+
+    public Set<K> getKeys() {
+        return internalMap.keySet();
+    }
+
+    public TypedMap<V> getAll(K key) {
+        return internalMap.get(key);
     }
 }

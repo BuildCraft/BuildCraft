@@ -43,7 +43,6 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
     public IMenuElement currentMenu;
     /** Ledger-style elements. */
     public IGuiPosition lowerLeftLedgerPos, lowerRightLedgerPos;
-    protected final LedgerHelp ledgerHelp;
     private float lastPartialTicks;
 
     public GuiBC8(C container) {
@@ -56,9 +55,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
             shownElements.add(new LedgerOwnership((GuiBC8<? extends ContainerBCTile<?>>) this, true));
         }
         if (shouldAddHelpLedger()) {
-            shownElements.add(ledgerHelp = new LedgerHelp(this, false));
-        } else {
-            ledgerHelp = null;
+            shownElements.add(new LedgerHelp(this, false));
         }
     }
 

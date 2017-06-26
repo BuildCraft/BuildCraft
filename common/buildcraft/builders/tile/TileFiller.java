@@ -261,6 +261,14 @@ public class TileFiller extends TileBC_Neptune
         return true;
     }
 
+    public int getCountToPlace() {
+        return builder == null ? 0 : builder.leftToPlace;
+    }
+
+    public int getCountToBreak() {
+        return builder == null ? 0 : builder.leftToBreak;
+    }
+
     // @Override
     // @Nonnull
     // @SideOnly(Side.CLIENT)

@@ -94,7 +94,6 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         } else if (lastSentAmount != tank.getFluidAmount()) {
             if (tracker.markTimeIfDelay(world)) {
                 lastSentAmount = tank.getFluidAmount();
-                world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false);
                 sendNetworkUpdate(NET_FLUID_DELTA);
             }
         }

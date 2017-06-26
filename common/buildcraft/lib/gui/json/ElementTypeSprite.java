@@ -33,7 +33,7 @@ public class ElementTypeSprite extends ElementType {
 
     @Override
     public IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
-        FunctionContext ctx = createContext(json);
+        FunctionContext ctx = createContext(gui, json);
         inheritProperty(json, "area[0]", "pos[0]");
         inheritProperty(json, "area[1]", "pos[1]");
         inheritProperty(json, "area[2]", "size[0]");
@@ -66,7 +66,7 @@ public class ElementTypeSprite extends ElementType {
         String origin = tex.origin;
         int texSize = tex.texSize;
 
-        ISprite sprite = gui.miscProperties.get(origin, ISprite.class);
+        ISprite sprite = gui.properties.get(origin, ISprite.class);
         if (sprite != null) {
             sprite = GuiUtil.subRelative(sprite, u, v, us, vs, texSize);
         } else {

@@ -252,6 +252,10 @@ public final class BlockUtil {
         if (block == Blocks.FLOWING_LAVA) {
             return FluidRegistry.LAVA;
         }
+        if (block instanceof IFluidBlock) {
+            IFluidBlock fb = (IFluidBlock) block;
+            return FluidRegistry.getFluid(fb.getFluid().getName());
+        }
         return FluidRegistry.lookupFluidForBlock(block);
     }
 

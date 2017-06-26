@@ -31,6 +31,10 @@ public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {
         this.colour = colour;
     }
 
+    public GuiElementText(GuiBC8<?> gui, IGuiPosition parent, Supplier<String> text, int colour) {
+        this(gui, parent, text, () -> colour);
+    }
+
     public GuiElementText(GuiBC8<?> gui, IGuiPosition parent, String text, int colour) {
         this(gui, parent, () -> text, () -> colour);
     }

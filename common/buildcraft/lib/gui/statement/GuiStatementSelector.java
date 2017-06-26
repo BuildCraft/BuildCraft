@@ -22,6 +22,7 @@ import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.statement.StatementWrapper;
 
+@Deprecated
 public abstract class GuiStatementSelector<C extends ContainerBC_Neptune> extends GuiBC8<C> implements ITooltipElement {
     public static final ResourceLocation TEXTURE_SELECTOR =
         new ResourceLocation("buildcraftlib:textures/gui/statement_selector.png");

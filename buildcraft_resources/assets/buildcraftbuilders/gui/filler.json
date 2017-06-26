@@ -45,10 +45,10 @@
 			"colour": "0x40_40_40",
 			"pos": [7,141]
 		},
-		"ledger_buttons": {
+		"ledger_counters": {
 			"type": "buildcraftlib:ledger",
-			"title": "buttons",
-			"side": "left",
+			"title": "gui.counters",
+			"side": "right",
 			"colour": "0xFF_6C_D4_1F",
 			"closed": [
 				{
@@ -62,15 +62,26 @@
 			],
 			"children": [
 				{
-					"type": "four_button",
-					"u_start": 192,
-					"area": [0, 20, 16, 16]
+					"type": "buildcraftlib:text",
+					"text": "gui.leftToBreak",
+					"colour": "0xFF_AA_AF_B8",
+					"pos": [0, "14 * 1"]
 				},
 				{
 					"type": "buildcraftlib:text",
-					"text": "gui.inventory",
-					"colour": "0xFF_FF_FF",
-					"pos": [30, 20]
+					"expression": "filler.to_break",
+					"pos": [0, "14 * 2"]
+				},
+				{
+					"type": "buildcraftlib:text",
+					"text": "gui.leftToPlace",
+					"colour": "0xFF_AA_AF_B8",
+					"pos": [0, "14 * 3"]
+				},
+				{
+					"type": "buildcraftlib:text",
+					"expression": "filler.to_place",
+					"pos": [0, "14 * 4"]
 				}
 			]
 		},

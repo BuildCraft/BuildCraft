@@ -24,7 +24,7 @@ public class ElementTypeStatementSlot extends ElementType {
 
     @Override
     public IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
-        FunctionContext ctx = createContext(json);
+        FunctionContext ctx = createContext(gui, json);
 
         inheritProperty(json, "area[0]", "pos[0]");
         inheritProperty(json, "area[1]", "pos[1]");
@@ -40,7 +40,7 @@ public class ElementTypeStatementSlot extends ElementType {
 
         boolean draw = !"false".equals(json.properties.get("draw"));
 
-        FullStatement<?> stmnt = gui.miscProperties.get(source, FullStatement.class);
+        FullStatement<?> stmnt = gui.properties.get(source, FullStatement.class);
         IGuiArea area = new GuiRectangle(posX, posY, sizeX, sizeY).offset(parent);
         return new GuiElementStatement<>(gui, area, stmnt, draw);
     }

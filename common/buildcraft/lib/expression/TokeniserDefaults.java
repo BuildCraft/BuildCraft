@@ -97,8 +97,14 @@ public class TokeniserDefaults {
         }
     };
     public static final ITokenizerGobbler GOBBLER_WORD = (ctx) -> {
-        /* Allow words to start with ".", so that object method calling works. (for example "5.sub(6)", where ".sub" is
-         * treated as a single token) */
+        /*
+         * Allow words to start with ".", so that object method calling works. (for example "5.sub(6)", where ".sub" is
+         * treated as a single token)
+         * 
+         * Allow words to contain "." so that full names work.
+         * 
+         * I have no idea how this will work in regards to object properties... although they aren't implemented yet
+         */
         int i = 0;
         while (true) {
             char c = ctx.getCharAt(i);
@@ -106,7 +112,7 @@ public class TokeniserDefaults {
                 if (c != '.' && !Character.isJavaIdentifierStart(c)) {
                     break;
                 }
-            } else if (!Character.isJavaIdentifierPart(c)) {
+            } else if (c != '.' && !Character.isJavaIdentifierPart(c)) {
                 break;
             }
             i++;

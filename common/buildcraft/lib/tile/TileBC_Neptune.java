@@ -59,10 +59,12 @@ import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.delta.DeltaManager.EnumDeltaMessage;
 import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.FakePlayerProvider;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.PermissionUtil;
 import buildcraft.lib.misc.PermissionUtil.PermissionBlock;
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.IPayloadReceiver;
 import buildcraft.lib.net.IPayloadWriter;
@@ -171,7 +173,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     /** @param pos The <i>absolute</i> position of the {@link IBlockState} . */
     public final IBlockState getLocalState(BlockPos pos) {
-        return BlockUtil.getBlockState(world, pos, isInThisChunk(pos));
+        return BlockUtil.getBlockState(world, pos, true);
     }
 
     public final TileEntity getNeighbourTile(EnumFacing offset) {
@@ -186,12 +188,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     /** @param pos The <i>absolute</i> position of the {@link TileEntity} . */
     public final TileEntity getLocalTile(BlockPos pos) {
-        return BlockUtil.getTileEntity(world, pos, isInThisChunk(pos));
-    }
-
-    private boolean isInThisChunk(BlockPos other) {
-        return pos.getX() >> 4 == other.getX() >> 4//
-            && pos.getZ() >> 4 == other.getZ() >> 4;
+        return BlockUtil.getTileEntity(world, pos, true);
     }
 
     // ##################
@@ -245,6 +242,8 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
                 if (!owner.isComplete()) {
                     throw new IllegalArgumentException("Incomplete owner! ( " + placer + " -> " + owner + " )");
                 }
+            } else {
+                throw new IllegalArgumentException("Not an EntityPlayer! (placer = " + placer + ")");
             }
         }
     }
@@ -253,7 +252,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (owner == null) {
             owner = player.getGameProfile();
             if (!owner.isComplete()) {
-                owner = null;
+                throw new IllegalArgumentException("Incomplete owner! ( " + player + " -> " + owner + " )");
             }
         }
         sendNetworkUpdate(NET_GUI_DATA, player);
@@ -290,6 +289,11 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     @Override
     public GameProfile getOwner() {
+        if (owner == null) {
+            String msg = "[lib.tile] Unknown owner for " + getClass() + " at ";
+            BCLog.logger.warn(msg + StringUtilBC.blockPosToShortString(getPos()));
+            return FakePlayerProvider.NULL_PROFILE;
+        }
         return owner;
     }
 
@@ -555,9 +559,13 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         deltaManager.readFromNBT(nbt.getCompoundTag("deltas"));
         if (nbt.hasKey("owner")) {
             owner = NBTUtil.readGameProfileFromNBT(nbt.getCompoundTag("owner"));
-            if (owner != null && !owner.isComplete()) {
-                owner = null;
+            if (owner == null || !owner.isComplete()) {
+                String msg = "[lib.tile] Unknown owner (" + owner + ") for " + getClass() + " at ";
+                BCLog.logger.warn(msg + getPos() + " when reading from NBT");
             }
+        } else {
+            String msg = "[lib.tile] Unknown owner (null) for " + getClass() + " at ";
+            BCLog.logger.warn(msg + getPos() + " when reading from NBT");
         }
         if (nbt.hasKey("items", Constants.NBT.TAG_COMPOUND)) {
             itemManager.deserializeNBT(nbt.getCompoundTag("items"));

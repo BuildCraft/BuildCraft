@@ -35,7 +35,7 @@ public class ElementTypeButton extends ElementType {
 
     @Override
     public IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
-        FunctionContext ctx = createContext(json);
+        FunctionContext ctx = createContext(gui, json);
         inheritProperty(json, "area[0]", "pos[0]");
         inheritProperty(json, "area[1]", "pos[1]");
         inheritProperty(json, "area[2]", "size[0]");
@@ -82,7 +82,7 @@ public class ElementTypeButton extends ElementType {
         buttonBuilder.disabled = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.disabled");
         buttonBuilder.disabledActive = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.active_disabled");
         GuiButtonDrawable button = new GuiButtonDrawable(gui, json.name, parent, buttonBuilder);
-        gui.miscProperties.put(src, button);
+        gui.properties.put(src, button);
         return button;
     }
 
@@ -93,7 +93,7 @@ public class ElementTypeButton extends ElementType {
             uvs[i] = resolveEquationDouble(json, key + "[" + i + "]", ctx);
         }
         SrcTexture texture = resolveTexture(guiInfo, json, key);
-        ISprite sprite = gui.miscProperties.get(texture.origin, ISprite.class);
+        ISprite sprite = gui.properties.get(texture.origin, ISprite.class);
         if (sprite != null) {
             sprite = GuiUtil.subRelative(sprite, uvs[0], uvs[1], uvs[2], uvs[3], texture.texSize);
         } else {

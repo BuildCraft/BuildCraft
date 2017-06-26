@@ -1,6 +1,7 @@
 package buildcraft.lib.misc.collect;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,6 +92,17 @@ public class TypedMapHierarchy<V> implements TypedMap<V> {
                 removeNode(p);
             }
         }
+    }
+
+    @Override
+    public Collection<?> getValues() {
+        Collection<Object> values = new ArrayList<>();
+        for (Node<?> n : nodes.values()) {
+            if (n.value != null) {
+                values.add(n.value);
+            }
+        }
+        return values;
     }
 
     static class Node<T> {

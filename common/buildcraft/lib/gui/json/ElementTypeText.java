@@ -1,6 +1,13 @@
 package buildcraft.lib.gui.json;
 
+import java.util.function.Supplier;
+
+import com.google.gson.JsonSyntaxException;
+
 import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.InternalCompiler;
+import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.pos.IGuiPosition;
@@ -21,14 +28,30 @@ public class ElementTypeText extends ElementType {
 
     @Override
     public IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
-        FunctionContext ctx = createContext(json);
+        FunctionContext ctx = createContext(gui, json);
 
         int posX = resolveEquationInt(json, "pos[0]", ctx);
         int posY = resolveEquationInt(json, "pos[1]", ctx);
 
-        String text = LocaleUtil.localize(json.properties.get("text"));
-        int colour;
+        Supplier<String> text;
 
+        String prop;
+
+        if ((prop = json.properties.get("text")) != null) {
+            String localized = LocaleUtil.localize(prop);
+            text = () -> localized;
+        } else if ((prop = json.properties.get("expression")) != null) {
+            try {
+                IExpressionNode exp = InternalCompiler.compileExpression(prop, ctx);
+                text = () -> exp.evaluateAsString();
+            } catch (InvalidExpressionException e) {
+                throw new JsonSyntaxException("Invalid expression for '" + json.name + "'", e);
+            }
+        } else {
+            throw new JsonSyntaxException("Require either 'text' or 'expression'!");
+        }
+
+        int colour;
         if (json.properties.containsKey("colour")) {
             colour = resolveEquationInt(json, "colour", ctx);
         } else {

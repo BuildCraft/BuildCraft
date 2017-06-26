@@ -1,5 +1,6 @@
 package buildcraft.lib.misc.collect;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +10,7 @@ import javax.annotation.Nullable;
  * return either null, or an object whose {@link #getClass()} equals the argument class. */
 public class TypedMapDirect<V> implements TypedMap<V> {
 
-    private final Map<Class<?>, Object> internalMap = new HashMap<>();
+    private final Map<Class<?>, V> internalMap = new HashMap<>();
 
     @Override
     @Nullable
@@ -34,5 +35,10 @@ public class TypedMapDirect<V> implements TypedMap<V> {
     @Override
     public <T extends V> void remove(T value) {
         internalMap.remove(value.getClass(), value);
+    }
+
+    @Override
+    public Collection<V> getValues() {
+        return internalMap.values();
     }
 }

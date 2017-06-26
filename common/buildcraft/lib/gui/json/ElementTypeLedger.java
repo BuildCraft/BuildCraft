@@ -17,7 +17,7 @@ public class ElementTypeLedger extends ElementType {
 
     @Override
     public IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
-        FunctionContext ctx = createContext(json);
+        FunctionContext ctx = createContext(gui, json);
 
         inheritProperty(json, "color", "colour");
 
@@ -37,7 +37,7 @@ public class ElementTypeLedger extends ElementType {
                 BCLog.logger.warn("Unknown type " + typeName);
             } else {
                 IGuiElement e = type.deserialize(gui, ledger.positionLedgerInnerStart, info, c);
-                gui.miscProperties.put("custom." + json.name + "." + c.name, e);
+                gui.properties.put("custom." + json.name + "." + c.name, e);
                 ledger.getChildElements().add(e);
             }
         }
@@ -49,7 +49,7 @@ public class ElementTypeLedger extends ElementType {
                 BCLog.logger.warn("Unknown type " + typeName);
             } else {
                 IGuiElement e = type.deserialize(gui, ledger.positionLedgerIconStart, info, c);
-                gui.miscProperties.put("custom." + json.name + "." + c.name, e);
+                gui.properties.put("custom." + json.name + "." + c.name, e);
                 ledger.getClosedElements().add(e);
             }
         }

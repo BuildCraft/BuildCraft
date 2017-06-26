@@ -30,11 +30,11 @@ public class ExpressionTester {
 
     @Test
     public void testLongBasics() {
-        bakeAndCallLong("0x0", 0);
-        bakeAndCallLong("0xa", 10);
-        bakeAndCallLong("0xA", 10);
-        bakeAndCallLong("0x10", 16);
-        bakeAndCallLong("0x1_0", 16);
+        bakeAndCallLong("0x0", 0x0);
+        bakeAndCallLong("0xa", 0xa);
+        bakeAndCallLong("0xA", 0xA);
+        bakeAndCallLong("0x10", 0x10);
+        bakeAndCallLong("0x1_0", 0x1_0);
     }
 
     @Test
@@ -42,9 +42,9 @@ public class ExpressionTester {
         // I COULD change all these to be in separate functions... except that thats really long :/
         bakeAndCallDouble("0", 0);
         bakeAndCallDouble("-1", -1);
-        bakeAndCallDouble("0+1", 1);
+        bakeAndCallDouble("0+1", 0 + 1);
         bakeAndCallDouble("   0   +    1    ", 1);
-        bakeAndCallDouble("3-2", 1);
+        bakeAndCallDouble("3-2", 3-2);
         bakeAndCallDouble("1+1+1", 3);
         bakeAndCallDouble("1+2-1", 2);
         bakeAndCallDouble("1-2+1", 0);

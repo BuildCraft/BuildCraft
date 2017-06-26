@@ -2,10 +2,7 @@ package buildcraft.lib.gui.json;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -30,8 +27,7 @@ import buildcraft.lib.misc.collect.TypedKeyMap;
  * via json, more complex ones must be implemented in code. */
 public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
     private final ResourceLocation guiDefinition;
-    protected final Map<String, Supplier<String>> properties = new HashMap<>();
-    protected final TypedKeyMap<String, Object> miscProperties = TypedKeyMap.createHierachy();
+    protected final TypedKeyMap<String, Object> properties = TypedKeyMap.createHierachy();
 
     public GuiJson(C container, ResourceLocation guiDefinition) {
         super(container);
@@ -53,8 +49,8 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
         try (IResource res = Minecraft.getMinecraft().getResourceManager().getResource(guiDefinition)) {
             JsonObject obj = new Gson().fromJson(new InputStreamReader(res.getInputStream()), JsonObject.class);
 
-            miscProperties.put("gui.root", rootElement);
-            miscProperties.put("mouse", mouse);
+            properties.put("gui.root", rootElement);
+            properties.put("mouse", mouse);
             preLoad();
 
             JsonGuiInfo info = new JsonGuiInfo(obj);
@@ -69,8 +65,8 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
                 } else {
                     IGuiElement e = type.deserialize(this, rootElement, info, elem);
                     String parent = elem.properties.get("parent");
-                    IContainingElement p = miscProperties.get("custom." + parent, IContainingElement.class);
-                    miscProperties.put("custom." + elem.name, e);
+                    IContainingElement p = properties.get("custom." + parent, IContainingElement.class);
+                    properties.put("custom." + elem.name, e);
                     if (p == null) {
                         shownElements.add(e);
                     } else {
@@ -84,14 +80,14 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
         }
     }
 
-    /** Add strings to {@link #properties}, and put {@link ISprite}'s into {@link #miscProperties} */
+    /** Fill up {@link #properties} */
     protected void preLoad() {}
 
-    /** Setup objects contained in {@link #miscProperties}. Usually via {@link #setup(String, Class, Consumer)}. */
+    /** Setup objects contained in {@link #properties}. Usually via {@link #setup(String, Class, Consumer)}. */
     protected void postLoad() {}
 
     protected final <T> void setup(String name, Class<T> clazz, Consumer<T> ifNonNull) {
-        T value = miscProperties.get(name, clazz);
+        T value = properties.get(name, clazz);
         if (value != null) {
             ifNonNull.accept(value);
         }
