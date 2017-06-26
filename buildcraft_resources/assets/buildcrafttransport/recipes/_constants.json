@@ -28,5 +28,35 @@
         "item": "minecraft:slime_ball"
       }
     ]
+  },
+  {
+    "name": "gearIron",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "gearIron"
+      }
+    ]
+  },
+  {
+    "name": "pulsarPart",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "cobblestone"
+      },
+      {
+        "item": "buildcrafttransport:plug_blocker"
+      }
+    ]
+  },
+  {
+    "name": "dustRedstone",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "dustRedstone"
+      }
+    ]
   }
 ]

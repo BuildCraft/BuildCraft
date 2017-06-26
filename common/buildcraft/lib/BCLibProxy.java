@@ -36,7 +36,6 @@ import buildcraft.lib.client.resource.ResourceRegistry;
 import buildcraft.lib.debug.DebugRenderHelper;
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.fluid.FluidManager;
-import buildcraft.lib.item.ItemManager;
 
 public abstract class BCLibProxy implements IGuiHandler {
     @SidedProxy(modId = BCLib.MODID)
@@ -115,7 +114,6 @@ public abstract class BCLibProxy implements IGuiHandler {
             IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
             IReloadableResourceManager reloadable = (IReloadableResourceManager) manager;
             reloadable.registerReloadListener(ResourceRegistry.INSTANCE);
-            ItemManager.fmlInitClient();
         }
 
         @Override

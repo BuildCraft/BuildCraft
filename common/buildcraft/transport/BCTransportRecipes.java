@@ -31,7 +31,6 @@ import buildcraft.lib.inventory.filter.ArrayStackFilter;
 import buildcraft.lib.inventory.filter.OreStackFilter;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
-import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 
 import buildcraft.core.BCCoreBlocks;
@@ -76,11 +75,11 @@ public class BCTransportRecipes {
         addPipeUpgradeRecipe(BCTransportItems.pipeItemDiaWood, BCTransportItems.pipeFluidDiaWood, waterproof);
         */
 
-        if (BCTransportItems.plugPulsar != null) {
+        {
             ItemStack output = new ItemStack(BCTransportItems.plugPulsar);
 
             ItemStack redstoneEngine;
-            if (BCCoreBlocks.engine != null && BCCoreBlocks.engine.isRegistered(EnumEngineType.WOOD)) {
+            if (BCCoreBlocks.engine != null) {
                 redstoneEngine = BCCoreBlocks.engine.getStack(EnumEngineType.WOOD);
             } else {
                 redstoneEngine = new ItemStack(Blocks.REDSTONE_BLOCK);
@@ -92,19 +91,9 @@ public class BCTransportRecipes {
                 input.add(OreStackFilter.definition(2, "ingotIron"));
                 AssemblyRecipe recipe = new AssemblyRecipe("plug_pulsar", 1000 * MjAPI.MJ, input, output);
                 AssemblyRecipeRegistry.INSTANCE.addRecipe(recipe);
-            } else {
-                RecipeBuilderShaped builder = new RecipeBuilderShaped();
-                builder.add("rer");
-                builder.add("gpg");
-                builder.map('p', BCTransportItems.plugBlocker, Blocks.COBBLESTONE);
-                builder.map('r', "dustRedstone");
-                builder.map('e', redstoneEngine);
-                builder.map('g', OredictionaryNames.GEAR_IRON);
-                builder.setResult(output);
-                builder.register();
             }
-        }
 
+        }
         if (BCTransportItems.plugGate != null) {
             // You can craft some of the basic gate types in a normal crafting table
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
@@ -277,7 +266,7 @@ public class BCTransportRecipes {
     }
 
     private static void addPipeRecipe(ItemPipeHolder pipe, Object left, Object right) {
-        if (pipe == null) {
+       /* if (pipe == null) {
             return;
         }
 
@@ -295,7 +284,7 @@ public class BCTransportRecipes {
             pipeBuilderSingle.map('g', "blockGlass" + ColourUtil.getName(colour));
             pipeBuilderSingle.setResult(new ItemStack(pipe, 8, colour.getMetadata() + 1));
             pipeBuilderSingle.register();
-        }
+        }*/
     }
 
     private static void addPipeUpgradeRecipe(ItemPipeHolder from, ItemPipeHolder to, Object additional) {

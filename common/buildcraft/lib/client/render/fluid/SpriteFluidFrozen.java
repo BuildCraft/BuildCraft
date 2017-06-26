@@ -8,6 +8,7 @@ package buildcraft.lib.client.render.fluid;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.function.Function;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.PngSizeInfo;
@@ -36,7 +37,7 @@ public class SpriteFluidFrozen extends TextureAtlasSprite {
     }
 
     @Override
-    public boolean load(IResourceManager manager, ResourceLocation location) {
+    public boolean load(IResourceManager manager, ResourceLocation location, Function<ResourceLocation, TextureAtlasSprite> textureGetter) {
         location = SpriteUtil.transformLocation(srcLocation);
         TextureAtlasSprite src = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(srcLocation.toString());
         if (src == null) {
@@ -46,7 +47,7 @@ public class SpriteFluidFrozen extends TextureAtlasSprite {
 
         if (src.getFrameCount() <= 0) {
             if (src.hasCustomLoader(manager, location)) {
-                src.load(manager, location);
+                src.load(manager, location, textureGetter);
             } else {
                 try {
                     PngSizeInfo pngsizeinfo = PngSizeInfo.makeFromResource(manager.getResource(location));

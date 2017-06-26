@@ -138,32 +138,4 @@ public class BlockBCBase_Neptune extends Block {
         }
         return state;
     }
-
-    /*public static <B extends BlockBCBase_Neptune> B register(B block) {
-        return register(block, false, ItemBlockBC_Neptune::new);
-    }
-
-    public static <B extends BlockBCBase_Neptune> B register(B block, boolean force) {
-        return register(block, force, ItemBlockBC_Neptune::new);
-    }
-
-    public static <B extends BlockBCBase_Neptune, I extends Item & IItemBuildCraft> B register(B block, Function<B, I> itemBlockConstructor) {
-        return register(block, false, itemBlockConstructor);
-    }
-
-    public static <B extends BlockBCBase_Neptune, I extends Item & IItemBuildCraft> B register(B block, boolean force, Function<B, I> itemBlockConstructor) {
-        if (RegistryHelper.registerBlock(block, force)) {
-            registeredBlocks.add(block);
-            MigrationManager.INSTANCE.addBlockMigration(block, TagManager.getMultiTag(block.id, EnumTagTypeMulti.OLD_REGISTRY_NAME));
-            if (itemBlockConstructor != null) {
-                I item = itemBlockConstructor.apply(block);
-                if (item != null) {
-                    ItemManager.register(item, true);
-                }
-            }
-            return block;
-        }
-        return null;
-    }
-    */
 }

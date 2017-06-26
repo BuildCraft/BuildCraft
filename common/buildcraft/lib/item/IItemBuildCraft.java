@@ -4,6 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.item;
 
+import java.util.ArrayList;
+
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -12,21 +14,35 @@ import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 
+import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.registry.CreativeTabManager;
+import buildcraft.lib.registry.MigrationManager;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 
 public interface IItemBuildCraft {
+    boolean DEBUG = BCDebugging.shouldDebugLog("lib.item");
     String id();
+    ArrayList<IItemBuildCraft> list = new ArrayList<>();
 
     default void init() {
         Item thisItem = (Item) this;
         thisItem.setUnlocalizedName(TagManager.getTag(id(), EnumTagType.UNLOCALIZED_NAME));
         thisItem.setRegistryName(TagManager.getTag(id(), EnumTagType.REGISTRY_NAME));
         thisItem.setCreativeTab(CreativeTabManager.getTab(TagManager.getTag(id(), EnumTagType.CREATIVE_TAB)));
+        MigrationManager.INSTANCE.addItemMigration(thisItem, TagManager.getMultiTag(id(), TagManager.EnumTagTypeMulti.OLD_REGISTRY_NAME));
+        if (TagManager.hasTag(id(), EnumTagType.OREDICT_NAME)) {
+            list.add(this);
+        }
+    }
+
+    static void registerOredict() {
+        list.forEach(item -> OreDictionary.registerOre(TagManager.getTag(item.id(), EnumTagType.OREDICT_NAME), (Item) item));
+
     }
 
     /** Sets up all of the model information for this item. This is called multiple times, and you *must* make sure that
@@ -49,10 +65,9 @@ public interface IItemBuildCraft {
         addModelVariants(variants);
         for (int key : variants.keys()) {
             ModelResourceLocation variant = variants.get(key);
-            if (ItemManager.DEBUG) {
+            if (DEBUG) {
                 BCLog.logger.info("[lib.item][" + thisItem.getRegistryName() + "] Registering a variant " + variant + " for damage " + key);
             }
-            //ModelBakery.registerItemVariants(thisItem, variant);
             ModelLoader.setCustomModelResourceLocation(thisItem, key, variant);
         }
     }
