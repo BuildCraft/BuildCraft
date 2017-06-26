@@ -119,7 +119,7 @@ public class GuiFillingPlanner extends GuiBC8<ContainerFillingPlanner> {
                 found.set(true);
             }
         });
-        container.addon.markDirty();
+        container.addon.updateBuildingInfo();
         if (!found.get()) {
             super.mouseClicked(mouseX, mouseY, mouseButton);
         }

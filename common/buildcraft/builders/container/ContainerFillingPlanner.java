@@ -70,7 +70,7 @@ public class ContainerFillingPlanner extends ContainerBC_Neptune {
                 inverted = buffer.readBoolean();
                 addon.parameters = parameters;
                 addon.inverted = inverted;
-                addon.markDirty();
+                addon.updateBuildingInfo();
                 WorldSavedDataVolumeBoxes.get(player.world).markDirty();
             }
         }
