@@ -26,10 +26,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 
 import buildcraft.api.schematics.ISchematicEntity;
 
-import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.FluidUtilBC;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.Box;
@@ -51,8 +51,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         return Stream.concat(
             requiredItems == null ? Stream.empty() : requiredItems.stream(),
             requiredFluids == null ? Stream.empty() : requiredFluids.stream()
-                .map(FluidStack::getFluid)
-                .map(BlockUtil::getBucketFromFluid)
+                .map(FluidUtil::getFilledBucket)
         );
     }
 
@@ -87,7 +86,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                     FluidUtilBC.mergeSameFluids(requiredFluids).stream()
                         .map(fluidStack -> tile.getTankManager().drain(fluidStack, true))
                         .map(fluidStack -> {
-                            ItemStack stack = BlockUtil.getBucketFromFluid(fluidStack.getFluid());
+                            ItemStack stack = FluidUtil.getFilledBucket(fluidStack);
                             if (!stack.hasTagCompound()) {
                                 stack.setTagCompound(new NBTTagCompound());
                             }
