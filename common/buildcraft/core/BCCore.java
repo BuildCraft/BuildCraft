@@ -18,8 +18,6 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 
-import buildcraft.api.enums.EnumEngineType;
-
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
 import buildcraft.lib.marker.MarkerCache;
@@ -31,7 +29,6 @@ import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
 import buildcraft.lib.tile.TileBC_Neptune;
 
-import buildcraft.core.block.BlockEngine_BC8;
 import buildcraft.core.list.ListTooltipHandler;
 import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.VolumeCache;
@@ -91,9 +88,6 @@ public class BCCore {
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
-        BlockEngine_BC8 engine = (BlockEngine_BC8) BCCoreBlocks.engine;
-        engine.registerEngine(EnumEngineType.WOOD, TileEngineRedstone_BC8::new);
-        engine.registerEngine(EnumEngineType.CREATIVE, TileEngineCreative::new);
         BCLibItems.guide.setCreativeTab(CreativeTabManager.getTab("buildcraft.main"));
 
         BCCoreProxy.getProxy().fmlInit();

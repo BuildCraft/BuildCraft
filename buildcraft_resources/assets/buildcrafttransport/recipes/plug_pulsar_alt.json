@@ -1,20 +1,15 @@
 {
   "conditions": [
     {
-      "type": "forge:and",
-      "values": [
-        {
-          "type": "engine_registered",
-          "engineType": "WOOD"
-        },
-        {
-          "type": "forge:not",
-          "value": {
-            "type": "mod_loaded",
-            "mod": "buildcraftsilicon"
-          }
-        }
-      ]
+      "type": "engine_registered",
+      "engineType": "WOOD"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "buildcraftsilicon"
+      }
     }
   ],
   "result": {
@@ -31,10 +26,10 @@
     },
     "e": {
       "item": "buildcraftcore:engine",
-      "data": 1
+      "data": 0
     },
     "g": {
-      "item": "#gearItem"
+      "item": "#gearIron"
     },
     "p": {
       "item": "#pulsarPart"

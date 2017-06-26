@@ -75,8 +75,8 @@ public class RegistryHelper {
         listAndRegister(event, list, itemBlocks.toArray(new ItemBlockBC_Neptune[itemBlocks.size()]));
     }
 
-    public static boolean isEnabled(String category, String resourcePath, String langKey) {
-        return isEnabled(getActiveMod(), category, resourcePath, langKey);
+    public static boolean isEnabled(String modid, String category, String resourcePath, String langKey) {
+        return isEnabled(getMod(modid), category, resourcePath, langKey);
     }
 
     // #######################
@@ -93,7 +93,7 @@ public class RegistryHelper {
         }
     }
 
-    private static boolean isEnabled(ModContainer activeMod, String category, String resourcePath, String langKey) {
+    public static boolean isEnabled(ModContainer activeMod, String category, String resourcePath, String langKey) {
         Configuration config = modObjectConfigs.get(activeMod);
         if (config == null) throw new RuntimeException("No config exists for the mod " + activeMod.getModId());
         Property prop = config.get(category, resourcePath, true);
@@ -107,15 +107,6 @@ public class RegistryHelper {
         ModContainer container = Loader.instance().getIndexedModList().get(modid);
         if (container == null) {
             throw new RuntimeException("No mod with an id of \"" + modid + "\" is loaded!");
-        } else {
-            return container;
-        }
-    }
-
-    private static ModContainer getActiveMod() {
-        ModContainer container = Loader.instance().activeModContainer();
-        if (container == null) {
-            throw new RuntimeException("Was not called within the scope of an active mod!");
         } else {
             return container;
         }

@@ -30,6 +30,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+
 import buildcraft.api.blocks.ICustomRotationHandler;
 import buildcraft.api.core.IEngineType;
 
@@ -47,8 +50,17 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     // Engine directly related methods
 
     public void registerEngine(E type, Supplier<? extends TileEngineBase_BC8> constructor) {
-        if (RegistryHelper.isEnabled("engines", getRegistryName() + "/" + type.name().toLowerCase(Locale.ROOT), getUnlocalizedName(type))) {
+        if (RegistryHelper.isEnabled(getActiveMod(),"engines", getRegistryName() + "/" + type.name().toLowerCase(Locale.ROOT), getUnlocalizedName(type))) {
             engineTileConstructors.put(type, constructor);
+        }
+    }
+
+    private static ModContainer getActiveMod() {
+        ModContainer container = Loader.instance().activeModContainer();
+        if (container == null) {
+            throw new RuntimeException("Was not called within the scope of an active mod!");
+        } else {
+            return container;
         }
     }
 

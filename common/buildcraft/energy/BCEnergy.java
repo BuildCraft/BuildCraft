@@ -31,7 +31,6 @@ import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.core.BCCore;
 import buildcraft.core.BCCoreBlocks;
-import buildcraft.core.block.BlockEngine_BC8;
 import buildcraft.energy.generation.BiomeInitializer;
 import buildcraft.energy.generation.BiomeOilDesert;
 import buildcraft.energy.generation.BiomeOilOcean;
@@ -70,12 +69,11 @@ public class BCEnergy {
         BCEnergyRecipes.init();
         BCEnergyProxy.getProxy().fmlInit();
 
-        BlockEngine_BC8 engine = (BlockEngine_BC8) BCCoreBlocks.engine;
         TileBC_Neptune.registerTile(TileEngineStone_BC8.class, "tile.engine.stone");
-        engine.registerEngine(EnumEngineType.STONE, TileEngineStone_BC8::new);
+        BCCoreBlocks.engine.registerEngine(EnumEngineType.STONE, TileEngineStone_BC8::new);
 
         TileBC_Neptune.registerTile(TileEngineIron_BC8.class, "tile.engine.iron");
-        engine.registerEngine(EnumEngineType.IRON, TileEngineIron_BC8::new);
+        BCCoreBlocks.engine.registerEngine(EnumEngineType.IRON, TileEngineIron_BC8::new);
 
         BiomeDictionary.addTypes(
             BiomeOilOcean.INSTANCE,

@@ -1,23 +1,18 @@
 {
   "conditions": [
     {
-      "type": "forge:and",
-      "values": [
-        {
-          "type": "forge:not",
-          "value": {
-            "type": "engine_registered",
-            "engineType": "WOOD"
-          }
-        },
-        {
-          "type": "forge:not",
-          "value": {
-            "type": "mod_loaded",
-            "mod": "buildcraftsilicon5"
-          }
-        }
-      ]
+      "type": "forge:not",
+      "value": {
+        "type": "engine_registered",
+        "engineType": "WOOD"
+      }
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "buildcraftsilicon"
+      }
     }
   ],
   "result": {
@@ -36,7 +31,7 @@
       "item": "minecraft:redstone_block"
     },
     "g": {
-      "item": "#gearItem"
+      "item": "#gearIron"
     },
     "p": {
       "item": "#pulsarPart"
