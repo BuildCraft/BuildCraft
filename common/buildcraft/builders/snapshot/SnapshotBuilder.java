@@ -345,8 +345,6 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                 cancelPlaceTask(placeTask);
             }
         }
-        breakTasks.removeIf(breakTask -> checkResults.get(CheckResult.CORRECT).contains(breakTask.pos));
-        placeTasks.removeIf(placeTask -> checkResults.get(CheckResult.CORRECT).contains(placeTask.pos));
         tile.getWorldBC().profiler.endSection();
 
         boolean isDone = true;
