@@ -26,6 +26,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.expression.ExpressionDebugManager;
+import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.list.ListMatchHandlerFluid;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
@@ -97,6 +98,8 @@ public class BCLib {
         VanillaListHandlers.fmlInit();
         VanillaPaintHandlers.fmlInit();
         VanillaRotationHandlers.fmlInit();
+
+        IItemBuildCraft.registerOredict();
     }
 
     @Mod.EventHandler
