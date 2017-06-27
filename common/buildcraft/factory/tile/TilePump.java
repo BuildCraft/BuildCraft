@@ -107,7 +107,10 @@ public class TilePump extends TileMiner {
                         continue;
                     }
                     if (!checked.contains(offsetPos)) {
-                        if (BlockUtil.getFluidWithFlowing(world, offsetPos) == fluid) {
+                        Fluid drain = BlockUtil.getFluidWithFlowing(world, offsetPos);
+                        if (drain != null &&
+                            fluid != null &&
+                            Objects.equals(drain.getName(), fluid.getName())) {
                             ImmutableList.Builder<BlockPos> pathBuilder = new ImmutableList.Builder<>();
                             pathBuilder.addAll(paths.get(posToCheck));
                             pathBuilder.add(offsetPos);
