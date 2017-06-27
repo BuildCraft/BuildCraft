@@ -8,6 +8,7 @@ package buildcraft.builders.snapshot;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -274,7 +275,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         clientPlaceTasks.clear();
         prevClientPlaceTasks.clear();
         toCheck.clear();
-        checkResults.clear();
+        checkResults.values().forEach(Collection::clear);
         robotPos = null;
         prevRobotPos = null;
         leftToBreak = 0;
