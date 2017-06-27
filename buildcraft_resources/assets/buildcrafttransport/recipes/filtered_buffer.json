@@ -7,7 +7,7 @@
     "wcw",
     "wpw"
   ],
-  "type": "forge:ore_shaped",
+  "type": "buildcraftlib:BC_recipe_shaped",
   "key": {
     "p": {
       "item": "minecraft:piston"

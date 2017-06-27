@@ -6,7 +6,7 @@
   "pattern": [
     "s"
   ],
-  "type": "minecraft:crafting_shaped",
+  "type": "buildcraftlib:BC_recipe_shaped",
   "key": {
     "s": {
       "item": "buildcrafttransport:pipe_structure",

@@ -7,7 +7,7 @@
     "OrO",
     "OgO"
   ],
-  "type": "forge:ore_shaped",
+  "type": "buildcraftlib:BC_recipe_shaped",
   "key": {
     "r": {
       "item": "buildcraftsilicon:redstone_chipset",

@@ -6,7 +6,7 @@
     "g",
     "t"
   ],
-  "type": "minecraft:crafting_shaped",
+  "type": "buildcraftlib:BC_recipe_shaped",
   "key": {
     "t": {
       "item": "minecraft:redstone_torch"

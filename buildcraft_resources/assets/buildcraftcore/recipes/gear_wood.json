@@ -7,7 +7,7 @@
     "o o",
     " o "
   ],
-  "type": "forge:ore_shaped",
+  "type": "buildcraftlib:BC_recipe_shaped",
   "key": {
     "o": {
       "type": "forge:ore_dict",

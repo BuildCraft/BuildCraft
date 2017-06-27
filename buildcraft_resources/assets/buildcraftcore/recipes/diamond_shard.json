@@ -6,7 +6,7 @@
   "pattern": [
     "D"
   ],
-  "type": "minecraft:crafting_shaped",
+  "type": "buildcraftlib:BC_recipe_shaped",
   "key": {
     "D": {
       "item": "minecraft:diamond"

@@ -12,6 +12,8 @@ import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -74,6 +76,14 @@ public class RegistryHelper {
             itemBlocks.add(new ItemBlockBC_Neptune(block));
         }
         listAndRegister(event, list, itemBlocks.toArray(new ItemBlockBC_Neptune[itemBlocks.size()]));
+    }
+
+    public static boolean isEnabled(ItemStack stack) {
+        Item item = stack.getItem();
+        if (item instanceof ItemBlock) {
+            return isEnabled(((ItemBlock) item).getBlock());
+        }
+        return isEnabled(item);
     }
 
     public static boolean isEnabled(Item item) {

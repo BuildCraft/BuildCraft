@@ -2,7 +2,7 @@
   "result": {
     "item": "buildcrafttransport:waterproof"
   },
-  "type": "minecraft:crafting_shapeless",
+  "type": "buildcraftlib:BC_recipe_shapeless",
   "ingredients": [
     {
       "item": "#sealant"

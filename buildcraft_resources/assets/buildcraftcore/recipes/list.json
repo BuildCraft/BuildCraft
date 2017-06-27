@@ -16,7 +16,7 @@
     "pGp",
     "ppp"
   ],
-  "type": "minecraft:crafting_shaped",
+  "type": "buildcraftlib:BC_recipe_shaped",
   "key": {
     "p": {
       "item": "minecraft:paper"
