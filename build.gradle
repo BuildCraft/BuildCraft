@@ -178,10 +178,9 @@ def parseConfig(File config) {
     }
 }
 
-def libsDir = new File(file(System.getenv("LIBS_DIR") ?: "build/libs/"), version)
+def libsDir = new File(System.getenv("LIBS_DIR") ?: "build/libs/", version)
 def modulesDir = new File(libsDir, "modules")
 def modulesDirSrc = new File(modulesDir, "src")
-System.out.println(libsDir)
 
 // add a source jar
 //task sourceJar(type: Jar) {
