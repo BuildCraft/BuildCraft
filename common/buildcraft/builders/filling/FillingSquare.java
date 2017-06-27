@@ -8,6 +8,7 @@ package buildcraft.builders.filling;
 
 import net.minecraft.util.math.BlockPos;
 
+@SuppressWarnings("WeakerAccess")
 public class FillingSquare {
     public static boolean[][][] get(BlockPos size,
                                     EnumParameterType parameterType,
