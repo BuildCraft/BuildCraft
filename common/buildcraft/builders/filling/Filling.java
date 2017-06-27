@@ -154,7 +154,7 @@ public class Filling {
     }
 
     public static boolean[][][] generateFillingPlanByFunction(BlockPos size,
-                                                       Function<BlockPos, Boolean> function) {
+                                                              Function<BlockPos, Boolean> function) {
         boolean[][][] fillingPlan = new boolean[size.getX()][size.getY()][size.getZ()];
         for (int z = 0; z < size.getZ(); z++) {
             for (int y = 0; y < size.getY(); y++) {
@@ -167,8 +167,8 @@ public class Filling {
     }
 
     public static boolean[][][] generateFillingPlanByFunctionInAxis(BlockPos size,
-                                                             EnumFacing.Axis axis,
-                                                             BiFunction<Point2i, Point2i, Boolean> function) {
+                                                                    EnumFacing.Axis axis,
+                                                                    BiFunction<Point2i, Point2i, Boolean> function) {
         switch (axis) {
             case X:
                 return generateFillingPlanByFunction(size, pos -> function.apply(
@@ -191,8 +191,8 @@ public class Filling {
     }
 
     public static boolean[][][] generateFillingPlanByFunctionInAxis(BlockPos size,
-                                                             EnumFacing.Axis axis,
-                                                             BiConsumer<Point2i, boolean[][]> function) {
+                                                                    EnumFacing.Axis axis,
+                                                                    BiConsumer<Point2i, boolean[][]> function) {
         Point2i flatSize;
         switch (axis) {
             case X:
@@ -253,11 +253,15 @@ public class Filling {
         if (parameterPattern == EnumParameterPattern.CIRCLE) {
             EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
             EnumParameterAxis parameterAxis = (EnumParameterAxis) parameters.get(2);
-            return FillingCircle.get(size, parameterType, parameterAxis);
+            return FillingCircle.getCircle(size, parameterType, parameterAxis);
         }
         if (parameterPattern == EnumParameterPattern.FRAME) {
             EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
             return FillingFrame.get(size, parameterType);
+        }
+        if (parameterPattern == EnumParameterPattern.SPHERE) {
+            EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
+            return FillingCircle.getSphere(size, parameterType);
         }
         return generateFillingPlanByFunction(size, pos -> false);
     }

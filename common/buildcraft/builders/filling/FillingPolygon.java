@@ -15,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import buildcraft.lib.misc.DrawingUtil;
 import buildcraft.lib.misc.MathUtil;
 
+@SuppressWarnings("WeakerAccess")
 public class FillingPolygon {
     public static boolean[][][] get(BlockPos size,
                                     EnumParameterType parameterType,

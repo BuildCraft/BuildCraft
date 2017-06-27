@@ -20,6 +20,8 @@ public class DrawingUtil {
                                    int ry,
                                    boolean filled,
                                    BiConsumer<Integer, Integer> drawPixel) {
+        rx = Math.max(1, rx);
+        ry = Math.max(1, ry);
         int rx2 = rx * rx;
         int ry2 = ry * ry;
 

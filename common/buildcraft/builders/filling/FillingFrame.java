@@ -8,6 +8,7 @@ package buildcraft.builders.filling;
 
 import net.minecraft.util.math.BlockPos;
 
+@SuppressWarnings("WeakerAccess")
 public class FillingFrame {
     public static boolean[][][] get(BlockPos size,
                                     EnumParameterType parameterType) {
