@@ -27,7 +27,6 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
-import buildcraft.api.fuels.ICoolant;
 import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.IFuelManager.IDirtyFuel;
 import buildcraft.api.fuels.ISolidCoolant;
@@ -81,12 +80,15 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
 
     public TileEngineIron_BC8() {
         // TODO: Auto list of example fuels!
-        tankFuel.helpInfo = new ElementHelpInfo(tankFuel.helpInfo.title, 0xFF_FF_33_33, Tank.DEFAULT_HELP_KEY, null, "buildcraft.help.tank.fuel");
+        tankFuel.helpInfo = new ElementHelpInfo(tankFuel.helpInfo.title, 0xFF_FF_33_33, Tank.DEFAULT_HELP_KEY, null,
+            "buildcraft.help.tank.fuel");
 
         // TODO: Auto list of example coolants!
-        tankCoolant.helpInfo = new ElementHelpInfo(tankCoolant.helpInfo.title, 0xFF_55_55_FF, Tank.DEFAULT_HELP_KEY, null, "buildcraft.help.tank.coolant");
+        tankCoolant.helpInfo = new ElementHelpInfo(tankCoolant.helpInfo.title, 0xFF_55_55_FF, Tank.DEFAULT_HELP_KEY,
+            null, "buildcraft.help.tank.coolant");
 
-        tankResidue.helpInfo = new ElementHelpInfo(tankResidue.helpInfo.title, 0xFF_AA_33_AA, Tank.DEFAULT_HELP_KEY, null, "buildcraft.help.tank.residue");
+        tankResidue.helpInfo = new ElementHelpInfo(tankResidue.helpInfo.title, 0xFF_AA_33_AA, Tank.DEFAULT_HELP_KEY,
+            null, "buildcraft.help.tank.residue");
 
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, fluidHandler, EnumPipePart.VALUES);
     }
@@ -143,13 +145,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
                 return false;
             }
             if (!world.isRemote) {
-                if (FluidUtil.interactWithFluidHandler(
-                    player,
-                    hand,
-                    world,
-                    pos,
-                    side
-                )) {
+                if (FluidUtil.interactWithFluidHandler(player, hand, world, pos, side)) {
                     return true;
                 }
             }
@@ -192,11 +188,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     protected void burn() {
         FluidStack fuel = this.tankFuel.getFluid();
         if (currentFuel == null) {
-            if (fuel == null) {
-                currentFuel = null;
-            } else {
-                currentFuel = BuildcraftFuelRegistry.fuel.getFuel(fuel.getFluid());
-            }
+            currentFuel = BuildcraftFuelRegistry.fuel.getFuel(fuel);
         }
 
         if (currentFuel == null) {
@@ -269,10 +261,9 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
                     // fillCoolingBuffer();
                     {
                         if (tankCoolant.getFluidAmount() > 0) {
-                            ICoolant coolant = BuildcraftFuelRegistry.coolant.getCoolant(tankCoolant.getFluidType());
-                            if (coolant != null) {
-                                float coolPerMb = coolant.getDegreesCoolingPerMB((float) heat);
-
+                            float coolPerMb =
+                                BuildcraftFuelRegistry.coolant.getDegreesPerMb(tankCoolant.getFluid(), (float) heat);
+                            if (coolPerMb > 0) {
                                 int coolantAmount = Math.min(MAX_COOLANT_PER_TICK, tankCoolant.getFluidAmount());
                                 float cooling = coolPerMb;
                                 // cooling /= getBiomeTempScalar();
@@ -343,11 +334,11 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     // Fluid related
 
     private boolean isValidFuel(FluidStack fluid) {
-        return BuildcraftFuelRegistry.fuel.getFuel(fluid.getFluid()) != null;
+        return BuildcraftFuelRegistry.fuel.getFuel(fluid) != null;
     }
 
     private boolean isValidCoolant(FluidStack fluid) {
-        return BuildcraftFuelRegistry.coolant.getCoolant(fluid.getFluid()) != null;
+        return BuildcraftFuelRegistry.coolant.getCoolant(fluid) != null;
     }
 
     private boolean isResidue(FluidStack fluid) {

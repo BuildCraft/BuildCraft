@@ -27,6 +27,7 @@ import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.api.recipes.IRefineryRecipeManager;
 import buildcraft.api.recipes.IRefineryRecipeManager.IDistillationRecipe;
 import buildcraft.api.tiles.IDebuggable;
 
@@ -67,7 +68,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
     public static final long MAX_MJ_PER_TICK = 6 * MjAPI.MJ;
 
     public final Tank tankIn = new Tank("in", 4 * Fluid.BUCKET_VOLUME, this);
-    public final Tank tankOutGas = new Tank("out_gas", 4 * Fluid.BUCKET_VOLUME, this);
+    public final Tank tankOutGas = new Tank("out_gas", 4 * Fluid.BUCKET_VOLUME, this, this::isDistillable);
     public final Tank tankOutLiquid = new Tank("out_liquid", 4 * Fluid.BUCKET_VOLUME, this);
     public final TankManager<Tank> tankManager = new TankManager<>(tankIn, tankOutGas, tankOutLiquid);
 
@@ -140,6 +141,11 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
                 powerAvgClient = buffer.readLong();
             }
         }
+    }
+
+    private boolean isDistillable(FluidStack fluid) {
+        IRefineryRecipeManager manager = BuildcraftRecipeRegistry.refineryRecipes;
+        return manager.getDistilationRegistry().getRecipeForInput(fluid) != null;
     }
 
     public static void setClientModelVariablesForItem() {

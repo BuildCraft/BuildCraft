@@ -12,18 +12,14 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
-import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.lists.ListMatchHandler;
 
 import buildcraft.lib.misc.StackUtil;

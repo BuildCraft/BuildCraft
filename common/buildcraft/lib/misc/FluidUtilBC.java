@@ -14,6 +14,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
@@ -120,5 +121,12 @@ public class FluidUtilBC {
 
     public static boolean areFluidStackEqual(FluidStack a, FluidStack b) {
         return (a == null && b == null) || (a != null && a.isFluidEqual(b) && a.amount == b.amount);
+    }
+
+    public static boolean areFluidsEqual(Fluid a, Fluid b) {
+        if (a == null || b == null) {
+            return a == b;
+        }
+        return a.getName().equals(b.getName());
     }
 }

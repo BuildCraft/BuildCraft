@@ -12,7 +12,6 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.fuels.ICoolant;
@@ -38,7 +37,7 @@ public enum CoolantRegistry implements ICoolantManager {
     }
 
     @Override
-    public ICoolant addCoolant(Fluid fluid, float degreesCoolingPerMB) {
+    public ICoolant addCoolant(FluidStack fluid, float degreesCoolingPerMB) {
         return addCoolant(new Coolant(fluid, degreesCoolingPerMB));
     }
 
@@ -58,13 +57,30 @@ public enum CoolantRegistry implements ICoolantManager {
     }
 
     @Override
-    public ICoolant getCoolant(Fluid fluid) {
+    public ICoolant getCoolant(FluidStack fluid) {
+        if (fluid == null || fluid.amount == 0) {
+            return null;
+        }
         for (ICoolant coolant : coolants) {
-            if (coolant.getFluid() == fluid) {
+            if (coolant.matchesFluid(fluid)) {
                 return coolant;
             }
         }
         return null;
+    }
+
+    @Override
+    public float getDegreesPerMb(FluidStack fluid, float heat) {
+        if (fluid == null || fluid.amount == 0) {
+            return 0;
+        }
+        for (ICoolant coolant : coolants) {
+            float degrees = coolant.getDegreesCoolingPerMB(fluid, heat);
+            if (degrees > 0) {
+                return degrees;
+            }
+        }
+        return 0;
     }
 
     @Override
@@ -77,23 +93,26 @@ public enum CoolantRegistry implements ICoolantManager {
         return null;
     }
 
-    private static class Coolant implements ICoolant {
-        private final Fluid fluid;
+    public static class Coolant implements ICoolant {
+        private final FluidStack fluid;
         private final float degreesCoolingPerMB;
 
-        public Coolant(Fluid fluid, float degreesCoolingPerMB) {
+        public Coolant(FluidStack fluid, float degreesCoolingPerMB) {
             this.fluid = fluid;
             this.degreesCoolingPerMB = degreesCoolingPerMB;
         }
 
         @Override
-        public Fluid getFluid() {
-            return fluid;
+        public boolean matchesFluid(FluidStack stack) {
+            return fluid.isFluidEqual(stack);
         }
 
         @Override
-        public float getDegreesCoolingPerMB(float heat) {
-            return degreesCoolingPerMB;
+        public float getDegreesCoolingPerMB(FluidStack stack, float heat) {
+            if (matchesFluid(stack)) {
+                return degreesCoolingPerMB;
+            }
+            return 0;
         }
     }
 

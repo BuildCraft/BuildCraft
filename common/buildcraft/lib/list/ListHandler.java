@@ -198,7 +198,7 @@ public final class ListHandler {
                     }
                 }
             }
-//            Collections.shuffle(stackList);
+            Collections.shuffle(stackList);
             return stackList;
         }
     }
