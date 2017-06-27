@@ -4,6 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.fluid;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,7 +33,7 @@ public class SingleUseTank extends Tank {
             acceptedFluid = resource.getFluid();
         }
 
-        if (acceptedFluid == null || acceptedFluid == resource.getFluid()) {
+        if (acceptedFluid == null || Objects.equals(acceptedFluid.getName(), resource.getFluid().getName())) {
             return super.fill(resource, doFill);
         }
 

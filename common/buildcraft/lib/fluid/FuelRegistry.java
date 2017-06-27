@@ -9,6 +9,7 @@ package buildcraft.lib.fluid;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -46,9 +47,11 @@ public enum FuelRegistry implements IFuelManager {
 
     @Override
     public IFuel getFuel(Fluid fluid) {
-        for (IFuel fuel : fuels) {
-            if (fuel.getFluid() == fluid) {
-                return fuel;
+        if (fluid != null) {
+            for (IFuel fuel : fuels) {
+                if (Objects.equals(fuel.getFluid().getName(), fluid.getName())) {
+                    return fuel;
+                }
             }
         }
         return null;

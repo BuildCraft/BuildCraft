@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
@@ -126,7 +127,7 @@ public class TilePump extends TileMiner {
 
     private boolean canDrain(BlockPos blockPos) {
         Fluid fluid = BlockUtil.getFluid(world, blockPos);
-        return tank.isEmpty() ? fluid != null : fluid == tank.getFluidType();
+        return fluid != null && (tank.isEmpty() || Objects.equals(fluid.getName(), tank.getFluidType().getName()));
     }
 
     private void nextPos() {
@@ -180,11 +181,12 @@ public class TilePump extends TileMiner {
                         tank.fillInternal(drain, true);
                         progress = 0;
                         int count = 0;
-                        if (drain.getFluid() == FluidRegistry.WATER) {
+                        if (Objects.equals(drain.getFluid().getName(), FluidRegistry.WATER.getName())) {
                             for (int x = -1; x <= 1; x++) {
                                 for (int z = -1; z <= 1; z++) {
                                     BlockPos waterPos = currentPos.add(new BlockPos(x, 0, z));
-                                    if (BlockUtil.getFluid(world, waterPos) == FluidRegistry.WATER) {
+                                    Fluid fluid = BlockUtil.getFluid(world, waterPos);
+                                    if (fluid != null && Objects.equals(fluid.getName(), FluidRegistry.WATER.getName())) {
                                         count++;
                                     }
                                 }

@@ -43,7 +43,7 @@ import buildcraft.lib.misc.VecUtil;
 // TODO: thread safety (per thread context?)
 public class FluidRenderer {
 
-    private static final EnumMap<FluidSpriteType, Map<Fluid, TextureAtlasSprite>> fluidSprites = new EnumMap<>(FluidSpriteType.class);
+    private static final EnumMap<FluidSpriteType, Map<String, TextureAtlasSprite>> fluidSprites = new EnumMap<>(FluidSpriteType.class);
     public static final MutableVertex vertex = new MutableVertex();
     private static final boolean[] DEFAULT_FACES = { true, true, true, true, true, true };
 
@@ -70,22 +70,22 @@ public class FluidRenderer {
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
             ResourceLocation still = fluid.getStill();
             if (spritesStitched.containsKey(still)) {
-                fluidSprites.get(FluidSpriteType.FROZEN).put(fluid, spritesStitched.get(still));
+                fluidSprites.get(FluidSpriteType.FROZEN).put(fluid.getName(), spritesStitched.get(still));
             } else {
                 SpriteFluidFrozen spriteFrozen = new SpriteFluidFrozen(still);
                 spritesStitched.put(still, spriteFrozen);
                 if (!map.setTextureEntry(spriteFrozen)) {
                     throw new IllegalStateException("Failed to set the frozen variant of " + still + "!");
                 }
-                fluidSprites.get(FluidSpriteType.FROZEN).put(fluid, spriteFrozen);
+                fluidSprites.get(FluidSpriteType.FROZEN).put(fluid.getName(), spriteFrozen);
             }
         }
     }
 
     public static void onTextureStitchPost(TextureMap map) {
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
-            fluidSprites.get(FluidSpriteType.STILL).put(fluid, map.registerSprite(fluid.getStill()));
-            fluidSprites.get(FluidSpriteType.FLOWING).put(fluid, map.registerSprite(fluid.getFlowing()));
+            fluidSprites.get(FluidSpriteType.STILL).put(fluid.getName(), map.registerSprite(fluid.getStill()));
+            fluidSprites.get(FluidSpriteType.FLOWING).put(fluid.getName(), map.registerSprite(fluid.getFlowing()));
         }
     }
 
@@ -156,7 +156,7 @@ public class FluidRenderer {
         if (type == null) {
             type = FluidSpriteType.STILL;
         }
-        sprite = fluidSprites.get(type).get(fluid.getFluid());
+        sprite = fluidSprites.get(type).get(fluid.getFluid().getName());
         if (sprite == null) {
             sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
         }
@@ -263,7 +263,7 @@ public class FluidRenderer {
      * {@link GuiUtil}'s fluid drawing methods in preference to this. */
     public static void drawFluidForGui(FluidStack fluid, int startX, int startY, int endX, int endY) {
 
-        sprite = FluidRenderer.fluidSprites.get(FluidSpriteType.STILL).get(fluid.getFluid());
+        sprite = FluidRenderer.fluidSprites.get(FluidSpriteType.STILL).get(fluid.getFluid().getName());
         if (sprite == null) {
             sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
         }

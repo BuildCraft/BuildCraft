@@ -9,6 +9,7 @@ package buildcraft.lib.fluid;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import net.minecraft.item.ItemStack;
 
@@ -59,9 +60,11 @@ public enum CoolantRegistry implements ICoolantManager {
 
     @Override
     public ICoolant getCoolant(Fluid fluid) {
-        for (ICoolant coolant : coolants) {
-            if (coolant.getFluid() == fluid) {
-                return coolant;
+        if (fluid != null) {
+            for (ICoolant coolant : coolants) {
+                if (Objects.equals(coolant.getFluid().getName(), fluid.getName())) {
+                    return coolant;
+                }
             }
         }
         return null;

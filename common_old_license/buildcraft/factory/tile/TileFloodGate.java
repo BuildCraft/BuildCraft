@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -115,7 +116,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                     Block block = blockState.getBlock();
                     Fluid fluid = BlockUtil.getFluidWithFlowing(block);
 
-                    boolean isCurrentFluid = this.tank.getFluidType() != null && this.tank.getFluidType() == fluid;
+                    boolean isCurrentFluid = this.tank.getFluidType() != null && fluid != null && Objects.equals(this.tank.getFluidType().getName(), fluid.getName());
 
                     if (world.isAirBlock(currentPos) || block instanceof BlockFloodGate || isCurrentFluid) {
                         blocksFound.add(currentPos);
