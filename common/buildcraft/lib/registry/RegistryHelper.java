@@ -10,6 +10,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 
 import net.minecraftforge.common.config.Configuration;
@@ -75,7 +76,14 @@ public class RegistryHelper {
         listAndRegister(event, list, itemBlocks.toArray(new ItemBlockBC_Neptune[itemBlocks.size()]));
     }
 
-    public static boolean isEnabled(String modid, String category, String resourcePath, String langKey) {
+    public static boolean isEnabled(Item item) {
+        return isEnabled(item.getRegistryName().getResourceDomain(), getCategory(item), item.getRegistryName().getResourcePath(), item.getUnlocalizedName() + ".name");
+    }
+    public static boolean isEnabled(Block block) {
+        return isEnabled(block.getRegistryName().getResourceDomain(), getCategory(block), block.getRegistryName().getResourcePath(), block.getUnlocalizedName() + ".name");
+    }
+
+    private static boolean isEnabled(String modid, String category, String resourcePath, String langKey) {
         return isEnabled(getMod(modid), category, resourcePath, langKey);
     }
 
@@ -85,9 +93,11 @@ public class RegistryHelper {
     //
     // #######################
 
-    private static String getCategory(Item item) {
+    private static String getCategory(Object item) {
         if (item instanceof IItemPipe) {
             return "pipes";
+        } else if (item instanceof Block) {
+            return "blocks";
         } else {
             return "items";
         }
