@@ -170,7 +170,6 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
         tooltips.drawForeground(lastPartialTicks);
 
-        renderHoveredToolTip(mouseX, mouseY);
         GlStateManager.translate(guiLeft, guiTop, 0);
     }
 
@@ -237,6 +236,13 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
         ledgersLeft.onMouseReleased(state);
         ledgersRight.onMouseReleased(state);
+    }
+
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        this.drawDefaultBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
     }
 
     protected void drawBackgroundLayer(float partialTicks) {
