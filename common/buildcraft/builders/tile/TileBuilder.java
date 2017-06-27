@@ -122,19 +122,19 @@ public class TileBuilder extends TileBC_Neptune
     protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, @Nonnull ItemStack before,
         @Nonnull ItemStack after) {
         if (itemHandler == invSnapshot) {
-            currentBasePosIndex = 0;
-            snapshot = null;
-            if (after.getItem() instanceof ItemSnapshot) {
-                Snapshot.Header header = BCBuildersItems.snapshot.getHeader(after);
-                if (header != null) {
-                    Snapshot newSnapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(header);
-                    if (newSnapshot != null) {
-                        snapshot = newSnapshot;
+            if (!world.isRemote) {
+                currentBasePosIndex = 0;
+                snapshot = null;
+                if (after.getItem() instanceof ItemSnapshot) {
+                    Snapshot.Header header = BCBuildersItems.snapshot.getHeader(after);
+                    if (header != null) {
+                        Snapshot newSnapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(header);
+                        if (newSnapshot != null) {
+                            snapshot = newSnapshot;
+                        }
                     }
                 }
-            }
-            updateSnapshot();
-            if (!world.isRemote) {
+                updateSnapshot();
                 sendNetworkUpdate(NET_SNAPSHOT_TYPE);
             }
         }

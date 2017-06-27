@@ -209,7 +209,12 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
 
     private void setStackInternal(int slot, @Nonnull ItemStack stack) {
         ItemStack before = stacks.get(slot);
-        if (!ItemStack.areItemStacksEqual(before, stack)) {
+        if (ItemStack.areItemStacksEqual(before, stack)) {
+            // Called by some things for the callback -- it may have changed previously
+            if (callback != null) {
+                callback.onStackChange(this, slot, before, asValid(stack));
+            }
+        } else {
             stacks.set(slot, asValid(stack));
             // Transactor calc
             if (stack.isEmpty() && firstUsed == slot) {
