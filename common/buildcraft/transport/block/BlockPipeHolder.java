@@ -65,7 +65,6 @@ import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.prop.UnlistedNonNullProperty;
 
 import buildcraft.transport.BCTransportItems;
-import buildcraft.transport.BCTransportPlugs;
 import buildcraft.transport.item.ItemWire;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.tile.TilePipeHolder;
@@ -733,7 +732,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         TilePipeHolder tile = getPipe(world, pos, false);
         if (tile != null) {
             PipePluggable pluggable = tile.getPluggable(side.getOpposite());
-            return pluggable != null && pluggable.definition == BCTransportPlugs.gate;
+            return pluggable != null && pluggable.canConnectToRedstone(side);
         }
         return false;
     }
