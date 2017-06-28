@@ -1,7 +1,9 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
+/*
+ * Copyright (c) 2016 SpaceToad and the BuildCraft team
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 package buildcraft.lib.fluid;
 
 import java.util.HashMap;
@@ -59,8 +61,8 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
     @Nonnull
     private final Predicate<FluidStack> filter;
 
-    private NetworkedFluidStackCache.Link clientFluid = null;
-    private int clientAmount = 0;
+    NetworkedFluidStackCache.Link clientFluid = null;
+    int clientAmount = 0;
 
     public ElementHelpInfo helpInfo;
 
@@ -80,7 +82,8 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
         this.name = name;
         this.tile = tile;
         this.filter = filter == null ? ((f) -> true) : filter;
-        helpInfo = new ElementHelpInfo("buildcraft.help.tank.title." + name, 0xFF_00_00_00 | name.hashCode(), DEFAULT_HELP_KEY);
+        helpInfo = new ElementHelpInfo("buildcraft.help.tank.title." + name, 0xFF_00_00_00 | name.hashCode(),
+            DEFAULT_HELP_KEY);
     }
 
     @Nonnull
@@ -270,7 +273,8 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
                     hasFilled = true;
                     int reallyAccepted = fill(result.fluidStack, true);
                     if (reallyAccepted != accepted) {
-                        throw new IllegalStateException("We seem to be buggy! (accepted = " + accepted + ", reallyAccepted = " + reallyAccepted + ")");
+                        throw new IllegalStateException("We seem to be buggy! (accepted = " + accepted
+                            + ", reallyAccepted = " + reallyAccepted + ")");
                     }
                     held.shrink(1);
                     if (isSurvival) {
@@ -295,7 +299,8 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
             if (hasFilled) {
                 FluidStack fl = getFluid();
                 if (fl != null) {
-                    SoundEvent sound = fl.getFluid().getEmptySound(container.player.world, container.player.getPosition());
+                    SoundEvent sound =
+                        fl.getFluid().getEmptySound(container.player.world, container.player.getPosition());
                     container.player.world.playSound(null, player.getPosition(), sound, SoundCategory.BLOCKS, 1, 1);
                 }
                 return;
@@ -318,7 +323,8 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
                 player.inventory.setItemStack(filledContainer);
                 ((EntityPlayerMP) player).updateHeldItem();
             }
-            SoundEvent sound = reallyDrained.getFluid().getFillSound(container.player.world, container.player.getPosition());
+            SoundEvent sound =
+                reallyDrained.getFluid().getFillSound(container.player.world, container.player.getPosition());
             container.player.world.playSound(null, player.getPosition(), sound, SoundCategory.BLOCKS, 1, 1);
         }
     }

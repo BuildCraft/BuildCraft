@@ -140,7 +140,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         EnumFacing facing = state.getValue(BlockBCBase_Neptune.PROP_FACING);
         int middles = 0;
         BlockPos search = getPos();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i <= 3; i++) {
             search = search.offset(facing);
             state = getLocalState(search);
             if (state.getBlock() != BCFactoryBlocks.heatExchangeMiddle) {

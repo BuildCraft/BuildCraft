@@ -27,6 +27,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.render.fluid.FluidSpriteType;
+import buildcraft.lib.fluid.FluidSmoother.SmoothedFluid;
 import buildcraft.lib.fluid.Tank;
 
 import buildcraft.factory.tile.TileTank;
@@ -41,7 +42,7 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
 
     @Override
     public void renderTileEntityAt(TileTank tile, double x, double y, double z, float partialTicks, int destroyStage) {
-        FluidStack forRender = tile.tank.getFluidForRender();
+        SmoothedFluid forRender = tile.getFluidForRender(partialTicks);
         if (forRender == null) {
             return;
         }
@@ -67,12 +68,13 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
 
         Vec3d min = connectedDown ? MIN_CONNECTED : MIN;
         Vec3d max = connectedUp ? MAX_CONNECTED : MAX;
-        int blocklight = forRender.getFluid().getLuminosity(forRender);
+        FluidStack fluid = forRender.fluid;
+        int blocklight = fluid.getFluid().getLuminosity(fluid);
         int combinedLight = tile.getWorld().getCombinedLight(tile.getPos(), blocklight);
 
         FluidRenderer.vertex.lighti(combinedLight);
 
-        FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, tile.getFluidAmountForRender(partialTicks), tile.tank.getCapacity(), min, max, vb, sideRender);
+        FluidRenderer.renderFluid(FluidSpriteType.STILL, fluid, forRender.amount, tile.tank.getCapacity(), min, max, vb, sideRender);
 
         // buffer finish
         vb.setTranslation(0, 0, 0);
