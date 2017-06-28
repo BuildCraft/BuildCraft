@@ -485,7 +485,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     @Override
     public boolean setRedstoneOutput(EnumFacing side, int value) {
         if (side == null) {
-            for (EnumFacing facing : EnumFacing.values()) {
+            for (EnumFacing facing : EnumFacing.VALUES) {
                 redstoneValues[facing.ordinal()] = value;
             }
         } else {
