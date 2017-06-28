@@ -72,8 +72,6 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
         }
     }
 
-
-
     protected int getRGSOSlot() {
         return 0;
     }
