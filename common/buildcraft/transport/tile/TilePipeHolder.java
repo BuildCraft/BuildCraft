@@ -156,7 +156,11 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         }
         wireManager.readFromNbt(nbt.getCompoundTag("wireManager"));
         if (nbt.hasKey("redstone"))  {
-            redstoneValues = nbt.getIntArray("redstone");
+
+            int[] temp = nbt.getIntArray("redstone");
+            if (temp.length == 6) {
+                redstoneValues = temp;
+            }
         }
     }
 
