@@ -15,7 +15,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.EntityLivingBase;
@@ -72,6 +71,8 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     public static final int NET_UPDATE_PLUG_EAST = getReceiverId(PipeMessageReceiver.PLUGGABLE_EAST);
     public static final int NET_UPDATE_WIRES = getReceiverId(PipeMessageReceiver.WIRES);
 
+    private int[] redstoneValues = new int[6];
+
     static {
         for (PipeMessageReceiver rec : PipeMessageReceiver.VALUES) {
             IDS.allocId("UPDATE_" + rec);
@@ -126,6 +127,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             nbt.setTag("plugs", plugs);
         }
         nbt.setTag("wireManager", wireManager.writeToNbt());
+        nbt.setIntArray("redstone", redstoneValues);
         return nbt;
     }
 
@@ -151,6 +153,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             pluggables.get(face).readFromNbt(plugs.getCompoundTag(face.getName()));
         }
         wireManager.readFromNbt(nbt.getCompoundTag("wireManager"));
+        if (nbt.hasKey("redstone"))  {
+            redstoneValues = nbt.getIntArray("redstone");
+        }
     }
 
     // Misc
@@ -470,7 +475,20 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
 
     @Override
     public boolean setRedstoneOutput(EnumFacing side, int value) {
-        return false;// TODO!
+        if (side == null) {
+            for (EnumFacing facing : EnumFacing.values())
+                setRedstoneOutput(facing, value);
+        } else {
+            if (redstoneValues[side.ordinal()] == value)
+                return true;
+            redstoneValues[side.ordinal()] = value;
+            world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
+        }
+        return true;
+    }
+
+    public int getRedstoneOutput(EnumFacing side) {
+        return redstoneValues[side.ordinal()];
     }
 
     // Caps
