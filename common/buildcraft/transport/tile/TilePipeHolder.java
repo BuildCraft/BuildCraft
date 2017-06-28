@@ -73,7 +73,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     public static final int NET_UPDATE_WIRES = getReceiverId(PipeMessageReceiver.WIRES);
 
     private int[] redstoneValues = new int[6];
-    private int[] oldredstoneValues = new int[]{ -1, -1, -1, -1, -1, -1};
+    private int[] oldRedstoneValues = new int[]{ -1, -1, -1, -1, -1, -1};
 
     static {
         for (PipeMessageReceiver rec : PipeMessageReceiver.VALUES) {
@@ -258,9 +258,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             wireManager.inited = true;
         }
 
-        if (!Arrays.equals(redstoneValues, oldredstoneValues)) {
+        if (!Arrays.equals(redstoneValues, oldRedstoneValues)) {
             world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
-            oldredstoneValues = redstoneValues;
+            oldRedstoneValues = redstoneValues;
         }
     }
 
