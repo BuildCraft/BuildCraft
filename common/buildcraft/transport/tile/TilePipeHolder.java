@@ -9,6 +9,7 @@ package buildcraft.transport.tile;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -72,6 +73,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     public static final int NET_UPDATE_WIRES = getReceiverId(PipeMessageReceiver.WIRES);
 
     private int[] redstoneValues = new int[6];
+    private int[] oldredstoneValues = new int[]{ -1, -1, -1, -1, -1, -1};
 
     static {
         for (PipeMessageReceiver rec : PipeMessageReceiver.VALUES) {
@@ -216,6 +218,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
 
     @Override
     public void update() {
+        redstoneValues = new int[6];
         // Tick objects
         if (pipe != null) {
             pipe.onTick();
@@ -253,6 +256,11 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         if (!wireManager.inited) {
             wireManager.updateBetweens(false);
             wireManager.inited = true;
+        }
+
+        if (!Arrays.equals(redstoneValues, oldredstoneValues)) {
+            world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
+            oldredstoneValues = redstoneValues;
         }
     }
 
@@ -381,6 +389,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     }
 
     public PipePluggable replacePluggable(EnumFacing side, PipePluggable with) {
+        redstoneValues = new int[6];
         PluggableHolder holder = pluggables.get(side);
         PipePluggable old = holder.pluggable;
         holder.pluggable = with;
@@ -476,13 +485,11 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     @Override
     public boolean setRedstoneOutput(EnumFacing side, int value) {
         if (side == null) {
-            for (EnumFacing facing : EnumFacing.values())
-                setRedstoneOutput(facing, value);
+            for (EnumFacing facing : EnumFacing.values()) {
+                redstoneValues[facing.ordinal()] = value;
+            }
         } else {
-            if (redstoneValues[side.ordinal()] == value)
-                return true;
             redstoneValues[side.ordinal()] = value;
-            world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
         }
         return true;
     }
