@@ -4,8 +4,6 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import java.util.ArrayList;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -16,8 +14,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import buildcraft.lib.item.IItemBuildCraft;
-import buildcraft.lib.item.ItemBlockBC_Neptune;
 import buildcraft.lib.registry.RegistryHelper;
 
 import buildcraft.builders.block.BlockArchitectTable;
@@ -31,16 +27,14 @@ import buildcraft.builders.block.BlockReplacer;
 @Mod.EventBusSubscriber(modid = BCBuilders.MODID)
 @GameRegistry.ObjectHolder(BCBuilders.MODID)
 public class BCBuildersBlocks{
-    public static final BlockArchitectTable architect = null;
-    public static final BlockBuilder builder = null;
-    public static final BlockFiller filler = null;
-    public static final BlockElectronicLibrary library = null;
-    public static final BlockReplacer replacer = null;
+    public static final BlockArchitectTable ARCHITECT = null;
+    public static final BlockBuilder BUILDER = null;
+    public static final BlockFiller FILLER = null;
+    public static final BlockElectronicLibrary LIBRARY = null;
+    public static final BlockReplacer REPLACER = null;
 
-    public static final BlockFrame frame = null;
-    public static final BlockQuarry quarry = null;
-
-    private static ArrayList<ItemBlockBC_Neptune> items = new ArrayList<>();
+    public static final BlockFrame FRAME = null;
+    public static final BlockQuarry QUARRY = null;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -60,21 +54,28 @@ public class BCBuildersBlocks{
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        RegistryHelper.listAndRegister(event, items,
-            architect,
-            builder,
-            filler,
-            library,
-            replacer,
-            frame,
-            quarry
+        RegistryHelper.registerItems(event,
+            ARCHITECT,
+            BUILDER,
+            FILLER,
+            LIBRARY,
+            REPLACER,
+            FRAME,
+            QUARRY
         );
 
     }
 
     @SubscribeEvent
     public static void modelRegisterEvent(ModelRegistryEvent event) {
-        items.forEach(IItemBuildCraft::registerVariants);
+        RegistryHelper.registerVariants(
+            ARCHITECT,
+            BUILDER,
+            FILLER,
+            LIBRARY,
+            REPLACER,
+            FRAME,
+            QUARRY);
     }
 
 

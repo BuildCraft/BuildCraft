@@ -168,7 +168,7 @@ public abstract class BCTransportProxy implements IGuiHandler {
                     }
                 }
                 return -1;
-            }, BCTransportBlocks.pipeHolder);
+            }, BCTransportBlocks.PIPE_HOLDER);
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler((item, tintIndex) -> {
                 FullFacadeInstance states = ItemPluggableFacade.getStates(item);
                 FacadePhasedState state = states.getCurrentStateForStack();
@@ -179,7 +179,7 @@ public abstract class BCTransportProxy implements IGuiHandler {
                     //the block didn't like the null world or player
                 }
                 return color;
-            }, BCTransportItems.plugFacade);
+            }, BCTransportItems.PLUG_FACADE);
         }
 
         @Override

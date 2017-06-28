@@ -14,18 +14,16 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.registry.RegistryHelper;
 
 import buildcraft.factory.item.ItemWaterGel;
 @Mod.EventBusSubscriber(modid = BCFactory.MODID)
 @GameRegistry.ObjectHolder(BCFactory.MODID)
 
 public class BCFactoryItems {
-    @GameRegistry.ObjectHolder("plastic_sheet")
-    public static final ItemBC_Neptune plasticSheet = null;
-    @GameRegistry.ObjectHolder("water_gel_spawn")
-    public static final ItemWaterGel waterGel = null;
-    @GameRegistry.ObjectHolder("gel")
-    public static final ItemBC_Neptune gelledWater = null;
+    public static final ItemBC_Neptune PLASTIC_SHEET = null;
+    public static final ItemWaterGel WATER_GEL_SPAWN = null;
+    public static final ItemBC_Neptune GELLED_WATER = null;
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -40,10 +38,10 @@ public class BCFactoryItems {
 
     @SubscribeEvent
     public static void modelRegisterEvent(ModelRegistryEvent event) {
-        if (BCLib.DEV) {
-            plasticSheet.registerVariants();
-        }
-        waterGel.registerVariants();
-        gelledWater.registerVariants();
+        RegistryHelper.registerVariants(
+            WATER_GEL_SPAWN,
+            GELLED_WATER,
+            PLASTIC_SHEET
+        );
     }
 }

@@ -213,7 +213,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                 }
                 double xResult = min.getX() + (max.getX() - min.getX()) * xProgress;
                 double zResult = min.getZ() + (max.getZ() - min.getZ()) * zProgress;
-                ItemStack stack = new ItemStack(BCBuildersBlocks.frame);
+                ItemStack stack = new ItemStack(BCBuildersBlocks.FRAME);
 
                 RenderHelper.disableStandardItemLighting();
                 GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);

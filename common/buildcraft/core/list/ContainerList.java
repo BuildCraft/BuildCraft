@@ -6,7 +6,6 @@
 package buildcraft.core.list;
 
 import java.io.IOException;
-
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -124,7 +123,7 @@ public class ContainerList extends ContainerBC_Neptune {
     }
 
     public void setLabel(final String text) {
-        BCCoreItems.list.setName(getListItemStack(), text);
+        BCCoreItems.LIST.setName(getListItemStack(), text);
 
         if (player.world.isRemote) {
             sendMessage(ID_LABEL, (buffer) -> buffer.writeString(text));

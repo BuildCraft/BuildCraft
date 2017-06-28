@@ -85,7 +85,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     private ItemPaintbrush_BC8.Brush getPaintbrushBrush() {
         ItemStack paintbrush = getPaintbrush();
         if (paintbrush != null) {
-            ItemPaintbrush_BC8.Brush brush = BCCoreItems.paintbrush.getBrushFromStack(paintbrush);
+            ItemPaintbrush_BC8.Brush brush = BCCoreItems.PAINTBRUSH.getBrushFromStack(paintbrush);
             if (brush.colour != null) {
                 return brush;
             }

@@ -110,7 +110,7 @@ public class PluggableFacade extends PipePluggable {
 
     @Override
     public ItemStack getPickStack() {
-        return BCTransportItems.plugFacade.createItemStack(states);
+        return BCTransportItems.PLUG_FACADE.createItemStack(states);
     }
 
     @Override

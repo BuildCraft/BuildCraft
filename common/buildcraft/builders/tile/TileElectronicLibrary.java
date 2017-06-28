@@ -5,7 +5,6 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
-
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
@@ -131,7 +130,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                 }
             }
             if (id == NET_DOWN) {
-                Snapshot.Header header = BCBuildersItems.snapshot.getHeader(invDownIn.getStackInSlot(0));
+                Snapshot.Header header = BCBuildersItems.SNAPSHOT.getHeader(invDownIn.getStackInSlot(0));
                 if (header != null) {
                     Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(header);
                     if (snapshot != null) {
@@ -195,7 +194,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                     invUpIn.setStackInSlot(0, StackUtil.EMPTY);
                     store.snapshots.add(snapshot);
                     store.markDirty();
-                    invUpOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshot.getType(), snapshot.header));
+                    invUpOut.setStackInSlot(0, BCBuildersItems.SNAPSHOT.getUsed(snapshot.getType(), snapshot.header));
                 }
             }
         }

@@ -64,7 +64,7 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         super.render(tile, x, y, z, partialTicks, destroyStage, alpha);
 
         IBlockState state = tile.getWorld().getBlockState(tile.getPos());
-        if (state.getBlock() != BCFactoryBlocks.distiller) {
+        if (state.getBlock() != BCFactoryBlocks.DISTILLER) {
             return;
         }
 

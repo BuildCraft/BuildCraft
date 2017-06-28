@@ -55,7 +55,7 @@ public class PluggableBlocker extends PipePluggable {
 
     @Override
     public ItemStack getPickStack() {
-        return new ItemStack(BCTransportItems.plugBlocker);
+        return new ItemStack(BCTransportItems.PLUG_BLOCKER);
     }
 
     @Override

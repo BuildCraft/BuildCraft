@@ -8,7 +8,6 @@ package buildcraft.factory.tile;
 
 import java.io.IOException;
 import java.util.List;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
@@ -45,7 +44,7 @@ public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable {
     }
 
     private IFluidHandler getTankForSide(EnumFacing side) {
-        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchangeEnd);
+        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.HEAT_EXCHANGE_END);
         if (state == null) {
             return null;
         }
@@ -98,7 +97,7 @@ public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable {
 
     @Nullable
     public IFluidHandler getFluidAutoOutputTarget() {
-        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchangeEnd);
+        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.HEAT_EXCHANGE_END);
         if (state == null) {
             return null;
         }

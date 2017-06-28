@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.state.IBlockState;
@@ -243,7 +242,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     private void finishScanning() {
-        IBlockState thisState = getCurrentStateForBlock(BCBuildersBlocks.architect);
+        IBlockState thisState = getCurrentStateForBlock(BCBuildersBlocks.ARCHITECT);
         if (thisState == null) {
             return;
         }
@@ -275,7 +274,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             stackIn = ItemStack.EMPTY;
         }
         invSnapshotIn.setStackInSlot(0, stackIn);
-        invSnapshotOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshotType, snapshot.header));
+        invSnapshotOut.setStackInSlot(0, BCBuildersItems.SNAPSHOT.getUsed(snapshotType, snapshot.header));
         templateScannedBlocks = null;
         blueprintScannedData = null;
         blueprintScannedEntities.clear();

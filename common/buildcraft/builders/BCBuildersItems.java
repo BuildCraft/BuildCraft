@@ -4,8 +4,6 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import java.util.ArrayList;
-
 import net.minecraft.item.Item;
 
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -15,7 +13,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.lib.BCLib;
-import buildcraft.lib.item.IItemBuildCraft;
+import buildcraft.lib.registry.RegistryHelper;
 
 import buildcraft.builders.item.ItemFillingPlanner;
 import buildcraft.builders.item.ItemSchematicSingle;
@@ -24,13 +22,9 @@ import buildcraft.builders.item.ItemSnapshot;
 @Mod.EventBusSubscriber(modid = BCBuilders.MODID)
 @GameRegistry.ObjectHolder(BCBuilders.MODID)
 public class BCBuildersItems {
-    @GameRegistry.ObjectHolder("schematic_single")
-    public static final ItemSchematicSingle schematicSingle = null;
-    public static final ItemSnapshot snapshot = null;
-    @GameRegistry.ObjectHolder("filling_planner")
-    public static final ItemFillingPlanner fillingPlanner = null;
-
-    private static ArrayList<IItemBuildCraft> items = new ArrayList<>();
+    public static final ItemSchematicSingle SCHEMATIC_SINGLE = null;
+    public static final ItemSnapshot SNAPSHOT = null;
+    public static final ItemFillingPlanner FILLING_PLANNER = null;
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -45,8 +39,10 @@ public class BCBuildersItems {
 
     @SubscribeEvent
     public static void modelRegisterEvent(ModelRegistryEvent event) {
-        schematicSingle.registerVariants();
-        snapshot.registerVariants();
-        fillingPlanner.registerVariants();
+        RegistryHelper.registerVariants(
+            SCHEMATIC_SINGLE,
+            SNAPSHOT,
+            FILLING_PLANNER
+        );
     }
 }

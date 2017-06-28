@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.annotation.Nonnull;
 
 import org.lwjgl.input.Keyboard;
@@ -137,7 +136,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
 
         textField = new GuiTextField(6, this.fontRenderer, guiLeft + 10, guiTop + 10, 156, 12);
         textField.setMaxStringLength(32);
-        textField.setText(BCCoreItems.list.getName(container.getListItemStack()));
+        textField.setText(BCCoreItems.LIST.getName(container.getListItemStack()));
         textField.setFocused(false);
     }
 

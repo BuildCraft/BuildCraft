@@ -48,7 +48,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
     }
 
     private IFluidHandler getTankForSide(EnumFacing side) {
-        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchangeEnd);
+        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.HEAT_EXCHANGE_END);
         if (state == null) {
             return null;
         }
@@ -100,7 +100,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         }
         // TODO (AlexIIL): Make this check passive, not active.
         tileEnd = null;
-        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchangeStart);
+        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.HEAT_EXCHANGE_START);
         if (state == null) {
             return;
         }
@@ -111,10 +111,10 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         for (int i = 0; i < 3; i++) {
             search = search.offset(facing);
             state = getLocalState(search);
-            if (state.getBlock() != BCFactoryBlocks.heatExchangeMiddle) {
+            if (state.getBlock() != BCFactoryBlocks.HEAT_EXCHANGE_MIDDLE) {
                 break;
             }
-            block = BCFactoryBlocks.heatExchangeMiddle;
+            block = BCFactoryBlocks.HEAT_EXCHANGE_MIDDLE;
             if (block.part.getAxis(state) != facing.getAxis()) {
                 return;
             }
@@ -125,7 +125,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         }
         search = search.offset(facing);
         state = getLocalState(search);
-        if (state.getBlock() != BCFactoryBlocks.heatExchangeEnd) {
+        if (state.getBlock() != BCFactoryBlocks.HEAT_EXCHANGE_END) {
             return;
         }
         if (state.getValue(BlockBCBase_Neptune.PROP_FACING) != facing.getOpposite()) {

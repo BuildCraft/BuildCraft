@@ -15,6 +15,6 @@ public class EngineRegisteredFactory implements IConditionFactory {
 
     @Override
     public BooleanSupplier parse(JsonContext context, JsonObject json) {
-        return () -> BCCoreBlocks.engine.isRegistered(EnumEngineType.valueOf(json.get("engineType").getAsString()));
+        return () -> BCCoreBlocks.ENGINE.isRegistered(EnumEngineType.valueOf(json.get("engineType").getAsString()));
     }
 }

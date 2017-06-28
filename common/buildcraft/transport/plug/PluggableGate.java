@@ -193,7 +193,7 @@ public class PluggableGate extends PipePluggable {
 
     @Override
     public ItemStack getPickStack() {
-        return BCTransportItems.plugGate.getStack(logic.variant);
+        return BCTransportItems.PLUG_GATE.getStack(logic.variant);
     }
 
     @Override

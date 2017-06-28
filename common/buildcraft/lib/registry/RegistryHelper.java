@@ -5,9 +5,7 @@
 package buildcraft.lib.registry;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 
 import net.minecraft.block.Block;
@@ -24,6 +22,7 @@ import net.minecraftforge.fml.common.ModContainer;
 import buildcraft.api.transport.pipe.IItemPipe;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.item.ItemBlockBC_Neptune;
 
 public class RegistryHelper {
@@ -60,22 +59,29 @@ public class RegistryHelper {
     //
     // #######################
 
-    public static void listAndRegister(RegistryEvent.Register<Item> event, List<? super ItemBlockBC_Neptune> list, ItemBlockBC_Neptune...blocks) {
-        list.clear();
-        for (ItemBlockBC_Neptune block: blocks) {
-            event.getRegistry().register(block);
-            list.add(block);
+    public static void registerItems(RegistryEvent.Register<Item> event, Object...items) {
+        for (Object o: items) {
+            Item item = null;
+            if (o instanceof Item) {
+                item = (Item) o;
+            } else if (o instanceof BlockBCBase_Neptune) {
+                item = new ItemBlockBC_Neptune((BlockBCBase_Neptune) o);
+            }
+            if (item != null)
+                event.getRegistry().register(item);
         }
     }
 
-    public static void listAndRegister(RegistryEvent.Register<Item> event, List<? super ItemBlockBC_Neptune> list, BlockBCBase_Neptune...blocks) {
-        ArrayList<ItemBlockBC_Neptune> itemBlocks = new ArrayList<>();
-        for (BlockBCBase_Neptune block: blocks) {
-            if (block == null)
-                continue;
-            itemBlocks.add(new ItemBlockBC_Neptune(block));
+    public static void registerVariants(Object...items) {
+        for (Object o : items) {
+            if (o instanceof Block) {
+                o = Item.getItemFromBlock((Block) o);
+            }
+            if (o instanceof IItemBuildCraft) {
+                ((IItemBuildCraft) o).registerVariants();
+            }
+
         }
-        listAndRegister(event, list, itemBlocks.toArray(new ItemBlockBC_Neptune[itemBlocks.size()]));
     }
 
     public static boolean isEnabled(ItemStack stack) {

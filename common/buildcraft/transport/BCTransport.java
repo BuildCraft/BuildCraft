@@ -67,8 +67,8 @@ public class BCTransport {
         // Reload after all of the pipe defs have been created.
         BCTransportConfig.reloadConfig(EnumRestartRequirement.GAME);
 
-        tabPipes.setItem(BCTransportItems.pipeItemDiamond);
-        tabPlugs.setItem(BCTransportItems.plugGate);
+        tabPipes.setItem(BCTransportItems.PIPE_DIAMOND_ITEM);
+        tabPlugs.setItem(BCTransportItems.PLUG_GATE);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCTransportProxy.getProxy());
 
@@ -77,6 +77,9 @@ public class BCTransport {
         MinecraftForge.EVENT_BUS.register(BCTransportEventDist.INSTANCE);
         MessageManager.addMessageType(MessageWireSystems.class, MessageWireSystems.HANDLER, Side.CLIENT);
         MessageManager.addMessageType(MessageWireSystemsPowered.class, MessageWireSystemsPowered.HANDLER, Side.CLIENT);
+
+        BCTransportPipes.preInit();
+        BCTransportPlugs.preInit();
     }
 
     @Mod.EventHandler
@@ -100,10 +103,10 @@ public class BCTransport {
     public static void postInit(FMLPostInitializationEvent evt) {
         BCTransportProxy.getProxy().fmlPostInit();
         FacadeStateManager.postInit();
-        if (BCTransportItems.plugFacade != null) {
+        if (BCTransportItems.PLUG_FACADE != null) {
             FacadeBlockStateInfo state = FacadeStateManager.previewState;
             FullFacadeInstance inst = FullFacadeInstance.createSingle(state, false);
-            tabFacades.setItem(BCTransportItems.plugFacade.createItemStack(inst));
+            tabFacades.setItem(BCTransportItems.PLUG_FACADE.createItemStack(inst));
         }
     }
 

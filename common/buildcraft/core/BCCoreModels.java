@@ -74,7 +74,7 @@ public class BCCoreModels {
         ClientRegistry.bindTileEntitySpecialRenderer(TileMarkerVolume.class, RenderMarkerVolume.INSTANCE);
         ClientRegistry.bindTileEntitySpecialRenderer(TileEngineRedstone_BC8.class, RenderEngineWood.INSTANCE);
         ClientRegistry.bindTileEntitySpecialRenderer(TileEngineCreative.class, RenderEngineCreative.INSTANCE);
-        ModelLoader.setCustomStateMapper(BCCoreBlocks.engine, b -> ImmutableMap.of());
+        ModelLoader.setCustomStateMapper(BCCoreBlocks.ENGINE, b -> ImmutableMap.of());
     }
 
     @SubscribeEvent

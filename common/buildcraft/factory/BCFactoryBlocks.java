@@ -4,8 +4,6 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory;
 
-import java.util.ArrayList;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -17,7 +15,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.lib.BCLib;
-import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.registry.RegistryHelper;
 
 import buildcraft.factory.block.BlockAutoWorkbenchItems;
@@ -34,29 +31,22 @@ import buildcraft.factory.block.BlockWaterGel;
 @Mod.EventBusSubscriber(modid = BCFactory.MODID)
 @GameRegistry.ObjectHolder(BCFactory.MODID)
 public class BCFactoryBlocks {
-    @GameRegistry.ObjectHolder("autoworkbench_item")
-    public static final BlockAutoWorkbenchItems autoWorkbenchItems = null;
-    @GameRegistry.ObjectHolder("mining_well")
-    public static final BlockMiningWell miningWell = null;
-    public static final BlockPump pump = null;
-    public static final BlockTube tube = null;
-    @GameRegistry.ObjectHolder("flood_gate")
-    public static final BlockFloodGate floodGate = null;
-    public static final BlockTank tank = null;
-    public static final BlockChute chute = null;
-    public static final BlockDistiller distiller = null;
-    @GameRegistry.ObjectHolder("heat_exchange_start")
-    public static final BlockHeatExchange heatExchangeStart = null;
-    @GameRegistry.ObjectHolder("heat_exchange_middle")
-    public static final BlockHeatExchange heatExchangeMiddle = null;
-    @GameRegistry.ObjectHolder("heat_exchange_end")
-    public static final BlockHeatExchange heatExchangeEnd = null;
+    public static final BlockAutoWorkbenchItems AUTOWORKBENCH_ITEM = null;
+    public static final BlockMiningWell MINING_WELL = null;
+    public static final BlockPump PUMP = null;
+    public static final BlockTube TUBE = null;
+    public static final BlockFloodGate FLOOD_GATE = null;
+    public static final BlockTank TANK = null;
+    public static final BlockChute CHUTE = null;
+    public static final BlockDistiller DISTILLER = null;
+    public static final BlockHeatExchange HEAT_EXCHANGE_START = null;
+    public static final BlockHeatExchange HEAT_EXCHANGE_MIDDLE = null;
+    public static final BlockHeatExchange HEAT_EXCHANGE_END = null;
 
     // public static Block autoWorkbenchFluids;
     // public static BlockPlastic plastic;
-    public static BlockWaterGel waterGel;
+    public static BlockWaterGel WATER_GEL;
 
-    private static ArrayList<IItemBuildCraft> items = new ArrayList<>();
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -85,22 +75,33 @@ public class BCFactoryBlocks {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        RegistryHelper.listAndRegister(event, items,
-            autoWorkbenchItems,
-            miningWell,
-            pump,
-            floodGate,
-            tank,
-            chute,
-            distiller,
-            heatExchangeStart,
-            heatExchangeMiddle,
-            heatExchangeEnd
+        RegistryHelper.registerItems(event,
+            AUTOWORKBENCH_ITEM,
+            MINING_WELL,
+            PUMP,
+            FLOOD_GATE,
+            TANK,
+            CHUTE,
+            DISTILLER,
+            HEAT_EXCHANGE_START,
+            HEAT_EXCHANGE_MIDDLE,
+            HEAT_EXCHANGE_END
         );
     }
 
     @SubscribeEvent
     public static void modelRegisterEvent(ModelRegistryEvent event) {
-        items.forEach(IItemBuildCraft::registerVariants);
+        RegistryHelper.registerVariants(
+            AUTOWORKBENCH_ITEM,
+            MINING_WELL,
+            PUMP,
+            FLOOD_GATE,
+            TANK,
+            CHUTE,
+            DISTILLER,
+            HEAT_EXCHANGE_START,
+            HEAT_EXCHANGE_MIDDLE,
+            HEAT_EXCHANGE_END
+        );
     }
 }

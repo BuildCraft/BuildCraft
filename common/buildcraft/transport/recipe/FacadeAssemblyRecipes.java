@@ -9,7 +9,6 @@ package buildcraft.transport.recipe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -50,7 +49,7 @@ public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeVie
     @Override
     public List<AssemblyRecipe> getRecipesFor(@Nonnull NonNullList<ItemStack> possible) {
         // Require 3 structure pipes -- check for those first as its much cheaper
-        if (!StackUtil.contains(new ItemStack(BCTransportItems.pipeStructure, 3), possible)) {
+        if (!StackUtil.contains(new ItemStack(BCTransportItems.PIPE_STRUCTURE, 3), possible)) {
             return ImmutableList.of();
         }
         List<AssemblyRecipe> recipes = new ArrayList<>();
@@ -70,7 +69,7 @@ public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeVie
 
     private static void addRecipe(List<AssemblyRecipe> recipes, ItemStack from, FacadeBlockStateInfo info) {
         ImmutableSet<StackDefinition> stacks = ImmutableSet.of(ArrayStackFilter.definition(from),
-                ArrayStackFilter.definition(3, BCTransportItems.pipeStructure));
+                ArrayStackFilter.definition(3, BCTransportItems.PIPE_STRUCTURE));
 
         NBTTagCompound recipeTag = new NBTTagCompound();
         recipeTag.setTag("stack", from.serializeNBT());
@@ -82,7 +81,7 @@ public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeVie
     }
 
     public static ItemStack createFacadeStack(FacadeBlockStateInfo info, boolean isHollow) {
-        ItemStack stack = BCTransportItems.plugFacade.createItemStack(FullFacadeInstance.createSingle(info, isHollow));
+        ItemStack stack = BCTransportItems.PLUG_FACADE.createItemStack(FullFacadeInstance.createSingle(info, isHollow));
         stack.setCount(6);
         return stack;
     }
@@ -90,7 +89,7 @@ public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeVie
     @Override
     public ChangingItemStack[] getRecipeInputs() {
         ChangingItemStack[] inputs = new ChangingItemStack[2];
-        inputs[0] = ChangingItemStack.create(new ItemStack(BCTransportItems.pipeStructure, 3));
+        inputs[0] = ChangingItemStack.create(new ItemStack(BCTransportItems.PIPE_STRUCTURE, 3));
         NonNullList<ItemStack> list = NonNullList.create();
         for (FacadeBlockStateInfo info : FacadeStateManager.validFacadeStates.values()) {
             if (info.isVisible) {

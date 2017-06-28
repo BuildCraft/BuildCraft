@@ -68,7 +68,7 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         double maxZ = 1 + offset;
 
         IBlockState state = tile.getWorld().getBlockState(tile.getPos());
-        if (state.getBlock() != BCRoboticsBlocks.zonePlanner) {
+        if (state.getBlock() != BCRoboticsBlocks.ZONE_PLANNER) {
             return;
         }
         EnumFacing side = state.getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();

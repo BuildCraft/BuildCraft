@@ -80,7 +80,7 @@ public class TilePump extends TileMiner {
                     queue.add(posToCheck);
                 }
                 break;
-            } else if (!world.isAirBlock(posToCheck) && world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.tube) {
+            } else if (!world.isAirBlock(posToCheck) && world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.TUBE) {
                 break;
             }
         }

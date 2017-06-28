@@ -42,7 +42,7 @@ public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemP
     private CreativeTabs creativeTab;
 
     public ItemPipeHolder(PipeDefinition definition) {
-        super(BCTransportBlocks.pipeHolder);
+        super(BCTransportBlocks.PIPE_HOLDER);
         this.definition = definition;
         this.id = "item.pipe." + definition.identifier.getResourceDomain() + "." + definition.identifier.getResourcePath();
         //this.setMaxDamage(0);

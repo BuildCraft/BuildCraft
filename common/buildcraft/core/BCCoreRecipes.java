@@ -38,7 +38,7 @@ public class BCCoreRecipes {
             Converter.addShapedRecipe(cleanPaintbrush, input);
 
             for (EnumDyeColor colour : EnumDyeColor.values()) {
-                ItemPaintbrush_BC8.Brush brush = BCCoreItems.paintbrush.new Brush(colour);
+                ItemPaintbrush_BC8.Brush brush = BCCoreItems.PAINTBRUSH.new Brush(colour);
                 ItemStack out = brush.save();
                 //GameRegistry.addRecipe(new ShapelessOreRecipe(out, cleanPaintbrush, ColourUtil.getDyeName(colour)));
             }

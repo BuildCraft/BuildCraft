@@ -183,7 +183,7 @@ public final class OilPopulate {
             BlockPos well = new BlockPos(wellX, baseY, wellZ);
 
             if (makeSpring && world.getBlockState(well).getBlock() == Blocks.BEDROCK) {
-                IBlockState state = BCCoreBlocks.spring.getDefaultState();
+                IBlockState state = BCCoreBlocks.SPRING.getDefaultState();
                 state = state.withProperty(BuildCraftProperties.SPRING_TYPE, EnumSpring.OIL);
                 world.setBlockState(well, state, 3);
             } // TODO: reanimate

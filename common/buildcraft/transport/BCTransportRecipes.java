@@ -45,30 +45,30 @@ import buildcraft.transport.recipe.FacadeSwapRecipe;
 
 public class BCTransportRecipes {
     public static void init() {
-        addPipeRecipe(BCTransportItems.pipeItemWood, "plankWood");
-        addPipeRecipe(BCTransportItems.pipeItemCobble, "cobblestone");
-        addPipeRecipe(BCTransportItems.pipeItemStone, "stone");
-        addPipeRecipe(BCTransportItems.pipeItemQuartz, "blockQuartz");
-        addPipeRecipe(BCTransportItems.pipeItemIron, "ingotIron");
-        addPipeRecipe(BCTransportItems.pipeItemGold, "ingotGold");
-        addPipeRecipe(BCTransportItems.pipeItemClay, Blocks.CLAY);
-        addPipeRecipe(BCTransportItems.pipeItemSandstone,
+        addPipeRecipe(BCTransportItems.PIPE_WOOD_ITEM, "plankWood");
+        addPipeRecipe(BCTransportItems.PIPE_COBBLE_ITEM, "cobblestone");
+        addPipeRecipe(BCTransportItems.PIPE_STONE_ITEM, "stone");
+        addPipeRecipe(BCTransportItems.PIPE_QUARTZ_ITEM, "blockQuartz");
+        addPipeRecipe(BCTransportItems.PIPE_IRON_ITEM, "ingotIron");
+        addPipeRecipe(BCTransportItems.PIPE_GOLD_ITEM, "ingotGold");
+        addPipeRecipe(BCTransportItems.PIPE_CLAY_ITEM, Blocks.CLAY);
+        addPipeRecipe(BCTransportItems.PIPE_SANDSTONE_ITEM,
             new ItemStack(Blocks.SANDSTONE, 1, OreDictionary.WILDCARD_VALUE));
-        addPipeRecipe(BCTransportItems.pipeItemVoid, new ItemStack(Items.DYE, 1, EnumDyeColor.BLACK.getDyeDamage()),
+        addPipeRecipe(BCTransportItems.PIPE_VOID_ITEM, new ItemStack(Items.DYE, 1, EnumDyeColor.BLACK.getDyeDamage()),
             "dustRedstone");
-        addPipeRecipe(BCTransportItems.pipeItemObsidian, Blocks.OBSIDIAN);
-        addPipeRecipe(BCTransportItems.pipeItemDiamond, Items.DIAMOND);
-        addPipeRecipe(BCTransportItems.pipeItemLapis, Blocks.LAPIS_BLOCK);
-        addPipeRecipe(BCTransportItems.pipeItemDaizuli, Blocks.LAPIS_BLOCK, Items.DIAMOND);
-        addPipeRecipe(BCTransportItems.pipeItemDiaWood, "plankWood", Items.DIAMOND);
-        /*addPipeUpgradeRecipe(BCTransportItems.pipeItemWood, BCTransportItems.pipeFluidWood, waterproof);
-        addPipeUpgradeRecipe(BCTransportItems.pipeItemCobble, BCTransportItems.pipeFluidCobble, waterproof);
-        addPipeUpgradeRecipe(BCTransportItems.pipeItemStone, BCTransportItems.pipeFluidStone, waterproof);
-        addPipeUpgradeRecipe(BCTransportItems.pipeItemQuartz, BCTransportItems.pipeFluidQuartz, waterproof);
+        addPipeRecipe(BCTransportItems.PIPE_OBSIDIAN_ITEM, Blocks.OBSIDIAN);
+        addPipeRecipe(BCTransportItems.PIPE_DIAMOND_ITEM, Items.DIAMOND);
+        addPipeRecipe(BCTransportItems.PIPE_LAPIS_ITEM, Blocks.LAPIS_BLOCK);
+        addPipeRecipe(BCTransportItems.PIPE_DAIZULI_ITEM, Blocks.LAPIS_BLOCK, Items.DIAMOND);
+        addPipeRecipe(BCTransportItems.PIPE_DIAWOOD_ITEM, "plankWood", Items.DIAMOND);
+        /*addPipeUpgradeRecipe(BCTransportItems.PIPE_WOOD_ITEM, BCTransportItems.PIPE_WOOD_FLUID, waterproof);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_COBBLE_ITEM, BCTransportItems.PIPE_COBBLE_FLUID, waterproof);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_STONE_ITEM, BCTransportItems.PIPE_STONE_FLUID, waterproof);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_QUARTZ_ITEM, BCTransportItems.PIPE_QUARTZ_FLUID, waterproof);
         addPipeUpgradeRecipe(BCTransportItems.pipeItemIron, BCTransportItems.pipeFluidIron, waterproof);
-        addPipeUpgradeRecipe(BCTransportItems.pipeItemGold, BCTransportItems.pipeFluidGold, waterproof);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_GOLD_ITEM, BCTransportItems.PIPE_GOLD_FLUID, waterproof);
         addPipeUpgradeRecipe(BCTransportItems.pipeItemClay, BCTransportItems.pipeFluidClay, waterproof);
-        addPipeUpgradeRecipe(BCTransportItems.pipeItemSandstone, BCTransportItems.pipeFluidSandstone, waterproof);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_SANDSTONE_ITEM, BCTransportItems.pipeFluidSandstone, waterproof);
         addPipeUpgradeRecipe(BCTransportItems.pipeItemVoid, BCTransportItems.pipeFluidVoid, waterproof);
         addPipeUpgradeRecipe(BCTransportItems.pipeItemObsidian, BCTransportItems.pipeFluidObsidian, waterproof);
         addPipeUpgradeRecipe(BCTransportItems.pipeItemDiamond, BCTransportItems.pipeFluidDiamond, waterproof);
@@ -76,11 +76,11 @@ public class BCTransportRecipes {
         */
 
         {
-            ItemStack output = new ItemStack(BCTransportItems.plugPulsar);
+            ItemStack output = new ItemStack(BCTransportItems.PLUG_PULSAR);
 
             ItemStack redstoneEngine;
-            if (BCCoreBlocks.engine != null) {
-                redstoneEngine = BCCoreBlocks.engine.getStack(EnumEngineType.WOOD);
+            if (BCCoreBlocks.ENGINE != null) {
+                redstoneEngine = BCCoreBlocks.ENGINE.getStack(EnumEngineType.WOOD);
             } else {
                 redstoneEngine = new ItemStack(Blocks.REDSTONE_BLOCK);
             }
@@ -94,14 +94,14 @@ public class BCTransportRecipes {
             }
 
         }
-        if (BCTransportItems.plugGate != null) {
+        if (BCTransportItems.PLUG_GATE != null) {
             // You can craft some of the basic gate types in a normal crafting table
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add(" m ");
             builder.add("mrm");
             builder.add(" b ");
             builder.map('r', "dustRedstone");
-            builder.map('b', BCTransportItems.plugBlocker, Blocks.COBBLESTONE);
+            builder.map('b', BCTransportItems.PLUG_BLOCKER, Blocks.COBBLESTONE);
 
             // Base craftable types
 
@@ -117,7 +117,7 @@ public class BCTransportRecipes {
             // Iron modifier addition
             GateVariant variant =
                 new GateVariant(EnumGateLogic.AND, EnumGateMaterial.IRON, EnumGateModifier.NO_MODIFIER);
-            ItemStack ironGateBase = BCTransportItems.plugGate.getStack(variant);
+            ItemStack ironGateBase = BCTransportItems.PLUG_GATE.getStack(variant);
             builder = new RecipeBuilderShaped();
             builder.add(" m ");
             builder.add("mgm");
@@ -130,8 +130,8 @@ public class BCTransportRecipes {
             builder.map('m', Items.QUARTZ);
             makeGateRecipe(builder, EnumGateMaterial.IRON, EnumGateModifier.QUARTZ);
 
-            if (BCCoreItems.diamondShard != null) {
-                builder.map('m', BCCoreItems.diamondShard);
+            if (BCCoreItems.DIAMOND_SHARD != null) {
+                builder.map('m', BCCoreItems.DIAMOND_SHARD);
                 makeGateRecipe(builder, EnumGateMaterial.IRON, EnumGateModifier.DIAMOND);
             }
 
@@ -142,10 +142,10 @@ public class BCTransportRecipes {
                 }
                 for (EnumGateModifier modifier : EnumGateModifier.VALUES) {
                     GateVariant varAnd = new GateVariant(EnumGateLogic.AND, material, modifier);
-                    ItemStack resultAnd = BCTransportItems.plugGate.getStack(varAnd);
+                    ItemStack resultAnd = BCTransportItems.PLUG_GATE.getStack(varAnd);
 
                     GateVariant varOr = new GateVariant(EnumGateLogic.OR, material, modifier);
-                    ItemStack resultOr = BCTransportItems.plugGate.getStack(varOr);
+                    ItemStack resultOr = BCTransportItems.PLUG_GATE.getStack(varOr);
 
                     //GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(resultAnd, "i", 'i', resultOr));
                     //GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(resultOr, "i", 'i', resultAnd));
@@ -176,48 +176,48 @@ public class BCTransportRecipes {
                 ArrayStackFilter.definition(EnumRedstoneChipset.DIAMOND.getStack()));
         }
 
-        if (BCTransportItems.wire != null) {
+        if (BCTransportItems.WIRE != null) {
             for (EnumDyeColor color : ColourUtil.COLOURS) {
                 String name = String.format("wire-%s", color.getUnlocalizedName());
                 ImmutableSet<StackDefinition> input = ImmutableSet.of(OreStackFilter.definition("dustRedstone"),
                     OreStackFilter.definition(ColourUtil.getDyeName(color)));
                 AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(name, 10_000 * MjAPI.MJ, input,
-                    new ItemStack(BCTransportItems.wire, 8, color.getMetadata())));
+                    new ItemStack(BCTransportItems.WIRE, 8, color.getMetadata())));
             }
         }
 
-        if (BCTransportItems.plugLens != null) {
+        if (BCTransportItems.PLUG_LENS != null) {
             for (EnumDyeColor colour : ColourUtil.COLOURS) {
                 String name = String.format("lens-regular-%s", colour.getUnlocalizedName());
                 StackDefinition stainedGlass = OreStackFilter.definition("blockGlass" + ColourUtil.getName(colour));
                 ImmutableSet<StackDefinition> input = ImmutableSet.of(stainedGlass);
-                ItemStack output = BCTransportItems.plugLens.getStack(colour, false);
+                ItemStack output = BCTransportItems.PLUG_LENS.getStack(colour, false);
                 AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(name, 500 * MjAPI.MJ, input, output));
 
                 name = String.format("lens-filter-%s", colour.getUnlocalizedName());
-                output = BCTransportItems.plugLens.getStack(colour, true);
+                output = BCTransportItems.PLUG_LENS.getStack(colour, true);
                 input = ImmutableSet.of(stainedGlass, ArrayStackFilter.definition(new ItemStack(Blocks.IRON_BARS)));
                 AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(name, 500 * MjAPI.MJ, input, output));
             }
 
             StackDefinition glass = OreStackFilter.definition("blockGlass");
             ImmutableSet<StackDefinition> input = ImmutableSet.of(glass);
-            ItemStack output = BCTransportItems.plugLens.getStack(null, false);
+            ItemStack output = BCTransportItems.PLUG_LENS.getStack(null, false);
             AssemblyRecipeRegistry.INSTANCE
                 .addRecipe(new AssemblyRecipe("lens-regular", 500 * MjAPI.MJ, input, output));
 
-            output = BCTransportItems.plugLens.getStack(null, true);
+            output = BCTransportItems.PLUG_LENS.getStack(null, true);
             input = ImmutableSet.of(glass, ArrayStackFilter.definition(new ItemStack(Blocks.IRON_BARS)));
             AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe("lens-filter", 500 * MjAPI.MJ, input, output));
         }
 
-        if (BCTransportItems.plugLightSensor != null) {
+        if (BCTransportItems.PLUG_LIGHT_SENSOR != null) {
             BuildcraftRecipeRegistry.assemblyRecipes.addRecipe(new AssemblyRecipe("light-sensor", 500 * MjAPI.MJ,
                 ImmutableSet.of(ArrayStackFilter.definition(Blocks.DAYLIGHT_DETECTOR)),
-                new ItemStack(BCTransportItems.plugLightSensor)));
+                new ItemStack(BCTransportItems.PLUG_LIGHT_SENSOR)));
         }
 
-        if (BCTransportItems.plugFacade != null) {
+        if (BCTransportItems.PLUG_FACADE != null) {
             AssemblyRecipeRegistry.INSTANCE.addRecipeProvider(FacadeAssemblyRecipes.INSTANCE);
             RecipeSorter.register("buildcraftlib:facade_swap", FacadeSwapRecipe.class, RecipeSorter.Category.SHAPELESS,
                 "before:minecraft:shapeless");
@@ -230,8 +230,8 @@ public class BCTransportRecipes {
         for (EnumGateLogic logic : EnumGateLogic.VALUES) {
             String name = String.format("gate-modifier-%s-%s-%s", logic, material, modifier);
             ItemStack toUpgrade =
-                BCTransportItems.plugGate.getStack(new GateVariant(logic, material, EnumGateModifier.NO_MODIFIER));
-            ItemStack output = BCTransportItems.plugGate.getStack(new GateVariant(logic, material, modifier));
+                BCTransportItems.PLUG_GATE.getStack(new GateVariant(logic, material, EnumGateModifier.NO_MODIFIER));
+            ItemStack output = BCTransportItems.PLUG_GATE.getStack(new GateVariant(logic, material, modifier));
             ImmutableSet<StackDefinition> input = new ImmutableSet.Builder<StackDefinition>()
                 .add(ArrayStackFilter.definition(toUpgrade)).add(mods).build();
             AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(name, MjAPI.MJ * multiplier, input, output));
@@ -246,18 +246,18 @@ public class BCTransportRecipes {
         ImmutableSet<StackDefinition> input = temp.build();
 
         String name = String.format("gate-and-%s-%s", material, modifier);
-        ItemStack output = BCTransportItems.plugGate.getStack(new GateVariant(EnumGateLogic.AND, material, modifier));
+        ItemStack output = BCTransportItems.PLUG_GATE.getStack(new GateVariant(EnumGateLogic.AND, material, modifier));
         AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(name, MjAPI.MJ * multiplier, input, output));
 
         name = String.format("gate-or-%s-%s", material, modifier);
-        output = BCTransportItems.plugGate.getStack(new GateVariant(EnumGateLogic.OR, material, modifier));
+        output = BCTransportItems.PLUG_GATE.getStack(new GateVariant(EnumGateLogic.OR, material, modifier));
         AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(name, MjAPI.MJ * multiplier, input, output));
     }
 
     private static void makeGateRecipe(RecipeBuilderShaped builder, EnumGateMaterial material,
         EnumGateModifier modifier) {
         GateVariant variant = new GateVariant(EnumGateLogic.AND, material, modifier);
-        builder.setResult(BCTransportItems.plugGate.getStack(variant));
+        builder.setResult(BCTransportItems.PLUG_GATE.getStack(variant));
         builder.registerNbtAware();
     }
 

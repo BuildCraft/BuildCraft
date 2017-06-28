@@ -18,8 +18,7 @@ import buildcraft.lib.item.ItemBC_Neptune;
 @Mod.EventBusSubscriber(modid = BCEnergy.MODID)
 @GameRegistry.ObjectHolder(BCEnergy.MODID)
 public class BCEnergyItems {
-    @GameRegistry.ObjectHolder("glob_oil")
-    public static final ItemBC_Neptune globOfOil = null;
+    public static final ItemBC_Neptune GLOB_OIL = null;
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -31,7 +30,7 @@ public class BCEnergyItems {
     @SubscribeEvent
     public static void modelRegisterEvent(ModelRegistryEvent event) {
         if (BCLib.DEV) {
-            globOfOil.registerVariants();
+            GLOB_OIL.registerVariants();
         }
     }
 }

@@ -408,9 +408,9 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             }
 
             if (part != null && tile.wireManager.getColorOfPart(part) != null) {
-                return new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(part).getMetadata());
+                return new ItemStack(BCTransportItems.WIRE, 1, tile.wireManager.getColorOfPart(part).getMetadata());
             } else if (between != null && tile.wireManager.getColorOfPart(between.parts[0]) != null) {
-                return new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(between.parts[0])
+                return new ItemStack(BCTransportItems.WIRE, 1, tile.wireManager.getColorOfPart(between.parts[0])
                     .getMetadata());
             }
         }
@@ -520,7 +520,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             }
             return false;
         } else if (part != null) {
-            toDrop.add(new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(part).getMetadata()));
+            toDrop.add(new ItemStack(BCTransportItems.WIRE, 1, tile.wireManager.getColorOfPart(part).getMetadata()));
             tile.wireManager.removePart(part);
             if (!player.capabilities.isCreativeMode) {
                 InventoryUtil.dropAll(world, pos, toDrop);
@@ -528,7 +528,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             tile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
             return false;
         } else if (between != null) {
-            toDrop.add(new ItemStack(BCTransportItems.wire, between.to == null ? 2 : 1, tile.wireManager.getColorOfPart(
+            toDrop.add(new ItemStack(BCTransportItems.WIRE, between.to == null ? 2 : 1, tile.wireManager.getColorOfPart(
                 between.parts[0]).getMetadata()));
             if (between.to == null) {
                 tile.wireManager.removeParts(Arrays.asList(between.parts));
@@ -563,7 +563,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             }
         }
         for (EnumDyeColor color : tile.wireManager.parts.values()) {
-            toDrop.add(new ItemStack(BCTransportItems.wire, 1, color.getMetadata()));
+            toDrop.add(new ItemStack(BCTransportItems.WIRE, 1, color.getMetadata()));
         }
         Pipe pipe = tile.getPipe();
         if (pipe != null) {

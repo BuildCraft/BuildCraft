@@ -70,7 +70,7 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileQuarry) {
             for (BlockPos blockPos : ((TileQuarry) tile).getFramePositions(state)) {
-                if (world.getBlockState(blockPos).getBlock() == BCBuildersBlocks.frame) {
+                if (world.getBlockState(blockPos).getBlock() == BCBuildersBlocks.FRAME) {
                     world.setBlockToAir(blockPos);
                 }
             }

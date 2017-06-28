@@ -14,13 +14,14 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import buildcraft.lib.registry.RegistryHelper;
+
 import buildcraft.silicon.item.ItemRedstoneChipset;
 
 @Mod.EventBusSubscriber(modid = BCSilicon.MODID)
 @GameRegistry.ObjectHolder(BCSilicon.MODID)
 public class BCSiliconItems {
-    @GameRegistry.ObjectHolder("redstone_chipset")
-    public static final ItemRedstoneChipset redstoneChipset = null;
+    public static final ItemRedstoneChipset REDSTONE_CHIPSET = null;
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -29,6 +30,6 @@ public class BCSiliconItems {
 
     @SubscribeEvent
     public static void modelRegisterEvent(ModelRegistryEvent event) {
-        redstoneChipset.registerVariants();
+        RegistryHelper.registerVariants(REDSTONE_CHIPSET);
     }
 }

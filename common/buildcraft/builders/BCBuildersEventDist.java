@@ -100,7 +100,7 @@ public enum BCBuildersEventDist {
     public void onRenderTooltipPostText(RenderTooltipEvent.PostText event) {
         Snapshot snapshot = null;
         ItemStack stack = event.getStack();
-        Header header = BCBuildersItems.snapshot.getHeader(stack);
+        Header header = BCBuildersItems.SNAPSHOT.getHeader(stack);
         if (header != null) {
             snapshot = ClientSnapshots.INSTANCE.getSnapshot(header);
         } else {

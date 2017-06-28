@@ -40,7 +40,7 @@ public enum AdvDebuggerLaser implements IDetachedRenderer {
     public static AdvDebuggerLaser getForTile(TileLaser tile) {
         INSTANCE.pos = tile.getPos();
         IBlockState state = tile.getWorld().getBlockState(INSTANCE.pos);
-        if (state.getBlock() == BCSiliconBlocks.laser) {
+        if (state.getBlock() == BCSiliconBlocks.LASER) {
             INSTANCE.face = state.getValue(BuildCraftProperties.BLOCK_FACING_6);
         } else {
             INSTANCE.face = null;

@@ -283,12 +283,12 @@ public class BuildCraftTransport extends BuildCraftMod {
             pipePowerWood = buildPipe(PipePowerWood.class, "dustRedstone", pipeItemsWood);
             //pipePowerCobblestone = buildPipe(PipePowerCobblestone.class, "dustRedstone", pipeItemsCobblestone);
             pipePowerStone = buildPipe(PipePowerStone.class, "dustRedstone", pipeItemsStone);
-            //pipePowerQuartz = buildPipe(PipePowerQuartz.class, "dustRedstone", pipeItemsQuartz);
+            //PIPE_QUARTZ_POWER = buildPipe(PipePowerQuartz.class, "dustRedstone", pipeItemsQuartz);
             pipePowerIron = buildPipe(PipePowerIron.class, "dustRedstone", pipeItemsIron);
             pipePowerGold = buildPipe(PipePowerGold.class, "dustRedstone", pipeItemsGold);
             pipePowerDiamond = buildPipe(PipePowerDiamond.class, "dustRedstone", pipeItemsDiamond);
             //pipePowerEmerald = buildPipe(PipePowerEmerald.class, "dustRedstone", pipeItemsEmerald);
-            //pipePowerSandstone = buildPipe(PipePowerSandstone.class, "dustRedstone", pipeItemsSandstone);
+            //PIPE_SANDSTONE_POWER = buildPipe(PipePowerSandstone.class, "dustRedstone", pipeItemsSandstone);
 
             pipeStructureCobblestone = buildPipe(PipeStructureCobblestone.class, Blocks.cobblestone, Blocks.gravel, Blocks.cobblestone);
 

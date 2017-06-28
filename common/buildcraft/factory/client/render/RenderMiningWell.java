@@ -79,7 +79,7 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
         buffer.setTranslation(x, y, z);
         EnumFacing facing = EnumFacing.NORTH;
         IBlockState state = tile.getWorld().getBlockState(tile.getPos());
-        if (state.getBlock() == BCFactoryBlocks.miningWell) {
+        if (state.getBlock() == BCFactoryBlocks.MINING_WELL) {
             facing = state.getValue(BuildCraftProperties.BLOCK_FACING);
         }
 

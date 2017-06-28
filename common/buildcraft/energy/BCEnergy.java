@@ -70,10 +70,10 @@ public class BCEnergy {
         BCEnergyProxy.getProxy().fmlInit();
 
         TileBC_Neptune.registerTile(TileEngineStone_BC8.class, "tile.engine.stone");
-        BCCoreBlocks.engine.registerEngine(EnumEngineType.STONE, TileEngineStone_BC8::new);
+        BCCoreBlocks.ENGINE.registerEngine(EnumEngineType.STONE, TileEngineStone_BC8::new);
 
         TileBC_Neptune.registerTile(TileEngineIron_BC8.class, "tile.engine.iron");
-        BCCoreBlocks.engine.registerEngine(EnumEngineType.IRON, TileEngineIron_BC8::new);
+        BCCoreBlocks.ENGINE.registerEngine(EnumEngineType.IRON, TileEngineIron_BC8::new);
 
         BiomeDictionary.addTypes(
             BiomeOilOcean.INSTANCE,

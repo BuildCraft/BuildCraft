@@ -69,7 +69,7 @@ public class BCCore {
 
         BCCoreProxy.getProxy().fmlPreInit();
 
-        tab.setItem(BCCoreItems.wrench);
+        tab.setItem(BCCoreItems.WRENCH);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCCoreProxy.getProxy());
 
@@ -88,7 +88,7 @@ public class BCCore {
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
-        BCLibItems.guide.setCreativeTab(CreativeTabManager.getTab("buildcraft.main"));
+        BCLibItems.GUIDE.setCreativeTab(CreativeTabManager.getTab("buildcraft.main"));
 
         BCCoreProxy.getProxy().fmlInit();
 
@@ -97,7 +97,7 @@ public class BCCore {
         MarkerCache.registerCache(VolumeCache.INSTANCE);
         MarkerCache.registerCache(PathCache.INSTANCE);
 
-        ((CreativeTabBC) CreativeTabManager.getTab("buildcraft.main")).setItem(BCCoreItems.wrench);
+        ((CreativeTabBC) CreativeTabManager.getTab("buildcraft.main")).setItem(BCCoreItems.WRENCH);
     }
 
     @Mod.EventHandler

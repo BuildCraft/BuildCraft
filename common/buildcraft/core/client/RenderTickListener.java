@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.annotation.Nonnull;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Point3d;
@@ -206,9 +205,9 @@ public enum RenderTickListener {
         Item mainHandItem = mainHand.getItem();
         Item offHandItem = offHand.getItem();
 
-        if (mainHandItem == BCCoreItems.mapLocation) {
+        if (mainHandItem == BCCoreItems.MAP_LOCATION) {
             renderMapLocation(mainHand);
-        } else if (mainHandItem == BCCoreItems.markerConnector || offHandItem == BCCoreItems.markerConnector) {
+        } else if (mainHandItem == BCCoreItems.MARKER_CONNECTOR || offHandItem == BCCoreItems.MARKER_CONNECTOR) {
             renderMarkerConnector(world, player);
         }
 
@@ -238,7 +237,7 @@ public enum RenderTickListener {
             LaserBoxRenderer.renderLaserBoxStatic(lastRenderedMapLoc, BuildCraftLaserManager.STRIPES_WRITE);
 
         } else if (type == MapLocationType.PATH) {
-            List<BlockPos> path = BCCoreItems.mapLocation.getPath(stack);
+            List<BlockPos> path = BCCoreItems.MAP_LOCATION.getPath(stack);
             if (path != null && path.size() > 1) {
                 BlockPos last = null;
                 for (BlockPos p : path) {

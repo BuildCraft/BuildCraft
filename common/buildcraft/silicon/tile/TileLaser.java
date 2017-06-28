@@ -62,7 +62,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
 
     private void findTarget() {
         IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() != BCSiliconBlocks.laser) {
+        if (state.getBlock() != BCSiliconBlocks.LASER) {
             return;
         }
         EnumFacing face = state.getValue(BuildCraftProperties.BLOCK_FACING_6);

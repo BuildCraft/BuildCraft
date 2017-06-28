@@ -14,12 +14,13 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.lib.item.ItemDebugger;
 import buildcraft.lib.item.ItemGuide;
+import buildcraft.lib.registry.RegistryHelper;
 
 @Mod.EventBusSubscriber(modid = BCLib.MODID)
 @GameRegistry.ObjectHolder(BCLib.MODID)
 public class BCLibItems {
-    public static final ItemGuide guide = null;
-    public static final ItemDebugger debugger = null;
+    public static final ItemGuide GUIDE = null;
+    public static final ItemDebugger DEBUGGER = null;
 
     private static boolean enableGuide, enableDebugger;
 
@@ -49,7 +50,9 @@ public class BCLibItems {
 
     @SubscribeEvent
     public static void modelRegisterEvent(ModelRegistryEvent event) {
-        guide.registerVariants();
-        debugger.registerVariants();
+        RegistryHelper.registerVariants(
+            GUIDE,
+            DEBUGGER
+        );
     }
 }

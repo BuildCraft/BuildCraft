@@ -72,7 +72,7 @@ public class SpringPopulate {
             // Handle flat bedrock maps
             int y = i > 0 ? i : i - 1;
 
-            IBlockState springState = BCCoreBlocks.spring.getDefaultState();
+            IBlockState springState = BCCoreBlocks.SPRING.getDefaultState();
             springState = springState.withProperty(BuildCraftProperties.SPRING_TYPE, EnumSpring.WATER);
 
             world.setBlockState(new BlockPos(posX, y, posZ), springState);

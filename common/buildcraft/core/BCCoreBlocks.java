@@ -4,8 +4,6 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core;
 
-import java.util.ArrayList;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -19,8 +17,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import buildcraft.api.enums.EnumEngineType;
 
 import buildcraft.lib.BCLib;
-import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.item.ItemBlockBC_Neptune;
+import buildcraft.lib.registry.RegistryHelper;
 
 import buildcraft.core.block.BlockDecoration;
 import buildcraft.core.block.BlockEngine_BC8;
@@ -36,15 +34,11 @@ import buildcraft.core.tile.TileEngineRedstone_BC8;
 @Mod.EventBusSubscriber(modid = BCCore.MODID)
 @GameRegistry.ObjectHolder(BCCore.MODID)
 public class BCCoreBlocks {
-    public static final BlockEngine_BC8 engine = null;
-    public static final BlockSpring spring = null;
-    public static final BlockDecoration decorated = null;
-    @GameRegistry.ObjectHolder("marker_volume")
-    public static final BlockMarkerVolume markerVolume = null;
-    @GameRegistry.ObjectHolder("marker_path")
-    public static final BlockMarkerPath markerPath = null;
-
-    private static ArrayList<IItemBuildCraft> items = new ArrayList<>();
+    public static final BlockEngine_BC8 ENGINE = null;
+    public static final BlockSpring SPRING = null;
+    public static final BlockDecoration DECORATED = null;
+    public static final BlockMarkerVolume MARKER_VOLUME = null;
+    public static final BlockMarkerPath MARKER_PATH = null;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -65,28 +59,27 @@ public class BCCoreBlocks {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        items.clear();
-        ItemBlockBC_Neptune[] blocks = {
-            new ItemBlockSpring(spring),
-            new ItemEngine_BC8<>(engine),
-            new ItemBlockBC_Neptune(markerPath),
-            new ItemBlockBC_Neptune(markerVolume)
-        };
-        for (ItemBlockBC_Neptune itemblock: blocks) {
-            items.add(itemblock);
-            event.getRegistry().register(itemblock);
-        }
+        RegistryHelper.registerItems(event,
+            new ItemBlockSpring(SPRING),
+            new ItemEngine_BC8<>(ENGINE),
+            new ItemBlockBC_Neptune(MARKER_PATH),
+            new ItemBlockBC_Neptune(MARKER_VOLUME)
+        );
 
         if (BCLib.DEV) {
-            ItemBlockBC_Neptune itemblock = new ItemBlockDecorated(decorated);
-            items.add(itemblock);
-            event.getRegistry().register(itemblock);
+            event.getRegistry().register(new ItemBlockDecorated(DECORATED));
         }
     }
 
     @SubscribeEvent
     public static void registerVariants(ModelRegistryEvent event) {
-        items.forEach(IItemBuildCraft::registerVariants);
+        RegistryHelper.registerVariants(
+            ENGINE,
+            SPRING,
+            DECORATED,
+            MARKER_VOLUME,
+            MARKER_PATH
+        );
     }
 
 }

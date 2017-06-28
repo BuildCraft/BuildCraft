@@ -6,8 +6,6 @@
 
 package buildcraft.silicon;
 
-import java.util.ArrayList;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -21,7 +19,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import buildcraft.api.enums.EnumLaserTableType;
 
 import buildcraft.lib.BCLib;
-import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.registry.RegistryHelper;
 
 import buildcraft.silicon.block.BlockLaser;
@@ -30,19 +27,13 @@ import buildcraft.silicon.block.BlockLaserTable;
 @Mod.EventBusSubscriber(modid = BCSilicon.MODID)
 @GameRegistry.ObjectHolder(BCSilicon.MODID)
 public class BCSiliconBlocks {
-    public static final BlockLaser laser = null;
-    @GameRegistry.ObjectHolder("assembly_table")
-    public static final BlockLaserTable assemblyTable = null;
-    @GameRegistry.ObjectHolder("advanced_crafting_table")
-    public static final BlockLaserTable advancedCraftingTable = null;
-    @GameRegistry.ObjectHolder("integration_table")
-    public static final BlockLaserTable integrationTable = null;
-    @GameRegistry.ObjectHolder("charging_table")
-    public static final BlockLaserTable chargingTable = null;
-    @GameRegistry.ObjectHolder("programming_table")
-    public static final BlockLaserTable programmingTable = null;
+    public static final BlockLaser LASER = null;
+    public static final BlockLaserTable ASSEMBLY_TABLE = null;
+    public static final BlockLaserTable ADVANCED_CRAFTING_TABLE = null;
+    public static final BlockLaserTable INTEGRATION_TABLE = null;
+    public static final BlockLaserTable CHARGING_TABLE = null;
+    public static final BlockLaserTable PROGRAMMING_TABLE = null;
 
-    private static ArrayList<IItemBuildCraft> items = new ArrayList<>();
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -63,18 +54,25 @@ public class BCSiliconBlocks {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        RegistryHelper.listAndRegister(event, items,
-            laser,
-            assemblyTable,
-            advancedCraftingTable,
-            integrationTable,
-            chargingTable,
-            programmingTable
+        RegistryHelper.registerItems(event,
+            LASER,
+            ASSEMBLY_TABLE,
+            ADVANCED_CRAFTING_TABLE,
+            INTEGRATION_TABLE,
+            CHARGING_TABLE,
+            PROGRAMMING_TABLE
         );
     }
 
     @SubscribeEvent
     public static void modelRegisterEvent(ModelRegistryEvent event) {
-        items.forEach(IItemBuildCraft::registerVariants);
+        RegistryHelper.registerVariants(
+            LASER,
+            ASSEMBLY_TABLE,
+            ADVANCED_CRAFTING_TABLE,
+            INTEGRATION_TABLE,
+            CHARGING_TABLE,
+            PROGRAMMING_TABLE
+        );
     }
 }

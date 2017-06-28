@@ -160,7 +160,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
     public List<BlockPos> getFramePositions() {
         IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() != BCBuildersBlocks.quarry) {
+        if (state.getBlock() != BCBuildersBlocks.QUARRY) {
             return Collections.emptyList();
         }
         return getFramePositions(state);
@@ -318,7 +318,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                         ((z == min.getZ() || z == max.getZ()) && (x == min.getX() || x == max.getX()));
                     Block block = world.getBlockState(framePos).getBlock();
                     if (((block != Blocks.AIR && !shouldBeFrame) ||
-                        (block != BCBuildersBlocks.frame && block != Blocks.AIR && shouldBeFrame)) && !canSkip(framePos)) {
+                        (block != BCBuildersBlocks.FRAME && block != Blocks.AIR && shouldBeFrame)) && !canSkip(framePos)) {
                         breakPoses.add(framePos);
                     }
                 }
@@ -708,7 +708,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         @Override
         protected boolean finish() {
             if (world.isAirBlock(framePos)) {
-                world.setBlockState(framePos, BCBuildersBlocks.frame.getDefaultState());
+                world.setBlockState(framePos, BCBuildersBlocks.FRAME.getDefaultState());
             }
             return true;
         }

@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.ImmutableList;
@@ -119,7 +118,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
             currentBasePosIndex = 0;
             snapshot = null;
             if (after.getItem() instanceof ItemSnapshot) {
-                Snapshot.Header header = BCBuildersItems.snapshot.getHeader(after);
+                Snapshot.Header header = BCBuildersItems.SNAPSHOT.getHeader(after);
                 if (header != null) {
                     Snapshot newSnapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(header);
                     if (newSnapshot != null) {

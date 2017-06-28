@@ -6,8 +6,6 @@
 
 package buildcraft.robotics;
 
-import java.util.ArrayList;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -18,18 +16,16 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.item.ItemBlockBC_Neptune;
+import buildcraft.lib.registry.RegistryHelper;
 
 import buildcraft.robotics.block.BlockZonePlanner;
 
 @Mod.EventBusSubscriber(modid = BCRobotics.MODID)
 @GameRegistry.ObjectHolder(BCRobotics.MODID)
 public class BCRoboticsBlocks {
-    @GameRegistry.ObjectHolder("zone_planner")
-    public static final BlockZonePlanner zonePlanner = null;
+    public static final BlockZonePlanner ZONE_PLANNER = null;
 
-    private static ArrayList<IItemBuildCraft> items = new ArrayList<>();
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -38,13 +34,11 @@ public class BCRoboticsBlocks {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        items.clear();
-        ItemBlockBC_Neptune itemblock = new ItemBlockBC_Neptune(zonePlanner);
-        event.getRegistry().register(itemblock);
+        RegistryHelper.registerItems(event, new ItemBlockBC_Neptune(ZONE_PLANNER));
     }
 
     @SubscribeEvent
     public static void modelRegisterEvent(ModelRegistryEvent event) {
-        items.forEach(IItemBuildCraft::registerVariants);
+        RegistryHelper.registerVariants(ZONE_PLANNER);
     }
 }
