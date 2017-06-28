@@ -5,6 +5,7 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.annotation.Nonnull;
 
@@ -43,7 +44,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
     public final ItemHandlerSimple invDownOut = itemManager.addInvHandler("downOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
     public final ItemHandlerSimple invUpIn = itemManager.addInvHandler("upIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
     public final ItemHandlerSimple invUpOut = itemManager.addInvHandler("upOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
-    public Snapshot.Header selected = null;
+    public Snapshot.Key selected = null;
     public int progressDown = -1;
     public int progressUp = -1;
     public final DeltaInt deltaProgressDown = deltaManager.addDelta("progressDown", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
@@ -88,7 +89,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
             } else {
                 progressDown++;
             }
-        } else if(progressDown != -1) {
+        } else if (progressDown != -1) {
             progressDown = -1;
             deltaProgressDown.setValue(0);
         }
@@ -105,7 +106,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
             } else {
                 progressUp++;
             }
-        } else if(progressUp != -1) {
+        } else if (progressUp != -1) {
             progressUp = -1;
             deltaProgressUp.setValue(0);
         }
@@ -133,10 +134,14 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
             if (id == NET_DOWN) {
                 Snapshot.Header header = BCBuildersItems.snapshot.getHeader(invDownIn.getStackInSlot(0));
                 if (header != null) {
-                    Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(header);
+                    Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(header.key);
                     if (snapshot != null) {
                         buffer.writeBoolean(true);
-                        NbtSquisher.squish(Snapshot.writeToNBT(snapshot), NbtSquishConstants.BUILDCRAFT_V1_COMPRESSED, buffer);
+                        NbtSquisher.squish(
+                            Snapshot.writeToNBT(snapshot),
+                            NbtSquishConstants.BUILDCRAFT_V1_COMPRESSED,
+                            buffer
+                        );
                     } else {
                         buffer.writeBoolean(false);
                     }
@@ -144,16 +149,21 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                     buffer.writeBoolean(false);
                 }
             }
+            // noinspection StatementWithEmptyBody
             if (id == NET_UP) {
             }
         }
         if (side == Side.CLIENT) {
             if (id == NET_UP) {
                 if (selected != null) {
-                    Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(selected);
+                    Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(selected);
                     if (snapshot != null) {
                         buffer.writeBoolean(true);
-                        NbtSquisher.squish(Snapshot.writeToNBT(snapshot), NbtSquishConstants.BUILDCRAFT_V1_COMPRESSED, buffer);
+                        NbtSquisher.squish(
+                            Snapshot.writeToNBT(snapshot),
+                            NbtSquishConstants.BUILDCRAFT_V1_COMPRESSED,
+                            buffer
+                        );
                     } else {
                         buffer.writeBoolean(false);
                     }
@@ -167,11 +177,10 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
     @Override
     public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        GlobalSavedDataSnapshots store = GlobalSavedDataSnapshots.get(world);
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 if (buffer.readBoolean()) {
-                    selected = new Snapshot.Header(buffer);
+                    selected = new Snapshot.Key(buffer);
                 } else {
                     selected = null;
                 }
@@ -179,8 +188,8 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
             if (id == NET_DOWN) {
                 if (buffer.readBoolean()) {
                     Snapshot snapshot = Snapshot.readFromNBT(NbtSquisher.expand(buffer));
-                    store.snapshots.add(snapshot);
-                    store.markDirty();
+                    snapshot.computeKey();
+                    GlobalSavedDataSnapshots.get(world).addSnapshot(snapshot);
                 }
             }
             if (id == NET_UP) {
@@ -193,9 +202,20 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                     NBTTagCompound nbt = NbtSquisher.expand(buffer);
                     Snapshot snapshot = Snapshot.readFromNBT(nbt);
                     invUpIn.setStackInSlot(0, StackUtil.EMPTY);
-                    store.snapshots.add(snapshot);
-                    store.markDirty();
-                    invUpOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshot.getType(), snapshot.header));
+                    snapshot.computeKey();
+                    GlobalSavedDataSnapshots.get(world).addSnapshot(snapshot);
+                    invUpOut.setStackInSlot(
+                        0,
+                        BCBuildersItems.snapshot.getUsed(
+                            snapshot.getType(),
+                            new Snapshot.Header(
+                                snapshot.key,
+                                getOwner().getId(),
+                                new Date(),
+                                "From library"
+                            )
+                        )
+                    );
                 }
             }
         }

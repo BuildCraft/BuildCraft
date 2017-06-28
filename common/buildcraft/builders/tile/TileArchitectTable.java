@@ -255,27 +255,32 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         snapshot.offset = box.min().subtract(pos.offset(facing.getOpposite()));
         if (snapshot instanceof Template) {
             ((Template) snapshot).data = templateScannedBlocks;
-        } else if (snapshot instanceof Blueprint) {
-            // noinspection ConstantConditions
-            Blueprint bpt = (Blueprint) snapshot;
-            bpt.palette.addAll(blueprintScannedPalette);
-            bpt.data = blueprintScannedData;
-            bpt.entities.addAll(blueprintScannedEntities);
-        } else {
-
         }
-
-        snapshot.header = new Header(snapshot.computeHash(), getOwner().getId(), new Date(), name);
-        GlobalSavedDataSnapshots store = GlobalSavedDataSnapshots.get(world);
-        store.snapshots.add(snapshot);
-        store.markDirty();
+        if (snapshot instanceof Blueprint) {
+            ((Blueprint) snapshot).palette.addAll(blueprintScannedPalette);
+            ((Blueprint) snapshot).data = blueprintScannedData;
+            ((Blueprint) snapshot).entities.addAll(blueprintScannedEntities);
+        }
+        snapshot.computeKey();
+        GlobalSavedDataSnapshots.get(world).addSnapshot(snapshot);
         ItemStack stackIn = invSnapshotIn.getStackInSlot(0);
         stackIn.setCount(stackIn.getCount() - 1);
         if (stackIn.getCount() == 0) {
             stackIn = ItemStack.EMPTY;
         }
         invSnapshotIn.setStackInSlot(0, stackIn);
-        invSnapshotOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshotType, snapshot.header));
+        invSnapshotOut.setStackInSlot(
+            0,
+            BCBuildersItems.snapshot.getUsed(
+                snapshotType,
+                new Header(
+                    snapshot.key,
+                    getOwner().getId(),
+                    new Date(),
+                    name
+                )
+            )
+        );
         templateScannedBlocks = null;
         blueprintScannedData = null;
         blueprintScannedEntities.clear();

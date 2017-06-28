@@ -142,7 +142,7 @@ public class TileBuilder extends TileBC_Neptune
                 if (after.getItem() instanceof ItemSnapshot) {
                     Snapshot.Header header = BCBuildersItems.snapshot.getHeader(after);
                     if (header != null) {
-                        Snapshot newSnapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(header);
+                        Snapshot newSnapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(header.key);
                         if (newSnapshot != null) {
                             snapshot = newSnapshot;
                         }

@@ -56,7 +56,7 @@ public class Blueprint extends Snapshot {
             }
         }
         blueprint.entities.addAll(entities);
-        blueprint.header = header.withHash(blueprint.computeHash());
+        blueprint.computeKey();
         return blueprint;
     }
 

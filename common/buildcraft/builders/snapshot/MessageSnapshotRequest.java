@@ -15,27 +15,27 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.lib.net.PacketBufferBC;
 
 public class MessageSnapshotRequest implements IMessage {
-    private Snapshot.Header header;
+    private Snapshot.Key key;
 
     public MessageSnapshotRequest() {
     }
 
-    public MessageSnapshotRequest(Snapshot.Header header) {
-        this.header = header;
+    public MessageSnapshotRequest(Snapshot.Key key) {
+        this.key = key;
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        header.writeToByteBuf(new PacketBufferBC(buf));
+        key.writeToByteBuf(new PacketBufferBC(buf));
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        header = new Snapshot.Header(new PacketBufferBC(buf));
+        key = new Snapshot.Key(new PacketBufferBC(buf));
     }
 
     public static final IMessageHandler<MessageSnapshotRequest, MessageSnapshotResponse> HANDLER = (message, ctx) -> {
-        Snapshot snapshot = GlobalSavedDataSnapshots.get(Side.SERVER).getSnapshotByHeader(message.header);
+        Snapshot snapshot = GlobalSavedDataSnapshots.get(Side.SERVER).getSnapshot(message.key);
         return snapshot != null ? new MessageSnapshotResponse(snapshot) : null;
     };
 }
