@@ -126,6 +126,12 @@ public class BCEnergyRecipes {
             addHeatExchange(BCEnergyFluids.fuelLight, 1);
             addHeatExchange(BCEnergyFluids.fuelDense, 2);
             addHeatExchange(BCEnergyFluids.oilResidue, 6);
+
+            FluidStack water = new FluidStack(FluidRegistry.WATER, 10);
+            BuildcraftRecipeRegistry.refineryRecipes.addHeatableRecipe(water, null, 0, 1, 2);
+
+            FluidStack lava = new FluidStack(FluidRegistry.LAVA, 5);
+            BuildcraftRecipeRegistry.refineryRecipes.addCoolableRecipe(lava, null, 4, 3, 5);
         }
     }
 

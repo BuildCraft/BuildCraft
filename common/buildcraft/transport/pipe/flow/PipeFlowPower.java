@@ -10,9 +10,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.ToLongFunction;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
@@ -47,7 +45,7 @@ import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.data.AverageInt;
 
 public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
-    public static final long DEFAULT_MAX_POWER = MjAPI.MJ * 10;
+    private static final long DEFAULT_MAX_POWER = MjAPI.MJ * 10;
     public static final int NET_POWER_AMOUNTS = 2;
 
     private long maxPower = -1;
@@ -57,29 +55,24 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     private long currentWorldTime;
 
     private boolean isReceiver = false;
-    private final EnumMap<EnumFacing, Section> sections = Arrays.stream(EnumFacing.VALUES)
-        .collect(Collectors.toMap(
-            Function.identity(),
-            Section::new,
-            (u, v) -> u,
-            () -> new EnumMap<>(EnumFacing.class)
-        ));
-    public final EnumMap<EnumFacing, Double> clientPowerAmounts = Arrays.stream(EnumFacing.VALUES)
-        .collect(Collectors.toMap(
-            Function.identity(),
-            f -> 0D,
-            (u, v) -> u,
-            () -> new EnumMap<>(EnumFacing.class)
-        ));
+    private final EnumMap<EnumFacing, Section> sections;
 
     private final SafeTimeTracker tracker = new SafeTimeTracker(1);
 
     public PipeFlowPower(IPipe pipe) {
         super(pipe);
+        sections = new EnumMap<>(EnumFacing.class);
+        for (EnumFacing face : EnumFacing.VALUES) {
+            sections.put(face, new Section(face));
+        }
     }
 
     public PipeFlowPower(IPipe pipe, NBTTagCompound nbt) {
         super(pipe, nbt);
+        sections = new EnumMap<>(EnumFacing.class);
+        for (EnumFacing face : EnumFacing.VALUES) {
+            sections.put(face, new Section(face));
+        }
     }
 
     @Override
@@ -95,9 +88,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         if (side == Side.SERVER) {
             if (id == NET_POWER_AMOUNTS || id == NET_ID_FULL_STATE) {
                 for (EnumFacing face : EnumFacing.VALUES) {
-                    buffer.writeDouble(
-                        sections.get(face).displayPower
-                    );
+                    buffer.writeDouble(sections.get(face).displayPower);
                 }
             }
         }
@@ -109,7 +100,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         if (side == Side.CLIENT) {
             if (id == NET_POWER_AMOUNTS || id == NET_ID_FULL_STATE) {
                 for (EnumFacing face : EnumFacing.VALUES) {
-                    clientPowerAmounts.put(face, buffer.readDouble());
+                    sections.get(face).clientPowerAmount = buffer.readDouble();
                 }
             }
         }
@@ -179,7 +170,8 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     }
 
     @Override
-    public boolean onFlowActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ, EnumPipePart part) {
+    public boolean onFlowActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ,
+        EnumPipePart part) {
         return super.onFlowActivate(player, trace, hitX, hitY, hitZ, part);
     }
 
@@ -201,9 +193,11 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("maxPower = " + LocaleUtil.localizeMj(maxPower));
         left.add("isReceiver = " + isReceiver);
-        left.add("internalPower = " + arrayToString(s -> s.internalPower) + " <- " + arrayToString(s -> s.internalNextPower));
+        left.add("internalPower = " + arrayToString(s -> s.internalPower) + " <- "
+            + arrayToString(s -> s.internalNextPower));
         left.add("- powerQuery: " + arrayToString(s -> s.powerQuery) + " <- " + arrayToString(s -> s.nextPowerQuery));
-        left.add("- power: IN " + arrayToString(s -> s.debugPowerInput) + ", OUT " + arrayToString(s -> s.debugPowerOutput));
+        left.add(
+            "- power: IN " + arrayToString(s -> s.debugPowerInput) + ", OUT " + arrayToString(s -> s.debugPowerOutput));
         left.add("- power: OFFERED " + arrayToString(s -> s.debugPowerOffered));
     }
 
@@ -250,11 +244,13 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
                             unusedPowerQuery -= s2.powerQuery;
                             IPipe neighbour = pipe.getConnectedPipe(face2);
                             long leftover = watts;
-                            if (neighbour != null && neighbour.getFlow() instanceof PipeFlowPower && neighbour.isConnected(face2.getOpposite())) {
+                            if (neighbour != null && neighbour.getFlow() instanceof PipeFlowPower
+                                && neighbour.isConnected(face2.getOpposite())) {
                                 PipeFlowPower oFlow = (PipeFlowPower) neighbour.getFlow();
                                 leftover = oFlow.sections.get(face2.getOpposite()).receivePowerInternal(watts);
                             } else {
-                                IMjReceiver reciever = pipe.getHolder().getCapabilityFromPipe(face2, MjAPI.CAP_RECEIVER);
+                                IMjReceiver reciever =
+                                    pipe.getHolder().getCapabilityFromPipe(face2, MjAPI.CAP_RECEIVER);
                                 if (reciever != null && reciever.canReceive()) {
                                     leftover = reciever.receivePower(watts, false);
                                 }
@@ -349,7 +345,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         public final EnumFacing side;
 
         public final AverageInt clientDisplayAverage = new AverageInt(10);
-        public double clientDisplayFlow;
+        public double clientDisplayFlow, clientPowerAmount;
 
         public long displayPower;
         public EnumFlow displayFlow = EnumFlow.STATIONARY;
@@ -360,9 +356,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         long powerQuery;
         long internalPower;
 
-        /**
-         * Debugging fields
-         */
+        /** Debugging fields */
         long debugPowerInput, debugPowerOutput, debugPowerOffered;
 
         public Section(EnumFacing side) {

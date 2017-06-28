@@ -12,13 +12,18 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -39,6 +44,7 @@ import buildcraft.lib.fluid.TankManager;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;
 import buildcraft.lib.misc.MathUtil;
+import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
@@ -177,7 +183,6 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         ICoolableRecipe c_recipe = reg.getCoolableRegistry().getRecipeForInput(c_in.getFluid());
         IHeatableRecipe h_recipe = reg.getHeatableRegistry().getRecipeForInput(h_in.getFluid());
         if (h_recipe == null || c_recipe == null) {
-            BCLog.logger.warn("A recipe was null");
             return;
         }
         if (c_recipe.heatFrom() <= h_recipe.heatFrom()) {
@@ -209,7 +214,39 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
                 drain(c_in, c_in_f);
                 drain(h_in, h_in_f);
                 progress = lag;
-                // TODO: Add particles if its water or lava
+                if (c_in_f.getFluid() == FluidRegistry.LAVA) {
+                    // Output is at the other end
+                    Vec3d from = VecUtil.convertCenter(getPos());
+                    EnumFacing dir = EnumFacing.SOUTH;
+                    spewForth(from, dir, EnumParticleTypes.SMOKE_LARGE);
+                }
+                if (h_in_f.getFluid() == FluidRegistry.WATER) {
+                    // Output is here
+                    Vec3d from = VecUtil.convertCenter(tileEnd.getPos());
+                    EnumFacing dir = EnumFacing.UP;
+                    spewForth(from, dir, EnumParticleTypes.CLOUD);
+                }
+            }
+        }
+    }
+
+    private static void spewForth(Vec3d from, EnumFacing dir, EnumParticleTypes particle) {
+        Vec3d vecDir = new Vec3d(dir.getDirectionVec());
+        from = from.add(VecUtil.scale(vecDir, 0.5));
+
+        double x = from.xCoord;
+        double y = from.yCoord;
+        double z = from.zCoord;
+
+        Vec3d motion = VecUtil.scale(vecDir, 0.4);
+        for (int i = 0; i < 10; i++) {
+            double dx = motion.xCoord + Math.random() * 0.01;
+            double dy = motion.yCoord + Math.random() * 0.01;
+            double dz = motion.zCoord + Math.random() * 0.01;
+
+            WorldClient w = Minecraft.getMinecraft().world;
+            if (w != null) {
+                w.spawnParticle(particle, x, y, z, dx, dy, dz);
             }
         }
     }
@@ -238,7 +275,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
     }
 
     private static boolean canFill(Tank t, FluidStack fluid) {
-        return t.fillInternal(fluid, false) == fluid.amount;
+        return fluid == null || t.fillInternal(fluid, false) == fluid.amount;
     }
 
     private static boolean canDrain(Tank t, FluidStack fluid) {
@@ -247,6 +284,9 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
     }
 
     private static void fill(Tank t, FluidStack fluid) {
+        if (fluid == null) {
+            return;
+        }
         int a = t.fillInternal(fluid, true);
         if (a != fluid.amount) {
             String err = "Buggy transation! Failed to fill " + fluid.getFluid();
