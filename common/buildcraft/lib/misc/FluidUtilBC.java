@@ -18,6 +18,9 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
+import buildcraft.api.core.IFluidFilter;
+import buildcraft.api.core.IFluidHandlerAdv;
+
 import buildcraft.lib.fluid.Tank;
 
 public class FluidUtilBC {
@@ -49,7 +52,8 @@ public class FluidUtilBC {
         if (drained > 0) {
             FluidStack actuallyDrained = tank.drain(drained, true);
             if (actuallyDrained == null || actuallyDrained.amount != drained) {
-                throw new IllegalStateException("Bad tank! Could drain " + working + " but only drained " + actuallyDrained + "( tank " + tank.getClass() + ")");
+                throw new IllegalStateException("Bad tank! Could drain " + working + " but only drained "
+                    + actuallyDrained + "( tank " + tank.getClass() + ")");
             }
         }
     }
@@ -79,7 +83,8 @@ public class FluidUtilBC {
                 if (filled > 0) {
                     FluidStack reallyDrained = handler.drain(filled, true);
                     if (reallyDrained == null || reallyDrained.amount != filled) {
-                        throw new IllegalStateException("Bad IFluidHandler.drain implementation! ( drained = " + drained + " reallyDrained = " + reallyDrained + " handler " + handler.getClass());
+                        throw new IllegalStateException("Bad IFluidHandler.drain implementation! ( drained = " + drained
+                            + " reallyDrained = " + reallyDrained + " handler " + handler.getClass());
                     }
                     max -= filled;
                 }
@@ -93,7 +98,8 @@ public class FluidUtilBC {
                     fluidFilter.amount = filled;
                     FluidStack reallyDrained = handler.drain(fluidFilter, true);
                     if (reallyDrained == null || reallyDrained.amount != filled) {
-                        throw new IllegalStateException("Bad IFluidHandler.drain implementation! ( drained = " + drained + " reallyDrained = " + reallyDrained + " handler " + handler.getClass());
+                        throw new IllegalStateException("Bad IFluidHandler.drain implementation! ( drained = " + drained
+                            + " reallyDrained = " + reallyDrained + " handler " + handler.getClass());
                     }
                     max -= filled;
                 }
@@ -128,5 +134,36 @@ public class FluidUtilBC {
             return a == b;
         }
         return a.getName().equals(b.getName());
+    }
+
+    public static int move(IFluidHandler from, IFluidHandler to) {
+        return move(from, to, Integer.MAX_VALUE);
+    }
+
+    public static int move(IFluidHandler from, IFluidHandler to, int max) {
+        if (from == null || to == null) {
+            return 0;
+        }
+        FluidStack toDrainPotential;
+        if (from instanceof IFluidHandlerAdv) {
+            IFluidFilter filter = f -> to.fill(f, false) > 0;
+            toDrainPotential = ((IFluidHandlerAdv) from).drain(filter, max, false);
+        } else {
+            toDrainPotential = from.drain(max, false);
+        }
+        int accepted = to.fill(toDrainPotential, false);
+        if (accepted <= 0) {
+            return 0;
+        }
+        FluidStack toDrain = new FluidStack(toDrainPotential, accepted);
+        FluidStack drained = from.drain(toDrain, true);
+        if (!toDrain.isFluidEqual(drained) || toDrain.amount != drained.amount) {
+            throw new IllegalStateException("");
+        }
+        int actuallyAccepted = to.fill(drained, true);
+        if (actuallyAccepted != accepted) {
+            throw new IllegalStateException("Mismatched IFluidHandler implementations!");
+        }
+        return actuallyAccepted;
     }
 }

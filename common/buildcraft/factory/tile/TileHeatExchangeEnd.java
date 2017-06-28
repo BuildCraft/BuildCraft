@@ -17,12 +17,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
@@ -36,12 +38,17 @@ import buildcraft.factory.BCFactoryBlocks;
 
 public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable {
     public final Tank tankHeatableOut = new Tank("heatable_out", 2 * Fluid.BUCKET_VOLUME, this);
-    public final Tank tankCoolableIn = new Tank("coolable_in", 2 * Fluid.BUCKET_VOLUME, this);
+    public final Tank tankCoolableIn = new Tank("coolable_in", 2 * Fluid.BUCKET_VOLUME, this, this::isCoolant);
     private final TankManager<Tank> tankManager = new TankManager<>(tankHeatableOut, tankCoolableIn);
 
     public TileHeatExchangeEnd() {
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankHeatableOut, EnumPipePart.UP);
         caps.addCapability(CapUtil.CAP_FLUIDS, this::getTankForSide, EnumPipePart.HORIZONTALS);
+        tankHeatableOut.setCanFill(false);
+    }
+
+    private boolean isCoolant(FluidStack fluid) {
+        return BuildcraftRecipeRegistry.refineryRecipes.getCoolableRegistry().getRecipeForInput(fluid) != null;
     }
 
     private IFluidHandler getTankForSide(EnumFacing side) {
@@ -98,15 +105,10 @@ public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable {
 
     @Nullable
     public IFluidHandler getFluidAutoOutputTarget() {
-        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchangeEnd);
-        if (state == null) {
-            return null;
-        }
-        EnumFacing facing = state.getValue(BlockBCBase_Neptune.PROP_FACING);
-        TileEntity tile = getNeighbourTile(facing.getOpposite());
+        TileEntity tile = getNeighbourTile(EnumFacing.UP);
         if (tile == null) {
             return null;
         }
-        return tile.getCapability(CapUtil.CAP_FLUIDS, facing);
+        return tile.getCapability(CapUtil.CAP_FLUIDS, EnumFacing.DOWN);
     }
 }

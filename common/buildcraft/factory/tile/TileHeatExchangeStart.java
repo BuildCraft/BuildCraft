@@ -9,6 +9,8 @@ package buildcraft.factory.tile;
 import java.io.IOException;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -17,18 +19,26 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.api.recipes.IRefineryRecipeManager;
+import buildcraft.api.recipes.IRefineryRecipeManager.ICoolableRecipe;
+import buildcraft.api.recipes.IRefineryRecipeManager.IHeatableRecipe;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.fluid.TankManager;
 import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.FluidUtilBC;
+import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
@@ -36,19 +46,25 @@ import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.block.BlockHeatExchange;
 
 public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, IDebuggable {
-    public final Tank tankHeatableIn = new Tank("heatable_in", 2 * Fluid.BUCKET_VOLUME, this);
+    public final Tank tankHeatableIn = new Tank("heatable_in", 2 * Fluid.BUCKET_VOLUME, this, this::isHeatant);
     public final Tank tankCoolableOut = new Tank("coolable_out", 2 * Fluid.BUCKET_VOLUME, this);
     private final TankManager<Tank> tankManager = new TankManager<>(tankHeatableIn, tankCoolableOut);
 
     private TileHeatExchangeEnd tileEnd;
+    private int progress = 0;
 
     public TileHeatExchangeStart() {
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankHeatableIn, EnumPipePart.DOWN);
         caps.addCapability(CapUtil.CAP_FLUIDS, this::getTankForSide, EnumPipePart.HORIZONTALS);
+        tankCoolableOut.setCanFill(false);
+    }
+
+    private boolean isHeatant(FluidStack fluid) {
+        return BuildcraftRecipeRegistry.refineryRecipes.getHeatableRegistry().getRecipeForInput(fluid) != null;
     }
 
     private IFluidHandler getTankForSide(EnumFacing side) {
-        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchangeEnd);
+        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchangeStart);
         if (state == null) {
             return null;
         }
@@ -98,10 +114,20 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
             // TODO: Client stuffs
             return;
         }
+        tileEnd = null;
+        findEnd();
+        if (tileEnd != null) {
+            craft();
+        }
+        output();
+    }
+
+    private void findEnd() {
         // TODO (AlexIIL): Make this check passive, not active.
         tileEnd = null;
         IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchangeStart);
         if (state == null) {
+            // BCLog.logger.warn("Null state");
             return;
         }
         BlockHeatExchange block = (BlockHeatExchange) state.getBlock();
@@ -112,30 +138,142 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
             search = search.offset(facing);
             state = getLocalState(search);
             if (state.getBlock() != BCFactoryBlocks.heatExchangeMiddle) {
+                // BCLog.logger.warn("Not middle @ " + search + " (" + i + ")");
                 break;
             }
             block = BCFactoryBlocks.heatExchangeMiddle;
             if (block.part.getAxis(state) != facing.getAxis()) {
+                // BCLog.logger.warn("Wrong axis!");
                 return;
             }
             middles++;
         }
         if (middles == 0) {
+            // BCLog.logger.warn("No middles!");
             return;
         }
-        search = search.offset(facing);
-        state = getLocalState(search);
         if (state.getBlock() != BCFactoryBlocks.heatExchangeEnd) {
+            // BCLog.logger.warn("Not end @ " + search);
             return;
         }
         if (state.getValue(BlockBCBase_Neptune.PROP_FACING) != facing.getOpposite()) {
+            // BCLog.logger.warn("Wrong EnumFacing");
             return;
         }
         TileEntity tile = getLocalTile(search);
         if (tile instanceof TileHeatExchangeEnd) {
             tileEnd = (TileHeatExchangeEnd) tile;
+        } else {
+            // BCLog.logger.warn("Not end tile!");
         }
-        // TODO: Ticks!
+    }
+
+    private void craft() {
+        Tank c_in = tileEnd.tankCoolableIn;
+        Tank c_out = tankCoolableOut;
+        Tank h_in = tankHeatableIn;
+        Tank h_out = tileEnd.tankHeatableOut;
+        IRefineryRecipeManager reg = BuildcraftRecipeRegistry.refineryRecipes;
+        ICoolableRecipe c_recipe = reg.getCoolableRegistry().getRecipeForInput(c_in.getFluid());
+        IHeatableRecipe h_recipe = reg.getHeatableRegistry().getRecipeForInput(h_in.getFluid());
+        if (h_recipe == null || c_recipe == null) {
+            BCLog.logger.warn("A recipe was null");
+            return;
+        }
+        if (c_recipe.heatFrom() <= h_recipe.heatFrom()) {
+            BCLog.logger.warn("Invalid heat values!");
+            return;
+        }
+        int c_diff = c_recipe.heatFrom() - c_recipe.heatTo();
+        int h_diff = h_recipe.heatTo() - h_recipe.heatFrom();
+        if (h_diff < 1 || c_diff < 1) {
+            throw new IllegalStateException("Invalid recipe " + c_recipe + ", " + h_recipe);
+        }
+        int c_mult = 1;
+        int h_mult = 1;
+        if (h_diff != c_diff) {
+            int lcm = MathUtil.findLowestCommonMultiple(c_diff, h_diff);
+            c_mult = lcm / c_diff;
+            h_mult = lcm / h_diff;
+        }
+        FluidStack c_in_f = mult(c_recipe.in(), c_mult);
+        FluidStack c_out_f = mult(c_recipe.out(), c_mult);
+        FluidStack h_in_f = mult(h_recipe.in(), h_mult);
+        FluidStack h_out_f = mult(h_recipe.out(), h_mult);
+        if (canFill(c_out, c_out_f) && canFill(h_out, h_out_f) && canDrain(c_in, c_in_f) && canDrain(h_in, h_in_f)) {
+            progress++;
+            int lag = Math.max(c_recipe.ticks(), h_recipe.ticks());
+            if (progress >= lag) {
+                fill(c_out, c_out_f);
+                fill(h_out, h_out_f);
+                drain(c_in, c_in_f);
+                drain(h_in, h_in_f);
+                progress = lag;
+                // TODO: Add particles if its water or lava
+            }
+        }
+    }
+
+    private void output() {
+        IFluidHandler thisOut = getFluidAutoOutputTarget();
+        FluidUtilBC.move(tankCoolableOut, thisOut, 1000);
+
+        if (tileEnd != null) {
+            IFluidHandler endOut = tileEnd.getFluidAutoOutputTarget();
+            FluidUtilBC.move(tileEnd.tankHeatableOut, endOut, 1000);
+        }
+    }
+
+    private static FluidStack mult(FluidStack fluid, int mult) {
+        if (fluid == null) {
+            return null;
+        }
+        switch (mult) {
+            case 0:
+            case 1:
+                return fluid;
+            default:
+                return new FluidStack(fluid, fluid.amount * mult);
+        }
+    }
+
+    private static boolean canFill(Tank t, FluidStack fluid) {
+        return t.fillInternal(fluid, false) == fluid.amount;
+    }
+
+    private static boolean canDrain(Tank t, FluidStack fluid) {
+        FluidStack f2 = t.drainInternal(fluid, false);
+        return f2 != null && f2.amount == fluid.amount;
+    }
+
+    private static void fill(Tank t, FluidStack fluid) {
+        int a = t.fillInternal(fluid, true);
+        if (a != fluid.amount) {
+            String err = "Buggy transation! Failed to fill " + fluid.getFluid();
+            throw new IllegalStateException(err + " x " + fluid.amount + " into " + t);
+        }
+    }
+
+    private static void drain(Tank t, FluidStack fluid) {
+        FluidStack f2 = t.drainInternal(fluid, true);
+        if (f2 == null || f2.amount != fluid.amount) {
+            String err = "Buggy transation! Failed to drain " + fluid.getFluid();
+            throw new IllegalStateException(err + " x " + fluid.amount + " from " + t);
+        }
+    }
+
+    @Nullable
+    private IFluidHandler getFluidAutoOutputTarget() {
+        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchangeStart);
+        if (state == null) {
+            return null;
+        }
+        EnumFacing facing = state.getValue(BlockBCBase_Neptune.PROP_FACING);
+        TileEntity tile = getNeighbourTile(facing.getOpposite());
+        if (tile == null) {
+            return null;
+        }
+        return tile.getCapability(CapUtil.CAP_FLUIDS, facing);
     }
 
     @Override
@@ -143,5 +281,6 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("heatable_in = " + tankHeatableIn.getDebugString());
         left.add("coolable_out = " + tankCoolableOut.getDebugString());
+        left.add("progress = " + progress);
     }
 }
