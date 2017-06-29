@@ -144,9 +144,9 @@ public class BCTransportItems {
                 makePipeItem(BCTransportPipes.cobblePower),
                 makePipeItem(BCTransportPipes.stonePower),
                 makePipeItem(BCTransportPipes.quartzPower),
-                makePipeItem(BCTransportPipes.goldPower)
+                makePipeItem(BCTransportPipes.goldPower),
                 //makePipeItem(BCTransportPipes.ironPower),
-                //makePipeItem(BCTransportPipes.sandstonePower)
+                makePipeItem(BCTransportPipes.sandstonePower)
             );
         }
     }
@@ -197,7 +197,12 @@ public class BCTransportItems {
             PIPE_EMZULI_ITEM,
             PIPE_STRIPES_ITEM,
             WIRE,
-            PLUG_BLOCKER
+            PLUG_BLOCKER,
+            PLUG_GATE,
+            PLUG_LENS,
+            PLUG_LIGHT_SENSOR,
+            PLUG_PULSAR,
+            PLUG_FACADE
         );
     }
 }

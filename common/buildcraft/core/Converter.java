@@ -21,16 +21,19 @@ public class Converter {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final File RECIPE_DIR = new File("changeme");
+    private static String color = "";
+
+    static {
+        if (RECIPE_DIR.exists()) {
+            RECIPE_DIR.delete();
+        }
+        RECIPE_DIR.mkdir();
+    }
 
 
 
     public static void addShapedRecipe(ItemStack result, Object... components) {
-        if (!RECIPE_DIR.exists()) {
-            RECIPE_DIR.mkdir();
-        }
-
-        // GameRegistry.addShapedRecipe(result, components);
-
+        color = "";
         Map<String, Object> json = new HashMap<>();
 
         List<String> pattern = new ArrayList<>();
@@ -53,8 +56,12 @@ public class Converter {
             } else {
                 if (curKey == null)
                     throw new IllegalArgumentException("Providing object without a char key");
-                if (o instanceof String)
+                if (o instanceof String) {
                     isOreDict = true;
+                    if (((String) o).startsWith("blockGlass")) {
+                        color = "_" + ((String) o).substring(10).toLowerCase();
+                    }
+                }
                 key.put(Character.toString(curKey), serializeItem(o));
                 curKey = null;
             }
@@ -62,12 +69,13 @@ public class Converter {
         json.put("key", key);
         json.put("type", isOreDict ? "forge:ore_shaped" : "minecraft:crafting_shaped");
         json.put("result", serializeItem(result));
+        json.put("group", result.getItem().getRegistryName().getResourcePath());
 
         // names the json the same name as the output's registry name
         // repeatedly adds _alt if a file already exists
         // janky I know but it works
         String suffix = result.getItem().getHasSubtypes() ? "_" + result.getItemDamage() : "";
-        File f = new File(RECIPE_DIR, result.getItem().getRegistryName().getResourcePath() + suffix + ".json");
+        File f = new File(RECIPE_DIR, result.getItem().getRegistryName().getResourcePath() + suffix + color + ".json");
 
         while (f.exists()) {
             suffix += "_alt";
@@ -115,7 +123,7 @@ public class Converter {
 
 
         try (FileWriter w = new FileWriter(f)) {
-            //GSON.toJson(json, w);
+            GSON.toJson(json, w);
         } catch (IOException e) {
             e.printStackTrace();
         }
