@@ -9,8 +9,10 @@ import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.lib.client.sprite.RawSprite;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.button.GuiButtonSmall;
@@ -68,19 +70,24 @@ public class GuiFillingPlanner extends GuiBC8<ContainerFillingPlanner> {
 
     @Override
     protected void drawForegroundLayer() {
+        GlStateManager.enableAlpha();
         iterateParameters((i, x, y, width, height, parameter) ->
                 new GuiIcon(
+                    new RawSprite(
                         new ResourceLocation(
-                                "buildcraftbuilders:textures/filling_planner/" +
-                                        parameter.getParameterName() +
-                                        "/" +
-                                        parameter.getName() +
-                                        ".png"
+                            "buildcraftbuilders:textures/filling/" +
+                                parameter.getParameterName() +
+                                "/" +
+                                parameter.getName() +
+                                ".png"
                         ),
                         0,
                         0,
-                        16,
-                        16
+                        width,
+                        height,
+                        (width + height) / 2
+                    ),
+                    (width + height) / 2
                 ).drawAt(x, y)
         );
         iterateParameters((i, x, y, width, height, parameter) -> {
