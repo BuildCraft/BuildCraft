@@ -16,16 +16,20 @@ import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.lib.net.PacketBufferBC;
 
 public interface IParameter {
+    String name();
+
+    int ordinal();
+
     default String getParameterName() {
         return EnumParameter.getForClass(getClass()).name().toLowerCase(Locale.ROOT);
     }
 
     default String getName() {
-        return ((Enum<?>) this).name().toLowerCase(Locale.ROOT);
+        return name().toLowerCase(Locale.ROOT);
     }
 
     default int getOrdinal() {
-        return ((Enum<?>) this).ordinal();
+        return ordinal();
     }
 
     static void toBytes(ByteBuf buf, IParameter parameter) {
