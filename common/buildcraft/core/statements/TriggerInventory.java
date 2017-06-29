@@ -29,21 +29,13 @@ import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
 
 public class TriggerInventory extends BCStatement implements ITriggerExternal {
-
-    public enum State {
-
-        Empty,
-        Contains,
-        Space,
-        Full;
-
-        public static final State[] VALUES = values();
-    }
-
     public State state;
 
     public TriggerInventory(State state) {
-        super("buildcraft:inventory." + state.name().toLowerCase(Locale.ENGLISH), "buildcraft.inventory." + state.name().toLowerCase(Locale.ENGLISH));
+        super(
+            "buildcraft:inventory." + state.name().toLowerCase(Locale.ROOT),
+            "buildcraft.inventory." + state.name().toLowerCase(Locale.ROOT)
+        );
         this.state = state;
     }
 
@@ -54,12 +46,12 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
 
     @Override
     public int maxParameters() {
-        return state == State.Contains || state == State.Space ? 1 : 0;
+        return state == State.CONTAINS || state == State.SPACE ? 1 : 0;
     }
 
     @Override
     public String getDescription() {
-        return LocaleUtil.localize("gate.trigger.inventory." + state.name().toLowerCase(Locale.ENGLISH));
+        return LocaleUtil.localize("gate.trigger.inventory." + state.name().toLowerCase(Locale.ROOT));
     }
 
     @Override
@@ -97,11 +89,11 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
             }
 
             switch (state) {
-                case Empty:
+                case EMPTY:
                     return !foundItems;
-                case Contains:
+                case CONTAINS:
                     return foundItems;
-                case Space:
+                case SPACE:
                     return foundSpace;
                 default:
                     return !foundSpace;
@@ -119,5 +111,14 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
     @Override
     public IStatement[] getPossible() {
         return BCCoreStatements.TRIGGER_INVENTORY_ALL;
+    }
+
+    public enum State {
+        EMPTY,
+        CONTAINS,
+        SPACE,
+        FULL;
+
+        public static final State[] VALUES = values();
     }
 }

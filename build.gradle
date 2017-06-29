@@ -84,7 +84,6 @@ sourceSets {
     main {
         java {
             srcDir "common"
-            srcDir "common_old_license"
             // srcDir "src_old_license"
         }
         resources {

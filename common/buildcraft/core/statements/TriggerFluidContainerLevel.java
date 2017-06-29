@@ -29,26 +29,13 @@ import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
 
 public class TriggerFluidContainerLevel extends BCStatement implements ITriggerExternal {
-
-    public enum TriggerType {
-
-        BELOW25(0.25F),
-        BELOW50(0.5F),
-        BELOW75(0.75F);
-
-        public static final TriggerType[] VALUES = values();
-
-        public final float level;
-
-        TriggerType(float level) {
-            this.level = level;
-        }
-    }
-
     public final TriggerType type;
 
     public TriggerFluidContainerLevel(TriggerType type) {
-        super("buildcraft:fluid." + type.name().toLowerCase(Locale.ROOT), "buildcraft.fluid." + type.name().toLowerCase(Locale.ROOT));
+        super(
+            "buildcraft:fluid." + type.name().toLowerCase(Locale.ROOT),
+            "buildcraft.fluid." + type.name().toLowerCase(Locale.ROOT)
+        );
         this.type = type;
     }
 
@@ -82,25 +69,22 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
             }
         }
 
-        IFluidTankProperties[] liquids = handler.getTankProperties();
-        if (liquids == null || liquids.length == 0) {
+        IFluidTankProperties[] tankPropertiesArray = handler.getTankProperties();
+        if (tankPropertiesArray == null || tankPropertiesArray.length == 0) {
             return false;
         }
 
-        for (IFluidTankProperties c : liquids) {
-            if (c == null) {
+        for (IFluidTankProperties tankProperties : tankPropertiesArray) {
+            if (tankProperties == null) {
                 continue;
             }
-            FluidStack fluid = c.getContents();
+            FluidStack fluid = tankProperties.getContents();
             if (fluid == null) {
-                if (searchedFluid == null) {
-                    return true;
-                }
-                return handler.fill(searchedFluid, false) > 0;
+                return searchedFluid == null || handler.fill(searchedFluid, false) > 0;
             }
 
             if (searchedFluid == null || searchedFluid.isFluidEqual(fluid)) {
-                float percentage = fluid.amount / (float) c.getCapacity();
+                float percentage = fluid.amount / (float) tankProperties.getCapacity();
                 return percentage < type.level;
             }
         }
@@ -115,5 +99,19 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
     @Override
     public IStatement[] getPossible() {
         return BCCoreStatements.TRIGGER_FLUID_ALL;
+    }
+
+    public enum TriggerType {
+        BELOW25(0.25F),
+        BELOW50(0.5F),
+        BELOW75(0.75F);
+
+        TriggerType(float level) {
+            this.level = level;
+        }
+
+        public static final TriggerType[] VALUES = values();
+
+        public final float level;
     }
 }
