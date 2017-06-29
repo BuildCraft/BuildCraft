@@ -350,8 +350,14 @@ public final class NBTUtilBC {
         return list;
     }
 
-    public static Stream<NBTTagCompound> readCompoundList(NBTTagList list) {
-        return IntStream.range(0, list.tagCount()).mapToObj(list::getCompoundTagAt);
+    public static Stream<NBTTagCompound> readCompoundList(NBTBase list) {
+        if (list == null) {
+            return Stream.empty();
+        }
+        if (!(list instanceof NBTTagList)) {
+            throw new IllegalArgumentException();
+        }
+        return IntStream.range(0, ((NBTTagList) list).tagCount()).mapToObj(((NBTTagList) list)::getCompoundTagAt);
     }
 
     public static NBTTagList writeStringList(Stream<String> stream) {
@@ -360,7 +366,33 @@ public final class NBTUtilBC {
         return list;
     }
 
-    public static Stream<String> readStringList(NBTTagList list) {
-        return IntStream.range(0, list.tagCount()).mapToObj(list::getStringTagAt);
+    public static Stream<String> readStringList(NBTBase list) {
+        if (list == null) {
+            return Stream.empty();
+        }
+        if (!(list instanceof NBTTagList)) {
+            throw new IllegalArgumentException();
+        }
+        return IntStream.range(0, ((NBTTagList) list).tagCount()).mapToObj(((NBTTagList) list)::getStringTagAt);
+    }
+
+    public static NBTTagByteArray writeBooleanList(Stream<Boolean> stream) {
+        Boolean[] booleans = stream.toArray(Boolean[]::new);
+        BitSet bitSet = new BitSet(booleans.length);
+        for (int i = 0; i < booleans.length; i++) {
+            bitSet.set(i, bitSet.get(i));
+        }
+        return new NBTTagByteArray(bitSet.toByteArray());
+    }
+
+    public static Stream<Boolean> readBooleanList(NBTBase list) {
+        if (list == null) {
+            return Stream.empty();
+        }
+        if (!(list instanceof NBTTagByteArray)) {
+            throw new IllegalArgumentException();
+        }
+        BitSet bitSet = BitSet.valueOf(((NBTTagByteArray) list).getByteArray());
+        return IntStream.range(0, bitSet.length()).mapToObj(bitSet::get);
     }
 }

@@ -46,13 +46,13 @@ import buildcraft.factory.BCFactoryBlocks;
 public class TilePump extends TileMiner {
     private final Tank tank = new Tank("tank", 16 * Fluid.BUCKET_VOLUME, this);
     private boolean queueBuilt = false;
-    private Queue<BlockPos> queue = new PriorityQueue<>(
-        Comparator.<BlockPos, Integer>comparing(blockPos ->
+    private final Queue<BlockPos> queue = new PriorityQueue<>(
+        Comparator.<BlockPos>comparingInt(blockPos ->
             (blockPos.getX() - pos.getX()) * (blockPos.getX() - pos.getX()) +
                 (blockPos.getZ() - pos.getZ()) * (blockPos.getZ() - pos.getZ())
         ).reversed()
     );
-    private Map<BlockPos, List<BlockPos>> paths = new HashMap<>();
+    private final Map<BlockPos, List<BlockPos>> paths = new HashMap<>();
 
     public TilePump() {
         tank.setCanFill(false);

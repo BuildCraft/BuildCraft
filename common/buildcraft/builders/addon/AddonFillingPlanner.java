@@ -17,8 +17,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
-import net.minecraftforge.common.util.Constants;
-
 import buildcraft.lib.misc.NBTUtilBC;
 
 import buildcraft.builders.BCBuildersGuis;
@@ -97,14 +95,7 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon {
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-        NBTUtilBC.readCompoundList(
-                nbt.getTagList(
-                        "parameters",
-                        Constants.NBT.TAG_COMPOUND
-                )
-        )
-                .map(IParameter::readFromNBT)
-                .forEach(parameters::add);
+        NBTUtilBC.readCompoundList(nbt.getTag("parameters")).map(IParameter::readFromNBT).forEach(parameters::add);
         updateBuildingInfo();
     }
 
