@@ -54,7 +54,8 @@ public interface IParameter {
     enum EnumParameter {
         PATTERN(EnumParameterPattern.class),
         TYPE(EnumParameterType.class),
-        AXIS(EnumParameterAxis.class);
+        AXIS(EnumParameterAxis.class),
+        FACING(EnumParameterFacing.class);
 
         public final Class<? extends IParameter> clazz;
 

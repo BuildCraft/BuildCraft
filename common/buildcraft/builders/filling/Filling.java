@@ -89,6 +89,11 @@ public class Filling {
             return EnumParameterPattern.class;
         }
         EnumParameterPattern parameterPattern = (EnumParameterPattern) parameters.get(0);
+        if (parameterPattern == EnumParameterPattern.STAIRS) {
+            if (parameters.size() == 1) {
+                return EnumParameterFacing.class;
+            }
+        }
         if (parameterPattern == EnumParameterPattern.TRIANGLE) {
             if (parameters.size() == 1) {
                 return EnumParameterType.class;
@@ -221,8 +226,42 @@ public class Filling {
         }
     }
 
+    public static boolean[][][] generateFillingPlanByFunctionInFacing(BlockPos size,
+                                                                      EnumFacing facing,
+                                                                      BiConsumer<Point2i, boolean[][]> function) {
+        Point2i flatSize;
+        switch (facing.getAxis()) {
+            case X:
+                flatSize = new Point2i(size.getZ(), size.getY());
+                break;
+            case Z:
+                flatSize = new Point2i(size.getX(), size.getY());
+                break;
+            default:
+                throw new UnsupportedOperationException();
+        }
+        boolean[][] flatFillingPlan = new boolean[flatSize.x][flatSize.y];
+        function.accept(flatSize, flatFillingPlan);
+        switch (facing) {
+            case WEST:
+                return generateFillingPlanByFunction(size, pos -> flatFillingPlan[pos.getZ()][pos.getY()]);
+            case EAST:
+                return generateFillingPlanByFunction(size, pos -> flatFillingPlan[size.getZ() - 1 - pos.getZ()][pos.getY()]);
+            case NORTH:
+                return generateFillingPlanByFunction(size, pos -> flatFillingPlan[pos.getX()][pos.getY()]);
+            case SOUTH:
+                return generateFillingPlanByFunction(size, pos -> flatFillingPlan[size.getX() - 1 - pos.getX()][pos.getY()]);
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
+
     public static boolean[][][] getFillingPlan(BlockPos size, List<IParameter> parameters) {
         EnumParameterPattern parameterPattern = (EnumParameterPattern) parameters.get(0);
+        if (parameterPattern == EnumParameterPattern.STAIRS) {
+            EnumParameterFacing parameterFacing = (EnumParameterFacing) parameters.get(1);
+            return FillingStairs.get(size, parameterFacing);
+        }
         if (parameterPattern == EnumParameterPattern.TRIANGLE) {
             EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
             EnumParameterAxis parameterAxis = (EnumParameterAxis) parameters.get(2);

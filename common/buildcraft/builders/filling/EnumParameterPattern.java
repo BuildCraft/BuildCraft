@@ -7,6 +7,7 @@
 package buildcraft.builders.filling;
 
 public enum EnumParameterPattern implements IParameter {
+    STAIRS,
     TRIANGLE,
     SQUARE,
     PENTAGON,
@@ -15,6 +16,4 @@ public enum EnumParameterPattern implements IParameter {
     CIRCLE,
     FRAME,
     SPHERE
-    // TODO: TILT
-    // TODO?: FLATTEN
 }
