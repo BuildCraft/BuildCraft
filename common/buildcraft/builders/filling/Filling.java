@@ -27,11 +27,6 @@ import net.minecraft.util.math.BlockPos;
 @SuppressWarnings("WeakerAccess")
 public class Filling {
     private static List<Item> itemBlocks = new ArrayList<>();
-    private static final List<Point2d> TRIANGLE_POINTS = Arrays.asList(
-        new Point2d(1, 0.5),
-        new Point2d(0.25, 0.9330127018922194),
-        new Point2d(0.25, 0.06698729810778076)
-    );
     private static final List<Point2d> PENTAGON_POINTS = Arrays.asList(
         new Point2d(1, 0.5),
         new Point2d(0.6545084971874737, 0.9755282581475768),
@@ -91,6 +86,9 @@ public class Filling {
         EnumParameterPattern parameterPattern = (EnumParameterPattern) parameters.get(0);
         if (parameterPattern == EnumParameterPattern.STAIRS) {
             if (parameters.size() == 1) {
+                return EnumParameterType.class;
+            }
+            if (parameters.size() == 2) {
                 return EnumParameterFacing.class;
             }
         }
@@ -99,7 +97,7 @@ public class Filling {
                 return EnumParameterType.class;
             }
             if (parameters.size() == 2) {
-                return EnumParameterAxis.class;
+                return EnumParameterFacing.class;
             }
         }
         if (parameterPattern == EnumParameterPattern.SQUARE) {
@@ -259,13 +257,14 @@ public class Filling {
     public static boolean[][][] getFillingPlan(BlockPos size, List<IParameter> parameters) {
         EnumParameterPattern parameterPattern = (EnumParameterPattern) parameters.get(0);
         if (parameterPattern == EnumParameterPattern.STAIRS) {
-            EnumParameterFacing parameterFacing = (EnumParameterFacing) parameters.get(1);
-            return FillingStairs.get(size, parameterFacing);
+            EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
+            EnumParameterFacing parameterFacing = (EnumParameterFacing) parameters.get(2);
+            return FillingStairs.get(size, parameterType, parameterFacing);
         }
         if (parameterPattern == EnumParameterPattern.TRIANGLE) {
             EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
-            EnumParameterAxis parameterAxis = (EnumParameterAxis) parameters.get(2);
-            return FillingPolygon.get(size, parameterType, parameterAxis, TRIANGLE_POINTS);
+            EnumParameterFacing parameterFacing = (EnumParameterFacing) parameters.get(2);
+            return FillingTriangle.get(size, parameterType, parameterFacing);
         }
         if (parameterPattern == EnumParameterPattern.SQUARE) {
             EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
