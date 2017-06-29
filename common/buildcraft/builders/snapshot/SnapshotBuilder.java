@@ -324,10 +324,12 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         }
 
         tile.getWorldBC().profiler.startSection("scan");
-        for (int i = 0; i < 10; i++) {
-            BlockPos blockPos = toCheck.pollFirst();
-            check(blockPos);
-            toCheck.addLast(blockPos);
+        if (!toCheck.isEmpty()) {
+            for (int i = 0; i < 10; i++) {
+                BlockPos blockPos = toCheck.pollFirst();
+                check(blockPos);
+                toCheck.addLast(blockPos);
+            }
         }
         tile.getWorldBC().profiler.endSection();
 

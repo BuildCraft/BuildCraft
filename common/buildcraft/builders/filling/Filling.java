@@ -17,12 +17,17 @@ import java.util.stream.StreamSupport;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point2i;
 
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemBlockSpecial;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+
+import buildcraft.builders.snapshot.Template;
 
 @SuppressWarnings("WeakerAccess")
 public class Filling {
@@ -154,6 +159,35 @@ public class Filling {
             }
         }
         return null;
+    }
+
+    public static List<IParameter> initParameters() {
+        List<IParameter> parameters = new ArrayList<>();
+        while (true) {
+            Class<? extends IParameter> nextParameterClass = Filling.getNextParameterClass(parameters);
+            if (nextParameterClass != null) {
+                // noinspection ConstantConditions
+                parameters.add(nextParameterClass.getEnumConstants()[0]);
+            } else {
+                break;
+            }
+        }
+        return ImmutableList.copyOf(parameters);
+    }
+
+    public static Template.BuildingInfo createBuildingInfo(BlockPos basePos,
+                                                           BlockPos size,
+                                                           List<IParameter> parameters,
+                                                           boolean inverted) {
+        Template template = new Template();
+        template.size = size;
+        template.offset = BlockPos.ORIGIN;
+        boolean[][][] fillingPlan = Filling.getFillingPlan(size, parameters);
+        if (inverted) {
+            fillingPlan = Filling.invertFillingPlan(size, fillingPlan);
+        }
+        template.data = fillingPlan;
+        return template.new BuildingInfo(basePos, Rotation.NONE);
     }
 
     public static boolean[][][] generateFillingPlanByFunction(BlockPos size,

@@ -64,6 +64,12 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileFiller) {
+            if (!((TileFiller) tile).isValid()) {
+                return false;
+            }
+        }
         if (!world.isRemote) {
             BCBuildersGuis.FILLER.openGUI(player, pos);
         }

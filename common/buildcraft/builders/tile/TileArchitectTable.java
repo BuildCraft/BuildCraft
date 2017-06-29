@@ -98,7 +98,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before,
-        @Nonnull ItemStack after) {
+                                @Nonnull ItemStack after) {
         super.onSlotChange(handler, slot, before, after);
         if (handler == invSnapshotIn) {
             if (invSnapshotOut.getStackInSlot(0).isEmpty() && after.getItem() instanceof ItemSnapshot) {
@@ -123,9 +123,15 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             box.setMin(volumeBox.box.min());
             box.setMax(volumeBox.box.max());
             isValid = true;
-            volumeBox.locks.add(new Lock(new Lock.Cause.CauseBlock(pos, blockState.getBlock()),
-                new Lock.Target.TargetResize(), new Lock.Target.TargetUsedByMachine(
-                    Lock.Target.TargetUsedByMachine.EnumType.STRIPES_READ)));
+            volumeBox.locks.add(
+                new Lock(
+                    new Lock.Cause.CauseBlock(pos, blockState.getBlock()),
+                    new Lock.Target.TargetResize(),
+                    new Lock.Target.TargetUsedByMachine(
+                        Lock.Target.TargetUsedByMachine.EnumType.STRIPES_READ
+                    )
+                )
+            );
             volumeBoxes.markDirty();
             sendNetworkUpdate(NET_BOX);
         } else if (tile instanceof IAreaProvider) {

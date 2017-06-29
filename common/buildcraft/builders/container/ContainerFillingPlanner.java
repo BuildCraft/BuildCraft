@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import com.google.common.collect.ImmutableList;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,13 +31,13 @@ import buildcraft.core.marker.volume.EnumAddonSlot;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 
-public class ContainerFillingPlanner extends ContainerBC_Neptune {
+public class ContainerFillingPlanner extends ContainerBC_Neptune implements IContainerFilling {
     private static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("filling_planner");
     private static final int ID_DATA = IDS.allocId("DATA");
 
     public AddonFillingPlanner addon;
-    public List<IParameter> parameters = new ArrayList<>();
-    public boolean inverted;
+    private List<IParameter> parameters = new ArrayList<>();
+    private boolean inverted;
 
     public ContainerFillingPlanner(EntityPlayer player) {
         super(player);
@@ -52,7 +54,7 @@ public class ContainerFillingPlanner extends ContainerBC_Neptune {
         return IDS;
     }
 
-    public void sendDataToServer() {
+    private void sendDataToServer() {
         sendMessage(ID_DATA, buffer -> {
             buffer.writeInt(parameters.size());
             parameters.forEach(parameter -> IParameter.toBytes(buffer, parameter));
@@ -66,14 +68,48 @@ public class ContainerFillingPlanner extends ContainerBC_Neptune {
         if (side == Side.SERVER) {
             if (id == ID_DATA) {
                 parameters.clear();
-                IntStream.range(0, buffer.readInt()).mapToObj(i -> IParameter.fromBytes(buffer)).forEach(parameters::add);
+                IntStream.range(0, buffer.readInt())
+                    .mapToObj(i -> IParameter.fromBytes(buffer))
+                    .forEach(parameters::add);
                 inverted = buffer.readBoolean();
-                addon.parameters = parameters;
+                addon.parameters.clear();
+                addon.parameters.addAll(parameters);
                 addon.inverted = inverted;
                 addon.updateBuildingInfo();
                 WorldSavedDataVolumeBoxes.get(player.world).markDirty();
             }
         }
+    }
+
+    @Override
+    public boolean isInverted() {
+        return inverted;
+    }
+
+    @Override
+    public void setInverted(boolean value) {
+        inverted = value;
+        sendDataToServer();
+    }
+
+    @Override
+    public List<IParameter> getParameters() {
+        return ImmutableList.copyOf(parameters);
+    }
+
+    @Override
+    public void setParameters(List<IParameter> value) {
+        parameters.clear();
+        parameters.addAll(value);
+    }
+
+    @Override
+    public boolean isCanExcavate() {
+        return true;
+    }
+
+    @Override
+    public void setCanExcavate(boolean value) {
     }
 
     @Override
