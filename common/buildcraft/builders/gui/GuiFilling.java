@@ -5,6 +5,7 @@
 package buildcraft.builders.gui;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -166,7 +167,7 @@ public class GuiFilling extends GuiBC8<ContainerBC_Neptune> {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         AtomicBoolean found = new AtomicBoolean(false);
-        List<IParameter> parameters = ((IContainerFilling) container).getParameters();
+        List<IParameter> parameters = new ArrayList<>(((IContainerFilling) container).getParameters());
         iterateParameters(parameters, (i, x, y, width, height, parameter) -> {
             if (mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height) {
                 IParameter[] values = parameter.getClass().getEnumConstants();

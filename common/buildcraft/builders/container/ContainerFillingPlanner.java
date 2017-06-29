@@ -101,6 +101,7 @@ public class ContainerFillingPlanner extends ContainerBC_Neptune implements ICon
     public void setParameters(List<IParameter> value) {
         parameters.clear();
         parameters.addAll(value);
+        sendDataToServer();
     }
 
     @Override
