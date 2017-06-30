@@ -82,6 +82,7 @@ public class BCTransportRecipes {
         ModContainer original = Loader.instance().activeModContainer();
         Loader.instance().getActiveModList().forEach((mod) -> {
             JsonContext ctx = new JsonContext(mod.getModId());
+            Loader.instance().setActiveModContainer(mod);
             CraftingHelper.findFiles(mod, "assets/" + mod.getModId() + "/pipes", null,
                 (root, file) -> {
                     String path = root.relativize(file).toString();
@@ -94,7 +95,7 @@ public class BCTransportRecipes {
                         reader = Files.newBufferedReader(file);
                         JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
                         if (json == null || json.isJsonNull())
-                            throw new JsonSyntaxException("Json is null (empty file?)welke");
+                            throw new JsonSyntaxException("Json is null (empty file?)");
 
                         Ingredient left = CraftingHelper.getIngredient(json.get("left"), ctx);
                         Ingredient right = CraftingHelper.getIngredient(json.get("right"), ctx);
