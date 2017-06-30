@@ -184,7 +184,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
-        targetPos = NBTUtilBC.readBlockPos(nbt.getTag("target_pos"));
+        targetPos = nbt.hasKey("target_pos") ? NBTUtilBC.readBlockPos(nbt.getTag("target_pos")) : null;
         laserPos = NBTUtilBC.readVec3d(nbt.getTag("laser_pos"));
         avgPower.readFromNbt(nbt, "average_power");
     }

@@ -97,8 +97,8 @@ public class Box implements IBox {
             min = new BlockPos(nbt.getInteger("xMin"), nbt.getInteger("yMin"), nbt.getInteger("zMin"));
             max = new BlockPos(nbt.getInteger("xMax"), nbt.getInteger("yMax"), nbt.getInteger("zMax"));
         } else {
-            min = NBTUtilBC.readBlockPos(nbt.getTag("min"));
-            max = NBTUtilBC.readBlockPos(nbt.getTag("max"));
+            min = nbt.hasKey("min") ? NBTUtilBC.readBlockPos(nbt.getTag("min")) : null;
+            max = nbt.hasKey("max") ? NBTUtilBC.readBlockPos(nbt.getTag("max")) : null;
         }
         extendToEncompassBoth(min, max);
     }
