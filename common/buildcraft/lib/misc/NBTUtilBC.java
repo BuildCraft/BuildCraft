@@ -117,7 +117,7 @@ public final class NBTUtilBC {
     }
 
     public static BlockPos readBlockPos(NBTBase base) {
-        if (base == null) return null;
+        if (base == null) return BlockPos.ORIGIN;
         switch (base.getId()) {
             case Constants.NBT.TAG_INT_ARRAY: {
                 int[] array = ((NBTTagIntArray) base).getIntArray();
