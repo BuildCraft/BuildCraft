@@ -218,6 +218,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     }
 
     private boolean canNotMine(BlockPos blockPos) {
+        if (world.getBlockState(blockPos).getBlockHardness(world, blockPos) < 0) {
+            return true;
+        }
         Fluid fluid = BlockUtil.getFluidWithFlowing(world, blockPos);
         return fluid != null && fluid.getViscosity() > 1000;
     }
@@ -635,7 +638,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             EntityPlayer fake = BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) world, getOwner(), pos);
 
             IBlockState state = world.getBlockState(breakPos);
-            if (state.getBlockHardness(world, breakPos) < 0) {
+            if (canNotMine(breakPos)) {
                 return true;
             }
 
