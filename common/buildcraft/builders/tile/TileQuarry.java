@@ -9,6 +9,7 @@ package buildcraft.builders.tile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
@@ -33,6 +35,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.WorldServer;
 
@@ -52,6 +55,8 @@ import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.chunkload.ChunkLoaderManager;
+import buildcraft.lib.chunkload.IChunkLoadingTile;
 import buildcraft.lib.inventory.AutomaticProvidingTransactor;
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.filter.StackFilter;
@@ -75,7 +80,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.BCBuildersEventDist;
 
-public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable {
+public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable, IChunkLoadingTile {
     private final MjBattery battery = new MjBattery(1600L * MjAPI.MJ);
     public final Box frameBox = new Box();
     private final Box miningBox = new Box();
@@ -248,6 +253,28 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         frameLocations = null;
     }
 
+    @Nullable
+    @Override
+    public LoadType getLoadType() {
+        return LoadType.HARD;
+    }
+
+    @Nullable
+    @Override
+    public Collection<ChunkPos> getChunksToLoad() {
+        ArrayList<ChunkPos> list = new ArrayList<>();
+            int minX = miningBox.min().getX() >> 4;
+            int minZ = miningBox.min().getZ() >> 4;
+            int maxX = miningBox.max().getX() >> 4;
+            int maxZ = miningBox.max().getZ() >> 4;
+            for (int x = minX; x < maxX; x++) {
+                for (int z = minZ; z < maxZ; z++) {
+                    list.add(new ChunkPos(x, z));
+                }
+        }
+        return list;
+    }
+
     @Override
     public void update() {
         if (world.isRemote) {
@@ -383,6 +410,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     @Override
     public void onLoad() {
         if (!world.isRemote && frameBox.isInitialized()) {
+            ChunkLoaderManager.updateChunksFor(this);
             BlockPos min = frameBox.min();
             BlockPos max = frameBox.max();
             for (int x = min.getX(); x <= max.getX(); x++) {
@@ -402,7 +430,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
 
     public void onLocationChange(BlockPos pos) {
-        if (miningBox.isInitialized() && miningBox.contains(pos) && frameLocations!= null && !frameLocations.contains(pos) && !world.isAirBlock(pos)) {
+        boolean air = world.isAirBlock(pos);
+        if (miningBox.isInitialized() && miningBox.contains(pos) && frameLocations != null && !frameLocations.contains(pos) && !air) {
             boxIterator = null;
         }
     }

@@ -9,7 +9,6 @@ package buildcraft.lib.chunkload;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.tileentity.TileEntity;
@@ -20,16 +19,20 @@ import net.minecraft.util.math.ChunkPos;
 import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.BCLibConfig.ChunkLoaderLevel;
 
-/** This should be implemented by {@link TileEntity}'s that wish to be chunkloaded by buildcraft lib. Note that tiles
- * should add themselves to the chunkloading list in {@link ChunkLoaderManager#loadChunksForTile(IChunkLoadingTile)} */
+/**
+ * This should be implemented by {@link TileEntity}'s that wish to be chunkloaded by buildcraft lib.
+ */
 public interface IChunkLoadingTile {
-    /** @return The chunkloading type, or null if this tile doesn't want to be chunkloaded. */
+    /**
+     * @return The chunkloading type, or null if this tile doesn't want to be chunkloaded.
+     */
     @Nullable
     default LoadType getLoadType() {
         return LoadType.SOFT;
     }
 
-    /** Gets a list of all the ADDITIONAL chunks to load.
+    /**
+     * Gets a list of all the ADDITIONAL chunks to load.
      * 
      * The default implementation returns neighbouring chunks if this block is on a chunk boundary.
      * 
