@@ -49,6 +49,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
@@ -672,6 +673,20 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 return onReceivePower();
             }
         }
+
+        public List<ItemStack> pickupItems(BlockPos pos) {
+            List<ItemStack> stacks = new ArrayList<>();
+            for (Entity entity : world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos).expandXyz(1))) {
+                if (entity instanceof EntityPlayer)
+                    continue;
+                IItemTransactor transactor = ItemTransactorHelper.getTransactorForEntity(entity, EnumFacing.UP);
+                ItemStack stack;
+                while (!(stack = transactor.extract(StackFilter.ALL, 0, Integer.MAX_VALUE, false)).isEmpty()) {
+                    stacks.add(stack);
+                }
+            }
+            return stacks;
+        }
     }
 
     public class TaskBreakBlock extends Task {
@@ -738,30 +753,16 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, breakPos, state, fake);
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if (!breakEvent.isCanceled()) {
-                List<ItemStack> stacks = new ArrayList<>();
                 // The drill pos will be null if we are making the frame: this is when we want to destroy the block, not
                 // drop its contents
                 world.sendBlockBreakProgress(breakPos.hashCode(), breakPos, -1);
                 world.destroyBlock(breakPos, true);
                 if (drillPos != null) {
-                    world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(breakPos)).stream()
-                        .map(entity -> ItemTransactorHelper.getTransactorForEntity(entity, EnumFacing.UP))
-                        .forEach(transactor -> {
-                            ItemStack stack;
-                            while (!(stack = transactor.extract(
-                                StackFilter.ALL,
-                                0,
-                                Integer.MAX_VALUE,
-                                false
-                            )).isEmpty()) {
-                                stacks.add(stack);
-                            }
-                        });
+                    for (ItemStack stack : pickupItems(breakPos)) {
+                        InventoryUtil.addToBestAcceptor(world, pos, null, stack);
+                    }
+                }
 
-                }
-                for (ItemStack stack : stacks) {
-                    InventoryUtil.addToBestAcceptor(world, pos, null, stack);
-                }
                 return true;
             } else {
                 return false;
@@ -929,6 +930,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 //            Vec3d oldDrillPos = drillPos;
             drillPos = to;
 //            moveEntities(oldDrillPos);
+            for (ItemStack stack : pickupItems(new BlockPos(to))) {
+                InventoryUtil.addToBestAcceptor(world, pos, null, stack);
+            }
             return true;
         }
 
