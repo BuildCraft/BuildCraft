@@ -100,6 +100,11 @@ public class FluidSmoother implements IDebuggable {
         return null;
     }
 
+    /** Delegate for {@link Tank#getCapacity()} - useful if this is the only object exposed for rendering. */
+    public int getCapacity() {
+        return tank.getCapacity();
+    }
+
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         if (data != null) {

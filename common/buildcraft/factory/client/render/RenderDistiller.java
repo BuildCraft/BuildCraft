@@ -32,6 +32,8 @@ import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.render.fluid.FluidSpriteType;
+import buildcraft.lib.fluid.FluidSmoother;
+import buildcraft.lib.fluid.FluidSmoother.SmoothedFluid;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.VecUtil;
 
@@ -107,9 +109,9 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         profiler.endSection();
         profiler.endStartSection("fluid");
 
-        renderTank(sizes.tankIn, tile.tankIn, combinedLight, vb);
-        renderTank(sizes.tankOutGas, tile.tankOutGas, combinedLight, vb);
-        renderTank(sizes.tankOutLiquid, tile.tankOutLiquid, combinedLight, vb);
+        renderTank(sizes.tankIn, tile.smoothedTankIn, combinedLight, partialTicks, vb);
+        renderTank(sizes.tankOutGas, tile.smoothedTankOutGas, combinedLight, partialTicks, vb);
+        renderTank(sizes.tankOutLiquid, tile.smoothedTankOutLiquid, combinedLight, partialTicks, vb);
 
         // buffer finish
         vb.setTranslation(0, 0, 0);
@@ -124,15 +126,15 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         profiler.endSection();
     }
 
-    private static void renderTank(Size size, Tank tank, int combinedLight, VertexBuffer vb) {
-        FluidStack fluid = tank.getFluidForRender();
+    private static void renderTank(Size size, FluidSmoother tank, int combinedLight, float partialTicks, VertexBuffer vb) {
+        SmoothedFluid fluid = tank.getFluidForRender(partialTicks);
         if (fluid == null || fluid.amount <= 0) {
             return;
         }
-        int blockLight = fluid.getFluid().getLuminosity(fluid) & 0xF;
+        int blockLight = fluid.fluid.getFluid().getLuminosity(fluid.fluid) & 0xF;
         combinedLight |= blockLight << 4;
         FluidRenderer.vertex.lighti(combinedLight);
-        FluidRenderer.renderFluid(FluidSpriteType.STILL, fluid, tank.getCapacity(), size.min, size.max, vb, null);
+        FluidRenderer.renderFluid(FluidSpriteType.STILL, fluid.fluid, fluid.amount, tank.getCapacity(), size.min, size.max, vb, null);
     }
 
     static class TankRenderSizes {

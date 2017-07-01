@@ -69,7 +69,6 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
         }
     };
     public final Tank tankResidue = new Tank("tankResidue", MAX_FLUID, this, this::isResidue);
-    private final TankManager<Tank> tankManager = new TankManager<>(tankFuel, tankCoolant, tankResidue);
     private final IFluidHandlerAdv fluidHandler = new InternalFluidHandler();
 
     private int penaltyCooling = 0;
@@ -79,6 +78,8 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     private IFuel currentFuel;
 
     public TileEngineIron_BC8() {
+        tankManager.addAll(tankFuel, tankCoolant, tankResidue);
+
         // TODO: Auto list of example fuels!
         tankFuel.helpInfo = new ElementHelpInfo(tankFuel.helpInfo.title, 0xFF_FF_33_33, Tank.DEFAULT_HELP_KEY, null,
             "buildcraft.help.tank.fuel");
@@ -98,7 +99,6 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
-        nbt.setTag("tanks", tankManager.serializeNBT());
         nbt.setInteger("penaltyCooling", penaltyCooling);
         nbt.setDouble("burnTime", burnTime);
         return nbt;
@@ -107,7 +107,6 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        tankManager.deserializeNBT(nbt.getCompoundTag("tanks"));
         penaltyCooling = nbt.getInteger("penaltyCooling");
         burnTime = nbt.getDouble("burnTime");
     }
@@ -187,7 +186,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     @Override
     protected void burn() {
         FluidStack fuel = this.tankFuel.getFluid();
-        if (currentFuel == null) {
+        if (currentFuel == null || !currentFuel.getFluid().isFluidEqual(fuel)) {
             currentFuel = BuildcraftFuelRegistry.fuel.getFuel(fuel);
         }
 

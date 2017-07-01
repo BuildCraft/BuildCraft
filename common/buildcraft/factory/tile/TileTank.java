@@ -54,6 +54,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     public final FluidSmoother smoothedTank = new FluidSmoother(w -> createAndSendMessage(NET_FLUID_DELTA, w), tank);
 
     public TileTank() {
+        tankManager.add(tank);// SAVING IS ALL SORTS OF BUGGED
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, this, EnumPipePart.VALUES);
     }
 
@@ -118,21 +119,6 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         }
         isPlayerInteracting = false;
         return true;
-    }
-
-    // NBT
-
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        tank.deserializeNBT(nbt.getCompoundTag("tank"));
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setTag("tank", tank.serializeNBT());
-        return nbt;
     }
 
     // Networking

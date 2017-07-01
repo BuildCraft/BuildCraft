@@ -19,23 +19,23 @@ public enum ComplexRefineryRecipeManager implements IRefineryRecipeManager {
     private final ComplexRefineryRegistry<IDistilationRecipe> distillationRegistry = new ComplexRefineryRegistry<>();
 
     @Override
-    public IHeatableRecipe createHeatingRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo, int ticks) {
+    public IHeatableRecipe createHeatingRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo) {
         return new HeatableRecipe(ticks, in, out, heatFrom, heatTo);
     }
 
     @Override
     public IHeatableRecipe addHeatableRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo, int ticks, boolean replaceExisting) {
-        return getHeatableRegistry().addRecipe(createHeatingRecipe(in, out, heatFrom, heatTo, ticks), replaceExisting);
+        return getHeatableRegistry().addRecipe(createHeatingRecipe(in, out, heatFrom, heatTo), replaceExisting);
     }
 
     @Override
-    public ICoolableRecipe createCoolableRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo, int ticks) {
+    public ICoolableRecipe createCoolableRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo) {
         return new CoolableRecipe(ticks, in, out, heatFrom, heatTo);
     }
     
     @Override
     public ICoolableRecipe addCoolableRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo, int ticks, boolean replaceExisting) {
-        return getCoolableRegistry().addRecipe(createCoolableRecipe(in, out, heatFrom, heatTo, ticks), replaceExisting);
+        return getCoolableRegistry().addRecipe(createCoolableRecipe(in, out, heatFrom, heatTo), replaceExisting);
     }
 
     @Override

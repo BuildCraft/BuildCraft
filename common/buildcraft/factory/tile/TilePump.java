@@ -20,7 +20,6 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
@@ -56,6 +55,7 @@ public class TilePump extends TileMiner {
 
     public TilePump() {
         tank.setCanFill(false);
+        tankManager.add(tank);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank, EnumPipePart.VALUES);
     }
 
@@ -205,19 +205,6 @@ public class TilePump extends TileMiner {
                 nextPos();
             }
         }
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        tank.deserializeNBT(nbt.getCompoundTag("tank"));
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setTag("tank", tank.serializeNBT());
-        return nbt;
     }
 
     // Networking

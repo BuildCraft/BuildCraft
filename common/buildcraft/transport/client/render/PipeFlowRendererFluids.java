@@ -62,8 +62,9 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
         fluidBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         fluidBuffer.setTranslation(x, y, z);
 
+        boolean gas = forRender.getFluid().isGaseous(forRender);
         boolean horizontal = false;
-        boolean vertical = flow.pipe.isConnected(EnumFacing.UP);
+        boolean vertical = flow.pipe.isConnected(gas ? EnumFacing.DOWN : EnumFacing.UP);
 
         for (EnumFacing face : EnumFacing.VALUES) {
             double size = ((Pipe) flow.pipe).getConnectedDist(face);
@@ -121,9 +122,12 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
             perc = Math.sqrt(perc);
             double minXZ = 0.5 - 0.24 * perc;
             double maxXZ = 0.5 + 0.24 * perc;
+            
+            double yMin = gas ? 0.26 : horizPos;
+            double yMax = gas ? 1 - horizPos : 0.74;
 
-            Vec3d min = new Vec3d(minXZ, horizPos, minXZ);
-            Vec3d max = new Vec3d(maxXZ, 0.74, maxXZ);
+            Vec3d min = new Vec3d(minXZ, yMin, minXZ);
+            Vec3d max = new Vec3d(maxXZ, yMax, maxXZ);
             min = min.add(offset);
             max = max.add(offset);
 

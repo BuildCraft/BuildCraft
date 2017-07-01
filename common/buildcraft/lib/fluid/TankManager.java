@@ -1,11 +1,14 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
+/*
+ * Copyright (c) 2016 SpaceToad and the BuildCraft team
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 package buildcraft.lib.fluid;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.ForwardingList;
@@ -25,19 +28,23 @@ import buildcraft.lib.net.PacketBufferBC;
 
 /** Provides a simple way to save+load and send+receive data for any number of tanks. This also attempts to fill all of
  * the tanks one by one via the {@link #fill(FluidStack, boolean)} and {@link #drain(FluidStack, boolean)} methods. */
-public class TankManager<T extends Tank> extends ForwardingList<T> implements IFluidHandlerAdv, INBTSerializable<NBTTagCompound> {
+public class TankManager extends ForwardingList<Tank> implements IFluidHandlerAdv, INBTSerializable<NBTTagCompound> {
 
-    private List<T> tanks = new ArrayList<>();
+    private final List<Tank> tanks = new ArrayList<>();
 
     public TankManager() {}
 
-    public TankManager(T... tanks) {
+    public TankManager(Tank... tanks) {
         addAll(Arrays.asList(tanks));
     }
 
     @Override
-    protected List<T> delegate() {
+    protected List<Tank> delegate() {
         return tanks;
+    }
+
+    public void addAll(Tank... values) {
+        Collections.addAll(this, values);
     }
 
     @Override
@@ -145,21 +152,7 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         for (Tank t : tanks) {
-            t.deserializeNBT(nbt.getCompoundTag(t.getTankName()));
-        }
-    }
-
-    @Deprecated
-    public void writeToNBT(NBTTagCompound data) {
-        for (Tank tank : tanks) {
-            tank.writeToNBT(data);
-        }
-    }
-
-    @Deprecated
-    public void readFromNBT(NBTTagCompound data) {
-        for (Tank tank : tanks) {
-            tank.readFromNBT(data);
+            t.readFromNBT(nbt.getCompoundTag(t.getTankName()));
         }
     }
 

@@ -21,7 +21,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -43,7 +42,7 @@ import buildcraft.lib.net.cache.NetworkedFluidStackCache;
 /** Provides a useful implementation of a fluid tank that can save + load, and has a few helper funtions.
  * 
  * Can optionally specify a filter to only allow a limited types of fluids in the tank. */
-public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializable<NBTTagCompound> {
+public class Tank extends FluidTank implements IFluidHandlerAdv {
     public static final String DEFAULT_HELP_KEY = "buildcraft.help.tank.generic";
 
     public int colorRenderCache = 0xFFFFFF;
@@ -106,36 +105,27 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
         return fluidStack != null ? fluidStack.getFluid() : null;
     }
 
-    @Override
     public NBTTagCompound serializeNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        writeToNBT(nbt);
-        return nbt;
-    }
-
-    @Override
-    public void deserializeNBT(NBTTagCompound nbt) {
-        readFromNBT(nbt);
+        return writeToNBT(new NBTTagCompound());
     }
 
     @Override
     public final NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        NBTTagCompound tankData = new NBTTagCompound();
-        super.writeToNBT(tankData);
-        writeTankToNBT(tankData);
-        nbt.setTag(name, tankData);
+        super.writeToNBT(nbt);
+        writeTankToNBT(nbt);
         return nbt;
     }
 
     @Override
     public final FluidTank readFromNBT(NBTTagCompound nbt) {
         if (nbt.hasKey(name)) {
-            // allow to read empty tanks
-            setFluid(null);
-
+            // Old style of saving + loading
             NBTTagCompound tankData = nbt.getCompoundTag(name);
             super.readFromNBT(tankData);
             readTankFromNBT(tankData);
+        } else {
+            super.readFromNBT(nbt);
+            readTankFromNBT(nbt);
         }
         return this;
     }

@@ -42,7 +42,8 @@ import buildcraft.factory.block.BlockFloodGate;
 import buildcraft.factory.client.render.AdvDebuggerFloodGate;
 
 public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebuggable {
-    public static final EnumFacing[] SIDE_INDEXES = new EnumFacing[] { EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST };
+    public static final EnumFacing[] SIDE_INDEXES =
+        new EnumFacing[] { EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST };
     public static final int[] REBUILD_DELAYS = new int[] { 128, 256, 512, 1024, 2048, 4096, 8192, 16384 };
 
     private boolean[] sidesBlocked = new boolean[5];
@@ -55,6 +56,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     public final TreeMap<Integer, Deque<BlockPos>> clientLayerQueues = new TreeMap<>();
 
     public TileFloodGate() {
+        tankManager.add(tank);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank, EnumPipePart.VALUES);
     }
 
@@ -106,7 +108,8 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                     return;
                 }
                 if (visitedBlocks.add(currentPos)) {
-                    if ((currentPos.getX() - pos.getX()) * (currentPos.getX() - pos.getX()) + (currentPos.getZ() - pos.getZ()) * (currentPos.getZ() - pos.getZ()) > 64 * 64) {
+                    if ((currentPos.getX() - pos.getX()) * (currentPos.getX() - pos.getX())
+                        + (currentPos.getZ() - pos.getZ()) * (currentPos.getZ() - pos.getZ()) > 64 * 64) {
                         return;
                     }
 
@@ -119,7 +122,8 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
                     if (world.isAirBlock(currentPos) || block instanceof BlockFloodGate || isCurrentFluid) {
                         blocksFound.add(currentPos);
-                        if (world.isAirBlock(currentPos) || (isCurrentFluid && blockState.getValue(BlockLiquid.LEVEL) != 0)) {
+                        if (world.isAirBlock(currentPos)
+                            || (isCurrentFluid && blockState.getValue(BlockLiquid.LEVEL) != 0)) {
                             getLayerQueue(currentPos.getY()).addLast(currentPos);
                         }
                     }
@@ -200,7 +204,6 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        tank.readFromNBT(nbt);
         for (int i = 0; i < sidesBlocked.length; i++) {
             nbt.setBoolean("sides_blocked_" + i, sidesBlocked[i]);
         }
@@ -209,7 +212,6 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
-        tank.writeToNBT(nbt);
         for (int i = 0; i < sidesBlocked.length; i++) {
             sidesBlocked[i] = nbt.getBoolean("sides_blocked_" + i);
         }

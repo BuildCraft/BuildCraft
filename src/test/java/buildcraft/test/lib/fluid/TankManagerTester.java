@@ -13,7 +13,7 @@ import buildcraft.test.VanillaSetupBaseTester;
 public class TankManagerTester extends VanillaSetupBaseTester {
     @Test
     public void testSimpleMoving() {
-        TankManager<Tank> manager = new TankManager<>();
+        TankManager manager = new TankManager();
         manager.add(new Tank("tank_1", 3, null));
         Assert.assertEquals(2, manager.fill(new FluidStack(FluidRegistry.WATER, 2), true));
         Assert.assertEquals(1, manager.fill(new FluidStack(FluidRegistry.WATER, 2), true));

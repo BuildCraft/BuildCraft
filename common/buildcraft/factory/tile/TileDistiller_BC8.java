@@ -37,11 +37,13 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableLong;
 import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.fluid.FluidSmoother;
+import buildcraft.lib.fluid.FluidSmoother.IFluidDataSender;
 import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.fluid.TankManager;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.data.AverageLong;
+import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.net.PacketBufferBC;
@@ -57,6 +59,11 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
     private static final NodeVariableLong MODEL_POWER_AVG;
     private static final NodeVariableLong MODEL_POWER_MAX;
 
+    public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("Distiller");
+    public static final int NET_TANK_IN = IDS.allocId("TANK_IN");
+    public static final int NET_TANK_OUT_GAS = IDS.allocId("TANK_OUT_GAS");
+    public static final int NET_TANK_OUT_LIQUID = IDS.allocId("TANK_OUT_LIQUID");
+
     static {
         MODEL_FUNC_CTX = DefaultContexts.createWithAll();
         MODEL_FACING = MODEL_FUNC_CTX.putVariableString("facing");
@@ -67,12 +74,34 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
 
     public static final long MAX_MJ_PER_TICK = 6 * MjAPI.MJ;
 
-    public final Tank tankIn = new Tank("in", 4 * Fluid.BUCKET_VOLUME, this);
-    public final Tank tankOutGas = new Tank("out_gas", 4 * Fluid.BUCKET_VOLUME, this, this::isDistillable);
-    public final Tank tankOutLiquid = new Tank("out_liquid", 4 * Fluid.BUCKET_VOLUME, this);
-    public final TankManager<Tank> tankManager = new TankManager<>(tankIn, tankOutGas, tankOutLiquid);
+    private final Tank tankIn = new Tank("in", 4 * Fluid.BUCKET_VOLUME, this) {
+        @Override
+        public int fill(FluidStack resource, boolean doFill) {
+            IRefineryRecipeManager manager = BuildcraftRecipeRegistry.refineryRecipes;
+            IDistillationRecipe recipe = manager.getDistilationRegistry().getRecipeForInput(resource);
+            if (recipe == null) {
+                return 0;
+            }
+            // Quality-of-life change: Only accept full amounts of the input fluid, so
+            // we don't get small amounts left over
+            int amount = getFluidAmount() + resource.amount;
+            amount = Math.min(amount, getCapacity());
+            amount = resource.amount - (amount % recipe.in().amount);
+            if (amount <= 0) {
+                return 0;
+            }
+            return super.fill(new FluidStack(resource, amount), doFill);
+        }
+    };
+    private final Tank tankOutGas = new Tank("out_gas", 4 * Fluid.BUCKET_VOLUME, this);
+    private final Tank tankOutLiquid = new Tank("out_liquid", 4 * Fluid.BUCKET_VOLUME, this);
 
     private final MjBattery mjBattery = new MjBattery(1024 * MjAPI.MJ);
+
+    public final FluidSmoother smoothedTankIn = new FluidSmoother(createSender(NET_TANK_IN), tankIn);
+    public final FluidSmoother smoothedTankOutGas = new FluidSmoother(createSender(NET_TANK_OUT_GAS), tankOutGas);
+    public final FluidSmoother smoothedTankOutLiquid =
+        new FluidSmoother(createSender(NET_TANK_OUT_LIQUID), tankOutLiquid);
 
     /** The model variables, used to keep track of the various state-based variables. */
     public final ModelVariableData clientModelData = new ModelVariableData();
@@ -91,10 +120,18 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         tankOutGas.setCanFill(false);
         tankOutLiquid.setCanFill(false);
 
+        tankManager.add(tankIn);
+        tankManager.add(tankOutGas);
+        tankManager.add(tankOutLiquid);
+
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankIn, EnumPipePart.HORIZONTALS);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankOutGas, EnumPipePart.UP);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankOutLiquid, EnumPipePart.DOWN);
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(mjBattery)));
+    }
+
+    private IFluidDataSender createSender(int netId) {
+        return writer -> createAndSendMessage(netId, writer);
     }
 
     @Override
@@ -121,12 +158,20 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         super.writePayload(id, buffer, side);
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
-                tankManager.writeData(buffer);
+                writePayload(NET_TANK_IN, buffer, side);
+                writePayload(NET_TANK_OUT_GAS, buffer, side);
+                writePayload(NET_TANK_OUT_LIQUID, buffer, side);
                 buffer.writeBoolean(isActive);
                 powerAvgClient = powerAvg.getAverageLong();
                 final long div = MjAPI.MJ / 2;
                 powerAvgClient = Math.round(powerAvgClient / (double) div) * div;
                 buffer.writeLong(powerAvgClient);
+            } else if (id == NET_TANK_IN) {
+                smoothedTankIn.writeInit(buffer);
+            } else if (id == NET_TANK_OUT_GAS) {
+                smoothedTankOutGas.writeInit(buffer);
+            } else if (id == NET_TANK_OUT_LIQUID) {
+                smoothedTankOutLiquid.writeInit(buffer);
             }
         }
     }
@@ -136,16 +181,24 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
-                tankManager.readData(buffer);
+                readPayload(NET_TANK_IN, buffer, side, ctx);
+                readPayload(NET_TANK_OUT_GAS, buffer, side, ctx);
+                readPayload(NET_TANK_OUT_LIQUID, buffer, side, ctx);
+
+                smoothedTankIn.resetSmoothing(getWorld());
+                smoothedTankOutGas.resetSmoothing(getWorld());
+                smoothedTankOutLiquid.resetSmoothing(getWorld());
+
                 isActive = buffer.readBoolean();
                 powerAvgClient = buffer.readLong();
+            } else if (id == NET_TANK_IN) {
+                smoothedTankIn.handleMessage(getWorld(), buffer);
+            } else if (id == NET_TANK_OUT_GAS) {
+                smoothedTankOutGas.handleMessage(getWorld(), buffer);
+            } else if (id == NET_TANK_OUT_LIQUID) {
+                smoothedTankOutLiquid.handleMessage(getWorld(), buffer);
             }
         }
-    }
-
-    private boolean isDistillable(FluidStack fluid) {
-        IRefineryRecipeManager manager = BuildcraftRecipeRegistry.refineryRecipes;
-        return manager.getDistilationRegistry().getRecipeForInput(fluid) != null;
     }
 
     public static void setClientModelVariablesForItem() {
@@ -177,17 +230,19 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
 
     @Override
     public void update() {
+        smoothedTankIn.tick(getWorld());
+        smoothedTankOutGas.tick(getWorld());
+        smoothedTankOutLiquid.tick(getWorld());
         if (world.isRemote) {
             setClientModelVariables(1);
             clientModelData.tick();
             return;
         }
-        long avgNow = powerAvg.getAverageLong();
         powerAvg.tick();
-        changedSinceNetUpdate |= avgNow / MjAPI.MJ != powerAvg.getAverageLong() / MjAPI.MJ;
+        changedSinceNetUpdate |= powerAvgClient != powerAvg.getAverageLong();
 
-        currentRecipe = BuildcraftRecipeRegistry.refineryRecipes.getDistilationRegistry().getRecipeForInput(tankIn
-            .getFluid());
+        currentRecipe =
+            BuildcraftRecipeRegistry.refineryRecipes.getDistilationRegistry().getRecipeForInput(tankIn.getFluid());
         if (currentRecipe == null) {
             mjBattery.addPowerChecking(distillPower, false);
             distillPower = 0;
@@ -219,7 +274,6 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
                     tankIn.drainInternal(reqIn, true);
                     tankOutGas.fillInternal(outGas, true);
                     tankOutLiquid.fillInternal(outLiquid, true);
-                    changedSinceNetUpdate = true;
                 }
             } else {
                 mjBattery.addPowerChecking(distillPower, false);
@@ -228,8 +282,10 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
             }
         }
 
-        if (updateTracker.markTimeIfDelay(world)) {
+        if (changedSinceNetUpdate && updateTracker.markTimeIfDelay(world)) {
+            powerAvgClient = powerAvg.getAverageLong();
             sendNetworkUpdate(NET_RENDER_DATA);
+            changedSinceNetUpdate = false;
         }
     }
 

@@ -33,7 +33,7 @@ public interface IChunkLoadingTile {
      * 
      * The default implementation returns neighbouring chunks if this block is on a chunk boundary.
      * 
-     * @return A collection of all the additional chunks to load, not including the {@link ChunkPos} that this tile is
+     * @return A collection of all the additional chunks to load, optionally including the {@link ChunkPos} that this tile is
      *         contained within. If the return value is null then only the chunk containing this block will be
      *         chunkloaded. */
     @Nullable

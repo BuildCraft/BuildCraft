@@ -25,7 +25,7 @@ public enum DefaultBlockAccessor implements ISoftBlockAccessor {
     @Override
     @Nullable
     public TileEntity getTile(World world, BlockPos pos, boolean force) {
-        if (direct) {
+        if (direct | force) {
             if (force || world.isBlockLoaded(pos)) {
                 return world.getTileEntity(pos);
             }
@@ -41,7 +41,7 @@ public enum DefaultBlockAccessor implements ISoftBlockAccessor {
 
     @Override
     public IBlockState getState(World world, BlockPos pos, boolean force) {
-        if (direct) {
+        if (direct | force) {
             if (force || world.isBlockLoaded(pos)) {
                 return world.getBlockState(pos);
             }
