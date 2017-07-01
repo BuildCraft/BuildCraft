@@ -7,7 +7,6 @@
 package buildcraft.energy.tile;
 
 import java.io.IOException;
-
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -187,6 +186,10 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     @Override
     protected void burn() {
         FluidStack fuel = this.tankFuel.getFluid();
+        if (fuel == null) {
+            currentFuel = null;
+            currentOutput = 0;
+        }
         if (currentFuel == null) {
             currentFuel = BuildcraftFuelRegistry.fuel.getFuel(fuel);
         }
