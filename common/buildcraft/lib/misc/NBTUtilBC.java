@@ -103,7 +103,6 @@ public final class NBTUtilBC {
     }
 
     public static NBTTagIntArray writeBlockPos(BlockPos pos) {
-        if (pos == null) return null;
         return new NBTTagIntArray(new int[] { pos.getX(), pos.getY(), pos.getZ() });
     }
 

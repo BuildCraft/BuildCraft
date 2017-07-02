@@ -67,7 +67,9 @@ public class BoxIterator implements Iterator<BlockPos> {
         nbt.setBoolean("invert", invert);
         // repeat
         nbt.setTag("order", order.writeNBT());
-        nbt.setTag("current", NBTUtilBC.writeBlockPos(current));
+        if (current != null) {
+            nbt.setTag("current", NBTUtilBC.writeBlockPos(current));
+        }
         return nbt;
     }
 
