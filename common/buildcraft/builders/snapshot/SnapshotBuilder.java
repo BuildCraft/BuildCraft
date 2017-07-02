@@ -21,6 +21,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
@@ -54,10 +55,10 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
     protected final T tile;
     private final IWorldEventListener worldEventListener = new IWorldEventListener() {
         @Override
-        public void notifyBlockUpdate(World world,
-                                      BlockPos pos,
-                                      IBlockState oldState,
-                                      IBlockState newState,
+        public void notifyBlockUpdate(@Nonnull World world,
+                                      @Nonnull BlockPos pos,
+                                      @Nonnull IBlockState oldState,
+                                      @Nonnull IBlockState newState,
                                       int flags) {
             if (tile.getBuilder() == SnapshotBuilder.this) {
                 check(pos);
@@ -65,7 +66,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         }
 
         @Override
-        public void notifyLightSet(BlockPos pos) {
+        public void notifyLightSet(@Nonnull BlockPos pos) {
         }
 
         @Override
@@ -74,8 +75,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
 
         @Override
         public void playSoundToAllNearExcept(@Nullable EntityPlayer player,
-                                             SoundEvent soundIn,
-                                             SoundCategory category,
+                                             @Nonnull SoundEvent sound,
+                                             @Nonnull SoundCategory category,
                                              double x,
                                              double y,
                                              double z,
@@ -84,7 +85,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         }
 
         @Override
-        public void playRecord(SoundEvent soundIn, BlockPos pos) {
+        public void playRecord(@Nonnull SoundEvent sound, @Nonnull BlockPos pos) {
         }
 
         @Override
@@ -96,40 +97,40 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                                   double xSpeed,
                                   double ySpeed,
                                   double zSpeed,
-                                  int... parameters) {
+                                  @Nonnull int... parameters) {
         }
 
         @Override
         public void spawnParticle(int id,
                                   boolean ignoreRange,
-                                  boolean p_190570_3_,
+                                  boolean minParticles,
                                   double x,
                                   double y,
                                   double z,
                                   double xSpeed,
                                   double ySpeed,
                                   double zSpeed,
-                                  int... parameters) {
+                                  @Nonnull int... parameters) {
         }
 
         @Override
-        public void onEntityAdded(Entity entityIn) {
+        public void onEntityAdded(@Nonnull Entity entity) {
         }
 
         @Override
-        public void onEntityRemoved(Entity entityIn) {
+        public void onEntityRemoved(@Nonnull Entity entity) {
         }
 
         @Override
-        public void broadcastSound(int soundID, BlockPos pos, int data) {
+        public void broadcastSound(int soundID, @Nonnull BlockPos pos, int data) {
         }
 
         @Override
-        public void playEvent(EntityPlayer player, int type, BlockPos blockPosIn, int data) {
+        public void playEvent(@Nullable EntityPlayer player, int type, @Nonnull BlockPos blockPos, int data) {
         }
 
         @Override
-        public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress) {
+        public void sendBlockBreakProgress(int breakerId, @Nonnull BlockPos pos, int progress) {
         }
     };
     private final Queue<BreakTask> breakTasks = new ArrayDeque<>();
