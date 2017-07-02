@@ -27,7 +27,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.render.fluid.FluidSpriteType;
-import buildcraft.lib.fluid.FluidSmoother.SmoothedFluid;
+import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
 import buildcraft.lib.fluid.Tank;
 
 import buildcraft.factory.tile.TileTank;
@@ -42,7 +42,7 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
 
     @Override
     public void renderTileEntityAt(TileTank tile, double x, double y, double z, float partialTicks, int destroyStage) {
-        SmoothedFluid forRender = tile.getFluidForRender(partialTicks);
+        FluidStackInterp forRender = tile.getFluidForRender(partialTicks);
         if (forRender == null) {
             return;
         }

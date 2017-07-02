@@ -14,7 +14,6 @@ import java.util.List;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -36,7 +35,7 @@ import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.fluid.FluidSmoother;
-import buildcraft.lib.fluid.FluidSmoother.SmoothedFluid;
+import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;
@@ -160,7 +159,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     // Rendering
 
     @SideOnly(Side.CLIENT)
-    public SmoothedFluid getFluidForRender(float partialTicks) {
+    public FluidStackInterp getFluidForRender(float partialTicks) {
         return smoothedTank.getFluidForRender(partialTicks);
     }
 
@@ -238,6 +237,10 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
                 return 0;
             }
         }
+        boolean gas = resource.getFluid().isGaseous(resource);
+        if (gas) {
+            Collections.reverse(tanks);
+        }
         for (TileTank t : tanks) {
             int tankFilled = t.tank.fill(resource, doFill);
             if (tankFilled > 0) {
@@ -275,8 +278,17 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
             return null;
         }
         List<TileTank> tanks = getTanks();
-        // The returned list is ordered bottom -> top, but we want top -> bottom
-        Collections.reverse(tanks);
+        boolean gas = false;
+        for (TileTank tile : tanks) {
+            FluidStack fluid = tile.tank.getFluid();
+            if (fluid != null) {
+                gas = fluid.getFluid().isGaseous(fluid);
+                break;
+            }
+        }
+        if (!gas) {
+            Collections.reverse(tanks);
+        }
         FluidStack total = null;
         for (TileTank t : tanks) {
             int realMax = maxDrain - (total == null ? 0 : total.amount);

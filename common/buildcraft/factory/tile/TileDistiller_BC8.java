@@ -98,10 +98,9 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
 
     private final MjBattery mjBattery = new MjBattery(1024 * MjAPI.MJ);
 
-    public final FluidSmoother smoothedTankIn = new FluidSmoother(createSender(NET_TANK_IN), tankIn);
-    public final FluidSmoother smoothedTankOutGas = new FluidSmoother(createSender(NET_TANK_OUT_GAS), tankOutGas);
-    public final FluidSmoother smoothedTankOutLiquid =
-        new FluidSmoother(createSender(NET_TANK_OUT_LIQUID), tankOutLiquid);
+    public final FluidSmoother smoothedTankIn;
+    public final FluidSmoother smoothedTankOutGas;
+    public final FluidSmoother smoothedTankOutLiquid;
 
     /** The model variables, used to keep track of the various state-based variables. */
     public final ModelVariableData clientModelData = new ModelVariableData();
@@ -123,6 +122,10 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         tankManager.add(tankIn);
         tankManager.add(tankOutGas);
         tankManager.add(tankOutLiquid);
+
+        smoothedTankIn = new FluidSmoother(createSender(NET_TANK_IN), tankIn);
+        smoothedTankOutGas = new FluidSmoother(createSender(NET_TANK_OUT_GAS), tankOutGas);
+        smoothedTankOutLiquid = new FluidSmoother(createSender(NET_TANK_OUT_LIQUID), tankOutLiquid);
 
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankIn, EnumPipePart.HORIZONTALS);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankOutGas, EnumPipePart.UP);

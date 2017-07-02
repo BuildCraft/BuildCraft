@@ -75,6 +75,9 @@ public class FluidSmoother implements IDebuggable {
     public FluidStack getFluidForRender() {
         if (data instanceof _Client) {
             _Client client = (_Client) data;
+            if (client.link == null) {
+                return null;
+            }
             FluidStack fluid = client.link.get();
             if (fluid == null) {
                 return null;
@@ -84,7 +87,7 @@ public class FluidSmoother implements IDebuggable {
         return null;
     }
 
-    public SmoothedFluid getFluidForRender(double partialTicks) {
+    public FluidStackInterp getFluidForRender(double partialTicks) {
         if (data instanceof _Client) {
             _Client client = (_Client) data;
             if (client.link == null) {
@@ -95,7 +98,7 @@ public class FluidSmoother implements IDebuggable {
                 return null;
             }
             double amount = client.amountLast * (1 - partialTicks) + client.amount * partialTicks;
-            return new SmoothedFluid(fluid, amount);
+            return new FluidStackInterp(fluid, amount);
         }
         return null;
     }
@@ -117,11 +120,11 @@ public class FluidSmoother implements IDebuggable {
         void writePacket(IPayloadWriter writer);
     }
 
-    public static class SmoothedFluid {
+    public static class FluidStackInterp {
         public final FluidStack fluid;
         public final double amount;
 
-        public SmoothedFluid(FluidStack fluid, double amount) {
+        public FluidStackInterp(FluidStack fluid, double amount) {
             this.fluid = fluid;
             this.amount = amount;
         }

@@ -75,9 +75,9 @@ public class BCEnergyRecipes {
         final int _light_dense_residue = 3;
         final int _gas_light_dense = 8;
 
-        addFuel(BCEnergyFluids.fuelGaseous, _gas, 4);
+        addFuel(BCEnergyFluids.fuelGaseous, _gas, 8);
         addFuel(BCEnergyFluids.fuelLight, _light, 6);
-        addFuel(BCEnergyFluids.fuelDense, _dense, 8);
+        addFuel(BCEnergyFluids.fuelDense, _dense, 4);
 
         addFuel(BCEnergyFluids.fuelMixedLight, _gas_light, 3);
         addFuel(BCEnergyFluids.fuelMixedHeavy, _light_dense, 5);
