@@ -28,7 +28,6 @@ import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 
 import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -165,12 +164,6 @@ public enum BCBuildersEventDist implements IWorldEventListener {
             ClientArchitectTables.tick();
         }
     }
-
-    @SubscribeEvent
-    public void onBlockPlace(BlockEvent.PlaceEvent event) {
-
-    }
-
 
     @Override
     public void notifyBlockUpdate(World world, BlockPos pos, IBlockState oldState, IBlockState newState, int flags) {
