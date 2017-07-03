@@ -5,12 +5,22 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Nonnull;
 
+import com.google.common.primitives.Bytes;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -37,7 +47,9 @@ import buildcraft.builders.snapshot.Snapshot;
 
 public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("library");
+    @SuppressWarnings("WeakerAccess")
     public static final int NET_DOWN = IDS.allocId("DOWN");
+    @SuppressWarnings("WeakerAccess")
     public static final int NET_UP = IDS.allocId("UP");
 
     public final ItemHandlerSimple invDownIn = itemManager.addInvHandler("downIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
@@ -45,10 +57,11 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
     public final ItemHandlerSimple invUpIn = itemManager.addInvHandler("upIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
     public final ItemHandlerSimple invUpOut = itemManager.addInvHandler("upOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
     public Snapshot.Key selected = null;
-    public int progressDown = -1;
-    public int progressUp = -1;
+    private int progressDown = -1;
+    private int progressUp = -1;
     public final DeltaInt deltaProgressDown = deltaManager.addDelta("progressDown", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
     public final DeltaInt deltaProgressUp = deltaManager.addDelta("progressUp", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
+    private final Map<Pair<UUID, Snapshot.Key>, List<byte[]>> upSnapshotsParts = new HashMap<>();
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
@@ -153,25 +166,6 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
             if (id == NET_UP) {
             }
         }
-        if (side == Side.CLIENT) {
-            if (id == NET_UP) {
-                if (selected != null) {
-                    Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(selected);
-                    if (snapshot != null) {
-                        buffer.writeBoolean(true);
-                        NbtSquisher.squish(
-                            Snapshot.writeToNBT(snapshot),
-                            NbtSquishConstants.BUILDCRAFT_V1_COMPRESSED,
-                            buffer
-                        );
-                    } else {
-                        buffer.writeBoolean(false);
-                    }
-                } else {
-                    buffer.writeBoolean(false);
-                }
-            }
-        }
     }
 
     @Override
@@ -193,29 +187,89 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                 }
             }
             if (id == NET_UP) {
-                MessageManager.sendToServer(createNetworkUpdate(NET_UP));
+                if (selected != null) {
+                    Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(selected);
+                    if (snapshot != null) {
+                        try (OutputStream outputStream = new OutputStream() {
+                            private byte[] buf = new byte[4 * 1024];
+                            private int pos = 0;
+                            private boolean closed = false;
+
+                            private void write(boolean last) throws IOException {
+                                MessageManager.sendToServer(createMessage(NET_UP, localBuffer -> {
+                                    localBuffer.writeUniqueId(ctx.getClientHandler().getGameProfile().getId());
+                                    selected.writeToByteBuf(localBuffer);
+                                    localBuffer.writeBoolean(last);
+                                    localBuffer.writeByteArray(buf);
+                                }));
+                            }
+
+                            @Override
+                            public void write(int b) throws IOException {
+                                buf[pos++] = (byte) b;
+                                if (pos >= buf.length) {
+                                    write(false);
+                                    buf = new byte[buf.length];
+                                    pos = 0;
+                                }
+                            }
+
+                            @Override
+                            public void close() throws IOException {
+                                if (closed) {
+                                    return;
+                                }
+                                closed = true;
+                                buf = Arrays.copyOf(buf, pos);
+                                pos = 0;
+                                write(true);
+                            }
+                        }) {
+                            NbtSquisher.squish(
+                                Snapshot.writeToNBT(snapshot),
+                                NbtSquishConstants.BUILDCRAFT_V1_COMPRESSED,
+                                outputStream
+                            );
+                        }
+                    }
+                }
             }
         }
         if (side == Side.SERVER) {
             if (id == NET_UP) {
-                if (buffer.readBoolean()) {
-                    NBTTagCompound nbt = NbtSquisher.expand(buffer);
-                    Snapshot snapshot = Snapshot.readFromNBT(nbt);
-                    invUpIn.setStackInSlot(0, StackUtil.EMPTY);
-                    snapshot.computeKey();
-                    GlobalSavedDataSnapshots.get(world).addSnapshot(snapshot);
-                    invUpOut.setStackInSlot(
-                        0,
-                        BCBuildersItems.snapshot.getUsed(
-                            snapshot.getType(),
-                            new Snapshot.Header(
-                                snapshot.key,
-                                getOwner().getId(),
-                                new Date(),
-                                "From library"
+                UUID playerId = buffer.readUniqueId();
+                Snapshot.Key key = new Snapshot.Key(buffer);
+                Pair<UUID, Snapshot.Key> pair = Pair.of(playerId, key);
+                boolean last = buffer.readBoolean();
+                upSnapshotsParts.computeIfAbsent(pair, localPair -> new ArrayList<>()).add(buffer.readByteArray());
+                if (last && upSnapshotsParts.containsKey(pair)) {
+                    try {
+                        Snapshot snapshot = Snapshot.readFromNBT(
+                            NbtSquisher.expand(
+                                Bytes.concat(
+                                    upSnapshotsParts.get(pair)
+                                        .toArray(new byte[0][])
+                                )
                             )
-                        )
-                    );
+                        );
+                        invUpIn.setStackInSlot(0, StackUtil.EMPTY);
+                        snapshot.computeKey();
+                        GlobalSavedDataSnapshots.get(world).addSnapshot(snapshot);
+                        invUpOut.setStackInSlot(
+                            0,
+                            BCBuildersItems.snapshot.getUsed(
+                                snapshot.getType(),
+                                new Snapshot.Header(
+                                    snapshot.key,
+                                    getOwner().getId(),
+                                    new Date(),
+                                    "From library"
+                                )
+                            )
+                        );
+                    } finally {
+                        upSnapshotsParts.remove(pair);
+                    }
                 }
             }
         }
