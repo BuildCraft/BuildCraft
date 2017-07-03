@@ -37,6 +37,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -60,6 +61,7 @@ import buildcraft.lib.delta.DeltaManager.EnumDeltaMessage;
 import buildcraft.lib.fluid.TankManager;
 import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.ChunkUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.PermissionUtil;
@@ -543,7 +545,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (nbt.hasKey("items", Constants.NBT.TAG_COMPOUND)) {
             itemManager.deserializeNBT(nbt.getCompoundTag("items"));
         }
-        if (nbt.hasKey("tanks",Constants.NBT.TAG_COMPOUND)) {
+        if (nbt.hasKey("tanks", Constants.NBT.TAG_COMPOUND)) {
             tankManager.deserializeNBT(nbt.getCompoundTag("tanks"));
         }
     }
@@ -575,8 +577,6 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (!tanks.hasNoTags()) {
             nbt.setTag("tanks", tanks);
         }
-
-        markDirty();
         return nbt;
     }
 
@@ -584,9 +584,6 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     protected void setWorldCreate(World world) {
         // The default impl doesn't actually set the world for some reason :/
         setWorld(world);
-        if (hasWorld()) {
-            markDirty();
-        }
     }
 
     // ##################

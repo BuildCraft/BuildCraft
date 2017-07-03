@@ -13,7 +13,6 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -22,6 +21,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -176,6 +176,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         findEnd();
         updateProgress();
         if (world.isRemote) {
+            spawnParticles();
             return;
         }
         if (tileEnd != null) {
@@ -304,22 +305,12 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
                     heatProvided += c_diff;
                     fill(c_out, c_out_f);
                     drain(c_in, c_in_f);
-                    if (c_in_f.getFluid() == FluidRegistry.LAVA) {
-                        Vec3d from = VecUtil.convertCenter(getPos());
-                        EnumFacing dir = EnumFacing.SOUTH;
-                        spewForth(from, dir, EnumParticleTypes.SMOKE_LARGE);
-                    }
                 }
 
                 if (needs_h) {
                     coolingProvided += h_diff;
                     fill(h_out, h_out_f);
                     drain(h_in, h_in_f);
-                    if (h_in_f.getFluid() == FluidRegistry.WATER) {
-                        Vec3d from = VecUtil.convertCenter(tileEnd.getPos());
-                        EnumFacing dir = EnumFacing.UP;
-                        spewForth(from, dir, EnumParticleTypes.CLOUD);
-                    }
                 }
             }
         } else {
@@ -327,7 +318,32 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         }
     }
 
-    private static void spewForth(Vec3d from, EnumFacing dir, EnumParticleTypes particle) {
+    private void spawnParticles() {
+        if (progressState == EnumProgressState.RUNNING) {
+            TileHeatExchangeEnd end = tileEnd;
+            if (end == null) {
+                return;
+            }
+            Vec3d from = VecUtil.convertCenter(getPos());
+            FluidStack c_in_f = end.smoothedCoolableIn.getFluidForRender();
+            if (c_in_f != null && c_in_f.getFluid() == FluidRegistry.LAVA) {
+                IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchangeStart);
+                if (state != null) {
+                    EnumFacing dir = state.getValue(BlockBCBase_Neptune.PROP_FACING);
+                    spewForth(from, dir.getOpposite(), EnumParticleTypes.SMOKE_LARGE);
+                }
+            }
+
+            FluidStack h_in_f = smoothedHeatableIn.getFluidForRender();
+            from = VecUtil.convertCenter(tileEnd.getPos());
+            if (h_in_f != null && h_in_f.getFluid() == FluidRegistry.WATER) {
+                EnumFacing dir = EnumFacing.UP;
+                spewForth(from, dir, EnumParticleTypes.CLOUD);
+            }
+        }
+    }
+
+    private void spewForth(Vec3d from, EnumFacing dir, EnumParticleTypes particle) {
         Vec3d vecDir = new Vec3d(dir.getDirectionVec());
         from = from.add(VecUtil.scale(vecDir, 0.5));
 
@@ -335,19 +351,24 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         double y = from.yCoord;
         double z = from.zCoord;
 
-        Minecraft.getMinecraft().addScheduledTask(() -> {
-            Vec3d motion = VecUtil.scale(vecDir, 0.4);
-            for (int i = 0; i < 10; i++) {
-                double dx = motion.xCoord + Math.random() * 0.01;
-                double dy = motion.yCoord + Math.random() * 0.01;
-                double dz = motion.zCoord + Math.random() * 0.01;
+        Vec3d motion = VecUtil.scale(vecDir, 0.4);
+        int particleCount = Minecraft.getMinecraft().gameSettings.particleSetting;
+        World w = getWorld();
+        if (particleCount == 2 || w == null) {
+            return;
+        }
+        particleCount = particleCount == 0 ? 5 : 2;
+        for (int i = 0; i < particleCount; i++) {
+            double dx = motion.xCoord + (Math.random() - 0.5) * 0.1;
+            double dy = motion.yCoord + (Math.random() - 0.5) * 0.1;
+            double dz = motion.zCoord + (Math.random() - 0.5) * 0.1;
+            double interp = i / (double) particleCount;
+            x -= dx * interp;
+            y -= dy * interp;
+            z -= dz * interp;
 
-                WorldClient w = Minecraft.getMinecraft().world;
-                if (w != null) {
-                    w.spawnParticle(particle, x, y, z, dx, dy, dz);
-                }
-            }
-        });
+            w.spawnParticle(particle, x, y, z, dx, dy, dz);
+        }
     }
 
     private void output() {
