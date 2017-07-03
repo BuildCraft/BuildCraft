@@ -144,9 +144,9 @@ public class RenderHeatExchangeStart extends TileEntitySpecialRenderer<TileHeatE
                 double otherEnd = flip ? p0 + length * progress : p1;
                 Vec3d vDiff = new Vec3d(diff).addVector(x, y, z);
                 renderFlow(vDiff, face, vb, progressStart + 0.01, progressEnd - 0.01,
-                    end.smoothedCoolableIn.getFluidForRender(), 4);
+                    end.smoothedCoolableIn.getFluidForRender(), 4, partialTicks);
                 renderFlow(vDiff, face.getOpposite(), vb, otherStart, otherEnd,
-                    tile.smoothedHeatableIn.getFluidForRender(), 2);
+                    tile.smoothedHeatableIn.getFluidForRender(), 2, partialTicks);
             }
         }
 
@@ -177,9 +177,8 @@ public class RenderHeatExchangeStart extends TileEntitySpecialRenderer<TileHeatE
     }
 
     private static void renderFlow(Vec3d diff, EnumFacing face, VertexBuffer vb, double s, double e, FluidStack fluid,
-        int point) {
+        int point, float partialTicks) {
         double tickTime = Minecraft.getMinecraft().world.getTotalWorldTime();
-        float partialTicks = 0;
         double offset = (tickTime + partialTicks) % 31 / 31.0;
         if (face.getAxisDirection() == AxisDirection.NEGATIVE) {
             offset = -offset;
