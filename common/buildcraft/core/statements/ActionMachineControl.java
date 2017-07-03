@@ -3,6 +3,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
+
 package buildcraft.core.statements;
 
 import java.util.Locale;
@@ -30,7 +31,10 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
     public final Mode mode;
 
     public ActionMachineControl(Mode mode) {
-        super("buildcraft:machine." + mode.name().toLowerCase(Locale.ROOT), "buildcraft.machine." + mode.name().toLowerCase(Locale.ROOT));
+        super(
+            "buildcraft:machine." + mode.name().toLowerCase(Locale.ROOT),
+            "buildcraft.machine." + mode.name().toLowerCase(Locale.ROOT)
+        );
         this.mode = mode;
     }
 

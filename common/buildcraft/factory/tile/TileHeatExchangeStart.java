@@ -192,18 +192,27 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
 
     private void updateProgress() {
         progressLast = progress;
-        if (progressState == EnumProgressState.STOPPING) {
-            progress--;
-            if (progress <= 0) {
-                progress = 0;
-                progressState = EnumProgressState.OFF;
+        switch (progressState) {
+            case STOPPING: {
+                progress--;
+                if (progress <= 0) {
+                    progress = 0;
+                    progressState = EnumProgressState.OFF;
+                }
+                return;
             }
-        } else if (progressState == EnumProgressState.PREPARING) {
-            int lag = 120;
-            progress++;
-            if (progress >= lag) {
-                progress = lag;
-                progressState = EnumProgressState.RUNNING;
+            case PREPARING:
+            case RUNNING: {
+                int lag = 120;
+                progress++;
+                if (progress >= lag) {
+                    progress = lag;
+                    progressState = EnumProgressState.RUNNING;
+                }
+                return;
+            }
+            default: {
+                return;
             }
         }
     }
@@ -278,8 +287,8 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         }
         // TODO: Make mult the *maximum* multiplier, not the exact one.
         int mult = FLUID_MULT[middles - 1];
-        boolean needs_c = heatProvided == 0;
-        boolean needs_h = coolingProvided == 0;
+        boolean needs_c = heatProvided <= 0;
+        boolean needs_h = coolingProvided <= 0;
 
         FluidStack c_in_f = setAmount(c_recipe.in(), mult);
         FluidStack c_out_f = setAmount(c_recipe.out(), mult);
@@ -289,14 +298,13 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
             if (progressState == EnumProgressState.OFF) {
                 progressState = EnumProgressState.PREPARING;
             } else if (progressState == EnumProgressState.RUNNING) {
-                heatProvided += c_diff - 1;
-                coolingProvided += h_diff - 1;
-
+                heatProvided--;
+                coolingProvided--;
                 if (needs_c) {
+                    heatProvided += c_diff;
                     fill(c_out, c_out_f);
                     drain(c_in, c_in_f);
                     if (c_in_f.getFluid() == FluidRegistry.LAVA) {
-                        // Output is here
                         Vec3d from = VecUtil.convertCenter(getPos());
                         EnumFacing dir = EnumFacing.SOUTH;
                         spewForth(from, dir, EnumParticleTypes.SMOKE_LARGE);
@@ -304,10 +312,10 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
                 }
 
                 if (needs_h) {
+                    coolingProvided += h_diff;
                     fill(h_out, h_out_f);
                     drain(h_in, h_in_f);
                     if (h_in_f.getFluid() == FluidRegistry.WATER) {
-                        // Output is at the other end
                         Vec3d from = VecUtil.convertCenter(tileEnd.getPos());
                         EnumFacing dir = EnumFacing.UP;
                         spewForth(from, dir, EnumParticleTypes.CLOUD);
@@ -428,6 +436,8 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         left.add("progress = " + progress);
         left.add("state = " + progressState);
         left.add("has_end = " + (tileEnd != null));
+        left.add("heatProvided = " + heatProvided);
+        left.add("coolingProvided = " + coolingProvided);
         if (hasWorld() && world.isRemote) {
             left.add("");
             left.add("coolable:");

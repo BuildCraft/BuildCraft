@@ -78,7 +78,7 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
         return true;
     }
 
-    public void sendSelectedToServer(Snapshot.Header selected) {
+    public void sendSelectedToServer(Snapshot.Key selected) {
         sendMessage(ID_SELECTED, buffer -> {
             buffer.writeBoolean(selected != null);
             if (selected != null) {
@@ -93,7 +93,7 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
         if (side == Side.SERVER) {
             if (id == ID_SELECTED) {
                 if (buffer.readBoolean()) {
-                    tile.selected = new Snapshot.Header(buffer);
+                    tile.selected = new Snapshot.Key(buffer);
                 } else {
                     tile.selected = null;
                 }

@@ -9,6 +9,7 @@ package buildcraft.transport.plug;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -224,6 +225,11 @@ public class PluggableGate extends PipePluggable {
         if (holder.getPipeWorld().isRemote) {
             clientModelData.tick();
         }
+    }
+
+    @Override
+    public boolean canConnectToRedstone(@Nullable EnumFacing to) {
+        return true;
     }
 
     // Model

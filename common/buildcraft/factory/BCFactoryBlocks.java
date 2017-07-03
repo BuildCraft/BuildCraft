@@ -55,11 +55,9 @@ public class BCFactoryBlocks {
         tank = BlockBCBase_Neptune.register(new BlockTank(Material.ROCK, "block.tank"));
         chute = BlockBCBase_Neptune.register(new BlockChute(Material.ROCK, "block.chute"));
         distiller = BlockBCBase_Neptune.register(new BlockDistiller(Material.IRON, "block.distiller"));
-        if (BCLib.DEV) {
-            heatExchangeStart = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.start", BlockHeatExchange.Part.START));
-            heatExchangeMiddle = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.middle", BlockHeatExchange.Part.MIDDLE));
-            heatExchangeEnd = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.end", BlockHeatExchange.Part.END));
-        }
+        heatExchangeStart = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.start", BlockHeatExchange.Part.START));
+        heatExchangeMiddle = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.middle", BlockHeatExchange.Part.MIDDLE));
+        heatExchangeEnd = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.end", BlockHeatExchange.Part.END));
         if (BCLib.DEV) {
             waterGel = BlockBCBase_Neptune.register(new BlockWaterGel(Material.CLAY, "block.water_gel"), null);
         }
@@ -71,9 +69,7 @@ public class BCFactoryBlocks {
         TileBC_Neptune.registerTile(TileTank.class, "tile.tank");
         TileBC_Neptune.registerTile(TileChute.class, "tile.chute");
         TileBC_Neptune.registerTile(TileDistiller_BC8.class, "tile.distiller");
-        if (BCLib.DEV) {
-            TileBC_Neptune.registerTile(TileHeatExchangeStart.class, "tile.heat_exchange.start");
-            TileBC_Neptune.registerTile(TileHeatExchangeEnd.class, "tile.heat_exchange.end");
-        }
+        TileBC_Neptune.registerTile(TileHeatExchangeStart.class, "tile.heat_exchange.start");
+        TileBC_Neptune.registerTile(TileHeatExchangeEnd.class, "tile.heat_exchange.end");
     }
 }

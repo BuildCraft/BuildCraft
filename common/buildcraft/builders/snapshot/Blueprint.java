@@ -56,7 +56,7 @@ public class Blueprint extends Snapshot {
             }
         }
         blueprint.entities.addAll(entities);
-        blueprint.header = header.withHash(blueprint.computeHash());
+        blueprint.computeKey();
         return blueprint;
     }
 
@@ -86,8 +86,8 @@ public class Blueprint extends Snapshot {
     public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
         super.deserializeNBT(nbt);
         palette.clear();
-        for (NBTTagCompound schematicBlockTag : NBTUtilBC.readCompoundList(nbt.getTagList("palette",
-            Constants.NBT.TAG_COMPOUND)).collect(Collectors.toList())) {
+        for (NBTTagCompound schematicBlockTag :
+            NBTUtilBC.readCompoundList(nbt.getTag("palette")).collect(Collectors.toList())) {
             // TODO: Allow reading blueprints partially - invalid elements should be replaced with air
             // (Although this needs to add a "pass-through" ISchematicBlock that will store the
             // invalid NBTTagCompound and show up in the tooltip as an error, so that we can migrate
@@ -116,8 +116,8 @@ public class Blueprint extends Snapshot {
                 }
             }
         }
-        for (NBTTagCompound schematicEntityTag : NBTUtilBC.readCompoundList(nbt.getTagList("entities",
-            Constants.NBT.TAG_COMPOUND)).collect(Collectors.toList())) {
+        for (NBTTagCompound schematicEntityTag :
+            NBTUtilBC.readCompoundList(nbt.getTag("entities")).collect(Collectors.toList())) {
             entities.add(SchematicEntityManager.readFromNBT(schematicEntityTag));
         }
     }

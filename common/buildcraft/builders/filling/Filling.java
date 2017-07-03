@@ -17,21 +17,21 @@ import java.util.stream.StreamSupport;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point2i;
 
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemBlockSpecial;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+
+import buildcraft.builders.snapshot.Template;
 
 @SuppressWarnings("WeakerAccess")
 public class Filling {
     private static List<Item> itemBlocks = new ArrayList<>();
-    private static final List<Point2d> TRIANGLE_POINTS = Arrays.asList(
-        new Point2d(1, 0.5),
-        new Point2d(0.25, 0.9330127018922194),
-        new Point2d(0.25, 0.06698729810778076)
-    );
     private static final List<Point2d> PENTAGON_POINTS = Arrays.asList(
         new Point2d(1, 0.5),
         new Point2d(0.6545084971874737, 0.9755282581475768),
@@ -48,14 +48,14 @@ public class Filling {
         new Point2d(0.75, 0.06698729810778048)
     );
     private static final List<Point2d> OCTAGON_POINTS = Arrays.asList(
-        new Point2d(1, 0.5),
-        new Point2d(0.8535533905932737, 0.8535533905932737),
-        new Point2d(0.5, 1),
-        new Point2d(0.14644660940672627, 0.8535533905932737),
-        new Point2d(0, 0.5),
-        new Point2d(0.14644660940672616, 0.14644660940672627),
-        new Point2d(0.5, 0),
-        new Point2d(0.8535533905932737, 0.14644660940672616)
+        new Point2d(0.9619397662556434, 0.6913417161825449),
+        new Point2d(0.6913417161825449, 0.9619397662556434),
+        new Point2d(0.30865828381745514, 0.9619397662556434),
+        new Point2d(0.03806023374435663, 0.6913417161825449),
+        new Point2d(0.038060233744356575, 0.3086582838174552),
+        new Point2d(0.30865828381745486, 0.03806023374435674),
+        new Point2d(0.691341716182545, 0.038060233744356686),
+        new Point2d(0.9619397662556433, 0.3086582838174548)
     );
 
     static {
@@ -89,12 +89,20 @@ public class Filling {
             return EnumParameterPattern.class;
         }
         EnumParameterPattern parameterPattern = (EnumParameterPattern) parameters.get(0);
+        if (parameterPattern == EnumParameterPattern.STAIRS) {
+            if (parameters.size() == 1) {
+                return EnumParameterType.class;
+            }
+            if (parameters.size() == 2) {
+                return EnumParameterFacing.class;
+            }
+        }
         if (parameterPattern == EnumParameterPattern.TRIANGLE) {
             if (parameters.size() == 1) {
                 return EnumParameterType.class;
             }
             if (parameters.size() == 2) {
-                return EnumParameterAxis.class;
+                return EnumParameterFacing.class;
             }
         }
         if (parameterPattern == EnumParameterPattern.SQUARE) {
@@ -151,6 +159,35 @@ public class Filling {
             }
         }
         return null;
+    }
+
+    public static List<IParameter> initParameters() {
+        List<IParameter> parameters = new ArrayList<>();
+        while (true) {
+            Class<? extends IParameter> nextParameterClass = Filling.getNextParameterClass(parameters);
+            if (nextParameterClass != null) {
+                // noinspection ConstantConditions
+                parameters.add(nextParameterClass.getEnumConstants()[0]);
+            } else {
+                break;
+            }
+        }
+        return ImmutableList.copyOf(parameters);
+    }
+
+    public static Template.BuildingInfo createBuildingInfo(BlockPos basePos,
+                                                           BlockPos size,
+                                                           List<IParameter> parameters,
+                                                           boolean inverted) {
+        Template template = new Template();
+        template.size = size;
+        template.offset = BlockPos.ORIGIN;
+        boolean[][][] fillingPlan = Filling.getFillingPlan(size, parameters);
+        if (inverted) {
+            fillingPlan = Filling.invertFillingPlan(size, fillingPlan);
+        }
+        template.data = fillingPlan;
+        return template.new BuildingInfo(basePos, Rotation.NONE);
     }
 
     public static boolean[][][] generateFillingPlanByFunction(BlockPos size,
@@ -221,12 +258,47 @@ public class Filling {
         }
     }
 
+    public static boolean[][][] generateFillingPlanByFunctionInFacing(BlockPos size,
+                                                                      EnumFacing facing,
+                                                                      BiConsumer<Point2i, boolean[][]> function) {
+        Point2i flatSize;
+        switch (facing.getAxis()) {
+            case X:
+                flatSize = new Point2i(size.getZ(), size.getY());
+                break;
+            case Z:
+                flatSize = new Point2i(size.getX(), size.getY());
+                break;
+            default:
+                throw new UnsupportedOperationException();
+        }
+        boolean[][] flatFillingPlan = new boolean[flatSize.x][flatSize.y];
+        function.accept(flatSize, flatFillingPlan);
+        switch (facing) {
+            case WEST:
+                return generateFillingPlanByFunction(size, pos -> flatFillingPlan[pos.getZ()][pos.getY()]);
+            case EAST:
+                return generateFillingPlanByFunction(size, pos -> flatFillingPlan[size.getZ() - 1 - pos.getZ()][pos.getY()]);
+            case NORTH:
+                return generateFillingPlanByFunction(size, pos -> flatFillingPlan[pos.getX()][pos.getY()]);
+            case SOUTH:
+                return generateFillingPlanByFunction(size, pos -> flatFillingPlan[size.getX() - 1 - pos.getX()][pos.getY()]);
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
+
     public static boolean[][][] getFillingPlan(BlockPos size, List<IParameter> parameters) {
         EnumParameterPattern parameterPattern = (EnumParameterPattern) parameters.get(0);
+        if (parameterPattern == EnumParameterPattern.STAIRS) {
+            EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
+            EnumParameterFacing parameterFacing = (EnumParameterFacing) parameters.get(2);
+            return FillingStairs.get(size, parameterType, parameterFacing);
+        }
         if (parameterPattern == EnumParameterPattern.TRIANGLE) {
             EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
-            EnumParameterAxis parameterAxis = (EnumParameterAxis) parameters.get(2);
-            return FillingPolygon.get(size, parameterType, parameterAxis, TRIANGLE_POINTS);
+            EnumParameterFacing parameterFacing = (EnumParameterFacing) parameters.get(2);
+            return FillingTriangle.get(size, parameterType, parameterFacing);
         }
         if (parameterPattern == EnumParameterPattern.SQUARE) {
             EnumParameterType parameterType = (EnumParameterType) parameters.get(1);

@@ -114,10 +114,8 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> implement
         private final SlotIndex index;
 
         public GuiPaintButton(GuiBC8<?> gui, int buttonId, int x, int y, SlotIndex index) {
-            super(gui, buttonId, x, y, ICON_BUTTON_UP, ICON_BUTTON_DOWN);
+            super(gui, buttonId, x, y, 20, 20, ICON_BUTTON_UP, ICON_BUTTON_DOWN);
             this.index = index;
-            this.width = 20;
-            this.height = 20;
             setBehaviour(IButtonBehaviour.DEFAULT);
         }
 

@@ -24,7 +24,6 @@ public class Template extends Snapshot {
 
     public Template copy() {
         Template template = new Template();
-        template.header = header;
         template.size = size;
         template.facing = facing;
         template.offset = offset;
@@ -36,6 +35,7 @@ public class Template extends Snapshot {
                 }
             }
         }
+        template.computeKey();
         return template;
     }
 

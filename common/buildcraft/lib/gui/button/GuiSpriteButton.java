@@ -22,7 +22,7 @@ public class GuiSpriteButton extends GuiAbstractButton {
      * @param y
      * @param buttonStates The states. 0 should be the default (enabled, not active and not hovered), 1 should be
      *            active, [2 is hovered and 3 is active and hovered [4 is not enabled]] */
-    public GuiSpriteButton(GuiBC8<?> gui, int buttonId, int x, int y, ISimpleDrawable... buttonStates) {
+    public GuiSpriteButton(GuiBC8<?> gui, int buttonId, int x, int y, int width, int height, ISimpleDrawable... buttonStates) {
         super(gui, buttonId, x, y, "");
         switch (buttonStates.length) {
             case 0: {
@@ -64,6 +64,8 @@ public class GuiSpriteButton extends GuiAbstractButton {
                 throw new IllegalArgumentException("Too many button states! (" + buttonStates.length + ")");
             }
         }
+        this.width = width;
+        this.height = height;
     }
 
     @Override
@@ -78,12 +80,12 @@ public class GuiSpriteButton extends GuiAbstractButton {
 
         if (enabled) {
             if (active) {
-                if (hovered) {
+                if (isMouseOver()) {
                     drActiveHovered.drawAt(xPosition, yPosition);
                 } else {
                     drActive.drawAt(xPosition, yPosition);
                 }
-            } else if (hovered) {
+            } else if (isMouseOver()) {
                 drHovered.drawAt(xPosition, yPosition);
             } else {
                 drEnabled.drawAt(xPosition, yPosition);
