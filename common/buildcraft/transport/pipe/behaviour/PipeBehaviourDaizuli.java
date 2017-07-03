@@ -112,13 +112,15 @@ public class PipeBehaviourDaizuli extends PipeBehaviourDirectional {
         }
     }
 
-    @PipeEventHandler
-    public static void addActions(PipeEventStatement.AddActionInternal event) {
+    @Override
+    public void addActions(PipeEventStatement.AddActionInternal event) {
+        super.addActions(event);
         Collections.addAll(event.actions, BCTransportStatements.ACTION_PIPE_COLOUR);
     }
 
-    @PipeEventHandler
-    public void onActionActivated(PipeEventActionActivate event) {
+    @Override
+    public void onActionActivate(PipeEventActionActivate event) {
+        super.onActionActivate(event);
         if (event.action instanceof ActionPipeColor) {
             ActionPipeColor action = ((ActionPipeColor) event.action);
             if (this.colour != action.color) {
