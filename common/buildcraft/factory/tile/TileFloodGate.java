@@ -73,7 +73,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
         16384
     };
 
-    private final Tank tank = new Tank("tank", 16 * Fluid.BUCKET_VOLUME, this);
+    private final Tank tank = new Tank("tank", 2 * Fluid.BUCKET_VOLUME, this);
     public final EnumMap<EnumFacing, Boolean> openSides = new EnumMap<>(EnumFacing.class);
     public final Queue<BlockPos> queue = new PriorityQueue<>(
         Comparator.<BlockPos>comparingInt(blockPos ->
