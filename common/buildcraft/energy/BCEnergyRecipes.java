@@ -21,6 +21,7 @@ import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IRefineryRecipeManager.IDistillationRecipe;
 
 import buildcraft.lib.fluid.BCFluid;
+import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 
@@ -187,6 +188,14 @@ public class BCEnergyRecipes {
             BuildcraftRecipeRegistry.refineryRecipes.getDistilationRegistry().getRecipeForInput(_in);
         if (existing != null) {
             throw new IllegalStateException("Already added distillation recipe for " + _in.getFluid().getName());
+        }
+        int hcf = MathUtil.findHighestCommonFactor(_in.amount, _outGas.amount);
+        hcf = MathUtil.findHighestCommonFactor(hcf, _outLiquid.amount);
+        if (hcf > 1) {
+            (_in = _in.copy()).amount /= hcf;
+            (_outGas = _outGas.copy()).amount /= hcf;
+            (_outLiquid = _outLiquid.copy()).amount /= hcf;
+            mjCost /= hcf;
         }
         BuildcraftRecipeRegistry.refineryRecipes.addDistillationRecipe(_in, _outGas, _outLiquid, mjCost);
     }

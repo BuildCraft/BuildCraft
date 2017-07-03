@@ -75,24 +75,34 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
         if (!placer.world.isRemote) {
-            BlockPos p = pos.up();
-            TileTank moveTo = this;
-            while (true) {
-                TileEntity tileUp = world.getTileEntity(p);
-                if (tileUp instanceof TileTank) {
-                    TileTank tankUp = (TileTank) tileUp;
-
-                    int used = moveTo.tank.fill(tankUp.tank.getFluid(), true);
-                    if (used > 0) {
-                        tankUp.drain(used, true);
-                    }
-
-                    moveTo = tankUp;
-                    p = p.up();
-                } else {
-                    break;
+            List<TileTank> tanks = getTanks();
+            FluidStack fluid = null;
+            for (TileTank tile : tanks) {
+                FluidStack held = tile.tank.getFluid();
+                if (held == null) {
+                    continue;
+                }
+                if (fluid == null) {
+                    fluid = held;
+                } else if (!fluid.isFluidEqual(held)) {
+                    return;
                 }
             }
+            if (fluid == null) {
+                return;
+            }
+            if (fluid.getFluid().isGaseous(fluid)) {
+                Collections.reverse(tanks);
+            }
+            TileTank prev = null;
+            isPlayerInteracting = true;
+            for (TileTank tile : tanks) {
+                if (prev != null) {
+                    FluidUtilBC.move(tile.tank, prev.tank);
+                }
+                prev = tile;
+            }
+            isPlayerInteracting = false;
         }
     }
 
@@ -244,7 +254,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         for (TileTank t : tanks) {
             int tankFilled = t.tank.fill(resource, doFill);
             if (tankFilled > 0) {
-                if (isPlayerInteracting) {
+                if (isPlayerInteracting & doFill) {
                     t.sendNetworkUpdate(NET_RENDER_DATA);
                 }
                 resource.amount -= tankFilled;
@@ -297,7 +307,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
             }
             FluidStack drained = t.tank.drain(filter, realMax, doDrain);
             if (drained == null) continue;
-            if (isPlayerInteracting) {
+            if (isPlayerInteracting & doDrain) {
                 t.sendNetworkUpdate(NET_RENDER_DATA);
             }
             if (total == null) {
