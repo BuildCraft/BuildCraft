@@ -18,6 +18,8 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import buildcraft.lib.chunkload.ChunkLoaderManager;
+import buildcraft.lib.chunkload.IChunkLoadingTile;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune implements ITileEntityProvider {
@@ -32,6 +34,9 @@ public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune implements
             TileBC_Neptune tileBC = (TileBC_Neptune) tile;
             tileBC.onExplode(explosion);
         }
+        if (tile instanceof IChunkLoadingTile) {
+            ChunkLoaderManager.releaseChunksFor((IChunkLoadingTile) tile);
+        }
         super.onBlockExploded(world, pos, explosion);
     }
 
@@ -41,6 +46,9 @@ public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune implements
         if (tile instanceof TileBC_Neptune) {
             TileBC_Neptune tileBC = (TileBC_Neptune) tile;
             tileBC.onRemove();
+        }
+        if (tile instanceof IChunkLoadingTile) {
+            ChunkLoaderManager.releaseChunksFor((IChunkLoadingTile) tile);
         }
         super.breakBlock(world, pos, state);
     }

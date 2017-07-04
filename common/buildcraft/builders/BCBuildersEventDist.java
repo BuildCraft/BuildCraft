@@ -13,11 +13,18 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
+import javax.annotation.Nullable;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 
 import net.minecraftforge.client.event.RenderTooltipEvent;
@@ -39,15 +46,19 @@ import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.builders.snapshot.Snapshot.Header;
 import buildcraft.builders.tile.TileQuarry;
 
-public enum BCBuildersEventDist {
+public enum BCBuildersEventDist implements IWorldEventListener {
     INSTANCE;
 
     private static final UUID UUID_SINGLE_SCHEMATIC = new UUID(0xfd3b8c59b0a8b191L, 0x772ec006c1b0ffaaL);
     private final Map<World, Deque<WeakReference<TileQuarry>>> allQuarries = new WeakHashMap<>();
 
     public void validateQuarry(TileQuarry quarry) {
-        Deque<WeakReference<TileQuarry>> quarries = allQuarries.computeIfAbsent(quarry.getWorld(),
-            k -> new LinkedList<>());
+        Deque<WeakReference<TileQuarry>> quarries = allQuarries.get(quarry.getWorld());
+        if (quarries == null) {
+            quarries = new LinkedList<>();
+            allQuarries.put(quarry.getWorld(), quarries);
+            quarry.getWorld().addEventListener(this);
+        }
         quarries.add(new WeakReference<>(quarry));
         BCLog.logger.info("Added quarry to checking list");
     }
@@ -153,4 +164,54 @@ public enum BCBuildersEventDist {
             ClientArchitectTables.tick();
         }
     }
+
+    @Override
+    public void notifyBlockUpdate(World world, BlockPos pos, IBlockState oldState, IBlockState newState, int flags) {
+        Deque<WeakReference<TileQuarry>> quarries = allQuarries.get(world);
+        if (quarries == null)
+            return;
+        Iterator<WeakReference<TileQuarry>> iter = quarries.iterator();
+        while (iter.hasNext()) {
+            WeakReference<TileQuarry> ref = iter.next();
+            TileQuarry quarry = ref.get();
+            if (quarry == null) {
+                iter.remove();
+                continue;
+            }
+            quarry.onLocationChange(pos);
+        }
+    }
+
+    @Override
+    public void notifyLightSet(BlockPos pos) {}
+
+    @Override
+    public void markBlockRangeForRenderUpdate(int x1, int y1, int z1, int x2, int y2, int z2) {}
+
+    @Override
+    public void playSoundToAllNearExcept(@Nullable EntityPlayer player, SoundEvent soundIn, SoundCategory category, double x, double y, double z, float volume, float pitch) {}
+
+    @Override
+    public void playRecord(SoundEvent soundIn, BlockPos pos) {}
+
+    @Override
+    public void spawnParticle(int particleID, boolean ignoreRange, double xCoord, double yCoord, double zCoord, double xSpeed, double ySpeed, double zSpeed, int... parameters) {}
+
+    @Override
+    public void spawnParticle(int id, boolean ignoreRange, boolean p_190570_3_, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, int... parameters) {}
+
+    @Override
+    public void onEntityAdded(Entity entityIn) {}
+
+    @Override
+    public void onEntityRemoved(Entity entityIn) {}
+
+    @Override
+    public void broadcastSound(int soundID, BlockPos pos, int data) {}
+
+    @Override
+    public void playEvent(EntityPlayer player, int type, BlockPos blockPosIn, int data) {}
+
+    @Override
+    public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress) {}
 }

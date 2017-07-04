@@ -8,10 +8,13 @@ package buildcraft.builders.block;
 
 import java.util.Arrays;
 import java.util.List;
+import javax.annotation.Nullable;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -76,5 +79,10 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
             }
         }
         super.breakBlock(world, pos, state);
+    }
+
+    @Override
+    public SoundType getSoundType(IBlockState state, World world, BlockPos pos, @Nullable Entity entity) {
+        return SoundType.ANVIL;
     }
 }
