@@ -27,6 +27,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
 
@@ -121,11 +122,17 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         if (nbt.hasKey(name)) {
             // Old style of saving + loading
             NBTTagCompound tankData = nbt.getCompoundTag(name);
+            BCLog.logger.info(" - Loading old data " + tankData);
             super.readFromNBT(tankData);
+            BCLog.logger.info(" - Loading fluid " + getDebugString());
             readTankFromNBT(tankData);
+            BCLog.logger.info(" - Loaded fluid " + getDebugString());
         } else {
+            BCLog.logger.info(" - Loading new data " + nbt);
             super.readFromNBT(nbt);
+            BCLog.logger.info(" - Loading fluid " + getDebugString());
             readTankFromNBT(nbt);
+            BCLog.logger.info(" - Loaded fluid " + getDebugString());
         }
         return this;
     }
@@ -180,7 +187,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
 
     @Override
     public void setFluid(FluidStack fluid) {
-        if (fluid == null || canFillFluidType(fluid)) {
+        if (fluid == null || filter.test(fluid)) {
             super.setFluid(fluid);
         }
     }

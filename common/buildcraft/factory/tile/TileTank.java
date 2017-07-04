@@ -39,6 +39,7 @@ import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;
+import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -120,11 +121,18 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
             return true;
         }
         isPlayerInteracting = true;
-        if (FluidUtilBC.move(flItem, this) > 0 || FluidUtilBC.move(this, flItem) > 0) {
-            if (replace) {
-                player.setHeldItem(hand, flItem.getContainer());
-                player.inventoryContainer.detectAndSendChanges();
-            }
+        boolean changed = true;
+        FluidStack moved;
+        if ((moved = FluidUtilBC.move(flItem, this)) != null) {
+            SoundUtil.playBucketEmpty(getWorld(), getPos(), moved);
+        } else if ((moved = FluidUtilBC.move(this, flItem)) != null) {
+            SoundUtil.playBucketFill(getWorld(), getPos(), moved);
+        } else {
+            changed = false;
+        }
+        if (changed & replace) {
+            player.setHeldItem(hand, flItem.getContainer());
+            player.inventoryContainer.detectAndSendChanges();
         }
         isPlayerInteracting = false;
         return true;

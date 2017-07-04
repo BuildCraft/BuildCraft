@@ -37,7 +37,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -61,7 +60,6 @@ import buildcraft.lib.delta.DeltaManager.EnumDeltaMessage;
 import buildcraft.lib.fluid.TankManager;
 import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.ChunkUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.PermissionUtil;
@@ -546,18 +544,22 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             itemManager.deserializeNBT(nbt.getCompoundTag("items"));
         }
         if (nbt.hasKey("tanks", Constants.NBT.TAG_COMPOUND)) {
+            BCLog.logger.info("Loading tanks for " + getClass().getSimpleName() + " {");
             tankManager.deserializeNBT(nbt.getCompoundTag("tanks"));
+            BCLog.logger.info("}");
         }
     }
 
     protected void migrateOldNBT(int version, NBTTagCompound nbt) {
         // 7.99.0 -> 7.99.4
         // Most tiles with a single tank saved it under "tank"
+        BCLog.logger.info("Migrating NBT for " + getClass() + " = " + nbt);
         NBTTagCompound tankComp = nbt.getCompoundTag("tank");
         if (!tankComp.hasNoTags()) {
             NBTTagCompound tanks = new NBTTagCompound();
             tanks.setTag("tank", tankComp);
             nbt.setTag("tanks", tanks);
+            BCLog.logger.info("Migrated a tank!");
         }
     }
 
@@ -577,6 +579,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (!tanks.hasNoTags()) {
             nbt.setTag("tanks", tanks);
         }
+        BCLog.logger.info("Writing NBT for " + getClass() + " = " + nbt);
         return nbt;
     }
 

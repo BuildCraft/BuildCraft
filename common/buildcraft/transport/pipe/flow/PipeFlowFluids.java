@@ -503,8 +503,12 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         int spaceAvailable = capacity - center.amount;
         int flowRate = fluidTransferInfo.transferPerTick;
 
+        List<EnumPipePart> faces = new ArrayList<>();
+        Collections.addAll(faces, EnumPipePart.FACES);
+        Collections.shuffle(faces);
+
         int[] inputPerTick = new int[6];
-        for (EnumPipePart part : EnumPipePart.FACES) {
+        for (EnumPipePart part : faces) {
             Section section = sections.get(part);
             inputPerTick[part.getIndex()] = 0;
             if (section.getCurrentDirection().canInput()) {

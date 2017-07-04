@@ -88,6 +88,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
     public TileFloodGate() {
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank, EnumPipePart.VALUES);
+        tankManager.add(tank);
         Arrays.stream(EnumFacing.VALUES)
             .forEach(side -> openSides.put(side, BlockFloodGate.CONNECTED_MAP.containsKey(side)));
     }
@@ -249,7 +250,6 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
-        nbt.setTag("tank", tank.writeToNBT(new NBTTagCompound()));
         nbt.setTag("openSides", NBTUtilBC.writeBooleanList(openSides.values().stream()));
         return nbt;
     }
@@ -257,14 +257,13 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        tank.readFromNBT(nbt.getCompoundTag("tank"));
         Boolean[] blockedSidesArray = NBTUtilBC.readBooleanList(nbt.getTag("openSides")).toArray(Boolean[]::new);
         for (int i = 0; i < blockedSidesArray.length; i++) {
             openSides.put(EnumFacing.getFront(i), blockedSidesArray[i]);
         }
     }
 
-    // Netwokring
+    // Networking
 
     @Override
     public void writePayload(int id, PacketBufferBC buffer, Side side) {
