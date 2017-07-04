@@ -111,7 +111,7 @@ public class Filling {
             }
             if (parameters.size() == 2) {
                 EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
-                if (parameterType == EnumParameterType.EMPTY) {
+                if (parameterType == EnumParameterType.HOLLOW) {
                     return EnumParameterAxis.class;
                 }
             }
@@ -302,7 +302,7 @@ public class Filling {
         }
         if (parameterPattern == EnumParameterPattern.SQUARE) {
             EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
-            EnumParameterAxis parameterAxis = parameterType == EnumParameterType.EMPTY
+            EnumParameterAxis parameterAxis = parameterType == EnumParameterType.HOLLOW
                 ? (EnumParameterAxis) parameters.get(2)
                 : null;
             return FillingSquare.get(size, parameterType, parameterAxis);
@@ -325,7 +325,7 @@ public class Filling {
         if (parameterPattern == EnumParameterPattern.CIRCLE) {
             EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
             EnumParameterAxis parameterAxis = (EnumParameterAxis) parameters.get(2);
-            return FillingCircle.getCircle(size, parameterType, parameterAxis);
+            return FillingCircle.get(size, parameterType, parameterAxis);
         }
         if (parameterPattern == EnumParameterPattern.FRAME) {
             EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
@@ -333,7 +333,7 @@ public class Filling {
         }
         if (parameterPattern == EnumParameterPattern.SPHERE) {
             EnumParameterType parameterType = (EnumParameterType) parameters.get(1);
-            return FillingCircle.getSphere(size, parameterType);
+            return FillingSphere.getSphere(size, parameterType);
         }
         return generateFillingPlanByFunction(size, pos -> false);
     }

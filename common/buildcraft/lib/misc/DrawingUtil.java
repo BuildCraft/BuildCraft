@@ -9,8 +9,11 @@ package buildcraft.lib.misc;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import javax.vecmath.Point2i;
+
+import net.minecraft.util.math.BlockPos;
 
 public class DrawingUtil {
     @SuppressWarnings("Duplicates")
@@ -96,6 +99,62 @@ public class DrawingUtil {
             }
         }
     }
+
+    @SuppressWarnings("UnnecessaryLabelOnBreakStatement")
+    public static void drawSphere(BlockPos radius,
+                                  BlockPos center,
+                                  boolean filled,
+                                  Consumer<BlockPos> drawPixel) {
+
+        double nextNx = 0;
+        xLabel:
+        for (int x = 0; x <= radius.getX(); x++) {
+            double nx = nextNx;
+            nextNx = (x + 1) * (1D / radius.getX());
+
+            double nextNy = 0;
+            yLabel:
+            for (int y = 0; y <= radius.getY(); y++) {
+                double ny = nextNy;
+                nextNy = (y + 1) * (1D / radius.getY());
+
+                double nextNz = 0;
+                zLabel:
+                for (int z = 0; z <= radius.getZ(); z++) {
+                    double nz = nextNz;
+                    nextNz = (z + 1) * (1D / radius.getZ());
+
+                    if ((nx * nx) + (ny * ny) + (nz * nz) > 1) {
+                        if (z != 0) {
+                            break zLabel;
+                        } else if (y != 0) {
+                            break yLabel;
+                        } else if (x != 0) {
+                            break xLabel;
+                        }
+                    }
+
+                    if (!filled) {
+                        if ((nextNx * nextNx) + (ny * ny) + (nz * nz) <= 1 &&
+                            (nx * nx) + (nextNy * nextNy) + (nz * nz) <= 1 &&
+                            (nx * nx) + (ny * ny) + (nextNz * nextNz) <= 1) {
+                            continue;
+                        }
+                    }
+
+                    drawPixel.accept(center.add(-x, -y, -z));
+                    drawPixel.accept(center.add(-x, -y, z));
+                    drawPixel.accept(center.add(-x, y, -z));
+                    drawPixel.accept(center.add(-x, y, z));
+                    drawPixel.accept(center.add(x, -y, -z));
+                    drawPixel.accept(center.add(x, -y, z));
+                    drawPixel.accept(center.add(x, y, -z));
+                    drawPixel.accept(center.add(x, y, z));
+                }
+            }
+        }
+    }
+
 
     public static void fill(boolean[][] data, int startX, int startY, int width, int height) {
         Queue<Point2i> queue = new ArrayDeque<>();
