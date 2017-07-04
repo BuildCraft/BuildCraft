@@ -165,7 +165,8 @@ public class FluidUtilBC {
         FluidStack toDrain = new FluidStack(toDrainPotential, accepted);
         FluidStack drained = from.drain(toDrain, true);
         if (!toDrain.isFluidEqual(drained) || toDrain.amount != drained.amount) {
-            throw new IllegalStateException("");
+            throw new IllegalStateException(
+                "Drained fluid did not equal expected fluid! Bad impl - " + from.getClass());
         }
         int actuallyAccepted = to.fill(drained, true);
         if (actuallyAccepted != accepted) {

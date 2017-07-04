@@ -35,6 +35,7 @@ import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo;
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
@@ -296,9 +297,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
             if (hasFilled) {
                 FluidStack fl = getFluid();
                 if (fl != null) {
-                    SoundEvent sound =
-                        fl.getFluid().getEmptySound(container.player.world, container.player.getPosition());
-                    container.player.world.playSound(null, player.getPosition(), sound, SoundCategory.BLOCKS, 1, 1);
+                    SoundUtil.playBucketEmpty(player.world, player.getPosition(), fl);
                 }
                 return;
             }
@@ -320,9 +319,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
                 player.inventory.setItemStack(filledContainer);
                 ((EntityPlayerMP) player).updateHeldItem();
             }
-            SoundEvent sound =
-                reallyDrained.getFluid().getFillSound(container.player.world, container.player.getPosition());
-            container.player.world.playSound(null, player.getPosition(), sound, SoundCategory.BLOCKS, 1, 1);
+            SoundUtil.playBucketFill(player.world, player.getPosition(), reallyDrained);
         }
     }
 
