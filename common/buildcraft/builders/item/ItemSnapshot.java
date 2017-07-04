@@ -6,6 +6,7 @@
 
 package buildcraft.builders.item;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,7 +28,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.enums.EnumSnapshotType;
 
 import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.HashUtil;
 import buildcraft.lib.misc.LocaleUtil;
 
 import buildcraft.builders.snapshot.Snapshot;
@@ -72,8 +72,7 @@ public class ItemSnapshot extends ItemBC_Neptune {
 
     @Override
     public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> subItems) {
-        subItems.add(new ItemStack(item, 1, 2));// clean blueprint
-        subItems.add(new ItemStack(item, 1));// clean template
+        Arrays.stream(EnumSnapshotType.values()).map(this::getClean).forEach(subItems::add);
     }
 
     @Override
@@ -100,14 +99,14 @@ public class ItemSnapshot extends ItemBC_Neptune {
             tooltip.add(LocaleUtil.localize("item.blueprint.blank"));
         } else {
             tooltip.add(header.name);
-            EntityPlayer author = header.getOwnerPlayer(player.world);
-            if (author != null) {
-                tooltip.add(LocaleUtil.localize("item.blueprint.author") + " " + author.getName());
+            EntityPlayer owner = header.getOwnerPlayer(player.world);
+            if (owner != null) {
+                tooltip.add(LocaleUtil.localize("item.blueprint.author") + " " + owner.getName());
             }
             if (advanced) {
-                tooltip.add("Hash: " + HashUtil.convertHashToString(header.hash));
+                tooltip.add("Hash: " + header.key.toString());
                 tooltip.add("Date: " + header.created);
-                tooltip.add("AuthorId: " + header.owner);
+                tooltip.add("Owner UUID: " + header.owner);
             }
         }
     }

@@ -57,4 +57,10 @@ public class PipeBehaviourIron extends PipeBehaviourDirectional {
         tryBounce.canBounce = true;
     }
 
+    @PipeEventHandler
+    public void fluidInsert(PipeEventFluid.TryInsert insert) {
+        if (currentDir.face == insert.from) {
+            insert.cancel();
+        }
+    }
 }

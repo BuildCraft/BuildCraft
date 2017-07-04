@@ -3,6 +3,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
+
 package buildcraft.lib.misc;
 
 import java.util.Collection;
@@ -57,6 +58,7 @@ import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.mj.MjAPI;
 
 import buildcraft.lib.BCLibConfig;
@@ -71,7 +73,7 @@ public final class BlockUtil {
         }
 
         List<ItemStack> dropsList = block.getDrops(world, pos, state, 0);
-        EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer(world, pos, owner);
+        EntityPlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner, pos);
         float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, pos, state, 0, 1.0F, false, fakePlayer);
 
         NonNullList<ItemStack> returnList = NonNullList.create();
@@ -101,7 +103,7 @@ public final class BlockUtil {
     }
 
     public static boolean harvestBlock(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, BlockPos ownerPos, GameProfile owner) {
-        FakePlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer(world, ownerPos, owner);
+        FakePlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner, ownerPos);
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), fakePlayer);
         MinecraftForge.EVENT_BUS.post(breakEvent);
 
@@ -123,7 +125,7 @@ public final class BlockUtil {
     }
 
     public static FakePlayer getFakePlayerWithTool(WorldServer world, @Nonnull ItemStack tool, GameProfile owner) {
-        FakePlayer player = FakePlayerUtil.INSTANCE.getFakePlayer(world, owner);
+        FakePlayer player = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner);
         int i = 0;
 
         while (player.getHeldItemMainhand() != tool && i < 9) {
@@ -139,7 +141,7 @@ public final class BlockUtil {
     }
 
     public static boolean breakBlock(WorldServer world, BlockPos pos, NonNullList<ItemStack> drops, BlockPos ownerPos, GameProfile owner) {
-        FakePlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer(world, ownerPos, owner);
+        FakePlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner, ownerPos);
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), fakePlayer);
         MinecraftForge.EVENT_BUS.post(breakEvent);
 
@@ -198,7 +200,7 @@ public final class BlockUtil {
 
     public static float getBlockHardnessMining(World world, BlockPos pos, IBlockState state, GameProfile owner) {
         if (world instanceof WorldServer) {
-            EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, owner);
+            EntityPlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) world, owner);
             float relativeHardness = state.getPlayerRelativeBlockHardness(fakePlayer, world, pos);
             if (relativeHardness <= 0.0F) {
                 // Forge's getPlayerRelativeBlockHardness hook returns 0.0F if the hardness is < 0.0F.
@@ -245,19 +247,19 @@ public final class BlockUtil {
     public static Fluid getFluidWithFlowing(World world, BlockPos pos) {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
-        Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
-        if (fluid == null) {
-            if (block == Blocks.FLOWING_WATER) {
-                fluid = FluidRegistry.WATER;
-            }
-            if (block == Blocks.FLOWING_LAVA) {
-                fluid = FluidRegistry.LAVA;
-            }
+        if (block == Blocks.FLOWING_WATER) {
+            return FluidRegistry.WATER;
         }
-        return fluid;
+        if (block == Blocks.FLOWING_LAVA) {
+            return FluidRegistry.LAVA;
+        }
+        return getFluid(block);
     }
 
     public static Fluid getFluid(Block block) {
+        if (block instanceof IFluidBlock) {
+            return FluidRegistry.getFluid(((IFluidBlock) block).getFluid().getName());
+        }
         return FluidRegistry.lookupFluidForBlock(block);
     }
 
@@ -448,5 +450,22 @@ public final class BlockUtil {
         return world instanceof ChunkCache
                 ? ((ChunkCache) world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK)
                 : world.getTileEntity(pos);
+    }
+
+    public static Comparator<BlockPos> uniqueBlockPosComparator(Comparator<BlockPos> parent) {
+        return (a, b) -> {
+            int parentValue = parent.compare(a, b);
+            if (parentValue != 0) {
+                return parentValue;
+            } else if (a.getX() != b.getX()) {
+                return Integer.compare(a.getX(), b.getX());
+            } else if (a.getY() != b.getY()) {
+                return Integer.compare(a.getY(), b.getY());
+            } else if (a.getZ() != b.getZ()) {
+                return Integer.compare(a.getZ(), b.getZ());
+            } else {
+                return 0;
+            }
+        };
     }
 }

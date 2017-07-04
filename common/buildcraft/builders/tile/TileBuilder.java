@@ -1,7 +1,9 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
+/*
+ * Copyright (c) 2016 SpaceToad and the BuildCraft team
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 package buildcraft.builders.tile;
 
 import java.io.IOException;
@@ -27,7 +29,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -73,14 +74,14 @@ import buildcraft.builders.snapshot.SnapshotBuilder;
 import buildcraft.builders.snapshot.Template;
 import buildcraft.builders.snapshot.TemplateBuilder;
 
-public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder {
+public class TileBuilder extends TileBC_Neptune
+    implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("builder");
     public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
     public static final int NET_SNAPSHOT_TYPE = IDS.allocId("SNAPSHOT_TYPE");
 
-    public final ItemHandlerSimple invSnapshot = itemManager.addInvHandler("snapshot", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
-    public final ItemHandlerSimple invResources = itemManager.addInvHandler("resources", 27, EnumAccess.BOTH, EnumPipePart.VALUES);
-    private final TankManager<Tank> tankManager = new TankManager<>();
+    public final ItemHandlerSimple invSnapshot;
+    public final ItemHandlerSimple invResources;
 
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
     private boolean canExcavate = true;
@@ -101,6 +102,8 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     private boolean isDone = false;
 
     public TileBuilder() {
+        invSnapshot = itemManager.addInvHandler("snapshot", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
+        invResources = itemManager.addInvHandler("resources", 27, EnumAccess.BOTH, EnumPipePart.VALUES);
         for (int i = 1; i <= 4; i++) {
             tankManager.add(new Tank("fluid" + i, Fluid.BUCKET_VOLUME * 8, this));
         }
@@ -114,35 +117,49 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     }
 
     @Override
-    protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
+    protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, @Nonnull ItemStack before,
+        @Nonnull ItemStack after) {
         if (itemHandler == invSnapshot) {
-            currentBasePosIndex = 0;
-            snapshot = null;
-            if (after.getItem() instanceof ItemSnapshot) {
-                Snapshot.Header header = BCBuildersItems.snapshot.getHeader(after);
-                if (header != null) {
-                    Snapshot newSnapshot = GlobalSavedDataSnapshots.get(world).getSnapshotByHeader(header);
-                    if (newSnapshot != null) {
-                        snapshot = newSnapshot;
+            if (!world.isRemote) {
+                currentBasePosIndex = 0;
+                snapshot = null;
+                if (after.getItem() instanceof ItemSnapshot) {
+                    Snapshot.Header header = BCBuildersItems.snapshot.getHeader(after);
+                    if (header != null) {
+                        Snapshot newSnapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(header.key);
+                        if (newSnapshot != null) {
+                            snapshot = newSnapshot;
+                        }
                     }
                 }
-            }
-            updateSnapshot();
-            if (!world.isRemote) {
+                updateSnapshot();
                 sendNetworkUpdate(NET_SNAPSHOT_TYPE);
             }
         }
         super.onSlotChange(itemHandler, slot, before, after);
     }
 
+    @Override
+    public void validate() {
+        super.validate();
+        templateBuilder.validate();
+        blueprintBuilder.validate();
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        templateBuilder.invalidate();
+        blueprintBuilder.invalidate();
+    }
+
     private void updateSnapshot() {
-        if (getBuilder() != null) {
-            getBuilder().cancel();
-        }
+        Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::cancel);
         if (snapshot != null && getCurrentBasePos() != null) {
             snapshotType = snapshot.getType();
             EnumFacing facing = world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING);
-            Rotation rotation = Arrays.stream(Rotation.values()).filter(r -> r.rotate(snapshot.facing) == facing).findFirst().orElse(null);
+            Rotation rotation = Arrays.stream(Rotation.values()).filter(r -> r.rotate(snapshot.facing) == facing)
+                .findFirst().orElse(null);
             if (snapshot.getType() == EnumSnapshotType.TEMPLATE) {
                 templateBuildingInfo = ((Template) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
             }
@@ -150,6 +167,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                 blueprintBuildingInfo = ((Blueprint) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
             }
             currentBox = Optional.ofNullable(getBuilder()).map(SnapshotBuilder::getBox).orElse(null);
+            Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::updateSnapshot);
         } else {
             snapshotType = null;
             templateBuildingInfo = null;
@@ -199,8 +217,10 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     public void update() {
         battery.tick(getWorld(), getPos());
         battery.addPowerChecking(64 * MjAPI.MJ, false);
-        if (getBuilder() != null) {
-            if (isDone = getBuilder().tick()) {
+        SnapshotBuilder<?> builder = getBuilder();
+        if (builder != null) {
+            isDone = builder.tick();
+            if (isDone) {
                 if (currentBasePosIndex < basePoses.size() - 1) {
                     currentBasePosIndex++;
                     if (currentBasePosIndex >= basePoses.size()) {
@@ -254,7 +274,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                 path = new ArrayList<>();
                 int pathSize = buffer.readInt();
                 if (pathSize != 0) {
-                    for (int i =0; i < pathSize; i++) {
+                    for (int i = 0; i < pathSize; i++) {
                         path.add(MessageUtil.readBlockPos(buffer));
                     }
                 } else {
@@ -263,7 +283,6 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                 updateBasePoses();
                 if (buffer.readBoolean()) {
                     snapshotType = buffer.readEnumValue(EnumSnapshotType.class);
-                    // noinspection ConstantConditions
                     getBuilder().readFromByteBuf(buffer);
                 } else {
                     snapshotType = null;
@@ -279,8 +298,11 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
                 canExcavate = buffer.readBoolean();
             }
             if (id == NET_SNAPSHOT_TYPE) {
+                EnumSnapshotType old = snapshotType;
                 snapshotType = buffer.readEnumValue(EnumOptionalSnapshotType.class).type;
-                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 0);
+                if (old != snapshotType) {
+                    redrawBlock();
+                }
             }
         }
         if (side == Side.SERVER) {
@@ -312,9 +334,13 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         if (nbt.hasKey("path")) {
-            path = NBTUtilBC.readCompoundList(nbt.getTagList("path", Constants.NBT.TAG_COMPOUND)).map(NBTUtil::getPosFromTag).collect(Collectors.toList());
+            path = NBTUtilBC.readCompoundList(nbt.getTag("path"))
+                .map(NBTUtil::getPosFromTag)
+                .collect(Collectors.toList());
         }
-        basePoses = NBTUtilBC.readCompoundList(nbt.getTagList("basePoses", Constants.NBT.TAG_COMPOUND)).map(NBTUtil::getPosFromTag).collect(Collectors.toList());
+        basePoses = NBTUtilBC.readCompoundList(nbt.getTag("basePoses"))
+            .map(NBTUtil::getPosFromTag)
+            .collect(Collectors.toList());
         canExcavate = nbt.getBoolean("canExcavate");
     }
 
@@ -400,7 +426,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     }
 
     @Override
-    public TankManager<Tank> getTankManager() {
+    public TankManager getTankManager() {
         return tankManager;
     }
 }

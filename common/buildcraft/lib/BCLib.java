@@ -107,7 +107,6 @@ public class BCLib {
         MessageManager.fmlPostInit();
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();
-        ListMatchHandlerFluid.fmlPostInit();
     }
 
     @Mod.EventHandler

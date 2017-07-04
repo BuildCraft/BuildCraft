@@ -43,7 +43,8 @@ import buildcraft.lib.misc.VecUtil;
 // TODO: thread safety (per thread context?)
 public class FluidRenderer {
 
-    private static final EnumMap<FluidSpriteType, Map<Fluid, TextureAtlasSprite>> fluidSprites = new EnumMap<>(FluidSpriteType.class);
+    private static final EnumMap<FluidSpriteType, Map<Fluid, TextureAtlasSprite>> fluidSprites =
+        new EnumMap<>(FluidSpriteType.class);
     public static final MutableVertex vertex = new MutableVertex();
     private static final boolean[] DEFAULT_FACES = { true, true, true, true, true, true };
 
@@ -101,7 +102,8 @@ public class FluidRenderer {
      *            faces will be rendered. The indexes are determined by what {@link EnumFacing#ordinal()} returns.
      * 
      * @see #renderFluid(FluidSpriteType, FluidStack, double, double, Vec3d, Vec3d, VertexBuffer, boolean[]) */
-    public static void renderFluid(FluidSpriteType type, IFluidTank tank, Vec3d min, Vec3d max, VertexBuffer vbIn, boolean[] sideRender) {
+    public static void renderFluid(FluidSpriteType type, IFluidTank tank, Vec3d min, Vec3d max, VertexBuffer vbIn,
+        boolean[] sideRender) {
         renderFluid(type, tank.getFluid(), tank.getCapacity(), min, max, vbIn, sideRender);
     }
 
@@ -116,7 +118,8 @@ public class FluidRenderer {
      * @param vbIn The {@link VertexBuffer} that the fluid will be rendered into.
      * @param sideRender A size 6 boolean array that determines if the face will be rendered. If it is null then all
      *            faces will be rendered. The indexes are determined by what {@link EnumFacing#ordinal()} returns. */
-    public static void renderFluid(FluidSpriteType type, FluidStack fluid, int cap, Vec3d min, Vec3d max, VertexBuffer vbIn, boolean[] sideRender) {
+    public static void renderFluid(FluidSpriteType type, FluidStack fluid, int cap, Vec3d min, Vec3d max,
+        VertexBuffer vbIn, boolean[] sideRender) {
         renderFluid(type, fluid, fluid == null ? 0 : fluid.amount, cap, min, max, vbIn, sideRender);
     }
 
@@ -133,7 +136,8 @@ public class FluidRenderer {
      * @param vbIn The {@link VertexBuffer} that the fluid will be rendered into.
      * @param sideRender A size 6 boolean array that determines if the face will be rendered. If it is null then all
      *            faces will be rendered. The indexes are determined by what {@link EnumFacing#ordinal()} returns. */
-    public static void renderFluid(FluidSpriteType type, FluidStack fluid, double amount, double cap, Vec3d min, Vec3d max, VertexBuffer vbIn, boolean[] sideRender) {
+    public static void renderFluid(FluidSpriteType type, FluidStack fluid, double amount, double cap, Vec3d min,
+        Vec3d max, VertexBuffer vbIn, boolean[] sideRender) {
         if (fluid == null || fluid.getFluid() == null || amount <= 0) {
             return;
         }
@@ -376,6 +380,46 @@ public class FluidRenderer {
                 realv = 1 - realv;
             }
             vertex.texf(sprite.getInterpolatedU(realu * 16), sprite.getInterpolatedV(realv * 16));
+        }
+    }
+
+    public static class TankSize {
+        public final Vec3d min;
+        public final Vec3d max;
+
+        public TankSize(int sx, int sy, int sz, int ex, int ey, int ez) {
+            this(new Vec3d(sx, sy, sz).scale(1 / 16.0), new Vec3d(ex, ey, ez).scale(1 / 16.0));
+        }
+
+        public TankSize(Vec3d min, Vec3d max) {
+            this.min = min;
+            this.max = max;
+        }
+
+        public TankSize shrink(double by) {
+            return shrink(by, by, by);
+        }
+
+        public TankSize shrink(double x, double y, double z) {
+            return new TankSize(min.addVector(x, y, z), max.subtract(x, y, z));
+        }
+
+        public TankSize shink(Vec3d by) {
+            return shrink(by.xCoord, by.yCoord, by.zCoord);
+        }
+
+        public TankSize rotateY() {
+            Vec3d _min = rotateY(min);
+            Vec3d _max = rotateY(max);
+            return new TankSize(VecUtil.min(_min, _max), VecUtil.max(_min, _max));
+        }
+
+        private static Vec3d rotateY(Vec3d vec) {
+            return new Vec3d(//
+                1 - vec.zCoord,//
+                vec.yCoord,//
+                vec.xCoord//
+            );
         }
     }
 }

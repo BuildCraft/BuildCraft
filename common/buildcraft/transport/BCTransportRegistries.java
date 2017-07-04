@@ -12,7 +12,7 @@ import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemMinecart;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.transport.IStripesRegistry.HandlerPriority;
+import buildcraft.api.core.EnumHandlerPriority;
 import buildcraft.api.transport.pipe.ICustomPipeConnection;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeConnectionAPI;
@@ -57,12 +57,12 @@ public class BCTransportRegistries {
         PipeApi.stripeRegistry.addHandler(StripesHandlerShears.INSTANCE);
         // PipeApi.stripeRegistry.addHandler(new StripesHandlerPipes());
         // PipeApi.stripeRegistry.addHandler(new StripesHandlerPipeWires());
-        PipeApi.stripeRegistry.addHandler(StripesHandlerEntityInteract.INSTANCE, HandlerPriority.LOW);
+        PipeApi.stripeRegistry.addHandler(StripesHandlerEntityInteract.INSTANCE, EnumHandlerPriority.LOW);
         PipeApi.stripeRegistry.addHandler(StripesHandlerHoe.INSTANCE);
-        // PipeApi.stripeRegistry.addHandler(new StripesHandlerRightClick(), HandlerPriority.LOW);
-        PipeApi.stripeRegistry.addHandler(StripesHandlerDispenser.INSTANCE, HandlerPriority.LOW);
-        PipeApi.stripeRegistry.addHandler(StripesHandlerPlaceBlock.INSTANCE, HandlerPriority.LOW);
-        PipeApi.stripeRegistry.addHandler(StripesHandlerUse.INSTANCE, HandlerPriority.LOW);
+        // PipeApi.stripeRegistry.addHandler(new StripesHandlerRightClick(), EnumHandlerPriority.LOW);
+        PipeApi.stripeRegistry.addHandler(StripesHandlerDispenser.INSTANCE, EnumHandlerPriority.LOW);
+        PipeApi.stripeRegistry.addHandler(StripesHandlerPlaceBlock.INSTANCE, EnumHandlerPriority.LOW);
+        PipeApi.stripeRegistry.addHandler(StripesHandlerUse.INSTANCE, EnumHandlerPriority.LOW);
 
         StripesHandlerDispenser.ITEM_CLASSES.add(ItemBucket.class);
         StripesHandlerDispenser.ITEM_CLASSES.add(ItemMinecart.class);

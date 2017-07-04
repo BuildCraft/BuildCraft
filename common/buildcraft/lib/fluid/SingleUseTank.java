@@ -1,7 +1,9 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
+/*
+ * Copyright (c) 2016 SpaceToad and the BuildCraft team
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 package buildcraft.lib.fluid;
 
 import javax.annotation.Nonnull;
@@ -9,13 +11,16 @@ import javax.annotation.Nonnull;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 public class SingleUseTank extends Tank {
 
-    private Fluid acceptedFluid;
+    private static final String NBT_ACCEPTED_FLUID = "acceptedFluid";
+
+    private FluidStack acceptedFluid;
 
     public SingleUseTank(@Nonnull String name, int capacity, TileEntity tile) {
         super(name, capacity, tile);
@@ -28,10 +33,11 @@ public class SingleUseTank extends Tank {
         }
 
         if (doFill && acceptedFluid == null) {
-            acceptedFluid = resource.getFluid();
+            acceptedFluid = resource.copy();
+            acceptedFluid.amount = 1;
         }
 
-        if (acceptedFluid == null || acceptedFluid == resource.getFluid()) {
+        if (acceptedFluid == null || acceptedFluid.isFluidEqual(resource)) {
             return super.fill(resource, doFill);
         }
 
@@ -43,10 +49,22 @@ public class SingleUseTank extends Tank {
     }
 
     public void setAcceptedFluid(Fluid fluid) {
-        this.acceptedFluid = fluid;
+        if (fluid == null) {
+            this.acceptedFluid = null;
+        } else {
+            this.acceptedFluid = new FluidStack(fluid, 1);
+        }
     }
 
-    public Fluid getAcceptedFluid() {
+    public void setAcceptedFluid(FluidStack fluid) {
+        if (fluid == null) {
+            this.acceptedFluid = null;
+        } else {
+            this.acceptedFluid = new FluidStack(fluid, 1);
+        }
+    }
+
+    public FluidStack getAcceptedFluid() {
         return acceptedFluid;
     }
 
@@ -54,13 +72,17 @@ public class SingleUseTank extends Tank {
     public void writeTankToNBT(NBTTagCompound nbt) {
         super.writeTankToNBT(nbt);
         if (acceptedFluid != null) {
-            nbt.setString("acceptedFluid", acceptedFluid.getName());
+            nbt.setTag(NBT_ACCEPTED_FLUID, acceptedFluid.writeToNBT(new NBTTagCompound()));
         }
     }
 
     @Override
     public void readTankFromNBT(NBTTagCompound nbt) {
         super.readTankFromNBT(nbt);
-        acceptedFluid = FluidRegistry.getFluid(nbt.getString("acceptedFluid"));
+        if (nbt.hasKey(NBT_ACCEPTED_FLUID, Constants.NBT.TAG_STRING)) {
+            setAcceptedFluid(FluidRegistry.getFluid(nbt.getString(NBT_ACCEPTED_FLUID)));
+        } else {
+            acceptedFluid = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag(NBT_ACCEPTED_FLUID));
+        }
     }
 }

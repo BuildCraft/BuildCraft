@@ -37,7 +37,6 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 
@@ -186,14 +185,6 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         canBeReplacedWithBlocks.add(placeBlock);
     }
 
-    @SuppressWarnings({"unused", "WeakerAccess"})
-    protected void setRequiredItems(SchematicBlockContext context, Set<JsonRule> rules) {
-    }
-
-    @SuppressWarnings({"unused", "WeakerAccess"})
-    protected void setRequiredFluids(SchematicBlockContext context, Set<JsonRule> rules) {
-    }
-
     @Override
     public void init(SchematicBlockContext context) {
         Set<JsonRule> rules = RulesLoader.getRules(context.blockState);
@@ -205,8 +196,6 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         setPlaceBlock /*             */(context, rules);
         setUpdateBlockOffsets /*     */(context, rules);
         setCanBeReplacedWithBlocks /**/(context, rules);
-        setRequiredItems /*          */(context, rules);
-        setRequiredFluids /*         */(context, rules);
     }
 
     @Override
@@ -455,11 +444,11 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
-        NBTUtilBC.readCompoundList(nbt.getTagList("requiredBlockOffsets", Constants.NBT.TAG_COMPOUND))
+        NBTUtilBC.readCompoundList(nbt.getTag("requiredBlockOffsets"))
             .map(NBTUtil::getPosFromTag)
             .forEach(requiredBlockOffsets::add);
         blockState = NBTUtil.readBlockState(nbt.getCompoundTag("blockState"));
-        NBTUtilBC.readStringList(nbt.getTagList("ignoredProperties", Constants.NBT.TAG_STRING))
+        NBTUtilBC.readStringList(nbt.getTag("ignoredProperties"))
             .map(propertyName ->
                 blockState.getPropertyKeys().stream()
                     .filter(property -> property.getName().equals(propertyName))
@@ -470,13 +459,13 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         if (nbt.hasKey("tileNbt")) {
             tileNbt = nbt.getCompoundTag("tileNbt");
         }
-        NBTUtilBC.readStringList(nbt.getTagList("ignoredTags", Constants.NBT.TAG_STRING)).forEach(ignoredTags::add);
+        NBTUtilBC.readStringList(nbt.getTag("ignoredTags")).forEach(ignoredTags::add);
         tileRotation = NBTUtilBC.readEnum(nbt.getTag("tileRotation"), Rotation.class);
         placeBlock = Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("placeBlock")));
-        NBTUtilBC.readCompoundList(nbt.getTagList("updateBlockOffsets", Constants.NBT.TAG_COMPOUND))
+        NBTUtilBC.readCompoundList(nbt.getTag("updateBlockOffsets"))
             .map(NBTUtil::getPosFromTag)
             .forEach(updateBlockOffsets::add);
-        NBTUtilBC.readStringList(nbt.getTagList("canBeReplacedWithBlocks", Constants.NBT.TAG_STRING))
+        NBTUtilBC.readStringList(nbt.getTag("canBeReplacedWithBlocks"))
             .map(ResourceLocation::new)
             .map(Block.REGISTRY::getObject)
             .forEach(canBeReplacedWithBlocks::add);

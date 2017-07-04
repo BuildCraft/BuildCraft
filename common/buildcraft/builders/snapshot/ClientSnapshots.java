@@ -40,21 +40,21 @@ public enum ClientSnapshots {
     INSTANCE;
 
     private final List<Snapshot> snapshots = new ArrayList<>();
-    private final List<Snapshot.Header> pending = new ArrayList<>();
-    private final Map<Snapshot.Header, FakeWorld> worlds = new HashMap<>();
-    private final Map<Snapshot.Header, VertexBuffer> buffers = new HashMap<>();
+    private final List<Snapshot.Key> pending = new ArrayList<>();
+    private final Map<Snapshot.Key, FakeWorld> worlds = new HashMap<>();
+    private final Map<Snapshot.Key, VertexBuffer> buffers = new HashMap<>();
 
-    public Snapshot getSnapshot(Snapshot.Header header) {
-        Snapshot found = snapshots.stream().filter(snapshot -> snapshot.header.equals(header)).findFirst().orElse(null);
-        if (found == null && !pending.contains(header)) {
-            pending.add(header);
-            MessageManager.sendToServer(new MessageSnapshotRequest(header));
+    public Snapshot getSnapshot(Snapshot.Key key) {
+        Snapshot found = snapshots.stream().filter(snapshot -> snapshot.key.equals(key)).findFirst().orElse(null);
+        if (found == null && !pending.contains(key)) {
+            pending.add(key);
+            MessageManager.sendToServer(new MessageSnapshotRequest(key));
         }
         return found;
     }
 
     public void onSnapshotReceived(Snapshot snapshot) {
-        pending.remove(snapshot.header);
+        pending.remove(snapshot.key);
         snapshots.add(snapshot);
     }
 
@@ -63,7 +63,7 @@ public enum ClientSnapshots {
         if (header == null) {
             return;
         }
-        Snapshot snapshot = getSnapshot(header);
+        Snapshot snapshot = getSnapshot(header.key);
         if (snapshot == null) {
             return;
         }
@@ -72,7 +72,7 @@ public enum ClientSnapshots {
 
     @SideOnly(Side.CLIENT)
     public void renderSnapshot(Snapshot snapshot, int offsetX, int offsetY, int sizeX, int sizeY) {
-        FakeWorld world = worlds.computeIfAbsent(snapshot.header, localHeader -> {
+        FakeWorld world = worlds.computeIfAbsent(snapshot.key, key -> {
             FakeWorld localWorld = new FakeWorld();
             if (snapshot instanceof Blueprint) {
                 localWorld.uploadBlueprint((Blueprint) snapshot, false);
@@ -96,7 +96,7 @@ public enum ClientSnapshots {
             }
             return localWorld;
         });
-        VertexBuffer vertexBuffer = buffers.computeIfAbsent(snapshot.header, localHeader -> {
+        VertexBuffer vertexBuffer = buffers.computeIfAbsent(snapshot.key, key -> {
             VertexBuffer localBuffer = new VertexBuffer(1024) {
                 @Override
                 public void reset() {

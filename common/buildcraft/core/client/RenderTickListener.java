@@ -47,6 +47,7 @@ import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.MatrixUtil;
+import buildcraft.lib.misc.SpriteUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;

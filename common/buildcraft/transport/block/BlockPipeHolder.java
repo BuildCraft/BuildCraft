@@ -10,7 +10,6 @@ import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
@@ -122,8 +121,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     // Collisions
 
     @Override
-    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<
-        AxisAlignedBB> collidingBoxes, Entity entityIn, boolean isPistonMoving) {
+    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox,
+                                      List<AxisAlignedBB> collidingBoxes, Entity entityIn, boolean isPistonMoving) {
         TilePipeHolder tile = getPipe(world, pos, false);
         if (tile == null) {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, FULL_BLOCK_AABB);
@@ -481,10 +480,14 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                 }
             }
         }
-        if (tile.getPipe().behaviour.onPipeActivate(player, trace, hitX, hitY, hitZ, part)) {
+        Pipe pipe = tile.getPipe();
+        if (pipe == null) {
+            return false;
+        }
+        if (pipe.behaviour.onPipeActivate(player, trace, hitX, hitY, hitZ, part)) {
             return true;
         }
-        if (tile.getPipe().flow.onFlowActivate(player, trace, hitX, hitY, hitZ, part)) {
+        if (pipe.flow.onFlowActivate(player, trace, hitX, hitY, hitZ, part)) {
             return true;
         }
         return false;
@@ -724,5 +727,44 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     @SideOnly(Side.CLIENT)
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
         return layer == BlockRenderLayer.CUTOUT_MIPPED || layer == BlockRenderLayer.TRANSLUCENT;
+    }
+
+    @Override
+    public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, @Nullable EnumFacing side) {
+        if (side == null)
+            return false;
+        TilePipeHolder tile = getPipe(world, pos, false);
+        if (tile != null) {
+            PipePluggable pluggable = tile.getPluggable(side.getOpposite());
+            return pluggable != null && pluggable.canConnectToRedstone(side);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean canProvidePower(IBlockState state) {
+        return true;
+    }
+
+    @Override
+    public int getStrongPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+        if (side == null) {
+            return 0;
+        }
+        TilePipeHolder tile = getPipe(blockAccess, pos, false);
+        if (tile != null) {
+            return tile.getRedstoneOutput(side.getOpposite());
+        }
+        return 0;
+    }
+
+    @Override
+    public boolean isBlockNormalCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public int getWeakPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+        return getStrongPower(blockState, blockAccess, pos, side);
     }
 }

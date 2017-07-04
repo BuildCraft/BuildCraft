@@ -21,6 +21,8 @@ import javax.annotation.Nonnull;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
@@ -63,6 +65,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     private static final int DIRECTION_COOLDOWN = 60;
     private static final int COOLDOWN_INPUT = -DIRECTION_COOLDOWN;
     private static final int COOLDOWN_OUTPUT = DIRECTION_COOLDOWN;
+
+    private static final ActionResult<FluidStack> FAILED_EXTRACT = ActionResult.newResult(EnumActionResult.FAIL, null);
+    private static final ActionResult<FluidStack> PASSED_EXTRACT = ActionResult.newResult(EnumActionResult.PASS, null);
 
     public static final int NET_FLUID_AMOUNTS = 2;
 
@@ -151,11 +156,10 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         return oTile.hasCapability(CapUtil.CAP_FLUIDS, face.getOpposite());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == CapUtil.CAP_FLUIDS) {
-            return (T) sections.get(EnumPipePart.fromFacing(facing));
+            return CapUtil.CAP_FLUIDS.cast(sections.get(EnumPipePart.fromFacing(facing)));
         }
         return super.getCapability(capability, facing);
     }
@@ -208,19 +212,19 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     }
 
     @Override
-    public FluidStack tryExtractFluidAdv(int millibuckets, EnumFacing from, IFluidFilter filter) {
+    public ActionResult<FluidStack> tryExtractFluidAdv(int millibuckets, EnumFacing from, IFluidFilter filter) {
         // Mostly a copy of the above method
         if (from == null || filter == null || millibuckets <= 0) {
-            return null;
+            return FAILED_EXTRACT;
         }
         IFluidHandler fluidHandler = pipe.getHolder().getCapabilityFromPipe(from, CapUtil.CAP_FLUIDS);
         if (!(fluidHandler instanceof IFluidHandlerAdv)) {
-            return null;
+            return PASSED_EXTRACT;
         }
         IFluidHandlerAdv handlerAdv = (IFluidHandlerAdv) fluidHandler;
         if (currentFluid != null) {
             if (!filter.matches(currentFluid)) {
-                return null;
+                return FAILED_EXTRACT;
             }
             final IFluidFilter existing = filter;
             filter = (fluid) -> currentFluid.isFluidEqual(fluid) && existing.matches(fluid);
@@ -228,11 +232,11 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         Section section = sections.get(EnumPipePart.fromFacing(from));
         millibuckets = Math.min(millibuckets, section.getMaxFilled());
         if (millibuckets <= 0) {
-            return null;
+            return FAILED_EXTRACT;
         }
         FluidStack toAdd = handlerAdv.drain(filter, millibuckets, true);
         if (toAdd == null || toAdd.amount <= 0) {
-            return null;
+            return FAILED_EXTRACT;
         }
         millibuckets = toAdd.amount;
         if (currentFluid == null) {
@@ -244,7 +248,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             BCLog.logger.warn("[tryExtractFluidAdv] Filled " + reallyFilled + " != extracted " + millibuckets //
                 + " (handler = " + fluidHandler.getClass() + ") @" + pipe.getHolder().getPipePos());
         }
-        return toAdd;
+        return ActionResult.newResult(EnumActionResult.SUCCESS, toAdd);
     }
 
     // IDebuggable
@@ -499,8 +503,12 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         int spaceAvailable = capacity - center.amount;
         int flowRate = fluidTransferInfo.transferPerTick;
 
+        List<EnumPipePart> faces = new ArrayList<>();
+        Collections.addAll(faces, EnumPipePart.FACES);
+        Collections.shuffle(faces);
+
         int[] inputPerTick = new int[6];
-        for (EnumPipePart part : EnumPipePart.FACES) {
+        for (EnumPipePart part : faces) {
             Section section = sections.get(part);
             inputPerTick[part.getIndex()] = 0;
             if (section.getCurrentDirection().canInput()) {

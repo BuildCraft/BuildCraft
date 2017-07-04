@@ -45,7 +45,7 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
     public static boolean canCreateConnection(VolumeSubCache subCache, BlockPos from, BlockPos to) {
         EnumFacing directOffset = PositionUtil.getDirectFacingOffset(from, to);
         if (directOffset == null) return false;
-        for (int i = 1; i < BCCoreConfig.markerMaxDistance; i++) {
+        for (int i = 1; i <= BCCoreConfig.markerMaxDistance; i++) {
             BlockPos offset = from.offset(directOffset, i);
             if (offset.equals(to)) return true;
             if (subCache.hasLoadedOrUnloadedMarker(offset)) return false;

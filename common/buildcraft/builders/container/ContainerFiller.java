@@ -6,6 +6,8 @@
 
 package buildcraft.builders.container;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,24 +17,55 @@ import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 
 import buildcraft.builders.filling.Filling;
+import buildcraft.builders.filling.IParameter;
 import buildcraft.builders.tile.TileFiller;
 
-public class ContainerFiller extends ContainerBCTile<TileFiller> {
+public class ContainerFiller extends ContainerBCTile<TileFiller> implements IContainerFilling {
     public ContainerFiller(EntityPlayer player, TileFiller tile) {
         super(player, tile);
 
-        addFullPlayerInventory(153);
+        addFullPlayerInventory(108);
 
         for (int sy = 0; sy < 3; sy++) {
             for (int sx = 0; sx < 9; sx++) {
-                addSlotToContainer(new SlotBase(tile.invResources, sx + sy * 9, 8 + sx * 18, 85 + sy * 18) {
+                addSlotToContainer(new SlotBase(tile.invResources, sx + sy * 9, sx * 18 + 8, sy * 18 + 40) {
                     @Override
                     public boolean isItemValid(@Nonnull ItemStack stack) {
-                        return Filling.INSTANCE.getItemBlocks().contains(stack.getItem());
+                        return Filling.getItemBlocks().contains(stack.getItem());
                     }
                 });
             }
         }
+    }
+
+    @Override
+    public boolean isInverted() {
+        return tile.isInverted();
+    }
+
+    @Override
+    public void setInverted(boolean value) {
+        tile.sendInverted(value);
+    }
+
+    @Override
+    public List<IParameter> getParameters() {
+        return tile.getParameters();
+    }
+
+    @Override
+    public void setParameters(List<IParameter> value) {
+        tile.sendParameters(value);
+    }
+
+    @Override
+    public boolean isCanExcavate() {
+        return tile.isCanExcavate();
+    }
+
+    @Override
+    public void setCanExcavate(boolean value) {
+        tile.sendCanExcavate(value);
     }
 
     @Override

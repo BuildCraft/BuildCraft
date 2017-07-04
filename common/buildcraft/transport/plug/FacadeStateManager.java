@@ -3,6 +3,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
+
 package buildcraft.transport.plug;
 
 import java.util.ArrayList;
@@ -138,7 +139,7 @@ public class FacadeStateManager {
      *         {@link #isValidFacadeState(IBlockState)}</li>
      *         <li>OR {@link #STR_SUCCESS} if every state of the block is valid for a facade.
      *         </ul>
-    */
+     */
     private static String isValidFacadeBlock(Block block) {
         String disablingMod = disabledBlocks.get(block);
         if (disablingMod != null) {
@@ -162,7 +163,7 @@ public class FacadeStateManager {
      *         </li>
      *         <li>OR {@link #STR_SUCCESS} if this state is valid for a facade.
      *         </ul>
-    */
+     */
     private static String isValidFacadeState(IBlockState state) {
         if (state.getBlock().hasTileEntity(state)) {
             return "it has a tile entity";

@@ -9,6 +9,7 @@ package buildcraft.transport.pipe.behaviour;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -122,6 +123,7 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
         return flow.tryExtractItems(count, dir, null, StackFilter.ALL);
     }
 
+    @Nullable
     protected FluidStack extractFluid(IFlowFluid flow, EnumFacing dir, int millibuckets) {
         return flow.tryExtractFluid(millibuckets, dir, null);
     }

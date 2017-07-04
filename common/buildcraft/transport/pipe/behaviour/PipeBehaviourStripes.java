@@ -29,6 +29,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
@@ -47,7 +48,6 @@ import buildcraft.api.transport.pipe.PipeFlow;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
@@ -174,10 +174,10 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
                         world,
                         pos.offset(direction),
                         world.getBlockState(pos.offset(direction)),
-                        FakePlayerUtil.INSTANCE.getFakePlayer(
+                        BuildCraftAPI.fakePlayerProvider.getFakePlayer(
                             (WorldServer) world,
-                            pos,
-                            pipe.getHolder().getOwner()
+                            pipe.getHolder().getOwner(),
+                            pos
                         )
                     );
                     MinecraftForge.EVENT_BUS.post(breakEvent);
@@ -209,7 +209,7 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
         IPipeHolder holder = pipe.getHolder();
         World world = holder.getPipeWorld();
         BlockPos pos = holder.getPipePos();
-        FakePlayer player = FakePlayerUtil.INSTANCE.getFakePlayer((WorldServer) world, pos, holder.getOwner());
+        FakePlayer player = BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) world, holder.getOwner(), pos);
         player.inventory.clear();
         // set the main hand of the fake player to the stack
         player.inventory.setInventorySlotContents(player.inventory.currentItem, event.getStack());
@@ -240,17 +240,16 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == MjAPI.CAP_REDSTONE_RECEIVER) {
-            return (T) this;
+            return MjAPI.CAP_REDSTONE_RECEIVER.cast(this);
         }
         if (capability == MjAPI.CAP_RECEIVER) {
-            return (T) this;
+            return MjAPI.CAP_RECEIVER.cast(this);
         }
         if (capability == MjAPI.CAP_CONNECTOR) {
-            return (T) this;
+            return MjAPI.CAP_CONNECTOR.cast(this);
         }
         return super.getCapability(capability, facing);
     }

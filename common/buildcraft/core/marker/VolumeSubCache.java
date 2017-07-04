@@ -85,7 +85,7 @@ public class VolumeSubCache extends MarkerSubCache<VolumeConnection> {
         ImmutableList.Builder<BlockPos> valids = ImmutableList.builder();
         for (EnumFacing face : EnumFacing.VALUES) {
             if (taken.contains(face.getAxis())) continue;
-            for (int i = 1; i < BCCoreConfig.markerMaxDistance; i++) {
+            for (int i = 1; i <= BCCoreConfig.markerMaxDistance; i++) {
                 BlockPos toTry = from.offset(face, i);
                 if (hasLoadedOrUnloadedMarker(toTry)) {
                     if (!canConnect(from, toTry)) break;
