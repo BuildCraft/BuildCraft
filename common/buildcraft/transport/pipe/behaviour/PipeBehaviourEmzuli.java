@@ -216,13 +216,15 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
         return true;
     }
 
-    @PipeEventHandler
-    public static void addActions(PipeEventStatement.AddActionInternal event) {
+    @Override
+    public void addActions(PipeEventStatement.AddActionInternal event) {
+        super.addActions(event);
         Collections.addAll(event.actions, BCTransportStatements.ACTION_EXTRACTION_PRESET);
     }
 
-    @PipeEventHandler
+    @Override
     public void onActionActivate(PipeEventActionActivate event) {
+        super.onActionActivate(event);
         if (event.action instanceof ActionExtractionPreset) {
             ActionExtractionPreset preset = (ActionExtractionPreset) event.action;
             activeSlots.add(preset.index);

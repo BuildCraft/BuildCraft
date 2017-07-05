@@ -48,12 +48,12 @@ public class BoxIterator implements Iterator<BlockPos> {
     }
 
     public static BoxIterator readFromNbt(NBTTagCompound nbt) {
-        BlockPos min = nbt.hasKey("min") ? NBTUtilBC.readBlockPos(nbt.getTag("min")) : null;
-        BlockPos max = nbt.hasKey("max") ? NBTUtilBC.readBlockPos(nbt.getTag("max")) : null;
+        BlockPos min = NBTUtilBC.readBlockPos(nbt.getTag("min"));
+        BlockPos max = NBTUtilBC.readBlockPos(nbt.getTag("max"));
         boolean invert = nbt.getBoolean("invert");
         boolean repeat = false;
         AxisOrder order = AxisOrder.readNbt(nbt.getCompoundTag("order"));
-        BlockPos current = nbt.hasKey("current") ? NBTUtilBC.readBlockPos(nbt.getTag("current")) : null;
+        BlockPos current = NBTUtilBC.readBlockPos(nbt.getTag("current"));
         if (min == null || max == null || order == null) {
             return null;
         }

@@ -665,7 +665,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         public long clientPower;
         public long prevClientPower;
 
-        @SuppressWarnings("WeakerAccess")
         public Task() {
         }
 
@@ -687,7 +686,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             power = buffer.readLong();
         }
 
-        @SuppressWarnings("WeakerAccess")
         public void clientTick() {
             prevClientPower = clientPower;
             clientPower = power;
@@ -709,7 +707,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         /**
          * @return True if this task has been completed, or cancelled.
          */
-        @SuppressWarnings("WeakerAccess")
         public final boolean addPower(long microJoules) {
             power += microJoules;
             if (power >= getTarget()) {
@@ -726,11 +723,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     public class TaskBreakBlock extends Task {
         public BlockPos breakPos = BlockPos.ORIGIN;
 
-        @SuppressWarnings("WeakerAccess")
         public TaskBreakBlock() {
         }
 
-        @SuppressWarnings("WeakerAccess")
         public TaskBreakBlock(BlockPos pos) {
             this.breakPos = pos;
         }
@@ -746,6 +741,10 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         public void readFromNBT(NBTTagCompound nbt) {
             super.readFromNBT(nbt);
             breakPos = NBTUtilBC.readBlockPos(nbt.getTag("breakPos"));
+            if (breakPos == null) {
+                // We failed to read, abort
+                currentTask = null;
+            }
         }
 
         @Override
@@ -828,11 +827,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     public class TaskAddFrame extends Task {
         public BlockPos framePos = BlockPos.ORIGIN;
 
-        @SuppressWarnings("WeakerAccess")
         public TaskAddFrame() {
         }
 
-        @SuppressWarnings("WeakerAccess")
         public TaskAddFrame(BlockPos framePos) {
             this.framePos = framePos;
         }
@@ -848,6 +845,10 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         public void readFromNBT(NBTTagCompound nbt) {
             super.readFromNBT(nbt);
             framePos = NBTUtilBC.readBlockPos(nbt.getTag("framePos"));
+            if (framePos == null) {
+                // We failed to read, abort
+                currentTask = null;
+            }
         }
 
         @Override
@@ -893,11 +894,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         public Vec3d from = Vec3d.ZERO;
         public Vec3d to = Vec3d.ZERO;
 
-        @SuppressWarnings("WeakerAccess")
         public TaskMoveDrill() {
         }
 
-        @SuppressWarnings("WeakerAccess")
         public TaskMoveDrill(Vec3d from, Vec3d to) {
             this.from = from;
             this.to = to;
@@ -916,6 +915,10 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             super.readFromNBT(nbt);
             from = NBTUtilBC.readVec3d(nbt.getTag("from"));
             to = NBTUtilBC.readVec3d(nbt.getTag("to"));
+            if (from == null || to == null) {
+                // We failed to read. Abort.
+                currentTask = null;
+            }
         }
 
         @Override

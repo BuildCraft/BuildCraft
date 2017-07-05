@@ -54,7 +54,7 @@ public class BCEnergyFluids {
             {     1200,      4000,    3,      4, 0x10_0F_10, 0x42_10_42 },// Residue
             {      850,      1800,    3,      6, 0xA0_8F_1F, 0x42_35_20 },// Heavy Oil
             {      950,      1600,    3,      5, 0x87_6E_77, 0x42_24_24 },// Dense Oil
-            {      750,      1400,    2,      8, 0xE4_BF_78, 0xA4_8F_00 },// Distilled Oil
+            {      750,      1400,    2,      8, 0xE4_AF_78, 0xB4_7F_00 },// Distilled Oil
             {      600,       800,    2,      7, 0xFF_AF_3F, 0xE0_7F_00 },// Dense Fuel
             {      700,      1000,    2,      7, 0xF2_A7_00, 0xC4_87_00 },// Mixed Heavy Fuels
             {      400,       600,    1,      8, 0xFF_FF_30, 0xE4_CF_00 },// Light Fuel

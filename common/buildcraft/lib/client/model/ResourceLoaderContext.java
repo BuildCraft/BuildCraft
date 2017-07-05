@@ -33,7 +33,7 @@ public class ResourceLoaderContext {
             IResource res = Minecraft.getMinecraft().getResourceManager().getResource(location);
             return new InputStreamReader(res.getInputStream());
         } catch (FileNotFoundException e) {
-            throw new JsonSyntaxException("Did not find the file " + location, fnfe);
+            throw new JsonSyntaxException("Did not find the file " + location, e);
         } catch (IOException io) {
             throw new JsonSyntaxException(io);
         }

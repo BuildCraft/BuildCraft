@@ -105,20 +105,10 @@ public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnect
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (world.isRemote) {
-            return true;
-        }
-        if (player.getHeldItem(hand).isEmpty()) {
-            return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
-        }
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileTank) {
             TileTank tank = (TileTank) tile;
-            if (FluidUtil.interactWithFluidHandler(player, hand, world, pos, side)) {
-                tank.sendNetworkUpdate(TileBC_Neptune.NET_RENDER_DATA);
-                player.inventoryContainer.detectAndSendChanges();
-                return true;
-            }
+            return tank.onActivate(player, hand);
         }
         return false;
     }

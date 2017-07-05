@@ -21,12 +21,18 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 import buildcraft.api.transport.pipe.PipeBehaviour;
+import buildcraft.api.transport.pipe.PipeEventActionActivate;
+import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.api.transport.pipe.PipeEventStatement;
 
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.collect.OrderedEnumMap;
 import buildcraft.lib.net.PacketBufferBC;
+
+import buildcraft.transport.BCTransportStatements;
+import buildcraft.transport.statements.ActionPipeDirection;
 
 public abstract class PipeBehaviourDirectional extends PipeBehaviour {
     public static final OrderedEnumMap<EnumFacing> ROTATION_ORDER = VanillaRotationHandlers.ROTATE_FACING;
@@ -63,7 +69,8 @@ public abstract class PipeBehaviourDirectional extends PipeBehaviour {
     }
 
     @Override
-    public boolean onPipeActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ, EnumPipePart part) {
+    public boolean onPipeActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ,
+        EnumPipePart part) {
         if (EntityUtil.getWrenchHand(player) != null) {
             EntityUtil.activateWrench(player);
             if (part.face != getCurrentDir()) {
@@ -104,6 +111,25 @@ public abstract class PipeBehaviourDirectional extends PipeBehaviour {
         this.currentDir = EnumPipePart.fromFacing(setTo);
         if (!pipe.getHolder().getPipeWorld().isRemote) {
             pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
+        }
+    }
+
+    @PipeEventHandler
+    public void addActions(PipeEventStatement.AddActionInternal event) {
+        for (EnumFacing face : EnumFacing.VALUES) {
+            if (canFaceDirection(face)) {
+                event.actions.add(BCTransportStatements.ACTION_PIPE_DIRECTION[face.ordinal()]);
+            }
+        }
+    }
+
+    @PipeEventHandler
+    public void onActionActivate(PipeEventActionActivate event) {
+        if (event.action instanceof ActionPipeDirection) {
+            ActionPipeDirection action = (ActionPipeDirection) event.action;
+            if (canFaceDirection(action.direction)) {
+                setCurrentDir(action.direction);
+            }
         }
     }
 }

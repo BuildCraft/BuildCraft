@@ -16,5 +16,5 @@ public interface ITileForBlueprintBuilder extends ITileForSnapshotBuilder {
 
     IItemTransactor getInvResources();
 
-    TankManager<Tank> getTankManager();
+    TankManager getTankManager();
 }

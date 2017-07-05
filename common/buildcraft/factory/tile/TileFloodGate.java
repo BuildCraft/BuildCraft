@@ -73,7 +73,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
         16384
     };
 
-    private final Tank tank = new Tank("tank", 16 * Fluid.BUCKET_VOLUME, this);
+    private final Tank tank = new Tank("tank", 2 * Fluid.BUCKET_VOLUME, this);
     public final EnumMap<EnumFacing, Boolean> openSides = new EnumMap<>(EnumFacing.class);
     public final Queue<BlockPos> queue = new PriorityQueue<>(
         Comparator.<BlockPos>comparingInt(blockPos ->
@@ -88,6 +88,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
     public TileFloodGate() {
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank, EnumPipePart.VALUES);
+        tankManager.add(tank);
         Arrays.stream(EnumFacing.VALUES)
             .forEach(side -> openSides.put(side, BlockFloodGate.CONNECTED_MAP.containsKey(side)));
     }
@@ -249,7 +250,6 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
-        nbt.setTag("tank", tank.writeToNBT(new NBTTagCompound()));
         nbt.setTag("openSides", NBTUtilBC.writeBooleanList(openSides.values().stream()));
         return nbt;
     }
@@ -257,7 +257,6 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        tank.readFromNBT(nbt.getCompoundTag("tank"));
         Boolean[] blockedSidesArray = NBTUtilBC.readBooleanList(nbt.getTag("openSides")).toArray(Boolean[]::new);
         for (int i = 0; i < blockedSidesArray.length; i++) {
             openSides.put(EnumFacing.getFront(i), blockedSidesArray[i]);

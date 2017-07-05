@@ -48,6 +48,10 @@ public class PipeEventBus {
     private static List<Handler> getHandlers(Class<?> cls) {
         if (!allHandlers.containsKey(cls)) {
             List<Handler> list = new ArrayList<>();
+            Class<?> superCls = cls.getSuperclass();
+            if (superCls != null) {
+                list.addAll(getHandlers(superCls));
+            }
             for (Method m : cls.getMethods()) {
                 PipeEventHandler annot = m.getAnnotation(PipeEventHandler.class);
                 if (annot == null) {
@@ -74,10 +78,6 @@ public class PipeEventBus {
                 list.add(new Handler(annot.priority(), annot.receiveCancelled(), isStatic, methodName, mh, p.getType()));
             }
 
-            Class<?> superCls = cls.getSuperclass();
-            if (superCls != null) {
-                list.addAll(getHandlers(superCls));
-            }
             allHandlers.put(cls, list);
             return list;
         }

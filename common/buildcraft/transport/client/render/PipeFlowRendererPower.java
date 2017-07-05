@@ -29,10 +29,10 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
 
     @Override
     public void render(PipeFlowPower flow, double x, double y, double z, float partialTicks, VertexBuffer vb) {
-        float r = (float) flow.clientPowerAmounts.values().stream()
+        float r = 0;/*(float) flow.clientPowerAmounts.values().stream()
             .mapToDouble(Double::valueOf)
             .average()
-            .orElse(0) / PipeFlowPower.DEFAULT_MAX_POWER * 0.8F;
+            .orElse(0) / PipeFlowPower.DEFAULT_MAX_POWER * 0.8F;*/
         if (r == 0) {
             return;
         }

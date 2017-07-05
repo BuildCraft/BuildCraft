@@ -18,6 +18,8 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fluids.FluidStack;
+
 public class SoundUtil {
     public static void playBlockPlace(World world, BlockPos pos) {
         playBlockPlace(world, pos, world.getBlockState(pos));
@@ -77,9 +79,24 @@ public class SoundUtil {
     public static void playSlideSound(World world, BlockPos pos, IBlockState state, EnumActionResult result) {
         if (result == EnumActionResult.PASS) return;
         SoundType soundType = state.getBlock().getSoundType(state, world, pos, null);
-        SoundEvent soundEvent = result == EnumActionResult.SUCCESS ? SoundEvents.BLOCK_PISTON_CONTRACT : SoundEvents.BLOCK_PISTON_EXTEND;
+        SoundEvent event;
+        if (result == EnumActionResult.SUCCESS) {
+            event = SoundEvents.BLOCK_PISTON_CONTRACT;
+        } else {
+            event = SoundEvents.BLOCK_PISTON_EXTEND;
+        }
         float volume = (soundType.getVolume() + 1.0F) / 2.0F;
         float pitch = soundType.getPitch() * 0.8F;
-        world.playSound(null, pos, soundEvent, SoundCategory.BLOCKS, volume, pitch);
+        world.playSound(null, pos, event, SoundCategory.BLOCKS, volume, pitch);
+    }
+
+    public static void playBucketEmpty(World world, BlockPos pos, FluidStack moved) {
+        SoundEvent sound = moved.getFluid().getEmptySound(moved);
+        world.playSound(null, pos, sound, SoundCategory.PLAYERS, 1, 1);
+    }
+
+    public static void playBucketFill(World world, BlockPos pos, FluidStack moved) {
+        SoundEvent sound = moved.getFluid().getFillSound(moved);
+        world.playSound(null, pos, sound, SoundCategory.PLAYERS, 1, 1);
     }
 }

@@ -37,7 +37,6 @@ import buildcraft.api.transport.pipe.IItemPipe;
 import buildcraft.lib.engine.EngineConnector;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.fluid.TankManager;
 import buildcraft.lib.fluid.TankProperties;
 import buildcraft.lib.gui.help.ElementHelpInfo;
 import buildcraft.lib.misc.CapUtil;
@@ -69,7 +68,6 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
         }
     };
     public final Tank tankResidue = new Tank("tankResidue", MAX_FLUID, this, this::isResidue);
-    private final TankManager<Tank> tankManager = new TankManager<>(tankFuel, tankCoolant, tankResidue);
     private final IFluidHandlerAdv fluidHandler = new InternalFluidHandler();
 
     private int penaltyCooling = 0;
@@ -79,6 +77,8 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     private IFuel currentFuel;
 
     public TileEngineIron_BC8() {
+        tankManager.addAll(tankFuel, tankCoolant, tankResidue);
+
         // TODO: Auto list of example fuels!
         tankFuel.helpInfo = new ElementHelpInfo(tankFuel.helpInfo.title, 0xFF_FF_33_33, Tank.DEFAULT_HELP_KEY, null,
             "buildcraft.help.tank.fuel");
@@ -98,7 +98,6 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
-        nbt.setTag("tanks", tankManager.serializeNBT());
         nbt.setInteger("penaltyCooling", penaltyCooling);
         nbt.setDouble("burnTime", burnTime);
         return nbt;
@@ -107,7 +106,6 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        tankManager.deserializeNBT(nbt.getCompoundTag("tanks"));
         penaltyCooling = nbt.getInteger("penaltyCooling");
         burnTime = nbt.getDouble("burnTime");
     }
@@ -135,7 +133,8 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     // TileEngineBase overrides
 
     @Override
-    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY,
+        float hitZ) {
         ItemStack current = player.getHeldItem(hand);
         if (!current.isEmpty()) {
             if (EntityUtil.getWrenchHand(player) != null) {
@@ -186,12 +185,12 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
 
     @Override
     protected void burn() {
-        FluidStack fuel = this.tankFuel.getFluid();
-        if (currentFuel == null) {
+        final FluidStack fuel = this.tankFuel.getFluid();
+        if (currentFuel == null || !currentFuel.getFluid().isFluidEqual(fuel)) {
             currentFuel = BuildcraftFuelRegistry.fuel.getFuel(fuel);
         }
 
-        if (currentFuel == null) {
+        if (fuel == null || currentFuel == null) {
             return;
         }
 
@@ -199,32 +198,26 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
             if (isRedstonePowered) {
                 lastPowered = true;
 
-                if (burnTime > 0 || (fuel != null && fuel.amount > 0)) {
+                if (burnTime > 0 || fuel.amount > 0) {
                     if (burnTime > 0) {
                         burnTime--;
                     }
                     if (burnTime <= 0) {
-                        if (fuel != null) {
-                            if (--fuel.amount <= 0) {
-                                tankFuel.setFluid(null);
-                            }
-                            burnTime += currentFuel.getTotalBurningTime() / 1000.0;
+                        if (--fuel.amount <= 0) {
+                            tankFuel.setFluid(null);
+                        }
+                        burnTime += currentFuel.getTotalBurningTime() / 1000.0;
 
-                            // If we also produce residue then put it out too
-                            if (currentFuel instanceof IDirtyFuel) {
-                                IDirtyFuel dirtyFuel = (IDirtyFuel) currentFuel;
-                                residueAmount += dirtyFuel.getResidue().amount / 1000.0;
-                                if (residueAmount >= 1) {
-                                    int residue = MathHelper.floor(residueAmount);
-                                    FluidStack residueFluid = dirtyFuel.getResidue().copy();
-                                    residueFluid.amount = residue;
-                                    residueAmount -= tankResidue.fill(residueFluid, true);
-                                }
+                        // If we also produce residue then put it out too
+                        if (currentFuel instanceof IDirtyFuel) {
+                            IDirtyFuel dirtyFuel = (IDirtyFuel) currentFuel;
+                            residueAmount += dirtyFuel.getResidue().amount / 1000.0;
+                            if (residueAmount >= 1) {
+                                int residue = MathHelper.floor(residueAmount);
+                                FluidStack residueFluid = dirtyFuel.getResidue().copy();
+                                residueFluid.amount = residue;
+                                residueAmount -= tankResidue.fill(residueFluid, true);
                             }
-                        } else {
-                            currentFuel = null;
-                            residueAmount = 0;
-                            return;
                         }
                     }
                     currentOutput = currentFuel.getPowerPerCycle(); // Comment out for constant power

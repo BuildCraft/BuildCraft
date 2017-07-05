@@ -364,13 +364,15 @@ task allSrcJar(type: Jar, dependsOn:reobfJar) {
     }
 }
 
+sourceJar.destinationDir = libsDir
+
 // add api classes to main package
 jar {
 	from sourceSets.api.output
 }
 
 // make sure all of these happen when we run build
-build.dependsOn sourceJar, apiJar, deobfJar, javadocJar
+build.dependsOn allSrcJar, apiJar, deobfJar, javadocJar
 
 // --------------------
 // maven section
