@@ -36,7 +36,7 @@ import buildcraft.transport.BCTransportBlocks;
 public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemPipe {
     public final PipeDefinition definition;
     private final String id;
-    private String unlocalisedName;
+    private String unlocalizedName;
     private CreativeTabs creativeTab;
 
     public ItemPipeHolder(PipeDefinition definition) {
@@ -59,7 +59,7 @@ public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemP
     }
 
     @Override
-    public PipeDefinition getDefiniton() {
+    public PipeDefinition getDefinition() {
         return definition;
     }
 
@@ -86,18 +86,18 @@ public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemP
 
     @Override
     public ItemBlock setUnlocalizedName(String unlocalizedName) {
-        this.unlocalisedName = "item." + unlocalizedName;
+        this.unlocalizedName = "item." + unlocalizedName;
         return this;
     }
 
     @Override
     public String getUnlocalizedName() {
-        return unlocalisedName;
+        return unlocalizedName;
     }
 
     @Override
     public String getUnlocalizedName(ItemStack stack) {
-        return unlocalisedName;
+        return unlocalizedName;
     }
 
     @Override
@@ -116,7 +116,7 @@ public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemP
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
-        String tipName = "tip." + unlocalisedName.replace(".name", "").replace("item.", "");
+        String tipName = "tip." + unlocalizedName.replace(".name", "").replace("item.", "");
         String localised = I18n.format(tipName);
         if (!localised.equals(tipName)) {
             tooltip.add(TextFormatting.GRAY + localised);

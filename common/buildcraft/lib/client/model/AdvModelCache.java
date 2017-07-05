@@ -161,9 +161,9 @@ public class AdvModelCache {
     static class CacheValue {
         final MutableQuad[] cutout, translucent;
 
-        CacheValue(MutableQuad[] cutout, MutableQuad[] translucnt) {
+        CacheValue(MutableQuad[] cutout, MutableQuad[] translucent) {
             this.cutout = cutout;
-            this.translucent = translucnt;
+            this.translucent = translucent;
         }
     }
 }

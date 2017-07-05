@@ -46,7 +46,7 @@ import buildcraft.lib.expression.node.value.NodeVariableLong;
 import buildcraft.lib.expression.node.value.NodeVariableString;
 
 public class FunctionContext {
-    public static final String FUNCTION_ARG_SEPERATOR = "^";
+    public static final String FUNCTION_ARG_SEPARATOR = "^";
 
     private final FunctionContext[] parents;
     private final Map<String, IExpressionNode> variables = new HashMap<>();
@@ -193,7 +193,7 @@ public class FunctionContext {
 
     public INodeFunc getFunction(String name, int args) {
         name = name.toLowerCase(Locale.ROOT);
-        return getFunction0(name + FUNCTION_ARG_SEPERATOR + args);
+        return getFunction0(name + FUNCTION_ARG_SEPARATOR + args);
     }
 
     private INodeFunc getFunction0(String fullName) {
@@ -220,7 +220,7 @@ public class FunctionContext {
 
     public <F extends INodeFunc> F putFunction(String name, F function) {
         name = name.toLowerCase(Locale.ROOT);
-        functions.put(name + FUNCTION_ARG_SEPERATOR + getArgCount(function), function);
+        functions.put(name + FUNCTION_ARG_SEPARATOR + getArgCount(function), function);
         return function;
     }
 

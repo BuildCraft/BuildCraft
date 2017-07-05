@@ -264,7 +264,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
         }
     }
 
-    // Netwokring
+    // Networking
 
     @Override
     public void writePayload(int id, PacketBufferBC buffer, Side side) {

@@ -33,7 +33,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.client.model.ModelHolderRegistry;
 import buildcraft.lib.client.reload.ReloadManager;
-import buildcraft.lib.client.render.DetatchedRenderer;
+import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
@@ -163,7 +163,7 @@ public enum BCLibEventDist {
         if (player == null) return;
         float partialTicks = event.getPartialTicks();
 
-        DetatchedRenderer.INSTANCE.renderWorldLastEvent(player, partialTicks);
+        DetachedRenderer.INSTANCE.renderWorldLastEvent(player, partialTicks);
     }
 
     @SubscribeEvent

@@ -171,7 +171,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         super.onPlacedBy(placer, stack);
         Item item = stack.getItem();
         if (item instanceof IItemPipe) {
-            PipeDefinition definition = ((IItemPipe) item).getDefiniton();
+            PipeDefinition definition = ((IItemPipe) item).getDefinition();
             this.pipe = new Pipe(this, definition);
             eventBus.registerHandler(pipe.behaviour);
             eventBus.registerHandler(pipe.flow);
@@ -434,9 +434,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             }
         }
         if (pipe.isConnected(side)) {
-            TileEntity neighour = getNeighbourTile(side);
-            if (neighour != null) {
-                return neighour.getCapability(capability, side.getOpposite());
+            TileEntity neighbour = getNeighbourTile(side);
+            if (neighbour != null) {
+                return neighbour.getCapability(capability, side.getOpposite());
             }
         }
         return null;

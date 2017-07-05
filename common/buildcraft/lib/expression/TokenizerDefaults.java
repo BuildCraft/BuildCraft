@@ -9,13 +9,13 @@ package buildcraft.lib.expression;
 import java.util.ArrayList;
 import java.util.List;
 
-import buildcraft.lib.expression.Tokeniser.ITokenizerGobbler;
-import buildcraft.lib.expression.Tokeniser.ResultConsume;
-import buildcraft.lib.expression.Tokeniser.ResultDiscard;
-import buildcraft.lib.expression.Tokeniser.ResultInvalid;
-import buildcraft.lib.expression.Tokeniser.ResultSpecific;
+import buildcraft.lib.expression.Tokenizer.ITokenizerGobbler;
+import buildcraft.lib.expression.Tokenizer.ResultConsume;
+import buildcraft.lib.expression.Tokenizer.ResultDiscard;
+import buildcraft.lib.expression.Tokenizer.ResultInvalid;
+import buildcraft.lib.expression.Tokenizer.ResultSpecific;
 
-public class TokeniserDefaults {
+public class TokenizerDefaults {
     // Lots of gobblers.
     // They like to "gobble" up bits of text.
     public static final ITokenizerGobbler GOBBLER_QUOTE = (ctx) -> {
@@ -28,7 +28,7 @@ public class TokeniserDefaults {
                 length++;
             } else if (c == '\'') {
                 return new ResultConsume(length + 1);
-            } else if (c == Tokeniser.END_OF_LINE) {
+            } else if (c == Tokenizer.END_OF_LINE) {
                 return new ResultInvalid(length + 1);
             }
             length++;
@@ -45,7 +45,7 @@ public class TokeniserDefaults {
         }
         return ResultSpecific.IGNORE;
     };
-    public static final ITokenizerGobbler GOBBLER_HEXIDECIMAL = (ctx) -> {
+    public static final ITokenizerGobbler GOBBLER_HEXADECIMAL = (ctx) -> {
         if ("0x".equals(ctx.get(2))) {
             int size = 2;
             while (true) {
@@ -116,7 +116,7 @@ public class TokeniserDefaults {
     public static final ITokenizerGobbler GOBBLER_NON_WHITESPACE = (ctx) -> {
         // Non-special char gobbler, takes a single of not-EOL and not-EOF and not-whitespace
         char c = ctx.getCharAt(0);
-        if (c == Tokeniser.END_OF_LINE) {
+        if (c == Tokenizer.END_OF_LINE) {
             return ResultSpecific.IGNORE;
         }
         if (Character.isWhitespace(c)) {
@@ -130,7 +130,7 @@ public class TokeniserDefaults {
         List<ITokenizerGobbler> list = new ArrayList<>();
         list.add(GOBBLER_QUOTE);
         list.add(GOBBLER_MATH_OPERATOR);
-        list.add(GOBBLER_HEXIDECIMAL);
+        list.add(GOBBLER_HEXADECIMAL);
         list.add(GOBBLER_NUMBER);
         list.add(GOBBLER_WORD);
         list.add(GOBBLER_NON_WHITESPACE);
@@ -138,7 +138,7 @@ public class TokeniserDefaults {
         return list;
     }
 
-    public static Tokeniser createTokensizer() {
-        return new Tokeniser(createParts());
+    public static Tokenizer createTokenizer() {
+        return new Tokenizer(createParts());
     }
 }

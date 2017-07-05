@@ -43,7 +43,7 @@ import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.data.AverageLong;
 import buildcraft.lib.misc.data.ModelVariableData;
-import buildcraft.lib.mj.MjBatteryReciver;
+import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
@@ -94,7 +94,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankIn, EnumPipePart.HORIZONTALS);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankOutGas, EnumPipePart.UP);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankOutLiquid, EnumPipePart.DOWN);
-        caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(mjBattery)));
+        caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(mjBattery)));
     }
 
     @Override
@@ -145,7 +145,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
 
     private boolean isDistillable(FluidStack fluid) {
         IRefineryRecipeManager manager = BuildcraftRecipeRegistry.refineryRecipes;
-        return manager.getDistilationRegistry().getRecipeForInput(fluid) != null;
+        return manager.getDistillationRegistry().getRecipeForInput(fluid) != null;
     }
 
     public static void setClientModelVariablesForItem() {
@@ -186,7 +186,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         powerAvg.tick();
         changedSinceNetUpdate |= avgNow / MjAPI.MJ != powerAvg.getAverageLong() / MjAPI.MJ;
 
-        currentRecipe = BuildcraftRecipeRegistry.refineryRecipes.getDistilationRegistry().getRecipeForInput(tankIn
+        currentRecipe = BuildcraftRecipeRegistry.refineryRecipes.getDistillationRegistry().getRecipeForInput(tankIn
             .getFluid());
         if (currentRecipe == null) {
             mjBattery.addPowerChecking(distillPower, false);

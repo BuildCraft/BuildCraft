@@ -42,11 +42,11 @@ public class JsonVariableFaceUV {
         }
     }
 
-    private static INodeString readVariableString(JsonObject json, String memeber, FunctionContext fnCtx) {
-        if (!json.has(memeber)) {
-            throw new JsonSyntaxException("Required member " + memeber + " in '" + json + "'");
+    private static INodeString readVariableString(JsonObject json, String member, FunctionContext fnCtx) {
+        if (!json.has(member)) {
+            throw new JsonSyntaxException("Required member " + member + " in '" + json + "'");
         }
-        JsonElement elem = json.get(memeber);
+        JsonElement elem = json.get(member);
         if (!elem.isJsonPrimitive()) {
             throw new JsonSyntaxException("Expected a string, but got '" + json + "'");
         }

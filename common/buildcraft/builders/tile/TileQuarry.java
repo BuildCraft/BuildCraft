@@ -73,7 +73,7 @@ import buildcraft.lib.misc.data.AxisOrder;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.BoxIterator;
 import buildcraft.lib.misc.data.EnumAxisOrder;
-import buildcraft.lib.mj.MjBatteryReciver;
+import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.world.WorldEventListenerAdapter;
@@ -131,7 +131,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     };
 
     public TileQuarry() {
-        caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(battery) {
+        caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery) {
             @Override
             public long receivePower(long microJoules, boolean simulate) {
                 long excess = super.receivePower(microJoules, simulate);

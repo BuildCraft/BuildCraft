@@ -249,7 +249,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
     private static void fill(Tank t, FluidStack fluid) {
         int a = t.fillInternal(fluid, true);
         if (a != fluid.amount) {
-            String err = "Buggy transation! Failed to fill " + fluid.getFluid();
+            String err = "Buggy transition! Failed to fill " + fluid.getFluid();
             throw new IllegalStateException(err + " x " + fluid.amount + " into " + t);
         }
     }
@@ -257,7 +257,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
     private static void drain(Tank t, FluidStack fluid) {
         FluidStack f2 = t.drainInternal(fluid, true);
         if (f2 == null || f2.amount != fluid.amount) {
-            String err = "Buggy transation! Failed to drain " + fluid.getFluid();
+            String err = "Buggy transition! Failed to drain " + fluid.getFluid();
             throw new IllegalStateException(err + " x " + fluid.amount + " from " + t);
         }
     }

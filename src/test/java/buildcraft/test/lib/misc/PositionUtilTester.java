@@ -6,7 +6,7 @@ import net.minecraft.util.math.BlockPos;
 
 import buildcraft.lib.misc.PositionUtil;
 
-public class PositonUtilTester {
+public class PositionUtilTester {
     @Test
     public void testPath1() {
         testPath(new BlockPos(0, 1, 0), new BlockPos(1, 4, 6));

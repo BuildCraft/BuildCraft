@@ -178,7 +178,7 @@ public class BCEnergyRecipes {
         FluidStack _outGas = outGas[heat];
         FluidStack _outLiquid = outLiquid[heat];
         IDistillationRecipe existing =
-            BuildcraftRecipeRegistry.refineryRecipes.getDistilationRegistry().getRecipeForInput(_in);
+            BuildcraftRecipeRegistry.refineryRecipes.getDistillationRegistry().getRecipeForInput(_in);
         if (existing != null) {
             throw new IllegalStateException("Already added distillation recipe for " + _in.getFluid().getName());
         }

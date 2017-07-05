@@ -13,10 +13,10 @@ import buildcraft.api.mj.IMjReadable;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjBattery;
 
-public class MjBatteryReciver implements IMjReceiver, IMjReadable {
+public class MjBatteryReceiver implements IMjReceiver, IMjReadable {
     private final MjBattery battery;
 
-    public MjBatteryReciver(MjBattery battery) {
+    public MjBatteryReceiver(MjBattery battery) {
         this.battery = battery;
     }
 

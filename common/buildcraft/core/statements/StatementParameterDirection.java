@@ -31,7 +31,7 @@ import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
 
-/** Directions *might* be replaced with indervidual triggers and actions per direction. Not sure yet. */
+/** Directions *might* be replaced with individual triggers and actions per direction. Not sure yet. */
 @Deprecated
 public class StatementParameterDirection implements IStatementParameter {
 

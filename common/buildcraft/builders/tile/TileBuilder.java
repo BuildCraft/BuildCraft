@@ -55,7 +55,7 @@ import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.IdAllocator;
-import buildcraft.lib.mj.MjBatteryReciver;
+import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -120,7 +120,7 @@ public class TileBuilder extends TileBC_Neptune
         for (int i = 1; i <= 4; i++) {
             tankManager.add(new Tank("fluid" + i, Fluid.BUCKET_VOLUME * 8, this));
         }
-        caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(battery)));
+        caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankManager, EnumPipePart.VALUES);
     }
 

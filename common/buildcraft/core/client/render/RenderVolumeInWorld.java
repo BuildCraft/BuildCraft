@@ -23,7 +23,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.lib.client.render.DetatchedRenderer;
+import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
@@ -36,7 +36,7 @@ import buildcraft.core.marker.volume.ClientVolumeBoxes;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
 import buildcraft.core.marker.volume.Lock;
 
-public enum RenderVolumeInWorld implements DetatchedRenderer.IDetachedRenderer {
+public enum RenderVolumeInWorld implements DetachedRenderer.IDetachedRenderer {
     INSTANCE;
 
     private static final double OFFSET_BY = 2 / 16.0;

@@ -85,10 +85,10 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
         boolean split = container.gate.isSplitInTwo();
         GateVariant variant = container.gate.variant;
         int triggerWidth = 18 * (variant.numTriggerArgs + 1);
-        int columWidth = 18 * 2 + triggerWidth + 18 * variant.numActionArgs;
+        int columnWidth = 18 * 2 + triggerWidth + 18 * variant.numActionArgs;
 
-        int columnStartFirst = split ? (GUI_WIDTH - 18) / 2 - columWidth : (GUI_WIDTH - columWidth) / 2;
-        int columnStartSecond = columnStartFirst + columWidth + 18;
+        int columnStartFirst = split ? (GUI_WIDTH - 18) / 2 - columnWidth : (GUI_WIDTH - columnWidth) / 2;
+        int columnStartSecond = columnStartFirst + columnWidth + 18;
 
         int numSlots = variant.numSlots;
         positionSlotPair = new IGuiArea[numSlots];
@@ -98,10 +98,10 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
             boolean otherColumn = split && i >= container.slotHeight;
             int x = otherColumn ? columnStartSecond : columnStartFirst;
             int y = (otherColumn ? i - container.slotHeight : i) * 18 + 16;
-            positionSlotPair[i] = new GuiRectangle(x, y, columWidth, 18).offset(rootElement);
+            positionSlotPair[i] = new GuiRectangle(x, y, columnWidth, 18).offset(rootElement);
 
-            boolean nextOtherColum = split && i + 1 >= container.slotHeight;
-            if (otherColumn == nextOtherColum && i < numSlots - 1) {
+            boolean nextOtherColumn = split && i + 1 >= container.slotHeight;
+            if (otherColumn == nextOtherColumn && i < numSlots - 1) {
                 positionConnect[i] = new GuiRectangle(x + triggerWidth, y + 9, 18, 18).offset(rootElement);
             }
         }
@@ -248,32 +248,32 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
         void iterate(StatementWrapper wrapper, IGuiArea pos);
     }
 
-    private void iteratePossible(OnStatement onStatemenet) {
+    private void iteratePossible(OnStatement onStatement) {
         int tx = 0;
         int ty = 0;
         EnumPipePart last = null;
-        onStatemenet.iterate(null, rootElement.offset(-18, 8).resize(18, 18));
+        onStatement.iterate(null, rootElement.offset(-18, 8).resize(18, 18));
         for (TriggerWrapper wrapper : container.possibleTriggers) {
             tx++;
             if (tx > 3 || (last != null && last != wrapper.sourcePart)) {
                 tx = 0;
                 ty++;
             }
-            onStatemenet.iterate(wrapper, rootElement.offset(18 * (-1 - tx), ty * 18 + 8).resize(18, 18));
+            onStatement.iterate(wrapper, rootElement.offset(18 * (-1 - tx), ty * 18 + 8).resize(18, 18));
             last = wrapper.sourcePart;
         }
 
         tx = 0;
         ty = 0;
         last = null;
-        onStatemenet.iterate(null, rootElement.offset(GUI_WIDTH, 8).resize(18, 18));
+        onStatement.iterate(null, rootElement.offset(GUI_WIDTH, 8).resize(18, 18));
         for (ActionWrapper wrapper : container.possibleActions) {
             tx++;
             if (tx > 3 || (last != null && last != wrapper.sourcePart)) {
                 tx = 0;
                 ty++;
             }
-            onStatemenet.iterate(wrapper, rootElement.offset(GUI_WIDTH + 18 * tx, ty * 18 + 8).resize(18, 18));
+            onStatement.iterate(wrapper, rootElement.offset(GUI_WIDTH + 18 * tx, ty * 18 + 8).resize(18, 18));
             last = wrapper.sourcePart;
         }
     }

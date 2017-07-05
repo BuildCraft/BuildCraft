@@ -30,7 +30,7 @@ features or change existing behaviour or balance, please discuss it on the featu
 Do not submit pull requests which solely "fix" formatting. As these kinds of changes are usually very intrusive in commit history and everyone has their own idea what "proper formatting" is, they should be done by one of the main contributors. 
 Please only submit "code cleanup", if the changes actually have a substantial impact on readability.
 
-PR implementing new features or changing large portions of code are helpful. But if you're doing such a change and if it gets accepted, please don't "fire and forget". Complex changes are introducing bugs, and as thourough as testing and peer review may be, there will be bugs. Please carry on playing your changes after initial commit and fix residual issues. It is extremely frustrating for others to spend days fixing regressions introduced by unmaintained submissions.
+PR implementing new features or changing large portions of code are helpful. But if you're doing such a change and if it gets accepted, please don't "fire and forget". Complex changes are introducing bugs, and as thorough as testing and peer review may be, there will be bugs. Please carry on playing your changes after initial commit and fix residual issues. It is extremely frustrating for others to spend days fixing regressions introduced by unmaintained submissions.
 
 #### Frequently reported
 
@@ -48,7 +48,7 @@ PR implementing new features or changing large portions of code are helpful. But
 1. Clone (and update) the submodules into 'baseDir/BuildCraft with 'git submodule init' and 'git submodule update'
 1. Navigate to basedir/BuildCraft in a shell and run one of two commands:
  * `gradlew setupCIWorkspace build` to just build a current jar (this may take a while).
- * `gradlew setupDecompWorkspace` to setup a complete developement enviroment.
+ * `gradlew setupDecompWorkspace` to setup a complete development environment.
  * With `Gradle` installed: use `gradle` instead of `gradlew`
  * On Windows: use `gradlew.bat` instead of `gradlew`
 1. The compiles and obfuscated module jars will be in 'baseDir/BuildCraft/modules'

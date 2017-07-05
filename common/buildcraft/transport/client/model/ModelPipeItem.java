@@ -175,7 +175,7 @@ public enum ModelPipeItem implements IBakedModel {
             TextureAtlasSprite bottom = center;
 
             if (item instanceof IItemPipe) {
-                PipeDefinition def = ((IItemPipe) item).getDefiniton();
+                PipeDefinition def = ((IItemPipe) item).getDefinition();
                 top = PipeModelCacheBase.generator.getItemSprite(def, def.itemTextureTop);
                 center = PipeModelCacheBase.generator.getItemSprite(def, def.itemTextureCenter);
                 bottom = PipeModelCacheBase.generator.getItemSprite(def, def.itemTextureBottom);

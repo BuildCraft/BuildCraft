@@ -18,7 +18,7 @@ import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.properties.BuildCraftProperties;
 
-import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
+import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
 import buildcraft.lib.debug.DebugRenderHelper;
 import buildcraft.lib.misc.VolumeUtil;
 

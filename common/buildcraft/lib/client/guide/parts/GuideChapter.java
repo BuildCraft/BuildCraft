@@ -20,7 +20,7 @@ public abstract class GuideChapter extends GuidePart {
     public static final int MAX_HOVER_DISTANCE = 20;
 
     public final PageLine chapter;
-    private int hoverProgress = 0, hoverProgessLast = 0;
+    private int hoverProgress = 0, hoverProgressLast = 0;
     protected EnumGuiSide lastDrawn = null;
 
     public enum EnumGuiSide {
@@ -136,7 +136,7 @@ public abstract class GuideChapter extends GuidePart {
     }
 
     private float getHoverWidth(float partialTicks) {
-        float prog = partialTicks * hoverProgress + (1 - partialTicks) * hoverProgessLast;
+        float prog = partialTicks * hoverProgress + (1 - partialTicks) * hoverProgressLast;
         return (prog * MAX_HOVER_DISTANCE) / MAX_HOWEVER_PROGRESS;
     }
 
@@ -151,7 +151,7 @@ public abstract class GuideChapter extends GuidePart {
 
     @Override
     public void updateScreen() {
-        hoverProgessLast = hoverProgress;
+        hoverProgressLast = hoverProgress;
         if (isMouseInside()) {
             hoverProgress++;
             if (hoverProgress > MAX_HOWEVER_PROGRESS) {

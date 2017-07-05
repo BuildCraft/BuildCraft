@@ -108,7 +108,7 @@ public class PipeEventBus {
         if (DEBUG) {
             String error = event.checkStateForErrors();
             if (error != null) {
-                throw new IllegalArgumentException("The event " + event.getClass() + " was in an invalid state when firing! This is DEFINATLY a bug!\n"//
+                throw new IllegalArgumentException("The event " + event.getClass() + " was in an invalid state when firing! This is DEFINITELY a bug!\n"//
                     + "(error = " + error + ")");
             }
         }
