@@ -56,13 +56,20 @@ import buildcraft.factory.BCFactoryBlocks;
 public class TilePump extends TileMiner {
     private final Tank tank = new Tank("tank", 16 * Fluid.BUCKET_VOLUME, this);
     private boolean queueBuilt = false;
-    private final Queue<BlockPos> queue = new PriorityQueue<>(
-        Comparator.<BlockPos>comparingInt(blockPos ->
-            (blockPos.getX() - pos.getX()) * (blockPos.getX() - pos.getX()) +
-                (blockPos.getZ() - pos.getZ()) * (blockPos.getZ() - pos.getZ())
-        ).reversed()
-    );
     private final Map<BlockPos, List<BlockPos>> paths = new HashMap<>();
+    private final Queue<BlockPos> queue = new PriorityQueue<>(
+        BlockUtil.uniqueBlockPosComparator(
+            Comparator.<BlockPos>comparingInt(blockPos ->
+                paths.get(blockPos).size()
+            ).reversed()
+                .thenComparing(
+                    Comparator.<BlockPos>comparingInt(blockPos ->
+                        (blockPos.getX() - pos.getX()) * (blockPos.getX() - pos.getX()) +
+                            (blockPos.getZ() - pos.getZ()) * (blockPos.getZ() - pos.getZ())
+                    ).reversed()
+                )
+        )
+    );
 
     @Nullable
     private BlockPos oilSpringPos;
@@ -119,7 +126,7 @@ public class TilePump extends TileMiner {
                         (offsetPos.getZ() - pos.getZ()) * (offsetPos.getZ() - pos.getZ()) > 64 * 64) {
                         continue;
                     }
-                    if (!checked.contains(offsetPos)) {
+                    if (checked.add(offsetPos)) {
                         if (BlockUtil.getFluidWithFlowing(world, offsetPos) == fluid) {
                             ImmutableList.Builder<BlockPos> pathBuilder = new ImmutableList.Builder<>();
                             pathBuilder.addAll(paths.get(posToCheck));
@@ -130,7 +137,6 @@ public class TilePump extends TileMiner {
                             }
                             nextPosesToCheck.add(offsetPos);
                         }
-                        checked.add(offsetPos);
                     }
                 }
             }
@@ -153,13 +159,13 @@ public class TilePump extends TileMiner {
                 case 0:
                     break;
                 case 1:
-                    this.oilSpringPos = springPositions.get(0);
+                    oilSpringPos = springPositions.get(0);
                     break;
                 default:
-                    Collections.sort(springPositions, Comparator.comparingDouble(p -> p.distanceSq(pos)));
-                    this.oilSpringPos = springPositions.get(0);
+                    springPositions.sort(Comparator.comparingDouble(pos::distanceSq));
+                    oilSpringPos = springPositions.get(0);
             }
-            
+
         }
         world.profiler.endSection();
     }
@@ -197,6 +203,7 @@ public class TilePump extends TileMiner {
 
         super.update();
 
+        tank.drain(tank.getCapacity(), true);
         FluidUtilBC.pushFluidAround(world, pos, tank);
     }
 
