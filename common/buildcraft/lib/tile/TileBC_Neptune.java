@@ -133,7 +133,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         caps.addProvider(itemManager);
     }
 
-    public static <T extends TileBC_Neptune> void registerTile(Class<T> tileClass, String id) {
+    public static <T extends TileEntity> void registerTile(Class<T> tileClass, String id) {
         String regName = TagManager.getTag(id, EnumTagType.REGISTRY_NAME);
         String[] alternatives = TagManager.getMultiTag(id, EnumTagTypeMulti.OLD_REGISTRY_NAME);
         GameRegistry.registerTileEntityWithAlternatives(tileClass, regName, alternatives);
@@ -544,22 +544,18 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             itemManager.deserializeNBT(nbt.getCompoundTag("items"));
         }
         if (nbt.hasKey("tanks", Constants.NBT.TAG_COMPOUND)) {
-            BCLog.logger.info("Loading tanks for " + getClass().getSimpleName() + " {");
             tankManager.deserializeNBT(nbt.getCompoundTag("tanks"));
-            BCLog.logger.info("}");
         }
     }
 
     protected void migrateOldNBT(int version, NBTTagCompound nbt) {
         // 7.99.0 -> 7.99.4
         // Most tiles with a single tank saved it under "tank"
-        BCLog.logger.info("Migrating NBT for " + getClass() + " = " + nbt);
         NBTTagCompound tankComp = nbt.getCompoundTag("tank");
         if (!tankComp.hasNoTags()) {
             NBTTagCompound tanks = new NBTTagCompound();
             tanks.setTag("tank", tankComp);
             nbt.setTag("tanks", tanks);
-            BCLog.logger.info("Migrated a tank!");
         }
     }
 
@@ -579,7 +575,6 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (!tanks.hasNoTags()) {
             nbt.setTag("tanks", tanks);
         }
-        BCLog.logger.info("Writing NBT for " + getClass() + " = " + nbt);
         return nbt;
     }
 

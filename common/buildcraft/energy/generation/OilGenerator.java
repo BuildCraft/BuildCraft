@@ -5,13 +5,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.ChunkProviderServer;
 
 import net.minecraftforge.fml.common.IWorldGenerator;
 
@@ -21,6 +22,7 @@ import buildcraft.lib.misc.data.Box;
 
 import buildcraft.energy.generation.OilGenStructure.GenByPredicate;
 import buildcraft.energy.generation.OilGenStructure.ReplaceType;
+import buildcraft.energy.generation.OilGenStructure.Spring;
 import buildcraft.energy.generation.OilPopulate.GenType;
 
 public enum OilGenerator implements IWorldGenerator {
@@ -42,25 +44,35 @@ public enum OilGenerator implements IWorldGenerator {
         int z = chunkZ * 16 + 8;
         BlockPos min = new BlockPos(x, 0, z);
         Box box = new Box(min, min.add(15, world.getHeight(), 15));
-        List<OilGenStructure> structures = new ArrayList<>();
 
-        world.profiler.startSection("scan");
         for (int cdx = -MAX_CHUNK_RADIUS; cdx <= MAX_CHUNK_RADIUS; cdx++) {
             for (int cdz = -MAX_CHUNK_RADIUS; cdz <= MAX_CHUNK_RADIUS; cdz++) {
                 int cx = chunkX + cdx;
                 int cz = chunkZ + cdz;
-                addStructures(structures, world, cx, cz);
+                world.profiler.startSection("scan");
+                List<OilGenStructure> structures = getStructures(world, cx, cz);
+                OilGenStructure.Spring spring = null;
+                world.profiler.endStartSection("gen");
+                for (OilGenStructure struct : structures) {
+                    struct.generate(world, box);
+                    if (struct instanceof OilGenStructure.Spring) {
+                        spring = (Spring) struct;
+                    }
+                }
+                if (spring != null && box.contains(spring.pos)) {
+                    int count = 0;
+                    for (OilGenStructure struct : structures) {
+                        count += struct.countOilBlocks();
+                    }
+                    spring.generate(world, count);
+                }
+                world.profiler.endSection();
             }
         }
-        world.profiler.endStartSection("gen");
-        for (OilGenStructure struct : structures) {
-            struct.generate(world, box);
-        }
-        world.profiler.endSection();
         world.profiler.endSection();
     }
 
-    public static void addStructures(List<OilGenStructure> structures, World world, int cx, int cz) {
+    public static List<OilGenStructure> getStructures(World world, int cx, int cz) {
         Random rand = RandUtil.createRandomForChunk(world, cx, cz, MAGIC_GEN_NUMBER);
 
         // shift to world coordinates
@@ -71,7 +83,7 @@ public enum OilGenerator implements IWorldGenerator {
 
         // Do not generate oil in the End or Nether
         if (OilPopulate.INSTANCE.excludedBiomeNames.contains(biome.getBiomeName())) {
-            return;
+            return ImmutableList.of();
         }
 
         boolean oilBiome = OilPopulate.INSTANCE.surfaceDepositBiomeNames.contains(biome.getBiomeName());
@@ -91,27 +103,23 @@ public enum OilGenerator implements IWorldGenerator {
             // 2%
             type = GenType.LAKE;
         } else {
-            return;
+            return ImmutableList.of();
         }
 
-        // FIXME: Half implemented!
-        int[][] heights;
-        IChunkProvider provider = world.getChunkProvider();
-        if (provider instanceof IHeightFunction) {
-            heights = ((IHeightFunction) provider).genHeights(cx, cz);
-        } else if (provider instanceof ChunkProviderServer) {
-            IChunkGenerator gen = ((ChunkProviderServer) provider).chunkGenerator;
-            if (gen instanceof IHeightFunction) {
-                heights = ((IHeightFunction) gen).genHeights(cx, cz);
-            } else {
-                heights = new int[16][16];
-                for (int hx = 0; hx < 16; hx++) {
-                    for (int hz = 0; hz < 16; hz++) {
-                        heights[hx][hz] = world.getSeaLevel();
-                    }    
-                }
-            }
+        List<OilGenStructure> structures = new ArrayList<>();
+        int lakeRadius;
+        int tendrilRadius;
+        if (type == GenType.LARGE) {
+            lakeRadius = 4;
+            tendrilRadius = 25 + rand.nextInt(20);
+        } else if (type == GenType.LAKE) {
+            lakeRadius = 6;
+            tendrilRadius = 25 + rand.nextInt(20);
+        } else {
+            lakeRadius = 2;
+            tendrilRadius = 5 + rand.nextInt(10);
         }
+        structures.add(createTendril(new BlockPos(x, 62, z), lakeRadius, tendrilRadius, rand));
 
         if (type != GenType.LAKE) {
             // Generate a spherical cave deposit
@@ -141,22 +149,10 @@ public enum OilGenerator implements IWorldGenerator {
             // Generate a spring at the very bottom
             if (type == GenType.LARGE) {
                 structures.add(createTubeY(new BlockPos(x, 1, z), wellY, radius));
+                structures.add(createSpring(new BlockPos(x, 0, z)));
             }
         }
-
-        int lakeRadius;
-        int tendrilRadius;
-        if (type == GenType.LARGE) {
-            lakeRadius = 4;
-            tendrilRadius = 25 + rand.nextInt(20);
-        } else if (type == GenType.LAKE) {
-            lakeRadius = 6;
-            tendrilRadius = 25 + rand.nextInt(20);
-        } else {
-            lakeRadius = 2;
-            tendrilRadius = 5 + rand.nextInt(10);
-        }
-        structures.add(createTendril(new BlockPos(x, 62, z), lakeRadius, tendrilRadius, rand));
+        return structures;
     }
 
     private static OilGenStructure createSpout(BlockPos start, int height, int radius) {
@@ -173,6 +169,10 @@ public enum OilGenerator implements IWorldGenerator {
 
     public static OilGenStructure createTubeZ(BlockPos start, int length, int radius) {
         return createTube(start, length, radius, Axis.Z);
+    }
+
+    public static OilGenStructure createSpring(BlockPos at) {
+        return new OilGenStructure.Spring(at);
     }
 
     private static OilGenStructure createTube(BlockPos center, int length, int radius, Axis axis) {

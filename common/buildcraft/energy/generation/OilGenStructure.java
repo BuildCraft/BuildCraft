@@ -2,18 +2,24 @@ package buildcraft.energy.generation;
 
 import java.util.function.Predicate;
 
+import net.minecraft.block.BlockSponge;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.enums.EnumSpring;
 
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
+import buildcraft.core.BCCoreBlocks;
+import buildcraft.core.block.BlockSpring;
 import buildcraft.energy.BCEnergyFluids;
+import buildcraft.energy.tile.TileSpringOil;
 
 public abstract class OilGenStructure {
     public final Box box;
@@ -33,6 +39,10 @@ public abstract class OilGenStructure {
 
     /** Generates this structure in the world, but only between the given coordinates. */
     protected abstract void generateWithin(World world, Box intersect);
+
+    /** @return The number of oil blocks that this structure will set. Note that this is called *after*
+     *         {@link #generateWithin(World, Box)}, by the Spring type, so this can store the number set. */
+    protected abstract int countOilBlocks();
 
     public void setOilIfCanReplace(World world, BlockPos pos) {
         if (canReplaceForOil(world, pos)) {
@@ -80,6 +90,17 @@ public abstract class OilGenStructure {
                 }
             }
         }
+
+        @Override
+        protected int countOilBlocks() {
+            int count = 0;
+            for (BlockPos pos : BlockPos.getAllInBox(box.min(), box.max())) {
+                if (predicate.test(pos)) {
+                    count++;
+                }
+            }
+            return count;
+        }
     }
 
     public static class FlatPattern extends OilGenStructure {
@@ -110,6 +131,19 @@ public abstract class OilGenStructure {
                 }
             }
         }
+
+        @Override
+        protected int countOilBlocks() {
+            int count = 0;
+            for (int x = 0; x < pattern.length; x++) {
+                for (int z = 0; z < pattern[x].length; z++) {
+                    if (pattern[x][z]) {
+                        count++;
+                    }
+                }
+            }
+            return count * depth;
+        }
     }
 
     public static class Spout extends OilGenStructure {
@@ -119,6 +153,7 @@ public abstract class OilGenStructure {
         public final BlockPos start;
         public final int radius;
         public final int height;
+        private int count = 0;
 
         public Spout(BlockPos start, ReplaceType replaceType, int radius, int height) {
             super(createBox(start), replaceType);
@@ -135,6 +170,7 @@ public abstract class OilGenStructure {
 
         @Override
         protected void generateWithin(World world, Box intersect) {
+            count = 0;
             int segment = world.getChunkFromBlockCoords(start).getTopFilledSegment();
             BlockPos worldTop = new BlockPos(start.getX(), segment + 16, start.getZ());
             for (int y = segment; y >= start.getY(); y--) {
@@ -152,13 +188,61 @@ public abstract class OilGenStructure {
             }
             OilGenStructure tubeY = OilGenerator.createTubeY(start, worldTop.getY() - start.getY(), radius);
             tubeY.generate(world, tubeY.box);
+            count += tubeY.countOilBlocks();
             BlockPos base = worldTop;
             for (int r = radius; r >= 0; r--) {
                 BCLog.logger.info(" - " + base + " = " + r);
                 OilGenStructure struct = OilGenerator.createTubeY(base, height, r);
                 struct.generate(world, struct.box);
                 base = base.add(0, height, 0);
+                count += struct.countOilBlocks();
             }
+        }
+
+        @Override
+        protected int countOilBlocks() {
+            if (count == 0) {
+                throw new IllegalStateException("Called countOilBlocks before calling generateWithin!");
+            }
+            return count;
+        }
+    }
+
+    public static class Spring extends OilGenStructure {
+        public final BlockPos pos;
+
+        public Spring(BlockPos pos) {
+            super(new Box(pos, pos), ReplaceType.ALWAYS);
+            this.pos = pos;
+        }
+
+        @Override
+        protected void generateWithin(World world, Box intersect) {
+            // NO-OP (this one is called separately)
+        }
+
+        @Override
+        protected int countOilBlocks() {
+            return 0;
+        }
+
+        public void generate(World world, int count) {
+            IBlockState state = BCCoreBlocks.spring.getDefaultState();
+            state = state.withProperty(BlockSpring.SPRING_TYPE, EnumSpring.OIL);
+            world.setBlockState(pos, state);
+            TileEntity tile = world.getTileEntity(pos);
+            TileSpringOil spring;
+            if (tile instanceof TileSpringOil) {
+                spring = (TileSpringOil) tile;
+            } else {
+                BCLog.logger.warn("[energy.gen.oil] Setting the blockstate didn't also set the tile at " + pos);
+                spring = new TileSpringOil();
+                spring.setWorld(world);
+                spring.setPos(pos);
+                world.setTileEntity(pos, spring);
+            }
+            spring.totalSources = count;
+            BCLog.logger.info("[energy.gen.oil] Generated TileSpringOil as " + System.identityHashCode(tile)); //  TODO: This might not work properly!
         }
     }
 }

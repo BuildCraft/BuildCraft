@@ -123,17 +123,11 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         if (nbt.hasKey(name)) {
             // Old style of saving + loading
             NBTTagCompound tankData = nbt.getCompoundTag(name);
-            BCLog.logger.info(" - Loading old data " + tankData);
             super.readFromNBT(tankData);
-            BCLog.logger.info(" - Loading fluid " + getDebugString());
             readTankFromNBT(tankData);
-            BCLog.logger.info(" - Loaded fluid " + getDebugString());
         } else {
-            BCLog.logger.info(" - Loading new data " + nbt);
             super.readFromNBT(nbt);
-            BCLog.logger.info(" - Loading fluid " + getDebugString());
             readTankFromNBT(nbt);
-            BCLog.logger.info(" - Loaded fluid " + getDebugString());
         }
         return this;
     }

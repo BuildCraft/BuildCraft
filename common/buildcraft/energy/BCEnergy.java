@@ -104,6 +104,7 @@ public class BCEnergy {
         // Tiles
         registerTag("tile.engine.stone").reg("engine.stone");
         registerTag("tile.engine.iron").reg("engine.iron");
+        registerTag("tile.spring.oil").reg("spring.oil");
 
         endBatch(TagManager.prependTags("buildcraftenergy:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(TagManager.setTab("buildcraft.main")));
     }
