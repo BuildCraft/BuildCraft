@@ -40,9 +40,12 @@ import buildcraft.api.transport.pipe.PipeApi.PowerTransferInfo;
 import buildcraft.api.transport.pipe.PipeEventPower;
 import buildcraft.api.transport.pipe.PipeFlow;
 
+import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.data.AverageInt;
+
+import buildcraft.core.BCCoreConfig;
 
 public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     private static final long DEFAULT_MAX_POWER = MjAPI.MJ * 10;
@@ -57,7 +60,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     private boolean isReceiver = false;
     private final EnumMap<EnumFacing, Section> sections;
 
-    private final SafeTimeTracker tracker = new SafeTimeTracker(1);
+    private final SafeTimeTracker tracker = new SafeTimeTracker(BCCoreConfig.networkUpdateRate);
 
     public PipeFlowPower(IPipe pipe) {
         super(pipe);
@@ -88,7 +91,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         if (side == Side.SERVER) {
             if (id == NET_POWER_AMOUNTS || id == NET_ID_FULL_STATE) {
                 for (EnumFacing face : EnumFacing.VALUES) {
-                    buffer.writeDouble(sections.get(face).displayPower);
+                    buffer.writeInt(sections.get(face).displayPower);
                 }
             }
         }
@@ -100,7 +103,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         if (side == Side.CLIENT) {
             if (id == NET_POWER_AMOUNTS || id == NET_ID_FULL_STATE) {
                 for (EnumFacing face : EnumFacing.VALUES) {
-                    sections.get(face).clientPowerAmount = buffer.readDouble();
+                    sections.get(face).displayPower = buffer.readInt();
                 }
             }
         }
@@ -261,14 +264,17 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
                             s.powerAverage.push((int) used);
                             s2.powerAverage.push((int) used);
-                            s.displayPower = (long) (Math.random() * DEFAULT_MAX_POWER);
-                            s2.displayPower = (long) (Math.random() * DEFAULT_MAX_POWER);
                         }
                     }
                 }
             }
         }
         // Render compute goes here
+        for (Section s : sections.values()) {
+            s.powerAverage.tick();
+            long value = (long) s.powerAverage.getAverage();
+            s.displayPower = (int)(value * MjAPI.MJ / maxPower);
+        }
 
         // Compute the tiles requesting power that are not power pipes
         for (EnumFacing face : EnumFacing.VALUES) {
@@ -313,9 +319,9 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         }
         // Networking
 
-        if (tracker.markTimeIfDelay(pipe.getHolder().getPipeWorld())) {
+//        if (tracker.markTimeIfDelay(pipe.getHolder().getPipeWorld())) {
             sendPayload(NET_POWER_AMOUNTS);
-        }
+//        }
     }
 
     private void step() {
@@ -341,13 +347,24 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         }
     }
 
+    public double getMaxTransferForRender(float partialTicks) {
+        double max = 0;
+        for (Section s : sections.values()) {
+            double value = s.displayPower / (double) MjAPI.MJ;
+//            value = MathUtil.interp(partialTicks, value, value);
+            max = Math.max(max, value);
+        }
+        return max;
+    }
+
     public class Section implements IMjReceiver {
         public final EnumFacing side;
 
         public final AverageInt clientDisplayAverage = new AverageInt(10);
-        public double clientDisplayFlow, clientPowerAmount;
+        public double clientDisplayFlow;
 
-        public long displayPower;
+        /** Range: 0 to {@link MjAPI#MJ} */
+        public int displayPower;
         public EnumFlow displayFlow = EnumFlow.STATIONARY;
         public long nextPowerQuery;
         public long internalNextPower;
