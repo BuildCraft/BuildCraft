@@ -203,7 +203,6 @@ public class TilePump extends TileMiner {
 
         super.update();
 
-        tank.drain(tank.getCapacity(), true);
         FluidUtilBC.pushFluidAround(world, pos, tank);
     }
 
