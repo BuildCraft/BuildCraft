@@ -49,8 +49,8 @@ public class InternalCompiler {
     private static final String FUNCTION_START = "@";
     private static final String FUNCTION_ARGS = "#";
     private static final String OPERATORS = "+-*/^%~?:& << >> >>> == <= >= && || !=";
-    private static final String leftAssosiative = "+-^*/%||&&==!=<=>=<<>>?&";
-    private static final String rightAssosiative = "";
+    private static final String leftAssociative = "+-^*/%||&&==!=<=>=<<>>?&";
+    private static final String rightAssociative = "";
     private static final String[] precedence = { "(),", "?", "&& ||", "!= == <= >=", "<< >>", "+-", "%", "*/", "^", "~¬" };
 
     private static final String LONG_REGEX = "[-+]?(0x[0-9a-fA-F_]+|[0-9]+)";
@@ -101,10 +101,10 @@ public class InternalCompiler {
     }
 
     private static String[] tokenize(String function) throws InvalidExpressionException {
-        return TokeniserDefaults.createTokensizer().tokenize(function);
+        return TokenizerDefaults.createTokenizer().tokenize(function);
     }
 
-    private static int getPrecendence(String token) {
+    private static int getPrecedence(String token) {
         int p = 0;
         if (token.startsWith(FUNCTION_START)) {
             return 0;
@@ -200,12 +200,12 @@ public class InternalCompiler {
 
                 String s;
                 while ((s = stack.peek()) != null) {
-                    int tokenPrec = getPrecendence(token);
-                    int stackPrec = getPrecendence(s);
+                    int tokenPrec = getPrecedence(token);
+                    int stackPrec = getPrecedence(s);
                     boolean continueIfEqual = !"?".contains(token);
 
-                    boolean shouldContinue = leftAssosiative.contains(token) && (continueIfEqual ? tokenPrec <= stackPrec : tokenPrec < stackPrec);
-                    if (!shouldContinue && rightAssosiative.contains(token)) {
+                    boolean shouldContinue = leftAssociative.contains(token) && (continueIfEqual ? tokenPrec <= stackPrec : tokenPrec < stackPrec);
+                    if (!shouldContinue && rightAssociative.contains(token)) {
                         if (tokenPrec > stackPrec) shouldContinue = true;
                     }
 
@@ -313,7 +313,7 @@ public class InternalCompiler {
     public static long parseValidLong(String value) {
         long val;
         if (value.startsWith("0x")) {
-            // its a hexidecimal number
+            // its a hexadecimal number
             String v = value.substring(2).replace("_", "");
             val = Long.parseLong(v, 16);
         } else {
@@ -398,7 +398,7 @@ public class InternalCompiler {
             } else if (right instanceof INodeLong) {
                 stack.push(new NodeConditionalLong(condition, (INodeLong) left, (INodeLong) right));
             } else {
-                throw new InvalidExpressionException("Unkown node " + left);
+                throw new InvalidExpressionException("Unknown node " + left);
             }
 
         } else {

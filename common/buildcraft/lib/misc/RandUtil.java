@@ -18,7 +18,7 @@ public class RandUtil {
      * @return A {@link Random} instance that starts off with the same seed given the same arguments. */
     public static Random createRandomForChunk(World world, int chunkX, int chunkY, long magicNumber) {
         // Ensure we have the same seed for the same chunk
-        // (this is similar to the code that calls IWorldGenerater.generate)
+        // (this is similar to the code that calls IWorldGenerator.generate)
         long worldSeed = world.getSeed();
         Random worldRandom = new Random(worldSeed);
         long xSeed = worldRandom.nextLong() >> 2 + 1L;

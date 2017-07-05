@@ -52,7 +52,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IPlayerOwned;
 
 import buildcraft.lib.cap.CapabilityHelper;
-import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
+import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
 import buildcraft.lib.debug.BCAdvDebugging;
 import buildcraft.lib.debug.IAdvDebugTarget;
 import buildcraft.lib.delta.DeltaManager;

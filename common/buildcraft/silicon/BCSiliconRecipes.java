@@ -46,7 +46,7 @@ public class BCSiliconRecipes {
             builder.registerRotated();
         }
 
-        if (BCItems.SILICON_REDSTONE_CLIPSET != null) {
+        if (BCItems.SILICON_REDSTONE_CHIPSET != null) {
             addChipsetAssembly(1, null, EnumRedstoneChipset.RED);
             addChipsetAssembly(2, "ingotIron", EnumRedstoneChipset.IRON);
             addChipsetAssembly(4, "ingotGold", EnumRedstoneChipset.GOLD);

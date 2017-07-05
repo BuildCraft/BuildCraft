@@ -30,7 +30,7 @@ public class ActionPowerPulsar extends BCStatement implements IActionInternalSid
     public final boolean constant;
 
     public ActionPowerPulsar(boolean constant) {
-        super("buildcraft:pulsar." + (constant ? "constant" : "single"), "buildcraft.pulser.constant" + (constant ? "constant" : "single"));
+        super("buildcraft:pulsar." + (constant ? "constant" : "single"), "buildcraft.pulsar.constant" + (constant ? "constant" : "single"));
         this.constant = constant;
     }
 

@@ -118,7 +118,7 @@ public class PipeModelCacheBase {
 
         @Override
         public String toString() {
-            return "PipeBaseTransclucentKey [colour=" + colour + ", connections=" + Arrays.toString(connections) + "]";
+            return "PipeBaseTranslucentKey [colour=" + colour + ", connections=" + Arrays.toString(connections) + "]";
         }
     }
 }

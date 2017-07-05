@@ -78,7 +78,7 @@ public class LocaleUtil {
      * arguments given.
      * 
      * @param key The key to localize
-     * @param args The arguments to put into the localzied key
+     * @param args The arguments to put into the localized key
      * @return The localized string. */
     public static String localize(String key, Object... args) {
         String localized = I18n.translateToLocal(key);

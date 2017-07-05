@@ -45,7 +45,7 @@ import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.data.AverageLong;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.misc.data.ModelVariableData;
-import buildcraft.lib.mj.MjBatteryReciver;
+import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
@@ -78,7 +78,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         @Override
         public int fill(FluidStack resource, boolean doFill) {
             IRefineryRecipeManager manager = BuildcraftRecipeRegistry.refineryRecipes;
-            IDistillationRecipe recipe = manager.getDistilationRegistry().getRecipeForInput(resource);
+            IDistillationRecipe recipe = manager.getDistillationRegistry().getRecipeForInput(resource);
             if (recipe == null) {
                 return 0;
             }
@@ -130,7 +130,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankIn, EnumPipePart.HORIZONTALS);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankOutGas, EnumPipePart.UP);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankOutLiquid, EnumPipePart.DOWN);
-        caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(mjBattery)));
+        caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(mjBattery)));
     }
 
     private IFluidDataSender createSender(int netId) {
@@ -227,7 +227,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
     }
 
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY,
-        float hitZ) {
+                               float hitZ) {
         return false;
     }
 
@@ -245,7 +245,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         changedSinceNetUpdate |= powerAvgClient != powerAvg.getAverageLong();
 
         currentRecipe =
-            BuildcraftRecipeRegistry.refineryRecipes.getDistilationRegistry().getRecipeForInput(tankIn.getFluid());
+            BuildcraftRecipeRegistry.refineryRecipes.getDistillationRegistry().getRecipeForInput(tankIn.getFluid());
         if (currentRecipe == null) {
             mjBattery.addPowerChecking(distillPower, false);
             distillPower = 0;

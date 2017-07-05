@@ -39,7 +39,7 @@ public class ExpressionTester {
 
     @Test
     public void testDoubleBasics() {
-        // I COULD change all these to be in separate functions... except that thats really long :/
+        // I COULD change all these to be in separate functions... except that's really long :/
         bakeAndCallDouble("0", 0);
         bakeAndCallDouble("-1", -1);
         bakeAndCallDouble("0+1", 1);

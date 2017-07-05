@@ -13,7 +13,7 @@ public interface IVariableNode extends IExpressionNode {
     void set(IExpressionNode from);
 
     /** If isConstant is true, then calls to {@link #inline()} will return an {@link IConstantNode} (which is
-     * independant to this node), but if false then {@link #inline()} will return this variable. */
+     * independent to this node), but if false then {@link #inline()} will return this variable. */
     void setConstant(boolean isConstant);
 
     String valueToString();

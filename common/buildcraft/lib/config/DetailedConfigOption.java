@@ -35,9 +35,9 @@ public class DetailedConfigOption {
     private double cacheDouble;
     private IExpressionNode cacheExpression;
 
-    public DetailedConfigOption(String name, String defultVal) {
+    public DetailedConfigOption(String name, String defaultVal) {
         this.id = name;
-        this.defaultVal = defultVal;
+        this.defaultVal = defaultVal;
         allRegistered.add(this);
     }
 

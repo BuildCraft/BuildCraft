@@ -691,9 +691,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
         /** @return The maximum amount of fluid that can be inserted into this pipe on this tick. */
         int getMaxFilled() {
-            int avalibleTotal = capacity - amount;
-            int avalibleThisTick = fluidTransferInfo.transferPerTick - incoming[currentTime];
-            return Math.min(avalibleTotal, avalibleThisTick);
+            int availableTotal = capacity - amount;
+            int availableThisTick = fluidTransferInfo.transferPerTick - incoming[currentTime];
+            return Math.min(availableTotal, availableThisTick);
         }
 
         /** @return The maximum amount of fluid that can be extracted out of this pipe this tick. */

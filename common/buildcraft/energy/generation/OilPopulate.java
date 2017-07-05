@@ -389,13 +389,13 @@ public final class OilPopulate {
 
     private double surfaceDeviation(World world, int x, int y, int z, int radius) {
         int diameter = radius * 2;
-        double centralTendancy = y;
+        double centralTendency = y;
         double deviation = 0;
         for (int i = 0; i < diameter; i++) {
             for (int k = 0; k < diameter; k++) {
-                deviation += getTopBlock(world, x - radius + i, z - radius + k) - centralTendancy;
+                deviation += getTopBlock(world, x - radius + i, z - radius + k) - centralTendency;
             }
         }
-        return Math.abs(deviation / centralTendancy);
+        return Math.abs(deviation / centralTendency);
     }
 }

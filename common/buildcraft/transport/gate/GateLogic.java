@@ -124,7 +124,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                         param.readFromNBT(cpt);
                         triggerParameters[i][j] = param;
                     } else {
-                        BCLog.logger.warn("Didn't find an IStatementParamater for " + tag);
+                        BCLog.logger.warn("Didn't find an IStatementParameter for " + tag);
                     }
                 }
             }
@@ -149,7 +149,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                         param.readFromNBT(cpt);
                         actionParameters[i][j] = param;
                     } else {
-                        BCLog.logger.warn("Didn't find an IStatementParamater for " + tag);
+                        BCLog.logger.warn("Didn't find an IStatementParameter for " + tag);
                     }
                 }
             }

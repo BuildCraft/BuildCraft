@@ -43,7 +43,7 @@ public abstract class ContainerBC_Neptune extends Container {
     /** Generic "data" id. Used by all containers which only have 1 id to write out (no point in making EVERY container
      * have an {@link IdAllocator} if they only allocate one. */
     public static final int NET_DATA = IDS.allocId("DATA");
-    public static final int NET_WDIGET = IDS.allocId("WIDGET");
+    public static final int NET_WIDGET = IDS.allocId("WIDGET");
 
     public final EntityPlayer player;
     private final List<Widget_Neptune<?>> widgets = new ArrayList<>();
@@ -172,7 +172,7 @@ public abstract class ContainerBC_Neptune extends Container {
                 BCLog.logger.warn("[lib.container]   Player {class = " + player.getClass() + ", name = " + player.getName() + "}");
             }
         } else {
-            sendMessage(NET_WDIGET, (buffer) -> {
+            sendMessage(NET_WIDGET, (buffer) -> {
                 buffer.writeShort(widgetId);
                 writer.write(buffer);
             });
@@ -197,7 +197,7 @@ public abstract class ContainerBC_Neptune extends Container {
     public void writeMessage(int id, PacketBufferBC buffer, Side side) {}
 
     public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
-        if (id == NET_WDIGET) {
+        if (id == NET_WIDGET) {
             int widgetId = buffer.readUnsignedShort();
             if (widgetId < 0 || widgetId >= widgets.size()) {
                 if (DEBUG) {

@@ -104,7 +104,7 @@ public class Blueprint extends Snapshot {
         }
         int len = list == null ? serializedData.length : list.tagCount();
         if (len != size.getX() * size.getY() * size.getZ()) {
-            throw new InvalidInputDataException("Pallette has length of " + len
+            throw new InvalidInputDataException("Palette has length of " + len
                 + ", but we expected " + size.getX() * size.getY() * size.getZ() + size.toString());
         }
         int i = 0;

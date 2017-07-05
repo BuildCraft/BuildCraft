@@ -167,20 +167,20 @@ public abstract class VariableInfo<N extends IVariableNode> {
     }
 
     public static class VariableInfoBoolean extends VariableInfo<NodeVariableBoolean> {
-        public enum BooleanPosibilities {
+        public enum BooleanPossibilities {
             FALSE(Boolean.FALSE),
             TRUE(Boolean.TRUE),
             FALSE_TRUE(Boolean.FALSE, Boolean.TRUE);
 
             public final Collection<Boolean> possible;
 
-            BooleanPosibilities(Boolean... possible) {
+            BooleanPossibilities(Boolean... possible) {
                 this.possible = Arrays.asList(possible);
             }
         }
 
         @Nonnull
-        public BooleanPosibilities possibleValues = BooleanPosibilities.FALSE_TRUE;
+        public BooleanPossibilities possibleValues = BooleanPossibilities.FALSE_TRUE;
 
         public VariableInfoBoolean(NodeVariableBoolean node) {
             super(node);

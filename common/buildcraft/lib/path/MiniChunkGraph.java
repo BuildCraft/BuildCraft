@@ -22,10 +22,10 @@ import buildcraft.lib.path.task.TaskMiniChunkAnalyser;
 
 public class MiniChunkGraph {
     public enum ChunkType {
-        COMPLETLY_FREE,
+        COMPLETELY_FREE,
         SINGLE_GRAPH,
         MULTIPLE_GRAPHS,
-        COMPLETLY_FILLED
+        COMPLETELY_FILLED
     }
 
     public final BlockPos min;

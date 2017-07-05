@@ -99,14 +99,14 @@ public class BCEnergyFluids {
 
     private static BCFluid defineFluid(int[] data, int heat, String name) {
         final int density = data[0];
-        final int baseViscocity = data[1];
+        final int baseViscosity = data[1];
         final int boilPoint = data[2];
         final int baseQuanta = data[3];
         final int texLight = data[4];
         final int texDark = data[5];
 
         String fullName = name + (heat == 0 ? "" : "_heat_" + heat);
-        int tempAdjustedViscocity = baseViscocity * (4 - heat) / 4;
+        int tempAdjustedViscosity = baseViscosity * (4 - heat) / 4;
         int boilAdjustedDensity = density * (heat >= boilPoint ? -1 : 1);
 
         String fluidTexture = "buildcraftenergy:blocks/fluids/" + name + "_heat_" + heat;
@@ -123,11 +123,11 @@ public class BCEnergyFluids {
                 ))
                 .orElseThrow(IllegalArgumentException::new)
         );
-        def.setFlamable(true);
+        def.setFlammable(true);
         def.setHeat(heat);
         def.setUnlocalizedName(name);
         def.setTemperature(300 + 20 * heat);
-        def.setViscosity(tempAdjustedViscocity);
+        def.setViscosity(tempAdjustedViscosity);
         def.setDensity(boilAdjustedDensity);
         def.setGaseous(def.getDensity() < 0);
         def.setColour(texLight, texDark);

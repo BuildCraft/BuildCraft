@@ -27,14 +27,14 @@ import buildcraft.core.client.BuildCraftLaserManager;
 public class VolumeConnection extends MarkerConnection<VolumeConnection> {
     private static final double RENDER_SCALE = 1 / 16.05;
 
-    private final Set<BlockPos> makup = new HashSet<>();
+    private final Set<BlockPos> makeup = new HashSet<>();
     private final Box box = new Box();
 
     public static boolean tryCreateConnection(VolumeSubCache subCache, BlockPos from, BlockPos to) {
         if (canCreateConnection(subCache, from, to)) {
             VolumeConnection connection = new VolumeConnection(subCache);
-            connection.makup.add(from);
-            connection.makup.add(to);
+            connection.makeup.add(from);
+            connection.makeup.add(to);
             connection.createBox();
             subCache.addConnection(connection);
             return true;
@@ -59,23 +59,23 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
 
     public VolumeConnection(VolumeSubCache subCache, Collection<BlockPos> positions) {
         super(subCache);
-        makup.addAll(positions);
+        makeup.addAll(positions);
         createBox();
     }
 
     @Override
     public void removeMarker(BlockPos pos) {
-        makup.remove(pos);
-        if (makup.size() < 2) {
+        makeup.remove(pos);
+        if (makeup.size() < 2) {
             // This connection will be removed by the sub-cache
-            makup.clear();
+            makeup.clear();
         }
         createBox();
     }
 
     public boolean addMarker(BlockPos pos) {
         if (canAddMarker(pos)) {
-            makup.add(pos);
+            makeup.add(pos);
             createBox();
             subCache.refreshConnection(this);
             return true;
@@ -85,7 +85,7 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
 
     public boolean canAddMarker(BlockPos to) {
         Set<Axis> taken = getConnectedAxis();
-        for (BlockPos from : makup) {
+        for (BlockPos from : makeup) {
             EnumFacing direct = PositionUtil.getDirectFacingOffset(from, to);
             if (direct != null && !taken.contains(direct.getAxis())) {
                 return true;
@@ -96,8 +96,8 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
 
     public boolean mergeWith(VolumeConnection other) {
         if (canMergeWith(other)) {
-            makup.addAll(other.makup);
-            other.makup.clear();
+            makeup.addAll(other.makeup);
+            other.makeup.clear();
             createBox();
             subCache.refreshConnection(other);
             subCache.refreshConnection(this);
@@ -117,8 +117,8 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
         }
         Set<Axis> blacklisted = EnumSet.copyOf(us);
         blacklisted.addAll(them);
-        for (BlockPos from : makup) {
-            for (BlockPos to : other.makup) {
+        for (BlockPos from : makeup) {
+            for (BlockPos to : other.makeup) {
                 EnumFacing offset = PositionUtil.getDirectFacingOffset(from, to);
                 if (offset != null && !blacklisted.contains(offset.getAxis())) {
                     return true;
@@ -143,12 +143,12 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
 
     @Override
     public Collection<BlockPos> getMarkerPositions() {
-        return makup;
+        return makeup;
     }
 
     private void createBox() {
         box.reset();
-        for (BlockPos p : makup) {
+        for (BlockPos p : makeup) {
             box.extendToEncompass(p);
         }
     }

@@ -30,8 +30,8 @@ import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.reload.LibConfigChangeListener;
-import buildcraft.lib.client.render.DetatchedRenderer;
-import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
+import buildcraft.lib.client.render.DetachedRenderer;
+import buildcraft.lib.client.render.DetachedRenderer.RenderMatrixType;
 import buildcraft.lib.client.render.MarkerRenderer;
 import buildcraft.lib.client.resource.ResourceRegistry;
 import buildcraft.lib.debug.DebugRenderHelper;
@@ -39,7 +39,6 @@ import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.fluid.FluidManager;
 import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.item.ItemManager;
-import buildcraft.lib.list.ListMatchHandlerFluid;
 
 public abstract class BCLibProxy implements IGuiHandler {
     @SidedProxy(modId = BCLib.MODID)
@@ -113,8 +112,8 @@ public abstract class BCLibProxy implements IGuiHandler {
         @Override
         void fmlPreInit() {
             super.fmlPreInit();
-            DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, MarkerRenderer.INSTANCE);
-            DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, DebugRenderHelper.INSTANCE);
+            DetachedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, MarkerRenderer.INSTANCE);
+            DetachedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, DebugRenderHelper.INSTANCE);
             // various sprite registers
             BCLibSprites.fmlPreInitClient(); 
             BCLibConfig.configChangeListeners.add(LibConfigChangeListener.INSTANCE);

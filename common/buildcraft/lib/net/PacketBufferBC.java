@@ -15,7 +15,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
 
 /** Special {@link PacketBuffer} class that provides methods specific to "offset" reading and writing - like writing a
- * single bit to the stream, and auto-compacting it with simalir bits into a single byte. */
+ * single bit to the stream, and auto-compacting it with similar bits into a single byte. */
 public class PacketBufferBC extends PacketBuffer {
 
     // Byte-based flag access
@@ -135,9 +135,9 @@ public class PacketBufferBC extends PacketBuffer {
         if (writePartialOffset > 0) {
 
             // top length = 8 - (num bits in cache) or length, whichever is SMALLER
-            int availbleBits = 8 - writePartialOffset;
+            int availableBits = 8 - writePartialOffset;
 
-            if (availbleBits >= length) {
+            if (availableBits >= length) {
                 int mask = (1 << length) - 1;
                 int bitsToWrite = value & mask;
 
@@ -154,9 +154,9 @@ public class PacketBufferBC extends PacketBuffer {
                 // mask == ____ ____ ___1
                 // shift back = 9
 
-                int mask = (1 << availbleBits) - 1;
+                int mask = (1 << availableBits) - 1;
 
-                int shift = length - availbleBits;
+                int shift = length - availableBits;
 
                 int bitsToWrite = (value >>> shift) & mask;
 
@@ -168,7 +168,7 @@ public class PacketBufferBC extends PacketBuffer {
                 writePartialOffset = 8;
 
                 // now shift the value down ready for the next iteration
-                length -= availbleBits;
+                length -= availableBits;
             }
         }
 
@@ -216,8 +216,8 @@ public class PacketBufferBC extends PacketBuffer {
 
         if (readPartialOffset > 0) {
             // If we have bits left at the top of the buffer...
-            int avalibleBits = 8 - readPartialOffset;
-            if (avalibleBits >= length) {
+            int availableBits = 8 - readPartialOffset;
+            if (availableBits >= length) {
                 // If the wanted bits are completely contained within the cache
                 int mask = (1 << length) - 1;
                 value = (readPartialCache >>> readPartialOffset) & mask;
@@ -234,7 +234,7 @@ public class PacketBufferBC extends PacketBuffer {
                 readPartialCache = 0;
                 readPartialOffset = 8;
 
-                length -= avalibleBits;
+                length -= availableBits;
             }
         }
 

@@ -35,7 +35,7 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.info.ContextInfo;
 import buildcraft.lib.expression.info.VariableInfo.CacheType;
 import buildcraft.lib.expression.info.VariableInfo.VariableInfoBoolean;
-import buildcraft.lib.expression.info.VariableInfo.VariableInfoBoolean.BooleanPosibilities;
+import buildcraft.lib.expression.info.VariableInfo.VariableInfoBoolean.BooleanPossibilities;
 import buildcraft.lib.expression.info.VariableInfo.VariableInfoString;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableString;
@@ -116,7 +116,7 @@ public class PluggableGate extends PipePluggable {
         VariableInfoBoolean infoIsOn = MODEL_VAR_INFO.createInfoBoolean("on", MODEL_IS_ON);
         infoIsOn.cacheType = CacheType.ALWAYS;
         infoIsOn.setIsComplete = true;
-        infoIsOn.possibleValues = BooleanPosibilities.FALSE_TRUE;
+        infoIsOn.possibleValues = BooleanPossibilities.FALSE_TRUE;
     }
 
     // Manual constructor (called by the specific item pluggable gate code)

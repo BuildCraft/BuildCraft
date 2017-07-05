@@ -432,14 +432,14 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     public void invalidate() {
         super.invalidate();
         // tileCache = null;
-        // checkOrienation = true;
+        // checkOrientation = true;
     }
 
     @Override
     public void validate() {
         super.validate();
         // tileCache = null;
-        // checkOrienation = true;
+        // checkOrientation = true;
     }
 
     /* STATE INFORMATION */

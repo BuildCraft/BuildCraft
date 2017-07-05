@@ -26,7 +26,7 @@ import net.minecraft.util.math.Vec3i;
 
 import buildcraft.lib.client.sprite.ISprite;
 
-/** Holds all of the information necessary to make one of the verticies in a {@link BakedQuad}. This provides a variety
+/** Holds all of the information necessary to make one of the vertices in a {@link BakedQuad}. This provides a variety
  * of methods to quickly set or get different elements. This should be used with {@link MutableQuad} to make a face, or
  * by itself if you only need to define a single vertex. <br>
  * This currently holds the 3D position, normal, colour, 2D texture, skylight and blocklight. Note that you don't have
@@ -117,7 +117,7 @@ public class MutableVertex {
         // TEX_2F
         data[offset + 4] = Float.floatToRawIntBits(tex_u);
         data[offset + 5] = Float.floatToRawIntBits(tex_v);
-        // NROMAL_3B
+        // NORMAL_3B
         data[offset + 6] = normalToPackedInt();
     }
 
@@ -146,7 +146,7 @@ public class MutableVertex {
         // TEX_2F
         tex_u = Float.intBitsToFloat(data[offset + 4]);
         tex_v = Float.intBitsToFloat(data[offset + 5]);
-        // NROMAL_3B
+        // NORMAL_3B
         normali(data[offset + 6]);
         lightf(1,1);
     }

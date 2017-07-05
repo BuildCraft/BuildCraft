@@ -130,7 +130,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
         }
     }
 
-    // TileEngineBase overrrides
+    // TileEngineBase overrides
 
     @Override
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY,

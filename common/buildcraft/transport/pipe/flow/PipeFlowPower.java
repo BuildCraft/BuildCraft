@@ -163,8 +163,8 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         if (tile == null) {
             return 0;
         }
-        IMjPassiveProvider reciever = tile.getCapability(MjAPI.CAP_PASSIVE_PROVIDER, from.getOpposite());
-        if (reciever == null) {
+        IMjPassiveProvider receiver = tile.getCapability(MjAPI.CAP_PASSIVE_PROVIDER, from.getOpposite());
+        if (receiver == null) {
             return 0;
         }
 
@@ -174,7 +174,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
     @Override
     public boolean onFlowActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ,
-        EnumPipePart part) {
+                                  EnumPipePart part) {
         return super.onFlowActivate(player, trace, hitX, hitY, hitZ, part);
     }
 
@@ -252,10 +252,10 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
                                 PipeFlowPower oFlow = (PipeFlowPower) neighbour.getFlow();
                                 leftover = oFlow.sections.get(face2.getOpposite()).receivePowerInternal(watts);
                             } else {
-                                IMjReceiver reciever =
+                                IMjReceiver receiver =
                                     pipe.getHolder().getCapabilityFromPipe(face2, MjAPI.CAP_RECEIVER);
-                                if (reciever != null && reciever.canReceive()) {
-                                    leftover = reciever.receivePower(watts, false);
+                                if (receiver != null && receiver.canReceive()) {
+                                    leftover = receiver.receivePower(watts, false);
                                 }
                             }
                             long used = watts - leftover;

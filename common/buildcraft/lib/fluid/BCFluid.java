@@ -16,7 +16,7 @@ import buildcraft.lib.misc.LocaleUtil;
 
 public class BCFluid extends Fluid {
     private int colour = 0xFFFFFFFF, light = 0xFF_FF_FF_FF, dark = 0xFF_FF_FF_FF;
-    private boolean isFlamable = false;
+    private boolean isFlammable = false;
     private int lightOpacity = 0;
     private MapColor mapColour = MapColor.BLACK;
     private int heat;
@@ -44,12 +44,12 @@ public class BCFluid extends Fluid {
         return this.mapColour;
     }
 
-    public void setFlamable(boolean isFlamable) {
-        this.isFlamable = isFlamable;
+    public void setFlammable(boolean isFlammable) {
+        this.isFlammable = isFlammable;
     }
 
     public final boolean isFlammable() {
-        return isFlamable;
+        return isFlammable;
     }
 
     public void setLightOpacity(int lightOpacity) {

@@ -54,7 +54,7 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
     }
 
     @Override
-    public IRefineryRegistry<IDistillationRecipe> getDistilationRegistry() {
+    public IRefineryRegistry<IDistillationRecipe> getDistillationRegistry() {
         return distillationRegistry;
     }
 

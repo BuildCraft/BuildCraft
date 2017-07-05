@@ -127,7 +127,7 @@ public class PacketBufferBcTest {
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidEnum_0_read() {
         PacketBufferBC buffer = new PrintingByteBuf(Unpooled.buffer());
-        /* Attempting to write out an enum value that doesn't have any values is definatly a bug */
+        /* Attempting to write out an enum value that doesn't have any values is definitely a bug */
         buffer.readEnumValue(Enum_0.class);
     }
 
