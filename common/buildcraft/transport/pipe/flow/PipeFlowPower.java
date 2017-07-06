@@ -272,7 +272,8 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         for (Section s : sections.values()) {
             s.powerAverage.tick();
             long value = (long) s.powerAverage.getAverage();
-            s.displayPower = (int)((value * MjAPI.MJ * 3 / maxPower)/4);
+            long temp = Math.min(value * MjAPI.MJ / maxPower, 1 * MjAPI.MJ);
+            s.displayPower = (int) (temp);
         }
 
         // Compute the tiles requesting power that are not power pipes
@@ -410,10 +411,9 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
         long receivePowerInternal(long sent) {
             if (sent > 0) {
-                long accepted = Math.min(sent, maxPower);
-                debugPowerOffered += accepted;
-                internalNextPower += accepted;
-                return sent - accepted;
+                debugPowerOffered += sent;
+                internalNextPower += sent;
+                return 0;
             }
             return sent;
         }

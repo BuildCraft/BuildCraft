@@ -72,7 +72,7 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileQuarry) {
-            for (BlockPos blockPos : ((TileQuarry) tile).getFramePositions()) {
+            for (BlockPos blockPos : ((TileQuarry) tile).framePoses) {
                 if (world.getBlockState(blockPos).getBlock() == BCBuildersBlocks.frame) {
                     world.setBlockToAir(blockPos);
                 }
