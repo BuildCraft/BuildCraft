@@ -86,7 +86,10 @@ import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.BCBuildersEventDist;
 
 public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable, IChunkLoadingTile {
-    private final MjBattery battery = new MjBattery(1600L * MjAPI.MJ);
+
+    private static final long MAX_MJ_PER_TICK = 64 * MjAPI.MJ;
+
+    private final MjBattery battery = new MjBattery(16000 * MjAPI.MJ);
     public final Box frameBox = new Box();
     private final Box miningBox = new Box();
     private BoxIterator boxIterator;
@@ -102,10 +105,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     public Vec3d drillPos;
     public Vec3d clientDrillPos;
     public Vec3d prevClientDrillPos;
-    /**
-     * Recent power input, in MJ (not micro)
-     */
-    private final AverageInt recentPowerAverage = new AverageInt(200);
     private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
         @Override
         public void notifyBlockUpdate(@Nonnull World world,
@@ -135,16 +134,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     };
 
     public TileQuarry() {
-        caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery) {
-            @Override
-            public long receivePower(long microJoules, boolean simulate) {
-                long excess = super.receivePower(microJoules, simulate);
-                if (!simulate) {
-                    recentPowerAverage.push((int) ((microJoules - excess) / MjAPI.MJ));
-                }
-                return excess;
-            }
-        }));
+        caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
         caps.addCapabilityInstance(CapUtil.CAP_ITEM_TRANSACTOR, AutomaticProvidingTransactor.INSTANCE, EnumPipePart.VALUES);
     }
 
@@ -383,50 +373,10 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             }
             return;
         }
-        recentPowerAverage.tick();
 
         if (!frameBox.isInitialized() || !miningBox.isInitialized()) {
             return;
         }
-
-        /*
-        if (drillPos != null) {
-            Map<BlockPos, EnumFacing.Axis> entityPoses = new HashMap<>();
-
-            for (int x = min.getX(); x <= max.getX(); x++) {
-                entityPoses.put(new BlockPos(x, max.getY(), drillPos.zCoord + 0.5), EnumFacing.Axis.X);
-            }
-
-            for (int y = (int) drillPos.yCoord; y < max.getY(); y++) {
-                entityPoses.put(new BlockPos(drillPos.xCoord + 0.5, y, drillPos.zCoord + 0.5), EnumFacing.Axis.Y);
-            }
-
-            for (int z = min.getZ(); z <= max.getZ(); z++) {
-                entityPoses.put(new BlockPos(drillPos.xCoord + 0.5, max.getY(), z), EnumFacing.Axis.Z);
-            }
-
-            List<EntityQuarryFrame> allEntities = world.getEntitiesWithinAABB(
-                    EntityQuarryFrame.class,
-                    miningBox.getBoundingBox().union(frameBox.getBoundingBox()).expandXyz(1)
-            );
-            entityPoses.forEach((currentPos, axis) -> {
-                List<EntityQuarryFrame> entities = allEntities.stream()
-                        .filter(entity ->
-                                entity != null &&
-                                        EnumFacing.Axis.values()[entity.getDataManager().get(EntityQuarryFrame.AXIS)] == axis &&
-                                        entity.getDataManager().get(EntityQuarryFrame.QUARRY_POS).equals(pos) &&
-                                        entity.getDataManager().get(EntityQuarryFrame.FRAME_POS).equals(currentPos))
-                        .collect(Collectors.toList());
-                if (entities.isEmpty()) {
-                    world.spawnEntity(new EntityQuarryFrame(world, pos, currentPos, axis));
-                } else {
-                    for (EntityQuarryFrame entity : entities) {
-                        entity.getDataManager().set(EntityQuarryFrame.TIMEOUT, EntityQuarryFrame.INIT_TIMEOUT);
-                    }
-                }
-            });
-        }
-        */
 
         if (!toCheck.isEmpty()) {
             for (int i = 0; i < (firstChecked ? 10 : 50); i++) {
@@ -437,13 +387,12 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
 
         if (currentTask != null) {
-            long maxToExtract = MjAPI.MJ * 10;
-            if (currentTask.addPower(
-                battery.extractPower(
-                    0,
-                    Math.min(currentTask.getTarget() - currentTask.getPower(), maxToExtract)
-                )
-            )) {
+            long max = MAX_MJ_PER_TICK;
+            max *= battery.getStored() + max;
+            max /= battery.getCapacity() / 2;
+            max = Math.min(max, MAX_MJ_PER_TICK);
+            long power = battery.extractPower(0, max);
+            if (currentTask.addPower(power)) {
                 currentTask = null;
             }
             sendNetworkUpdate(NET_RENDER_DATA);
@@ -649,7 +598,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
         left.add("battery = " + battery.getDebugString());
-        left.add("recent power = " + recentPowerAverage.getAverage());
         left.add("frameBox");
         left.add(" - min = " + frameBox.min());
         left.add(" - max = " + frameBox.max());
@@ -668,7 +616,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         left.add("drill = " + drillPos);
     }
 
-    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
