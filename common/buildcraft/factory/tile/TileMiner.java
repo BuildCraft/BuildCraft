@@ -49,7 +49,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
     private double lastLength = 0;
 
     protected boolean isComplete = false;
-    protected final MjBattery battery = new MjBattery(500 * MjAPI.MJ);
+    protected final MjBattery battery = new MjBattery(getBatteryCapacity());
 
     public TileMiner() {
         caps.addProvider(new MjCapabilityHelper(createMjReceiver()));
@@ -246,5 +246,9 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
     public float getPercentFilledForRender() {
         float val = battery.getStored() / (float) battery.getCapacity();
         return val < 0 ? 0 : val > 1 ? 1 : val;
+    }
+
+    protected long getBatteryCapacity() {
+        return 500 * MjAPI.MJ;
     }
 }

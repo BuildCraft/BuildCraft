@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
-
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -309,5 +308,10 @@ public class TilePump extends TileMiner {
         super.getDebugInfo(left, right, side);
         left.add("fluid = " + tank.getDebugString());
         left.add("queue size = " + queue.size());
+    }
+
+    @Override
+    protected long getBatteryCapacity() {
+        return 50 * MjAPI.MJ;
     }
 }

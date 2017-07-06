@@ -473,9 +473,9 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                     % 1 > 0.5, (trace.hitVec.zCoord % 1 + 1) % 1 > 0.5);
             }
             if (wirePart != null && attachTile != null) {
-                attachTile.getWireManager().addPart(wirePart, EnumDyeColor.byMetadata(held.getMetadata()));
+                boolean attached = attachTile.getWireManager().addPart(wirePart, EnumDyeColor.byMetadata(held.getMetadata()));
                 attachTile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
-                if (!player.capabilities.isCreativeMode) {
+                if (attached && !player.capabilities.isCreativeMode) {
                     held.shrink(1);
                 }
             }

@@ -9,6 +9,7 @@ package buildcraft.builders.tile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -19,8 +20,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
@@ -36,6 +37,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
@@ -57,6 +59,8 @@ import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.chunkload.ChunkLoaderManager;
+import buildcraft.lib.chunkload.IChunkLoadingTile;
 import buildcraft.lib.inventory.AutomaticProvidingTransactor;
 import buildcraft.lib.inventory.TransactorEntityItem;
 import buildcraft.lib.inventory.filter.StackFilter;
@@ -81,12 +85,11 @@ import buildcraft.lib.world.WorldEventListenerAdapter;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.BCBuildersEventDist;
 
-public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable {
+public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable, IChunkLoadingTile {
     private final MjBattery battery = new MjBattery(1600L * MjAPI.MJ);
     public final Box frameBox = new Box();
     private final Box miningBox = new Box();
     private BoxIterator boxIterator;
-    private final Set<BlockPos> frameBoxPoses = new HashSet<>();
     private final LinkedList<BlockPos> toCheck = new LinkedList<>();
     private final Set<BlockPos> firstCheckedPoses = new HashSet<>();
     private boolean firstChecked = false;
@@ -94,6 +97,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         Comparator.<BlockPos>comparingDouble(pos::distanceSq)
     );
     private final Set<BlockPos> framePlaceFramePoses = new HashSet<>();
+    private List<BlockPos> frameLocations = Collections.emptyList();
     public Task currentTask = null;
     public Vec3d drillPos;
     public Vec3d clientDrillPos;
@@ -199,11 +203,10 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 }
             }
         }
-
         return framePositionsSorted;
     }
 
-    private boolean isShouldBeFrame(BlockPos p) {
+    private boolean shouldBeFrame(BlockPos p) {
         boolean shouldBeFrameXY = (p.getX() == frameBox.min().getX() || p.getX() == frameBox.max().getX()) &&
             (p.getY() == frameBox.min().getY() || p.getY() == frameBox.max().getY());
         boolean shouldBeFrameYZ = (p.getY() == frameBox.min().getY() || p.getY() == frameBox.max().getY()) &&
@@ -214,11 +217,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     }
 
     public List<BlockPos> getFramePositions() {
-        IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() != BCBuildersBlocks.quarry) {
-            return Collections.emptyList();
-        }
-        return getFramePositions(state);
+        return frameLocations;
     }
 
     @Override
@@ -270,7 +269,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         miningBox.reset();
         miningBox.setMin(new BlockPos(min.getX() + 1, 0, min.getZ() + 1));
         miningBox.setMax(new BlockPos(max.getX() - 1, max.getY() - 1, max.getZ() - 1));
-        onLoad();
+        loadFrameCaches();
     }
 
     private boolean canNotMine(BlockPos blockPos) {
@@ -289,7 +288,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     private void check(BlockPos blockPos) {
         frameBreakBlockPoses.remove(blockPos);
         framePlaceFramePoses.remove(blockPos);
-        if (isShouldBeFrame(blockPos)) {
+        if (shouldBeFrame(blockPos)) {
             if (world.getBlockState(blockPos).getBlock() != BCBuildersBlocks.frame) {
                 if (!world.isAirBlock(blockPos)) {
                     frameBreakBlockPoses.add(blockPos);
@@ -304,9 +303,16 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
         if (!firstChecked) {
             firstCheckedPoses.add(blockPos);
-            if (firstCheckedPoses.containsAll(frameBoxPoses)) {
+            if (firstCheckedPoses.containsAll(frameLocations)) {
                 firstChecked = true;
             }
+        }
+    }
+
+    @Override
+    public void onLoad() {
+        if (!world.isRemote) {
+            loadFrameCaches();
         }
     }
 
@@ -325,17 +331,46 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         BCBuildersEventDist.INSTANCE.invalidateQuarry(this);
         if (!world.isRemote) {
             world.removeEventListener(worldEventListener);
+            ChunkLoaderManager.releaseChunksFor(this);
         }
     }
 
+    @Nullable
     @Override
-    public void onLoad() {
-        frameBoxPoses.clear();
-        if (frameBox.isInitialized()) {
-            frameBoxPoses.addAll(frameBox.getBlocksInArea());
+    public LoadType getLoadType() {
+        return LoadType.HARD;
+    }
+
+    @Nullable
+    @Override
+    public Collection<ChunkPos> getChunksToLoad() {
+        if (!miningBox.isInitialized()) {
+            return null;
+        }
+        ArrayList<ChunkPos> list = new ArrayList<>();
+        int minX = miningBox.min().getX() >> 4;
+        int minZ = miningBox.min().getZ() >> 4;
+        int maxX = miningBox.max().getX() >> 4;
+        int maxZ = miningBox.max().getZ() >> 4;
+        for (int x = minX; x < maxX; x++) {
+            for (int z = minZ; z < maxZ; z++) {
+                list.add(new ChunkPos(x, z));
+            }
+        }
+        return list;
+    }
+
+    private void loadFrameCaches() {
+        IBlockState state = world.getBlockState(pos);
+        if (state.getBlock() != BCBuildersBlocks.quarry) {
+            frameLocations = Collections.emptyList();
         }
         toCheck.clear();
-        toCheck.addAll(frameBoxPoses);
+        if (frameBox.isInitialized()) {
+            toCheck.addAll(frameBox.getBlocksInArea());
+            frameLocations = getFramePositions(state);
+            ChunkLoaderManager.loadChunksForTile(this);
+        }
     }
 
     @Override
@@ -459,7 +494,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         if (boxIterator != null && boxIterator.hasNext()) {
             boolean found = false;
 
-            if (drillPos.squareDistanceTo(new Vec3d(boxIterator.getCurrent())) > 2) {
+            if (drillPos.squareDistanceTo(new Vec3d(boxIterator.getCurrent())) >= 1) {
                 currentTask = new TaskMoveDrill(drillPos, new Vec3d(boxIterator.getCurrent()));
                 found = true;
             } else if (!world.isAirBlock(boxIterator.getCurrent()) && !canSkip(boxIterator.getCurrent())) {

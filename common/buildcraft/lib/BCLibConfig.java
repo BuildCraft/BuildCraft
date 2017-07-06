@@ -13,7 +13,6 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.lib.chunkload.IChunkLoadingTile;
@@ -123,7 +122,7 @@ public class BCLibConfig {
         /** Automatic chunkloading is ENABLED. */
         ON,
         /** Automatic chunkloading is ENABLED when using the integrated server (singleplayer + LAN), and DISABLED when
-         * using a dedicated server. */
+         * using a dedicated server. Currently NOT implemented */
         AUTO,
         /** Automatic chunkloading is DISABLED. Even for strict tiles (like the quarry) */
         OFF
@@ -140,9 +139,6 @@ public class BCLibConfig {
         /** {@link TileEntity}'s that implement the {@link IChunkLoadingTile} interface will be loaded, provided they
          * DON'T return null. */
         SELF_TILES,
-
-        /** {@link TileEntity}'s that implement {@link ITickable} will be loaded (so a LOT of tiles) */
-        ALL_TICKABLE,
     }
 
     static {
