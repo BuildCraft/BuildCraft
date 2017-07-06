@@ -105,6 +105,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     public Vec3d drillPos;
     public Vec3d clientDrillPos;
     public Vec3d prevClientDrillPos;
+    private long debugPowerRate = 0;
     private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
         @Override
         public void notifyBlockUpdate(@Nonnull World world,
@@ -391,6 +392,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             max *= battery.getStored() + max;
             max /= battery.getCapacity() / 2;
             max = Math.min(max, MAX_MJ_PER_TICK);
+            debugPowerRate = max;
             long power = battery.extractPower(0, max);
             if (currentTask.addPower(power)) {
                 currentTask = null;
@@ -598,18 +600,23 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
         left.add("battery = " + battery.getDebugString());
+        left.add("rate = " + LocaleUtil.localizeMjFlow(debugPowerRate));
         left.add("frameBox");
         left.add(" - min = " + frameBox.min());
         left.add(" - max = " + frameBox.max());
         left.add("miningBox:");
         left.add(" - min = " + miningBox.min());
         left.add(" - max = " + miningBox.max());
-        left.add("current = " + (boxIterator == null ? "null" : boxIterator.getCurrent()));
-        if (currentTask != null) {
+
+        BoxIterator iter = boxIterator;
+        left.add("current = " + (iter == null ? "null" : iter.getCurrent()));
+
+        Task task = currentTask;
+        if (task != null) {
             left.add("task:");
-            left.add(" - class = " + currentTask.getClass().getName());
-            left.add(" - power = " + LocaleUtil.localizeMj(currentTask.getPower()));
-            left.add(" - target = " + LocaleUtil.localizeMj(currentTask.getTarget()));
+            left.add(" - class = " + task.getClass().getName());
+            left.add(" - power = " + LocaleUtil.localizeMj(task.getPower()));
+            left.add(" - target = " + LocaleUtil.localizeMj(task.getTarget()));
         } else {
             left.add("task = null");
         }

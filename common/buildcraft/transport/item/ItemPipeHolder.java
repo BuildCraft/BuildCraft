@@ -127,6 +127,8 @@ public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemP
         } else if (definition.flowType == PipeApi.flowPower) {
             PipeApi.PowerTransferInfo pti = PipeApi.getPowerTransferInfo(definition);
             tooltip.add(LocaleUtil.localizeMjFlow(pti.transferPerTick));
+            // TODO: remove this! (Not localised b/c localisations happen AFTER this is removed)
+            tooltip.add("Work in progress - the above limit isn't enforced!");
         }
     }
 }
