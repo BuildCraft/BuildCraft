@@ -6,6 +6,7 @@ package buildcraft.builders;
 
 import net.minecraft.block.material.Material;
 
+import buildcraft.lib.BCLib;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.tile.TileBC_Neptune;
 
@@ -38,7 +39,9 @@ public class BCBuildersBlocks {
         builder = BlockBCBase_Neptune.register(new BlockBuilder(Material.IRON, "block.builder"));
         filler = BlockBCBase_Neptune.register(new BlockFiller(Material.IRON, "block.filler"));
         library = BlockBCBase_Neptune.register(new BlockElectronicLibrary(Material.IRON, "block.library"));
-        replacer = BlockBCBase_Neptune.register(new BlockReplacer(Material.IRON, "block.replacer"));
+        if (BCLib.DEV) {
+            replacer = BlockBCBase_Neptune.register(new BlockReplacer(Material.IRON, "block.replacer"));
+        }
         frame = BlockBCBase_Neptune.register(new BlockFrame(Material.ROCK, "block.frame"));
         quarry = BlockBCBase_Neptune.register(new BlockQuarry(Material.ROCK, "block.quarry"));
 
@@ -46,7 +49,9 @@ public class BCBuildersBlocks {
         TileBC_Neptune.registerTile(TileBuilder.class, "tile.builder");
         TileBC_Neptune.registerTile(TileFiller.class, "tile.filler");
         TileBC_Neptune.registerTile(TileElectronicLibrary.class, "tile.library");
-        TileBC_Neptune.registerTile(TileReplacer.class, "tile.replacer");
+        if (BCLib.DEV) {
+            TileBC_Neptune.registerTile(TileReplacer.class, "tile.replacer");
+        }
         TileBC_Neptune.registerTile(TileQuarry.class, "tile.quarry");
     }
 }

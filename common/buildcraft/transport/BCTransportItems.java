@@ -8,7 +8,6 @@ package buildcraft.transport;
 
 import buildcraft.api.transport.pipe.PipeDefinition;
 
-import buildcraft.lib.BCLib;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemManager;
 
@@ -120,15 +119,13 @@ public class BCTransportItems {
         pipeFluidDiaWood = makePipeItem(BCTransportPipes.diaWoodFluid);
         // pipeFluidObsidian = makePipeItem(BCTransportPipes.obsidianFluid);
 
-        if (BCLib.DEV) {
-            pipePowerWood = makePipeItem(BCTransportPipes.woodPower);
-            pipePowerCobble = makePipeItem(BCTransportPipes.cobblePower);
-            pipePowerStone = makePipeItem(BCTransportPipes.stonePower);
-            pipePowerQuartz = makePipeItem(BCTransportPipes.quartzPower);
-            pipePowerGold = makePipeItem(BCTransportPipes.goldPower);
-            // pipePowerIron = makePipeItem(BCTransportPipes.ironPower);
-            pipePowerSandstone = makePipeItem(BCTransportPipes.sandstonePower);
-        }
+        pipePowerWood = makePipeItem(BCTransportPipes.woodPower);
+        pipePowerCobble = makePipeItem(BCTransportPipes.cobblePower);
+        pipePowerStone = makePipeItem(BCTransportPipes.stonePower);
+        pipePowerQuartz = makePipeItem(BCTransportPipes.quartzPower);
+        pipePowerGold = makePipeItem(BCTransportPipes.goldPower);
+        // pipePowerIron = makePipeItem(BCTransportPipes.ironPower);
+        pipePowerSandstone = makePipeItem(BCTransportPipes.sandstonePower);
 
         plugBlocker = ItemManager.register(new ItemPluggableSimple("item.plug.blocker", BCTransportPlugs.blocker));
         plugGate = ItemManager.register(new ItemPluggableGate("item.plug.gate"));
