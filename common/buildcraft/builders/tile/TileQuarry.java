@@ -117,7 +117,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 if (frameBox.contains(pos)) {
                     check(pos);
                 } else if (miningBox.contains(pos)) {
-                    if (!world.isAirBlock(pos) && boxIterator != null) {
+                    if (!world.isAirBlock(pos) && !canSkip(pos) && boxIterator != null) {
                         BoxIterator tempBoxIterator = createBoxIterator();
                         while (!Objects.equals(tempBoxIterator.getCurrent(), pos)) {
                             if (tempBoxIterator.advance() == null) {
