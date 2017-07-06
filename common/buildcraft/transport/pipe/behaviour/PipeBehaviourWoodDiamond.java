@@ -107,7 +107,8 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
     }
 
     @Override
-    public boolean onPipeActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ, EnumPipePart part) {
+    public boolean onPipeActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ,
+        EnumPipePart part) {
         if (EntityUtil.getWrenchHand(player) != null) {
             return super.onPipeActivate(player, trace, hitX, hitY, hitZ, part);
         }
@@ -138,9 +139,13 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
         switch (filterMode) {
             default:
             case WHITE_LIST:
+                if (filters.extract(s -> true, 1, 1, true).isEmpty()) {
+                    return s -> true;
+                }
                 return new DelegatingItemHandlerFilter(StackUtil::isMatchingItemOrList, filters);
             case BLACK_LIST:
-                return new InvertedStackFilter(new DelegatingItemHandlerFilter(StackUtil::isMatchingItemOrList, filters));
+                return new InvertedStackFilter(
+                    new DelegatingItemHandlerFilter(StackUtil::isMatchingItemOrList, filters));
             case ROUND_ROBIN:
                 return (comparison) -> {
                     ItemStack filter = filters.getStackInSlot(currentFilter);
@@ -170,6 +175,9 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
         switch (filterMode) {
             default:
             case WHITE_LIST:
+                if (filters.extract(s -> true, 1, 1, true).isEmpty()) {
+                    return flow.tryExtractFluid(millibuckets, dir, null);
+                }
                 // Firstly try the advanced version - if that fails we will need to try the basic version
                 ActionResult<FluidStack> result = flow.tryExtractFluidAdv(millibuckets, dir, new ArrayFluidFilter(filters.stacks));
                 FluidStack extracted = result.getResult();

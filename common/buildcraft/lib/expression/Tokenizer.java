@@ -11,12 +11,12 @@ import java.util.List;
 
 import buildcraft.lib.expression.api.InvalidExpressionException;
 
-public class Tokeniser {
+public class Tokenizer {
     public static final char END_OF_LINE = '\n';
 
     private final List<ITokenizerGobbler> tokenizers;
 
-    public Tokeniser(List<ITokenizerGobbler> tokenizers) {
+    public Tokenizer(List<ITokenizerGobbler> tokenizers) {
         this.tokenizers = new ArrayList<>(tokenizers);
     }
 

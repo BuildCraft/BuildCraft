@@ -18,10 +18,14 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fluids.Fluid;
@@ -30,6 +34,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
@@ -38,24 +43,40 @@ import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 
+import buildcraft.core.BCCoreBlocks;
+import buildcraft.energy.BCEnergyFluids;
+import buildcraft.energy.tile.TileSpringOil;
 import buildcraft.factory.BCFactoryBlocks;
 
 public class TilePump extends TileMiner {
     private final Tank tank = new Tank("tank", 16 * Fluid.BUCKET_VOLUME, this);
     private boolean queueBuilt = false;
-    private final Queue<BlockPos> queue = new PriorityQueue<>(
-        Comparator.<BlockPos>comparingInt(blockPos ->
-            (blockPos.getX() - pos.getX()) * (blockPos.getX() - pos.getX()) +
-                (blockPos.getZ() - pos.getZ()) * (blockPos.getZ() - pos.getZ())
-        ).reversed()
-    );
     private final Map<BlockPos, List<BlockPos>> paths = new HashMap<>();
+    private final Queue<BlockPos> queue = new PriorityQueue<>(
+        BlockUtil.uniqueBlockPosComparator(
+            Comparator.<BlockPos>comparingInt(blockPos ->
+                paths.get(blockPos).size()
+            ).reversed()
+                .thenComparing(
+                    Comparator.<BlockPos>comparingInt(blockPos ->
+                        (blockPos.getX() - pos.getX()) * (blockPos.getX() - pos.getX()) +
+                            (blockPos.getZ() - pos.getZ()) * (blockPos.getZ() - pos.getZ())
+                    ).reversed()
+                )
+        )
+    );
+
+    @Nullable
+    private BlockPos oilSpringPos;
 
     public TilePump() {
         tank.setCanFill(false);
+        tankManager.add(tank);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank, EnumPipePart.VALUES);
     }
 
@@ -105,7 +126,7 @@ public class TilePump extends TileMiner {
                         (offsetPos.getZ() - pos.getZ()) * (offsetPos.getZ() - pos.getZ()) > 64 * 64) {
                         continue;
                     }
-                    if (!checked.contains(offsetPos)) {
+                    if (checked.add(offsetPos)) {
                         if (BlockUtil.getFluidWithFlowing(world, offsetPos) == fluid) {
                             ImmutableList.Builder<BlockPos> pathBuilder = new ImmutableList.Builder<>();
                             pathBuilder.addAll(paths.get(posToCheck));
@@ -116,10 +137,35 @@ public class TilePump extends TileMiner {
                             }
                             nextPosesToCheck.add(offsetPos);
                         }
-                        checked.add(offsetPos);
                     }
                 }
             }
+        }
+        world.profiler.endStartSection("oil_spring_search");
+        if (FluidUtilBC.areFluidsEqual(fluid, BCEnergyFluids.crudeOil[0])) {
+            List<BlockPos> springPositions = new ArrayList<>();
+            BlockPos center = VecUtil.replaceValue(getPos(), Axis.Y, 0);
+            for (BlockPos spring : BlockPos.getAllInBox(center.add(-10, 0, -10), center.add(10, 0, 10))) {
+                if (world.getBlockState(spring).getBlock() == BCCoreBlocks.spring) {
+                    BCLog.logger.info("Found block at " + spring);
+                    TileEntity tile = world.getTileEntity(spring);
+                    if (tile instanceof TileSpringOil) {
+                        springPositions.add(spring);
+                        BCLog.logger.info("Found a spring tile at " + spring);
+                    }
+                }
+            }
+            switch (springPositions.size()) {
+                case 0:
+                    break;
+                case 1:
+                    oilSpringPos = springPositions.get(0);
+                    break;
+                default:
+                    springPositions.sort(Comparator.comparingDouble(pos::distanceSq));
+                    oilSpringPos = springPositions.get(0);
+            }
+
         }
         world.profiler.endSection();
     }
@@ -192,6 +238,14 @@ public class TilePump extends TileMiner {
                         }
                         if (count < 4) {
                             BlockUtil.drainBlock(world, currentPos, true);
+                            if (FluidUtilBC.areFluidsEqual(drain.getFluid(), BCEnergyFluids.crudeOil[0])) {
+                                if (oilSpringPos != null) {
+                                    TileEntity tile = world.getTileEntity(oilSpringPos);
+                                    if (tile instanceof TileSpringOil) {
+                                        ((TileSpringOil) tile).onPumpOil(this, currentPos);
+                                    }
+                                }
+                            }
                             nextPos();
                         }
                     } else {
@@ -207,16 +261,20 @@ public class TilePump extends TileMiner {
         }
     }
 
+    // NBT
+
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        tank.deserializeNBT(nbt.getCompoundTag("tank"));
+        oilSpringPos = NBTUtilBC.readBlockPos(nbt.getTag("oilSpringPos"));
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
-        nbt.setTag("tank", tank.serializeNBT());
+        if (oilSpringPos != null) {
+            nbt.setTag("oilSpringPos", NBTUtilBC.writeBlockPos(oilSpringPos));
+        }
         return nbt;
     }
 

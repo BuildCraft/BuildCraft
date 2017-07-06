@@ -98,13 +98,40 @@ public class BCFactoryRecipes {
             builder.register();
         }
 
-        RecipeBuilderShaped heatExchanger = new RecipeBuilderShaped();
-        heatExchanger.add("   ");
-        heatExchanger.add("pgp");
-        heatExchanger.add("   ");
-
         if (BCBlocks.FACTORY_HEAT_EXCHANGE_START != null) {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
+            builder.add("IGI");
+            builder.add("###");
+            builder.add("G#G");
+            builder.map('I', Items.IRON_INGOT);
+            builder.map('G', OredictionaryNames.GEAR_IRON);
+            builder.map('#', Blocks.GLASS);
+            builder.setResult(new ItemStack(BCBlocks.FACTORY_HEAT_EXCHANGE_START));
+            builder.register();
+        }
 
+        if (BCBlocks.FACTORY_HEAT_EXCHANGE_MIDDLE != null) {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
+            builder.add("IGI");
+            builder.add("###");
+            builder.add("IGI");
+            builder.map('I', Items.IRON_INGOT);
+            builder.map('G', OredictionaryNames.GEAR_IRON);
+            builder.map('#', Blocks.GLASS);
+            builder.setResult(new ItemStack(BCBlocks.FACTORY_HEAT_EXCHANGE_MIDDLE));
+            builder.register();
+        }
+
+        if (BCBlocks.FACTORY_HEAT_EXCHANGE_END != null) {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
+            builder.add("G#G");
+            builder.add("###");
+            builder.add("IGI");
+            builder.map('I', Items.IRON_INGOT);
+            builder.map('G', OredictionaryNames.GEAR_IRON);
+            builder.map('#', Blocks.GLASS);
+            builder.setResult(new ItemStack(BCBlocks.FACTORY_HEAT_EXCHANGE_END));
+            builder.register();
         }
     }
 }

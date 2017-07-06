@@ -50,7 +50,7 @@ public final class OilPopulate {
     public final Set<String> surfaceDepositBiomeNames = new HashSet<>();
     public final Set<String> excludedBiomeNames = new HashSet<>(Arrays.asList("Hell", "The End"));
 
-    private enum GenType {
+    public enum GenType {
         LARGE,
         MEDIUM,
         LAKE,
@@ -271,7 +271,6 @@ public final class OilPopulate {
         return block == BCEnergyFluids.crudeOil[0].getBlock();
     }
 
-    @SuppressWarnings("unchecked")
     private boolean isReplaceableForLake(World world, Biome biome, int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
         if (world.isAirBlock(pos)) {
@@ -390,13 +389,13 @@ public final class OilPopulate {
 
     private double surfaceDeviation(World world, int x, int y, int z, int radius) {
         int diameter = radius * 2;
-        double centralTendancy = y;
+        double centralTendency = y;
         double deviation = 0;
         for (int i = 0; i < diameter; i++) {
             for (int k = 0; k < diameter; k++) {
-                deviation += getTopBlock(world, x - radius + i, z - radius + k) - centralTendancy;
+                deviation += getTopBlock(world, x - radius + i, z - radius + k) - centralTendency;
             }
         }
-        return Math.abs(deviation / centralTendancy);
+        return Math.abs(deviation / centralTendency);
     }
 }

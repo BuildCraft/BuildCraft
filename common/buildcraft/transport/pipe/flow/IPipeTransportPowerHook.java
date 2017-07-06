@@ -13,7 +13,7 @@ public interface IPipeTransportPowerHook {
     /** Override default behavior on receiving energy into the pipe.
      *
      * @return The amount of power used, or -1 for default behavior. */
-    int receivetPower(EnumFacing from, long val);
+    int receivePower(EnumFacing from, long val);
 
     /** Override default requested power. */
     int requestPower(EnumFacing from, long amount);

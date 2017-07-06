@@ -9,6 +9,8 @@ package buildcraft.lib.misc;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -136,13 +138,18 @@ public class FluidUtilBC {
         return a.getName().equals(b.getName());
     }
 
-    public static int move(IFluidHandler from, IFluidHandler to) {
+    /** @return The fluidstack that was moved, or null if no fluid was moved. */
+    @Nullable
+    public static FluidStack move(IFluidHandler from, IFluidHandler to) {
         return move(from, to, Integer.MAX_VALUE);
     }
 
-    public static int move(IFluidHandler from, IFluidHandler to, int max) {
+    /** @param max The maximum amount of fluid to move.
+     * @return The fluidstack that was moved, or null if no fluid was moved. */
+    @Nullable
+    public static FluidStack move(IFluidHandler from, IFluidHandler to, int max) {
         if (from == null || to == null) {
-            return 0;
+            return null;
         }
         FluidStack toDrainPotential;
         if (from instanceof IFluidHandlerAdv) {
@@ -153,17 +160,18 @@ public class FluidUtilBC {
         }
         int accepted = to.fill(toDrainPotential, false);
         if (accepted <= 0) {
-            return 0;
+            return null;
         }
         FluidStack toDrain = new FluidStack(toDrainPotential, accepted);
         FluidStack drained = from.drain(toDrain, true);
         if (!toDrain.isFluidEqual(drained) || toDrain.amount != drained.amount) {
-            throw new IllegalStateException("");
+            throw new IllegalStateException(
+                "Drained fluid did not equal expected fluid! Bad impl - " + from.getClass());
         }
         int actuallyAccepted = to.fill(drained, true);
         if (actuallyAccepted != accepted) {
             throw new IllegalStateException("Mismatched IFluidHandler implementations!");
         }
-        return actuallyAccepted;
+        return new FluidStack(drained, accepted);
     }
 }

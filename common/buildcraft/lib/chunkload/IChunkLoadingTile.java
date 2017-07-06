@@ -32,7 +32,7 @@ public interface IChunkLoadingTile {
      * 
      * The default implementation returns neighbouring chunks if this block is on a chunk boundary.
      * 
-     * @return A collection of all the additional chunks to load, not including the {@link ChunkPos} that this tile is
+     * @return A collection of all the additional chunks to load, optionally including the {@link ChunkPos} that this tile is
      *         contained within. If the return value is null then only the chunk containing this block will be
      *         chunkloaded. */
     @Nullable
@@ -49,7 +49,7 @@ public interface IChunkLoadingTile {
         return list;
     }
 
-    enum LoadType {
+    public enum LoadType {
         /** Softly attempt to chunkload this. If the value of {@link BCLibConfig#chunkLoadingType} is equal to
          * {@link ChunkLoaderLevel#STRICT_TILES} or {@link ChunkLoaderLevel#NONE} then it won't be loaded. */
         SOFT,

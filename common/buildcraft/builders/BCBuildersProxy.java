@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.client.render.DetatchedRenderer;
+import buildcraft.lib.client.render.DetachedRenderer;
 
 import buildcraft.builders.client.render.RenderArchitectTables;
 import buildcraft.builders.client.render.RenderBuilder;
@@ -161,8 +161,8 @@ public abstract class BCBuildersProxy implements IGuiHandler {
             ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilder());
             ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderFiller());
             ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderQuarry());
-            DetatchedRenderer.INSTANCE.addRenderer(
-                DetatchedRenderer.RenderMatrixType.FROM_WORLD_ORIGIN,
+            DetachedRenderer.INSTANCE.addRenderer(
+                DetachedRenderer.RenderMatrixType.FROM_WORLD_ORIGIN,
                 RenderArchitectTables.INSTANCE
             );
         }

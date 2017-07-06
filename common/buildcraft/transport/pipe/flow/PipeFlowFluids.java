@@ -503,8 +503,12 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         int spaceAvailable = capacity - center.amount;
         int flowRate = fluidTransferInfo.transferPerTick;
 
+        List<EnumPipePart> faces = new ArrayList<>();
+        Collections.addAll(faces, EnumPipePart.FACES);
+        Collections.shuffle(faces);
+
         int[] inputPerTick = new int[6];
-        for (EnumPipePart part : EnumPipePart.FACES) {
+        for (EnumPipePart part : faces) {
             Section section = sections.get(part);
             inputPerTick[part.getIndex()] = 0;
             if (section.getCurrentDirection().canInput()) {
@@ -687,9 +691,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
         /** @return The maximum amount of fluid that can be inserted into this pipe on this tick. */
         int getMaxFilled() {
-            int avalibleTotal = capacity - amount;
-            int avalibleThisTick = fluidTransferInfo.transferPerTick - incoming[currentTime];
-            return Math.min(avalibleTotal, avalibleThisTick);
+            int availableTotal = capacity - amount;
+            int availableThisTick = fluidTransferInfo.transferPerTick - incoming[currentTime];
+            return Math.min(availableTotal, availableThisTick);
         }
 
         /** @return The maximum amount of fluid that can be extracted out of this pipe this tick. */

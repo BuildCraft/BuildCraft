@@ -20,6 +20,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
@@ -103,28 +104,39 @@ public final class NBTUtilBC {
     }
 
     public static NBTTagIntArray writeBlockPos(BlockPos pos) {
+        if (pos == null) {
+            throw new NullPointerException("Cannot return a null NBTTag -- pos was null!");
+        }
         return new NBTTagIntArray(new int[] { pos.getX(), pos.getY(), pos.getZ() });
     }
 
     public static NBTTagCompound writeBlockPosAsCompound(BlockPos pos) {
-        if (pos == null) return null;
+        if (pos == null) {
+            throw new NullPointerException("Cannot return a null NBTTag -- pos was null!");
+        }
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setInteger("x", pos.getX());
-        nbt.setInteger("y", pos.getX());
-        nbt.setInteger("z", pos.getX());
+        nbt.setInteger("y", pos.getY());
+        nbt.setInteger("z", pos.getZ());
         return nbt;
     }
 
+    @Nullable
     public static BlockPos readBlockPos(NBTBase base) {
-        if (base == null) return BlockPos.ORIGIN;
+        if (base == null) {
+            return null;
+        }
         switch (base.getId()) {
             case Constants.NBT.TAG_INT_ARRAY: {
                 int[] array = ((NBTTagIntArray) base).getIntArray();
-                return new BlockPos(array[0], array[1], array[2]);
+                if (array.length == 3){
+                    return new BlockPos(array[0], array[1], array[2]);
+                }
+                return null;
             }
             case Constants.NBT.TAG_COMPOUND: {
                 NBTTagCompound nbt = (NBTTagCompound) base;
-                BlockPos pos = BlockPos.ORIGIN;
+                BlockPos pos = null;
                 if (nbt.hasKey("i")) {
                     int i = nbt.getInteger("i");
                     int j = nbt.getInteger("j");
@@ -144,7 +156,7 @@ public final class NBTUtilBC {
             }
         }
         BCLog.logger.warn("Attempted to read a block position from an invalid tag! (" + base + ")", new Throwable());
-        return BlockPos.ORIGIN;
+        return null;
     }
 
     public static NBTTagList writeVec3d(Vec3d vec3) {
@@ -155,11 +167,12 @@ public final class NBTUtilBC {
         return list;
     }
 
+    @Nullable
     public static Vec3d readVec3d(NBTBase nbt) {
         if (nbt instanceof NBTTagList) {
             return readVec3d((NBTTagList) nbt);
         }
-        return new Vec3d(0, 0, 0);
+        return null;
     }
 
     public static Vec3d readVec3d(NBTTagCompound nbt, String tagName) {

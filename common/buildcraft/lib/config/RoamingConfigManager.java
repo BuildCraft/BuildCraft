@@ -39,7 +39,7 @@ public class RoamingConfigManager extends StreamConfigManager {
         try (InputStream stream = BCLibProxy.getProxy().getStreamForIdentifier(identifier)) {
             read(stream);
             cacheExists = Boolean.TRUE;
-        } catch (FileNotFoundException fnfe) {
+        } catch (FileNotFoundException e) {
             // We can safely ignore this
         } catch (IOException io) {
             throw new Error("Failed to read from " + identifier, io);

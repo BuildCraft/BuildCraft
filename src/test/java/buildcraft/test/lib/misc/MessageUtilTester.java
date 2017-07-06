@@ -21,7 +21,7 @@ public class MessageUtilTester {
     }
 
     @Test
-    public void testBooleanArrrayLarge() {
+    public void testBooleanArrayLarge() {
         boolean[] expected = { false, true, false, false, false, true, true, true, true, true, true, true, false };
 
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
@@ -31,7 +31,7 @@ public class MessageUtilTester {
     }
 
     @Test
-    public void testBooleanArrrayLargeManual() {
+    public void testBooleanArrayLargeManual() {
         boolean[] expected = { false, true, false, false, false, true, true, true, true, true, true, true, false };
 
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());

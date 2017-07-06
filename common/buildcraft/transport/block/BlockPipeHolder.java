@@ -480,10 +480,14 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                 }
             }
         }
-        if (tile.getPipe().behaviour.onPipeActivate(player, trace, hitX, hitY, hitZ, part)) {
+        Pipe pipe = tile.getPipe();
+        if (pipe == null) {
+            return false;
+        }
+        if (pipe.behaviour.onPipeActivate(player, trace, hitX, hitY, hitZ, part)) {
             return true;
         }
-        if (tile.getPipe().flow.onFlowActivate(player, trace, hitX, hitY, hitZ, part)) {
+        if (pipe.flow.onFlowActivate(player, trace, hitX, hitY, hitZ, part)) {
             return true;
         }
         return false;

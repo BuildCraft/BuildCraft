@@ -63,9 +63,9 @@ public abstract class ResourceHolder {
             try (InputStream input = res.getInputStream()) {
                 return IOUtils.toByteArray(input);
             }
-        } catch (FileNotFoundException fnfe) {
+        } catch (FileNotFoundException e) {
             if (care) {
-                BCLog.logger.warn("[lib.resource] The file " + location + " was not found! (" + fnfe.getMessage() + ")");
+                BCLog.logger.warn("[lib.resource] The file " + location + " was not found! (" + e.getMessage() + ")");
             }
         } catch (IOException e) {
             // Some error, we DO care about it no matter what.

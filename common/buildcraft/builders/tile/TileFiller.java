@@ -42,7 +42,7 @@ import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.IdAllocator;
-import buildcraft.lib.mj.MjBatteryReciver;
+import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -93,7 +93,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     public TemplateBuilder builder = new TemplateBuilder(this);
 
     public TileFiller() {
-        caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(battery)));
+        caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
     }
 
     @Override

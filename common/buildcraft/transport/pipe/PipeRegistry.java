@@ -71,7 +71,7 @@ public enum PipeRegistry implements IPipeRegistry {
     public PipeDefinition loadDefinition(String identifier) throws InvalidInputDataException {
         PipeDefinition def = getDefinition(new ResourceLocation(identifier));
         if (def == null) {
-            throw new InvalidInputDataException("Unknown pipe defintion " + identifier);
+            throw new InvalidInputDataException("Unknown pipe definition " + identifier);
         }
         return def;
     }

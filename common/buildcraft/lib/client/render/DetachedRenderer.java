@@ -20,12 +20,12 @@ import net.minecraft.util.math.Vec3d;
 
 /** Dispatches "detached renderer elements" - rendering that does not require a specific tile or entity in the world
  * (perhaps held item HUD elements) */
-public enum DetatchedRenderer {
+public enum DetachedRenderer {
     INSTANCE;
 
     public enum RenderMatrixType implements IGlPre, IGLPost {
         FROM_PLAYER(null, null),
-        FROM_WORLD_ORIGIN(DetatchedRenderer::fromWorldOriginPre, DetatchedRenderer::fromWorldOriginPost);
+        FROM_WORLD_ORIGIN(DetachedRenderer::fromWorldOriginPre, DetachedRenderer::fromWorldOriginPost);
 
         public final IGlPre pre;
         public final IGLPost post;
@@ -63,7 +63,7 @@ public enum DetatchedRenderer {
 
     private final Map<RenderMatrixType, List<IDetachedRenderer>> renders = new EnumMap<>(RenderMatrixType.class);
 
-    DetatchedRenderer() {
+    DetachedRenderer() {
         for (RenderMatrixType type : RenderMatrixType.values()) {
             renders.put(type, new ArrayList<>());
         }

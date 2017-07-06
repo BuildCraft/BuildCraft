@@ -23,19 +23,18 @@ import buildcraft.lib.client.model.ModelUtil;
 
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
+import buildcraft.transport.pipe.flow.PipeFlowPower.Section;
 
 public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
     INSTANCE;
 
     @Override
     public void render(PipeFlowPower flow, double x, double y, double z, float partialTicks, VertexBuffer vb) {
-        float r = (float) flow.clientPowerAmounts.values().stream()
-            .mapToDouble(Double::valueOf)
-            .average()
-            .orElse(0) / PipeFlowPower.DEFAULT_MAX_POWER * 0.8F;
-        if (r == 0) {
+        double transfer = flow.getMaxTransferForRender(partialTicks);
+        if (transfer <= 0) {
             return;
         }
+        float r = (float) (transfer / 2f);
         List<Triple<Pair<EnumFacing, EnumFacing>, Point3f, Point3f>> facesSidesCentersRadiuses = new ArrayList<>();
         for (EnumFacing face : EnumFacing.VALUES) {
             facesSidesCentersRadiuses.add(

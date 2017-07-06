@@ -1,4 +1,4 @@
-remotedir = /home/exemple/
+remotedir = /home/example/
 host = thehost
 port = 22
 username = ****

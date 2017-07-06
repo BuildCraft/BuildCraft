@@ -157,7 +157,7 @@ public abstract class NetworkedObjectCache<T> {
     /** Takes a specific object and turns it into its most basic form. For example for {@link ItemStack}'s this will
      * should set the stack size to 1, and remove all non-rendered NBT tag components.
      * 
-     * @param obj The object to canonicalised.
+     * @param obj The object to canonicalized.
      * @return A canonical version of the input */
     protected abstract T getCanonical(T obj);
 
@@ -168,7 +168,7 @@ public abstract class NetworkedObjectCache<T> {
     protected abstract void writeObject(T obj, PacketBufferBC buffer);
 
     /** Reads the specified object from the buffer. Note that the returned object should be identity equal to itself
-     * passed into {@link #getCanonical(Object)} (so {@code  value.equals(getCononical(value)) } should return true.)
+     * passed into {@link #getCanonical(Object)} (so {@code  value.equals(getCanonical(value)) } should return true.)
      * 
      * @param buffer The buffer to read from
      * @return */

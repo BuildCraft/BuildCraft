@@ -55,7 +55,7 @@ import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.IdAllocator;
-import buildcraft.lib.mj.MjBatteryReciver;
+import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -80,30 +80,15 @@ public class TileBuilder extends TileBC_Neptune
     public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
     public static final int NET_SNAPSHOT_TYPE = IDS.allocId("SNAPSHOT_TYPE");
 
-    public final ItemHandlerSimple invSnapshot = itemManager.addInvHandler(
-        "snapshot",
-        1,
-        EnumAccess.BOTH,
-        EnumPipePart.VALUES
-    );
-    public final ItemHandlerSimple invResources = itemManager.addInvHandler(
-        "resources",
-        27,
-        EnumAccess.BOTH,
-        EnumPipePart.VALUES
-    );
-    private final TankManager<Tank> tankManager = new TankManager<>();
+    public final ItemHandlerSimple invSnapshot;
+    public final ItemHandlerSimple invResources;
 
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
     private boolean canExcavate = true;
 
-    /**
-     * Stores the real path - just a few block positions.
-     */
+    /** Stores the real path - just a few block positions. */
     public List<BlockPos> path = null;
-    /**
-     * Stores the real path plus all possible block positions inbetween.
-     */
+    /** Stores the real path plus all possible block positions inbetween. */
     private List<BlockPos> basePoses = new ArrayList<>();
     private int currentBasePosIndex = 0;
     private Snapshot snapshot = null;
@@ -117,10 +102,12 @@ public class TileBuilder extends TileBC_Neptune
     private boolean isDone = false;
 
     public TileBuilder() {
+        invSnapshot = itemManager.addInvHandler("snapshot", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
+        invResources = itemManager.addInvHandler("resources", 27, EnumAccess.BOTH, EnumPipePart.VALUES);
         for (int i = 1; i <= 4; i++) {
             tankManager.add(new Tank("fluid" + i, Fluid.BUCKET_VOLUME * 8, this));
         }
-        caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(battery)));
+        caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankManager, EnumPipePart.VALUES);
     }
 
@@ -130,10 +117,8 @@ public class TileBuilder extends TileBC_Neptune
     }
 
     @Override
-    protected void onSlotChange(IItemHandlerModifiable itemHandler,
-                                int slot,
-                                @Nonnull ItemStack before,
-                                @Nonnull ItemStack after) {
+    protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, @Nonnull ItemStack before,
+        @Nonnull ItemStack after) {
         if (itemHandler == invSnapshot) {
             if (!world.isRemote) {
                 currentBasePosIndex = 0;
@@ -232,8 +217,10 @@ public class TileBuilder extends TileBC_Neptune
     public void update() {
         battery.tick(getWorld(), getPos());
         battery.addPowerChecking(64 * MjAPI.MJ, false);
-        if (getBuilder() != null) {
-            if (isDone = getBuilder().tick()) {
+        SnapshotBuilder<?> builder = getBuilder();
+        if (builder != null) {
+            isDone = builder.tick();
+            if (isDone) {
                 if (currentBasePosIndex < basePoses.size() - 1) {
                     currentBasePosIndex++;
                     if (currentBasePosIndex >= basePoses.size()) {
@@ -439,7 +426,7 @@ public class TileBuilder extends TileBC_Neptune
     }
 
     @Override
-    public TankManager<Tank> getTankManager() {
+    public TankManager getTankManager() {
         return tankManager;
     }
 }

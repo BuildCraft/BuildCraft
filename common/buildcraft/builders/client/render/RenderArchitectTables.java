@@ -27,11 +27,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.lib.client.model.ModelUtil;
-import buildcraft.lib.client.render.DetatchedRenderer;
+import buildcraft.lib.client.render.DetachedRenderer;
 
 import buildcraft.builders.client.ClientArchitectTables;
 
-public enum RenderArchitectTables implements DetatchedRenderer.IDetachedRenderer {
+public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer {
     INSTANCE;
 
     @Override

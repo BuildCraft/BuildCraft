@@ -17,21 +17,19 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.EnumPipePart;
 
 import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.fluid.TankManager;
 import buildcraft.lib.misc.CapUtil;
 
 public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
     private final Tank tank1 = new Tank("tank1", Fluid.BUCKET_VOLUME * 6, this);
     private final Tank tank2 = new Tank("tank2", Fluid.BUCKET_VOLUME * 6, this);
-    private final TankManager<Tank> tankManager = new TankManager<>(tank1, tank2);
 
     public TileAutoWorkbenchFluids() {
         super(2, 2);
+        tankManager.addAll(tank1, tank2);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankManager, EnumPipePart.CENTER);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank1, EnumPipePart.DOWN, EnumPipePart.NORTH, EnumPipePart.WEST);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank2, EnumPipePart.UP, EnumPipePart.SOUTH, EnumPipePart.EAST);
     }
-
 
     @Override
     @SideOnly(Side.CLIENT)
@@ -47,5 +45,3 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
         return false;
     }
 }
-
-
