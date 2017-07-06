@@ -272,7 +272,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         for (Section s : sections.values()) {
             s.powerAverage.tick();
             long value = (long) s.powerAverage.getAverage();
-            s.displayPower = (int)((value * MjAPI.MJ) / maxPower);
+            s.displayPower = (int)((value * MjAPI.MJ * 3 / maxPower)/4);
         }
 
         // Compute the tiles requesting power that are not power pipes
