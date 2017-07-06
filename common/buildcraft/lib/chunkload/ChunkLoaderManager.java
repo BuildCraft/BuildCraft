@@ -8,9 +8,9 @@ package buildcraft.lib.chunkload;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import javax.annotation.Nonnull;
 
 import net.minecraft.tileentity.TileEntity;
@@ -26,7 +26,7 @@ import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.misc.NBTUtilBC;
 
 public class ChunkLoaderManager {
-    private static final Map<IChunkLoadingTile, ForgeChunkManager.Ticket> TICKETS = new HashMap<>();
+    private static final Map<IChunkLoadingTile, ForgeChunkManager.Ticket> TICKETS = new WeakHashMap<>();
 
     /**
      * This should be called in {@link TileEntity#validate()}, if a tile entity might be able to load. A check is
