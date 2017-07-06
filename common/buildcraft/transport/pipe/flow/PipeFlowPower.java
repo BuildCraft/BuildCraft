@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.function.ToLongFunction;
-
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,7 +39,6 @@ import buildcraft.api.transport.pipe.PipeApi.PowerTransferInfo;
 import buildcraft.api.transport.pipe.PipeEventPower;
 import buildcraft.api.transport.pipe.PipeFlow;
 
-import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.data.AverageInt;
@@ -61,6 +59,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     private final EnumMap<EnumFacing, Section> sections;
 
     private final SafeTimeTracker tracker = new SafeTimeTracker(BCCoreConfig.networkUpdateRate);
+    private long[] transferQuery;
 
     public PipeFlowPower(IPipe pipe) {
         super(pipe);
@@ -273,7 +272,8 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         for (Section s : sections.values()) {
             s.powerAverage.tick();
             long value = (long) s.powerAverage.getAverage();
-            s.displayPower = (int)(value * MjAPI.MJ / maxPower);
+            long temp = Math.min(value * MjAPI.MJ / maxPower, 1 * MjAPI.MJ);
+            s.displayPower = (int) (temp);
         }
 
         // Compute the tiles requesting power that are not power pipes
@@ -291,7 +291,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         }
 
         // Sum the amount of power requested on each side
-        long[] transferQuery = new long[6];
+        long[] transferQueryTemp = new long[6];
         for (EnumFacing face : EnumFacing.VALUES) {
             if (!pipe.isConnected(face)) {
                 continue;
@@ -302,12 +302,12 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
                     query += sections.get(face2).powerQuery;
                 }
             }
-            transferQuery[face.ordinal()] = query;
+            transferQueryTemp[face.ordinal()] = query;
         }
 
         // Transfer requested power to neighbouring pipes
         for (EnumFacing face : EnumFacing.VALUES) {
-            if (transferQuery[face.ordinal()] <= 0 || !pipe.isConnected(face)) {
+            if (transferQueryTemp[face.ordinal()] <= 0 || !pipe.isConnected(face)) {
                 continue;
             }
             IPipe oPipe = pipe.getHolder().getNeighbourPipe(face);
@@ -315,12 +315,16 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
                 continue;
             }
             PipeFlowPower oFlow = (PipeFlowPower) oPipe.getFlow();
-            oFlow.requestPower(face.getOpposite(), transferQuery[face.ordinal()]);
+            oFlow.requestPower(face.getOpposite(), transferQueryTemp[face.ordinal()]);
         }
         // Networking
 
 //        if (tracker.markTimeIfDelay(pipe.getHolder().getPipeWorld())) {
+        if (!Arrays.equals(transferQuery, transferQueryTemp)) {
             sendPayload(NET_POWER_AMOUNTS);
+        }
+
+        transferQuery = transferQueryTemp;
 //        }
     }
 
