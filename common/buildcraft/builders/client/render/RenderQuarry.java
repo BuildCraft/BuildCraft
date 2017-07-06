@@ -171,9 +171,9 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
 
         if (tile.frameBox.isInitialized() && false) {
             TileQuarry.TaskAddFrame currentTask = (TileQuarry.TaskAddFrame) tile.currentTask;
-            int index = tile.getFramePositions().indexOf(currentTask.framePos);
+            int index = tile.framePoses.indexOf(currentTask.framePos);
             if (index > 1) {
-                double progress = (double) currentTask.getPower() / currentTask.getTarget() * (index - 1) / tile.getFramePositions().size();
+                double progress = (double) currentTask.getPower() / currentTask.getTarget() * (index - 1) / tile.framePoses.size();
                 double progress1 = (progress >= 0 && progress <= 0.25) ? progress * 4 ://
                     (progress >= 0.25 && progress <= 0.5) ? 1 ://
                         (progress >= 0.5 && progress <= 0.75) ? 1 - (progress - 0.5) * 4 ://
