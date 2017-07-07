@@ -437,14 +437,14 @@ publishing {
         pub_apiJar(MavenPublication) {
             groupId "com.mod-buildcraft"
             artifactId "buildcraft-api"
-            version "7.99"
+            version project.version
 
             artifact apiJar
         }
         pub_apiSrcJar(MavenPublication) {
             groupId "com.mod-buildcraft"
             artifactId "buildcraft-api"
-            version "7.99"
+            version project.version
 
             artifact apiSrcJar
         }
