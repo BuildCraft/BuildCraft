@@ -128,15 +128,16 @@ public class GuideCraftingFactory implements GuidePartFactory {
             ChangingItemStack[][] inputGrid = { input };
             if (recipe instanceof IRecipeViewable.IViewableGrid) {
                 int width = ((IRecipeViewable.IViewableGrid) recipe).getRecipeWidth();
-                inputGrid = new ChangingItemStack[inputGrid.length / width][width];
+                int height = ((IRecipeViewable.IViewableGrid) recipe).getRecipeHeight();
+                inputGrid = new ChangingItemStack[width][height];
                 int x = 0;
                 int y = 0;
                 for (ChangingItemStack anInput : input) {
                     inputGrid[x][y] = anInput;
-                    x++;
-                    if (x > width) {
-                        x = 0;
-                        y++;
+                    y++;
+                    if (y >= height) {
+                        y = 0;
+                        x++;
                     }
                 }
             }
