@@ -11,14 +11,14 @@ public interface IRecipeViewable {
 
     ChangingItemStack getRecipeOutputs();
 
-    interface IViewableGrid extends IRecipeViewable {
+    public interface IViewableGrid extends IRecipeViewable {
         int getRecipeWidth();
 
         int getRecipeHeight();
     }
 
     /** Use this for integration table recipes or assembly table recipes. */
-    interface IRecipePowered extends IRecipeViewable {
+    public interface IRecipePowered extends IRecipeViewable {
         ChangingObject<Long> getMjCost();
     }
 }

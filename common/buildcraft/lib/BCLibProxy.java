@@ -131,7 +131,6 @@ public abstract class BCLibProxy implements IGuiHandler {
         @Override
         void fmlPostInit() {
             super.fmlPostInit();
-            GuideManager.INSTANCE.load();
         }
 
         @Override
