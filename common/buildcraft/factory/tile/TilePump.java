@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -145,7 +146,7 @@ public class TilePump extends TileMiner {
             List<BlockPos> springPositions = new ArrayList<>();
             BlockPos center = VecUtil.replaceValue(getPos(), Axis.Y, 0);
             for (BlockPos spring : BlockPos.getAllInBox(center.add(-10, 0, -10), center.add(10, 0, 10))) {
-                if (world.getBlockState(spring).getBlock() == BCCoreBlocks.spring) {
+                if (world.getBlockState(spring).getBlock() == BCCoreBlocks.SPRING) {
                     BCLog.logger.info("Found block at " + spring);
                     TileEntity tile = world.getTileEntity(spring);
                     if (tile instanceof TileSpringOil) {

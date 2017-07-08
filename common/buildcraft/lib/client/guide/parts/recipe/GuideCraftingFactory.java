@@ -6,6 +6,7 @@ package buildcraft.lib.client.guide.parts.recipe;
 
 import java.lang.reflect.Field;
 import java.util.List;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.Item;
@@ -26,9 +27,6 @@ import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.NonNullMatrix;
-import buildcraft.lib.recipe.ChangingItemStack;
-import buildcraft.lib.recipe.IRecipeViewable;
-import buildcraft.lib.recipe.IRecipeViewable.IViewableGrid;
 
 public class GuideCraftingFactory implements GuidePartFactory {
     private static final Field SHAPED_ORE_RECIPE___WIDTH;

@@ -16,7 +16,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.api.transport.pipe.PipeDefinition;
 
-import buildcraft.lib.BCLib;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.registry.RegistryHelper;
 
@@ -134,21 +133,16 @@ public class BCTransportItems {
             new ItemPluggablePulsar("item.plug.pulsar"),
             new ItemPluggableSimple("item.plug.light_sensor", BCTransportPlugs.lightSensor),
             new ItemPluggableFacade("item.plug.facade"),
-            new ItemWire("item.wire")
+            new ItemWire("item.wire"),
+            makePipeItem(BCTransportPipes.woodPower),
+            makePipeItem(BCTransportPipes.cobblePower),
+            makePipeItem(BCTransportPipes.stonePower),
+            makePipeItem(BCTransportPipes.quartzPower),
+            makePipeItem(BCTransportPipes.goldPower),
+            //makePipeItem(BCTransportPipes.ironPower),
+            makePipeItem(BCTransportPipes.sandstonePower)
         );
 
-
-        if (BCLib.DEV) {
-            event.getRegistry().registerAll(
-                makePipeItem(BCTransportPipes.woodPower),
-                makePipeItem(BCTransportPipes.cobblePower),
-                makePipeItem(BCTransportPipes.stonePower),
-                makePipeItem(BCTransportPipes.quartzPower),
-                makePipeItem(BCTransportPipes.goldPower),
-                //makePipeItem(BCTransportPipes.ironPower),
-                makePipeItem(BCTransportPipes.sandstonePower)
-            );
-        }
     }
 
     public static ItemPipeHolder makePipeItem(PipeDefinition def) {

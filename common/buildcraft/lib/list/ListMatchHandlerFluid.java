@@ -35,7 +35,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
         isBuilt = true;
         for (Item item : Item.REGISTRY) {
             NonNullList<ItemStack> stacks = NonNullList.create();
-            item.getSubItems(item, CreativeTabs.SEARCH, stacks);
+            item.getSubItems(CreativeTabs.SEARCH, stacks);
             for (ItemStack toTry : stacks) {
                 IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(toTry);
                 if (fluidHandler != null && fluidHandler.drain(1, false) == null) {

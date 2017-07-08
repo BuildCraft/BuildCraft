@@ -1,12 +1,15 @@
 package buildcraft.test.lib.expression;
 
-import static buildcraft.lib.expression.Argument.*;
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Assert;
 import org.junit.Test;
 
-import buildcraft.lib.expression.*;
+import buildcraft.lib.expression.Argument;
+import buildcraft.lib.expression.DefaultContexts;
+import buildcraft.lib.expression.ExpressionDebugManager;
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.GenericExpressionCompiler;
+import buildcraft.lib.expression.NodeStack;
+import buildcraft.lib.expression.NodeStackRecording;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
@@ -20,7 +23,15 @@ import buildcraft.lib.expression.node.func.NodeFuncGenericToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongToLong;
 import buildcraft.lib.expression.node.unary.UnaryNodeType;
-import buildcraft.lib.expression.node.value.*;
+import buildcraft.lib.expression.node.value.NodeConstantDouble;
+import buildcraft.lib.expression.node.value.NodeConstantLong;
+import buildcraft.lib.expression.node.value.NodeVariableDouble;
+import buildcraft.lib.expression.node.value.NodeVariableLong;
+import buildcraft.lib.expression.node.value.NodeVariableString;
+
+import static buildcraft.lib.expression.Argument.argDouble;
+import static buildcraft.lib.expression.Argument.argLong;
+import static org.junit.Assert.assertEquals;
 
 @SuppressWarnings("static-method")
 public class ExpressionTester {

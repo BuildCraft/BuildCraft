@@ -2,7 +2,6 @@ package buildcraft.energy.generation;
 
 import java.util.function.Predicate;
 
-import net.minecraft.block.BlockSponge;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing.Axis;
@@ -227,7 +226,7 @@ public abstract class OilGenStructure {
         }
 
         public void generate(World world, int count) {
-            IBlockState state = BCCoreBlocks.spring.getDefaultState();
+            IBlockState state = BCCoreBlocks.SPRING.getDefaultState();
             state = state.withProperty(BlockSpring.SPRING_TYPE, EnumSpring.OIL);
             world.setBlockState(pos, state);
             TileEntity tile = world.getTileEntity(pos);

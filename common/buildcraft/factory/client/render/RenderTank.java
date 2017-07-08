@@ -74,10 +74,10 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
 
         FluidRenderer.vertex.lighti(combinedLight);
 
-        FluidRenderer.renderFluid(FluidSpriteType.STILL, fluid, forRender.amount, tile.tank.getCapacity(), min, max, vb, sideRender);
+        FluidRenderer.renderFluid(FluidSpriteType.STILL, fluid, forRender.amount, tile.tank.getCapacity(), min, max, bb, sideRender);
 
         // buffer finish
-        vb.setTranslation(0, 0, 0);
+        bb.setTranslation(0, 0, 0);
         Tessellator.getInstance().draw();
 
         // gl state finish

@@ -27,7 +27,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.client.guide.GuiGuide;
-import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.reload.LibConfigChangeListener;
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.DetachedRenderer.RenderMatrixType;

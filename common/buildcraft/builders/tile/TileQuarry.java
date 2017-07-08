@@ -276,7 +276,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         frameBreakBlockPoses.remove(blockPos);
         framePlaceFramePoses.remove(blockPos);
         if (shouldBeFrame(blockPos)) {
-            if (world.getBlockState(blockPos).getBlock() != BCBuildersBlocks.frame) {
+            if (world.getBlockState(blockPos).getBlock() != BCBuildersBlocks.FRAME) {
                 if (!world.isAirBlock(blockPos)) {
                     frameBreakBlockPoses.add(blockPos);
                 } else {
@@ -785,7 +785,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                     world.destroyBlock(breakPos, true);
                     for (EntityItem entity : world.getEntitiesWithinAABB(
                         EntityItem.class,
-                        new AxisAlignedBB(breakPos).expandXyz(1)
+                        new AxisAlignedBB(breakPos).grow(1)
                     )) {
                         TransactorEntityItem transactor = new TransactorEntityItem(entity);
                         ItemStack stack;

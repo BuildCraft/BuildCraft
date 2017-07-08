@@ -21,10 +21,6 @@ import buildcraft.api.recipes.IRefineryRecipeManager.IDistillationRecipe;
 
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.misc.MathUtil;
-import buildcraft.lib.recipe.OredictionaryNames;
-import buildcraft.lib.recipe.RecipeBuilderShaped;
-
-import buildcraft.core.BCCoreBlocks;
 
 public class BCEnergyRecipes {
     public static void init() {

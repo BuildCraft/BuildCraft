@@ -327,7 +327,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
             Vec3d from = VecUtil.convertCenter(getPos());
             FluidStack c_in_f = end.smoothedCoolableIn.getFluidForRender();
             if (c_in_f != null && c_in_f.getFluid() == FluidRegistry.LAVA) {
-                IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchangeStart);
+                IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.HEAT_EXCHANGE_START);
                 if (state != null) {
                     EnumFacing dir = state.getValue(BlockBCBase_Neptune.PROP_FACING);
                     spewForth(from, dir.getOpposite(), EnumParticleTypes.SMOKE_LARGE);
@@ -347,9 +347,9 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         Vec3d vecDir = new Vec3d(dir.getDirectionVec());
         from = from.add(VecUtil.scale(vecDir, 0.5));
 
-        double x = from.xCoord;
-        double y = from.yCoord;
-        double z = from.zCoord;
+        double x = from.x;
+        double y = from.y;
+        double z = from.z;
 
         Vec3d motion = VecUtil.scale(vecDir, 0.4);
         int particleCount = Minecraft.getMinecraft().gameSettings.particleSetting;
@@ -359,9 +359,9 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         }
         particleCount = particleCount == 0 ? 5 : 2;
         for (int i = 0; i < particleCount; i++) {
-            double dx = motion.xCoord + (Math.random() - 0.5) * 0.1;
-            double dy = motion.yCoord + (Math.random() - 0.5) * 0.1;
-            double dz = motion.zCoord + (Math.random() - 0.5) * 0.1;
+            double dx = motion.x + (Math.random() - 0.5) * 0.1;
+            double dy = motion.y + (Math.random() - 0.5) * 0.1;
+            double dz = motion.z + (Math.random() - 0.5) * 0.1;
             double interp = i / (double) particleCount;
             x -= dx * interp;
             y -= dy * interp;
@@ -418,7 +418,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
 
     @Nullable
     private IFluidHandler getFluidAutoOutputTarget() {
-        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchangeStart);
+        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.HEAT_EXCHANGE_START);
         if (state == null) {
             return null;
         }

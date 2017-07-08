@@ -7,8 +7,6 @@
 package buildcraft.energy;
 
 import net.minecraft.block.Block;
-import buildcraft.api.enums.EnumEngineType;
-import buildcraft.api.enums.EnumSpring;
 
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -26,6 +24,7 @@ public class BCEnergyBlocks {
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         BCEnergyFluids.register();
+        EnumSpring.OIL.liquidBlock = BCEnergyFluids.crudeOil[0].getBlock().getDefaultState();
         EnumSpring.OIL.tileConstructor = TileSpringOil::new;
     }
 }

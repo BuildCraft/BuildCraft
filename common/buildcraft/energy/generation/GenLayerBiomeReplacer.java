@@ -11,9 +11,6 @@ import java.util.Random;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
 
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
-
 import buildcraft.lib.misc.data.SimplexNoise;
 
 @SuppressWarnings("Duplicates")

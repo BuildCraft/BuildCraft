@@ -1,8 +1,5 @@
 package buildcraft.test.lib.misc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -16,6 +13,9 @@ import net.minecraft.util.math.Vec3i;
 
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.Matrix4i;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 @RunWith(Theories.class)
 public class Matrix4iTester {

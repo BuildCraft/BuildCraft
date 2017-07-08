@@ -14,6 +14,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.RegistryHelper;
 
 import buildcraft.builders.block.BlockArchitectTable;
@@ -44,12 +45,12 @@ public class BCBuildersBlocks{
             new BlockBuilder(Material.IRON, "block.builder"),
             new BlockFiller(Material.IRON, "block.filler"),
             new BlockElectronicLibrary(Material.IRON, "block.library"),
-            new BlockReplacer(Material.IRON, "block.replacer"),
             new BlockFrame(Material.ROCK, "block.frame"),
             new BlockQuarry(Material.ROCK, "block.quarry")
         );
-
-
+        if (BCLib.DEV) {
+            event.getRegistry().register(new BlockReplacer(Material.IRON, "block.replacer"));
+        }
     }
 
     @SubscribeEvent

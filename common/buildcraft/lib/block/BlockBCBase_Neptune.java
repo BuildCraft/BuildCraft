@@ -16,8 +16,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Item;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
@@ -39,7 +37,9 @@ public class BlockBCBase_Neptune extends Block {
     public static final IProperty<EnumFacing> PROP_FACING = BuildCraftProperties.BLOCK_FACING;
     public static final IProperty<EnumFacing> BLOCK_FACING_6 = BuildCraftProperties.BLOCK_FACING_6;
 
-    /** The tag used to identify this in the {@link TagManager} */
+    /**
+     * The tag used to identify this in the {@link TagManager}
+     */
     public final String id;
 
     public BlockBCBase_Neptune(Material material, String id) {
@@ -161,4 +161,5 @@ public class BlockBCBase_Neptune extends Block {
             super.getSubBlocks(itemIn, items);
         }
 
+    }
 }

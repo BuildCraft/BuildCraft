@@ -7,6 +7,7 @@
 package buildcraft.transport.item;
 
 import java.util.List;
+
 import javax.annotation.Nonnull;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -94,7 +95,6 @@ public class ItemPluggableGate extends ItemBC_Neptune implements IItemPluggable 
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
         subItems.add(new ItemStack(this));
         for (EnumGateMaterial material : EnumGateMaterial.VALUES) {

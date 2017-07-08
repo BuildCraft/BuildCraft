@@ -58,17 +58,16 @@ public class BCFactoryBlocks {
             new BlockFloodGate(Material.ROCK, "block.flood_gate"),
             new BlockTank(Material.ROCK, "block.tank"),
             new BlockChute(Material.ROCK, "block.chute"),
-            new BlockDistiller(Material.IRON, "block.distiller")
+            new BlockDistiller(Material.IRON, "block.distiller"),
             //new BlockPlastic("block.plastic")
-        );
+            new BlockHeatExchange(Material.IRON, "block.heat_exchange.start", BlockHeatExchange.Part.START),
+            new BlockHeatExchange(Material.IRON, "block.heat_exchange.middle", BlockHeatExchange.Part.MIDDLE),
+            new BlockHeatExchange(Material.IRON, "block.heat_exchange.end", BlockHeatExchange.Part.END)
+            );
 
         if (BCLib.DEV) {
             event.getRegistry().registerAll(
-                new BlockHeatExchange(Material.IRON, "block.heat_exchange.start", BlockHeatExchange.Part.START),
-                new BlockHeatExchange(Material.IRON, "block.heat_exchange.middle", BlockHeatExchange.Part.MIDDLE),
-                new BlockHeatExchange(Material.IRON, "block.heat_exchange.end", BlockHeatExchange.Part.END),
                 new BlockWaterGel(Material.CLAY, "block.water_gel")
-
             );
         }
     }

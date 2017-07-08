@@ -1,7 +1,5 @@
 package buildcraft.test.core;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -20,6 +18,8 @@ import net.minecraft.util.math.Vec3d;
 import buildcraft.lib.misc.data.Box;
 
 import buildcraft.test.TestHelper;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(Theories.class)
 public class BoxTester {

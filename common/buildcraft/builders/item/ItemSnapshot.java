@@ -107,7 +107,7 @@ public class ItemSnapshot extends ItemBC_Neptune {
                 tooltip.add(LocaleUtil.localize("item.blueprint.author") + " " + owner.getName());
             }
             if (flag.isAdvanced()) {
-                tooltip.add("Hash: " + HashUtil.convertHashToString(header.hash));
+                tooltip.add("Hash: " + HashUtil.convertHashToString(header.key.hash));
                 tooltip.add("Date: " + header.created);
                 tooltip.add("Owner UUID: " + header.owner);
             }

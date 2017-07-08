@@ -82,7 +82,6 @@ public class ItemPluggableLens extends ItemBC_Neptune implements IItemPluggable 
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
         for (int i = 0; i < 34; i++) {
             subItems.add(new ItemStack(this, 1, i));

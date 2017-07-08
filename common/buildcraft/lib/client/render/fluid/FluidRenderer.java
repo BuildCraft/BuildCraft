@@ -408,7 +408,7 @@ public class FluidRenderer {
         }
 
         public TankSize shink(Vec3d by) {
-            return shrink(by.xCoord, by.yCoord, by.zCoord);
+            return shrink(by.x, by.y, by.z);
         }
 
         public TankSize rotateY() {
@@ -419,9 +419,9 @@ public class FluidRenderer {
 
         private static Vec3d rotateY(Vec3d vec) {
             return new Vec3d(//
-                1 - vec.zCoord,//
-                vec.yCoord,//
-                vec.xCoord//
+                1 - vec.z,//
+                vec.y,//
+                vec.x//
             );
         }
     }

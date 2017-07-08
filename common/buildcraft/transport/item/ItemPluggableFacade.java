@@ -7,6 +7,7 @@
 package buildcraft.transport.item;
 
 import java.util.List;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.state.IBlockState;
@@ -22,9 +23,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacadeItem;
@@ -103,7 +101,6 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
         // Add a single phased facade as a default
         //check if the data is present as we only process in post-init

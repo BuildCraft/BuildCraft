@@ -19,7 +19,6 @@ import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.button.GuiSpriteButton;
-import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.elem.ToolTip;
 
 import buildcraft.builders.container.ContainerFiller;

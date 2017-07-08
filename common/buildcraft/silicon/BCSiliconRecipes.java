@@ -30,7 +30,7 @@ import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 
 public class BCSiliconRecipes {
     public static void init() {
-        if (BCItems.SILICON_REDSTONE_CLIPSET != null) {
+        if (BCItems.SILICON_REDSTONE_CHIPSET != null) {
             addChipsetAssembly(1, null, EnumRedstoneChipset.RED);
             addChipsetAssembly(2, "ingotIron", EnumRedstoneChipset.IRON);
             addChipsetAssembly(4, "ingotGold", EnumRedstoneChipset.GOLD);

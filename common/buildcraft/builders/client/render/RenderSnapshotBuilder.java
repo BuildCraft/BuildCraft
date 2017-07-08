@@ -7,6 +7,7 @@
 package buildcraft.builders.client.render;
 
 import java.util.Collections;
+
 import javax.vecmath.Point3f;
 
 import net.minecraft.client.renderer.BufferBuilder;
@@ -86,7 +87,7 @@ public class RenderSnapshotBuilder {
                     )
                 )
                     .lighti(world.getCombinedLight(new BlockPos(robotPos), 0))
-                    .render(vb);
+                    .render(bb);
                 i++;
             }
 

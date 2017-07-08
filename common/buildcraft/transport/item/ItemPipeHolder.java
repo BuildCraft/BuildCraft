@@ -55,7 +55,6 @@ public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemP
         return this;
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (this.isInCreativeTab(tab))

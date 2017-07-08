@@ -226,7 +226,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                             for (EnumFacing side : EnumFacing.VALUES) {
                                 world.notifyNeighborsOfStateChange(
                                     currentPos.offset(side),
-                                    BCFactoryBlocks.floodGate,
+                                    BCFactoryBlocks.FLOOD_GATE,
                                     false
                                 );
                             }
