@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.client.render.DetatchedRenderer;
+import buildcraft.lib.client.render.DetachedRenderer;
 
 import buildcraft.builders.client.render.RenderArchitectTables;
 import buildcraft.builders.client.render.RenderBuilder;
@@ -31,8 +31,7 @@ import buildcraft.builders.container.ContainerReplacer;
 import buildcraft.builders.gui.GuiArchitectTable;
 import buildcraft.builders.gui.GuiBuilder;
 import buildcraft.builders.gui.GuiElectronicLibrary;
-import buildcraft.builders.gui.GuiFiller;
-import buildcraft.builders.gui.GuiFillingPlanner;
+import buildcraft.builders.gui.GuiFilling;
 import buildcraft.builders.gui.GuiReplacer;
 import buildcraft.builders.tile.TileArchitectTable;
 import buildcraft.builders.tile.TileBuilder;
@@ -127,7 +126,7 @@ public abstract class BCBuildersProxy implements IGuiHandler {
             if (id == BCBuildersGuis.FILLER.ordinal()) {
                 if (tile instanceof TileFiller) {
                     TileFiller filler = (TileFiller) tile;
-                    return new GuiFiller(new ContainerFiller(player, filler));
+                    return new GuiFilling(new ContainerFiller(player, filler));
                 }
             }
             if (id == BCBuildersGuis.ARCHITECT.ordinal()) {
@@ -143,7 +142,7 @@ public abstract class BCBuildersProxy implements IGuiHandler {
                 }
             }
             if (id == BCBuildersGuis.FILLING_PLANNER.ordinal()) {
-                return new GuiFillingPlanner(new ContainerFillingPlanner(player));
+                return new GuiFilling(new ContainerFillingPlanner(player));
             }
             return null;
         }
@@ -162,8 +161,8 @@ public abstract class BCBuildersProxy implements IGuiHandler {
             ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilder());
             ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderFiller());
             ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderQuarry());
-            DetatchedRenderer.INSTANCE.addRenderer(
-                DetatchedRenderer.RenderMatrixType.FROM_WORLD_ORIGIN,
+            DetachedRenderer.INSTANCE.addRenderer(
+                DetachedRenderer.RenderMatrixType.FROM_WORLD_ORIGIN,
                 RenderArchitectTables.INSTANCE
             );
         }

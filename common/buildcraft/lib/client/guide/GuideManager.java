@@ -98,14 +98,23 @@ public enum GuideManager {
     }
 
     public ImmutableSet<PageEntry> getAllEntries() {
+        if (entries.isEmpty()) {
+            load();
+        }
         return ImmutableSet.copyOf(entries.keySet());
     }
 
     public GuidePageFactory getFactoryFor(PageEntry entry) {
+        if (entries.isEmpty()) {
+            load();
+        }
         return pages.get(entry.page);
     }
 
     public PageEntry getEntryFor(@Nonnull ItemStack stack) {
+        if (entries.isEmpty()) {
+            load();
+        }
         for (PageEntry entry : entries.keySet()) {
             if (entry.stackMatches(stack)) {
                 return entry;
@@ -116,6 +125,9 @@ public enum GuideManager {
 
     @Nonnull
     public GuidePageFactory getPageFor(@Nonnull ItemStack stack) {
+        if (entries.isEmpty()) {
+            load();
+        }
         PageEntry entry = getEntryFor(stack);
         if (entry != null) {
             GuidePageFactory factory = getFactoryFor(entry);

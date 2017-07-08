@@ -16,7 +16,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.lib.client.render.DetatchedRenderer;
+import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
@@ -48,7 +48,7 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
         Minecraft.getMinecraft().mcProfiler.startSection("marker");
         Minecraft.getMinecraft().mcProfiler.startSection("volume");
 
-        DetatchedRenderer.fromWorldOriginPre(Minecraft.getMinecraft().player, partialTicks);
+        DetachedRenderer.fromWorldOriginPre(Minecraft.getMinecraft().player, partialTicks);
         RenderHelper.disableStandardItemLighting();
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
@@ -65,7 +65,7 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
         }
 
         RenderHelper.enableStandardItemLighting();
-        DetatchedRenderer.fromWorldOriginPost();
+        DetachedRenderer.fromWorldOriginPost();
 
         Minecraft.getMinecraft().mcProfiler.endSection();
         Minecraft.getMinecraft().mcProfiler.endSection();

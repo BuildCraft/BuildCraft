@@ -3,6 +3,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
+
 package buildcraft.lib.misc;
 
 import java.text.DecimalFormat;
@@ -72,17 +73,12 @@ public final class StringUtilBC {
         return out.toString();
     }
 
-    public static String blockPosToShortString(BlockPos pos) {
-        return pos.getX() + "," + pos.getY() + "," + pos.getZ();
+    public static String blockPosToString(BlockPos pos) {
+        return pos.getX() + ", " + pos.getY() + ", " + pos.getZ();
     }
 
-    public static BlockPos blockPosFromShortString(String string) {
-        String[] s = string.split(",");
-        try {
-            return new BlockPos(Integer.parseInt(s[0]), Integer.parseInt(s[1]), Integer.parseInt(s[2]));
-        } catch (NumberFormatException | ArrayIndexOutOfBoundsException nfe) {
-            throw new IllegalArgumentException("The given string \"" + string + "\" was invalid!", nfe);
-        }
+    public static String blockPosAsSizeToString(BlockPos pos) {
+        return pos.getX() + "x" + pos.getY() + "x" + pos.getZ();
     }
 
     // Displaying objects

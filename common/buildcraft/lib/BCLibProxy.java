@@ -29,8 +29,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.reload.LibConfigChangeListener;
-import buildcraft.lib.client.render.DetatchedRenderer;
-import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
+import buildcraft.lib.client.render.DetachedRenderer;
+import buildcraft.lib.client.render.DetachedRenderer.RenderMatrixType;
 import buildcraft.lib.client.render.MarkerRenderer;
 import buildcraft.lib.client.resource.ResourceRegistry;
 import buildcraft.lib.debug.DebugRenderHelper;
@@ -101,8 +101,8 @@ public abstract class BCLibProxy implements IGuiHandler {
         @Override
         void fmlPreInit() {
             super.fmlPreInit();
-            DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, MarkerRenderer.INSTANCE);
-            DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, DebugRenderHelper.INSTANCE);
+            DetachedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, MarkerRenderer.INSTANCE);
+            DetachedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, DebugRenderHelper.INSTANCE);
             // various sprite registers
             BCLibSprites.fmlPreInitClient(); 
             BCLibConfig.configChangeListeners.add(LibConfigChangeListener.INSTANCE);
@@ -119,7 +119,6 @@ public abstract class BCLibProxy implements IGuiHandler {
         @Override
         void fmlPostInit() {
             super.fmlPostInit();
-            GuideManager.INSTANCE.load();
         }
 
         @Override

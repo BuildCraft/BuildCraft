@@ -31,11 +31,10 @@ public enum FacadeSwapRecipe implements IRecipe, IRecipeViewable.IViewableGrid {
 
     private static final int TIME_GAP = 500;
 
-    private static final ChangingItemStack[] INPUTS;
-    private static final ChangingItemStack OUTPUTS;
+    private static final ChangingItemStack[] INPUTS = { null };
+    private static ChangingItemStack OUTPUTS;
 
-    static {
-        INPUTS = new ChangingItemStack[1];
+    private static void genRecipes() {
         NonNullList<ItemStack> list1 = NonNullList.create();
         NonNullList<ItemStack> list2 = NonNullList.create();
         for (FacadeBlockStateInfo info : FacadeStateManager.validFacadeStates.values()) {
@@ -94,11 +93,17 @@ public enum FacadeSwapRecipe implements IRecipe, IRecipeViewable.IViewableGrid {
 
     @Override
     public ChangingItemStack[] getRecipeInputs() {
+        if (INPUTS[0] == null) {
+            genRecipes();
+        }
         return INPUTS;
     }
 
     @Override
     public ChangingItemStack getRecipeOutputs() {
+        if (OUTPUTS == null) {
+            genRecipes();
+        }
         return OUTPUTS;
     }
 

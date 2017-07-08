@@ -3,6 +3,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
+
 package buildcraft.transport.statements;
 
 import net.minecraft.util.EnumFacing;
@@ -29,7 +30,7 @@ public class ActionPowerPulsar extends BCStatement implements IActionInternalSid
     public final boolean constant;
 
     public ActionPowerPulsar(boolean constant) {
-        super("buildcraft:pulsar." + (constant ? "constant" : "single"), "buildcraft.pulser.constant" + (constant ? "constant" : "single"));
+        super("buildcraft:pulsar." + (constant ? "constant" : "single"), "buildcraft.pulsar.constant" + (constant ? "constant" : "single"));
         this.constant = constant;
     }
 

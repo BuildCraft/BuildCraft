@@ -240,17 +240,16 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == MjAPI.CAP_REDSTONE_RECEIVER) {
-            return (T) this;
+            return MjAPI.CAP_REDSTONE_RECEIVER.cast(this);
         }
         if (capability == MjAPI.CAP_RECEIVER) {
-            return (T) this;
+            return MjAPI.CAP_RECEIVER.cast(this);
         }
         if (capability == MjAPI.CAP_CONNECTOR) {
-            return (T) this;
+            return MjAPI.CAP_CONNECTOR.cast(this);
         }
         return super.getCapability(capability, facing);
     }

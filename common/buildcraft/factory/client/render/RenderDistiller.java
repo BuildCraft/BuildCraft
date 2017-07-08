@@ -33,9 +33,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
+import buildcraft.lib.client.render.fluid.FluidRenderer.TankSize;
 import buildcraft.lib.client.render.fluid.FluidSpriteType;
-import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.fluid.FluidSmoother;
+import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
 
 import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.BCFactoryModels;
@@ -47,9 +48,9 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
 
     static {
         EnumFacing face = EnumFacing.WEST;
-        Size tankIn = new Size(0, 0, 4, 8, 16, 12).shrink(1 / 64.0);
-        Size tankOutGas = new Size(8, 8, 0, 16, 16, 16).shrink(1 / 64.0);
-        Size tankOutLiquid = new Size(8, 0, 0, 16, 8, 16).shrink(1 / 64.0);
+        TankSize tankIn = new TankSize(0, 0, 4, 8, 16, 12).shrink(1 / 64.0);
+        TankSize tankOutGas = new TankSize(8, 8, 0, 16, 16, 16).shrink(1 / 64.0);
+        TankSize tankOutLiquid = new TankSize(8, 0, 0, 16, 8, 16).shrink(1 / 64.0);
         TankRenderSizes sizes = new TankRenderSizes(tankIn, tankOutGas, tankOutLiquid);
         for (int i = 0; i < 4; i++) {
             TANK_SIZES.put(face, sizes);
@@ -111,9 +112,9 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         profiler.endSection();
         profiler.endStartSection("fluid");
 
-        renderTank(sizes.tankIn, tile.tankIn, combinedLight, bb);
-        renderTank(sizes.tankOutGas, tile.tankOutGas, combinedLight, bb);
-        renderTank(sizes.tankOutLiquid, tile.tankOutLiquid, combinedLight, bb);
+        renderTank(sizes.tankIn, tile.smoothedTankIn, combinedLight, partialTicks, bb);
+        renderTank(sizes.tankOutGas, tile.smoothedTankOutGas, combinedLight, partialTicks, bb);
+        renderTank(sizes.tankOutLiquid, tile.smoothedTankOutLiquid, combinedLight, partialTicks, bb);
 
         // buffer finish
         bb.setTranslation(0, 0, 0);
@@ -128,21 +129,21 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         profiler.endSection();
     }
 
-    private static void renderTank(Size size, Tank tank, int combinedLight, BufferBuilder bb) {
-        FluidStack fluid = tank.getFluidForRender();
+    public static void renderTank(TankSize size, FluidSmoother tank, int combinedLight, float partialTicks, BufferBuilder bb) {
+        FluidStackInterp fluid = tank.getFluidForRender(partialTicks);
         if (fluid == null || fluid.amount <= 0) {
             return;
         }
-        int blockLight = fluid.getFluid().getLuminosity(fluid) & 0xF;
+        int blockLight = fluid.fluid.getFluid().getLuminosity(fluid.fluid) & 0xF;
         combinedLight |= blockLight << 4;
         FluidRenderer.vertex.lighti(combinedLight);
-        FluidRenderer.renderFluid(FluidSpriteType.STILL, fluid, tank.getCapacity(), size.min, size.max, bb, null);
+        FluidRenderer.renderFluid(FluidSpriteType.STILL, fluid.fluid, fluid.amount, tank.getCapacity(), size.min, size.max, bb, null);
     }
 
     static class TankRenderSizes {
-        final Size tankIn, tankOutGas, tankOutLiquid;
+        final TankSize tankIn, tankOutGas, tankOutLiquid;
 
-        public TankRenderSizes(Size tankIn, Size tankOutGas, Size tankOutLiquid) {
+        public TankRenderSizes(TankSize tankIn, TankSize tankOutGas, TankSize tankOutLiquid) {
             this.tankIn = tankIn;
             this.tankOutGas = tankOutGas;
             this.tankOutLiquid = tankOutLiquid;

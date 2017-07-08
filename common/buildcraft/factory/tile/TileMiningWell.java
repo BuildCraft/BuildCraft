@@ -22,7 +22,7 @@ import buildcraft.lib.inventory.AutomaticProvidingTransactor;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.InventoryUtil;
-import buildcraft.lib.mj.MjBatteryReciver;
+import buildcraft.lib.mj.MjBatteryReceiver;
 
 import buildcraft.factory.BCFactoryBlocks;
 
@@ -99,6 +99,6 @@ public class TileMiningWell extends TileMiner {
 
     @Override
     protected IMjReceiver createMjReceiver() {
-        return new MjBatteryReciver(battery);
+        return new MjBatteryReceiver(battery);
     }
 }

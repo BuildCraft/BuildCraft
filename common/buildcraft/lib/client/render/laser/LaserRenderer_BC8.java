@@ -28,6 +28,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
+import buildcraft.lib.misc.SpriteUtil;
 
 @SideOnly(Side.CLIENT)
 public class LaserRenderer_BC8 {
@@ -149,6 +150,7 @@ public class LaserRenderer_BC8 {
         profiler.startSection("compute");
         LaserCompiledList compiled = COMPILED_STATIC_LASERS.getUnchecked(data);
         profiler.endStartSection("render");
+        SpriteUtil.bindBlockTextureMap();
         compiled.render();
         profiler.endSection();
     }
@@ -159,6 +161,7 @@ public class LaserRenderer_BC8 {
         profiler.startSection("compute");
         LaserCompiledBuffer compiled = COMPILED_DYNAMIC_LASERS.getUnchecked(data);
         profiler.endStartSection("render");
+        SpriteUtil.bindBlockTextureMap();
         compiled.render(buffer);
         profiler.endSection();
     }

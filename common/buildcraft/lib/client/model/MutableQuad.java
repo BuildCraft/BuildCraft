@@ -599,7 +599,7 @@ public class MutableQuad {
 
     @Override
     public String toString() {
-        return "MutableQuad [verticies=" + vToS() + ", tintIndex=" + tintIndex + ", face=" + face + "]";
+        return "MutableQuad [vertices=" + vToS() + ", tintIndex=" + tintIndex + ", face=" + face + "]";
     }
 
     private String vToS() {

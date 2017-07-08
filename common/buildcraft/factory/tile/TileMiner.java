@@ -29,6 +29,7 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.TilesAPI;
 
 import buildcraft.lib.migrate.BCVersion;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -48,7 +49,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
     private double lastLength = 0;
 
     protected boolean isComplete = false;
-    protected final MjBattery battery = new MjBattery(500 * MjAPI.MJ);
+    protected final MjBattery battery = new MjBattery(getBatteryCapacity());
 
     public TileMiner() {
         caps.addProvider(new MjCapabilityHelper(createMjReceiver()));
@@ -143,6 +144,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
 
     @Override
     protected void migrateOldNBT(int version, NBTTagCompound nbt) {
+        super.migrateOldNBT(version, nbt);
         if (version == BCVersion.BEFORE_RECORDS.dataVersion || version == BCVersion.v7_2_0_pre_12.dataVersion) {
             NBTTagCompound oldBattery = nbt.getCompoundTag("battery");
             int energy = oldBattery.getInteger("energy");
@@ -217,7 +219,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
         left.add("currentLength = " + currentLength);
         left.add("lastLength = " + lastLength);
         left.add("isComplete = " + isComplete());
-        left.add("progress = " + progress);
+        left.add("progress = " + LocaleUtil.localizeMj(progress));
     }
 
     @Override
@@ -244,5 +246,9 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
     public float getPercentFilledForRender() {
         float val = battery.getStored() / (float) battery.getCapacity();
         return val < 0 ? 0 : val > 1 ? 1 : val;
+    }
+
+    protected long getBatteryCapacity() {
+        return 500 * MjAPI.MJ;
     }
 }

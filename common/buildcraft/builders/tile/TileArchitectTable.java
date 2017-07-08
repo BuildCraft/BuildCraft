@@ -97,7 +97,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before,
-        @Nonnull ItemStack after) {
+                                @Nonnull ItemStack after) {
         super.onSlotChange(handler, slot, before, after);
         if (handler == invSnapshotIn) {
             if (invSnapshotOut.getStackInSlot(0).isEmpty() && after.getItem() instanceof ItemSnapshot) {
@@ -122,9 +122,15 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             box.setMin(volumeBox.box.min());
             box.setMax(volumeBox.box.max());
             isValid = true;
-            volumeBox.locks.add(new Lock(new Lock.Cause.CauseBlock(pos, blockState.getBlock()),
-                new Lock.Target.TargetResize(), new Lock.Target.TargetUsedByMachine(
-                    Lock.Target.TargetUsedByMachine.EnumType.STRIPES_READ)));
+            volumeBox.locks.add(
+                new Lock(
+                    new Lock.Cause.CauseBlock(pos, blockState.getBlock()),
+                    new Lock.Target.TargetResize(),
+                    new Lock.Target.TargetUsedByMachine(
+                        Lock.Target.TargetUsedByMachine.EnumType.STRIPES_READ
+                    )
+                )
+            );
             volumeBoxes.markDirty();
             sendNetworkUpdate(NET_BOX);
         } else if (tile instanceof IAreaProvider) {
@@ -254,27 +260,32 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         snapshot.offset = box.min().subtract(pos.offset(facing.getOpposite()));
         if (snapshot instanceof Template) {
             ((Template) snapshot).data = templateScannedBlocks;
-        } else if (snapshot instanceof Blueprint) {
-            // noinspection ConstantConditions
-            Blueprint bpt = (Blueprint) snapshot;
-            bpt.palette.addAll(blueprintScannedPalette);
-            bpt.data = blueprintScannedData;
-            bpt.entities.addAll(blueprintScannedEntities);
-        } else {
-
         }
-
-        snapshot.header = new Header(snapshot.computeHash(), getOwner().getId(), new Date(), name);
-        GlobalSavedDataSnapshots store = GlobalSavedDataSnapshots.get(world);
-        store.snapshots.add(snapshot);
-        store.markDirty();
+        if (snapshot instanceof Blueprint) {
+            ((Blueprint) snapshot).palette.addAll(blueprintScannedPalette);
+            ((Blueprint) snapshot).data = blueprintScannedData;
+            ((Blueprint) snapshot).entities.addAll(blueprintScannedEntities);
+        }
+        snapshot.computeKey();
+        GlobalSavedDataSnapshots.get(world).addSnapshot(snapshot);
         ItemStack stackIn = invSnapshotIn.getStackInSlot(0);
         stackIn.setCount(stackIn.getCount() - 1);
         if (stackIn.getCount() == 0) {
             stackIn = ItemStack.EMPTY;
         }
         invSnapshotIn.setStackInSlot(0, stackIn);
-        invSnapshotOut.setStackInSlot(0, BCBuildersItems.SNAPSHOT.getUsed(snapshotType, snapshot.header));
+        invSnapshotOut.setStackInSlot(
+            0,
+            BCBuildersItems.SNAPSHOT.getUsed(
+                snapshotType,
+                new Header(
+                    snapshot.key,
+                    getOwner().getId(),
+                    new Date(),
+                    name
+                )
+            )
+        );
         templateScannedBlocks = null;
         blueprintScannedData = null;
         blueprintScannedEntities.clear();

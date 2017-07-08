@@ -72,7 +72,7 @@ public class BlockBuilder extends BlockBCTile_Neptune implements IBlockWithFacin
     }
 
     @Override
-    public boolean canBeRotated(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+    public boolean canBeRotated(World world, BlockPos pos, IBlockState state) {
         TileEntity tile = world.getTileEntity(pos);
         return !(tile instanceof TileBuilder) || ((TileBuilder) tile).getBuilder() == null;
     }

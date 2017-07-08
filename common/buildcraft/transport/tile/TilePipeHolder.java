@@ -9,13 +9,13 @@ package buildcraft.transport.tile;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.EntityLivingBase;
@@ -72,6 +72,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     public static final int NET_UPDATE_PLUG_EAST = getReceiverId(PipeMessageReceiver.PLUGGABLE_EAST);
     public static final int NET_UPDATE_WIRES = getReceiverId(PipeMessageReceiver.WIRES);
 
+    private int[] redstoneValues = new int[6];
+    private int[] oldRedstoneValues = new int[]{ -1, -1, -1, -1, -1, -1};
+
     static {
         for (PipeMessageReceiver rec : PipeMessageReceiver.VALUES) {
             IDS.allocId("UPDATE_" + rec);
@@ -126,6 +129,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             nbt.setTag("plugs", plugs);
         }
         nbt.setTag("wireManager", wireManager.writeToNbt());
+        nbt.setIntArray("redstone", redstoneValues);
         return nbt;
     }
 
@@ -151,6 +155,13 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             pluggables.get(face).readFromNbt(plugs.getCompoundTag(face.getName()));
         }
         wireManager.readFromNbt(nbt.getCompoundTag("wireManager"));
+        if (nbt.hasKey("redstone"))  {
+
+            int[] temp = nbt.getIntArray("redstone");
+            if (temp.length == 6) {
+                redstoneValues = temp;
+            }
+        }
     }
 
     // Misc
@@ -160,7 +171,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         super.onPlacedBy(placer, stack);
         Item item = stack.getItem();
         if (item instanceof IItemPipe) {
-            PipeDefinition definition = ((IItemPipe) item).getDefiniton();
+            PipeDefinition definition = ((IItemPipe) item).getDefinition();
             this.pipe = new Pipe(this, definition);
             eventBus.registerHandler(pipe.behaviour);
             eventBus.registerHandler(pipe.flow);
@@ -211,6 +222,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
 
     @Override
     public void update() {
+        redstoneValues = new int[6];
         // Tick objects
         if (pipe != null) {
             pipe.onTick();
@@ -248,6 +260,11 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         if (!wireManager.inited) {
             wireManager.updateBetweens(false);
             wireManager.inited = true;
+        }
+
+        if (!Arrays.equals(redstoneValues, oldRedstoneValues)) {
+            world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
+            oldRedstoneValues = redstoneValues;
         }
     }
 
@@ -376,6 +393,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     }
 
     public PipePluggable replacePluggable(EnumFacing side, PipePluggable with) {
+        redstoneValues = new int[6];
         PluggableHolder holder = pluggables.get(side);
         PipePluggable old = holder.pluggable;
         holder.pluggable = with;
@@ -416,9 +434,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             }
         }
         if (pipe.isConnected(side)) {
-            TileEntity neighour = getNeighbourTile(side);
-            if (neighour != null) {
-                return neighour.getCapability(capability, side.getOpposite());
+            TileEntity neighbour = getNeighbourTile(side);
+            if (neighbour != null) {
+                return neighbour.getCapability(capability, side.getOpposite());
             }
         }
         return null;
@@ -470,7 +488,18 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
 
     @Override
     public boolean setRedstoneOutput(EnumFacing side, int value) {
-        return false;// TODO!
+        if (side == null) {
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                redstoneValues[facing.ordinal()] = value;
+            }
+        } else {
+            redstoneValues[side.ordinal()] = value;
+        }
+        return true;
+    }
+
+    public int getRedstoneOutput(EnumFacing side) {
+        return redstoneValues[side.ordinal()];
     }
 
     // Caps

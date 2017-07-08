@@ -21,8 +21,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 
-import net.minecraftforge.common.util.Constants;
-
 import buildcraft.api.core.IZone;
 
 import buildcraft.lib.misc.NBTUtilBC;
@@ -128,7 +126,7 @@ public class ZonePlan implements IZone {
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
-        NBTUtilBC.readCompoundList(nbt.getTagList("chunkMapping", Constants.NBT.TAG_COMPOUND))
+        NBTUtilBC.readCompoundList(nbt.getTag("chunkMapping"))
                 .forEach(zoneChunkTag -> {
                     ZoneChunk chunk = new ZoneChunk();
                     chunk.readFromNBT(zoneChunkTag);

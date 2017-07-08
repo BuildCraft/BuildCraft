@@ -45,7 +45,7 @@ public class GuiIcon implements ISimpleDrawable {
         return new GuiIcon(new RawSprite(raw.location, uMin, vMin, raw.width, raw.height), textureSize);
     }
 
-    public DynamicTexture createDynamicTexure(int scale) {
+    public DynamicTexture createDynamicTexture(int scale) {
         return new DynamicTexture(width * scale, height * scale);
     }
 

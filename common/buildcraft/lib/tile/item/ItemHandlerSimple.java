@@ -30,7 +30,7 @@ import buildcraft.lib.tile.item.StackInsertionFunction.InsertionResult;
 public class ItemHandlerSimple extends AbstractInvItemTransactor implements IItemHandlerModifiable, IItemHandlerAdv, INBTSerializable<NBTTagCompound> {
     // Function-called stuff (helpers etc)
     private final StackInsertionChecker checker;
-    private final StackInsertionFunction insertor;
+    private final StackInsertionFunction inserter;
     private final StackChangeCallback callback;
 
     // Actual item stacks used
@@ -46,7 +46,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     public ItemHandlerSimple(int size, StackInsertionChecker checker, StackInsertionFunction insertionFunction, StackChangeCallback callback) {
         stacks = NonNullList.withSize(size, StackUtil.EMPTY);
         this.checker = checker;
-        this.insertor = insertionFunction;
+        this.inserter = insertionFunction;
         this.callback = callback;
     }
 
@@ -110,16 +110,17 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
         }
         if (canSet(slot, stack)) {
             ItemStack current = stacks.get(slot);
-            InsertionResult result = insertor.modifyForInsertion(slot, asValid(current.copy()), asValid(stack.copy()));
+            InsertionResult result = inserter.modifyForInsertion(slot, asValid(current.copy()), asValid(stack.copy()));
             if (!canSet(slot, result.toSet)) {
                 // We have a bad inserter or checker, as they should not be conflicting
-                CrashReport report = new CrashReport("Inserting an item (buildcraft:ItemHandlerSimple)", new IllegalStateException("Confilicting Insertion!"));
+                CrashReport report = new CrashReport("Inserting an item (buildcraft:ItemHandlerSimple)",
+                    new IllegalStateException("Conflicting Insertion!"));
                 CrashReportCategory cat = report.makeCategory("Inventory details");
                 cat.addCrashSection("Existing Item", current);
                 cat.addCrashSection("Inserting Item", stack);
                 cat.addCrashSection("Slot", slot);
                 cat.addCrashSection("Checker", checker.getClass());
-                cat.addCrashSection("Insertor", insertor.getClass());
+                cat.addCrashSection("Inserter", inserter.getClass());
                 throw new ReportedException(report);
             } else if (!simulate) {
                 setStackInternal(slot, result.toSet);
@@ -209,26 +210,24 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
 
     private void setStackInternal(int slot, @Nonnull ItemStack stack) {
         ItemStack before = stacks.get(slot);
-        if (!ItemStack.areItemStacksEqual(before, stack)) {
-            stacks.set(slot, asValid(stack));
-            // Transactor calc
-            if (stack.isEmpty() && firstUsed == slot) {
-                for (int s = firstUsed; s < getSlots(); s++) {
-                    if (!stacks.get(s).isEmpty()) {
-                        firstUsed = s;
-                        break;
-                    }
+        stacks.set(slot, asValid(stack));
+        // Transactor calc
+        if (stack.isEmpty() && firstUsed == slot) {
+            for (int s = firstUsed; s < getSlots(); s++) {
+                if (!stacks.get(s).isEmpty()) {
+                    firstUsed = s;
+                    break;
                 }
-                if (firstUsed == slot) {
-                    firstUsed = Integer.MAX_VALUE;
-                }
-            } else if (!stack.isEmpty() && firstUsed > slot) {
-                firstUsed = slot;
             }
+            if (firstUsed == slot) {
+                firstUsed = Integer.MAX_VALUE;
+            }
+        } else if (!stack.isEmpty() && firstUsed > slot) {
+            firstUsed = slot;
+        }
 
-            if (callback != null) {
-                callback.onStackChange(this, slot, before, asValid(stack));
-            }
+        if (callback != null) {
+            callback.onStackChange(this, slot, before, asValid(stack));
         }
     }
 
@@ -236,7 +235,4 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     public int getSlotLimit(int slot) {
         return 64;
     }
-
-
-
 }

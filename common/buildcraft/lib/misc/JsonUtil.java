@@ -32,7 +32,7 @@ public class JsonUtil {
             return ImmutableMap.copyOf(map);
 
         } catch (IllegalStateException ise) {
-            throw new JsonSyntaxException("Something was wrong with " + obj + " when deserialzing it as a " + token, ise);
+            throw new JsonSyntaxException("Something was wrong with " + obj + " when deserializing it as a " + token, ise);
         }
     }
 
@@ -45,7 +45,7 @@ public class JsonUtil {
             ArrayList<T> list = new Gson().fromJson(elem, token.getType());
             return ImmutableList.copyOf(list);
         } catch (IllegalStateException ise) {
-            throw new JsonSyntaxException("Something was wrong with " + obj + " when deserialzing it as a " + token, ise);
+            throw new JsonSyntaxException("Something was wrong with " + obj + " when deserializing it as a " + token, ise);
         }
     }
 

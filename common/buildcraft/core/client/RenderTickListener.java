@@ -38,7 +38,7 @@ import buildcraft.api.items.IMapLocation.MapLocationType;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.BCLibProxy;
-import buildcraft.lib.client.render.DetatchedRenderer;
+import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
@@ -200,7 +200,7 @@ public enum RenderTickListener {
         mc.mcProfiler.startSection("bc");
         mc.mcProfiler.startSection("renderWorld");
 
-        DetatchedRenderer.fromWorldOriginPre(player, partialTicks);
+        DetachedRenderer.fromWorldOriginPre(player, partialTicks);
 
         Item mainHandItem = mainHand.getItem();
         Item offHandItem = offHand.getItem();
@@ -211,7 +211,7 @@ public enum RenderTickListener {
             renderMarkerConnector(world, player);
         }
 
-        DetatchedRenderer.fromWorldOriginPost();
+        DetachedRenderer.fromWorldOriginPost();
 
         mc.mcProfiler.endSection();
         mc.mcProfiler.endSection();

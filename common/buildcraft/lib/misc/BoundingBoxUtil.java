@@ -15,6 +15,8 @@ import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.core.IBox;
 
+import buildcraft.lib.misc.data.Box;
+
 /** Various methods operating on (and creating) {@link AxisAlignedBB} */
 public class BoundingBoxUtil {
 
@@ -29,6 +31,14 @@ public class BoundingBoxUtil {
             BlockPos max = VecUtil.max(box.max(), additional);
             return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
         }
+    }
+
+    public static AxisAlignedBB makeFrom(BlockPos primary, BlockPos... additional) {
+        Box box = new Box(primary, primary);
+        for (BlockPos a : additional) {
+            box.extendToEncompass(a);
+        }
+        return box.getBoundingBox();
     }
 
     /** Creates an {@link AxisAlignedBB} from a block pos and 2 boxes
@@ -55,7 +65,8 @@ public class BoundingBoxUtil {
     }
 
     public static AxisAlignedBB makeAround(Vec3d around, double radius) {
-        return new AxisAlignedBB(around.subtract(radius, radius, radius), around.addVector(radius, radius, radius));
+        return new AxisAlignedBB(around.xCoord, around.yCoord, around.zCoord, around.xCoord, around.yCoord,
+            around.zCoord).expandXyz(radius);
     }
 
     public static AxisAlignedBB makeFrom(BlockPos pos, @Nullable IBox box, @Nullable Collection<BlockPos> additional) {

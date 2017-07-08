@@ -29,7 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.client.sprite.ISprite;
 
-/** 
+/**
  * Holds all of the information necessary to make one of the verticies in a {@link BakedQuad}. This provides a variety
  * of methods to quickly set or get different elements. This should be used with {@link MutableQuad} to make a face, or
  * by itself if you only need to define a single vertex. <br>
@@ -38,7 +38,7 @@ import buildcraft.lib.client.sprite.ISprite;
  * All of the mutating methods are in the form {@literal <element><type>}, where {@literal <element>} is the element to
  * set/get, and {@literal <type>} is the type that they should be set as. So {@link #positiond(double, double, double)}
  * will take in 3 doubles and set them to the position element, and {@link #colouri(int, int, int, int)} will take in 4
- * int's and set them to the colour elements. 
+ * int's and set them to the colour elements.
  */
 @SideOnly(Side.CLIENT)
 public class MutableVertex {
@@ -123,7 +123,7 @@ public class MutableVertex {
         // TEX_2F
         data[offset + 4] = Float.floatToRawIntBits(tex_u);
         data[offset + 5] = Float.floatToRawIntBits(tex_v);
-        // NROMAL_3B
+        // NORMAL_3B
         data[offset + 6] = normalToPackedInt();
     }
 
@@ -152,7 +152,7 @@ public class MutableVertex {
         // TEX_2F
         tex_u = Float.intBitsToFloat(data[offset + 4]);
         tex_v = Float.intBitsToFloat(data[offset + 5]);
-        // NROMAL_3B
+        // NORMAL_3B
         normali(data[offset + 6]);
         lightf(1,1);
     }

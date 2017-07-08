@@ -6,6 +6,7 @@
 
 package buildcraft.builders.item;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -73,8 +74,7 @@ public class ItemSnapshot extends ItemBC_Neptune {
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
-        subItems.add(new ItemStack(this, 1, 2));// clean blueprint
-        subItems.add(new ItemStack(this, 1));// clean template
+        Arrays.stream(EnumSnapshotType.values()).map(this::getClean).forEach(subItems::add);
     }
 
     @Override
@@ -102,14 +102,14 @@ public class ItemSnapshot extends ItemBC_Neptune {
             tooltip.add(LocaleUtil.localize("item.blueprint.blank"));
         } else {
             tooltip.add(header.name);
-            EntityPlayer author = header.getOwnerPlayer(world);
-            if (author != null) {
-                tooltip.add(LocaleUtil.localize("item.blueprint.author") + " " + author.getName());
+            EntityPlayer owner = header.getOwnerPlayer(world);
+            if (owner != null) {
+                tooltip.add(LocaleUtil.localize("item.blueprint.author") + " " + owner.getName());
             }
             if (flag.isAdvanced()) {
                 tooltip.add("Hash: " + HashUtil.convertHashToString(header.hash));
                 tooltip.add("Date: " + header.created);
-                tooltip.add("AuthorId: " + header.owner);
+                tooltip.add("Owner UUID: " + header.owner);
             }
         }
     }

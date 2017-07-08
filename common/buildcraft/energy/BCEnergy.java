@@ -34,7 +34,7 @@ import buildcraft.core.BCCoreBlocks;
 import buildcraft.energy.generation.BiomeInitializer;
 import buildcraft.energy.generation.BiomeOilDesert;
 import buildcraft.energy.generation.BiomeOilOcean;
-import buildcraft.energy.generation.OilPopulate;
+import buildcraft.energy.generation.OilGenerator;
 import buildcraft.energy.tile.TileEngineIron_BC8;
 import buildcraft.energy.tile.TileEngineStone_BC8;
 
@@ -58,6 +58,8 @@ public class BCEnergy {
     public static void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
         BCEnergyEntities.preInit();
+
+        GameRegistry.registerWorldGenerator(OilGenerator.INSTANCE, 0);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCEnergyProxy.getProxy());
 
@@ -91,7 +93,7 @@ public class BCEnergy {
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
-        MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
+//        MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
         BCEnergyProxy.getProxy().fmlPostInit();
         registerMigrations();
     }
@@ -123,6 +125,7 @@ public class BCEnergy {
         // Tiles
         registerTag("tile.engine.stone").reg("engine.stone");
         registerTag("tile.engine.iron").reg("engine.iron");
+        registerTag("tile.spring.oil").reg("spring.oil");
 
         endBatch(TagManager.prependTags("buildcraftenergy:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(TagManager.setTab("buildcraft.main")));
     }

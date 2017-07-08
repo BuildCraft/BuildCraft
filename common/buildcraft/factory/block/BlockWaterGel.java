@@ -125,7 +125,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
         if (stage.spreading) {
             List<BlockPos> openSet = new ArrayList<>();
             Set<BlockPos> closedSet = new HashSet<>();
-            List<BlockPos> changable = new ArrayList<>();
+            List<BlockPos> changeable = new ArrayList<>();
             List<EnumFacing> faces = new ArrayList<>();
             Collections.addAll(faces, EnumFacing.VALUES);
             Collections.shuffle(faces);
@@ -135,7 +135,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
             Collections.shuffle(faces);
             int tries = 0;
 
-            while (openSet.size() > 0 && changable.size() < 3 && tries < 10_000) {
+            while (openSet.size() > 0 && changeable.size() < 3 && tries < 10_000) {
                 openSet.sort(Comparator.comparingDouble(a -> a.distanceSq(pos)));
 
                 BlockPos test = openSet.remove(0);
@@ -145,7 +145,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
                 boolean spreadable = water || canSpread(world, test);
 
                 if (water) {
-                    changable.add(test);
+                    changeable.add(test);
                 }
                 if (spreadable) {
                     Collections.shuffle(faces);
@@ -159,8 +159,8 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
                 tries++;
             }
             final int time = next.spreading ? 200 : 400;
-            if (changable.size() == 3) {
-                for (BlockPos p : changable) {
+            if (changeable.size() == 3) {
+                for (BlockPos p : changeable) {
                     world.setBlockState(p, nextState);
                     world.scheduleUpdate(p, this, rand.nextInt(150) + time);
                 }

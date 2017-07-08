@@ -3,6 +3,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
+
 package buildcraft.lib.misc;
 
 import java.util.Collection;
@@ -249,10 +250,13 @@ public final class BlockUtil {
         if (block == Blocks.FLOWING_LAVA) {
             return FluidRegistry.LAVA;
         }
-        return FluidRegistry.lookupFluidForBlock(block);
+        return getFluid(block);
     }
 
     public static Fluid getFluid(Block block) {
+        if (block instanceof IFluidBlock) {
+            return FluidRegistry.getFluid(((IFluidBlock) block).getFluid().getName());
+        }
         return FluidRegistry.lookupFluidForBlock(block);
     }
 
@@ -439,5 +443,22 @@ public final class BlockUtil {
         return world instanceof ChunkCache
                 ? ((ChunkCache) world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK)
                 : world.getTileEntity(pos);
+    }
+
+    public static Comparator<BlockPos> uniqueBlockPosComparator(Comparator<BlockPos> parent) {
+        return (a, b) -> {
+            int parentValue = parent.compare(a, b);
+            if (parentValue != 0) {
+                return parentValue;
+            } else if (a.getX() != b.getX()) {
+                return Integer.compare(a.getX(), b.getX());
+            } else if (a.getY() != b.getY()) {
+                return Integer.compare(a.getY(), b.getY());
+            } else if (a.getZ() != b.getZ()) {
+                return Integer.compare(a.getZ(), b.getZ());
+            } else {
+                return 0;
+            }
+        };
     }
 }

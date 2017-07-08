@@ -31,14 +31,12 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
     INSTANCE;
 
     @Override
-    public void render(PipeFlowPower flow, double x, double y, double z, float partialTicks, BufferBuilder vb) {
-        float r = (float) flow.clientPowerAmounts.values().stream()
-            .mapToDouble(Double::valueOf)
-            .average()
-            .orElse(0) / PipeFlowPower.DEFAULT_MAX_POWER * 0.8F;
-        if (r == 0) {
+    public void render(PipeFlowPower flow, double x, double y, double z, float partialTicks, BufferBuilder bb) {
+        double transfer = flow.getMaxTransferForRender(partialTicks);
+        if (transfer <= 0) {
             return;
         }
+        float r = (float) (transfer / 4.1f);
         List<Triple<Pair<EnumFacing, EnumFacing>, Point3f, Point3f>> facesSidesCentersRadiuses = new ArrayList<>();
         for (EnumFacing face : EnumFacing.VALUES) {
             facesSidesCentersRadiuses.add(
@@ -69,7 +67,7 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
                 );
             }
         }
-        vb.setTranslation(x, y, z);
+        bb.setTranslation(x, y, z);
         for (Triple<Pair<EnumFacing, EnumFacing>, Point3f, Point3f> faceSideCenterRadius : facesSidesCentersRadiuses) {
             EnumFacing face = faceSideCenterRadius.getLeft().getLeft();
             EnumFacing side = faceSideCenterRadius.getLeft().getRight();
@@ -128,8 +126,8 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
             );
             ModelUtil.createFace(face, center, radius, uvs)
                 .lighti(15, 15)
-                .render(vb);
+                .render(bb);
         }
-        vb.setTranslation(0, 0, 0);
+        bb.setTranslation(0, 0, 0);
     }
 }

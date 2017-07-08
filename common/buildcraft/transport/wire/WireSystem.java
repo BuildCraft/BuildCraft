@@ -258,6 +258,10 @@ public class WireSystem {
         public WireElement(NBTTagCompound nbt) {
             type = Type.values()[nbt.getInteger("type")];
             blockPos = NBTUtilBC.readBlockPos(nbt.getTag("blockPos"));
+            if (blockPos == null) {
+                // Oh dear. We probably can't recover from this properly
+                throw new NullPointerException("Cannot read this Wire Systems from NBT!");
+            }
             if (type == Type.WIRE_PART) {
                 wirePart = EnumWirePart.VALUES[nbt.getInteger("wirePart")];
                 this.emitterSide = null;

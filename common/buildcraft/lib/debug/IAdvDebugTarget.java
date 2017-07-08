@@ -9,7 +9,7 @@ package buildcraft.lib.debug;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
+import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
 
 /** Something that can be put into an "advanced debug" state - every tick {@link #sendDebugState()} will be called on
  * the server, to allow the client to render all of the details normally hidden on the server. */

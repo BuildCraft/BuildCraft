@@ -34,7 +34,7 @@ public class BCCoreConfig {
     public static boolean worldGen;
     public static boolean worldGenWaterSpring;
     public static boolean useLocalServerOnClient;
-    public static boolean minePlayerProteted;
+    public static boolean minePlayerProtected;
     public static boolean hidePower;
     public static boolean hideFluid;
     public static int markerMaxDistance;
@@ -62,7 +62,7 @@ public class BCCoreConfig {
         objConfig = RegistryHelper.setRegistryConfig(BCCore.MODID, new File(cfgFolder, "objects.cfg"));
 
         detailedConfigManager = new FileConfigManager(
-            " The buildcraft detailed configuration file. This contains a lot of miscelaneous options that have no "
+            " The buildcraft detailed configuration file. This contains a lot of miscellaneous options that have no "
                 + "affect on gameplay.\n You should refer to the BC source code for a detailed description of what these do. (https://github.com/BuildCraft/BuildCraft)\n"
                 + " This file will be overwritten every time that buildcraft starts, so don't change anything other than the values.");
         detailedConfigManager.setConfigFile(new File(cfgFolder, "detailed.properties"));
@@ -180,7 +180,7 @@ public class BCCoreConfig {
 
     public static void reloadConfig(EnumRestartRequirement restarted) {
         useLocalServerOnClient = propUseLocalServerOnClient.getBoolean();
-        minePlayerProteted = propMinePlayerProtected.getBoolean();
+        minePlayerProtected = propMinePlayerProtected.getBoolean();
         BCLibConfig.useColouredLabels = propUseColouredLabels.getBoolean();
         BCLibConfig.useHighContrastLabelColours = propUseHighContrastColouredLabels.getBoolean();
         hidePower = propHidePower.getBoolean();

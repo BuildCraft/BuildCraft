@@ -3,6 +3,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
+
 package buildcraft.lib.gui.slot;
 
 import javax.annotation.Nonnull;
@@ -12,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 
 import buildcraft.lib.tile.item.IItemHandlerAdv;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 public class SlotBase extends SlotItemHandler {
     public final int handlerIndex;
@@ -37,5 +39,13 @@ public class SlotBase extends SlotItemHandler {
      * @return The left over. */
     public ItemStack insert(ItemStack stack, boolean simulate) {
         return getItemHandler().insertItem(handlerIndex, stack, simulate);
+    }
+
+    @Override
+    public void onSlotChanged() {
+        super.onSlotChanged();
+        if (itemHandler instanceof ItemHandlerSimple) {
+            ((ItemHandlerSimple) itemHandler).setStackInSlot(handlerIndex, getStack());
+        }
     }
 }

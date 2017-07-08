@@ -167,13 +167,12 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
     // PipeFlow
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == PipeApi.CAP_INJECTABLE) {
-            return (T) this;
+            return PipeApi.CAP_INJECTABLE.cast(this);
         } else if (capability == CapUtil.CAP_ITEM_TRANSACTOR) {
-            return (T) ItemTransactorHelper.wrapInjectable(this, facing);
+            return CapUtil.CAP_ITEM_TRANSACTOR.cast(ItemTransactorHelper.wrapInjectable(this, facing));
         } else {
             return super.getCapability(capability, facing);
         }

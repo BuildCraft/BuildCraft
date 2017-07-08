@@ -7,8 +7,6 @@
 package buildcraft.builders;
 
 import java.lang.ref.WeakReference;
-import java.time.Instant;
-import java.util.Date;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -102,18 +100,17 @@ public enum BCBuildersEventDist {
         ItemStack stack = event.getStack();
         Header header = BCBuildersItems.SNAPSHOT.getHeader(stack);
         if (header != null) {
-            snapshot = ClientSnapshots.INSTANCE.getSnapshot(header);
+            snapshot = ClientSnapshots.INSTANCE.getSnapshot(header.key);
         } else {
             ISchematicBlock<?> schematic = ItemSchematicSingle.getSchematicSafe(stack);
             if (schematic != null) {
-                // Create a blueprint specific for this given item
-                Blueprint bpt = new Blueprint();
-                bpt.size = new BlockPos(1, 1, 1);
-                bpt.offset = BlockPos.ORIGIN;
-                bpt.data = new int[][][] { { { 0 } } };
-                bpt.palette.add(schematic);
-                bpt.header = new Header(bpt.computeHash(), UUID_SINGLE_SCHEMATIC, Date.from(Instant.EPOCH), "_item");
-                snapshot = bpt;
+                Blueprint blueprint = new Blueprint();
+                blueprint.size = new BlockPos(1, 1, 1);
+                blueprint.offset = BlockPos.ORIGIN;
+                blueprint.data = new int[][][] { { { 0 } } };
+                blueprint.palette.add(schematic);
+                blueprint.computeKey();
+                snapshot = blueprint;
             }
         }
 

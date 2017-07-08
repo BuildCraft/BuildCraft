@@ -153,13 +153,7 @@ public class StackUtil {
             return list.matches(stack2, stack1);
         }
 
-        if (!stack1.isItemEqual(stack2)) {
-            return false;
-        }
-        if (!ItemStack.areItemStackTagsEqual(stack1, stack2)) {
-            return false;
-        }
-        return true;
+        return stack1.isItemEqual(stack2) && ItemStack.areItemStackTagsEqual(stack1, stack2);
 
     }
 

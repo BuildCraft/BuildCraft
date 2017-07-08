@@ -29,12 +29,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.client.model.ModelUtil;
-import buildcraft.lib.client.render.DetatchedRenderer;
+import buildcraft.lib.client.render.DetachedRenderer;
 
 import buildcraft.builders.client.ClientArchitectTables;
 
 @SideOnly(Side.CLIENT)
-public enum RenderArchitectTables implements DetatchedRenderer.IDetachedRenderer {
+public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer {
     INSTANCE;
 
     @Override

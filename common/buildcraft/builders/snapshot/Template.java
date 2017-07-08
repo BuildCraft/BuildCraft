@@ -6,8 +6,8 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,7 +24,6 @@ public class Template extends Snapshot {
 
     public Template copy() {
         Template template = new Template();
-        template.header = header;
         template.size = size;
         template.facing = facing;
         template.offset = offset;
@@ -36,6 +35,7 @@ public class Template extends Snapshot {
                 }
             }
         }
+        template.computeKey();
         return template;
     }
 
@@ -85,8 +85,8 @@ public class Template extends Snapshot {
         public final BlockPos basePos;
         public final Rotation rotation;
         public final Box box;
-        public final List<BlockPos> toBreak = new ArrayList<>();
-        public final List<BlockPos> toPlace = new ArrayList<>();
+        public final Set<BlockPos> toBreak = new HashSet<>();
+        public final Set<BlockPos> toPlace = new HashSet<>();
 
         public BuildingInfo(BlockPos basePos, Rotation rotation) {
             this.basePos = basePos;

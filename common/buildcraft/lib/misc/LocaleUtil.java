@@ -56,7 +56,7 @@ public class LocaleUtil {
         localeKeyFluidStaticEmpty = "buildcraft.fluid.empty." + (bucketFlow ? "bucket." : "milli.") + longName;
         localeKeyFluidStaticFull = "buildcraft.fluid.full." + (bucketFlow ? "bucket." : "milli.") + longName;
         localeKeyMjStatic = "buildcraft.mj.static." + longName;
-        localeKeyFluidFlow = "buildcraft.mj.flow." + timeGap + longName;
+        localeKeyMjFlow = "buildcraft.mj.flow." + timeGap + longName;
     }
 
     /** Localizes the give key to the current locale.
@@ -78,7 +78,7 @@ public class LocaleUtil {
      * arguments given.
      * 
      * @param key The key to localize
-     * @param args The arguments to put into the localzied key
+     * @param args The arguments to put into the localized key
      * @return The localized string. */
     public static String localize(String key, Object... args) {
         String localized = I18n.translateToLocal(key);

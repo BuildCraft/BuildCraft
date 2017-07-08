@@ -52,7 +52,7 @@ public abstract class ActionWrapper extends StatementWrapper implements IActionI
             }
             return new ActionWrapperExternal((IActionExternal) statement, side);
         } else {
-            throw new IllegalArgumentException("Unknwon class or interface " + statement.getClass());
+            throw new IllegalArgumentException("Unknown class or interface " + statement.getClass());
         }
     }
 

@@ -121,7 +121,7 @@ public enum ReloadManager {
             return;
         }
         BCLog.logger.fatal("Detected a cyclic dependency chain!");
-        BCLog.logger.fatal("Reloadables invloved:");
+        BCLog.logger.fatal("Reloadables involved:");
         for (Reloadable r : toReload) {
             BCLog.logger.fatal("  - " + r);
         }

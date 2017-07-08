@@ -13,8 +13,8 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.client.render.DetatchedRenderer;
-import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
+import buildcraft.lib.client.render.DetachedRenderer;
+import buildcraft.lib.client.render.DetachedRenderer.RenderMatrixType;
 
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.client.RenderTickListener;
@@ -70,7 +70,7 @@ public abstract class BCCoreProxy implements IGuiHandler {
             BCCoreSprites.fmlPreInit();
             BCCoreModels.fmlPreInit();
             BuildCraftLaserManager.fmlPreInit();
-            DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, RenderVolumeInWorld.INSTANCE);
+            DetachedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, RenderVolumeInWorld.INSTANCE);
         }
 
         @Override

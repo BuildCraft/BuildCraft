@@ -26,6 +26,9 @@ import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.NonNullMatrix;
+import buildcraft.lib.recipe.ChangingItemStack;
+import buildcraft.lib.recipe.IRecipeViewable;
+import buildcraft.lib.recipe.IRecipeViewable.IViewableGrid;
 
 public class GuideCraftingFactory implements GuidePartFactory {
     private static final Field SHAPED_ORE_RECIPE___WIDTH;
@@ -124,14 +127,16 @@ public class GuideCraftingFactory implements GuidePartFactory {
             ChangingItemStack output = viewableRecipe.getRecipeOutputs();
             ChangingItemStack[][] inputGrid = { input };
             if (recipe instanceof IRecipeViewable.IViewableGrid) {
-                int width = ((IRecipeViewable.IViewableGrid) recipe).getRecipeWidth();
-                inputGrid = new ChangingItemStack[inputGrid.length / width][width];
+                IViewableGrid recipeGrid = (IRecipeViewable.IViewableGrid) recipe;
+                int width = recipeGrid.getRecipeWidth();
+                int height = recipeGrid.getRecipeHeight();
+                inputGrid = new ChangingItemStack[width][height];
                 int x = 0;
                 int y = 0;
                 for (ChangingItemStack anInput : input) {
                     inputGrid[x][y] = anInput;
                     x++;
-                    if (x > width) {
+                    if (x >= width) {
                         x = 0;
                         y++;
                     }

@@ -77,7 +77,7 @@ public class NodeStack implements INodeStack {
         index = 0;
     }
 
-    /** Used to ensure that the {@link INodeFunc} instance behavous the second time and doesn't try to pop off nodes
+    /** Used to ensure that the {@link INodeFunc} instance behaves the second time and doesn't try to pop off nodes
      * that it wasn't meant to. */
     private void checkTypeMatch(NodeType type) throws InvalidExpressionException {
         if (recordingTypes == null) {

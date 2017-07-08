@@ -45,7 +45,14 @@ public enum EnumAddonSlot {
                 directions.get(EnumFacing.Axis.Y) == EnumFacing.AxisDirection.POSITIVE ? boxBB.maxY : boxBB.minY,
                 directions.get(EnumFacing.Axis.Z) == EnumFacing.AxisDirection.POSITIVE ? boxBB.maxZ : boxBB.minZ
         );
-        return new AxisAlignedBB(boxOffset, boxOffset).grow(1 / 16D);
+        return new AxisAlignedBB(
+            boxOffset.x,
+            boxOffset.y,
+            boxOffset.z,
+            boxOffset.x,
+            boxOffset.y,
+            boxOffset.z
+        ).grow(1 / 16D);
     }
 
     public static Pair<VolumeBox, EnumAddonSlot> getSelectingBoxAndSlot(EntityPlayer player, List<VolumeBox> boxes) {
