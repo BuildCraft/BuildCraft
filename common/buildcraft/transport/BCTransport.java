@@ -64,6 +64,9 @@ public class BCTransport {
         BCTransportStatements.preInit();
         PipeApi.initCapabilites();
 
+        BCTransportPipes.preInit();
+        BCTransportPlugs.preInit();
+
         // Reload after all of the pipe defs have been created.
         BCTransportConfig.reloadConfig(EnumRestartRequirement.GAME);
 
@@ -77,9 +80,6 @@ public class BCTransport {
         MinecraftForge.EVENT_BUS.register(BCTransportEventDist.INSTANCE);
         MessageManager.addMessageType(MessageWireSystems.class, MessageWireSystems.HANDLER, Side.CLIENT);
         MessageManager.addMessageType(MessageWireSystemsPowered.class, MessageWireSystemsPowered.HANDLER, Side.CLIENT);
-
-        BCTransportPipes.preInit();
-        BCTransportPlugs.preInit();
     }
 
     @Mod.EventHandler
