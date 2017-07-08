@@ -25,6 +25,7 @@ import buildcraft.api.transport.pipe.PipeBehaviour;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.transport.client.PipeRegistryClient;
+import buildcraft.transport.client.render.PipeWireRenderer;
 import buildcraft.transport.container.ContainerDiamondPipe;
 import buildcraft.transport.container.ContainerDiamondWoodPipe;
 import buildcraft.transport.container.ContainerEmzuliPipe_BC8;
@@ -146,6 +147,7 @@ public abstract class BCTransportProxy implements IGuiHandler {
             BCTransportSprites.fmlPreInit();
             BCTransportModels.fmlPreInit();
             PipeApiClient.registry = PipeRegistryClient.INSTANCE;
+            PipeWireRenderer.init();
         }
 
         @Override

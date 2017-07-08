@@ -74,7 +74,7 @@ public class Converter {
         // names the json the same name as the output's registry name
         // repeatedly adds _alt if a file already exists
         // janky I know but it works
-        String suffix = result.getItem().getHasSubtypes() ? "_" + result.getItemDamage() : "";
+        /*String suffix = result.getItem().getHasSubtypes() ? "_" + result.getItemDamage() : "";
         File f = new File(RECIPE_DIR, result.getItem().getRegistryName().getResourcePath() + suffix + color + ".json");
 
         while (f.exists()) {
@@ -86,7 +86,7 @@ public class Converter {
             //GSON.toJson(json, w);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public static void addShapelessRecipe(ItemStack result, Object... components)

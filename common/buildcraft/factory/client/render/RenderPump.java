@@ -149,4 +149,8 @@ public class RenderPump extends FastTESR<TilePump> {
     public boolean isGlobalRenderer(TilePump tile) {
         return true;
     }
+
+    public static void init() {
+        //force the static block to run before texture stitching
+    }
 }

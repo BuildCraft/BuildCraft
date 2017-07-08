@@ -251,4 +251,8 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
     public boolean isGlobalRenderer(TileQuarry tile) {
         return true;
     }
+
+    public static void init() {
+
+    }
 }

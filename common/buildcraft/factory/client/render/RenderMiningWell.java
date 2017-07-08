@@ -131,4 +131,6 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
     public boolean isGlobalRenderer(TileMiningWell tile) {
         return true;
     }
+
+    public static void init() {}
 }

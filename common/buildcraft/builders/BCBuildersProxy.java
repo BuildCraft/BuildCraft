@@ -153,6 +153,7 @@ public abstract class BCBuildersProxy implements IGuiHandler {
                 Minecraft.getMinecraft().getFramebuffer().enableStencil();
             }
             BCBuildersSprites.fmlPreInit();
+            RenderQuarry.init();
         }
 
         @Override

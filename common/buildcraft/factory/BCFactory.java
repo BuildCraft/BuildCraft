@@ -50,6 +50,8 @@ public class BCFactory {
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCFactoryProxy.getProxy());
 
         MinecraftForge.EVENT_BUS.register(BCFactoryEventDist.INSTANCE);
+
+        BCFactoryProxy.getProxy().fmlPreInit();
     }
 
     @Mod.EventHandler

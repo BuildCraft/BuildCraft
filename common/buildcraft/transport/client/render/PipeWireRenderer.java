@@ -9,6 +9,7 @@ package buildcraft.transport.client.render;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
+
 import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 
@@ -286,5 +287,9 @@ public class PipeWireRenderer {
          * directly */
         GL11.glColor3f(1, 1, 1);
         GlStateManager.color(1, 1, 1, 1);
+    }
+
+    public static void init() {
+        //make sure static runs
     }
 }
