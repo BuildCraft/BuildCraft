@@ -86,7 +86,8 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     private AddonFillingPlanner addon;
     private final List<IParameter> parameters = new ArrayList<>();
     private boolean inverted;
-    private final Box box = new Box();
+    public final Box box = new Box();
+    public boolean markerBox = false;
     private Template.BuildingInfo buildingInfo;
     private List<IParameter> prevParameters;
     private boolean prevInverted;
@@ -149,6 +150,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
             box.reset();
             box.setMin(provider.min());
             box.setMax(provider.max());
+            markerBox = true;
             provider.removeFromWorld();
             parameters.addAll(Filling.initParameters());
             updateBuildingInfo();
@@ -237,6 +239,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
                 box.writeData(buffer);
+                buffer.writeBoolean(markerBox);
                 buffer.writeBoolean(addon != null);
                 if (addon != null) {
                     buffer.writeUniqueId(addon.box.id);
@@ -266,6 +269,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 box.readData(buffer);
+                markerBox = buffer.readBoolean();
                 if (buffer.readBoolean()) {
                     UUID boxId = buffer.readUniqueId();
                     VolumeBox volumeBox = world.isRemote
@@ -358,6 +362,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         );
         nbt.setBoolean("inverted", inverted);
         nbt.setTag("box", box.writeToNBT());
+        nbt.setBoolean("markerBox", markerBox);
         if (prevParameters != null) {
             nbt.setTag(
                 "prevParameters",
@@ -387,6 +392,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
             .forEach(parameters::add);
         inverted = nbt.getBoolean("inverted");
         box.initialize(nbt.getCompoundTag("box"));
+        markerBox = nbt.getBoolean("markerBox");
         if (nbt.hasKey("prevParameters")) {
             prevParameters = new ArrayList<>();
             NBTUtilBC.readCompoundList(nbt.getTag("prevParameters"))

@@ -15,23 +15,19 @@ import net.minecraftforge.client.model.animation.FastTESR;
 
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
 
-import buildcraft.builders.tile.TileFiller;
+import buildcraft.builders.tile.TileArchitectTable;
 import buildcraft.core.client.BuildCraftLaserManager;
 
-public class RenderFiller extends FastTESR<TileFiller> {
+public class RenderArchitectTable extends FastTESR<TileArchitectTable> {
     @Override
-    public void renderTileEntityFast(@Nonnull TileFiller tile, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer vb) {
+    public void renderTileEntityFast(@Nonnull TileArchitectTable tile, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer vb) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
-        Minecraft.getMinecraft().mcProfiler.startSection("filler");
-
-        Minecraft.getMinecraft().mcProfiler.startSection("main");
-        RenderSnapshotBuilder.render(tile.builder, tile.getWorld(), tile.getPos(), x, y, z, partialTicks, vb);
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getMinecraft().mcProfiler.startSection("architect_table");
 
         Minecraft.getMinecraft().mcProfiler.startSection("box");
         if (tile.markerBox) {
             vb.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
-            LaserBoxRenderer.renderLaserBoxDynamic(tile.box, BuildCraftLaserManager.STRIPES_WRITE, vb);
+            LaserBoxRenderer.renderLaserBoxDynamic(tile.box, BuildCraftLaserManager.STRIPES_READ, vb);
             vb.setTranslation(0, 0, 0);
         }
         Minecraft.getMinecraft().mcProfiler.endSection();
@@ -41,7 +37,7 @@ public class RenderFiller extends FastTESR<TileFiller> {
     }
 
     @Override
-    public boolean isGlobalRenderer(TileFiller te) {
+    public boolean isGlobalRenderer(TileArchitectTable te) {
         return true;
     }
 }

@@ -73,13 +73,22 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     public static final int NET_BOX = IDS.allocId("BOX");
     public static final int NET_SCAN = IDS.allocId("SCAN");
 
-    public final ItemHandlerSimple invSnapshotIn = itemManager.addInvHandler("in", 1, EnumAccess.INSERT,
-        EnumPipePart.VALUES);
-    public final ItemHandlerSimple invSnapshotOut = itemManager.addInvHandler("out", 1, EnumAccess.EXTRACT,
-        EnumPipePart.VALUES);
+    public final ItemHandlerSimple invSnapshotIn = itemManager.addInvHandler(
+        "in",
+        1,
+        EnumAccess.INSERT,
+        EnumPipePart.VALUES
+    );
+    public final ItemHandlerSimple invSnapshotOut = itemManager.addInvHandler(
+        "out",
+        1,
+        EnumAccess.EXTRACT,
+        EnumPipePart.VALUES
+    );
 
     private EnumSnapshotType snapshotType = EnumSnapshotType.BLUEPRINT;
     public final Box box = new Box();
+    public boolean markerBox = false;
     private boolean[][][] templateScannedBlocks;
     private final List<ISchematicBlock<?>> blueprintScannedPalette = new ArrayList<>();
     private int[][][] blueprintScannedData;
@@ -88,8 +97,10 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     private boolean isValid = false;
     private boolean scanning = false;
     public String name = "<unnamed>";
-    public final DeltaInt deltaProgress = deltaManager.addDelta("progress",
-        DeltaManager.EnumNetworkVisibility.GUI_ONLY);
+    public final DeltaInt deltaProgress = deltaManager.addDelta(
+        "progress",
+        DeltaManager.EnumNetworkVisibility.GUI_ONLY
+    );
 
     @Override
     public IdAllocator getIdAllocator() {
@@ -97,7 +108,9 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     @Override
-    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before,
+    protected void onSlotChange(IItemHandlerModifiable handler,
+                                int slot,
+                                @Nonnull ItemStack before,
                                 @Nonnull ItemStack after) {
         super.onSlotChange(handler, slot, before, after);
         if (handler == invSnapshotIn) {
@@ -139,6 +152,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             box.reset();
             box.setMin(provider.min());
             box.setMax(provider.max());
+            markerBox = true;
             isValid = true;
             provider.removeFromWorld();
         } else {
@@ -304,6 +318,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             }
             if (id == NET_BOX) {
                 box.writeData(buffer);
+                buffer.writeBoolean(markerBox);
             }
         }
     }
@@ -318,10 +333,13 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             }
             if (id == NET_BOX) {
                 box.readData(buffer);
+                markerBox = buffer.readBoolean();
             }
             if (id == NET_SCAN) {
-                ClientArchitectTables.SCANNED_BLOCKS.put(MessageUtil.readBlockPos(buffer),
-                    ClientArchitectTables.START_SCANNED_BLOCK_VALUE);
+                ClientArchitectTables.SCANNED_BLOCKS.put(
+                    MessageUtil.readBlockPos(buffer),
+                    ClientArchitectTables.START_SCANNED_BLOCK_VALUE
+                );
             }
         }
     }
@@ -330,6 +348,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         nbt.setTag("box", box.writeToNBT());
+        nbt.setBoolean("markerBox", markerBox);
         if (boxIterator != null) {
             nbt.setTag("iter", boxIterator.writeToNbt());
         }
@@ -344,6 +363,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         box.initialize(nbt.getCompoundTag("box"));
+        markerBox = nbt.getBoolean("markerBox");
         if (nbt.hasKey("iter")) {
             boxIterator = BoxIterator.readFromNbt(nbt.getCompoundTag("iter"));
         }
