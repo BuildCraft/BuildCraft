@@ -28,6 +28,8 @@ public class ItemBC_Neptune extends Item implements IItemBuildCraft {
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (!isInCreativeTab(tab))
+            return;
         if (RegistryHelper.isEnabled(this)) {
             super.getSubItems(tab, items);
         }

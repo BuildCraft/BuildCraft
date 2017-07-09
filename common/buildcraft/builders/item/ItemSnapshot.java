@@ -74,6 +74,8 @@ public class ItemSnapshot extends ItemBC_Neptune {
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        if (!isInCreativeTab(tab))
+            return;
         Arrays.stream(EnumSnapshotType.values()).map(this::getClean).forEach(subItems::add);
     }
 

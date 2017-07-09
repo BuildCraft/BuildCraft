@@ -96,6 +96,8 @@ public class ItemPluggableGate extends ItemBC_Neptune implements IItemPluggable 
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        if (!this.isInCreativeTab(tab))
+            return;
         subItems.add(new ItemStack(this));
         for (EnumGateMaterial material : EnumGateMaterial.VALUES) {
             if (!material.canBeModified) {

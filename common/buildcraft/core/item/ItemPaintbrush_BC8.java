@@ -47,6 +47,8 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        if (!isInCreativeTab(tab))
+            return;
         for (int i = 0; i < 17; i++) {
             subItems.add(new ItemStack(this, 1, i));
         }

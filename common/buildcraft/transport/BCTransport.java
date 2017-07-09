@@ -70,9 +70,6 @@ public class BCTransport {
         // Reload after all of the pipe defs have been created.
         BCTransportConfig.reloadConfig(EnumRestartRequirement.GAME);
 
-        tabPipes.setItem(BCTransportItems.PIPE_DIAMOND_ITEM);
-        tabPlugs.setItem(BCTransportItems.PLUG_GATE);
-
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCTransportProxy.getProxy());
 
         BCTransportProxy.getProxy().fmlPreInit();
@@ -90,6 +87,9 @@ public class BCTransport {
 
         TileBC_Neptune.registerTile(TileFilteredBuffer.class, "tile.filtered_buffer");
         TileBC_Neptune.registerTile(TilePipeHolder.class, "tile.pipe_holder");
+
+        tabPipes.setItem(BCTransportItems.PIPE_DIAMOND_ITEM);
+        tabPlugs.setItem(BCTransportItems.PLUG_GATE);
     }
 
     @Mod.EventHandler

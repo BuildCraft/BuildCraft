@@ -36,6 +36,8 @@ public class ItemRedstoneChipset extends ItemBC_Neptune {
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        if (!isInCreativeTab(tab))
+            return;
         for (EnumRedstoneChipset type : EnumRedstoneChipset.values()) {
             subItems.add(new ItemStack(this, 1, type.ordinal()));
         }

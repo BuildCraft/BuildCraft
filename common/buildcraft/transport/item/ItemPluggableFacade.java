@@ -102,6 +102,8 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        if (!this.isInCreativeTab(tab))
+            return;
         // Add a single phased facade as a default
         //check if the data is present as we only process in post-init
         FacadeBlockStateInfo stone = getInfoForBlock(Blocks.STONE);
