@@ -9,6 +9,7 @@ package buildcraft.core.item;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
 import javax.annotation.Nonnull;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -66,6 +67,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack stack, World world, List<String> strings, ITooltipFlag flag) {
         stack = StackUtil.asNonNull(stack);

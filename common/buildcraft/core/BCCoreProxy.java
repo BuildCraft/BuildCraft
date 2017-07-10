@@ -21,6 +21,7 @@ import buildcraft.core.client.RenderTickListener;
 import buildcraft.core.client.render.RenderVolumeInWorld;
 import buildcraft.core.list.ContainerList;
 import buildcraft.core.list.GuiList;
+import buildcraft.core.list.ListTooltipHandler;
 
 public abstract class BCCoreProxy implements IGuiHandler {
     @SidedProxy(modId = BCCore.MODID)
@@ -71,6 +72,7 @@ public abstract class BCCoreProxy implements IGuiHandler {
             BCCoreModels.fmlPreInit();
             BuildCraftLaserManager.fmlPreInit();
             DetachedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, RenderVolumeInWorld.INSTANCE);
+            MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
         }
 
         @Override

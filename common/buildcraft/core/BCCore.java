@@ -29,7 +29,6 @@ import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
 import buildcraft.lib.tile.TileBC_Neptune;
 
-import buildcraft.core.list.ListTooltipHandler;
 import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.VolumeCache;
 import buildcraft.core.marker.volume.MessageVolumeBoxes;
@@ -72,8 +71,6 @@ public class BCCore {
         tab.setItem(BCCoreItems.WRENCH);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCCoreProxy.getProxy());
-
-        MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
 
         OreDictionary.registerOre("craftingTableWood", Blocks.CRAFTING_TABLE);
 

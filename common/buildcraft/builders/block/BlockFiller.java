@@ -21,6 +21,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.properties.BuildCraftProperties;
 
@@ -82,7 +85,8 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
     public boolean canBeRotated(World world, BlockPos pos, IBlockState state) {
         return false;
     }
-    
+
+    @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
         super.addInformation(stack, world, tooltip, flag);

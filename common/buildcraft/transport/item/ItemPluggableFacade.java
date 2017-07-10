@@ -24,6 +24,9 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacadeItem;
 import buildcraft.api.transport.IItemPluggable;
@@ -145,6 +148,7 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
         return s;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
         FullFacadeInstance states = getStates(stack);
