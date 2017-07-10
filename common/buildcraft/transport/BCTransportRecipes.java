@@ -6,45 +6,32 @@
 
 package buildcraft.transport;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapelessRecipes;
-import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.BCBlocks;
 import buildcraft.api.enums.EnumEngineType;
@@ -62,7 +49,6 @@ import buildcraft.lib.recipe.RecipeBuilderShaped;
 
 import buildcraft.core.BCCoreBlocks;
 import buildcraft.core.BCCoreItems;
-import buildcraft.core.Converter;
 import buildcraft.transport.gate.EnumGateLogic;
 import buildcraft.transport.gate.EnumGateMaterial;
 import buildcraft.transport.gate.EnumGateModifier;
@@ -73,112 +59,10 @@ import buildcraft.transport.recipe.FacadeSwapRecipe;
 
 @Mod.EventBusSubscriber(modid = BCTransport.MODID)
 public class BCTransportRecipes {
-    private enum Type { item, fluid, power}
-
     private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        ModContainer original = Loader.instance().activeModContainer();
-        Loader.instance().getActiveModList().forEach((mod) -> {
-            JsonContext ctx = new JsonContext(mod.getModId());
-            Loader.instance().setActiveModContainer(mod);
-            CraftingHelper.findFiles(mod, "assets/" + mod.getModId() + "/pipes", null,
-                (root, file) -> {
-                    String path = root.relativize(file).toString();
-                    if (!FilenameUtils.getExtension(file.toString()).equals("json"))
-                        return true;
-                    String name = FilenameUtils.removeExtension(path).replaceAll("\\\\", "/");
-                    ResourceLocation key = new ResourceLocation(mod.getModId(), name);
-                    BufferedReader reader = null;
-                    try {
-                        reader = Files.newBufferedReader(file);
-                        JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
-                        if (json == null || json.isJsonNull())
-                            throw new JsonSyntaxException("Json is null (empty file?)");
-
-                        Ingredient left = CraftingHelper.getIngredient(json.get("left"), ctx);
-                        Ingredient right = CraftingHelper.getIngredient(json.get("right"), ctx);
-
-                        String base = json.get("item").getAsString();
-                        int count = json.get("count").getAsInt();
-                        boolean fluid = json.get("fluid").getAsBoolean();
-                        boolean power = json.get("power").getAsBoolean();
-
-                        //itempipe
-                        Item item = Item.getByNameOrId(base + "item");
-                        Item itemFluid = Item.getByNameOrId(base + "fluid");
-                        Item itempower = Item.getByNameOrId(base + "power");
-                        ItemStack result = new ItemStack(item, count);
-                        IRecipe recipe = new ShapedOreRecipe(new ResourceLocation(base + "item"),
-                            result, "lgr", 'l', left, 'r', right, 'g', "blockGlassColorless");
-                        recipe.setRegistryName(new ResourceLocation(base + "item"));
-                        ForgeRegistries.RECIPES.register(recipe);
-
-                        //fluidpipe
-                        if (fluid) {
-                            ItemStack resultFluid = new ItemStack(itemFluid);
-                            NonNullList<Ingredient> ingredients = NonNullList.create();
-                            ingredients.add(CraftingHelper.getIngredient(item));
-                            ingredients.add(CraftingHelper.getIngredient(BCTransportItems.WATERPROOF));
-                            IRecipe recipeFluid = new ShapelessRecipes(base + "fluid", resultFluid, ingredients) ;
-                            recipeFluid.setRegistryName(new ResourceLocation(base + "fluid"));
-                            ForgeRegistries.RECIPES.register(recipeFluid);
-                        }
-
-                        //powerpipe
-                        if (power) {
-                            ItemStack resultPower = new ItemStack(itempower);
-                            NonNullList<Ingredient> ingredients = NonNullList.create();
-                            ingredients.add(CraftingHelper.getIngredient(item));
-                            ingredients.add(CraftingHelper.getIngredient(Items.REDSTONE));
-                            IRecipe recipePower = new ShapelessRecipes(base + "power", resultPower, ingredients) ;
-                            recipePower.setRegistryName(new ResourceLocation(base + "power"));
-                            ForgeRegistries.RECIPES.register(recipePower);
-                        }
-
-                        for (EnumDyeColor colour : EnumDyeColor.values()) {
-                            ItemStack resultStack =  new ItemStack(item, count, colour.getMetadata() + 1);
-                            IRecipe colorRecipe = new ShapedOreRecipe(new ResourceLocation(base + "item"), resultStack,
-                                "lgr", 'l', left, 'r', right, 'g', "blockGlass" + ColourUtil.getName(colour));
-                            colorRecipe.setRegistryName(new ResourceLocation(base + "item" + colour));
-                            ForgeRegistries.RECIPES.register(colorRecipe);
-
-                            if (fluid) {
-                                resultStack = new ItemStack(itemFluid, 1, colour.getMetadata() + 1);
-                                NonNullList<Ingredient> ingredients = NonNullList.create();
-                                ingredients.add(CraftingHelper.getIngredient(new ItemStack(item, 1, colour.getMetadata() + 1)));
-                                ingredients.add(CraftingHelper.getIngredient(BCTransportItems.WATERPROOF));
-                                IRecipe recipeFluid = new ShapelessRecipes(base + "fluid", resultStack, ingredients) ;
-                                recipeFluid.setRegistryName(new ResourceLocation(base + "fluid" + colour));
-                                ForgeRegistries.RECIPES.register(recipeFluid);
-                            }
-
-                            if (power) {
-                                resultStack = new ItemStack(itempower, 1, colour.getMetadata() + 1);
-                                NonNullList<Ingredient> ingredients = NonNullList.create();
-                                ingredients.add(CraftingHelper.getIngredient(new ItemStack(item, 1, colour.getMetadata() + 1)));
-                                ingredients.add(CraftingHelper.getIngredient(Items.REDSTONE));
-                                IRecipe recipePower = new ShapelessRecipes(base + "power", resultStack, ingredients) ;
-                                recipePower.setRegistryName(new ResourceLocation(base + "power" + colour));
-                                ForgeRegistries.RECIPES.register(recipePower);
-                            }
-                        }
-
-
-                    } catch (IOException e) {
-                        FMLLog.log.error("Couldn't read recipe {} from {}", key, file, e);
-                        return false;
-                    } finally {
-                        IOUtils.closeQuietly(reader);
-                    }
-                    return true;
-                });
-        });
-        Loader.instance().setActiveModContainer(original);
-    }
-
-    public static void init() {
         addPipeRecipe(BCTransportItems.PIPE_WOOD_ITEM, "plankWood");
         addPipeRecipe(BCTransportItems.PIPE_COBBLE_ITEM, "cobblestone");
         addPipeRecipe(BCTransportItems.PIPE_STONE_ITEM, "stone");
@@ -195,20 +79,32 @@ public class BCTransportRecipes {
         addPipeRecipe(BCTransportItems.PIPE_LAPIS_ITEM, Blocks.LAPIS_BLOCK);
         addPipeRecipe(BCTransportItems.PIPE_DAIZULI_ITEM, Blocks.LAPIS_BLOCK, Items.DIAMOND);
         addPipeRecipe(BCTransportItems.PIPE_DIAWOOD_ITEM, "plankWood", Items.DIAMOND);
-        /*addPipeUpgradeRecipe(BCTransportItems.PIPE_WOOD_ITEM, BCTransportItems.PIPE_WOOD_FLUID, waterproof);
-        addPipeUpgradeRecipe(BCTransportItems.PIPE_COBBLE_ITEM, BCTransportItems.PIPE_COBBLE_FLUID, waterproof);
-        addPipeUpgradeRecipe(BCTransportItems.PIPE_STONE_ITEM, BCTransportItems.PIPE_STONE_FLUID, waterproof);
-        addPipeUpgradeRecipe(BCTransportItems.PIPE_QUARTZ_ITEM, BCTransportItems.PIPE_QUARTZ_FLUID, waterproof);
-        addPipeUpgradeRecipe(BCTransportItems.pipeItemIron, BCTransportItems.pipeFluidIron, waterproof);
-        addPipeUpgradeRecipe(BCTransportItems.PIPE_GOLD_ITEM, BCTransportItems.PIPE_GOLD_FLUID, waterproof);
-        addPipeUpgradeRecipe(BCTransportItems.pipeItemClay, BCTransportItems.pipeFluidClay, waterproof);
-        addPipeUpgradeRecipe(BCTransportItems.PIPE_SANDSTONE_ITEM, BCTransportItems.pipeFluidSandstone, waterproof);
-        addPipeUpgradeRecipe(BCTransportItems.pipeItemVoid, BCTransportItems.pipeFluidVoid, waterproof);
-        addPipeUpgradeRecipe(BCTransportItems.pipeItemObsidian, BCTransportItems.pipeFluidObsidian, waterproof);
-        addPipeUpgradeRecipe(BCTransportItems.pipeItemDiamond, BCTransportItems.pipeFluidDiamond, waterproof);
-        addPipeUpgradeRecipe(BCTransportItems.pipeItemDiaWood, BCTransportItems.pipeFluidDiaWood, waterproof);
-        */
 
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_WOOD_ITEM, BCTransportItems.PIPE_WOOD_FLUID, BCTransportItems.WATERPROOF);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_COBBLE_ITEM, BCTransportItems.PIPE_COBBLE_FLUID, BCTransportItems.WATERPROOF);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_STONE_ITEM, BCTransportItems.PIPE_STONE_FLUID, BCTransportItems.WATERPROOF);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_QUARTZ_ITEM, BCTransportItems.PIPE_QUARTZ_FLUID, BCTransportItems.WATERPROOF);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_IRON_ITEM, BCTransportItems.PIPE_IRON_FLUID, BCTransportItems.WATERPROOF);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_GOLD_ITEM, BCTransportItems.PIPE_GOLD_FLUID, BCTransportItems.WATERPROOF);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_CLAY_ITEM, BCTransportItems.PIPE_CLAY_FLUID, BCTransportItems.WATERPROOF);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_SANDSTONE_ITEM, BCTransportItems.PIPE_SANDSTONE_FLUID, BCTransportItems.WATERPROOF);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_VOID_ITEM, BCTransportItems.PIPE_VOID_FLUID, BCTransportItems.WATERPROOF);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_OBSIDIAN_ITEM, BCTransportItems.PIPE_OBSIDIAN_FLUID, BCTransportItems.WATERPROOF);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_DIAMOND_ITEM, BCTransportItems.PIPE_DIAMOND_FLUID, BCTransportItems.WATERPROOF);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_DIAWOOD_ITEM, BCTransportItems.PIPE_DIAWOOD_FLUID, BCTransportItems.WATERPROOF);
+
+        String upgrade = "dustRedstone";
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_WOOD_ITEM, BCTransportItems.PIPE_WOOD_POWER, upgrade);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_COBBLE_ITEM, BCTransportItems.PIPE_COBBLE_POWER, upgrade);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_STONE_ITEM, BCTransportItems.PIPE_STONE_POWER, upgrade);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_QUARTZ_ITEM, BCTransportItems.PIPE_QUARTZ_POWER, upgrade);
+//        addPipeUpgradeRecipe(BCTransportItems.pipeItemIron, BCTransportItems.pipePowerIron, upgrade);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_GOLD_ITEM, BCTransportItems.PIPE_GOLD_POWER, upgrade);
+        addPipeUpgradeRecipe(BCTransportItems.PIPE_SANDSTONE_ITEM, BCTransportItems.PIPE_SANDSTONE_POWER, upgrade);
+//        addPipeUpgradeRecipe(BCTransportItems.pipeItemDiamond, BCTransportItems.pipePowerDiamond, upgrade);
+    }
+
+    public static void init() {
         {
             ItemStack output = new ItemStack(BCTransportItems.PLUG_PULSAR);
 
@@ -403,8 +299,21 @@ public class BCTransportRecipes {
        if (pipe == null) {
             return;
         }
+        ItemStack result = new ItemStack(pipe, 8);
+        IRecipe recipe = new ShapedOreRecipe(pipe.getRegistryName(),
+            result, "lgr", 'l', left, 'r', right, 'g', "blockGlassColorless");
+        recipe.setRegistryName(new ResourceLocation(pipe.getRegistryName() + "_colorless"));
+        ForgeRegistries.RECIPES.register(recipe);
 
-        // TODO: Use RecipePipeColour instead!
+        for (EnumDyeColor colour : EnumDyeColor.values()) {
+            ItemStack resultStack = new ItemStack(pipe, 8, colour.getMetadata() + 1);
+            IRecipe colorRecipe = new ShapedOreRecipe(pipe.getRegistryName(), resultStack,
+                "lgr", 'l', left, 'r', right, 'g', "blockGlass" + ColourUtil.getName(colour));
+            colorRecipe.setRegistryName(new ResourceLocation(pipe.getRegistryName() + "_" + colour));
+            ForgeRegistries.RECIPES.register(colorRecipe);
+        }
+
+
 
     }
 
@@ -416,16 +325,28 @@ public class BCTransportRecipes {
             throw new NullPointerException("additional");
         }
 
-        // TODO: Use RecipePipeColour instead!
+        IRecipe returnRecipe = new ShapelessOreRecipe(from.getRegistryName(), new ItemStack(from), new ItemStack(to)).setRegistryName(new ResourceLocation(from.getRegistryName() + "_undo"));
+        ForgeRegistries.RECIPES.register(returnRecipe);
 
-        Converter.addShapelessRecipe(new ItemStack(from), new ItemStack(to));
-        Converter.addShapelessRecipe(new ItemStack(to), new ItemStack(from), additional);
+        NonNullList<Ingredient> list = NonNullList.create();
+        list.add(Ingredient.fromItem(from));
+        list.add(CraftingHelper.getIngredient(additional));
+
+        IRecipe upgradeRecipe = new ShapelessRecipes(to.getRegistryName().getResourcePath(), new ItemStack(to), list).setRegistryName(new ResourceLocation(to.getRegistryName() + "_colorless"));
+        ForgeRegistries.RECIPES.register(upgradeRecipe);
 
         for (EnumDyeColor colour : ColourUtil.COLOURS) {
             ItemStack f = new ItemStack(from, 1, colour.getMetadata() + 1);
             ItemStack t = new ItemStack(to, 1, colour.getMetadata() + 1);
-            //GameRegistry.addShapelessRecipe(f, t);
-            Converter.addShapelessRecipe(t, f, additional);
+            IRecipe returnRecipeColored = new ShapelessOreRecipe(from.getRegistryName(), f, t).setRegistryName(new ResourceLocation(from.getRegistryName() + colour.getName() + "_undo"));
+            ForgeRegistries.RECIPES.register(returnRecipeColored);
+
+            NonNullList<Ingredient> colorList = NonNullList.create();
+            colorList.add(Ingredient.fromStacks(f));
+            colorList.add(CraftingHelper.getIngredient(additional));
+
+            IRecipe upgradeRecipeColored = new ShapelessOreRecipe(to.getRegistryName(), colorList, t).setRegistryName(new ResourceLocation(to.getRegistryName() + "_" + colour.getName()));
+            ForgeRegistries.RECIPES.register(upgradeRecipeColored);
         }
     }
 }
