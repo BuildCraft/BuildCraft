@@ -127,7 +127,7 @@ public class RulesLoader {
                                         selector.indexOf("[") + 1,
                                         selector.indexOf("]")
                                     )
-                                        .split(",")
+                                        .split(", ")
                                 )
                                     .map(nameValue -> nameValue.split("="))
                                     .allMatch(nameValue ->

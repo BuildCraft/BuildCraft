@@ -80,28 +80,6 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         if (context.block instanceof BlockFalling) {
             requiredBlockOffsets.add(new BlockPos(0, -1, 0));
         }
-        rules.stream()
-            .map(rule -> rule.copyOppositeRequiredBlockOffsetFromProperty)
-            .forEach(propertyName ->
-                context.blockState.getProperties().keySet().stream()
-                    .filter(property -> property.getName().equals(propertyName))
-                    .map(PropertyDirection.class::cast)
-                    .map(context.blockState::getValue)
-                    .map(EnumFacing::getOpposite)
-                    .map(EnumFacing::getDirectionVec)
-                    .map(BlockPos::new)
-                    .forEach(requiredBlockOffsets::add)
-            );
-        if (rules.stream().anyMatch(rule -> rule.copyRequiredBlockOffsetsFromProperties)) {
-            for (EnumFacing side : EnumFacing.VALUES) {
-                if (context.blockState.getProperties().keySet().stream()
-                    .filter(property -> property.getName().equals(side.getName()))
-                    .map(PropertyBool.class::cast)
-                    .anyMatch(context.blockState::getValue)) {
-                    requiredBlockOffsets.add(new BlockPos(side.getDirectionVec()));
-                }
-            }
-        }
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
