@@ -1,17 +1,44 @@
 [
+//    {
+//        "selectors": [
+//            "minecraft:double_stone_slab",
+//            "minecraft:stone_slab",
+//            "minecraft:purpur_double_slab",
+//            "minecraft:purpur_slab",
+//            "minecraft:double_wooden_slab",
+//            "minecraft:wooden_slab",
+//            "minecraft:double_stone_slab2",
+//            "minecraft:stone_slab2",
+//            "minecraft:flower_pot"
+//        ]/*,
+//        "copyRequiredItemsFromDrops": true*/
+//    },
     {
-        "selectors": [
-            "minecraft:double_stone_slab",
-            "minecraft:stone_slab",
-            "minecraft:purpur_double_slab",
-            "minecraft:purpur_slab",
-            "minecraft:double_wooden_slab",
-            "minecraft:wooden_slab",
-            "minecraft:double_stone_slab2",
-            "minecraft:stone_slab2",
-            "minecraft:flower_pot"
-        ],
-        "copyRequiredItemsFromDrops": true
+        "selectors": ["minecraft:flower_pot"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:flower_pot"
+            }]
+        }]
+    },
+    {
+        "selectors": [{
+            "base": "minecraft:flower_pot",
+            "nbt": [{
+                "key": ["Item"],
+                "operation": "!=",
+                "value": "minecraft:air"
+            }]
+        }],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": ["Item"],
+                "amount": 1,
+                "meta": ["Data"]
+            }]
+        }]
     },
     {
         "selectors": [
@@ -31,72 +58,8 @@
             "minecraft:green_shulker_box",
             "minecraft:red_shulker_box",
             "minecraft:black_shulker_box"
-        ],
-        "copyRequiredItemsFromItemHandlersOnSides": ["north"]
-    },
-    {
-        "selectors": ["minecraft:white_shulker_box"],
-        "requiredItems": ["minecraft:white_shulker_box"]
-    },
-    {
-        "selectors": ["minecraft:orange_shulker_box"],
-        "requiredItems": ["minecraft:orange_shulker_box"]
-    },
-    {
-        "selectors": ["minecraft:magenta_shulker_box"],
-        "requiredItems": ["minecraft:magenta_shulker_box"]
-    },
-    {
-        "selectors": ["minecraft:light_blue_shulker_box"],
-        "requiredItems": ["minecraft:light_blue_shulker_box"]
-    },
-    {
-        "selectors": ["minecraft:yellow_shulker_box"],
-        "requiredItems": ["minecraft:yellow_shulker_box"]
-    },
-    {
-        "selectors": ["minecraft:lime_shulker_box"],
-        "requiredItems": ["minecraft:lime_shulker_box"]
-    },
-    {
-        "selectors": ["minecraft:pink_shulker_box"],
-        "requiredItems": ["minecraft:pink_shulker_box"]
-    },
-    {
-        "selectors": ["minecraft:gray_shulker_box"],
-        "requiredItems": ["minecraft:gray_shulker_box"]
-    },
-    {
-        "selectors": ["minecraft:silver_shulker_box"],
-        "requiredItems": ["minecraft:silver_shulker_box"]
-    },
-    {
-        "selectors": ["minecraft:cyan_shulker_box"],
-        "requiredItems": ["minecraft:cyan_shulker_box"]
-    },
-    {
-        "selectors": ["minecraft:purple_shulker_box"],
-        "requiredItems": ["minecraft:purple_shulker_box"]
-    },
-    {
-        "selectors": ["minecraft:blue_shulker_box"],
-        "requiredItems": ["minecraft:blue_shulker_box"]
-    },
-    {
-        "selectors": ["minecraft:brown_shulker_box"],
-        "requiredItems": ["minecraft:brown_shulker_box"]
-    },
-    {
-        "selectors": ["minecraft:green_shulker_box"],
-        "requiredItems": ["minecraft:green_shulker_box"]
-    },
-    {
-        "selectors": ["minecraft:red_shulker_box"],
-        "requiredItems": ["minecraft:red_shulker_box"]
-    },
-    {
-        "selectors": ["minecraft:black_shulker_box"],
-        "requiredItems": ["minecraft:black_shulker_box"]
+        ]/*,
+        "copyRequiredItemsFromItemHandlersOnSides": ["north"]*/
     },
     {
         "selectors": [
@@ -106,41 +69,41 @@
         "ignore": true
     },
     {
-        "selectors": ["minecraft:cake"],
-        "requiredItems": ["minecraft:cake"]
+        "selectors": ["minecraft:cake"]/*,
+        "requiredItems": ["minecraft:cake"]*/
     },
     {
-        "selectors": ["minecraft:snow_layer"],
-        "copyRequiredItemsCountFromProperty": "layers"
+        "selectors": ["minecraft:snow_layer"]/*,
+        "copyRequiredItemsCountFromProperty": "layers"*/
     },
     {
-        "selectors": ["minecraft:farmland"],
-        "requiredItems": ["minecraft:dirt"],
+        "selectors": ["minecraft:farmland"],/*
+        "requiredItems": ["minecraft:dirt"],*/
         "ignoredProperties": ["moisture"]
     },
     {
-        "selectors": ["minecraft:wheat"],
-        "requiredItems": ["minecraft:wheat_seeds"]
+        "selectors": ["minecraft:wheat"]/*,
+        "requiredItems": ["minecraft:wheat_seeds"]*/
     },
     {
-        "selectors": ["minecraft:pumpkin_stem"],
-        "requiredItems": ["minecraft:pumpkin_seeds"]
+        "selectors": ["minecraft:pumpkin_stem"]/*,
+        "requiredItems": ["minecraft:pumpkin_seeds"]*/
     },
     {
-        "selectors": ["minecraft:melon_stem"],
-        "requiredItems": ["minecraft:melon_seeds"]
+        "selectors": ["minecraft:melon_stem"]/*,
+        "requiredItems": ["minecraft:melon_seeds"]*/
     },
     {
-        "selectors": ["minecraft:beetroots"],
-        "requiredItems": ["minecraft:beetroot_seeds"]
+        "selectors": ["minecraft:beetroots"]/*,
+        "requiredItems": ["minecraft:beetroot_seeds"]*/
     },
     {
-        "selectors": ["minecraft:carrots"],
-        "requiredItems": ["minecraft:carrot"]
+        "selectors": ["minecraft:carrots"]/*,
+        "requiredItems": ["minecraft:carrot"]*/
     },
     {
-        "selectors": ["minecraft:potatoes"],
-        "requiredItems": ["minecraft:potato"]
+//        "selectors": ["minecraft:potatoes"],
+//        "requiredItems": ["minecraft:potato"]
     },
     {
         "selectors": [
@@ -155,37 +118,37 @@
     },
     {
         "selectors": ["minecraft:redstone_wire"],
-        "requiredItems": ["minecraft:redstone"],
+//        "requiredItems": ["minecraft:redstone"],
         "ignoredProperties": ["power", "east", "north", "south", "west"]
     },
     {
         "selectors": ["minecraft:powered_repeater", "minecraft:unpowered_repeater"],
-        "requiredItems": ["minecraft:repeater"],
+//        "requiredItems": ["minecraft:repeater"],
         "placeBlock": "minecraft:repeater",
         "canBeReplacedWithBlocks": ["minecraft:powered_repeater", "minecraft:unpowered_repeater"]
     },
     {
         "selectors": ["minecraft:powered_comparator", "minecraft:unpowered_comparator"],
-        "requiredItems": ["minecraft:comparator"],
+//        "requiredItems": ["minecraft:comparator"],
         "placeBlock": "minecraft:comparator",
         "ignoredProperties": ["powered"],
         "canBeReplacedWithBlocks": ["minecraft:powered_comparator", "minecraft:unpowered_comparator"]
     },
     {
         "selectors": ["minecraft:redstone_ore", "minecraft:lit_redstone_ore"],
-        "requiredItems": ["minecraft:redstone_ore"],
+//        "requiredItems": ["minecraft:redstone_ore"],
         "placeBlock": "minecraft:redstone_ore",
         "canBeReplacedWithBlocks": ["minecraft:redstone_ore", "minecraft:lit_redstone_ore"]
     },
     {
         "selectors": ["minecraft:redstone_torch", "minecraft:unlit_redstone_torch"],
-        "requiredItems": ["minecraft:redstone_torch"],
+//        "requiredItems": ["minecraft:redstone_torch"],
         "placeBlock": "minecraft:redstone_torch",
         "canBeReplacedWithBlocks": ["minecraft:redstone_torch", "minecraft:unlit_redstone_torch"]
     },
     {
         "selectors": ["minecraft:redstone_lamp", "minecraft:lit_redstone_lamp"],
-        "requiredItems": ["minecraft:redstone_lamp"],
+//        "requiredItems": ["minecraft:redstone_lamp"],
         "placeBlock": "minecraft:redstone_lamp",
         "canBeReplacedWithBlocks": ["minecraft:redstone_lamp", "minecraft:lit_redstone_lamp"]
     },
@@ -207,7 +170,7 @@
     },
     {
         "selectors": ["minecraft:daylight_detector", "minecraft:daylight_detector_inverted"],
-        "requiredItems": ["minecraft:daylight_detector"],
+//        "requiredItems": ["minecraft:daylight_detector"],
         "ignoredProperties": ["power"]
     },
     {
@@ -262,8 +225,8 @@
         "selectors": ["minecraft:piston_head"],
         "placeBlock": "minecraft:air",
         "canBeReplacedWithBlocks": ["minecraft:piston_head", "minecraft:piston_extension", "minecraft:air"],
-        "ignoredProperties": ["facing", "short", "type"],
-        "requiredItems": []
+        "ignoredProperties": ["facing", "short", "type"]/*,
+        "requiredItems": []*/
     },
     {
         "selectors": [
@@ -280,8 +243,8 @@
             "minecraft:wooden_door[half=upper]",
             "minecraft:iron_door[half=upper]",
             "minecraft:double_plant[half=upper]"
-        ],
-        "requiredItems": []
+        ]/*,
+        "requiredItems": []*/
     },
     {
         "selectors": [
@@ -390,7 +353,7 @@
         "capture": true
     },
     {
-        "selectors": ["minecraft:ender_crystal"],
-        "requiredItems": ["minecraft:end_crystal"]
+        "selectors": ["minecraft:ender_crystal"]/*,
+        "requiredItems": ["minecraft:end_crystal"]*/
     }
 ]

@@ -8,16 +8,12 @@ package buildcraft.builders.snapshot;
 
 import java.util.List;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
+@SuppressWarnings("WeakerAccess")
 public class JsonRule {
-    public List<String> selectors = null;
-    public List<ItemStack> requiredItems = null;
-    public boolean copyRequiredItemsFromDrops = false;
-    public boolean doNotCopyRequiredItemsFromBreakBlockDrops = false;
-    public String copyRequiredItemsCountFromProperty = null;
-    public List<String> copyRequiredItemsFromItemHandlersOnSides = null;
+    public List<JsonSelector> selectors = null;
+    public List<RequiredExtractor> requiredExtractors = null;
     public List<BlockPos> requiredBlockOffsets = null;
     public List<String> ignoredProperties = null;
     public List<String> ignoredTags = null;
