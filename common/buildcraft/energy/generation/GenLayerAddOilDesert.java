@@ -16,10 +16,12 @@ import net.minecraftforge.common.BiomeDictionary;
 
 import buildcraft.api.core.BCLog;
 
+import buildcraft.lib.BCLib;
+
 public class GenLayerAddOilDesert extends GenLayerBiomeReplacer {
     private static final double NOISE_FIELD_SCALE = 0.001;
     private static final double NOISE_FIELD_THRESHOLD = 0.7;
-    
+
     private static final List<BiomeDictionary.Type> REQUIRED_TYPES = Arrays.asList(
         BiomeDictionary.Type.HOT,
         BiomeDictionary.Type.DRY,
@@ -34,7 +36,8 @@ public class GenLayerAddOilDesert extends GenLayerBiomeReplacer {
     protected boolean canReplaceBiome(int biomeId) {
         Biome biome = Biome.getBiomeForId(biomeId);
         if (biome == null) {
-            BCLog.logger.warn("Couldn't find a biome with an ID of " + biomeId);
+            if (BCLib.DEV) //don't spam outside of dev, it's way to noisy
+                BCLog.logger.warn("Couldn't find a biome with an ID of " + biomeId);
             return false;
         }
         return BiomeDictionary.getTypes(biome).containsAll(REQUIRED_TYPES);
