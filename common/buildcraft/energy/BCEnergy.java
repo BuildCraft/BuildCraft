@@ -38,6 +38,7 @@ import buildcraft.energy.generation.BiomeOilOcean;
 import buildcraft.energy.generation.OilGenerator;
 import buildcraft.energy.tile.TileEngineIron_BC8;
 import buildcraft.energy.tile.TileEngineStone_BC8;
+import buildcraft.energy.tile.TileSpringOil;
 
 //@formatter:off
 @Mod(modid = BCEnergy.MODID,
@@ -89,6 +90,8 @@ public class BCEnergy {
             BiomeDictionary.Type.SANDY
         );
         MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
+
+        TileBC_Neptune.registerTile(TileSpringOil.class, "tile.spring.oil");
 
     }
 
