@@ -134,13 +134,11 @@ public enum FacadeSwapRecipe implements IRecipe, IRecipeViewable.IViewableGrid {
 
     @Override
     public Class<IRecipe> getRegistryType() {
-        //FIXME: new recipe method
-        return null;
+        return IRecipe.class;
     }
 
     @Override
     public boolean canFit(int width, int height) {
-        //FIXME: new recipe method
-        return false;
+        return width >= 1 && height >= 1;
     }
 }

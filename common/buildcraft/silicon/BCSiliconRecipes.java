@@ -15,7 +15,6 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.oredict.OreDictionary;
 
-import buildcraft.api.BCItems;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
@@ -30,7 +29,7 @@ import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 
 public class BCSiliconRecipes {
     public static void init() {
-        if (BCItems.SILICON_REDSTONE_CHIPSET != null) {
+        if (BCSiliconItems.REDSTONE_CHIPSET != null) {
             addChipsetAssembly(1, null, EnumRedstoneChipset.RED);
             addChipsetAssembly(2, "ingotIron", EnumRedstoneChipset.IRON);
             addChipsetAssembly(4, "ingotGold", EnumRedstoneChipset.GOLD);

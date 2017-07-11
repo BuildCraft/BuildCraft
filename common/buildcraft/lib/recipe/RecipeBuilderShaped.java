@@ -8,6 +8,7 @@ package buildcraft.lib.recipe;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.Nonnull;
 
 import gnu.trove.map.hash.TCharObjectHashMap;
@@ -16,11 +17,10 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import buildcraft.lib.misc.StackUtil;
-
-import buildcraft.core.Converter;
 
 public class RecipeBuilderShaped {
     @Nonnull
@@ -98,8 +98,7 @@ public class RecipeBuilderShaped {
             objs[offset++] = c;
             objs[offset++] = objects.get(c);
         }
-        //returning null for now, not used anyways
-        return null; //new ShapedOreRecipe(result, objs);
+        return new ShapedOreRecipe(result.getItem().getRegistryName(), result, objs);
     }
 
     private void ensureValid() {
@@ -110,16 +109,16 @@ public class RecipeBuilderShaped {
 
     public void register() {
         ensureValid();
-        Converter.addShapedRecipe(result, createRecipeObjectArray());
+        ForgeRegistries.RECIPES.register(new ShapedOreRecipe(result.getItem().getRegistryName(), result, createRecipeObjectArray()));
     }
 
     public void registerNbtAware() {
         ensureValid();
-        Converter.addShapedRecipe(result, createRecipeObjectArray());
+        ForgeRegistries.RECIPES.register(new NBTAwareShapedOreRecipe(result, createRecipeObjectArray()).setRegistryName(result.getItem().getRegistryName()));
     }
 
     public void registerRotated() {
         ensureValid();
-        //GameRegistry.addRecipe(buildRotated());
+        ForgeRegistries.RECIPES.register(buildRotated().setRegistryName(result.getItem().getRegistryName()));
     }
 }

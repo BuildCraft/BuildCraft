@@ -8,11 +8,11 @@ package buildcraft.lib.recipe;
 
 import java.util.Iterator;
 import java.util.List;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -22,8 +22,7 @@ import buildcraft.lib.misc.StackUtil;
 public class NBTAwareShapedOreRecipe extends ShapedOreRecipe {
 
     public NBTAwareShapedOreRecipe(@Nonnull ItemStack result, Object... recipe) {
-        //TODO: convert to factory
-        super(new ResourceLocation("temp"), result, recipe);
+        super(result.getItem().getRegistryName(), result, recipe);
     }
 
     @SuppressWarnings("unchecked")

@@ -83,7 +83,6 @@ public class BCTransport {
     public static void init(FMLInitializationEvent evt) {
         BCTransportProxy.getProxy().fmlInit();
         BCTransportRegistries.init();
-        BCTransportRecipes.init();
 
         TileBC_Neptune.registerTile(TileFilteredBuffer.class, "tile.filtered_buffer");
         TileBC_Neptune.registerTile(TilePipeHolder.class, "tile.pipe_holder");

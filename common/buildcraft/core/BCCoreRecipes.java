@@ -6,31 +6,10 @@
  */
 package buildcraft.core;
 
-import com.google.common.collect.ImmutableSet;
-
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemStack;
-
-import buildcraft.api.BCBlocks;
-import buildcraft.api.BCItems;
-import buildcraft.api.enums.EnumDecoratedBlock;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.recipes.AssemblyRecipe;
-import buildcraft.api.recipes.BuildcraftRecipeRegistry;
-import buildcraft.api.recipes.StackDefinition;
-
-import buildcraft.lib.inventory.filter.ArrayStackFilter;
-import buildcraft.lib.inventory.filter.OreStackFilter;
-import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.recipe.RecipeBuilderShaped;
-
-import buildcraft.core.item.ItemPaintbrush_BC8;
-
 public class BCCoreRecipes {
     public static void init() {
         //TODO: define these in json
+        /*
         if (BCItems.CORE_PAINTBRUSH != null) {
             ItemStack cleanPaintbrush = new ItemStack(BCItems.CORE_PAINTBRUSH);
             Object[] input = { " iw", " gi", "s  ", 's', "stickWood", 'g', "gearWood", 'w', new ItemStack(Blocks.WOOL,
@@ -81,5 +60,6 @@ public class BCCoreRecipes {
             builder.setResult(new ItemStack(BCBlocks.CORE_DECORATED, 32, EnumDecoratedBlock.LASER_BACK.ordinal()));
             builder.register();
         }
+        */
     }
 }
