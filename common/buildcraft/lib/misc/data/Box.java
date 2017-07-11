@@ -208,7 +208,7 @@ public class Box implements IBox {
         return this;
     }
 
-    /** IMPORTANT: Use {@link #contains(Vec3d)}instead of the returned {@link AxisAlignedBB#isVecInside(Vec3d)} as the
+    /** IMPORTANT: Use {@link #contains(Vec3d)}instead of the returned {@link AxisAlignedBB#contains(Vec3d)} as the
      * logic is different! */
     public AxisAlignedBB getBoundingBox() {
         return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
