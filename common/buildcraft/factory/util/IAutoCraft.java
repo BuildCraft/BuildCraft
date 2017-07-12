@@ -56,7 +56,7 @@ public interface IAutoCraft {
         ItemStack out = getCurrentRecipe().getCraftingResult(getWorkbenchCrafting());
         InventoryUtil.drop(getWorldForAutoCrafting(), getPosForAutoCrafting(), insertInInventory(getInvResult(), out));
         for (ItemStack stack : getCurrentRecipe().getRemainingItems(getWorkbenchCrafting())) {
-            InventoryUtil.drop(getWorldForAutoCrafting(), getPosForAutoCrafting(), insertInInventory(getInvResult(), stack));
+            InventoryUtil.addToBestAcceptor(getWorldForAutoCrafting(), getPosForAutoCrafting(), null, stack);
         }
         for (ItemStack input : getRequirements()) {
             ItemStack toExtract = input.copy();
@@ -85,7 +85,7 @@ public interface IAutoCraft {
     }
 
     default boolean hasMaterials() {
-        return getCurrentRecipe() != null && getCurrentRecipe().matches(getWorkbenchCrafting(), getWorldForAutoCrafting()) && StackUtil.containsAll(getRequirements(), StackUtil.mergeSameItems(getInvMaterials().stacks));
+        return getCurrentRecipe() != null && getCurrentRecipe().matches(getWorkbenchCrafting(), getWorldForAutoCrafting()) && getRequirements() != null && StackUtil.containsAll(getRequirements(), StackUtil.mergeSameItems(getInvMaterials().stacks));
     }
 
     default boolean canWork() {
