@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "buildcraftcore:gear_wood"
+      "item": "buildcraftlib:guide"
     },
     "title": {
       "translate": "advancements.buildcraftcore.root.title"
@@ -9,25 +9,20 @@
     "description": {
       "translate": "advancements.buildcraftcore.root.description"
     },
-    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
-    "show_toast": false,
-    "announce_to_chat": false
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png"
   },
   "criteria": {
-    "has_stick": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "item": "minecraft:stick"
-          }
-        ]
-      }
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
     }
   },
   "rewards": {
     "recipes": [
-      "buildcraftcore:gear_wood"
+      "buildcraftcore:gear_wood",
+      "buildcraftcore:gear_stone",
+      "buildcraftcore:gear_iron",
+      "buildcraftcore:gear_gold",
+      "buildcraftcore:gear_diamond"
     ]
   }
 }

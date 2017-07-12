@@ -31,7 +31,6 @@ import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -44,7 +43,6 @@ import buildcraft.core.BCCoreBlocks;
 import buildcraft.energy.BCEnergy;
 import buildcraft.energy.BCEnergyFluids;
 
-@Mod.EventBusSubscriber(modid = BCEnergy.MODID)
 public final class OilPopulate {
     public static final OilPopulate INSTANCE = new OilPopulate();
     public static final EventType EVENT_TYPE = EnumHelper.addEnum(EventType.class, "BUILDCRAFT_OIL", new Class[0]);
