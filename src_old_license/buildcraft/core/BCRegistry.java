@@ -16,7 +16,6 @@ import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.item.ItemBlockBC_Neptune;
-import buildcraft.lib.recipe.NBTAwareShapedOreRecipe;
 
 @Deprecated
 public final class BCRegistry {

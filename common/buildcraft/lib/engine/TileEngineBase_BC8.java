@@ -68,7 +68,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     public long currentOutput;// TODO: sync gui data
     public boolean isRedstonePowered = false;
-    private boolean isPumping = false;
+    protected boolean isPumping = false;
 
     /** The model variables, used to keep track of the various state-based variables. */
     public final ModelVariableData clientModelData = new ModelVariableData();

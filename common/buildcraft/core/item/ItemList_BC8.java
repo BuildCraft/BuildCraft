@@ -5,6 +5,7 @@
 package buildcraft.core.item;
 
 import java.util.List;
+
 import javax.annotation.Nonnull;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -16,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -27,12 +29,14 @@ import buildcraft.api.items.IList;
 
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.list.ListHandler;
+import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
 
 import buildcraft.core.BCCoreGuis;
 
 public class ItemList_BC8 extends ItemBC_Neptune implements IList {
+    private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftcore:list");
     public ItemList_BC8(String id) {
         super(id);
         setMaxStackSize(1);
@@ -40,6 +44,7 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        AdvancementUtil.unlockAdvancement(player, ADVANCEMENT);
         BCCoreGuis.LIST.openGUI(player);
         return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
     }

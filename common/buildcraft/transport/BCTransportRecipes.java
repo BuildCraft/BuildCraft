@@ -31,7 +31,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
@@ -46,7 +45,7 @@ import buildcraft.lib.inventory.filter.ArrayStackFilter;
 import buildcraft.lib.inventory.filter.OreStackFilter;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
-import buildcraft.lib.recipe.NBTAwareShapedOreRecipe;
+import buildcraft.lib.recipe.IngredientNBTBC;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 
 import buildcraft.core.BCCoreBlocks;
@@ -178,8 +177,8 @@ public class BCTransportRecipes {
                     GateVariant varOr = new GateVariant(EnumGateLogic.OR, material, modifier);
                     ItemStack resultOr = BCTransportItems.PLUG_GATE.getStack(varOr);
 
-                    ForgeRegistries.RECIPES.register(new NBTAwareShapedOreRecipe(resultAnd, "i", 'i', resultOr).setRegistryName(resultOr.getItem().getRegistryName() + "_" + modifier));
-                    ForgeRegistries.RECIPES.register(new NBTAwareShapedOreRecipe(resultOr, "i", 'i', resultAnd).setRegistryName(resultAnd.getItem().getRegistryName() + "_" + modifier));
+                    ForgeRegistries.RECIPES.register(new ShapedOreRecipe(resultOr.getItem().getRegistryName(), resultAnd, "i", 'i', new IngredientNBTBC(resultOr)).setRegistryName(resultOr.getItem().getRegistryName() + "_" + modifier + "_" + material + "_or"));
+                    ForgeRegistries.RECIPES.register(new ShapedOreRecipe(resultAnd.getItem().getRegistryName(), resultOr, "i", 'i', new IngredientNBTBC(resultAnd)).setRegistryName(resultAnd.getItem().getRegistryName() + "_" + modifier + "_" + material + "_and"));
                 }
             }
                 StackDefinition lapis = OreStackFilter.definition("gemLapis");
@@ -250,8 +249,8 @@ public class BCTransportRecipes {
 
             if (BCTransportItems.PLUG_FACADE != null) {
                 AssemblyRecipeRegistry.INSTANCE.addRecipeProvider(FacadeAssemblyRecipes.INSTANCE);
-                RecipeSorter.register("buildcraftlib:facade_swap", FacadeSwapRecipe.class, RecipeSorter.Category.SHAPELESS,
-                    "before:minecraft:shapeless");
+                //RecipeSorter.register("buildcraftlib:facade_swap", FacadeSwapRecipe.class, RecipeSorter.Category.SHAPELESS,
+                    //"before:minecraft:shapeless");
                 ForgeRegistries.RECIPES.register(FacadeSwapRecipe.INSTANCE);
             }
         }

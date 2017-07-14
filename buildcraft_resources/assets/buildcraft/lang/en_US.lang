@@ -730,3 +730,25 @@ command.buildcraft.buildcraft.op.format=Format: /%s
 command.buildcraft.buildcraft.deop.desc=- %s : Deop FakePlayer
 command.buildcraft.buildcraft.deop.help=Ungives OP rights to the BC FakePlayer (acts in the name of quarries, robots, etc.)
 command.buildcraft.buildcraft.deop.format=Format: /%s
+
+#advancements
+advancements.buildcraftcore.root.title=Welcome to Buildcraft!
+advancements.buildcraftcore.root.description=Needs a description
+
+advancements.buildcraftcore.guide.title=How does this work again?
+advancements.buildcraftcore.guide.description=Check out the guide
+
+advancements.buildcraftcore.gears.title=Gearing up
+advancements.buildcraftcore.gears.description=Get one of each gear
+
+advancements.buildcraftcore.wrenched.title=Wrenched!
+advancements.buildcraftcore.wrenched.description=Use the wrench
+
+advancements.buildcraftcore.freePowar.title=Free Power!
+advancements.buildcraftcore.freePowar.description=Generate free power
+
+advancements.buildcraftcore.list.title=Sorting all the things
+advancements.buildcraftcore.list.description=Discover the advanced capabilities of the list
+
+advancements.buildcraftcore.engine.title=My first engine
+advancements.buildcraftcore.engine.description=Get your first engine

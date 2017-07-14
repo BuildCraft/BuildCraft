@@ -33,7 +33,7 @@ public class BCRecipeShaped extends ShapedOreRecipe {
 
     @Override
     public boolean isHidden() {
-        return enabled;
+        return !enabled;
     }
 
 

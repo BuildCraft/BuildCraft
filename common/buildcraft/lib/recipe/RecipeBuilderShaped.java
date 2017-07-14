@@ -77,6 +77,19 @@ public class RecipeBuilderShaped {
         return objs;
     }
 
+    public Object[] createRecipeObjectArrayNBT() {
+        Object[] objs = new Object[shape.size() + objects.size() * 2];
+        Object[] original = createRecipeObjectArray();
+        for (int i = 0; i < objs.length; i++) {
+            Object o = original[i];
+            if (o instanceof ItemStack) {
+                o = new IngredientNBTBC((ItemStack) o);
+            }
+            objs[i] = o;
+        }
+        return objs;
+    }
+
     public ShapedOreRecipe buildRotated() {
         int fromRows = shape.size();
         int toRows = shape.get(0).length();
@@ -114,7 +127,7 @@ public class RecipeBuilderShaped {
 
     public void registerNbtAware() {
         ensureValid();
-        ForgeRegistries.RECIPES.register(new NBTAwareShapedOreRecipe(result, createRecipeObjectArray()).setRegistryName(result.getItem().getRegistryName()));
+        ForgeRegistries.RECIPES.register(new ShapedOreRecipe(result.getItem().getRegistryName(), result, createRecipeObjectArrayNBT()).setRegistryName(result.getItem().getRegistryName()));
     }
 
     public void registerRotated() {

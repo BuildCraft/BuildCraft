@@ -27,9 +27,6 @@ public class BCRecipeShapedFactory implements IRecipeFactory {
 
     @Override
     public IRecipe parse(JsonContext context, JsonObject json) {
-        String group = JsonUtils.getString(json, "group", "");
-
-
         Map<Character, Ingredient> ingMap = Maps.newHashMap();
         for (Map.Entry<String, JsonElement> entry : JsonUtils.getJsonObject(json, "key").entrySet())
         {
@@ -83,6 +80,7 @@ public class BCRecipeShapedFactory implements IRecipeFactory {
             throw new JsonSyntaxException("Key defines symbols that aren't used in pattern: " + keys);
 
         ItemStack result = CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "result"), context);
+        String group = JsonUtils.getString(json, "group", result.getItem().getRegistryName().getResourcePath());
         return new BCRecipeShaped(new ResourceLocation(group), result, primer, RegistryHelper.isEnabled(result));
     }
 }

@@ -32,6 +32,6 @@ public class BCRecipeShapeless extends ShapelessOreRecipe {
 
     @Override
     public boolean isHidden() {
-        return enabled;
+        return !enabled;
     }
 }
