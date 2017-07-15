@@ -13,11 +13,14 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 
 public class BCFluidBlock extends BlockFluidClassic {
+    private boolean sticky = false;
+
     public BCFluidBlock(Fluid fluid, Material material) {
         super(fluid, material);
         Boolean displaceWater = fluid.getDensity() > 1000;
@@ -37,5 +40,16 @@ public class BCFluidBlock extends BlockFluidClassic {
             return true;
         }
         return null;
+    }
+
+    @Override
+    public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+        if (sticky) {
+            entityIn.setInWeb();
+        }
+    }
+
+    public void setSticky(boolean sticky) {
+        this.sticky = sticky;
     }
 }

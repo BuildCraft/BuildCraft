@@ -65,39 +65,39 @@ public class BCEnergyFluids {
             int index = 0;
 
             // Add all of the fluid states
-            crudeOil = defineFluids(data[index++], "oil");
-            oilResidue = defineFluids(data[index++], "oil_residue");
-            oilHeavy = defineFluids(data[index++], "oil_heavy");
-            oilDense = defineFluids(data[index++], "oil_dense");
-            oilDistilled = defineFluids(data[index++], "oil_distilled");
-            fuelDense = defineFluids(data[index++], "fuel_dense");
-            fuelMixedHeavy = defineFluids(data[index++], "fuel_mixed_heavy");
-            fuelLight = defineFluids(data[index++], "fuel_light");
-            fuelMixedLight = defineFluids(data[index++], "fuel_mixed_light");
-            fuelGaseous = defineFluids(data[index++], "fuel_gaseous");
+            crudeOil = defineFluids(data[index++], "oil", true);
+            oilResidue = defineFluids(data[index++], "oil_residue", false);
+            oilHeavy = defineFluids(data[index++], "oil_heavy", false);
+            oilDense = defineFluids(data[index++], "oil_dense", false);
+            oilDistilled = defineFluids(data[index++], "oil_distilled", false);
+            fuelDense = defineFluids(data[index++], "fuel_dense", false);
+            fuelMixedHeavy = defineFluids(data[index++], "fuel_mixed_heavy", false);
+            fuelLight = defineFluids(data[index++], "fuel_light", false);
+            fuelMixedLight = defineFluids(data[index++], "fuel_mixed_light", false);
+            fuelGaseous = defineFluids(data[index++], "fuel_gaseous", false);
         } else {
-            crudeOil = new BCFluid[] { defineFluid(data[0], 0, "oil") };
+            crudeOil = new BCFluid[] { defineFluid(data[0], 0, "oil", true) };
             oilResidue = new BCFluid[0];
             oilHeavy = new BCFluid[0];
             oilDense = new BCFluid[0];
             oilDistilled = new BCFluid[0];
             fuelDense = new BCFluid[0];
             fuelMixedHeavy = new BCFluid[0];
-            fuelLight = new BCFluid[] { defineFluid(data[7], 0, "fuel_light") };
+            fuelLight = new BCFluid[] { defineFluid(data[7], 0, "fuel_light", false) };
             fuelMixedLight = new BCFluid[0];
             fuelGaseous = new BCFluid[0];
         }
     }
 
-    private static BCFluid[] defineFluids(int[] data, String name) {
+    private static BCFluid[] defineFluids(int[] data, String name, boolean sticky) {
         BCFluid[] arr = new BCFluid[3];
         for (int h = 0; h < 3; h++) {
-            arr[h] = defineFluid(data, h, name);
+            arr[h] = defineFluid(data, h, name, sticky);
         }
         return arr;
     }
 
-    private static BCFluid defineFluid(int[] data, int heat, String name) {
+    private static BCFluid defineFluid(int[] data, int heat, String name, boolean sticky) {
         final int density = data[0];
         final int baseViscosity = data[1];
         final int boilPoint = data[2];
@@ -136,6 +136,7 @@ public class BCEnergyFluids {
 
         BCFluidBlock block = (BCFluidBlock) def.getBlock();
         block.setLightOpacity(3);
+        block.setSticky(sticky);
         // Distance that the fluid will travel: 1->16
         // Higher heat values travel a little further
         block.setQuantaPerBlock(baseQuanta + (baseQuanta > 6 ? heat : heat / 2));
