@@ -1,0 +1,20 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcraftfactory:pump"
+    },
+    "title": {
+      "translate": "advancements.buildcraftfactory.black_gold.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftfactory.black_gold.description"
+    },
+    "frame": "challenge"
+  },
+  "parent": "buildcraftfactory:oil_platform",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

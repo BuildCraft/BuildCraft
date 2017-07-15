@@ -4,13 +4,14 @@
       "item": "buildcraftenergy:glob_oil"
     },
     "title": {
-      "translate": "advancements.buildcraftenergy.sticky_situation.title"
+      "translate": "advancements.buildcraftenergy.sticky_dipping.title"
     },
     "description": {
-      "translate": "advancements.buildcraftenergy.sticky_situation.description"
-    }
+      "translate": "advancements.buildcraftenergy.sticky_dipping.description"
+    },
+    "hidden": true
   },
-  "parent": "buildcraftenergy:powering_up",
+  "parent": "buildcraftenergy:fine_riches",
   "criteria": {
     "oil": {
       "trigger": "minecraft:enter_block",
