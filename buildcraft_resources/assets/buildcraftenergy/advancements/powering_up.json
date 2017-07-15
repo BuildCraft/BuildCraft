@@ -2,16 +2,16 @@
   "display": {
     "icon": {
       "item": "buildcraftcore:engine",
-      "data": 0
+      "data": 1
     },
     "title": {
-      "translate": "advancements.buildcraftcore.freePowar.title"
+      "translate": "advancements.buildcraftenergy.poweringUp.title"
     },
     "description": {
-      "translate": "advancements.buildcraftcore.freePowar.description"
+      "translate": "advancements.buildcraftenergy.poweringUp.description"
     }
   },
-  "parent": "buildcraftcore:wrenched",
+  "parent": "buildcraftenergy:engine",
   "criteria": {
     "code_trigger": {
       "trigger": "minecraft:impossible"

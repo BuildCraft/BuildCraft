@@ -1,0 +1,19 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcraftcore:goggles"
+    },
+    "title": {
+      "translate": "advancements.buildcraftcore.goggles.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftcore.goggles.description"
+    }
+  },
+  "parent": "buildcraftcore:guide",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

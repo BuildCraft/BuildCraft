@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcraftenergy:glob_oil"
+    },
+    "title": {
+      "translate": "advancements.buildcraftenergy.sticky_situation.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftenergy.sticky_situation.description"
+    }
+  },
+  "parent": "buildcraftenergy:powering_up",
+  "criteria": {
+    "oil": {
+      "trigger": "minecraft:enter_block",
+      "conditions": {
+        "block": "buildcraftenergy:fluid_block_oil_heat_0"
+      }
+    }
+  }
+}

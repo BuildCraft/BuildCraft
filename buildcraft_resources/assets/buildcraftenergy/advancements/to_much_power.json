@@ -4,13 +4,13 @@
       "item": "buildcraftcore:wrench"
     },
     "title": {
-      "translate": "advancements.buildcraftcore.wrenched.title"
+      "translate": "advancements.buildcraftenergy.to_much_power.title"
     },
     "description": {
-      "translate": "advancements.buildcraftcore.wrenched.description"
+      "translate": "advancements.buildcraftenergy.to_much_power.description"
     }
   },
-  "parent": "buildcraftcore:root",
+  "parent": "buildcraftenergy:powering_up",
   "criteria": {
     "code_trigger": {
       "trigger": "minecraft:impossible"

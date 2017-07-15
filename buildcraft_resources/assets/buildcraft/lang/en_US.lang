@@ -752,3 +752,26 @@ advancements.buildcraftcore.list.description=Discover the advanced capabilities 
 
 advancements.buildcraftcore.engine.title=My first engine
 advancements.buildcraftcore.engine.description=Get your first engine
+
+advancements.buildcraftcore.markers.title=Marking your territory
+advancements.buildcraftcore.markers.description=Use volume markers to mark out an area
+
+advancements.buildcraftcore.path_markers.title=Defining the trail
+advancements.buildcraftcore.path_markers.description=Define a path
+
+advancements.buildcraftcore.paper.title=Paper collector
+advancements.buildcraftcore.paper.description=Use every piece of paper
+
+advancements.buildcraftenergy.poweringUp.title=Powering Up!
+advancements.buildcraftenergy.poweringUp.description=Activate a Stirling/Combustion engine with a redstone signal
+
+advancements.buildcraftenergy.lava_power.title=Lava Power
+advancements.buildcraftenergy.lava_power.description=Power a strling engine with a lava bucket
+
+advancements.buildcraftenergy.to_much_power.title=To much power!
+advancements.buildcraftenergy.to_much_power.description=Make an engine overheat and wackit it with a wrench
+
+advancements.buildcraftenergy.ice_cool.title=Ice cool
+advancements.buildcraftenergy.ice_cool.description=Cool a combustion engine with something else then water (if available)
+
+advancements.buildcraftenergy.sticky_situation.title=Sticky Situation
