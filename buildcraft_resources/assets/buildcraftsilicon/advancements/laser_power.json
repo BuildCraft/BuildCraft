@@ -12,8 +12,15 @@
   },
   "parent": "buildcraftcore:root",
   "criteria": {
-    "code_trigger": {
-      "trigger": "minecraft:impossible"
+    "get_laser": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "buildcraftsilicon:laser"
+          }
+        ]
+      }
     }
   }
 }

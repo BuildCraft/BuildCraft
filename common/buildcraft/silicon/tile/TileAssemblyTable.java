@@ -27,6 +27,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.recipes.AssemblyRecipe;
 
+import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.data.IdAllocator;
@@ -45,6 +46,8 @@ public class TileAssemblyTable extends TileLaserTableBase {
 
     public final ItemHandlerSimple inv = itemManager.addInvHandler("inv", 3 * 4, ItemHandlerManager.EnumAccess.BOTH, EnumPipePart.VALUES);
     public SortedMap<AssemblyRecipe, EnumAssemblyRecipeState> recipesStates = new TreeMap<>();
+
+    private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftsilicon:precision_crafting");
 
     @Override
     public IdAllocator getIdAllocator() {
@@ -147,16 +150,19 @@ public class TileAssemblyTable extends TileLaserTableBase {
 
         updateRecipes();
 
-        if (getTarget() > 0 && power >= getTarget()) {
-            AssemblyRecipe recipe = getActiveRecipe();
-            extract(inv, recipe.requiredStacks, false, false);
+        if (getTarget() > 0) {
+            AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT);
+            if (power >= getTarget()) {
+                AssemblyRecipe recipe = getActiveRecipe();
+                extract(inv, recipe.requiredStacks, false, false);
 
-            InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, recipe.output.copy());
+                InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, recipe.output.copy());
 
-            power -= getTarget();
-            activateNextRecipe();
+                power -= getTarget();
+                activateNextRecipe();
+            }
+            sendNetworkGuiUpdate(NET_GUI_DATA);
         }
-        sendNetworkGuiUpdate(NET_GUI_DATA);
     }
 
     @Override

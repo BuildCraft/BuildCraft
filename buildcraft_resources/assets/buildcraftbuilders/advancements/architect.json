@@ -1,13 +1,13 @@
 {
   "display": {
     "icon": {
-      "item": "buildcraftcore:volume_box"
+      "item": "buildcraftbuilders:architect"
     },
     "title": {
-      "translate": "advancements.buildcraftcore.path_markers.title"
+      "translate": "advancements.buildcraftbuilders.architect.title"
     },
     "description": {
-      "translate": "advancements.buildcraftcore.path_markers.description"
+      "translate": "advancements.buildcraftbuilders.architect.description"
     }
   },
   "parent": "buildcraftcore:markers",

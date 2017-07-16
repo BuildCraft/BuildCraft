@@ -11,7 +11,7 @@
       "translate": "advancements.buildcrafttransport.extended_logic.description"
     }
   },
-  "parent": "buildcrafttransport:pipe_dream",
+  "parent": "buildcrafttransport:pipe_logic",
   "criteria": {
     "code_trigger": {
       "trigger": "minecraft:impossible"
