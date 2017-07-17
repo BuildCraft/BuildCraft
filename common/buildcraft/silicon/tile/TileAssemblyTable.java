@@ -57,6 +57,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
     }
 
     private void updateRecipes() {
+        int count = recipesStates.size();
         for (AssemblyRecipe recipe: AssemblyRecipeRegistry.REGISTRY) {
             Set<ItemStack> outputs = recipe.getOutputs(inv.stacks);
             for (ItemStack out: outputs) {
@@ -108,6 +109,9 @@ public class TileAssemblyTable extends TileLaserTableBase {
                     break;
                 }
             }
+        }
+        if (count != recipesStates.size()) {
+            sendNetworkGuiUpdate(NET_GUI_DATA);
         }
     }
 
