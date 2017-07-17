@@ -10,8 +10,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -38,11 +36,9 @@ import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
-import buildcraft.api.recipes.BuildcraftRecipeRegistry;
-import buildcraft.api.recipes.StackDefinition;
+import buildcraft.api.recipes.AssemblyRecipeBasic;
+import buildcraft.api.recipes.IngredientStack;
 
-import buildcraft.lib.inventory.filter.ArrayStackFilter;
-import buildcraft.lib.inventory.filter.OreStackFilter;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.IngredientNBTBC;
@@ -62,7 +58,6 @@ import buildcraft.transport.recipe.FacadeSwapRecipe;
 public class BCTransportRecipes {
     @GameRegistry.ObjectHolder("buildcraftsilicon:assembly_table")
     private static final Block SILICON_TABLE_ASSEMBLY = null;
-    private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
@@ -116,11 +111,11 @@ public class BCTransportRecipes {
             }
 
             if (SILICON_TABLE_ASSEMBLY != null) {
-                Set<StackDefinition> input = new HashSet<>();
-                input.add(ArrayStackFilter.definition(redstoneEngine));
-                input.add(OreStackFilter.definition(2, "ingotIron"));
-                AssemblyRecipe recipe = new AssemblyRecipe("plug_pulsar", 1000 * MjAPI.MJ, input, output);
-                AssemblyRecipeRegistry.INSTANCE.addRecipe(recipe);
+                Set<IngredientStack> input = new HashSet<>();
+                input.add(new IngredientStack(Ingredient.fromStacks(redstoneEngine)));
+                input.add(new IngredientStack(CraftingHelper.getIngredient("ingotIron"), 2));
+                AssemblyRecipe recipe = new AssemblyRecipeBasic("plug_pulsar", 1000 * MjAPI.MJ, input, output);
+                AssemblyRecipeRegistry.REGISTRY.register(recipe);
             }
 
         }
@@ -181,37 +176,37 @@ public class BCTransportRecipes {
                     ForgeRegistries.RECIPES.register(new ShapedOreRecipe(resultAnd.getItem().getRegistryName(), resultOr, "i", 'i', new IngredientNBTBC(resultAnd)).setRegistryName(resultAnd.getItem().getRegistryName() + "_" + modifier + "_" + material + "_and"));
                 }
             }
-                StackDefinition lapis = OreStackFilter.definition("gemLapis");
+            IngredientStack lapis = IngredientStack.of("gemLapis");
                 makeGateAssembly(20_000, EnumGateMaterial.IRON, EnumGateModifier.NO_MODIFIER, EnumRedstoneChipset.IRON);
                 makeGateAssembly(40_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.NO_MODIFIER,
-                    EnumRedstoneChipset.IRON, ArrayStackFilter.definition(new ItemStack(Blocks.NETHER_BRICK)));
+                    EnumRedstoneChipset.IRON, IngredientStack.of(new ItemStack(Blocks.NETHER_BRICK)));
                 makeGateAssembly(80_000, EnumGateMaterial.GOLD, EnumGateModifier.NO_MODIFIER, EnumRedstoneChipset.GOLD);
 
                 makeGateModifierAssembly(40_000, EnumGateMaterial.IRON, EnumGateModifier.LAPIS, lapis);
                 makeGateModifierAssembly(60_000, EnumGateMaterial.IRON, EnumGateModifier.QUARTZ,
-                    ArrayStackFilter.definition(EnumRedstoneChipset.QUARTZ.getStack()));
+                    IngredientStack.of(EnumRedstoneChipset.QUARTZ.getStack()));
                 makeGateModifierAssembly(80_000, EnumGateMaterial.IRON, EnumGateModifier.DIAMOND,
-                    ArrayStackFilter.definition(EnumRedstoneChipset.DIAMOND.getStack()));
+                    IngredientStack.of(EnumRedstoneChipset.DIAMOND.getStack()));
 
                 makeGateModifierAssembly(80_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.LAPIS, lapis);
                 makeGateModifierAssembly(100_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.QUARTZ,
-                    ArrayStackFilter.definition(EnumRedstoneChipset.QUARTZ.getStack()));
+                    IngredientStack.of(EnumRedstoneChipset.QUARTZ.getStack()));
                 makeGateModifierAssembly(120_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.DIAMOND,
-                    ArrayStackFilter.definition(EnumRedstoneChipset.DIAMOND.getStack()));
+                    IngredientStack.of(EnumRedstoneChipset.DIAMOND.getStack()));
 
                 makeGateModifierAssembly(100_000, EnumGateMaterial.GOLD, EnumGateModifier.LAPIS, lapis);
                 makeGateModifierAssembly(140_000, EnumGateMaterial.GOLD, EnumGateModifier.QUARTZ,
-                    ArrayStackFilter.definition(EnumRedstoneChipset.QUARTZ.getStack()));
+                    IngredientStack.of(EnumRedstoneChipset.QUARTZ.getStack()));
                 makeGateModifierAssembly(180_000, EnumGateMaterial.GOLD, EnumGateModifier.DIAMOND,
-                    ArrayStackFilter.definition(EnumRedstoneChipset.DIAMOND.getStack()));
+                    IngredientStack.of(EnumRedstoneChipset.DIAMOND.getStack()));
             }
 
             if (BCTransportItems.WIRE != null) {
                 for (EnumDyeColor color : ColourUtil.COLOURS) {
                     String name = String.format("wire-%s", color.getUnlocalizedName());
-                    ImmutableSet<StackDefinition> input = ImmutableSet.of(OreStackFilter.definition("dustRedstone"),
-                        OreStackFilter.definition(ColourUtil.getDyeName(color)));
-                    AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(name, 10_000 * MjAPI.MJ, input,
+                    ImmutableSet<IngredientStack> input = ImmutableSet.of(IngredientStack.of("dustRedstone"),
+                        IngredientStack.of(ColourUtil.getDyeName(color)));
+                    AssemblyRecipeRegistry.REGISTRY.register(new AssemblyRecipeBasic(name, 10_000 * MjAPI.MJ, input,
                         new ItemStack(BCTransportItems.WIRE, 8, color.getMetadata())));
                 }
             }
@@ -219,38 +214,36 @@ public class BCTransportRecipes {
             if (BCTransportItems.PLUG_LENS != null) {
                 for (EnumDyeColor colour : ColourUtil.COLOURS) {
                     String name = String.format("lens-regular-%s", colour.getUnlocalizedName());
-                    StackDefinition stainedGlass = OreStackFilter.definition("blockGlass" + ColourUtil.getName(colour));
-                    ImmutableSet<StackDefinition> input = ImmutableSet.of(stainedGlass);
+                    IngredientStack stainedGlass = IngredientStack.of("blockGlass" + ColourUtil.getName(colour));
+                    ImmutableSet<IngredientStack> input = ImmutableSet.of(stainedGlass);
                     ItemStack output = BCTransportItems.PLUG_LENS.getStack(colour, false);
-                    AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(name, 500 * MjAPI.MJ, input, output));
+                    AssemblyRecipeRegistry.REGISTRY.register(new AssemblyRecipeBasic(name, 500 * MjAPI.MJ, input, output));
 
                     name = String.format("lens-filter-%s", colour.getUnlocalizedName());
                     output = BCTransportItems.PLUG_LENS.getStack(colour, true);
-                    input = ImmutableSet.of(stainedGlass, ArrayStackFilter.definition(new ItemStack(Blocks.IRON_BARS)));
-                    AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(name, 500 * MjAPI.MJ, input, output));
+                    input = ImmutableSet.of(stainedGlass, IngredientStack.of(new ItemStack(Blocks.IRON_BARS)));
+                    AssemblyRecipeRegistry.REGISTRY.register(new AssemblyRecipeBasic(name, 500 * MjAPI.MJ, input, output));
                 }
 
-                StackDefinition glass = OreStackFilter.definition("blockGlass");
-                ImmutableSet<StackDefinition> input = ImmutableSet.of(glass);
+                IngredientStack glass = IngredientStack.of("blockGlass");
+                ImmutableSet<IngredientStack> input = ImmutableSet.of(glass);
                 ItemStack output = BCTransportItems.PLUG_LENS.getStack(null, false);
-                AssemblyRecipeRegistry.INSTANCE
-                    .addRecipe(new AssemblyRecipe("lens-regular", 500 * MjAPI.MJ, input, output));
+                AssemblyRecipeRegistry.REGISTRY
+                    .register(new AssemblyRecipeBasic("lens-regular", 500 * MjAPI.MJ, input, output));
 
                 output = BCTransportItems.PLUG_LENS.getStack(null, true);
-                input = ImmutableSet.of(glass, ArrayStackFilter.definition(new ItemStack(Blocks.IRON_BARS)));
-                AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe("lens-filter", 500 * MjAPI.MJ, input, output));
+                input = ImmutableSet.of(glass, IngredientStack.of(new ItemStack(Blocks.IRON_BARS)));
+                AssemblyRecipeRegistry.REGISTRY.register(new AssemblyRecipeBasic("lens-filter", 500 * MjAPI.MJ, input, output));
             }
 
             if (BCTransportItems.PLUG_LIGHT_SENSOR != null) {
-                BuildcraftRecipeRegistry.assemblyRecipes.addRecipe(new AssemblyRecipe("light-sensor", 500 * MjAPI.MJ,
-                    ImmutableSet.of(ArrayStackFilter.definition(Blocks.DAYLIGHT_DETECTOR)),
+                AssemblyRecipeRegistry.REGISTRY.register(new AssemblyRecipeBasic("light-sensor", 500 * MjAPI.MJ,
+                    ImmutableSet.of(IngredientStack.of(Blocks.DAYLIGHT_DETECTOR)),
                     new ItemStack(BCTransportItems.PLUG_LIGHT_SENSOR)));
             }
 
             if (BCTransportItems.PLUG_FACADE != null) {
-                AssemblyRecipeRegistry.INSTANCE.addRecipeProvider(FacadeAssemblyRecipes.INSTANCE);
-                //RecipeSorter.register("buildcraftlib:facade_swap", FacadeSwapRecipe.class, RecipeSorter.Category.SHAPELESS,
-                    //"before:minecraft:shapeless");
+                AssemblyRecipeRegistry.REGISTRY.register(FacadeAssemblyRecipes.INSTANCE);
                 ForgeRegistries.RECIPES.register(FacadeSwapRecipe.INSTANCE);
             }
         }
@@ -258,32 +251,33 @@ public class BCTransportRecipes {
 
 
     private static void makeGateModifierAssembly(int multiplier, EnumGateMaterial material, EnumGateModifier modifier,
-                                                 StackDefinition... mods) {
+                                                 IngredientStack... mods) {
         for (EnumGateLogic logic : EnumGateLogic.VALUES) {
             String name = String.format("gate-modifier-%s-%s-%s", logic, material, modifier);
             ItemStack toUpgrade =
                 BCTransportItems.PLUG_GATE.getStack(new GateVariant(logic, material, EnumGateModifier.NO_MODIFIER));
             ItemStack output = BCTransportItems.PLUG_GATE.getStack(new GateVariant(logic, material, modifier));
-            ImmutableSet<StackDefinition> input = new ImmutableSet.Builder<StackDefinition>()
-                .add(ArrayStackFilter.definition(toUpgrade)).add(mods).build();
-            AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(name, MjAPI.MJ * multiplier, input, output));
+            ImmutableSet<IngredientStack> input = new ImmutableSet.Builder<IngredientStack>()
+                .add(IngredientStack.of(toUpgrade)).add(mods).build();
+            AssemblyRecipeRegistry.REGISTRY.register((new AssemblyRecipeBasic(name, MjAPI.MJ * multiplier, input, output)));
         }
     }
 
+
     private static void makeGateAssembly(int multiplier, EnumGateMaterial material, EnumGateModifier modifier,
-                                         EnumRedstoneChipset chipset, StackDefinition... additional) {
-        ImmutableSet.Builder<StackDefinition> temp = ImmutableSet.builder();
-        temp.add(ArrayStackFilter.definition(chipset.getStack()));
+                                         EnumRedstoneChipset chipset, IngredientStack... additional) {
+        ImmutableSet.Builder<IngredientStack> temp = ImmutableSet.builder();
+        temp.add(IngredientStack.of(chipset.getStack()));
         temp.add(additional);
-        ImmutableSet<StackDefinition> input = temp.build();
+        ImmutableSet<IngredientStack> input = temp.build();
 
         String name = String.format("gate-and-%s-%s", material, modifier);
         ItemStack output = BCTransportItems.PLUG_GATE.getStack(new GateVariant(EnumGateLogic.AND, material, modifier));
-        AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(name, MjAPI.MJ * multiplier, input, output));
+        AssemblyRecipeRegistry.REGISTRY.register((new AssemblyRecipeBasic(name, MjAPI.MJ * multiplier, input, output)));
 
         name = String.format("gate-or-%s-%s", material, modifier);
         output = BCTransportItems.PLUG_GATE.getStack(new GateVariant(EnumGateLogic.OR, material, modifier));
-        AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(name, MjAPI.MJ * multiplier, input, output));
+        AssemblyRecipeRegistry.REGISTRY.register((new AssemblyRecipeBasic(name, MjAPI.MJ * multiplier, input, output)));
     }
 
     private static void makeGateRecipe(RecipeBuilderShaped builder, EnumGateMaterial material,

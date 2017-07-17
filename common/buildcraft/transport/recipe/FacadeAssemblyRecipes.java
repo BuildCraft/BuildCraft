@@ -7,78 +7,45 @@
 package buildcraft.transport.recipe;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.Set;
 
-import com.google.common.collect.ImmutableList;
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
-import buildcraft.api.recipes.IAssemblyRecipeProvider;
-import buildcraft.api.recipes.StackDefinition;
+import buildcraft.api.recipes.IngredientStack;
 
-import buildcraft.lib.inventory.filter.ArrayStackFilter;
 import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.ChangingObject;
 import buildcraft.lib.recipe.IRecipeViewable;
 
-import buildcraft.transport.BCTransport;
 import buildcraft.transport.BCTransportItems;
+import buildcraft.transport.item.ItemPluggableFacade;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
 import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
 
-public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeViewable.IRecipePowered {
-    INSTANCE;
+public class FacadeAssemblyRecipes extends AssemblyRecipe  implements IRecipeViewable.IRecipePowered {
+    public static final FacadeAssemblyRecipes INSTANCE = new FacadeAssemblyRecipes();
+
+    static {
+        INSTANCE.setRegistryName(new ResourceLocation("buildcrafttransport:facadeRecipes"));
+    }
 
     private static final int TIME_GAP = 500;
     private static final long MJ_COST = 64 * MjAPI.MJ;
     private static final ChangingObject<Long> MJ_COSTS = new ChangingObject<>(new Long[] { MJ_COST });
-
-    @Nonnull
-    @Override
-    public List<AssemblyRecipe> getRecipesFor(@Nonnull NonNullList<ItemStack> possible) {
-        // Require 3 structure pipes -- check for those first as its much cheaper
-        if (!StackUtil.contains(new ItemStack(BCTransportItems.PIPE_STRUCTURE, 3), possible)) {
-            return ImmutableList.of();
-        }
-        List<AssemblyRecipe> recipes = new ArrayList<>();
-        for (ItemStack stack : possible) {
-            stack = stack.copy();
-            stack.setCount(1);
-            List<FacadeBlockStateInfo> infos = FacadeStateManager.stackFacades.get(new ItemStackKey(stack));
-            if (infos == null || infos.isEmpty()) {
-                continue;
-            }
-            for (FacadeBlockStateInfo info : infos) {
-                addRecipe(recipes, stack, info);
-            }
-        }
-        return recipes;
-    }
-
-    private static void addRecipe(List<AssemblyRecipe> recipes, ItemStack from, FacadeBlockStateInfo info) {
-        ImmutableSet<StackDefinition> stacks = ImmutableSet.of(ArrayStackFilter.definition(from),
-                ArrayStackFilter.definition(3, BCTransportItems.PIPE_STRUCTURE));
-
-        NBTTagCompound recipeTag = new NBTTagCompound();
-        recipeTag.setTag("stack", from.serializeNBT());
-
-        String name = String.format("facade-normal-%s", info.state);
-        recipes.add(new AssemblyRecipe(new ResourceLocation(BCTransport.MODID, name), MJ_COST, stacks, createFacadeStack(info, false), recipeTag));
-        name = String.format("facade-hollow-%s", info.state);
-        recipes.add(new AssemblyRecipe(new ResourceLocation(BCTransport.MODID, name), MJ_COST, stacks, createFacadeStack(info, true), recipeTag));
-    }
 
     public static ItemStack createFacadeStack(FacadeBlockStateInfo info, boolean isHollow) {
         ItemStack stack = BCTransportItems.PLUG_FACADE.createItemStack(FullFacadeInstance.createSingle(info, isHollow));
@@ -121,21 +88,44 @@ public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeVie
         return MJ_COSTS;
     }
 
+
+
     @Override
-    public Optional<AssemblyRecipe> getRecipe(@Nonnull ResourceLocation name, @Nullable NBTTagCompound recipeTag) {
-        if (!name.getResourceDomain().equals(BCTransport.MODID) || !name.getResourcePath().startsWith("facade-") ||
-                recipeTag == null || !recipeTag.hasKey("stack")) return Optional.empty();
-        ItemStack stack = new ItemStack(recipeTag.getCompoundTag("stack"));
-        List<FacadeBlockStateInfo> infos = FacadeStateManager.stackFacades.get(new ItemStackKey(stack));
-        if (infos == null || infos.isEmpty()) {
-            return Optional.empty();
+    public Set<ItemStack> getOutputs(NonNullList<ItemStack> inputs) {
+        if (!StackUtil.contains(new ItemStack(BCTransportItems.PIPE_STRUCTURE, 3), inputs)) {
+            return Collections.emptySet();
         }
-        for (FacadeBlockStateInfo info : infos) {
-            List<AssemblyRecipe> recipes = new ArrayList<>();
-            addRecipe(recipes, stack, info);
-            Optional<AssemblyRecipe> recipe = recipes.stream().filter(r -> name.equals(r.name)).findFirst();
-            if (recipe.isPresent()) return recipe;
+
+        ArrayList<ItemStack> stacks = new ArrayList<>();
+        for (ItemStack stack : inputs) {
+            stack = stack.copy();
+            stack.setCount(1);
+            List<FacadeBlockStateInfo> infos = FacadeStateManager.stackFacades.get(new ItemStackKey(stack));
+            if (infos == null || infos.isEmpty()) {
+                continue;
+            }
+            for (FacadeBlockStateInfo info : infos) {
+                stacks.add(createFacadeStack(info, false));
+                stacks.add(createFacadeStack(info, true));
+            }
         }
-        return Optional.empty();
+        return ImmutableSet.copyOf(stacks);
+    }
+
+    @Override
+    public Set<ItemStack> getOutputPreviews() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Set<IngredientStack> getInputsFor(@Nonnull ItemStack output) {
+        ImmutableSet<IngredientStack> stacks = ImmutableSet.of(new IngredientStack(Ingredient.fromStacks(ItemPluggableFacade.getStates(output).getCurrentStateForStack().stateInfo.requiredStack)),
+            new IngredientStack(Ingredient.fromItem(BCTransportItems.PIPE_STRUCTURE),3));
+        return stacks;
+    }
+
+    @Override
+    public long getRequiredMicroJoulesFor(@Nonnull ItemStack output) {
+        return MJ_COST;
     }
 }

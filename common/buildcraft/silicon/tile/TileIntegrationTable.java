@@ -20,6 +20,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.recipes.IngredientStack;
 import buildcraft.api.recipes.IntegrationRecipe;
 import buildcraft.api.recipes.StackDefinition;
 
@@ -35,7 +36,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
     public final ItemHandlerSimple invResult = itemManager.addInvHandler("result", 1, ItemHandlerManager.EnumAccess.INSERT, EnumPipePart.VALUES);
     public IntegrationRecipe recipe;
 
-    private boolean extract(StackDefinition item, ImmutableList<StackDefinition> items, boolean simulate) {
+    private boolean extract(StackDefinition item, ImmutableList<IngredientStack> items, boolean simulate) {
         ItemStack targetStack = invTarget.getStackInSlot(0);
         if (targetStack.isEmpty()) return false;
         if (!StackUtil.contains(item, targetStack)) return false;

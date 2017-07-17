@@ -7,10 +7,9 @@
 package buildcraft.silicon.tile;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-
-import com.google.common.collect.ImmutableCollection;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,7 +22,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.ILaserTarget;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.recipes.StackDefinition;
+import buildcraft.api.recipes.IngredientStack;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.TilesAPI;
 
@@ -120,14 +119,14 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
         left.add("target - " + LocaleUtil.localizeMj(getTarget()));
     }
 
-    protected boolean extract(ItemHandlerSimple inv, ImmutableCollection<StackDefinition> items, boolean simulate, boolean precise) {
+    protected boolean extract(ItemHandlerSimple inv, Collection<IngredientStack> items, boolean simulate, boolean precise) {
         AtomicLong remainingStacks = new AtomicLong(inv.stacks.stream().filter(stack -> !stack.isEmpty()).count());
         boolean allItemsConsumed = items.stream().allMatch((definition) -> {
             int remaining = definition.count;
             for (int i = 0; i < inv.getSlots() && remaining > 0; i++) {
                 ItemStack slotStack = inv.getStackInSlot(i);
                 if (slotStack.isEmpty()) continue;
-                if (definition.filter.matches(slotStack)) {
+                if (definition.ingredient.apply(slotStack)) {
                     int spend = Math.min(remaining, slotStack.getCount());
                     remaining -= spend;
                     if (!simulate) {

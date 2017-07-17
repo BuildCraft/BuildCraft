@@ -20,7 +20,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.oredict.RecipeSorter;
 
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
@@ -40,7 +39,6 @@ import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.net.cache.MessageObjectCacheReply;
 import buildcraft.lib.net.cache.MessageObjectCacheReq;
 import buildcraft.lib.particle.MessageParticleVanilla;
-import buildcraft.lib.recipe.BCRecipeShaped;
 import buildcraft.lib.registry.MigrationManager;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
@@ -93,9 +91,6 @@ public class BCLib {
 
         ForgeChunkManager.setForcedChunkLoadingCallback(BCLib.INSTANCE, ChunkLoaderManager::rebindTickets);
         MinecraftForge.EVENT_BUS.register(this);
-
-        RecipeSorter.register("buildcraftlib:BC_recipe_shaped", BCRecipeShaped.class, RecipeSorter.Category.SHAPED,
-                    "before:minecraft:shaped");
     }
 
     @Mod.EventHandler

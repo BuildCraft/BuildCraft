@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -213,7 +214,7 @@ public class FacadeStateManager {
                 }
                 if (!result.equals(STR_SUCCESS)) {
                     result = isValidFacadeState(state);
-                    if (!result.equals(STR_SUCCESS)) {
+                    if (result.equals(STR_SUCCESS)) {
                         if (DEBUG) {
                             BCLog.logger.info("[transport.facade] Allowed state " + state);
                         }
