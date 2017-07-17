@@ -52,9 +52,10 @@ public class TileAssemblyTable extends TileLaserTableBase {
     }
 
     private void updateRecipes() {
+        int count = recipesStates.size();
         AssemblyRecipeRegistry.INSTANCE.getRecipesFor(inv.stacks).forEach(recipe -> recipesStates.putIfAbsent(recipe, EnumAssemblyRecipeState.POSSIBLE));
         boolean findActive = false;
-        for (Iterator<Map.Entry<AssemblyRecipe, EnumAssemblyRecipeState>> iterator = recipesStates.entrySet().iterator(); iterator.hasNext();) {
+        for (Iterator<Map.Entry<AssemblyRecipe, EnumAssemblyRecipeState>> iterator = recipesStates.entrySet().iterator(); iterator.hasNext(); ) {
             Map.Entry<AssemblyRecipe, EnumAssemblyRecipeState> entry = iterator.next();
             AssemblyRecipe recipe = entry.getKey();
             EnumAssemblyRecipeState state = entry.getValue();
@@ -88,6 +89,9 @@ public class TileAssemblyTable extends TileLaserTableBase {
                     break;
                 }
             }
+        }
+        if (count != recipesStates.size()) {
+            sendNetworkGuiUpdate(NET_GUI_DATA);
         }
     }
 
