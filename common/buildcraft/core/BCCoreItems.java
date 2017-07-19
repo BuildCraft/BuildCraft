@@ -54,11 +54,11 @@ public class BCCoreItems {
             new ItemPaintbrush_BC8("item.paintbrush"),
             new ItemList_BC8("item.list"),
             new ItemMarkerConnector("item.marker_connector"),
-            new ItemVolumeBox("item.volume_box")
+            new ItemVolumeBox("item.volume_box"),
+            new ItemBC_Neptune("item.diamond.shard")
         );
         if (BCLib.DEV) {
             event.getRegistry().registerAll(
-                new ItemBC_Neptune("item.diamond.shard"),
                 new ItemMapLocation("item.map_location"),
                 new ItemGoggles("item.goggles")
             );

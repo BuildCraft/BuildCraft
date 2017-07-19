@@ -78,9 +78,13 @@ public class BCRecipeShapedFactory implements IRecipeFactory {
 
         if (!keys.isEmpty())
             throw new JsonSyntaxException("Key defines symbols that aren't used in pattern: " + keys);
-
-        ItemStack result = CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "result"), context);
+        ItemStack result = ItemStack.EMPTY;
+        try {
+            result = CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "result"), context);
+        } catch (JsonSyntaxException ex) {
+            //the output is most likely dissabled, ignore so forge doesn't choke
+        }
         String group = JsonUtils.getString(json, "group", result.getItem().getRegistryName().getResourcePath());
-        return new BCRecipeShaped(new ResourceLocation(group), result, primer, RegistryHelper.isEnabled(result));
+        return new BCRecipeShaped(new ResourceLocation(group), result, primer, !result.isEmpty() && RegistryHelper.isEnabled(result));
     }
 }
