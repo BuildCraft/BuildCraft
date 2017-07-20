@@ -21,6 +21,8 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.IRecipeFactory;
 import net.minecraftforge.common.crafting.JsonContext;
 
+import buildcraft.api.core.BCLog;
+
 import buildcraft.lib.registry.RegistryHelper;
 
 public class BCRecipeShapedFactory implements IRecipeFactory {
@@ -83,6 +85,7 @@ public class BCRecipeShapedFactory implements IRecipeFactory {
             result = CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "result"), context);
         } catch (JsonSyntaxException ex) {
             //the output is most likely dissabled, ignore so forge doesn't choke
+            BCLog.logger.warn("Recipe parsing failed, if this item is dissabled in the config this can be ignored", ex);
         }
         String group = JsonUtils.getString(json, "group", result.getItem().getRegistryName().getResourcePath());
         return new BCRecipeShaped(new ResourceLocation(group), result, primer, !result.isEmpty() && RegistryHelper.isEnabled(result));
