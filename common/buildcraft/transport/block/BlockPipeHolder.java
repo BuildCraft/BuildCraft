@@ -10,6 +10,7 @@ import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
@@ -414,7 +415,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                     .getMetadata());
             }
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
