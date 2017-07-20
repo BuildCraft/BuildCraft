@@ -6,15 +6,13 @@
 
 package buildcraft.transport.gui;
 
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.item.ItemStack;
-
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.data.IReference;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.item.ItemStack;
 
 public class ElementStatementParam extends ElementGuiSlot<IStatementParameter> {
     public final int paramIndex;

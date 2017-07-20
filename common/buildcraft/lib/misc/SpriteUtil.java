@@ -6,22 +6,20 @@
 
 package buildcraft.lib.misc;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import buildcraft.lib.BCLibSprites;
+import buildcraft.lib.client.sprite.ISprite;
+import buildcraft.lib.client.sprite.RawSprite;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.lib.BCLibSprites;
-import buildcraft.lib.client.sprite.ISprite;
-import buildcraft.lib.client.sprite.RawSprite;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SpriteUtil {
 

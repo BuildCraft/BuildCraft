@@ -4,11 +4,10 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.marker;
 
-import java.util.List;
-
+import buildcraft.lib.marker.MarkerSavedData;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.lib.marker.MarkerSavedData;
+import java.util.List;
 
 public class PathSavedData extends MarkerSavedData<PathSubCache, PathConnection> {
     public static final String NAME = "buildcraft_marker_path";

@@ -6,15 +6,13 @@
 
 package buildcraft.transport.tile;
 
-import net.minecraft.item.ItemStack;
-
 import buildcraft.api.core.EnumPipePart;
-
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.lib.tile.item.StackInsertionFunction;
+import net.minecraft.item.ItemStack;
 
 public class TileFilteredBuffer extends TileBC_Neptune {
     public final ItemHandlerSimple invFilter;

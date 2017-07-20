@@ -6,26 +6,18 @@
 
 package buildcraft.lib.recipe;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.api.recipes.IAssemblyRecipeProvider;
+import buildcraft.api.recipes.IAssemblyRecipeRegistry;
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.recipes.AssemblyRecipe;
-import buildcraft.api.recipes.IAssemblyRecipeProvider;
-import buildcraft.api.recipes.IAssemblyRecipeRegistry;
-
-import buildcraft.lib.misc.StackUtil;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
 
 public enum AssemblyRecipeRegistry implements IAssemblyRecipeRegistry {
     INSTANCE;

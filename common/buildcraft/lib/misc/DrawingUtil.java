@@ -6,14 +6,13 @@
 
 package buildcraft.lib.misc;
 
+import net.minecraft.util.math.BlockPos;
+
+import javax.vecmath.Point2i;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-
-import javax.vecmath.Point2i;
-
-import net.minecraft.util.math.BlockPos;
 
 public class DrawingUtil {
     @SuppressWarnings("Duplicates")

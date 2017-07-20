@@ -6,15 +6,6 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.util.List;
-
-import javax.vecmath.Vector3f;
-
-import com.google.gson.JsonObject;
-
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
@@ -26,6 +17,12 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 import buildcraft.lib.misc.RenderUtil;
+import com.google.gson.JsonObject;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.EnumFacing;
+
+import javax.vecmath.Vector3f;
+import java.util.List;
 
 public abstract class VariablePartCuboidBase extends JsonVariableModelPart {
     public final INodeDouble[] from;

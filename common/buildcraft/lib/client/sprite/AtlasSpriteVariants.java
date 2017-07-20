@@ -6,26 +6,19 @@
 
 package buildcraft.lib.client.sprite;
 
-import java.util.List;
-import java.util.Set;
-import java.util.function.IntSupplier;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.client.reload.*;
+import buildcraft.lib.misc.SpriteUtil;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.BCLibConfig;
-import buildcraft.lib.client.reload.IReloadable;
-import buildcraft.lib.client.reload.ReloadManager;
-import buildcraft.lib.client.reload.ReloadSource;
-import buildcraft.lib.client.reload.ReloadUtil;
-import buildcraft.lib.client.reload.SourceType;
-import buildcraft.lib.misc.SpriteUtil;
+import java.util.List;
+import java.util.Set;
+import java.util.function.IntSupplier;
 
 /** A type of {@link AtlasSpriteSwappable} that will switch between multiple different */
 public class AtlasSpriteVariants extends AtlasSpriteSwappable implements IReloadable {

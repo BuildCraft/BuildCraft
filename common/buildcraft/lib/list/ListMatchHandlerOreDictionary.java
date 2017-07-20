@@ -6,19 +6,15 @@
 
 package buildcraft.lib.list;
 
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.lists.ListMatchHandler;
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-
 import net.minecraftforge.oredict.OreDictionary;
 
-import buildcraft.api.lists.ListMatchHandler;
-
-import buildcraft.lib.misc.StackUtil;
+import javax.annotation.Nonnull;
+import java.util.Set;
 
 public class ListMatchHandlerOreDictionary extends ListMatchHandler {
     private static int getUppercaseCount(String s) {

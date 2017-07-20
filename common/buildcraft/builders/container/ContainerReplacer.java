@@ -6,17 +6,15 @@
 
 package buildcraft.builders.container;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-
-import buildcraft.lib.gui.ContainerBCTile;
-import buildcraft.lib.gui.slot.SlotBase;
-
 import buildcraft.builders.item.ItemSchematicSingle;
 import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.tile.TileReplacer;
+import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.lib.gui.slot.SlotBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 public class ContainerReplacer extends ContainerBCTile<TileReplacer> {
     public ContainerReplacer(EntityPlayer player, TileReplacer tile) {

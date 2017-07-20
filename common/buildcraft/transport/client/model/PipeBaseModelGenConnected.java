@@ -6,20 +6,17 @@
 
 package buildcraft.transport.client.model;
 
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-
+import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
+import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 
-import buildcraft.api.transport.pipe.PipeDefinition;
-
-import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
-import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 
 public enum PipeBaseModelGenConnected implements IPipeBaseModelGen {
     INSTANCE;

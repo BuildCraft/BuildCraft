@@ -6,14 +6,12 @@
 
 package buildcraft.lib.inventory;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.IStackFilter;
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.api.core.IStackFilter;
-
-import buildcraft.lib.misc.StackUtil;
+import javax.annotation.Nonnull;
 
 public final class InventoryWrapper extends AbstractInvItemTransactor {
     private final IInventory inventory;

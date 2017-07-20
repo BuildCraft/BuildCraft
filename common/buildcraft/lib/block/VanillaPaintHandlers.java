@@ -6,6 +6,8 @@
 
 package buildcraft.lib.block;
 
+import buildcraft.api.blocks.CustomPaintHelper;
+import buildcraft.api.blocks.ICustomPaintHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.BlockStainedGlass;
@@ -15,9 +17,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumActionResult;
-
-import buildcraft.api.blocks.CustomPaintHelper;
-import buildcraft.api.blocks.ICustomPaintHandler;
 
 public class VanillaPaintHandlers {
 

@@ -4,10 +4,10 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.item;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.api.blocks.CustomPaintHelper;
+import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.*;
 import gnu.trove.map.hash.TIntObjectHashMap;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -23,18 +23,10 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.blocks.CustomPaintHelper;
-
-import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.ParticleUtil;
-import buildcraft.lib.misc.SoundUtil;
-import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.VecUtil;
+import javax.annotation.Nonnull;
 
 public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
     private static final String DAMAGE = "damage";

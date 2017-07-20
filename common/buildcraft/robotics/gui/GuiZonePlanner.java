@@ -4,17 +4,14 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.robotics.gui;
 
-import java.io.IOException;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-
-import javax.vecmath.Vector3d;
-
-import org.lwjgl.BufferUtils;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.GLU;
-
+import buildcraft.core.BCCoreItems;
+import buildcraft.core.item.ItemPaintbrush_BC8;
+import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.robotics.container.ContainerZonePlanner;
+import buildcraft.robotics.zone.*;
+import buildcraft.robotics.zone.ZonePlannerMapChunk.MapColourData;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -26,20 +23,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
 
-import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.pos.GuiRectangle;
-
-import buildcraft.core.BCCoreItems;
-import buildcraft.core.item.ItemPaintbrush_BC8;
-import buildcraft.robotics.container.ContainerZonePlanner;
-import buildcraft.robotics.zone.ZonePlan;
-import buildcraft.robotics.zone.ZonePlannerMapChunk;
-import buildcraft.robotics.zone.ZonePlannerMapChunk.MapColourData;
-import buildcraft.robotics.zone.ZonePlannerMapChunkKey;
-import buildcraft.robotics.zone.ZonePlannerMapDataClient;
-import buildcraft.robotics.zone.ZonePlannerMapRenderer;
+import javax.vecmath.Vector3d;
+import java.io.IOException;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftrobotics:textures/gui/zone_planner.png");

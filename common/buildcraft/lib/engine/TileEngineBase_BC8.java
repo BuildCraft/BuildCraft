@@ -6,11 +6,16 @@
 
 package buildcraft.lib.engine;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.enums.EnumPowerStage;
+import buildcraft.api.mj.*;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.lib.block.VanillaRotationHandlers;
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.collect.OrderedEnumMap;
+import buildcraft.lib.misc.data.ModelVariableData;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -21,27 +26,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.biome.Biome;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.enums.EnumPowerStage;
-import buildcraft.api.mj.IMjConnector;
-import buildcraft.api.mj.IMjReceiver;
-import buildcraft.api.mj.IMjRedstoneReceiver;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjCapabilityHelper;
-import buildcraft.api.tiles.IDebuggable;
-
-import buildcraft.lib.block.VanillaRotationHandlers;
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.collect.OrderedEnumMap;
-import buildcraft.lib.misc.data.ModelVariableData;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBC_Neptune;
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.util.List;
 
 public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITickable, IDebuggable {
 

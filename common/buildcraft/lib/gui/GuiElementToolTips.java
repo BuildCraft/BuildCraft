@@ -6,13 +6,12 @@
 
 package buildcraft.lib.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.client.gui.GuiButton;
-
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.misc.GuiUtil;
+import net.minecraft.client.gui.GuiButton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuiElementToolTips implements IGuiElement {
     private final GuiBC8<?> gui;

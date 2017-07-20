@@ -6,16 +6,15 @@
 
 package buildcraft.lib.misc;
 
-import java.text.DecimalFormat;
-import java.util.List;
-import java.util.function.Function;
-
 import com.google.common.base.Splitter;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.TextFormatting;
+
+import java.text.DecimalFormat;
+import java.util.List;
+import java.util.function.Function;
 
 public final class StringUtilBC {
 

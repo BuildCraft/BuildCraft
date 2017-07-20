@@ -6,23 +6,19 @@
 
 package buildcraft.robotics.zone;
 
-import java.util.OptionalInt;
-import java.util.concurrent.TimeUnit;
-
+import buildcraft.lib.client.model.MutableVertex;
+import buildcraft.robotics.zone.ZonePlannerMapChunk.MapColourData;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalNotification;
-
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import org.lwjgl.opengl.GL11;
 
-import buildcraft.lib.client.model.MutableVertex;
-
-import buildcraft.robotics.zone.ZonePlannerMapChunk.MapColourData;
+import java.util.OptionalInt;
+import java.util.concurrent.TimeUnit;
 
 public enum ZonePlannerMapRenderer {
     INSTANCE;

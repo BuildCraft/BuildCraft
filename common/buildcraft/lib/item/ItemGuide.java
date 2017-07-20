@@ -6,14 +6,13 @@
 
 package buildcraft.lib.item;
 
+import buildcraft.lib.BCLib;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
-
-import buildcraft.lib.BCLib;
 
 public class ItemGuide extends ItemBC_Neptune {
     public ItemGuide(String id) {

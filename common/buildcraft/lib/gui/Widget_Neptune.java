@@ -6,16 +6,15 @@
 
 package buildcraft.lib.gui;
 
-import java.io.IOException;
-
+import buildcraft.lib.net.IPayloadReceiver;
+import buildcraft.lib.net.IPayloadWriter;
+import buildcraft.lib.net.PacketBufferBC;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.net.IPayloadReceiver;
-import buildcraft.lib.net.IPayloadWriter;
-import buildcraft.lib.net.PacketBufferBC;
+import java.io.IOException;
 
 /** Defines some sort of separate element that exists on both the server and client. Doesn't draw directly. */
 public abstract class Widget_Neptune<C extends ContainerBC_Neptune> implements IPayloadReceiver {

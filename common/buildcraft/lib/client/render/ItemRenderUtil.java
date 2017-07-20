@@ -6,23 +6,16 @@
 
 package buildcraft.lib.client.render;
 
-import java.util.concurrent.TimeUnit;
-
-import javax.vecmath.Vector3f;
-
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.ItemStackKey;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalNotification;
-
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.RenderEntityItem;
@@ -32,12 +25,10 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import org.lwjgl.opengl.GL11;
 
-import buildcraft.api.core.EnumPipePart;
-
-import buildcraft.lib.BCLibConfig;
-import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.misc.ItemStackKey;
+import javax.vecmath.Vector3f;
+import java.util.concurrent.TimeUnit;
 
 public class ItemRenderUtil {
 

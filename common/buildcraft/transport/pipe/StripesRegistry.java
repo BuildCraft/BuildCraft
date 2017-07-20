@@ -6,21 +6,20 @@
 
 package buildcraft.transport.pipe;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-
+import buildcraft.api.core.EnumHandlerPriority;
+import buildcraft.api.transport.IStripesActivator;
+import buildcraft.api.transport.IStripesHandlerBlock;
+import buildcraft.api.transport.IStripesHandlerItem;
+import buildcraft.api.transport.IStripesRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.EnumHandlerPriority;
-import buildcraft.api.transport.IStripesActivator;
-import buildcraft.api.transport.IStripesHandlerBlock;
-import buildcraft.api.transport.IStripesHandlerItem;
-import buildcraft.api.transport.IStripesRegistry;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
 
 public enum StripesRegistry implements IStripesRegistry {
     INSTANCE;

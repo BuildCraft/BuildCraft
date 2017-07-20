@@ -6,8 +6,6 @@
 
 package buildcraft.lib.gui.ledger;
 
-import net.minecraft.client.renderer.GlStateManager;
-
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
@@ -18,6 +16,7 @@ import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.RenderUtil;
+import net.minecraft.client.renderer.GlStateManager;
 
 public class LedgerHelp extends Ledger_Neptune {
 

@@ -6,16 +6,14 @@
 
 package buildcraft.lib.client.resource;
 
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.lib.client.guide.GuiGuide;
+import buildcraft.lib.client.guide.parts.GuideImage;
+import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-
-import buildcraft.lib.client.guide.GuiGuide;
-import buildcraft.lib.client.guide.parts.GuideImage;
-import buildcraft.lib.client.guide.parts.GuidePartFactory;
+import org.lwjgl.opengl.GL11;
 
 public class TextureResourceHolder extends ResourceHolder implements GuidePartFactory {
     private SimpleTexture texture;

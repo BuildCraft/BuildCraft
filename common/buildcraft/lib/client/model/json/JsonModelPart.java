@@ -6,21 +6,19 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import buildcraft.lib.client.model.ResourceLoaderContext;
+import buildcraft.lib.misc.JsonUtil;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
-
 import net.minecraft.client.renderer.block.model.BlockPart;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.JsonUtils;
 
-import buildcraft.lib.client.model.ResourceLoaderContext;
-import buildcraft.lib.misc.JsonUtil;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /** {@link BlockPart} but with a few extra features */
 public class JsonModelPart {

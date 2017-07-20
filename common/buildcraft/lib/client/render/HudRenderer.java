@@ -6,10 +6,9 @@
 
 package buildcraft.lib.client.render;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import org.lwjgl.opengl.GL11;
 
 public abstract class HudRenderer {
     protected abstract void renderImpl(Minecraft mc, EntityPlayerSP player);

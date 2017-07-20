@@ -6,11 +6,11 @@
 
 package buildcraft.robotics.zone;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+
+import javax.annotation.Nullable;
 
 public class ZonePlannerMapChunk {
     private final MapColourData[][] data = new MapColourData[16][16];

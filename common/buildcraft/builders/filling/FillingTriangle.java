@@ -6,12 +6,11 @@
 
 package buildcraft.builders.filling;
 
-import java.util.function.BiConsumer;
-
-import net.minecraft.util.math.BlockPos;
-
 import buildcraft.lib.misc.DrawingUtil;
 import buildcraft.lib.misc.MathUtil;
+import net.minecraft.util.math.BlockPos;
+
+import java.util.function.BiConsumer;
 
 public class FillingTriangle {
     public static boolean[][][] get(BlockPos size,

@@ -6,8 +6,10 @@
 
 package buildcraft.lib.inventory;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.api.inventory.IItemTransactor;
+import buildcraft.api.transport.IInjectable;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.lib.misc.CapUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -17,15 +19,10 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
-
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
 
-import buildcraft.api.inventory.IItemTransactor;
-import buildcraft.api.transport.IInjectable;
-import buildcraft.api.transport.pipe.PipeApi;
-
-import buildcraft.lib.misc.CapUtil;
+import javax.annotation.Nonnull;
 
 public class ItemTransactorHelper {
     @Nonnull

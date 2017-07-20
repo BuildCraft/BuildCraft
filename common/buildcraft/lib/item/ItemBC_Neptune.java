@@ -4,9 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.item;
 
-import net.minecraft.item.Item;
-
 import buildcraft.lib.registry.TagManager;
+import net.minecraft.item.Item;
 
 public class ItemBC_Neptune extends Item implements IItemBuildCraft {
     /** The tag used to identify this in the {@link TagManager} */

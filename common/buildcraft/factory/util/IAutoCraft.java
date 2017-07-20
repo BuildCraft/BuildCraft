@@ -6,17 +6,16 @@
 
 package buildcraft.factory.util;
 
-import java.util.List;
-
+import buildcraft.lib.misc.CraftingUtil;
+import buildcraft.lib.misc.InventoryUtil;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.lib.misc.CraftingUtil;
-import buildcraft.lib.misc.InventoryUtil;
-import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.tile.item.ItemHandlerSimple;
+import java.util.List;
 
 public interface IAutoCraft {
 

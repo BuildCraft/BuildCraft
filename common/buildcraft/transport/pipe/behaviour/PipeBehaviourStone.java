@@ -6,9 +6,8 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.transport.pipe.IPipe;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class PipeBehaviourStone extends PipeBehaviourSeparate {
     public PipeBehaviourStone(IPipe pipe) {

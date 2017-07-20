@@ -6,15 +6,12 @@
 
 package buildcraft.transport.client.render;
 
-import net.minecraft.client.renderer.VertexBuffer;
-
 import buildcraft.api.transport.pluggable.IPlugDynamicRenderer;
-
 import buildcraft.lib.client.model.AdvModelCache;
 import buildcraft.lib.client.model.MutableQuad;
-
 import buildcraft.transport.BCTransportModels;
 import buildcraft.transport.plug.PluggableGate;
+import net.minecraft.client.renderer.VertexBuffer;
 
 public enum PlugGateRenderer implements IPlugDynamicRenderer<PluggableGate> {
     INSTANCE;

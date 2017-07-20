@@ -6,8 +6,7 @@
 
 package buildcraft.lib.misc;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.api.tools.IToolWrench;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -23,7 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import buildcraft.api.tools.IToolWrench;
+import javax.annotation.Nonnull;
 
 public class EntityUtil {
     public static NonNullList<ItemStack> collectItems(World world, BlockPos around, double radius) {

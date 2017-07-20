@@ -6,14 +6,12 @@
 
 package buildcraft.builders.filling;
 
-import java.util.Arrays;
-import java.util.Locale;
-
+import buildcraft.lib.net.PacketBufferBC;
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.lib.net.PacketBufferBC;
+import java.util.Arrays;
+import java.util.Locale;
 
 public interface IParameter {
     String name();

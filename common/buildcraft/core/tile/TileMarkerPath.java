@@ -4,16 +4,12 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.tile;
 
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.util.math.BlockPos;
-
 import buildcraft.api.core.IPathProvider;
-
-import buildcraft.lib.tile.TileMarker;
-
 import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.PathConnection;
+import buildcraft.lib.tile.TileMarker;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.util.math.BlockPos;
 
 public class TileMarkerPath extends TileMarker<PathConnection> implements IPathProvider {
 

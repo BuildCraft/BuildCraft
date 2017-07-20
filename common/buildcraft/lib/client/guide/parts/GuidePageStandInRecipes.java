@@ -6,15 +6,13 @@
 
 package buildcraft.lib.client.guide.parts;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
+import net.minecraft.item.ItemStack;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuidePageStandInRecipes extends GuidePage {
     public GuidePageStandInRecipes(GuiGuide gui, List<GuidePart> parts, ItemStack stack) {

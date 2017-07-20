@@ -6,23 +6,11 @@
 
 package buildcraft.lib.nbt;
 
-import java.io.DataOutput;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import gnu.trove.list.array.TByteArrayList;
-import gnu.trove.list.array.TDoubleArrayList;
-import gnu.trove.list.array.TFloatArrayList;
-import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.list.array.TLongArrayList;
-import gnu.trove.list.array.TShortArrayList;
+import buildcraft.api.data.NbtSquishConstants;
+import buildcraft.lib.misc.data.CompactingBitSet;
+import gnu.trove.list.array.*;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.set.hash.TIntHashSet;
-
 import net.minecraft.init.Bootstrap;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,9 +18,13 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.profiler.Profiler;
 
-import buildcraft.api.data.NbtSquishConstants;
-
-import buildcraft.lib.misc.data.CompactingBitSet;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 class NbtSquishMapWriter {
     static boolean debug;

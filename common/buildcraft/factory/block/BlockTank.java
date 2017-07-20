@@ -6,8 +6,10 @@
 
 package buildcraft.factory.block;
 
-import java.util.List;
-
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.api.transport.pipe.ICustomPipeConnection;
+import buildcraft.factory.tile.TileTank;
+import buildcraft.lib.block.BlockBCTile_Neptune;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -21,18 +23,10 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
-import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.api.transport.pipe.ICustomPipeConnection;
-
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.tile.TileBC_Neptune;
-
-import buildcraft.factory.tile.TileTank;
+import java.util.List;
 
 public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnection {
     private static final IProperty<Boolean> JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;

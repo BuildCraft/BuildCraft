@@ -6,14 +6,13 @@
 
 package buildcraft.lib.client.guide.parts;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.misc.StringUtilBC;
+import com.google.common.collect.ImmutableList;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuidePage extends GuidePageBase {
     public final ImmutableList<GuidePart> parts;

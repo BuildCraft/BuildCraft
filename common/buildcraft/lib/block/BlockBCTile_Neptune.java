@@ -4,8 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.block;
 
-import java.util.List;
-
+import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -18,7 +17,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import buildcraft.lib.tile.TileBC_Neptune;
+import java.util.List;
 
 public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune implements ITileEntityProvider {
     public BlockBCTile_Neptune(Material material, String id) {

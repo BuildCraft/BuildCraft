@@ -6,15 +6,13 @@
 
 package buildcraft.energy.client.gui;
 
-import net.minecraft.util.ResourceLocation;
-
+import buildcraft.energy.container.ContainerEngineIron_BC8;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.ledger.LedgerEngine;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.LocaleUtil;
-
-import buildcraft.energy.container.ContainerEngineIron_BC8;
+import net.minecraft.util.ResourceLocation;
 
 public class GuiEngineIron_BC8 extends GuiBC8<ContainerEngineIron_BC8> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftenergy:textures/gui/combustion_engine_gui.png");

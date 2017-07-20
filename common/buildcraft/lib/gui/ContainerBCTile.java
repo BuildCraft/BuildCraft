@@ -6,9 +6,8 @@
 
 package buildcraft.lib.gui;
 
-import net.minecraft.entity.player.EntityPlayer;
-
 import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.entity.player.EntityPlayer;
 
 public abstract class ContainerBCTile<T extends TileBC_Neptune> extends ContainerBC_Neptune {
     public final T tile;

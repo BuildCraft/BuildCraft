@@ -6,14 +6,11 @@
 
 package buildcraft.lib.client.model.json;
 
-import com.google.gson.JsonObject;
-
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.client.model.ModelLoader;
-
 import buildcraft.lib.client.model.json.JsonVariableModel.ITextureGetter;
 import buildcraft.lib.expression.FunctionContext;
+import com.google.gson.JsonObject;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.client.model.ModelLoader;
 
 public class VariablePartLed extends VariablePartCuboidBase {
     private static final VariableFaceData FACE_DATA = new VariableFaceData();

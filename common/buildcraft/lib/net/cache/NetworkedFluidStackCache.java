@@ -6,13 +6,12 @@
 
 package buildcraft.lib.net.cache;
 
-import java.io.IOException;
-
+import buildcraft.lib.net.PacketBufferBC;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.lib.net.PacketBufferBC;
+import java.io.IOException;
 
 public class NetworkedFluidStackCache extends NetworkedObjectCache<FluidStack> {
     private static final int FLUID_AMOUNT = 1;

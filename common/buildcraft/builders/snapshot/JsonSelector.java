@@ -6,11 +6,6 @@
 
 package buildcraft.builders.snapshot;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Predicate;
-
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
@@ -19,9 +14,13 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
 
 @SuppressWarnings("WeakerAccess")
 public class JsonSelector {

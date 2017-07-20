@@ -6,6 +6,12 @@
 
 package buildcraft.lib.misc.data;
 
+import buildcraft.lib.nbt.NbtSquisher;
+import com.google.common.collect.ImmutableSet;
+import net.minecraft.nbt.NBTTagCompound;
+import org.apache.commons.io.IOUtils;
+
+import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -14,16 +20,6 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
-import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableSet;
-
-import org.apache.commons.io.IOUtils;
-
-import net.minecraft.nbt.NBTTagCompound;
-
-import buildcraft.lib.nbt.NbtSquisher;
 
 public class ZipFileHelper {
     private final Map<String, byte[]> entries = new HashMap<>();

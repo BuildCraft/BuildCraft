@@ -6,21 +6,8 @@
 
 package buildcraft.transport;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.registry.IRegistry;
-
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
 import buildcraft.api.transport.pipe.PipeApiClient;
 import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
-
 import buildcraft.lib.client.model.ModelHolderStatic;
 import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.ModelPluggableItem;
@@ -29,30 +16,13 @@ import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableString;
 import buildcraft.lib.misc.data.ModelVariableData;
-
 import buildcraft.transport.client.model.GateMeshDefinition;
 import buildcraft.transport.client.model.ModelGateItem;
 import buildcraft.transport.client.model.ModelPipe;
 import buildcraft.transport.client.model.ModelPipeItem;
-import buildcraft.transport.client.model.key.KeyPlugBlocker;
-import buildcraft.transport.client.model.key.KeyPlugFacade;
-import buildcraft.transport.client.model.key.KeyPlugGate;
-import buildcraft.transport.client.model.key.KeyPlugLens;
-import buildcraft.transport.client.model.key.KeyPlugLightSensor;
-import buildcraft.transport.client.model.key.KeyPlugPulsar;
-import buildcraft.transport.client.model.plug.ModelFacadeItem;
-import buildcraft.transport.client.model.plug.ModelLensItem;
-import buildcraft.transport.client.model.plug.PlugBakerFacade;
-import buildcraft.transport.client.model.plug.PlugBakerLens;
-import buildcraft.transport.client.model.plug.PlugBakerSimple;
-import buildcraft.transport.client.model.plug.PlugGateBaker;
-import buildcraft.transport.client.render.PipeBehaviourRendererStripes;
-import buildcraft.transport.client.render.PipeFlowRendererFluids;
-import buildcraft.transport.client.render.PipeFlowRendererItems;
-import buildcraft.transport.client.render.PipeFlowRendererPower;
-import buildcraft.transport.client.render.PlugGateRenderer;
-import buildcraft.transport.client.render.PlugPulsarRenderer;
-import buildcraft.transport.client.render.RenderPipeHolder;
+import buildcraft.transport.client.model.key.*;
+import buildcraft.transport.client.model.plug.*;
+import buildcraft.transport.client.render.*;
 import buildcraft.transport.gate.GateVariant;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourStripes;
 import buildcraft.transport.pipe.flow.PipeFlowFluids;
@@ -61,6 +31,16 @@ import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.plug.PluggableGate;
 import buildcraft.transport.plug.PluggablePulsar;
 import buildcraft.transport.tile.TilePipeHolder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.registry.IRegistry;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class BCTransportModels {
     public static final ModelHolderStatic BLOCKER;

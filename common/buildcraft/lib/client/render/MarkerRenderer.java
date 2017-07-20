@@ -6,12 +6,11 @@
 
 package buildcraft.lib.client.render;
 
-import net.minecraft.entity.player.EntityPlayer;
-
 import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerConnection;
 import buildcraft.lib.marker.MarkerSubCache;
+import net.minecraft.entity.player.EntityPlayer;
 
 public enum MarkerRenderer implements IDetachedRenderer {
     INSTANCE;

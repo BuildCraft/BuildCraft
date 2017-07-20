@@ -4,9 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.item;
 
-import net.minecraft.item.ItemBlock;
-
 import buildcraft.lib.block.BlockBCBase_Neptune;
+import net.minecraft.item.ItemBlock;
 
 public class ItemBlockBC_Neptune extends ItemBlock implements IItemBuildCraft {
     public final String id;

@@ -6,16 +6,16 @@
 
 package buildcraft.lib.misc;
 
-import javax.annotation.Nonnull;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector3f;
-
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+
+import javax.annotation.Nonnull;
+import javax.vecmath.Tuple3f;
+import javax.vecmath.Vector3f;
 
 /** Class for dealing with {@link Vec3d}, {@link Vec3i}, {@link EnumFacing}, {@link Axis} conversions and additions.
  * This is for simple functions ONLY, {@link PositionUtil} is for complex interactions */

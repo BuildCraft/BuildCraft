@@ -6,16 +6,14 @@
 
 package buildcraft.core.marker.volume;
 
-import org.apache.commons.lang3.tuple.Pair;
-
+import buildcraft.lib.item.ItemBC_Neptune;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
-
-import buildcraft.lib.item.ItemBC_Neptune;
+import org.apache.commons.lang3.tuple.Pair;
 
 public abstract class ItemAddon extends ItemBC_Neptune {
     public ItemAddon(String id) {

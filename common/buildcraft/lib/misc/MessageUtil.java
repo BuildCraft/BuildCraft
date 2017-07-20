@@ -6,13 +6,13 @@
 
 package buildcraft.lib.misc;
 
-import java.util.EnumSet;
-import java.util.UUID;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.BCLibProxy;
+import buildcraft.lib.misc.data.DelayedList;
+import buildcraft.lib.net.MessageManager;
+import buildcraft.lib.net.PacketBufferBC;
 import com.mojang.authlib.GameProfile;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,16 +23,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.BCLibProxy;
-import buildcraft.lib.misc.data.DelayedList;
-import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.net.PacketBufferBC;
+import java.util.EnumSet;
+import java.util.UUID;
 
 public class MessageUtil {
     private static final DelayedList<Runnable> DELAYED_TASKS = DelayedList.createConcurrent();

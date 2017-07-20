@@ -6,11 +6,10 @@
 
 package buildcraft.lib.expression;
 
-import net.minecraft.item.EnumDyeColor;
-
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.misc.ColourUtil;
+import net.minecraft.item.EnumDyeColor;
 
 public class DefaultContexts {
     public static final FunctionContext STRINGS = new FunctionContext();

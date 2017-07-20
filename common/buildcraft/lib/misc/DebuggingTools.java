@@ -6,6 +6,8 @@
 
 package buildcraft.lib.misc;
 
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,13 +16,9 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
 
 public class DebuggingTools {
     public static final boolean ENABLE = BCDebugging.shouldDebugComplex("lib.debug.world");

@@ -6,6 +6,10 @@
 
 package buildcraft.factory.item;
 
+import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.factory.block.BlockWaterGel;
+import buildcraft.factory.block.BlockWaterGel.GelStage;
+import buildcraft.lib.item.ItemBC_Neptune;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -18,12 +22,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
-import buildcraft.lib.item.ItemBC_Neptune;
-
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.factory.block.BlockWaterGel;
-import buildcraft.factory.block.BlockWaterGel.GelStage;
 
 public class ItemWaterGel extends ItemBC_Neptune {
 

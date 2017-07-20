@@ -6,9 +6,10 @@
 
 package buildcraft.core.block;
 
-import java.util.Random;
-import java.util.function.Supplier;
-
+import buildcraft.api.enums.EnumSpring;
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.misc.data.XorShift128Random;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -22,11 +23,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.enums.EnumSpring;
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.misc.data.XorShift128Random;
+import java.util.Random;
+import java.util.function.Supplier;
 
 public class BlockSpring extends BlockBCBase_Neptune {
     public static final IProperty<EnumSpring> SPRING_TYPE = BuildCraftProperties.SPRING_TYPE;

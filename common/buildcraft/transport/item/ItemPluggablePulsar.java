@@ -6,25 +6,22 @@
 
 package buildcraft.transport.item;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.transport.IItemPluggable;
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeBehaviour;
 import buildcraft.api.transport.pluggable.PipePluggable;
-
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.SoundUtil;
-
 import buildcraft.transport.BCTransportPlugs;
 import buildcraft.transport.plug.PluggablePulsar;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+
+import javax.annotation.Nonnull;
 
 public class ItemPluggablePulsar extends ItemBC_Neptune implements IItemPluggable {
     public ItemPluggablePulsar(String id) {

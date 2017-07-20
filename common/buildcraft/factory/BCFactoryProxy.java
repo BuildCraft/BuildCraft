@@ -4,33 +4,21 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory;
 
+import buildcraft.factory.client.render.*;
+import buildcraft.factory.container.ContainerAutoCraftItems;
+import buildcraft.factory.container.ContainerChute;
+import buildcraft.factory.gui.GuiAutoCraftItems;
+import buildcraft.factory.gui.GuiChute;
+import buildcraft.factory.tile.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.factory.client.render.RenderDistiller;
-import buildcraft.factory.client.render.RenderHeatExchangeStart;
-import buildcraft.factory.client.render.RenderMiningWell;
-import buildcraft.factory.client.render.RenderPump;
-import buildcraft.factory.client.render.RenderTank;
-import buildcraft.factory.container.ContainerAutoCraftItems;
-import buildcraft.factory.container.ContainerChute;
-import buildcraft.factory.gui.GuiAutoCraftItems;
-import buildcraft.factory.gui.GuiChute;
-import buildcraft.factory.tile.TileAutoWorkbenchItems;
-import buildcraft.factory.tile.TileChute;
-import buildcraft.factory.tile.TileDistiller_BC8;
-import buildcraft.factory.tile.TileHeatExchangeStart;
-import buildcraft.factory.tile.TileMiningWell;
-import buildcraft.factory.tile.TilePump;
-import buildcraft.factory.tile.TileTank;
 
 public abstract class BCFactoryProxy implements IGuiHandler {
     @SidedProxy

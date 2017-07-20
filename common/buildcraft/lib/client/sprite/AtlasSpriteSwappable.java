@@ -6,9 +6,6 @@
 
 package buildcraft.lib.client.sprite;
 
-import java.io.IOException;
-import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.PngSizeInfo;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -17,8 +14,10 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.fml.client.FMLClientHandler;
+
+import java.io.IOException;
+import java.util.List;
 
 /** Provides the basic implementation for */
 public abstract class AtlasSpriteSwappable extends TextureAtlasSprite {

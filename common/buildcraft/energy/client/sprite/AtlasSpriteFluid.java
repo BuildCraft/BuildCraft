@@ -6,16 +6,14 @@
 
 package buildcraft.energy.client.sprite;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.BCLog;
-
 import buildcraft.lib.client.sprite.AtlasSpriteDirect;
 import buildcraft.lib.client.sprite.AtlasSpriteSwappable;
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.misc.SpriteUtil;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.util.ResourceLocation;
 
 public class AtlasSpriteFluid extends AtlasSpriteSwappable {
     final ResourceLocation fromName;

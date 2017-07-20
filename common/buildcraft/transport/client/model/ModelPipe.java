@@ -6,11 +6,13 @@
 
 package buildcraft.transport.client.model;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
-
+import buildcraft.transport.block.BlockPipeHolder;
+import buildcraft.transport.client.model.PipeModelCacheAll.PipeAllCutoutKey;
+import buildcraft.transport.client.model.PipeModelCacheAll.PipeAllTranslucentKey;
+import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
+import buildcraft.transport.client.model.key.PipeModelKey;
+import buildcraft.transport.tile.TilePipeHolder;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -20,16 +22,11 @@ import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
-import buildcraft.transport.block.BlockPipeHolder;
-import buildcraft.transport.client.model.PipeModelCacheAll.PipeAllCutoutKey;
-import buildcraft.transport.client.model.PipeModelCacheAll.PipeAllTranslucentKey;
-import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
-import buildcraft.transport.client.model.key.PipeModelKey;
-import buildcraft.transport.tile.TilePipeHolder;
+import java.lang.ref.WeakReference;
+import java.util.List;
 
 public enum ModelPipe implements IBakedModel {
     INSTANCE;

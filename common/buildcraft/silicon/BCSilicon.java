@@ -6,21 +6,19 @@
 
 package buildcraft.silicon;
 
-import java.util.function.Consumer;
-
+import buildcraft.core.BCCore;
+import buildcraft.lib.BCLib;
+import buildcraft.lib.registry.RegistryHelper;
+import buildcraft.lib.registry.TagManager;
+import buildcraft.lib.registry.TagManager.EnumTagType;
+import buildcraft.lib.registry.TagManager.TagEntry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-import buildcraft.lib.BCLib;
-import buildcraft.lib.registry.RegistryHelper;
-import buildcraft.lib.registry.TagManager;
-import buildcraft.lib.registry.TagManager.EnumTagType;
-import buildcraft.lib.registry.TagManager.TagEntry;
-
-import buildcraft.core.BCCore;
+import java.util.function.Consumer;
 
 //@formatter:off
 @Mod(modid = BCSilicon.MODID,

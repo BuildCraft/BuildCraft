@@ -6,19 +6,16 @@
 
 package buildcraft.transport.gui;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.items.IItemHandler;
-
 import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.misc.LocaleUtil;
-
 import buildcraft.transport.container.ContainerDiamondPipe;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.items.IItemHandler;
 
 public class GuiDiamondPipe extends GuiBC8<ContainerDiamondPipe> {
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcrafttransport:textures/gui/filter.png");

@@ -1,24 +1,20 @@
 package buildcraft.energy.tile;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.factory.tile.TilePump;
 import com.mojang.authlib.GameProfile;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.api.tiles.IDebuggable;
-
-import buildcraft.factory.tile.TilePump;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 // We don't extend TileBC here because we have no need of any of its functions.
 public class TileSpringOil extends TileEntity implements IDebuggable {

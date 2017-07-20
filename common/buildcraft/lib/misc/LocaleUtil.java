@@ -6,26 +6,22 @@
 
 package buildcraft.lib.misc;
 
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.BCLibConfig.TimeGap;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.translation.I18n;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidTank;
+
+import javax.annotation.Nullable;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.text.translation.I18n;
-
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
-
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
-import buildcraft.api.mj.MjAPI;
-
-import buildcraft.lib.BCLibConfig;
-import buildcraft.lib.BCLibConfig.TimeGap;
 
 /** The central class for localizing objects. */
 public class LocaleUtil {

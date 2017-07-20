@@ -6,13 +6,11 @@
 
 package buildcraft.robotics;
 
-import net.minecraft.block.material.Material;
-
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.tile.TileBC_Neptune;
-
 import buildcraft.robotics.block.BlockZonePlanner;
 import buildcraft.robotics.tile.TileZonePlanner;
+import net.minecraft.block.material.Material;
 
 public class BCRoboticsBlocks {
     public static BlockZonePlanner zonePlanner;

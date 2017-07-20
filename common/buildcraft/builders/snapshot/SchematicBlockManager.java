@@ -6,14 +6,12 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.api.schematics.SchematicBlockContext;
+import buildcraft.api.schematics.SchematicBlockFactory;
+import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
 import com.google.common.collect.Lists;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -21,14 +19,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fluids.FluidStack;
+import org.apache.commons.lang3.tuple.Pair;
 
-import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.schematics.ISchematicBlock;
-import buildcraft.api.schematics.SchematicBlockContext;
-import buildcraft.api.schematics.SchematicBlockFactory;
-import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
+import javax.annotation.Nonnull;
+import java.util.List;
 
 public class SchematicBlockManager {
     @SuppressWarnings("WeakerAccess")

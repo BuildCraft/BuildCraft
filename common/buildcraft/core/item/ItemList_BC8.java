@@ -4,12 +4,13 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.item;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.items.IList;
+import buildcraft.core.BCCoreGuis;
+import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.list.ListHandler;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
 import gnu.trove.map.hash.TIntObjectHashMap;
-
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -19,18 +20,11 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.items.IList;
-
-import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.list.ListHandler;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.StackUtil;
-
-import buildcraft.core.BCCoreGuis;
+import javax.annotation.Nonnull;
+import java.util.List;
 
 public class ItemList_BC8 extends ItemBC_Neptune implements IList {
     public ItemList_BC8(String id) {

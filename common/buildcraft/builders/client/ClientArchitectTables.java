@@ -6,11 +6,11 @@
 
 package buildcraft.builders.client;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ClientArchitectTables {
     public static final int START_BOX_VALUE = 3;

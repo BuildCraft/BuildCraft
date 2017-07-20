@@ -6,12 +6,12 @@
 
 package buildcraft.builders.item;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
+import buildcraft.api.enums.EnumSnapshotType;
+import buildcraft.builders.snapshot.Snapshot;
+import buildcraft.builders.snapshot.Snapshot.Header;
+import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.LocaleUtil;
 import gnu.trove.map.hash.TIntObjectHashMap;
-
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,18 +20,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.enums.EnumSnapshotType;
-
-import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.LocaleUtil;
-
-import buildcraft.builders.snapshot.Snapshot;
-import buildcraft.builders.snapshot.Snapshot.Header;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 public class ItemSnapshot extends ItemBC_Neptune {
     public ItemSnapshot(String id) {

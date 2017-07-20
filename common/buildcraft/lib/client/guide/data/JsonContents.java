@@ -6,14 +6,13 @@
 
 package buildcraft.lib.client.guide.data;
 
+import buildcraft.api.core.BCLog;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import com.google.gson.annotations.SerializedName;
-
-import buildcraft.api.core.BCLog;
 
 public class JsonContents {
     public final JsonEntry[] contents;

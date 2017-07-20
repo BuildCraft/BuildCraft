@@ -6,11 +6,10 @@
 
 package buildcraft.lib.client.guide.world;
 
-import java.util.List;
+import com.google.common.collect.ImmutableList;
 
 import javax.vecmath.Vector3f;
-
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 public class WorldState {
     private final Vector3f cameraPos;

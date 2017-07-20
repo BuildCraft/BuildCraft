@@ -6,16 +6,15 @@
 
 package buildcraft.lib.client.guide.node;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
-import com.google.common.collect.Lists;
-
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.parts.GuideChapter;
 import buildcraft.lib.client.guide.parts.GuidePart;
 import buildcraft.lib.client.guide.parts.GuideText;
+import com.google.common.collect.Lists;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class NodePageLine implements Comparable<NodePageLine> {
     public final NodePageLine parent;

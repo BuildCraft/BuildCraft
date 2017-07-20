@@ -4,6 +4,10 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.block;
 
+import buildcraft.builders.BCBuildersGuis;
+import buildcraft.builders.tile.TileElectronicLibrary;
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithFacing;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,12 +16,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.block.IBlockWithFacing;
-
-import buildcraft.builders.BCBuildersGuis;
-import buildcraft.builders.tile.TileElectronicLibrary;
 
 public class BlockElectronicLibrary extends BlockBCTile_Neptune implements IBlockWithFacing {
     public BlockElectronicLibrary(Material material, String id) {

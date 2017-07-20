@@ -6,23 +6,14 @@
 
 package buildcraft.transport.plug;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.facades.FacadeAPI;
+import buildcraft.api.facades.FacadeType;
+import buildcraft.lib.misc.*;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.world.SingleBlockAccess;
 import com.google.common.collect.ImmutableSet;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGlass;
 import net.minecraft.block.BlockLiquid;
@@ -40,24 +31,15 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
-import buildcraft.api.facades.FacadeAPI;
-import buildcraft.api.facades.FacadeType;
-
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.ItemStackKey;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.world.SingleBlockAccess;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class FacadeStateManager {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("transport.facade");

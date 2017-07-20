@@ -6,26 +6,18 @@
 
 package buildcraft.transport.statements;
 
-import java.util.Collection;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.gates.IGate;
+import buildcraft.api.statements.*;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeEventStatement;
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.transport.BCTransportStatements;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.gates.IGate;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.api.statements.ITriggerInternalSided;
-import buildcraft.api.statements.ITriggerProvider;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pipe.PipeEventStatement;
-
-import buildcraft.lib.misc.ColourUtil;
-
-import buildcraft.transport.BCTransportStatements;
+import javax.annotation.Nonnull;
+import java.util.Collection;
 
 public enum TransportTriggerProvider implements ITriggerProvider {
     INSTANCE;

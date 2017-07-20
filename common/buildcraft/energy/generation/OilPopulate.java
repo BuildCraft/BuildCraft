@@ -6,11 +6,11 @@
 
 package buildcraft.energy.generation;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
-
+import buildcraft.api.enums.EnumSpring;
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.core.BCCoreBlocks;
+import buildcraft.energy.BCEnergyFluids;
+import buildcraft.lib.misc.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockStaticLiquid;
@@ -21,7 +21,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
-
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType;
@@ -33,13 +32,10 @@ import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.api.enums.EnumSpring;
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.lib.misc.BlockUtil;
-
-import buildcraft.core.BCCoreBlocks;
-import buildcraft.energy.BCEnergyFluids;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 
 public final class OilPopulate {
     public static final OilPopulate INSTANCE = new OilPopulate();

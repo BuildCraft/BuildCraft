@@ -6,31 +6,22 @@
 
 package buildcraft.factory.tile;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.factory.block.BlockFloodGate;
+import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.misc.*;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Booleans;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -38,21 +29,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.tiles.IDebuggable;
-
-import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.FluidUtilBC;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBC_Neptune;
-
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.factory.block.BlockFloodGate;
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebuggable {
     private static final int[] REBUILD_DELAYS = new int[] {

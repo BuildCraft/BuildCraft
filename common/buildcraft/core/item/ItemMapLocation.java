@@ -6,14 +6,19 @@
 
 package buildcraft.core.item;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.core.IBox;
+import buildcraft.api.core.IPathProvider;
+import buildcraft.api.core.IZone;
+import buildcraft.api.items.IMapLocation;
+import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.data.Box;
+import buildcraft.robotics.zone.ZonePlan;
 import gnu.trove.map.hash.TIntObjectHashMap;
-
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -26,24 +31,13 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.IBox;
-import buildcraft.api.core.IPathProvider;
-import buildcraft.api.core.IZone;
-import buildcraft.api.items.IMapLocation;
-
-import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.StringUtilBC;
-import buildcraft.lib.misc.data.Box;
-
-import buildcraft.robotics.zone.ZonePlan;
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     private static final String[] STORAGE_TAGS = "x,y,z,side,xMin,xMax,yMin,yMax,zMin,zMax,path,chunkMapping,name".split(",");

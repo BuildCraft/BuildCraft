@@ -6,21 +6,19 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventItem;
 import buildcraft.api.transport.pipe.PipeEventItem.ItemEntry;
-
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.StackUtil;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
 

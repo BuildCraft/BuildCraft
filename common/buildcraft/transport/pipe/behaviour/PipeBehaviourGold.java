@@ -6,12 +6,11 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeBehaviour;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventItem;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class PipeBehaviourGold extends PipeBehaviour {
     private static final double SPEED_DELTA = 0.07;

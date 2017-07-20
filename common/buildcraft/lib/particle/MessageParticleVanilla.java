@@ -6,20 +6,17 @@
 
 package buildcraft.lib.particle;
 
-import java.util.function.BiConsumer;
-
+import buildcraft.lib.BCLibProxy;
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.BCLibProxy;
+import java.util.function.BiConsumer;
 
 public class MessageParticleVanilla implements IMessage {
     public EnumParticleTypes type;

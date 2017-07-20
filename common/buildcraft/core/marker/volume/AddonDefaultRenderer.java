@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
-
 import net.minecraftforge.client.model.ModelLoader;
 
 public class AddonDefaultRenderer<T extends Addon> implements IFastAddonRenderer<T> {

@@ -6,11 +6,11 @@
 
 package buildcraft.lib.client.guide.block;
 
-import java.util.List;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public interface IBlockGuidePageMapper {
     /** @param world The world object to query

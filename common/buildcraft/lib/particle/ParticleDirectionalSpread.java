@@ -6,10 +6,10 @@
 
 package buildcraft.lib.particle;
 
+import net.minecraft.util.math.Vec3d;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import net.minecraft.util.math.Vec3d;
 
 public enum ParticleDirectionalSpread implements IParticlePositionPipe {
     SMALL(0.01),

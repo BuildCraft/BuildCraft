@@ -6,8 +6,8 @@
 
 package buildcraft.lib.misc;
 
-import javax.annotation.Nullable;
-
+import buildcraft.lib.particle.ParticlePipes;
+import buildcraft.lib.particle.ParticlePosition;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
@@ -15,8 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import buildcraft.lib.particle.ParticlePipes;
-import buildcraft.lib.particle.ParticlePosition;
+import javax.annotation.Nullable;
 
 public class ParticleUtil {
     public static void showChangeColour(World world, Vec3d pos, @Nullable EnumDyeColor colour) {

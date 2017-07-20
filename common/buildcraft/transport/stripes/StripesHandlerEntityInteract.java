@@ -6,9 +6,8 @@
 
 package buildcraft.transport.stripes;
 
-import java.util.Collections;
-import java.util.List;
-
+import buildcraft.api.transport.IStripesActivator;
+import buildcraft.api.transport.IStripesHandlerItem;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -19,8 +18,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.transport.IStripesActivator;
-import buildcraft.api.transport.IStripesHandlerItem;
+import java.util.Collections;
+import java.util.List;
 
 public enum StripesHandlerEntityInteract implements IStripesHandlerItem {
     INSTANCE;

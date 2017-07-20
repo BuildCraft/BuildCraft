@@ -6,11 +6,10 @@
 
 package buildcraft.robotics.zone;
 
-import java.util.Arrays;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.util.math.ChunkPos;
+
+import java.util.Arrays;
 
 public class ZonePlannerMapChunkKey {
     public static final int LEVEL_HEIGHT = 32;

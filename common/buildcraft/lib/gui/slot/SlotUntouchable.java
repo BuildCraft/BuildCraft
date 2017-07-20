@@ -6,15 +6,13 @@
 
 package buildcraft.lib.gui.slot;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.lib.tile.item.IItemHandlerAdv;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.tile.item.IItemHandlerAdv;
+import javax.annotation.Nonnull;
 
 public class SlotUntouchable extends SlotBase implements IPhantomSlot {
 

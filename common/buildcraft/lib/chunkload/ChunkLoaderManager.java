@@ -6,24 +6,17 @@
 
 package buildcraft.lib.chunkload;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
-import javax.annotation.Nonnull;
-
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
-
-import net.minecraftforge.common.ForgeChunkManager;
-
 import buildcraft.api.core.BCLog;
-
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.misc.NBTUtilBC;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeChunkManager;
+
+import javax.annotation.Nonnull;
+import java.util.*;
 
 public class ChunkLoaderManager {
     private static final Map<IChunkLoadingTile, ForgeChunkManager.Ticket> TICKETS = new WeakHashMap<>();

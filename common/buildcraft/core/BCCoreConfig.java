@@ -6,9 +6,13 @@
  */
 package buildcraft.core;
 
-import java.io.File;
-import java.util.Locale;
-
+import buildcraft.api.BCModules;
+import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.BCLibConfig.TimeGap;
+import buildcraft.lib.config.EnumRestartRequirement;
+import buildcraft.lib.config.FileConfigManager;
+import buildcraft.lib.misc.ConfigUtil;
+import buildcraft.lib.registry.RegistryHelper;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -17,14 +21,8 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.api.BCModules;
-
-import buildcraft.lib.BCLibConfig;
-import buildcraft.lib.BCLibConfig.TimeGap;
-import buildcraft.lib.config.EnumRestartRequirement;
-import buildcraft.lib.config.FileConfigManager;
-import buildcraft.lib.misc.ConfigUtil;
-import buildcraft.lib.registry.RegistryHelper;
+import java.io.File;
+import java.util.Locale;
 
 public class BCCoreConfig {
     public static Configuration config;

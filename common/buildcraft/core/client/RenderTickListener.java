@@ -4,18 +4,25 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.client;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.api.core.IBox;
+import buildcraft.api.items.IMapLocation.MapLocationType;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.core.BCCoreConfig;
+import buildcraft.core.BCCoreItems;
+import buildcraft.core.item.ItemMapLocation;
+import buildcraft.core.item.ItemMarkerConnector;
+import buildcraft.lib.BCLibProxy;
+import buildcraft.lib.client.render.DetachedRenderer;
+import buildcraft.lib.client.render.laser.LaserBoxRenderer;
+import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.marker.MarkerSubCache;
+import buildcraft.lib.misc.MatrixUtil;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.misc.data.Box;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,32 +36,19 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
-
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.lwjgl.opengl.GL11;
 
-import buildcraft.api.core.IBox;
-import buildcraft.api.items.IMapLocation.MapLocationType;
-import buildcraft.api.tiles.IDebuggable;
-
-import buildcraft.lib.BCLibProxy;
-import buildcraft.lib.client.render.DetachedRenderer;
-import buildcraft.lib.client.render.laser.LaserBoxRenderer;
-import buildcraft.lib.client.render.laser.LaserData_BC8;
-import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
-import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
-import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.marker.MarkerSubCache;
-import buildcraft.lib.misc.MatrixUtil;
-import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.misc.data.Box;
-
-import buildcraft.core.BCCoreConfig;
-import buildcraft.core.BCCoreItems;
-import buildcraft.core.item.ItemMapLocation;
-import buildcraft.core.item.ItemMarkerConnector;
+import javax.annotation.Nonnull;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public enum RenderTickListener {
     INSTANCE;

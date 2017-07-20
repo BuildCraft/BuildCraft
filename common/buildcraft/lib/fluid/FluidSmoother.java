@@ -1,22 +1,18 @@
 package buildcraft.lib.fluid;
 
-import java.util.List;
-
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
-
-import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
-
+import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.net.cache.NetworkedFluidStackCache;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.core.BCCoreConfig;
+import java.util.List;
 
 public class FluidSmoother implements IDebuggable {
     final IFluidDataSender sender;

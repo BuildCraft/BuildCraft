@@ -6,26 +6,22 @@
 
 package buildcraft.factory.client.render;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-
-import net.minecraftforge.client.model.animation.FastTESR;
-
 import buildcraft.api.properties.BuildCraftProperties;
-
+import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.factory.tile.TileMiningWell;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.tile.RenderPartCube;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
+import net.minecraftforge.client.model.animation.FastTESR;
 
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.factory.tile.TileMiningWell;
+import javax.annotation.Nonnull;
 
 public class RenderMiningWell extends FastTESR<TileMiningWell> {
     private static final int[] COLOUR_POWER = new int[16];

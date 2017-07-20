@@ -6,19 +6,8 @@
 
 package buildcraft.builders.filling;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.StreamSupport;
-
-import javax.vecmath.Point2d;
-import javax.vecmath.Point2i;
-
+import buildcraft.builders.snapshot.Template;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -27,7 +16,15 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.builders.snapshot.Template;
+import javax.vecmath.Point2d;
+import javax.vecmath.Point2i;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.StreamSupport;
 
 @SuppressWarnings("WeakerAccess")
 public class Filling {

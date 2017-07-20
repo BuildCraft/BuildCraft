@@ -6,16 +6,14 @@
 
 package buildcraft.lib.client.model;
 
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.expression.info.ContextInfo;
+import buildcraft.lib.expression.info.VariableInfo;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Nullable;
-
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.expression.info.ContextInfo;
-import buildcraft.lib.expression.info.VariableInfo;
 
 public class AdvModelCache {
     private static final int MODEL_INDEX_INCORRECT = -1;

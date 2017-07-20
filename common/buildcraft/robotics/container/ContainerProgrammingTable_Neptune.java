@@ -6,11 +6,9 @@
 
 package buildcraft.robotics.container;
 
-import net.minecraft.entity.player.EntityPlayer;
-
 import buildcraft.lib.gui.ContainerBCTile;
-
 import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
+import net.minecraft.entity.player.EntityPlayer;
 
 public class ContainerProgrammingTable_Neptune extends ContainerBCTile<TileProgrammingTable_Neptune> {
     public ContainerProgrammingTable_Neptune(EntityPlayer player, TileProgrammingTable_Neptune tile) {

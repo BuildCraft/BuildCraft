@@ -6,15 +6,13 @@
 
 package buildcraft.lib.client.guide;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.StringUtils;
-
 import buildcraft.api.core.BCLog;
-
 import buildcraft.lib.client.guide.data.JsonEntry;
 import buildcraft.lib.client.guide.data.JsonTypeTags;
 import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.StringUtils;
 
 public class PageEntry {
     public final String title, page;

@@ -6,17 +6,14 @@
 
 package buildcraft.builders.client.render;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.VertexBuffer;
-
-import net.minecraftforge.client.model.animation.FastTESR;
-
-import buildcraft.lib.client.render.laser.LaserBoxRenderer;
-
 import buildcraft.builders.tile.TileFiller;
 import buildcraft.core.client.BuildCraftLaserManager;
+import buildcraft.lib.client.render.laser.LaserBoxRenderer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraftforge.client.model.animation.FastTESR;
+
+import javax.annotation.Nonnull;
 
 public class RenderFiller extends FastTESR<TileFiller> {
     @Override

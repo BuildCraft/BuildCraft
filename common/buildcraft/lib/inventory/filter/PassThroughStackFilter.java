@@ -6,11 +6,10 @@
 
 package buildcraft.lib.inventory.filter;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.IStackFilter;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.api.core.IStackFilter;
+import javax.annotation.Nonnull;
 
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class PassThroughStackFilter implements IStackFilter {

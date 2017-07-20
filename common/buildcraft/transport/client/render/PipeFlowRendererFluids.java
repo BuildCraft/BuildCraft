@@ -6,10 +6,14 @@
 
 package buildcraft.transport.client.render;
 
-import java.util.Arrays;
-
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.transport.pipe.IPipeFlowRenderer;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.lib.client.render.fluid.FluidRenderer;
+import buildcraft.lib.client.render.fluid.FluidSpriteType;
+import buildcraft.lib.misc.VecUtil;
+import buildcraft.transport.pipe.Pipe;
+import buildcraft.transport.pipe.flow.PipeFlowFluids;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
@@ -23,19 +27,10 @@ import net.minecraft.profiler.Profiler;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.Vec3d;
-
 import net.minecraftforge.fluids.FluidStack;
+import org.lwjgl.opengl.GL11;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.transport.pipe.IPipeFlowRenderer;
-import buildcraft.api.transport.pipe.IPipeHolder;
-
-import buildcraft.lib.client.render.fluid.FluidRenderer;
-import buildcraft.lib.client.render.fluid.FluidSpriteType;
-import buildcraft.lib.misc.VecUtil;
-
-import buildcraft.transport.pipe.Pipe;
-import buildcraft.transport.pipe.flow.PipeFlowFluids;
+import java.util.Arrays;
 
 public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> {
     INSTANCE;

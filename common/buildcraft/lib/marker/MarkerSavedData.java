@@ -6,17 +6,15 @@
 
 package buildcraft.lib.marker;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.misc.NBTUtilBC;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldSavedData;
 
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.misc.NBTUtilBC;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends MarkerConnection<C>> extends WorldSavedData {
     protected static final boolean DEBUG_FULL = MarkerSubCache.DEBUG_FULL;

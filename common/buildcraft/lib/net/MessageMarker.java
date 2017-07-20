@@ -6,25 +6,21 @@
 
 package buildcraft.lib.net;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.BiConsumer;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.BCLibProxy;
+import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.misc.MessageUtil;
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.BCLibProxy;
-import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.misc.MessageUtil;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.BiConsumer;
 
 public class MessageMarker implements IMessage {
     private static final boolean DEBUG = MessageManager.DEBUG;

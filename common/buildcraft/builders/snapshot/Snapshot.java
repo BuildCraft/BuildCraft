@@ -6,10 +6,12 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.UUID;
-
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.enums.EnumSnapshotType;
+import buildcraft.lib.misc.HashUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,16 +19,11 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.enums.EnumSnapshotType;
-
-import buildcraft.lib.misc.HashUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.StringUtilBC;
-import buildcraft.lib.net.PacketBufferBC;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.UUID;
 
 public abstract class Snapshot {
     public Key key = new Key(new byte[0]);

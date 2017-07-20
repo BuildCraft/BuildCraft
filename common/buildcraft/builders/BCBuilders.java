@@ -4,10 +4,19 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import java.util.function.Consumer;
-
+import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
+import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
+import buildcraft.builders.addon.AddonFillingPlanner;
+import buildcraft.builders.snapshot.*;
+import buildcraft.core.BCCore;
+import buildcraft.core.marker.volume.AddonsRegistry;
+import buildcraft.lib.BCLib;
+import buildcraft.lib.net.MessageManager;
+import buildcraft.lib.registry.RegistryHelper;
+import buildcraft.lib.registry.TagManager;
+import buildcraft.lib.registry.TagManager.EnumTagType;
+import buildcraft.lib.registry.TagManager.TagEntry;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -17,27 +26,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
-import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
-
-import buildcraft.lib.BCLib;
-import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.registry.RegistryHelper;
-import buildcraft.lib.registry.TagManager;
-import buildcraft.lib.registry.TagManager.EnumTagType;
-import buildcraft.lib.registry.TagManager.TagEntry;
-
-import buildcraft.builders.addon.AddonFillingPlanner;
-import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
-import buildcraft.builders.snapshot.MessageSnapshotRequest;
-import buildcraft.builders.snapshot.MessageSnapshotResponse;
-import buildcraft.builders.snapshot.RulesLoader;
-import buildcraft.builders.snapshot.SchematicBlockAir;
-import buildcraft.builders.snapshot.SchematicBlockDefault;
-import buildcraft.builders.snapshot.SchematicBlockFluid;
-import buildcraft.builders.snapshot.SchematicEntityDefault;
-import buildcraft.core.BCCore;
-import buildcraft.core.marker.volume.AddonsRegistry;
+import java.util.function.Consumer;
 
 //@formatter:off
 @Mod(modid = BCBuilders.MODID,

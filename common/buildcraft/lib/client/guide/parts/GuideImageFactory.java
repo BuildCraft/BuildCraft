@@ -6,9 +6,8 @@
 
 package buildcraft.lib.client.guide.parts;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.lib.client.guide.GuiGuide;
+import net.minecraft.util.ResourceLocation;
 
 public class GuideImageFactory implements GuidePartFactory {
     private final ResourceLocation location;

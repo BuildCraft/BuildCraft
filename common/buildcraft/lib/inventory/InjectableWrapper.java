@@ -6,17 +6,15 @@
 
 package buildcraft.lib.inventory;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.inventory.IItemTransactor;
+import buildcraft.api.transport.IInjectable;
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 
-import buildcraft.api.core.IStackFilter;
-import buildcraft.api.inventory.IItemTransactor;
-import buildcraft.api.transport.IInjectable;
-
-import buildcraft.lib.misc.StackUtil;
+import javax.annotation.Nonnull;
 
 public class InjectableWrapper implements IItemTransactor {
     private final IInjectable injectable;

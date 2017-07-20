@@ -6,21 +6,14 @@
 
 package buildcraft.lib.marker;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
+import buildcraft.lib.tile.TileMarker;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.tile.TileMarker;
+import javax.annotation.Nullable;
+import java.util.*;
 
 public abstract class MarkerConnection<C extends MarkerConnection<C>> {
     public final MarkerSubCache<C> subCache;

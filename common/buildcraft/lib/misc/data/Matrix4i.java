@@ -6,10 +6,9 @@
 
 package buildcraft.lib.misc.data;
 
+import buildcraft.lib.misc.VecUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
-
-import buildcraft.lib.misc.VecUtil;
 
 public class Matrix4i {
     public static final Matrix4i IDENTITY = makeScale(VecUtil.POS_ONE);

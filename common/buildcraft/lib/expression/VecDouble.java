@@ -6,10 +6,10 @@
 
 package buildcraft.lib.expression;
 
+import net.minecraft.util.math.Vec3d;
+
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
-
-import net.minecraft.util.math.Vec3d;
 
 /** An immutable class the represents a 4 part vector of doubles. */
 public class VecDouble {

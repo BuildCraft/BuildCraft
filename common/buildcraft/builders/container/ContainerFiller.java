@@ -6,19 +6,16 @@
 
 package buildcraft.builders.container;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-
-import buildcraft.lib.gui.ContainerBCTile;
-import buildcraft.lib.gui.slot.SlotBase;
-
 import buildcraft.builders.filling.Filling;
 import buildcraft.builders.filling.IParameter;
 import buildcraft.builders.tile.TileFiller;
+import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.lib.gui.slot.SlotBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+
+import javax.annotation.Nonnull;
+import java.util.List;
 
 public class ContainerFiller extends ContainerBCTile<TileFiller> implements IContainerFilling {
     public ContainerFiller(EntityPlayer player, TileFiller tile) {

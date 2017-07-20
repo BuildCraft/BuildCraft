@@ -6,9 +6,8 @@
 
 package buildcraft.lib.client.guide.data;
 
-import com.google.gson.annotations.SerializedName;
-
 import buildcraft.api.core.BCLog;
+import com.google.gson.annotations.SerializedName;
 
 public class JsonEntry {
     public final String title;

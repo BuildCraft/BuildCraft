@@ -6,8 +6,19 @@
 
 package buildcraft.transport.plug;
 
-import javax.annotation.Nullable;
-
+import buildcraft.api.facades.FacadeType;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.PluggableDefinition;
+import buildcraft.api.transport.pluggable.PluggableModelKey;
+import buildcraft.lib.misc.MathUtil;
+import buildcraft.lib.misc.RotationUtil;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.transport.BCTransportItems;
+import buildcraft.transport.client.model.key.KeyPlugBlocker;
+import buildcraft.transport.client.model.key.KeyPlugFacade;
+import buildcraft.transport.plug.FacadeStateManager.FacadePhasedState;
+import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -18,25 +29,10 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.Explosion;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.facades.FacadeType;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.api.transport.pluggable.PluggableDefinition;
-import buildcraft.api.transport.pluggable.PluggableModelKey;
-
-import buildcraft.lib.misc.MathUtil;
-import buildcraft.lib.misc.RotationUtil;
-import buildcraft.lib.net.PacketBufferBC;
-
-import buildcraft.transport.BCTransportItems;
-import buildcraft.transport.client.model.key.KeyPlugBlocker;
-import buildcraft.transport.client.model.key.KeyPlugFacade;
-import buildcraft.transport.plug.FacadeStateManager.FacadePhasedState;
-import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
+import javax.annotation.Nullable;
 
 public class PluggableFacade extends PipePluggable {
     public static final int SIZE = 2;

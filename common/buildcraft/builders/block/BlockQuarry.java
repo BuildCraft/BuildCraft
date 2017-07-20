@@ -6,10 +6,12 @@
 
 package buildcraft.builders.block;
 
-import java.util.Arrays;
-import java.util.List;
-import javax.annotation.Nullable;
-
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.builders.BCBuildersBlocks;
+import buildcraft.builders.tile.TileQuarry;
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithFacing;
+import buildcraft.lib.misc.CapUtil;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -21,14 +23,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.block.IBlockWithFacing;
-import buildcraft.lib.misc.CapUtil;
-
-import buildcraft.builders.BCBuildersBlocks;
-import buildcraft.builders.tile.TileQuarry;
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.List;
 
 public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing {
     public BlockQuarry(Material material, String id) {

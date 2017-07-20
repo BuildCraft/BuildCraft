@@ -11,14 +11,7 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
 import buildcraft.lib.expression.node.cast.NodeCasting;
-import buildcraft.lib.expression.node.value.NodeConstantBoolean;
-import buildcraft.lib.expression.node.value.NodeConstantDouble;
-import buildcraft.lib.expression.node.value.NodeConstantLong;
-import buildcraft.lib.expression.node.value.NodeConstantString;
-import buildcraft.lib.expression.node.value.NodeVariableBoolean;
-import buildcraft.lib.expression.node.value.NodeVariableDouble;
-import buildcraft.lib.expression.node.value.NodeVariableLong;
-import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.expression.node.value.*;
 
 public enum NodeType {
     LONG,

@@ -6,20 +6,17 @@
 
 package buildcraft.lib;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import buildcraft.api.BCItems;
+import buildcraft.lib.recipe.NBTAwareShapedOreRecipe;
 import net.minecraft.init.Items;
-
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.RecipeSorter.Category;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-import buildcraft.api.BCItems;
-
-import buildcraft.lib.recipe.NBTAwareShapedOreRecipe;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class BCLibRecipes {
     public static void fmlInit() {

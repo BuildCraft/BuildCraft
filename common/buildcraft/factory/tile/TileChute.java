@@ -6,16 +6,19 @@
 
 package buildcraft.factory.tile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-
-import org.apache.commons.lang3.tuple.Pair;
-
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjBattery;
+import buildcraft.api.mj.MjCapabilityHelper;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.factory.block.BlockChute;
+import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.inventory.ItemTransactorHelper;
+import buildcraft.lib.inventory.NoSpaceTransactor;
+import buildcraft.lib.mj.MjBatteryReceiver;
+import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -26,24 +29,12 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import org.apache.commons.lang3.tuple.Pair;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjBattery;
-import buildcraft.api.mj.MjCapabilityHelper;
-import buildcraft.api.tiles.IDebuggable;
-
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.inventory.ItemTransactorHelper;
-import buildcraft.lib.inventory.NoSpaceTransactor;
-import buildcraft.lib.mj.MjBatteryReceiver;
-import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
-import buildcraft.lib.tile.item.ItemHandlerSimple;
-
-import buildcraft.factory.block.BlockChute;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable {
     private static final int PICKUP_RADIUS = 3;

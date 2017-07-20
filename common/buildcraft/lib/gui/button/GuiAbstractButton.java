@@ -6,16 +6,15 @@
 
 package buildcraft.lib.gui.button;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class GuiAbstractButton extends GuiButton implements IGuiElement, IButtonClickEventTrigger {
     public final GuiBC8<?> gui;

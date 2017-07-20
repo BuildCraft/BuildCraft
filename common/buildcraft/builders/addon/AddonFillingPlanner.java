@@ -6,17 +6,6 @@
 
 package buildcraft.builders.addon;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
-
-import io.netty.buffer.ByteBuf;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-
-import buildcraft.lib.misc.NBTUtilBC;
-
 import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.BCBuildersSprites;
 import buildcraft.builders.filling.Filling;
@@ -26,6 +15,14 @@ import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.AddonDefaultRenderer;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
 import buildcraft.core.marker.volume.ISingleAddon;
+import buildcraft.lib.misc.NBTUtilBC;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
 
 public class AddonFillingPlanner extends Addon implements ISingleAddon {
     public final List<IParameter> parameters = new ArrayList<>();

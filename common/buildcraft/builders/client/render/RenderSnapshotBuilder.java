@@ -6,10 +6,16 @@
 
 package buildcraft.builders.client.render;
 
-import java.util.Collections;
-
-import javax.vecmath.Point3f;
-
+import buildcraft.builders.BCBuildersSprites;
+import buildcraft.builders.snapshot.ITileForSnapshotBuilder;
+import buildcraft.builders.snapshot.SnapshotBuilder;
+import buildcraft.core.client.BuildCraftLaserManager;
+import buildcraft.lib.client.model.ModelUtil;
+import buildcraft.lib.client.render.ItemRenderUtil;
+import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import buildcraft.lib.misc.MathUtil;
+import buildcraft.lib.misc.VecUtil;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -17,17 +23,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import buildcraft.lib.client.model.ModelUtil;
-import buildcraft.lib.client.render.ItemRenderUtil;
-import buildcraft.lib.client.render.laser.LaserData_BC8;
-import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
-import buildcraft.lib.misc.MathUtil;
-import buildcraft.lib.misc.VecUtil;
-
-import buildcraft.builders.BCBuildersSprites;
-import buildcraft.builders.snapshot.ITileForSnapshotBuilder;
-import buildcraft.builders.snapshot.SnapshotBuilder;
-import buildcraft.core.client.BuildCraftLaserManager;
+import javax.vecmath.Point3f;
+import java.util.Collections;
 
 public class RenderSnapshotBuilder {
     public static <T extends ITileForSnapshotBuilder> void render(

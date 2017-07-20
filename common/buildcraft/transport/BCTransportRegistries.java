@@ -6,18 +6,11 @@
 
 package buildcraft.transport;
 
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemBucket;
-import net.minecraft.item.ItemMinecart;
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.core.EnumHandlerPriority;
 import buildcraft.api.transport.pipe.ICustomPipeConnection;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeConnectionAPI;
 import buildcraft.api.transport.pipe.PipeFlowType;
-
 import buildcraft.transport.pipe.PipeRegistry;
 import buildcraft.transport.pipe.StripesRegistry;
 import buildcraft.transport.pipe.flow.PipeFlowFluids;
@@ -25,14 +18,12 @@ import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.pipe.flow.PipeFlowStructure;
 import buildcraft.transport.plug.PluggableRegistry;
-import buildcraft.transport.stripes.StripesHandlerDispenser;
-import buildcraft.transport.stripes.StripesHandlerEntityInteract;
-import buildcraft.transport.stripes.StripesHandlerHoe;
-import buildcraft.transport.stripes.StripesHandlerMinecartDestroy;
-import buildcraft.transport.stripes.StripesHandlerPlaceBlock;
-import buildcraft.transport.stripes.StripesHandlerPlant;
-import buildcraft.transport.stripes.StripesHandlerShears;
-import buildcraft.transport.stripes.StripesHandlerUse;
+import buildcraft.transport.stripes.*;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemMinecart;
+import net.minecraft.util.EnumFacing;
 
 public class BCTransportRegistries {
     public static void preInit() {

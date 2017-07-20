@@ -6,24 +6,21 @@
 
 package buildcraft.lib.client.guide.data;
 
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.client.guide.loader.FolderLoadable;
+import buildcraft.lib.client.guide.loader.ILoadableResource;
+import buildcraft.lib.client.guide.loader.ZipLoadable;
+import com.google.gson.Gson;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.gson.Gson;
-
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
-
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.client.guide.loader.FolderLoadable;
-import buildcraft.lib.client.guide.loader.ILoadableResource;
-import buildcraft.lib.client.guide.loader.ZipLoadable;
 
 public class GuideEntryLoader {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.guide.loader");

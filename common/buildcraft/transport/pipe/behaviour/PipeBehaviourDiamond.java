@@ -6,18 +6,15 @@
 
 package buildcraft.transport.pipe.behaviour;
 
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.PipeBehaviour;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.transport.BCTransportGuis;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.RayTraceResult;
-
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.PipeBehaviour;
-
-import buildcraft.lib.tile.item.ItemHandlerSimple;
-
-import buildcraft.transport.BCTransportGuis;
 
 public abstract class PipeBehaviourDiamond extends PipeBehaviour {
 

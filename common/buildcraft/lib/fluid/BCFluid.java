@@ -6,13 +6,11 @@
 
 package buildcraft.lib.fluid;
 
+import buildcraft.lib.misc.LocaleUtil;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-
-import buildcraft.lib.misc.LocaleUtil;
 
 public class BCFluid extends Fluid {
     private int colour = 0xFFFFFFFF, light = 0xFF_FF_FF_FF, dark = 0xFF_FF_FF_FF;

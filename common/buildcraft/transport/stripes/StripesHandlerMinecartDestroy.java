@@ -6,9 +6,9 @@
 
 package buildcraft.transport.stripes;
 
-import java.util.Collections;
-import java.util.List;
-
+import buildcraft.api.transport.IStripesActivator;
+import buildcraft.api.transport.IStripesHandlerBlock;
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.item.EntityMinecartContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,10 +18,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.transport.IStripesActivator;
-import buildcraft.api.transport.IStripesHandlerBlock;
-
-import buildcraft.lib.misc.StackUtil;
+import java.util.Collections;
+import java.util.List;
 
 public enum StripesHandlerMinecartDestroy implements IStripesHandlerBlock {
     INSTANCE;

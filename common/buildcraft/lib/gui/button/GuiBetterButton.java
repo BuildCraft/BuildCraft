@@ -6,15 +6,12 @@
 
 package buildcraft.lib.gui.button;
 
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.lib.gui.GuiBC8;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.lib.gui.GuiBC8;
+import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class GuiBetterButton extends GuiAbstractButton {

@@ -6,18 +6,15 @@
 
 package buildcraft.transport.client.model;
 
-import java.util.List;
-
+import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.lib.config.DetailedConfigOption;
+import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
+import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 
-import buildcraft.api.transport.pipe.PipeDefinition;
-
-import buildcraft.lib.config.DetailedConfigOption;
-
-import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
-import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;
+import java.util.List;
 
 public interface IPipeBaseModelGen {
     DetailedConfigOption OPTION_INSIDE_COLOUR_MULT = new DetailedConfigOption("render.pipe.misc.inside.shade", "0.725");

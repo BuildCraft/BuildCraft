@@ -6,18 +6,15 @@
 
 package buildcraft.lib.misc;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
+import buildcraft.api.core.IFakePlayerProvider;
+import buildcraft.lib.fake.FakePlayerBC;
 import com.mojang.authlib.GameProfile;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 
-import buildcraft.api.core.IFakePlayerProvider;
-
-import buildcraft.lib.fake.FakePlayerBC;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public enum FakePlayerProvider implements IFakePlayerProvider {
     INSTANCE;

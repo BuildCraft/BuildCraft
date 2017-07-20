@@ -6,14 +6,13 @@
 
 package buildcraft.lib.client.render;
 
+import buildcraft.lib.client.model.MutableVertex;
+import buildcraft.lib.client.render.fluid.FluidRenderer;
+import buildcraft.lib.misc.SpriteUtil;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
-
-import buildcraft.lib.client.model.MutableVertex;
-import buildcraft.lib.client.render.fluid.FluidRenderer;
-import buildcraft.lib.misc.SpriteUtil;
 
 /** Renders something that flows. Most commonly used for fluid rendering, however power and data rendering both use this
  * as well.<br>

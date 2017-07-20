@@ -6,21 +6,19 @@
 
 package buildcraft.lib.debug;
 
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
-
+import buildcraft.lib.client.model.ModelUtil;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.client.model.ModelUtil;
-import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
+import javax.vecmath.Point3f;
+import javax.vecmath.Tuple3f;
 
 public enum DebugRenderHelper implements IDetachedRenderer {
     INSTANCE;

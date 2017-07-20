@@ -6,14 +6,9 @@
 
 package buildcraft.builders.client.render;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
-import javax.vecmath.Point3f;
-
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.builders.client.ClientArchitectTables;
+import buildcraft.lib.client.model.ModelUtil;
+import buildcraft.lib.client.render.DetachedRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -25,11 +20,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import org.lwjgl.opengl.GL11;
 
-import buildcraft.lib.client.model.ModelUtil;
-import buildcraft.lib.client.render.DetachedRenderer;
-
-import buildcraft.builders.client.ClientArchitectTables;
+import javax.vecmath.Point3f;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer {
     INSTANCE;

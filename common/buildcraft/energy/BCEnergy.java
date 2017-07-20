@@ -4,8 +4,17 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.energy;
 
-import java.util.function.Consumer;
-
+import buildcraft.core.BCCore;
+import buildcraft.energy.generation.BiomeInitializer;
+import buildcraft.energy.generation.BiomeOilDesert;
+import buildcraft.energy.generation.BiomeOilOcean;
+import buildcraft.energy.generation.OilGenerator;
+import buildcraft.lib.BCLib;
+import buildcraft.lib.registry.MigrationManager;
+import buildcraft.lib.registry.RegistryHelper;
+import buildcraft.lib.registry.TagManager;
+import buildcraft.lib.registry.TagManager.EnumTagType;
+import buildcraft.lib.registry.TagManager.TagEntry;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -16,18 +25,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import buildcraft.lib.BCLib;
-import buildcraft.lib.registry.MigrationManager;
-import buildcraft.lib.registry.RegistryHelper;
-import buildcraft.lib.registry.TagManager;
-import buildcraft.lib.registry.TagManager.EnumTagType;
-import buildcraft.lib.registry.TagManager.TagEntry;
-
-import buildcraft.core.BCCore;
-import buildcraft.energy.generation.BiomeInitializer;
-import buildcraft.energy.generation.BiomeOilDesert;
-import buildcraft.energy.generation.BiomeOilOcean;
-import buildcraft.energy.generation.OilGenerator;
+import java.util.function.Consumer;
 
 //@formatter:off
 @Mod(modid = BCEnergy.MODID,

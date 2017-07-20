@@ -4,13 +4,11 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-
 import buildcraft.api.enums.EnumSnapshotType;
-
 import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 
 public class BCBuildersRecipes {
     public static void init() {

@@ -6,20 +6,15 @@
 
 package buildcraft.lib.client.model;
 
-import java.util.List;
-
 import com.google.common.collect.ImmutableList;
-
-import org.lwjgl.util.vector.Vector3f;
-
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
-import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
+import org.lwjgl.util.vector.Vector3f;
+
+import java.util.List;
 
 /** Provides a simple way of rendering an item model with just a list of quads. This provides some transforms to use
  * that make it simple to render as a block, item (todo) or tool (todo) */
@@ -111,6 +106,7 @@ public class ModelItemSimple implements IBakedModel {
 
     @Override
     public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+        GlStateManager.enableLighting();
         return side == null ? quads : ImmutableList.of();
     }
 

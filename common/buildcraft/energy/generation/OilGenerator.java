@@ -1,29 +1,25 @@
 package buildcraft.energy.generation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Predicate;
-
+import buildcraft.energy.generation.OilGenStructure.GenByPredicate;
+import buildcraft.energy.generation.OilGenStructure.ReplaceType;
+import buildcraft.energy.generation.OilGenStructure.Spring;
+import buildcraft.energy.generation.OilPopulate.GenType;
+import buildcraft.lib.misc.RandUtil;
+import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.misc.data.Box;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
-
 import net.minecraftforge.fml.common.IWorldGenerator;
 
-import buildcraft.lib.misc.RandUtil;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.misc.data.Box;
-
-import buildcraft.energy.generation.OilGenStructure.GenByPredicate;
-import buildcraft.energy.generation.OilGenStructure.ReplaceType;
-import buildcraft.energy.generation.OilGenStructure.Spring;
-import buildcraft.energy.generation.OilPopulate.GenType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Predicate;
 
 public enum OilGenerator implements IWorldGenerator {
     INSTANCE;

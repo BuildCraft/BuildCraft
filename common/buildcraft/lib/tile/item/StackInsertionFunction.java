@@ -6,11 +6,10 @@
 
 package buildcraft.lib.tile.item;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.lib.misc.StackUtil;
+import javax.annotation.Nonnull;
 
 /** Defines a way of inserting items into an inventory - this can be overridden to have different rules with stack
  * merging. */

@@ -6,16 +6,14 @@
 
 package buildcraft.lib.client.guide.block;
 
-import java.util.List;
-
+import buildcraft.api.enums.EnumEngineType;
+import buildcraft.api.properties.BuildCraftProperties;
 import com.google.common.collect.Lists;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.enums.EnumEngineType;
-import buildcraft.api.properties.BuildCraftProperties;
+import java.util.List;
 
 public class EngineBlockMapper implements IBlockGuidePageMapper {
     @Override

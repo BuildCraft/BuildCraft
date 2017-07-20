@@ -6,11 +6,10 @@
 
 package buildcraft.builders.snapshot;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 import buildcraft.api.core.IPlayerOwned;
 import buildcraft.api.mj.MjBattery;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 public interface ITileForSnapshotBuilder extends IPlayerOwned {
     World getWorldBC();

@@ -6,15 +6,14 @@
 
 package buildcraft.lib.config;
 
+import buildcraft.lib.BCLibProxy;
+import net.minecraft.util.ResourceLocation;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import net.minecraft.util.ResourceLocation;
-
-import buildcraft.lib.BCLibProxy;
 
 @Deprecated
 public class RoamingConfigManager extends StreamConfigManager {

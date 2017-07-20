@@ -6,16 +6,15 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagString;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+
+import java.util.Objects;
+import java.util.Optional;
 
 public class FluidStackRef {
     private final NbtRef<NBTTagString> fluid;

@@ -6,17 +6,18 @@
 
 package buildcraft.transport.client.model;
 
-import java.util.ArrayList;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector3f;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.lib.client.model.ModelUtil;
+import buildcraft.lib.client.model.ModelUtil.UvFaceData;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.client.sprite.AtlasSpriteVariants;
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.transport.BCTransportSprites;
+import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
+import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -26,19 +27,13 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.api.transport.pipe.PipeApi;
-import buildcraft.api.transport.pipe.PipeDefinition;
-
-import buildcraft.lib.client.model.ModelUtil;
-import buildcraft.lib.client.model.ModelUtil.UvFaceData;
-import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.client.sprite.AtlasSpriteVariants;
-import buildcraft.lib.misc.ColourUtil;
-
-import buildcraft.transport.BCTransportSprites;
-import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
-import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;
+import javax.vecmath.Point3f;
+import javax.vecmath.Tuple3f;
+import javax.vecmath.Vector3f;
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 
 public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
     INSTANCE;

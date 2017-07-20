@@ -6,13 +6,13 @@
 
 package buildcraft.transport.client.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import buildcraft.lib.client.model.ModelItemSimple;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.transport.BCTransportModels;
+import buildcraft.transport.gate.GateVariant;
+import buildcraft.transport.item.ItemPluggableGate;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -24,13 +24,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-import buildcraft.lib.client.model.ModelItemSimple;
-import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.misc.StackUtil;
-
-import buildcraft.transport.BCTransportModels;
-import buildcraft.transport.gate.GateVariant;
-import buildcraft.transport.item.ItemPluggableGate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public enum ModelGateItem implements IBakedModel {
     INSTANCE;

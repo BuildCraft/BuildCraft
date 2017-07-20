@@ -1,7 +1,6 @@
 package buildcraft.lib.compat;
 
-import javax.annotation.Nullable;
-
+import buildcraft.lib.misc.ChunkUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
@@ -10,7 +9,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
 
-import buildcraft.lib.misc.ChunkUtil;
+import javax.annotation.Nullable;
 
 public enum DefaultBlockAccessor implements ISoftBlockAccessor {
     DIRECT(true),

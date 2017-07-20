@@ -6,28 +6,17 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
+import buildcraft.lib.client.model.ResourceLoaderContext;
+import buildcraft.lib.misc.JsonUtil;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.lib.client.model.ResourceLoaderContext;
-import buildcraft.lib.misc.JsonUtil;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
 
 /** {@link ModelBlock} but with different/additional features */
 public class JsonModel {

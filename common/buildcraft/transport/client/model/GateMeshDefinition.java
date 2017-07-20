@@ -6,15 +6,13 @@
 
 package buildcraft.transport.client.model;
 
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.transport.gate.GateVariant;
+import buildcraft.transport.item.ItemPluggableGate;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-
-import buildcraft.lib.misc.StackUtil;
-
-import buildcraft.transport.gate.GateVariant;
-import buildcraft.transport.item.ItemPluggableGate;
 
 public enum GateMeshDefinition implements ItemMeshDefinition {
     INSTANCE;

@@ -4,15 +4,13 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core;
 
+import buildcraft.lib.registry.AchievementPageManager;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
-
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
-
-import buildcraft.lib.registry.AchievementPageManager;
 
 public class BCAchievements {
     // public static final AchievementPageManager mainPage;

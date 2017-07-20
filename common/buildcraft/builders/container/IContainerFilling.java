@@ -6,9 +6,9 @@
 
 package buildcraft.builders.container;
 
-import java.util.List;
-
 import buildcraft.builders.filling.IParameter;
+
+import java.util.List;
 
 public interface IContainerFilling {
     boolean isInverted();

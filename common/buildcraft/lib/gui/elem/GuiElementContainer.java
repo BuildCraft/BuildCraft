@@ -6,14 +6,14 @@
 
 package buildcraft.lib.gui.elem;
 
+import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.IGuiElement;
+import buildcraft.lib.gui.pos.IGuiPosition;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.IGuiElement;
-import buildcraft.lib.gui.pos.IGuiPosition;
 
 public class GuiElementContainer implements IGuiElement {
     public final GuiBC8<?> gui;

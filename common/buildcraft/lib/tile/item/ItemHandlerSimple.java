@@ -6,8 +6,11 @@
 
 package buildcraft.lib.tile.item;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.IStackFilter;
+import buildcraft.lib.inventory.AbstractInvItemTransactor;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.tile.item.StackInsertionFunction.InsertionResult;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.item.ItemStack;
@@ -15,17 +18,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ReportedException;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.api.core.IStackFilter;
-
-import buildcraft.lib.inventory.AbstractInvItemTransactor;
-import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.tile.item.StackInsertionFunction.InsertionResult;
+import javax.annotation.Nonnull;
 
 public class ItemHandlerSimple extends AbstractInvItemTransactor implements IItemHandlerModifiable, IItemHandlerAdv, INBTSerializable<NBTTagCompound> {
     // Function-called stuff (helpers etc)

@@ -6,12 +6,11 @@
 
 package buildcraft.robotics.zone;
 
-import java.util.concurrent.TimeUnit;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-
 import net.minecraft.world.World;
+
+import java.util.concurrent.TimeUnit;
 
 public abstract class ZonePlannerMapData {
     protected final Cache<ZonePlannerMapChunkKey, ZonePlannerMapChunk> data = CacheBuilder.newBuilder()

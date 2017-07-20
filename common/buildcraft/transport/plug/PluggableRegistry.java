@@ -6,13 +6,12 @@
 
 package buildcraft.transport.plug;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.transport.pluggable.IPluggableRegistry;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public enum PluggableRegistry implements IPluggableRegistry {
     INSTANCE;

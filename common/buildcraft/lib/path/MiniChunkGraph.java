@@ -6,19 +6,17 @@
 
 package buildcraft.lib.path;
 
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Set;
-
+import buildcraft.lib.path.task.TaskMiniChunkAnalyser;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
-
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.lib.path.task.TaskMiniChunkAnalyser;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Set;
 
 public class MiniChunkGraph {
     public enum ChunkType {

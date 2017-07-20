@@ -6,16 +6,14 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.Arrays;
-import java.util.Objects;
-
+import buildcraft.lib.misc.JsonUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
-
 import net.minecraft.nbt.NBTBase;
 
-import buildcraft.lib.misc.JsonUtil;
+import java.util.Arrays;
+import java.util.Objects;
 
 public enum EnumNbtCompareOperation {
     EQ("=") {

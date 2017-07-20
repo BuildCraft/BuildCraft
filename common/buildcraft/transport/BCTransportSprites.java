@@ -6,25 +6,22 @@
 
 package buildcraft.transport;
 
-import java.util.EnumMap;
-import java.util.Locale;
-
+import buildcraft.lib.client.sprite.SpriteHolderRegistry;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.transport.client.model.PipeModelCacheAll;
+import buildcraft.transport.client.model.PipeModelCacheBase;
+import buildcraft.transport.client.render.PipeFlowRendererItems;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli.SlotIndex;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.lib.client.sprite.SpriteHolderRegistry;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.ColourUtil;
-
-import buildcraft.transport.client.model.PipeModelCacheAll;
-import buildcraft.transport.client.model.PipeModelCacheBase;
-import buildcraft.transport.client.render.PipeFlowRendererItems;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli.SlotIndex;
+import java.util.EnumMap;
+import java.util.Locale;
 
 public class BCTransportSprites {
     public static final SpriteHolder EMPTY_FILTERED_BUFFER_SLOT;

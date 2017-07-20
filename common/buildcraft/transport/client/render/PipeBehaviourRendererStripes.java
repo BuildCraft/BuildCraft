@@ -6,15 +6,12 @@
 
 package buildcraft.transport.client.render;
 
-import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.transport.pipe.IPipeBehaviourRenderer;
-
 import buildcraft.lib.client.model.MutableQuad;
-
 import buildcraft.transport.BCTransportModels;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourStripes;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.util.EnumFacing;
 
 public enum PipeBehaviourRendererStripes implements IPipeBehaviourRenderer<PipeBehaviourStripes> {
     INSTANCE;

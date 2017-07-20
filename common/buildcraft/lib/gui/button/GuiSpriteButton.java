@@ -6,11 +6,10 @@
 
 package buildcraft.lib.gui.button;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.ISimpleDrawable;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 
 public class GuiSpriteButton extends GuiAbstractButton {
 

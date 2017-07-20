@@ -6,17 +6,15 @@
 
 package buildcraft.lib.gui;
 
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.lib.client.sprite.ISprite;
+import buildcraft.lib.client.sprite.RawSprite;
+import buildcraft.lib.gui.pos.IGuiArea;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-
-import buildcraft.lib.client.sprite.ISprite;
-import buildcraft.lib.client.sprite.RawSprite;
-import buildcraft.lib.gui.pos.IGuiArea;
+import org.lwjgl.opengl.GL11;
 
 public class GuiIcon implements ISimpleDrawable {
     public final ISprite sprite;

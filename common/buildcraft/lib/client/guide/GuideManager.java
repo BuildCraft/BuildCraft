@@ -6,22 +6,7 @@
 
 package buildcraft.lib.client.guide;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Nonnull;
-
-import com.google.common.collect.ImmutableSet;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.Language;
-import net.minecraft.item.ItemStack;
-
 import buildcraft.api.core.BCLog;
-
 import buildcraft.lib.client.guide.data.GuideEntryLoader;
 import buildcraft.lib.client.guide.data.JsonEntry;
 import buildcraft.lib.client.guide.loader.ILoadableResource;
@@ -29,6 +14,17 @@ import buildcraft.lib.client.guide.loader.IPageLoader;
 import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
 import buildcraft.lib.client.guide.parts.GuidePageFactory;
 import buildcraft.lib.client.guide.parts.GuidePageStandInRecipes;
+import com.google.common.collect.ImmutableSet;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.Language;
+import net.minecraft.item.ItemStack;
+
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public enum GuideManager {
     INSTANCE;

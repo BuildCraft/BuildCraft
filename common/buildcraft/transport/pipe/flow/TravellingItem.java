@@ -6,11 +6,9 @@
 
 package buildcraft.transport.pipe.flow;
 
-import java.util.EnumSet;
-import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.VecUtil;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,9 +16,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.VecUtil;
+import javax.annotation.Nonnull;
+import java.util.EnumSet;
+import java.util.function.Supplier;
 
 public class TravellingItem {
     // Client fields - public for rendering

@@ -6,17 +6,20 @@
 
 package buildcraft.transport.pipe.flow;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.inventory.IItemTransactor;
+import buildcraft.api.transport.IInjectable;
+import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IPipe.ConnectedType;
+import buildcraft.lib.inventory.ItemTransactorHelper;
+import buildcraft.lib.inventory.NoSpaceTransactor;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.data.DelayedList;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -27,31 +30,18 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.IStackFilter;
-import buildcraft.api.inventory.IItemTransactor;
-import buildcraft.api.transport.IInjectable;
-import buildcraft.api.transport.pipe.IFlowItems;
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.IPipe.ConnectedType;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pipe.PipeApi;
-import buildcraft.api.transport.pipe.PipeEventItem;
-import buildcraft.api.transport.pipe.PipeFlow;
-
-import buildcraft.lib.inventory.ItemTransactorHelper;
-import buildcraft.lib.inventory.NoSpaceTransactor;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.data.DelayedList;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.net.cache.BuildCraftObjectCaches;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.function.Supplier;
 
 public final class PipeFlowItems extends PipeFlow implements IFlowItems {
     private static final double EXTRACT_SPEED = 0.08;

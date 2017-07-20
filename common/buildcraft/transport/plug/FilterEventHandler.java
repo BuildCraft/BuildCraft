@@ -6,13 +6,12 @@
 
 package buildcraft.transport.plug;
 
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumFacing;
 
 public class FilterEventHandler {
     @PipeEventHandler

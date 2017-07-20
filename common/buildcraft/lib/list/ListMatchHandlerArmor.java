@@ -6,20 +6,16 @@
 
 package buildcraft.lib.list;
 
-import java.util.EnumSet;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.lists.ListMatchHandler;
+import buildcraft.lib.BCLibProxy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.common.DimensionManager;
 
-import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.lists.ListMatchHandler;
-
-import buildcraft.lib.BCLibProxy;
+import javax.annotation.Nonnull;
+import java.util.EnumSet;
 
 public class ListMatchHandlerArmor extends ListMatchHandler {
     private static EnumSet<EntityEquipmentSlot> getArmorTypes(ItemStack stack) {

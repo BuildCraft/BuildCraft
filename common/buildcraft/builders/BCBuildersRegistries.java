@@ -7,7 +7,6 @@
 package buildcraft.builders;
 
 import buildcraft.api.template.TemplateApi;
-
 import buildcraft.builders.snapshot.TemplateHandlerDefault;
 import buildcraft.builders.snapshot.TemplateRegistry;
 

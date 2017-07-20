@@ -6,12 +6,11 @@
 
 package buildcraft.lib.item;
 
-import java.util.function.Function;
-
+import buildcraft.lib.block.BlockBCBase_Neptune;
 import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.lib.block.BlockBCBase_Neptune;
+import java.util.function.Function;
 
 /** Basically a copy of {@link ItemMultiTexture}, but extends {@link ItemBC_Neptune} */
 public class ItemBlockBCMulti extends ItemBlockBC_Neptune {

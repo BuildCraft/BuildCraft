@@ -6,14 +6,14 @@
 
 package buildcraft.lib.gui.ledger;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.ITooltipElement;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.GuiUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LedgerManager_Neptune implements ITooltipElement {
     public final GuiBC8<?> gui;

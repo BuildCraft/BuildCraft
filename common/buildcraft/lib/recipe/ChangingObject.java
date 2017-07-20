@@ -6,9 +6,9 @@
 
 package buildcraft.lib.recipe;
 
-import java.util.Arrays;
-
 import net.minecraft.item.ItemStack;
+
+import java.util.Arrays;
 
 public class ChangingObject<T> {
     protected final T[] options;

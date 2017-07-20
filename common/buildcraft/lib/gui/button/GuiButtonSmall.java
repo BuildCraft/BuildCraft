@@ -6,10 +6,9 @@
 
 package buildcraft.lib.gui.button;
 
+import buildcraft.lib.gui.GuiBC8;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.lib.gui.GuiBC8;
 
 @SideOnly(Side.CLIENT)
 public class GuiButtonSmall extends GuiBetterButton {

@@ -6,15 +6,15 @@
 
 package buildcraft.transport.client.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector3f;
-
+import buildcraft.api.transport.pipe.IItemPipe;
+import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.lib.client.model.ModelItemSimple;
+import buildcraft.lib.client.model.ModelUtil;
+import buildcraft.lib.client.model.ModelUtil.UvFaceData;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.transport.BCTransportSprites;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -30,16 +30,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.world.World;
 
-import buildcraft.api.transport.pipe.IItemPipe;
-import buildcraft.api.transport.pipe.PipeDefinition;
-
-import buildcraft.lib.client.model.ModelItemSimple;
-import buildcraft.lib.client.model.ModelUtil;
-import buildcraft.lib.client.model.ModelUtil.UvFaceData;
-import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.misc.ColourUtil;
-
-import buildcraft.transport.BCTransportSprites;
+import javax.vecmath.Point3f;
+import javax.vecmath.Tuple3f;
+import javax.vecmath.Vector3f;
+import java.util.ArrayList;
+import java.util.List;
 
 public enum ModelPipeItem implements IBakedModel {
     INSTANCE;

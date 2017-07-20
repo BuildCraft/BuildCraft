@@ -6,22 +6,7 @@ package buildcraft.core;
 
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.tiles.IControllable.Mode;
-
-import buildcraft.core.statements.ActionMachineControl;
-import buildcraft.core.statements.ActionRedstoneOutput;
-import buildcraft.core.statements.BCStatement;
-import buildcraft.core.statements.CoreActionProvider;
-import buildcraft.core.statements.CoreTriggerProvider;
-import buildcraft.core.statements.StatementParamGateSideOnly;
-import buildcraft.core.statements.StatementParameterRedstoneLevel;
-import buildcraft.core.statements.TriggerFluidContainer;
-import buildcraft.core.statements.TriggerFluidContainerLevel;
-import buildcraft.core.statements.TriggerInventory;
-import buildcraft.core.statements.TriggerInventoryLevel;
-import buildcraft.core.statements.TriggerMachine;
-import buildcraft.core.statements.TriggerPower;
-import buildcraft.core.statements.TriggerRedstoneInput;
-import buildcraft.core.statements.TriggerTrue;
+import buildcraft.core.statements.*;
 
 public class BCCoreStatements {
     public static final TriggerTrue TRIGGER_TRUE = new TriggerTrue();

@@ -6,14 +6,12 @@
 
 package buildcraft.builders.filling;
 
-import java.util.List;
-
-import javax.vecmath.Point2d;
-
-import net.minecraft.util.math.BlockPos;
-
 import buildcraft.lib.misc.DrawingUtil;
 import buildcraft.lib.misc.MathUtil;
+import net.minecraft.util.math.BlockPos;
+
+import javax.vecmath.Point2d;
+import java.util.List;
 
 @SuppressWarnings("WeakerAccess")
 public class FillingPolygon {
