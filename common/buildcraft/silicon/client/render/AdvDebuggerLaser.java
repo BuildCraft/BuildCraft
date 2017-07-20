@@ -6,8 +6,12 @@
 
 package buildcraft.silicon.client.render;
 
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
+import buildcraft.lib.debug.DebugRenderHelper;
+import buildcraft.lib.misc.VolumeUtil;
+import buildcraft.silicon.BCSiliconBlocks;
+import buildcraft.silicon.tile.TileLaser;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -15,15 +19,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
-import buildcraft.lib.debug.DebugRenderHelper;
-import buildcraft.lib.misc.VolumeUtil;
-
-import buildcraft.silicon.BCSiliconBlocks;
-import buildcraft.silicon.tile.TileLaser;
+import org.lwjgl.opengl.GL11;
 
 public enum AdvDebuggerLaser implements IDetachedRenderer {
     INSTANCE;

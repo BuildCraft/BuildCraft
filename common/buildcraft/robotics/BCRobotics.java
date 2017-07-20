@@ -6,8 +6,15 @@
 
 package buildcraft.robotics;
 
-import java.util.function.Consumer;
-
+import buildcraft.core.BCCore;
+import buildcraft.lib.BCLib;
+import buildcraft.lib.net.MessageManager;
+import buildcraft.lib.registry.RegistryHelper;
+import buildcraft.lib.registry.TagManager;
+import buildcraft.lib.registry.TagManager.EnumTagType;
+import buildcraft.lib.registry.TagManager.TagEntry;
+import buildcraft.robotics.zone.MessageZoneMapRequest;
+import buildcraft.robotics.zone.MessageZoneMapResponse;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -15,16 +22,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.lib.BCLib;
-import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.registry.RegistryHelper;
-import buildcraft.lib.registry.TagManager;
-import buildcraft.lib.registry.TagManager.EnumTagType;
-import buildcraft.lib.registry.TagManager.TagEntry;
-
-import buildcraft.core.BCCore;
-import buildcraft.robotics.zone.MessageZoneMapRequest;
-import buildcraft.robotics.zone.MessageZoneMapResponse;
+import java.util.function.Consumer;
 
 //@formatter:off
 @Mod(modid = BCRobotics.MODID,

@@ -6,6 +6,13 @@
 
 package buildcraft.lib.path;
 
+import buildcraft.lib.misc.WorkerThreadUtil;
+import buildcraft.lib.path.task.TaskMiniChunkManager;
+import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.Futures;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -13,15 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
-
-import com.google.common.base.Throwables;
-import com.google.common.util.concurrent.Futures;
-
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
-import buildcraft.lib.misc.WorkerThreadUtil;
-import buildcraft.lib.path.task.TaskMiniChunkManager;
 
 public class MiniChunkCache {
     private static Map<Integer, MiniChunkCache> worldCaches = new HashMap<>();

@@ -6,13 +6,11 @@
 
 package buildcraft.lib.engine;
 
-import java.util.EnumMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.blocks.ICustomRotationHandler;
+import buildcraft.api.core.IEngineType;
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.misc.EntityUtil;
+import buildcraft.lib.registry.RegistryHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -23,21 +21,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import buildcraft.api.blocks.ICustomRotationHandler;
-import buildcraft.api.core.IEngineType;
-
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.misc.EntityUtil;
-import buildcraft.lib.registry.RegistryHelper;
+import javax.annotation.Nonnull;
+import java.util.EnumMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> extends BlockBCTile_Neptune implements ICustomRotationHandler {
     private final Map<E, Supplier<? extends TileEngineBase_BC8>> engineTileConstructors = new EnumMap<>(getEngineProperty().getValueClass());

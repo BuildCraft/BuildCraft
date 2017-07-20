@@ -6,20 +6,13 @@
 
 package buildcraft.lib.recipe;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-
-import javax.annotation.Nullable;
-
+import buildcraft.api.recipes.IRefineryRecipeManager;
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.api.recipes.IRefineryRecipeManager;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
     INSTANCE;

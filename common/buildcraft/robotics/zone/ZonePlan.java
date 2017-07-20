@@ -6,25 +6,17 @@
 
 package buildcraft.robotics.zone;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-
-import javax.vecmath.Point2i;
-
+import buildcraft.api.core.IZone;
+import buildcraft.lib.misc.NBTUtilBC;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.api.core.IZone;
-
-import buildcraft.lib.misc.NBTUtilBC;
+import javax.vecmath.Point2i;
+import java.util.*;
 
 public class ZonePlan implements IZone {
     private final HashMap<ChunkPos, ZoneChunk> chunkMapping = new HashMap<>();

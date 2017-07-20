@@ -4,18 +4,16 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.delta;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import buildcraft.lib.delta.DeltaManager.EnumDeltaMessage;
+import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
-
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.lib.delta.DeltaManager.EnumDeltaMessage;
-import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class DeltaInt {
     public final String name;

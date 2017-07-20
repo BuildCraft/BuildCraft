@@ -6,18 +6,17 @@
 
 package buildcraft.lib;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import buildcraft.lib.chunkload.IChunkLoadingTile;
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.misc.LocaleUtil;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.text.TextFormatting;
 
-import buildcraft.lib.chunkload.IChunkLoadingTile;
-import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.LocaleUtil;
+import java.util.ArrayList;
+import java.util.List;
 
 /** Configuration file for lib. In order to keep lib as close to being just a library mod as possible, these are not set
  * by a config file, but instead by BC Core. Feel free to set them yourself, from your own configs, if you do not depend

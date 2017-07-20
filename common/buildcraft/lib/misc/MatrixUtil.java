@@ -6,19 +6,13 @@
 
 package buildcraft.lib.misc;
 
-import java.util.Map;
-
-import javax.vecmath.AxisAngle4f;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
-
 import com.google.common.collect.ImmutableMap;
-
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.AxisAlignedBB;
+
+import javax.vecmath.*;
+import java.util.Map;
 
 public class MatrixUtil {
     /** Rotation map for gates */

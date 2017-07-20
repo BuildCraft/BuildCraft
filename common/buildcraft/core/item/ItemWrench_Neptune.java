@@ -4,6 +4,10 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.item;
 
+import buildcraft.api.blocks.CustomRotationHelper;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.SoundUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -15,12 +19,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
-import buildcraft.api.blocks.CustomRotationHelper;
-import buildcraft.api.tools.IToolWrench;
-
-import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.SoundUtil;
 
 public class ItemWrench_Neptune extends ItemBC_Neptune implements IToolWrench {
     public ItemWrench_Neptune(String id) {

@@ -6,12 +6,12 @@
 
 package buildcraft.lib.misc.data;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
-
-import com.google.common.collect.ImmutableList;
 
 /** Implements a delayed list of something- stuff that can be postponed for later retrieval. A specialised ordered queue
  * really. */

@@ -1,5 +1,11 @@
 package buildcraft.lib.misc;
 
+import com.google.common.base.Throwables;
+import com.google.common.io.ByteStreams;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+
 import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -12,13 +18,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.TreeMap;
-
-import com.google.common.base.Throwables;
-import com.google.common.io.ByteStreams;
-
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 
 public class HashUtil {
     public static final int DIGEST_LENGTH = 32;

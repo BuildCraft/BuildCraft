@@ -6,8 +6,11 @@
 
 package buildcraft.factory.client.render;
 
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.factory.tile.TileTank;
+import buildcraft.lib.client.render.fluid.FluidRenderer;
+import buildcraft.lib.client.render.fluid.FluidSpriteType;
+import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
+import buildcraft.lib.fluid.Tank;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
@@ -22,15 +25,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-
 import net.minecraftforge.fluids.FluidStack;
-
-import buildcraft.lib.client.render.fluid.FluidRenderer;
-import buildcraft.lib.client.render.fluid.FluidSpriteType;
-import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
-import buildcraft.lib.fluid.Tank;
-
-import buildcraft.factory.tile.TileTank;
+import org.lwjgl.opengl.GL11;
 
 public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
     private static final Vec3d MIN = new Vec3d(0.13, 0.01, 0.13);

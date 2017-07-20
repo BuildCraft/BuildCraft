@@ -6,9 +6,6 @@
 
 package buildcraft.transport.client;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import buildcraft.api.transport.pipe.IPipeBehaviourRenderer;
 import buildcraft.api.transport.pipe.IPipeFlowRenderer;
 import buildcraft.api.transport.pipe.PipeApiClient.IClientRegistry;
@@ -18,6 +15,9 @@ import buildcraft.api.transport.pluggable.IPlugDynamicRenderer;
 import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public enum PipeRegistryClient implements IClientRegistry {
     INSTANCE;

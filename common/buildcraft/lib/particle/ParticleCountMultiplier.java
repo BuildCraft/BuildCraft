@@ -6,11 +6,11 @@
 
 package buildcraft.lib.particle;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public enum ParticleCountMultiplier implements IParticlePositionPipe {
     MINIMAL(2),

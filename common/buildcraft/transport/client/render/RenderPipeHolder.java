@@ -6,25 +6,22 @@
 
 package buildcraft.transport.client.render;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.client.model.animation.FastTESR;
-
 import buildcraft.api.transport.pipe.IPipeBehaviourRenderer;
 import buildcraft.api.transport.pipe.IPipeFlowRenderer;
 import buildcraft.api.transport.pipe.PipeBehaviour;
 import buildcraft.api.transport.pipe.PipeFlow;
 import buildcraft.api.transport.pluggable.IPlugDynamicRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
-
 import buildcraft.transport.client.PipeRegistryClient;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.tile.TilePipeHolder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.client.model.animation.FastTESR;
+
+import javax.annotation.Nonnull;
 
 public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
     @Override

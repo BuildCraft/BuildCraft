@@ -6,32 +6,23 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import java.util.Collections;
-
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
+import buildcraft.lib.misc.EntityUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.transport.BCTransportStatements;
+import buildcraft.transport.statements.ActionPipeColor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.RayTraceResult;
-
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
-import buildcraft.api.transport.pipe.PipeBehaviour;
-import buildcraft.api.transport.pipe.PipeEventActionActivate;
-import buildcraft.api.transport.pipe.PipeEventHandler;
-import buildcraft.api.transport.pipe.PipeEventItem;
-import buildcraft.api.transport.pipe.PipeEventStatement;
-
-import buildcraft.lib.misc.EntityUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-
-import buildcraft.transport.BCTransportStatements;
-import buildcraft.transport.statements.ActionPipeColor;
+import java.util.Collections;
 
 public class PipeBehaviourLapis extends PipeBehaviour {
     private EnumDyeColor colour = EnumDyeColor.WHITE;

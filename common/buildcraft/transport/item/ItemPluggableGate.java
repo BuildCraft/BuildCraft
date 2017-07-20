@@ -6,12 +6,22 @@
 
 package buildcraft.transport.item;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.transport.IItemPluggable;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.PluggableDefinition;
+import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.SoundUtil;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.transport.BCTransportPlugs;
+import buildcraft.transport.gate.EnumGateLogic;
+import buildcraft.transport.gate.EnumGateMaterial;
+import buildcraft.transport.gate.EnumGateModifier;
+import buildcraft.transport.gate.GateVariant;
+import buildcraft.transport.plug.PluggableGate;
 import gnu.trove.map.hash.TIntObjectHashMap;
-
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,27 +30,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.transport.IItemPluggable;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.api.transport.pluggable.PluggableDefinition;
-
-import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.SoundUtil;
-import buildcraft.lib.misc.StackUtil;
-
-import buildcraft.transport.BCTransportPlugs;
-import buildcraft.transport.gate.EnumGateLogic;
-import buildcraft.transport.gate.EnumGateMaterial;
-import buildcraft.transport.gate.EnumGateModifier;
-import buildcraft.transport.gate.GateVariant;
-import buildcraft.transport.plug.PluggableGate;
+import javax.annotation.Nonnull;
+import java.util.List;
 
 public class ItemPluggableGate extends ItemBC_Neptune implements IItemPluggable {
     public ItemPluggableGate(String id) {

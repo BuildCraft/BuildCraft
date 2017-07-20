@@ -6,17 +6,14 @@
 
 package buildcraft.lib.client.guide.data;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.google.gson.annotations.SerializedName;
-
-import net.minecraft.util.StringUtils;
-
 import buildcraft.api.core.BCLog;
-
 import buildcraft.lib.client.guide.ETypeTag;
 import buildcraft.lib.client.guide.TypeOrder;
+import com.google.gson.annotations.SerializedName;
+import net.minecraft.util.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class JsonTypeTags {
     public static final JsonTypeTags EMPTY = new JsonTypeTags("", "", "", "");

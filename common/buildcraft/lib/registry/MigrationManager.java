@@ -4,18 +4,17 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.registry;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent.MissingMapping;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry.Type;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public enum MigrationManager {
     INSTANCE;

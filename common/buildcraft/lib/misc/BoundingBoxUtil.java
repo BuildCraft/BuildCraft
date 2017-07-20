@@ -6,17 +6,14 @@
 
 package buildcraft.lib.misc;
 
-import java.util.Collection;
-
-import javax.annotation.Nullable;
-
+import buildcraft.api.core.IBox;
+import buildcraft.lib.misc.data.Box;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.api.core.IBox;
-
-import buildcraft.lib.misc.data.Box;
+import javax.annotation.Nullable;
+import java.util.Collection;
 
 /** Various methods operating on (and creating) {@link AxisAlignedBB} */
 public class BoundingBoxUtil {

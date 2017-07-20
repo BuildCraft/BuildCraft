@@ -6,15 +6,13 @@
 
 package buildcraft.lib.recipe;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-
-import net.minecraftforge.oredict.OreDictionary;
-
 import buildcraft.lib.misc.ArrayUtil;
 import buildcraft.lib.misc.StackUtil;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
+import net.minecraftforge.oredict.OreDictionary;
+
+import javax.annotation.Nonnull;
 
 /** Defines an {@link ItemStack} that changes between a specified list of stacks. Useful for displaying possible inputs
  * or outputs for recipes that use the oredictionary, or recipes that vary the output depending on the metadata of the

@@ -6,18 +6,15 @@
 
 package buildcraft.factory.tile;
 
-import java.util.List;
-
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.misc.CapUtil;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.EnumPipePart;
-
-import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.misc.CapUtil;
+import java.util.List;
 
 public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
     private final Tank tank1 = new Tank("tank1", Fluid.BUCKET_VOLUME * 6, this);

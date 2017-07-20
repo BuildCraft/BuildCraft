@@ -6,15 +6,14 @@
 
 package buildcraft.transport.stripes;
 
+import buildcraft.api.crops.CropManager;
+import buildcraft.api.transport.IStripesActivator;
+import buildcraft.api.transport.IStripesHandlerItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import buildcraft.api.crops.CropManager;
-import buildcraft.api.transport.IStripesActivator;
-import buildcraft.api.transport.IStripesHandlerItem;
 
 public enum StripesHandlerPlant implements IStripesHandlerItem {
     INSTANCE;

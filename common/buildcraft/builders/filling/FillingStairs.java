@@ -6,13 +6,12 @@
 
 package buildcraft.builders.filling;
 
-import java.util.function.BiConsumer;
-
+import buildcraft.lib.misc.DrawingUtil;
+import buildcraft.lib.misc.MathUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.lib.misc.DrawingUtil;
-import buildcraft.lib.misc.MathUtil;
+import java.util.function.BiConsumer;
 
 public class FillingStairs {
     public static boolean[][][] get(BlockPos size,

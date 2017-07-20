@@ -6,10 +6,10 @@
 
 package buildcraft.lib.expression;
 
+import buildcraft.lib.expression.api.InvalidExpressionException;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import buildcraft.lib.expression.api.InvalidExpressionException;
 
 public class Tokenizer {
     public static final char END_OF_LINE = '\n';

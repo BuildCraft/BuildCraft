@@ -6,25 +6,21 @@
 
 package buildcraft.transport.client.model;
 
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
-
 import buildcraft.lib.client.model.IModelCache;
 import buildcraft.lib.client.model.ModelCache;
 import buildcraft.lib.client.model.ModelCacheMultipleSame;
-
 import buildcraft.transport.client.PipeRegistryClient;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+
+import java.util.List;
 
 public class PipeModelCachePluggable {
     public static final IModelCache<PluggableKey> cacheCutoutAll, cacheTranslucentAll;

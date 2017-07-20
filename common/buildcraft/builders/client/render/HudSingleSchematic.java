@@ -6,11 +6,10 @@
 
 package buildcraft.builders.client.render;
 
+import buildcraft.lib.client.render.HudRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
-
-import buildcraft.lib.client.render.HudRenderer;
 
 public class HudSingleSchematic extends HudRenderer {
     @Override

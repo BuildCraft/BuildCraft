@@ -6,10 +6,19 @@
 
 package buildcraft.transport.item;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.facades.FacadeType;
+import buildcraft.api.facades.IFacadeItem;
+import buildcraft.api.transport.IItemPluggable;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.*;
+import buildcraft.transport.BCTransportPlugs;
+import buildcraft.transport.plug.FacadeStateManager;
+import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
+import buildcraft.transport.plug.FacadeStateManager.FacadePhasedState;
+import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
+import buildcraft.transport.plug.PluggableFacade;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,29 +31,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.facades.FacadeType;
-import buildcraft.api.facades.IFacadeItem;
-import buildcraft.api.transport.IItemPluggable;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pluggable.PipePluggable;
-
-import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.SoundUtil;
-import buildcraft.lib.misc.StackUtil;
-
-import buildcraft.transport.BCTransportPlugs;
-import buildcraft.transport.plug.FacadeStateManager;
-import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
-import buildcraft.transport.plug.FacadeStateManager.FacadePhasedState;
-import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
-import buildcraft.transport.plug.PluggableFacade;
+import javax.annotation.Nonnull;
+import java.util.List;
 
 public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggable, IFacadeItem {
     public ItemPluggableFacade(String id) {

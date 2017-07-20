@@ -6,10 +6,10 @@
 
 package buildcraft.lib.misc.data;
 
-import java.util.Objects;
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.Objects;
 
 public final class WorldPos {
     public final BlockPos pos;

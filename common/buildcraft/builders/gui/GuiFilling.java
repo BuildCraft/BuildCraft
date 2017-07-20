@@ -4,29 +4,26 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.gui;
 
+import buildcraft.builders.container.ContainerFiller;
+import buildcraft.builders.container.ContainerFillingPlanner;
+import buildcraft.builders.container.IContainerFilling;
+import buildcraft.builders.filling.Filling;
+import buildcraft.builders.filling.IParameter;
+import buildcraft.lib.client.sprite.RawSprite;
+import buildcraft.lib.gui.ContainerBC_Neptune;
+import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.button.GuiSpriteButton;
+import buildcraft.lib.gui.elem.ToolTip;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
-
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
-
-import buildcraft.lib.client.sprite.RawSprite;
-import buildcraft.lib.gui.ContainerBC_Neptune;
-import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.button.GuiSpriteButton;
-import buildcraft.lib.gui.button.IButtonBehaviour;
-import buildcraft.lib.gui.elem.ToolTip;
-
-import buildcraft.builders.container.ContainerFiller;
-import buildcraft.builders.container.ContainerFillingPlanner;
-import buildcraft.builders.container.IContainerFilling;
-import buildcraft.builders.filling.Filling;
-import buildcraft.builders.filling.IParameter;
 
 public class GuiFilling extends GuiBC8<ContainerBC_Neptune> {
     private static final ResourceLocation FILLING_PLANNER_TEXTURE_BASE =

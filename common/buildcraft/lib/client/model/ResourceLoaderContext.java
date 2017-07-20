@@ -6,6 +6,11 @@
 
 package buildcraft.lib.client.model;
 
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IResource;
+import net.minecraft.util.ResourceLocation;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,12 +18,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.util.ResourceLocation;
 
 public class ResourceLoaderContext {
     private final Set<ResourceLocation> loaded = new HashSet<>();

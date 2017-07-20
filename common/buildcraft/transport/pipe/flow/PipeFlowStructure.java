@@ -6,12 +6,11 @@
 
 package buildcraft.transport.pipe.flow;
 
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.PipeFlow;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.PipeFlow;
 
 public class PipeFlowStructure extends PipeFlow {
     public PipeFlowStructure(IPipe pipe) {

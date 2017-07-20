@@ -6,23 +6,16 @@
 
 package buildcraft.lib.cap;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import buildcraft.api.core.EnumPipePart;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
-import buildcraft.api.core.EnumPipePart;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /** Provides a simple way of mapping {@link Capability}'s to instances. Also allows for additional providers */
 public class CapabilityHelper implements ICapabilityProvider {

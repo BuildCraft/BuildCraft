@@ -6,11 +6,11 @@
 
 package buildcraft.lib.misc.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class IdAllocator {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.id_alloc");

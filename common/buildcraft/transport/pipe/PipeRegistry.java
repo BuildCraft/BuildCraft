@@ -6,25 +6,20 @@
 
 package buildcraft.transport.pipe;
 
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.transport.pipe.IItemPipe;
 import buildcraft.api.transport.pipe.IPipeRegistry;
 import buildcraft.api.transport.pipe.PipeDefinition;
-
 import buildcraft.lib.item.ItemManager;
-
 import buildcraft.transport.item.ItemPipeHolder;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.util.ResourceLocation;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 public enum PipeRegistry implements IPipeRegistry {
     INSTANCE;

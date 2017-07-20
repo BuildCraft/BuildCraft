@@ -6,10 +6,9 @@
 
 package buildcraft.lib.client.guide.parts;
 
+import buildcraft.lib.client.guide.GuiGuide;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.lib.client.guide.GuiGuide;
 
 @FunctionalInterface
 @SideOnly(Side.CLIENT)

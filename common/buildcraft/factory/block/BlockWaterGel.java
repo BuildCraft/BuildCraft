@@ -6,15 +6,9 @@
 
 package buildcraft.factory.block;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
-import java.util.Set;
-
+import buildcraft.factory.BCFactoryItems;
+import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.misc.SoundUtil;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -29,10 +23,7 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.misc.SoundUtil;
-
-import buildcraft.factory.BCFactoryItems;
+import java.util.*;
 
 public class BlockWaterGel extends BlockBCBase_Neptune {
     public enum GelStage implements IStringSerializable {

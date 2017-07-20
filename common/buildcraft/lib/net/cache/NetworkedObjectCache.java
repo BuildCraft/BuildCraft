@@ -6,30 +6,25 @@
 
 package buildcraft.lib.net.cache;
 
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.net.MessageManager;
+import buildcraft.lib.net.PacketBufferBC;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.function.Supplier;
-
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
-
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.net.PacketBufferBC;
-
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 /** Provides a way of defining a cache of *some object* that will be sent from server to every client (when they are
  * needed). Each object has a specific integer ID.

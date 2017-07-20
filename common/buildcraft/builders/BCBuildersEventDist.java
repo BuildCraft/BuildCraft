@@ -6,20 +6,20 @@
  */
 package buildcraft.builders;
 
-import java.lang.ref.WeakReference;
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.UUID;
-import java.util.WeakHashMap;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.builders.client.ClientArchitectTables;
+import buildcraft.builders.item.ItemSchematicSingle;
+import buildcraft.builders.snapshot.Blueprint;
+import buildcraft.builders.snapshot.ClientSnapshots;
+import buildcraft.builders.snapshot.Snapshot;
+import buildcraft.builders.snapshot.Snapshot.Header;
+import buildcraft.builders.tile.TileQuarry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.client.config.GuiUtils;
@@ -28,16 +28,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.api.schematics.ISchematicBlock;
-
-import buildcraft.builders.client.ClientArchitectTables;
-import buildcraft.builders.item.ItemSchematicSingle;
-import buildcraft.builders.snapshot.Blueprint;
-import buildcraft.builders.snapshot.ClientSnapshots;
-import buildcraft.builders.snapshot.Snapshot;
-import buildcraft.builders.snapshot.Snapshot.Header;
-import buildcraft.builders.tile.TileQuarry;
+import java.lang.ref.WeakReference;
+import java.util.*;
 
 public enum BCBuildersEventDist {
     INSTANCE;

@@ -8,7 +8,6 @@ package buildcraft.lib.client.reload;
 
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-
 import net.minecraftforge.client.model.IModel;
 
 /** Defines that source of the change. Listeners should check to see what actually changed to see if they also need to

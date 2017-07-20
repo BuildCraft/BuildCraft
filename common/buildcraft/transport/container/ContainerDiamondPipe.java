@@ -6,14 +6,12 @@
 
 package buildcraft.transport.container;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Slot;
-
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.slot.SlotPhantom;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
-
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Slot;
 
 public class ContainerDiamondPipe extends ContainerBC_Neptune {
     private final PipeBehaviourDiamond behaviour;

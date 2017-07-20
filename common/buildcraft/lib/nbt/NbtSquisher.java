@@ -6,33 +6,21 @@
 
 package buildcraft.lib.nbt;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.function.Function;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.data.NbtSquishConstants;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
-
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.profiler.Profiler;
-
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.data.NbtSquishConstants;
+import java.io.*;
+import java.util.function.Function;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class NbtSquisher {
     public static final Profiler profiler = new Profiler();

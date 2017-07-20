@@ -6,22 +6,11 @@
 
 package buildcraft.lib.expression;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.api.*;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
-import buildcraft.lib.expression.api.INodeFunc;
-import buildcraft.lib.expression.api.IVariableNode;
-import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.node.binary.BiNodeToBooleanType;
 import buildcraft.lib.expression.node.binary.BiNodeType;
 import buildcraft.lib.expression.node.binary.IBinaryNodeType;
@@ -43,6 +32,9 @@ import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 import buildcraft.lib.expression.node.value.NodeConstantString;
+
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class InternalCompiler {
     private static final String UNARY_NEGATION = "¬";

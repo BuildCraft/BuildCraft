@@ -4,9 +4,10 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.block;
 
-import java.util.EnumMap;
-import java.util.Map;
-
+import buildcraft.api.blocks.ICustomRotationHandler;
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.tile.TileMarker;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -22,15 +23,11 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.blocks.ICustomRotationHandler;
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.tile.TileMarker;
+import java.util.EnumMap;
+import java.util.Map;
 
 public abstract class BlockMarkerBase extends BlockBCTile_Neptune implements ICustomRotationHandler {
     private static final Map<EnumFacing, AxisAlignedBB> BOUNDING_BOXES = new EnumMap<>(EnumFacing.class);

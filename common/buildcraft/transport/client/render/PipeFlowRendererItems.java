@@ -6,12 +6,16 @@
 
 package buildcraft.transport.client.render;
 
-import java.util.List;
-
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector3f;
-
+import buildcraft.api.transport.pipe.IPipeFlowRenderer;
+import buildcraft.lib.client.model.ModelUtil;
+import buildcraft.lib.client.model.ModelUtil.UvFaceData;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.client.render.ItemRenderUtil;
+import buildcraft.lib.client.sprite.ISprite;
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.transport.BCTransportSprites;
+import buildcraft.transport.pipe.flow.PipeFlowItems;
+import buildcraft.transport.pipe.flow.TravellingItem;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -19,18 +23,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import buildcraft.api.transport.pipe.IPipeFlowRenderer;
-
-import buildcraft.lib.client.model.ModelUtil;
-import buildcraft.lib.client.model.ModelUtil.UvFaceData;
-import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.client.render.ItemRenderUtil;
-import buildcraft.lib.client.sprite.ISprite;
-import buildcraft.lib.misc.ColourUtil;
-
-import buildcraft.transport.BCTransportSprites;
-import buildcraft.transport.pipe.flow.PipeFlowItems;
-import buildcraft.transport.pipe.flow.TravellingItem;
+import javax.vecmath.Point3f;
+import javax.vecmath.Tuple3f;
+import javax.vecmath.Vector3f;
+import java.util.List;
 
 public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
     INSTANCE;

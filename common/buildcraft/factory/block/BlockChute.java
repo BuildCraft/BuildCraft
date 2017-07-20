@@ -6,9 +6,11 @@
 
 package buildcraft.factory.block;
 
-import java.util.List;
-import java.util.Map;
-
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.factory.BCFactoryGuis;
+import buildcraft.factory.tile.TileChute;
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithFacing;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -20,13 +22,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.block.IBlockWithFacing;
-
-import buildcraft.factory.BCFactoryGuis;
-import buildcraft.factory.tile.TileChute;
+import java.util.List;
+import java.util.Map;
 
 public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing {
     public static final Map<EnumFacing, IProperty<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;

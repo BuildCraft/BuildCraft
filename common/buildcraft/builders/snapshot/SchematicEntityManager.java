@@ -6,30 +6,25 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.schematics.ISchematicEntity;
+import buildcraft.api.schematics.SchematicEntityContext;
+import buildcraft.api.schematics.SchematicEntityFactory;
+import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
 import com.google.common.collect.Lists;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fluids.FluidStack;
+import org.apache.commons.lang3.tuple.Pair;
 
-import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.schematics.ISchematicEntity;
-import buildcraft.api.schematics.SchematicEntityContext;
-import buildcraft.api.schematics.SchematicEntityFactory;
-import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class SchematicEntityManager {
     @SuppressWarnings("WeakerAccess")

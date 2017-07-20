@@ -6,20 +6,18 @@
 
 package buildcraft.lib.marker;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.ModContainer;
 
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class MarkerCache<S extends MarkerSubCache<?>> {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.markers");

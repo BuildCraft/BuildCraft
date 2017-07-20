@@ -6,13 +6,12 @@
 
 package buildcraft.lib.client.resource;
 
+import com.google.common.base.Charsets;
+import net.minecraft.util.ResourceLocation;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import com.google.common.base.Charsets;
-
-import net.minecraft.util.ResourceLocation;
 
 public class StringResourceHolder extends ResourceHolder {
     private static final String REGEX_LINE_END = "\\R";

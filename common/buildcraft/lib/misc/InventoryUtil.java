@@ -6,12 +6,9 @@
 
 package buildcraft.lib.misc;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.inventory.IItemTransactor;
+import buildcraft.api.transport.IInjectable;
+import buildcraft.lib.inventory.ItemTransactorHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -20,14 +17,13 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.api.inventory.IItemTransactor;
-import buildcraft.api.transport.IInjectable;
-
-import buildcraft.lib.inventory.ItemTransactorHelper;
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class InventoryUtil {
     // Drops

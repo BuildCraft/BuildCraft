@@ -6,11 +6,11 @@
 
 package buildcraft.lib.client.model.json;
 
+import buildcraft.lib.client.model.MutableVertex;
+
 import javax.vecmath.Point2f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
-
-import buildcraft.lib.client.model.MutableVertex;
 
 public class JsonVertex {
     public Point3f pos;

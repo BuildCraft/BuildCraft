@@ -6,11 +6,16 @@
 
 package buildcraft.factory.client.render;
 
-import java.util.EnumMap;
-import java.util.Map;
-
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.factory.BCFactoryModels;
+import buildcraft.factory.tile.TileDistiller_BC8;
+import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.client.render.fluid.FluidRenderer;
+import buildcraft.lib.client.render.fluid.FluidRenderer.TankSize;
+import buildcraft.lib.client.render.fluid.FluidSpriteType;
+import buildcraft.lib.fluid.FluidSmoother;
+import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -24,18 +29,10 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.util.EnumFacing;
+import org.lwjgl.opengl.GL11;
 
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.client.render.fluid.FluidRenderer;
-import buildcraft.lib.client.render.fluid.FluidRenderer.TankSize;
-import buildcraft.lib.client.render.fluid.FluidSpriteType;
-import buildcraft.lib.fluid.FluidSmoother;
-import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
-
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.factory.BCFactoryModels;
-import buildcraft.factory.tile.TileDistiller_BC8;
+import java.util.EnumMap;
+import java.util.Map;
 
 public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8> {
     private static final Map<EnumFacing, TankRenderSizes> TANK_SIZES = new EnumMap<>(EnumFacing.class);

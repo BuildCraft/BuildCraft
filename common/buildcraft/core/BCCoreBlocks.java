@@ -4,19 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core;
 
-import net.minecraft.block.material.Material;
-
 import buildcraft.api.enums.EnumEngineType;
-
-import buildcraft.lib.BCLib;
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.tile.TileBC_Neptune;
-
-import buildcraft.core.block.BlockDecoration;
-import buildcraft.core.block.BlockEngine_BC8;
-import buildcraft.core.block.BlockMarkerPath;
-import buildcraft.core.block.BlockMarkerVolume;
-import buildcraft.core.block.BlockSpring;
+import buildcraft.core.block.*;
 import buildcraft.core.item.ItemBlockDecorated;
 import buildcraft.core.item.ItemBlockSpring;
 import buildcraft.core.item.ItemEngine_BC8;
@@ -24,6 +13,10 @@ import buildcraft.core.tile.TileEngineCreative;
 import buildcraft.core.tile.TileEngineRedstone_BC8;
 import buildcraft.core.tile.TileMarkerPath;
 import buildcraft.core.tile.TileMarkerVolume;
+import buildcraft.lib.BCLib;
+import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.block.material.Material;
 
 public class BCCoreBlocks {
     public static BlockEngine_BC8 engine;

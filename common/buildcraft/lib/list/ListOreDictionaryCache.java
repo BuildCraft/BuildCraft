@@ -6,12 +6,12 @@
 
 package buildcraft.lib.list;
 
+import net.minecraftforge.oredict.OreDictionary;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import net.minecraftforge.oredict.OreDictionary;
 
 public final class ListOreDictionaryCache {
     public static final ListOreDictionaryCache INSTANCE = new ListOreDictionaryCache();

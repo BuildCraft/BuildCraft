@@ -6,15 +6,14 @@
 
 package buildcraft.transport.wire;
 
-import java.util.Arrays;
-import java.util.function.Function;
-
+import buildcraft.api.transport.EnumWirePart;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.AxisAlignedBB;
 
-import buildcraft.api.transport.EnumWirePart;
+import java.util.Arrays;
+import java.util.function.Function;
 
 /** Holds all of the possible boxes that a wire can occupy - excluding the ones in EnumWirePart. */
 public enum EnumWireBetween {

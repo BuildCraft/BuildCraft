@@ -6,18 +6,17 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-
+import buildcraft.api.core.EnumHandlerPriority;
+import buildcraft.api.template.ITemplateHandler;
+import buildcraft.api.template.ITemplateRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.EnumHandlerPriority;
-import buildcraft.api.template.ITemplateHandler;
-import buildcraft.api.template.ITemplateRegistry;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
 
 public enum TemplateRegistry implements ITemplateRegistry {
     INSTANCE;

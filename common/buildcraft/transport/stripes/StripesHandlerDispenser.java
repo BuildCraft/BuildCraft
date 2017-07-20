@@ -6,9 +6,8 @@
 
 package buildcraft.transport.stripes;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import buildcraft.api.transport.IStripesActivator;
+import buildcraft.api.transport.IStripesHandlerItem;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.dispenser.IBehaviorDispenseItem;
@@ -22,8 +21,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.transport.IStripesActivator;
-import buildcraft.api.transport.IStripesHandlerItem;
+import java.util.ArrayList;
+import java.util.List;
 
 public enum StripesHandlerDispenser implements IStripesHandlerItem {
     INSTANCE;

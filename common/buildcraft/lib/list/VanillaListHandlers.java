@@ -6,11 +6,9 @@
 
 package buildcraft.lib.list;
 
-import net.minecraft.item.ItemFood;
-
-import net.minecraftforge.oredict.OreDictionary;
-
 import buildcraft.api.lists.ListRegistry;
+import net.minecraft.item.ItemFood;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class VanillaListHandlers {
     public static void fmlInit() {

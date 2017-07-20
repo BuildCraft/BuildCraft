@@ -6,13 +6,17 @@
 
 package buildcraft.core.client.render;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.core.client.BuildCraftLaserManager;
+import buildcraft.core.marker.volume.Addon;
+import buildcraft.core.marker.volume.ClientVolumeBoxes;
+import buildcraft.core.marker.volume.IFastAddonRenderer;
+import buildcraft.core.marker.volume.Lock;
+import buildcraft.lib.client.render.DetachedRenderer;
+import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.misc.data.Box;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -22,19 +26,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import org.lwjgl.opengl.GL11;
 
-import buildcraft.lib.client.render.DetachedRenderer;
-import buildcraft.lib.client.render.laser.LaserData_BC8;
-import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
-import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.misc.data.Box;
-
-import buildcraft.core.client.BuildCraftLaserManager;
-import buildcraft.core.marker.volume.Addon;
-import buildcraft.core.marker.volume.ClientVolumeBoxes;
-import buildcraft.core.marker.volume.IFastAddonRenderer;
-import buildcraft.core.marker.volume.Lock;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public enum RenderVolumeInWorld implements DetachedRenderer.IDetachedRenderer {
     INSTANCE;

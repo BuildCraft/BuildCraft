@@ -6,15 +6,10 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import java.util.Arrays;
-
+import buildcraft.api.transport.pipe.*;
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.PipeBehaviour;
-import buildcraft.api.transport.pipe.PipeEventFluid;
-import buildcraft.api.transport.pipe.PipeEventHandler;
-import buildcraft.api.transport.pipe.PipeEventItem;
+import java.util.Arrays;
 
 public class PipeBehaviourVoid extends PipeBehaviour {
     public PipeBehaviourVoid(IPipe pipe) {

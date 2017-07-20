@@ -6,13 +6,12 @@
 
 package buildcraft.lib.net.cache;
 
-import java.io.IOException;
-
-import net.minecraft.item.ItemStack;
-
 import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
+import net.minecraft.item.ItemStack;
+
+import java.io.IOException;
 
 // We use ItemStackKey here because ItemStack doesn't implement hashCode and equals
 public class NetworkedItemStackCache extends NetworkedObjectCache<ItemStackKey> {

@@ -6,13 +6,11 @@
 
 package buildcraft.lib.client.sprite;
 
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.lib.gui.pos.IGuiArea;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-
-import buildcraft.lib.gui.pos.IGuiArea;
+import org.lwjgl.opengl.GL11;
 
 /** Defines and draws a 9-sliced sprite. */
 public class SpriteNineSliced {

@@ -6,35 +6,25 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.apache.commons.lang3.tuple.Pair;
-
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.enums.EnumSnapshotType;
+import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.api.schematics.ISchematicEntity;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.data.Box;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
+import org.apache.commons.lang3.tuple.Pair;
 
-import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.enums.EnumSnapshotType;
-import buildcraft.api.schematics.ISchematicBlock;
-import buildcraft.api.schematics.ISchematicEntity;
-
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.data.Box;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Blueprint extends Snapshot {
     public final List<ISchematicBlock<?>> palette = new ArrayList<>();

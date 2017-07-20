@@ -6,17 +6,31 @@
  */
 package buildcraft.builders.tile;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.IPathProvider;
+import buildcraft.api.enums.EnumOptionalSnapshotType;
+import buildcraft.api.enums.EnumSnapshotType;
+import buildcraft.api.inventory.IItemTransactor;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjBattery;
+import buildcraft.api.mj.MjCapabilityHelper;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.builders.BCBuildersItems;
+import buildcraft.builders.item.ItemSnapshot;
+import buildcraft.builders.snapshot.*;
+import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.fluid.TankManager;
+import buildcraft.lib.misc.*;
+import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.misc.data.IdAllocator;
+import buildcraft.lib.mj.MjBatteryReceiver;
+import buildcraft.lib.net.MessageManager;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,51 +42,19 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.IPathProvider;
-import buildcraft.api.enums.EnumOptionalSnapshotType;
-import buildcraft.api.enums.EnumSnapshotType;
-import buildcraft.api.inventory.IItemTransactor;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjBattery;
-import buildcraft.api.mj.MjCapabilityHelper;
-import buildcraft.api.tiles.IDebuggable;
-
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.fluid.TankManager;
-import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.PositionUtil;
-import buildcraft.lib.misc.data.Box;
-import buildcraft.lib.misc.data.IdAllocator;
-import buildcraft.lib.mj.MjBatteryReceiver;
-import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
-import buildcraft.lib.tile.item.ItemHandlerSimple;
-
-import buildcraft.builders.BCBuildersItems;
-import buildcraft.builders.item.ItemSnapshot;
-import buildcraft.builders.snapshot.Blueprint;
-import buildcraft.builders.snapshot.BlueprintBuilder;
-import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
-import buildcraft.builders.snapshot.ITileForBlueprintBuilder;
-import buildcraft.builders.snapshot.ITileForTemplateBuilder;
-import buildcraft.builders.snapshot.Snapshot;
-import buildcraft.builders.snapshot.SnapshotBuilder;
-import buildcraft.builders.snapshot.Template;
-import buildcraft.builders.snapshot.TemplateBuilder;
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class TileBuilder extends TileBC_Neptune
     implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder {

@@ -6,24 +6,20 @@
 
 package buildcraft.lib.misc;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
+import buildcraft.api.core.IFluidFilter;
+import buildcraft.api.core.IFluidHandlerAdv;
+import buildcraft.lib.fluid.Tank;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-import buildcraft.api.core.IFluidFilter;
-import buildcraft.api.core.IFluidHandlerAdv;
-
-import buildcraft.lib.fluid.Tank;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FluidUtilBC {
     public static void pushFluidAround(IBlockAccess world, BlockPos pos, Tank tank) {

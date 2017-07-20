@@ -6,8 +6,7 @@
 
 package buildcraft.lib.client.guide.font;
 
-import java.awt.Font;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class GuideFont implements IFontRenderer {

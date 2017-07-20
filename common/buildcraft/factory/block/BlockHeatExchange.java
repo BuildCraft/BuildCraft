@@ -6,8 +6,10 @@
 
 package buildcraft.factory.block;
 
-import java.util.List;
-
+import buildcraft.api.transport.pipe.ICustomPipeConnection;
+import buildcraft.factory.tile.TileHeatExchangeEnd;
+import buildcraft.factory.tile.TileHeatExchangeStart;
+import buildcraft.lib.block.BlockBCTile_Neptune;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -24,16 +26,10 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.transport.pipe.ICustomPipeConnection;
-
-import buildcraft.lib.block.BlockBCTile_Neptune;
-
-import buildcraft.factory.tile.TileHeatExchangeEnd;
-import buildcraft.factory.tile.TileHeatExchangeStart;
+import java.util.List;
 
 public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPipeConnection {
     public enum Part {

@@ -6,8 +6,8 @@
 
 package buildcraft.transport.stripes;
 
-import java.util.List;
-
+import buildcraft.api.transport.IStripesActivator;
+import buildcraft.api.transport.IStripesHandlerItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,11 +16,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.IShearable;
 
-import buildcraft.api.transport.IStripesActivator;
-import buildcraft.api.transport.IStripesHandlerItem;
+import java.util.List;
 
 public enum StripesHandlerShears implements IStripesHandlerItem {
     INSTANCE;

@@ -6,12 +6,12 @@
 
 package buildcraft.lib.misc;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
-
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.lib.client.render.fluid.FluidRenderer;
+import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.pos.IGuiArea;
+import buildcraft.lib.gui.pos.IGuiPosition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
@@ -19,16 +19,13 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
+import org.lwjgl.opengl.GL11;
 
-import buildcraft.lib.client.render.fluid.FluidRenderer;
-import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.elem.ToolTip;
-import buildcraft.lib.gui.pos.IGuiArea;
-import buildcraft.lib.gui.pos.IGuiPosition;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
 public class GuiUtil {
     public static ToolTip createToolTip(GuiBC8<?> gui, Supplier<ItemStack> stackRef) {

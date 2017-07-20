@@ -6,10 +6,9 @@
 
 package buildcraft.builders.filling;
 
-import net.minecraft.util.math.BlockPos;
-
 import buildcraft.lib.misc.DrawingUtil;
 import buildcraft.lib.misc.MathUtil;
+import net.minecraft.util.math.BlockPos;
 
 @SuppressWarnings("WeakerAccess")
 public class FillingSphere {

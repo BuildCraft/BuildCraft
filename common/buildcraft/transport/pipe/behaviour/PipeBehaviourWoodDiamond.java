@@ -6,6 +6,18 @@
 
 package buildcraft.transport.pipe.behaviour;
 
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.transport.IItemPluggable;
+import buildcraft.api.transport.pipe.IFlowFluid;
+import buildcraft.api.transport.pipe.IFlowItems;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
+import buildcraft.lib.inventory.filter.*;
+import buildcraft.lib.misc.EntityUtil;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.transport.BCTransportGuis;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,31 +26,11 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.RayTraceResult;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandlerModifiable;
-
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.IStackFilter;
-import buildcraft.api.transport.IItemPluggable;
-import buildcraft.api.transport.pipe.IFlowFluid;
-import buildcraft.api.transport.pipe.IFlowItems;
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
-
-import buildcraft.lib.inventory.filter.ArrayFluidFilter;
-import buildcraft.lib.inventory.filter.DelegatingItemHandlerFilter;
-import buildcraft.lib.inventory.filter.InvertedFluidFilter;
-import buildcraft.lib.inventory.filter.InvertedStackFilter;
-import buildcraft.lib.inventory.filter.StackFilter;
-import buildcraft.lib.misc.EntityUtil;
-import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.tile.item.ItemHandlerSimple;
-
-import buildcraft.transport.BCTransportGuis;
 
 public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
 

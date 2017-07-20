@@ -6,12 +6,11 @@
 
 package buildcraft.lib.gui.ledger;
 
-import com.mojang.authlib.GameProfile;
-
 import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.misc.SpriteUtil;
+import com.mojang.authlib.GameProfile;
 
 public class LedgerOwnership extends Ledger_Neptune {
     private final ContainerBCTile<?> container;

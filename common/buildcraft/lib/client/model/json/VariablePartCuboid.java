@@ -6,18 +6,16 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.lib.client.model.ModelUtil.TexturedFace;
 import buildcraft.lib.client.model.json.JsonVariableModel.ITextureGetter;
 import buildcraft.lib.expression.FunctionContext;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.util.EnumFacing;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class VariablePartCuboid extends VariablePartCuboidBase {
     public final Map<EnumFacing, JsonVariableFaceUV> faces = new HashMap<>();

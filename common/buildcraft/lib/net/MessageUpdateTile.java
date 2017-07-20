@@ -6,24 +6,19 @@
 
 package buildcraft.lib.net;
 
-import java.io.IOException;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.BCLibProxy;
+import buildcraft.lib.misc.MessageUtil;
 import com.google.common.base.Throwables;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.BCLibProxy;
-import buildcraft.lib.misc.MessageUtil;
+import java.io.IOException;
 
 public class MessageUpdateTile implements IMessage {
     private BlockPos pos;

@@ -6,17 +6,6 @@
 
 package buildcraft.lib.gui.ledger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.IntSupplier;
-import java.util.function.Supplier;
-
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.math.MathHelper;
-
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
@@ -32,6 +21,15 @@ import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.PositionCallable;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.RenderUtil;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.util.math.MathHelper;
+import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 public abstract class Ledger_Neptune implements ITooltipElement {
     public static final SpriteHolder SPRITE_EXP_NEG = BCLibSprites.LEDGER_LEFT;

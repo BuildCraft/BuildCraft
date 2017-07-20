@@ -6,12 +6,11 @@
 
 package buildcraft.lib.inventory.filter;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.IStackFilter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 
-import buildcraft.api.core.IStackFilter;
+import javax.annotation.Nonnull;
 
 /** This interface is used with several of the functions in IItemTransfer to provide a convenient means of dealing with
  * entire classes of items without having to specify each item individually. */

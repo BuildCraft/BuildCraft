@@ -6,14 +6,13 @@
 
 package buildcraft.lib.client.resource;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import buildcraft.api.core.BCLog;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.core.BCLog;
+import java.util.HashMap;
+import java.util.Map;
 
 public enum ResourceRegistry implements IResourceManagerReloadListener {
     INSTANCE;

@@ -4,11 +4,10 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory;
 
+import buildcraft.factory.item.ItemWaterGel;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemManager;
-
-import buildcraft.factory.item.ItemWaterGel;
 
 public class BCFactoryItems {
     public static ItemBC_Neptune plasticSheet;

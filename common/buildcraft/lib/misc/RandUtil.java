@@ -1,8 +1,8 @@
 package buildcraft.lib.misc;
 
-import java.util.Random;
-
 import net.minecraft.world.World;
+
+import java.util.Random;
 
 /** Utilities based around more complex (but common) usages of {@link Random}. */
 public class RandUtil {

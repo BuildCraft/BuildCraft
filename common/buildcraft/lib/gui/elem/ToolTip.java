@@ -6,15 +6,14 @@
 
 package buildcraft.lib.gui.elem;
 
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.StringUtilBC;
+import com.google.common.collect.ForwardingList;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.RandomAccess;
-
-import com.google.common.collect.ForwardingList;
-
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StringUtilBC;
 
 public class ToolTip extends ForwardingList<String> implements RandomAccess {
 

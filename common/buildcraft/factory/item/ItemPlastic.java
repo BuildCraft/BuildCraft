@@ -4,20 +4,16 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory.item;
 
-import java.util.Locale;
-
+import buildcraft.factory.block.BlockPlastic;
+import buildcraft.lib.item.ItemBlockBCMulti;
+import buildcraft.lib.misc.ColourUtil;
 import gnu.trove.map.hash.TIntObjectHashMap;
-
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.EnumDyeColor;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.item.ItemBlockBCMulti;
-import buildcraft.lib.misc.ColourUtil;
-
-import buildcraft.factory.block.BlockPlastic;
+import java.util.Locale;
 
 public class ItemPlastic extends ItemBlockBCMulti {
     public ItemPlastic(BlockPlastic block) {

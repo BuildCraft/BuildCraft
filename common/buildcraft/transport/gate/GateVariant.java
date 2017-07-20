@@ -6,12 +6,11 @@
 
 package buildcraft.transport.gate;
 
-import java.util.Objects;
-
+import buildcraft.lib.misc.LocaleUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
-import buildcraft.lib.misc.LocaleUtil;
+import java.util.Objects;
 
 public class GateVariant {
     public final EnumGateLogic logic;

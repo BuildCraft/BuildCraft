@@ -6,14 +6,6 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.util.Arrays;
-import java.util.List;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSyntaxException;
-
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.model.ResourceLoaderContext;
 import buildcraft.lib.client.model.json.JsonVariableModel.ITextureGetter;
@@ -25,6 +17,13 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.misc.JsonUtil;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSyntaxException;
+
+import java.util.Arrays;
+import java.util.List;
 
 /** {@link JsonModelPart} but with can be animated */
 public abstract class JsonVariableModelPart {

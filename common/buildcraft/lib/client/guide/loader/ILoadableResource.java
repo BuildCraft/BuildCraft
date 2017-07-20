@@ -6,10 +6,9 @@
 
 package buildcraft.lib.client.guide.loader;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
-
-import javax.annotation.Nullable;
 
 public interface ILoadableResource {
     @Nullable

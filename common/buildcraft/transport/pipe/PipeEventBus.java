@@ -6,22 +6,17 @@
 
 package buildcraft.transport.pipe;
 
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.transport.pipe.PipeEvent;
+import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.api.transport.pipe.PipeEventPriority;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.transport.pipe.PipeEvent;
-import buildcraft.api.transport.pipe.PipeEventHandler;
-import buildcraft.api.transport.pipe.PipeEventPriority;
+import java.util.*;
 
 public class PipeEventBus {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("transport.pipe.event_bus");

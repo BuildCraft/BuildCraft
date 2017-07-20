@@ -6,13 +6,12 @@
 
 package buildcraft.transport.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.data.IReference;
-
 import buildcraft.transport.gate.TriggerWrapper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ElementTrigger extends ElementStatement<TriggerWrapper> {
 

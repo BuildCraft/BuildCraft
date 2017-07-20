@@ -4,15 +4,13 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.block;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.properties.BuildCraftProperties;
-
 import buildcraft.lib.engine.BlockEngineBase_BC8;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 
 public class BlockEngine_BC8 extends BlockEngineBase_BC8<EnumEngineType> {
     public BlockEngine_BC8(Material material, String id) {

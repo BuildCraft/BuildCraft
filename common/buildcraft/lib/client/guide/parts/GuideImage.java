@@ -6,10 +6,9 @@
 
 package buildcraft.lib.client.guide.parts;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.gui.GuiIcon;
+import net.minecraft.util.ResourceLocation;
 
 public class GuideImage extends GuidePart {
     public static final int PIXEL_HEIGHT = 42;

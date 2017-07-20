@@ -6,17 +6,15 @@
 
 package buildcraft.lib.inventory;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.inventory.IItemTransactor.IItemExtractable;
+import buildcraft.lib.misc.EntityUtil;
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityArrow.PickupStatus;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.api.core.IStackFilter;
-import buildcraft.api.inventory.IItemTransactor.IItemExtractable;
-
-import buildcraft.lib.misc.EntityUtil;
-import buildcraft.lib.misc.StackUtil;
+import javax.annotation.Nonnull;
 
 public class TransactorEntityArrow implements IItemExtractable {
 

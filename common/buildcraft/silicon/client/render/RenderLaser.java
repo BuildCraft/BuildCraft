@@ -6,22 +6,18 @@
 
 package buildcraft.silicon.client.render;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.core.client.BuildCraftLaserManager;
+import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import buildcraft.silicon.tile.TileLaser;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
-
 import net.minecraftforge.client.model.animation.FastTESR;
 
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.lib.client.render.laser.LaserData_BC8;
-import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
-
-import buildcraft.core.client.BuildCraftLaserManager;
-import buildcraft.silicon.tile.TileLaser;
+import javax.annotation.Nonnull;
 
 public class RenderLaser extends FastTESR<TileLaser> {
     private static final int MAX_POWER = BuildCraftLaserManager.POWERS.length - 1;

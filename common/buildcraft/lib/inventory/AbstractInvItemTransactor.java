@@ -6,18 +6,15 @@
 
 package buildcraft.lib.inventory;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.inventory.IItemTransactor;
+import buildcraft.lib.inventory.filter.StackFilter;
+import buildcraft.lib.misc.StackUtil;
 import gnu.trove.list.array.TIntArrayList;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
-import buildcraft.api.core.IStackFilter;
-import buildcraft.api.inventory.IItemTransactor;
-
-import buildcraft.lib.inventory.filter.StackFilter;
-import buildcraft.lib.misc.StackUtil;
+import javax.annotation.Nonnull;
 
 /** Designates an {@link IItemTransactor} that is backed by a simple, static, array based inventory. */
 public abstract class AbstractInvItemTransactor implements IItemTransactor {

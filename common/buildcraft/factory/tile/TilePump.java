@@ -6,51 +6,33 @@
 
 package buildcraft.factory.tile;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
-import javax.annotation.Nullable;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.mj.IMjReceiver;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.core.BCCoreBlocks;
+import buildcraft.energy.BCEnergyFluids;
+import buildcraft.energy.tile.TileSpringOil;
+import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.misc.*;
+import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
+import buildcraft.lib.net.PacketBufferBC;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.mj.IMjReceiver;
-import buildcraft.api.mj.MjAPI;
-
-import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.FluidUtilBC;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
-import buildcraft.lib.net.PacketBufferBC;
-
-import buildcraft.core.BCCoreBlocks;
-import buildcraft.energy.BCEnergyFluids;
-import buildcraft.energy.tile.TileSpringOil;
-import buildcraft.factory.BCFactoryBlocks;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.*;
 
 public class TilePump extends TileMiner {
     private final Tank tank = new Tank("tank", 16 * Fluid.BUCKET_VOLUME, this);

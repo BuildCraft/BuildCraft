@@ -6,20 +6,7 @@
 
 package buildcraft.lib.client.model;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import com.google.gson.JsonParseException;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.BCLog;
-
 import buildcraft.lib.client.model.ModelUtil.TexturedFace;
 import buildcraft.lib.client.model.json.JsonModelRule;
 import buildcraft.lib.client.model.json.JsonTexture;
@@ -31,8 +18,17 @@ import buildcraft.lib.client.reload.SourceType;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.ITickableNode;
 import buildcraft.lib.misc.SpriteUtil;
-
 import buildcraft.transport.BCTransportModels;
+import com.google.gson.JsonParseException;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.ResourceLocation;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /** Holds a model that can be changed by variables. Models are defined in this way by firstly creating a
  * {@link FunctionContext}, and then defining all of the variables with FunctionContext.getOrAddX(). It is recommended

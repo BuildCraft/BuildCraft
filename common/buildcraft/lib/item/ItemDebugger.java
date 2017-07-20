@@ -6,6 +6,8 @@
 
 package buildcraft.lib.item;
 
+import buildcraft.lib.debug.BCAdvDebugging;
+import buildcraft.lib.debug.IAdvDebugTarget;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
@@ -13,9 +15,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import buildcraft.lib.debug.BCAdvDebugging;
-import buildcraft.lib.debug.IAdvDebugTarget;
 
 public class ItemDebugger extends ItemBC_Neptune {
     public ItemDebugger(String id) {

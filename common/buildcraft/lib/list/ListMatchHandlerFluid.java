@@ -6,23 +6,19 @@
 
 package buildcraft.lib.list;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.lists.ListMatchHandler;
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
-import buildcraft.api.lists.ListMatchHandler;
-
-import buildcraft.lib.misc.StackUtil;
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ListMatchHandlerFluid extends ListMatchHandler {
     private static final List<ItemStack> clientExampleHolders = new ArrayList<>();

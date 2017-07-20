@@ -6,22 +6,18 @@
 
 package buildcraft.transport.client.render;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.vecmath.Point3f;
-
+import buildcraft.api.transport.pipe.IPipeFlowRenderer;
+import buildcraft.lib.client.model.ModelUtil;
+import buildcraft.transport.BCTransportSprites;
+import buildcraft.transport.pipe.flow.PipeFlowPower;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.util.EnumFacing;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
-import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.util.EnumFacing;
-
-import buildcraft.api.transport.pipe.IPipeFlowRenderer;
-
-import buildcraft.lib.client.model.ModelUtil;
-
-import buildcraft.transport.BCTransportSprites;
-import buildcraft.transport.pipe.flow.PipeFlowPower;
+import javax.vecmath.Point3f;
+import java.util.ArrayList;
+import java.util.List;
 
 public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
     INSTANCE;

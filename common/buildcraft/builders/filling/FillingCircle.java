@@ -6,14 +6,12 @@
 
 package buildcraft.builders.filling;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.vecmath.Point2i;
-
+import buildcraft.lib.misc.DrawingUtil;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.lib.misc.DrawingUtil;
+import javax.vecmath.Point2i;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("WeakerAccess")
 public class FillingCircle {

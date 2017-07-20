@@ -6,9 +6,9 @@
 
 package buildcraft.lib.expression;
 
-import java.util.Locale;
-
 import buildcraft.lib.expression.api.NodeType;
+
+import java.util.Locale;
 
 public class Argument {
     public final String name;

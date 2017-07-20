@@ -6,14 +6,13 @@
 
 package buildcraft.lib.client.guide.parts;
 
+import buildcraft.lib.client.guide.GuiGuide;
+import buildcraft.lib.client.guide.GuideManager;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
-
-import buildcraft.lib.client.guide.GuiGuide;
-import buildcraft.lib.client.guide.GuideManager;
-import buildcraft.lib.gui.pos.GuiRectangle;
 
 public abstract class GuidePartItem extends GuidePart {
     public static final GuiRectangle STACK_RECT = new GuiRectangle(0, 0, 16, 16);

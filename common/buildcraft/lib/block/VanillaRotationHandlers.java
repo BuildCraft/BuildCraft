@@ -4,21 +4,12 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.block;
 
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import net.minecraft.block.BlockButton;
-import net.minecraft.block.BlockChest;
-import net.minecraft.block.BlockDirectional;
-import net.minecraft.block.BlockDoor;
+import buildcraft.api.blocks.CustomRotationHelper;
+import buildcraft.lib.misc.collect.OrderedEnumMap;
+import net.minecraft.block.*;
 import net.minecraft.block.BlockDoor.EnumDoorHalf;
 import net.minecraft.block.BlockDoor.EnumHingePosition;
-import net.minecraft.block.BlockFenceGate;
-import net.minecraft.block.BlockLever;
 import net.minecraft.block.BlockLever.EnumOrientation;
-import net.minecraft.block.BlockPistonBase;
-import net.minecraft.block.BlockRedstoneDiode;
-import net.minecraft.block.BlockTorch;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumActionResult;
@@ -26,9 +17,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.blocks.CustomRotationHelper;
-
-import buildcraft.lib.misc.collect.OrderedEnumMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class VanillaRotationHandlers {
     /* Player friendly rotations- these only rotate through sides that are touching (only 90 degree changes, in any

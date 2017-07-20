@@ -4,6 +4,9 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.block;
 
+import buildcraft.core.tile.TileMarkerPath;
+import buildcraft.lib.block.BlockMarkerBase;
+import buildcraft.lib.misc.PermissionUtil;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,11 +15,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import buildcraft.lib.block.BlockMarkerBase;
-import buildcraft.lib.misc.PermissionUtil;
-
-import buildcraft.core.tile.TileMarkerPath;
 
 public class BlockMarkerPath extends BlockMarkerBase {
     public BlockMarkerPath(Material material, String id) {

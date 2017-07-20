@@ -6,10 +6,19 @@
 
 package buildcraft.transport.item;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.api.transport.IItemPluggable;
+import buildcraft.api.transport.pipe.IFlowItems;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.PluggableDefinition;
+import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.SoundUtil;
+import buildcraft.transport.BCTransportPlugs;
+import buildcraft.transport.plug.PluggableLens;
 import gnu.trove.map.hash.TIntObjectHashMap;
-
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,24 +29,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.transport.IItemPluggable;
-import buildcraft.api.transport.pipe.IFlowItems;
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.api.transport.pluggable.PluggableDefinition;
-
-import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.SoundUtil;
-
-import buildcraft.transport.BCTransportPlugs;
-import buildcraft.transport.plug.PluggableLens;
+import javax.annotation.Nonnull;
 
 public class ItemPluggableLens extends ItemBC_Neptune implements IItemPluggable {
     public ItemPluggableLens(String id) {

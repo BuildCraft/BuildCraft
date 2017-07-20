@@ -6,22 +6,15 @@
 
 package buildcraft.energy;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-
-import com.google.common.math.IntMath;
-
-import net.minecraft.block.material.MapColor;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.BCModules;
-
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.fluid.BCFluidBlock;
 import buildcraft.lib.fluid.FluidManager;
+import com.google.common.math.IntMath;
+import net.minecraft.block.material.MapColor;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.*;
 
 public class BCEnergyFluids {
     public static BCFluid[] crudeOil;

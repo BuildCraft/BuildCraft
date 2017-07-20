@@ -6,24 +6,21 @@
 
 package buildcraft.lib.nbt;
 
-import java.io.DataInput;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.data.NbtSquishConstants;
+import buildcraft.lib.misc.data.DecompactingBitSet;
 import gnu.trove.list.array.TByteArrayList;
 import gnu.trove.list.array.TIntArrayList;
-
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 
-import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.data.NbtSquishConstants;
-
-import buildcraft.lib.misc.data.DecompactingBitSet;
+import java.io.DataInput;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 class NbtSquishMapReader {
     private final NbtSquishMap map = new NbtSquishMap();

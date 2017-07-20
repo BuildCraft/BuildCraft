@@ -4,13 +4,13 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.registry;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreativeTabManager {
     private static final Map<String, CreativeTabBC> tabMap = new HashMap<>();

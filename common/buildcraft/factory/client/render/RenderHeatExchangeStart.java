@@ -1,11 +1,16 @@
 package buildcraft.factory.client.render;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
-
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.factory.tile.TileHeatExchangeEnd;
+import buildcraft.factory.tile.TileHeatExchangeStart;
+import buildcraft.factory.tile.TileHeatExchangeStart.EnumProgressState;
+import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.client.render.fluid.FluidRenderer;
+import buildcraft.lib.client.render.fluid.FluidRenderer.TankSize;
+import buildcraft.lib.client.render.fluid.FluidSpriteType;
+import buildcraft.lib.fluid.FluidSmoother;
+import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
+import buildcraft.lib.misc.VecUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -22,21 +27,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-
 import net.minecraftforge.fluids.FluidStack;
+import org.lwjgl.opengl.GL11;
 
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.client.render.fluid.FluidRenderer;
-import buildcraft.lib.client.render.fluid.FluidRenderer.TankSize;
-import buildcraft.lib.client.render.fluid.FluidSpriteType;
-import buildcraft.lib.fluid.FluidSmoother;
-import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
-import buildcraft.lib.misc.VecUtil;
-
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.factory.tile.TileHeatExchangeEnd;
-import buildcraft.factory.tile.TileHeatExchangeStart;
-import buildcraft.factory.tile.TileHeatExchangeStart.EnumProgressState;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Map;
 
 public class RenderHeatExchangeStart extends TileEntitySpecialRenderer<TileHeatExchangeStart> {
     private static final Map<EnumFacing, TankSideData> TANK_SIDES = new EnumMap<>(EnumFacing.class);

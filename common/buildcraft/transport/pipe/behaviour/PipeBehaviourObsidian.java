@@ -6,11 +6,16 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import java.util.List;
-import java.util.WeakHashMap;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.inventory.IItemTransactor;
+import buildcraft.api.mj.IMjConnector;
+import buildcraft.api.mj.IMjRedstoneReceiver;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjBattery;
+import buildcraft.api.transport.pipe.*;
+import buildcraft.lib.inventory.ItemTransactorHelper;
+import buildcraft.lib.inventory.filter.StackFilter;
+import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.VecUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -19,23 +24,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 
-import buildcraft.api.inventory.IItemTransactor;
-import buildcraft.api.mj.IMjConnector;
-import buildcraft.api.mj.IMjRedstoneReceiver;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjBattery;
-import buildcraft.api.transport.pipe.IFlowFluid;
-import buildcraft.api.transport.pipe.IFlowItems;
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.PipeBehaviour;
-import buildcraft.api.transport.pipe.PipeEventHandler;
-import buildcraft.api.transport.pipe.PipeEventItem;
-import buildcraft.api.transport.pipe.PipeFlow;
-
-import buildcraft.lib.inventory.ItemTransactorHelper;
-import buildcraft.lib.inventory.filter.StackFilter;
-import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.VecUtil;
+import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.WeakHashMap;
 
 public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneReceiver {
     private static final double INSERT_SPEED = 0.04;

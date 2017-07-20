@@ -6,21 +6,17 @@
 
 package buildcraft.lib.expression;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
-
-import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.api.*;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
-import buildcraft.lib.expression.api.INodeFunc;
-import buildcraft.lib.expression.api.INodeStack;
-import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.node.cast.NodeCasting;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
 
 public class NodeStack implements INodeStack {
     private final Deque<IExpressionNode> stack = new ArrayDeque<>();

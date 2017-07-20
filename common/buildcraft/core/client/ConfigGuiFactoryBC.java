@@ -6,17 +6,15 @@
 
 package buildcraft.core.client;
 
-import java.util.ArrayList;
-import java.util.Set;
-
+import buildcraft.core.BCCoreConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
-
 import net.minecraftforge.fml.client.IModGuiFactory;
 import net.minecraftforge.fml.client.config.GuiConfig;
 
-import buildcraft.core.BCCoreConfig;
+import java.util.ArrayList;
+import java.util.Set;
 
 public class ConfigGuiFactoryBC implements IModGuiFactory {
     public static class GuiConfigManager extends GuiConfig {

@@ -6,13 +6,15 @@
  */
 package buildcraft.core.item;
 
-import java.util.Iterator;
-import java.util.stream.Collectors;
-
+import buildcraft.core.marker.volume.*;
+import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.marker.MarkerSubCache;
+import buildcraft.lib.misc.PositionUtil;
+import buildcraft.lib.misc.PositionUtil.Line;
+import buildcraft.lib.misc.PositionUtil.LineSkewResult;
+import buildcraft.lib.misc.VecUtil;
 import com.google.common.collect.ImmutableList;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -24,20 +26,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
 
-import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.marker.MarkerSubCache;
-import buildcraft.lib.misc.PositionUtil;
-import buildcraft.lib.misc.PositionUtil.Line;
-import buildcraft.lib.misc.PositionUtil.LineSkewResult;
-import buildcraft.lib.misc.VecUtil;
-
-import buildcraft.core.marker.volume.Addon;
-import buildcraft.core.marker.volume.EnumAddonSlot;
-import buildcraft.core.marker.volume.Lock;
-import buildcraft.core.marker.volume.VolumeBox;
-import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
+import java.util.Iterator;
+import java.util.stream.Collectors;
 
 public class ItemMarkerConnector extends ItemBC_Neptune {
     public ItemMarkerConnector(String id) {

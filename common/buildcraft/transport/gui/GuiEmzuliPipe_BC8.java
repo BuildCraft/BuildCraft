@@ -6,14 +6,7 @@
 
 package buildcraft.transport.gui;
 
-import java.util.EnumMap;
-import java.util.List;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.ResourceLocation;
-
+import buildcraft.core.BCCoreSprites;
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.gui.GuiBC8;
@@ -25,12 +18,17 @@ import buildcraft.lib.gui.button.IButtonClickEventTrigger;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
-
-import buildcraft.core.BCCoreSprites;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.container.ContainerEmzuliPipe_BC8;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli.SlotIndex;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.EnumMap;
+import java.util.List;
 
 public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> implements IButtonClickEventListener {
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcrafttransport:textures/gui/pipe_emzuli.png");

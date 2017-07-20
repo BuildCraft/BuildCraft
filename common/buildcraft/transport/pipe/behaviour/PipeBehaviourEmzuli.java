@@ -6,12 +6,21 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.EnumSet;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.transport.pipe.IFlowItems;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
+import buildcraft.api.transport.pipe.PipeEventActionActivate;
+import buildcraft.api.transport.pipe.PipeEventStatement;
+import buildcraft.lib.misc.EntityUtil;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.transport.BCTransportGuis;
+import buildcraft.transport.BCTransportStatements;
+import buildcraft.transport.statements.ActionExtractionPreset;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -19,28 +28,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.RayTraceResult;
-
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.IStackFilter;
-import buildcraft.api.transport.pipe.IFlowItems;
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
-import buildcraft.api.transport.pipe.PipeEventActionActivate;
-import buildcraft.api.transport.pipe.PipeEventHandler;
-import buildcraft.api.transport.pipe.PipeEventStatement;
-
-import buildcraft.lib.misc.EntityUtil;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.tile.item.ItemHandlerSimple;
-
-import buildcraft.transport.BCTransportGuis;
-import buildcraft.transport.BCTransportStatements;
-import buildcraft.transport.statements.ActionExtractionPreset;
+import javax.annotation.Nonnull;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
 
 public class PipeBehaviourEmzuli extends PipeBehaviourWood {
 

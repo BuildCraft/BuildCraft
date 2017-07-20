@@ -8,7 +8,6 @@ package buildcraft.lib.misc.data;
 
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;

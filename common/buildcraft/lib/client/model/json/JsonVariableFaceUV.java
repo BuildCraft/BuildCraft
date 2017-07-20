@@ -6,12 +6,6 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.util.Arrays;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
@@ -20,6 +14,11 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeString;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 import buildcraft.lib.misc.JsonUtil;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+
+import java.util.Arrays;
 
 public class JsonVariableFaceUV {
     final INodeDouble[] uv;

@@ -6,20 +6,17 @@
 
 package buildcraft.core.statements;
 
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-
 import buildcraft.lib.misc.StackUtil;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class StatementParameterItemStackExact implements IStatementParameter {
     protected ItemStack stack;

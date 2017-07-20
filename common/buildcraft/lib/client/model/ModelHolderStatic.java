@@ -6,25 +6,22 @@
 
 package buildcraft.lib.client.model;
 
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.client.model.json.JsonModel;
+import buildcraft.lib.client.model.json.JsonModelPart;
+import buildcraft.lib.client.model.json.JsonQuad;
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonParseException;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.ResourceLocation;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.JsonParseException;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.ResourceLocation;
-
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.client.model.json.JsonModel;
-import buildcraft.lib.client.model.json.JsonModelPart;
-import buildcraft.lib.client.model.json.JsonQuad;
 
 /** Holds a model that will never change except if the json file it is defined from is changed. */
 public class ModelHolderStatic extends ModelHolder {

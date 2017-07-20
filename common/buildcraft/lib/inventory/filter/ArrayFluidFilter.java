@@ -6,15 +6,12 @@
 
 package buildcraft.lib.inventory.filter;
 
+import buildcraft.api.core.IFluidFilter;
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
-
-import buildcraft.api.core.IFluidFilter;
-
-import buildcraft.lib.misc.StackUtil;
 
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class ArrayFluidFilter implements IFluidFilter {

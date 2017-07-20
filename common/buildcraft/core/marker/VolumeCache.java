@@ -4,9 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.marker;
 
-import net.minecraft.world.World;
-
 import buildcraft.lib.marker.MarkerCache;
+import net.minecraft.world.World;
 
 public class VolumeCache extends MarkerCache<VolumeSubCache> {
     public static final VolumeCache INSTANCE = new VolumeCache();

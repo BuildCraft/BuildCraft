@@ -6,19 +6,16 @@
 
 package buildcraft.transport.client.model;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
+import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.lib.client.model.IModelCache;
+import buildcraft.lib.client.model.ModelCache;
+import buildcraft.transport.client.model.key.PipeModelKey;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.item.EnumDyeColor;
 
-import buildcraft.api.transport.pipe.PipeDefinition;
-
-import buildcraft.lib.client.model.IModelCache;
-import buildcraft.lib.client.model.ModelCache;
-
-import buildcraft.transport.client.model.key.PipeModelKey;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public class PipeModelCacheBase {
     public static IPipeBaseModelGen generator = PipeBaseModelGenStandard.INSTANCE;

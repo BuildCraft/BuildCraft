@@ -6,20 +6,18 @@
 
 package buildcraft.lib.misc;
 
-import java.util.Random;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+
+import javax.annotation.Nullable;
+import java.util.Random;
+import java.util.Set;
 
 public class PositionUtil {
     @Nullable

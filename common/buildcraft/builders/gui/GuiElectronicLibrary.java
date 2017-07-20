@@ -4,22 +4,20 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.gui;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import net.minecraft.util.ResourceLocation;
-
+import buildcraft.builders.container.ContainerElectronicLibrary;
+import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
+import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.button.GuiAbstractButton;
 import buildcraft.lib.gui.button.GuiBetterButton;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.LocaleUtil;
+import net.minecraft.util.ResourceLocation;
 
-import buildcraft.builders.container.ContainerElectronicLibrary;
-import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
-import buildcraft.builders.snapshot.Snapshot;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GuiElectronicLibrary extends GuiBC8<ContainerElectronicLibrary> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftbuilders:textures/gui/electronic_library.png");

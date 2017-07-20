@@ -6,16 +6,13 @@
 
 package buildcraft.core.list;
 
+import buildcraft.api.items.IList;
+import buildcraft.lib.misc.LocaleUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
-
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import buildcraft.api.items.IList;
-
-import buildcraft.lib.misc.LocaleUtil;
 
 public enum ListTooltipHandler {
     INSTANCE;

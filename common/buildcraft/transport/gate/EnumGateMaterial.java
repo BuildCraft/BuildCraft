@@ -6,10 +6,10 @@
 
 package buildcraft.transport.gate;
 
-import java.util.Locale;
-
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+
+import java.util.Locale;
 
 public enum EnumGateMaterial {
     CLAY_BRICK(Blocks.BRICK_BLOCK, 1, false),

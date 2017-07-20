@@ -6,10 +6,6 @@
 
 package buildcraft.builders.snapshot;
 
-import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
-import java.util.Map;
-
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
@@ -17,11 +13,14 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
+
+import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.util.Map;
 
 public class NbtRef<N extends NBTBase> {
     private final NbtPath path;

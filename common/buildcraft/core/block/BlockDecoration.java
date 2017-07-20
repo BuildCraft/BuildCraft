@@ -4,6 +4,9 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.block;
 
+import buildcraft.api.enums.EnumDecoratedBlock;
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.lib.block.BlockBCBase_Neptune;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
@@ -14,11 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-
-import buildcraft.api.enums.EnumDecoratedBlock;
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.lib.block.BlockBCBase_Neptune;
 
 public class BlockDecoration extends BlockBCBase_Neptune {
     public static final IProperty<EnumDecoratedBlock> DECORATED_TYPE = BuildCraftProperties.DECORATED_BLOCK;

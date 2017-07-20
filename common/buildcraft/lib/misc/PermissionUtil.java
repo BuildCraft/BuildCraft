@@ -6,14 +6,12 @@
 
 package buildcraft.lib.misc;
 
+import buildcraft.api.core.IPlayerOwned;
 import com.mojang.authlib.GameProfile;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import buildcraft.api.core.IPlayerOwned;
 
 /** Future class for checking to see if a given player can actually do something. */
 public class PermissionUtil {

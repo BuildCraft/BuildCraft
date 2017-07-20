@@ -6,18 +6,17 @@
 
 package buildcraft.lib.chunkload;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import javax.annotation.Nullable;
-
+import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.BCLibConfig.ChunkLoaderLevel;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 
-import buildcraft.lib.BCLibConfig;
-import buildcraft.lib.BCLibConfig.ChunkLoaderLevel;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /** This should be implemented by {@link TileEntity}'s that wish to be chunkloaded by buildcraft lib. Note that tiles
  * should add themselves to the chunkloading list in {@link ChunkLoaderManager#loadChunksForTile(TileEntity)}  */

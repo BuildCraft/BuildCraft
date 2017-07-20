@@ -6,21 +6,18 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.util.Arrays;
-
-import javax.vecmath.Vector3f;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.JsonUtils;
-
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.JsonUtil;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.JsonUtils;
+
+import javax.vecmath.Vector3f;
+import java.util.Arrays;
 
 public class JsonQuad {
     public boolean shade = false;

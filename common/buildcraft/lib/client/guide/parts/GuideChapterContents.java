@@ -6,9 +6,8 @@
 
 package buildcraft.lib.client.guide.parts;
 
-import net.minecraft.client.resources.I18n;
-
 import buildcraft.lib.client.guide.GuiGuide;
+import net.minecraft.client.resources.I18n;
 
 public class GuideChapterContents extends GuideChapter {
     public GuideChapterContents(GuiGuide gui) {

@@ -7,10 +7,8 @@
 package buildcraft.lib.net;
 
 import com.google.common.base.Charsets;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
 

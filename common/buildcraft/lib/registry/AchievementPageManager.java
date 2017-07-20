@@ -4,16 +4,14 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.registry;
 
+import buildcraft.lib.misc.RegistryUtil;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.stats.Achievement;
-
 import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-
-import buildcraft.lib.misc.RegistryUtil;
 
 public class AchievementPageManager {
     public final AchievementPage page;

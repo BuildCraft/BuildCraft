@@ -6,14 +6,13 @@
 
 package buildcraft.lib.path.task;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.Callable;
-
+import buildcraft.lib.path.task.AnalysedChunk.MiniGraph;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.lib.path.task.AnalysedChunk.MiniGraph;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.Callable;
 
 public class TaskMiniChunkAnalyser implements Callable<AnalysedChunk> {
     private final FilledChunk filled;

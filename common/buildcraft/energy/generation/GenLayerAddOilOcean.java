@@ -6,15 +6,13 @@
 
 package buildcraft.energy.generation;
 
-import java.util.Arrays;
-import java.util.List;
-
+import buildcraft.api.core.BCLog;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.layer.GenLayer;
-
 import net.minecraftforge.common.BiomeDictionary;
 
-import buildcraft.api.core.BCLog;
+import java.util.Arrays;
+import java.util.List;
 
 public class GenLayerAddOilOcean extends GenLayerBiomeReplacer {
     private static final double NOISE_FIELD_SCALE = 0.0005;

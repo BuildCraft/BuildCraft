@@ -6,14 +6,14 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagString;
+
+import java.util.Objects;
+import java.util.Optional;
 
 public class ItemStackRef {
     private final NbtRef<NBTTagString> item;

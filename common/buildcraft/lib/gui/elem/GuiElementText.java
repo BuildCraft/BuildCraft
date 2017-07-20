@@ -6,16 +6,15 @@
 
 package buildcraft.lib.gui.elem;
 
-import java.util.function.IntSupplier;
-import java.util.function.Supplier;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {
     public boolean dropShadow = false;

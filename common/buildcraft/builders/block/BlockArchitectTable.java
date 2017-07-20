@@ -4,8 +4,11 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.block;
 
-import java.util.List;
-
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.builders.BCBuildersGuis;
+import buildcraft.builders.tile.TileArchitectTable;
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithFacing;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -16,13 +19,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.block.IBlockWithFacing;
-
-import buildcraft.builders.BCBuildersGuis;
-import buildcraft.builders.tile.TileArchitectTable;
+import java.util.List;
 
 public class BlockArchitectTable extends BlockBCTile_Neptune implements IBlockWithFacing {
     public static final IProperty<Boolean> PROP_VALID = BuildCraftProperties.VALID;

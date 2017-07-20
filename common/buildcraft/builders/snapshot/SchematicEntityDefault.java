@@ -6,19 +6,11 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-
-import org.apache.commons.lang3.tuple.Pair;
-
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.schematics.ISchematicEntity;
+import buildcraft.api.schematics.SchematicEntityContext;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.RotationUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.EntityList;
@@ -31,15 +23,14 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fluids.FluidStack;
+import org.apache.commons.lang3.tuple.Pair;
 
-import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.schematics.ISchematicEntity;
-import buildcraft.api.schematics.SchematicEntityContext;
-
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.RotationUtil;
+import javax.annotation.Nonnull;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityDefault> {
     private NBTTagCompound entityNbt;

@@ -6,21 +6,18 @@
 
 package buildcraft.builders.snapshot;
 
+import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.template.TemplateApi;
+import buildcraft.lib.misc.data.Box;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.FakePlayer;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
-
-import net.minecraftforge.common.util.FakePlayer;
-
-import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.template.TemplateApi;
-
-import buildcraft.lib.misc.data.Box;
 
 public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     public TemplateBuilder(ITileForTemplateBuilder tile) {

@@ -6,15 +6,13 @@
 
 package buildcraft.lib.inventory;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.IStackFilter;
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.core.IStackFilter;
-
-import buildcraft.lib.misc.StackUtil;
+import javax.annotation.Nonnull;
 
 public final class SidedInventoryWrapper extends AbstractInvItemTransactor {
     private final ISidedInventory sided;

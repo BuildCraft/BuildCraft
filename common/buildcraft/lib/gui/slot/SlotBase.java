@@ -6,14 +6,12 @@
 
 package buildcraft.lib.gui.slot;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.items.SlotItemHandler;
-
 import buildcraft.lib.tile.item.IItemHandlerAdv;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.SlotItemHandler;
+
+import javax.annotation.Nonnull;
 
 public class SlotBase extends SlotItemHandler {
     public final int handlerIndex;

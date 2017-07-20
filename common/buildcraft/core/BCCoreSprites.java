@@ -6,19 +6,17 @@
 
 package buildcraft.core;
 
-import java.util.EnumMap;
-import java.util.Locale;
-import java.util.Map;
-
 import buildcraft.api.tiles.IControllable;
-
-import buildcraft.lib.client.sprite.SpriteHolderRegistry;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-
 import buildcraft.core.statements.TriggerFluidContainer;
 import buildcraft.core.statements.TriggerFluidContainerLevel;
 import buildcraft.core.statements.TriggerInventory;
 import buildcraft.core.statements.TriggerInventoryLevel;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+
+import java.util.EnumMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class BCCoreSprites {
     public static final SpriteHolder TRIGGER_TRUE;

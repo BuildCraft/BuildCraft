@@ -6,18 +6,16 @@
 
 package buildcraft.lib.client.resource;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.commons.io.IOUtils;
-
+import buildcraft.api.core.BCLog;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.io.IOUtils;
 
-import buildcraft.api.core.BCLog;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 public abstract class ResourceHolder {
     public final ResourceLocation locationBase;

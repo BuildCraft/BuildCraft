@@ -6,33 +6,14 @@
 
 package buildcraft.lib.nbt;
 
+import buildcraft.api.core.InvalidInputDataException;
+import gnu.trove.list.array.*;
+import net.minecraft.nbt.*;
+import net.minecraftforge.common.util.Constants;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import gnu.trove.list.array.TByteArrayList;
-import gnu.trove.list.array.TDoubleArrayList;
-import gnu.trove.list.array.TFloatArrayList;
-import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.list.array.TLongArrayList;
-import gnu.trove.list.array.TShortArrayList;
-
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagByte;
-import net.minecraft.nbt.NBTTagByteArray;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagFloat;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagIntArray;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagLong;
-import net.minecraft.nbt.NBTTagShort;
-import net.minecraft.nbt.NBTTagString;
-
-import net.minecraftforge.common.util.Constants;
-
-import buildcraft.api.core.InvalidInputDataException;
 
 /** Defines a map of commonly used tags. */
 public class NbtSquishMap {

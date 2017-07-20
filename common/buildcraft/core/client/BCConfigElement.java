@@ -6,14 +6,14 @@
 
 package buildcraft.core.client;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.config.IConfigElement;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class BCConfigElement extends ConfigElement {
     private ConfigCategory cat;

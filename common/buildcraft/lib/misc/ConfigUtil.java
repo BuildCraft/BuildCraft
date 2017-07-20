@@ -6,17 +6,12 @@
 
 package buildcraft.lib.misc;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Locale;
-import java.util.Queue;
-
+import buildcraft.api.core.BCLog;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
-import buildcraft.api.core.BCLog;
+import java.util.*;
 
 public class ConfigUtil {
     /** Sets a good default language key for all of the properties contained in the given configuration */

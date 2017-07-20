@@ -6,22 +6,18 @@
 
 package buildcraft.transport.container;
 
-import java.io.IOException;
-
-import net.minecraft.entity.player.EntityPlayer;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
-
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.slot.SlotPhantom;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
-
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond.FilterMode;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.IOException;
 
 public class ContainerDiamondWoodPipe extends ContainerBC_Neptune {
     private final PipeBehaviourWoodDiamond behaviour;

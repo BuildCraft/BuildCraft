@@ -6,23 +6,20 @@
 
 package buildcraft.core.gen;
 
-import java.util.Random;
-
+import buildcraft.api.enums.EnumSpring;
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.core.BCCoreBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.api.enums.EnumSpring;
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.core.BCCoreBlocks;
+import java.util.Random;
 
 public class SpringPopulate {
 
