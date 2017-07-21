@@ -1,0 +1,23 @@
+{
+  "result": {
+    "item": "buildcraftfactory:heat_exchange_end"
+  },
+  "pattern": [
+    "g#g",
+    "###",
+    "igi"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "i": {
+      "item": "#ingotIron"
+    },
+    "g": {
+      "item": "#gearIron"
+    },
+    "#": {
+      "type": "forge:ore_dict",
+      "ore": "blockGlass"
+    }
+  }
+}
