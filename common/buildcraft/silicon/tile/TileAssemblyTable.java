@@ -190,7 +190,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         NBTTagList recipesStatesTag = new NBTTagList();
-        recipesStates.forEach((instruction, state) -> {
+        recipesStates.forEach((recipe, state) -> {
             NBTTagCompound entryTag = new NBTTagCompound();
             entryTag.setString("recipe", instruction.recipe.getRegistryName().toString());
             entryTag.setTag("output", instruction.output.serializeNBT());
