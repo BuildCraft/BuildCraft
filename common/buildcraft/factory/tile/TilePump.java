@@ -56,6 +56,7 @@ public class TilePump extends TileMiner {
     private final Tank tank = new Tank("tank", 16 * Fluid.BUCKET_VOLUME, this);
     private boolean queueBuilt = false;
     private final Map<BlockPos, List<BlockPos>> paths = new HashMap<>();
+    private BlockPos fluidConnection;
     private final Queue<BlockPos> queue = new PriorityQueue<>(
         BlockUtil.uniqueBlockPosComparator(
             Comparator.<BlockPos>comparingInt(blockPos ->
@@ -99,6 +100,7 @@ public class TilePump extends TileMiner {
                 if (BlockUtil.getFluid(world, posToCheck) != null) {
                     queue.add(posToCheck);
                 }
+                fluidConnection = posToCheck;
                 break;
             } else if (!world.isAirBlock(posToCheck) && world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.tube) {
                 break;
@@ -184,6 +186,14 @@ public class TilePump extends TileMiner {
         }
         currentPos = null;
         updateLength();
+    }
+
+    @Override
+    protected BlockPos getTargetPos() {
+        if (currentPos != null && fluidConnection != null) {
+            return currentPos.getY() > fluidConnection.getY() ? fluidConnection : currentPos;
+        }
+        return currentPos;
     }
 
     @Override
