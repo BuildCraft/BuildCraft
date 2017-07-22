@@ -47,6 +47,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
     private int wantedLength = 0;
     private double currentLength = 0;
     private double lastLength = 0;
+    private int offset;
 
     protected boolean isComplete = false;
     protected final MjBattery battery = new MjBattery(getBatteryCapacity());
@@ -81,14 +82,18 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
 
         battery.tick(getWorld(), getPos());
 
-        // if (worldObj.rand.nextDouble() > 0.9) { // is this correct?
-        if (true) {
+        if (world.getTotalWorldTime() % 10 == offset) {
             sendNetworkUpdate(NET_LED_STATUS);
         }
 
         initCurrentPos();
 
         mine();
+    }
+
+    @Override
+    public void onLoad() {
+        offset = world.rand.nextInt(10);
     }
 
     @Override
@@ -105,7 +110,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
     }
 
     protected void updateLength() {
-        int newY = currentPos != null ? currentPos.getY() : pos.getY();
+        int newY = getTargetPos() != null ? getTargetPos().getY() : pos.getY();
         int newLength = pos.getY() - newY;
         if (newLength != wantedLength) {
             for (int y = pos.getY() - 1; y > 0; y--) {
@@ -126,6 +131,10 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
             currentLength = wantedLength = newLength;
             sendNetworkUpdate(NET_WANTED_Y);
         }
+    }
+
+    protected BlockPos getTargetPos() {
+        return currentPos;
     }
 
     public double getLength(float partialTicks) {
