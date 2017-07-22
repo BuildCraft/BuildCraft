@@ -44,7 +44,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
         if (world.isRemote) {
             return;
         }
-        if (power > POWER_REQ) {
+        if (power >= POWER_REQ) {
             power -= POWER_REQ;
             craft();
         }

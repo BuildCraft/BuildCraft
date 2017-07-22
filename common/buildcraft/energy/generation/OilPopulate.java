@@ -17,6 +17,7 @@ import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -39,6 +40,7 @@ import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.lib.misc.BlockUtil;
 
 import buildcraft.core.BCCoreBlocks;
+import buildcraft.energy.BCEnergy;
 import buildcraft.energy.BCEnergyFluids;
 
 public final class OilPopulate {
@@ -46,9 +48,9 @@ public final class OilPopulate {
     public static final EventType EVENT_TYPE = EnumHelper.addEnum(EventType.class, "BUILDCRAFT_OIL", new Class[0]);
     private static final byte LARGE_WELL_HEIGHT = 16;
     private static final byte MEDIUM_WELL_HEIGHT = 6;
-    public final Set<String> excessiveBiomeNames = new HashSet<>(Arrays.asList("Desert Oil Field", "Ocean Oil Field"));
-    public final Set<String> surfaceDepositBiomeNames = new HashSet<>();
-    public final Set<String> excludedBiomeNames = new HashSet<>(Arrays.asList("Hell", "The End"));
+    public final Set<ResourceLocation> excessiveBiomes = new HashSet<>(Arrays.asList(new ResourceLocation(BCEnergy.MODID + ":oil_desert"), new ResourceLocation(BCEnergy.MODID + ":oil_ocean")));
+    public final Set<ResourceLocation> surfaceDepositBiomes = new HashSet<>();
+    public final Set<ResourceLocation> excludedBiomes = new HashSet<>(Arrays.asList(new ResourceLocation("minecraft:hell"), new ResourceLocation("minecraft:sky")));
 
     public enum GenType {
         LARGE,
@@ -82,14 +84,14 @@ public final class OilPopulate {
         Biome biome = world.getBiome(new BlockPos(x, 0, z));
 
         // Do not generate oil in the End or Nether
-        if (excludedBiomeNames.contains(biome.getBiomeName())) {
+        if (excludedBiomes.contains(biome.getRegistryName())) {
             return;
         }
 
-        boolean oilBiome = surfaceDepositBiomeNames.contains(biome.getBiomeName());
+        boolean oilBiome = surfaceDepositBiomes.contains(biome.getRegistryName());
 
         double bonus = oilBiome ? 3.0 : 1.0;
-        if (excessiveBiomeNames.contains(biome.getBiomeName())) {
+        if (excessiveBiomes.contains(biome.getRegistryName())) {
             bonus *= 30.0;
         }
         GenType type = GenType.NONE;

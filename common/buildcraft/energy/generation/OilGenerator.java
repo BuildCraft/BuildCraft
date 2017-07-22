@@ -82,14 +82,14 @@ public enum OilGenerator implements IWorldGenerator {
         Biome biome = world.getBiome(new BlockPos(x, 0, z));
 
         // Do not generate oil in the End or Nether
-        if (OilPopulate.INSTANCE.excludedBiomeNames.contains(biome.getBiomeName())) {
+        if (OilPopulate.INSTANCE.excludedBiomes.contains(biome.getRegistryName())) {
             return ImmutableList.of();
         }
 
-        boolean oilBiome = OilPopulate.INSTANCE.surfaceDepositBiomeNames.contains(biome.getBiomeName());
+        boolean oilBiome = OilPopulate.INSTANCE.surfaceDepositBiomes.contains(biome.getRegistryName());
 
         double bonus = oilBiome ? 3.0 : 1.0;
-        if (OilPopulate.INSTANCE.excessiveBiomeNames.contains(biome.getBiomeName())) {
+        if (OilPopulate.INSTANCE.excessiveBiomes.contains(biome.getRegistryName())) {
             bonus *= 30.0;
         }
         final GenType type;
