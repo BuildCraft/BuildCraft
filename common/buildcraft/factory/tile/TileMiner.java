@@ -93,6 +93,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
 
     @Override
     public void onLoad() {
+        super.onLoad();
         offset = world.rand.nextInt(10);
     }
 

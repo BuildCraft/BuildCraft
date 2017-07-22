@@ -376,7 +376,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
             return;
         }
         IMjReceiver receiver = getReceiverToPower(tile, currentDirection);
-        if (receiver != null && mjConnector.canConnect(receiver) && receiver.canConnect(mjConnector)) {
+        if (receiver != null) {
             long extracted = getPowerToExtract(true);
             if (extracted > 0) {
                 long excess = receiver.receivePower(extracted, false);
@@ -524,7 +524,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     public IMjReceiver getReceiverToPower(TileEntity tile, EnumFacing side) {
         if (tile == null) return null;
         IMjReceiver rec = tile.getCapability(MjAPI.CAP_RECEIVER, side.getOpposite());
-        if (rec != null && rec.canConnect(mjConnector)) {
+        if (rec != null && rec.canConnect(mjConnector) && mjConnector.canConnect(rec)) {
             return rec;
         } else {
             return null;
