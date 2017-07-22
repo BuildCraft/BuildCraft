@@ -376,7 +376,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
             return;
         }
         IMjReceiver receiver = getReceiverToPower(tile, currentDirection);
-        if (receiver != null) {
+        if (receiver != null && mjConnector.canConnect(receiver) && receiver.canConnect(mjConnector)) {
             long extracted = getPowerToExtract(true);
             if (extracted > 0) {
                 long excess = receiver.receivePower(extracted, false);
