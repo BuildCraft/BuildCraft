@@ -32,6 +32,7 @@ import buildcraft.api.schematics.SchematicEntityFactory;
 import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
 
 public class SchematicEntityManager {
+    @SuppressWarnings("WeakerAccess")
     public static ISchematicEntity<?> getSchematicEntity(SchematicEntityContext context) {
         for (SchematicEntityFactory<?> schematicEntityFactory : Lists.reverse(SchematicEntityFactoryRegistry.getFactories())) {
             if (schematicEntityFactory.predicate.test(context)) {
@@ -54,6 +55,7 @@ public class SchematicEntityManager {
         return null;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public static Pair<List<List<ItemStack>>, List<List<FluidStack>>> computeRequired(Blueprint blueprint) {
         List<List<ItemStack>> requiredItems = new ArrayList<>(
             Collections.nCopies(
@@ -67,22 +69,12 @@ public class SchematicEntityManager {
                 Collections.emptyList()
             )
         );
-        FakeWorld world = FakeWorld.INSTANCE;
-        world.uploadBlueprint(blueprint, true);
         int i = 0;
         for (ISchematicEntity<?> schematicEntity : blueprint.entities) {
-            Entity entity = schematicEntity.buildWithoutChecks(world, FakeWorld.BLUEPRINT_OFFSET);
-            if (entity != null) {
-                world.editable = false;
-                SchematicEntityContext schematicEntityContext = new SchematicEntityContext(world, FakeWorld.BLUEPRINT_OFFSET, entity);
-                requiredItems.set(i, schematicEntity.computeRequiredItems(schematicEntityContext));
-                requiredFluids.set(i, schematicEntity.computeRequiredFluids(schematicEntityContext));
-                world.editable = true;
-                world.removeEntity(entity);
-            }
+            requiredItems.set(i, schematicEntity.computeRequiredItems(null));
+            requiredFluids.set(i, schematicEntity.computeRequiredFluids(null));
             i++;
         }
-        world.clear();
         return Pair.of(requiredItems, requiredFluids);
     }
 

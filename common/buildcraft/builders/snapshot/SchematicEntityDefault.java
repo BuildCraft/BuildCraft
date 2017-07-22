@@ -6,13 +6,13 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
@@ -51,7 +51,12 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
         ResourceLocation registryName = EntityList.getKey(context.entity);
         return registryName != null &&
             RulesLoader.READ_DOMAINS.contains(registryName.getResourceDomain()) &&
-            RulesLoader.getRules(context.entity).stream().anyMatch(rule -> rule.capture);
+            RulesLoader.getRules(
+                EntityList.getKey(context.entity),
+                context.entity.serializeNBT()
+            )
+                .stream()
+                .anyMatch(rule -> rule.capture);
     }
 
     @Override
@@ -76,28 +81,36 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
     @Nonnull
     @Override
     public List<ItemStack> computeRequiredItems(SchematicEntityContext context) {
-        Set<JsonRule> rules = RulesLoader.getRules(context.entity);
-        List<ItemStack> requiredItems = new ArrayList<>();
-        if (rules.stream().noneMatch(rule -> rule.doNotCopyRequiredItemsFromBreakBlockDrops)) {
-            if (context.world instanceof FakeWorld) {
-                requiredItems.addAll(((FakeWorld) context.world).killEntityAndGetDrops(context.entity));
-            }
+        Set<JsonRule> rules = RulesLoader.getRules(
+            new ResourceLocation(entityNbt.getString("id")),
+            entityNbt
+        );
+        if (rules.isEmpty()) {
+            throw new IllegalArgumentException("Rules are empty");
         }
-        if (rules.stream().map(rule -> rule.requiredItems).anyMatch(Objects::nonNull)) {
-            requiredItems.clear();
-            rules.stream()
-                .map(rule -> rule.requiredItems)
-                .filter(Objects::nonNull)
-                .flatMap(Collection::stream)
-                .forEach(requiredItems::add);
-        }
-        return requiredItems;
+        return rules.stream()
+            .map(rule -> rule.requiredExtractors)
+            .filter(Objects::nonNull)
+            .flatMap(Collection::stream)
+            .flatMap(requiredExtractor -> requiredExtractor.extractItemsFromEntity(entityNbt).stream())
+            .filter(((Predicate<ItemStack>) ItemStack::isEmpty).negate())
+            .collect(Collectors.toList());
     }
 
     @Nonnull
     @Override
     public List<FluidStack> computeRequiredFluids(SchematicEntityContext context) {
-        return Collections.emptyList();
+        Set<JsonRule> rules = RulesLoader.getRules(
+            new ResourceLocation(entityNbt.getString("id")),
+            entityNbt
+        );
+        return rules.stream()
+            .map(rule -> rule.requiredExtractors)
+            .filter(Objects::nonNull)
+            .flatMap(Collection::stream)
+            .flatMap(requiredExtractor -> requiredExtractor.extractFluidsFromEntity(entityNbt).stream())
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     @Override

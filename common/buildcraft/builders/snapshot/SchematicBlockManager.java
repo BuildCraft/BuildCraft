@@ -31,6 +31,7 @@ import buildcraft.api.schematics.SchematicBlockFactory;
 import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
 
 public class SchematicBlockManager {
+    @SuppressWarnings("WeakerAccess")
     public static ISchematicBlock<?> getSchematicBlock(SchematicBlockContext context) {
         for (SchematicBlockFactory<?> schematicBlockFactory : Lists.reverse(SchematicBlockFactoryRegistry.getFactories())) {
             if (schematicBlockFactory.predicate.test(context)) {
@@ -57,6 +58,7 @@ public class SchematicBlockManager {
         return getSchematicBlock(context);
     }
 
+    @SuppressWarnings("WeakerAccess")
     public static Pair<List<ItemStack>[][][], List<FluidStack>[][][]> computeRequired(Blueprint blueprint) {
         @SuppressWarnings("unchecked") List<ItemStack>[][][] requiredItems = (List<ItemStack>[][][]) new List
             [blueprint.size.getX()]
@@ -66,37 +68,15 @@ public class SchematicBlockManager {
             [blueprint.size.getX()]
             [blueprint.size.getY()]
             [blueprint.size.getZ()];
-        FakeWorld world = FakeWorld.INSTANCE;
-        world.uploadBlueprint(blueprint, true);
-        world.editable = false;
         for (int z = 0; z < blueprint.size.getZ(); z++) {
             for (int y = 0; y < blueprint.size.getY(); y++) {
                 for (int x = 0; x < blueprint.size.getX(); x++) {
-                    BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
-                    ISchematicBlock<?> schematicBlock = blueprint.palette.get(
-                        blueprint.data
-                            [pos.getX() - FakeWorld.BLUEPRINT_OFFSET.getX()]
-                            [pos.getY() - FakeWorld.BLUEPRINT_OFFSET.getY()]
-                            [pos.getZ() - FakeWorld.BLUEPRINT_OFFSET.getZ()]
-                    );
-                    IBlockState blockState = world.getBlockState(pos);
-                    Block block = blockState.getBlock();
-                    SchematicBlockContext schematicBlockContext = new SchematicBlockContext(
-                        world,
-                        FakeWorld.BLUEPRINT_OFFSET,
-                        pos,
-                        blockState,
-                        block
-                    );
-                    requiredItems[x][y][z] =
-                        schematicBlock.computeRequiredItems(schematicBlockContext);
-                    requiredFluids[x][y][z] =
-                        schematicBlock.computeRequiredFluids(schematicBlockContext);
+                    ISchematicBlock<?> schematicBlock = blueprint.palette.get(blueprint.data[x][y][z]);
+                    requiredItems[x][y][z] = schematicBlock.computeRequiredItems(null);
+                    requiredFluids[x][y][z] = schematicBlock.computeRequiredFluids(null);
                 }
             }
         }
-        world.editable = true;
-        world.clear();
         return Pair.of(requiredItems, requiredFluids);
     }
 
