@@ -35,6 +35,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -64,6 +65,7 @@ import buildcraft.lib.chunkload.IChunkLoadingTile;
 import buildcraft.lib.inventory.AutomaticProvidingTransactor;
 import buildcraft.lib.inventory.TransactorEntityItem;
 import buildcraft.lib.inventory.filter.StackFilter;
+import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.CapUtil;
@@ -87,6 +89,7 @@ import buildcraft.builders.BCBuildersEventDist;
 public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable, IChunkLoadingTile {
 
     private static final long MAX_MJ_PER_TICK = 64 * MjAPI.MJ;
+    private static final ResourceLocation DIGGY_DIGGY_HOLE = new ResourceLocation("buildcraftbuilders:diggy_diggy_hole");
 
     private final MjBattery battery = new MjBattery(16000 * MjAPI.MJ);
     public final Box frameBox = new Box();
@@ -466,6 +469,11 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
             if (found) {
                 sendNetworkUpdate(NET_RENDER_DATA);
+            } else {
+                AxisAlignedBB box = miningBox.getBoundingBox();
+                if (box.maxX - box.minX == 63 && box.maxZ - box.minZ == 63) {
+                    AdvancementUtil.unlockAdvancement(getOwner().getId(), DIGGY_DIGGY_HOLE);
+                }
             }
         }
     }
