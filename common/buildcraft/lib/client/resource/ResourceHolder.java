@@ -31,7 +31,7 @@ public abstract class ResourceHolder {
         String path = location.getResourcePath();
         final String lang;
         if (useFallback) {
-            lang = "en_US";
+            lang = "en_us";
         } else {
             lang = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
         }

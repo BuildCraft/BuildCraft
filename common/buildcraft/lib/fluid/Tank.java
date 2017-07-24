@@ -182,9 +182,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
 
     @Override
     public void setFluid(FluidStack fluid) {
-        if (fluid == null || filter.test(fluid)) {
-            super.setFluid(fluid);
-        }
+        super.setFluid(fluid);
     }
 
     @Override

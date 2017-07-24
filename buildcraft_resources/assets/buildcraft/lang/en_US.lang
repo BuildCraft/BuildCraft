@@ -193,8 +193,8 @@ buildcraft.mj.static.long=%s Minecraft Joules
 buildcraft.mj.static.short=%s MJ
 buildcraft.mj.flow.long=%s Minecraft Joules per tick
 buildcraft.mj.flow.short=%s MJ/t
-buildcraft.mj.flow.second.long=%s Minecraft Joules per second
-buildcraft.mj.flow.second.short=%s MJ/s
+buildcraft.mj.flow.seconds.long=%s Minecraft Joules per second
+buildcraft.mj.flow.seconds.short=%s MJ/s
 
 fillerpattern.clear=Clear
 fillerpattern.fill=Fill
