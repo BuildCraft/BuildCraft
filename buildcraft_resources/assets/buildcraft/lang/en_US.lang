@@ -193,8 +193,8 @@ buildcraft.mj.static.long=%s Minecraft Joules
 buildcraft.mj.static.short=%s MJ
 buildcraft.mj.flow.long=%s Minecraft Joules per tick
 buildcraft.mj.flow.short=%s MJ/t
-buildcraft.mj.flow.second.long=%s Minecraft Joules per second
-buildcraft.mj.flow.second.short=%s MJ/s
+buildcraft.mj.flow.seconds.long=%s Minecraft Joules per second
+buildcraft.mj.flow.seconds.short=%s MJ/s
 
 fillerpattern.clear=Clear
 fillerpattern.fill=Fill
@@ -687,6 +687,9 @@ buildcraft.guide.chapter.type.pipe=Pipes
 buildcraft.guide.chapter.subtype.unknown=Unknown Subtype!
 buildcraft.guide.chapter.subtype.gear=Gears
 buildcraft.guide.chapter.subtype.tool=Tools
+buildcraft.guide.chapter.subtype.fluid=Fluid
+buildcraft.guide.chapter.subtype.mining=Mining
+buildcraft.guide.chapter.subtype.engine=Engines
 buildcraft.guide.chapter.subtype.pipe_item=Item Transport
 buildcraft.guide.chapter.subtype.pipe_plug=Pluggables
 buildcraft.guide.chapter.subtype.refining=Refining
@@ -702,8 +705,10 @@ buildcraft.guide.chapter.mod.unknown=Unknown Mod!
 buildcraft.guide.chapter.mod.buildcraft=BuildCraft
 
 buildcraft.guide.chapter.submod.unknown=Unknown SubMod!
+buildcraft.guide.chapter.submod.lib=Lib
 buildcraft.guide.chapter.submod.core=Core
 buildcraft.guide.chapter.submod.factory=Factory
+buildcraft.guide.chapter.submod.energy=Energy
 buildcraft.guide.chapter.submod.transport=Transport
 
 buildcraft.guide.chapter.title.gate_base=Gates

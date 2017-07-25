@@ -32,7 +32,7 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.json.JsonVariableObject;
 import buildcraft.lib.misc.JsonUtil;
 
-/** {@link JsonModel} but any element can change depening on variables. */
+/** {@link JsonModel} but any element can change depending on variables. */
 public class JsonVariableModel extends JsonVariableObject {
     // Never allow ao or textures to be variable - they need to be hardcoded so that we can stitch them
     public final boolean ambientOcclusion;
@@ -67,7 +67,7 @@ public class JsonVariableModel extends JsonVariableObject {
         JsonArray array = elem.getAsJsonArray();
         JsonVariableModelPart[] to = new JsonVariableModelPart[array.size()];
         for (int i = 0; i < to.length; i++) {
-            to[i] = JsonVariableModelPart.deserialiseModelPart(array.get(i), fnCtx, ctx);
+            to[i] = JsonVariableModelPart.deserializeModelPart(array.get(i), fnCtx, ctx);
         }
         return to;
     }

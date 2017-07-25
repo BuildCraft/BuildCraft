@@ -29,13 +29,13 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
     public final IRefineryRegistry<ICoolableRecipe> coolableRegistry = new SingleRegistry<>();
 
     @Override
-    public IHeatableRecipe createHeatingRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo, int ticks) {
-        return new HeatableRecipe(ticks, in, out, heatFrom, heatTo);
+    public IHeatableRecipe createHeatingRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo) {
+        return new HeatableRecipe(in, out, heatFrom, heatTo);
     }
 
     @Override
-    public ICoolableRecipe createCoolableRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo, int ticks) {
-        return new CoolableRecipe(ticks, in, out, heatFrom, heatTo);
+    public ICoolableRecipe createCoolableRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo) {
+        return new CoolableRecipe(in, out, heatFrom, heatTo);
     }
 
     @Override
@@ -54,7 +54,7 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
     }
 
     @Override
-    public IRefineryRegistry<IDistillationRecipe> getDistilationRegistry() {
+    public IRefineryRegistry<IDistillationRecipe> getDistillationRegistry() {
         return distillationRegistry;
     }
 
@@ -156,21 +156,14 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
     }
 
     public static abstract class HeatExchangeRecipe extends RefineryRecipe implements IHeatExchangerRecipe {
-        private final int ticks;
         private final FluidStack out;
         private final int heatFrom, heatTo;
 
-        public HeatExchangeRecipe(int ticks, FluidStack in, FluidStack out, int heatFrom, int heatTo) {
+        public HeatExchangeRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo) {
             super(in);
-            this.ticks = ticks;
             this.out = out;
             this.heatFrom = heatFrom;
             this.heatTo = heatTo;
-        }
-
-        @Override
-        public int ticks() {
-            return ticks;
         }
 
         @Override
@@ -190,14 +183,14 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
     }
 
     public static class HeatableRecipe extends HeatExchangeRecipe implements IHeatableRecipe {
-        public HeatableRecipe(int ticks, FluidStack in, FluidStack out, int heatFrom, int heatTo) {
-            super(ticks, in, out, heatFrom, heatTo);
+        public HeatableRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo) {
+            super(in, out, heatFrom, heatTo);
         }
     }
 
     public static class CoolableRecipe extends HeatExchangeRecipe implements ICoolableRecipe {
-        public CoolableRecipe(int ticks, FluidStack in, FluidStack out, int heatFrom, int heatTo) {
-            super(ticks, in, out, heatFrom, heatTo);
+        public CoolableRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo) {
+            super(in, out, heatFrom, heatTo);
         }
     }
 }

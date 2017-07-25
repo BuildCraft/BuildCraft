@@ -9,6 +9,7 @@ package buildcraft.transport.pipe.behaviour;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -20,7 +21,6 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.pipe.IFlowFluid;
@@ -111,6 +111,7 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
         return flow.tryExtractItems(count, dir, null, StackFilter.ALL, simulate);
     }
 
+    @Nullable
     protected FluidStack extractFluid(IFlowFluid flow, EnumFacing dir, int millibuckets, boolean simulate) {
         return flow.tryExtractFluid(millibuckets, dir, null, simulate);
     }

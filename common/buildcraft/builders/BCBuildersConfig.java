@@ -35,7 +35,7 @@ public class BCBuildersConfig {
         none.setTo(propBptStoreExternalThreshold);
 
         propQuarryFrameMinHeight = BCCoreConfig.config.get("general", "quarryFrameMinHeight", 4);
-        propQuarryFrameMinHeight.setComment("The minimum height that all quarry frames must be. A value of 1 will look strange when it drills the toppermost layer.");
+        propQuarryFrameMinHeight.setComment("The minimum height that all quarry frames must be. A value of 1 will look strange when it drills the uppermost layer.");
         propQuarryFrameMinHeight.setMinValue(1);
         none.setTo(propQuarryFrameMinHeight);
 

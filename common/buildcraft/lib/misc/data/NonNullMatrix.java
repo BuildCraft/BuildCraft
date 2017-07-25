@@ -42,15 +42,15 @@ public class NonNullMatrix<T> extends AbstractList<T> {
 
     /** Creates a {@link NonNullMatrix} from the given 2-dim array, replacing all null values with the given nonnull
      * replacement. */
-    public NonNullMatrix(T[][] from, @Nonnull T nullReplacor) {
+    public NonNullMatrix(T[][] from, @Nonnull T nullReplacer) {
         this.width = from.length;
         this.height = width == 0 ? 0 : from[0].length;
-        internalList = NonNullList.withSize(width * height, nullReplacor);
+        internalList = NonNullList.withSize(width * height, nullReplacer);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 T val = from[x][y];
                 if (val == null) {
-                    set(x, y, nullReplacor);
+                    set(x, y, nullReplacer);
                 } else {
                     set(x, y, val);
                 }

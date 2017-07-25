@@ -3,11 +3,14 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
+
 package buildcraft.lib.misc.data;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 
@@ -243,8 +246,39 @@ public class Box implements IBox {
         return PositionUtil.randomBlockPos(rand, min, max.add(1, 1, 1));
     }
 
+    /** Delegate for {@link PositionUtil#isCorner(BlockPos, BlockPos, BlockPos)} */
+    public boolean isCorner(BlockPos pos) {
+        return PositionUtil.isCorner(min, max, pos);
+    }
+
+    /** Delegate for {@link PositionUtil#isOnEdge(BlockPos, BlockPos, BlockPos)} */
     public boolean isOnEdge(BlockPos pos) {
         return PositionUtil.isOnEdge(min, max, pos);
+    }
+
+    /** Delegate for {@link PositionUtil#isOnFace(BlockPos, BlockPos, BlockPos)} */
+    public boolean isOnFace(BlockPos pos) {
+        return PositionUtil.isOnFace(min, max, pos);
+    }
+
+    public boolean doesIntersectWith(Box box) {
+        if (isInitialized() && box.isInitialized()) {
+            return min.getX() <= box.max.getX() && max.getX() >= box.min.getX()//
+                && min.getY() <= box.max.getY() && max.getY() >= box.min.getY() //
+                && min.getZ() <= box.max.getZ() && max.getZ() >= box.min.getZ();
+        }
+        return false;
+    }
+
+    /** @return The intersection box (if these two boxes are intersecting) or null if they were not. */
+    @Nullable
+    public Box getIntersect(Box box) {
+        if (doesIntersectWith(box)) {
+            BlockPos min2 = VecUtil.max(min, box.min);
+            BlockPos max2 = VecUtil.min(max, box.max);
+            return new Box(min2, max2);
+        }
+        return null;
     }
 
     public void readData(PacketBuffer stream) {

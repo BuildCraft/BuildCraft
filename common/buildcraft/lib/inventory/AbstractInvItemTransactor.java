@@ -97,7 +97,7 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
             before = insert(slot, before, false);
         }
         if (!before.isEmpty()) {
-            // We have a bad implemtation that doesn't respect simulation properly- we are in an invalid state at this
+            // We have a bad implementation that doesn't respect simulation properly- we are in an invalid state at this
             // point with no chance of recovery
             throw new IllegalStateException("Somehow inserting a lot of items at once failed when we thought it shouldn't! ("
                 + getClass() + ")");
@@ -107,7 +107,7 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
 
     @Override
     public NonNullList<ItemStack> insert(NonNullList<ItemStack> stacks, boolean simulate) {
-        // WRANING: SLOW IMPL
+        // WARNING: SLOW IMPL
         return stacks;
     }
 

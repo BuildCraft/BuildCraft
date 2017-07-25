@@ -138,50 +138,7 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
     @Override
     protected void drawForegroundLayer() {
         String title = LocaleUtil.localize("gui.pipes.emzuli.title");
-        fontRenderer.drawString(title, rootElement.getX() + (xSize - fontRenderer.getStringWidth(title)) / 2,
-            rootElement.getY() + 6, 0x404040);
-        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), rootElement.getX() + 8,
-            rootElement.getY() + ySize - 93, 0x404040);
+        fontRenderer.drawString(title, rootElement.getX() + (xSize - fontRenderer.getStringWidth(title)) / 2, rootElement.getY() + 6, 0x404040);
+        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), rootElement.getX() + 8, rootElement.getY() + ySize - 93, 0x404040);
     }
-    /*
-     * public final class GuiPaintButton extends GuiButtonDrawable {
-     * private final SlotIndex index;
-     * 
-     * public GuiPaintButton(GuiBC8<?> gui, int buttonId, int x, int y, SlotIndex index) {
-     * super(gui, buttonId, x, y, ICON_BUTTON_UP, ICON_BUTTON_DOWN);
-     * this.index = index;
-     * this.width = 20;
-     * this.height = 20;
-     * setBehaviour(IButtonBehaviour.DEFAULT);
-     * }
-     * 
-     * private EnumDyeColor getCurrentColour() {
-     * return container.behaviour.slotColours.get(index);
-     * }
-     * 
-     * @Override
-     * public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-     * super.drawButton(mc, mouseX, mouseY);
-     * EnumDyeColor colour = getCurrentColour();
-     * if (colour == null) {
-     * ICON_NO_PAINT.drawAt(getX() + 2, getY() + 2);
-     * } else {
-     * GuiIcon.drawAt(BCTransportSprites.ACTION_PIPE_COLOUR[colour.ordinal()], getX() + 2, getY() + 2, 16);
-     * }
-     * }
-     * 
-     * @Override
-     * public void addToolTips(List<ToolTip> tooltips) {
-     * if (contains(gui.mouse)) {
-     * EnumDyeColor color = getCurrentColour();
-     * if (color != null) {
-     * tooltips.add(new ToolTip(
-     * LocaleUtil.localize("gui.pipes.emzuli.paint", ColourUtil.getTextFullTooltip(color))));
-     * } else {
-     * tooltips.add(new ToolTip(LocaleUtil.localize("gui.pipes.emzuli.nopaint")));
-     * }
-     * }
-     * }
-     * }
-     */
 }

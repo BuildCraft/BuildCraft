@@ -23,18 +23,18 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 public class ModelCacheMultipleSame<K, T> implements IModelCache<K> {
     private final IModelCache<K> mainCache;
     private final IModelKeyMultipleSameMapper<K, T> mapper;
-    private final IModelCache<T> seperateCache;
+    private final IModelCache<T> separateCache;
 
-    public ModelCacheMultipleSame(IModelKeyMultipleSameMapper<K, T> mapper, IModelCache<T> seperateCache) {
+    public ModelCacheMultipleSame(IModelKeyMultipleSameMapper<K, T> mapper, IModelCache<T> separateCache) {
         this.mainCache = new ModelCache<>(this::load);
         this.mapper = mapper;
-        this.seperateCache = seperateCache;
+        this.separateCache = separateCache;
     }
 
     private List<BakedQuad> load(K key) {
         List<BakedQuad> quads = new ArrayList<>();
         for (T to : mapper.map(key)) {
-            quads.addAll(seperateCache.bake(to));
+            quads.addAll(separateCache.bake(to));
         }
         return quads;
     }
@@ -51,7 +51,7 @@ public class ModelCacheMultipleSame<K, T> implements IModelCache<K> {
     @Override
     public void clear() {
         mainCache.clear();
-        seperateCache.clear();
+        separateCache.clear();
     }
 
     public interface IModelKeyMultipleSameMapper<F, T> {

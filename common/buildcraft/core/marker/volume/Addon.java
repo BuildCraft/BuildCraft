@@ -43,6 +43,9 @@ public abstract class Addon {
     public void onRemoved() {
     }
 
+    public void onBoxSizeChange() {
+    }
+
     public void onPlayerRightClick(EntityPlayer player) {
     }
 

@@ -3,6 +3,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
+
 package buildcraft.core.statements;
 
 import java.util.Locale;
@@ -31,21 +32,13 @@ import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
 
 public class TriggerFluidContainer extends BCStatement implements ITriggerExternal {
-
-    public enum State {
-
-        Empty,
-        Contains,
-        Space,
-        Full;
-
-        public static final State[] VALUES = values();
-    }
-
     public State state;
 
     public TriggerFluidContainer(State state) {
-        super("buildcraft:fluid." + state.name().toLowerCase(Locale.ROOT), "buildcraft.fluid." + state.name().toLowerCase(Locale.ROOT));
+        super(
+            "buildcraft:fluid." + state.name().toLowerCase(Locale.ROOT),
+            "buildcraft.fluid." + state.name().toLowerCase(Locale.ROOT)
+        );
         this.state = state;
     }
 
@@ -57,7 +50,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 
     @Override
     public int maxParameters() {
-        return state == State.Contains || state == State.Space ? 1 : 0;
+        return state == State.CONTAINS || state == State.SPACE ? 1 : 0;
     }
 
     @Override
@@ -86,10 +79,10 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
             }
 
             switch (state) {
-                case Empty:
+                case EMPTY:
                     FluidStack drained = handler.drain(1, false);
                     return drained == null || drained.amount <= 0;
-                case Contains:
+                case CONTAINS:
                     for (IFluidTankProperties c : liquids) {
                         if (c == null) continue;
                         FluidStack fluid = c.getContents();
@@ -98,7 +91,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
                         }
                     }
                     return false;
-                case Space:
+                case SPACE:
                     if (searchedFluid == null) {
                         for (IFluidTankProperties c : liquids) {
                             if (c == null) continue;
@@ -110,7 +103,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
                         return false;
                     }
                     return handler.fill(searchedFluid, false) > 0;
-                case Full:
+                case FULL:
                     if (searchedFluid == null) {
                         for (IFluidTankProperties c : liquids) {
                             if (c == null) continue;
@@ -136,5 +129,14 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
     @Override
     public IStatement[] getPossible() {
         return BCCoreStatements.TRIGGER_FLUID_ALL;
+    }
+
+    public enum State {
+        EMPTY,
+        CONTAINS,
+        SPACE,
+        FULL;
+
+        public static final State[] VALUES = values();
     }
 }

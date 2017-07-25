@@ -42,7 +42,7 @@ public abstract class GuidePart {
             return new PagePosition(page, added);
         }
 
-        public PagePosition guarenteeSpace(int required, int maxPageHeight) {
+        public PagePosition guaranteeSpace(int required, int maxPageHeight) {
             PagePosition next = nextLine(required, maxPageHeight);
             if (next.page == page) return this;
             return next;

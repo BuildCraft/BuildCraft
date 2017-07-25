@@ -6,6 +6,7 @@ package buildcraft.lib;
 
 import java.util.function.Consumer;
 
+import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -21,9 +22,9 @@ import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
+import buildcraft.lib.chunkload.ChunkLoaderManager;
 import buildcraft.lib.expression.ExpressionDebugManager;
 import buildcraft.lib.item.ItemManager;
-import buildcraft.lib.list.ListMatchHandlerFluid;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.net.MessageContainer;
@@ -84,6 +85,8 @@ public class BCLib {
         MessageManager.addMessageType(MessageObjectCacheReply.class, MessageObjectCacheReply.HANDLER, Side.CLIENT);
 
         MinecraftForge.EVENT_BUS.register(BCLibEventDist.INSTANCE);
+
+        ForgeChunkManager.setForcedChunkLoadingCallback(BCLib.INSTANCE, ChunkLoaderManager::rebindTickets);
     }
 
     @Mod.EventHandler
@@ -107,7 +110,6 @@ public class BCLib {
         MessageManager.fmlPostInit();
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();
-        ListMatchHandlerFluid.fmlPostInit();
     }
 
     @Mod.EventHandler

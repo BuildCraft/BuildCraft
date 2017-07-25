@@ -52,11 +52,12 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IPlayerOwned;
 
 import buildcraft.lib.cap.CapabilityHelper;
-import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
+import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
 import buildcraft.lib.debug.BCAdvDebugging;
 import buildcraft.lib.debug.IAdvDebugTarget;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.delta.DeltaManager.EnumDeltaMessage;
+import buildcraft.lib.fluid.TankManager;
 import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.FakePlayerProvider;
@@ -77,7 +78,7 @@ import buildcraft.lib.registry.TagManager.EnumTagTypeMulti;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 
 public abstract class TileBC_Neptune extends TileEntity implements IPayloadReceiver, IAdvDebugTarget, IPlayerOwned {
-    public static final boolean DEBUG_PARTICLES = BCDebugging.shouldDebugLog("tile.debug.particles");
+    public static final boolean DEBUG = BCDebugging.shouldDebugLog("tile.debug.network");
 
     protected static final IdAllocator IDS = new IdAllocator("tile");
 
@@ -108,6 +109,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     protected final CapabilityHelper caps = new CapabilityHelper();
     protected final ItemHandlerManager itemManager = caps.addProvider(new ItemHandlerManager(this::onSlotChange));
+    protected final TankManager tankManager = new TankManager();
 
     /** Handles all of the players that are currently using this tile (have a GUI open) */
     private final Set<EntityPlayer> usingPlayers = Sets.newIdentityHashSet();
@@ -133,7 +135,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         caps.addProvider(itemManager);
     }
 
-    public static <T extends TileBC_Neptune> void registerTile(Class<T> tileClass, String id) {
+    public static <T extends TileEntity> void registerTile(Class<T> tileClass, String id) {
         String regName = TagManager.getTag(id, EnumTagType.REGISTRY_NAME);
         String[] alternatives = TagManager.getMultiTag(id, EnumTagTypeMulti.OLD_REGISTRY_NAME);
         GameRegistry.registerTileEntityWithAlternatives(tileClass, regName, alternatives);
@@ -291,7 +293,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public GameProfile getOwner() {
         if (owner == null) {
             String msg = "[lib.tile] Unknown owner for " + getClass() + " at ";
-            BCLog.logger.warn(msg + StringUtilBC.blockPosToShortString(getPos()));
+            BCLog.logger.warn(msg + StringUtilBC.blockPosToString(getPos()));
             return FakePlayerProvider.NULL_PROFILE;
         }
         return owner;
@@ -334,7 +336,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
                 IBlockState state = world.getBlockState(pos);
                 world.notifyBlockUpdate(pos, state, state, 0);
 
-                if (DEBUG_PARTICLES) {
+                if (DEBUG) {
                     double x = pos.getX() + 0.5;
                     double y = pos.getY() + 0.5;
                     double z = pos.getZ() + 0.5;
@@ -456,22 +458,24 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             readPayload(id, new PacketBufferBC(buf), world.isRemote ? Side.CLIENT : Side.SERVER, null);
             // Make sure that we actually read the entire message rather than just discarding it
             MessageUtil.ensureEmpty(buf, world.isRemote, getClass() + ", id = " + getIdAllocator().getNameFor(id));
+            spawnReceiveParticles(id);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        spawnReceiveParticles();
     }
 
-    private void spawnReceiveParticles() {
-        if (DEBUG_PARTICLES) {
+    private void spawnReceiveParticles(int id) {
+        if (DEBUG) {
+            String name = getIdAllocator().getNameFor(id);
+
             if (world != null) {
                 double x = pos.getX() + 0.5;
                 double y = pos.getY() + 0.5;
                 double z = pos.getZ() + 0.5;
-                double dx = Math.random() - 0.5;
-                double dy = Math.random() - 1;
-                double dz = Math.random() - 0.5;
-                world.spawnParticle(EnumParticleTypes.DAMAGE_INDICATOR, x, y, z, dx, dy, dz);
+                double r = 0.01 + (id & 3) / 4.0;
+                double g = 0.01 + ((id / 4) & 3) / 4.0;
+                double b = 0.01 + ((id / 16) & 3) / 4.0;
+                world.spawnParticle(EnumParticleTypes.REDSTONE, x, y, z, r, g, b);
             }
         }
     }
@@ -485,7 +489,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         MessageUtil.ensureEmpty(buffer, world.isRemote, getClass() + ", id = " + getIdAllocator().getNameFor(id));
 
         if (ctx.side == Side.CLIENT) {
-            spawnReceiveParticles();
+            spawnReceiveParticles(id);
         }
         return null;
     }
@@ -529,12 +533,9 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) deltaManager.receiveDeltaData(false, EnumDeltaMessage.CURRENT_STATE, buffer);
             else if (id == NET_GUI_DATA) deltaManager.receiveDeltaData(true, EnumDeltaMessage.CURRENT_STATE, buffer);
-            else if (id == NET_REN_DELTA_SINGLE)
-                deltaManager.receiveDeltaData(false, EnumDeltaMessage.ADD_SINGLE, buffer);
-            else if (id == NET_GUI_DELTA_SINGLE)
-                deltaManager.receiveDeltaData(true, EnumDeltaMessage.ADD_SINGLE, buffer);
-            else if (id == NET_REN_DELTA_CLEAR)
-                deltaManager.receiveDeltaData(false, EnumDeltaMessage.SET_VALUE, buffer);
+            else if (id == NET_REN_DELTA_SINGLE) deltaManager.receiveDeltaData(false, EnumDeltaMessage.ADD_SINGLE, buffer);
+            else if (id == NET_GUI_DELTA_SINGLE) deltaManager.receiveDeltaData(true, EnumDeltaMessage.ADD_SINGLE, buffer);
+            else if (id == NET_REN_DELTA_CLEAR) deltaManager.receiveDeltaData(false, EnumDeltaMessage.SET_VALUE, buffer);
             else if (id == NET_GUI_DELTA_CLEAR) deltaManager.receiveDeltaData(true, EnumDeltaMessage.SET_VALUE, buffer);
             else if (id == NET_REDRAW) redrawBlock();
             else if (id == NET_ADV_DEBUG) {
@@ -552,10 +553,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        int version = nbt.getInteger("data-version");
-        if (version != BCVersion.CURRENT.dataVersion) {
-            migrateOldNBT(version, nbt);
-        }
+        migrateOldNBT(nbt.getInteger("data-version"), nbt);
         deltaManager.readFromNBT(nbt.getCompoundTag("deltas"));
         if (nbt.hasKey("owner")) {
             owner = NBTUtil.readGameProfileFromNBT(nbt.getCompoundTag("owner"));
@@ -570,9 +568,21 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (nbt.hasKey("items", Constants.NBT.TAG_COMPOUND)) {
             itemManager.deserializeNBT(nbt.getCompoundTag("items"));
         }
+        if (nbt.hasKey("tanks", Constants.NBT.TAG_COMPOUND)) {
+            tankManager.deserializeNBT(nbt.getCompoundTag("tanks"));
+        }
     }
 
-    protected void migrateOldNBT(int version, NBTTagCompound nbt) {}
+    protected void migrateOldNBT(int version, NBTTagCompound nbt) {
+        // 7.99.0 -> 7.99.4
+        // Most tiles with a single tank saved it under "tank"
+        NBTTagCompound tankComp = nbt.getCompoundTag("tank");
+        if (!tankComp.hasNoTags()) {
+            NBTTagCompound tanks = new NBTTagCompound();
+            tanks.setTag("tank", tankComp);
+            nbt.setTag("tanks", tanks);
+        }
+    }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
@@ -586,7 +596,10 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (!items.hasNoTags()) {
             nbt.setTag("items", items);
         }
-
+        NBTTagCompound tanks = tankManager.serializeNBT();
+        if (!tanks.hasNoTags()) {
+            nbt.setTag("tanks", tanks);
+        }
         return nbt;
     }
 

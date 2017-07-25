@@ -63,10 +63,10 @@ public class GuiGate extends GuiStatementSelector<ContainerGate> {
         boolean split = container.gate.isSplitInTwo();
         GateVariant variant = container.gate.variant;
         int triggerWidth = 18 * (variant.numTriggerArgs + 1);
-        int columWidth = 18 * 2 + triggerWidth + 18 * variant.numActionArgs;
+        int columnWidth = 18 * 2 + triggerWidth + 18 * variant.numActionArgs;
 
-        int columnStartFirst = split ? (GUI_WIDTH - 18) / 2 - columWidth : (GUI_WIDTH - columWidth) / 2;
-        int columnStartSecond = columnStartFirst + columWidth + 18;
+        int columnStartFirst = split ? (GUI_WIDTH - 18) / 2 - columnWidth : (GUI_WIDTH - columnWidth) / 2;
+        int columnStartSecond = columnStartFirst + columnWidth + 18;
 
         int numSlots = variant.numSlots;
         positionSlotPair = new IGuiArea[numSlots];
@@ -76,10 +76,10 @@ public class GuiGate extends GuiStatementSelector<ContainerGate> {
             boolean otherColumn = split && i >= container.slotHeight;
             int x = otherColumn ? columnStartSecond : columnStartFirst;
             int y = (otherColumn ? i - container.slotHeight : i) * 18 + 16;
-            positionSlotPair[i] = new GuiRectangle(x, y, columWidth, 18).offset(rootElement);
+            positionSlotPair[i] = new GuiRectangle(x, y, columnWidth, 18).offset(rootElement);
 
-            boolean nextOtherColum = split && i + 1 >= container.slotHeight;
-            if (otherColumn == nextOtherColum && i < numSlots - 1) {
+            boolean nextOtherColumn = split && i + 1 >= container.slotHeight;
+            if (otherColumn == nextOtherColumn && i < numSlots - 1) {
                 positionConnect[i] = new GuiRectangle(x + triggerWidth, y + 9, 18, 18).offset(rootElement);
             }
         }

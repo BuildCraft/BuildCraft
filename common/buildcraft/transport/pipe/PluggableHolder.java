@@ -95,10 +95,10 @@ public final class PluggableHolder {
     }
 
     private void readCreateInternal(PacketBuffer buffer) {
-        ResourceLocation identifer = new ResourceLocation(buffer.readString(256));
-        PluggableDefinition def = PipeApi.pluggableRegistry.getDefinition(identifer);
+        ResourceLocation identifier = new ResourceLocation(buffer.readString(256));
+        PluggableDefinition def = PipeApi.pluggableRegistry.getDefinition(identifier);
         if (def == null) {
-            throw new IllegalStateException("Unknown remote pluggable \"" + identifer + "\"");
+            throw new IllegalStateException("Unknown remote pluggable \"" + identifier + "\"");
         }
         pluggable = def.loadFromBuffer(holder, side, buffer);
         holder.eventBus.registerHandler(pluggable);

@@ -3,6 +3,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
+
 package buildcraft.core.statements;
 
 import buildcraft.api.statements.IStatement;
@@ -19,12 +20,11 @@ import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
 
 public class TriggerRedstoneInput extends BCStatement implements ITriggerInternal {
-
-    boolean active;
+    public final boolean active;
 
     public TriggerRedstoneInput(boolean active) {
         super("buildcraft:redstone.input." + (active ? "active" : "inactive"),//
-            "buildcraft.redtone.input." + (active ? "active" : "inactive"));
+                "buildcraft.redstone.input." + (active ? "active" : "inactive"));
         this.active = active;
     }
 

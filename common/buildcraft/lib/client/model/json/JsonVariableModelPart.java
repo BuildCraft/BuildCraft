@@ -31,7 +31,7 @@ public abstract class JsonVariableModelPart {
 
     public abstract void addQuads(List<MutableQuad> to, ITextureGetter spriteLookup);
 
-    public static JsonVariableModelPart deserialiseModelPart(JsonElement json, FunctionContext fnCtx, ResourceLoaderContext ctx) {
+    public static JsonVariableModelPart deserializeModelPart(JsonElement json, FunctionContext fnCtx, ResourceLoaderContext ctx) {
         if (!json.isJsonObject()) {
             throw new JsonSyntaxException("Expected an object, got " + json);
         }

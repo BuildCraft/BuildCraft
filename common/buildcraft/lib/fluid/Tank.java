@@ -1,7 +1,9 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
+/*
+ * Copyright (c) 2016 SpaceToad and the BuildCraft team
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 package buildcraft.lib.fluid;
 
 import java.util.HashMap;
@@ -19,7 +21,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -28,6 +29,7 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
 
@@ -35,15 +37,16 @@ import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo;
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.net.cache.NetworkedFluidStackCache;
 
-/** Provides a useful implementation of a fluid tank that can save + load, and has a few helper funtions.
+/** Provides a useful implementation of a fluid tank that can save + load, and has a few helper functions.
  * 
  * Can optionally specify a filter to only allow a limited types of fluids in the tank. */
-public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializable<NBTTagCompound> {
+public class Tank extends FluidTank implements IFluidHandlerAdv {
     public static final String DEFAULT_HELP_KEY = "buildcraft.help.tank.generic";
 
     public int colorRenderCache = 0xFFFFFF;
@@ -61,8 +64,8 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
     @Nonnull
     private final Predicate<FluidStack> filter;
 
-    private NetworkedFluidStackCache.Link clientFluid = null;
-    private int clientAmount = 0;
+    NetworkedFluidStackCache.Link clientFluid = null;
+    int clientAmount = 0;
 
     public ElementHelpInfo helpInfo;
 
@@ -82,7 +85,8 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
         this.name = name;
         this.tile = tile;
         this.filter = filter == null ? ((f) -> true) : filter;
-        helpInfo = new ElementHelpInfo("buildcraft.help.tank.title." + name, 0xFF_00_00_00 | name.hashCode(), DEFAULT_HELP_KEY);
+        helpInfo = new ElementHelpInfo("buildcraft.help.tank.title." + name, 0xFF_00_00_00 | name.hashCode(),
+            DEFAULT_HELP_KEY);
     }
 
     @Nonnull
@@ -105,36 +109,27 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
         return fluidStack != null ? fluidStack.getFluid() : null;
     }
 
-    @Override
     public NBTTagCompound serializeNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        writeToNBT(nbt);
-        return nbt;
-    }
-
-    @Override
-    public void deserializeNBT(NBTTagCompound nbt) {
-        readFromNBT(nbt);
+        return writeToNBT(new NBTTagCompound());
     }
 
     @Override
     public final NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        NBTTagCompound tankData = new NBTTagCompound();
-        super.writeToNBT(tankData);
-        writeTankToNBT(tankData);
-        nbt.setTag(name, tankData);
+        super.writeToNBT(nbt);
+        writeTankToNBT(nbt);
         return nbt;
     }
 
     @Override
     public final FluidTank readFromNBT(NBTTagCompound nbt) {
         if (nbt.hasKey(name)) {
-            // allow to read empty tanks
-            setFluid(null);
-
+            // Old style of saving + loading
             NBTTagCompound tankData = nbt.getCompoundTag(name);
             super.readFromNBT(tankData);
             readTankFromNBT(tankData);
+        } else {
+            super.readFromNBT(nbt);
+            readTankFromNBT(nbt);
         }
         return this;
     }
@@ -189,9 +184,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
 
     @Override
     public void setFluid(FluidStack fluid) {
-        if (fluid == null || canFillFluidType(fluid)) {
-            super.setFluid(fluid);
-        }
+        super.setFluid(fluid);
     }
 
     @Override
@@ -273,7 +266,8 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
                     hasFilled = true;
                     int reallyAccepted = fill(result.fluidStack, true);
                     if (reallyAccepted != accepted) {
-                        throw new IllegalStateException("We seem to be buggy! (accepted = " + accepted + ", reallyAccepted = " + reallyAccepted + ")");
+                        throw new IllegalStateException("We seem to be buggy! (accepted = " + accepted
+                            + ", reallyAccepted = " + reallyAccepted + ")");
                     }
                     held.shrink(1);
                     if (isSurvival) {
@@ -298,8 +292,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
             if (hasFilled) {
                 FluidStack fl = getFluid();
                 if (fl != null) {
-                    SoundEvent sound = fl.getFluid().getEmptySound(container.player.world, container.player.getPosition());
-                    container.player.world.playSound(null, player.getPosition(), sound, SoundCategory.BLOCKS, 1, 1);
+                    SoundUtil.playBucketEmpty(player.world, player.getPosition(), fl);
                 }
                 return;
             }
@@ -321,8 +314,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
                 player.inventory.setItemStack(filledContainer);
                 ((EntityPlayerMP) player).updateHeldItem();
             }
-            SoundEvent sound = reallyDrained.getFluid().getFillSound(container.player.world, container.player.getPosition());
-            container.player.world.playSound(null, player.getPosition(), sound, SoundCategory.BLOCKS, 1, 1);
+            SoundUtil.playBucketFill(player.world, player.getPosition(), reallyDrained);
         }
     }
 

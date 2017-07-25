@@ -6,10 +6,14 @@
 
 package buildcraft.lib.client.resource;
 
+import java.io.IOException;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.PngSizeInfo;
 import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 
@@ -18,7 +22,6 @@ import buildcraft.lib.client.guide.parts.GuideImage;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 
 public class TextureResourceHolder extends ResourceHolder implements GuidePartFactory {
-    private SimpleTexture texture;
     private boolean langFallback;
     private final int dispWidth, dispHeight;
     private int texWidth, texHeight;
@@ -39,20 +42,17 @@ public class TextureResourceHolder extends ResourceHolder implements GuidePartFa
             langFallback = false;
         } else if (createFrom(getLocationForLang(true))) {
             langFallback = true;
-        } else {
-            texture = null;
         }
         return null;
     }
 
-    private boolean createFrom(ResourceLocation locationBase) {
-        texture = new SimpleTexture(locationBase);
-        if (Minecraft.getMinecraft().renderEngine.loadTexture(locationBase, texture)) {
-            Minecraft.getMinecraft().renderEngine.bindTexture(locationBase);
-            texWidth = GL11.glGetInteger(GL11.GL_TEXTURE_WIDTH);
-            texHeight = GL11.glGetInteger(GL11.GL_TEXTURE_HEIGHT);
+    private boolean createFrom(ResourceLocation location) {
+        try (IResource res = Minecraft.getMinecraft().getResourceManager().getResource(location)) {
+            PngSizeInfo info = new PngSizeInfo(res.getInputStream());
+            texWidth = info.pngWidth;
+            texHeight = info.pngHeight;
             return true;
-        } else {
+        } catch (IOException io) {
             return false;
         }
     }
@@ -64,5 +64,4 @@ public class TextureResourceHolder extends ResourceHolder implements GuidePartFa
     public GuideImage createNew(GuiGuide gui) {
         return new GuideImage(gui, getLocationForLang(langFallback), texWidth, texHeight, dispWidth, dispHeight);
     }
-
 }

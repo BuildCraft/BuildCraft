@@ -59,18 +59,18 @@ public class BCCoreStatements {
     public static final TriggerPower TRIGGER_POWER_LOW = new TriggerPower(false);
     public static final TriggerPower[] TRIGGER_POWER = { TRIGGER_POWER_LOW, TRIGGER_POWER_HIGH };
 
-    public static final TriggerInventory TRIGGER_INVENTORY_EMPTY = new TriggerInventory(TriggerInventory.State.Empty);
-    public static final TriggerInventory TRIGGER_INVENTORY_CONTAINS = new TriggerInventory(TriggerInventory.State.Contains);
-    public static final TriggerInventory TRIGGER_INVENTORY_SPACE = new TriggerInventory(TriggerInventory.State.Space);
-    public static final TriggerInventory TRIGGER_INVENTORY_FULL = new TriggerInventory(TriggerInventory.State.Full);
+    public static final TriggerInventory TRIGGER_INVENTORY_EMPTY = new TriggerInventory(TriggerInventory.State.EMPTY);
+    public static final TriggerInventory TRIGGER_INVENTORY_CONTAINS = new TriggerInventory(TriggerInventory.State.CONTAINS);
+    public static final TriggerInventory TRIGGER_INVENTORY_SPACE = new TriggerInventory(TriggerInventory.State.SPACE);
+    public static final TriggerInventory TRIGGER_INVENTORY_FULL = new TriggerInventory(TriggerInventory.State.FULL);
     public static final TriggerInventory[] TRIGGER_INVENTORY = {//
         TRIGGER_INVENTORY_EMPTY, TRIGGER_INVENTORY_SPACE, TRIGGER_INVENTORY_CONTAINS, TRIGGER_INVENTORY_FULL //
     };
 
-    public static final TriggerFluidContainer TRIGGER_FLUID_EMPTY = new TriggerFluidContainer(TriggerFluidContainer.State.Empty);
-    public static final TriggerFluidContainer TRIGGER_FLUID_CONTAINS = new TriggerFluidContainer(TriggerFluidContainer.State.Contains);
-    public static final TriggerFluidContainer TRIGGER_FLUID_SPACE = new TriggerFluidContainer(TriggerFluidContainer.State.Space);
-    public static final TriggerFluidContainer TRIGGER_FLUID_FULL = new TriggerFluidContainer(TriggerFluidContainer.State.Full);
+    public static final TriggerFluidContainer TRIGGER_FLUID_EMPTY = new TriggerFluidContainer(TriggerFluidContainer.State.EMPTY);
+    public static final TriggerFluidContainer TRIGGER_FLUID_CONTAINS = new TriggerFluidContainer(TriggerFluidContainer.State.CONTAINS);
+    public static final TriggerFluidContainer TRIGGER_FLUID_SPACE = new TriggerFluidContainer(TriggerFluidContainer.State.SPACE);
+    public static final TriggerFluidContainer TRIGGER_FLUID_FULL = new TriggerFluidContainer(TriggerFluidContainer.State.FULL);
     public static final TriggerFluidContainer[] TRIGGER_FLUID = {//
         TRIGGER_FLUID_EMPTY, TRIGGER_FLUID_SPACE, TRIGGER_FLUID_CONTAINS, TRIGGER_FLUID_FULL //
     };

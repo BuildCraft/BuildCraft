@@ -29,17 +29,10 @@ import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
 
 public abstract class Snapshot {
-    private static final String NBT_HEADER = "header";
-    public Header header;
+    public Key key = new Key(new byte[0]);
     public BlockPos size;
     public EnumFacing facing;
     public BlockPos offset;
-
-    public Snapshot(Header header) {
-        this.header = header;
-    }
-
-    public Snapshot() {}
 
     public static Snapshot create(EnumSnapshotType type) {
         switch (type) {
@@ -70,9 +63,7 @@ public abstract class Snapshot {
 
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-        if (header != null) {
-            nbt.setTag(NBT_HEADER, header.serializeNBT());
-        }
+        nbt.setTag("key", key.serializeNBT());
         nbt.setTag("size", NBTUtil.createPosTag(size));
         nbt.setTag("facing", NBTUtilBC.writeEnum(facing));
         nbt.setTag("offset", NBTUtil.createPosTag(offset));
@@ -80,11 +71,7 @@ public abstract class Snapshot {
     }
 
     public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
-        Header h = new Header(nbt.getCompoundTag(NBT_HEADER));
-        if (h.hash == null || h.hash.length != HashUtil.DIGEST_LENGTH) {
-            h = h.withHash(computeHash(nbt));
-        }
-        header = h;
+        key = new Key(nbt.getCompoundTag("key"));
         size = NBTUtil.getPosFromTag(nbt.getCompoundTag("size"));
         facing = NBTUtilBC.readEnum(nbt.getTag("facing"), EnumFacing.class);
         offset = NBTUtil.getPosFromTag(nbt.getCompoundTag("offset"));
@@ -92,74 +79,106 @@ public abstract class Snapshot {
 
     abstract public EnumSnapshotType getType();
 
-    public final byte[] computeHash() {
-        return computeHash(writeToNBT(this));
-    }
-
-    private static byte[] computeHash(NBTTagCompound nbt) {
-        NBTTagCompound nbtHeader = null;
-        if (nbt.hasKey(NBT_HEADER, Constants.NBT.TAG_COMPOUND)) {
-            // Don't let the hash depend on the header
-            nbtHeader = nbt.getCompoundTag(NBT_HEADER);
-            nbt.removeTag(NBT_HEADER);
+    public void computeKey() {
+        NBTTagCompound nbt = writeToNBT(this);
+        if (nbt.hasKey("key", Constants.NBT.TAG_COMPOUND)) {
+            nbt.removeTag("key");
         }
-        try {
-            return HashUtil.computeHash(nbt);
-        } finally {
-            // Re-add the header nbt - callers probably expect the header tag to still be there
-            if (nbtHeader != null) {
-                nbt.setTag(NBT_HEADER, nbtHeader);
-            }
-        }
+        key = new Key(HashUtil.computeHash(nbt));
     }
 
     @Override
     public String toString() {
-        return getType() + " - " + StringUtilBC.blockPosToShortString(size).replace(',', 'x') + " = " + header;
+        return "Snapshot{" +
+            "key=" + key +
+            ", size=" + StringUtilBC.blockPosAsSizeToString(size) +
+            ", facing=" + facing +
+            ", offset=" + offset +
+            "}";
     }
 
-    public static class Header {
+    public static class Key {
         public final byte[] hash;
-        public final UUID owner;
-        public final Date created;
-        public final String name;
 
-        public Header(byte[] hash, UUID owner, Date created, String name) {
+        @SuppressWarnings("WeakerAccess")
+        public Key(byte[] hash) {
             this.hash = hash;
-            this.owner = owner;
-            this.created = created;
-            this.name = name;
         }
 
-        public Header withHash(byte[] newHash) {
-            return new Header(newHash, owner, created, name);
-        }
-
-        public Header(NBTTagCompound nbt) {
+        @SuppressWarnings("WeakerAccess")
+        public Key(NBTTagCompound nbt) {
             hash = nbt.getByteArray("hash");
-            owner = nbt.getUniqueId("owner");
-            created = new Date(nbt.getLong("created"));
-            name = nbt.getString("name");
+        }
+
+        @SuppressWarnings("WeakerAccess")
+        public Key(PacketBufferBC buffer) {
+            hash = buffer.readByteArray();
         }
 
         public NBTTagCompound serializeNBT() {
             NBTTagCompound nbt = new NBTTagCompound();
             nbt.setByteArray("hash", hash);
+            return nbt;
+        }
+
+        public void writeToByteBuf(PacketBufferBC buffer) {
+            buffer.writeByteArray(hash);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || !(o == null || getClass() != o.getClass()) && Arrays.equals(hash, ((Key) o).hash);
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(hash);
+        }
+
+        @Override
+        public String toString() {
+            return HashUtil.convertHashToString(hash);
+        }
+    }
+
+    public static class Header {
+        public final Key key;
+        public final UUID owner;
+        public final Date created;
+        public final String name;
+
+        public Header(Key key, UUID owner, Date created, String name) {
+            this.key = key;
+            this.owner = owner;
+            this.created = created;
+            this.name = name;
+        }
+
+        public Header(NBTTagCompound nbt) {
+            key = new Key(nbt.getCompoundTag("key"));
+            owner = nbt.getUniqueId("owner");
+            created = new Date(nbt.getLong("created"));
+            name = nbt.getString("name");
+        }
+
+        public Header(PacketBufferBC buffer) {
+            key = new Key(buffer);
+            owner = buffer.readUniqueId();
+            created = new Date(buffer.readLong());
+            name = buffer.readString();
+        }
+
+        public NBTTagCompound serializeNBT() {
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setTag("key", key.serializeNBT());
             nbt.setUniqueId("owner", owner);
             nbt.setLong("created", created.getTime());
             nbt.setString("name", name);
             return nbt;
         }
 
-        public Header(PacketBufferBC buffer) {
-            hash = buffer.readByteArray();
-            owner = buffer.readUniqueId();
-            created = new Date(buffer.readLong());
-            name = buffer.readString();
-        }
-
         public void writeToByteBuf(PacketBufferBC buffer) {
-            buffer.writeByteArray(hash);
+            key.writeToByteBuf(buffer);
             buffer.writeUniqueId(owner);
             buffer.writeLong(created.getTime());
             buffer.writeString(name);
@@ -167,30 +186,6 @@ public abstract class Snapshot {
 
         public EntityPlayer getOwnerPlayer(World world) {
             return world.getPlayerEntityByUUID(owner);
-        }
-
-        @Override
-        public String toString() {
-            return name + " {" + HashUtil.convertHashToString(hash) + "}";
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            Header header = (Header) o;
-
-            return Arrays.equals(hash, header.hash);
-        }
-
-        @Override
-        public int hashCode() {
-            return Arrays.hashCode(hash);
         }
     }
 }

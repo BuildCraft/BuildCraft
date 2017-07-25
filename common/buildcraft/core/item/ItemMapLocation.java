@@ -3,6 +3,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
+
 package buildcraft.core.item;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.misc.data.Box;
 
 import buildcraft.robotics.zone.ZonePlan;
@@ -109,12 +111,9 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
 
                     if (pathNBT.tagCount() > 0) {
                         BlockPos first = NBTUtilBC.readBlockPos(pathNBT.get(0));
-
-                        int x = first.getX();
-                        int y = first.getY();
-                        int z = first.getZ();
-
-                        strings.add(LocaleUtil.localize("{" + x + ", " + y + ", " + z + "} + " + (pathNBT.tagCount() - 1) + " elements"));
+                        if (first != null) {
+                            strings.add(StringUtilBC.blockPosToString(first) + (pathNBT.tagCount() - 1) + " elements");
+                        }
                     }
                 }
                 break;
@@ -331,7 +330,10 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                 List<BlockPos> indexList = new ArrayList<>();
                 NBTTagList pathNBT = (NBTTagList) cpt.getTag("path");
                 for (int i = 0; i < pathNBT.tagCount(); i++) {
-                    indexList.add(NBTUtilBC.readBlockPos(pathNBT.get(i)));
+                    BlockPos pos = NBTUtilBC.readBlockPos(pathNBT.get(i));
+                    if (pos != null){
+                        indexList.add(pos);
+                    }
                 }
                 return indexList;
             }

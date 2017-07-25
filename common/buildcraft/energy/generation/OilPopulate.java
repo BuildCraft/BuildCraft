@@ -3,6 +3,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
+
 package buildcraft.energy.generation;
 
 import java.util.Arrays;
@@ -16,6 +17,7 @@ import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -38,6 +40,7 @@ import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.lib.misc.BlockUtil;
 
 import buildcraft.core.BCCoreBlocks;
+import buildcraft.energy.BCEnergy;
 import buildcraft.energy.BCEnergyFluids;
 
 public final class OilPopulate {
@@ -45,11 +48,11 @@ public final class OilPopulate {
     public static final EventType EVENT_TYPE = EnumHelper.addEnum(EventType.class, "BUILDCRAFT_OIL", new Class[0]);
     private static final byte LARGE_WELL_HEIGHT = 16;
     private static final byte MEDIUM_WELL_HEIGHT = 6;
-    public final Set<String> excessiveBiomeNames = new HashSet<>(Arrays.asList("Desert Oil Field", "Ocean Oil Field"));
-    public final Set<String> surfaceDepositBiomeNames = new HashSet<>();
-    public final Set<String> excludedBiomeNames = new HashSet<>(Arrays.asList("Hell", "The End"));
+    public final Set<ResourceLocation> excessiveBiomes = new HashSet<>(Arrays.asList(new ResourceLocation(BCEnergy.MODID + ":oil_desert"), new ResourceLocation(BCEnergy.MODID + ":oil_ocean")));
+    public final Set<ResourceLocation> surfaceDepositBiomes = new HashSet<>();
+    public final Set<ResourceLocation> excludedBiomes = new HashSet<>(Arrays.asList(new ResourceLocation("minecraft:hell"), new ResourceLocation("minecraft:sky")));
 
-    private enum GenType {
+    public enum GenType {
         LARGE,
         MEDIUM,
         LAKE,
@@ -81,14 +84,14 @@ public final class OilPopulate {
         Biome biome = world.getBiome(new BlockPos(x, 0, z));
 
         // Do not generate oil in the End or Nether
-        if (excludedBiomeNames.contains(biome.getBiomeName())) {
+        if (excludedBiomes.contains(biome.getRegistryName())) {
             return;
         }
 
-        boolean oilBiome = surfaceDepositBiomeNames.contains(biome.getBiomeName());
+        boolean oilBiome = surfaceDepositBiomes.contains(biome.getRegistryName());
 
         double bonus = oilBiome ? 3.0 : 1.0;
-        if (excessiveBiomeNames.contains(biome.getBiomeName())) {
+        if (excessiveBiomes.contains(biome.getRegistryName())) {
             bonus *= 30.0;
         }
         GenType type = GenType.NONE;
@@ -270,7 +273,6 @@ public final class OilPopulate {
         return block == BCEnergyFluids.crudeOil[0].getBlock();
     }
 
-    @SuppressWarnings("unchecked")
     private boolean isReplaceableForLake(World world, Biome biome, int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
         if (world.isAirBlock(pos)) {
@@ -389,13 +391,13 @@ public final class OilPopulate {
 
     private double surfaceDeviation(World world, int x, int y, int z, int radius) {
         int diameter = radius * 2;
-        double centralTendancy = y;
+        double centralTendency = y;
         double deviation = 0;
         for (int i = 0; i < diameter; i++) {
             for (int k = 0; k < diameter; k++) {
-                deviation += getTopBlock(world, x - radius + i, z - radius + k) - centralTendancy;
+                deviation += getTopBlock(world, x - radius + i, z - radius + k) - centralTendency;
             }
         }
-        return Math.abs(deviation / centralTendancy);
+        return Math.abs(deviation / centralTendency);
     }
 }

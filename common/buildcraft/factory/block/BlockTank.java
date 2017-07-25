@@ -34,7 +34,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.factory.tile.TileTank;
 
-public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnection {
+public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnection, TankBlockConnector {
     private static final IProperty<Boolean> JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
     private static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(2 / 16D, 0 / 16D, 2 / 16D, 14 / 16D, 16 / 16D, 14 / 16D);
 
@@ -76,17 +76,14 @@ public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnect
 
     @SideOnly(Side.CLIENT)
     @Override
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        return side.getAxis() != Axis.Y || !(world.getBlockState(pos.offset(side)).getBlock() instanceof BlockTank);
+    public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        return side.getAxis() != Axis.Y || !(world.getBlockState(pos.offset(side)).getBlock() instanceof TankBlockConnector);
     }
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        return state
-                .withProperty(
-                        JOINED_BELOW,
-                        world.getBlockState(pos.down()).getBlock() instanceof BlockTank
-                );
+        boolean isTankBelow = world.getBlockState(pos.down()).getBlock() instanceof TankBlockConnector;
+        return state.withProperty(JOINED_BELOW, isTankBelow);
     }
 
     @Override
@@ -105,20 +102,10 @@ public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnect
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (world.isRemote) {
-            return true;
-        }
-        if (player.getHeldItem(hand).isEmpty()) {
-            return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
-        }
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileTank) {
             TileTank tank = (TileTank) tile;
-            if (FluidUtil.interactWithFluidHandler(player, hand, world, pos, side)) {
-                tank.sendNetworkUpdate(TileBC_Neptune.NET_RENDER_DATA);
-                player.inventoryContainer.detectAndSendChanges();
-                return true;
-            }
+            return tank.onActivate(player, hand);
         }
         return false;
     }

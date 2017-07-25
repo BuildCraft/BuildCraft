@@ -72,8 +72,9 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
     @Override
     public List<FluidStack> computeRequiredFluids(SchematicBlockContext context) {
         List<FluidStack> requiredFluids = new ArrayList<>();
-        if (BlockUtil.drainBlock(context.world, context.pos, false) != null) {
-            requiredFluids.add(BlockUtil.drainBlock(context.world, context.pos, false));
+        FluidStack fluid = BlockUtil.drainBlock(context.world, context.pos, false);
+        if (fluid != null) {
+            requiredFluids.add(fluid);
         }
         return requiredFluids;
     }

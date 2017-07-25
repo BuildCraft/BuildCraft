@@ -19,8 +19,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.util.Constants;
-
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
@@ -62,7 +60,7 @@ public class Lock {
             throw new RuntimeException(e);
         }
         cause.readFromNBT(causeTag.getCompoundTag("data"));
-        NBTUtilBC.readCompoundList(nbt.getTagList("targets", Constants.NBT.TAG_COMPOUND)).map(targetTag -> {
+        NBTUtilBC.readCompoundList(nbt.getTag("targets")).map(targetTag -> {
             Target target;
             try {
                 target = NBTUtilBC.readEnum(targetTag.getTag("type"), Target.EnumTarget.class).clazz.newInstance();

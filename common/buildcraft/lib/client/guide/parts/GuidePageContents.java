@@ -83,7 +83,7 @@ public class GuidePageContents extends GuidePageBase {
             pageEntries.put(text, entry);
         }
 
-        parentNode.sortChildrenRecursivly();
+        parentNode.sortChildrenRecursively();
     }
 
     @Override

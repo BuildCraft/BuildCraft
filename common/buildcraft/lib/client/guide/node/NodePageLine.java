@@ -63,10 +63,10 @@ public class NodePageLine implements Comparable<NodePageLine> {
         return null;
     }
 
-    public void sortChildrenRecursivly() {
+    public void sortChildrenRecursively() {
         Collections.sort(children);
         for (NodePageLine child : children) {
-            child.sortChildrenRecursivly();
+            child.sortChildrenRecursively();
         }
     }
 

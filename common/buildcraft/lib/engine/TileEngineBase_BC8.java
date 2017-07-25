@@ -27,6 +27,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjReceiver;
@@ -38,6 +39,7 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.misc.collect.OrderedEnumMap;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.PacketBufferBC;
@@ -146,6 +148,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     public EnumActionResult attemptRotation() {
+        BCLog.logger.info("[lib.engine] Attempt rotation @ " + StringUtilBC.blockPosToString(getPos()));
         OrderedEnumMap<EnumFacing> possible = VanillaRotationHandlers.ROTATE_FACING;
         EnumFacing current = currentDirection;
         for (int i = 0; i < 6; i++) {
@@ -174,6 +177,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     public void rotateIfInvalid() {
+        BCLog.logger.info("[lib.engine] rotateIfInvalid @ " + StringUtilBC.blockPosToString(getPos()));
         if (currentDirection != null && isFacingReceiver(currentDirection)) {
             return;
         }
@@ -432,14 +436,14 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     public void invalidate() {
         super.invalidate();
         // tileCache = null;
-        // checkOrienation = true;
+        // checkOrientation = true;
     }
 
     @Override
     public void validate() {
         super.validate();
         // tileCache = null;
-        // checkOrienation = true;
+        // checkOrientation = true;
     }
 
     /* STATE INFORMATION */
@@ -524,7 +528,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     public IMjReceiver getReceiverToPower(TileEntity tile, EnumFacing side) {
         if (tile == null) return null;
         IMjReceiver rec = tile.getCapability(MjAPI.CAP_RECEIVER, side.getOpposite());
-        if (rec != null && rec.canConnect(mjConnector)) {
+        if (rec != null && rec.canConnect(mjConnector) && mjConnector.canConnect(rec)) {
             return rec;
         } else {
             return null;

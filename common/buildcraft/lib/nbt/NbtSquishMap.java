@@ -38,7 +38,7 @@ import buildcraft.api.core.InvalidInputDataException;
 public class NbtSquishMap {
     // TODO: Try adding "ImmutableTagCompound" and "ImmutableTagList" to see if the equals() and hashCode() of compounds
     // is a problem atm
-    // perhaps use "TCustomHashSet" with a simalir deduplicating functionality of FoamFix?
+    // perhaps use "TCustomHashSet" with a similar deduplication functionality of FoamFix?
 
     // I'm not completely convinced that this one is necessary.
     // However it completes the set so, meh
@@ -261,8 +261,8 @@ public class NbtSquishMap {
                 throw new IOException("Cannot handle index " + index);
             }
             return value;
-        } catch (IndexOutOfBoundsException ioobe) {
-            throw new InvalidInputDataException(ioobe);
+        } catch (IndexOutOfBoundsException e) {
+            throw new InvalidInputDataException(e);
         }
     }
 

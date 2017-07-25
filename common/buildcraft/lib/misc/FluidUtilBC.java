@@ -9,13 +9,19 @@ package buildcraft.lib.misc;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+
+import buildcraft.api.core.IFluidFilter;
+import buildcraft.api.core.IFluidHandlerAdv;
 
 import buildcraft.lib.fluid.Tank;
 
@@ -48,7 +54,8 @@ public class FluidUtilBC {
         if (drained > 0) {
             FluidStack actuallyDrained = tank.drain(drained, true);
             if (actuallyDrained == null || actuallyDrained.amount != drained) {
-                throw new IllegalStateException("Bad tank! Could drain " + working + " but only drained " + actuallyDrained + "( tank " + tank.getClass() + ")");
+                throw new IllegalStateException("Bad tank! Could drain " + working + " but only drained "
+                    + actuallyDrained + "( tank " + tank.getClass() + ")");
             }
         }
     }
@@ -78,7 +85,8 @@ public class FluidUtilBC {
                 if (filled > 0) {
                     FluidStack reallyDrained = handler.drain(filled, true);
                     if (reallyDrained == null || reallyDrained.amount != filled) {
-                        throw new IllegalStateException("Bad IFluidHandler.drain implementation! ( drained = " + drained + " reallyDrained = " + reallyDrained + " handler " + handler.getClass());
+                        throw new IllegalStateException("Bad IFluidHandler.drain implementation! ( drained = " + drained
+                            + " reallyDrained = " + reallyDrained + " handler " + handler.getClass());
                     }
                     max -= filled;
                 }
@@ -92,7 +100,8 @@ public class FluidUtilBC {
                     fluidFilter.amount = filled;
                     FluidStack reallyDrained = handler.drain(fluidFilter, true);
                     if (reallyDrained == null || reallyDrained.amount != filled) {
-                        throw new IllegalStateException("Bad IFluidHandler.drain implementation! ( drained = " + drained + " reallyDrained = " + reallyDrained + " handler " + handler.getClass());
+                        throw new IllegalStateException("Bad IFluidHandler.drain implementation! ( drained = " + drained
+                            + " reallyDrained = " + reallyDrained + " handler " + handler.getClass());
                     }
                     max -= filled;
                 }
@@ -120,5 +129,49 @@ public class FluidUtilBC {
 
     public static boolean areFluidStackEqual(FluidStack a, FluidStack b) {
         return (a == null && b == null) || (a != null && a.isFluidEqual(b) && a.amount == b.amount);
+    }
+
+    public static boolean areFluidsEqual(Fluid a, Fluid b) {
+        if (a == null || b == null) {
+            return a == b;
+        }
+        return a.getName().equals(b.getName());
+    }
+
+    /** @return The fluidstack that was moved, or null if no fluid was moved. */
+    @Nullable
+    public static FluidStack move(IFluidHandler from, IFluidHandler to) {
+        return move(from, to, Integer.MAX_VALUE);
+    }
+
+    /** @param max The maximum amount of fluid to move.
+     * @return The fluidstack that was moved, or null if no fluid was moved. */
+    @Nullable
+    public static FluidStack move(IFluidHandler from, IFluidHandler to, int max) {
+        if (from == null || to == null) {
+            return null;
+        }
+        FluidStack toDrainPotential;
+        if (from instanceof IFluidHandlerAdv) {
+            IFluidFilter filter = f -> to.fill(f, false) > 0;
+            toDrainPotential = ((IFluidHandlerAdv) from).drain(filter, max, false);
+        } else {
+            toDrainPotential = from.drain(max, false);
+        }
+        int accepted = to.fill(toDrainPotential, false);
+        if (accepted <= 0) {
+            return null;
+        }
+        FluidStack toDrain = new FluidStack(toDrainPotential, accepted);
+        FluidStack drained = from.drain(toDrain, true);
+        if (!toDrain.isFluidEqual(drained) || toDrain.amount != drained.amount) {
+            throw new IllegalStateException(
+                "Drained fluid did not equal expected fluid! Bad impl - " + from.getClass());
+        }
+        int actuallyAccepted = to.fill(drained, true);
+        if (actuallyAccepted != accepted) {
+            throw new IllegalStateException("Mismatched IFluidHandler implementations!");
+        }
+        return new FluidStack(drained, accepted);
     }
 }

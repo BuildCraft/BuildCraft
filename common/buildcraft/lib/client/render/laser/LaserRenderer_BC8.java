@@ -25,6 +25,7 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
+import buildcraft.lib.misc.SpriteUtil;
 
 public class LaserRenderer_BC8 {
     private static final Map<LaserType, CompiledLaserType> COMPILED_LASER_TYPES = new HashMap<>();
@@ -145,6 +146,7 @@ public class LaserRenderer_BC8 {
         profiler.startSection("compute");
         LaserCompiledList compiled = COMPILED_STATIC_LASERS.getUnchecked(data);
         profiler.endStartSection("render");
+        SpriteUtil.bindBlockTextureMap();
         compiled.render();
         profiler.endSection();
     }
@@ -155,6 +157,7 @@ public class LaserRenderer_BC8 {
         profiler.startSection("compute");
         LaserCompiledBuffer compiled = COMPILED_DYNAMIC_LASERS.getUnchecked(data);
         profiler.endStartSection("render");
+        SpriteUtil.bindBlockTextureMap();
         compiled.render(buffer);
         profiler.endSection();
     }

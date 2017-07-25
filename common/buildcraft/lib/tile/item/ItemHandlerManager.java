@@ -113,11 +113,10 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == CapUtil.CAP_ITEMS) {
             Wrapper wrapper = wrappers.get(EnumPipePart.fromFacing(facing));
-            return (T) wrapper.combined;
+            return CapUtil.CAP_ITEMS.cast(wrapper.combined);
         }
         return null;
     }

@@ -50,9 +50,9 @@ public class PositionUtil {
         return set.build();
     }
 
-    public static boolean isOnEdge(BlockPos min, BlockPos max, BlockPos pos) {
+    private static int getBoxAxisCount(BlockPos min, BlockPos max, BlockPos pos) {
         if (min == null || max == null || pos == null) {
-            return false;
+            return 0;
         }
         int same = 0;
         if (min.getX() == pos.getX() || max.getX() == pos.getX()) {
@@ -64,7 +64,37 @@ public class PositionUtil {
         if (min.getZ() == pos.getZ() || max.getZ() == pos.getZ()) {
             same++;
         }
-        return same >= 2;
+        return same;
+    }
+
+    /** Checks to see if the given position is a corner for the box given by min and max
+     * 
+     * @param min The minimum co-ordinate of the box
+     * @param max The maximum co-ordinate of the box
+     * @param pos The position to test
+     * @return True if this position was on a corner, false if not. */
+    public static boolean isCorner(BlockPos min, BlockPos max, BlockPos pos) {
+        return getBoxAxisCount(min, max, pos) == 3;
+    }
+
+    /** Checks to see if the given position is on one of the edges of the box given by min and max
+     * 
+     * @param min The minimum co-ordinate of the box
+     * @param max The maximum co-ordinate of the box
+     * @param pos The position to test
+     * @return True if this position was on an edge, false if not. */
+    public static boolean isOnEdge(BlockPos min, BlockPos max, BlockPos pos) {
+        return getBoxAxisCount(min, max, pos) >= 2;
+    }
+
+    /** Checks to see if the given position is on one of the faces of the box given by min and max
+     * 
+     * @param min The minimum co-ordinate of the box
+     * @param max The maximum co-ordinate of the box
+     * @param pos The position to test
+     * @return True if this position was on a face, false if not. */
+    public static boolean isOnFace(BlockPos min, BlockPos max, BlockPos pos) {
+        return getBoxAxisCount(min, max, pos) >= 1;
     }
 
     public static boolean isNextTo(BlockPos one, BlockPos two) {

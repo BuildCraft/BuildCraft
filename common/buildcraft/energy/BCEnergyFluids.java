@@ -54,7 +54,7 @@ public class BCEnergyFluids {
             {     1200,      4000,    3,      4, 0x10_0F_10, 0x42_10_42 },// Residue
             {      850,      1800,    3,      6, 0xA0_8F_1F, 0x42_35_20 },// Heavy Oil
             {      950,      1600,    3,      5, 0x87_6E_77, 0x42_24_24 },// Dense Oil
-            {      750,      1400,    2,      8, 0xE4_BF_78, 0xA4_8F_00 },// Distilled Oil
+            {      750,      1400,    2,      8, 0xE4_AF_78, 0xB4_7F_00 },// Distilled Oil
             {      600,       800,    2,      7, 0xFF_AF_3F, 0xE0_7F_00 },// Dense Fuel
             {      700,      1000,    2,      7, 0xF2_A7_00, 0xC4_87_00 },// Mixed Heavy Fuels
             {      400,       600,    1,      8, 0xFF_FF_30, 0xE4_CF_00 },// Light Fuel
@@ -99,14 +99,14 @@ public class BCEnergyFluids {
 
     private static BCFluid defineFluid(int[] data, int heat, String name) {
         final int density = data[0];
-        final int baseViscocity = data[1];
+        final int baseViscosity = data[1];
         final int boilPoint = data[2];
         final int baseQuanta = data[3];
         final int texLight = data[4];
         final int texDark = data[5];
 
         String fullName = name + (heat == 0 ? "" : "_heat_" + heat);
-        int tempAdjustedViscocity = baseViscocity * (4 - heat) / 4;
+        int tempAdjustedViscosity = baseViscosity * (4 - heat) / 4;
         int boilAdjustedDensity = density * (heat >= boilPoint ? -1 : 1);
 
         String fluidTexture = "buildcraftenergy:blocks/fluids/" + name + "_heat_" + heat;
@@ -123,11 +123,11 @@ public class BCEnergyFluids {
                 ))
                 .orElseThrow(IllegalArgumentException::new)
         );
-        def.setFlamable(true);
+        def.setFlammable(true);
         def.setHeat(heat);
         def.setUnlocalizedName(name);
         def.setTemperature(300 + 20 * heat);
-        def.setViscosity(tempAdjustedViscocity);
+        def.setViscosity(tempAdjustedViscosity);
         def.setDensity(boilAdjustedDensity);
         def.setGaseous(def.getDensity() < 0);
         def.setColour(texLight, texDark);

@@ -12,15 +12,18 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -29,35 +32,29 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
-import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
 
+import buildcraft.lib.fluid.FluidSmoother;
+import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.MathUtil;
+import buildcraft.lib.misc.FluidUtilBC;
+import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
-
-import buildcraft.core.BCCoreConfig;
 
 public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, IFluidHandlerAdv {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("tank");
     public static final int NET_FLUID_DELTA = IDS.allocId("FLUID_DELTA");
 
-    public Tank tank = new Tank("tank", 16000, this);
+    private static boolean isPlayerInteracting = false;
 
-    private int lastSentAmount = -1;
-    private boolean lastSentFluid = false;
-    private final SafeTimeTracker tracker = new SafeTimeTracker(BCCoreConfig.networkUpdateRate, 4);
-
-    // client side
-
-    private int target;
-    private int amount, amountLast;
-    private long lastMessage, lastMessageMinus1;
+    public final Tank tank = new Tank("tank", 16000, this);
+    public final FluidSmoother smoothedTank = new FluidSmoother(w -> createAndSendMessage(NET_FLUID_DELTA, w), tank);
 
     public TileTank() {
+        tankManager.add(tank);// SAVING IS ALL SORTS OF BUGGED
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, this, EnumPipePart.VALUES);
     }
 
@@ -70,73 +67,75 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
 
     @Override
     public void update() {
-        if (world.isRemote) {
-            amountLast = amount;
-            if (amount != target) {
-                int delta = target - amount;
-                long msgDelta = lastMessage - lastMessageMinus1;
-                msgDelta = MathUtil.clamp((int) msgDelta, 1, 60);
-                if (Math.abs(delta) < msgDelta) {
-                    amount += delta;
-                } else {
-                    amount += delta / (int) msgDelta;
-                }
-            }
-            return;
-        }
-
-        if (lastSentFluid != (tank.getFluid() != null)) {
-            if (tracker.markTimeIfDelay(world)) {
-                lastSentFluid = tank.getFluid() != null;
-                lastSentAmount = tank.getFluidAmount();
-                sendNetworkUpdate(NET_RENDER_DATA);
-            }
-        } else if (lastSentAmount != tank.getFluidAmount()) {
-            if (tracker.markTimeIfDelay(world)) {
-                lastSentAmount = tank.getFluidAmount();
-                sendNetworkUpdate(NET_FLUID_DELTA);
-            }
-        }
+        smoothedTank.tick(getWorld());
     }
+
+    // TileEntity
 
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
         if (!placer.world.isRemote) {
-            BlockPos p = pos.up();
-            TileTank moveTo = this;
-            while (true) {
-                TileEntity tileUp = world.getTileEntity(p);
-                if (tileUp instanceof TileTank) {
-                    TileTank tankUp = (TileTank) tileUp;
-
-                    int used = moveTo.tank.fill(tankUp.tank.getFluid(), true);
-                    if (used > 0) {
-                        tankUp.drain(used, true);
-                    }
-
-                    moveTo = tankUp;
-                    p = p.up();
-                } else {
-                    break;
+            List<TileTank> tanks = getTanks();
+            FluidStack fluid = null;
+            for (TileTank tile : tanks) {
+                FluidStack held = tile.tank.getFluid();
+                if (held == null) {
+                    continue;
+                }
+                if (fluid == null) {
+                    fluid = held;
+                } else if (!fluid.isFluidEqual(held)) {
+                    return;
                 }
             }
+            if (fluid == null) {
+                return;
+            }
+            if (fluid.getFluid().isGaseous(fluid)) {
+                Collections.reverse(tanks);
+            }
+            TileTank prev = null;
+            isPlayerInteracting = true;
+            for (TileTank tile : tanks) {
+                if (prev != null) {
+                    FluidUtilBC.move(tile.tank, prev.tank);
+                }
+                prev = tile;
+            }
+            isPlayerInteracting = false;
         }
     }
 
-    // NBT
-
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        tank.deserializeNBT(nbt.getCompoundTag("tank"));
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setTag("tank", tank.serializeNBT());
-        return nbt;
+    public boolean onActivate(EntityPlayer player, EnumHand hand) {
+        ItemStack held = player.getHeldItem(hand);
+        if (held.isEmpty()) {
+            return false;
+        }
+        boolean replace = !player.capabilities.isCreativeMode;
+        IFluidHandlerItem flItem = FluidUtil.getFluidHandler(replace ? held : held.copy());
+        if (flItem == null) {
+            return false;
+        }
+        if (getWorld().isRemote) {
+            return true;
+        }
+        isPlayerInteracting = true;
+        boolean changed = true;
+        FluidStack moved;
+        if ((moved = FluidUtilBC.move(flItem, this)) != null) {
+            SoundUtil.playBucketEmpty(getWorld(), getPos(), moved);
+        } else if ((moved = FluidUtilBC.move(this, flItem)) != null) {
+            SoundUtil.playBucketFill(getWorld(), getPos(), moved);
+        } else {
+            changed = false;
+        }
+        if (changed & replace) {
+            player.setHeldItem(hand, flItem.getContainer());
+            player.inventoryContainer.detectAndSendChanges();
+        }
+        isPlayerInteracting = false;
+        return true;
     }
 
     // Networking
@@ -146,9 +145,9 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         super.writePayload(id, buffer, side);
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
-                tank.writeToBuffer(buffer);
+                writePayload(NET_FLUID_DELTA, buffer, side);
             } else if (id == NET_FLUID_DELTA) {
-                buffer.writeInt(tank.getFluidAmount());
+                smoothedTank.writeInit(buffer);
             }
         }
     }
@@ -158,13 +157,10 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
-                tank.readFromBuffer(buffer);
-                target = tank.getClientAmount();
-                lastMessageMinus1 = lastMessage = world.getTotalWorldTime();
+                readPayload(NET_FLUID_DELTA, buffer, side, ctx);
+                smoothedTank.resetSmoothing(getWorld());
             } else if (id == NET_FLUID_DELTA) {
-                target = buffer.readInt();
-                lastMessageMinus1 = lastMessage;
-                lastMessage = world.getTotalWorldTime();
+                smoothedTank.handleMessage(getWorld(), buffer);
             }
         }
     }
@@ -175,43 +171,31 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("fluid = " + tank.getDebugString());
-        if (world.isRemote) {
-            left.add("shown = " + amount + ", target = " + target);
-            left.add("lastMsg = " + lastMessage + ", lastMsg-1 = " + lastMessageMinus1 + ", diff = " + (lastMessage - lastMessageMinus1));
-        } else {
-            left.add("current = " + tank.getFluidAmount() + " of " + ((tank.getFluid() != null) ? "Something" : "Nothing"));
-            left.add("lastSent = " + lastSentAmount + " of " + (lastSentFluid ? "Something" : "Nothing"));
-        }
+        smoothedTank.getDebugInfo(left, right, side);
     }
 
     // Rendering
 
     @SideOnly(Side.CLIENT)
-    public double getFluidAmountForRender(float partialTicks) {
-        float interpAmount = amountLast * (1 - partialTicks) + this.amount * partialTicks;
-        Tank other = getTank(pos.up());
-        if (other != null && !other.isEmpty()) {
-            interpAmount = tank.getCapacity();
-        }
-        return interpAmount;
+    public FluidStackInterp getFluidForRender(float partialTicks) {
+        return smoothedTank.getFluidForRender(partialTicks);
     }
 
     // Tank helper methods
 
-    private Tank getTank(BlockPos at) {
+    private TileTank getTank(BlockPos at) {
         TileEntity tile = world.getTileEntity(at);
         if (tile instanceof TileTank) {
-            TileTank tileTank = (TileTank) tile;
-            return tileTank.tank;
+            return (TileTank) tile;
         }
         return null;
     }
 
-    private List<Tank> getTanks() {
-        List<Tank> tanks = new ArrayList<>();
+    private List<TileTank> getTanks() {
+        List<TileTank> tanks = new ArrayList<>();
         BlockPos currentPos = pos;
         while (true) {
-            Tank tankUp = getTank(currentPos);
+            TileTank tankUp = getTank(currentPos);
             if (tankUp != null) {
                 tanks.add(tankUp);
             } else {
@@ -221,7 +205,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         }
         currentPos = pos.down();
         while (true) {
-            Tank tankBelow = getTank(currentPos);
+            TileTank tankBelow = getTank(currentPos);
             if (tankBelow != null) {
                 tanks.add(0, tankBelow);
             } else {
@@ -236,23 +220,23 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
 
     @Override
     public IFluidTankProperties[] getTankProperties() {
-        List<Tank> tanks = getTanks();
-        Tank bottom = tanks.get(0);
-        FluidStack total = bottom.getFluid();
+        List<TileTank> tanks = getTanks();
+        TileTank bottom = tanks.get(0);
+        FluidStack total = bottom.tank.getFluid();
         int capacity = 0;
         if (total == null) {
-            for (Tank t : tanks) {
-                capacity += t.getCapacity();
+            for (TileTank t : tanks) {
+                capacity += t.tank.getCapacity();
             }
         } else {
             total = total.copy();
             total.amount = 0;
-            for (Tank t : tanks) {
-                FluidStack other = t.getFluid();
+            for (TileTank t : tanks) {
+                FluidStack other = t.tank.getFluid();
                 if (other != null) {
                     total.amount += other.amount;
                 }
-                capacity += t.getCapacity();
+                capacity += t.tank.getCapacity();
             }
         }
         return new IFluidTankProperties[] { new FluidTankProperties(total, capacity) };
@@ -264,16 +248,23 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
             return 0;
         }
         int filled = 0;
-        List<Tank> tanks = getTanks();
-        for (Tank t : tanks) {
-            FluidStack current = t.getFluid();
+        List<TileTank> tanks = getTanks();
+        for (TileTank t : tanks) {
+            FluidStack current = t.tank.getFluid();
             if (current != null && !current.isFluidEqual(resource)) {
                 return 0;
             }
         }
-        for (Tank t : tanks) {
-            int tankFilled = t.fill(resource, doFill);
+        boolean gas = resource.getFluid().isGaseous(resource);
+        if (gas) {
+            Collections.reverse(tanks);
+        }
+        for (TileTank t : tanks) {
+            int tankFilled = t.tank.fill(resource, doFill);
             if (tankFilled > 0) {
+                if (isPlayerInteracting & doFill) {
+                    t.sendNetworkUpdate(NET_RENDER_DATA);
+                }
                 resource.amount -= tankFilled;
                 filled += tankFilled;
                 if (resource.amount == 0) {
@@ -304,17 +295,29 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         if (maxDrain <= 0) {
             return null;
         }
-        List<Tank> tanks = getTanks();
-        // The returned list is ordered bottom -> top, but we want top -> bottom
-        Collections.reverse(tanks);
+        List<TileTank> tanks = getTanks();
+        boolean gas = false;
+        for (TileTank tile : tanks) {
+            FluidStack fluid = tile.tank.getFluid();
+            if (fluid != null) {
+                gas = fluid.getFluid().isGaseous(fluid);
+                break;
+            }
+        }
+        if (!gas) {
+            Collections.reverse(tanks);
+        }
         FluidStack total = null;
-        for (Tank t : tanks) {
+        for (TileTank t : tanks) {
             int realMax = maxDrain - (total == null ? 0 : total.amount);
             if (realMax <= 0) {
                 break;
             }
-            FluidStack drained = t.drain(filter, realMax, doDrain);
+            FluidStack drained = t.tank.drain(filter, realMax, doDrain);
             if (drained == null) continue;
+            if (isPlayerInteracting & doDrain) {
+                t.sendNetworkUpdate(NET_RENDER_DATA);
+            }
             if (total == null) {
                 total = drained.copy();
                 total.amount = 0;

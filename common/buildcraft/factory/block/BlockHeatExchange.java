@@ -216,13 +216,6 @@ public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPip
 
     @Override
     public float getExtension(World world, BlockPos pos, EnumFacing face, IBlockState state) {
-        if (part == Part.MIDDLE) {
-            return 0;
-        }
-        EnumFacing thisFacing = state.getValue(PROP_FACING);
-        if (face != thisFacing.getOpposite()) {
-            return 0;
-        }
-        return 2 / 16.0f;
+        return 0;
     }
 }

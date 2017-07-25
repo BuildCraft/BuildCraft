@@ -73,7 +73,7 @@ public class VolumeBox {
                 addon.readFromNBT(addonsEntryTag.getCompoundTag("addonData"));
                 EnumAddonSlot slot = NBTUtilBC.readEnum(addonsEntryTag.getTag("slot"), EnumAddonSlot.class);
                 addons.put(slot, addon);
-            } catch (InstantiationException | IllegalAccessException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
@@ -110,6 +110,7 @@ public class VolumeBox {
     public void confirmEditing() {
         player = null;
         resetEditing();
+        addons.values().forEach(Addon::onBoxSizeChange);
     }
 
     public void pauseEditing() {

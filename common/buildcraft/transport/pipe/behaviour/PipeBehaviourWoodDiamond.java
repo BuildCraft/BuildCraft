@@ -10,6 +10,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.RayTraceResult;
 
@@ -105,7 +107,8 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
     }
 
     @Override
-    public boolean onPipeActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ, EnumPipePart part) {
+    public boolean onPipeActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ,
+        EnumPipePart part) {
         if (EntityUtil.getWrenchHand(player) != null) {
             return super.onPipeActivate(player, trace, hitX, hitY, hitZ, part);
         }
@@ -136,9 +139,13 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
         switch (filterMode) {
             default:
             case WHITE_LIST:
+                if (filters.extract(s -> true, 1, 1, true).isEmpty()) {
+                    return s -> true;
+                }
                 return new DelegatingItemHandlerFilter(StackUtil::isMatchingItemOrList, filters);
             case BLACK_LIST:
-                return new InvertedStackFilter(new DelegatingItemHandlerFilter(StackUtil::isMatchingItemOrList, filters));
+                return new InvertedStackFilter(
+                    new DelegatingItemHandlerFilter(StackUtil::isMatchingItemOrList, filters));
             case ROUND_ROBIN:
                 return (comparison) -> {
                     ItemStack filter = filters.getStackInSlot(currentFilter);
@@ -168,13 +175,23 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
         switch (filterMode) {
             default:
             case WHITE_LIST:
+                if (filters.extract(s -> true, 1, 1, true).isEmpty()) {
+                    return flow.tryExtractFluid(millibuckets, dir, null, true);
+                }
                 // Firstly try the advanced version - if that fails we will need to try the basic version
-                FluidStack extracted = flow.tryExtractFluidAdv(millibuckets, dir, new ArrayFluidFilter(filters.stacks), simulate);
+                ActionResult<FluidStack> result = flow.tryExtractFluidAdv(millibuckets, dir, new ArrayFluidFilter(filters.stacks), false);
+                FluidStack extracted = result.getResult();
+                if (result.getType() != EnumActionResult.PASS) {
+                    return extracted;
+                }
 
                 if (extracted == null || extracted.amount <= 0) {
                     for (int i = 0; i < filters.getSlots(); i++) {
                         ItemStack stack = filters.getStackInSlot(i);
-                        extracted = flow.tryExtractFluid(millibuckets, dir, FluidUtil.getFluidContained(stack), simulate);
+                        if (stack.isEmpty()) {
+                            continue;
+                        }
+                        extracted = flow.tryExtractFluid(millibuckets, dir, FluidUtil.getFluidContained(stack), true);
                         if (extracted != null && extracted.amount > 0) {
                             return extracted;
                         }
@@ -183,7 +200,8 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
                 return null;
             case BLACK_LIST:
                 // We cannot fallback to the basic version - only use the advanced version
-                return flow.tryExtractFluidAdv(millibuckets, dir, new InvertedFluidFilter(new ArrayFluidFilter(filters.stacks)), simulate);
+                InvertedFluidFilter filter = new InvertedFluidFilter(new ArrayFluidFilter(filters.stacks));
+                return flow.tryExtractFluidAdv(millibuckets, dir, filter, false).getResult();
             case ROUND_ROBIN:
                 // We can't do this -- amounts might differ and its just ugly
                 return null;

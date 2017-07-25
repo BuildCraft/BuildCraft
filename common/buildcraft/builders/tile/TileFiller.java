@@ -46,7 +46,7 @@ import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.IdAllocator;
-import buildcraft.lib.mj.MjBatteryReciver;
+import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.FullStatement;
@@ -101,9 +101,9 @@ public class TileFiller extends TileBC_Neptune
 
     public TileFiller() {
         pattern = new FullStatement<>(FillerType.INSTANCE, 4, this::onStatementChange);
-        caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(battery)));
+        caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
         caps.addCapabilityInstance(TilesAPI.CAP_CONTROLLABLE, this, EnumPipePart.VALUES);
-        StackInsertionChecker checker = (slot, stack) -> Filling.INSTANCE.getItemBlocks().contains(stack.getItem());
+        StackInsertionChecker checker = (slot, stack) -> Filling.getItemBlocks().contains(stack.getItem());
         StackInsertionFunction insertor = StackInsertionFunction.getDefaultInserter();
         ItemHandlerSimple handler = new ItemHandlerSimple(27, checker, insertor, this::onSlotChange);
         invResources = itemManager.addInvHandler("resources", handler, EnumAccess.BOTH, EnumPipePart.VALUES);

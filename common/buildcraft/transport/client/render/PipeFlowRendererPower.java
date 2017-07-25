@@ -8,7 +8,6 @@ package buildcraft.transport.client.render;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.vecmath.Point3f;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -29,13 +28,11 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
 
     @Override
     public void render(PipeFlowPower flow, double x, double y, double z, float partialTicks, VertexBuffer vb) {
-        float r = (float) flow.clientPowerAmounts.values().stream()
-            .mapToDouble(Double::valueOf)
-            .average()
-            .orElse(0) / PipeFlowPower.DEFAULT_MAX_POWER * 0.8F;
-        if (r == 0) {
+        double transfer = flow.getMaxTransferForRender(partialTicks);
+        if (transfer <= 0) {
             return;
         }
+        float r = (float) (transfer / 4.1f);
         List<Triple<Pair<EnumFacing, EnumFacing>, Point3f, Point3f>> facesSidesCentersRadiuses = new ArrayList<>();
         for (EnumFacing face : EnumFacing.VALUES) {
             facesSidesCentersRadiuses.add(

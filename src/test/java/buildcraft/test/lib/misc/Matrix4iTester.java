@@ -20,8 +20,8 @@ import buildcraft.lib.misc.data.Matrix4i;
 @RunWith(Theories.class)
 public class Matrix4iTester {
 
-    @DataPoints("rotate-y-indicies")
-    public static final int[] testVectorIndicies = { 0, 1, 2 };
+    @DataPoints("rotate-y-indices")
+    public static final int[] testVectorIndices = { 0, 1, 2 };
 
     private static final Vec3i[] testVectorInputs = { new Vec3i(0, 0, 0), new Vec3i(1, 1, 0), new Vec3i(7, 67, 20) };
     private static final Vec3i[] testVectorResults = { new Vec3i(0, 0, 0), new Vec3i(0, 1, -1), new Vec3i(20, 67, -7) };
@@ -50,7 +50,7 @@ public class Matrix4iTester {
 
     @Test
     @Theory
-    public void testMakeRotY(@FromDataPoints("rotate-y-indicies") int index) {
+    public void testMakeRotY(@FromDataPoints("rotate-y-indices") int index) {
         Matrix4i mat = Matrix4i.makeRotY(90);
 
         Vec3i in = testVectorInputs[index];

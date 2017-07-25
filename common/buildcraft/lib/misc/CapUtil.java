@@ -42,7 +42,7 @@ public class CapUtil {
 
     static {
         if (!Loader.instance().hasReachedState(LoaderState.INITIALIZATION)) {
-            throw new IllegalStateException("Used Caputil too early, you must wait until init or later!");
+            throw new IllegalStateException("Used CapUtil too early, you must wait until init or later!");
         }
 
         CAP_ITEMS = getCapNonNull(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, IItemHandler.class);

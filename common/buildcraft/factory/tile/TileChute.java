@@ -38,7 +38,7 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
-import buildcraft.lib.mj.MjBatteryReciver;
+import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
@@ -53,7 +53,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
     private int progress = 0;
 
     public TileChute() {
-        caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(battery)));
+        caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
     }
 
     public static boolean hasInventoryAtPosition(IBlockAccess world, BlockPos pos, EnumFacing side) {

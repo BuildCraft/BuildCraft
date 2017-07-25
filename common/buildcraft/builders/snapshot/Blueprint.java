@@ -9,8 +9,10 @@ package buildcraft.builders.snapshot;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,7 +56,7 @@ public class Blueprint extends Snapshot {
             }
         }
         blueprint.entities.addAll(entities);
-        blueprint.header = header.withHash(blueprint.computeHash());
+        blueprint.computeKey();
         return blueprint;
     }
 
@@ -84,8 +86,8 @@ public class Blueprint extends Snapshot {
     public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
         super.deserializeNBT(nbt);
         palette.clear();
-        for (NBTTagCompound schematicBlockTag : NBTUtilBC.readCompoundList(nbt.getTagList("palette",
-            Constants.NBT.TAG_COMPOUND)).collect(Collectors.toList())) {
+        for (NBTTagCompound schematicBlockTag :
+            NBTUtilBC.readCompoundList(nbt.getTag("palette")).collect(Collectors.toList())) {
             // TODO: Allow reading blueprints partially - invalid elements should be replaced with air
             // (Although this needs to add a "pass-through" ISchematicBlock that will store the
             // invalid NBTTagCompound and show up in the tooltip as an error, so that we can migrate
@@ -102,7 +104,7 @@ public class Blueprint extends Snapshot {
         }
         int len = list == null ? serializedData.length : list.tagCount();
         if (len != size.getX() * size.getY() * size.getZ()) {
-            throw new InvalidInputDataException("Pallette has length of " + len
+            throw new InvalidInputDataException("Palette has length of " + len
                 + ", but we expected " + size.getX() * size.getY() * size.getZ() + size.toString());
         }
         int i = 0;
@@ -114,8 +116,8 @@ public class Blueprint extends Snapshot {
                 }
             }
         }
-        for (NBTTagCompound schematicEntityTag : NBTUtilBC.readCompoundList(nbt.getTagList("entities",
-            Constants.NBT.TAG_COMPOUND)).collect(Collectors.toList())) {
+        for (NBTTagCompound schematicEntityTag :
+            NBTUtilBC.readCompoundList(nbt.getTag("entities")).collect(Collectors.toList())) {
             entities.add(SchematicEntityManager.readFromNBT(schematicEntityTag));
         }
     }
@@ -129,11 +131,11 @@ public class Blueprint extends Snapshot {
         public final BlockPos basePos;
         public final Rotation rotation;
         private final Box box;
-        public final List<BlockPos> toBreak = new ArrayList<>();
+        public final Set<BlockPos> toBreak = new HashSet<>();
         public final Map<BlockPos, ISchematicBlock<?>> toPlace = new HashMap<>();
         public final Map<BlockPos, List<ItemStack>> toPlaceRequiredItems = new HashMap<>();
         public final Map<BlockPos, List<FluidStack>> toPlaceRequiredFluids = new HashMap<>();
-        public final List<ISchematicEntity<?>> entities = new ArrayList<>();
+        public final Set<ISchematicEntity<?>> entities = new HashSet<>();
         public final Map<ISchematicEntity<?>, List<ItemStack>> entitiesRequiredItems = new HashMap<>();
         public final Map<ISchematicEntity<?>, List<FluidStack>> entitiesRequiredFluids = new HashMap<>();
 

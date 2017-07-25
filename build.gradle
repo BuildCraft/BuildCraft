@@ -66,7 +66,7 @@ minecraft {
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not allways work.
+    // Use non-default mappings at your own risk. they may not always work.
     // simply re-run your setup task after changing the mappings to update your workspace.
     mappings = config.mappings_version
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
@@ -84,7 +84,6 @@ sourceSets {
     main {
         java {
             srcDir "common"
-            srcDir "common_old_license"
             // srcDir "src_old_license"
         }
         resources {
@@ -178,6 +177,10 @@ def parseConfig(File config) {
     }
 }
 
+def libsDir = new File(System.getenv("LIBS_DIR") ?: "build/libs/", version)
+def modulesDir = new File(libsDir, "modules")
+def modulesDirSrc = new File(modulesDir, "src")
+
 // add a source jar
 //task sourceJar(type: Jar) {
 //    from sourceSets.main.allSource
@@ -192,22 +195,21 @@ javadoc {
 
 // add a javadoc jar
 task javadocJar(type: Jar, dependsOn: javadoc) {
+    destinationDir = libsDir
     classifier = 'javadoc'
     from 'build/docs/javadoc'
 }
 
 // because the normal output has been made to be obfuscated
 task deobfJar(type: Jar) {
+    destinationDir = libsDir
     from sourceSets.main.output
     from sourceSets.api.output
     classifier = 'dev'
 }
 
-def modulesDir = file("build/libs/modules")
-def modulesDirSrc = new File(modulesDir, "src")
-
 task apiJar(type: Jar, dependsOn: reobfJar) {
-    destinationDir = modulesDir
+    destinationDir = libsDir
     appendix = "api"
 
     doFirst {
@@ -343,7 +345,7 @@ task roboticsJar(type: Jar, dependsOn: reobfJar) {
 }
 
 task allJar(type: Jar, dependsOn:reobfJar) {
-    destinationDir = modulesDir
+    destinationDir = libsDir
 
     doFirst {
         from(project.ext.jarFile) {
@@ -353,7 +355,7 @@ task allJar(type: Jar, dependsOn:reobfJar) {
 }
 
 task allSrcJar(type: Jar, dependsOn:reobfJar) {
-    destinationDir = modulesDir
+    destinationDir = libsDir
     classifier = "sources"
 
     doFirst {
@@ -362,13 +364,15 @@ task allSrcJar(type: Jar, dependsOn:reobfJar) {
     }
 }
 
+sourceJar.destinationDir = libsDir
+
 // add api classes to main package
 jar {
 	from sourceSets.api.output
 }
 
 // make sure all of these happen when we run build
-build.dependsOn sourceJar, apiJar, deobfJar, javadocJar
+build.dependsOn allSrcJar, apiJar, deobfJar, javadocJar
 
 // --------------------
 // maven section
@@ -426,21 +430,21 @@ def sftp(String subPath, Closure antFileset = {}) {
 publishing {
     repositories {
         maven {
-            url "build/maven"
+            url System.getenv("MAVEN_DIR") ?: "build/maven"
         }
     }
     publications {
         pub_apiJar(MavenPublication) {
             groupId "com.mod-buildcraft"
             artifactId "buildcraft-api"
-            version "8.0"
+            version project.version
 
             artifact apiJar
         }
         pub_apiSrcJar(MavenPublication) {
             groupId "com.mod-buildcraft"
             artifactId "buildcraft-api"
-            version "8.0"
+            version project.version
 
             artifact apiSrcJar
         }
