@@ -65,7 +65,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
                 final WidgetListSlot listSlot = arr[slot];
                 GuiRectangle rectangle = new GuiRectangle(8 + slot * 18, 32 + line * 34, 16, 16);
 
-                shownElements.add(listSlot.new GuiElementPhantomSlot<GuiList>(this, rootElement, rectangle) {
+                shownElements.add(listSlot.new GuiElementPhantomSlot<GuiList>(this, rectangle.offset(rootElement)) {
                     @Override
                     protected boolean shouldDrawHighlight() {
                         return listSlot.slotIndex == 0 || !gui.container.lines[listSlot.lineIndex].isOneStackMode();

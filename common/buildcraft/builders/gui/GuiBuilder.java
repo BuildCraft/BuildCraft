@@ -48,13 +48,7 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
         for (int i = 0; i < container.widgetTanks.size(); i++) {
             shownElements.add(
                     container.widgetTanks
-                            .get(i)
-                            .createGuiElement(
-                                    this,
-                                    rootElement,
-                                    new GuiRectangle(179 + i * 18, 145, 16, 47),
-                                    ICON_TANK_OVERLAY
-                            )
+                    .get(i).createGuiElement(this, new GuiRectangle(179 + i * 18, 145, 16, 47).offset(rootElement), ICON_TANK_OVERLAY)
             );
         }
 

@@ -24,8 +24,7 @@ import buildcraft.lib.gui.IInteractionElement;
 import buildcraft.lib.gui.Widget_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
-import buildcraft.lib.gui.pos.GuiRectangle;
-import buildcraft.lib.gui.pos.IGuiPosition;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -49,15 +48,15 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
     }
 
     @SideOnly(Side.CLIENT)
-    public IGuiElement createGuiElement(GuiBC8<?> gui, IGuiPosition parent, GuiRectangle position, GuiIcon overlay) {
-        return new GuiElementFluidTank(gui, parent, position, overlay);
+    public IGuiElement createGuiElement(GuiBC8<?> gui, IGuiArea area, GuiIcon overlay) {
+        return new GuiElementFluidTank(gui, area, overlay);
     }
 
     private final class GuiElementFluidTank extends GuiElementSimple<GuiBC8<?>> implements IInteractionElement {
         private final GuiIcon overlay;
 
-        public GuiElementFluidTank(GuiBC8<?> gui, IGuiPosition parent, GuiRectangle position, GuiIcon overlay) {
-            super(gui, parent, position);
+        public GuiElementFluidTank(GuiBC8<?> gui, IGuiArea area, GuiIcon overlay) {
+            super(gui, area);
             this.overlay = overlay;
         }
 

@@ -12,8 +12,10 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.InternalCompiler;
 import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeType;
+import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.collect.TypedMap;
@@ -25,7 +27,6 @@ public abstract class ElementType {
         this.name = name;
     }
 
-    // TODO: Add a "IGuiPosition parent" arg! (refactor tool broken atm)
     public abstract IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json);
 
     public static FunctionContext createContext(GuiJson<?> gui, JsonGuiElement json) {
@@ -119,12 +120,16 @@ public abstract class ElementType {
 
     public static boolean resolveEquationBool(JsonGuiElement json, String member, FunctionContext ctx,
         boolean _default) {
+        return getEquationBool(json, member, ctx, _default).evaluate();
+    }
+
+    public static INodeBoolean getEquationBool(JsonGuiElement json, String member, FunctionContext ctx, boolean _default) {
         String eqn = json.properties.get(member);
         if (eqn == null) {
-            return _default;
+            return NodeConstantBoolean.get(_default);
         }
         try {
-            return GenericExpressionCompiler.compileExpressionBoolean(eqn, ctx).evaluate();
+            return GenericExpressionCompiler.compileExpressionBoolean(eqn, ctx);
         } catch (InvalidExpressionException iee) {
             throw new JsonSyntaxException(iee);
         }

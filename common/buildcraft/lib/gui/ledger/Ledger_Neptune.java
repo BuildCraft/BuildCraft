@@ -21,6 +21,7 @@ import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
+import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IContainingElement;
 import buildcraft.lib.gui.IGuiElement;
@@ -94,7 +95,7 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
 
         GuiRectangle iconRect = new GuiRectangle(0, 0, 16, 16);
         ISimpleDrawable drawable = this::drawIcon;
-        closedElements.add(new GuiElementDrawable(gui, positionLedgerIconStart, iconRect, drawable, false));
+        closedElements.add(new GuiElementDrawable(gui, iconRect.offset(positionLedgerIconStart), drawable, false));
         appendText(this::getTitle, this::getTitleColour).setDropShadow(true);
         calculateMaxSize();
     }

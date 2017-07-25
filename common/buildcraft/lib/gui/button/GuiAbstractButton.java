@@ -16,7 +16,6 @@ import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.IInteractionElement;
 import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.elem.ToolTip;
-import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
@@ -29,11 +28,6 @@ public abstract class GuiAbstractButton<G extends GuiBC8<?>> extends GuiElementS
     public boolean active, enabled = true, visible = true;
     private IButtonBehaviour behaviour = IButtonBehaviour.DEFAULT;
     private ToolTip toolTip;
-
-    public GuiAbstractButton(G gui, String id, IGuiPosition parent, GuiRectangle rect) {
-        super(gui, parent, rect);
-        this.id = id;
-    }
 
     public GuiAbstractButton(G gui, String id, IGuiArea area) {
         super(gui, area);

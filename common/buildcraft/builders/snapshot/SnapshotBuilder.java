@@ -258,7 +258,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             }
         }
 
-        return isDone;
+        return isDone && breakTasks.isEmpty() && placeTasks.isEmpty();
     }
 
     public void writeToByteBuf(PacketBufferBC buffer) {

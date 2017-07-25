@@ -28,8 +28,7 @@ import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.IInteractionElement;
 import buildcraft.lib.gui.Widget_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
-import buildcraft.lib.gui.pos.GuiRectangle;
-import buildcraft.lib.gui.pos.IGuiPosition;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
@@ -127,8 +126,8 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
     public class GuiElementPhantomSlot<G extends GuiBC8<?>> extends GuiElementSimple<G> implements IInteractionElement {
         private final ToolTip tooltip = GuiUtil.createToolTip(gui, this::getStack);
 
-        public GuiElementPhantomSlot(G gui, IGuiPosition parent, GuiRectangle position) {
-            super(gui, parent, position);
+        public GuiElementPhantomSlot(G gui, IGuiArea area) {
+            super(gui, area);
         }
 
         @Override

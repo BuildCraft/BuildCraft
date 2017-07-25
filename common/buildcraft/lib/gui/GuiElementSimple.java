@@ -14,10 +14,6 @@ public class GuiElementSimple<G extends GuiBC8<?>> implements IGuiElement {
     public final G gui;
     private final IGuiArea element;
 
-    public GuiElementSimple(G gui, IGuiPosition parent, GuiRectangle rectangle) {
-        this(gui, rectangle.offset(parent));
-    }
-
     public GuiElementSimple(G gui, IGuiArea element) {
         this.gui = gui;
         this.element = element;

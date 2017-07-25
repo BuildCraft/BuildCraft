@@ -25,7 +25,7 @@ public class ScrollbarElement<G extends GuiBC8<?>> extends GuiElementSimple<G> i
     private boolean isClicking;
 
     public ScrollbarElement(G gui, IGuiPosition parent, int height, GuiIcon background, GuiIcon scroller) {
-        super(gui, parent, new GuiRectangle(0, 0, 6, height));
+        super(gui, new GuiRectangle(0, 0, 6, height).offset(parent));
         this.background = background;
         this.scroller = scroller;
     }

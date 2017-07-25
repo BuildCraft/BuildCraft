@@ -94,17 +94,6 @@ public class TypedMapHierarchy<V> implements TypedMap<V> {
         }
     }
 
-    @Override
-    public Collection<?> getValues() {
-        Collection<Object> values = new ArrayList<>();
-        for (Node<?> n : nodes.values()) {
-            if (n.value != null) {
-                values.add(n.value);
-            }
-        }
-        return values;
-    }
-
     static class Node<T> {
         final Class<T> clazz;
         final List<Node<? super T>> parents = new ArrayList<>();

@@ -4,7 +4,7 @@
 	"types": {
 		"param": {
 			"type": "buildcraftlib:statement/parameter",
-			"area": ["53 + 18 * index",29,18,18],
+			"area": ["53 + 18 * index",39,18,18],
 			"source": "filler.pattern"
 		},
 		"four_button": {
@@ -57,7 +57,7 @@
 						"sprite": "minecraft:items/iron_ingot",
 						"area": [0, 0, 16, 16]
 					},
-					"area": [0,0, 16, 16]
+					"area": [0, 0, 16, 16]
 				}
 			],
 			"children": [
@@ -88,7 +88,7 @@
 		"pattern_drag_target": {
 			"type": "buildcraftlib:statement/slot",
 			"source": "filler.pattern",
-			"area": [16,26,24,24],
+			"area": [16,36,24,24],
 			"draw": false
 		},
 		"pattern_drawable": {
@@ -97,7 +97,7 @@
 				"sprite": "filler.pattern.sprite",
 				"area": [4,4,8,8]
 			},
-			"area": [20,30,16,16]
+			"area": [20,40,16,16]
 		},
 		"params": {
 			"iterator": "index = [0, 4)",
@@ -134,11 +134,11 @@
 			"type": "four_button",
 			"source": "filler.no_excavate",
 			"u_start": 192,
-			"area": [130,30,16,16]
+			"area": [130,40,16,16]
 		},
 		"button_no_excavate_help": {
 			"type": "buildcraftlib:help",
-			"area": [128,28,20,20],
+			"area": [128,38,20,20],
 			"colour": "0xFF_CC_AA_88",
 			"title": "buildcraft.help.filler.excavate.title",
 			"text": "buildcraft.help.filler.excavate.desc"
@@ -147,14 +147,45 @@
 			"type": "four_button",
 			"source": "filler.invert",
 			"u_start": 224,
-			"area": [152,30,16,16]
+			"area": [152,40,16,16]
 		},
 		"button_invert_help": {
 			"type": "buildcraftlib:help",
-			"area": [150,28,20,20],
+			"area": [150,38,20,20],
 			"colour": "0xFF_88_AA_CC",
 			"title": "buildcraft.help.filler.invert.title",
 			"text": "buildcraft.help.filler.invert.desc"
+		},
+		"icon_is_locked": {
+			"type": "buildcraftlib:drawable",
+			"visible": "filler.is_locked",
+			"source": {
+				"sprite": "buildcraftlib:icons/lock",
+				"area": [0, 0, 16, 16]
+			},
+			"area": [12, 16, 16, 16]
+		},
+		"icon_mode": {
+			"type": "buildcraftlib:drawable",
+			"visible": "controllable.mode != 'ON'",
+			"source": {
+				"sprite": "controllable.sprite",
+				"area": [0, 0, 16, 16]
+			},
+			"area": [32, 16, 16, 16]
+		},
+		"tooltip_mode": {
+			"type": "buildcraftlib:tooltip",
+			"visible": "controllable.mode != 'ON'",
+			"expression": "controllable.mode",
+			"area": [32, 16, 16, 16]
+		},
+		"help_mode": {
+			"type": "buildcraftlib:help",
+			"area": [30, 14, 20, 20],
+			"colour": "0xFF_77_BB_CC",
+			"title": "Control mode",
+			"text": [ "Either ON, OFF, or LOOP.", "Set by gates." ]
 		},
 		"player_inventory": {
 			"type": "buildcraftlib:inventory/player/full",

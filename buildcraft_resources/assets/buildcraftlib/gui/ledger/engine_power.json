@@ -1,0 +1,23 @@
+{
+	"type": "buildcraftlib:ledger",
+	"title": "",
+	"variables": {
+		"heat_sprite": "engine.is_on ? 0 : (engine.heat_stage == 'BLUE' || engine.heat_stage == 'GREEN') ? 1 : (engine.heat_stage == 'YELLOW' || engine.heat_stage == 'RED) ? 2 : 3",
+		"sprite_suffixes": [ "inactive", "active", "warm", "overheat" ],
+		"sprites": "array_prefix('buildcraftlib:icons/engine_', sprite_suffixes)"
+	},
+	"closed": [
+		{
+			"type": "buildcraftlib:drawable",
+			"source": {
+				"sprite": "sprites[heat_sprite]"
+			},
+			"area": [0, 0, 16, 16]
+		}
+	],
+	"children": [
+		{
+			
+		}
+	]
+}

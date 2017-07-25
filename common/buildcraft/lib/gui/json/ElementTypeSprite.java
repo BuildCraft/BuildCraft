@@ -1,11 +1,14 @@
 package buildcraft.lib.gui.json;
 
+import org.omg.CORBA.REBIND;
+
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.client.sprite.SpriteRaw;
 import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.gui.GuiSpriteScaled;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.ISimpleDrawable;
@@ -59,12 +62,20 @@ public class ElementTypeSprite extends ElementType {
         double us = resolveEquationDouble(json, "source.size[0]", ctx);
         double vs = resolveEquationDouble(json, "source.size[1]", ctx);
 
+        INodeBoolean visible = getEquationBool(json, "visible", ctx, true);
         boolean foreground = resolveEquationBool(json, "foreground", ctx, false);
 
         // TODO: Allow this to be changing as well!
         SrcTexture tex = resolveTexture(info, json, "source");
         String origin = tex.origin;
         int texSize = tex.texSize;
+
+        if (!json.properties.containsKey("source.size[0]")) {
+            us = texSize;
+        }
+        if (!json.properties.containsKey("source.size[1]")) {
+            vs = texSize;
+        }
 
         ISprite sprite = gui.properties.get(origin, ISprite.class);
         if (sprite != null) {
@@ -75,6 +86,6 @@ public class ElementTypeSprite extends ElementType {
 
         GuiRectangle rect = new GuiRectangle(posX, posY, sizeX, sizeY);
         ISimpleDrawable icon = new GuiSpriteScaled(sprite, sizeX, sizeY);
-        return new GuiElementDrawable(gui, parent, rect, icon, foreground);
+        return new GuiElementDrawable(gui, rect.offset(parent), icon, foreground, visible);
     }
 }

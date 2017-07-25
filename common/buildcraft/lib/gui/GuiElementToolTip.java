@@ -9,20 +9,13 @@ package buildcraft.lib.gui;
 import java.util.List;
 
 import buildcraft.lib.gui.elem.ToolTip;
-import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
-import buildcraft.lib.gui.pos.IGuiPosition;
 
 public class GuiElementToolTip extends GuiElementSimple<GuiBC8<?>> {
     public final ITooltipElement source;
 
-    public GuiElementToolTip(GuiBC8<?> gui, IGuiArea element, ITooltipElement source) {
-        super(gui, element);
-        this.source = source;
-    }
-
-    public GuiElementToolTip(GuiBC8<?> gui, IGuiPosition parent, GuiRectangle rectangle, ITooltipElement source) {
-        super(gui, parent, rectangle);
+    public GuiElementToolTip(GuiBC8<?> gui, IGuiArea area, ITooltipElement source) {
+        super(gui, area);
         this.source = source;
     }
 

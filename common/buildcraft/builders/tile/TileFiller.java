@@ -18,6 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.Rotation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -35,11 +36,14 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IFillerStatementContainer;
+import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.api.tiles.TilesAPI;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.mj.MjBatteryReciver;
@@ -64,18 +68,27 @@ import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 
 public class TileFiller extends TileBC_Neptune
-    implements ITickable, IDebuggable, ITileForTemplateBuilder, IFillerStatementContainer {
+    implements ITickable, IDebuggable, ITileForTemplateBuilder, IFillerStatementContainer, IControllable {
+
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("filler");
     public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
+    public static final int NET_INVERT = IDS.allocId("INVERT");
     public static final int NET_PATTERN = IDS.allocId("PATTERN");
     public static final int NET_BOX = IDS.allocId("BOX");
+
+    @Override
+    public IdAllocator getIdAllocator() {
+        return IDS;
+    }
 
     public final ItemHandlerSimple invResources;
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
     public TemplateBuilder builder = new TemplateBuilder(this);
     private boolean canExcavate = true;
-
     private boolean invertPattern = false;
+    private boolean finished = false;
+    private int lockedTicks = 0;
+    private Mode mode = Mode.ON;
 
     public final Box box = new Box();
     public boolean placedWithVolume = false;
@@ -89,6 +102,7 @@ public class TileFiller extends TileBC_Neptune
     public TileFiller() {
         pattern = new FullStatement<>(FillerType.INSTANCE, 4, this::onStatementChange);
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReciver(battery)));
+        caps.addCapabilityInstance(TilesAPI.CAP_CONTROLLABLE, this, EnumPipePart.VALUES);
         StackInsertionChecker checker = (slot, stack) -> Filling.INSTANCE.getItemBlocks().contains(stack.getItem());
         StackInsertionFunction insertor = StackInsertionFunction.getDefaultInserter();
         ItemHandlerSimple handler = new ItemHandlerSimple(27, checker, insertor, this::onSlotChange);
@@ -130,8 +144,6 @@ public class TileFiller extends TileBC_Neptune
 
     @Override
     public void update() {
-        // battery.tick(getWorld(), getPos());
-        // battery.addPowerChecking(64 * MjAPI.MJ, false);
         if (world.isRemote) {
             builder.tick();
             return;
@@ -164,8 +176,11 @@ public class TileFiller extends TileBC_Neptune
                 buildingInfo = blueprintTemplate.new BuildingInfo(box.min(), Rotation.NONE);
             }
         }
+        if (mode == Mode.OFF || (mode == Mode.ON && finished)) {
+            return;
+        }
         if (buildingInfo != null) {
-            builder.tick();
+            finished = builder.tick();
         }
     }
 
@@ -176,13 +191,20 @@ public class TileFiller extends TileBC_Neptune
             if (id == NET_RENDER_DATA) {
                 builder.writeToByteBuf(buffer);
                 writePayload(NET_BOX, buffer, side);
-            } else if (id == NET_GUI_DATA) {
+            } else if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
                 writePayload(NET_CAN_EXCAVATE, buffer, side);
+                writePayload(NET_INVERT, buffer, side);
                 writePayload(NET_PATTERN, buffer, side);
+                builder.writeToByteBuf(buffer);
+                buffer.writeBoolean(finished);
+                buffer.writeBoolean(lockedTicks > 0);
+                buffer.writeEnumValue(mode);
             } else if (id == NET_BOX) {
                 box.writeData(buffer);
             } else if (id == NET_CAN_EXCAVATE) {
                 buffer.writeBoolean(canExcavate);
+            } else if (id == NET_INVERT) {
+                buffer.writeBoolean(invertPattern);
             } else if (id == NET_PATTERN) {
                 pattern.writeToBuffer(buffer);
             }
@@ -196,13 +218,20 @@ public class TileFiller extends TileBC_Neptune
             if (id == NET_RENDER_DATA) {
                 builder.readFromByteBuf(buffer);
                 readPayload(NET_BOX, buffer, side, ctx);
-            } else if (id == NET_GUI_DATA) {
+            } else if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
                 readPayload(NET_CAN_EXCAVATE, buffer, side, ctx);
+                readPayload(NET_INVERT, buffer, side, ctx);
                 readPayload(NET_PATTERN, buffer, side, ctx);
+                builder.readFromByteBuf(buffer);
+                finished = buffer.readBoolean();
+                lockedTicks = buffer.readBoolean() ? 1 : 0;
+                mode = buffer.readEnumValue(Mode.class);
             } else if (id == NET_BOX) {
                 box.readData(buffer);
             } else if (id == NET_CAN_EXCAVATE) {
                 canExcavate = buffer.readBoolean();
+            } else if (id == NET_INVERT) {
+                invertPattern = buffer.readBoolean();
             } else if (id == NET_PATTERN) {
                 pattern.readFromBuffer(buffer);
             }
@@ -211,10 +240,17 @@ public class TileFiller extends TileBC_Neptune
             if (id == NET_CAN_EXCAVATE) {
                 canExcavate = buffer.readBoolean();
                 sendNetworkGuiUpdate(NET_CAN_EXCAVATE);
+            } else if (id == NET_INVERT) {
+                invertPattern = buffer.readBoolean();
+                sendNetworkGuiUpdate(NET_INVERT);
             } else if (id == NET_PATTERN) {
-                pattern.readFromBuffer(buffer);
-                sendNetworkUpdate(NET_PATTERN);
-                onStatementChange(null, -1);
+                if (isLocked()) {
+                    new FullStatement<>(FillerType.INSTANCE, 4, (a, b) -> {}).readFromBuffer(buffer);
+                } else {
+                    pattern.readFromBuffer(buffer);
+                    sendNetworkUpdate(NET_PATTERN);
+                    onStatementChange(null, -1);
+                }
             }
         }
     }
@@ -223,10 +259,15 @@ public class TileFiller extends TileBC_Neptune
         MessageManager.sendToServer(createMessage(NET_CAN_EXCAVATE, buffer -> buffer.writeBoolean(newValue)));
     }
 
+    public void sendInvert(boolean newValue) {
+        MessageManager.sendToServer(createMessage(NET_INVERT, buffer -> buffer.writeBoolean(newValue)));
+    }
+
     private void onStatementChange(FullStatement<?> stmnt, int paramIndex) {
         createAndSendMessage(NET_PATTERN, b -> pattern.writeToBuffer(b));
         patternTemplate = null;
         blueprintTemplate = null;
+        finished = false;
     }
 
     // Read-write
@@ -239,6 +280,9 @@ public class TileFiller extends TileBC_Neptune
         nbt.setTag("box", box.writeToNBT());
         nbt.setBoolean("canExcavate", canExcavate);
         nbt.setBoolean("invertPattern", invertPattern);
+        nbt.setBoolean("finished", finished);
+        nbt.setByte("lockedTicks", (byte) lockedTicks);
+        nbt.setTag("mode", NBTUtilBC.writeEnum(mode));
         return nbt;
     }
 
@@ -248,6 +292,10 @@ public class TileFiller extends TileBC_Neptune
         battery.deserializeNBT(nbt.getCompoundTag("battery"));
         invertPattern = nbt.getBoolean("invertPattern");
         canExcavate = nbt.getBoolean("canExcavate");
+        finished = nbt.getBoolean("finished");
+        lockedTicks = nbt.getByte("lockedTicks");
+        mode = NBTUtilBC.readEnum(nbt.getTag("mode"), Mode.class);
+        if (mode == null) mode = Mode.ON;
         box.initialize(nbt.getCompoundTag("box"));
         pattern.readFromNbt(nbt.getCompoundTag("pattern"));
         patternTemplate = null;
@@ -261,20 +309,11 @@ public class TileFiller extends TileBC_Neptune
         return true;
     }
 
-    public int getCountToPlace() {
-        return builder == null ? 0 : builder.leftToPlace;
+    @Override
+    @SideOnly(Side.CLIENT)
+    public AxisAlignedBB getRenderBoundingBox() {
+        return BoundingBoxUtil.makeFrom(getPos(), box);
     }
-
-    public int getCountToBreak() {
-        return builder == null ? 0 : builder.leftToBreak;
-    }
-
-    // @Override
-    // @Nonnull
-    // @SideOnly(Side.CLIENT)
-    // public AxisAlignedBB getRenderBoundingBox() {
-    // return addon == null ? super.getRenderBoundingBox() : BoundingBoxUtil.makeFrom(pos, addon.box.box);
-    // }
 
     @Override
     @SideOnly(Side.CLIENT)
@@ -289,6 +328,9 @@ public class TileFiller extends TileBC_Neptune
         left.add("battery = " + battery.getDebugString());
         left.add("box = " + box);
         left.add("pattern = " + pattern.get());
+        left.add("mode = " + mode);
+        left.add("is_finished = " + finished);
+        left.add("lockedTicks = " + lockedTicks);
         left.add("pattern.template = " + (patternTemplate == null ? "null" : "[...]"));
         left.add("builder.template = " + (blueprintTemplate == null ? "null" : "[...]"));
     }
@@ -296,6 +338,14 @@ public class TileFiller extends TileBC_Neptune
     @Override
     public World getWorldBC() {
         return world;
+    }
+
+    public int getCountToPlace() {
+        return builder == null ? 0 : builder.leftToPlace;
+    }
+
+    public int getCountToBreak() {
+        return builder == null ? 0 : builder.leftToBreak;
     }
 
     @Override
@@ -311,6 +361,18 @@ public class TileFiller extends TileBC_Neptune
     @Override
     public boolean canExcavate() {
         return canExcavate;
+    }
+
+    public boolean shouldInvert() {
+        return invertPattern;
+    }
+
+    public boolean isFinished() {
+        return mode == Mode.LOOP ? false : this.finished;
+    }
+
+    public boolean isLocked() {
+        return lockedTicks > 0;
     }
 
     @Override
@@ -355,5 +417,22 @@ public class TileFiller extends TileBC_Neptune
         for (int i = 0; i < this.pattern.maxParams; i++) {
             this.pattern.set(i, params[i]);
         }
+        finished = false;
+        lockedTicks = 3;
+    }
+
+    // IControllable
+
+    @Override
+    public Mode getControlMode() {
+        return mode;
+    }
+
+    @Override
+    public void setControlMode(Mode mode) {
+        if (this.mode == Mode.OFF && mode != Mode.OFF) {
+            finished = false;
+        }
+        this.mode = mode;
     }
 }

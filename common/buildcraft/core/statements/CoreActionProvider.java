@@ -5,8 +5,8 @@
  */
 package buildcraft.core.statements;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
@@ -42,15 +42,14 @@ public enum CoreActionProvider implements IActionProvider {
     public void addExternalActions(Collection<IActionExternal> res, EnumFacing side, TileEntity tile) {
         IControllable controllable = tile.getCapability(TilesAPI.CAP_CONTROLLABLE, side.getOpposite());
         if (controllable != null) {
-            Arrays.stream(BCCoreStatements.ACTION_MACHINE_CONTROL)
-                    .filter(action -> controllable.setControlMode(action.mode, true))
-                    .forEach(res::add);
+            for (ActionMachineControl action : BCCoreStatements.ACTION_MACHINE_CONTROL) {
+                if (controllable.acceptsControlMode(action.mode)) {
+                    res.add(action);
+                }
+            }
         }
         if (tile instanceof IFillerStatementContainer) {
-            res.add(BCCoreStatements.PATTERN_NONE);
-            res.add(BCCoreStatements.PATTERN_CLEAR);
-            res.add(BCCoreStatements.PATTERN_FILL);
-            res.add(BCCoreStatements.PATTERN_BOX);
+            Collections.addAll(res, BCCoreStatements.PATTERNS);
         }
     }
 }

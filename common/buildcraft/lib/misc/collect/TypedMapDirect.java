@@ -36,9 +36,4 @@ public class TypedMapDirect<V> implements TypedMap<V> {
     public <T extends V> void remove(T value) {
         internalMap.remove(value.getClass(), value);
     }
-
-    @Override
-    public Collection<V> getValues() {
-        return internalMap.values();
-    }
 }

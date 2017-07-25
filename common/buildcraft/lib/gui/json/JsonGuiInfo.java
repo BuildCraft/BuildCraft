@@ -13,9 +13,10 @@ import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.util.JsonUtils;
 
+import buildcraft.lib.json.JsonVariableObject;
 import buildcraft.lib.misc.JsonUtil;
 
-public class JsonGuiInfo {
+public class JsonGuiInfo extends JsonVariableObject {
     public final int sizeX;
     public final int sizeY;
     public final String defaultTexture;
@@ -23,6 +24,15 @@ public class JsonGuiInfo {
     public final List<JsonGuiElement> elements = new ArrayList<>();
 
     public JsonGuiInfo(JsonObject json) {
+
+        if (json.has("values")) {
+
+        }
+
+        if (json.has("parent")) {
+            // TODO!
+        }
+
         if (json.has("size")) {
             JsonElement size = json.get("size");
             sizeX = size.getAsJsonArray().get(0).getAsInt();

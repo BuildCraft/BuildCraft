@@ -21,7 +21,7 @@ public interface IExpressionNode {
     // common expression types
 
     @FunctionalInterface
-    interface INodeDouble extends IExpressionNode, DoubleSupplier {
+    public interface INodeDouble extends IExpressionNode, DoubleSupplier {
         double evaluate();
 
         @Override
@@ -42,7 +42,7 @@ public interface IExpressionNode {
     }
 
     @FunctionalInterface
-    interface INodeLong extends IExpressionNode, LongSupplier {
+    public interface INodeLong extends IExpressionNode, LongSupplier {
         long evaluate();
 
         @Override
@@ -63,7 +63,7 @@ public interface IExpressionNode {
     }
 
     @FunctionalInterface
-    interface INodeBoolean extends IExpressionNode, BooleanSupplier {
+    public interface INodeBoolean extends IExpressionNode, BooleanSupplier {
         boolean evaluate();
 
         @Override
@@ -85,7 +85,7 @@ public interface IExpressionNode {
     }
 
     @FunctionalInterface
-    interface INodeString extends IExpressionNode, Supplier<String> {
+    public interface INodeString extends IExpressionNode, Supplier<String> {
         String evaluate();
 
         @Override

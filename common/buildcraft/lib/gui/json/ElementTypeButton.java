@@ -2,7 +2,6 @@ package buildcraft.lib.gui.json;
 
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.client.sprite.SpriteRaw;

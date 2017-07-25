@@ -26,7 +26,7 @@ public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {
     private final IntSupplier colour;
 
     public GuiElementText(GuiBC8<?> gui, IGuiPosition parent, Supplier<String> text, IntSupplier colour) {
-        super(gui, parent, GuiRectangle.ZERO);
+        super(gui, GuiRectangle.ZERO.offset(parent));
         this.text = text;
         this.colour = colour;
     }

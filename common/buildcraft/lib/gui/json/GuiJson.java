@@ -15,6 +15,7 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.render.ISprite;
 
+import buildcraft.lib.expression.node.value.ITickableNode;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IContainingElement;
@@ -28,6 +29,7 @@ import buildcraft.lib.misc.collect.TypedKeyMap;
 public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
     private final ResourceLocation guiDefinition;
     protected final TypedKeyMap<String, Object> properties = TypedKeyMap.createHierachy();
+    private ITickableNode[] tickableNodes = new ITickableNode[0];
 
     public GuiJson(C container, ResourceLocation guiDefinition) {
         super(container);
@@ -37,7 +39,7 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
 
     @Override
     protected boolean shouldAddHelpLedger() {
-        return false;
+        return true;
     }
 
     @Override
@@ -54,6 +56,7 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
             preLoad();
 
             JsonGuiInfo info = new JsonGuiInfo(obj);
+            // TODO: Deserialize everything in the above statement!
             xSize = info.sizeX;
             ySize = info.sizeY;
 

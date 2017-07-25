@@ -14,18 +14,19 @@ public class JsonGuiTypeRegistry {
     public static final Map<String, ElementType> TYPES = new HashMap<>();
 
     static {
-        registerType(ElementTypeText.NAME, ElementTypeText.INSTANCE);
-        registerType(ElementTypeHelp.NAME, ElementTypeHelp.INSTANCE);
-        registerType(ElementTypeSprite.NAME, ElementTypeSprite.INSTANCE);
-        registerType(ElementTypeButton.NAME, ElementTypeButton.INSTANCE);
-        registerType(ElementTypeLedger.NAME, ElementTypeLedger.INSTANCE);
-        registerType(ElementTypeStatementSlot.NAME, ElementTypeStatementSlot.INSTANCE);
-        registerType(ElementTypeStatementParam.NAME, ElementTypeStatementParam.INSTANCE);
-        registerType(ElementTypeStatementSource.NAME, ElementTypeStatementSource.INSTANCE);
+        registerType(ElementTypeText.INSTANCE);
+        registerType(ElementTypeHelp.INSTANCE);
+        registerType(ElementTypeSprite.INSTANCE);
+        registerType(ElementTypeButton.INSTANCE);
+        registerType(ElementTypeLedger.INSTANCE);
+        registerType(ElementTypeToolTip.INSTANCE);
+        registerType(ElementTypeStatementSlot.INSTANCE);
+        registerType(ElementTypeStatementParam.INSTANCE);
+        registerType(ElementTypeStatementSource.INSTANCE);
     }
 
-    public static void registerType(String id, ElementType type) {
-        TYPES.put(id, type);
+    public static void registerType(ElementType type) {
+        TYPES.put(type.name, type);
     }
 
     // Simple test

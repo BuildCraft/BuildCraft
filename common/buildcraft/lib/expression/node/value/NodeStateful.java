@@ -17,7 +17,6 @@ import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.node.binary.BiNodeType;
 import buildcraft.lib.expression.node.cast.NodeCastLongToDouble;
 
-/* TODO: Use this for the models so that models can increment a variable every tick */
 public class NodeStateful implements ITickableNode.Source {
     public final String name;
     public final IVariableNode getter, variable, last, rounderValue;
