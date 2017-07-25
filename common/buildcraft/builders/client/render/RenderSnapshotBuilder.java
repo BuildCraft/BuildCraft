@@ -74,7 +74,7 @@ public class RenderSnapshotBuilder {
                 ModelUtil.createFace(
                     face,
                     new Point3f((float) robotPos.xCoord, (float) robotPos.yCoord, (float) robotPos.zCoord),
-                    new Point3f(8 / 16F, 8 / 16F, 8 / 16F),
+                    new Point3f(4 / 16F, 4 / 16F, 4 / 16F),
                     new ModelUtil.UvFaceData(
                         BCBuildersSprites.ROBOT.getInterpU((i * 8) / 64D),
                         BCBuildersSprites.ROBOT.getInterpV(0 / 64D),

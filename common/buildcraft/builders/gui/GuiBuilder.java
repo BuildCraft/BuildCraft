@@ -10,9 +10,6 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.button.GuiButtonSmall;
-import buildcraft.lib.gui.button.IButtonBehaviour;
-import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 
 import buildcraft.builders.container.ContainerBuilder;
@@ -38,7 +35,7 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
         xSize = SIZE_BLUEPRINT_X;
         ySize = SIZE_Y;
 
-        ledgersRight.ledgers.add(new LedgerCounters(ledgersRight, container.tile));
+//        ledgersRight.ledgers.add(new LedgerCounters(ledgersRight, container.tile));
     }
 
     @Override
@@ -52,22 +49,22 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
             );
         }
 
-        buttonList.add(
-                new GuiButtonSmall(
-                        this,
-                        0,
-                        rootElement.getX() + (ICON_GUI.width - 100) / 2,
-                        rootElement.getY() + 50,
-                        100,
-                        "Can Excavate"
-                )
-                        .setToolTip(ToolTip.createLocalized("gui.builder.canExcavate"))
-                        .setBehaviour(IButtonBehaviour.TOGGLE)
-                        .setActive(container.tile.canExcavate())
-                        .registerListener((button, buttonId, buttonKey) ->
-                                container.tile.sendCanExcavate(button.isButtonActive())
-                        )
-        );
+//        buttonList.add(
+//                new GuiButtonSmall(
+//                        this,
+//                        0,
+//                        rootElement.getX() + (ICON_GUI.width - 100) / 2,
+//                        rootElement.getY() + 50,
+//                        100,
+//                        "Can Excavate"
+//                )
+//                        .setToolTip(ToolTip.createLocalized("gui.builder.canExcavate"))
+//                        .setBehaviour(IButtonBehaviour.TOGGLE)
+//                        .setActive(container.tile.canExcavate())
+//                        .registerListener((button, buttonId, buttonKey) ->
+//                                container.tile.sendCanExcavate(button.isButtonActive())
+//                        )
+//        );
     }
 
     @Override

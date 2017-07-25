@@ -148,6 +148,10 @@ public class TileFiller extends TileBC_Neptune
             builder.tick();
             return;
         }
+        lockedTicks--;
+        if (lockedTicks < 0) {
+            lockedTicks = 0;
+        }
         IFillerPattern p = pattern.get();
         if (hasBox() && p != null && patternTemplate == null) {
             IStatementParameter[] params = new IStatementParameter[pattern.maxParams];
@@ -174,6 +178,7 @@ public class TileFiller extends TileBC_Neptune
                     }
                 }
                 buildingInfo = blueprintTemplate.new BuildingInfo(box.min(), Rotation.NONE);
+                builder.updateSnapshot();
             }
         }
         if (mode == Mode.OFF || (mode == Mode.ON && finished)) {
@@ -182,6 +187,18 @@ public class TileFiller extends TileBC_Neptune
         if (buildingInfo != null) {
             finished = builder.tick();
         }
+    }
+    
+    @Override
+    public void validate() {
+        super.validate();
+        builder.validate();
+    }
+    
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        builder.invalidate();
     }
 
     @Override
