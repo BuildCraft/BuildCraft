@@ -408,7 +408,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         }
         tile.getWorldBC().profiler.endSection();
 
-        return isDone && breakTasks.isEmpty() && placeTasks.isEmpty();
+        return isDone && breakTasks.isEmpty() && placeTasks.isEmpty() && checkResults.get(CheckResult.TO_PLACE).isEmpty() && checkResults.get(CheckResult.TO_BREAK).isEmpty();
     }
 
     protected void check(BlockPos blockPos) {
