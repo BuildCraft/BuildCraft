@@ -193,6 +193,14 @@
     },
     {
         "selectors": [
+            "minecraft:chest",
+            "minecraft:trapped_chest",
+            "minecraft:brewing_stand",
+            "minecraft:dispenser",
+            "minecraft:dropper",
+            "minecraft:furnace",
+            "minecraft:lit_furnace",
+            "minecraft:hopper",
             "minecraft:white_shulker_box",
             "minecraft:orange_shulker_box",
             "minecraft:magenta_shulker_box",
@@ -209,8 +217,13 @@
             "minecraft:green_shulker_box",
             "minecraft:red_shulker_box",
             "minecraft:black_shulker_box"
-        ]/*,
-        "copyRequiredItemsFromItemHandlersOnSides": ["north"]*/
+        ],
+        "requiredExtractors": [{
+            "type": "item_from_block"
+        }, {
+            "type": "items_list",
+            "path": ["Items"]
+        }]
     },
     {
         "selectors": [

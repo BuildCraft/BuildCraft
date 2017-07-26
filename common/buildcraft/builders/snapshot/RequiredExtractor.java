@@ -46,6 +46,7 @@ public abstract class RequiredExtractor {
 
     public enum EnumType {
         CONSTANT(RequiredExtractorConstant.class),
+        ITEMS_LIST(RequiredExtractorItemsList.class),
         ITEM_FROM_BLOCK(RequiredExtractorItemFromBlock.class);
 
         public final Class<? extends RequiredExtractor> clazz;
