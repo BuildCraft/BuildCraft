@@ -312,10 +312,9 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                         .map(placeTask -> placeTask.pos)
                         .noneMatch(Predicate.isEqual(blockPos))
                 )
-                .filter(this::canPlace)
                 .collect(Collectors.toList());
             leftToPlace = blocks.size();
-            if ((!tile.canExcavate() || breakTasks.isEmpty())) {
+            if (!tile.canExcavate() || breakTasks.isEmpty()) {
                 if (!blocks.isEmpty()) {
                     isDone = false;
                 }
@@ -330,6 +329,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                     .filter(placeTask -> placeTask.items != null)
                     .filter(placeTask -> !placeTask.items.contains(ItemStack.EMPTY))
                     .limit(MAX_QUEUE_SIZE - placeTasks.size())
+                    .filter(placeTasks -> canPlace(placeTasks.pos))
                     .forEach(placeTasks::add);
             }
         }
@@ -423,7 +423,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         if (getToPlace().contains(blockPos)) {
             if (isBlockCorrect(blockPos)) {
                 checkResults.get(CheckResult.CORRECT).add(blockPos);
-            } else if (tile.getWorldBC().isAirBlock(blockPos)) {
+            } else if (canPlace(blockPos)) {
                 checkResults.get(CheckResult.TO_PLACE).add(blockPos);
             } else {
                 checkResults.get(CheckResult.TO_BREAK).add(blockPos);
