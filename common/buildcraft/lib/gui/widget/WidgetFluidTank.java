@@ -85,8 +85,8 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
         }
 
         @Override
-        public HelpPosition getHelpInfo() {
-            return tank.helpInfo.target(this.expand(4));
+        public void addHelpElements(List<HelpPosition> elements) {
+            elements.add(tank.helpInfo.target(this.expand(4)));
         }
     }
 }

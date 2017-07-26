@@ -6,6 +6,9 @@
 
 package buildcraft.lib.gui.ledger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.client.renderer.GlStateManager;
 
 import buildcraft.api.core.render.ISprite;
@@ -63,12 +66,11 @@ public class LedgerHelp extends Ledger_Neptune {
     protected void drawIcon(int x, int y) {
         if (!init) {
             init = true;
+            List<HelpPosition> elements = new ArrayList<>();
             for (IGuiElement element : gui.shownElements) {
-                HelpPosition info = element.getHelpInfo();
-                if (info == null) continue;
-                foundAny = true;
-                break;
+                element.addHelpElements(elements);
             }
+            foundAny = elements.size() > 0;
         }
         ISprite sprite = foundAny ? BCLibSprites.HELP : BCLibSprites.WARNING_MINOR;
         GuiIcon.draw(sprite, x, y, x + 16, y + 16);
@@ -81,30 +83,33 @@ public class LedgerHelp extends Ledger_Neptune {
             return;
         }
         boolean set = false;
+        List<HelpPosition> elements = new ArrayList<>();
         for (IGuiElement element : gui.shownElements) {
-            HelpPosition info = element.getHelpInfo();
-            if (info == null) continue;
-            foundAny = true;
-            IGuiArea rect = info.target;
-            boolean isHovered = rect.contains(gui.mouse);
-            if (isHovered) {
-                if (selected != element && !set) {
-                    selected = element;
-                    GuiElementContainer container = new GuiElementContainer(gui, positionLedgerInnerStart);
-                    info.info.addGuiElements(container);
-                    if (openElements.size() == 2) {
-                        openElements.remove(1);
+            element.addHelpElements(elements);
+            foundAny |= elements.size() > 0;
+            for (HelpPosition info : elements) {
+                IGuiArea rect = info.target;
+                boolean isHovered = rect.contains(gui.mouse);
+                if (isHovered) {
+                    if (selected != element && !set) {
+                        selected = element;
+                        GuiElementContainer container = new GuiElementContainer(gui, positionLedgerInnerStart);
+                        info.info.addGuiElements(container);
+                        if (openElements.size() == 2) {
+                            openElements.remove(1);
+                        }
+                        openElements.add(container);
+                        title = LocaleUtil.localize("gui.ledger.help") + ": " + LocaleUtil.localize(info.info.title);
+                        calculateMaxSize();
+                        set = true;
                     }
-                    openElements.add(container);
-                    title = LocaleUtil.localize("gui.ledger.help") + ": " + LocaleUtil.localize(info.info.title);
-                    calculateMaxSize();
-                    set = true;
                 }
+                boolean isSelected = selected == element;
+                SpriteNineSliced split = SPRITE_HELP_SPLIT[isHovered ? 1 : 0][isSelected ? 1 : 0];
+                RenderUtil.setGLColorFromInt(info.info.colour);
+                split.draw(rect);
             }
-            boolean isSelected = selected == element;
-            SpriteNineSliced split = SPRITE_HELP_SPLIT[isHovered ? 1 : 0][isSelected ? 1 : 0];
-            RenderUtil.setGLColorFromInt(info.info.colour);
-            split.draw(rect);
+            elements.clear();
         }
         GlStateManager.color(1, 1, 1);
     }

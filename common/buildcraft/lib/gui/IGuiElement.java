@@ -19,7 +19,7 @@ import buildcraft.lib.gui.pos.IGuiArea;
 
 /** Defines an element that can be irendered, that exists inside of a rectangle. */
 @SideOnly(Side.CLIENT)
-public interface IGuiElement extends IGuiArea, ITooltipElement {
+public interface IGuiElement extends IGuiArea, ITooltipElement, IHelpElement {
     default void drawBackground(float partialTicks) {}
 
     default void drawForeground(float partialTicks) {}
@@ -32,11 +32,8 @@ public interface IGuiElement extends IGuiArea, ITooltipElement {
     @Override
     default void addToolTips(List<ToolTip> tooltips) {}
 
-    /** @return The {@link HelpPosition} pair, or null if this element shouldn't display help right now.
-     * @deprecated This should be like {@link ITooltipElement} where it adds to a list rather than returning values. */
-    default HelpPosition getHelpInfo() {
-        return null;
-    }
+    @Override
+    default void addHelpElements(List<HelpPosition> elements) {}
 
     default List<IGuiElement> getThisAndChildrenAt(int x, int y) {
         if (contains(x, y)) {

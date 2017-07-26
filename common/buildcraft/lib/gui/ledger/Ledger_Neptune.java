@@ -21,7 +21,6 @@ import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
-import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IContainingElement;
 import buildcraft.lib.gui.IGuiElement;
@@ -30,6 +29,7 @@ import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.elem.GuiElementDrawable;
 import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.GuiUtil;
@@ -377,8 +377,20 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
             }
         }
         if (currentWidth != maxWidth || currentHeight != maxHeight) {
-            if (getEnclosingRectangle().contains(gui.mouse)) {
+            if (contains(gui.mouse)) {
                 tooltips.add(new ToolTip(getTitle()));
+            }
+        }
+    }
+
+    @Override
+    public void addHelpElements(List<HelpPosition> elements) {
+        for (IGuiElement element : closedElements) {
+            element.addHelpElements(elements);
+        }
+        if (currentWidth == maxWidth && currentHeight == maxHeight) {
+            for (IGuiElement element : openElements) {
+                element.addHelpElements(elements);
             }
         }
     }

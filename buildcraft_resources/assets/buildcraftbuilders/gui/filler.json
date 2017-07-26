@@ -111,8 +111,8 @@
 			"type": "buildcraftlib:ledger",
 			"title": "test",
 			"colour": "0xFF_D4_6C_1F",
-			"closed": [
-				{
+			"closed": {
+				"icon": {
 					"type": "buildcraftlib:drawable",
 					"source": {
 						"sprite": "minecraft:items/diamond",
@@ -120,15 +120,22 @@
 					},
 					"area": [0,0,16,16]
 				}
-			],
-			"children": [
-				{
+			},
+			"children": {
+				"inv_text": {
 					"type": "buildcraftlib:text",
 					"text": "gui.inventory",
 					"colour": "0xFF_FF_FF",
 					"pos": [4, 20]
+				},
+				"inv_help": {
+					"type": "buildcraftlib:help",
+					"colour": "0xFF_CC_AA_BB",
+					"area": "inv_text.expand(2)",
+					"title": "Text",
+					"text": "Some text shown by lols"
 				}
-			]
+			}
 		},
 		"button_no_excavate": {
 			"type": "four_button",
@@ -156,7 +163,7 @@
 			"title": "buildcraft.help.filler.invert.title",
 			"text": "buildcraft.help.filler.invert.desc"
 		},
-		"icon_is_locked": {
+		"is_locked_icon": {
 			"type": "buildcraftlib:drawable",
 			"visible": "filler.is_locked",
 			"source": {
@@ -165,7 +172,20 @@
 			},
 			"area": [12, 16, 16, 16]
 		},
-		"icon_mode": {
+		"is_locked_tooltip": {
+			"type": "buildcraftlib:tooltip",
+			"visible": "filler.is_locked",
+			"text": "Locked",
+			"area": [12, 16, 16, 16]
+		},
+		"is_locked_help": {
+			"type": "buildcraftlib:help",
+			"area": [10, 14, 19, 20],
+			"colour": "0xFF_FF_BB_33",
+			"title": "Locked",
+			"text": [ "Shows a lock if the pattern", "is set by a nearby gate" ]
+		},
+		"mode_icon": {
 			"type": "buildcraftlib:drawable",
 			"visible": "controllable.mode != 'ON'",
 			"source": {
@@ -174,16 +194,16 @@
 			},
 			"area": [32, 16, 16, 16]
 		},
-		"tooltip_mode": {
+		"mode_tooltip": {
 			"type": "buildcraftlib:tooltip",
 			"visible": "controllable.mode != 'ON'",
 			"expression": "controllable.mode",
 			"area": [32, 16, 16, 16]
 		},
-		"help_mode": {
+		"mode_help": {
 			"type": "buildcraftlib:help",
 			"area": [30, 14, 20, 20],
-			"colour": "0xFF_77_BB_CC",
+			"colour": "0xFF_33_BB_FF",
 			"title": "Control mode",
 			"text": [ "Either ON, OFF, or LOOP.", "Set by gates." ]
 		},

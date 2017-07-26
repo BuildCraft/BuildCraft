@@ -6,6 +6,8 @@
 
 package buildcraft.lib.gui.help;
 
+import java.util.List;
+
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
@@ -41,7 +43,7 @@ public class DummyHelpElement implements IGuiElement {
     }
 
     @Override
-    public HelpPosition getHelpInfo() {
-        return help.target(area);
+    public void addHelpElements(List<HelpPosition> elements) {
+        elements.add(help.target(area));
     }
 }
