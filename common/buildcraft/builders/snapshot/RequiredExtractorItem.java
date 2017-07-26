@@ -20,16 +20,16 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.lib.misc.NBTUtilBC;
 
-public class RequiredExtractorItemsList extends RequiredExtractor {
+public class RequiredExtractorItem extends RequiredExtractor {
     private NbtPath path = null;
 
     @Nonnull
     @Override
     public List<ItemStack> extractItemsFromBlock(@Nonnull IBlockState blockState, @Nullable NBTTagCompound tileNbt) {
         return Optional.ofNullable(path.get(tileNbt))
-            .map(NBTUtilBC::readCompoundList)
-            .map(stream -> stream.map(ItemStack::new).collect(Collectors.toList()))
-            .map(Collections::unmodifiableList)
+            .map(NBTTagCompound.class::cast)
+            .map(ItemStack::new)
+            .map(Collections::singletonList)
             .orElseGet(Collections::emptyList);
     }
 
@@ -37,9 +37,9 @@ public class RequiredExtractorItemsList extends RequiredExtractor {
     @Override
     public List<ItemStack> extractItemsFromEntity(@Nonnull NBTTagCompound entityNbt) {
         return Optional.ofNullable(path.get(entityNbt))
-            .map(NBTUtilBC::readCompoundList)
-            .map(stream -> stream.map(ItemStack::new).collect(Collectors.toList()))
-            .map(Collections::unmodifiableList)
+            .map(NBTTagCompound.class::cast)
+            .map(ItemStack::new)
+            .map(Collections::singletonList)
             .orElseGet(Collections::emptyList);
     }
 }

@@ -763,7 +763,220 @@
         "capture": true
     },
     {
-        "selectors": ["minecraft:ender_crystal"]/*,
-        "requiredItems": ["minecraft:end_crystal"]*/
+        "selectors": ["minecraft:painting"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:painting"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:item_frame"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:item_frame"
+            }]
+        }, {
+            "type": "item",
+            "path": ["Item"]
+        }]
+    },
+    {
+        "selectors": ["minecraft:armor_stand"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:armor_stand"
+            }]
+        }, {
+            "type": "items_list",
+            "path": ["HandItems"]
+        }, {
+            "type": "items_list",
+            "path": ["ArmorItems"]
+        }]
+    },
+    {
+        "selectors": ["minecraft:ender_crystal"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:ender_crystal"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:ender_crystal"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:ender_crystal"
+            }]
+        }]
+    },
+    {
+        "selectors": [{
+            "base": "minecraft:boat",
+            "nbt": [{
+                "key": ["Type"],
+                "operation": "=",
+                "value": "oak"
+            }]
+        }],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:oak_boat"
+            }]
+        }]
+    },
+    {
+        "selectors": [{
+            "base": "minecraft:boat",
+            "nbt": [{
+                "key": ["Type"],
+                "operation": "=",
+                "value": "spruce"
+            }]
+        }],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:spruce_boat"
+            }]
+        }]
+    },
+    {
+        "selectors": [{
+            "base": "minecraft:boat",
+            "nbt": [{
+                "key": ["Type"],
+                "operation": "=",
+                "value": "birch"
+            }]
+        }],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:birch_boat"
+            }]
+        }]
+    },
+    {
+        "selectors": [{
+            "base": "minecraft:boat",
+            "nbt": [{
+                "key": ["Type"],
+                "operation": "=",
+                "value": "jungle"
+            }]
+        }],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:jungle_boat"
+            }]
+        }]
+    },
+    {
+        "selectors": [{
+            "base": "minecraft:boat",
+            "nbt": [{
+                "key": ["Type"],
+                "operation": "=",
+                "value": "jungle"
+            }]
+        }],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:jungle_boat"
+            }]
+        }]
+    },
+    {
+        "selectors": [{
+            "base": "minecraft:boat",
+            "nbt": [{
+                "key": ["Type"],
+                "operation": "=",
+                "value": "acacia"
+            }]
+        }],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:acacia_boat"
+            }]
+        }]
+    },
+    {
+        "selectors": [{
+            "base": "minecraft:boat",
+            "nbt": [{
+                "key": ["Type"],
+                "operation": "=",
+                "value": "dark_oak"
+            }]
+        }],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:dark_oak_boat"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:minecart"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:minecart"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:chest_minecart"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:chest_minecart"
+            }]
+        }, {
+            "type": "items_list",
+            "path": ["Items"]
+        }]
+    },
+    {
+        "selectors": ["minecraft:furnace_minecart"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:furnace_minecart"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:tnt_minecart"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:tnt_minecart"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:hopper_minecart"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:hopper_minecart"
+            }]
+        }, {
+            "type": "items_list",
+            "path": ["Items"]
+        }]
     }
 ]

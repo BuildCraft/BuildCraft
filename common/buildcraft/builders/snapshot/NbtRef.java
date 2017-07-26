@@ -43,6 +43,14 @@ public class NbtRef<N extends NBTBase> {
         return null;
     }
 
+    @Override
+    public String toString() {
+        return "NbtRef{" +
+            "path=" + path + ", " +
+            "value=" + value +
+            "}";
+    }
+
     @SuppressWarnings("WeakerAccess")
     public static final TypeAdapterFactory TYPE_ADAPTER_FACTORY = new TypeAdapterFactory() {
         @Override
