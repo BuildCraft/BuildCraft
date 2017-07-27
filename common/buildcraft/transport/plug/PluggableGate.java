@@ -36,9 +36,9 @@ import buildcraft.lib.expression.info.ContextInfo;
 import buildcraft.lib.expression.info.VariableInfo.CacheType;
 import buildcraft.lib.expression.info.VariableInfo.VariableInfoBoolean;
 import buildcraft.lib.expression.info.VariableInfo.VariableInfoBoolean.BooleanPossibilities;
-import buildcraft.lib.expression.info.VariableInfo.VariableInfoString;
+import buildcraft.lib.expression.info.VariableInfo.VariableInfoObject;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
-import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
@@ -54,10 +54,10 @@ import buildcraft.transport.gate.GateVariant;
 
 public class PluggableGate extends PipePluggable {
     public static final FunctionContext MODEL_FUNC_CTX_STATIC, MODEL_FUNC_CTX_DYNAMIC;
-    private static final NodeVariableString MODEL_MATERIAL;
-    private static final NodeVariableString MODEL_MODIFIER;
-    private static final NodeVariableString MODEL_LOGIC;
-    private static final NodeVariableString MODEL_SIDE;
+    private static final NodeVariableObject MODEL_MATERIAL;
+    private static final NodeVariableObject MODEL_MODIFIER;
+    private static final NodeVariableObject MODEL_LOGIC;
+    private static final NodeVariableObject MODEL_SIDE;
     private static final NodeVariableBoolean MODEL_IS_ON;
     public static final ContextInfo MODEL_VAR_INFO;
 
@@ -93,22 +93,22 @@ public class PluggableGate extends PipePluggable {
         MODEL_IS_ON = MODEL_FUNC_CTX_DYNAMIC.putVariableBoolean("on");
 
         MODEL_VAR_INFO = new ContextInfo(MODEL_FUNC_CTX_DYNAMIC);
-        VariableInfoString infoMaterial = MODEL_VAR_INFO.createInfoString("material", MODEL_MATERIAL);
+        VariableInfoObject infoMaterial = MODEL_VAR_INFO.createInfoString("material", MODEL_MATERIAL);
         infoMaterial.cacheType = CacheType.ALWAYS;
         infoMaterial.setIsComplete = true;
         infoMaterial.possibleValues.addAll(Arrays.stream(EnumGateMaterial.VALUES).map(m -> m.tag).collect(Collectors.toList()));
 
-        VariableInfoString infoModifier = MODEL_VAR_INFO.createInfoString("modifier", MODEL_MODIFIER);
+        VariableInfoObject infoModifier = MODEL_VAR_INFO.createInfoString("modifier", MODEL_MODIFIER);
         infoModifier.cacheType = CacheType.ALWAYS;
         infoModifier.setIsComplete = true;
         infoModifier.possibleValues.addAll(Arrays.stream(EnumGateModifier.VALUES).map(m -> m.tag).collect(Collectors.toList()));
 
-        VariableInfoString infoLogic = MODEL_VAR_INFO.createInfoString("logic", MODEL_LOGIC);
+        VariableInfoObject infoLogic = MODEL_VAR_INFO.createInfoString("logic", MODEL_LOGIC);
         infoLogic.cacheType = CacheType.ALWAYS;
         infoLogic.setIsComplete = true;
         infoLogic.possibleValues.addAll(Arrays.stream(EnumGateLogic.VALUES).map(m -> m.tag).collect(Collectors.toList()));
 
-        VariableInfoString infoSide = MODEL_VAR_INFO.createInfoString("side", MODEL_SIDE);
+        VariableInfoObject infoSide = MODEL_VAR_INFO.createInfoString("side", MODEL_SIDE);
         infoSide.cacheType = CacheType.ALWAYS;
         infoSide.setIsComplete = true;
         infoSide.possibleValues.addAll(Arrays.stream(EnumFacing.VALUES).map(EnumFacing::getName).collect(Collectors.toList()));

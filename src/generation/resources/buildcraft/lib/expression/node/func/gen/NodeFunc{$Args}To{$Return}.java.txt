@@ -4,50 +4,56 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
 
-package buildcraft.lib.expression.node.func;
+package buildcraft.lib.expression.node.func.gen;
 
 import buildcraft.lib.expression.NodeInliningHelper;
+import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
+import buildcraft.lib.expression.api.INodeFunc.INodeFunc{$Return};
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
+import buildcraft.lib.expression.node.value.NodeConstantBoolean;
+import buildcraft.lib.expression.node.value.NodeConstantDouble;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
+import buildcraft.lib.expression.node.value.NodeConstantObject;
 
-public class NodeFuncStringToLong implements INodeFuncLong {
+public class NodeFunc{$Args}To{$Return} implements INodeFunc{$Return} {
 
-    public final IFuncStringToLong function;
-    private final StringFunctionBi stringFunction;
+    public final IFunc{$Args}To{$Return} function;
+    private final {$StringFunction} stringFunction;
 
-    public NodeFuncStringToLong(IFuncStringToLong function) {
+    public NodeFunc{$Args}To{$Return}({$ObjectReturnArg}IFunc{$Args}To{$Return} function) {
         this.function = function;
         this.stringFunction = null;
     }
 
-    public NodeFuncStringToLong(IFuncStringToLong function, String fnString) {
+    public NodeFunc{$Args}To{$Return}({$ObjectReturnArg}IFuncDoubleToLong function, String fnString) {
         this(function, (a) -> "[" + a + "] " + fnString);
     }
 
-    public NodeFuncStringToLong(IFuncStringToLong function, StringFunctionBi stringFunction) {
+    public NodeFunc{$Args}To{$Return}({$ObjectReturnArg}IFuncDoubleToLong function, {$StringFunction} stringFunction) {
         this.function = function;
         this.stringFunction = stringFunction;
     }
 
     @Override
     public String toString() {
-        return stringFunction == null ? "[string -> long] {" + function.toString() + "}" : stringFunction.apply("{0}");
+        return stringFunction == null ? "[double -> long] {" + function.toString() + "}" : stringFunction.apply("{0}");
     }
 
     @Override
     public INodeLong getNode(INodeStack stack) throws InvalidExpressionException {
-        return new Func(stack.popString(), function, stringFunction);
+        return new Func(stack.popDouble(), function, stringFunction);
     }
 
-    private static class Func implements INodeLong {
-        private final INodeString arg;
-        private final IFuncStringToLong function;
+    private static class Func implements INode{$Return} {
+        private final INodeDouble arg;
+        private final IFuncDoubleToLong function;
         private final StringFunctionBi stringFunction;
 
-        public Func(INodeString arg, IFuncStringToLong function, StringFunctionBi stringFunction) {
+        public Func(INodeDouble arg, IFuncDoubleToLong function, StringFunctionBi stringFunction) {
             this.arg = arg;
             this.function = function;
             this.stringFunction = stringFunction;
@@ -61,7 +67,7 @@ public class NodeFuncStringToLong implements INodeFuncLong {
         @Override
         public INodeLong inline() {
             return NodeInliningHelper.tryInline(this, arg, (a) -> new Func(a, function, stringFunction),//
-                (a) -> new NodeConstantLong(function.apply(a.evaluate())));
+                    (a) -> new NodeConstantLong(function.apply(a.evaluate())));
         }
 
         @Override
@@ -72,7 +78,7 @@ public class NodeFuncStringToLong implements INodeFuncLong {
         }
     }
 
-    public interface IFuncStringToLong {
-        long apply(String arg);
+    public interface IFunc{$Args}To{$Return} {
+        {$return} apply({$arg_param});
     }
 }

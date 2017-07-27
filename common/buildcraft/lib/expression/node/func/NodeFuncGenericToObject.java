@@ -7,48 +7,57 @@
 package buildcraft.lib.expression.node.func;
 
 import buildcraft.lib.expression.api.IExpressionNode;
-import buildcraft.lib.expression.api.IExpressionNode.INodeString;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncString;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.api.NodeType;
-import buildcraft.lib.expression.node.value.NodeConstantString;
+import buildcraft.lib.expression.node.value.NodeConstantObject;
 
-public class NodeFuncGenericToString extends NodeFuncGeneric implements INodeFuncString {
+public class NodeFuncGenericToObject<T> extends NodeFuncGeneric implements INodeFuncObject<T> {
 
-    protected final INodeString node;
+    protected final INodeObject<T> node;
 
-    public NodeFuncGenericToString(INodeString node, NodeType[] types, IVariableNode[] nodes) {
+    public NodeFuncGenericToObject(INodeObject<T> node, Class<?>[] types, IVariableNode[] nodes) {
         super(node, types, nodes);
         this.node = node;
     }
 
     @Override
-    public INodeString getNode(INodeStack stack) throws InvalidExpressionException {
-        return new FuncString(popArgs(stack));
+    public INodeObject<T> getNode(INodeStack stack) throws InvalidExpressionException {
+        return new FuncObject(popArgs(stack));
     }
 
-    protected class FuncString extends Func implements INodeString {
-        public FuncString(IExpressionNode[] argsIn) {
+    @Override
+    public Class<T> getType() {
+        return node.getType();
+    }
+
+    protected class FuncObject extends Func implements INodeObject<T> {
+        public FuncObject(IExpressionNode[] argsIn) {
             super(argsIn);
         }
 
         @Override
-        public String evaluate() {
+        public Class<T> getType() {
+            return node.getType();
+        }
+
+        @Override
+        public T evaluate() {
             setupEvaluate(realArgs);
             return node.evaluate();
         }
 
         @Override
-        public INodeString inline() {
+        public INodeObject<T> inline() {
             IExpressionNode[] newArgs = new IExpressionNode[realArgs.length];
             InlineType type = setupInline(newArgs);
             if (type == InlineType.FULL) {
                 setupEvaluate(newArgs);
-                return new NodeConstantString(node.evaluate());
+                return new NodeConstantObject<>(getType(), node.evaluate());
             } else if (type == InlineType.PARTIAL) {
-                return new FuncString(newArgs);
+                return new FuncObject(newArgs);
             }
             return this;
         }

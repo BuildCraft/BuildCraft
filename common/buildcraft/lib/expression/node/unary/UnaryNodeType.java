@@ -12,7 +12,7 @@ import java.util.function.LongUnaryOperator;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 
 public enum UnaryNodeType implements IUnaryNodeType {
@@ -54,7 +54,7 @@ public enum UnaryNodeType implements IUnaryNodeType {
     }
 
     @Override
-    public INodeString createStringNode(INodeString n) throws InvalidExpressionException {
+    public INodeObject<String> createStringNode(INodeObject<String> n) throws InvalidExpressionException {
         throw new InvalidExpressionException("Cannot perform " + this + " on string nodes!");
     }
 }

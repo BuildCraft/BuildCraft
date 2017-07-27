@@ -15,18 +15,17 @@ import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.node.cast.NodeCasting;
 
 public class NodeStack implements INodeStack {
     private final Deque<IExpressionNode> stack = new ArrayDeque<>();
 
     private INodeFunc currentlyPopping;
-    private List<NodeType> recordingTypes;
+    private List<Class<?>> recordingTypes;
     private int index = 0;
 
     public NodeStack() {}
@@ -52,11 +51,19 @@ public class NodeStack implements INodeStack {
         }
     }
 
+    public IExpressionNode peek() throws InvalidExpressionException {
+        if (stack.isEmpty()) {
+            throw new InvalidExpressionException("No more nodes to peek!");
+        } else {
+            return stack.peek();
+        }
+    }
+    
     public boolean isEmpty() {
         return stack.isEmpty();
     }
 
-    public void setRecorder(List<NodeType> expected, INodeFunc toTest) throws InvalidExpressionException {
+    public void setRecorder(List<Class<?>> expected, INodeFunc toTest) throws InvalidExpressionException {
         checkAndRemoveRecorder();
         ExpressionDebugManager.debugStart("Recording " + toTest + ", expecting " + expected);
         recordingTypes = new ArrayList<>(expected);
@@ -69,7 +76,8 @@ public class NodeStack implements INodeStack {
             return;
         }
         if (index != recordingTypes.size()) {
-            throw new InvalidExpressionException("Only removed " + recordingTypes.subList(0, index) + ", expected to remove " + recordingTypes + " for " + currentlyPopping);
+            throw new InvalidExpressionException("Only removed " + recordingTypes.subList(0, index)
+                + ", expected to remove " + recordingTypes + " for " + currentlyPopping);
         }
         ExpressionDebugManager.debugEnd("Record was correct");
         recordingTypes = null;
@@ -79,16 +87,18 @@ public class NodeStack implements INodeStack {
 
     /** Used to ensure that the {@link INodeFunc} instance behaves the second time and doesn't try to pop off nodes
      * that it wasn't meant to. */
-    private void checkTypeMatch(NodeType type) throws InvalidExpressionException {
+    private void checkTypeMatch(Class<?> type) throws InvalidExpressionException {
         if (recordingTypes == null) {
             return;
         }
         if (index >= recordingTypes.size()) {
-            throw new InvalidExpressionException("Attempted to pop off " + type + ", but the function was not allowed to!");
+            throw new InvalidExpressionException(
+                "Attempted to pop off " + type + ", but the function was not allowed to!");
         }
-        NodeType said = recordingTypes.get(index);
+        Class<?> said = recordingTypes.get(index);
         if (said != type) {
-            throw new InvalidExpressionException("Attempted to pop off " + type + ", but the function previously popped off !");
+            throw new InvalidExpressionException(
+                "Attempted to pop off " + type + ", but the function previously popped off !");
         }
         index++;
     }
@@ -100,7 +110,7 @@ public class NodeStack implements INodeStack {
 
     @Override
     public INodeLong popLong() throws InvalidExpressionException {
-        checkTypeMatch(NodeType.LONG);
+        checkTypeMatch(long.class);
         IExpressionNode node = pop();
         if (node instanceof INodeLong) {
             return (INodeLong) node;
@@ -111,13 +121,13 @@ public class NodeStack implements INodeStack {
 
     @Override
     public INodeDouble popDouble() throws InvalidExpressionException {
-        checkTypeMatch(NodeType.DOUBLE);
+        checkTypeMatch(double.class);
         return NodeCasting.castToDouble(pop());
     }
 
     @Override
     public INodeBoolean popBoolean() throws InvalidExpressionException {
-        checkTypeMatch(NodeType.BOOLEAN);
+        checkTypeMatch(boolean.class);
         IExpressionNode node = pop();
         if (node instanceof INodeBoolean) {
             return (INodeBoolean) node;
@@ -127,8 +137,19 @@ public class NodeStack implements INodeStack {
     }
 
     @Override
-    public INodeString popString() throws InvalidExpressionException {
-        checkTypeMatch(NodeType.STRING);
-        return NodeCasting.castToString(pop());
+    public <T> INodeObject<T> popObject(Class<T> type) throws InvalidExpressionException {
+        checkTypeMatch(type);
+        IExpressionNode node = pop();
+        if (node instanceof INodeObject) {
+            INodeObject<?> nodeObj = (INodeObject<?>) node;
+            if (nodeObj.getType() == type) {
+                return (INodeObject<T>) nodeObj;
+            } else {
+                throw new InvalidExpressionException(
+                    "Cannot cast " + nodeObj.getType().getSimpleName() + " to " + type.getSimpleName() + "!");
+            }
+        } else {
+            throw new InvalidExpressionException("Cannot cast " + node + " to " + type.getSimpleName() + "!");
+        }
     }
 }

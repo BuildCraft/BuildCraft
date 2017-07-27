@@ -16,8 +16,6 @@ public interface IVariableNode extends IExpressionNode {
      * independent to this node), but if false then {@link #inline()} will return this variable. */
     void setConstant(boolean isConstant);
 
-    String valueToString();
-
     String getName();
 
     interface IVariableNodeLong extends IVariableNode, INodeLong {}
@@ -26,5 +24,5 @@ public interface IVariableNode extends IExpressionNode {
 
     interface IVariableNodeBoolean extends IVariableNode, INodeBoolean {}
 
-    interface IVariableNodeString extends IVariableNode, INodeString {}
+    interface IVariableNodeObject<T> extends IVariableNode, INodeObject<T> {}
 }

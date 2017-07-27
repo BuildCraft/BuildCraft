@@ -13,11 +13,11 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.info.VariableInfo.VariableInfoBoolean;
 import buildcraft.lib.expression.info.VariableInfo.VariableInfoDouble;
 import buildcraft.lib.expression.info.VariableInfo.VariableInfoLong;
-import buildcraft.lib.expression.info.VariableInfo.VariableInfoString;
+import buildcraft.lib.expression.info.VariableInfo.VariableInfoObject;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableLong;
-import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.expression.node.value.NodeVariableObject;
 
 public class ContextInfo {
     public final FunctionContext fnCtx;
@@ -27,16 +27,16 @@ public class ContextInfo {
         this.fnCtx = fnCtx;
     }
 
-    public VariableInfoString createInfoString(String name, NodeVariableString node) {
-        VariableInfoString info = new VariableInfoString(node);
+    public VariableInfoObject createInfoString(String name, NodeVariableObject node) {
+        VariableInfoObject info = new VariableInfoObject(node);
         variables.put(name, info);
         return info;
     }
 
-    public VariableInfoString getInfoString(String name) {
+    public VariableInfoObject getInfoString(String name) {
         VariableInfo<?> info = variables.get(name);
-        if (info instanceof VariableInfoString) {
-            return (VariableInfoString) info;
+        if (info instanceof VariableInfoObject) {
+            return (VariableInfoObject) info;
         }
         return null;
     }

@@ -21,7 +21,8 @@ public class NodeInliningHelper {
      *            attempting to inline itself.
      * @param inlinedChanger A changer that should return an immutable node from the inlined version.
      * @return A new node that has been inlined fully. */
-    public static <F extends IExpressionNode, T extends IExpressionNode> T tryInline(T node, F subNode, Function<F, T> changer, Function<F, T> inlinedChanger) {
+    public static <F extends IExpressionNode, T extends IExpressionNode> T tryInline(T node, F subNode,
+        Function<F, T> changer, Function<F, T> inlinedChanger) {
         ExpressionDebugManager.debugStart("Inlining " + node);
         // Nothing we can do about these unchecked warnings without making IExpressionNode generic
         @SuppressWarnings("unchecked")
@@ -40,13 +41,12 @@ public class NodeInliningHelper {
         }
     }
 
-    public static <F extends IExpressionNode, T extends IExpressionNode> T tryInline(T node, F subNodeLeft, F subNodeRight, BiFunction<F, F, T> changer, BiFunction<F, F, T> inlinedChanger) {
+    public static <L extends IExpressionNode, R extends IExpressionNode, T extends IExpressionNode> T tryInline(T node, L subNodeLeft,
+        R subNodeRight, BiFunction<L, R, T> changer, BiFunction<L, R, T> inlinedChanger) {
         ExpressionDebugManager.debugStart("Inlining " + node);
         // Nothing we can do about these unchecked warnings without making IExpressionNode generic
-        @SuppressWarnings("unchecked")
-        F leftInlined = (F) subNodeLeft.inline();
-        @SuppressWarnings("unchecked")
-        F rightInlined = (F) subNodeRight.inline();
+        L leftInlined = (L) subNodeLeft.inline();
+        R rightInlined = (R) subNodeRight.inline();
         if (leftInlined instanceof IConstantNode && rightInlined instanceof IConstantNode) {
             T to = inlinedChanger.apply(leftInlined, rightInlined);
             ExpressionDebugManager.debugEnd("Fully inlined to " + to);

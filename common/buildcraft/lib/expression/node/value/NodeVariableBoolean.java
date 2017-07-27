@@ -38,7 +38,7 @@ public class NodeVariableBoolean implements IVariableNodeBoolean {
 
     @Override
     public String toString() {
-        return name + " = " + valueToString();
+        return name + " = " + evaluateAsString();
     }
 
     @Override
@@ -49,10 +49,5 @@ public class NodeVariableBoolean implements IVariableNodeBoolean {
     @Override
     public void set(IExpressionNode from) {
         value = ((INodeBoolean) from).evaluate();
-    }
-
-    @Override
-    public String valueToString() {
-        return Boolean.toString(value);
     }
 }

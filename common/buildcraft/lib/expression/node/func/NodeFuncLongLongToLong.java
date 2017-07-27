@@ -41,19 +41,15 @@ public class NodeFuncLongLongToLong implements INodeFuncLong {
     public INodeLong getNode(INodeStack stack) throws InvalidExpressionException {
         INodeLong b = stack.popLong();
         INodeLong a = stack.popLong();
-        return new Func(a, b, function, stringFunction);
+        return new Func(a, b);
     }
 
-    private static class Func implements INodeLong {
+    private class Func implements INodeLong {
         private final INodeLong a, b;
-        private final IFuncLongLongToLong function;
-        private final StringFunctionTri stringFunction;
 
-        public Func(INodeLong a, INodeLong b, IFuncLongLongToLong function, StringFunctionTri stringFunction) {
+        public Func(INodeLong a, INodeLong b) {
             this.a = a;
             this.b = b;
-            this.function = function;
-            this.stringFunction = stringFunction;
         }
 
         @Override
@@ -63,7 +59,7 @@ public class NodeFuncLongLongToLong implements INodeFuncLong {
 
         @Override
         public INodeLong inline() {
-            return NodeInliningHelper.tryInline(this, a, b, (a, b) -> new Func(a, b, function, stringFunction),//
+            return NodeInliningHelper.tryInline(this, a, b, (a, b) -> new Func(a, b),//
                 (a, b) -> new NodeConstantLong(function.apply(a.evaluate(), b.evaluate())));
         }
 

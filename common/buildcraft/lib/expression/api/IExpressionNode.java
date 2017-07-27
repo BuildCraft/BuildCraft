@@ -6,7 +6,6 @@
 
 package buildcraft.lib.expression.api;
 
-import java.util.Objects;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.LongSupplier;
@@ -97,7 +96,7 @@ public interface IExpressionNode {
 
         @Override
         default String evaluateAsString() {
-            return Objects.toString(evaluate());
+            return evaluate().toString();
         }
 
         /** @deprecated As {@link #evaluate()} gives a better description as to the cost. */
@@ -118,24 +117,6 @@ public interface IExpressionNode {
                     return clazz;
                 }
             };
-        }
-    }
-
-    /** Specialised type of {@link INodeObject} for {@link String}, for use as a {@link FunctionalInterface} */
-    @FunctionalInterface
-    @Deprecated
-    public interface INodeString extends INodeObject<String> {
-        @Override
-        String evaluate();
-
-        @Override
-        default Class<String> getType() {
-            return String.class;
-        }
-
-        @Override
-        default INodeString inline() {
-            return this;
         }
     }
 }

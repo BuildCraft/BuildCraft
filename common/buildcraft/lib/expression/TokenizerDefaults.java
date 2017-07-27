@@ -103,19 +103,28 @@ public class TokenizerDefaults {
          * 
          * Allow words to contain "." so that full names work.
          * 
+         * Except in the case where "engine.stage.toLowerCase()" -- only take "engine.stage"
+         * 
          * I have no idea how this will work in regards to object properties... although they aren't implemented yet
          */
+        int lastDot = -1;
         int i = 0;
-        while (true) {
+        for (;; i++) {
             char c = ctx.getCharAt(i);
-            if (i == 0) {
-                if (c != '.' && !Character.isJavaIdentifierStart(c)) {
+            if (c == '.') {
+                lastDot = i;
+            } else if (c == '(') {
+                if (lastDot == -1) {
+                    break;
+                } else if (lastDot == 0) {
+                    break;
+                } else {
+                    i = lastDot;
                     break;
                 }
-            } else if (c != '.' && !Character.isJavaIdentifierPart(c)) {
+            } else if (!Character.isJavaIdentifierPart(c)) {
                 break;
             }
-            i++;
         }
         return i == 0 ? ResultSpecific.IGNORE : new ResultConsume(i);
     };

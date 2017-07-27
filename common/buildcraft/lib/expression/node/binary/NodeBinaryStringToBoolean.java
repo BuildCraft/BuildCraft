@@ -8,6 +8,7 @@ package buildcraft.lib.expression.node.binary;
 
 import buildcraft.lib.expression.NodeInliningHelper;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 
 public class NodeBinaryStringToBoolean implements INodeBoolean {
@@ -16,11 +17,11 @@ public class NodeBinaryStringToBoolean implements INodeBoolean {
         boolean apply(String l, String r);
     }
 
-    private final INodeString left, right;
+    private final INodeObject<String> left, right;
     private final BiStringToBooleanFunction func;
     private final String op;
 
-    public NodeBinaryStringToBoolean(INodeString left, INodeString right, BiStringToBooleanFunction func, String op) {
+    public NodeBinaryStringToBoolean(INodeObject<String> left, INodeObject<String> right, BiStringToBooleanFunction func, String op) {
         this.left = left;
         this.right = right;
         this.func = func;

@@ -1,26 +1,37 @@
 package buildcraft.test.lib.expression;
 
-import static buildcraft.lib.expression.Argument.*;
+import static buildcraft.lib.expression.Argument.argDouble;
+import static buildcraft.lib.expression.Argument.argLong;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import buildcraft.lib.expression.*;
+import buildcraft.lib.expression.Argument;
+import buildcraft.lib.expression.DefaultContexts;
+import buildcraft.lib.expression.ExpressionDebugManager;
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.GenericExpressionCompiler;
+import buildcraft.lib.expression.NodeStack;
+import buildcraft.lib.expression.NodeStackRecording;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
 import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.api.NodeType;
+import buildcraft.lib.expression.minecraft.ExpressionCompat;
 import buildcraft.lib.expression.node.binary.BiNodeType;
 import buildcraft.lib.expression.node.func.NodeFuncGenericToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongToLong;
 import buildcraft.lib.expression.node.unary.UnaryNodeType;
-import buildcraft.lib.expression.node.value.*;
+import buildcraft.lib.expression.node.value.NodeConstantDouble;
+import buildcraft.lib.expression.node.value.NodeConstantLong;
+import buildcraft.lib.expression.node.value.NodeVariableDouble;
+import buildcraft.lib.expression.node.value.NodeVariableLong;
+import buildcraft.lib.expression.node.value.NodeVariableObject;
 
 @SuppressWarnings("static-method")
 public class ExpressionTester {
@@ -44,7 +55,7 @@ public class ExpressionTester {
         bakeAndCallDouble("-1", -1);
         bakeAndCallDouble("0+1", 0 + 1);
         bakeAndCallDouble("   0   +    1    ", 1);
-        bakeAndCallDouble("3-2", 3-2);
+        bakeAndCallDouble("3-2", 3 - 2);
         bakeAndCallDouble("1+1+1", 3);
         bakeAndCallDouble("1+2-1", 2);
         bakeAndCallDouble("1-2+1", 0);
@@ -77,6 +88,8 @@ public class ExpressionTester {
         bakeAndCallString("'A'", "A");
         bakeAndCallString("'a' + 'b'", "ab");
         bakeAndCallString("'aA' + 'b'", "aAb");
+        bakeAndCallString("'aAB'.toLowerCase()", "aab");
+        bakeAndCallString("'aAB'.tolOwercase()", "aab");
 
         bakeAndCallBoolean("'a' == 'a'", true);
         bakeAndCallBoolean("'a' != 'b'", true);
@@ -117,7 +130,7 @@ public class ExpressionTester {
 
         IVariableNode[] vars = { arg1 };
 
-        NodeType[] ntArgs = { NodeType.LONG };
+        Class<?>[] ntArgs = { long.class };
 
         NodeFuncGenericToLong func = new NodeFuncGenericToLong(node, ntArgs, vars);
 
@@ -186,7 +199,8 @@ public class ExpressionTester {
         nd = (INodeDouble) ctx2.getVariable("e");
         System.out.println(nd + " = " + nd.evaluate());
 
-        INodeFuncLong func3 = GenericExpressionCompiler.compileFunctionLong("input * 2 + 1", ctx2, Argument.argLong("input"));
+        INodeFuncLong func3 =
+            GenericExpressionCompiler.compileFunctionLong("input * 2 + 1", ctx2, Argument.argLong("input"));
         NodeStack stack3 = new NodeStack();
         NodeVariableLong input = stack3.push(new NodeVariableLong("input"));
         INodeLong node3 = func3.getNode(stack3);
@@ -263,11 +277,13 @@ public class ExpressionTester {
         bakeAndCallDouble("powLong(3, 3)", 27, ctx);
     }
 
-    private static void compileFuncLong(FunctionContext ctx, String name, String expr, Argument... args) throws InvalidExpressionException {
+    private static void compileFuncLong(FunctionContext ctx, String name, String expr, Argument... args)
+        throws InvalidExpressionException {
         ctx.putFunction(name, GenericExpressionCompiler.compileFunctionLong(expr, ctx, args));
     }
 
-    private static void compileFuncDouble(FunctionContext ctx, String name, String expr, Argument... args) throws InvalidExpressionException {
+    private static void compileFuncDouble(FunctionContext ctx, String name, String expr, Argument... args)
+        throws InvalidExpressionException {
         ctx.putFunction(name, GenericExpressionCompiler.compileFunctionDouble(expr, ctx, args));
     }
 
@@ -281,7 +297,7 @@ public class ExpressionTester {
         someVariable.value = 1;
         bakeAndCallDouble("something", 1, ctx);
 
-        NodeVariableString variant = ctx.putVariableString("variant");
+        NodeVariableObject<String> variant = ctx.putVariableString("variant");
         String exp = "variant == 'gold'";
         INodeBoolean expBool = bakeFunctionBoolean(exp, ctx);
 
@@ -303,6 +319,30 @@ public class ExpressionTester {
         Assert.assertEquals(expLong.evaluate(), 2);
         variant.value = "some_other_value";
         Assert.assertEquals(expLong.evaluate(), 3);
+    }
+
+    @Test
+    public void testObjects() {
+        FunctionContext ctx = new FunctionContext();
+
+        ctx.putConstantLong("engine.rate", 6);
+        bakeAndCallLong("engine.rate", 6, ctx);
+
+        ctx.putConstant("engine.stage", String.class, "blue");
+        bakeAndCallString("engine.stage.toUpperCase()", "BLUE", ctx);
+    }
+
+    @Test
+    public void testMinecraftClasses() {
+        FunctionContext ctx = ExpressionCompat.CONTEXT;
+
+        bakeAndCallString("Facing.UP", "up", ctx);
+        bakeAndCallString("Facing.uP", "up", ctx);
+        bakeAndCallString("Facing.up.getOpposite()", "down", ctx);
+        bakeAndCallString("Facing.up.getAxis()", "y", ctx);
+
+        bakeAndCallString("Axis.X", "x", ctx);
+        bakeAndCallString("axis.x", "x", ctx);
     }
 
     private static INodeDouble bakeFunctionDouble(String function, FunctionContext ctx) {
@@ -345,7 +385,7 @@ public class ExpressionTester {
         bakeAndCallBoolean(function, def, null);
     }
 
-    private static INodeString bakeFunctionString(String function, FunctionContext ctx) {
+    private static INodeObject<String> bakeFunctionString(String function, FunctionContext ctx) {
         try {
             return GenericExpressionCompiler.compileExpressionString(function, ctx);
         } catch (buildcraft.lib.expression.api.InvalidExpressionException e) {
@@ -355,7 +395,7 @@ public class ExpressionTester {
 
     private static void bakeAndCallString(String function, String expected, FunctionContext ctx) {
         ExpressionDebugManager.debugPrintln("Testing \"" + function + "\", expecting " + expected);
-        INodeString node = bakeFunctionString(function, ctx);
+        INodeObject<String> node = bakeFunctionString(function, ctx);
         ExpressionDebugManager.debugPrintln("To " + node);
         String got = node.evaluate();
         assertEquals(expected, got);
@@ -374,7 +414,7 @@ public class ExpressionTester {
     }
 
     private static void testExpr(String expr, FunctionContext ctx) throws InvalidExpressionException {
-        INodeString node = GenericExpressionCompiler.compileExpressionString(expr, ctx);
+        INodeObject<String> node = GenericExpressionCompiler.compileExpressionString(expr, ctx);
         System.out.println(expr + " = " + node.evaluate());
     }
 

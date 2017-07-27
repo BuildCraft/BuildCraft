@@ -34,10 +34,10 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.info.ContextInfo;
 import buildcraft.lib.expression.info.VariableInfo.CacheType;
 import buildcraft.lib.expression.info.VariableInfo.VariableInfoDouble;
-import buildcraft.lib.expression.info.VariableInfo.VariableInfoString;
+import buildcraft.lib.expression.info.VariableInfo.VariableInfoObject;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
-import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
@@ -49,7 +49,7 @@ import buildcraft.transport.client.model.key.KeyPlugPulsar;
 public class PluggablePulsar extends PipePluggable {
 
     public static final FunctionContext MODEL_FUNC_CTX;
-    private static final NodeVariableString MODEL_SIDE;
+    private static final NodeVariableObject MODEL_SIDE;
     private static final NodeVariableDouble MODEL_STAGE;
     private static final NodeVariableBoolean MODEL_ON;
     private static final NodeVariableBoolean MODEL_AUTO;
@@ -98,7 +98,7 @@ public class PluggablePulsar extends PipePluggable {
         MODEL_MANUAL = MODEL_FUNC_CTX.putVariableBoolean("manual");
 
         MODEL_VAR_INFO = new ContextInfo(MODEL_FUNC_CTX);
-        VariableInfoString infoSide = MODEL_VAR_INFO.createInfoString("side", MODEL_SIDE);
+        VariableInfoObject infoSide = MODEL_VAR_INFO.createInfoString("side", MODEL_SIDE);
         infoSide.cacheType = CacheType.ALWAYS;
         infoSide.setIsComplete = true;
         infoSide.possibleValues.addAll(Arrays.stream(EnumFacing.VALUES).map(EnumFacing::getName).collect(Collectors.toList()));

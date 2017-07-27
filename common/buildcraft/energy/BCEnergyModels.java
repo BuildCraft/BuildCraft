@@ -32,7 +32,7 @@ import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
-import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.misc.data.ModelVariableData;
 
@@ -42,8 +42,8 @@ import buildcraft.energy.tile.TileEngineStone_BC8;
 public class BCEnergyModels {
 
     private static final NodeVariableDouble ENGINE_PROGRESS;
-    private static final NodeVariableString ENGINE_STAGE;
-    private static final NodeVariableString ENGINE_FACING;
+    private static final NodeVariableObject ENGINE_STAGE;
+    private static final NodeVariableObject ENGINE_FACING;
 
     private static final ModelHolderVariable ENGINE_STONE;
     private static final ModelHolderVariable ENGINE_IRON;

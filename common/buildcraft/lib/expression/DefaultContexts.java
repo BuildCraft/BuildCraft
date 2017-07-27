@@ -13,7 +13,6 @@ import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.misc.ColourUtil;
 
 public class DefaultContexts {
-    public static final FunctionContext STRINGS = new FunctionContext();
     public static final FunctionContext MATH_SCALAR = new FunctionContext();
     public static final FunctionContext MATH_VECTOR = new FunctionContext();
     public static final FunctionContext RENDERING = new FunctionContext();
@@ -22,7 +21,7 @@ public class DefaultContexts {
 
     public static final INodeFuncLong MATH_SCALAR_FUNC_ROUND;
 
-    private static final FunctionContext[] CTX_ARRAY_ALL = { STRINGS, MATH_SCALAR, MATH_VECTOR, RENDERING };
+    private static final FunctionContext[] CTX_ARRAY_ALL = { MATH_SCALAR, MATH_VECTOR, RENDERING };
 
     /** Creates a new {@link FunctionContext} with all of the functions given in this class. */
     public static FunctionContext createWithAll() {
@@ -30,9 +29,6 @@ public class DefaultContexts {
     }
 
     static {
-        // STRINGS.put_s_s("lowercase", (a) -> a.toLowerCase(Locale.ROOT));
-        // STRINGS.put_s_s("uppercase", (a) -> a.toUpperCase(Locale.ROOT));
-        STRINGS.put_s_l("length", String::length);
         // STRINGS.put_sl_s("string_at", (a, b) -> Character.toString(a.charAt(b)));
         // STRINGS.put_sl_s("substring", (a, b) -> a.substring(b));
         // STRINGS.put_sll_s("substring", (a, b, c) -> a.substring(b, c));

@@ -36,7 +36,7 @@ import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableLong;
-import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.fluid.FluidSmoother;
 import buildcraft.lib.fluid.FluidSmoother.IFluidDataSender;
 import buildcraft.lib.fluid.Tank;
@@ -54,7 +54,7 @@ import buildcraft.factory.BCFactoryBlocks;
 
 public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final FunctionContext MODEL_FUNC_CTX;
-    private static final NodeVariableString MODEL_FACING;
+    private static final NodeVariableObject MODEL_FACING;
     private static final NodeVariableBoolean MODEL_ACTIVE;
     private static final NodeVariableLong MODEL_POWER_AVG;
     private static final NodeVariableLong MODEL_POWER_MAX;

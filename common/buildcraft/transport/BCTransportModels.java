@@ -27,7 +27,7 @@ import buildcraft.lib.client.model.ModelPluggableItem;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
-import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.misc.data.ModelVariableData;
 
 import buildcraft.transport.client.model.GateMeshDefinition;
@@ -71,13 +71,13 @@ public class BCTransportModels {
     private static final ModelVariableData GATE_VAR_DATA_STATIC;
 
     private static final ModelHolderVariable LENS, FILTER;
-    private static final NodeVariableString LENS_COLOUR, LENS_SIDE;
+    private static final NodeVariableObject LENS_COLOUR, LENS_SIDE;
 
     public static final ModelHolderStatic PULSAR_STATIC;
     public static final ModelHolderVariable PULSAR_DYNAMIC;
 
     private static final ModelHolderVariable STRIPES;
-    private static final NodeVariableString STRIPES_DIRECTION;
+    private static final NodeVariableObject STRIPES_DIRECTION;
 
     public static final IPluggableStaticBaker<KeyPlugPulsar> BAKER_PLUG_PULSAR;
     public static final IPluggableStaticBaker<KeyPlugBlocker> BAKER_PLUG_BLOCKER;

@@ -10,7 +10,7 @@ import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 
 public interface IUnaryNodeType {
@@ -20,5 +20,5 @@ public interface IUnaryNodeType {
 
     IExpressionNode createBooleanNode(INodeBoolean n) throws InvalidExpressionException;
 
-    IExpressionNode createStringNode(INodeString n) throws InvalidExpressionException;
+    IExpressionNode createStringNode(INodeObject<String> n) throws InvalidExpressionException;
 }

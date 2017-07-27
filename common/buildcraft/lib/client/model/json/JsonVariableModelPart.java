@@ -22,7 +22,7 @@ import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.misc.JsonUtil;
 
@@ -63,7 +63,7 @@ public abstract class JsonVariableModelPart {
         }
     }
 
-    public static INodeString convertStringToStringNode(String expression, FunctionContext context) {
+    public static INodeObject<String> convertStringToStringNode(String expression, FunctionContext context) {
         try {
             return GenericExpressionCompiler.compileExpressionString(expression, context);
         } catch (InvalidExpressionException e) {
@@ -79,7 +79,15 @@ public abstract class JsonVariableModelPart {
         }
     }
 
-    private static INodeLong convertStringToLongNode(String expression, FunctionContext context) {
+    public static INodeLong convertStringToLongNode(String expression, FunctionContext context) {
+        try {
+            return GenericExpressionCompiler.compileExpressionLong(expression, context);
+        } catch (InvalidExpressionException e) {
+            throw new JsonSyntaxException("Invalid expression " + expression, e);
+        }
+    }
+    
+    public static <T> INodeObject<T> convertStringToObjectNode(String expression, FunctionContext context, Class<T> clazz) {
         try {
             return GenericExpressionCompiler.compileExpressionLong(expression, context);
         } catch (InvalidExpressionException e) {

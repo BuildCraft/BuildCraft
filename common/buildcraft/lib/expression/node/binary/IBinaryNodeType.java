@@ -11,7 +11,7 @@ import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 
 public interface IBinaryNodeType {
@@ -21,7 +21,7 @@ public interface IBinaryNodeType {
 
     IExpressionNode createBooleanNode(INodeBoolean l, INodeBoolean r) throws InvalidExpressionException;
 
-    IExpressionNode createStringNode(INodeString l, INodeString r) throws InvalidExpressionException;
+    IExpressionNode createStringNode(INodeObject<String> l, INodeObject<String> r) throws InvalidExpressionException;
 
     default IExpressionNode createNode(IExpressionNode left, IExpressionNode right) throws InvalidExpressionException {
         left = InternalCompiler.convertBinary(left, right);
@@ -33,8 +33,8 @@ public interface IBinaryNodeType {
             return createDoubleNode((INodeDouble) left, (INodeDouble) right);
         } else if (left instanceof INodeBoolean) {
             return createBooleanNode((INodeBoolean) left, (INodeBoolean) right);
-        } else if (left instanceof INodeString) {
-            return createStringNode((INodeString) left, (INodeString) right);
+        } else if (left instanceof INodeObject && ((INodeObject) left).getType() == String.class) {
+            return createStringNode((INodeObject<String>) left, (INodeObject<String>) right);
         } else {
             throw new InvalidExpressionException("Unknown node " + left + ", " + right);
         }

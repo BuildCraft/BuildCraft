@@ -43,16 +43,11 @@ public class NodeVariableLong implements IVariableNodeLong {
 
     @Override
     public String toString() {
-        return name;
+        return name + " = " + evaluateAsString();
     }
 
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public String valueToString() {
-        return Long.toString(value);
     }
 }

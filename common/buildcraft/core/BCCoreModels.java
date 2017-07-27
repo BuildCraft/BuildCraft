@@ -33,7 +33,7 @@ import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
-import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.misc.data.ModelVariableData;
 
 import buildcraft.core.client.render.RenderEngineCreative;
@@ -46,8 +46,8 @@ import buildcraft.core.tile.TileMarkerVolume;
 public class BCCoreModels {
 
     private static final NodeVariableDouble ENGINE_PROGRESS;
-    private static final NodeVariableString ENGINE_STAGE;
-    private static final NodeVariableString ENGINE_FACING;
+    private static final NodeVariableObject<String> ENGINE_STAGE;
+    private static final NodeVariableObject<String> ENGINE_FACING;
 
     private static final ModelHolderVariable ENGINE_REDSTONE;
     private static final ModelHolderVariable ENGINE_CREATIVE;

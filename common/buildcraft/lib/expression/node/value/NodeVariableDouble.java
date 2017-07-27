@@ -43,18 +43,11 @@ public class NodeVariableDouble implements IVariableNodeDouble {
 
     @Override
     public String toString() {
-        return name + " = " + valueToString();
+        return name + " = " + evaluateAsString();
     }
 
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public String valueToString() {
-        double strVal = value * 1000;
-        strVal = Math.round(strVal) / 1000.0;
-        return Double.toString(strVal);
     }
 }

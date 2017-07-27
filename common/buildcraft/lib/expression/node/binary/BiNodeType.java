@@ -12,7 +12,7 @@ import java.util.function.LongBinaryOperator;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.node.binary.NodeBinaryBoolean.BiBooleanPredicate;
 import buildcraft.lib.expression.node.binary.NodeBinaryString.BiStringFunction;
@@ -35,7 +35,8 @@ public enum BiNodeType implements IBinaryNodeType {
     public final BiBooleanPredicate booleanFunction;
     public final BiStringFunction stringFunc;
 
-    BiNodeType(String op, LongBinaryOperator longFunc, DoubleBinaryOperator doubleFunc, BiBooleanPredicate booleanFunction, BiStringFunction stringFunc) {
+    BiNodeType(String op, LongBinaryOperator longFunc, DoubleBinaryOperator doubleFunc,
+        BiBooleanPredicate booleanFunction, BiStringFunction stringFunc) {
         this.op = op;
         this.longFunc = longFunc;
         this.doubleFunc = doubleFunc;
@@ -68,7 +69,8 @@ public enum BiNodeType implements IBinaryNodeType {
     }
 
     @Override
-    public INodeString createStringNode(INodeString l, INodeString r) throws InvalidExpressionException {
+    public INodeObject<String> createStringNode(INodeObject<String> l, INodeObject<String> r)
+        throws InvalidExpressionException {
         if (stringFunc == null) {
             throw new InvalidExpressionException("Cannot perform " + this + " on string nodes!");
         }
