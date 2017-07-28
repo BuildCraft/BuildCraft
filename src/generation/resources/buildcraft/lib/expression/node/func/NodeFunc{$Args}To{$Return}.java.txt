@@ -1,0 +1,75 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
+package buildcraft.lib.expression.node.func;
+
+import buildcraft.lib.expression.NodeInliningHelper;
+import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
+import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
+import buildcraft.lib.expression.api.INodeFunc.INodeFunc{$ReturnOnly};
+import buildcraft.lib.expression.api.INodeStack;
+import buildcraft.lib.expression.api.InvalidExpressionException;
+import buildcraft.lib.expression.node.func.{$StringFunction};
+import buildcraft.lib.expression.node.value.NodeConstant{$ReturnOnly};
+
+{$AutoGenWarning}
+public class NodeFunc{$Args}To{$ReturnOnly}{$TypeArgs} implements INodeFunc{$Return} {
+
+    public final IFunc{$Args}To{$ReturnOnly}{$TypeArgs} function;
+    private final {$StringFunction} stringFunction;
+{$ObjectClassFields}
+    public NodeFunc{$Args}To{$ReturnOnly}(String name, {$ObjectClassArgs}IFunc{$Args}To{$ReturnOnly}{$TypeArgs} function) {
+        this({$ObjectClassArgsPass}({$StringFunctionArgs}) -> name + "(" + {$StringFunctionArgsPlus} ")", function);
+    }
+
+    public NodeFunc{$Args}To{$ReturnOnly}({$ObjectClassArgs}{$StringFunction} stringFunction, IFunc{$Args}To{$ReturnOnly}{$TypeArgs} function) {
+{$ObjectClassFieldSet}
+        this.function = function;
+        this.stringFunction = stringFunction;
+    }
+{$ObjectGetType}
+    @Override
+    public String toString() {
+        return stringFunction.apply({$ToStringArgs});
+    }
+
+    @Override
+    public INode{$Return} getNode(INodeStack stack) throws InvalidExpressionException {
+{$NodeStackPops}
+        return new Func({$StringFunctionArgs});
+    }
+
+    private class Func implements INode{$Return} {
+{$ObjectNodeFields}
+        public Func({$ObjectNodeArgs}) {
+{$ObjectNodeFieldSet}
+        }
+{$ObjectGetType2}
+        @Override
+        public {$return} evaluate() {
+            return function.apply({$NodeEvaluationsL});
+        }
+
+        @Override
+        public INode{$Return} inline() {
+            return NodeInliningHelper.tryInline(this, {$StringFunctionArgsL}, ({$StringFunctionArgs}) -> new Func({$StringFunctionArgs}),
+                    ({$StringFunctionArgs}) -> {$NodeConstantGetter}function.apply({$NodeEvaluations}))
+            );
+        }
+
+        @Override
+        public String toString() {
+            return stringFunction.apply({$NodeToStringArgs});
+        }
+    }
+
+    @FunctionalInterface
+    public interface IFunc{$Args}To{$ReturnOnly}{$TypeArgs} {
+        {$return} apply({$FunctionArgs});
+    }
+}

@@ -15,7 +15,7 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.InternalCompiler;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.api.NodeType;
+import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.value.ITickableNode;
 import buildcraft.lib.expression.node.value.NodeStateful;
 import buildcraft.lib.expression.node.value.NodeStateful.IGetterFunc;
@@ -56,9 +56,9 @@ public class JsonVariableObject {
             NodeStateful stateful = null;
             if (getter != null) {
                 // stateful node
-                NodeType nodeType;
+                Class<?> nodeType;
                 try {
-                    nodeType = NodeType.parseType(type);
+                    nodeType = NodeTypes.parseType(type);
                 } catch (InvalidExpressionException iee) {
                     throw new JsonSyntaxException("Could not parse node type for variable '" + name + "'", iee);
                 }

@@ -89,7 +89,7 @@ public abstract class JsonVariableModelPart {
     
     public static <T> INodeObject<T> convertStringToObjectNode(String expression, FunctionContext context, Class<T> clazz) {
         try {
-            return GenericExpressionCompiler.compileExpressionLong(expression, context);
+            return GenericExpressionCompiler.compileExpressionObject(clazz, expression, context);
         } catch (InvalidExpressionException e) {
             throw new JsonSyntaxException("Invalid expression " + expression, e);
         }

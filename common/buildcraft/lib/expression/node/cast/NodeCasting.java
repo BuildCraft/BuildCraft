@@ -6,8 +6,6 @@
 
 package buildcraft.lib.expression.node.cast;
 
-import java.util.function.Function;
-
 import buildcraft.lib.expression.NodeStack;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
@@ -22,6 +20,7 @@ import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeType2;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.NodeFuncObjectToObject;
+import buildcraft.lib.expression.node.func.NodeFuncObjectToObject.IFuncObjectToObject;
 
 public class NodeCasting {
     public static INodeObject<String> castToString(IExpressionNode node) {
@@ -93,12 +92,12 @@ public class NodeCasting {
             return (INodeObject<T>) nodeFrom;
         } else {
             NodeType2<T> typeTo = NodeTypes.getType(clazz);
-            Function<F, T> caster = typeTo.getCast(fromClass);
+            IFuncObjectToObject<F, T> caster = typeTo.getCast(fromClass);
             if (caster == null) {
                 throw new InvalidExpressionException("Cannot cast " + nodeFrom + " to " + clazz.getSimpleName());
             }
             INodeStack stack = new NodeStack(nodeFrom);
-            return new NodeFuncObjectToObject<>(fromClass, clazz, caster).getNode(stack);
+            return new NodeFuncObjectToObject<>("cast", fromClass, clazz, caster).getNode(stack);
         }
     }
 
@@ -118,11 +117,11 @@ public class NodeCasting {
             return (INodeFuncObject<T>) nodeFrom;
         } else {
             NodeType2<T> typeTo = NodeTypes.getType(clazz);
-            Function<F, T> caster = typeTo.getCast(fromClass);
+            IFuncObjectToObject<F, T> caster = typeTo.getCast(fromClass);
             if (caster == null) {
                 throw new InvalidExpressionException("Cannot cast " + nodeFrom + " to " + clazz.getSimpleName());
             }
-            return new NodeFuncObjectToObject<>(fromClass, clazz, caster);
+            return new NodeFuncObjectToObject<>("cast", fromClass, clazz, caster);
         }
     }
 }

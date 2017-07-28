@@ -24,7 +24,6 @@ import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.minecraft.ExpressionCompat;
 import buildcraft.lib.expression.node.binary.BiNodeType;
 import buildcraft.lib.expression.node.func.NodeFuncGenericToLong;
-import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongToLong;
 import buildcraft.lib.expression.node.unary.UnaryNodeType;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
@@ -142,7 +141,7 @@ public class ExpressionTester {
         nodeStack.push(new NodeConstantLong(27));
         System.out.println(func.getNode(nodeStack).inline().evaluate());
 
-        NodeFuncLongToLong func2 = new NodeFuncLongToLong((a) -> (a * 2), "a * 2");
+        NodeFuncLongToLong func2 = new NodeFuncLongToLong("mult2", (a) -> (a * 2));
 
         nodeStack.push(new NodeConstantLong(1));
         System.out.println(func2.getNode(nodeStack).inline().evaluate());
@@ -211,7 +210,7 @@ public class ExpressionTester {
         input.value = 30;
         System.out.println(node3 + " = " + node3.evaluate());
 
-        ctx2.putFunction("sub", new NodeFuncLongLongToLong((a, b) -> a - b, (a, b) -> a + " - " + b));
+        ctx2.put_ll_l("sub", (a, b) -> a - b);
 
         testExpr("floor(ceil(0.5)+0.5)", ctx2);
         testExpr("sub(5, 6)", ctx2);
@@ -334,7 +333,8 @@ public class ExpressionTester {
 
     @Test
     public void testMinecraftClasses() {
-        FunctionContext ctx = ExpressionCompat.CONTEXT;
+        ExpressionCompat.setup();
+        FunctionContext ctx = null;
 
         bakeAndCallString("Facing.UP", "up", ctx);
         bakeAndCallString("Facing.uP", "up", ctx);

@@ -285,7 +285,7 @@ public class InternalCompiler {
             } else if (isValidDouble(op)) {
                 stack.push(new NodeConstantDouble(Double.parseDouble(op)));
             } else if (BOOLEAN_MATCHER.matcher(op).matches()) {
-                stack.push(NodeConstantBoolean.get(Boolean.parseBoolean(op)));
+                stack.push(NodeConstantBoolean.of(Boolean.parseBoolean(op)));
             } else if (STRING_MATCHER.matcher(op).matches()) {
                 stack.push(new NodeConstantObject<>(String.class, op.substring(1, op.length() - 1)));
             } else if (op.startsWith(FUNCTION_START)) {
@@ -294,6 +294,17 @@ public class InternalCompiler {
                 pushFunctionNode(stack, function, context);
             } else {
                 IExpressionNode node = context == null ? null : context.getVariable(op);
+                if (node == null && op.contains(".")) {
+                    int index = op.indexOf('.');
+                    String type = op.substring(0, index);
+                    FunctionContext ctx = getContext(type);
+                    if (ctx != null) {
+                        node = ctx.getVariable(op);
+                        if (node == null) {
+                            node = ctx.getVariable(op.substring(index + 1));
+                        }
+                    }
+                }
                 if (node != null) {
                     stack.push(node);
                 } else {
@@ -451,13 +462,23 @@ public class InternalCompiler {
                 INodeObject<?> nodeObj = (INodeObject<?>) node;
                 Class<?> clazz = nodeObj.getType();
                 ExpressionDebugManager.debugPrintln("type is " + clazz.getSimpleName());
-                NodeType2<?> type = NodeTypes.getType(clazz);
-                func = type.objectContext.getFunction(name, count);
+                func = NodeTypes.getType(clazz).getFunction(name, count);
             }
         }
 
-        if (func == null) {
+        if (func == null && context != null) {
             func = context.getFunction(name, count);
+        }
+
+        if (func == null && name.contains(".")) {
+            String type = name.substring(0, name.indexOf('.'));
+            FunctionContext ctx = getContext(type);
+            if (ctx != null) {
+                func = ctx.getFunction(name, count);
+                if (func == null) {
+                    func = ctx.getFunction(name.substring(name.indexOf('.') + 1), count);
+                }
+            }
         }
 
         if (func == null) {
@@ -477,5 +498,10 @@ public class InternalCompiler {
         stack.checkAndRemoveRecorder();
 
         stack.push(node);
+    }
+
+    private static FunctionContext getContext(String type) throws InvalidExpressionException {
+        Class<?> clazz = NodeTypes.parseType(type);
+        return NodeTypes.getType(clazz);
     }
 }

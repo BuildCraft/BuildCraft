@@ -15,6 +15,8 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 
+import net.minecraft.client.resources.IResourceManager;
+
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 

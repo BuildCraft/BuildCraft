@@ -8,6 +8,7 @@ package buildcraft.lib.expression.node.value;
 
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeObject;
+import buildcraft.lib.expression.api.NodeType2;
 import buildcraft.lib.expression.api.NodeTypes;
 
 public class NodeVariableObject<T> implements IVariableNodeObject<T> {
@@ -19,7 +20,11 @@ public class NodeVariableObject<T> implements IVariableNodeObject<T> {
     public NodeVariableObject(String name, Class<T> type) {
         this.name = name;
         this.type = type;
-        this.value = NodeTypes.getType(type).defaultValue;
+        NodeType2<T> nodeType = NodeTypes.getType(type);
+        if (nodeType == null) {
+            throw new IllegalArgumentException("Unknown NodeType " + type);
+        }
+        this.value = nodeType.defaultValue;
     }
 
     @Override

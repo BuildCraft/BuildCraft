@@ -9,33 +9,20 @@ package buildcraft.lib.expression;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.INodeFunc;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
 import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleToDouble;
-import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleToDouble.IFuncDoubleDoubleToDouble;
-import buildcraft.lib.expression.node.func.NodeFuncDoubleToDouble;
-import buildcraft.lib.expression.node.func.NodeFuncDoubleToDouble.IFuncDoubleToDouble;
-import buildcraft.lib.expression.node.func.NodeFuncDoubleToLong;
-import buildcraft.lib.expression.node.func.NodeFuncDoubleToLong.IFuncDoubleToLong;
-import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong;
-import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong.IFuncLongLongToLong;
-import buildcraft.lib.expression.node.func.NodeFuncLongToLong;
-import buildcraft.lib.expression.node.func.NodeFuncLongToLong.IFuncLongToLong;
-import buildcraft.lib.expression.node.func.NodeFuncObjectLongToObject;
-import buildcraft.lib.expression.node.func.NodeFuncObjectLongToObject.IFuncObjectLongToObject;
-import buildcraft.lib.expression.node.func.NodeFuncObjectToLong;
+import buildcraft.lib.expression.node.func.NodeFuncObjectLongLongToLong.IFuncObjectLongLongToLong;
+import buildcraft.lib.expression.node.func.NodeFuncObjectLongToLong.IFuncObjectLongToLong;
+import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToObject.IFuncObjectObjectToObject;
 import buildcraft.lib.expression.node.func.NodeFuncObjectToLong.IFuncObjectToLong;
-import buildcraft.lib.expression.node.func.NodeFuncObjectToObject;
 import buildcraft.lib.expression.node.func.NodeFuncToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncToBoolean.IFuncToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncToObject;
@@ -48,7 +35,7 @@ import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableLong;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
 
-public class FunctionContext {
+public class FunctionContext extends FunctionContextBase {
     public static final String FUNCTION_ARG_SEPARATOR = "^";
 
     private final FunctionContext[] parents;
@@ -69,7 +56,7 @@ public class FunctionContext {
 
     /** Constructs a function context that will delegate to the parents, in order, to find functions and variables if
      * they don't exist in this context. */
-    public FunctionContext(FunctionContext[] parents) {
+    public FunctionContext(FunctionContext... parents) {
         this.parents = parents.clone();
     }
 
@@ -157,7 +144,7 @@ public class FunctionContext {
 
             @Override
             public INodeBoolean inline() {
-                return NodeConstantBoolean.get(value);
+                return NodeConstantBoolean.of(value);
             }
 
             @Override
@@ -212,6 +199,7 @@ public class FunctionContext {
         return recorder.types.size();
     }
 
+    @Override
     public <F extends INodeFunc> F putFunction(String name, F function) {
         name = name.toLowerCase(Locale.ROOT);
         functions.put(name + FUNCTION_ARG_SEPARATOR + getArgCount(function), function);
@@ -232,39 +220,19 @@ public class FunctionContext {
         return putFunction(name, new NodeFuncToObject<>(name, type, func));
     }
 
-    public INodeFuncLong put_l_l(String name, IFuncLongToLong func) {
-        return putFunction(name, new NodeFuncLongToLong(func, (a) -> name + "(" + a + ")"));
-    }
-
-    public INodeFuncLong put_ll_l(String name, IFuncLongLongToLong func) {
-        return putFunction(name, new NodeFuncLongLongToLong(func, (a, b) -> name + "(" + a + ", " + b + ")"));
-    }
-
-    public INodeFuncLong put_d_l(String name, IFuncDoubleToLong func) {
-        return putFunction(name, new NodeFuncDoubleToLong(func, (a) -> name + "(" + a + ")"));
-    }
-
-    public INodeFuncDouble put_d_d(String name, IFuncDoubleToDouble func) {
-        return putFunction(name, new NodeFuncDoubleToDouble(func, (a) -> name + "(" + a + ")"));
-    }
-
-    public INodeFuncDouble put_dd_d(String name, IFuncDoubleDoubleToDouble func) {
-        return putFunction(name, new NodeFuncDoubleDoubleToDouble(func, (a, b) -> name + "(" + a + ", " + b + ")"));
-    }
-
-    public <T> INodeFuncLong put_o_l(String name, Class<T> type, IFuncObjectToLong<T> func) {
-        return putFunction(name, new NodeFuncObjectToLong<>(type, func, (a) -> name + "(" + a + ")"));
-    }
-
     public INodeFuncLong put_s_l(String name, IFuncObjectToLong<String> func) {
         return put_o_l(name, String.class, func);
     }
 
-    public <F, T> INodeFuncObject<T> put_o_o(String name, Class<F> typeFrom, Class<T> typeTo, Function<F, T> func) {
-        return putFunction(name, new NodeFuncObjectToObject<>(typeFrom, typeTo, func, (a) -> name + "(" + a + ")"));
+    public INodeFuncLong put_sl_l(String name, IFuncObjectLongToLong<String> func) {
+        return put_ol_l(name, String.class, func);
     }
 
-    public <F, T> INodeFuncObject<T> put_ol_o(String name, Class<F> typeFrom, Class<T> typeTo, IFuncObjectLongToObject<F, T> func) {
-        return putFunction(name, new NodeFuncObjectLongToObject<>(typeFrom, typeTo, func, (a, b) -> name + "(" + a + ", " + b + ")"));
+    public INodeFuncLong put_sl_l(String name, IFuncObjectLongLongToLong<String> func) {
+        return put_oll_l(name, String.class, func);
+    }
+
+    public INodeFuncObject<String> put_ss_s(String name, IFuncObjectObjectToObject<String, String, String> func) {
+        return put_oo_o(name, String.class, String.class, String.class, func);
     }
 }

@@ -84,6 +84,7 @@ sourceSets {
     main {
         java {
             srcDir "common"
+            srcDir "src/autogen/java"
             // srcDir "src_old_license"
         }
         resources {

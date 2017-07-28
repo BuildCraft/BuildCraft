@@ -24,7 +24,7 @@ public class NodeBooleanInvert implements INodeBoolean {
 
     @Override
     public INodeBoolean inline() {
-        return NodeInliningHelper.tryInline(this, from, NodeBooleanInvert::new, (f) -> NodeConstantBoolean.get(!f.evaluate()));
+        return NodeInliningHelper.tryInline(this, from, NodeBooleanInvert::new, (f) -> NodeConstantBoolean.of(!f.evaluate()));
     }
 
     @Override

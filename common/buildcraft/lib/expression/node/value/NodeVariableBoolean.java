@@ -31,7 +31,7 @@ public class NodeVariableBoolean implements IVariableNodeBoolean {
     @Override
     public INodeBoolean inline() {
         if (isConst) {
-            return NodeConstantBoolean.get(value);
+            return NodeConstantBoolean.of(value);
         }
         return this;
     }

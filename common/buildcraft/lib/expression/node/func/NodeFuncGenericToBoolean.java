@@ -46,7 +46,7 @@ public class NodeFuncGenericToBoolean extends NodeFuncGeneric implements INodeFu
             InlineType type = setupInline(newArgs);
             if (type == InlineType.FULL) {
                 setupEvaluate(newArgs);
-                return NodeConstantBoolean.get(node.evaluate());
+                return NodeConstantBoolean.of(node.evaluate());
             } else if (type == InlineType.PARTIAL) {
                 return new FuncBoolean(newArgs);
             }

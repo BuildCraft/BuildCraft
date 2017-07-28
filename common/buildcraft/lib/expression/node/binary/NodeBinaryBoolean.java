@@ -35,7 +35,7 @@ public class NodeBinaryBoolean implements INodeBoolean {
     @Override
     public INodeBoolean inline() {
         return NodeInliningHelper.tryInline(this, left, right, (l, r) -> new NodeBinaryBoolean(l, r, func, op), //
-            (l, r) -> NodeConstantBoolean.get(func.apply(l.evaluate(), r.evaluate())));
+            (l, r) -> NodeConstantBoolean.of(func.apply(l.evaluate(), r.evaluate())));
     }
 
     @Override

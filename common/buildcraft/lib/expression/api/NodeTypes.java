@@ -52,6 +52,7 @@ public class NodeTypes {
     }
 
     public static <T> void addType(String key, NodeType2<T> type) {
+        key = key.toLowerCase(Locale.ROOT);
         knownTypes.put(key, type.type);
         objectTypes.put(type.type, type);
     }
@@ -75,7 +76,7 @@ public class NodeTypes {
     public static IConstantNode createConstantNode(IExpressionNode node) {
         if (node instanceof INodeLong) return new NodeConstantLong(((INodeLong) node).evaluate());
         else if (node instanceof INodeDouble) return new NodeConstantDouble(((INodeDouble) node).evaluate());
-        else if (node instanceof INodeBoolean) return NodeConstantBoolean.get(((INodeBoolean) node).evaluate());
+        else if (node instanceof INodeBoolean) return NodeConstantBoolean.of(((INodeBoolean) node).evaluate());
         else if (node instanceof INodeObject) {
             INodeObject<?> nodeObj = (INodeObject<?>) node;
             return createConstantObject(nodeObj);

@@ -6,9 +6,7 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -17,14 +15,13 @@ import com.google.gson.JsonSyntaxException;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.JsonUtils;
 
-import buildcraft.api.core.BCLog;
-
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.model.ResourceLoaderContext;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
+import buildcraft.lib.expression.minecraft.ExpressionCompat;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 
 /** A rule for changing a model's elements. The most basic example is rotating an entire model based of a single
@@ -49,6 +46,7 @@ public abstract class JsonModelRule {
         if (type.startsWith("builtin:")) {
             String builtin = type.substring("builtin:".length());
             if ("rotate_facing".equals(builtin)) {
+                fnCtx = new FunctionContext(fnCtx, ExpressionCompat.ENUM_FACING);
                 String from = JsonUtils.getString(obj, "from");
                 INodeObject<EnumFacing> nodeFrom = JsonVariableModelPart.convertStringToObjectNode(from, fnCtx, EnumFacing.class);
 

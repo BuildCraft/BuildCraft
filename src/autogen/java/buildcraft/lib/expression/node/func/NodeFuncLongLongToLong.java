@@ -7,70 +7,75 @@
 package buildcraft.lib.expression.node.func;
 
 import buildcraft.lib.expression.NodeInliningHelper;
+import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
+import buildcraft.lib.expression.node.func.StringFunctionTri;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 
+// AUTO_GENERATED FILE, DO NOT EDIT MANUALLY!
 public class NodeFuncLongLongToLong implements INodeFuncLong {
 
     public final IFuncLongLongToLong function;
     private final StringFunctionTri stringFunction;
 
-    public NodeFuncLongLongToLong(IFuncLongLongToLong function) {
-        this.function = function;
-        this.stringFunction = null;
+    public NodeFuncLongLongToLong(String name, IFuncLongLongToLong function) {
+        this((a, b) -> name + "(" + a + b +  ")", function);
     }
 
-    public NodeFuncLongLongToLong(IFuncLongLongToLong function, String fnString) {
-        this(function, (a, b) -> "[" + a + ", " + b + "] " + fnString);
-    }
+    public NodeFuncLongLongToLong(StringFunctionTri stringFunction, IFuncLongLongToLong function) {
 
-    public NodeFuncLongLongToLong(IFuncLongLongToLong function, StringFunctionTri stringFunction) {
         this.function = function;
         this.stringFunction = stringFunction;
     }
 
     @Override
     public String toString() {
-        return stringFunction == null ? "[long, long -> long] {" + function.toString() + "}" : stringFunction.apply("{0}", "{1}");
+        return stringFunction.apply("{A}", "{B}");
     }
 
     @Override
     public INodeLong getNode(INodeStack stack) throws InvalidExpressionException {
+
         INodeLong b = stack.popLong();
         INodeLong a = stack.popLong();
+
         return new Func(a, b);
     }
 
     private class Func implements INodeLong {
-        private final INodeLong a, b;
+        private final INodeLong argA;
+        private final INodeLong argB;
 
-        public Func(INodeLong a, INodeLong b) {
-            this.a = a;
-            this.b = b;
+        public Func(INodeLong argA, INodeLong argB) {
+            this.argA = argA;
+            this.argB = argB;
+
         }
 
         @Override
         public long evaluate() {
-            return function.apply(a.evaluate(), b.evaluate());
+            return function.apply(argA.evaluate(), argB.evaluate());
         }
 
         @Override
         public INodeLong inline() {
-            return NodeInliningHelper.tryInline(this, a, b, (a, b) -> new Func(a, b),//
-                (a, b) -> new NodeConstantLong(function.apply(a.evaluate(), b.evaluate())));
+            return NodeInliningHelper.tryInline(this, argA, argB, (a, b) -> new Func(a, b),
+                    (a, b) -> NodeConstantLong.of(function.apply(a.evaluate(), b.evaluate()))
+            );
         }
 
         @Override
         public String toString() {
-            return stringFunction == null//
-                ? "[" + a + ", " + b + " -> long] {" + function.toString() + "}"//
-                : stringFunction.apply(a.toString(), b.toString());
+            return stringFunction.apply(argA.toString(), argB.toString());
         }
     }
 
+    @FunctionalInterface
     public interface IFuncLongLongToLong {
         long apply(long a, long b);
     }

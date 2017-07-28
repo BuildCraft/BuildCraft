@@ -8,7 +8,7 @@ import com.google.gson.JsonSyntaxException;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
-import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.gui.GuiElementToolTip;
 import buildcraft.lib.gui.IGuiElement;
@@ -60,7 +60,7 @@ public class ElementTypeToolTip extends ElementType {
         INodeBoolean visible = getEquationBool(json, "visible", ctx, true);
         ITooltipElement source;
         if (isExpression) {
-            List<INodeString> nodes = new ArrayList<>(text.size());
+            List<INodeObject<String>> nodes = new ArrayList<>(text.size());
             try {
                 for (String s : text) {
                     nodes.add(GenericExpressionCompiler.compileExpressionString(s, ctx));

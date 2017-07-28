@@ -66,10 +66,10 @@ public class ModelVariableData {
             for (ITickableNode node : tickableNodes) {
                 if (node instanceof NodeUpdatable) {
                     NodeUpdatable nU = (NodeUpdatable) node;
-                    to.add("  " + nU.name + " = " + nU.variable.valueToString());
+                    to.add("  " + nU.name + " = " + nU.variable.evaluateAsString());
                 } else if (node instanceof NodeStateful.Instance) {
                     NodeStateful.Instance nS = (Instance) node;
-                    to.add("  " + nS.getContainer().name + " = " + nS.storedVar.valueToString());
+                    to.add("  " + nS.getContainer().name + " = " + nS.storedVar.evaluateAsString());
                 }
             }
         }

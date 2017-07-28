@@ -14,7 +14,7 @@ import buildcraft.lib.expression.InternalCompiler;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.api.NodeType;
+import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.IGuiPosition;
@@ -52,7 +52,7 @@ public abstract class ElementType {
                 String value = json.properties.get(key);
                 try {
                     IExpressionNode node = InternalCompiler.compileExpression(value, ctx);
-                    ctx.putVariable(argName, NodeType.createConstantNode(node));
+                    ctx.putVariable(argName, NodeTypes.createConstantNode(node));
                 } catch (InvalidExpressionException e) {
                     // Ignore the error
                     BCLog.logger.info("Failed to compile expression for " + key + " because " + e.getMessage());
@@ -67,7 +67,7 @@ public abstract class ElementType {
             String value = json.properties.get(key);
             try {
                 IExpressionNode node = InternalCompiler.compileExpression(value, ctx);
-                ctx.putVariable(key, NodeType.createConstantNode(node));
+                ctx.putVariable(key, NodeTypes.createConstantNode(node));
             } catch (InvalidExpressionException e) {
                 // Ignore the error
                 // BCLog.logger.info("Failed to compile expression for " + key + " because " + e.getMessage());
@@ -123,10 +123,11 @@ public abstract class ElementType {
         return getEquationBool(json, member, ctx, _default).evaluate();
     }
 
-    public static INodeBoolean getEquationBool(JsonGuiElement json, String member, FunctionContext ctx, boolean _default) {
+    public static INodeBoolean getEquationBool(JsonGuiElement json, String member, FunctionContext ctx,
+        boolean _default) {
         String eqn = json.properties.get(member);
         if (eqn == null) {
-            return NodeConstantBoolean.get(_default);
+            return NodeConstantBoolean.of(_default);
         }
         try {
             return GenericExpressionCompiler.compileExpressionBoolean(eqn, ctx);

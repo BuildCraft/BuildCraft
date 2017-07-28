@@ -30,7 +30,7 @@ public class NodeConditionalBoolean implements INodeBoolean {
         INodeBoolean t = ifTrue.inline();
         INodeBoolean f = ifFalse.inline();
         if (c instanceof NodeConstantBoolean && t instanceof NodeConstantBoolean && f instanceof NodeConstantBoolean) {
-            return NodeConstantBoolean.get(((NodeConstantBoolean) c).value ? ((NodeConstantBoolean) t).value : ((NodeConstantBoolean) f).value);
+            return NodeConstantBoolean.of(((NodeConstantBoolean) c).value ? ((NodeConstantBoolean) t).value : ((NodeConstantBoolean) f).value);
         } else if (c != condition || t != ifTrue || f != ifFalse) {
             return new NodeConditionalBoolean(c, t, f);
         } else {
