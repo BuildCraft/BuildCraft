@@ -14,6 +14,7 @@ import buildcraft.lib.expression.Tokenizer.ResultConsume;
 import buildcraft.lib.expression.Tokenizer.ResultDiscard;
 import buildcraft.lib.expression.Tokenizer.ResultInvalid;
 import buildcraft.lib.expression.Tokenizer.ResultSpecific;
+import buildcraft.lib.expression.api.NodeTypes;
 
 public class TokenizerDefaults {
     // Lots of gobblers.
@@ -107,21 +108,25 @@ public class TokenizerDefaults {
          * 
          * I have no idea how this will work in regards to object properties... although they aren't implemented yet
          */
+        int firstDot = Integer.MAX_VALUE;
         int lastDot = -1;
         int i = 0;
         for (;; i++) {
             char c = ctx.getCharAt(i);
             if (c == '.') {
+                firstDot = Math.min(i, firstDot);
                 lastDot = i;
             } else if (c == '(') {
                 if (lastDot == -1) {
                     break;
                 } else if (lastDot == 0) {
                     break;
-                } else if ("new".equals(ctx.get(lastDot + 1, i))) {
+                } else if (NodeTypes.getType(ctx.get(0, firstDot + 1)) == null) {
+                    if (firstDot != lastDot) {
+                        i = lastDot;
+                    }
                     break;
                 } else {
-                    i = lastDot;
                     break;
                 }
             } else if (!Character.isJavaIdentifierPart(c)) {

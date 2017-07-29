@@ -18,6 +18,7 @@ import buildcraft.lib.expression.api.INodeFunc;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.node.cast.NodeCasting;
+import buildcraft.lib.expression.node.value.NodeConstantObject;
 
 public class NodeStack implements INodeStack {
     private final List<IExpressionNode> stack = new ArrayList<>();

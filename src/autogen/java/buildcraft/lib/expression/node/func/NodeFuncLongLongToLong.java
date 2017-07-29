@@ -25,7 +25,7 @@ public class NodeFuncLongLongToLong implements INodeFuncLong {
     private final StringFunctionTri stringFunction;
 
     public NodeFuncLongLongToLong(String name, IFuncLongLongToLong function) {
-        this((a, b) -> "[ long, long -> long ] " + name + "(" + a + b +  ")", function);
+        this((a, b) -> "[ long, long -> long ] " + name + "(" + a + ", " + b +  ")", function);
     }
 
     public NodeFuncLongLongToLong(StringFunctionTri stringFunction, IFuncLongLongToLong function) {

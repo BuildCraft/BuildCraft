@@ -31,6 +31,10 @@ import buildcraft.lib.expression.node.func.NodeFuncDoubleToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleToDouble.IFuncDoubleToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleToDouble.IFuncDoubleDoubleToDouble;
+import buildcraft.lib.expression.node.func.NodeFuncObjectToDouble;
+import buildcraft.lib.expression.node.func.NodeFuncObjectToDouble.IFuncObjectToDouble;
+import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToDouble;
+import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToDouble.IFuncObjectObjectToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncLongLongToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncLongLongToBoolean.IFuncLongLongToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleToBoolean;
@@ -53,6 +57,12 @@ import buildcraft.lib.expression.node.func.NodeFuncLongLongLongLongToObject;
 import buildcraft.lib.expression.node.func.NodeFuncLongLongLongLongToObject.IFuncLongLongLongLongToObject;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleToObject;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleToObject.IFuncDoubleToObject;
+import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleToObject;
+import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleToObject.IFuncDoubleDoubleToObject;
+import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleDoubleToObject;
+import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleDoubleToObject.IFuncDoubleDoubleDoubleToObject;
+import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleDoubleDoubleToObject;
+import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleDoubleDoubleToObject.IFuncDoubleDoubleDoubleDoubleToObject;
 import buildcraft.lib.expression.node.func.NodeFuncBooleanToObject;
 import buildcraft.lib.expression.node.func.NodeFuncBooleanToObject.IFuncBooleanToObject;
 import buildcraft.lib.expression.node.func.NodeFuncObjectToObject;
@@ -114,6 +124,14 @@ public abstract class FunctionContextBase {
         return putFunction(name, new NodeFuncDoubleDoubleToDouble(name, func));
     }
 
+    public <A> INodeFuncDouble put_o_d(String name, Class<A> argTypeA, IFuncObjectToDouble<A> func) {
+        return putFunction(name, new NodeFuncObjectToDouble<>(name, argTypeA, func));
+    }
+
+    public <A, B> INodeFuncDouble put_oo_d(String name, Class<A> argTypeA, Class<B> argTypeB, IFuncObjectObjectToDouble<A, B> func) {
+        return putFunction(name, new NodeFuncObjectObjectToDouble<>(name, argTypeA, argTypeB, func));
+    }
+
     public  INodeFuncBoolean put_ll_b(String name, IFuncLongLongToBoolean func) {
         return putFunction(name, new NodeFuncLongLongToBoolean(name, func));
     }
@@ -156,6 +174,18 @@ public abstract class FunctionContextBase {
 
     public <R> INodeFuncObject<R> put_d_o(String name, Class<R> returnType, IFuncDoubleToObject<R> func) {
         return putFunction(name, new NodeFuncDoubleToObject<>(name, returnType, func));
+    }
+
+    public <R> INodeFuncObject<R> put_dd_o(String name, Class<R> returnType, IFuncDoubleDoubleToObject<R> func) {
+        return putFunction(name, new NodeFuncDoubleDoubleToObject<>(name, returnType, func));
+    }
+
+    public <R> INodeFuncObject<R> put_ddd_o(String name, Class<R> returnType, IFuncDoubleDoubleDoubleToObject<R> func) {
+        return putFunction(name, new NodeFuncDoubleDoubleDoubleToObject<>(name, returnType, func));
+    }
+
+    public <R> INodeFuncObject<R> put_dddd_o(String name, Class<R> returnType, IFuncDoubleDoubleDoubleDoubleToObject<R> func) {
+        return putFunction(name, new NodeFuncDoubleDoubleDoubleDoubleToObject<>(name, returnType, func));
     }
 
     public <R> INodeFuncObject<R> put_b_o(String name, Class<R> returnType, IFuncBooleanToObject<R> func) {

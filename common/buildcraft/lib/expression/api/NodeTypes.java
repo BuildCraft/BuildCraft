@@ -31,12 +31,15 @@ import buildcraft.lib.expression.node.value.NodeVariableObject;
 
 public class NodeTypes {
 
-    public static final FunctionContext LONG = new FunctionContext();
-    public static final FunctionContext DOUBLE = new FunctionContext();
-    public static final FunctionContext BOOLEAN = new FunctionContext();
-    public static final NodeType2<String> STRING = new NodeType2<>("");
-    public static final NodeType2<VecLong> VEC_LONG = new NodeType2<>(VecLong.ZERO);
-    public static final NodeType2<VecDouble> VEC_DOUBLE = new NodeType2<>(VecDouble.ZERO);
+    public static final FunctionContext LONG;
+    public static final FunctionContext DOUBLE;
+    public static final FunctionContext BOOLEAN;
+    public static final NodeType2<String> STRING;
+    public static final NodeType2<VecLong> VEC_LONG;
+    public static final NodeType2<VecDouble> VEC_DOUBLE;
+    public static final NodeType2<INodeLong> NODE_LONG;
+    public static final NodeType2<INodeDouble> NODE_DOUBLE;
+    public static final NodeType2<INodeBoolean> NODE_BOOLEAN;
 
     private static final Map<String, Class<?>> typesByName = new HashMap<>();
     private static final Map<Class<?>, String> namesByType = new HashMap<>();
@@ -45,6 +48,16 @@ public class NodeTypes {
     public static final BiMap<Class<?>, NodeType2<?>> typesByClass = HashBiMap.create();
 
     static {
+        LONG = new FunctionContext();
+        DOUBLE = new FunctionContext();
+        BOOLEAN = new FunctionContext();
+        STRING = new NodeType2<>("");
+        VEC_LONG = new NodeType2<>(VecLong.ZERO);
+        VEC_DOUBLE = new NodeType2<>(VecDouble.ZERO);
+        NODE_LONG = new NodeType2<>(INodeLong.class, NodeConstantLong.ZERO);
+        NODE_DOUBLE = new NodeType2<>(INodeDouble.class, NodeConstantDouble.ZERO);
+        NODE_BOOLEAN = new NodeType2<>(INodeBoolean.class, NodeConstantBoolean.FALSE);
+
         typesByName.put("long", long.class);
         typesByName.put("double", double.class);
         typesByName.put("boolean", boolean.class);
@@ -54,6 +67,9 @@ public class NodeTypes {
         addType("String", STRING);
         addType("VecLong", VEC_LONG);
         addType("VecDouble", VEC_DOUBLE);
+        addType("NodeLong", NODE_LONG);
+        addType("NodeDouble", NODE_DOUBLE);
+        addType("NodeBoolean", NODE_BOOLEAN);
 
         LONG.put_l_l("-", (a) -> -a);
         LONG.put_l_l("~", (a) -> ~a);
@@ -115,18 +131,40 @@ public class NodeTypes {
         STRING.put_t_t("toUpperCase", a -> a.toUpperCase(Locale.ROOT));
 
         VEC_LONG.putConstant("ZERO", VecLong.ZERO);
-        VEC_LONG.put_l_o("new", VecLong.class, (a) -> new VecLong(a, 0, 0, 0));
-        VEC_LONG.put_ll_o("new", VecLong.class, (a, b) -> new VecLong(a, b, 0, 0));
-        VEC_LONG.put_lll_o("new", VecLong.class, (a, b, c) -> new VecLong(a, b, c, 0));
-        VEC_LONG.put_llll_o("new", VecLong.class, (a, b, c, d) -> new VecLong(a, b, c, d));
+        VEC_LONG.put_l_t("vec", VecLong::new);
+        VEC_LONG.put_ll_t("vec", VecLong::new);
+        VEC_LONG.put_lll_t("vec", VecLong::new);
+        VEC_LONG.put_llll_t("vec", VecLong::new);
+        VEC_LONG.put_t_o("(VecDouble)", VecDouble.class, VecLong::castToDouble);
 
         VEC_LONG.put_tt_t("+", VecLong::add);
         VEC_LONG.put_tt_t("-", VecLong::sub);
         VEC_LONG.put_tt_t("*", VecLong::scale);
         VEC_LONG.put_tt_t("/", VecLong::div);
+        VEC_LONG.put_tt_t("cross", VecLong::crossProduct);
+        VEC_LONG.put_tt_d("distanceTo", VecLong::distance);
         VEC_LONG.put_tt_l("dot2", VecLong::dotProduct2);
         VEC_LONG.put_tt_l("dot3", VecLong::dotProduct3);
         VEC_LONG.put_tt_l("dot4", VecLong::dotProduct4);
+        VEC_LONG.put_t_d("length", VecLong::length);
+        VEC_LONG.put_t_o("(string)", String.class, VecLong::toString);
+
+        VEC_DOUBLE.put_d_t("vec", VecDouble::new);
+        VEC_DOUBLE.put_dd_t("vec", VecDouble::new);
+        VEC_DOUBLE.put_ddd_t("vec", VecDouble::new);
+        VEC_DOUBLE.put_dddd_t("vec", VecDouble::new);
+
+        VEC_DOUBLE.put_tt_t("+", VecDouble::add);
+        VEC_DOUBLE.put_tt_t("-", VecDouble::sub);
+        VEC_DOUBLE.put_tt_t("*", VecDouble::scale);
+        VEC_DOUBLE.put_tt_t("/", VecDouble::div);
+        VEC_DOUBLE.put_tt_t("cross", VecDouble::crossProduct);
+        VEC_DOUBLE.put_tt_d("distanceTo", VecDouble::distance);
+        VEC_DOUBLE.put_tt_d("dot2", VecDouble::dotProduct2);
+        VEC_DOUBLE.put_tt_d("dot3", VecDouble::dotProduct3);
+        VEC_DOUBLE.put_tt_d("dot4", VecDouble::dotProduct4);
+        VEC_DOUBLE.put_t_d("length", VecDouble::length);
+        VEC_DOUBLE.put_t_o("(string)", String.class, VecDouble::toString);
     }
 
     public static Class<?> getType(String name) {

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -414,10 +415,12 @@ public class InternalCompiler {
         int bestCastCount = Integer.MAX_VALUE;
         List<INodeFunc> bestCasters = null;
         List<Class<?>> bestClassesTo = null;
-        ExpressionDebugManager.debugStart("Finding best function called '" + name + "' for " + functionOrder);
+        List<String> fnOrderNames = functionOrder.stream().map(NodeTypes::getName).collect(Collectors.toList());
+        ExpressionDebugManager.debugStart("Finding best function called '" + name + "' for " + fnOrderNames);
         for (Entry<List<Class<?>>, INodeFunc> func : functions.entrySet()) {
             List<Class<?>> functionClasses = func.getKey();
-            ExpressionDebugManager.debugPrintln("Found " + functionClasses);
+            List<String> fnClassNames = functionClasses.stream().map(NodeTypes::getName).collect(Collectors.toList());
+            ExpressionDebugManager.debugPrintln("Found " + fnClassNames);
             if (functionClasses.size() != functionOrder.size()) {
                 continue;
             }
@@ -431,15 +434,25 @@ public class InternalCompiler {
                 ExpressionDebugManager.debugPrintln("  - " + NodeTypes.getName(from) + " -> " + NodeTypes.getName(to));
                 if (from == to) {
                     casters.add(a -> a.pop(from));
-                    ExpressionDebugManager.debugPrintln("    - Was equal, no cast needed.");
+                    ExpressionDebugManager.debugPrintln("    - Equal types, no cast needed.");
                     continue;
                 }
-                FunctionContext castingCtx = new FunctionContext(NodeTypes.getContext(from), NodeTypes.getContext(to));
-                INodeFunc caster = castingCtx.getFunction("(" + NodeTypes.getName(to) + ")", ImmutableList.of(from));
-                if (caster == null) {
-                    ExpressionDebugManager.debugPrintln("    - No cast found!");
-                    canCast = false;
-                    break;
+                INodeFunc caster;
+                if (from == long.class && to == INodeLong.class) {
+                    caster = s -> new NodeConstantObject<>(INodeLong.class, s.popLong());
+                } else if (from == double.class && to == INodeDouble.class) {
+                    caster = s -> new NodeConstantObject<>(INodeDouble.class, s.popDouble());
+                } else if (from == boolean.class && to == INodeBoolean.class) {
+                    caster = s -> new NodeConstantObject<>(INodeBoolean.class, s.popBoolean());
+                } else {
+                    FunctionContext castingCtx =
+                        new FunctionContext(NodeTypes.getContext(from), NodeTypes.getContext(to));
+                    caster = castingCtx.getFunction("(" + NodeTypes.getName(to) + ")", ImmutableList.of(from));
+                    if (caster == null) {
+                        ExpressionDebugManager.debugPrintln("    - No cast found!");
+                        canCast = false;
+                        break;
+                    }
                 }
                 casts++;
                 casters.add(caster);
@@ -459,7 +472,7 @@ public class InternalCompiler {
         ExpressionDebugManager.debugEnd("Best = " + bestFunction);
 
         if (bestFunction == null || bestCasters == null) {
-            throw new InvalidExpressionException("No viable function called '" + name + "' found for " + functionOrder);
+            throw new InvalidExpressionException("No viable function called '" + name + "' found for " + fnOrderNames);
         }
 
         NodeStack realStack;

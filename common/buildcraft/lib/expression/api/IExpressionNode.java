@@ -8,6 +8,7 @@ package buildcraft.lib.expression.api;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
 import java.util.function.Supplier;
 
@@ -42,7 +43,7 @@ public interface IExpressionNode {
     }
 
     @FunctionalInterface
-    public interface INodeLong extends IExpressionNode, LongSupplier {
+    public interface INodeLong extends IExpressionNode, LongSupplier, IntSupplier {
         long evaluate();
 
         @Override
@@ -59,6 +60,12 @@ public interface IExpressionNode {
         @Override
         default long getAsLong() {
             return evaluate();
+        }
+
+        /** @deprecated As {@link #evaluate()} gives a better description as to the cost. */
+        @Override
+        default int getAsInt() {
+            return (int) evaluate();
         }
     }
 

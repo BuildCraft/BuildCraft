@@ -25,7 +25,7 @@ public class NodeFuncLongLongToBoolean implements INodeFuncBoolean {
     private final StringFunctionTri stringFunction;
 
     public NodeFuncLongLongToBoolean(String name, IFuncLongLongToBoolean function) {
-        this((a, b) -> "[ long, long -> boolean ] " + name + "(" + a + b +  ")", function);
+        this((a, b) -> "[ long, long -> boolean ] " + name + "(" + a + ", " + b +  ")", function);
     }
 
     public NodeFuncLongLongToBoolean(StringFunctionTri stringFunction, IFuncLongLongToBoolean function) {

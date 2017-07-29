@@ -9,12 +9,13 @@ package buildcraft.lib.expression;
 import net.minecraft.item.EnumDyeColor;
 
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
+import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.misc.ColourUtil;
 
 public class DefaultContexts {
     public static final FunctionContext MATH_SCALAR = new FunctionContext();
-    public static final FunctionContext MATH_VECTOR = new FunctionContext();
+    public static final FunctionContext MATH_VECTOR = new FunctionContext(NodeTypes.VEC_LONG, NodeTypes.VEC_DOUBLE);
     public static final FunctionContext RENDERING = new FunctionContext();
 
     public static final NodeVariableDouble RENDER_PARTIAL_TICKS;

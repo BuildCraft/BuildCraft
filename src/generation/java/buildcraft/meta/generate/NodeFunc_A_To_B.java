@@ -116,6 +116,8 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
         generateType(_double, _long);
         generateType(_double, _double);
         generateType(_double, _double, _double);
+        generateType(_double, _obj);
+        generateType(_double, _obj, _obj);
 
         generateType(_bool, _long, _long);
         generateType(_bool, _double, _double);
@@ -129,6 +131,9 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
         generateType(_obj, _long, _long, _long);
         generateType(_obj, _long, _long, _long, _long);
         generateType(_obj, _double);
+        generateType(_obj, _double, _double);
+        generateType(_obj, _double, _double, _double);
+        generateType(_obj, _double, _double, _double, _double);
         generateType(_obj, _bool);
         generateType(_obj, _obj);
         generateType(_obj, _obj, _long);
@@ -156,7 +161,7 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
 
         map.put("StringFunctionArgs", join1(args, NodeTypeStr::_StringArg, ", "));
         map.put("StringFunctionArgsL", join1(args, NodeTypeStr::_StringArgL, ", "));
-        map.put("StringFunctionArgsPlus", join2(args, NodeTypeStr::_StringArg, " + "));
+        map.put("StringFunctionArgsPlus", join1(args, NodeTypeStr::_StringArg, " + \", \" + ") + " + ");
 
         map.put("ReturnOnly", ret.prop_Capitalised);
         boolean isObject = ret == NodeTypeStr.OBJECT;
@@ -199,7 +204,7 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
         map.put("a", join1(args, a -> a.name().toLowerCase(Locale.ROOT).substring(0, 1), ""));
         map.put("r", ret.name().toLowerCase(Locale.ROOT).substring(0, 1));
         String value = join1(args, NodeTypeStr::_ToStringName, ", ") + " -> ";
-        map.put("ToStringName",  value + ret._ToStringName().replace("argType{$INDEX}", "returnType"));
+        map.put("ToStringName", value + ret._ToStringName().replace("argType{$INDEX}", "returnType"));
 
         FunctionContextBase_Adder.allFunctionTypes.add(map);
         generateFile(PATH + "NodeFunc{$Args}To{$ReturnOnly}.java", map);

@@ -11,24 +11,28 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.StringFunctionTri;
-import buildcraft.lib.expression.node.value.NodeConstantBoolean;
+import buildcraft.lib.expression.node.value.NodeConstantDouble;
 
 // AUTO_GENERATED FILE, DO NOT EDIT MANUALLY!
-public class NodeFuncBooleanBooleanToBoolean implements INodeFuncBoolean {
+public class NodeFuncObjectObjectToDouble<A, B> implements INodeFuncDouble {
 
-    public final IFuncBooleanBooleanToBoolean function;
+    public final IFuncObjectObjectToDouble<A, B> function;
     private final StringFunctionTri stringFunction;
+    private final Class<A> argTypeA;
+    private final Class<B> argTypeB;
 
-    public NodeFuncBooleanBooleanToBoolean(String name, IFuncBooleanBooleanToBoolean function) {
-        this((a, b) -> "[ boolean, boolean -> boolean ] " + name + "(" + a + ", " + b +  ")", function);
+    public NodeFuncObjectObjectToDouble(String name, Class<A> argTypeA, Class<B> argTypeB, IFuncObjectObjectToDouble<A, B> function) {
+        this(argTypeA, argTypeB, (a, b) -> "[ " + NodeTypes.getName(argTypeA) + ", " + NodeTypes.getName(argTypeB) + " -> double ] " + name + "(" + a + ", " + b +  ")", function);
     }
 
-    public NodeFuncBooleanBooleanToBoolean(StringFunctionTri stringFunction, IFuncBooleanBooleanToBoolean function) {
+    public NodeFuncObjectObjectToDouble(Class<A> argTypeA, Class<B> argTypeB, StringFunctionTri stringFunction, IFuncObjectObjectToDouble<A, B> function) {
+        this.argTypeA = argTypeA;
+        this.argTypeB = argTypeB;
 
         this.function = function;
         this.stringFunction = stringFunction;
@@ -40,33 +44,33 @@ public class NodeFuncBooleanBooleanToBoolean implements INodeFuncBoolean {
     }
 
     @Override
-    public INodeBoolean getNode(INodeStack stack) throws InvalidExpressionException {
+    public INodeDouble getNode(INodeStack stack) throws InvalidExpressionException {
 
-        INodeBoolean b = stack.popBoolean();
-        INodeBoolean a = stack.popBoolean();
+        INodeObject<B> b = stack.popObject(argTypeB);
+        INodeObject<A> a = stack.popObject(argTypeA);
 
         return new Func(a, b);
     }
 
-    private class Func implements INodeBoolean {
-        private final INodeBoolean argA;
-        private final INodeBoolean argB;
+    private class Func implements INodeDouble {
+        private final INodeObject<A> argA;
+        private final INodeObject<B> argB;
 
-        public Func(INodeBoolean argA, INodeBoolean argB) {
+        public Func(INodeObject<A> argA, INodeObject<B> argB) {
             this.argA = argA;
             this.argB = argB;
 
         }
 
         @Override
-        public boolean evaluate() {
+        public double evaluate() {
             return function.apply(argA.evaluate(), argB.evaluate());
         }
 
         @Override
-        public INodeBoolean inline() {
+        public INodeDouble inline() {
             return NodeInliningHelper.tryInline(this, argA, argB, (a, b) -> new Func(a, b),
-                    (a, b) -> NodeConstantBoolean.of(function.apply(a.evaluate(), b.evaluate()))
+                    (a, b) -> NodeConstantDouble.of(function.apply(a.evaluate(), b.evaluate()))
             );
         }
 
@@ -77,7 +81,7 @@ public class NodeFuncBooleanBooleanToBoolean implements INodeFuncBoolean {
     }
 
     @FunctionalInterface
-    public interface IFuncBooleanBooleanToBoolean {
-        boolean apply(boolean a, boolean b);
+    public interface IFuncObjectObjectToDouble<A, B> {
+        double apply(A a, B b);
     }
 }

@@ -27,7 +27,7 @@ public class NodeFuncObjectLongToObject<A, R> implements INodeFuncObject<R> {
     private final Class<R> returnType;
 
     public NodeFuncObjectLongToObject(String name, Class<A> argTypeA, Class<R> returnType, IFuncObjectLongToObject<A, R> function) {
-        this(argTypeA, returnType, (a, b) -> "[ " + NodeTypes.getName(argTypeA) + ", long -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a + b +  ")", function);
+        this(argTypeA, returnType, (a, b) -> "[ " + NodeTypes.getName(argTypeA) + ", long -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a + ", " + b +  ")", function);
     }
 
     public NodeFuncObjectLongToObject(Class<A> argTypeA, Class<R> returnType, StringFunctionTri stringFunction, IFuncObjectLongToObject<A, R> function) {

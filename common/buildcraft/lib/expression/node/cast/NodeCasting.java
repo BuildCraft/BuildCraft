@@ -89,6 +89,9 @@ public class NodeCasting {
         FunctionContext castingContext = new FunctionContext(NodeTypes.getContext(from), NodeTypes.getContext(to));
         INodeFunc caster = castingContext.getFunction("(" + NodeTypes.getName(to) + ")", ImmutableList.of(from));
         if (caster == null) {
+            if (to == String.class) {
+                return new NodeCastToString(node);
+            }
             throw new InvalidExpressionException(
                 "Cannot cast from " + NodeTypes.getName(from) + " to " + NodeTypes.getName(to));
         }
@@ -117,6 +120,9 @@ public class NodeCasting {
         FunctionContext castingContext = new FunctionContext(NodeTypes.getContext(from), NodeTypes.getContext(to));
         INodeFunc caster = castingContext.getFunction("(" + NodeTypes.getName(to) + ")", ImmutableList.of(from));
         if (caster == null) {
+            if (to == String.class) {
+                return (INodeFuncObject<T>) castToString(func);
+            }
             throw new InvalidExpressionException(
                 "Cannot cast from " + NodeTypes.getName(from) + " to " + NodeTypes.getName(to));
         }

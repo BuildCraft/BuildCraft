@@ -27,7 +27,7 @@ public class NodeFuncObjectObjectToLong<A, B> implements INodeFuncLong {
     private final Class<B> argTypeB;
 
     public NodeFuncObjectObjectToLong(String name, Class<A> argTypeA, Class<B> argTypeB, IFuncObjectObjectToLong<A, B> function) {
-        this(argTypeA, argTypeB, (a, b) -> "[ " + NodeTypes.getName(argTypeA) + ", " + NodeTypes.getName(argTypeB) + " -> long ] " + name + "(" + a + b +  ")", function);
+        this(argTypeA, argTypeB, (a, b) -> "[ " + NodeTypes.getName(argTypeA) + ", " + NodeTypes.getName(argTypeB) + " -> long ] " + name + "(" + a + ", " + b +  ")", function);
     }
 
     public NodeFuncObjectObjectToLong(Class<A> argTypeA, Class<B> argTypeB, StringFunctionTri stringFunction, IFuncObjectObjectToLong<A, B> function) {

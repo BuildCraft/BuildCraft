@@ -19,25 +19,17 @@ import buildcraft.lib.expression.node.func.StringFunctionPenta;
 import buildcraft.lib.expression.node.value.NodeConstantObject;
 
 // AUTO_GENERATED FILE, DO NOT EDIT MANUALLY!
-public class NodeFuncObjectObjectObjectObjectToObject<A, B, C, D, R> implements INodeFuncObject<R> {
+public class NodeFuncDoubleDoubleDoubleDoubleToObject<R> implements INodeFuncObject<R> {
 
-    public final IFuncObjectObjectObjectObjectToObject<A, B, C, D, R> function;
+    public final IFuncDoubleDoubleDoubleDoubleToObject<R> function;
     private final StringFunctionPenta stringFunction;
-    private final Class<A> argTypeA;
-    private final Class<B> argTypeB;
-    private final Class<C> argTypeC;
-    private final Class<D> argTypeD;
     private final Class<R> returnType;
 
-    public NodeFuncObjectObjectObjectObjectToObject(String name, Class<A> argTypeA, Class<B> argTypeB, Class<C> argTypeC, Class<D> argTypeD, Class<R> returnType, IFuncObjectObjectObjectObjectToObject<A, B, C, D, R> function) {
-        this(argTypeA, argTypeB, argTypeC, argTypeD, returnType, (a, b, c, d) -> "[ " + NodeTypes.getName(argTypeA) + ", " + NodeTypes.getName(argTypeB) + ", " + NodeTypes.getName(argTypeC) + ", " + NodeTypes.getName(argTypeD) + " -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a + ", " + b + ", " + c + ", " + d +  ")", function);
+    public NodeFuncDoubleDoubleDoubleDoubleToObject(String name, Class<R> returnType, IFuncDoubleDoubleDoubleDoubleToObject<R> function) {
+        this(returnType, (a, b, c, d) -> "[ double, double, double, double -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a + ", " + b + ", " + c + ", " + d +  ")", function);
     }
 
-    public NodeFuncObjectObjectObjectObjectToObject(Class<A> argTypeA, Class<B> argTypeB, Class<C> argTypeC, Class<D> argTypeD, Class<R> returnType, StringFunctionPenta stringFunction, IFuncObjectObjectObjectObjectToObject<A, B, C, D, R> function) {
-        this.argTypeA = argTypeA;
-        this.argTypeB = argTypeB;
-        this.argTypeC = argTypeC;
-        this.argTypeD = argTypeD;
+    public NodeFuncDoubleDoubleDoubleDoubleToObject(Class<R> returnType, StringFunctionPenta stringFunction, IFuncDoubleDoubleDoubleDoubleToObject<R> function) {
         this.returnType = returnType;
 
         this.function = function;
@@ -57,21 +49,21 @@ public class NodeFuncObjectObjectObjectObjectToObject<A, B, C, D, R> implements 
     @Override
     public INodeObject<R> getNode(INodeStack stack) throws InvalidExpressionException {
 
-        INodeObject<D> d = stack.popObject(argTypeD);
-        INodeObject<C> c = stack.popObject(argTypeC);
-        INodeObject<B> b = stack.popObject(argTypeB);
-        INodeObject<A> a = stack.popObject(argTypeA);
+        INodeDouble d = stack.popDouble();
+        INodeDouble c = stack.popDouble();
+        INodeDouble b = stack.popDouble();
+        INodeDouble a = stack.popDouble();
 
         return new Func(a, b, c, d);
     }
 
     private class Func implements INodeObject<R> {
-        private final INodeObject<A> argA;
-        private final INodeObject<B> argB;
-        private final INodeObject<C> argC;
-        private final INodeObject<D> argD;
+        private final INodeDouble argA;
+        private final INodeDouble argB;
+        private final INodeDouble argC;
+        private final INodeDouble argD;
 
-        public Func(INodeObject<A> argA, INodeObject<B> argB, INodeObject<C> argC, INodeObject<D> argD) {
+        public Func(INodeDouble argA, INodeDouble argB, INodeDouble argC, INodeDouble argD) {
             this.argA = argA;
             this.argB = argB;
             this.argC = argC;
@@ -103,7 +95,7 @@ public class NodeFuncObjectObjectObjectObjectToObject<A, B, C, D, R> implements 
     }
 
     @FunctionalInterface
-    public interface IFuncObjectObjectObjectObjectToObject<A, B, C, D, R> {
-        R apply(A a, B b, C c, D d);
+    public interface IFuncDoubleDoubleDoubleDoubleToObject<R> {
+        R apply(double a, double b, double c, double d);
     }
 }

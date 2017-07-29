@@ -34,6 +34,7 @@ import buildcraft.lib.expression.node.value.NodeConstantLong;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableLong;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
+import buildcraft.lib.gui.pos.IGuiPosition;
 
 @SuppressWarnings("static-method")
 public class ExpressionTester {
@@ -358,9 +359,28 @@ public class ExpressionTester {
     @Test
     public void testVectors() {
         bakeAndCallString("VecLong.zero", VecLong.ZERO.toString());
-        bakeAndCallString("VecLong.new(0, 0, 0, 0)", VecLong.ZERO.toString());
-        bakeAndCallString("VecLong.new(3, 4) + VecLong.new(1, 2)", "{ 4, 6, 0, 0 }");
-        bakeAndCallString("VecLong.new(3, 4) - VecLong.new(1, 2)", "{ 2, 2, 0, 0 }");
+        bakeAndCallString("vec(0, 0, 0, 0)", VecLong.ZERO.toString());
+        bakeAndCallString("vec(3, 4) + vec(1, 2)", "{ 4, 6, 0, 0 }");
+        bakeAndCallString("vec(3, 4) - vec(1, 2)", "{ 2, 2, 0, 0 }");
+        bakeAndCallLong("vec(3, 4).dot2(vec(1, 2))", 11);
+        bakeAndCallLong("vec(3, 4).dot3(vec(1, 2))", 11);
+        bakeAndCallLong("vec(3, 4).dot4(vec(1, 2))", 11);
+        bakeAndCallDouble("vec(3, 4).length()", Math.sqrt(3 * 3 + 4 * 4));
+        bakeAndCallDouble("vec(3, 4).distanceTo(vec(3, 9))", 5);
+    }
+
+    @Test
+    public void testGuiClasses() {
+        FunctionContext ctx = DefaultContexts.createWithAll();
+        NodeVariableLong var = ctx.putVariableLong("value");
+        ExpressionCompat.setup();
+        IGuiPosition pos = bakeFunctionObject(IGuiPosition.class, "GuiPosition.pos(value + 3, 5)", ctx).evaluate();
+
+        var.value = 4;
+        Assert.assertEquals(7, pos.getX());
+
+        var.value = 5;
+        Assert.assertEquals(8, pos.getX());
     }
 
     private static INodeDouble bakeFunctionDouble(String function, FunctionContext ctx) {
@@ -380,7 +400,7 @@ public class ExpressionTester {
     }
 
     private static void bakeAndCallDouble(String function, double def) {
-        bakeAndCallDouble(function, def, null);
+        bakeAndCallDouble(function, def, DefaultContexts.createWithAll());
     }
 
     private static INodeBoolean bakeFunctionBoolean(String function, FunctionContext ctx) {
@@ -404,9 +424,13 @@ public class ExpressionTester {
     }
 
     private static INodeObject<String> bakeFunctionString(String function, FunctionContext ctx) {
+        return bakeFunctionObject(String.class, function, ctx);
+    }
+
+    private static <T> INodeObject<T> bakeFunctionObject(Class<T> clazz, String function, FunctionContext ctx) {
         try {
-            return GenericExpressionCompiler.compileExpressionString(function, ctx);
-        } catch (buildcraft.lib.expression.api.InvalidExpressionException e) {
+            return GenericExpressionCompiler.compileExpressionObject(clazz, function, ctx);
+        } catch (InvalidExpressionException e) {
             throw new AssertionError(e);
         }
     }
@@ -420,7 +444,7 @@ public class ExpressionTester {
     }
 
     private static void bakeAndCallString(String function, String def) {
-        bakeAndCallString(function, def, null);
+        bakeAndCallString(function, def, DefaultContexts.createWithAll());
     }
 
     private static INodeLong bakeFunctionLong(String function, FunctionContext ctx) {
@@ -445,6 +469,6 @@ public class ExpressionTester {
     }
 
     private static void bakeAndCallLong(String function, long def) {
-        bakeAndCallLong(function, def, null);
+        bakeAndCallLong(function, def, DefaultContexts.createWithAll());
     }
 }

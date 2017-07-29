@@ -195,6 +195,10 @@ public class FunctionContext extends FunctionContextBase {
         return map;
     }
 
+    public Table<String, List<Class<?>>, INodeFunc> getAllFunctions() {
+        return functions;
+    }
+
     private void getFunctions0(String name, Map<List<Class<?>>, INodeFunc> map) {
         for (FunctionContext parent : parents) {
             parent.getFunctions0(name, map);

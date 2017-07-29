@@ -33,4 +33,9 @@ public class PositionCallable implements IGuiPosition {
     public int getY() {
         return y.getAsInt();
     }
+
+    @Override
+    public String toString() {
+        return "{ " + x + ", " + y + " }";
+    }
 }

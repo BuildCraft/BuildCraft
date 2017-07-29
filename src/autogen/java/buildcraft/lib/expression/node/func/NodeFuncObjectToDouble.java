@@ -15,20 +15,22 @@ import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
-import buildcraft.lib.expression.node.func.StringFunctionTri;
+import buildcraft.lib.expression.node.func.StringFunctionBi;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 
 // AUTO_GENERATED FILE, DO NOT EDIT MANUALLY!
-public class NodeFuncDoubleDoubleToDouble implements INodeFuncDouble {
+public class NodeFuncObjectToDouble<A> implements INodeFuncDouble {
 
-    public final IFuncDoubleDoubleToDouble function;
-    private final StringFunctionTri stringFunction;
+    public final IFuncObjectToDouble<A> function;
+    private final StringFunctionBi stringFunction;
+    private final Class<A> argTypeA;
 
-    public NodeFuncDoubleDoubleToDouble(String name, IFuncDoubleDoubleToDouble function) {
-        this((a, b) -> "[ double, double -> double ] " + name + "(" + a + ", " + b +  ")", function);
+    public NodeFuncObjectToDouble(String name, Class<A> argTypeA, IFuncObjectToDouble<A> function) {
+        this(argTypeA, (a) -> "[ " + NodeTypes.getName(argTypeA) + " -> double ] " + name + "(" + a +  ")", function);
     }
 
-    public NodeFuncDoubleDoubleToDouble(StringFunctionTri stringFunction, IFuncDoubleDoubleToDouble function) {
+    public NodeFuncObjectToDouble(Class<A> argTypeA, StringFunctionBi stringFunction, IFuncObjectToDouble<A> function) {
+        this.argTypeA = argTypeA;
 
         this.function = function;
         this.stringFunction = stringFunction;
@@ -36,48 +38,45 @@ public class NodeFuncDoubleDoubleToDouble implements INodeFuncDouble {
 
     @Override
     public String toString() {
-        return stringFunction.apply("{A}", "{B}");
+        return stringFunction.apply("{A}");
     }
 
     @Override
     public INodeDouble getNode(INodeStack stack) throws InvalidExpressionException {
 
-        INodeDouble b = stack.popDouble();
-        INodeDouble a = stack.popDouble();
+        INodeObject<A> a = stack.popObject(argTypeA);
 
-        return new Func(a, b);
+        return new Func(a);
     }
 
     private class Func implements INodeDouble {
-        private final INodeDouble argA;
-        private final INodeDouble argB;
+        private final INodeObject<A> argA;
 
-        public Func(INodeDouble argA, INodeDouble argB) {
+        public Func(INodeObject<A> argA) {
             this.argA = argA;
-            this.argB = argB;
 
         }
 
         @Override
         public double evaluate() {
-            return function.apply(argA.evaluate(), argB.evaluate());
+            return function.apply(argA.evaluate());
         }
 
         @Override
         public INodeDouble inline() {
-            return NodeInliningHelper.tryInline(this, argA, argB, (a, b) -> new Func(a, b),
-                    (a, b) -> NodeConstantDouble.of(function.apply(a.evaluate(), b.evaluate()))
+            return NodeInliningHelper.tryInline(this, argA, (a) -> new Func(a),
+                    (a) -> NodeConstantDouble.of(function.apply(a.evaluate()))
             );
         }
 
         @Override
         public String toString() {
-            return stringFunction.apply(argA.toString(), argB.toString());
+            return stringFunction.apply(argA.toString());
         }
     }
 
     @FunctionalInterface
-    public interface IFuncDoubleDoubleToDouble {
-        double apply(double a, double b);
+    public interface IFuncObjectToDouble<A> {
+        double apply(A a);
     }
 }

@@ -11,27 +11,34 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.StringFunctionTri;
-import buildcraft.lib.expression.node.value.NodeConstantBoolean;
+import buildcraft.lib.expression.node.value.NodeConstantObject;
 
 // AUTO_GENERATED FILE, DO NOT EDIT MANUALLY!
-public class NodeFuncBooleanBooleanToBoolean implements INodeFuncBoolean {
+public class NodeFuncDoubleDoubleToObject<R> implements INodeFuncObject<R> {
 
-    public final IFuncBooleanBooleanToBoolean function;
+    public final IFuncDoubleDoubleToObject<R> function;
     private final StringFunctionTri stringFunction;
+    private final Class<R> returnType;
 
-    public NodeFuncBooleanBooleanToBoolean(String name, IFuncBooleanBooleanToBoolean function) {
-        this((a, b) -> "[ boolean, boolean -> boolean ] " + name + "(" + a + ", " + b +  ")", function);
+    public NodeFuncDoubleDoubleToObject(String name, Class<R> returnType, IFuncDoubleDoubleToObject<R> function) {
+        this(returnType, (a, b) -> "[ double, double -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a + ", " + b +  ")", function);
     }
 
-    public NodeFuncBooleanBooleanToBoolean(StringFunctionTri stringFunction, IFuncBooleanBooleanToBoolean function) {
+    public NodeFuncDoubleDoubleToObject(Class<R> returnType, StringFunctionTri stringFunction, IFuncDoubleDoubleToObject<R> function) {
+        this.returnType = returnType;
 
         this.function = function;
         this.stringFunction = stringFunction;
+    }
+
+    @Override
+    public Class<R> getType() {
+        return returnType;
     }
 
     @Override
@@ -40,33 +47,38 @@ public class NodeFuncBooleanBooleanToBoolean implements INodeFuncBoolean {
     }
 
     @Override
-    public INodeBoolean getNode(INodeStack stack) throws InvalidExpressionException {
+    public INodeObject<R> getNode(INodeStack stack) throws InvalidExpressionException {
 
-        INodeBoolean b = stack.popBoolean();
-        INodeBoolean a = stack.popBoolean();
+        INodeDouble b = stack.popDouble();
+        INodeDouble a = stack.popDouble();
 
         return new Func(a, b);
     }
 
-    private class Func implements INodeBoolean {
-        private final INodeBoolean argA;
-        private final INodeBoolean argB;
+    private class Func implements INodeObject<R> {
+        private final INodeDouble argA;
+        private final INodeDouble argB;
 
-        public Func(INodeBoolean argA, INodeBoolean argB) {
+        public Func(INodeDouble argA, INodeDouble argB) {
             this.argA = argA;
             this.argB = argB;
 
         }
 
         @Override
-        public boolean evaluate() {
+        public Class<R> getType() {
+            return returnType;
+        }
+
+        @Override
+        public R evaluate() {
             return function.apply(argA.evaluate(), argB.evaluate());
         }
 
         @Override
-        public INodeBoolean inline() {
+        public INodeObject<R> inline() {
             return NodeInliningHelper.tryInline(this, argA, argB, (a, b) -> new Func(a, b),
-                    (a, b) -> NodeConstantBoolean.of(function.apply(a.evaluate(), b.evaluate()))
+                    (a, b) -> new NodeConstantObject<>(returnType, function.apply(a.evaluate(), b.evaluate()))
             );
         }
 
@@ -77,7 +89,7 @@ public class NodeFuncBooleanBooleanToBoolean implements INodeFuncBoolean {
     }
 
     @FunctionalInterface
-    public interface IFuncBooleanBooleanToBoolean {
-        boolean apply(boolean a, boolean b);
+    public interface IFuncDoubleDoubleToObject<R> {
+        R apply(double a, double b);
     }
 }

@@ -20,14 +20,14 @@ public class NodeTypeBase_Adder extends AutoGenerateFile {
 
         for (Map<String, String> types : FunctionContextBase_Adder.allFunctionTypes) {
             String args = types.get("a");
-            if (!args.startsWith("o")) {
-                continue;
-            }
             String ret = types.get("r");
 
-            String original = ret + "_t" + args.substring(1);
+            String original = ret + "_" + args;
 
             int objectCount = (int) original.chars().filter(i -> i == 'o').count();
+            if (objectCount == 0) {
+                continue;
+            }
             int[] indexObject = new int[objectCount];
             int j = 0;
             for (int i = 0; i < original.length(); i++) {
@@ -38,7 +38,17 @@ public class NodeTypeBase_Adder extends AutoGenerateFile {
             String importStart = "import buildcraft.lib.expression.node.func.NodeFunc";
             imports += importStart + replaceAll("{$Args}To{$ReturnOnly}.IFunc{$Args}To{$ReturnOnly};\n", types);
             System.out.println(ret + "_" + args + ":");
-            for (int i = 0; i <= objectCount; i++) {
+            if (objectCount > 2) {
+                replace += "\n\t/////////////////////////";
+                replace += "\n\t//";
+                replace += "\n\t// put_" + args + "_" + ret + "";
+                replace += "\n\t//";
+                replace += "\n\t/////////////////////////";
+                replace += "\n";
+            } else {
+                replace += "\n\t// put_" + args + "_" + ret + "\n";
+            }
+            for (int i = 1; i < (1 << objectCount); i++) {
                 Map<String, String> map = new LinkedHashMap<>(types);
                 String repl = original;
                 String[] classArgs = types.get("ObjectClassArgs").split(", ");
@@ -46,23 +56,21 @@ public class NodeTypeBase_Adder extends AutoGenerateFile {
                 String string = types.get("TypeArgs");
                 String[] typeArgs = string.substring(1, string.length() - 1).split(", ");
                 String[] typeArgsPass = Arrays.copyOf(typeArgs, typeArgs.length);
-                classArgs[0] = "";
-                classArgsPass[0] = "getType()";
-                typeArgs[0] = "";
-                typeArgsPass[0] = "T";
-                for (int k = 1; k <= i; k++) {
-                    int index = indexObject[k - 1];
-                    int arrIndex = k == 1 ? classArgs.length - 1 : k - 1;
-                    classArgs[arrIndex] = "";
-                    classArgsPass[arrIndex] = "getType()";
-                    typeArgs[arrIndex] = "";
-                    typeArgsPass[arrIndex] = "T";
-                    repl = repl.substring(0, index) + 't' + repl.substring(index + 1);
+                for (int k = 0; k < objectCount; k++) {
+                    if ((i & (1 << k)) != 0) {
+                        int index = indexObject[k];
+                        int arrIndex = k == 0 ? classArgs.length - 1 : k - 1;
+                        classArgs[arrIndex] = "";
+                        classArgsPass[arrIndex] = "getType()";
+                        typeArgs[arrIndex] = "";
+                        typeArgsPass[arrIndex] = "T";
+                        repl = repl.substring(0, index) + 't' + repl.substring(index + 1);
+                    }
                 }
 
                 map.put("a2", repl.substring(2));
                 map.put("r2", repl.substring(0, 1));
-                map.put("ObjectClassArgs2", replaceAll(join(classArgs, ", "), ", , ", ", "));
+                map.put("ObjectClassArgs2", replaceAll(", " + join(classArgs, ", "), ", , ", ", "));
                 map.put("ObjectClassArgsPass2", join(classArgsPass, ", "));
                 String repl2 = replaceAll(join2(typeArgs, ", "), ", , ", ", ");
                 if (repl2.startsWith(", ")) {

@@ -6,12 +6,14 @@ import net.minecraft.util.EnumFacing.Axis;
 
 import buildcraft.api.enums.EnumPowerStage;
 
+import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.NodeType2;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.PositionAbsolute;
+import buildcraft.lib.gui.pos.PositionCallable;
 import buildcraft.lib.misc.ColourUtil;
 
 public class ExpressionCompat {
@@ -63,6 +65,8 @@ public class ExpressionCompat {
         NodeTypes.addType("GuiPosition", GUI_POSITION);
         NodeTypes.addType("GuiArea", GUI_AREA);
 
+//        GUI_POSITION.put_ll_t("pos", PositionAbsolute::new);
+        GUI_POSITION.put_oo_t("pos", INodeLong.class, INodeLong.class, PositionCallable::new);
     }
 
     public static void setup() {

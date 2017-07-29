@@ -27,7 +27,7 @@ public class NodeFuncObjectObjectToBoolean<A, B> implements INodeFuncBoolean {
     private final Class<B> argTypeB;
 
     public NodeFuncObjectObjectToBoolean(String name, Class<A> argTypeA, Class<B> argTypeB, IFuncObjectObjectToBoolean<A, B> function) {
-        this(argTypeA, argTypeB, (a, b) -> "[ " + NodeTypes.getName(argTypeA) + ", " + NodeTypes.getName(argTypeB) + " -> boolean ] " + name + "(" + a + b +  ")", function);
+        this(argTypeA, argTypeB, (a, b) -> "[ " + NodeTypes.getName(argTypeA) + ", " + NodeTypes.getName(argTypeB) + " -> boolean ] " + name + "(" + a + ", " + b +  ")", function);
     }
 
     public NodeFuncObjectObjectToBoolean(Class<A> argTypeA, Class<B> argTypeB, StringFunctionTri stringFunction, IFuncObjectObjectToBoolean<A, B> function) {
