@@ -32,6 +32,7 @@ import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.minecraft.ExpressionCompat;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.misc.data.ModelVariableData;
@@ -53,7 +54,7 @@ public class BCCoreModels {
     private static final ModelHolderVariable ENGINE_CREATIVE;
 
     static {
-        FunctionContext fnCtx = DefaultContexts.createWithAll();
+        FunctionContext fnCtx =  new FunctionContext(ExpressionCompat.ENUM_POWER_STAGE, DefaultContexts.createWithAll());
         ENGINE_PROGRESS = fnCtx.putVariableDouble("progress");
         ENGINE_STAGE = fnCtx.putVariableObject("stage", EnumPowerStage.class);
         ENGINE_FACING = fnCtx.putVariableObject("facing", EnumFacing.class);

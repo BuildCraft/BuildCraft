@@ -67,10 +67,10 @@ public class DefaultContexts {
         MATH_SCALAR.put_d_d("cosh", Math::cosh);
         MATH_SCALAR.put_d_d("tanh", Math::tanh);
 
-        MATH_SCALAR.put_ll_l("min_long", Math::min);
-        MATH_SCALAR.put_ll_l("max_long", Math::max);
-        MATH_SCALAR.put_dd_d("min_double", Math::min);
-        MATH_SCALAR.put_dd_d("max_double", Math::max);
+        MATH_SCALAR.put_ll_l("min", Math::min);
+        MATH_SCALAR.put_ll_l("max", Math::max);
+        MATH_SCALAR.put_dd_d("min", Math::min);
+        MATH_SCALAR.put_dd_d("max", Math::max);
         MATH_SCALAR.put_dd_d("pow", Math::pow);
 
         // MATH_VECTOR.putConstantVecLong("origin", VecLong.ZERO);

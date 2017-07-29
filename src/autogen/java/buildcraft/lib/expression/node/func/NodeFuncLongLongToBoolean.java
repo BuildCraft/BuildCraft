@@ -11,36 +11,27 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.StringFunctionTri;
-import buildcraft.lib.expression.node.value.NodeConstantObject;
+import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 
 // AUTO_GENERATED FILE, DO NOT EDIT MANUALLY!
-public class NodeFuncObjectLongToObject<A, R> implements INodeFuncObject<R> {
+public class NodeFuncLongLongToBoolean implements INodeFuncBoolean {
 
-    public final IFuncObjectLongToObject<A, R> function;
+    public final IFuncLongLongToBoolean function;
     private final StringFunctionTri stringFunction;
-    private final Class<A> argTypeA;
-    private final Class<R> returnType;
 
-    public NodeFuncObjectLongToObject(String name, Class<A> argTypeA, Class<R> returnType, IFuncObjectLongToObject<A, R> function) {
-        this(argTypeA, returnType, (a, b) -> "[ " + NodeTypes.getName(argTypeA) + ", long -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a + b +  ")", function);
+    public NodeFuncLongLongToBoolean(String name, IFuncLongLongToBoolean function) {
+        this((a, b) -> "[ long, long -> boolean ] " + name + "(" + a + b +  ")", function);
     }
 
-    public NodeFuncObjectLongToObject(Class<A> argTypeA, Class<R> returnType, StringFunctionTri stringFunction, IFuncObjectLongToObject<A, R> function) {
-        this.argTypeA = argTypeA;
-        this.returnType = returnType;
+    public NodeFuncLongLongToBoolean(StringFunctionTri stringFunction, IFuncLongLongToBoolean function) {
 
         this.function = function;
         this.stringFunction = stringFunction;
-    }
-
-    @Override
-    public Class<R> getType() {
-        return returnType;
     }
 
     @Override
@@ -49,38 +40,33 @@ public class NodeFuncObjectLongToObject<A, R> implements INodeFuncObject<R> {
     }
 
     @Override
-    public INodeObject<R> getNode(INodeStack stack) throws InvalidExpressionException {
+    public INodeBoolean getNode(INodeStack stack) throws InvalidExpressionException {
 
         INodeLong b = stack.popLong();
-        INodeObject<A> a = stack.popObject(argTypeA);
+        INodeLong a = stack.popLong();
 
         return new Func(a, b);
     }
 
-    private class Func implements INodeObject<R> {
-        private final INodeObject<A> argA;
+    private class Func implements INodeBoolean {
+        private final INodeLong argA;
         private final INodeLong argB;
 
-        public Func(INodeObject<A> argA, INodeLong argB) {
+        public Func(INodeLong argA, INodeLong argB) {
             this.argA = argA;
             this.argB = argB;
 
         }
 
         @Override
-        public Class<R> getType() {
-            return returnType;
-        }
-
-        @Override
-        public R evaluate() {
+        public boolean evaluate() {
             return function.apply(argA.evaluate(), argB.evaluate());
         }
 
         @Override
-        public INodeObject<R> inline() {
+        public INodeBoolean inline() {
             return NodeInliningHelper.tryInline(this, argA, argB, (a, b) -> new Func(a, b),
-                    (a, b) -> new NodeConstantObject<>(returnType, function.apply(a.evaluate(), b.evaluate()))
+                    (a, b) -> NodeConstantBoolean.of(function.apply(a.evaluate(), b.evaluate()))
             );
         }
 
@@ -91,7 +77,7 @@ public class NodeFuncObjectLongToObject<A, R> implements INodeFuncObject<R> {
     }
 
     @FunctionalInterface
-    public interface IFuncObjectLongToObject<A, R> {
-        R apply(A a, long b);
+    public interface IFuncLongLongToBoolean {
+        boolean apply(long a, long b);
     }
 }

@@ -14,6 +14,7 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
+import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.StringFunctionBi;
 import buildcraft.lib.expression.node.value.NodeConstantObject;
 
@@ -26,7 +27,7 @@ public class NodeFuncObjectToObject<A, R> implements INodeFuncObject<R> {
     private final Class<R> returnType;
 
     public NodeFuncObjectToObject(String name, Class<A> argTypeA, Class<R> returnType, IFuncObjectToObject<A, R> function) {
-        this(argTypeA, returnType, (a) -> name + "(" + a +  ")", function);
+        this(argTypeA, returnType, (a) -> "[ " + NodeTypes.getName(argTypeA) + " -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a +  ")", function);
     }
 
     public NodeFuncObjectToObject(Class<A> argTypeA, Class<R> returnType, StringFunctionBi stringFunction, IFuncObjectToObject<A, R> function) {

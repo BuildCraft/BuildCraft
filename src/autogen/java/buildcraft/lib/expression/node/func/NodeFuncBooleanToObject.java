@@ -11,29 +11,34 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.StringFunctionBi;
-import buildcraft.lib.expression.node.value.NodeConstantLong;
+import buildcraft.lib.expression.node.value.NodeConstantObject;
 
 // AUTO_GENERATED FILE, DO NOT EDIT MANUALLY!
-public class NodeFuncObjectToLong<A> implements INodeFuncLong {
+public class NodeFuncBooleanToObject<R> implements INodeFuncObject<R> {
 
-    public final IFuncObjectToLong<A> function;
+    public final IFuncBooleanToObject<R> function;
     private final StringFunctionBi stringFunction;
-    private final Class<A> argTypeA;
+    private final Class<R> returnType;
 
-    public NodeFuncObjectToLong(String name, Class<A> argTypeA, IFuncObjectToLong<A> function) {
-        this(argTypeA, (a) -> "[ " + NodeTypes.getName(argTypeA) + " -> long ] " + name + "(" + a +  ")", function);
+    public NodeFuncBooleanToObject(String name, Class<R> returnType, IFuncBooleanToObject<R> function) {
+        this(returnType, (a) -> "[ boolean -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a +  ")", function);
     }
 
-    public NodeFuncObjectToLong(Class<A> argTypeA, StringFunctionBi stringFunction, IFuncObjectToLong<A> function) {
-        this.argTypeA = argTypeA;
+    public NodeFuncBooleanToObject(Class<R> returnType, StringFunctionBi stringFunction, IFuncBooleanToObject<R> function) {
+        this.returnType = returnType;
 
         this.function = function;
         this.stringFunction = stringFunction;
+    }
+
+    @Override
+    public Class<R> getType() {
+        return returnType;
     }
 
     @Override
@@ -42,30 +47,35 @@ public class NodeFuncObjectToLong<A> implements INodeFuncLong {
     }
 
     @Override
-    public INodeLong getNode(INodeStack stack) throws InvalidExpressionException {
+    public INodeObject<R> getNode(INodeStack stack) throws InvalidExpressionException {
 
-        INodeObject<A> a = stack.popObject(argTypeA);
+        INodeBoolean a = stack.popBoolean();
 
         return new Func(a);
     }
 
-    private class Func implements INodeLong {
-        private final INodeObject<A> argA;
+    private class Func implements INodeObject<R> {
+        private final INodeBoolean argA;
 
-        public Func(INodeObject<A> argA) {
+        public Func(INodeBoolean argA) {
             this.argA = argA;
 
         }
 
         @Override
-        public long evaluate() {
+        public Class<R> getType() {
+            return returnType;
+        }
+
+        @Override
+        public R evaluate() {
             return function.apply(argA.evaluate());
         }
 
         @Override
-        public INodeLong inline() {
+        public INodeObject<R> inline() {
             return NodeInliningHelper.tryInline(this, argA, (a) -> new Func(a),
-                    (a) -> NodeConstantLong.of(function.apply(a.evaluate()))
+                    (a) -> new NodeConstantObject<>(returnType, function.apply(a.evaluate()))
             );
         }
 
@@ -76,7 +86,7 @@ public class NodeFuncObjectToLong<A> implements INodeFuncLong {
     }
 
     @FunctionalInterface
-    public interface IFuncObjectToLong<A> {
-        long apply(A a);
+    public interface IFuncBooleanToObject<R> {
+        R apply(boolean a);
     }
 }

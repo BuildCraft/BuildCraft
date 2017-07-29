@@ -14,6 +14,7 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
+import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.StringFunctionBi;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 
@@ -24,7 +25,7 @@ public class NodeFuncDoubleToDouble implements INodeFuncDouble {
     private final StringFunctionBi stringFunction;
 
     public NodeFuncDoubleToDouble(String name, IFuncDoubleToDouble function) {
-        this((a) -> name + "(" + a +  ")", function);
+        this((a) -> "[ double -> double ] " + name + "(" + a +  ")", function);
     }
 
     public NodeFuncDoubleToDouble(StringFunctionBi stringFunction, IFuncDoubleToDouble function) {

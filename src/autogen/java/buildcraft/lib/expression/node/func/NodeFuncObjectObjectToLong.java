@@ -15,22 +15,24 @@ import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
-import buildcraft.lib.expression.node.func.StringFunctionBi;
+import buildcraft.lib.expression.node.func.StringFunctionTri;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 
 // AUTO_GENERATED FILE, DO NOT EDIT MANUALLY!
-public class NodeFuncObjectToLong<A> implements INodeFuncLong {
+public class NodeFuncObjectObjectToLong<A, B> implements INodeFuncLong {
 
-    public final IFuncObjectToLong<A> function;
-    private final StringFunctionBi stringFunction;
+    public final IFuncObjectObjectToLong<A, B> function;
+    private final StringFunctionTri stringFunction;
     private final Class<A> argTypeA;
+    private final Class<B> argTypeB;
 
-    public NodeFuncObjectToLong(String name, Class<A> argTypeA, IFuncObjectToLong<A> function) {
-        this(argTypeA, (a) -> "[ " + NodeTypes.getName(argTypeA) + " -> long ] " + name + "(" + a +  ")", function);
+    public NodeFuncObjectObjectToLong(String name, Class<A> argTypeA, Class<B> argTypeB, IFuncObjectObjectToLong<A, B> function) {
+        this(argTypeA, argTypeB, (a, b) -> "[ " + NodeTypes.getName(argTypeA) + ", " + NodeTypes.getName(argTypeB) + " -> long ] " + name + "(" + a + b +  ")", function);
     }
 
-    public NodeFuncObjectToLong(Class<A> argTypeA, StringFunctionBi stringFunction, IFuncObjectToLong<A> function) {
+    public NodeFuncObjectObjectToLong(Class<A> argTypeA, Class<B> argTypeB, StringFunctionTri stringFunction, IFuncObjectObjectToLong<A, B> function) {
         this.argTypeA = argTypeA;
+        this.argTypeB = argTypeB;
 
         this.function = function;
         this.stringFunction = stringFunction;
@@ -38,45 +40,48 @@ public class NodeFuncObjectToLong<A> implements INodeFuncLong {
 
     @Override
     public String toString() {
-        return stringFunction.apply("{A}");
+        return stringFunction.apply("{A}", "{B}");
     }
 
     @Override
     public INodeLong getNode(INodeStack stack) throws InvalidExpressionException {
 
+        INodeObject<B> b = stack.popObject(argTypeB);
         INodeObject<A> a = stack.popObject(argTypeA);
 
-        return new Func(a);
+        return new Func(a, b);
     }
 
     private class Func implements INodeLong {
         private final INodeObject<A> argA;
+        private final INodeObject<B> argB;
 
-        public Func(INodeObject<A> argA) {
+        public Func(INodeObject<A> argA, INodeObject<B> argB) {
             this.argA = argA;
+            this.argB = argB;
 
         }
 
         @Override
         public long evaluate() {
-            return function.apply(argA.evaluate());
+            return function.apply(argA.evaluate(), argB.evaluate());
         }
 
         @Override
         public INodeLong inline() {
-            return NodeInliningHelper.tryInline(this, argA, (a) -> new Func(a),
-                    (a) -> NodeConstantLong.of(function.apply(a.evaluate()))
+            return NodeInliningHelper.tryInline(this, argA, argB, (a, b) -> new Func(a, b),
+                    (a, b) -> NodeConstantLong.of(function.apply(a.evaluate(), b.evaluate()))
             );
         }
 
         @Override
         public String toString() {
-            return stringFunction.apply(argA.toString());
+            return stringFunction.apply(argA.toString(), argB.toString());
         }
     }
 
     @FunctionalInterface
-    public interface IFuncObjectToLong<A> {
-        long apply(A a);
+    public interface IFuncObjectObjectToLong<A, B> {
+        long apply(A a, B b);
     }
 }

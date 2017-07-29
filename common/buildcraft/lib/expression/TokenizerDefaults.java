@@ -118,6 +118,8 @@ public class TokenizerDefaults {
                     break;
                 } else if (lastDot == 0) {
                     break;
+                } else if ("new".equals(ctx.get(lastDot + 1, i))) {
+                    break;
                 } else {
                     i = lastDot;
                     break;

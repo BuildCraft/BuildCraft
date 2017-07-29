@@ -14,6 +14,7 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
+import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.StringFunctionQuad;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 
@@ -25,7 +26,7 @@ public class NodeFuncObjectLongLongToLong<A> implements INodeFuncLong {
     private final Class<A> argTypeA;
 
     public NodeFuncObjectLongLongToLong(String name, Class<A> argTypeA, IFuncObjectLongLongToLong<A> function) {
-        this(argTypeA, (a, b, c) -> name + "(" + a + b + c +  ")", function);
+        this(argTypeA, (a, b, c) -> "[ " + NodeTypes.getName(argTypeA) + ", long, long -> long ] " + name + "(" + a + b + c +  ")", function);
     }
 
     public NodeFuncObjectLongLongToLong(Class<A> argTypeA, StringFunctionQuad stringFunction, IFuncObjectLongLongToLong<A> function) {

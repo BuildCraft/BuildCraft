@@ -14,7 +14,9 @@ import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
 import buildcraft.lib.expression.node.func.NodeFuncObjectToLong.IFuncObjectToLong;
 import buildcraft.lib.expression.node.func.NodeFuncObjectLongToLong.IFuncObjectLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncObjectLongLongToLong.IFuncObjectLongLongToLong;
+import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToLong.IFuncObjectObjectToLong;
 import buildcraft.lib.expression.node.func.NodeFuncObjectToBoolean.IFuncObjectToBoolean;
+import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToBoolean.IFuncObjectObjectToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncObjectToObject.IFuncObjectToObject;
 import buildcraft.lib.expression.node.func.NodeFuncObjectLongToObject.IFuncObjectLongToObject;
 import buildcraft.lib.expression.node.func.NodeFuncObjectLongLongToObject.IFuncObjectLongLongToObject;
@@ -40,8 +42,24 @@ public abstract class NodeTypeBase<T> extends FunctionContext {
         return put_oll_l(name, getType(), func);
     }
 
+    public <B> INodeFuncLong put_to_l(String name, Class<B> argTypeB, IFuncObjectObjectToLong<T, B> func) {
+        return put_oo_l(name, getType(), argTypeB, func);
+    }
+
+    public  INodeFuncLong put_tt_l(String name, IFuncObjectObjectToLong<T, T> func) {
+        return put_oo_l(name, getType(), getType(), func);
+    }
+
     public  INodeFuncBoolean put_t_b(String name, IFuncObjectToBoolean<T> func) {
         return put_o_b(name, getType(), func);
+    }
+
+    public <B> INodeFuncBoolean put_to_b(String name, Class<B> argTypeB, IFuncObjectObjectToBoolean<T, B> func) {
+        return put_oo_b(name, getType(), argTypeB, func);
+    }
+
+    public  INodeFuncBoolean put_tt_b(String name, IFuncObjectObjectToBoolean<T, T> func) {
+        return put_oo_b(name, getType(), getType(), func);
     }
 
     public <R> INodeFuncObject<R> put_t_o(String name, Class<R> returnType, IFuncObjectToObject<T, R> func) {

@@ -11,26 +11,24 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.StringFunctionBi;
-import buildcraft.lib.expression.node.value.NodeConstantLong;
+import buildcraft.lib.expression.node.value.NodeConstantDouble;
 
 // AUTO_GENERATED FILE, DO NOT EDIT MANUALLY!
-public class NodeFuncObjectToLong<A> implements INodeFuncLong {
+public class NodeFuncLongToDouble implements INodeFuncDouble {
 
-    public final IFuncObjectToLong<A> function;
+    public final IFuncLongToDouble function;
     private final StringFunctionBi stringFunction;
-    private final Class<A> argTypeA;
 
-    public NodeFuncObjectToLong(String name, Class<A> argTypeA, IFuncObjectToLong<A> function) {
-        this(argTypeA, (a) -> "[ " + NodeTypes.getName(argTypeA) + " -> long ] " + name + "(" + a +  ")", function);
+    public NodeFuncLongToDouble(String name, IFuncLongToDouble function) {
+        this((a) -> "[ long -> double ] " + name + "(" + a +  ")", function);
     }
 
-    public NodeFuncObjectToLong(Class<A> argTypeA, StringFunctionBi stringFunction, IFuncObjectToLong<A> function) {
-        this.argTypeA = argTypeA;
+    public NodeFuncLongToDouble(StringFunctionBi stringFunction, IFuncLongToDouble function) {
 
         this.function = function;
         this.stringFunction = stringFunction;
@@ -42,30 +40,30 @@ public class NodeFuncObjectToLong<A> implements INodeFuncLong {
     }
 
     @Override
-    public INodeLong getNode(INodeStack stack) throws InvalidExpressionException {
+    public INodeDouble getNode(INodeStack stack) throws InvalidExpressionException {
 
-        INodeObject<A> a = stack.popObject(argTypeA);
+        INodeLong a = stack.popLong();
 
         return new Func(a);
     }
 
-    private class Func implements INodeLong {
-        private final INodeObject<A> argA;
+    private class Func implements INodeDouble {
+        private final INodeLong argA;
 
-        public Func(INodeObject<A> argA) {
+        public Func(INodeLong argA) {
             this.argA = argA;
 
         }
 
         @Override
-        public long evaluate() {
+        public double evaluate() {
             return function.apply(argA.evaluate());
         }
 
         @Override
-        public INodeLong inline() {
+        public INodeDouble inline() {
             return NodeInliningHelper.tryInline(this, argA, (a) -> new Func(a),
-                    (a) -> NodeConstantLong.of(function.apply(a.evaluate()))
+                    (a) -> NodeConstantDouble.of(function.apply(a.evaluate()))
             );
         }
 
@@ -76,7 +74,7 @@ public class NodeFuncObjectToLong<A> implements INodeFuncLong {
     }
 
     @FunctionalInterface
-    public interface IFuncObjectToLong<A> {
-        long apply(A a);
+    public interface IFuncLongToDouble {
+        double apply(long a);
     }
 }

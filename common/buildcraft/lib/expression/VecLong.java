@@ -86,4 +86,9 @@ public class VecLong {
     public VecDouble castToDouble() {
         return new VecDouble(a, b, c, d);
     }
+
+    @Override
+    public String toString() {
+        return "{ " + a + ", " + b + ", " + c + ", " + d + " }";
+    }
 }

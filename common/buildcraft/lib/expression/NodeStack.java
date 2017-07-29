@@ -6,9 +6,7 @@
 
 package buildcraft.lib.expression;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 
 import buildcraft.lib.expression.api.IExpressionNode;
@@ -22,7 +20,7 @@ import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.node.cast.NodeCasting;
 
 public class NodeStack implements INodeStack {
-    private final Deque<IExpressionNode> stack = new ArrayDeque<>();
+    private final List<IExpressionNode> stack = new ArrayList<>();
 
     private INodeFunc currentlyPopping;
     private List<Class<?>> recordingTypes;
@@ -37,7 +35,7 @@ public class NodeStack implements INodeStack {
     }
 
     public <T extends IExpressionNode> T push(T node) {
-        stack.push(node);
+        stack.add(node);
         ExpressionDebugManager.debugPrintln("Pushed " + node);
         return node;
     }
@@ -46,8 +44,9 @@ public class NodeStack implements INodeStack {
         if (stack.isEmpty()) {
             throw new InvalidExpressionException("No more nodes to pop!");
         } else {
-            ExpressionDebugManager.debugPrintln("Popped " + stack.peek());
-            return stack.pop();
+            IExpressionNode node = stack.remove(stack.size() - 1);
+            ExpressionDebugManager.debugPrintln("Popped " + node);
+            return node;
         }
     }
 
@@ -55,10 +54,25 @@ public class NodeStack implements INodeStack {
         if (stack.isEmpty()) {
             throw new InvalidExpressionException("No more nodes to peek!");
         } else {
-            return stack.peek();
+            return stack.get(stack.size() - 1);
         }
     }
-    
+
+    /** @return A list of the nodes, in the order that they would be in if popped. (SO the first node in the list will
+     *         be the first node returned by {@link #peek()} or {@link #pop()} */
+    public List<IExpressionNode> peek(int count) throws InvalidExpressionException {
+        if (stack.size() < count) {
+            throw new InvalidExpressionException("Not enough nodes to peek!");
+        }
+        List<IExpressionNode> nodes = new ArrayList<>(count);
+        int i2 = stack.size() - 1;
+        for (int i = count; i > 0; i--) {
+            nodes.add(stack.get(i2));
+            i2--;
+        }
+        return nodes;
+    }
+
     public boolean isEmpty() {
         return stack.isEmpty();
     }

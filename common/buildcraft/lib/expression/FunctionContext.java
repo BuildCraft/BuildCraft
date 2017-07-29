@@ -7,9 +7,13 @@
 package buildcraft.lib.expression;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
@@ -36,11 +40,11 @@ import buildcraft.lib.expression.node.value.NodeVariableLong;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
 
 public class FunctionContext extends FunctionContextBase {
-    public static final String FUNCTION_ARG_SEPARATOR = "^";
+    public static final String FUNCTION_ARG_SEPARATOR = "@";
 
     private final FunctionContext[] parents;
     private final Map<String, IExpressionNode> variables = new HashMap<>();
-    private final Map<String, INodeFunc> functions = new HashMap<>();
+    private final Table<String, List<Class<?>>, INodeFunc> functions = HashBasedTable.create();
 
     /** Creates a function context with no parents. You probably DON'T want this, as it doesn't have any of the useful
      * functions found in {@link DefaultContexts} */
@@ -172,37 +176,46 @@ public class FunctionContext extends FunctionContextBase {
 
     // Function getter/setters
 
-    public INodeFunc getFunction(String name, int args) {
-        name = name.toLowerCase(Locale.ROOT);
-        return getFunction0(name + FUNCTION_ARG_SEPARATOR + args);
-    }
-
-    private INodeFunc getFunction0(String fullName) {
-        INodeFunc current = functions.get(fullName);
-        if (current != null) {
-            return current;
+    public INodeFunc getFunction(String name, List<Class<?>> args) {
+        INodeFunc func = functions.get(name, args);
+        if (func != null) {
+            return func;
         }
         for (FunctionContext parent : parents) {
-            INodeFunc func = parent.getFunction0(fullName);
+            func = parent.getFunction(name, args);
             if (func != null) return func;
         }
         return null;
     }
 
-    private static int getArgCount(INodeFunc function) {
+    public Map<List<Class<?>>, INodeFunc> getFunctions(String name) {
+        name = name.toLowerCase(Locale.ROOT);
+        Map<List<Class<?>>, INodeFunc> map = new HashMap<>();
+        getFunctions0(name, map);
+        return map;
+    }
+
+    private void getFunctions0(String name, Map<List<Class<?>>, INodeFunc> map) {
+        for (FunctionContext parent : parents) {
+            parent.getFunctions0(name, map);
+        }
+        map.putAll(functions.row(name));
+    }
+
+    private static List<Class<?>> getArgTypes(INodeFunc function) {
         NodeStackRecording recorder = new NodeStackRecording();
         try {
             function.getNode(recorder);
         } catch (InvalidExpressionException e) {
             throw new IllegalStateException("This should never happen!", e);
         }
-        return recorder.types.size();
+        return recorder.types;
     }
 
     @Override
     public <F extends INodeFunc> F putFunction(String name, F function) {
         name = name.toLowerCase(Locale.ROOT);
-        functions.put(name + FUNCTION_ARG_SEPARATOR + getArgCount(function), function);
+        functions.put(name, getArgTypes(function), function);
         return function;
     }
 

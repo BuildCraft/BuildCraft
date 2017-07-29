@@ -4,6 +4,8 @@ import static buildcraft.lib.expression.Argument.argDouble;
 import static buildcraft.lib.expression.Argument.argLong;
 import static org.junit.Assert.assertEquals;
 
+import com.google.common.collect.ImmutableList;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,6 +16,7 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.NodeStack;
 import buildcraft.lib.expression.NodeStackRecording;
+import buildcraft.lib.expression.VecLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
@@ -113,6 +116,8 @@ public class ExpressionTester {
         bakeAndCallLong("false ? 0 : true ? 1 : 2", 1);
         bakeAndCallLong("(true ? false : true) ? 0 : 1", 1);
         bakeAndCallLong("(false ? 0 : 2) - 1", 1);
+
+        bakeAndCallDouble("false ? 1 : 0.4", 0.4);
     }
 
     @Test
@@ -175,21 +180,26 @@ public class ExpressionTester {
 
         FunctionContext ctx2 = DefaultContexts.createWithAll();
 
-        System.out.println(ctx2.getFunction("sin", 1));
-        System.out.println(ctx2.getFunction("cosh", 1));
-        System.out.println(ctx2.getFunction("round", 1));
-        System.out.println(ctx2.getFunction("ceil", 1));
-        System.out.println(ctx2.getFunction("max_long", 1));
-        System.out.println(ctx2.getFunction("max_long", 2));
+        ImmutableList<Class<?>> list_d = ImmutableList.of(double.class);
+        ImmutableList<Class<?>> list_l = ImmutableList.of(long.class);
+        ImmutableList<Class<?>> list_ll = ImmutableList.of(long.class, long.class);
+        System.out.println(ctx2.getFunctions("sin"));
+        System.out.println(ctx2.getFunction("sin", list_d));
+        System.out.println(ctx2.getFunction("cosh", list_d));
+        System.out.println(ctx2.getFunction("round", list_d));
+        System.out.println(ctx2.getFunction("ceil", list_d));
+        System.out.println(ctx2.getFunction("max", list_d));
+        System.out.println(ctx2.getFunction("max", list_l));
+        System.out.println(ctx2.getFunction("max", list_ll));
 
         NodeStack stack4 = new NodeStack();
 
         stack4.push(new NodeConstantDouble(0.4));
-        INodeLong out = (INodeLong) ctx2.getFunction("ceil", 1).getNode(stack4);
+        INodeLong out = (INodeLong) ctx2.getFunction("ceil", list_d).getNode(stack4);
         System.out.println(out + " = " + out.evaluate());
 
         stack4.push(new NodeConstantDouble(0.4));
-        out = (INodeLong) ctx2.getFunction("floor", 1).getNode(stack4);
+        out = (INodeLong) ctx2.getFunction("floor", list_d).getNode(stack4);
         System.out.println(out + " = " + out.evaluate());
 
         INodeDouble nd = (INodeDouble) ctx2.getVariable("pi");
@@ -343,6 +353,14 @@ public class ExpressionTester {
 
         bakeAndCallString("Axis.X", "x", ctx);
         bakeAndCallString("axis.x", "x", ctx);
+    }
+
+    @Test
+    public void testVectors() {
+        bakeAndCallString("VecLong.zero", VecLong.ZERO.toString());
+        bakeAndCallString("VecLong.new(0, 0, 0, 0)", VecLong.ZERO.toString());
+        bakeAndCallString("VecLong.new(3, 4) + VecLong.new(1, 2)", "{ 4, 6, 0, 0 }");
+        bakeAndCallString("VecLong.new(3, 4) - VecLong.new(1, 2)", "{ 2, 2, 0, 0 }");
     }
 
     private static INodeDouble bakeFunctionDouble(String function, FunctionContext ctx) {

@@ -9,7 +9,6 @@ import buildcraft.lib.expression.node.func.NodeFuncObjectToObject.IFuncObjectToO
 public final class NodeType2<T> extends NodeTypeBase<T> {
     public final Class<T> type;
     public final T defaultValue;
-    private final Map<Class<?>, IFuncObjectToObject<?, T>> casts = new HashMap<>();
 
     public NodeType2(T defaultValue) {
         this((Class<T>) defaultValue.getClass(), defaultValue);
@@ -38,14 +37,6 @@ public final class NodeType2<T> extends NodeTypeBase<T> {
             return false;
         }
         return type == ((NodeType2<?>) obj).type;
-    }
-
-    public <F> void putCast(Class<F> from, IFuncObjectToObject<F, T> function) {
-        casts.put(from, function);
-    }
-
-    public <F> IFuncObjectToObject<F, T> getCast(Class<F> from) {
-        return (IFuncObjectToObject<F, T>) casts.get(from);
     }
 
     public void putConstant(String name, T value) {

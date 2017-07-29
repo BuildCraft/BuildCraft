@@ -12,6 +12,7 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
+import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.node.binary.NodeBinaryBoolean.BiBooleanPredicate;
 import buildcraft.lib.expression.node.binary.NodeBinaryDoubleToBoolean.BiDoubleToBooleanFunction;
@@ -71,5 +72,10 @@ public enum BiNodeToBooleanType implements IBinaryNodeType {
             throw new InvalidExpressionException("Cannot perform " + this + " on string nodes!");
         }
         return new NodeBinaryStringToBoolean(l, r, stringFunc, op);
+    }
+
+    @Override
+    public <T> IExpressionNode createObjectNode(INodeObject<T> l, INodeObject<T> r) throws InvalidExpressionException {
+        
     }
 }

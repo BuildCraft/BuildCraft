@@ -11,24 +11,24 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.StringFunctionTri;
-import buildcraft.lib.expression.node.value.NodeConstantDouble;
+import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 
 // AUTO_GENERATED FILE, DO NOT EDIT MANUALLY!
-public class NodeFuncDoubleDoubleToDouble implements INodeFuncDouble {
+public class NodeFuncBooleanBooleanToBoolean implements INodeFuncBoolean {
 
-    public final IFuncDoubleDoubleToDouble function;
+    public final IFuncBooleanBooleanToBoolean function;
     private final StringFunctionTri stringFunction;
 
-    public NodeFuncDoubleDoubleToDouble(String name, IFuncDoubleDoubleToDouble function) {
-        this((a, b) -> "[ double, double -> double ] " + name + "(" + a + b +  ")", function);
+    public NodeFuncBooleanBooleanToBoolean(String name, IFuncBooleanBooleanToBoolean function) {
+        this((a, b) -> "[ boolean, boolean -> boolean ] " + name + "(" + a + b +  ")", function);
     }
 
-    public NodeFuncDoubleDoubleToDouble(StringFunctionTri stringFunction, IFuncDoubleDoubleToDouble function) {
+    public NodeFuncBooleanBooleanToBoolean(StringFunctionTri stringFunction, IFuncBooleanBooleanToBoolean function) {
 
         this.function = function;
         this.stringFunction = stringFunction;
@@ -40,33 +40,33 @@ public class NodeFuncDoubleDoubleToDouble implements INodeFuncDouble {
     }
 
     @Override
-    public INodeDouble getNode(INodeStack stack) throws InvalidExpressionException {
+    public INodeBoolean getNode(INodeStack stack) throws InvalidExpressionException {
 
-        INodeDouble b = stack.popDouble();
-        INodeDouble a = stack.popDouble();
+        INodeBoolean b = stack.popBoolean();
+        INodeBoolean a = stack.popBoolean();
 
         return new Func(a, b);
     }
 
-    private class Func implements INodeDouble {
-        private final INodeDouble argA;
-        private final INodeDouble argB;
+    private class Func implements INodeBoolean {
+        private final INodeBoolean argA;
+        private final INodeBoolean argB;
 
-        public Func(INodeDouble argA, INodeDouble argB) {
+        public Func(INodeBoolean argA, INodeBoolean argB) {
             this.argA = argA;
             this.argB = argB;
 
         }
 
         @Override
-        public double evaluate() {
+        public boolean evaluate() {
             return function.apply(argA.evaluate(), argB.evaluate());
         }
 
         @Override
-        public INodeDouble inline() {
+        public INodeBoolean inline() {
             return NodeInliningHelper.tryInline(this, argA, argB, (a, b) -> new Func(a, b),
-                    (a, b) -> NodeConstantDouble.of(function.apply(a.evaluate(), b.evaluate()))
+                    (a, b) -> NodeConstantBoolean.of(function.apply(a.evaluate(), b.evaluate()))
             );
         }
 
@@ -77,7 +77,7 @@ public class NodeFuncDoubleDoubleToDouble implements INodeFuncDouble {
     }
 
     @FunctionalInterface
-    public interface IFuncDoubleDoubleToDouble {
-        double apply(double a, double b);
+    public interface IFuncBooleanBooleanToBoolean {
+        boolean apply(boolean a, boolean b);
     }
 }

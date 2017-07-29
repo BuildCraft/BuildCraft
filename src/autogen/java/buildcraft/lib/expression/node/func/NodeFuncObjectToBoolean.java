@@ -14,6 +14,7 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
+import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.StringFunctionBi;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 
@@ -25,7 +26,7 @@ public class NodeFuncObjectToBoolean<A> implements INodeFuncBoolean {
     private final Class<A> argTypeA;
 
     public NodeFuncObjectToBoolean(String name, Class<A> argTypeA, IFuncObjectToBoolean<A> function) {
-        this(argTypeA, (a) -> name + "(" + a +  ")", function);
+        this(argTypeA, (a) -> "[ " + NodeTypes.getName(argTypeA) + " -> boolean ] " + name + "(" + a +  ")", function);
     }
 
     public NodeFuncObjectToBoolean(Class<A> argTypeA, StringFunctionBi stringFunction, IFuncObjectToBoolean<A> function) {

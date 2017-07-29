@@ -14,6 +14,7 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc.INodeFunc{$ReturnOnly};
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
+import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.{$StringFunction};
 import buildcraft.lib.expression.node.value.NodeConstant{$ReturnOnly};
 
@@ -24,7 +25,7 @@ public class NodeFunc{$Args}To{$ReturnOnly}{$TypeArgs} implements INodeFunc{$Ret
     private final {$StringFunction} stringFunction;
 {$ObjectClassFields}
     public NodeFunc{$Args}To{$ReturnOnly}(String name, {$ObjectClassArgs}IFunc{$Args}To{$ReturnOnly}{$TypeArgs} function) {
-        this({$ObjectClassArgsPass}({$StringFunctionArgs}) -> name + "(" + {$StringFunctionArgsPlus} ")", function);
+        this({$ObjectClassArgsPass}({$StringFunctionArgs}) -> "[ {$ToStringName} ] " + name + "(" + {$StringFunctionArgsPlus} ")", function);
     }
 
     public NodeFunc{$Args}To{$ReturnOnly}({$ObjectClassArgs}{$StringFunction} stringFunction, IFunc{$Args}To{$ReturnOnly}{$TypeArgs} function) {

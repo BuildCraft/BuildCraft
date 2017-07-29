@@ -29,6 +29,7 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
         final String prop_ObjectNodeFieldSet;
 
         final String prop_InstanceArg;
+        final String prop_ToStringName;
 
         final String prop_ObjectTypeArg;
         final String prop_NodePop;
@@ -50,6 +51,7 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
         String _NodePop() { return prop_NodePop; }
         String _NodeConstant() { return prop_NodeConstant; }
         String _InstanceArg() { return prop_InstanceArg; }
+        String _ToStringName() { return prop_ToStringName; }
         // @formatter:on
 
         private NodeTypeStr() {
@@ -69,6 +71,7 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
                 prop_NodePop = "\t\tINodeObject<{$INDEX}> {$index} = stack.popObject(argType{$INDEX});";
                 prop_NodeConstant = "new NodeConstantObject<>(returnType, ";
                 prop_InstanceArg = "{$INDEX} {$index}";
+                prop_ToStringName = "\" + NodeTypes.getName(argType{$INDEX}) + \"";
             } else {
                 prop_return = name().toLowerCase(Locale.ROOT);
                 prop_Capitalised = name().substring(0, 1) + prop_return.substring(1);
@@ -83,6 +86,7 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
                 prop_NodePop = "\t\tINode" + prop_Capitalised + " {$index} = stack.pop" + prop_Capitalised + "();";
                 prop_NodeConstant = "NodeConstant" + prop_Capitalised + ".of(";
                 prop_InstanceArg = prop_return + " {$index}";
+                prop_ToStringName = prop_return;
             }
         }
     }
@@ -107,16 +111,25 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
         generateType(_long, _obj);
         generateType(_long, _obj, _long);
         generateType(_long, _obj, _long, _long);
+        generateType(_long, _obj, _obj);
 
+        generateType(_double, _long);
         generateType(_double, _double);
         generateType(_double, _double, _double);
 
+        generateType(_bool, _long, _long);
+        generateType(_bool, _double, _double);
+        generateType(_bool, _bool);
+        generateType(_bool, _bool, _bool);
         generateType(_bool, _obj);
+        generateType(_bool, _obj, _obj);
 
         generateType(_obj, _long);
         generateType(_obj, _long, _long);
         generateType(_obj, _long, _long, _long);
         generateType(_obj, _long, _long, _long, _long);
+        generateType(_obj, _double);
+        generateType(_obj, _bool);
         generateType(_obj, _obj);
         generateType(_obj, _obj, _long);
         generateType(_obj, _obj, _long, _long);
@@ -185,6 +198,8 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
         map.put("Args", join1(args, NodeTypeStr::_Capitalised, ""));
         map.put("a", join1(args, a -> a.name().toLowerCase(Locale.ROOT).substring(0, 1), ""));
         map.put("r", ret.name().toLowerCase(Locale.ROOT).substring(0, 1));
+        String value = join1(args, NodeTypeStr::_ToStringName, ", ") + " -> ";
+        map.put("ToStringName",  value + ret._ToStringName().replace("argType{$INDEX}", "returnType"));
 
         FunctionContextBase_Adder.allFunctionTypes.add(map);
         generateFile(PATH + "NodeFunc{$Args}To{$ReturnOnly}.java", map);
