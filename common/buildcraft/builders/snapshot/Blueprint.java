@@ -41,7 +41,7 @@ public class Blueprint extends Snapshot {
     public int[][][] data;
     public final List<ISchematicEntity<?>> entities = new ArrayList<>();
 
-    public Blueprint copy() {
+    public Blueprint clone() {
         Blueprint blueprint = new Blueprint();
         blueprint.size = size;
         blueprint.facing = facing;

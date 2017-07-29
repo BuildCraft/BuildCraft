@@ -6,6 +6,7 @@ package buildcraft.builders.gui;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.minecraft.util.ResourceLocation;
@@ -83,7 +84,7 @@ public class GuiElectronicLibrary extends GuiBC8<ContainerElectronicLibrary> {
         iterateSnapshots((i, x, y, width, height, key) ->
             drawString(
                 fontRenderer,
-                key.toString(),
+                Optional.<Object>ofNullable(key.header).orElse(key).toString(),
                 x,
                 y,
                 key.equals(container.tile.selected)
