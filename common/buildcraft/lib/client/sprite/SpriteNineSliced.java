@@ -44,7 +44,7 @@ public class SpriteNineSliced {
         draw(element.getX(), element.getY(), element.getWidth(), element.getHeight());
     }
 
-    public void draw(int x, int y, int width, int height) {
+    public void draw(double x, double y, double width, double height) {
         sprite.bindTexture();
         Tessellator tess = Tessellator.getInstance();
         VertexBuffer vb = tess.getBuffer();

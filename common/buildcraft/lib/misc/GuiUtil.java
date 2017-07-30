@@ -51,9 +51,10 @@ public class GuiUtil {
     }
 
     /** Draws multiple elements, one after each other. */
-    public static <D> void drawVerticallyAppending(IGuiPosition element, Iterable<? extends D> iterable, IVerticalAppendingDrawer<D> drawer) {
-        int x = element.getX();
-        int y = element.getY();
+    public static <D> void drawVerticallyAppending(IGuiPosition element, Iterable<? extends D> iterable,
+        IVerticalAppendingDrawer<D> drawer) {
+        double x = element.getX();
+        double y = element.getY();
         for (D drawable : iterable) {
             y += drawer.draw(drawable, x, y);
         }
@@ -61,7 +62,7 @@ public class GuiUtil {
 
     @FunctionalInterface
     public interface IVerticalAppendingDrawer<D> {
-        int draw(D drawable, int x, int y);
+        double draw(D drawable, double x, double y);
     }
 
     /** Straight copy of {@link GuiUtils#drawHoveringText(List, int, int, int, int, int, FontRenderer)}, except that we
@@ -79,7 +80,8 @@ public class GuiUtil {
      * @param maxTextWidth the maximum width of the text in the tooltip box. Set to a negative number to have no max
      *            width.
      * @param font the font for drawing the text in the tooltip box */
-    public static int drawHoveringText(List<String> textLines, final int mouseX, final int mouseY, final int screenWidth, final int screenHeight, final int maxTextWidth, FontRenderer font) {
+    public static int drawHoveringText(List<String> textLines, final int mouseX, final int mouseY,
+        final int screenWidth, final int screenHeight, final int maxTextWidth, FontRenderer font) {
         if (!textLines.isEmpty()) {
             GlStateManager.disableRescaleNormal();
             RenderHelper.disableStandardItemLighting();
@@ -161,17 +163,26 @@ public class GuiUtil {
 
             final int zLevel = 300;
             final int backgroundColor = 0xF0100010;
-            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 4, tooltipX + tooltipTextWidth + 3, tooltipY - 3, backgroundColor, backgroundColor);
-            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY + tooltipHeight + 3, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 4, backgroundColor, backgroundColor);
-            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
-            GuiUtils.drawGradientRect(zLevel, tooltipX - 4, tooltipY - 3, tooltipX - 3, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
-            GuiUtils.drawGradientRect(zLevel, tooltipX + tooltipTextWidth + 3, tooltipY - 3, tooltipX + tooltipTextWidth + 4, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
+            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 4, tooltipX + tooltipTextWidth + 3, tooltipY - 3,
+                backgroundColor, backgroundColor);
+            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY + tooltipHeight + 3,
+                tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 4, backgroundColor, backgroundColor);
+            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3,
+                tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
+            GuiUtils.drawGradientRect(zLevel, tooltipX - 4, tooltipY - 3, tooltipX - 3, tooltipY + tooltipHeight + 3,
+                backgroundColor, backgroundColor);
+            GuiUtils.drawGradientRect(zLevel, tooltipX + tooltipTextWidth + 3, tooltipY - 3,
+                tooltipX + tooltipTextWidth + 4, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
             final int borderColorStart = 0x505000FF;
             final int borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
-            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3 + 1, tooltipX - 3 + 1, tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
-            GuiUtils.drawGradientRect(zLevel, tooltipX + tooltipTextWidth + 2, tooltipY - 3 + 1, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
-            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3, tooltipY - 3 + 1, borderColorStart, borderColorStart);
-            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY + tooltipHeight + 2, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, borderColorEnd, borderColorEnd);
+            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3 + 1, tooltipX - 3 + 1,
+                tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
+            GuiUtils.drawGradientRect(zLevel, tooltipX + tooltipTextWidth + 2, tooltipY - 3 + 1,
+                tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
+            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3,
+                tooltipY - 3 + 1, borderColorStart, borderColorStart);
+            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY + tooltipHeight + 2,
+                tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, borderColorEnd, borderColorEnd);
 
             for (int lineNumber = 0; lineNumber < textLines.size(); ++lineNumber) {
                 String line = textLines.get(lineNumber);
@@ -205,12 +216,12 @@ public class GuiUtil {
     public static void drawFluid(IGuiArea position, FluidStack fluid, int amount, int capacity) {
         if (fluid == null || amount <= 0) return;
 
-        int height = amount * position.getHeight() / capacity;
+        double height = amount * position.getHeight() / capacity;
 
-        int startX = position.getX();
-        int startY;
-        int endX = startX + position.getWidth();
-        int endY;
+        double startX = position.getX();
+        double startY;
+        double endX = startX + position.getWidth();
+        double endY;
 
         if (fluid.getFluid().isGaseous(fluid)) {
             startY = position.getY() + height;
@@ -223,7 +234,7 @@ public class GuiUtil {
         FluidRenderer.drawFluidForGui(fluid, startX, startY, endX, endY);
     }
 
-    public static void scissor(int x, int y, int width, int height) {
+    public static void scissor(double x, double y, double width, double height) {
         Minecraft mc = Minecraft.getMinecraft();
         ScaledResolution res = new ScaledResolution(mc);
         double scaleW = mc.displayWidth / res.getScaledWidth_double();
@@ -237,7 +248,8 @@ public class GuiUtil {
         return GuiUtil.subRelative(sprite, u / size, v / size, width / size, height / size);
     }
 
-    public static ISprite subAbsolute(ISprite sprite, double uMin, double vMin, double uMax, double vMax, double spriteSize) {
+    public static ISprite subAbsolute(ISprite sprite, double uMin, double vMin, double uMax, double vMax,
+        double spriteSize) {
         double size = spriteSize;
         return GuiUtil.subAbsolute(sprite, uMin / size, vMin / size, uMax / size, vMax / size);
     }
@@ -257,7 +269,8 @@ public class GuiUtil {
         return new SpriteNineSliced(sprite, uMin, vMin, uMax, vMax, textureSize);
     }
 
-    public static SpriteNineSliced slice(ISprite sprite, double uMin, double vMin, double uMax, double vMax, double scale) {
+    public static SpriteNineSliced slice(ISprite sprite, double uMin, double vMin, double uMax, double vMax,
+        double scale) {
         return new SpriteNineSliced(sprite, uMin, vMin, uMax, vMax, scale);
     }
 }

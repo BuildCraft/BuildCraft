@@ -5,13 +5,14 @@ import net.minecraft.client.renderer.GlStateManager;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
 public final class GuiButtonDrawable extends GuiAbstractButton<GuiBC8<?>> {
     private final ISimpleDrawable drEnabled, drActive, drHovered, drActiveHovered, drDisabled, drDisabledActive;
 
     public static class Builder {
-        public final GuiRectangle rect;
+        public final IGuiArea rect;
         public final ISimpleDrawable enabled;
         public ISimpleDrawable active;
         public ISimpleDrawable hovered;
@@ -19,7 +20,7 @@ public final class GuiButtonDrawable extends GuiAbstractButton<GuiBC8<?>> {
         public ISimpleDrawable disabled;
         public ISimpleDrawable disabledActive;
 
-        public Builder(GuiRectangle rect, ISimpleDrawable enabled) {
+        public Builder(IGuiArea rect, ISimpleDrawable enabled) {
             this.rect = rect;
             this.enabled = enabled;
         }

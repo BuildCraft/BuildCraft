@@ -8,7 +8,7 @@ package buildcraft.lib.gui.button;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.IntSupplier;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import buildcraft.lib.gui.GuiBC8;
@@ -35,15 +35,15 @@ public abstract class GuiAbstractButton<G extends GuiBC8<?>> extends GuiElementS
     }
 
     public GuiElementText createTextElement(String text) {
-        int width = gui.getFontRenderer().getStringWidth(text);
-        int height = gui.getFontRenderer().FONT_HEIGHT;
+        double width = gui.getFontRenderer().getStringWidth(text);
+        double height = gui.getFontRenderer().FONT_HEIGHT;
         IGuiPosition pos = getCenter().offset(-width / 2, -height / 2);
         return new GuiElementText(gui, pos, () -> text, this::getColourForText);
     }
 
     public GuiElementText createTextElement(Supplier<String> text) {
-        IntSupplier x = () -> -gui.getFontRenderer().getStringWidth(text.get()) / 2;
-        IntSupplier y = () -> -gui.getFontRenderer().FONT_HEIGHT / 2;
+        DoubleSupplier x = () -> -gui.getFontRenderer().getStringWidth(text.get()) / 2;
+        DoubleSupplier y = () -> -gui.getFontRenderer().FONT_HEIGHT / 2;
         IGuiPosition pos = getCenter().offset(x, y);
         return new GuiElementText(gui, pos, text, this::getColourForText);
     }

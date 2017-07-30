@@ -7,7 +7,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.tiles.IControllable;
 
-import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
+import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.NodeType2;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.gui.pos.GuiRectangle;
@@ -76,20 +76,20 @@ public class ExpressionCompat {
         NodeTypes.addType("GuiPosition", GUI_POSITION);
         NodeTypes.addType("GuiArea", GUI_AREA);
 
-        GUI_POSITION.put_ll_t("pos", PositionAbsolute::new);
-        GUI_POSITION.put_oo_t("pos", INodeLong.class, INodeLong.class, PositionCallable::new);
+        GUI_POSITION.put_oo_t("pos", INodeDouble.class, INodeDouble.class, IGuiPosition::create);
         GUI_POSITION.put_tt_t("+", IGuiPosition::offset);
         GUI_POSITION.put_tt_t("-", (a, b) -> a.offset(() -> -b.getX(), () -> -b.getY()));
-        GUI_POSITION.put_too_t("offset", INodeLong.class, INodeLong.class, IGuiPosition::offset);
+        GUI_POSITION.put_too_t("offset", INodeDouble.class, INodeDouble.class, IGuiPosition::offset);
 
-        GUI_AREA.put_ll_t("area", GuiRectangle::new);
-        GUI_AREA.put_llll_t("area", GuiRectangle::new);
+        GUI_AREA.put_oo_t("area", INodeDouble.class, INodeDouble.class, IGuiArea::create);
+        GUI_AREA.put_oooo_t("area", INodeDouble.class, INodeDouble.class, INodeDouble.class, INodeDouble.class, IGuiArea::create);
         GUI_AREA.put_to_t("+", IGuiPosition.class, IGuiArea::offset);
         GUI_AREA.put_ot_t("+", IGuiPosition.class, (b, a) -> a.offset(b));
         GUI_AREA.put_to_t("offset", IGuiPosition.class, IGuiArea::offset);
-        GUI_AREA.put_too_t("offset", INodeLong.class, INodeLong.class, IGuiArea::offset);
-        GUI_AREA.put_to_t("expand", INodeLong.class, IGuiArea::expand);
-        GUI_AREA.put_too_t("expand", INodeLong.class, INodeLong.class, IGuiArea::expand);
+        GUI_AREA.put_too_t("offset", INodeDouble.class, INodeDouble.class, IGuiArea::offset);
+        GUI_AREA.put_to_t("expand", INodeDouble.class, IGuiArea::expand);
+        GUI_AREA.put_too_t("expand", INodeDouble.class, INodeDouble.class, IGuiArea::expand);
+        GUI_AREA.put_too_t("resize", INodeDouble.class, INodeDouble.class, IGuiArea::resize);
     }
 
     public static void setup() {

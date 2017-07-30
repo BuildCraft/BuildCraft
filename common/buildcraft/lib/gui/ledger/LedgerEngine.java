@@ -43,7 +43,7 @@ public class LedgerEngine extends Ledger_Neptune {
     }
 
     @Override
-    protected void drawIcon(int x, int y) {
+    protected void drawIcon(double x, double y) {
         ISprite sprite;
         switch (engine.getPowerStage()) {
             case OVERHEAT:

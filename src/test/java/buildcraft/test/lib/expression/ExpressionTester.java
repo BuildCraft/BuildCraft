@@ -15,22 +15,15 @@ import buildcraft.lib.expression.ExpressionDebugManager;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.NodeStack;
-import buildcraft.lib.expression.NodeStackRecording;
 import buildcraft.lib.expression.VecLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
-import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.minecraft.ExpressionCompat;
-import buildcraft.lib.expression.node.binary.BiNodeType;
-import buildcraft.lib.expression.node.func.NodeFuncGenericToLong;
-import buildcraft.lib.expression.node.func.NodeFuncLongToLong;
-import buildcraft.lib.expression.node.unary.UnaryNodeType;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
-import buildcraft.lib.expression.node.value.NodeConstantLong;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableLong;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
@@ -123,62 +116,6 @@ public class ExpressionTester {
 
     @Test
     public void testMath() throws InvalidExpressionException {
-        NodeVariableLong arg1 = new NodeVariableLong("arg1");
-
-        INodeLong node = BiNodeType.ADD.createLongNode(arg1, new NodeConstantLong(10));
-
-        arg1.value = 1;
-        System.out.println(node.evaluate());
-
-        arg1.value = 6;
-        System.out.println(node.evaluate());
-
-        IVariableNode[] vars = { arg1 };
-
-        Class<?>[] ntArgs = { long.class };
-
-        NodeFuncGenericToLong func = new NodeFuncGenericToLong(node, ntArgs, vars);
-
-        NodeStack nodeStack = new NodeStack();
-
-        nodeStack.push(new NodeConstantLong(14));
-        System.out.println(func.getNode(nodeStack).inline().evaluate());
-
-        nodeStack.push(new NodeConstantLong(27));
-        System.out.println(func.getNode(nodeStack).inline().evaluate());
-
-        NodeFuncLongToLong func2 = new NodeFuncLongToLong("mult2", (a) -> (a * 2));
-
-        nodeStack.push(new NodeConstantLong(1));
-        System.out.println(func2.getNode(nodeStack).inline().evaluate());
-
-        nodeStack.push(new NodeConstantLong(13));
-        System.out.println(func2.getNode(nodeStack).inline().evaluate());
-
-        nodeStack.push(new NodeConstantLong(13));
-        INodeLong neg = UnaryNodeType.NEGATE.createLongNode(func2.getNode(nodeStack));
-        System.out.println(neg);
-        INodeLong negInlined = neg.inline();
-        System.out.println(negInlined);
-        System.out.println(negInlined.evaluate());
-
-        NodeStack stack = new NodeStack();
-
-        stack.push(neg);
-
-        NodeStackRecording recorder = new NodeStackRecording();
-
-        ExpressionDebugManager.debugStart("Recording " + func + " [");
-        func.getNode(recorder);
-        ExpressionDebugManager.debugEnd("]");
-
-        ExpressionDebugManager.debugStart("Compiling");
-        stack.setRecorder(recorder.types, func);
-        INodeLong node2 = func.getNode(stack);
-        stack.checkAndRemoveRecorder();
-        ExpressionDebugManager.debugEnd("Compiled as " + node2);
-        ExpressionDebugManager.debugPrintln("Inlined as " + node2.inline());
-
         FunctionContext ctx2 = DefaultContexts.createWithAll();
 
         ImmutableList<Class<?>> list_d = ImmutableList.of(double.class);
@@ -381,10 +318,10 @@ public class ExpressionTester {
         IGuiPosition pos = bakeFunctionObject(IGuiPosition.class, "GuiPosition.pos(value + 3, 5)", ctx).evaluate();
 
         var.value = 4;
-        Assert.assertEquals(7, pos.getX());
+        Assert.assertEquals(7, pos.getX(), 0.01);
 
         var.value = 5;
-        Assert.assertEquals(8, pos.getX());
+        Assert.assertEquals(8, pos.getX(), 0.01);
     }
 
     private static INodeDouble bakeFunctionDouble(String function, FunctionContext ctx) {

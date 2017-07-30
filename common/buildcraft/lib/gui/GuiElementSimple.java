@@ -18,22 +18,22 @@ public class GuiElementSimple<G extends GuiBC8<?>> implements IGuiElement {
     }
 
     @Override
-    public int getX() {
+    public double getX() {
         return element.getX();
     }
 
     @Override
-    public int getY() {
+    public double getY() {
         return element.getY();
     }
 
     @Override
-    public int getWidth() {
+    public double getWidth() {
         return element.getWidth();
     }
 
     @Override
-    public int getHeight() {
+    public double getHeight() {
         return element.getHeight();
     }
 }

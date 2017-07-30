@@ -15,11 +15,13 @@ import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.data.IReference;
 
+@Deprecated
 public class ElementStatementParam extends ElementGuiSlot<GuiStatementSelector<?>, IStatementParameter> {
     public final int paramIndex;
     public final ElementStatement<?, ?> parent;
 
-    public ElementStatementParam(GuiStatementSelector<?> gui, IGuiArea element, IReference<IStatementParameter> reference, int paramIndex, ElementStatement<?, ?> elemParent) {
+    public ElementStatementParam(GuiStatementSelector<?> gui, IGuiArea element,
+        IReference<IStatementParameter> reference, int paramIndex, ElementStatement<?, ?> elemParent) {
         super(gui, element, reference);
         this.paramIndex = paramIndex;
         this.parent = elemParent;
@@ -37,7 +39,7 @@ public class ElementStatementParam extends ElementGuiSlot<GuiStatementSelector<?
             super.drawBackground(partialTicks);
             ItemStack stack = param.getItemStack();
             if (!stack.isEmpty()) {
-                gui.drawItemStackAt(stack, getX() + 1, getY() + 1);
+                gui.drawItemStackAt(stack, (int) getX() + 1, (int) getY() + 1);
             }
         }
     }
@@ -51,7 +53,7 @@ public class ElementStatementParam extends ElementGuiSlot<GuiStatementSelector<?
             super.draw(val, element);
             ItemStack stack = val.getItemStack();
             if (!stack.isEmpty()) {
-                gui.drawItemStackAt(stack, getX() + 1, getY() + 1);
+                gui.drawItemStackAt(stack, (int) getX() + 1, (int) getY() + 1);
             }
         }
     }
@@ -65,7 +67,8 @@ public class ElementStatementParam extends ElementGuiSlot<GuiStatementSelector<?
             }
             ItemStack currentStack = gui.mc.player.inventory.getItemStack();
             StatementMouseClick event = new StatementMouseClick(button, GuiScreen.isShiftKeyDown());
-            IStatementParameter newParam = value.onClick(gui.getStatementContainer(), parent.reference.get(), currentStack, event);
+            IStatementParameter newParam =
+                value.onClick(gui.getStatementContainer(), parent.reference.get(), currentStack, event);
             if (newParam != null) {
                 // update the server with the click
                 reference.set(newParam);

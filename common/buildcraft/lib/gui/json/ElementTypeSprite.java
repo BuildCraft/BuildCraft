@@ -1,7 +1,5 @@
 package buildcraft.lib.gui.json;
 
-import org.omg.CORBA.REBIND;
-
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.render.ISprite;
@@ -14,7 +12,9 @@ import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.elem.GuiElementDrawable;
 import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import buildcraft.lib.gui.pos.PositionAbsolute;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.SpriteUtil;
 
@@ -37,30 +37,24 @@ public class ElementTypeSprite extends ElementType {
     @Override
     public IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(gui, json);
-        inheritProperty(json, "area[0]", "pos[0]");
-        inheritProperty(json, "area[1]", "pos[1]");
-        inheritProperty(json, "area[2]", "size[0]");
-        inheritProperty(json, "area[3]", "size[1]");
+        inheritProperty(json, "pos[0]", "area[0]");
+        inheritProperty(json, "pos[1]", "area[1]");
+        inheritProperty(json, "size[0]", "area[2]");
+        inheritProperty(json, "size[1]", "area[3]");
 
-        inheritProperty(json, "source.area[0]", "source.pos[0]");
-        inheritProperty(json, "source.area[1]", "source.pos[1]");
-        inheritProperty(json, "source.area[2]", "source.size[0]");
-        inheritProperty(json, "source.area[3]", "source.size[1]");
+        inheritProperty(json, "source.pos[0]", "source.area[0]");
+        inheritProperty(json, "source.pos[1]", "source.area[1]");
+        inheritProperty(json, "source.size[0]", "source.area[2]");
+        inheritProperty(json, "source.size[1]", "source.area[3]");
 
-        inheritProperty(json, "pos[0]", "source.pos[0]");
-        inheritProperty(json, "pos[1]", "source.pos[1]");
-        inheritProperty(json, "size[0]", "source.size[0]");
-        inheritProperty(json, "size[1]", "source.size[1]");
+        inheritProperty(json, "area", "source.area");
+        inheritProperty(json, "area[0]", "source.area[0]");
+        inheritProperty(json, "area[1]", "source.area[1]");
+        inheritProperty(json, "area[2]", "source.area[2]");
+        inheritProperty(json, "area[3]", "source.area[3]");
 
-        int posX = resolveEquationInt(json, "pos[0]", ctx);
-        int posY = resolveEquationInt(json, "pos[1]", ctx);
-        int sizeX = resolveEquationInt(json, "size[0]", ctx);
-        int sizeY = resolveEquationInt(json, "size[1]", ctx);
-
-        double u = resolveEquationDouble(json, "source.pos[0]", ctx);
-        double v = resolveEquationDouble(json, "source.pos[1]", ctx);
-        double us = resolveEquationDouble(json, "source.size[0]", ctx);
-        double vs = resolveEquationDouble(json, "source.size[1]", ctx);
+        IGuiArea area = resolveArea(json, "area", parent, ctx);
+        IGuiArea srcArea = resolveArea(json, "source.area", PositionAbsolute.ORIGIN, ctx);
 
         INodeBoolean visible = getEquationBool(json, "visible", ctx, true);
         boolean foreground = resolveEquationBool(json, "foreground", ctx, false);
@@ -70,22 +64,26 @@ public class ElementTypeSprite extends ElementType {
         String origin = tex.origin;
         int texSize = tex.texSize;
 
-        if (!json.properties.containsKey("source.size[0]")) {
-            us = texSize;
-        }
-        if (!json.properties.containsKey("source.size[1]")) {
-            vs = texSize;
+        if (!json.properties.containsKey("source.area[2]")//
+            && !json.properties.containsKey("source.area[3]")//
+            && !json.properties.containsKey("source.area")) {
+            srcArea = new GuiRectangle(texSize, texSize);
         }
 
         ISprite sprite = gui.properties.get(origin, ISprite.class);
+        // TODO: Allow variable source area for the sprite
+        double u = srcArea.getX();
+        double v = srcArea.getY();
+        double uSize = srcArea.getWidth();
+        double vSize = srcArea.getHeight();
         if (sprite != null) {
-            sprite = GuiUtil.subRelative(sprite, u, v, us, vs, texSize);
+            sprite = GuiUtil.subRelative(sprite, u, v, uSize, vSize, texSize);
         } else {
-            sprite = new SpriteRaw(SpriteUtil.transformLocation(new ResourceLocation(origin)), u, v, us, vs, texSize);
+            ResourceLocation loc = SpriteUtil.transformLocation(new ResourceLocation(origin));
+            sprite = new SpriteRaw(loc, u, v, uSize, vSize, texSize);
         }
 
-        GuiRectangle rect = new GuiRectangle(posX, posY, sizeX, sizeY);
-        ISimpleDrawable icon = new GuiSpriteScaled(sprite, sizeX, sizeY);
-        return new GuiElementDrawable(gui, rect.offset(parent), icon, foreground, visible);
+        ISimpleDrawable icon = new GuiSpriteScaled(sprite, area.offsetToOrigin());
+        return new GuiElementDrawable(gui, area, icon, foreground, visible);
     }
 }

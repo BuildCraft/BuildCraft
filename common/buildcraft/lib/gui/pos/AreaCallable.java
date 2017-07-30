@@ -1,34 +1,38 @@
 package buildcraft.lib.gui.pos;
 
-import java.util.function.IntSupplier;
+import java.util.function.DoubleSupplier;
 
 public class AreaCallable implements IGuiArea {
-    public final IntSupplier x, y, width, height;
+    public final DoubleSupplier x, y, width, height;
 
-    public AreaCallable(IntSupplier x, IntSupplier y, IntSupplier width, IntSupplier height) {
+    public AreaCallable(DoubleSupplier x, DoubleSupplier y, DoubleSupplier width, DoubleSupplier height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
     }
 
-    @Override
-    public int getX() {
-        return x.getAsInt();
+    public AreaCallable(DoubleSupplier width, DoubleSupplier height) {
+        this(() -> 0, () -> 0, width, height);
     }
 
     @Override
-    public int getY() {
-        return y.getAsInt();
+    public double getX() {
+        return x.getAsDouble();
     }
 
     @Override
-    public int getWidth() {
-        return width.getAsInt();
+    public double getY() {
+        return y.getAsDouble();
     }
 
     @Override
-    public int getHeight() {
-        return height.getAsInt();
+    public double getWidth() {
+        return width.getAsDouble();
+    }
+
+    @Override
+    public double getHeight() {
+        return height.getAsDouble();
     }
 }

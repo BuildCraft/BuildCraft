@@ -146,8 +146,10 @@ public class TileFiller extends TileBC_Neptune
     public void update() {
         if (world.isRemote) {
             builder.tick();
+            pattern.canInteract = !isLocked();
             return;
         }
+        sendNetworkUpdate(NET_RENDER_DATA);
         lockedTicks--;
         if (lockedTicks < 0) {
             lockedTicks = 0;
@@ -436,6 +438,8 @@ public class TileFiller extends TileBC_Neptune
         }
         finished = false;
         lockedTicks = 3;
+//        patternTemplate = null;
+//        blueprintTemplate = null;
     }
 
     // IControllable

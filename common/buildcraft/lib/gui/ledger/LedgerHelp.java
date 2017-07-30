@@ -63,7 +63,7 @@ public class LedgerHelp extends Ledger_Neptune {
     }
 
     @Override
-    protected void drawIcon(int x, int y) {
+    protected void drawIcon(double x, double y) {
         if (!init) {
             init = true;
             List<HelpPosition> elements = new ArrayList<>();

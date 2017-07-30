@@ -39,10 +39,10 @@ public class GuiIcon implements ISimpleDrawable {
         this(texture, u, v, width, height, 256);
     }
 
-    public GuiIcon offset(int u, int v) {
+    public GuiIcon offset(double u, double v) {
         SpriteRaw raw = (SpriteRaw) sprite;
-        double uMin = raw.uMin + u / (double) textureSize;
-        double vMin = raw.vMin + v / (double) textureSize;
+        double uMin = raw.uMin + u / textureSize;
+        double vMin = raw.vMin + v / textureSize;
         return new GuiIcon(new SpriteRaw(raw.location, uMin, vMin, raw.width, raw.height), textureSize);
     }
 
@@ -51,10 +51,6 @@ public class GuiIcon implements ISimpleDrawable {
     }
 
     @Override
-    public void drawAt(int x, int y) {
-        this.drawScaledInside(x, y, this.width, this.height);
-    }
-
     public void drawAt(double x, double y) {
         this.drawScaledInside(x, y, this.width, this.height);
     }
@@ -162,11 +158,11 @@ public class GuiIcon implements ISimpleDrawable {
         tess.draw();
     }
 
-    public static void drawAt(ISprite sprite, int x, int y, int size) {
+    public static void drawAt(ISprite sprite, double x, double y, double size) {
         drawAt(sprite, x, y, size, size);
     }
 
-    public static void drawAt(ISprite sprite, int x, int y, int width, int height) {
+    public static void drawAt(ISprite sprite, double x, double y, double width, double height) {
         draw(sprite, x, y, x + width, y + height);
     }
 

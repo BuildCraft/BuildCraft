@@ -182,12 +182,12 @@ public class GuiGate extends GuiStatementSelector<ContainerGate> {
 
     @Override
     protected void drawForegroundLayer() {
-        int x = rootElement.getX();
-        int y = rootElement.getY();
+        double x = rootElement.getX();
+        double y = rootElement.getY();
         String localizedName = container.gate.variant.getLocalizedName();
-        int cX = x + (GUI_WIDTH - fontRenderer.getStringWidth(localizedName)) / 2;
-        fontRenderer.drawString(localizedName, cX, y + 5, 0x404040);
-        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), x + 8, y + ySize - 97, 0x404040);
+        double cX = x + (GUI_WIDTH - fontRenderer.getStringWidth(localizedName)) / 2;
+        fontRenderer.drawString(localizedName, (int) cX, (int) y + 5, 0x404040);
+        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), (int) x + 8, (int) y + ySize - 97, 0x404040);
         GlStateManager.color(1, 1, 1);
         super.drawForegroundLayer();
     }

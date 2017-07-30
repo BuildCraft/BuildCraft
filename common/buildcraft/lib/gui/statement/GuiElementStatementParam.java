@@ -10,6 +10,7 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
+import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IInteractionElement;
@@ -75,8 +76,8 @@ public class GuiElementStatementParam extends GuiElementSimple<GuiJson<?>>
     public void drawBackground(float partialTicks) {
         if (draw) {
             int max = ref.get().maxParameters();
-            int x = getX();
-            int y = getY();
+            double x = getX();
+            double y = getY();
             if (paramIndex >= max) {
                 GuiElementStatement.ICON_SLOT_BLOCKED.drawAt(x, y);
                 return;
@@ -97,9 +98,12 @@ public class GuiElementStatementParam extends GuiElementSimple<GuiJson<?>>
                     GuiIcon.drawAt(sprite, x, y, 16);
                 }
             } else if (sprite == null) {
-                gui.drawItemStackAt(stack, x, y);
+                gui.drawItemStackAt(stack, (int) x, (int) y);
             } else {
                 GuiIcon.drawAt(sprite, x, y, 16);
+            }
+            if (!ref.canInteract) {
+                GuiIcon.drawAt(BCLibSprites.LOCK, x + 1, y + 7, 8);
             }
         }
     }
@@ -108,7 +112,7 @@ public class GuiElementStatementParam extends GuiElementSimple<GuiJson<?>>
 
     @Override
     public void onMouseClicked(int button) {
-        if (contains(gui.mouse)) {
+        if (ref.canInteract && contains(gui.mouse)) {
             IStatementParameter param = get();
             if (param == null) {
                 return;

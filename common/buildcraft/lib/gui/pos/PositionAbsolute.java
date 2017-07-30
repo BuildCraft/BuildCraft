@@ -6,30 +6,30 @@
 
 package buildcraft.lib.gui.pos;
 
-public final class PositionAbsolute implements IGuiPosition {
-    private final int x, y;
+import java.util.Arrays;
 
-    public PositionAbsolute(int x, int y) {
+public final class PositionAbsolute implements IGuiPosition {
+    public static final PositionAbsolute ORIGIN = new PositionAbsolute(0, 0);
+
+    private final double x, y;
+
+    public PositionAbsolute(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public PositionAbsolute(long x, long y) {
-        this((int) x, (int) y);
-    }
-
     @Override
-    public int getX() {
+    public double getX() {
         return x;
     }
 
     @Override
-    public int getY() {
+    public double getY() {
         return y;
     }
 
     @Override
-    public IGuiPosition offset(int xOffset, int yOffset) {
+    public IGuiPosition offset(double xOffset, double yOffset) {
         return new PositionAbsolute(xOffset + x, yOffset + y);
     }
 
@@ -40,7 +40,7 @@ public final class PositionAbsolute implements IGuiPosition {
 
     @Override
     public int hashCode() {
-        return Long.hashCode((((long) x) << 32) | y);
+        return Arrays.hashCode(new double[] { x, y });
     }
 
     @Override

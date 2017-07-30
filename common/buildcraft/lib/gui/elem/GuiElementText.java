@@ -55,13 +55,13 @@ public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {
     }
 
     @Override
-    public int getWidth() {
+    public double getWidth() {
         FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
         return fr.getStringWidth(text.get());
     }
 
     @Override
-    public int getHeight() {
+    public double getHeight() {
         FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
         return fr.FONT_HEIGHT;
     }
@@ -85,10 +85,10 @@ public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {
         if (centered) {
             String str = text.get();
             int width = fr.getStringWidth(str);
-            int x = getX() - width / 2;
-            fr.drawString(str, x, getY(), colour.getAsInt(), dropShadow);
+            double x = getX() - width / 2;
+            fr.drawString(str, (float) x, (float) getY(), colour.getAsInt(), dropShadow);
         } else {
-            fr.drawString(text.get(), getX(), getY(), colour.getAsInt(), dropShadow);
+            fr.drawString(text.get(), (float) getX(), (float) getY(), colour.getAsInt(), dropShadow);
         }
     }
 }

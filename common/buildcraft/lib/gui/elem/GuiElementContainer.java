@@ -19,7 +19,7 @@ public class GuiElementContainer implements IGuiElement {
     public final GuiBC8<?> gui;
     private final IGuiPosition position;
     private final List<IGuiElement> internalElements = new ArrayList<>();
-    private int width, height;
+    private double width, height;
     private boolean calc = false;
 
     public GuiElementContainer(GuiBC8<?> gui, IGuiPosition position) {
@@ -31,8 +31,8 @@ public class GuiElementContainer implements IGuiElement {
         calc = true;
         width = 0;
         height = 0;
-        int w = 0;
-        int h = 0;
+        double w = 0;
+        double h = 0;
         for (IGuiElement element : internalElements) {
             w = Math.max(w, element.getEndX());
             h = Math.max(h, element.getEndY());
@@ -61,22 +61,22 @@ public class GuiElementContainer implements IGuiElement {
     }
 
     @Override
-    public int getX() {
+    public double getX() {
         return calc ? 0 : position.getX();
     }
 
     @Override
-    public int getY() {
+    public double getY() {
         return calc ? 0 : position.getY();
     }
 
     @Override
-    public int getWidth() {
+    public double getWidth() {
         return this.width;
     }
 
     @Override
-    public int getHeight() {
+    public double getHeight() {
         return this.height;
     }
 

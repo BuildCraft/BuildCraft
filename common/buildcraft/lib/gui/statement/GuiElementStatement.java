@@ -8,6 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 
+import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.client.sprite.SpriteRaw;
 import buildcraft.lib.gui.GuiElementSimple;
@@ -88,10 +89,17 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple<
     public void drawBackground(float partialTicks) {
         if (draw) {
             S stmnt = ref.get();
-            if (stmnt == null) return;
-            ISprite sprite = stmnt.getSprite();
-            if (sprite == null) return;
-            GuiIcon.drawAt(sprite, getX() + 1, getY() + 1, 16);
+            double x = getX();
+            double y = getY();
+            if (stmnt != null) {
+                ISprite sprite = stmnt.getSprite();
+                if (sprite != null) {
+                    GuiIcon.drawAt(sprite, x + 1, y + 1, 16);
+                }
+            }
+            if (!ref.canInteract) {
+                GuiIcon.drawAt(BCLibSprites.LOCK, x + 1, y + 1, 16);
+            }
         }
     }
 
@@ -99,7 +107,10 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple<
 
     @Override
     public void onMouseClicked(int button) {
-        if (contains(gui.mouse)) {
+        if (!contains(gui.mouse)) {
+            return;
+        }
+        if (ref.canInteract && button == 0) {
             S s = get();
             if (s == null) {
                 return;

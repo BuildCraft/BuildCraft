@@ -14,6 +14,7 @@ import buildcraft.lib.misc.LocaleUtil;
 
 import buildcraft.builders.snapshot.ITileForSnapshotBuilder;
 
+@Deprecated
 public class LedgerCounters extends Ledger_Neptune {
     private static final int OVERLAY_COLOUR = 0xFF_6C_D4_1F;
     private static final int SUB_HEADER_COLOUR = 0xFF_AA_AF_b8;

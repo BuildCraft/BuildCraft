@@ -38,7 +38,7 @@ public class LedgerTablePower extends Ledger_Neptune {
     }
 
     @Override
-    protected void drawIcon(int x, int y) {
+    protected void drawIcon(double x, double y) {
         ISprite sprite = tile.avgPowerClient > 0 ? BCLibSprites.ENGINE_ACTIVE : BCLibSprites.ENGINE_INACTIVE;
         GuiIcon.draw(sprite, x, y, x + 16, y + 16);
     }

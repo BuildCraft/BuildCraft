@@ -15,12 +15,12 @@ public class PositionAdded implements IGuiPosition {
     }
 
     @Override
-    public int getX() {
+    public double getX() {
         return a.getX() + b.getX();
     }
 
     @Override
-    public int getY() {
+    public double getY() {
         return a.getY() + b.getY();
     }
 }

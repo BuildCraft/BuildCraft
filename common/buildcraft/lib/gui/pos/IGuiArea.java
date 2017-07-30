@@ -6,37 +6,37 @@
 
 package buildcraft.lib.gui.pos;
 
-import java.util.function.IntSupplier;
+import java.util.function.DoubleSupplier;
 
 import buildcraft.lib.expression.api.IConstantNode;
 
 /** Defines an area somewhere on the screen. */
 public interface IGuiArea extends IGuiPosition {
-    int getWidth();
+    double getWidth();
 
-    int getHeight();
+    double getHeight();
 
-    default int getCenterX() {
+    default double getCenterX() {
         return getX() + getWidth() / 2;
     }
 
-    default int getCenterY() {
+    default double getCenterY() {
         return getY() + getHeight() / 2;
     }
 
-    default int getEndX() {
+    default double getEndX() {
         return getX() + getWidth();
     }
 
-    default int getEndY() {
+    default double getEndY() {
         return getY() + getHeight();
     }
 
-    default boolean contains(int x, int y) {
-        int tx = getX();
-        int ty = getY();
-        int w = getWidth();
-        int h = getHeight();
+    default boolean contains(double x, double y) {
+        double tx = getX();
+        double ty = getY();
+        double w = getWidth();
+        double h = getHeight();
         if (x < tx || x >= tx + w) return false;
         if (y < ty || y >= ty + h) return false;
         return true;
@@ -72,8 +72,8 @@ public interface IGuiArea extends IGuiPosition {
      * @param partY -1, 0 or 1. -1 equals the start, 0 equals the centre and 1 equals the end
      * @return */
     default IGuiPosition getPosition(int partX, int partY) {
-        IntSupplier x = partX < 0 ? this::getX : partX > 0 ? this::getEndX : this::getCenterX;
-        IntSupplier y = partY < 0 ? this::getY : partY > 0 ? this::getEndY : this::getCenterY;
+        DoubleSupplier x = partX < 0 ? this::getX : partX > 0 ? this::getEndX : this::getCenterX;
+        DoubleSupplier y = partY < 0 ? this::getY : partY > 0 ? this::getEndY : this::getCenterY;
         return new PositionCallable(x, y);
     }
 
@@ -83,60 +83,75 @@ public interface IGuiArea extends IGuiPosition {
     }
 
     @Override
-    default IGuiArea offset(int x, IntSupplier y) {
+    default IGuiArea offset(double x, DoubleSupplier y) {
         return offset(() -> x, y);
     }
 
     @Override
-    default IGuiArea offset(IntSupplier x, int y) {
+    default IGuiArea offset(DoubleSupplier x, double y) {
         return offset(x, () -> y);
     }
 
     @Override
-    default IGuiArea offset(IntSupplier x, IntSupplier y) {
-        return create(() -> getX() + x.getAsInt(), () -> getY() + y.getAsInt(), this::getWidth, this::getHeight);
+    default IGuiArea offset(DoubleSupplier x, DoubleSupplier y) {
+        return create(() -> getX() + x.getAsDouble(), () -> getY() + y.getAsDouble(), this::getWidth, this::getHeight);
     }
 
     @Override
-    default IGuiArea offset(int x, int y) {
+    default IGuiArea offset(double x, double y) {
         return create(() -> getX() + x, () -> getY() + y, this::getWidth, this::getHeight);
     }
 
-    default IGuiArea resize(int newWidth, int newHeight) {
+    default IGuiArea resize(double newWidth, double newHeight) {
         return create(this::getX, this::getY, () -> newWidth, () -> newHeight);
     }
 
-    default IGuiArea expand(int by) {
+    default IGuiArea resize(DoubleSupplier newWidth, DoubleSupplier newHeight) {
+        return create(this::getX, this::getY, newWidth, newHeight);
+    }
+
+    default IGuiArea expand(double by) {
         return expand(by, by);
     }
 
-    default IGuiArea expand(int dX, int dY) {
+    default IGuiArea expand(double dX, double dY) {
         return create(() -> getX() - dX, () -> getY() - dY, () -> getWidth() + dX * 2, () -> getHeight() + dY * 2);
     }
 
-    default IGuiArea expand(IntSupplier by) {
+    default IGuiArea expand(DoubleSupplier by) {
         if (by instanceof IConstantNode) {
-            return expand(by.getAsInt());
+            return expand(by.getAsDouble());
         }
         return expand(by, by);
     }
 
-    default IGuiArea expand(IntSupplier dX, IntSupplier dY) {
+    default IGuiArea expand(DoubleSupplier dX, DoubleSupplier dY) {
         if (dX instanceof IConstantNode && dY instanceof IConstantNode) {
-            return expand(dX.getAsInt(), dY.getAsInt());
+            return expand(dX.getAsDouble(), dY.getAsDouble());
         }
         return create(//
-            () -> getX() - dX.getAsInt(),//
-            () -> getY() - dY.getAsInt(),//
-            () -> getWidth() + dX.getAsInt() * 2,//
-            () -> getHeight() + dY.getAsInt() * 2//
+            () -> getX() - dX.getAsDouble(),//
+            () -> getY() - dY.getAsDouble(),//
+            () -> getWidth() + dX.getAsDouble() * 2,//
+            () -> getHeight() + dY.getAsDouble() * 2//
         );
     }
 
-    static IGuiArea create(IntSupplier x, IntSupplier y, IntSupplier width, IntSupplier height) {
+    default IGuiArea offsetToOrigin() {
+        return create(() -> 0, () -> 0, this::getWidth, this::getHeight);
+    }
+
+    static IGuiArea create(DoubleSupplier width, DoubleSupplier height) {
+        if (width instanceof IConstantNode && height instanceof IConstantNode) {
+            return new GuiRectangle(width.getAsDouble(), height.getAsDouble());
+        }
+        return new AreaCallable(width, height);
+    }
+
+    static IGuiArea create(DoubleSupplier x, DoubleSupplier y, DoubleSupplier width, DoubleSupplier height) {
         if (x instanceof IConstantNode && y instanceof IConstantNode && width instanceof IConstantNode
             && height instanceof IConstantNode) {
-            return new GuiRectangle(x.getAsInt(), y.getAsInt(), width.getAsInt(), height.getAsInt());
+            return new GuiRectangle(x.getAsDouble(), y.getAsDouble(), width.getAsDouble(), height.getAsDouble());
         }
         return new AreaCallable(x, y, width, height);
     }

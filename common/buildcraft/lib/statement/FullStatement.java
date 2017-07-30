@@ -20,6 +20,7 @@ import buildcraft.lib.net.PacketBufferBC;
 public class FullStatement<S extends IStatement> implements IReference<S> {
     public final StatementType<S> type;
     public final int maxParams;
+    public boolean canInteract = true;
     private final IStatementChangeListener listener;
     private final ParamSlot[] params;
     private S statement;

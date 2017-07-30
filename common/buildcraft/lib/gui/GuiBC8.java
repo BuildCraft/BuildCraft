@@ -71,6 +71,14 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     // Protected -> Public
 
+    public void drawGradientRect(IGuiArea area, int startColor, int endColor) {
+        int left = (int) area.getX();
+        int right = (int) area.getEndX();
+        int top = (int) area.getY();
+        int bottom = (int) area.getEndY();
+        drawGradientRect(left, top, right, bottom, startColor, endColor);
+    }
+
     @Override
     public void drawGradientRect(int left, int top, int right, int bottom, int startColor, int endColor) {
         super.drawGradientRect(left, top, right, bottom, startColor, endColor);
@@ -90,7 +98,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     // Other
 
-    public List<IGuiElement> getElementsAt(int x, int y) {
+    public List<IGuiElement> getElementsAt(double x, double y) {
         List<IGuiElement> elements = new ArrayList<>();
         IMenuElement m = currentMenu;
         if (m != null) {
@@ -207,8 +215,9 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         return tooltips;
     }
 
-    private int drawTooltip(ToolTip tooltip, int x, int y) {
-        return 4 + GuiUtil.drawHoveringText(tooltip, x, y, width, height, -1, mc.fontRenderer);
+    private int drawTooltip(ToolTip tooltip, double x, double y) {
+        return 4 + GuiUtil.drawHoveringText(tooltip, (int) Math.round(x), (int) Math.round(y), width, height, -1,
+            mc.fontRenderer);
     }
 
     public void drawProgress(GuiRectangle rect, GuiIcon icon, double widthPercent, double heightPercent) {
@@ -299,22 +308,22 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         }
 
         @Override
-        public int getX() {
+        public double getX() {
             return gui.guiLeft;
         }
 
         @Override
-        public int getY() {
+        public double getY() {
             return gui.guiTop;
         }
 
         @Override
-        public int getWidth() {
+        public double getWidth() {
             return gui.xSize;
         }
 
         @Override
-        public int getHeight() {
+        public double getHeight() {
             return gui.ySize;
         }
     }

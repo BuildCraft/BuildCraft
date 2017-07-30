@@ -46,7 +46,7 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.world.WorldEventListenerAdapter;
 
 public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
-    private static final int MAX_QUEUE_SIZE = 64;
+    private static final int MAX_QUEUE_SIZE = 1;
 
     protected final T tile;
     private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
@@ -80,27 +80,15 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             new ImmutableMap.Builder<CheckResult, Set<BlockPos>>()
                 .put(
                     CheckResult.CORRECT,
-                    new TreeSet<>(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(blockPos ->
-                        Math.pow(blockPos.getX() - getBox().center().getX(), 2) +
-                            Math.pow(blockPos.getY() - getBox().center().getY(), 2) +
-                            Math.pow(blockPos.getZ() - getBox().center().getZ(), 2)
-                    )))
+                    new TreeSet<>()
                 )
                 .put(
                     CheckResult.TO_BREAK,
-                    new TreeSet<>(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(blockPos ->
-                        Math.pow(blockPos.getX() - getBox().center().getX(), 2) +
-                            Math.pow(blockPos.getZ() - getBox().center().getZ(), 2) +
-                            100_000 - Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
-                    )))
+                    new TreeSet<>()
                 )
                 .put(
                     CheckResult.TO_PLACE,
-                    new TreeSet<>(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(blockPos ->
-                        100_000 - (Math.pow(blockPos.getX() - tile.getBuilderPos().getX(), 2) +
-                            Math.pow(blockPos.getZ() - tile.getBuilderPos().getZ(), 2)) +
-                            Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
-                    )))
+                    new TreeSet<>()
                 )
                 .build();
     }
@@ -176,11 +164,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         tile.getWorldBC().profiler.startSection("init");
         toCheck.addAll(getToBreak());
         toCheck.addAll(getToPlace());
-        toCheck.sort(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(blockPos ->
-            Math.pow(blockPos.getX() - getBox().center().getX(), 2) +
-                Math.pow(blockPos.getY() - getBox().center().getY(), 2) +
-                Math.pow(blockPos.getZ() - getBox().center().getZ(), 2)
-        )));
+        toCheck.sort(Comparator.naturalOrder());
         tile.getWorldBC().profiler.endSection();
     }
 
@@ -347,7 +331,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                             target - breakTask.power,
                             tile.getBattery().getStored() / breakTasks.size()
                         ),
-                        10 * MjAPI.MJ
+                        100 * MjAPI.MJ
                     )
                 );
                 if (breakTask.power >= target) {
@@ -394,7 +378,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                             target - placeTask.power,
                             tile.getBattery().getStored() / placeTasks.size()
                         ),
-                        10 * MjAPI.MJ
+                        100 * MjAPI.MJ
                     )
                 );
                 if (placeTask.power >= target) {

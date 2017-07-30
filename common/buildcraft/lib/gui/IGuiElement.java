@@ -35,7 +35,7 @@ public interface IGuiElement extends IGuiArea, ITooltipElement, IHelpElement {
     @Override
     default void addHelpElements(List<HelpPosition> elements) {}
 
-    default List<IGuiElement> getThisAndChildrenAt(int x, int y) {
+    default List<IGuiElement> getThisAndChildrenAt(double x, double y) {
         if (contains(x, y)) {
             return ImmutableList.of(this);
         } else {

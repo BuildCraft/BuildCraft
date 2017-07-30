@@ -51,8 +51,7 @@ public abstract class GuiStatementSelector<C extends ContainerBC_Neptune> extend
         iteratePossible((wrapper, pos) -> {
             ElementStatement.draw(this, wrapper, pos);
             if (currentHover != null) {
-                drawGradientRect(pos.getX(), pos.getY(), pos.getX() + 18, pos.getY() + 18, 0x55_00_00_00,
-                    0x55_00_00_00);
+                drawGradientRect(pos.resize(18, 18), 0x55_00_00_00, 0x55_00_00_00);
             }
         });
     }
@@ -61,8 +60,7 @@ public abstract class GuiStatementSelector<C extends ContainerBC_Neptune> extend
     protected void drawForegroundLayer() {
         if (currentHover != null) {
             GlStateManager.disableDepth();
-            drawGradientRect(rootElement.getX(), rootElement.getY(), rootElement.getX() + GUI_WIDTH,
-                rootElement.getY() + ySize, 0x55_00_00_00, 0x55_00_00_00);
+            drawGradientRect(rootElement.resize(GUI_WIDTH, ySize), 0x55_00_00_00, 0x55_00_00_00);
             GlStateManager.enableDepth();
         }
 

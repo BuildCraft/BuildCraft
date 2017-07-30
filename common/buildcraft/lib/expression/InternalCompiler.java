@@ -29,6 +29,7 @@ import buildcraft.lib.expression.api.INodeFunc;
 import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
+import buildcraft.lib.expression.node.cast.NodeCastLongToDouble;
 import buildcraft.lib.expression.node.cast.NodeCasting;
 import buildcraft.lib.expression.node.condition.NodeConditionalBoolean;
 import buildcraft.lib.expression.node.condition.NodeConditionalDouble;
@@ -445,6 +446,12 @@ public class InternalCompiler {
                     caster = s -> new NodeConstantObject<>(INodeLong.class, s.popLong());
                 } else if (from == double.class && to == INodeDouble.class) {
                     caster = s -> new NodeConstantObject<>(INodeDouble.class, s.popDouble());
+                } else if (from == long.class && to == INodeDouble.class) {
+                    caster = s -> {
+                        INodeLong node = s.popLong();
+                        INodeDouble nodeD = new NodeCastLongToDouble(node);
+                        return new NodeConstantObject<>(INodeDouble.class, nodeD.inline());
+                    };
                 } else if (from == boolean.class && to == INodeBoolean.class) {
                     caster = s -> new NodeConstantObject<>(INodeBoolean.class, s.popBoolean());
                 } else {

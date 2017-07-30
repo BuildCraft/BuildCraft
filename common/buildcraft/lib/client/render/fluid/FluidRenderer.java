@@ -265,7 +265,7 @@ public class FluidRenderer {
 
     /** Fills up the given region with the fluids texture, repeated. Ignores the value of {@link FluidStack#amount}. Use
      * {@link GuiUtil}'s fluid drawing methods in preference to this. */
-    public static void drawFluidForGui(FluidStack fluid, int startX, int startY, int endX, int endY) {
+    public static void drawFluidForGui(FluidStack fluid, double startX, double startY, double endX, double endY) {
 
         sprite = FluidRenderer.fluidSprites.get(FluidSpriteType.STILL).get(fluid.getFluid());
         if (sprite == null) {
@@ -280,55 +280,63 @@ public class FluidRenderer {
 
         // draw all the full sprites
 
-        int diffX = endX - startX;
-        int diffY = endY - startY;
+        double diffX = endX - startX;
+        double diffY = endY - startY;
 
         int stepX = diffX > 0 ? 16 : -16;
         int stepY = diffY > 0 ? 16 : -16;
 
-        int loopEndX = startX + 16 * (diffX / 16);
-        int loopEndY = startY + 16 * (diffY / 16);
+        int loopCountX = (int) Math.abs(diffX / 16);
+        int loopCountY = (int) Math.abs(diffY / 16);
 
-        for (int x = startX; x != loopEndX; x += stepX) {
-            for (int y = startY; y != loopEndY; y += stepY) {
+        double x = startX;
+        for (int xc = 0; xc < loopCountX; xc++) {
+            double y = startY;
+            for (int yc = 0; yc < loopCountY; yc++) {
                 guiVertex(x, y, 0, 0);
                 guiVertex(x + stepX, y, 16, 0);
                 guiVertex(x + stepX, y + stepY, 16, 16);
                 guiVertex(x, y + stepY, 0, 16);
+                y += stepY;
             }
+            x += stepX;
         }
 
         if (diffX % 16 != 0) {
-            int additionalWidth = diffX % 16;
-            int x = endX - additionalWidth;
-            int xTex = additionalWidth < 0 ? -additionalWidth : additionalWidth;
-            for (int y = startY; y != loopEndY; y += stepY) {
+            double additionalWidth = diffX % 16;
+            x = endX - additionalWidth;
+            double xTex = additionalWidth < 0 ? -additionalWidth : additionalWidth;
+            double y = startY;
+            for (int yc = 0; yc <= loopCountY; y++) {
                 guiVertex(x, y, 0, 0);
                 guiVertex(endX, y, xTex, 0);
                 guiVertex(endX, y + stepY, xTex, 16);
                 guiVertex(x, y + stepY, 0, 16);
+                y += stepY;
             }
         }
 
         if (diffY % 16 != 0) {
-            int additionalHeight = diffY % 16;
-            int y = endY - additionalHeight;
-            int yTex = additionalHeight < 0 ? -additionalHeight : additionalHeight;
-            for (int x = startX; x != loopEndX; x += stepX) {
+            double additionalHeight = diffY % 16;
+            double y = endY - additionalHeight;
+            double yTex = additionalHeight < 0 ? -additionalHeight : additionalHeight;
+            x = startX;
+            for (int xc = 0; xc < loopCountX; xc++) {
                 guiVertex(x, y, 0, 0);
                 guiVertex(x + stepX, y, 16, 0);
                 guiVertex(x + stepX, endY, 16, yTex);
                 guiVertex(x, endY, 0, yTex);
+                x += stepX;
             }
         }
 
         if (diffX % 16 != 0 && diffY % 16 != 0) {
-            int w = diffX % 16;
-            int h = diffY % 16;
-            int x = endX - w;
-            int y = endY - h;
-            int tx = w < 0 ? -w : w;
-            int ty = h < 0 ? -h : h;
+            double w = diffX % 16;
+            double h = diffY % 16;
+            x = endX - w;
+            double y = endY - h;
+            double tx = w < 0 ? -w : w;
+            double ty = h < 0 ? -h : h;
             guiVertex(x, y, 0, 0);
             guiVertex(endX, y, tx, 0);
             guiVertex(endX, endY, tx, ty);
@@ -341,7 +349,7 @@ public class FluidRenderer {
         vb = null;
     }
 
-    private static void guiVertex(int x, int y, int u, int v) {
+    private static void guiVertex(double x, double y, double u, double v) {
         float ru = sprite.getInterpolatedU(u);
         float rv = sprite.getInterpolatedV(v);
         vb.pos(x, y, 0);

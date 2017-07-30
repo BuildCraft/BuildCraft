@@ -8,19 +8,29 @@ package buildcraft.lib.gui;
 
 import buildcraft.api.core.render.ISprite;
 
+import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.gui.pos.IGuiArea;
+
 /** An {@link ISimpleDrawable} that draws the specified {@link ISprite} as-is into the given width and height. */
 public class GuiSpriteScaled implements ISimpleDrawable {
     public final ISprite sprite;
-    public final double width, height;
+    public final IGuiArea area;
+
+    public GuiSpriteScaled(ISprite sprite, IGuiArea area) {
+        this.sprite = sprite;
+        this.area = area;
+    }
 
     public GuiSpriteScaled(ISprite sprite, double width, double height) {
-        this.sprite = sprite;
-        this.width = width;
-        this.height = height;
+        this(sprite, new GuiRectangle(width, height));
     }
 
     @Override
-    public void drawAt(int x, int y) {
-        GuiIcon.draw(sprite, x, y, x + width, y + height);
+    public void drawAt(double x, double y) {
+        x += area.getX();
+        y += area.getY();
+        double x2 = x + area.getWidth();
+        double y2 = y + area.getHeight();
+        GuiIcon.draw(sprite, x, y, x2, y2);
     }
 }

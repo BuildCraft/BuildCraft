@@ -59,14 +59,14 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
     public final IGuiPosition positionLedgerIconStart;
     public final IGuiPosition positionLedgerInnerStart;
 
-    protected int maxWidth = 96, maxHeight = 48;
+    protected double maxWidth = 96, maxHeight = 48;
 
-    protected int currentWidth = CLOSED_WIDTH;
-    protected int currentHeight = CLOSED_HEIGHT;
-    protected int lastWidth = currentWidth;
-    protected int lastHeight = currentHeight;
-    protected int interpWidth = lastWidth;
-    protected int interpHeight = lastHeight;
+    protected double currentWidth = CLOSED_WIDTH;
+    protected double currentHeight = CLOSED_HEIGHT;
+    protected double lastWidth = currentWidth;
+    protected double lastHeight = currentHeight;
+    protected double interpWidth = lastWidth;
+    protected double interpHeight = lastHeight;
 
     protected final List<IGuiElement> closedElements = new ArrayList<>();
     protected final List<IGuiElement> openElements = new ArrayList<>();
@@ -124,8 +124,8 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
 
     /** The default implementation only works if all the elements are based around {@link #positionLedgerStart} */
     public void calculateMaxSize() {
-        int w = CLOSED_WIDTH;
-        int h = CLOSED_HEIGHT;
+        double w = CLOSED_WIDTH;
+        double h = CLOSED_HEIGHT;
 
         for (IGuiElement element : openElements) {
             w = Math.max(w, element.getEndX());
@@ -143,8 +143,8 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
         lastWidth = currentWidth;
         lastHeight = currentHeight;
 
-        int targetWidth = currentWidth;
-        int targetHeight = currentHeight;
+        double targetWidth = currentWidth;
+        double targetHeight = currentHeight;
         if (currentDifference == 1) {
             targetWidth = maxWidth;
             targetHeight = maxHeight;
@@ -155,8 +155,8 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
             return;
         }
 
-        int maxDiff = Math.max(maxWidth - CLOSED_WIDTH, maxHeight - CLOSED_HEIGHT);
-        int ldgDiff = MathHelper.clamp(maxDiff / 5, 1, 15);
+        double maxDiff = Math.max(maxWidth - CLOSED_WIDTH, maxHeight - CLOSED_HEIGHT);
+        double ldgDiff = MathHelper.clamp(maxDiff / 5, 1, 15);
 
         // TODO: extract a method
         if (currentWidth < targetWidth) {
@@ -185,7 +185,7 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
         }
     }
 
-    private static int interp(int past, int current, float partialTicks) {
+    private static double interp(double past, double current, float partialTicks) {
         if (past == current) {
             return current;
         }
@@ -195,7 +195,7 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
         if (partialTicks >= 1) {
             return current;
         }
-        return (int) (past * (1 - partialTicks) + current * partialTicks);
+        return past * (1 - partialTicks) + current * partialTicks;
     }
 
     @Deprecated
@@ -218,8 +218,8 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
 
     @Override
     public void drawBackground(float partialTicks) {
-        int startX = getX();
-        int startY = getY();
+        double startX = getX();
+        double startY = getY();
         final SpriteNineSliced split;
 
         interpWidth = interp(lastWidth, currentWidth, partialTicks);
@@ -326,36 +326,36 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
         }
     }
 
-    protected void drawIcon(int x, int y) {
+    protected void drawIcon(double x, double y) {
 
     }
 
     @Override
-    public int getX() {
+    public double getX() {
         return positionLedgerStart.getX();
     }
 
     @Override
-    public int getY() {
+    public double getY() {
         return positionLedgerStart.getY();
     }
 
     @Override
-    public int getWidth() {
+    public double getWidth() {
         float partialTicks = gui.getLastPartialTicks();
         if (lastWidth == currentWidth) return currentWidth;
         else if (partialTicks <= 0) return lastWidth;
         else if (partialTicks >= 1) return currentWidth;
-        else return (int) (lastWidth * (1 - partialTicks) + currentWidth * partialTicks);
+        else return lastWidth * (1 - partialTicks) + currentWidth * partialTicks;
     }
 
     @Override
-    public int getHeight() {
+    public double getHeight() {
         float partialTicks = gui.getLastPartialTicks();
         if (lastHeight == currentHeight) return currentHeight;
         else if (partialTicks <= 0) return lastHeight;
         else if (partialTicks >= 1) return currentHeight;
-        else return (int) (lastHeight * (1 - partialTicks) + currentHeight * partialTicks);
+        else return lastHeight * (1 - partialTicks) + currentHeight * partialTicks;
     }
 
     public String getTitle() {

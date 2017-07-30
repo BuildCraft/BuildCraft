@@ -83,8 +83,8 @@ public class GuiElementStatementVariant extends GuiElementSimple<GuiBC8<?>> impl
         SELECTION_HOVER.draw(this);
         iteratePossible((pos, slot) -> {
             ISprite sprite = slot.getSprite();
-            int x = pos.getX();
-            int y = pos.getY();
+            double x = pos.getX();
+            double y = pos.getY();
             GuiElementStatement.SLOT_COLOUR.drawAt(pos);
             if (sprite != null) {
                 GuiIcon.drawAt(sprite, x + 1, y + 1, 16);

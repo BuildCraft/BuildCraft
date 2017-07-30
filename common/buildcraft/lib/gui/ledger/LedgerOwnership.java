@@ -31,7 +31,7 @@ public class LedgerOwnership extends Ledger_Neptune {
     }
 
     @Override
-    protected void drawIcon(int x, int y) {
+    protected void drawIcon(double x, double y) {
         ISprite sprite = SpriteUtil.getFaceSprite(tile.getOwner());
         GuiIcon.draw(sprite, x, y, x + 16, y + 16);
     }

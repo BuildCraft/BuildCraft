@@ -12,10 +12,12 @@ import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.InternalCompiler;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
+import buildcraft.lib.expression.node.value.NodeConstantDouble;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.IGuiArea;
@@ -112,12 +114,16 @@ public abstract class ElementType {
     }
 
     public static double resolveEquationDouble(JsonGuiElement json, String member, FunctionContext ctx) {
+        return getEquationDouble(json, member, ctx).evaluate();
+    }
+
+    public static INodeDouble getEquationDouble(JsonGuiElement json, String member, FunctionContext ctx) {
         String eqn = json.properties.get(member);
         if (eqn == null) {
-            return 0;
+            return NodeConstantDouble.ZERO;
         }
         try {
-            return GenericExpressionCompiler.compileExpressionDouble(eqn, ctx).evaluate();
+            return GenericExpressionCompiler.compileExpressionDouble(eqn, ctx);
         } catch (InvalidExpressionException iee) {
             throw new JsonSyntaxException(iee);
         }
@@ -144,10 +150,10 @@ public abstract class ElementType {
     public static IGuiArea resolveArea(JsonGuiElement json, String name, IGuiPosition parent, FunctionContext ctx) {
         String eqn = json.properties.get(name);
         if (eqn == null) {
-            INodeLong x = getEquationLong(json, name + "[0]", ctx);
-            INodeLong y = getEquationLong(json, name + "[1]", ctx);
-            INodeLong w = getEquationLong(json, name + "[2]", ctx);
-            INodeLong h = getEquationLong(json, name + "[3]", ctx);
+            INodeDouble x = getEquationDouble(json, name + "[0]", ctx);
+            INodeDouble y = getEquationDouble(json, name + "[1]", ctx);
+            INodeDouble w = getEquationDouble(json, name + "[2]", ctx);
+            INodeDouble h = getEquationDouble(json, name + "[3]", ctx);
             return IGuiArea.create(x, y, w, h).offset(parent);
         }
         try {

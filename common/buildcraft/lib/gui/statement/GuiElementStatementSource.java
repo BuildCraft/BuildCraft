@@ -4,6 +4,7 @@ import java.util.List;
 
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IGuiSlot;
+import buildcraft.api.statements.IStatement;
 
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
@@ -38,22 +39,22 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
     }
 
     @Override
-    public int getX() {
+    public double getX() {
         return position.getX();
     }
 
     @Override
-    public int getY() {
+    public double getY() {
         return position.getY();
     }
 
     @Override
-    public int getWidth() {
+    public double getWidth() {
         return 4 * 18;
     }
 
     @Override
-    public int getHeight() {
+    public double getHeight() {
         int size = 0;
         for (StatementGroup<S> group : ctx.getAllPossible()) {
             size += group.getValues().size();
@@ -67,8 +68,8 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
         for (StatementGroup<S> group : ctx.getAllPossible()) {
             int visited = 0;
             for (S slot : group.getValues()) {
-                int px = getX() + x * 18;
-                int py = getY() + y * 18;
+                double px = getX() + x * 18;
+                double py = getY() + y * 18;
                 iter.iterate(slot, new GuiRectangle(px, py, 18, 18));
                 visited++;
                 x++;
@@ -95,18 +96,17 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
             drawAt(s, area.x, area.y);
         });
         if (selected != null) {
-            int x = gui.mouse.getX();
-            int y = gui.mouse.getY();
+            double x = gui.mouse.getX();
+            double y = gui.mouse.getY();
             drawAt(selected, x - 9, y - 9);
         }
     }
 
-    private void drawAt(S slot, int x, int y) {
+    private void drawAt(S slot, double x, double y) {
         ISprite sprite = slot.getSprite();
         if (sprite != null) {
             GuiIcon.drawAt(sprite, x + 1, y + 1, 16);
         }
-
     }
 
     @Override
@@ -120,12 +120,25 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
 
     @Override
     public void onMouseClicked(int button) {
-        iterateSlots((slot, area) -> {
-            if (area.contains(gui.mouse)) {
-                isSelected = true;
-                selected = slot;
+        if (button == 0) {
+            iterateSlots((slot, area) -> {
+                if (area.contains(gui.mouse)) {
+                    isSelected = true;
+                    selected = slot;
+                }
+            });
+        } else if (button == 1) {
+            for (IGuiElement e : gui.getElementsAt(gui.mouse.getX(), gui.mouse.getX())) {
+                if (e instanceof IReference<?>) {
+                    IReference<?> elem = (IReference<?>) e;
+                    Object obj = elem.get();
+                    if (obj instanceof IStatement) {
+                        isSelected = true;
+                        selected = (S) obj;
+                    }
+                }
             }
-        });
+        }
     }
 
     @Override

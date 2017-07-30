@@ -24,6 +24,7 @@ import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.data.IReference;
 
+@Deprecated
 public abstract class ElementGuiSlot<G extends GuiStatementSelector<?>, T extends IGuiSlot> extends GuiElementSimple<G>
     implements IInteractionElement {
 
@@ -83,8 +84,8 @@ public abstract class ElementGuiSlot<G extends GuiStatementSelector<?>, T extend
             GlStateManager.disableDepth();
             int sub = 18 * (possible.length > 8 ? 2 : 1);
             int add = 18 * (possible.length > 8 ? 3 : 1);
-            int x = getX() - sub - 4;
-            int y = getY() - sub - 4;
+            double x = getX() - sub - 4;
+            double y = getY() - sub - 4;
             int size = 8 + add + 18 * 2;
             GuiStatementSelector.SELECTION_HOVER.draw(x, y, size, size);
             for (int i = 0; i < possible.length; i++) {

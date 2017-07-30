@@ -39,7 +39,7 @@ public class ScrollbarElement<G extends GuiBC8<?>> extends GuiElementSimple<G> i
     }
 
     private void updatePositionFromMouse() {
-        int h = getHeight();
+        double h = getHeight();
         setPosition(((gui.mouse.getY() - getY()) * len + (h / 2)) / h);
     }
 
@@ -75,7 +75,7 @@ public class ScrollbarElement<G extends GuiBC8<?>> extends GuiElementSimple<G> i
         return pos;
     }
 
-    public void setPosition(int pos) {
+    public void setPosition(double pos) {
         this.pos = MathUtil.clamp(pos, 0, len);
     }
 

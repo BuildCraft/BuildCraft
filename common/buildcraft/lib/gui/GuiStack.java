@@ -17,7 +17,7 @@ public class GuiStack implements ISimpleDrawable {
     }
 
     @Override
-    public void drawAt(int x, int y) {
-        Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(stack, x, y);
+    public void drawAt(double x, double y) {
+        Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(stack, (int) x, (int) y);
     }
 }

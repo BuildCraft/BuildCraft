@@ -6,42 +6,49 @@
 
 package buildcraft.lib.gui.pos;
 
-import java.util.function.IntSupplier;
+import java.util.function.DoubleSupplier;
 
 import buildcraft.lib.expression.api.IConstantNode;
 
 /** Defines a single point somewhere on the screen. */
 public interface IGuiPosition {
-    int getX();
+    double getX();
 
-    int getY();
+    double getY();
 
-    default IGuiPosition offset(IntSupplier x, IntSupplier y) {
+    default IGuiPosition offset(DoubleSupplier x, DoubleSupplier y) {
         if (x instanceof IConstantNode && y instanceof IConstantNode) {
-            return offset(x.getAsInt(), y.getAsInt());
+            return offset(x.getAsDouble(), y.getAsDouble());
         }
         return offset(new PositionCallable(x, y));
     }
 
-    default IGuiPosition offset(int x, IntSupplier y) {
+    default IGuiPosition offset(double x, DoubleSupplier y) {
         if (y instanceof IConstantNode) {
-            return offset(x, y.getAsInt());
+            return offset(x, y.getAsDouble());
         }
         return offset(new PositionCallable(x, y));
     }
 
-    default IGuiPosition offset(IntSupplier x, int y) {
+    default IGuiPosition offset(DoubleSupplier x, double y) {
         if (x instanceof IConstantNode) {
-            return offset(x.getAsInt(), y);
+            return offset(x.getAsDouble(), y);
         }
         return offset(new PositionCallable(x, y));
     }
 
-    default IGuiPosition offset(int x, int y) {
+    default IGuiPosition offset(double x, double y) {
         return PositionOffset.createOffset(this, x, y);
     }
 
     default IGuiPosition offset(IGuiPosition by) {
         return new PositionAdded(this, by);
+    }
+
+    static IGuiPosition create(DoubleSupplier x, DoubleSupplier y) {
+        if (x instanceof IConstantNode && y instanceof IConstantNode) {
+            return new PositionAbsolute(x.getAsDouble(), y.getAsDouble());
+        }
+        return new PositionCallable(x, y);
     }
 }

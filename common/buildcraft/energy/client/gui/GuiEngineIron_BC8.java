@@ -47,7 +47,12 @@ public class GuiEngineIron_BC8 extends GuiBC8<ContainerEngineIron_BC8> {
     protected void drawForegroundLayer() {
         String str = LocaleUtil.localize("tile.engineIron.name");
         int strWidth = fontRenderer.getStringWidth(str);
-        fontRenderer.drawString(str, rootElement.getCenterX() - strWidth / 2, rootElement.getY() + 6, 0x404040);
-        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), rootElement.getX() + 8, rootElement.getY() + SIZE_Y - 96, 0x404040);
+        double titleX = rootElement.getCenterX() - strWidth / 2;
+        double titleY = rootElement.getY() + 6;
+        fontRenderer.drawString(str, (int) titleX, (int) titleY, 0x404040);
+
+        double invX = rootElement.getX() + 8;
+        double invY = rootElement.getY() + SIZE_Y - 96;
+        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), (int) invX, (int) invY, 0x404040);
     }
 }
