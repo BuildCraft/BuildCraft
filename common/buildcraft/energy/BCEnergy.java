@@ -38,7 +38,7 @@ import buildcraft.energy.generation.OilGenerator;
 public class BCEnergy {
     public static final String MODID = "buildcraftenergy";
     static {
-        FluidRegistry.enableUniversalBucket(); // FIXME: not working
+        FluidRegistry.enableUniversalBucket();
     }
 
     @Mod.Instance(MODID)
