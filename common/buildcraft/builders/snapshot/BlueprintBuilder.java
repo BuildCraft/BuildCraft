@@ -273,7 +273,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                     } else {
                         toSpawn.stream()
                             .filter(schematicEntity ->
-                                !tryExtractRequired(
+                                tryExtractRequired(
                                     buildingInfo.entitiesRequiredItems.get(schematicEntity),
                                     buildingInfo.entitiesRequiredFluids.get(schematicEntity),
                                     true
