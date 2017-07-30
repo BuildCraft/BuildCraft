@@ -67,7 +67,7 @@ public class BCLibConfig {
             r.run();
         }
     }
-    
+
     public enum TimeGap {
         TICKS(1),
         SECONDS(20);
@@ -139,6 +139,9 @@ public class BCLibConfig {
         /** {@link TileEntity}'s that implement the {@link IChunkLoadingTile} interface will be loaded, provided they
          * DON'T return null. */
         SELF_TILES,
+
+        /** All {@link TileEntity}'s in the world. */
+        ALL_TILES;
     }
 
     static {

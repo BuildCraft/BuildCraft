@@ -1,5 +1,6 @@
 package buildcraft.lib.gui.json;
 
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,12 +8,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.util.JsonUtils;
+import net.minecraft.util.ResourceLocation;
 
+import buildcraft.lib.client.model.ResourceLoaderContext;
 import buildcraft.lib.json.JsonVariableObject;
 import buildcraft.lib.misc.JsonUtil;
 
@@ -23,14 +27,33 @@ public class JsonGuiInfo extends JsonVariableObject {
     public final Map<String, JsonGuiElement> types = new HashMap<>();
     public final List<JsonGuiElement> elements = new ArrayList<>();
 
-    public JsonGuiInfo(JsonObject json) {
-
+    public JsonGuiInfo(JsonObject json, ResourceLoaderContext context) {
         if (json.has("values")) {
 
         }
 
+        if (json.has("elements_below")) {
+            JsonObject jElems = JsonUtils.getJsonObject(json, "elements_below");
+            for (Entry<String, JsonElement> entry : jElems.entrySet()) {
+                String name = entry.getKey();
+                JsonObject obj = (JsonObject) entry.getValue();
+                JsonGuiElement elem = new JsonGuiElement(obj, name, name, types);
+                elements.addAll(elem.iterate());
+            }
+        }
+
         if (json.has("parent")) {
-            // TODO!
+            String parent = JsonUtils.getString(json, "parent");
+            ResourceLocation location = new ResourceLocation(parent + ".json");
+            try (InputStreamReader reader = context.startLoading(location)) {
+                JsonObject obj = new Gson().fromJson(reader, JsonObject.class);
+                JsonGuiInfo info = new JsonGuiInfo(obj, context);
+                types.putAll(info.types);
+                elements.addAll(info.elements);
+            } catch (Exception e) {
+                throw new JsonSyntaxException("Failed to load parent " + parent, e);
+            }
+            context.finishLoading();
         }
 
         if (json.has("size")) {

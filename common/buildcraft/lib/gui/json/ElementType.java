@@ -147,6 +147,21 @@ public abstract class ElementType {
         }
     }
 
+    public static IGuiPosition resolvePosition(JsonGuiElement json, String name, IGuiPosition parent,
+        FunctionContext ctx) {
+        String eqn = json.properties.get(name);
+        if (eqn == null) {
+            INodeDouble x = getEquationDouble(json, name + "[0]", ctx);
+            INodeDouble y = getEquationDouble(json, name + "[1]", ctx);
+            return IGuiPosition.create(x, y).offset(parent);
+        }
+        try {
+            return GenericExpressionCompiler.compileExpressionObject(IGuiPosition.class, eqn, ctx).evaluate();
+        } catch (InvalidExpressionException e) {
+            throw new JsonSyntaxException("Failed to resolve a position for " + json.fullName, e);
+        }
+    }
+
     public static IGuiArea resolveArea(JsonGuiElement json, String name, IGuiPosition parent, FunctionContext ctx) {
         String eqn = json.properties.get(name);
         if (eqn == null) {

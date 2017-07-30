@@ -16,6 +16,7 @@ public class JsonGuiTypeRegistry {
     static {
         registerType(ElementTypeText.INSTANCE);
         registerType(ElementTypeHelp.INSTANCE);
+        registerType(ElementTypeSlot.INSTANCE);
         registerType(ElementTypeSprite.INSTANCE);
         registerType(ElementTypeButton.INSTANCE);
         registerType(ElementTypeLedger.INSTANCE);

@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 
@@ -20,6 +21,7 @@ import net.minecraftforge.common.util.FakePlayer;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.template.TemplateApi;
 
+import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.data.Box;
 
 public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
@@ -62,12 +64,17 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
             tile.getOwner(),
             tile.getBuilderPos()
         );
-        fakePlayer.setHeldItem(fakePlayer.getActiveHand(), placeTask.items.get(0));
+        ItemStack stack = placeTask.items.get(0);
+        if (fakePlayer.getActiveHand() == EnumHand.MAIN_HAND) {
+            fakePlayer.inventory.mainInventory.set(0, stack);
+        } else {
+            fakePlayer.inventory.offHandInventory.set(0, stack);
+        }
         return TemplateApi.templateRegistry.handle(
             tile.getWorldBC(),
             placeTask.pos,
             fakePlayer,
-            placeTask.items.get(0)
+            stack
         );
     }
 

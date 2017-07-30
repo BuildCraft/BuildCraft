@@ -155,4 +155,11 @@ public interface IGuiArea extends IGuiPosition {
         }
         return new AreaCallable(x, y, width, height);
     }
+
+    static IGuiArea create(IGuiPosition pos, double width, double height) {
+        if (pos instanceof PositionAbsolute) {
+            return new GuiRectangle(pos.getX(), pos.getY(), width, height);
+        }
+        return new AreaCallable(pos::getX, pos::getY, () -> width, () -> height);
+    }
 }

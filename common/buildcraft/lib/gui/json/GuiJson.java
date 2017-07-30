@@ -7,18 +7,18 @@ import java.util.function.Consumer;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
 import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.render.ISprite;
 
+import buildcraft.lib.client.model.ResourceLoaderContext;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.node.value.ITickableNode;
+import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IContainingElement;
@@ -35,12 +35,15 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
     private final ResourceLocation guiDefinition;
     protected final TypedKeyMap<String, Object> properties = TypedKeyMap.createHierachy();
     private ITickableNode[] tickableNodes = new ITickableNode[0];
+    private final NodeVariableDouble time;
+    private int timeOpen;
 
     FunctionContext elementContext = DefaultContexts.createWithAll();
 
     public GuiJson(C container, ResourceLocation guiDefinition) {
         super(container);
         this.guiDefinition = guiDefinition;
+        time = elementContext.putVariableDouble("time");
         load();
     }
 
@@ -55,24 +58,23 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
     }
 
     protected final void load() {
-        try (IResource res = Minecraft.getMinecraft().getResourceManager().getResource(guiDefinition)) {
-            JsonObject obj = new Gson().fromJson(new InputStreamReader(res.getInputStream()), JsonObject.class);
+        properties.put("gui.root", rootElement);
+        properties.put("mouse", mouse);
+        preLoad();
 
-            properties.put("gui.root", rootElement);
-            properties.put("mouse", mouse);
-            preLoad();
-
-            for (String key : properties.getKeys()) {
-                TypedMap<Object> map = properties.getAll(key);
-                IExpressionNode node = map.get(IExpressionNode.class);
-                if (node != null) {
-                    elementContext.putVariable(key, node);
-                }
+        for (String key : properties.getKeys()) {
+            TypedMap<Object> map = properties.getAll(key);
+            IExpressionNode node = map.get(IExpressionNode.class);
+            if (node != null) {
+                elementContext.putVariable(key, node);
             }
-            elementContext.putConstant("gui.pos", IGuiPosition.class, rootElement);
+        }
+        elementContext.putConstant("gui.pos", IGuiPosition.class, rootElement);
 
-            JsonGuiInfo info = new JsonGuiInfo(obj);
-            // TODO: Deserialize everything in the above statement!
+        ResourceLoaderContext context = new ResourceLoaderContext();
+        try (InputStreamReader reader = context.startLoading(guiDefinition)) {
+            JsonObject obj = new Gson().fromJson(reader, JsonObject.class);
+            JsonGuiInfo info = new JsonGuiInfo(obj, context);
             xSize = info.sizeX;
             ySize = info.sizeY;
 
@@ -97,6 +99,19 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
         } catch (IOException e) {
             throw new Error(e);
         }
+        context.finishLoading();
+    }
+
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+        timeOpen++;
+    }
+
+    @Override
+    protected void drawBackgroundLayer(float partialTicks) {
+        super.drawBackgroundLayer(partialTicks);
+        time.value = timeOpen + partialTicks;
     }
 
     /** Fill up {@link #properties} */

@@ -305,9 +305,9 @@ public class FluidRenderer {
         if (diffX % 16 != 0) {
             double additionalWidth = diffX % 16;
             x = endX - additionalWidth;
-            double xTex = additionalWidth < 0 ? -additionalWidth : additionalWidth;
+            double xTex = Math.abs(additionalWidth);
             double y = startY;
-            for (int yc = 0; yc <= loopCountY; y++) {
+            for (int yc = 0; yc < loopCountY; y++) {
                 guiVertex(x, y, 0, 0);
                 guiVertex(endX, y, xTex, 0);
                 guiVertex(endX, y + stepY, xTex, 16);
@@ -319,7 +319,7 @@ public class FluidRenderer {
         if (diffY % 16 != 0) {
             double additionalHeight = diffY % 16;
             double y = endY - additionalHeight;
-            double yTex = additionalHeight < 0 ? -additionalHeight : additionalHeight;
+            double yTex = Math.abs(additionalHeight);
             x = startX;
             for (int xc = 0; xc < loopCountX; xc++) {
                 guiVertex(x, y, 0, 0);

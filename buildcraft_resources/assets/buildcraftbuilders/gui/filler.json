@@ -1,31 +1,14 @@
 {
 	"size": [176,241],
+	"parent": "buildcraftbuilders:gui/filler_base",
 	"texture": "buildcraftbuilders:gui/filler",
-	"types": {
-		"param": {
-			"type": "buildcraftlib:statement/parameter",
-			"area": ["53 + 18 * index",39,18,18],
-			"source": "filler.pattern"
-		},
-		"four_button": {
-			"type": "buildcraftlib:button",
-			"args": {
-				"u_start": 0
-			},
-			"size": [16,16],
-			"modes": {
-				"enabled": ["u_start",0],
-				"hovered": ["u_start",16],
-				"active": ["u_start + 16",0],
-				"active_hovered": ["u_start + 16",16]
-			}
-		}
-	},
-	"elements": {
+	"elements_below": {
 		"background": {
 			"type": "buildcraftlib:drawable",
 			"size": [176,241]
-		},
+		}
+	},
+	"elements": {
 		"title": {
 			"type": "buildcraftlib:text",
 			"text": "tile.fillerBlock.name",
@@ -85,58 +68,6 @@
 				}
 			}
 		},
-		"pattern_drag_target": {
-			"type": "buildcraftlib:statement/slot",
-			"source": "filler.pattern",
-			"area": [16,36,24,24],
-			"draw": false
-		},
-		"pattern_drawable": {
-			"type": "buildcraftlib:drawable",
-			"source": {
-				"sprite": "filler.pattern.sprite",
-				"area": [4,4,8,8]
-			},
-			"area": [20,40,16,16]
-		},
-		"params": {
-			"iterator": "index = [0, 4)",
-			"type": "param"
-		},
-		"pattern_possible": {
-			"type": "buildcraftlib:statement/source",
-			"source": "filler.possible"
-		},
-		"ledger_test": {
-			"type": "buildcraftlib:ledger",
-			"title": "test",
-			"colour": "0xFF_D4_6C_1F",
-			"closed": {
-				"icon": {
-					"type": "buildcraftlib:drawable",
-					"source": {
-						"sprite": "minecraft:items/diamond",
-						"area": [0, 0, 16, 16]
-					},
-					"area": [0,0,16,16]
-				}
-			},
-			"children": {
-				"inv_text": {
-					"type": "buildcraftlib:text",
-					"text": "gui.inventory",
-					"colour": "0xFF_FF_FF",
-					"pos": [4, 20]
-				},
-				"inv_help": {
-					"type": "buildcraftlib:help",
-					"colour": "0xFF_CC_AA_BB",
-					"area": "ledger_test.inv_text.area.expand(2)",
-					"title": "Text",
-					"text": "Some text shown by lols"
-				}
-			}
-		},
 		"button_no_excavate": {
 			"type": "four_button",
 			"source": "filler.no_excavate",
@@ -149,19 +80,6 @@
 			"colour": "0xFF_CC_AA_88",
 			"title": "buildcraft.help.filler.excavate.title",
 			"text": "buildcraft.help.filler.excavate.desc"
-		},
-		"button_invert": {
-			"type": "four_button",
-			"source": "filler.invert",
-			"u_start": 224,
-			"area": [152,40,16,16]
-		},
-		"button_invert_help": {
-			"type": "buildcraftlib:help",
-			"area": [150,38,20,20],
-			"colour": "0xFF_88_AA_CC",
-			"title": "buildcraft.help.filler.invert.title",
-			"text": "buildcraft.help.filler.invert.desc"
 		},
 		"is_locked_icon": {
 			"type": "buildcraftlib:drawable",
@@ -207,9 +125,24 @@
 			"title": "Control mode",
 			"text": [ "Either ON, OFF, or LOOP.", "Set by gates." ]
 		},
+		"filler_inventory": {
+			"type": "buildcraftlib:slot",
+			"slot": "filler.inventory",
+			"pos": "GuiPosition.pos(18 * (index % 9) + 7, 18 * floor(index / 9) + 84)",
+			"iterator": "index = [0, 27)"
+		},
 		"player_inventory": {
-			"type": "buildcraftlib:inventory/player/full",
-			"pos": [8,85]
+			"type": "buildcraftlib:slot",
+			"slot": "player.inventory",
+			"pos": "GuiPosition.pos(18 * (index % 9) + 7, 18 * floor(index / 9) + 152)",
+			"iterator": "index = [0, 27)"
+		},
+		"player_inventory_hand": {
+			"type": "buildcraftlib:slot",
+			"slot": "player.inventory",
+			"index": "i + 27",
+			"pos": "GuiPosition.pos(18 * (i % 9) + 7, 18 * floor(i / 9) + 210)",
+			"iterator": "i = [0, 9)"
 		}
 	}
 }

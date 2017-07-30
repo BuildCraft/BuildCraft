@@ -20,7 +20,7 @@ public class GuiEngineIron_BC8 extends GuiBC8<ContainerEngineIron_BC8> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftenergy:textures/gui/combustion_engine_gui.png");
     private static final int SIZE_X = 176, SIZE_Y = 177;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
-    private static final GuiIcon ICON_TANK_OVERLAY = new GuiIcon(TEXTURE_BASE, 176, 0, 16, 58);
+    private static final GuiIcon ICON_TANK_OVERLAY = new GuiIcon(TEXTURE_BASE, 176, 0, 16, 60);
 
     public GuiEngineIron_BC8(ContainerEngineIron_BC8 container) {
         super(container);
@@ -33,9 +33,9 @@ public class GuiEngineIron_BC8 extends GuiBC8<ContainerEngineIron_BC8> {
     public void initGui() {
         super.initGui();
 
-        shownElements.add(container.widgetTankFuel.createGuiElement(this, new GuiRectangle(26, 19, 16, 58).offset(rootElement), ICON_TANK_OVERLAY));
-        shownElements.add(container.widgetTankCoolant.createGuiElement(this, new GuiRectangle(80, 19, 16, 58).offset(rootElement), ICON_TANK_OVERLAY));
-        shownElements.add(container.widgetTankResidue.createGuiElement(this, new GuiRectangle(134, 19, 16, 58).offset(rootElement), ICON_TANK_OVERLAY));
+        shownElements.add(container.widgetTankFuel.createGuiElement(this, new GuiRectangle(26, 18, 16, 60).offset(rootElement), ICON_TANK_OVERLAY));
+        shownElements.add(container.widgetTankCoolant.createGuiElement(this, new GuiRectangle(80, 18, 16, 60).offset(rootElement), ICON_TANK_OVERLAY));
+        shownElements.add(container.widgetTankResidue.createGuiElement(this, new GuiRectangle(134, 18, 16, 60).offset(rootElement), ICON_TANK_OVERLAY));
     }
 
     @Override

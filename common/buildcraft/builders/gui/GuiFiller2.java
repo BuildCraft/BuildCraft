@@ -11,6 +11,7 @@ import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.button.IButtonClickEventListener;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.json.GuiJson;
+import buildcraft.lib.gui.json.InventorySlotHolder;
 import buildcraft.lib.gui.json.SpriteDelegate;
 
 import buildcraft.builders.container.ContainerFiller;
@@ -29,6 +30,8 @@ public class GuiFiller2 extends GuiJson<ContainerFiller> {
 
     @Override
     protected void preLoad() {
+        properties.put("player.inventory", new InventorySlotHolder(container, container.player.inventory));
+        properties.put("filler.inventory", new InventorySlotHolder(container, container.tile.invResources));
         properties.put("statement.container", container.tile);
         properties.put("controllable", container.tile);
         properties.put("controllable.sprite", SPRITE_CONTROL_MODE);

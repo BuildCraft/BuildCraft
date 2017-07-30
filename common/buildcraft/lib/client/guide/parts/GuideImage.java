@@ -29,19 +29,19 @@ public class GuideImage extends GuidePart {
             h = imageHeight;
         }
         if (w <= 0) {
-            int sf = GuiGuide.PAGE_LEFT_TEXT.width / imageWidth;
+            double sf = GuiGuide.PAGE_LEFT_TEXT.width / imageWidth;
             if (sf == 0) {
-                int df = 1 + imageWidth / GuiGuide.PAGE_LEFT_TEXT.width;
-                w = imageWidth / df;
+                double df = 1 + imageWidth / GuiGuide.PAGE_LEFT_TEXT.width;
+                w = (int)(imageWidth / df);
                 h /= df;
             } else {
-                w = imageWidth * sf;
+                w = (int) (imageWidth * sf);
                 h *= sf;
             }
         }
         int vDiff = 256;
         if (h > GuiGuide.PAGE_LEFT_TEXT.height) {
-            h = GuiGuide.PAGE_LEFT_TEXT.height - 10;
+            h = (int) GuiGuide.PAGE_LEFT_TEXT.height - 10;
             vDiff = (int) (256 * (double) h / (GuiGuide.PAGE_LEFT_TEXT.height - 10));
         }
 

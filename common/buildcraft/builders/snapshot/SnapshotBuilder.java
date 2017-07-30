@@ -57,7 +57,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                                       @Nonnull IBlockState newState,
                                       int flags) {
             if (tile.getBuilder() == SnapshotBuilder.this) {
-                check(pos);
+                toCheck.add(pos);
             }
         }
     };
@@ -237,13 +237,11 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         }
 
         tile.getWorldBC().profiler.startSection("scan");
-        if (!toCheck.isEmpty()) {
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 1000 && !toCheck.isEmpty(); i++) {
                 BlockPos blockPos = toCheck.pollFirst();
                 check(blockPos);
                 toCheck.addLast(blockPos);
             }
-        }
         tile.getWorldBC().profiler.endSection();
 
         tile.getWorldBC().profiler.startSection("remove tasks");

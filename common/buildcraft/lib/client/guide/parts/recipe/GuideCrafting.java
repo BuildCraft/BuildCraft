@@ -70,11 +70,11 @@ public class GuideCrafting extends GuidePartItem {
                 for (int itemY = 0; itemY < input[itemX].length; itemY++) {
                     GuiRectangle rect = ITEM_POSITION[itemX][itemY];
                     ItemStack stack = input[itemX][itemY].get();
-                    drawItemStack(stack, x + rect.x, y + rect.y);
+                    drawItemStack(stack, x + (int) rect.x, y + (int) rect.y);
                 }
             }
 
-            drawItemStack(output.get(), x + OUT_POSITION.x, y + OUT_POSITION.y);
+            drawItemStack(output.get(), x + (int) OUT_POSITION.x, y + (int) OUT_POSITION.y);
 
             RenderHelper.disableStandardItemLighting();
             GlStateManager.disableRescaleNormal();
@@ -95,11 +95,11 @@ public class GuideCrafting extends GuidePartItem {
                 for (int itemY = 0; itemY < input[itemX].length; itemY++) {
                     GuiRectangle rect = ITEM_POSITION[itemX][itemY];
                     ItemStack stack = input[itemX][itemY].get();
-                    testClickItemStack(stack, x + rect.x, y + rect.y);
+                    testClickItemStack(stack, x + (int) rect.x, y + (int) rect.y);
                 }
             }
 
-            testClickItemStack(output.get(), x + OUT_POSITION.x, y + OUT_POSITION.y);
+            testClickItemStack(output.get(), x + (int) OUT_POSITION.x, y + (int) OUT_POSITION.y);
         }
         current = current.nextLine(PIXEL_HEIGHT, height);
         return current;
