@@ -8,7 +8,6 @@ package buildcraft.transport.plug;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -49,7 +48,7 @@ import buildcraft.transport.client.model.key.KeyPlugPulsar;
 public class PluggablePulsar extends PipePluggable {
 
     public static final FunctionContext MODEL_FUNC_CTX;
-    private static final NodeVariableObject MODEL_SIDE;
+    private static final NodeVariableObject<EnumFacing> MODEL_SIDE;
     private static final NodeVariableDouble MODEL_STAGE;
     private static final NodeVariableBoolean MODEL_ON;
     private static final NodeVariableBoolean MODEL_AUTO;
@@ -91,17 +90,17 @@ public class PluggablePulsar extends PipePluggable {
         BOXES[EnumFacing.EAST.ordinal()] = new AxisAlignedBB(ul, min, min, uu, max, max);
 
         MODEL_FUNC_CTX = DefaultContexts.createWithAll();
-        MODEL_SIDE = MODEL_FUNC_CTX.putVariableString("side");
+        MODEL_SIDE = MODEL_FUNC_CTX.putVariableObject("side", EnumFacing.class);
         MODEL_STAGE = MODEL_FUNC_CTX.putVariableDouble("stage");
         MODEL_ON = MODEL_FUNC_CTX.putVariableBoolean("on");
         MODEL_AUTO = MODEL_FUNC_CTX.putVariableBoolean("auto");
         MODEL_MANUAL = MODEL_FUNC_CTX.putVariableBoolean("manual");
 
         MODEL_VAR_INFO = new ContextInfo(MODEL_FUNC_CTX);
-        VariableInfoObject infoSide = MODEL_VAR_INFO.createInfoString("side", MODEL_SIDE);
+        VariableInfoObject<EnumFacing> infoSide = MODEL_VAR_INFO.createInfoObject("side", MODEL_SIDE);
         infoSide.cacheType = CacheType.ALWAYS;
         infoSide.setIsComplete = true;
-        infoSide.possibleValues.addAll(Arrays.stream(EnumFacing.VALUES).map(EnumFacing::getName).collect(Collectors.toList()));
+        infoSide.possibleValues.addAll(Arrays.asList(EnumFacing.VALUES));
 
         VariableInfoDouble infoStage = MODEL_VAR_INFO.createInfoDouble("stage", MODEL_STAGE);
         infoStage.cacheType = CacheType.IN_SET;
@@ -275,7 +274,7 @@ public class PluggablePulsar extends PipePluggable {
         MODEL_AUTO.value = false;
         MODEL_MANUAL.value = false;
         MODEL_ON.value = false;
-        MODEL_SIDE.value = "west";
+        MODEL_SIDE.value = EnumFacing.WEST;
     }
 
     public void setModelVariables(float partialTicks) {
@@ -287,6 +286,6 @@ public class PluggablePulsar extends PipePluggable {
         MODEL_ON.value = isPulsing;
         MODEL_MANUAL.value = manuallyEnabled;
         MODEL_AUTO.value = autoEnabled;
-        MODEL_SIDE.value = side.getName();
+        MODEL_SIDE.value = side;
     }
 }

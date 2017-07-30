@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -16,6 +18,7 @@ import net.minecraft.util.JsonUtils;
 
 public class JsonGuiElement {
     public final String name;
+    public final String fullName;
     /** Map of string -> property. non-primitives are expanded, so arrays are turned into key[index], and objects are
      * turned into key.child.
      * <p>
@@ -23,13 +26,15 @@ public class JsonGuiElement {
      * {"prop": "" */
     public final Map<String, String> properties = new LinkedHashMap<>();
 
-    private JsonGuiElement(String name, Map<String, String> properties) {
+    private JsonGuiElement(String name, String fullName, Map<String, String> properties) {
         this.name = name;
+        this.fullName = fullName;
         this.properties.putAll(properties);
     }
 
-    public JsonGuiElement(JsonObject json, String name, Map<String, JsonGuiElement> typeLookup) {
+    public JsonGuiElement(JsonObject json, String name, String fullName, Map<String, JsonGuiElement> typeLookup) {
         this.name = name;
+        this.fullName = fullName;
         String str = JsonUtils.getString(json, "type", null);
         if (str != null) {
             JsonGuiElement parent = typeLookup.get(str);
@@ -80,7 +85,7 @@ public class JsonGuiElement {
             int u = Integer.parseInt(upper.substring(0, upper.length() - 1)) - (upper.endsWith(")") ? 1 : 0);
             if (u >= l) {
                 for (int i = l; i <= u; i++) {
-                    JsonGuiElement elem = new JsonGuiElement(name, properties);
+                    JsonGuiElement elem = new JsonGuiElement(name, fullName, properties);
                     elem.properties.put(iterName, Integer.toString(i));
                     list.add(elem);
                 }
@@ -91,34 +96,39 @@ public class JsonGuiElement {
 
     public List<JsonGuiElement> getChildren(JsonGuiInfo info, String subName) {
         List<JsonGuiElement> list = new ArrayList<>();
-        for (int i = 0;; i++) {
-            String propName = subName + "[" + i + "].";
-            boolean found = false;
-            Map<String, String> subProperties = new HashMap<>();
-            for (Entry<String, String> entry : properties.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                subProperties.put("parent." + key, value);
-                if (!key.startsWith(propName)) {
-                    continue;
-                }
-                found = true;
-                String subKey = key.substring(propName.length());
-                subProperties.put(subKey, value);
+        List<String> childKeys = new ArrayList<>();
+        Table<String, String, String> allChildren = HashBasedTable.create();
+        Map<String, String> parentProperties = new HashMap<>();
+        for (Entry<String, String> entry : properties.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            parentProperties.put("parent." + key, value);
+            if (!key.startsWith(subName)) {
+                continue;
             }
-            if (!found) {
-                break;
+            String subKey = key.substring(subName.length() + 1);
+            int indexOf = subKey.indexOf('.');
+            String childName = subKey.substring(0, indexOf);
+            String childPropName = subKey.substring(indexOf + 1);
+            if (!childKeys.contains(childName)) {
+                childKeys.add(childName);
             }
-            String type = subProperties.get("type");
+            allChildren.put(childName, childPropName, value);
+        }
+
+        for (String childName : childKeys) {
+            Map<String, String> childProperties = new HashMap<>(allChildren.row(childName));
+            childProperties.putAll(parentProperties);
+            String type = childProperties.get("type");
             JsonGuiElement parent = info.types.get(type);
             if (parent != null) {
                 Map<String, String> props2 = new HashMap<>();
                 props2.putAll(parent.properties);
-                props2.putAll(subProperties);
+                props2.putAll(childProperties);
                 props2.put("type", parent.properties.get("type"));
-                subProperties = props2;
+                childProperties = props2;
             }
-            list.add(new JsonGuiElement(propName, subProperties));
+            list.add(new JsonGuiElement(childName, fullName + "." + childName, childProperties));
         }
         return list;
     }

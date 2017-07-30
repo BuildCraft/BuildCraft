@@ -1,9 +1,9 @@
 {
 	"rules": [
 		{
-			"when": "facing != 'west'",
+			"when": "facing != Facing.west",
 			"type": "builtin:rotate_facing",
-			"from": "'west'",
+			"from": "Facing.west",
 			"to": "facing"
 		}
 	],

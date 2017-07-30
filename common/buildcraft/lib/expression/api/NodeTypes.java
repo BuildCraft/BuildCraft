@@ -176,7 +176,7 @@ public class NodeTypes {
         if (clazz != null) {
             return clazz;
         }
-        throw new InvalidExpressionException("Unknown type " + clazz + ", must be one of " + typesByName.keySet());
+        throw new InvalidExpressionException("Unknown type " + type + ", must be one of " + typesByName.keySet());
     }
 
     public static <T> NodeType2<T> getType(Class<T> clazz) {

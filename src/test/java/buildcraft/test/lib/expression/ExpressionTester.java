@@ -345,7 +345,7 @@ public class ExpressionTester {
     @Test
     public void testMinecraftClasses() {
         ExpressionCompat.setup();
-        FunctionContext ctx = null;
+        FunctionContext ctx = DefaultContexts.createWithAll();
 
         bakeAndCallString("Facing.UP", "up", ctx);
         bakeAndCallString("Facing.uP", "up", ctx);
@@ -354,6 +354,10 @@ public class ExpressionTester {
 
         bakeAndCallString("Axis.X", "x", ctx);
         bakeAndCallString("axis.x", "x", ctx);
+
+        bakeAndCallBoolean("Axis.X == Axis.X", true);
+        bakeAndCallBoolean("Axis.Y == Axis.X", false);
+        bakeAndCallBoolean("Facing.up.getOpposite().getAxis() == Axis.X", false);
     }
 
     @Test

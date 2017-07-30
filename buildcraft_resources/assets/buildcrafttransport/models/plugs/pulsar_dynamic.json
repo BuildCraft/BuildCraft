@@ -10,9 +10,9 @@
     },
     "rules": [
 		{
-			"when": "side != 'west'",
+			"when": "side != Facing.WEST",
 			"type": "builtin:rotate_facing",
-			"from": "'west'",
+			"from": "Facing.WEST",
 			"to": "side"
 		}
 	],

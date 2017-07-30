@@ -7,15 +7,14 @@
 package buildcraft.lib.expression.node.value;
 
 import buildcraft.lib.expression.DefaultContexts;
-import buildcraft.lib.expression.NodeStack;
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
-import buildcraft.lib.expression.node.binary.BiNodeType;
-import buildcraft.lib.expression.node.cast.NodeCastLongToDouble;
 
 public class NodeStateful implements ITickableNode.Source {
     public final String name;
@@ -120,27 +119,22 @@ public class NodeStateful implements ITickableNode.Source {
                     INodeDouble v = (INodeDouble) variable;
                     INodeDouble l = (INodeDouble) last;
                     INodeDouble p = DefaultContexts.RENDER_PARTIAL_TICKS;
-
-                    // return (l * (1 - p)) + (v * p)
-
-                    INodeDouble _1_minus_p = BiNodeType.SUB.createDoubleNode(NodeConstantDouble.ONE, p);
-                    INodeDouble l_times_1_minus_p = BiNodeType.MUL.createDoubleNode(l, _1_minus_p);
-                    INodeDouble v_times_p = BiNodeType.MUL.createDoubleNode(v, p);
-                    return BiNodeType.ADD.createDoubleNode(l_times_1_minus_p, v_times_p);
-
+                    FunctionContext ctx = new FunctionContext();
+                    ctx.putVariable("v", v);
+                    ctx.putVariable("l", l);
+                    ctx.putVariable("p", p);
+                    return GenericExpressionCompiler.compileExpressionDouble("l * (1 - p) + (v * p)", ctx);
                 } else if (type == long.class) {
                     INodeLong v = (INodeLong) variable;
                     INodeLong l = (INodeLong) last;
                     INodeDouble p = DefaultContexts.RENDER_PARTIAL_TICKS;
 
                     // return l + ( round( (v - l) * p ) )
-
-                    INodeLong d = BiNodeType.SUB.createLongNode(l, v);
-                    INodeDouble d_as_double = new NodeCastLongToDouble(d);
-                    INodeDouble d_times_p = BiNodeType.MUL.createDoubleNode(d_as_double, p);
-                    NodeStack stack = new NodeStack(d_times_p);
-                    INodeLong round_d_times_p = DefaultContexts.MATH_SCALAR_FUNC_ROUND.getNode(stack);
-                    return BiNodeType.ADD.createLongNode(l, round_d_times_p);
+                    FunctionContext ctx = new FunctionContext();
+                    ctx.putVariable("v", v);
+                    ctx.putVariable("l", l);
+                    ctx.putVariable("p", p);
+                    return GenericExpressionCompiler.compileExpressionLong("l + ( round( (v - l) * p ) )", ctx);
                 } else {
                     throw new InvalidExpressionException("Cannot create an interpolated value for " + type);
                 }

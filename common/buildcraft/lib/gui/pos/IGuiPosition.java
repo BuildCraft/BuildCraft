@@ -8,6 +8,8 @@ package buildcraft.lib.gui.pos;
 
 import java.util.function.IntSupplier;
 
+import buildcraft.lib.expression.api.IConstantNode;
+
 /** Defines a single point somewhere on the screen. */
 public interface IGuiPosition {
     int getX();
@@ -15,14 +17,23 @@ public interface IGuiPosition {
     int getY();
 
     default IGuiPosition offset(IntSupplier x, IntSupplier y) {
+        if (x instanceof IConstantNode && y instanceof IConstantNode) {
+            return offset(x.getAsInt(), y.getAsInt());
+        }
         return offset(new PositionCallable(x, y));
     }
 
     default IGuiPosition offset(int x, IntSupplier y) {
+        if (y instanceof IConstantNode) {
+            return offset(x, y.getAsInt());
+        }
         return offset(new PositionCallable(x, y));
     }
 
     default IGuiPosition offset(IntSupplier x, int y) {
+        if (x instanceof IConstantNode) {
+            return offset(x.getAsInt(), y);
+        }
         return offset(new PositionCallable(x, y));
     }
 

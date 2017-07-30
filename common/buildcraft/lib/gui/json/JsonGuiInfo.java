@@ -46,7 +46,7 @@ public class JsonGuiInfo extends JsonVariableObject {
             for (Entry<String, JsonElement> entry : jTypes.entrySet()) {
                 String name = entry.getKey();
                 JsonObject obj = (JsonObject) entry.getValue();
-                types.put(name, new JsonGuiElement(obj, name, types));
+                types.put(name, new JsonGuiElement(obj, name, name, types));
             }
         }
         if (json.has("elements")) {
@@ -54,7 +54,7 @@ public class JsonGuiInfo extends JsonVariableObject {
             for (Entry<String, JsonElement> entry : jElems.entrySet()) {
                 String name = entry.getKey();
                 JsonObject obj = (JsonObject) entry.getValue();
-                JsonGuiElement elem = new JsonGuiElement(obj, name, types);
+                JsonGuiElement elem = new JsonGuiElement(obj, name, name, types);
                 elements.addAll(elem.iterate());
             }
         }

@@ -20,11 +20,19 @@ public final class GuiRectangle implements IGuiArea {
         this.height = height;
     }
 
+    public GuiRectangle(long x, long y, long width, long height) {
+        this((int) x, (int) y, (int) width, (int) height);
+    }
+
     public GuiRectangle(int width, int height) {
         this.x = 0;
         this.y = 0;
         this.width = width;
         this.height = height;
+    }
+
+    public GuiRectangle(long width, long height) {
+        this(0, 0, (int) width, (int) height);
     }
 
     @Override
@@ -64,5 +72,10 @@ public final class GuiRectangle implements IGuiArea {
     @Override
     public GuiRectangle offset(int dx, int dy) {
         return new GuiRectangle(x + dx, y + dy, width, height);
+    }
+
+    @Override
+    public GuiRectangle expand(int dX, int dY) {
+        return new GuiRectangle(x - dX, y - dY, width + dX * 2, height + dY * 2);
     }
 }

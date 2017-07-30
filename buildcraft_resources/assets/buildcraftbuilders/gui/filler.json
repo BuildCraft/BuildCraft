@@ -50,8 +50,8 @@
 			"title": "gui.counters",
 			"side": "right",
 			"colour": "0xFF_6C_D4_1F",
-			"closed": [
-				{
+			"closed": {
+				"icon": {
 					"type":"buildcraftlib:drawable",
 					"source": {
 						"sprite": "minecraft:items/iron_ingot",
@@ -59,31 +59,31 @@
 					},
 					"area": [0, 0, 16, 16]
 				}
-			],
-			"children": [
-				{
+			},
+			"children": {
+				"to_break_text": {
 					"type": "buildcraftlib:text",
 					"text": "gui.leftToBreak",
 					"colour": "0xFF_AA_AF_B8",
 					"pos": [0, "14 * 1"]
 				},
-				{
+				"to_break_help": {
 					"type": "buildcraftlib:text",
 					"expression": "filler.to_break",
 					"pos": [0, "14 * 2"]
 				},
-				{
+				"to_place_text": {
 					"type": "buildcraftlib:text",
 					"text": "gui.leftToPlace",
 					"colour": "0xFF_AA_AF_B8",
 					"pos": [0, "14 * 3"]
 				},
-				{
+				"to_place_help": {
 					"type": "buildcraftlib:text",
 					"expression": "filler.to_place",
 					"pos": [0, "14 * 4"]
 				}
-			]
+			}
 		},
 		"pattern_drag_target": {
 			"type": "buildcraftlib:statement/slot",
@@ -131,7 +131,7 @@
 				"inv_help": {
 					"type": "buildcraftlib:help",
 					"colour": "0xFF_CC_AA_BB",
-					"area": "inv_text.expand(2)",
+					"area": "ledger_test.inv_text.area.expand(2)",
 					"title": "Text",
 					"text": "Some text shown by lols"
 				}
@@ -187,7 +187,7 @@
 		},
 		"mode_icon": {
 			"type": "buildcraftlib:drawable",
-			"visible": "controllable.mode != 'ON'",
+			"visible": "controllable.mode != ControlMode.ON",
 			"source": {
 				"sprite": "controllable.sprite",
 				"area": [0, 0, 16, 16]
@@ -196,8 +196,8 @@
 		},
 		"mode_tooltip": {
 			"type": "buildcraftlib:tooltip",
-			"visible": "controllable.mode != 'ON'",
-			"expression": "controllable.mode",
+			"visible": "controllable.mode != ControlMode.ON",
+			"expression": "controllable.mode.toLowerCase()",
 			"area": [32, 16, 16, 16]
 		},
 		"mode_help": {

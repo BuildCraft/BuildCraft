@@ -7,18 +7,19 @@ import com.google.gson.JsonSyntaxException;
 
 import buildcraft.api.core.BCLog;
 
-import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.InternalCompiler;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
+import buildcraft.lib.expression.node.value.NodeConstantLong;
 import buildcraft.lib.gui.IGuiElement;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
-import buildcraft.lib.misc.collect.TypedMap;
 
 public abstract class ElementType {
     public final String name;
@@ -27,18 +28,18 @@ public abstract class ElementType {
         this.name = name;
     }
 
-    public abstract IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json);
+    protected abstract IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info,
+        JsonGuiElement json);
+
+    public final IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
+        IGuiElement element = deserialize0(gui, parent, info, json);
+        gui.elementContext.putConstant(json.fullName + ".pos", IGuiPosition.class, element);
+        gui.elementContext.putConstant(json.fullName + ".area", IGuiArea.class, element);
+        return element;
+    }
 
     public static FunctionContext createContext(GuiJson<?> gui, JsonGuiElement json) {
-        FunctionContext ctx = DefaultContexts.createWithAll();
-
-        for (String key : gui.properties.getKeys()) {
-            TypedMap<Object> map = gui.properties.getAll(key);
-            IExpressionNode node = map.get(IExpressionNode.class);
-            if (node != null) {
-                ctx.putVariable(key, node);
-            }
-        }
+        FunctionContext ctx = gui.elementContext;
 
         // if json overrides variables then its ok
         ctx = new FunctionContext(ctx);
@@ -95,12 +96,16 @@ public abstract class ElementType {
     }
 
     public static int resolveEquationInt(JsonGuiElement json, String member, FunctionContext ctx) {
+        return (int) getEquationLong(json, member, ctx).evaluate();
+    }
+
+    public static INodeLong getEquationLong(JsonGuiElement json, String member, FunctionContext ctx) {
         String eqn = json.properties.get(member);
         if (eqn == null) {
-            return 0;
+            return NodeConstantLong.ZERO;
         }
         try {
-            return (int) GenericExpressionCompiler.compileExpressionLong(eqn, ctx).evaluate();
+            return GenericExpressionCompiler.compileExpressionLong(eqn, ctx);
         } catch (InvalidExpressionException iee) {
             throw new JsonSyntaxException(iee);
         }
@@ -133,6 +138,22 @@ public abstract class ElementType {
             return GenericExpressionCompiler.compileExpressionBoolean(eqn, ctx);
         } catch (InvalidExpressionException iee) {
             throw new JsonSyntaxException(iee);
+        }
+    }
+
+    public static IGuiArea resolveArea(JsonGuiElement json, String name, IGuiPosition parent, FunctionContext ctx) {
+        String eqn = json.properties.get(name);
+        if (eqn == null) {
+            INodeLong x = getEquationLong(json, name + "[0]", ctx);
+            INodeLong y = getEquationLong(json, name + "[1]", ctx);
+            INodeLong w = getEquationLong(json, name + "[2]", ctx);
+            INodeLong h = getEquationLong(json, name + "[3]", ctx);
+            return IGuiArea.create(x, y, w, h).offset(parent);
+        }
+        try {
+            return GenericExpressionCompiler.compileExpressionObject(IGuiArea.class, eqn, ctx).evaluate();
+        } catch (InvalidExpressionException e) {
+            throw new JsonSyntaxException("Failed to resolve an area for " + json.fullName, e);
         }
     }
 

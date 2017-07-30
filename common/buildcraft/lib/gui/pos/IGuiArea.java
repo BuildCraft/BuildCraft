@@ -8,6 +8,8 @@ package buildcraft.lib.gui.pos;
 
 import java.util.function.IntSupplier;
 
+import buildcraft.lib.expression.api.IConstantNode;
+
 /** Defines an area somewhere on the screen. */
 public interface IGuiArea extends IGuiPosition {
     int getWidth();
@@ -112,27 +114,30 @@ public interface IGuiArea extends IGuiPosition {
         return create(() -> getX() - dX, () -> getY() - dY, () -> getWidth() + dX * 2, () -> getHeight() + dY * 2);
     }
 
+    default IGuiArea expand(IntSupplier by) {
+        if (by instanceof IConstantNode) {
+            return expand(by.getAsInt());
+        }
+        return expand(by, by);
+    }
+
+    default IGuiArea expand(IntSupplier dX, IntSupplier dY) {
+        if (dX instanceof IConstantNode && dY instanceof IConstantNode) {
+            return expand(dX.getAsInt(), dY.getAsInt());
+        }
+        return create(//
+            () -> getX() - dX.getAsInt(),//
+            () -> getY() - dY.getAsInt(),//
+            () -> getWidth() + dX.getAsInt() * 2,//
+            () -> getHeight() + dY.getAsInt() * 2//
+        );
+    }
+
     static IGuiArea create(IntSupplier x, IntSupplier y, IntSupplier width, IntSupplier height) {
-        return new IGuiArea() {
-            @Override
-            public int getX() {
-                return x.getAsInt();
-            }
-
-            @Override
-            public int getY() {
-                return y.getAsInt();
-            }
-
-            @Override
-            public int getWidth() {
-                return width.getAsInt();
-            }
-
-            @Override
-            public int getHeight() {
-                return height.getAsInt();
-            }
-        };
+        if (x instanceof IConstantNode && y instanceof IConstantNode && width instanceof IConstantNode
+            && height instanceof IConstantNode) {
+            return new GuiRectangle(x.getAsInt(), y.getAsInt(), width.getAsInt(), height.getAsInt());
+        }
+        return new AreaCallable(x, y, width, height);
     }
 }

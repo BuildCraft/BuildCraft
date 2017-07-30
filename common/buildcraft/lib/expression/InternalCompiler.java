@@ -9,14 +9,15 @@ package buildcraft.lib.expression;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
 import buildcraft.lib.expression.api.IExpressionNode;
@@ -37,6 +38,8 @@ import buildcraft.lib.expression.node.func.NodeFuncGenericToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncGenericToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncGenericToLong;
 import buildcraft.lib.expression.node.func.NodeFuncGenericToObject;
+import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToBoolean;
+import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToBoolean.IFuncObjectObjectToBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
@@ -417,7 +420,7 @@ public class InternalCompiler {
         List<Class<?>> bestClassesTo = null;
         List<String> fnOrderNames = functionOrder.stream().map(NodeTypes::getName).collect(Collectors.toList());
         ExpressionDebugManager.debugStart("Finding best function called '" + name + "' for " + fnOrderNames);
-        for (Entry<List<Class<?>>, INodeFunc> func : functions.entrySet()) {
+        for (Map.Entry<List<Class<?>>, INodeFunc> func : functions.entrySet()) {
             List<Class<?>> functionClasses = func.getKey();
             List<String> fnClassNames = functionClasses.stream().map(NodeTypes::getName).collect(Collectors.toList());
             ExpressionDebugManager.debugPrintln("Found " + fnClassNames);
@@ -472,7 +475,21 @@ public class InternalCompiler {
         ExpressionDebugManager.debugEnd("Best = " + bestFunction);
 
         if (bestFunction == null || bestCasters == null) {
-            throw new InvalidExpressionException("No viable function called '" + name + "' found for " + fnOrderNames);
+            // Allow any object to be compared to itself with == and !=
+            boolean isEq = "==".equals(name);
+            boolean isNE = "!=".equals(name);
+            if (count == 2 && (isEq | isNE) && functionOrder.get(0) == functionOrder.get(1)) {
+                Class<?> cls = functionOrder.get(0);
+                IFuncObjectObjectToBoolean<?, ?> func = isEq ? Objects::equal : (a, b) -> !Objects.equal(a, b);
+                bestFunction = new NodeFuncObjectObjectToBoolean(name, cls, cls, func);
+                bestCastCount = 0;
+                bestCasters = Collections.emptyList();
+                bestClassesTo = ImmutableList.copyOf(functionOrder);
+                ExpressionDebugManager.debugPrintln("Using implicit object equality comparison.");
+            } else {
+                throw new InvalidExpressionException(
+                    "No viable function called '" + name + "' found for " + fnOrderNames);
+            }
         }
 
         NodeStack realStack;
@@ -499,6 +516,8 @@ public class InternalCompiler {
         }
         INodeFunc func = bestFunction;
 
+        bestClassesTo = new ArrayList<>(bestClassesTo);
+        Collections.reverse(bestClassesTo);
         realStack.setRecorder(bestClassesTo, func);
         IExpressionNode node = func.getNode(realStack);
         realStack.checkAndRemoveRecorder();
@@ -507,7 +526,7 @@ public class InternalCompiler {
     }
 
     private static FunctionContext getContext(String type) throws InvalidExpressionException {
-        Class<?> clazz = NodeTypes.parseType(type);
+        Class<?> clazz = NodeTypes.getType(type);
         return NodeTypes.getType(clazz);
     }
 }

@@ -27,16 +27,16 @@ public class ContextInfo {
         this.fnCtx = fnCtx;
     }
 
-    public VariableInfoObject createInfoString(String name, NodeVariableObject node) {
-        VariableInfoObject info = new VariableInfoObject(node);
+    public <T> VariableInfoObject<T> createInfoObject(String name, NodeVariableObject<T> node) {
+        VariableInfoObject<T> info = new VariableInfoObject<>(node);
         variables.put(name, info);
         return info;
     }
 
-    public VariableInfoObject getInfoString(String name) {
+    public VariableInfoObject<?> getInfoObject(String name) {
         VariableInfo<?> info = variables.get(name);
         if (info instanceof VariableInfoObject) {
-            return (VariableInfoObject) info;
+            return (VariableInfoObject<?>) info;
         }
         return null;
     }

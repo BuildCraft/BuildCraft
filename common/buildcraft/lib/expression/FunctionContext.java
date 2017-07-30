@@ -6,6 +6,8 @@
 
 package buildcraft.lib.expression;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -213,7 +215,9 @@ public class FunctionContext extends FunctionContextBase {
         } catch (InvalidExpressionException e) {
             throw new IllegalStateException("This should never happen!", e);
         }
-        return recorder.types;
+        List<Class<?>> types = new ArrayList<>(recorder.types);
+        Collections.reverse(types);
+        return types;
     }
 
     @Override

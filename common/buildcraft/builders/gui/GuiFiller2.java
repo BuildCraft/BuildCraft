@@ -6,7 +6,7 @@ import buildcraft.api.tiles.IControllable.Mode;
 
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.node.func.NodeFuncToObject;
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.button.IButtonClickEventListener;
 import buildcraft.lib.gui.elem.ToolTip;
@@ -32,7 +32,7 @@ public class GuiFiller2 extends GuiJson<ContainerFiller> {
         properties.put("statement.container", container.tile);
         properties.put("controllable", container.tile);
         properties.put("controllable.sprite", SPRITE_CONTROL_MODE);
-        properties.put("controllable.mode", (INodeString) () -> container.tile.getControlMode().name());
+        properties.put("controllable.mode", new NodeFuncToObject<>("mode", Mode.class, container.tile::getControlMode));
         properties.put("filler.is_finished", (INodeBoolean) container.tile::isFinished);
         properties.put("filler.is_locked", (INodeBoolean) container.tile::isLocked);
         properties.put("filler.to_break", (INodeLong) container.tile::getCountToBreak);

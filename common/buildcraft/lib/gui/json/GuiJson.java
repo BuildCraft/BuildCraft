@@ -15,13 +15,18 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.render.ISprite;
 
+import buildcraft.lib.expression.DefaultContexts;
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.node.value.ITickableNode;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IContainingElement;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.button.GuiAbstractButton;
+import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.collect.TypedKeyMap;
+import buildcraft.lib.misc.collect.TypedMap;
 
 /** A GUI that is defined (mostly) in a json file. Note that implementors generally have to add {@link Slot}'s,
  * {@link ISprite}'s and configure buttons in code - currently this only allows for completely defining simple elements
@@ -30,6 +35,8 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
     private final ResourceLocation guiDefinition;
     protected final TypedKeyMap<String, Object> properties = TypedKeyMap.createHierachy();
     private ITickableNode[] tickableNodes = new ITickableNode[0];
+
+    FunctionContext elementContext = DefaultContexts.createWithAll();
 
     public GuiJson(C container, ResourceLocation guiDefinition) {
         super(container);
@@ -54,6 +61,15 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
             properties.put("gui.root", rootElement);
             properties.put("mouse", mouse);
             preLoad();
+
+            for (String key : properties.getKeys()) {
+                TypedMap<Object> map = properties.getAll(key);
+                IExpressionNode node = map.get(IExpressionNode.class);
+                if (node != null) {
+                    elementContext.putVariable(key, node);
+                }
+            }
+            elementContext.putConstant("gui.pos", IGuiPosition.class, rootElement);
 
             JsonGuiInfo info = new JsonGuiInfo(obj);
             // TODO: Deserialize everything in the above statement!

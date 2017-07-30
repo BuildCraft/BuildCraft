@@ -34,7 +34,7 @@ public class ElementTypeToolTip extends ElementType {
     // - expression: The expression to display in the tooltip
 
     @Override
-    public IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
+    public IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(gui, json);
 
         List<String> text = new ArrayList<>();

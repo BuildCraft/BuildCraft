@@ -6,9 +6,9 @@
     "shade": true,
     "rules": [
         {
-            "when": "side != 'west'",
+            "when": "side != Facing.west",
             "type": "builtin:rotate_facing",
-            "from": "'west'",
+            "from": "Facing.west",
             "to": "side"
         }
     ],

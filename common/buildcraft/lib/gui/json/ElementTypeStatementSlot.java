@@ -23,7 +23,7 @@ public class ElementTypeStatementSlot extends ElementType {
     }
 
     @Override
-    public IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
+    public IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(gui, json);
 
         inheritProperty(json, "area[0]", "pos[0]");
