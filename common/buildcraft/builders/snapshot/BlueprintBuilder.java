@@ -279,7 +279,16 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                     true
                                 ).isPresent()
                             )
-                            .forEach(schematicEntity -> schematicEntity.build(tile.getWorldBC(), buildingInfo.basePos));
+                            .filter(schematicEntity ->
+                                schematicEntity.build(tile.getWorldBC(), buildingInfo.basePos) != null
+                            )
+                            .forEach(schematicEntity ->
+                                tryExtractRequired(
+                                    buildingInfo.entitiesRequiredItems.get(schematicEntity),
+                                    buildingInfo.entitiesRequiredFluids.get(schematicEntity),
+                                    false
+                                )
+                            );
                     }
                 }
                 return true;

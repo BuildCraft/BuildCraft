@@ -77,7 +77,7 @@ public enum ClientSnapshots {
             if (snapshot instanceof Blueprint) {
                 localWorld.uploadBlueprint((Blueprint) snapshot, false);
                 for (ISchematicEntity<?> schematicEntity : ((Blueprint) snapshot).entities) {
-                    schematicEntity.build(localWorld, FakeWorld.BLUEPRINT_OFFSET);
+                    schematicEntity.buildWithoutChecks(localWorld, FakeWorld.BLUEPRINT_OFFSET);
                 }
             }
             if (snapshot instanceof Template) {
