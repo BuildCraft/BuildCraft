@@ -828,7 +828,7 @@
         "requiredExtractors": [{
             "type": "constant",
             "items": [{
-                "item": "minecraft:oak_boat"
+                "item": "minecraft:boat"
             }]
         }]
     },
