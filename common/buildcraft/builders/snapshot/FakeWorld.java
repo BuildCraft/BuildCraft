@@ -6,35 +6,18 @@
 
 package buildcraft.builders.snapshot;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import com.mojang.authlib.GameProfile;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.profiler.Profiler;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.GameType;
-import net.minecraft.world.MinecraftException;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldSettings;
@@ -42,75 +25,24 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.gen.layer.GenLayer;
-import net.minecraft.world.gen.structure.template.TemplateManager;
-import net.minecraft.world.storage.IPlayerFileData;
-import net.minecraft.world.storage.ISaveHandler;
+import net.minecraft.world.storage.SaveHandlerMP;
 import net.minecraft.world.storage.WorldInfo;
 
-import buildcraft.api.schematics.ISchematicBlock;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SuppressWarnings("NullableProblems")
+@SideOnly(Side.CLIENT)
 public class FakeWorld extends World {
-    public static final Biome BIOME = Biomes.PLAINS;
+    private static final Biome BIOME = Biomes.PLAINS;
+    @SuppressWarnings("WeakerAccess")
     public static final BlockPos BLUEPRINT_OFFSET = new BlockPos(0, 127, 0);
 
-    public static FakeWorld INSTANCE = new FakeWorld();
-
-    private final List<ItemStack> drops = new ArrayList<>();
-    public boolean editable = true;
-
+    @SuppressWarnings("WeakerAccess")
     public FakeWorld() {
         super(
-            new ISaveHandler() {
-                @Nullable
-                @Override
-                public WorldInfo loadWorldInfo() {
-                    return null;
-                }
-
-                @Override
-                public void checkSessionLock() throws MinecraftException {
-
-                }
-
-                @Override
-                public IChunkLoader getChunkLoader(WorldProvider provider) {
-                    return null;
-                }
-
-                @Override
-                public void saveWorldInfoWithPlayer(WorldInfo worldInformation, NBTTagCompound tagCompound) {
-                }
-
-                @Override
-                public void saveWorldInfo(WorldInfo worldInformation) {
-                }
-
-                @Override
-                public IPlayerFileData getPlayerNBTManager() {
-                    return null;
-                }
-
-                @Override
-                public void flush() {
-                }
-
-                @Override
-                public File getWorldDirectory() {
-                    return null;
-                }
-
-                @Override
-                public File getMapFileFromName(String mapName) {
-                    return null;
-                }
-
-                @Override
-                public TemplateManager getStructureTemplateManager() {
-                    return null;
-                }
-            },
+            new SaveHandlerMP(),
             new WorldInfo(
                 new WorldSettings(
                     0,
@@ -128,7 +60,7 @@ public class FakeWorld extends World {
                 }
             },
             new Profiler(),
-            false
+            true
         );
         chunkProvider = new FakeChunkProvider(this);
     }
@@ -137,202 +69,27 @@ public class FakeWorld extends World {
         ((FakeChunkProvider) chunkProvider).chunks.clear();
     }
 
-    public void uploadBlueprint(Blueprint blueprint, boolean useStone) {
-        for (int z = -1; z <= blueprint.size.getZ(); z++) {
-            for (int y = -1; y <= blueprint.size.getY(); y++) {
-                for (int x = -1; x <= blueprint.size.getX(); x++) {
+    @SuppressWarnings("WeakerAccess")
+    public void uploadSnapshot(Snapshot snapshot) {
+        for (int z = 0; z < snapshot.size.getZ(); z++) {
+            for (int y = 0; y < snapshot.size.getY(); y++) {
+                for (int x = 0; x < snapshot.size.getX(); x++) {
                     BlockPos pos = new BlockPos(x, y, z).add(BLUEPRINT_OFFSET);
-                    if (x == -1 || y == -1 || z == -1 ||
-                        x == blueprint.size.getX() ||
-                        y == blueprint.size.getY() ||
-                        z == blueprint.size.getZ()) {
-                        setBlockState(pos, useStone ? Blocks.STONE.getDefaultState() : Blocks.AIR.getDefaultState());
-                    } else {
-                        ISchematicBlock<?> schematicBlock = blueprint.palette.get(blueprint.data[x][y][z]);
-                        schematicBlock.buildWithoutChecks(this, pos);
+                    if (snapshot instanceof Blueprint) {
+                        ((Blueprint) snapshot).palette
+                            .get(((Blueprint) snapshot).data[x][y][z])
+                            .buildWithoutChecks(this, pos);
+                    }
+                    if (snapshot instanceof Template) {
+                        setBlockState(pos, Blocks.QUARTZ_BLOCK.getDefaultState());
                     }
                 }
             }
         }
-    }
-
-    public List<ItemStack> breakBlockAndGetDrops(BlockPos pos) {
-        getBlockState(pos).getBlock().breakBlock(this, pos, getBlockState(pos));
-        List<ItemStack> dropsCopy = new ArrayList<>(drops);
-        drops.clear();
-        return dropsCopy;
-    }
-
-    public List<ItemStack> killEntityAndGetDrops(Entity entity) {
-        entity.move(MoverType.PLAYER, 1, 1, 1);
-        if (drops.isEmpty()) {
-            entity.isDead = false;
-            entity.attackEntityFrom(
-                DamageSource.causePlayerDamage(
-                    new EntityPlayer(
-                        this,
-                        new GameProfile(UUID.randomUUID(), "fake")
-                    ) {
-                        @Override
-                        public boolean isSpectator() {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean isCreative() {
-                            return false;
-                        }
-                    }
-                ),
-                100
+        if (snapshot instanceof Blueprint) {
+            ((Blueprint) snapshot).entities.forEach(schematicEntity ->
+                schematicEntity.buildWithoutChecks(this, FakeWorld.BLUEPRINT_OFFSET)
             );
-        }
-        List<ItemStack> dropsCopy = new ArrayList<>(drops);
-        drops.clear();
-        return dropsCopy;
-    }
-
-    @Override
-    public boolean setBlockState(BlockPos pos, IBlockState newState, int flags) {
-        if (editable) {
-            captureBlockSnapshots = true;
-            if (pos.getY() < 0 || pos.getY() >= 256) {
-                return false;
-            } else {
-                getChunkFromBlockCoords(pos).setBlockState(pos, newState);
-                return true;
-            }
-        } else {
-            return true;
-        }
-    }
-
-    @Override
-    public void updateBlockTick(BlockPos pos, Block block, int delay, int priority) {
-        if (editable) {
-            super.updateBlockTick(pos, block, delay, priority);
-        }
-    }
-
-    @Override
-    public void scheduleBlockUpdate(BlockPos pos, Block block, int delay, int priority) {
-        if (editable) {
-            super.scheduleBlockUpdate(pos, block, delay, priority);
-        }
-    }
-
-    @Override
-    protected void updateBlocks() {
-        if (editable) {
-            super.updateBlocks();
-        }
-    }
-
-    @Override
-    public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress) {
-        if (editable) {
-            super.sendBlockBreakProgress(breakerId, pos, progress);
-        }
-    }
-
-    @Override
-    public boolean addTileEntity(TileEntity tile) {
-        return !editable || super.addTileEntity(tile);
-    }
-
-    @Override
-    public void addTileEntities(Collection<TileEntity> tileEntityCollection) {
-        if (editable) {
-            super.addTileEntities(tileEntityCollection);
-        }
-    }
-
-    @Override
-    public void setTileEntity(BlockPos pos, @Nullable TileEntity tileEntity) {
-        if (editable) {
-            super.setTileEntity(pos, tileEntity);
-        }
-    }
-
-    @Override
-    public void removeTileEntity(BlockPos pos) {
-        if (editable) {
-            super.removeTileEntity(pos);
-        }
-    }
-
-    @Override
-    public void markTileEntityForRemoval(TileEntity tileEntity) {
-        if (editable) {
-            super.markTileEntityForRemoval(tileEntity);
-        }
-    }
-
-    @Override
-    public boolean spawnEntity(Entity entity) {
-        if (editable) {
-            return super.spawnEntity(entity);
-        } else {
-            if (entity instanceof EntityItem) {
-                drops.add(((EntityItem) entity).getEntityItem());
-            }
-            return true;
-        }
-    }
-
-    @Override
-    public void removeEntity(Entity entity) {
-        if (editable) {
-            super.removeEntity(entity);
-        }
-    }
-
-    @Override
-    public void setEntityState(Entity entity, byte state) {
-        if (editable) {
-            super.setEntityState(entity, state);
-        }
-    }
-
-    @Override
-    public void removeEntityDangerously(Entity entity) {
-        if (editable) {
-            super.removeEntityDangerously(entity);
-        }
-    }
-
-    @Override
-    public void updateEntity(Entity entity) {
-        if (editable) {
-            super.updateEntity(entity);
-        }
-    }
-
-    @Override
-    public void updateEntityWithOptionalForce(Entity entity, boolean forceUpdate) {
-        if (editable) {
-            super.updateEntityWithOptionalForce(entity, forceUpdate);
-        }
-    }
-
-    @Override
-    public void loadEntities(Collection<Entity> entityCollection) {
-        if (editable) {
-            super.loadEntities(entityCollection);
-        }
-    }
-
-    @Override
-    public void unloadEntities(Collection<Entity> entityCollection) {
-        if (editable) {
-            super.unloadEntities(entityCollection);
-        }
-    }
-
-    @Override
-    public void joinEntityInSurroundings(Entity entity) {
-        if (editable) {
-            super.joinEntityInSurroundings(entity);
         }
     }
 
