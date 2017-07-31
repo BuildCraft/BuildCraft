@@ -1,0 +1,16 @@
+[
+    {
+        "selectors": ["minecraft:painting"],
+        "capture": true,
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:painting"
+                    }
+                ]
+            }
+        ]
+    }
+]

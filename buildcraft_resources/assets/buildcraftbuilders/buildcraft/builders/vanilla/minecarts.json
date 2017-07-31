@@ -1,0 +1,78 @@
+[
+    {
+        "selectors": ["minecraft:minecart"],
+        "capture": true,
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:minecart"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:chest_minecart"],
+        "capture": true,
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:chest_minecart"
+                    }
+                ]
+            }, {
+                "type": "items_list",
+                "path": ["Items"]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:furnace_minecart"],
+        "capture": true,
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:furnace_minecart"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:tnt_minecart"],
+        "capture": true,
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:tnt_minecart"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:hopper_minecart"],
+        "capture": true,
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:hopper_minecart"
+                    }
+                ]
+            }, {
+                "type": "items_list",
+                "path": ["Items"]
+            }
+        ]
+    }
+]

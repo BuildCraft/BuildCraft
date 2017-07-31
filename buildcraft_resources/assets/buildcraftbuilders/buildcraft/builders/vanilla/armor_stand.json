@@ -1,0 +1,22 @@
+[
+    {
+        "selectors": ["minecraft:armor_stand"],
+        "capture": true,
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:armor_stand"
+                    }
+                ]
+            }, {
+                "type": "items_list",
+                "path": ["HandItems"]
+            }, {
+                "type": "items_list",
+                "path": ["ArmorItems"]
+            }
+        ]
+    }
+]

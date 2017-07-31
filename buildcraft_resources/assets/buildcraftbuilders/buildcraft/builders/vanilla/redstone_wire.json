@@ -1,0 +1,16 @@
+[
+    {
+        "selectors": ["minecraft:redstone_wire"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:redstone"
+                    }
+                ]
+            }
+        ],
+        "ignoredProperties": ["power", "east", "north", "south", "west"]
+    }
+]
