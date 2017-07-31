@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,6 +148,8 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                 if (header != null) {
                     Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(header.key);
                     if (snapshot != null) {
+                        snapshot = snapshot.clone();
+                        snapshot.key = new Snapshot.Key(snapshot.key, header);
                         buffer.writeBoolean(true);
                         NbtSquisher.squish(
                             Snapshot.writeToNBT(snapshot),
@@ -252,21 +253,13 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                                 )
                             )
                         );
-                        invUpIn.setStackInSlot(0, StackUtil.EMPTY);
+                        Snapshot.Header header = snapshot.key.header;
+                        snapshot = snapshot.clone();
+                        snapshot.key = new Snapshot.Key(snapshot.key, header);
                         snapshot.computeKey();
                         GlobalSavedDataSnapshots.get(world).addSnapshot(snapshot);
-                        invUpOut.setStackInSlot(
-                            0,
-                            BCBuildersItems.SNAPSHOT.getUsed(
-                                snapshot.getType(),
-                                new Snapshot.Header(
-                                    snapshot.key,
-                                    getOwner().getId(),
-                                    new Date(),
-                                    "From library"
-                                )
-                            )
-                        );
+                        invUpOut.setStackInSlot(0, BCBuildersItems.SNAPSHOT.getUsed(snapshot.getType(), header));
+                        invUpIn.setStackInSlot(0, StackUtil.EMPTY);
                     } finally {
                         upSnapshotsParts.remove(pair);
                     }

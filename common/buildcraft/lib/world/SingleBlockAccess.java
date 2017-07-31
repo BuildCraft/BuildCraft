@@ -16,8 +16,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 
-/** An {@link IBlockAccess} for getting the properties of a single {@link IBlockState} at the {@link BlockPos#ORIGIN} */
+/** An {@link IBlockAccess} for getting the properties of a single {@link IBlockState}
+ * at the {@link SingleBlockAccess#POS} */
 public class SingleBlockAccess implements IBlockAccess {
+    public static final BlockPos POS = BlockPos.ORIGIN;
     public final IBlockState state;
 
     public SingleBlockAccess(IBlockState state) {
@@ -36,7 +38,7 @@ public class SingleBlockAccess implements IBlockAccess {
 
     @Override
     public IBlockState getBlockState(BlockPos pos) {
-        return BlockPos.ORIGIN.equals(pos) ? state : Blocks.AIR.getDefaultState();
+        return POS.equals(pos) ? state : Blocks.AIR.getDefaultState();
     }
 
     @Override
@@ -61,7 +63,7 @@ public class SingleBlockAccess implements IBlockAccess {
 
     @Override
     public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
-        if (!BlockPos.ORIGIN.equals(pos)) {
+        if (POS.equals(pos)) {
             return _default;
         }
         return state.isSideSolid(this, pos, side);

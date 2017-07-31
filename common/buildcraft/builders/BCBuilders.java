@@ -68,29 +68,29 @@ public class BCBuilders {
         AddonsRegistry.INSTANCE.register(new ResourceLocation("buildcraftbuilders", "filling_planner"), AddonFillingPlanner.class);
 
         SchematicBlockFactoryRegistry.registerFactory(
-                "air",
-                0,
-                SchematicBlockAir::predicate,
-                SchematicBlockAir::new
+            "air",
+            0,
+            SchematicBlockAir::predicate,
+            SchematicBlockAir::new
         );
         SchematicBlockFactoryRegistry.registerFactory(
-                "default",
-                100,
-                SchematicBlockDefault::predicate,
-                SchematicBlockDefault::new
+            "default",
+            100,
+            SchematicBlockDefault::predicate,
+            SchematicBlockDefault::new
         );
         SchematicBlockFactoryRegistry.registerFactory(
-                "fluid",
-                200,
-                SchematicBlockFluid::predicate,
-                SchematicBlockFluid::new
+            "fluid",
+            200,
+            SchematicBlockFluid::predicate,
+            SchematicBlockFluid::new
         );
 
         SchematicEntityFactoryRegistry.registerFactory(
-                "default",
-                100,
-                SchematicEntityDefault::predicate,
-                SchematicEntityDefault::new
+            "default",
+            100,
+            SchematicEntityDefault::predicate,
+            SchematicEntityDefault::new
         );
 
         BCBuildersProxy.getProxy().fmlPreInit();

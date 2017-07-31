@@ -193,6 +193,11 @@ public class NbtPath {
         }
     }
 
+    @Override
+    public String toString() {
+        return "NbtPath{" + elements + "}";
+    }
+
     @SuppressWarnings("WeakerAccess")
     public static final JsonDeserializer<NbtPath> DESERIALIZER = (json, typeOfT, context) ->
         new NbtPath(

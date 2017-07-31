@@ -39,6 +39,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.lib.BCLib;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.JsonUtil;
 
 public class RulesLoader {
@@ -155,12 +156,14 @@ public class RulesLoader {
                                             .map(nameValue -> nameValue.split("="))
                                             .allMatch(nameValue ->
                                                 blockState.getPropertyKeys().stream()
-                                                    .filter(property ->
-                                                        property.getName().equals(nameValue[0])
-                                                    )
+                                                    .filter(property -> property.getName().equals(nameValue[0]))
                                                     .findFirst()
-                                                    .map(blockState::getValue)
-                                                    .map(Object::toString)
+                                                    .map(property ->
+                                                        BlockUtil.getPropertyStringValue(
+                                                            blockState,
+                                                            property
+                                                        )
+                                                    )
                                                     .map(nameValue[1]::equals)
                                                     .orElse(false)
                                             )

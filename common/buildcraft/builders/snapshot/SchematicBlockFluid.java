@@ -6,10 +6,10 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,6 +25,7 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.core.InvalidInputDataException;
@@ -39,7 +40,9 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
 
     @SuppressWarnings("unused")
     public static boolean predicate(SchematicBlockContext context) {
-        return BlockUtil.getFluidWithFlowing(context.world, context.pos) != null;
+        return BlockUtil.getFluidWithFlowing(context.world, context.pos) != null &&
+            (BlockUtil.getFluid(context.world, context.pos) == null ||
+                BlockUtil.getFluidWithoutFlowing(context.world.getBlockState(context.pos)) != null);
     }
 
     @Override
@@ -71,12 +74,10 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
     @Nonnull
     @Override
     public List<FluidStack> computeRequiredFluids(SchematicBlockContext context) {
-        List<FluidStack> requiredFluids = new ArrayList<>();
-        FluidStack fluid = BlockUtil.drainBlock(context.world, context.pos, false);
-        if (fluid != null) {
-            requiredFluids.add(fluid);
-        }
-        return requiredFluids;
+        return Optional.ofNullable(BlockUtil.getFluidWithoutFlowing(blockState))
+            .map(fluid -> new FluidStack(fluid, Fluid.BUCKET_VOLUME))
+            .map(Collections::singletonList)
+            .orElseGet(Collections::emptyList);
     }
 
     @Override
@@ -90,7 +91,7 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
     @Override
     public boolean canBuild(World world, BlockPos blockPos) {
         return world.isAirBlock(blockPos) ||
-            BlockUtil.getFluidWithFlowing(world, blockPos) != BlockUtil.getFluidWithFlowing(blockState.getBlock()) &&
+            BlockUtil.getFluidWithFlowing(world, blockPos) == BlockUtil.getFluidWithFlowing(blockState.getBlock()) &&
                 BlockUtil.getFluid(world, blockPos) == null;
     }
 

@@ -1,18 +1,169 @@
 [
-//    {
-//        "selectors": [
-//            "minecraft:double_stone_slab",
-//            "minecraft:stone_slab",
-//            "minecraft:purpur_double_slab",
-//            "minecraft:purpur_slab",
-//            "minecraft:double_wooden_slab",
-//            "minecraft:wooden_slab",
-//            "minecraft:double_stone_slab2",
-//            "minecraft:stone_slab2",
-//            "minecraft:flower_pot"
-//        ]/*,
-//        "copyRequiredItemsFromDrops": true*/
-//    },
+    {
+        "selectors": ["minecraft:double_stone_slab[variant=stone]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:stone_slab",
+                "amount": 2,
+                "meta": 0
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:double_stone_slab[variant=sandstone]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:stone_slab",
+                "amount": 2,
+                "meta": 1
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:double_stone_slab[variant=cobblestone]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:stone_slab",
+                "amount": 2,
+                "meta": 3
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:double_stone_slab[variant=brick]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:stone_slab",
+                "amount": 2,
+                "meta": 4
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:double_stone_slab[variant=stone_brick]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:stone_slab",
+                "amount": 2,
+                "meta": 5
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:double_stone_slab[variant=nether_brick]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:stone_slab",
+                "amount": 2,
+                "meta": 6
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:double_stone_slab[variant=quartz]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:stone_slab",
+                "amount": 2,
+                "meta": 7
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:double_wooden_slab[variant=oak]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:wooden_slab",
+                "amount": 2,
+                "meta": 0
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:double_wooden_slab[variant=spruce]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:wooden_slab",
+                "amount": 2,
+                "meta": 1
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:double_wooden_slab[variant=birch]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:wooden_slab",
+                "amount": 2,
+                "meta": 2
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:double_wooden_slab[variant=jungle]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:wooden_slab",
+                "amount": 2,
+                "meta": 3
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:double_wooden_slab[variant=acacia]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:wooden_slab",
+                "amount": 2,
+                "meta": 4
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:double_wooden_slab[variant=dark_oak]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:wooden_slab",
+                "amount": 2,
+                "meta": 5
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:double_stone_slab2[variant=red_sandstone]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:stone_slab2",
+                "amount": 2,
+                "meta": 0
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:purpur_double_slab[variant=default]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:purpur_slab",
+                "amount": 2,
+                "meta": 0
+            }]
+        }]
+    },
     {
         "selectors": ["minecraft:flower_pot"],
         "requiredExtractors": [{
@@ -42,6 +193,14 @@
     },
     {
         "selectors": [
+            "minecraft:chest",
+            "minecraft:trapped_chest",
+            "minecraft:brewing_stand",
+            "minecraft:dispenser",
+            "minecraft:dropper",
+            "minecraft:furnace",
+            "minecraft:lit_furnace",
+            "minecraft:hopper",
             "minecraft:white_shulker_box",
             "minecraft:orange_shulker_box",
             "minecraft:magenta_shulker_box",
@@ -58,8 +217,13 @@
             "minecraft:green_shulker_box",
             "minecraft:red_shulker_box",
             "minecraft:black_shulker_box"
-        ]/*,
-        "copyRequiredItemsFromItemHandlersOnSides": ["north"]*/
+        ],
+        "requiredExtractors": [{
+            "type": "item_from_block"
+        }, {
+            "type": "items_list",
+            "path": ["Items"]
+        }]
     },
     {
         "selectors": [
@@ -69,41 +233,157 @@
         "ignore": true
     },
     {
-        "selectors": ["minecraft:cake"]/*,
-        "requiredItems": ["minecraft:cake"]*/
+        "selectors": ["minecraft:cake"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:cake"
+            }]
+        }]
     },
     {
-        "selectors": ["minecraft:snow_layer"]/*,
-        "copyRequiredItemsCountFromProperty": "layers"*/
+        "selectors": ["minecraft:snow_layer[layers=1]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:snow_layer",
+                "amount": 1
+            }]
+        }]
     },
     {
-        "selectors": ["minecraft:farmland"],/*
-        "requiredItems": ["minecraft:dirt"],*/
+        "selectors": ["minecraft:snow_layer[layers=2]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:snow_layer",
+                "amount": 2
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:snow_layer[layers=3]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:snow_layer",
+                "amount": 3
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:snow_layer[layers=4]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:snow_layer",
+                "amount": 4
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:snow_layer[layers=5]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:snow_layer",
+                "amount": 5
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:snow_layer[layers=6]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:snow_layer",
+                "amount": 6
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:snow_layer[layers=7]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:snow_layer",
+                "amount": 7
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:snow_layer[layers=8]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:snow_layer",
+                "amount": 8
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:farmland"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:dirt"
+            }]
+        }],
         "ignoredProperties": ["moisture"]
     },
     {
-        "selectors": ["minecraft:wheat"]/*,
-        "requiredItems": ["minecraft:wheat_seeds"]*/
+        "selectors": ["minecraft:wheat"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:wheat_seeds"
+            }]
+        }]
     },
     {
-        "selectors": ["minecraft:pumpkin_stem"]/*,
-        "requiredItems": ["minecraft:pumpkin_seeds"]*/
+        "selectors": ["minecraft:pumpkin_stem"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:pumpkin_seeds"
+            }]
+        }]
     },
     {
-        "selectors": ["minecraft:melon_stem"]/*,
-        "requiredItems": ["minecraft:melon_seeds"]*/
+        "selectors": ["minecraft:melon_stem"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:melon_seeds"
+            }]
+        }]
     },
     {
-        "selectors": ["minecraft:beetroots"]/*,
-        "requiredItems": ["minecraft:beetroot_seeds"]*/
+        "selectors": ["minecraft:beetroots"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:beetroot_seeds"
+            }]
+        }]
     },
     {
-        "selectors": ["minecraft:carrots"]/*,
-        "requiredItems": ["minecraft:carrot"]*/
+        "selectors": ["minecraft:carrots"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:carrot"
+            }]
+        }]
     },
     {
-//        "selectors": ["minecraft:potatoes"],
-//        "requiredItems": ["minecraft:potato"]
+        "selectors": ["minecraft:potatoes"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:potato"
+            }]
+        }]
     },
     {
         "selectors": [
@@ -118,37 +398,67 @@
     },
     {
         "selectors": ["minecraft:redstone_wire"],
-//        "requiredItems": ["minecraft:redstone"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:redstone"
+            }]
+        }],
         "ignoredProperties": ["power", "east", "north", "south", "west"]
     },
     {
         "selectors": ["minecraft:powered_repeater", "minecraft:unpowered_repeater"],
-//        "requiredItems": ["minecraft:repeater"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:repeater"
+            }]
+        }],
         "placeBlock": "minecraft:repeater",
         "canBeReplacedWithBlocks": ["minecraft:powered_repeater", "minecraft:unpowered_repeater"]
     },
     {
         "selectors": ["minecraft:powered_comparator", "minecraft:unpowered_comparator"],
-//        "requiredItems": ["minecraft:comparator"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:comparator"
+            }]
+        }],
         "placeBlock": "minecraft:comparator",
         "ignoredProperties": ["powered"],
         "canBeReplacedWithBlocks": ["minecraft:powered_comparator", "minecraft:unpowered_comparator"]
     },
     {
         "selectors": ["minecraft:redstone_ore", "minecraft:lit_redstone_ore"],
-//        "requiredItems": ["minecraft:redstone_ore"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:redstone_ore"
+            }]
+        }],
         "placeBlock": "minecraft:redstone_ore",
         "canBeReplacedWithBlocks": ["minecraft:redstone_ore", "minecraft:lit_redstone_ore"]
     },
     {
         "selectors": ["minecraft:redstone_torch", "minecraft:unlit_redstone_torch"],
-//        "requiredItems": ["minecraft:redstone_torch"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:redstone_torch"
+            }]
+        }],
         "placeBlock": "minecraft:redstone_torch",
         "canBeReplacedWithBlocks": ["minecraft:redstone_torch", "minecraft:unlit_redstone_torch"]
     },
     {
         "selectors": ["minecraft:redstone_lamp", "minecraft:lit_redstone_lamp"],
-//        "requiredItems": ["minecraft:redstone_lamp"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:redstone_lamp"
+            }]
+        }],
         "placeBlock": "minecraft:redstone_lamp",
         "canBeReplacedWithBlocks": ["minecraft:redstone_lamp", "minecraft:lit_redstone_lamp"]
     },
@@ -161,7 +471,15 @@
         "ignoredProperties": ["powered"]
     },
     {
-        "selectors": ["minecraft:wooden_door", "minecraft:iron_door"],
+        "selectors": [
+            "minecraft:wooden_door",
+            "minecraft:spruce_door",
+            "minecraft:birch_door",
+            "minecraft:jungle_door",
+            "minecraft:acacia_door",
+            "minecraft:dark_oak_door",
+            "minecraft:iron_door"
+        ],
         "ignoredProperties": ["powered", "open", "hinge"]
     },
     {
@@ -170,7 +488,12 @@
     },
     {
         "selectors": ["minecraft:daylight_detector", "minecraft:daylight_detector_inverted"],
-//        "requiredItems": ["minecraft:daylight_detector"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:daylight_detector"
+            }]
+        }],
         "ignoredProperties": ["power"]
     },
     {
@@ -199,6 +522,11 @@
             "minecraft:yellow_flower",
             "minecraft:beetroots",
             "minecraft:wooden_door",
+            "minecraft:spruce_door",
+            "minecraft:birch_door",
+            "minecraft:jungle_door",
+            "minecraft:acacia_door",
+            "minecraft:dark_oak_door",
             "minecraft:iron_door",
             "minecraft:rail",
             "minecraft:activator_rail",
@@ -225,8 +553,8 @@
         "selectors": ["minecraft:piston_head"],
         "placeBlock": "minecraft:air",
         "canBeReplacedWithBlocks": ["minecraft:piston_head", "minecraft:piston_extension", "minecraft:air"],
-        "ignoredProperties": ["facing", "short", "type"]/*,
-        "requiredItems": []*/
+        "ignoredProperties": ["facing", "short", "type"],
+        "requiredExtractors": []
     },
     {
         "selectors": [
@@ -238,18 +566,100 @@
         "ignoredProperties": ["shape", "powered"]
     },
     {
+        "selectors": ["minecraft:bed[part=foot]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:bed"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:wooden_door[half=lower]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:wooden_door"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:spruce_door[half=lower]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:spruce_door"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:birch_door[half=lower]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:birch_door"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:jungle_door[half=lower]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:jungle_door"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:acacia_door[half=lower]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:acacia_door"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:dark_oak_door[half=lower]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:dark_oak_door"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:iron_door[half=lower]"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:iron_door"
+            }]
+        }]
+    },
+    {
         "selectors": [
             "minecraft:bed[part=head]",
             "minecraft:wooden_door[half=upper]",
+            "minecraft:spruce_door[half=upper]",
+            "minecraft:birch_door[half=upper]",
+            "minecraft:jungle_door[half=upper]",
+            "minecraft:acacia_door[half=upper]",
+            "minecraft:dark_oak_door[half=upper]",
             "minecraft:iron_door[half=upper]",
             "minecraft:double_plant[half=upper]"
-        ]/*,
-        "requiredItems": []*/
+        ],
+        "requiredExtractors": []
     },
     {
         "selectors": [
             "minecraft:bed[part=foot]",
             "minecraft:wooden_door[half=lower]",
+            "minecraft:spruce_door[half=lower]",
+            "minecraft:birch_door[half=lower]",
+            "minecraft:jungle_door[half=lower]",
+            "minecraft:acacia_door[half=lower]",
+            "minecraft:dark_oak_door[half=lower]",
             "minecraft:iron_door[half=lower]",
             "minecraft:double_plant[half=lower]"
         ],
@@ -353,7 +763,220 @@
         "capture": true
     },
     {
-        "selectors": ["minecraft:ender_crystal"]/*,
-        "requiredItems": ["minecraft:end_crystal"]*/
+        "selectors": ["minecraft:painting"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:painting"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:item_frame"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:item_frame"
+            }]
+        }, {
+            "type": "item",
+            "path": ["Item"]
+        }]
+    },
+    {
+        "selectors": ["minecraft:armor_stand"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:armor_stand"
+            }]
+        }, {
+            "type": "items_list",
+            "path": ["HandItems"]
+        }, {
+            "type": "items_list",
+            "path": ["ArmorItems"]
+        }]
+    },
+    {
+        "selectors": ["minecraft:ender_crystal"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:ender_crystal"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:ender_crystal"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:ender_crystal"
+            }]
+        }]
+    },
+    {
+        "selectors": [{
+            "base": "minecraft:boat",
+            "nbt": [{
+                "key": ["Type"],
+                "operation": "=",
+                "value": "oak"
+            }]
+        }],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:oak_boat"
+            }]
+        }]
+    },
+    {
+        "selectors": [{
+            "base": "minecraft:boat",
+            "nbt": [{
+                "key": ["Type"],
+                "operation": "=",
+                "value": "spruce"
+            }]
+        }],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:spruce_boat"
+            }]
+        }]
+    },
+    {
+        "selectors": [{
+            "base": "minecraft:boat",
+            "nbt": [{
+                "key": ["Type"],
+                "operation": "=",
+                "value": "birch"
+            }]
+        }],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:birch_boat"
+            }]
+        }]
+    },
+    {
+        "selectors": [{
+            "base": "minecraft:boat",
+            "nbt": [{
+                "key": ["Type"],
+                "operation": "=",
+                "value": "jungle"
+            }]
+        }],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:jungle_boat"
+            }]
+        }]
+    },
+    {
+        "selectors": [{
+            "base": "minecraft:boat",
+            "nbt": [{
+                "key": ["Type"],
+                "operation": "=",
+                "value": "jungle"
+            }]
+        }],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:jungle_boat"
+            }]
+        }]
+    },
+    {
+        "selectors": [{
+            "base": "minecraft:boat",
+            "nbt": [{
+                "key": ["Type"],
+                "operation": "=",
+                "value": "acacia"
+            }]
+        }],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:acacia_boat"
+            }]
+        }]
+    },
+    {
+        "selectors": [{
+            "base": "minecraft:boat",
+            "nbt": [{
+                "key": ["Type"],
+                "operation": "=",
+                "value": "dark_oak"
+            }]
+        }],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:dark_oak_boat"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:minecart"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:minecart"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:chest_minecart"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:chest_minecart"
+            }]
+        }, {
+            "type": "items_list",
+            "path": ["Items"]
+        }]
+    },
+    {
+        "selectors": ["minecraft:furnace_minecart"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:furnace_minecart"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:tnt_minecart"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:tnt_minecart"
+            }]
+        }]
+    },
+    {
+        "selectors": ["minecraft:hopper_minecart"],
+        "requiredExtractors": [{
+            "type": "constant",
+            "items": [{
+                "item": "minecraft:hopper_minecart"
+            }]
+        }, {
+            "type": "items_list",
+            "path": ["Items"]
+        }]
     }
 ]

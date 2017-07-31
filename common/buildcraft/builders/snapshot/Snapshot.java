@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,7 +31,7 @@ import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
 
 public abstract class Snapshot {
-    public Key key = new Key(new byte[0]);
+    public Key key = new Key();
     public BlockPos size;
     public EnumFacing facing;
     public BlockPos offset;
@@ -77,6 +79,9 @@ public abstract class Snapshot {
         offset = NBTUtil.getPosFromTag(nbt.getCompoundTag("offset"));
     }
 
+    @Override
+    abstract public Snapshot clone();
+
     abstract public EnumSnapshotType getType();
 
     public void computeKey() {
@@ -84,7 +89,7 @@ public abstract class Snapshot {
         if (nbt.hasKey("key", Constants.NBT.TAG_COMPOUND)) {
             nbt.removeTag("key");
         }
-        key = new Key(HashUtil.computeHash(nbt));
+        key = new Key(key, HashUtil.computeHash(nbt));
     }
 
     @Override
@@ -99,35 +104,64 @@ public abstract class Snapshot {
 
     public static class Key {
         public final byte[] hash;
+        @SuppressWarnings("WeakerAccess")
+        @Nullable // for client storage
+        public final Header header;
 
         @SuppressWarnings("WeakerAccess")
-        public Key(byte[] hash) {
+        public Key() {
+            this.hash = new byte[0];
+            this.header = null;
+        }
+
+        @SuppressWarnings("WeakerAccess")
+        public Key(Key oldKey, byte[] hash) {
             this.hash = hash;
+            this.header = oldKey.header;
+        }
+
+        @SuppressWarnings("WeakerAccess")
+        public Key(Key oldKey, @Nullable Header header) {
+            this.hash = oldKey.hash;
+            this.header = header;
         }
 
         @SuppressWarnings("WeakerAccess")
         public Key(NBTTagCompound nbt) {
             hash = nbt.getByteArray("hash");
+            header = nbt.hasKey("header") ? new Header(nbt.getCompoundTag("header")) : null;
         }
 
         @SuppressWarnings("WeakerAccess")
         public Key(PacketBufferBC buffer) {
             hash = buffer.readByteArray();
+            header = buffer.readBoolean() ? new Header(buffer) : null;
         }
 
         public NBTTagCompound serializeNBT() {
             NBTTagCompound nbt = new NBTTagCompound();
             nbt.setByteArray("hash", hash);
+            if (header != null) {
+                nbt.setTag("header", header.serializeNBT());
+            }
             return nbt;
         }
 
         public void writeToByteBuf(PacketBufferBC buffer) {
             buffer.writeByteArray(hash);
+            buffer.writeBoolean(header != null);
+            if (header != null) {
+                header.writeToByteBuf(buffer);
+            }
         }
 
         @Override
         public boolean equals(Object o) {
-            return this == o || !(o == null || getClass() != o.getClass()) && Arrays.equals(hash, ((Key) o).hash);
+            return this == o ||
+                o != null &&
+                    getClass() == o.getClass() &&
+                    Arrays.equals(hash, ((Key) o).hash) &&
+                    (header != null ? header.equals(((Key) o).header) : ((Key) o).header == null);
         }
 
         @Override
@@ -161,6 +195,7 @@ public abstract class Snapshot {
             name = nbt.getString("name");
         }
 
+        @SuppressWarnings("WeakerAccess")
         public Header(PacketBufferBC buffer) {
             key = new Key(buffer);
             owner = buffer.readUniqueId();
@@ -186,6 +221,31 @@ public abstract class Snapshot {
 
         public EntityPlayer getOwnerPlayer(World world) {
             return world.getPlayerEntityByUUID(owner);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o ||
+                o != null &&
+                    getClass() == o.getClass() &&
+                    key.equals(((Header) o).key) &&
+                    owner.equals(((Header) o).owner) &&
+                    created.equals(((Header) o).created) &&
+                    name.equals(((Header) o).name);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = key.hashCode();
+            result = 31 * result + owner.hashCode();
+            result = 31 * result + created.hashCode();
+            result = 31 * result + name.hashCode();
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return name;
         }
     }
 }
