@@ -166,6 +166,6 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
     @Override
     @SideOnly(Side.CLIENT)
     public void renderInWorld() {
-        LaserBoxRenderer.renderLaserBoxStatic(box, BuildCraftLaserManager.MARKER_VOLUME_CONNECTED);
+        LaserBoxRenderer.renderLaserBoxStatic(box, BuildCraftLaserManager.MARKER_VOLUME_CONNECTED, true);
     }
 }
