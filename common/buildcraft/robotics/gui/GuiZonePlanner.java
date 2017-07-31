@@ -7,6 +7,7 @@ package buildcraft.robotics.gui;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+
 import javax.vecmath.Vector3d;
 
 import org.lwjgl.BufferUtils;

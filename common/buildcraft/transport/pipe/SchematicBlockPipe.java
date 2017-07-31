@@ -40,7 +40,7 @@ public class SchematicBlockPipe implements ISchematicBlock<SchematicBlockPipe> {
     private Rotation tileRotation = Rotation.NONE;
 
     public static boolean predicate(SchematicBlockContext context) {
-        return context.world.getBlockState(context.pos).getBlock() == BCTransportBlocks.pipeHolder;
+        return context.world.getBlockState(context.pos).getBlock() == BCTransportBlocks.PIPE_HOLDER;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class SchematicBlockPipe implements ISchematicBlock<SchematicBlockPipe> {
     @SuppressWarnings("Duplicates")
     @Override
     public boolean build(World world, BlockPos blockPos) {
-        if (world.setBlockState(blockPos, BCTransportBlocks.pipeHolder.getDefaultState(), 11)) {
+        if (world.setBlockState(blockPos, BCTransportBlocks.PIPE_HOLDER.getDefaultState(), 11)) {
             TileEntity tileEntity = TileEntity.create(world, tileNbt);
             if (tileEntity != null) {
                 tileEntity.setWorld(world);
@@ -130,7 +130,7 @@ public class SchematicBlockPipe implements ISchematicBlock<SchematicBlockPipe> {
     @SuppressWarnings("Duplicates")
     @Override
     public boolean buildWithoutChecks(World world, BlockPos blockPos) {
-        if (world.setBlockState(blockPos, BCTransportBlocks.pipeHolder.getDefaultState(), 0)) {
+        if (world.setBlockState(blockPos, BCTransportBlocks.PIPE_HOLDER.getDefaultState(), 0)) {
             TileEntity tileEntity = TileEntity.create(world, tileNbt);
             if (tileEntity != null) {
                 tileEntity.setWorld(world);
@@ -146,7 +146,7 @@ public class SchematicBlockPipe implements ISchematicBlock<SchematicBlockPipe> {
 
     @Override
     public boolean isBuilt(World world, BlockPos blockPos) {
-        return world.getBlockState(blockPos).getBlock() == BCTransportBlocks.pipeHolder;
+        return world.getBlockState(blockPos).getBlock() == BCTransportBlocks.PIPE_HOLDER;
     }
 
     @Override

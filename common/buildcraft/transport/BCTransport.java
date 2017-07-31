@@ -19,7 +19,6 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
-
 import buildcraft.api.transport.pipe.PipeApi;
 
 import buildcraft.lib.BCLib;

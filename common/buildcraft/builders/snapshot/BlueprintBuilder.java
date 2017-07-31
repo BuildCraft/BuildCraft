@@ -86,7 +86,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                         FluidUtilBC.mergeSameFluids(requiredFluids).stream()
                             .map(fluidStack -> tile.getTankManager().drain(fluidStack, !simulate))
                             .map(fluidStack -> {
-                                ItemStack stack = BlockUtil.getBucketFromFluid(fluidStack.getFluid());
+                                ItemStack stack = FluidUtil.getFilledBucket(fluidStack);
                                 if (!stack.hasTagCompound()) {
                                     stack.setTagCompound(new NBTTagCompound());
                                 }
