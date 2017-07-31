@@ -51,6 +51,16 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     }
 
     @Override
+    protected boolean readyToPlace(BlockPos blockPos) {
+        return true;
+    }
+
+    @Override
+    protected boolean hasEnoughToPlaceItems(BlockPos blockPos) {
+        return !tile.getInvResources().extract(null, 1, 1, true).isEmpty();
+    }
+
+    @Override
     protected List<ItemStack> getToPlaceItems(BlockPos blockPos) {
         return Collections.singletonList(tile.getInvResources().extract(null, 1, 1, false));
     }

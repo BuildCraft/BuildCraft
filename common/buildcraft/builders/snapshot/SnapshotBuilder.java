@@ -123,9 +123,10 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
 
     protected abstract boolean canPlace(BlockPos blockPos);
 
-    /**
-     * @return items
-     */
+    protected abstract boolean readyToPlace(BlockPos blockPos);
+
+    protected abstract boolean hasEnoughToPlaceItems(BlockPos blockPos);
+
     protected abstract List<ItemStack> getToPlaceItems(BlockPos blockPos);
 
     /**
@@ -319,6 +320,9 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                     isDone = false;
                 }
                 blocks.stream()
+                    .filter(this::hasEnoughToPlaceItems)
+                    .filter(this::canPlace)
+                    .filter(this::readyToPlace)
                     .map(blockPos ->
                         new PlaceTask(
                             blockPos,
@@ -326,10 +330,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                             0
                         )
                     )
-                    .filter(placeTask -> placeTask.items != null)
-                    .filter(placeTask -> !placeTask.items.contains(ItemStack.EMPTY))
                     .limit(MAX_QUEUE_SIZE - placeTasks.size())
-                    .filter(placeTasks -> canPlace(placeTasks.pos))
                     .forEach(placeTasks::add);
             }
         }
@@ -453,11 +454,13 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         public BlockPos pos;
         public long power;
 
+        @SuppressWarnings("WeakerAccess")
         public BreakTask(BlockPos pos, long power) {
             this.pos = pos;
             this.power = power;
         }
 
+        @SuppressWarnings("WeakerAccess")
         public BreakTask(PacketBufferBC buffer) {
             pos = MessageUtil.readBlockPos(buffer);
             power = buffer.readLong();
@@ -478,12 +481,14 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         public List<ItemStack> items;
         public long power;
 
+        @SuppressWarnings("WeakerAccess")
         public PlaceTask(BlockPos pos, List<ItemStack> items, long power) {
             this.pos = pos;
             this.items = items;
             this.power = power;
         }
 
+        @SuppressWarnings("WeakerAccess")
         public PlaceTask(PacketBufferBC buffer) {
             pos = MessageUtil.readBlockPos(buffer);
             items = IntStream.range(0, buffer.readInt()).mapToObj(j -> {

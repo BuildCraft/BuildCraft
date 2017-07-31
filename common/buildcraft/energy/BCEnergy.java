@@ -50,7 +50,7 @@ import buildcraft.energy.tile.TileSpringOil;
 public class BCEnergy {
     public static final String MODID = "buildcraftenergy";
     static {
-        FluidRegistry.enableUniversalBucket(); // FIXME: not working
+        FluidRegistry.enableUniversalBucket();
     }
 
     @Mod.Instance(MODID)

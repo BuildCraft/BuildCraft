@@ -61,7 +61,6 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
         TUBE_LASER = new LaserType(cap, middle, middles, null, cap);
     }
 
-    /** TODO: Call this! */
     public static void textureStitchPost() {
         LED_POWER.setWhiteTex();
         LED_STATUS.setWhiteTex();

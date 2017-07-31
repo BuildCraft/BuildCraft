@@ -25,14 +25,11 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.api.schematics.ISchematicEntity;
 
 import buildcraft.lib.net.MessageManager;
 
@@ -74,26 +71,7 @@ public enum ClientSnapshots {
     public void renderSnapshot(Snapshot snapshot, int offsetX, int offsetY, int sizeX, int sizeY) {
         FakeWorld world = worlds.computeIfAbsent(snapshot.key, key -> {
             FakeWorld localWorld = new FakeWorld();
-            if (snapshot instanceof Blueprint) {
-                localWorld.uploadBlueprint((Blueprint) snapshot, false);
-                for (ISchematicEntity<?> schematicEntity : ((Blueprint) snapshot).entities) {
-                    schematicEntity.build(localWorld, FakeWorld.BLUEPRINT_OFFSET);
-                }
-            }
-            if (snapshot instanceof Template) {
-                for (int z = 0; z < snapshot.size.getZ(); z++) {
-                    for (int y = 0; y < snapshot.size.getY(); y++) {
-                        for (int x = 0; x < snapshot.size.getX(); x++) {
-                            if (((Template) snapshot).data[x][y][z]) {
-                                localWorld.setBlockState(
-                                    new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET),
-                                    Blocks.QUARTZ_BLOCK.getDefaultState()
-                                );
-                            }
-                        }
-                    }
-                }
-            }
+            localWorld.uploadSnapshot(snapshot);
             return localWorld;
         });
         BufferBuilder bufferBuilder = buffers.computeIfAbsent(snapshot.key, key -> {
