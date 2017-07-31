@@ -22,6 +22,7 @@ import net.minecraft.util.math.Vec3i;
 public class VecUtil {
     public static final BlockPos POS_ONE = new BlockPos(1, 1, 1);
     public static final Vec3d VEC_HALF = new Vec3d(0.5, 0.5, 0.5);
+    public static final Vec3d VEC_ONE = new Vec3d(1, 1, 1);
 
     public static Vec3d add(Vec3d a, Vec3i b) {
         return a.addVector(b.getX(), b.getY(), b.getZ());

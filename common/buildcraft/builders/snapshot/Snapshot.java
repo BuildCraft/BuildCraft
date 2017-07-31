@@ -79,8 +79,7 @@ public abstract class Snapshot {
         offset = NBTUtil.getPosFromTag(nbt.getCompoundTag("offset"));
     }
 
-    @Override
-    abstract public Snapshot clone();
+    abstract public Snapshot copy();
 
     abstract public EnumSnapshotType getType();
 

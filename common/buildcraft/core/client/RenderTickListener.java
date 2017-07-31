@@ -234,7 +234,7 @@ public enum RenderTickListener {
             IBox box = ItemMapLocation.getAreaBox(stack);
             lastRenderedMapLoc.reset();
             lastRenderedMapLoc.initialize(box);
-            LaserBoxRenderer.renderLaserBoxStatic(lastRenderedMapLoc, BuildCraftLaserManager.STRIPES_WRITE);
+            LaserBoxRenderer.renderLaserBoxStatic(lastRenderedMapLoc, BuildCraftLaserManager.STRIPES_WRITE, false);
 
         } else if (type == MapLocationType.PATH) {
             List<BlockPos> path = BCCoreItems.MAP_LOCATION.getPath(stack);

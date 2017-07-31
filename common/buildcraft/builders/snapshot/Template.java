@@ -22,7 +22,7 @@ import buildcraft.lib.misc.data.Box;
 public class Template extends Snapshot {
     public boolean[][][] data;
 
-    public Template clone() {
+    public Template copy() {
         Template template = new Template();
         template.size = size;
         template.facing = facing;

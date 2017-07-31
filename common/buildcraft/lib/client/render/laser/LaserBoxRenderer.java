@@ -12,7 +12,6 @@ import java.util.List;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -25,51 +24,50 @@ import buildcraft.lib.misc.data.Box;
 @SideOnly(Side.CLIENT)
 public class LaserBoxRenderer {
     private static final double RENDER_SCALE = 1 / 16.05;
-    private static final Vec3d VEC_HALF = new Vec3d(0.5, 0.5, 0.5);
 
-    public static void renderLaserBoxStatic(Box box, LaserType type) {
+    public static void renderLaserBoxStatic(Box box, LaserType type, boolean center) {
         if (box == null || box.min() == null || box.max() == null) return;
 
-        makeLaserBox(box, type);
+        makeLaserBox(box, type, center);
 
         for (LaserData_BC8 data : box.laserData) {
             LaserRenderer_BC8.renderLaserStatic(data);
         }
     }
 
-    public static void renderLaserBoxDynamic(Box box, LaserType type, BufferBuilder bb) {
+    public static void renderLaserBoxDynamic(Box box, LaserType type, BufferBuilder bb, boolean center) {
         if (box == null || box.min() == null || box.max() == null) return;
 
-        makeLaserBox(box, type);
+        makeLaserBox(box, type, center);
 
         for (LaserData_BC8 data : box.laserData) {
             LaserRenderer_BC8.renderLaserDynamic(data, bb);
         }
     }
 
-    private static void makeLaserBox(Box box, LaserType type) {
+    private static void makeLaserBox(Box box, LaserType type, boolean center) {
+        if (box.min().equals(box.lastMin) && box.max().equals(box.lastMax) && box.laserData != null) {
+            return;
+        }
+
         int sizeX = box.size().getX();
         int sizeY = box.size().getY();
         int sizeZ = box.size().getZ();
 
-        BlockPos min = box.min();
-        BlockPos max = box.max();
-
-        if (min.equals(box.lastMin) && max.equals(box.lastMax) && box.laserData != null) {
-            return;
-        }
+        Vec3d min = new Vec3d(box.min()).add(center ? VecUtil.VEC_HALF : Vec3d.ZERO);
+        Vec3d max = new Vec3d(box.max()).add(center ? VecUtil.VEC_HALF : VecUtil.VEC_ONE);
 
         List<LaserData_BC8> datas = new ArrayList<>();
 
         Vec3d[][][] vecs = new Vec3d[2][2][2];
-        vecs[0][0][0] = new Vec3d(min).add(VEC_HALF);
-        vecs[1][0][0] = new Vec3d(new BlockPos(max.getX(), min.getY(), min.getZ())).add(VEC_HALF);
-        vecs[0][1][0] = new Vec3d(new BlockPos(min.getX(), max.getY(), min.getZ())).add(VEC_HALF);
-        vecs[1][1][0] = new Vec3d(new BlockPos(max.getX(), max.getY(), min.getZ())).add(VEC_HALF);
-        vecs[0][0][1] = new Vec3d(new BlockPos(min.getX(), min.getY(), max.getZ())).add(VEC_HALF);
-        vecs[1][0][1] = new Vec3d(new BlockPos(max.getX(), min.getY(), max.getZ())).add(VEC_HALF);
-        vecs[0][1][1] = new Vec3d(new BlockPos(min.getX(), max.getY(), max.getZ())).add(VEC_HALF);
-        vecs[1][1][1] = new Vec3d(max).add(VEC_HALF);
+        vecs[0][0][0] = new Vec3d(min.xCoord, min.yCoord, min.zCoord);
+        vecs[1][0][0] = new Vec3d(max.xCoord, min.yCoord, min.zCoord);
+        vecs[0][1][0] = new Vec3d(min.xCoord, max.yCoord, min.zCoord);
+        vecs[1][1][0] = new Vec3d(max.xCoord, max.yCoord, min.zCoord);
+        vecs[0][0][1] = new Vec3d(min.xCoord, min.yCoord, max.zCoord);
+        vecs[1][0][1] = new Vec3d(max.xCoord, min.yCoord, max.zCoord);
+        vecs[0][1][1] = new Vec3d(min.xCoord, max.yCoord, max.zCoord);
+        vecs[1][1][1] = new Vec3d(max.xCoord, max.yCoord, max.zCoord);
 
         if (sizeX > 1) {
             datas.add(makeLaser(type, vecs[0][0][0], vecs[1][0][0], Axis.X));
@@ -110,9 +108,9 @@ public class LaserBoxRenderer {
             }
         }
 
-        box.laserData = datas.toArray(new LaserData_BC8[datas.size()]);
-        box.lastMin = min;
-        box.lastMax = max;
+        box.laserData = datas.toArray(new LaserData_BC8[0]);
+        box.lastMin = box.min();
+        box.lastMax = box.max();
     }
 
     private static LaserData_BC8 makeLaser(LaserType type, Vec3d min, Vec3d max, Axis axis) {

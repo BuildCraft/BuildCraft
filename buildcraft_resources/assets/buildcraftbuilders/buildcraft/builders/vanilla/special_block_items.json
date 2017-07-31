@@ -1,0 +1,93 @@
+[
+    {
+        "selectors": ["minecraft:cake"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:cake"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:wheat"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:wheat_seeds"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:pumpkin_stem"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:pumpkin_seeds"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:melon_stem"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:melon_seeds"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:beetroots"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:beetroot_seeds"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:carrots"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:carrot"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:potatoes"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:potato"
+                    }
+                ]
+            }
+        ]
+    }
+]

@@ -134,15 +134,15 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                              z++) {
                             if (clickedMouseButton == 0) {
                                 bufferLayer.set(
-                                        x - container.tile.getPos().getX(),
-                                        z - container.tile.getPos().getZ(),
-                                        true
+                                    x - container.tile.getPos().getX(),
+                                    z - container.tile.getPos().getZ(),
+                                    true
                                 );
                             } else if (clickedMouseButton == 1) {
                                 bufferLayer.set(
-                                        x - container.tile.getPos().getX(),
-                                        z - container.tile.getPos().getZ(),
-                                        false
+                                    x - container.tile.getPos().getX(),
+                                    z - container.tile.getPos().getZ(),
+                                    false
                                 );
                             }
                         }
@@ -174,16 +174,16 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         ICON_GUI.drawAt(rootElement);
 
         drawProgress(
-                RECT_PROGRESS_INPUT,
-                ICON_PROGRESS_INPUT,
-                container.tile.deltaProgressInput.getDynamic(partialTicks),
-                1
+            RECT_PROGRESS_INPUT,
+            ICON_PROGRESS_INPUT,
+            container.tile.deltaProgressInput.getDynamic(partialTicks),
+            1
         );
         drawProgress(
-                RECT_PROGRESS_OUTPUT,
-                ICON_PROGRESS_OUTPUT,
-                1,
-                container.tile.deltaProgressOutput.getDynamic(partialTicks)
+            RECT_PROGRESS_OUTPUT,
+            ICON_PROGRESS_OUTPUT,
+            1,
+            container.tile.deltaProgressOutput.getDynamic(partialTicks)
         );
     }
 
@@ -198,12 +198,12 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         {
             ChunkPos chunkPos = new ChunkPos(posX >> 4, posZ >> 4);
             ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(
-                    mc.world,
-                    new ZonePlannerMapChunkKey(
-                            chunkPos,
-                            dimension,
-                            container.tile.getLevel()
-                    )
+                mc.world,
+                new ZonePlannerMapChunkKey(
+                    chunkPos,
+                    dimension,
+                    container.tile.getLevel()
+                )
             );
             BlockPos pos = null;
             if (zonePlannerMapChunk != null) {
@@ -226,17 +226,29 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         int offsetY = 9;
         int sizeX = 213;
         int sizeY = 100;
-        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT); // TODO: save depth buffer?
         GlStateManager.pushMatrix();
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
         ScaledResolution scaledResolution = new ScaledResolution(mc);
+        int viewportX = (x + offsetX) * scaledResolution.getScaleFactor();
+        int viewportY = mc.displayHeight - (sizeY + y + offsetY) * scaledResolution.getScaleFactor();
+        int viewportWidth = sizeX * scaledResolution.getScaleFactor();
+        int viewportHeight = sizeY * scaledResolution.getScaleFactor();
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor(
+            viewportX,
+            viewportY,
+            viewportWidth,
+            viewportHeight
+        );
+        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
         GlStateManager.viewport(
-                (x + offsetX) * scaledResolution.getScaleFactor(),
-                mc.displayHeight - (sizeY + y + offsetY) * scaledResolution.getScaleFactor(),
-                sizeX * scaledResolution.getScaleFactor(),
-                sizeY * scaledResolution.getScaleFactor()
+            viewportX,
+            viewportY,
+            viewportWidth,
+            viewportHeight
         );
         GlStateManager.scale(scaledResolution.getScaleFactor(), scaledResolution.getScaleFactor(), 1);
         GLU.gluPerspective(70.0F, (float) sizeX / sizeY, 1F, 1000.0F);
@@ -256,11 +268,11 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         for (int chunkX = chunkBaseX - radius; chunkX < chunkBaseX + radius; chunkX++) {
             for (int chunkZ = chunkBaseZ - radius; chunkZ < chunkBaseZ + radius; chunkZ++) {
                 ZonePlannerMapRenderer.INSTANCE.getChunkGlList(
-                        new ZonePlannerMapChunkKey(
-                                new ChunkPos(chunkX, chunkZ),
-                                dimension,
-                                container.tile.getLevel()
-                        )
+                    new ZonePlannerMapChunkKey(
+                        new ChunkPos(chunkX, chunkZ),
+                        dimension,
+                        container.tile.getLevel()
+                    )
                 ).ifPresent(GlStateManager::callList);
             }
         }
@@ -269,9 +281,9 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         int foundColor = 0;
 
         if (Mouse.getX() / scaledResolution.getScaleFactor() > x + offsetX &&
-                Mouse.getX() / scaledResolution.getScaleFactor() < x + offsetX + sizeX &&
-                scaledResolution.getScaledHeight() - Mouse.getY() / scaledResolution.getScaleFactor() > y + offsetY &&
-                scaledResolution.getScaledHeight() - Mouse.getY() / scaledResolution.getScaleFactor() < y + offsetY + sizeY) {
+            Mouse.getX() / scaledResolution.getScaleFactor() < x + offsetX + sizeX &&
+            scaledResolution.getScaledHeight() - Mouse.getY() / scaledResolution.getScaleFactor() > y + offsetY &&
+            scaledResolution.getScaledHeight() - Mouse.getY() / scaledResolution.getScaleFactor() < y + offsetY + sizeY) {
             FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(16);
             FloatBuffer modelViewBuffer = BufferUtils.createFloatBuffer(16);
             IntBuffer viewportBuffer = BufferUtils.createIntBuffer(16);
@@ -300,18 +312,18 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                 int chunkX = (int) Math.round(rayPosition.getX()) >> 4;
                 int chunkZ = (int) Math.round(rayPosition.getZ()) >> 4;
                 ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(
-                        mc.world,
-                        new ZonePlannerMapChunkKey(
-                                new ChunkPos(chunkX, chunkZ),
-                                mc.world.provider.getDimension(),
-                                container.tile.getLevel()
-                        )
+                    mc.world,
+                    new ZonePlannerMapChunkKey(
+                        new ChunkPos(chunkX, chunkZ),
+                        mc.world.provider.getDimension(),
+                        container.tile.getLevel()
+                    )
                 );
                 if (zonePlannerMapChunk != null) {
                     BlockPos pos = new BlockPos(
-                            Math.round(rayPosition.getX()) - (chunkX << 4),
-                            Math.round(rayPosition.getY()),
-                            Math.round(rayPosition.getZ()) - (chunkZ << 4)
+                        Math.round(rayPosition.getX()) - (chunkX << 4),
+                        Math.round(rayPosition.getY()),
+                        Math.round(rayPosition.getZ()) - (chunkZ << 4)
                     );
                     MapColourData data = zonePlannerMapChunk.getData(pos.getX(), pos.getZ());
                     if (data != null && data.posY >= pos.getY()) {
@@ -363,19 +375,19 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                         for (int blockX = chunkPos.getXStart(); blockX <= chunkPos.getXEnd(); blockX++) {
                             for (int blockZ = chunkPos.getZStart(); blockZ <= chunkPos.getZEnd(); blockZ++) {
                                 if (!layer.get(
-                                        blockX - container.tile.getPos().getX(),
-                                        blockZ - container.tile.getPos().getZ()
+                                    blockX - container.tile.getPos().getX(),
+                                    blockZ - container.tile.getPos().getZ()
                                 )) {
                                     continue;
                                 }
                                 int height;
                                 ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(
-                                        mc.world,
-                                        new ZonePlannerMapChunkKey(
-                                                chunkPos,
-                                                dimension,
-                                                container.tile.getLevel()
-                                        )
+                                    mc.world,
+                                    new ZonePlannerMapChunkKey(
+                                        chunkPos,
+                                        dimension,
+                                        container.tile.getLevel()
+                                    )
                                 );
                                 if (zonePlannerMapChunk != null) {
                                     MapColourData data = zonePlannerMapChunk.getData(blockX, blockZ);
@@ -394,12 +406,12 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                                 int a = 0x55;
                                 ZonePlannerMapRenderer.INSTANCE.setColor(r << 16 | g << 8 | b << 0 | a << 24);
                                 ZonePlannerMapRenderer.INSTANCE.drawBlockCuboid(
-                                        Tessellator.getInstance().getBuffer(),
-                                        blockX,
-                                        height + 0.1,
-                                        blockZ,
-                                        height,
-                                        0.6
+                                    Tessellator.getInstance().getBuffer(),
+                                    blockX,
+                                    height + 0.1,
+                                    blockZ,
+                                    height,
+                                    0.6
                                 );
                             }
                         }

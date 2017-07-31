@@ -58,7 +58,7 @@ public class TileReplacer extends TileBC_Neptune implements ITickable {
                             NBTUtilBC.getItemData(invSchematicTo.getStackInSlot(0))
                                 .getCompoundTag(ItemSchematicSingle.NBT_KEY)
                         );
-                        Blueprint newBlueprint = blueprint.clone();
+                        Blueprint newBlueprint = blueprint.copy();
                         newBlueprint.replace(from, to);
                         newBlueprint.computeKey();
                         GlobalSavedDataSnapshots.get(world).addSnapshot(newBlueprint);

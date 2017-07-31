@@ -6,6 +6,7 @@
 
 package buildcraft.builders.snapshot;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -37,6 +38,8 @@ import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.misc.BlockUtil;
@@ -95,28 +98,45 @@ public class RulesLoader {
     public static void loadAll() {
         RULES.clear();
         READ_DOMAINS.clear();
-        Block.REGISTRY.forEach(block -> {
-            if (block == null || block.getRegistryName() == null) {
-                return;
-            }
-            String domain = block.getRegistryName().getResourceDomain();
+        for (ModContainer modContainer : Loader.instance().getModList()) {
+            String domain = modContainer.getModId();
             if (!READ_DOMAINS.contains(domain)) {
-                InputStream inputStream = block.getClass().getClassLoader().getResourceAsStream(
-                    "assets/" + domain + "/buildcraft/builders/rules.json"
+                String base = "assets/" + domain + "/buildcraft/builders/";
+                if (modContainer.getMod() == null) {
+                    continue;
+                }
+                InputStream inputStream = modContainer.getMod().getClass().getClassLoader().getResourceAsStream(
+                    base + "index.json"
                 );
                 if (inputStream != null) {
-                    RULES.addAll(
-                        GSON
-                            .fromJson(
-                                new InputStreamReader(inputStream),
+                    GSON.<List<String>>fromJson(
+                        new InputStreamReader(inputStream),
+                        new TypeToken<List<String>>() {
+                        }.getType()
+                    ).stream()
+                        .map(name -> base + name + ".json")
+                        .map(name -> {
+                            InputStream resourceAsStream = modContainer.getMod()
+                                .getClass()
+                                .getClassLoader()
+                                .getResourceAsStream(name);
+                            if (resourceAsStream == null) {
+                                throw new RuntimeException(new IOException("Can't read " + name));
+                            }
+                            return resourceAsStream;
+                        })
+                        .flatMap(localInputStream ->
+                            GSON.<List<JsonRule>>fromJson(
+                                new InputStreamReader(localInputStream),
                                 new TypeToken<List<JsonRule>>() {
                                 }.getType()
-                            )
-                    );
+                            ).stream()
+                        )
+                        .forEach(RULES::add);
                     READ_DOMAINS.add(domain);
                 }
             }
-        });
+        }
         READ_DOMAINS.add("minecraft");
         READ_DOMAINS.add("buildcraftcore");
         READ_DOMAINS.add("buildcraftlib");

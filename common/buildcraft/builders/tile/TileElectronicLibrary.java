@@ -148,7 +148,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                 if (header != null) {
                     Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(header.key);
                     if (snapshot != null) {
-                        snapshot = snapshot.clone();
+                        snapshot = snapshot.copy();
                         snapshot.key = new Snapshot.Key(snapshot.key, header);
                         buffer.writeBoolean(true);
                         NbtSquisher.squish(
@@ -254,7 +254,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                             )
                         );
                         Snapshot.Header header = snapshot.key.header;
-                        snapshot = snapshot.clone();
+                        snapshot = snapshot.copy();
                         snapshot.key = new Snapshot.Key(snapshot.key, header);
                         snapshot.computeKey();
                         GlobalSavedDataSnapshots.get(world).addSnapshot(snapshot);

@@ -1,0 +1,11 @@
+[
+    {
+        "selectors": [
+            "minecraft:rail",
+            "minecraft:activator_rail",
+            "minecraft:detector_rail",
+            "minecraft:golden_rail"
+        ],
+        "ignoredProperties": ["shape", "powered"]
+    }
+]

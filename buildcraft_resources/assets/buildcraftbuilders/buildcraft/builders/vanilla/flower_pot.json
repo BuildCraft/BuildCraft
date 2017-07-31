@@ -1,0 +1,41 @@
+[
+    {
+        "selectors": ["minecraft:flower_pot"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:flower_pot"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            {
+                "base": "minecraft:flower_pot",
+                "nbt": [
+                    {
+                        "key": ["Item"],
+                        "operation": "!=",
+                        "value": "minecraft:air"
+                    }
+                ]
+            }
+        ],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": ["Item"],
+                        "amount": 1,
+                        "meta": ["Data"]
+                    }
+                ]
+            }
+        ]
+    }
+]
