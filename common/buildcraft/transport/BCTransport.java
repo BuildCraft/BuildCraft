@@ -18,6 +18,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
+
 import buildcraft.lib.BCLib;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.net.MessageManager;
@@ -29,6 +31,7 @@ import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
 
 import buildcraft.core.BCCore;
+import buildcraft.transport.pipe.SchematicBlockPipe;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
 import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
@@ -72,6 +75,13 @@ public class BCTransport {
         tabPlugs.setItem(BCTransportItems.plugGate);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCTransportProxy.getProxy());
+
+        SchematicBlockFactoryRegistry.registerFactory(
+            "pipe",
+            300,
+            SchematicBlockPipe::predicate,
+            SchematicBlockPipe::new
+        );
 
         BCTransportProxy.getProxy().fmlPreInit();
 
