@@ -106,17 +106,29 @@ public enum ClientSnapshots {
         GlStateManager.pushAttrib();
         GlStateManager.enableDepth();
         GlStateManager.enableBlend();
-        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT); // TODO: save depth buffer?
         GlStateManager.pushMatrix();
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+        int viewportX = offsetX * scaledResolution.getScaleFactor();
+        int viewportY = Minecraft.getMinecraft().displayHeight - (sizeY + offsetY) * scaledResolution.getScaleFactor();
+        int viewportWidth = sizeX * scaledResolution.getScaleFactor();
+        int viewportHeight = sizeY * scaledResolution.getScaleFactor();
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor(
+            viewportX,
+            viewportY,
+            viewportWidth,
+            viewportHeight
+        );
+        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
         GlStateManager.viewport(
-            offsetX * scaledResolution.getScaleFactor(),
-            Minecraft.getMinecraft().displayHeight - (sizeY + offsetY) * scaledResolution.getScaleFactor(),
-            sizeX * scaledResolution.getScaleFactor(),
-            sizeY * scaledResolution.getScaleFactor()
+            viewportX,
+            viewportY,
+            viewportWidth,
+            viewportHeight
         );
         GlStateManager.scale(scaledResolution.getScaleFactor(), scaledResolution.getScaleFactor(), 1);
         GLU.gluPerspective(70.0F, (float) sizeX / sizeY, 0.1F, 1000.0F);
