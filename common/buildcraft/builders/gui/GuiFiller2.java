@@ -15,7 +15,7 @@ import buildcraft.lib.gui.json.InventorySlotHolder;
 import buildcraft.lib.gui.json.SpriteDelegate;
 
 import buildcraft.builders.container.ContainerFiller;
-import buildcraft.builders.patterns.FillerStatementContext;
+import buildcraft.builders.filler.FillerStatementContext;
 import buildcraft.core.BCCoreSprites;
 
 public class GuiFiller2 extends GuiJson<ContainerFiller> {
@@ -30,6 +30,7 @@ public class GuiFiller2 extends GuiJson<ContainerFiller> {
 
     @Override
     protected void preLoad() {
+        super.preLoad();
         properties.put("player.inventory", new InventorySlotHolder(container, container.player.inventory));
         properties.put("filler.inventory", new InventorySlotHolder(container, container.tile.invResources));
         properties.put("statement.container", container.tile);
@@ -47,6 +48,7 @@ public class GuiFiller2 extends GuiJson<ContainerFiller> {
 
     @Override
     protected void postLoad() {
+        super.postLoad();
         setupButton("filler.no_excavate", b -> {
             b.setBehaviour(IButtonBehaviour.TOGGLE);
             final ToolTip active = ToolTip.createLocalized("tip.filler.excavate.off");

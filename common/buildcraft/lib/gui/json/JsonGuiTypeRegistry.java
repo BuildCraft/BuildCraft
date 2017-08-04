@@ -9,6 +9,8 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import buildcraft.lib.client.model.ResourceLoaderContext;
+
 /** Turns several json elements into some functional gui data. */
 public class JsonGuiTypeRegistry {
     public static final Map<String, ElementType> TYPES = new HashMap<>();
@@ -39,7 +41,7 @@ public class JsonGuiTypeRegistry {
             obj = new Gson().fromJson(isr, JsonObject.class);
         }
 
-        JsonGuiInfo info = new JsonGuiInfo(obj);
+        JsonGuiInfo info = new JsonGuiInfo(obj, new ResourceLoaderContext());
         info.printOut(System.out::println);
     }
 }

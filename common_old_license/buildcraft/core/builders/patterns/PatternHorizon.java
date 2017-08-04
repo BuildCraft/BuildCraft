@@ -38,7 +38,7 @@ public class PatternHorizon extends Pattern {
         int minZ = box.min().getZ();
 
         int maxX = box.max().getX();
-        int maxY = filler.getTile().getWorld().getHeight();
+        int maxY = filler.getFillerWorld().getHeight();
         int maxZ = box.max().getZ();
 
         FilledTemplate bpt = new FilledTemplate(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ));

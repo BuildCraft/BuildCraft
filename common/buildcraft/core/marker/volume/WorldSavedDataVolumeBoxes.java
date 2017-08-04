@@ -113,7 +113,7 @@ public class WorldSavedDataVolumeBoxes extends WorldSavedData {
     }
 
     public static WorldSavedDataVolumeBoxes get(World world) {
-        if(world.isRemote) {
+        if (world.isRemote) {
             BCLog.logger.warn("Creating VolumeBoxes on client, this is a bug");
         }
         MapStorage storage = world.getPerWorldStorage();

@@ -456,7 +456,6 @@ item.PipeItemsSandstone.name=Sandstone Transport Pipe
 item.PipeFluidsSandstone.name=Sandstone Fluid Pipe
 item.PipePowerSandstone.name=Sandstone Kinesis Pipe
 
-
 item.PipeRobotStation.name=Docking Station
 item.Facade.name=Facade
 item.Facade.state_hollow=Hollow
@@ -474,6 +473,7 @@ item.debugger.warning=Use only for testing! Leaks secrets.
 item.package.name=Package
 item.guide.name=Guide Book
 item.robot_goggles.name=Robot Goggles
+item.filler_planner.name=Filler Planner
 
 itemGroup.buildcraft.boards=BuildCraft Robots
 itemGroup.buildcraft.main=BuildCraft

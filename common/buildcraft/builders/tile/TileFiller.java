@@ -57,8 +57,8 @@ import buildcraft.lib.tile.item.StackInsertionChecker;
 import buildcraft.lib.tile.item.StackInsertionFunction;
 
 import buildcraft.builders.BCBuildersBlocks;
+import buildcraft.builders.filler.FillerType;
 import buildcraft.builders.filling.Filling;
-import buildcraft.builders.patterns.FillerType;
 import buildcraft.builders.snapshot.ITileForTemplateBuilder;
 import buildcraft.builders.snapshot.SnapshotBuilder;
 import buildcraft.builders.snapshot.Template;
@@ -414,6 +414,11 @@ public class TileFiller extends TileBC_Neptune
     @Override
     public TileEntity getTile() {
         return this;
+    }
+
+    @Override
+    public World getFillerWorld() {
+        return world;
     }
 
     @Override

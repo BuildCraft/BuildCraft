@@ -6,17 +6,17 @@
 
 package buildcraft.core.marker.volume;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.UnpooledByteBufAllocator;
-
-import net.minecraft.network.PacketBuffer;
+import io.netty.buffer.Unpooled;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+
+import buildcraft.lib.net.PacketBufferBC;
 
 public class MessageVolumeBoxes implements IMessage {
     public List<VolumeBox> boxes = new ArrayList<>();
@@ -29,15 +29,24 @@ public class MessageVolumeBoxes implements IMessage {
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(ByteBuf buffer) {
+        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
         buf.writeInt(boxes.size());
-        boxes.forEach(box -> box.toBytes(new PacketBuffer(buf)));
+        boxes.forEach(box -> box.toBytes(buf));
     }
 
     @Override
-    public void fromBytes(ByteBuf buf) {
+    public void fromBytes(ByteBuf buffer) {
+        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
         boxes.clear();
-        IntStream.range(0, buf.readInt()).mapToObj(i -> new VolumeBox(new PacketBuffer(buf))).forEach(boxes::add);
+        int count = buf.readInt();
+        try {
+            for (int i = 0; i < count; i++) {
+                boxes.add(new VolumeBox(buf));
+            }
+        } catch (IOException io) {
+            throw new RuntimeException(io);
+        }
     }
 
     public static final IMessageHandler<MessageVolumeBoxes, IMessage> HANDLER = (message, ctx) -> {
@@ -46,12 +55,18 @@ public class MessageVolumeBoxes implements IMessage {
                 .filter(box -> !ClientVolumeBoxes.INSTANCE.boxes.contains(box))
                 .forEach(ClientVolumeBoxes.INSTANCE.boxes::add);
         for (VolumeBox box : message.boxes) {
-            PacketBuffer buf = new PacketBuffer(UnpooledByteBufAllocator.DEFAULT.buffer());
+            PacketBufferBC buf = new PacketBufferBC(Unpooled.buffer());
             box.toBytes(buf);
-            ClientVolumeBoxes.INSTANCE.boxes.stream()
-                    .filter(box::equals)
-                    .findFirst()
-                    .ifPresent(b -> b.fromBytes(buf));
+            for (VolumeBox clientBox : ClientVolumeBoxes.INSTANCE.boxes) {
+                if (clientBox.equals(box)) {
+                    try {
+                        clientBox.fromBytes(buf);
+                    } catch (IOException io) {
+                        throw new RuntimeException(io);
+                    }
+                    break;
+                }
+            }
         }
         return null;
     };

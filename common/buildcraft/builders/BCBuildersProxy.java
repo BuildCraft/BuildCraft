@@ -27,12 +27,14 @@ import buildcraft.builders.container.ContainerArchitectTable;
 import buildcraft.builders.container.ContainerBuilder;
 import buildcraft.builders.container.ContainerElectronicLibrary;
 import buildcraft.builders.container.ContainerFiller;
+import buildcraft.builders.container.ContainerFillerPlanner;
 import buildcraft.builders.container.ContainerFillingPlanner;
 import buildcraft.builders.container.ContainerReplacer;
 import buildcraft.builders.gui.GuiArchitectTable;
 import buildcraft.builders.gui.GuiBuilder;
 import buildcraft.builders.gui.GuiElectronicLibrary;
 import buildcraft.builders.gui.GuiFiller2;
+import buildcraft.builders.gui.GuiFillerPlanner;
 import buildcraft.builders.gui.GuiFilling;
 import buildcraft.builders.gui.GuiReplacer;
 import buildcraft.builders.tile.TileArchitectTable;
@@ -143,7 +145,7 @@ public abstract class BCBuildersProxy implements IGuiHandler {
                 }
             }
             if (id == BCBuildersGuis.FILLING_PLANNER.ordinal()) {
-                return new GuiFilling(new ContainerFillingPlanner(player));
+                return new GuiFillerPlanner(new ContainerFillerPlanner(player, fillerPlanner));
             }
             return null;
         }

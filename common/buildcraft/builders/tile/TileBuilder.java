@@ -154,6 +154,7 @@ public class TileBuilder extends TileBC_Neptune
     }
 
     private void updateSnapshot() {
+        world.profiler.startSection("updateSnapshot");
         Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::cancel);
         if (snapshot != null && getCurrentBasePos() != null) {
             snapshotType = snapshot.getType();
@@ -177,6 +178,7 @@ public class TileBuilder extends TileBC_Neptune
         if (currentBox == null) {
             currentBox = new Box();
         }
+        world.profiler.endSection();
     }
 
     private void updateBasePoses() {
@@ -215,8 +217,11 @@ public class TileBuilder extends TileBC_Neptune
 
     @Override
     public void update() {
+        world.profiler.startSection("main");
+        world.profiler.startSection("power");
         battery.tick(getWorld(), getPos());
         battery.addPowerChecking(64 * MjAPI.MJ, false);
+        world.profiler.endStartSection("builder");
         SnapshotBuilder<?> builder = getBuilder();
         if (builder != null) {
             isDone = builder.tick();
@@ -230,7 +235,9 @@ public class TileBuilder extends TileBC_Neptune
                 }
             }
         }
+        world.profiler.endStartSection("net_update");
         sendNetworkUpdate(NET_RENDER_DATA); // FIXME
+        world.profiler.endSection();
     }
 
     // Networking

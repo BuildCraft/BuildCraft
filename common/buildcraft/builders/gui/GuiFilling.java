@@ -28,6 +28,7 @@ import buildcraft.builders.container.IContainerFilling;
 import buildcraft.builders.filling.Filling;
 import buildcraft.builders.filling.IParameter;
 
+@Deprecated
 public class GuiFilling extends GuiBC8<ContainerBC_Neptune> {
     private static final ResourceLocation FILLING_PLANNER_TEXTURE_BASE =
         new ResourceLocation("buildcraftbuilders:textures/gui/filling_planner.png");

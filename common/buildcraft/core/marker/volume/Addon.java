@@ -6,19 +6,18 @@
 
 package buildcraft.core.marker.volume;
 
-import io.netty.buffer.ByteBuf;
+import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.World;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-/**
- * TODO: Replace this addon system with a "BoxType" system
- */
-@Deprecated
+import buildcraft.lib.net.PacketBufferBC;
+
 public abstract class Addon {
     public VolumeBox box;
 
@@ -37,7 +36,7 @@ public abstract class Addon {
         return !(this instanceof ISingleAddon) || box.addons.values().stream().noneMatch(addon -> addon.getClass() == getClass());
     }
 
-    public void onAdded() {
+    public void onAdded(World world) {
     }
 
     public void onRemoved() {
@@ -53,7 +52,7 @@ public abstract class Addon {
 
     public abstract void readFromNBT(NBTTagCompound nbt);
 
-    public abstract void toBytes(ByteBuf buf);
+    public abstract void toBytes(PacketBufferBC buf);
 
-    public abstract void fromBytes(ByteBuf buf);
+    public abstract void fromBytes(PacketBufferBC buf) throws IOException;
 }

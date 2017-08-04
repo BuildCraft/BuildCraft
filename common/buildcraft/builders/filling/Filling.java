@@ -29,6 +29,8 @@ import net.minecraft.util.math.BlockPos;
 
 import buildcraft.builders.snapshot.Template;
 
+// TODO: Move the functionality for a lot of this class to patterns
+@Deprecated
 public class Filling {
     private static List<Item> itemBlocks = new ArrayList<>();
     private static final List<Point2d> PENTAGON_POINTS = Arrays.asList(

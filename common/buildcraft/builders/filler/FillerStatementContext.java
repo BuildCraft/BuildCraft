@@ -1,4 +1,4 @@
-package buildcraft.builders.patterns;
+package buildcraft.builders.filler;
 
 import java.util.ArrayList;
 import java.util.List;
