@@ -48,14 +48,7 @@ public class Blueprint extends Snapshot {
         blueprint.facing = facing;
         blueprint.offset = offset;
         blueprint.palette.addAll(palette);
-        blueprint.data = new int[size.getX() * size.getY() * size.getZ()];
-        for (int z = 0; z < size.getZ(); z++) {
-            for (int y = 0; y < size.getY(); y++) {
-                for (int x = 0; x < size.getX(); x++) {
-                    blueprint.data[posToIndex(x, y, z)] = data[posToIndex(x, y, z)];
-                }
-            }
-        }
+        blueprint.data = data.clone();
         blueprint.entities.addAll(entities);
         blueprint.computeKey();
         return blueprint;
