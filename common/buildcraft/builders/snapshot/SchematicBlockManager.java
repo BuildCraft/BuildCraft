@@ -71,7 +71,9 @@ public class SchematicBlockManager {
         for (int z = 0; z < blueprint.size.getZ(); z++) {
             for (int y = 0; y < blueprint.size.getY(); y++) {
                 for (int x = 0; x < blueprint.size.getX(); x++) {
-                    ISchematicBlock<?> schematicBlock = blueprint.palette.get(blueprint.data[x][y][z]);
+                    ISchematicBlock<?> schematicBlock = blueprint.palette.get(
+                        blueprint.data[blueprint.posToIndex(x, y, z)]
+                    );
                     requiredItems[x][y][z] = schematicBlock.computeRequiredItems(null);
                     requiredFluids[x][y][z] = schematicBlock.computeRequiredFluids(null);
                 }

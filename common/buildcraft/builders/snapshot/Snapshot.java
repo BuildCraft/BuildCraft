@@ -46,6 +46,36 @@ public abstract class Snapshot {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public static int posToIndex(int sizeX, int sizeY, int sizeZ, int x, int y, int z) {
+        return z * sizeY * sizeX + y * sizeX + x;
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public static int posToIndex(BlockPos size, int x, int y, int z) {
+        return posToIndex(size.getX(), size.getY(), size.getZ(), x, y, z);
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public static int posToIndex(int sizeX, int sizeY, int sizeZ, BlockPos pos) {
+        return posToIndex(sizeX, sizeY, sizeZ, pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public static int posToIndex(BlockPos size, BlockPos pos) {
+        return posToIndex(size.getX(), size.getY(), size.getZ(), pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public int posToIndex(int x, int y, int z) {
+        return posToIndex(size, x, y, z);
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public int posToIndex(BlockPos pos) {
+        return posToIndex(size, pos);
+    }
+
     public static NBTTagCompound writeToNBT(Snapshot snapshot) {
         NBTTagCompound nbt = snapshot.serializeNBT();
         nbt.setTag("type", NBTUtilBC.writeEnum(snapshot.getType()));

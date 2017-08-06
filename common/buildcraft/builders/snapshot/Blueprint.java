@@ -38,7 +38,7 @@ import buildcraft.lib.misc.data.Box;
 
 public class Blueprint extends Snapshot {
     public final List<ISchematicBlock<?>> palette = new ArrayList<>();
-    public int[][][] data;
+    public int[] data;
     public final List<ISchematicEntity<?>> entities = new ArrayList<>();
 
     @Override
@@ -48,11 +48,11 @@ public class Blueprint extends Snapshot {
         blueprint.facing = facing;
         blueprint.offset = offset;
         blueprint.palette.addAll(palette);
-        blueprint.data = new int[size.getX()][size.getY()][size.getZ()];
+        blueprint.data = new int[size.getX() * size.getY() * size.getZ()];
         for (int z = 0; z < size.getZ(); z++) {
             for (int y = 0; y < size.getY(); y++) {
                 for (int x = 0; x < size.getX(); x++) {
-                    blueprint.data[x][y][z] = data[x][y][z];
+                    blueprint.data[posToIndex(x, y, z)] = data[posToIndex(x, y, z)];
                 }
             }
         }
@@ -74,7 +74,7 @@ public class Blueprint extends Snapshot {
         for (int z = 0; z < size.getZ(); z++) {
             for (int y = 0; y < size.getY(); y++) {
                 for (int x = 0; x < size.getX(); x++) {
-                    list.appendTag(new NBTTagInt(data[x][y][z]));
+                    list.appendTag(new NBTTagInt(data[posToIndex(x, y, z)]));
                 }
             }
         }
@@ -95,25 +95,32 @@ public class Blueprint extends Snapshot {
             // schematics through mod additions/deletions)
             palette.add(SchematicBlockManager.readFromNBT(schematicBlockTag));
         }
-        data = new int[size.getX()][size.getY()][size.getZ()];
-
-        NBTTagList list = nbt.hasKey("data", Constants.NBT.TAG_LIST) ? nbt.getTagList("data", Constants.NBT.TAG_INT)
+        data = new int[size.getX() * size.getY() * size.getZ()];
+        NBTTagList serializedDataList = nbt.hasKey("data", Constants.NBT.TAG_LIST)
+            ? nbt.getTagList("data", Constants.NBT.TAG_INT)
             : null;
-        int[] serializedData = nbt.hasKey("data", Constants.NBT.TAG_INT_ARRAY) ? nbt.getIntArray("data") : new int[0];
-        if (serializedData == null && list == null) {
+        int[] serializedDataIntArray = nbt.hasKey("data", Constants.NBT.TAG_INT_ARRAY)
+            ? nbt.getIntArray("data")
+            : null;
+        if (serializedDataIntArray == null && serializedDataList == null) {
             throw new InvalidInputDataException("Can't read a blueprint with no data!");
         }
-        int len = list == null ? serializedData.length : list.tagCount();
-        if (len != size.getX() * size.getY() * size.getZ()) {
-            throw new InvalidInputDataException("Palette has length of " + len
-                + ", but we expected " + size.getX() * size.getY() * size.getZ() + size.toString());
+        int serializedDataLength = serializedDataList == null
+            ? serializedDataIntArray.length
+            : serializedDataList.tagCount();
+        if (serializedDataLength != size.getX() * size.getY() * size.getZ()) {
+            throw new InvalidInputDataException(
+                "Serialized data has length of " + serializedDataLength +
+                    ", but we expected " +
+                    size.getX() * size.getY() * size.getZ() + " (" + size.toString() + ")"
+            );
         }
-        int i = 0;
         for (int z = 0; z < size.getZ(); z++) {
             for (int y = 0; y < size.getY(); y++) {
                 for (int x = 0; x < size.getX(); x++) {
-                    data[x][y][z] = list == null ? serializedData[i] : list.getIntAt(i);
-                    i++;
+                    data[posToIndex(x, y, z)] = serializedDataList == null
+                        ? serializedDataIntArray[posToIndex(x, y, z)]
+                        : serializedDataList.getIntAt(posToIndex(x, y, z));
                 }
             }
         }
@@ -128,6 +135,7 @@ public class Blueprint extends Snapshot {
         return EnumSnapshotType.BLUEPRINT;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public class BuildingInfo {
         public final BlockPos basePos;
         public final Rotation rotation;
@@ -150,7 +158,7 @@ public class Blueprint extends Snapshot {
             for (int z = 0; z < getSnapshot().size.getZ(); z++) {
                 for (int y = 0; y < getSnapshot().size.getY(); y++) {
                     for (int x = 0; x < getSnapshot().size.getX(); x++) {
-                        ISchematicBlock<?> schematicBlock = palette.get(data[x][y][z]);
+                        ISchematicBlock<?> schematicBlock = palette.get(data[posToIndex(x, y, z)]);
                         BlockPos blockPos = new BlockPos(x, y, z).rotate(rotation).add(basePos).add(offset.rotate(
                             rotation));
                         if (schematicBlock.isAir()) {

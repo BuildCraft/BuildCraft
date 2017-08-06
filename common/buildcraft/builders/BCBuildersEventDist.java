@@ -107,7 +107,7 @@ public enum BCBuildersEventDist {
                 Blueprint blueprint = new Blueprint();
                 blueprint.size = new BlockPos(1, 1, 1);
                 blueprint.offset = BlockPos.ORIGIN;
-                blueprint.data = new int[][][] { { { 0 } } };
+                blueprint.data = new int[] {0};
                 blueprint.palette.add(schematic);
                 blueprint.computeKey();
                 snapshot = blueprint;

@@ -79,13 +79,13 @@ public class FakeWorld extends World {
                     BlockPos pos = new BlockPos(x, y, z).add(BLUEPRINT_OFFSET);
                     if (snapshot instanceof Blueprint) {
                         ISchematicBlock<?> schematicBlock = ((Blueprint) snapshot).palette
-                            .get(((Blueprint) snapshot).data[x][y][z]);
+                            .get(((Blueprint) snapshot).data[snapshot.posToIndex(x, y, z)]);
                         if (!schematicBlock.isAir()) {
                             schematicBlock.buildWithoutChecks(this, pos);
                         }
                     }
                     if (snapshot instanceof Template) {
-                        if (((Template) snapshot).data[x][y][z]) {
+                        if (((Template) snapshot).data.get(snapshot.posToIndex(x, y, z))) {
                             setBlockState(pos, Blocks.QUARTZ_BLOCK.getDefaultState());
                         }
                     }
