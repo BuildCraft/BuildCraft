@@ -8,11 +8,12 @@ package buildcraft.builders.snapshot;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -27,24 +28,55 @@ import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.fluids.FluidStack;
 
+import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.ISchematicEntity;
 
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.FluidUtilBC;
 import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.net.PacketBufferBC;
 
 public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> {
     private static final double MAX_ENTITY_DISTANCE = 0.1D;
+
+    private List<ItemStack>[] remainingDisplayRequiredBlocks;
     public List<ItemStack> remainingDisplayRequired = new ArrayList<>();
 
     public BlueprintBuilder(ITileForBlueprintBuilder tile) {
         super(tile);
     }
 
-    private Blueprint.BuildingInfo getBuildingInfo() {
+    private ISchematicBlock<?> getSchematicBlock(BlockPos blockPos) {
+        BlockPos snapshotPos = getBuildingInfo().fromWorld(blockPos);
+        return getBuildingInfo().box.contains(blockPos) ? getBuildingInfo().getSnapshot().palette.get(
+            getBuildingInfo().getSnapshot().data[getBuildingInfo().getSnapshot().posToIndex(snapshotPos)]
+        ) : null;
+    }
+
+    @Override
+    protected boolean isAir(BlockPos blockPos) {
+        // noinspection ConstantConditions
+        return getSchematicBlock(blockPos) == null || getSchematicBlock(blockPos).isAir();
+    }
+
+    @Override
+    protected Blueprint.BuildingInfo getBuildingInfo() {
         return tile.getBlueprintBuildingInfo();
+    }
+
+    @Override
+    public void updateSnapshot() {
+        super.updateSnapshot();
+        // noinspection unchecked
+        remainingDisplayRequiredBlocks = (List<ItemStack>[])
+            new List<?>[getBuildingInfo().box.size().getX() * getBuildingInfo().box.size().getY() * getBuildingInfo().box.size().getZ()];
+        Arrays.fill(remainingDisplayRequiredBlocks, Collections.emptyList());
+    }
+
+    @Override
+    public void cancel() {
+        super.cancel();
+        remainingDisplayRequiredBlocks = null;
     }
 
     private Stream<ItemStack> getDisplayRequired(List<ItemStack> requiredItems, List<FluidStack> requiredFluids) {
@@ -107,33 +139,20 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     }
 
     @Override
-    protected Set<BlockPos> getToBreak() {
-        return Optional.ofNullable(getBuildingInfo())
-            .map(buildingInfo -> buildingInfo.toBreak)
-            .orElse(Collections.emptySet());
-    }
-
-    @Override
-    protected Set<BlockPos> getToPlace() {
-        return Optional.ofNullable(getBuildingInfo())
-            .map(buildingInfo -> getBuildingInfo().toPlace.keySet())
-            .orElse(Collections.emptySet());
-    }
-
-    @Override
     protected boolean canPlace(BlockPos blockPos) {
-        return !getBuildingInfo().toPlace.get(blockPos).isAir() &&
-            getBuildingInfo().toPlace.get(blockPos).canBuild(tile.getWorldBC(), blockPos);
+        // noinspection ConstantConditions
+        return !isAir(blockPos) && getSchematicBlock(blockPos).canBuild(tile.getWorldBC(), blockPos);
     }
 
     @Override
     protected boolean readyToPlace(BlockPos blockPos) {
-        return getBuildingInfo().toPlace.get(blockPos).getRequiredBlockOffsets().stream()
+        // noinspection ConstantConditions
+        return getSchematicBlock(blockPos).getRequiredBlockOffsets().stream()
             .map(blockPos::add)
             .allMatch(pos ->
-                getBuildingInfo().toPlace.containsKey(pos)
-                    ? checkResults.get(CheckResult.CORRECT).contains(pos)
-                    : !getToBreak().contains(pos) || tile.getWorldBC().isAirBlock(pos)
+                getSchematicBlock(pos) != null
+                    ? checkResults[posToIndex(pos)] == CHECK_RESULT_CORRECT
+                    : !isAir(pos) || tile.getWorldBC().isAirBlock(pos)
             );
     }
 
@@ -141,8 +160,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     protected boolean hasEnoughToPlaceItems(BlockPos blockPos) {
         return Optional.ofNullable(getBuildingInfo()).flatMap(buildingInfo ->
             tryExtractRequired(
-                buildingInfo.toPlaceRequiredItems.get(blockPos),
-                buildingInfo.toPlaceRequiredFluids.get(blockPos),
+                buildingInfo.toPlaceRequiredItems[posToIndex(blockPos)],
+                buildingInfo.toPlaceRequiredFluids[posToIndex(blockPos)],
                 true
             )
         ).isPresent();
@@ -152,8 +171,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     protected List<ItemStack> getToPlaceItems(BlockPos blockPos) {
         return Optional.ofNullable(getBuildingInfo()).flatMap(buildingInfo ->
             tryExtractRequired(
-                buildingInfo.toPlaceRequiredItems.get(blockPos),
-                buildingInfo.toPlaceRequiredFluids.get(blockPos),
+                buildingInfo.toPlaceRequiredItems[posToIndex(blockPos)],
+                buildingInfo.toPlaceRequiredFluids[posToIndex(blockPos)],
                 false
             )
         ).orElseThrow(IllegalStateException::new);
@@ -182,23 +201,18 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     protected boolean isBlockCorrect(BlockPos blockPos) {
+        // noinspection ConstantConditions
         return getBuildingInfo() != null &&
-            getBuildingInfo().toPlace.containsKey(blockPos) &&
-            getBuildingInfo().toPlace.get(blockPos).isBuilt(tile.getWorldBC(), blockPos);
+            getSchematicBlock(blockPos) != null &&
+            getSchematicBlock(blockPos).isBuilt(tile.getWorldBC(), blockPos);
     }
 
     @Override
     protected boolean doPlaceTask(PlaceTask placeTask) {
+        // noinspection ConstantConditions
         return getBuildingInfo() != null &&
-            getBuildingInfo().toPlace.get(placeTask.pos) != null &&
-            getBuildingInfo().toPlace.get(placeTask.pos).build(tile.getWorldBC(), placeTask.pos);
-    }
-
-    @Override
-    public Box getBox() {
-        return Optional.ofNullable(getBuildingInfo())
-            .map(Blueprint.BuildingInfo::getBox)
-            .orElse(null);
+            getSchematicBlock(placeTask.pos) != null &&
+            getSchematicBlock(placeTask.pos).build(tile.getWorldBC(), placeTask.pos);
     }
 
     @Override
@@ -210,7 +224,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             tile.getWorldBC().profiler.startSection("entitiesWithinBox");
             List<Entity> entitiesWithinBox = tile.getWorldBC().getEntitiesWithinAABB(
                 Entity.class,
-                buildingInfo.getBox().getBoundingBox(),
+                buildingInfo.box.getBoundingBox(),
                 Objects::nonNull
             );
             tile.getWorldBC().profiler.endSection();
@@ -229,14 +243,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             remainingDisplayRequired.clear();
             remainingDisplayRequired.addAll(StackUtil.mergeSameItems(
                 Stream.concat(
-                    getToPlace().stream()
-                        .filter(blockPos -> !checkResults.get(CheckResult.CORRECT).contains(blockPos))
-                        .flatMap(blockPos ->
-                            getDisplayRequired(
-                                buildingInfo.toPlaceRequiredItems.get(blockPos),
-                                buildingInfo.toPlaceRequiredFluids.get(blockPos)
-                            )
-                        ),
+                    Arrays.stream(remainingDisplayRequiredBlocks)
+                        .flatMap(Collection::stream),
                     toSpawn.stream()
                         .flatMap(schematicEntity ->
                             getDisplayRequired(
@@ -308,6 +316,19 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 return false;
             }
         }).orElseGet(super::tick);
+    }
+
+    @Override
+    protected void check(BlockPos blockPos) {
+        super.check(blockPos);
+        remainingDisplayRequiredBlocks[posToIndex(blockPos)] =
+            checkResults[posToIndex(blockPos)] != CHECK_RESULT_CORRECT
+                ?
+                getDisplayRequired(
+                    getBuildingInfo().toPlaceRequiredItems[posToIndex(blockPos)],
+                    getBuildingInfo().toPlaceRequiredFluids[posToIndex(blockPos)]
+                ).collect(Collectors.toList())
+                : Collections.emptyList();
     }
 
     @Override

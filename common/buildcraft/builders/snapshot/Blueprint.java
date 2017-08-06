@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -34,7 +33,6 @@ import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.ISchematicEntity;
 
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.data.Box;
 
 public class Blueprint extends Snapshot {
     public final List<ISchematicBlock<?>> palette = new ArrayList<>();
@@ -129,37 +127,30 @@ public class Blueprint extends Snapshot {
     }
 
     @SuppressWarnings("WeakerAccess")
-    public class BuildingInfo {
-        public final BlockPos basePos;
-        public final Rotation rotation;
-        private final Box box;
-        public final Set<BlockPos> toBreak = new HashSet<>();
-        public final Map<BlockPos, ISchematicBlock<?>> toPlace = new HashMap<>();
-        public final Map<BlockPos, List<ItemStack>> toPlaceRequiredItems = new HashMap<>();
-        public final Map<BlockPos, List<FluidStack>> toPlaceRequiredFluids = new HashMap<>();
+    public class BuildingInfo extends Snapshot.BuildingInfo {
+        public final List<ItemStack>[] toPlaceRequiredItems;
+        public final List<FluidStack>[] toPlaceRequiredFluids;
         public final Set<ISchematicEntity<?>> entities = new HashSet<>();
         public final Map<ISchematicEntity<?>, List<ItemStack>> entitiesRequiredItems = new HashMap<>();
         public final Map<ISchematicEntity<?>, List<FluidStack>> entitiesRequiredFluids = new HashMap<>();
 
         public BuildingInfo(BlockPos basePos, Rotation rotation) {
-            this.basePos = basePos;
-            this.rotation = rotation;
-            Pair<List<ItemStack>[][][], List<FluidStack>[][][]> required = SchematicBlockManager.computeRequired(
-                getSnapshot());
-            Pair<List<List<ItemStack>>, List<List<FluidStack>>> requiredEntities = SchematicEntityManager
-                .computeRequired(getSnapshot());
+            super(basePos, rotation);
+            // noinspection unchecked
+            toPlaceRequiredItems = (List<ItemStack>[]) new List<?>[size.getX() * size.getY() * size.getZ()];
+            // noinspection unchecked
+            toPlaceRequiredFluids = (List<FluidStack>[]) new List<?>[size.getX() * size.getY() * size.getZ()];
+            Pair<List<ItemStack>[][][], List<FluidStack>[][][]> required =
+                SchematicBlockManager.computeRequired(getSnapshot());
+            Pair<List<List<ItemStack>>, List<List<FluidStack>>> requiredEntities =
+                SchematicEntityManager.computeRequired(getSnapshot());
             for (int z = 0; z < getSnapshot().size.getZ(); z++) {
                 for (int y = 0; y < getSnapshot().size.getY(); y++) {
                     for (int x = 0; x < getSnapshot().size.getX(); x++) {
                         ISchematicBlock<?> schematicBlock = palette.get(data[posToIndex(x, y, z)]);
-                        BlockPos blockPos = new BlockPos(x, y, z).rotate(rotation).add(basePos).add(offset.rotate(
-                            rotation));
-                        if (schematicBlock.isAir()) {
-                            toBreak.add(blockPos);
-                        } else {
-                            toPlace.put(blockPos, schematicBlock.getRotated(rotation));
-                            toPlaceRequiredItems.put(blockPos, required.getLeft()[x][y][z]);
-                            toPlaceRequiredFluids.put(blockPos, required.getRight()[x][y][z]);
+                        if (!schematicBlock.isAir()) {
+                            toPlaceRequiredItems[posToIndex(x, y, z)] = required.getLeft()[x][y][z];
+                            toPlaceRequiredFluids[posToIndex(x, y, z)] = required.getRight()[x][y][z];
                         }
                     }
                 }
@@ -172,16 +163,11 @@ public class Blueprint extends Snapshot {
                 entitiesRequiredFluids.put(rotatedSchematicEntity, requiredEntities.getRight().get(i));
                 i++;
             }
-            box = new Box();
-            Stream.concat(toBreak.stream(), toPlace.keySet().stream()).forEach(box::extendToEncompass);
         }
 
+        @Override
         public Blueprint getSnapshot() {
             return Blueprint.this;
-        }
-
-        public Box getBox() {
-            return box;
         }
     }
 }

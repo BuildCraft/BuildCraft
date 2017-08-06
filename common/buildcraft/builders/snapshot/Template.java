@@ -7,9 +7,6 @@
 package buildcraft.builders.snapshot;
 
 import java.util.BitSet;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Stream;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Rotation;
@@ -17,8 +14,6 @@ import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.enums.EnumSnapshotType;
-
-import buildcraft.lib.misc.data.Box;
 
 public class Template extends Snapshot {
     public BitSet data;
@@ -60,40 +55,14 @@ public class Template extends Snapshot {
     }
 
     @SuppressWarnings("WeakerAccess")
-    public class BuildingInfo {
-        public final BlockPos basePos;
-        public final Rotation rotation;
-        public final Box box;
-        public final Set<BlockPos> toBreak = new HashSet<>();
-        public final Set<BlockPos> toPlace = new HashSet<>();
-
+    public class BuildingInfo extends Snapshot.BuildingInfo {
         public BuildingInfo(BlockPos basePos, Rotation rotation) {
-            this.basePos = basePos;
-            this.rotation = rotation;
-            for (int z = 0; z < getSnapshot().size.getZ(); z++) {
-                for (int y = 0; y < getSnapshot().size.getY(); y++) {
-                    for (int x = 0; x < getSnapshot().size.getX(); x++) {
-                        BlockPos blockPos = new BlockPos(x, y, z).rotate(rotation)
-                            .add(basePos)
-                            .add(offset.rotate(rotation));
-                        if (!data.get(posToIndex(x, y, z))) {
-                            toBreak.add(blockPos);
-                        } else {
-                            toPlace.add(blockPos);
-                        }
-                    }
-                }
-            }
-            box = new Box();
-            Stream.concat(toBreak.stream(), toPlace.stream()).forEach(box::extendToEncompass);
+            super(basePos, rotation);
         }
 
+        @Override
         public Template getSnapshot() {
             return Template.this;
-        }
-
-        public Box getBox() {
-            return box;
         }
     }
 }

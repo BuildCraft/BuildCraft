@@ -166,7 +166,9 @@ public class TileBuilder extends TileBC_Neptune
             if (snapshot.getType() == EnumSnapshotType.BLUEPRINT) {
                 blueprintBuildingInfo = ((Blueprint) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
             }
-            currentBox = Optional.ofNullable(getBuilder()).map(SnapshotBuilder::getBox).orElse(null);
+            currentBox = Optional.ofNullable(getBuildingInfo())
+                .map(buildingInfo -> buildingInfo.box)
+                .orElse(null);
             Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::updateSnapshot);
         } else {
             snapshotType = null;
@@ -406,6 +408,16 @@ public class TileBuilder extends TileBC_Neptune
         }
         if (snapshotType == EnumSnapshotType.BLUEPRINT) {
             return blueprintBuilder;
+        }
+        return null;
+    }
+
+    private Snapshot.BuildingInfo getBuildingInfo() {
+        if (snapshotType == EnumSnapshotType.TEMPLATE) {
+            return templateBuildingInfo;
+        }
+        if (snapshotType == EnumSnapshotType.BLUEPRINT) {
+            return blueprintBuildingInfo;
         }
         return null;
     }
