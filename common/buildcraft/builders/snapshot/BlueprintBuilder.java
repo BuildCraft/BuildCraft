@@ -207,11 +207,14 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             return super.tick();
         }
         return Optional.ofNullable(getBuildingInfo()).map(buildingInfo -> {
+            tile.getWorldBC().profiler.startSection("entitiesWithinBox");
             List<Entity> entitiesWithinBox = tile.getWorldBC().getEntitiesWithinAABB(
                 Entity.class,
                 buildingInfo.getBox().getBoundingBox(),
                 Objects::nonNull
             );
+            tile.getWorldBC().profiler.endSection();
+            tile.getWorldBC().profiler.startSection("toSpawn");
             List<ISchematicEntity<?>> toSpawn = buildingInfo.entities.stream()
                 .filter(schematicEntity ->
                     entitiesWithinBox.stream()
@@ -220,7 +223,9 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                         .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE)
                 )
                 .collect(Collectors.toList());
+            tile.getWorldBC().profiler.endSection();
             // Compute needed stacks
+            tile.getWorldBC().profiler.startSection("remainingDisplayRequired");
             remainingDisplayRequired.clear();
             remainingDisplayRequired.addAll(StackUtil.mergeSameItems(
                 Stream.concat(
@@ -241,7 +246,9 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                         )
                 ).collect(Collectors.toList())
             ));
+            tile.getWorldBC().profiler.endSection();
             // Kill not needed entities
+            tile.getWorldBC().profiler.startSection("toKill");
             List<Entity> toKill = entitiesWithinBox.stream()
                 .filter(entity ->
                     entity != null &&
@@ -261,9 +268,12 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 if (!tile.getBattery().isFull()) {
                     return false;
                 } else {
+                    tile.getWorldBC().profiler.startSection("kill");
                     toKill.forEach(Entity::setDead);
+                    tile.getWorldBC().profiler.endSection();
                 }
             }
+            tile.getWorldBC().profiler.endSection();
             // Call superclass method
             if (super.tick()) {
                 // Spawn needed entities
@@ -271,6 +281,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                     if (!tile.getBattery().isFull()) {
                         return false;
                     } else {
+                        tile.getWorldBC().profiler.startSection("spawn");
                         toSpawn.stream()
                             .filter(schematicEntity ->
                                 tryExtractRequired(
@@ -289,6 +300,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                     false
                                 )
                             );
+                        tile.getWorldBC().profiler.endSection();
                     }
                 }
                 return true;
