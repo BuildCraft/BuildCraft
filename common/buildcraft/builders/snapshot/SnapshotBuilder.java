@@ -331,6 +331,11 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                     isDone = false;
                 }
                 blocks.stream()
+                    .sorted(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(blockPos ->
+                        100_000 - (Math.pow(blockPos.getX() - tile.getBuilderPos().getX(), 2) +
+                            Math.pow(blockPos.getZ() - tile.getBuilderPos().getZ(), 2)) +
+                            Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
+                    )))
                     .filter(blockPos -> {
                         int i = posToIndex(blockPos);
                         if (requiredCache[i] != REQUIRED_UNKNOWN) {
@@ -340,14 +345,9 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                         requiredCache[i] = has ? REQUIRED_TRUE : REQUIRED_FALSE;
                         return has;
                     })
-                    .filter(this::canPlace)
                     .filter(this::readyToPlace)
-                    .sorted(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(blockPos ->
-                        100_000 - (Math.pow(blockPos.getX() - tile.getBuilderPos().getX(), 2) +
-                            Math.pow(blockPos.getZ() - tile.getBuilderPos().getZ(), 2)) +
-                            Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
-                    )))
                     .limit(MAX_QUEUE_SIZE - placeTasks.size())
+                    .filter(this::canPlace)
                     .map(blockPos ->
                         new PlaceTask(
                             blockPos,
