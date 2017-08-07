@@ -312,19 +312,18 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         tile.getWorldBC().profiler.startSection("add tasks");
         tile.getWorldBC().profiler.startSection("break");
         if (tile.canExcavate()) {
-            Set<BlockPos> breakTasksPoses = breakTasks.stream()
-                .map(breakTask -> breakTask.pos)
+            Set<Integer> breakTasksIndexes = breakTasks.stream()
+                .map(breakTask -> posToIndex(breakTask.pos))
                 .collect(Collectors.toSet());
-            List<BlockPos> blocks = Arrays.stream(breakOrder)
-                .filter(i -> checkResults[i] == CHECK_RESULT_TO_BREAK)
-                .mapToObj(this::indexToPos)
-                .filter(blockPos -> !breakTasksPoses.contains(blockPos))
-                .collect(Collectors.toList());
-            leftToBreak = blocks.size();
-            if (!blocks.isEmpty()) {
+            int[] blocks = Arrays.stream(breakOrder)
+                .filter(i -> checkResults[i] == CHECK_RESULT_TO_BREAK && !breakTasksIndexes.contains(i))
+                .toArray();
+            leftToBreak = blocks.length;
+            if (blocks.length != 0) {
                 isDone = false;
             }
-            blocks.stream()
+            Arrays.stream(blocks)
+                .mapToObj(this::indexToPos)
                 .filter(blockPos -> BlockUtil.getFluidWithFlowing(tile.getWorldBC(), blockPos) == null)
                 .map(blockPos ->
                     new BreakTask(
@@ -338,29 +337,27 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         tile.getWorldBC().profiler.endSection();
         tile.getWorldBC().profiler.startSection("place");
         {
-            Set<BlockPos> placeTasksPoses = placeTasks.stream()
-                .map(placeTask -> placeTask.pos)
+            Set<Integer> placeTasksIndexes = placeTasks.stream()
+                .map(placeTask -> posToIndex(placeTask.pos))
                 .collect(Collectors.toSet());
-            List<BlockPos> blocks = Arrays.stream(placeOrder)
-                .filter(i -> checkResults[i] == CHECK_RESULT_TO_PLACE)
-                .mapToObj(this::indexToPos)
-                .filter(blockPos -> !placeTasksPoses.contains(blockPos))
-                .collect(Collectors.toList());
-            leftToPlace = blocks.size();
+            int[] blocks = Arrays.stream(placeOrder)
+                .filter(i -> checkResults[i] == CHECK_RESULT_TO_PLACE && !placeTasksIndexes.contains(i))
+                .toArray();
+            leftToPlace = blocks.length;
             if (!tile.canExcavate() || breakTasks.isEmpty()) {
-                if (!blocks.isEmpty()) {
+                if (blocks.length != 0) {
                     isDone = false;
                 }
-                blocks.stream()
-                    .filter(blockPos -> {
-                        int i = posToIndex(blockPos);
+                Arrays.stream(blocks)
+                    .filter(i -> {
                         if (requiredCache[i] != REQUIRED_UNKNOWN) {
                             return requiredCache[i] == REQUIRED_TRUE;
                         }
-                        boolean has = hasEnoughToPlaceItems(blockPos);
+                        boolean has = hasEnoughToPlaceItems(indexToPos(i));
                         requiredCache[i] = has ? REQUIRED_TRUE : REQUIRED_FALSE;
                         return has;
                     })
+                    .mapToObj(this::indexToPos)
                     .filter(this::readyToPlace)
                     .limit(MAX_QUEUE_SIZE - placeTasks.size())
                     .filter(this::canPlace)
