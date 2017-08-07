@@ -258,6 +258,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         if (placeBlock == Blocks.AIR) {
             return true;
         }
+        world.profiler.startSection("prepare block");
         IBlockState newBlockState = blockState;
         if (placeBlock != blockState.getBlock()) {
             newBlockState = placeBlock.getDefaultState();
@@ -278,11 +279,18 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
                 placeBlock.getDefaultState()
             );
         }
-        if (world.setBlockState(blockPos, newBlockState, 11)) {
+        world.profiler.endSection();
+        world.profiler.startSection("place block");
+        boolean b = world.setBlockState(blockPos, newBlockState, 11);
+        world.profiler.endSection();
+        if (b) {
+            world.profiler.startSection("notify");
             updateBlockOffsets.stream()
                 .map(blockPos::add)
                 .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, placeBlock, false));
+            world.profiler.endSection();
             if (tileNbt != null && blockState.getBlock().hasTileEntity(blockState)) {
+                world.profiler.startSection("prepare tile");
                 NBTTagCompound newTileNbt = new NBTTagCompound();
                 tileNbt.getKeySet().stream()
                     .map(key -> Pair.of(key, tileNbt.getTag(key)))
@@ -293,6 +301,8 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
                 ignoredTags.stream()
                     .filter(newTileNbt::hasKey)
                     .forEach(newTileNbt::removeTag);
+                world.profiler.endSection();
+                world.profiler.startSection("place tile");
                 TileEntity tileEntity = TileEntity.create(world, newTileNbt);
                 if (tileEntity != null) {
                     tileEntity.setWorld(world);
@@ -301,6 +311,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
                         tileEntity.rotate(tileRotation);
                     }
                 }
+                world.profiler.endSection();
             }
             return true;
         }

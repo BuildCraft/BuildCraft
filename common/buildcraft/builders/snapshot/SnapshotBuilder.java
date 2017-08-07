@@ -404,12 +404,14 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                     );
                     MinecraftForge.EVENT_BUS.post(breakEvent);
                     if (!breakEvent.isCanceled()) {
+                        tile.getWorldBC().profiler.startSection("work");
                         tile.getWorldBC().sendBlockBreakProgress(
                             breakTask.pos.hashCode(),
                             breakTask.pos,
                             -1
                         );
                         tile.getWorldBC().destroyBlock(breakTask.pos, false);
+                        tile.getWorldBC().profiler.endSection();
                     } else {
                         cancelBreakTask(breakTask);
                     }
@@ -418,11 +420,13 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                     }
                     iterator.remove();
                 } else {
+                    tile.getWorldBC().profiler.startSection("work");
                     tile.getWorldBC().sendBlockBreakProgress(
                         breakTask.pos.hashCode(),
                         breakTask.pos,
                         (int) ((breakTask.power * 9) / target)
                     );
+                    tile.getWorldBC().profiler.endSection();
                 }
             }
         }
@@ -443,9 +447,11 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                     )
                 );
                 if (placeTask.power >= target) {
+                    tile.getWorldBC().profiler.startSection("work");
                     if (!doPlaceTask(placeTask)) {
                         cancelPlaceTask(placeTask);
                     }
+                    tile.getWorldBC().profiler.endSection();
                     if (check(placeTask.pos)) {
                         checkResultsChanged = true;
                     }
