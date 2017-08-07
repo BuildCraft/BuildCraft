@@ -98,10 +98,10 @@ public enum BCBuildersEventDist {
     public void onRenderTooltipPostText(RenderTooltipEvent.PostText event) {
         Snapshot snapshot = null;
         ItemStack stack = event.getStack();
-        Header header = BCBuildersItems.snapshot.getHeader(stack);
+        Header header = BCBuildersItems.snapshot != null ? BCBuildersItems.snapshot.getHeader(stack) : null;
         if (header != null) {
             snapshot = ClientSnapshots.INSTANCE.getSnapshot(header.key);
-        } else {
+        } else if (BCBuildersItems.schematicSingle != null) {
             ISchematicBlock<?> schematic = ItemSchematicSingle.getSchematicSafe(stack);
             if (schematic != null) {
                 Blueprint blueprint = new Blueprint();
