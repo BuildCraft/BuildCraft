@@ -197,7 +197,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         tile.getWorldBC().profiler.endSection();
     }
 
-    public void invResourcesChanged() {
+    public void resourcesChanged() {
         Arrays.fill(requiredCache, REQUIRED_UNKNOWN);
     }
 

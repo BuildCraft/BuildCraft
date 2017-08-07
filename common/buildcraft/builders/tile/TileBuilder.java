@@ -113,7 +113,15 @@ public class TileBuilder extends TileBC_Neptune
         invSnapshot = itemManager.addInvHandler("snapshot", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
         invResources = itemManager.addInvHandler("resources", 27, EnumAccess.BOTH, EnumPipePart.VALUES);
         for (int i = 1; i <= 4; i++) {
-            tankManager.add(new Tank("fluid" + i, Fluid.BUCKET_VOLUME * 8, this));
+            tankManager.add(
+                new Tank("fluid" + i, Fluid.BUCKET_VOLUME * 8, this) {
+                    @Override
+                    protected void onContentsChanged() {
+                        super.onContentsChanged();
+                        Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::resourcesChanged);
+                    }
+                }
+            );
         }
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankManager, EnumPipePart.VALUES);
@@ -146,7 +154,7 @@ public class TileBuilder extends TileBC_Neptune
                 sendNetworkUpdate(NET_SNAPSHOT_TYPE);
             }
             if (handler == invResources) {
-                Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::invResourcesChanged);
+                Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::resourcesChanged);
             }
         }
         super.onSlotChange(handler, slot, before, after);

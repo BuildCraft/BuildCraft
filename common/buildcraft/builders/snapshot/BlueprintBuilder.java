@@ -80,8 +80,8 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     }
 
     @Override
-    public void invResourcesChanged() {
-        super.invResourcesChanged();
+    public void resourcesChanged() {
+        super.resourcesChanged();
         extractRequiredCache.clear();
     }
 
