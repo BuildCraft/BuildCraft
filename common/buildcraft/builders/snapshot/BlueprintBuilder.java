@@ -40,6 +40,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     private static final double MAX_ENTITY_DISTANCE = 0.1D;
 
     private List<ItemStack>[] remainingDisplayRequiredBlocks;
+    private List<ItemStack> remainingDisplayRequiredBlocksConcat = Collections.emptyList();
     public List<ItemStack> remainingDisplayRequired = new ArrayList<>();
 
     public BlueprintBuilder(ITileForBlueprintBuilder tile) {
@@ -175,7 +176,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 buildingInfo.toPlaceRequiredFluids[posToIndex(blockPos)],
                 false
             )
-        ).orElseThrow(IllegalStateException::new);
+        ).orElse(null);
     }
 
     @Override
@@ -243,8 +244,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             remainingDisplayRequired.clear();
             remainingDisplayRequired.addAll(StackUtil.mergeSameItems(
                 Stream.concat(
-                    Arrays.stream(remainingDisplayRequiredBlocks)
-                        .flatMap(Collection::stream),
+                    remainingDisplayRequiredBlocksConcat.stream(),
                     toSpawn.stream()
                         .flatMap(schematicEntity ->
                             getDisplayRequired(
@@ -319,16 +319,27 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     }
 
     @Override
-    protected void check(BlockPos blockPos) {
-        super.check(blockPos);
-        remainingDisplayRequiredBlocks[posToIndex(blockPos)] =
-            checkResults[posToIndex(blockPos)] != CHECK_RESULT_CORRECT
-                ?
-                getDisplayRequired(
-                    getBuildingInfo().toPlaceRequiredItems[posToIndex(blockPos)],
-                    getBuildingInfo().toPlaceRequiredFluids[posToIndex(blockPos)]
-                ).collect(Collectors.toList())
-                : Collections.emptyList();
+    protected boolean check(BlockPos blockPos) {
+        if (super.check(blockPos)) {
+            remainingDisplayRequiredBlocks[posToIndex(blockPos)] =
+                checkResults[posToIndex(blockPos)] != CHECK_RESULT_CORRECT
+                    ?
+                    getDisplayRequired(
+                        getBuildingInfo().toPlaceRequiredItems[posToIndex(blockPos)],
+                        getBuildingInfo().toPlaceRequiredFluids[posToIndex(blockPos)]
+                    ).collect(Collectors.toList())
+                    : Collections.emptyList();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    protected void afterChecks() {
+        remainingDisplayRequiredBlocksConcat = Arrays.stream(remainingDisplayRequiredBlocks)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
     }
 
     @Override
