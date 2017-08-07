@@ -288,6 +288,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         tile.getWorldBC().profiler.endSection();
 
         tile.getWorldBC().profiler.startSection("remove tasks");
+        tile.getWorldBC().profiler.startSection("break");
         for (Iterator<BreakTask> iterator = breakTasks.iterator(); iterator.hasNext(); ) {
             BreakTask breakTask = iterator.next();
             if (checkResults[posToIndex(breakTask.pos)] == CHECK_RESULT_CORRECT) {
@@ -295,6 +296,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                 cancelBreakTask(breakTask);
             }
         }
+        tile.getWorldBC().profiler.endSection();
+        tile.getWorldBC().profiler.startSection("place");
         for (Iterator<PlaceTask> iterator = placeTasks.iterator(); iterator.hasNext(); ) {
             PlaceTask placeTask = iterator.next();
             if (checkResults[posToIndex(placeTask.pos)] == CHECK_RESULT_CORRECT) {
@@ -303,10 +306,12 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             }
         }
         tile.getWorldBC().profiler.endSection();
+        tile.getWorldBC().profiler.endSection();
 
         boolean isDone = true;
 
         tile.getWorldBC().profiler.startSection("add tasks");
+        tile.getWorldBC().profiler.startSection("break");
         if (tile.canExcavate()) {
             Set<BlockPos> breakTasksPoses = breakTasks.stream()
                 .map(breakTask -> breakTask.pos)
@@ -331,6 +336,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                 .limit(MAX_QUEUE_SIZE - breakTasks.size())
                 .forEach(breakTasks::add);
         }
+        tile.getWorldBC().profiler.endSection();
+        tile.getWorldBC().profiler.startSection("place");
         {
             Set<BlockPos> placeTasksPoses = placeTasks.stream()
                 .map(placeTask -> placeTask.pos)
@@ -370,8 +377,10 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             }
         }
         tile.getWorldBC().profiler.endSection();
+        tile.getWorldBC().profiler.endSection();
 
         tile.getWorldBC().profiler.startSection("do tasks");
+        tile.getWorldBC().profiler.startSection("break");
         if (!breakTasks.isEmpty()) {
             for (Iterator<BreakTask> iterator = breakTasks.iterator(); iterator.hasNext(); ) {
                 BreakTask breakTask = iterator.next();
@@ -421,6 +430,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                 }
             }
         }
+        tile.getWorldBC().profiler.endSection();
+        tile.getWorldBC().profiler.startSection("place");
         if (!placeTasks.isEmpty()) {
             for (Iterator<PlaceTask> iterator = placeTasks.iterator(); iterator.hasNext(); ) {
                 PlaceTask placeTask = iterator.next();
@@ -446,6 +457,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                 }
             }
         }
+        tile.getWorldBC().profiler.endSection();
         tile.getWorldBC().profiler.endSection();
 
         if (checkResultsChanged) {
