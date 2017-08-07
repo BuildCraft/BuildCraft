@@ -179,16 +179,13 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     protected boolean hasEnoughToPlaceItems(BlockPos blockPos) {
-        tile.getWorldBC().profiler.startSection("hasEnoughToPlaceItems");
-        boolean result = Optional.ofNullable(getBuildingInfo()).flatMap(buildingInfo ->
+        return Optional.ofNullable(getBuildingInfo()).flatMap(buildingInfo ->
             tryExtractRequired(
                 buildingInfo.toPlaceRequiredItems[posToIndex(blockPos)],
                 buildingInfo.toPlaceRequiredFluids[posToIndex(blockPos)],
                 true
             )
         ).isPresent();
-        tile.getWorldBC().profiler.endSection();
-        return result;
     }
 
     @Override

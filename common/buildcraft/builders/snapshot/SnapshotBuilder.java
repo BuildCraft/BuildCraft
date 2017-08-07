@@ -81,6 +81,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
     @SuppressWarnings("WeakerAccess")
     protected byte[] checkResults;
     private byte[] requiredCache;
+    private int[] breakOrder;
+    private int[] placeOrder;
     public Vec3d robotPos = null;
     public Vec3d prevRobotPos = null;
     public int leftToBreak = 0;
@@ -177,6 +179,22 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                 getBuildingInfo().box.size().getZ()
             ];
         Arrays.fill(requiredCache, REQUIRED_UNKNOWN);
+        breakOrder = getBuildingInfo().box.getBlocksInArea().stream()
+            .sorted(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(blockPos ->
+                Math.pow(blockPos.getX() - getBuildingInfo().box.center().getX(), 2) +
+                    Math.pow(blockPos.getZ() - getBuildingInfo().box.center().getZ(), 2) +
+                    100_000 - Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
+            )))
+            .mapToInt(this::posToIndex)
+            .toArray();
+        placeOrder = getBuildingInfo().box.getBlocksInArea().stream()
+            .sorted(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(blockPos ->
+                100_000 - (Math.pow(blockPos.getX() - tile.getBuilderPos().getX(), 2) +
+                    Math.pow(blockPos.getZ() - tile.getBuilderPos().getZ(), 2)) +
+                    Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
+            )))
+            .mapToInt(this::posToIndex)
+            .toArray();
         tile.getWorldBC().profiler.endSection();
     }
 
@@ -206,6 +224,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         toCheck.clear();
         checkResults = null;
         requiredCache = null;
+        breakOrder = null;
+        placeOrder = null;
         robotPos = null;
         prevRobotPos = null;
         leftToBreak = 0;
@@ -291,7 +311,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             Set<BlockPos> breakTasksPoses = breakTasks.stream()
                 .map(breakTask -> breakTask.pos)
                 .collect(Collectors.toSet());
-            List<BlockPos> blocks = IntStream.range(0, checkResults.length)
+            List<BlockPos> blocks = Arrays.stream(breakOrder)
                 .filter(i -> checkResults[i] == CHECK_RESULT_TO_BREAK)
                 .mapToObj(this::indexToPos)
                 .filter(blockPos -> !breakTasksPoses.contains(blockPos))
@@ -302,11 +322,6 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                 isDone = false;
             }
             blocks.stream()
-                .sorted(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(blockPos ->
-                    Math.pow(blockPos.getX() - getBuildingInfo().box.center().getX(), 2) +
-                        Math.pow(blockPos.getZ() - getBuildingInfo().box.center().getZ(), 2) +
-                        100_000 - Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
-                )))
                 .map(blockPos ->
                     new BreakTask(
                         blockPos,
@@ -320,7 +335,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             Set<BlockPos> placeTasksPoses = placeTasks.stream()
                 .map(placeTask -> placeTask.pos)
                 .collect(Collectors.toSet());
-            List<BlockPos> blocks = IntStream.range(0, checkResults.length)
+            List<BlockPos> blocks = Arrays.stream(placeOrder)
                 .filter(i -> checkResults[i] == CHECK_RESULT_TO_PLACE)
                 .mapToObj(this::indexToPos)
                 .filter(blockPos -> !placeTasksPoses.contains(blockPos))
@@ -331,11 +346,6 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                     isDone = false;
                 }
                 blocks.stream()
-                    .sorted(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(blockPos ->
-                        100_000 - (Math.pow(blockPos.getX() - tile.getBuilderPos().getX(), 2) +
-                            Math.pow(blockPos.getZ() - tile.getBuilderPos().getZ(), 2)) +
-                            Math.abs(blockPos.getY() - tile.getBuilderPos().getY()) * 100_000
-                    )))
                     .filter(blockPos -> {
                         int i = posToIndex(blockPos);
                         if (requiredCache[i] != REQUIRED_UNKNOWN) {
