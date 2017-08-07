@@ -91,6 +91,19 @@
         ]
     },
     {
+        "selectors": ["minecraft:reeds"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:reeds"
+                    }
+                ]
+            }
+        ]
+    },
+    {
         "selectors": ["minecraft:standing_sign", "minecraft:wall_sign"],
         "requiredExtractors": [
             {

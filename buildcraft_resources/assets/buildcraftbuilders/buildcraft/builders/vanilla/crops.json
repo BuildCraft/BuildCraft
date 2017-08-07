@@ -6,7 +6,8 @@
             "minecraft:melon_stem",
             "minecraft:beetroots",
             "minecraft:carrots",
-            "minecraft:potatoes"
+            "minecraft:potatoes",
+            "minecraft:reeds"
         ],
         "ignoredProperties": ["age"]
     }
