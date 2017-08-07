@@ -233,9 +233,10 @@ public class TileBuilder extends TileBC_Neptune
                     }
                     updateSnapshot();
                 }
+            } else if (world.getTotalWorldTime() % 10 == 0){
+                sendNetworkUpdate(NET_RENDER_DATA); // FIXME
             }
         }
-        sendNetworkUpdate(NET_RENDER_DATA); // FIXME
     }
 
     // Networking

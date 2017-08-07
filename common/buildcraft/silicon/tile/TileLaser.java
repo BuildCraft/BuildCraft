@@ -114,6 +114,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
                     9 / 16D,
                     (5 + world.rand.nextInt(6) + 0.5) / 16D
                 );
+            sendNetworkUpdate(NET_RENDER_DATA);
         } else {
             laserPos = null;
         }
@@ -162,8 +163,6 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         } else {
             avgPower.clear();
         }
-
-        sendNetworkUpdate(NET_RENDER_DATA);
     }
 
     @Override

@@ -190,6 +190,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         builder.tick();
         prevParameters = getParameters();
         prevInverted = isInverted();
+        if (world.getTotalWorldTime() % 3 == 0)
         sendNetworkUpdate(NET_RENDER_DATA); // FIXME
     }
 
