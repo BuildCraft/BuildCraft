@@ -315,13 +315,13 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                 .filter(i -> checkResults[i] == CHECK_RESULT_TO_BREAK)
                 .mapToObj(this::indexToPos)
                 .filter(blockPos -> !breakTasksPoses.contains(blockPos))
-                .filter(blockPos -> BlockUtil.getFluidWithFlowing(tile.getWorldBC(), blockPos) == null)
                 .collect(Collectors.toList());
             leftToBreak = blocks.size();
             if (!blocks.isEmpty()) {
                 isDone = false;
             }
             blocks.stream()
+                .filter(blockPos -> BlockUtil.getFluidWithFlowing(tile.getWorldBC(), blockPos) == null)
                 .map(blockPos ->
                     new BreakTask(
                         blockPos,
