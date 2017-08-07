@@ -357,9 +357,11 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     protected void afterChecks() {
-        remainingDisplayRequiredBlocksConcat = Arrays.stream(remainingDisplayRequiredBlocks)
-            .flatMap(Collection::stream)
-            .collect(Collectors.toList());
+        remainingDisplayRequiredBlocksConcat = StackUtil.mergeSameItems(
+            Arrays.stream(remainingDisplayRequiredBlocks)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList())
+        );
     }
 
     @Override
