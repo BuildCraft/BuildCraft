@@ -8,7 +8,6 @@ package buildcraft.builders.snapshot;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -346,7 +345,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                 .filter(i -> checkResults[i] == CHECK_RESULT_TO_PLACE)
                 .mapToObj(this::indexToPos)
                 .filter(blockPos -> !placeTasksPoses.contains(blockPos))
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
             leftToPlace = blocks.size();
             if (!tile.canExcavate() || breakTasks.isEmpty()) {
                 if (!blocks.isEmpty()) {
