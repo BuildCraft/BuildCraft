@@ -89,5 +89,18 @@
                 ]
             }
         ]
+    },
+    {
+        "selectors": ["minecraft:standing_sign", "minecraft:wall_sign"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:sign"
+                    }
+                ]
+            }
+        ]
     }
 ]

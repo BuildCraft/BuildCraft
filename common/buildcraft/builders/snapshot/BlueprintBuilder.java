@@ -170,11 +170,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         // noinspection ConstantConditions
         return getSchematicBlock(blockPos).getRequiredBlockOffsets().stream()
             .map(blockPos::add)
-            .allMatch(pos ->
-                getSchematicBlock(pos) != null
-                    ? checkResults[posToIndex(pos)] == CHECK_RESULT_CORRECT
-                    : !isAir(pos) || tile.getWorldBC().isAirBlock(pos)
-            );
+            .allMatch(pos -> getSchematicBlock(pos) == null || checkResults[posToIndex(pos)] == CHECK_RESULT_CORRECT);
     }
 
     @Override
