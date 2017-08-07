@@ -8,8 +8,6 @@ package buildcraft.builders.snapshot;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -20,29 +18,24 @@ import net.minecraftforge.common.util.FakePlayer;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.template.TemplateApi;
 
-import buildcraft.lib.misc.data.Box;
-
 public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     public TemplateBuilder(ITileForTemplateBuilder tile) {
         super(tile);
     }
 
-    private Template.BuildingInfo getBuildingInfo() {
+    @Override
+    protected Template.BuildingInfo getBuildingInfo() {
         return tile.getTemplateBuildingInfo();
     }
 
     @Override
-    protected Set<BlockPos> getToBreak() {
-        return Optional.ofNullable(getBuildingInfo())
-            .map(buildingInfo -> buildingInfo.toBreak)
-            .orElse(Collections.emptySet());
-    }
-
-    @Override
-    protected Set<BlockPos> getToPlace() {
-        return Optional.ofNullable(getBuildingInfo())
-            .map(buildingInfo -> buildingInfo.toPlace)
-            .orElse(Collections.emptySet());
+    protected boolean isAir(BlockPos blockPos) {
+        return !getBuildingInfo().box.contains(blockPos) ||
+            !getBuildingInfo().getSnapshot().data.get(
+                getBuildingInfo().getSnapshot().posToIndex(
+                    getBuildingInfo().fromWorld(blockPos)
+                )
+            );
     }
 
     @Override
@@ -89,13 +82,6 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
 
     @Override
     protected boolean isBlockCorrect(BlockPos blockPos) {
-        return getBuildingInfo().toPlace.contains(blockPos) && !tile.getWorldBC().isAirBlock(blockPos);
-    }
-
-    @Override
-    public Box getBox() {
-        return Optional.ofNullable(getBuildingInfo())
-            .map(Template.BuildingInfo::getBox)
-            .orElse(null);
+        return !isAir(blockPos) && !tile.getWorldBC().isAirBlock(blockPos);
     }
 }

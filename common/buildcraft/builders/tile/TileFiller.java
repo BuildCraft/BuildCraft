@@ -29,6 +29,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
@@ -65,8 +66,11 @@ import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 
 public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("filler");
+    @SuppressWarnings("WeakerAccess")
     public static final int NET_INVERTED = IDS.allocId("INVERTED");
+    @SuppressWarnings("WeakerAccess")
     public static final int NET_PARAMETERS = IDS.allocId("PARAMETERS");
+    @SuppressWarnings("WeakerAccess")
     public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
 
     public final ItemHandlerSimple invResources =
@@ -91,10 +95,23 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     private Template.BuildingInfo buildingInfo;
     private List<IParameter> prevParameters;
     private boolean prevInverted;
-    public TemplateBuilder builder = new TemplateBuilder(this);
+    public final TemplateBuilder builder = new TemplateBuilder(this);
 
     public TileFiller() {
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
+    }
+
+    @Override
+    protected void onSlotChange(IItemHandlerModifiable handler,
+                                int slot,
+                                @Nonnull ItemStack before,
+                                @Nonnull ItemStack after) {
+        if (!world.isRemote) {
+            if (handler == invResources) {
+                builder.invResourcesChanged();
+            }
+        }
+        super.onSlotChange(handler, slot, before, after);
     }
 
     @Override
@@ -277,7 +294,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                         ? ClientVolumeBoxes.INSTANCE.boxes.stream()
                         .filter(localVolumeBox -> localVolumeBox.id.equals(boxId))
                         .findFirst()
-                        .orElse(null)
+                        .orElseThrow(NullPointerException::new)
                         : WorldSavedDataVolumeBoxes.get(world).getBoxFromId(boxId);
                     addon = (AddonFillingPlanner) volumeBox
                         .addons

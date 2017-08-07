@@ -12,6 +12,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 
 public class RotationUtil {
+    @SuppressWarnings("SuspiciousNameCombination")
     public static AxisAlignedBB rotateAABB(AxisAlignedBB aabb, EnumFacing facing) {
         if (facing == EnumFacing.DOWN) {
             return new AxisAlignedBB(aabb.minX, aabb.maxY, aabb.minZ, aabb.maxX, aabb.minY, aabb.maxZ);
@@ -57,6 +58,20 @@ public class RotationUtil {
                 return EnumFacing.DOWN;
             case DOWN:
                 return EnumFacing.NORTH;
+        }
+        throw new IllegalArgumentException();
+    }
+
+    public static Rotation invert(Rotation rotation) {
+        switch (rotation) {
+            case NONE:
+                return Rotation.NONE;
+            case CLOCKWISE_90:
+                return Rotation.COUNTERCLOCKWISE_90;
+            case CLOCKWISE_180:
+                return Rotation.CLOCKWISE_180;
+            case COUNTERCLOCKWISE_90:
+                return Rotation.CLOCKWISE_90;
         }
         throw new IllegalArgumentException();
     }

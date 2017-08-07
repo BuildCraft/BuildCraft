@@ -79,7 +79,9 @@ import buildcraft.builders.snapshot.TemplateBuilder;
 public class TileBuilder extends TileBC_Neptune
     implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("builder");
+    @SuppressWarnings("WeakerAccess")
     public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
+    @SuppressWarnings("WeakerAccess")
     public static final int NET_SNAPSHOT_TYPE = IDS.allocId("SNAPSHOT_TYPE");
     private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftbuilders:paving_the_way");
 
@@ -89,16 +91,22 @@ public class TileBuilder extends TileBC_Neptune
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
     private boolean canExcavate = true;
 
-    /** Stores the real path - just a few block positions. */
+    /**
+     * Stores the real path - just a few block positions.
+     */
     public List<BlockPos> path = null;
-    /** Stores the real path plus all possible block positions inbetween. */
+    /**
+     * Stores the real path plus all possible block positions inbetween.
+     */
     private List<BlockPos> basePoses = new ArrayList<>();
     private int currentBasePosIndex = 0;
     private Snapshot snapshot = null;
     public EnumSnapshotType snapshotType = null;
     private Template.BuildingInfo templateBuildingInfo = null;
     private Blueprint.BuildingInfo blueprintBuildingInfo = null;
+    @SuppressWarnings("WeakerAccess")
     public TemplateBuilder templateBuilder = new TemplateBuilder(this);
+    @SuppressWarnings("WeakerAccess")
     public BlueprintBuilder blueprintBuilder = new BlueprintBuilder(this);
     private Box currentBox = new Box();
 
@@ -120,10 +128,12 @@ public class TileBuilder extends TileBC_Neptune
     }
 
     @Override
-    protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, @Nonnull ItemStack before,
-        @Nonnull ItemStack after) {
-        if (itemHandler == invSnapshot) {
-            if (!world.isRemote) {
+    protected void onSlotChange(IItemHandlerModifiable handler,
+                                int slot,
+                                @Nonnull ItemStack before,
+                                @Nonnull ItemStack after) {
+        if (!world.isRemote) {
+            if (handler == invSnapshot) {
                 currentBasePosIndex = 0;
                 snapshot = null;
                 if (after.getItem() instanceof ItemSnapshot) {
@@ -138,8 +148,11 @@ public class TileBuilder extends TileBC_Neptune
                 updateSnapshot();
                 sendNetworkUpdate(NET_SNAPSHOT_TYPE);
             }
+            if (handler == invResources) {
+                Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::invResourcesChanged);
+            }
         }
-        super.onSlotChange(itemHandler, slot, before, after);
+        super.onSlotChange(handler, slot, before, after);
     }
 
     @Override
@@ -169,7 +182,9 @@ public class TileBuilder extends TileBC_Neptune
             if (snapshot.getType() == EnumSnapshotType.BLUEPRINT) {
                 blueprintBuildingInfo = ((Blueprint) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
             }
-            currentBox = Optional.ofNullable(getBuilder()).map(SnapshotBuilder::getBox).orElse(null);
+            currentBox = Optional.ofNullable(getBuildingInfo())
+                .map(buildingInfo -> buildingInfo.box)
+                .orElse(null);
             Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::updateSnapshot);
         } else {
             snapshotType = null;
@@ -363,6 +378,7 @@ public class TileBuilder extends TileBC_Neptune
         return true;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
@@ -412,6 +428,16 @@ public class TileBuilder extends TileBC_Neptune
         }
         if (snapshotType == EnumSnapshotType.BLUEPRINT) {
             return blueprintBuilder;
+        }
+        return null;
+    }
+
+    private Snapshot.BuildingInfo getBuildingInfo() {
+        if (snapshotType == EnumSnapshotType.TEMPLATE) {
+            return templateBuildingInfo;
+        }
+        if (snapshotType == EnumSnapshotType.BLUEPRINT) {
+            return blueprintBuildingInfo;
         }
         return null;
     }

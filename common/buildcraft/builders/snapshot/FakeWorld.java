@@ -32,6 +32,8 @@ import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.schematics.ISchematicBlock;
+
 @SuppressWarnings("NullableProblems")
 @SideOnly(Side.CLIENT)
 public class FakeWorld extends World {
@@ -76,12 +78,16 @@ public class FakeWorld extends World {
                 for (int x = 0; x < snapshot.size.getX(); x++) {
                     BlockPos pos = new BlockPos(x, y, z).add(BLUEPRINT_OFFSET);
                     if (snapshot instanceof Blueprint) {
-                        ((Blueprint) snapshot).palette
-                            .get(((Blueprint) snapshot).data[x][y][z])
-                            .buildWithoutChecks(this, pos);
+                        ISchematicBlock<?> schematicBlock = ((Blueprint) snapshot).palette
+                            .get(((Blueprint) snapshot).data[snapshot.posToIndex(x, y, z)]);
+                        if (!schematicBlock.isAir()) {
+                            schematicBlock.buildWithoutChecks(this, pos);
+                        }
                     }
                     if (snapshot instanceof Template) {
-                        setBlockState(pos, Blocks.QUARTZ_BLOCK.getDefaultState());
+                        if (((Template) snapshot).data.get(snapshot.posToIndex(x, y, z))) {
+                            setBlockState(pos, Blocks.QUARTZ_BLOCK.getDefaultState());
+                        }
                     }
                 }
             }

@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -27,7 +28,9 @@ import buildcraft.api.enums.EnumSnapshotType;
 
 import buildcraft.lib.misc.HashUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.RotationUtil;
 import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.net.PacketBufferBC;
 
 public abstract class Snapshot {
@@ -44,6 +47,55 @@ public abstract class Snapshot {
                 return new Blueprint();
         }
         throw new UnsupportedOperationException();
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public static int posToIndex(int sizeX, int sizeY, int sizeZ, int x, int y, int z) {
+        return ((z * sizeY) + y) * sizeX + x;
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public static int posToIndex(BlockPos size, int x, int y, int z) {
+        return posToIndex(size.getX(), size.getY(), size.getZ(), x, y, z);
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public static int posToIndex(int sizeX, int sizeY, int sizeZ, BlockPos pos) {
+        return posToIndex(sizeX, sizeY, sizeZ, pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public static int posToIndex(BlockPos size, BlockPos pos) {
+        return posToIndex(size.getX(), size.getY(), size.getZ(), pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public int posToIndex(int x, int y, int z) {
+        return posToIndex(size, x, y, z);
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public int posToIndex(BlockPos pos) {
+        return posToIndex(size, pos);
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public static BlockPos indexToPos(int sizeX, int sizeY, int sizeZ, int i) {
+        return new BlockPos(
+            i % sizeX,
+            (i / sizeX) % sizeY,
+            i / (sizeY * sizeX)
+        );
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public static BlockPos indexToPos(BlockPos size, int i) {
+        return indexToPos(size.getX(), size.getY(), size.getZ(), i);
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public BlockPos indexToPos(int i) {
+        return indexToPos(size, i);
     }
 
     public static NBTTagCompound writeToNBT(Snapshot snapshot) {
@@ -246,5 +298,35 @@ public abstract class Snapshot {
         public String toString() {
             return name;
         }
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public abstract class BuildingInfo {
+        public final BlockPos basePos;
+        public final Rotation rotation;
+        public final Box box = new Box();
+
+        protected BuildingInfo(BlockPos basePos, Rotation rotation) {
+            this.basePos = basePos;
+            this.rotation = rotation;
+            this.box.extendToEncompass(toWorld(BlockPos.ORIGIN));
+            this.box.extendToEncompass(toWorld(size.subtract(new BlockPos(1, 1, 1))));
+        }
+
+        public BlockPos toWorld(BlockPos blockPos) {
+            return blockPos
+                .rotate(rotation)
+                .add(basePos)
+                .add(offset.rotate(rotation));
+        }
+
+        public BlockPos fromWorld(BlockPos blockPos) {
+            return blockPos
+                .subtract(offset.rotate(rotation))
+                .subtract(basePos)
+                .rotate(RotationUtil.invert(rotation));
+        }
+
+        public abstract Snapshot getSnapshot();
     }
 }

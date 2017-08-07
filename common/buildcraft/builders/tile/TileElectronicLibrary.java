@@ -255,7 +255,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                         );
                         Snapshot.Header header = snapshot.key.header;
                         snapshot = snapshot.copy();
-                        snapshot.key = new Snapshot.Key(snapshot.key, header);
+                        snapshot.key = new Snapshot.Key(snapshot.key, (Snapshot.Header) null);
                         snapshot.computeKey();
                         GlobalSavedDataSnapshots.get(world).addSnapshot(snapshot);
                         invUpOut.setStackInSlot(0, BCBuildersItems.SNAPSHOT.getUsed(snapshot.getType(), header));
