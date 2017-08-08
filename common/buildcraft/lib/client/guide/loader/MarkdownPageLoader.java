@@ -149,7 +149,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
                 String loc = substring.substring(0, index);
                 String args = substring.substring(index + 2);
                 String[] argsSplit = args.split(",");
-                BCLog.logger.info("[lib.markdown] Load image " + loc + ", " + args + " -> " + Arrays.toString(argsSplit));
+                BCLog.logger.info("[lib.guide.loader.markdown] Load image " + loc + ", " + args + " -> " + Arrays.toString(argsSplit));
             }
         }
 
@@ -180,14 +180,12 @@ public enum MarkdownPageLoader implements IPageLoaderText {
     }
 
     private static GuidePartFactory loadDefaultImage(String location) {
-        BCLog.logger.info("[lib.markdown] Load default image " + location);
         ResourceLocation resLoc = new ResourceLocation(location);
         TextureResourceHolder holder = new TextureResourceHolder(resLoc);
         return ResourceRegistry.INSTANCE.register(holder, TextureResourceHolder.class);
     }
 
     private static GuidePartFactory loadSizedImage(String location, int width, int height) {
-        BCLog.logger.info("[lib.markdown] Load sized image " + location + ", " + width + ", " + height);
         ResourceLocation resLoc = new ResourceLocation(location);
         TextureResourceHolder holder = new TextureResourceHolder(resLoc, width, height);
         return ResourceRegistry.INSTANCE.register(holder, TextureResourceHolder.class);
@@ -198,7 +196,6 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         if (line.startsWith("$[") && endIndex > 0) {
             String inner = line.substring(2, endIndex);
             String after = line.substring(endIndex + 1);
-            BCLog.logger.info("Changed \"" + line + " to [\"" + inner + "\", \"" + after + "\"]");
             SpecialParser factory = SPECIAL_FACTORIES.get(inner);
             if (factory != null) {
                 return factory.parse(after);
@@ -303,7 +300,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         if (item != null) {
             return new ItemStack(item);
         } else {
-            BCLog.logger.warn("[lib.markdown] " + substring + " was not a valid item!");
+            BCLog.logger.warn("[lib.guide.loader.markdown] " + substring + " was not a valid item!");
             return null;
         }
     }
@@ -311,7 +308,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
     public static ItemStack loadComplexItemStack(String line) {
         String[] args = line.split(",");
         if (args.length == 0) {
-            BCLog.logger.warn("[lib.markdown] " + line + " was not a valid complex item string!");
+            BCLog.logger.warn("[lib.guide.loader.markdown] " + line + " was not a valid complex item string!");
             return null;
         }
         ItemStack stack = null;
@@ -319,7 +316,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         if (item != null) {
             stack = new ItemStack(item);
         } else {
-            BCLog.logger.warn("[lib.markdown] " + args[0] + " was not a valid item!");
+            BCLog.logger.warn("[lib.guide.loader.markdown] " + args[0] + " was not a valid item!");
             return null;
         }
 
@@ -329,7 +326,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         try {
             stackSize = Integer.parseInt(args[1].trim());
         } catch (NumberFormatException nfe) {
-            BCLog.logger.warn("[lib.markdown] " + args[1] + " was not a valid number: " + nfe.getLocalizedMessage());
+            BCLog.logger.warn("[lib.guide.loader.markdown] " + args[1] + " was not a valid number: " + nfe.getLocalizedMessage());
         }
         stack.setCount(stackSize);
 
@@ -343,7 +340,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
             }
             stack = new ItemStack(stack.getItem(), stack.getCount(), meta);
         } catch (NumberFormatException nfe) {
-            BCLog.logger.warn("[lib.markdown] " + args[2] + " was not a valid number: " + nfe.getLocalizedMessage());
+            BCLog.logger.warn("[lib.guide.loader.markdown] " + args[2] + " was not a valid number: " + nfe.getLocalizedMessage());
         }
 
         if (args.length == 3) return stack;
@@ -352,7 +349,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         try {
             stack.setTagCompound(JsonToNBT.getTagFromJson(nbtString));
         } catch (NBTException e) {
-            BCLog.logger.warn("[lib.markdown] " + nbtString + " was not a valid nbt tag: " + e.getLocalizedMessage());
+            BCLog.logger.warn("[lib.guide.loader.markdown] " + nbtString + " was not a valid nbt tag: " + e.getLocalizedMessage());
         }
         return stack;
     }

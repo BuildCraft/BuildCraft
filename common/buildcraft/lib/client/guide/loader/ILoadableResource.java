@@ -11,6 +11,7 @@ import java.io.InputStream;
 
 import javax.annotation.Nullable;
 
+/** TODO: Replace this with resource packs, so that resource packs can add and replace entries! */
 public interface ILoadableResource {
     @Nullable
     InputStream getInputStreamFor(String location) throws IOException;

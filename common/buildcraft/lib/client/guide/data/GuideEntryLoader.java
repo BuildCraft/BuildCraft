@@ -68,13 +68,7 @@ public class GuideEntryLoader {
             JsonContents contents = loadContents(loadable, mod);
 
             if (contents != null) {
-                if (DEBUG) {
-                    contents.printContents();
-                }
                 contents = contents.inheritMissingTags();
-                if (DEBUG) {
-                    contents.printContents();
-                }
                 for (JsonEntry entry : contents.contents) {
                     allEntries.put(entry, loadable);
                 }
