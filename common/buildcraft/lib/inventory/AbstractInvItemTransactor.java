@@ -21,7 +21,7 @@ import buildcraft.lib.misc.StackUtil;
 
 /** Designates an {@link IItemTransactor} that is backed by a simple, static, array based inventory. */
 public abstract class AbstractInvItemTransactor implements IItemTransactor {
-    /** Returns a valid version of the given stack, or {@link ItemStack#EMPTY} if it was invalid */
+    /** Returns {@link ItemStack#EMPTY} if it was empty, or the input stack if it was not. */
     @Nonnull
     public static ItemStack asValid(@Nonnull ItemStack stack) {
         if (stack.isEmpty()) {
