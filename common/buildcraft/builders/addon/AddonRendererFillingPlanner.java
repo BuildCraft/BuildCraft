@@ -18,12 +18,17 @@ import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.client.model.ModelLoader;
 
+import buildcraft.builders.snapshot.Template;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
 
 public class AddonRendererFillingPlanner implements IFastAddonRenderer<AddonFillingPlanner> {
     @Override
     public void renderAddonFast(AddonFillingPlanner addon, EntityPlayer player, float partialTicks, VertexBuffer vb) {
-        List<BlockPos> blocksShouldBePlaced = new ArrayList<>(addon.buildingInfo.toPlace);
+        Template.BuildingInfo info = addon.buildingInfo;
+        if (info == null) {
+            return;
+        }
+        List<BlockPos> blocksShouldBePlaced = new ArrayList<>(info.toPlace);
         blocksShouldBePlaced.sort(Comparator.comparing((BlockPos blockPos) ->
                 Math.pow(player.posX - blockPos.getX(), 2) +
                         Math.pow(player.posY - blockPos.getY(), 2) +

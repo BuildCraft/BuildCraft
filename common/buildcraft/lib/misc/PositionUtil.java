@@ -1,13 +1,14 @@
 /*
- * Copyright (c) 2017 SpaceToad and the BuildCraft team
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team This Source Code Form is subject to the terms of the Mozilla
+ * Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at
+ * https://mozilla.org/MPL/2.0/
  */
 
 package buildcraft.lib.misc;
 
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
@@ -332,6 +333,13 @@ public class PositionUtil {
     public static ImmutableList<BlockPos> getAllOnPath(BlockPos from, BlockPos to) {
         ImmutableList.Builder<BlockPos> interp = ImmutableList.builder();
 
+        forAllOnPath(from, to, interp::add);
+
+        return interp.build();
+    }
+
+    public static void forAllOnPath(BlockPos from, BlockPos to, Consumer<BlockPos> iter) {
+
         final BlockPos difference = to.subtract(from);
 
         final int ax = Math.abs(difference.getX());
@@ -372,24 +380,89 @@ public class PositionUtil {
             }
 
             if (changed) {
-                interp.add(current);
+                iter.accept(current);
             }
         }
-        return interp.build();
+    }
+
+    public static void forAllOnPath2d(int a1, int b1, int a2, int b2, PathIterator2d iter) {
+        // Find the smallest number 'm' and smallest number 'o'
+        // such that a * m + o = b
+        // then draw a straight line (1, m)
+
+        // First swap a with b if b is smaller than a
+
+        int diff_a = a2 - a1;
+        int diff_b = b2 - b1;
+
+        int max_a = Math.abs(diff_a);
+        int max_b = Math.abs(diff_b);
+
+        int size_a = max_a + 1;
+        int size_b = max_b + 1;
+
+        int mult_a = diff_a > 0 ? 1 : -1;
+        int mult_b = diff_b > 0 ? 1 : -1;
+
+        boolean reverse = false;
+        int multiplier;
+        int offset;
+
+        if (size_a == size_b) {
+            multiplier = 1;
+            offset = 0;
+        } else {
+            if (size_a > size_b) {
+                int temp = size_a;
+                size_a = size_b;
+                size_b = temp;
+                reverse = true;
+            }
+            multiplier = size_b / size_a;
+            offset = size_b % size_a;
+        }
+
+        // Offset is distributed from the start of the line
+        // Which is wrong atm -- need to distribute it across the line
+
+        int normalLength = multiplier;
+        int currentOffsetA = 0;
+        int currentOffsetB = 0;
+        int count = size_a;
+        for (int i = 0; i < count; i++) {
+            int length = normalLength;
+            if (i < offset) {
+                length++;
+            }
+            for (int l = 0; l < length; l++) {
+                if (reverse) {
+                    iter.iterate(a1 + mult_a * currentOffsetB, b1 + mult_b * currentOffsetA);
+                } else {
+                    iter.iterate(a1 + mult_a * currentOffsetA, b1 + mult_b * currentOffsetB);
+                }
+                currentOffsetB++;
+            }
+            currentOffsetA++;
+        }
+    }
+
+    @FunctionalInterface
+    public interface PathIterator2d {
+        void iterate(int a, int b);
     }
 
     public static BlockPos randomBlockPos(Random rand, BlockPos size) {
         return new BlockPos(//
-            rand.nextInt(size.getX()),//
-            rand.nextInt(size.getY()),//
+            rand.nextInt(size.getX()), //
+            rand.nextInt(size.getY()), //
             rand.nextInt(size.getZ())//
         );
     }
 
     public static BlockPos randomBlockPos(Random rand, BlockPos min, BlockPos max) {
         return new BlockPos(//
-            min.getX() + rand.nextInt(max.getX() - min.getX()),//
-            min.getY() + rand.nextInt(max.getY() - min.getY()),//
+            min.getX() + rand.nextInt(max.getX() - min.getX()), //
+            min.getY() + rand.nextInt(max.getY() - min.getY()), //
             min.getZ() + rand.nextInt(max.getZ() - min.getZ())//
         );
     }

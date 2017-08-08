@@ -5,48 +5,43 @@
 package buildcraft.core.builders.patterns;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
-import buildcraft.api.blueprints.SchematicMask;
-import buildcraft.api.enums.EnumFillerPattern;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import buildcraft.api.core.IBox;
+import buildcraft.api.core.render.ISprite;
+import buildcraft.api.filler.FilledTemplate;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.blueprints.BptBuilderTemplate;
-import buildcraft.core.blueprints.Template;
-import buildcraft.lib.misc.data.Box;
+import buildcraft.api.statements.containers.IFillerStatementContainer;
 
-public class PatternFlatten extends FillerPattern {
+import buildcraft.core.BCCoreSprites;
+
+public class PatternFlatten extends Pattern {
 
     public PatternFlatten() {
-        super("flatten", EnumFillerPattern.FLATTEN);
+        super("flatten");
     }
 
     @Override
-    public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
-        int xMin = box.min().getX();
-        int yMin = box.min().getY() > 0 ? (int) box.min().getY() - 1 : 0;
-        int zMin = box.min().getZ();
+    public FilledTemplate createTemplate(IFillerStatementContainer filler, IStatementParameter[] params) {
+        IBox box = filler.getBox();
+        BlockPos min = box.min().down();
+        if (filler.getFillerWorld().isOutsideBuildHeight(min)) {
+            min = box.min();
+        }
+        FilledTemplate bpt = new FilledTemplate(min, box.max());
 
-        int xMax = box.max().getX();
-        int yMax = box.max().getY();
-        int zMax = box.max().getZ();
-
-        Template bpt = new Template(new BlockPos(box.size().getX(), yMax - yMin + 1, box.size().getZ()));
-
-        if (box.min().getY() > 0) {
-            for (int x = xMin; x <= xMax; ++x) {
-                for (int z = zMin; z <= zMax; ++z) {
-                    bpt.set(new BlockPos(x - xMin, 0, z - zMin), new SchematicMask(true));
-                }
-            }
+        if (box.size().getY() > 0) {
+            bpt.fillPlaneXZ(0);
         }
 
         return bpt;
     }
 
     @Override
-    public BptBuilderTemplate getTemplateBuilder(Box box, World world, IStatementParameter[] parameters) {
-        int yMin = box.min().getY() > 0 ? (int) box.min().getY() - 1 : 0;
-
-        return new BptBuilderTemplate(getTemplate(box, world, parameters), world, new BlockPos(box.min().getX(), yMin, box.min().getZ()));
+    @SideOnly(Side.CLIENT)
+    public ISprite getSprite() {
+        return BCCoreSprites.FILLER_FLATTEN;
     }
 }

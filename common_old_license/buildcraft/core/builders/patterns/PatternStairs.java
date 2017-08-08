@@ -46,8 +46,8 @@ public class PatternStairs extends Pattern {
     public FilledTemplate createTemplate(IFillerStatementContainer filler, IStatementParameter[] params) {
         FilledTemplate template = new FilledTemplate(filler.getBox());
 
-        PatternParameterXZDir xzDir = getParam(0, params, PatternParameterXZDir.EAST);
-        PatternParameterYDir yDir = getParam(1, params, PatternParameterYDir.UP);
+        PatternParameterYDir yDir = getParam(0, params, PatternParameterYDir.UP);
+        PatternParameterXZDir xzDir = getParam(1, params, PatternParameterXZDir.EAST);
 
         int y;
         final int yStep;
@@ -55,11 +55,11 @@ public class PatternStairs extends Pattern {
         if (yDir == PatternParameterYDir.UP) {
             y = 0;
             yStep = 1;
-            yEnd = template.maxY;
+            yEnd = template.maxY + 1;
         } else {
             y = template.maxY;
             yStep = -1;
-            yEnd = 0;
+            yEnd = -1;
         }
 
         final int dfx = xzDir.dir.getFrontOffsetX() > 0 ? 1 : 0;

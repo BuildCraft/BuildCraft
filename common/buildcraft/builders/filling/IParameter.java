@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.lib.net.PacketBufferBC;
 
+@Deprecated
 public interface IParameter {
     String name();
 

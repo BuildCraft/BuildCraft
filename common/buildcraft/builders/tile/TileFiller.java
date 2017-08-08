@@ -179,7 +179,7 @@ public class TileFiller extends TileBC_Neptune
                         }
                     }
                 }
-                buildingInfo = blueprintTemplate.new BuildingInfo(box.min(), Rotation.NONE);
+                buildingInfo = blueprintTemplate.new BuildingInfo(patternTemplate.min, Rotation.NONE);
                 builder.updateSnapshot();
             }
         }
@@ -443,8 +443,6 @@ public class TileFiller extends TileBC_Neptune
         }
         finished = false;
         lockedTicks = 3;
-//        patternTemplate = null;
-//        blueprintTemplate = null;
     }
 
     // IControllable

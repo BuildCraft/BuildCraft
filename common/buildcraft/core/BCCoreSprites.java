@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2017 SpaceToad and the BuildCraft team
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team This Source Code Form is subject to the terms of the Mozilla
+ * Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at
+ * https://mozilla.org/MPL/2.0/
  */
 
 package buildcraft.core;
@@ -41,6 +41,7 @@ public class BCCoreSprites {
     public static final SpriteHolder FILLER_CLEAR;
     public static final SpriteHolder FILLER_FILL;
     public static final SpriteHolder FILLER_BOX;
+    public static final SpriteHolder FILLER_FRAME;
     public static final SpriteHolder FILLER_FLATTEN;
     public static final SpriteHolder FILLER_HORIZON;
     public static final SpriteHolder FILLER_CYLINDER;
@@ -81,6 +82,7 @@ public class BCCoreSprites {
         FILLER_CLEAR = getHolder("filler/patterns/clear");
         FILLER_FILL = getHolder("filler/patterns/fill");
         FILLER_BOX = getHolder("filler/patterns/box");
+        FILLER_FRAME = getHolder("filler/patterns/frame");
         FILLER_FLATTEN = getHolder("filler/patterns/flatten");
         FILLER_HORIZON = getHolder("filler/patterns/horizon");
         FILLER_CYLINDER = getHolder("filler/patterns/cylinder");

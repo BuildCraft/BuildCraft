@@ -31,6 +31,7 @@ import buildcraft.core.marker.volume.EnumAddonSlot;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 
+@Deprecated
 public class ContainerFillingPlanner extends ContainerBC_Neptune implements IContainerFilling {
     private static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("filling_planner");
     private static final int ID_DATA = IDS.allocId("DATA");

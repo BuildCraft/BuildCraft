@@ -61,11 +61,11 @@ public abstract class BCStatement implements IStatement {
     }
 
     protected static <P extends IStatementParameter> P getParam(int index, IStatementParameter[] params, P _default) {
-        if (params.length <= index) {
+        if (params == null || params.length <= index) {
             return _default;
         }
         IStatementParameter atIndex = params[index];
-        if (atIndex.getClass() == _default.getClass()) {
+        if (atIndex != null && atIndex.getClass() == _default.getClass()) {
             return (P) atIndex;
         }
         return _default;

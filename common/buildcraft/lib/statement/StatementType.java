@@ -4,7 +4,6 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.statements.IGuiSlot;
 
-import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.net.PacketBufferBC;
 
 public abstract class StatementType<S extends IGuiSlot> {

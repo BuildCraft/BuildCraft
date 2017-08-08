@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2017 SpaceToad and the BuildCraft team
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team This Source Code Form is subject to the terms of the Mozilla
+ * Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at
+ * https://mozilla.org/MPL/2.0/
  */
 
 package buildcraft.lib;
@@ -121,9 +121,11 @@ public class BCLibConfig {
     public enum ChunkLoaderType {
         /** Automatic chunkloading is ENABLED. */
         ON,
+
         /** Automatic chunkloading is ENABLED when using the integrated server (singleplayer + LAN), and DISABLED when
          * using a dedicated server. Currently NOT implemented */
         AUTO,
+
         /** Automatic chunkloading is DISABLED. Even for strict tiles (like the quarry) */
         OFF
     }

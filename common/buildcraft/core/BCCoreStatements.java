@@ -12,13 +12,21 @@ import buildcraft.core.builders.patterns.PatternBox;
 import buildcraft.core.builders.patterns.PatternClear;
 import buildcraft.core.builders.patterns.PatternCylinder;
 import buildcraft.core.builders.patterns.PatternFill;
+import buildcraft.core.builders.patterns.PatternFlatten;
+import buildcraft.core.builders.patterns.PatternFrame;
 import buildcraft.core.builders.patterns.PatternHorizon;
 import buildcraft.core.builders.patterns.PatternNone;
+import buildcraft.core.builders.patterns.PatternParameterAxis;
 import buildcraft.core.builders.patterns.PatternParameterCenter;
 import buildcraft.core.builders.patterns.PatternParameterHollow;
 import buildcraft.core.builders.patterns.PatternParameterXZDir;
 import buildcraft.core.builders.patterns.PatternParameterYDir;
 import buildcraft.core.builders.patterns.PatternPyramid;
+import buildcraft.core.builders.patterns.PatternShape2dHexagon;
+import buildcraft.core.builders.patterns.PatternShape2dOctagon;
+import buildcraft.core.builders.patterns.PatternShape2dPentagon;
+import buildcraft.core.builders.patterns.PatternShape2dSquare;
+import buildcraft.core.builders.patterns.PatternShape2dTriangle;
 import buildcraft.core.builders.patterns.PatternStairs;
 import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.statements.ActionRedstoneOutput;
@@ -96,14 +104,27 @@ public class BCCoreStatements {
     public static final PatternClear PATTERN_CLEAR = new PatternClear();
     public static final PatternFill PATTERN_FILL = new PatternFill();
     public static final PatternBox PATTERN_BOX = new PatternBox();
+    public static final PatternFrame PATTERN_FRAME = new PatternFrame();
+    /**
+     * Superseeded (hopefully) by PatternShape2dCircle
+     */
+    @Deprecated
     public static final PatternCylinder PATTERN_CYLINDER = new PatternCylinder();
     public static final PatternHorizon PATTERN_HORIZON = new PatternHorizon();
     public static final PatternPyramid PATTERN_PYRAMID = new PatternPyramid();
     public static final PatternStairs PATTERN_STAIRS = new PatternStairs();
+    public static final PatternFlatten PATTERN_FLATTEN = new PatternFlatten();
+    public static final PatternShape2dTriangle PATTERN_TRIANGLE = new PatternShape2dTriangle();
+    public static final PatternShape2dSquare PATTERN_SQUARE = new PatternShape2dSquare();
+    public static final PatternShape2dPentagon PATTERN_PENTAGON = new PatternShape2dPentagon();
+    public static final PatternShape2dHexagon PATTERN_HEXAGON = new PatternShape2dHexagon();
+    public static final PatternShape2dOctagon PATTERN_OCTAGON = new PatternShape2dOctagon();
 
     public static final Pattern[] PATTERNS = {//
-        PATTERN_NONE, PATTERN_CLEAR, PATTERN_FILL, PATTERN_BOX,//
+        PATTERN_NONE, PATTERN_CLEAR, PATTERN_FILL, PATTERN_BOX, PATTERN_FRAME,//
         PATTERN_CYLINDER, PATTERN_HORIZON, PATTERN_PYRAMID, PATTERN_STAIRS,//
+        PATTERN_FLATTEN, PATTERN_TRIANGLE, PATTERN_SQUARE, PATTERN_PENTAGON,//
+        PATTERN_HEXAGON,//
     };
 
     static {
@@ -120,6 +141,7 @@ public class BCCoreStatements {
         StatementManager.registerParameter(PatternParameterYDir::readFromNbt);
         StatementManager.registerParameter(PatternParameterCenter::readFromNbt);
         StatementManager.registerParameter(PatternParameterHollow::readFromNbt);
+        StatementManager.registerParameter(PatternParameterAxis::readFromNbt);
     }
 
     public static void preInit() {

@@ -24,7 +24,7 @@ public class GuiFillerPlanner extends GuiJson<ContainerFillerPlanner> {
     protected void preLoad() {
         super.preLoad();
         properties.put("filler.possible", FillerStatementContext.CONTEXT_ALL);
-        properties.put("filler.pattern", container.fillerPlanner.pattern);
+        properties.put("filler.pattern", container.patternClient);
         properties.put("filler.pattern.sprite", SPRITE_PATTERN);
     }
 
@@ -38,7 +38,7 @@ public class GuiFillerPlanner extends GuiJson<ContainerFillerPlanner> {
             b.setActive(container.fillerPlanner.inverted);
             IButtonClickEventListener listener = (b2, k) -> {
                 b.setToolTip(b.active ? on : off);
-                container.fillerPlanner.setInverted(b.active);
+                container.setInverted(b.active);
             };
             listener.handleButtonClick(b, 0);
             b.registerListener(listener);
@@ -48,6 +48,6 @@ public class GuiFillerPlanner extends GuiJson<ContainerFillerPlanner> {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        SPRITE_PATTERN.delegate = container.fillerPlanner.pattern.get().getSprite();
+        SPRITE_PATTERN.delegate = container.patternClient.get().getSprite();
     }
 }

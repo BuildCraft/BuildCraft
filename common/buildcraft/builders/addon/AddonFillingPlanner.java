@@ -9,6 +9,8 @@ package buildcraft.builders.addon;
 import java.io.IOException;
 import java.util.Arrays;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -38,8 +40,8 @@ import buildcraft.core.marker.volume.ISingleAddon;
 public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerStatementContainer {
     public final FullStatement<IFillerPattern> pattern = new FullStatement<>(FillerType.INSTANCE, 4, null);
     public boolean inverted;
+    @Nullable
     public Template.BuildingInfo buildingInfo;
-    private World world;
 
     public void updateBuildingInfo() {
         IStatementParameter[] params = new IStatementParameter[pattern.maxParams];
@@ -64,7 +66,7 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerS
                     }
                 }
             }
-            buildingInfo = blueprintTemplate.new BuildingInfo(box.box.min(), Rotation.NONE);
+            buildingInfo = blueprintTemplate.new BuildingInfo(patternTemplate.min, Rotation.NONE);
         }
     }
 
@@ -80,18 +82,14 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerS
     }
 
     @Override
-    public void onAdded(World world) {
-        this.world = world;
+    public void onAdded() {
+        super.onAdded();
         updateBuildingInfo();
     }
 
     @Override
-    public void onRemoved() {
-        this.world = null;
-    }
-
-    @Override
     public void onPlayerRightClick(EntityPlayer player) {
+        super.onPlayerRightClick(player);
         BCBuildersGuis.FILLING_PLANNER.openGUI(player);
     }
 
@@ -106,7 +104,6 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerS
     public void readFromNBT(NBTTagCompound nbt) {
         pattern.readFromNbt(nbt.getCompoundTag("pattern"));
         inverted = nbt.getBoolean("inverted");
-        updateBuildingInfo();
     }
 
     @Override
@@ -136,7 +133,7 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerS
 
     @Override
     public World getFillerWorld() {
-        return world;
+        return box.world;
     }
 
     @Override
