@@ -35,7 +35,7 @@ import buildcraft.lib.misc.NBTUtilBC;
 
 import buildcraft.transport.BCTransportBlocks;
 
-public class SchematicBlockPipe implements ISchematicBlock<SchematicBlockPipe> {
+public class SchematicBlockPipe implements ISchematicBlock {
     private NBTTagCompound tileNbt;
     private Rotation tileRotation = Rotation.NONE;
 

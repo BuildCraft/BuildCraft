@@ -44,16 +44,25 @@ import buildcraft.api.schematics.SchematicBlockContext;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 
-public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefault> {
-    private final Set<BlockPos> requiredBlockOffsets = new HashSet<>();
-    private IBlockState blockState;
-    private final List<IProperty<?>> ignoredProperties = new ArrayList<>();
-    private NBTTagCompound tileNbt;
-    private final List<String> ignoredTags = new ArrayList<>();
-    private Rotation tileRotation = Rotation.NONE;
-    private Block placeBlock;
-    private final Set<BlockPos> updateBlockOffsets = new HashSet<>();
-    private final Set<Block> canBeReplacedWithBlocks = new HashSet<>();
+public class SchematicBlockDefault implements ISchematicBlock {
+    @SuppressWarnings("WeakerAccess")
+    protected final Set<BlockPos> requiredBlockOffsets = new HashSet<>();
+    @SuppressWarnings("WeakerAccess")
+    protected IBlockState blockState;
+    @SuppressWarnings("WeakerAccess")
+    protected final List<IProperty<?>> ignoredProperties = new ArrayList<>();
+    @SuppressWarnings("WeakerAccess")
+    protected NBTTagCompound tileNbt;
+    @SuppressWarnings("WeakerAccess")
+    protected final List<String> ignoredTags = new ArrayList<>();
+    @SuppressWarnings("WeakerAccess")
+    protected Rotation tileRotation = Rotation.NONE;
+    @SuppressWarnings("WeakerAccess")
+    protected Block placeBlock;
+    @SuppressWarnings("WeakerAccess")
+    protected final Set<BlockPos> updateBlockOffsets = new HashSet<>();
+    @SuppressWarnings("WeakerAccess")
+    protected final Set<Block> canBeReplacedWithBlocks = new HashSet<>();
 
     @SuppressWarnings("unused")
     public static boolean predicate(SchematicBlockContext context) {
@@ -230,7 +239,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
 
     @Override
     public SchematicBlockDefault getRotated(Rotation rotation) {
-        SchematicBlockDefault schematicBlock = new SchematicBlockDefault();
+        SchematicBlockDefault schematicBlock = SchematicBlockManager.createCleanCopy(this);
         requiredBlockOffsets.stream()
             .map(blockPos -> blockPos.rotate(rotation))
             .forEach(schematicBlock.requiredBlockOffsets::add);

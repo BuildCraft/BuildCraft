@@ -34,7 +34,7 @@ import buildcraft.api.schematics.SchematicBlockContext;
 
 import buildcraft.lib.misc.BlockUtil;
 
-public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid> {
+public class SchematicBlockFluid implements ISchematicBlock {
     private IBlockState blockState;
     private boolean isFlowing;
 
@@ -82,7 +82,7 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
 
     @Override
     public SchematicBlockFluid getRotated(Rotation rotation) {
-        SchematicBlockFluid schematicBlock = new SchematicBlockFluid();
+        SchematicBlockFluid schematicBlock = SchematicBlockManager.createCleanCopy(this);
         schematicBlock.blockState = blockState;
         schematicBlock.isFlowing = isFlowing;
         return schematicBlock;

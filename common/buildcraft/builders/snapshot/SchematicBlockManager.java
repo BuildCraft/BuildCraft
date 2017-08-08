@@ -25,10 +25,10 @@ import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
 
 public class SchematicBlockManager {
     @SuppressWarnings("WeakerAccess")
-    public static ISchematicBlock<?> getSchematicBlock(SchematicBlockContext context) {
+    public static ISchematicBlock getSchematicBlock(SchematicBlockContext context) {
         for (SchematicBlockFactory<?> schematicBlockFactory : Lists.reverse(SchematicBlockFactoryRegistry.getFactories())) {
             if (schematicBlockFactory.predicate.test(context)) {
-                ISchematicBlock<?> schematicBlock = schematicBlockFactory.supplier.get();
+                ISchematicBlock schematicBlock = schematicBlockFactory.supplier.get();
                 schematicBlock.init(context);
                 return schematicBlock;
             }
@@ -36,11 +36,11 @@ public class SchematicBlockManager {
         throw new UnsupportedOperationException();
     }
 
-    public static ISchematicBlock<?> getSchematicBlock(World world,
-                                                       BlockPos basePos,
-                                                       BlockPos pos,
-                                                       IBlockState blockState,
-                                                       Block block) {
+    public static ISchematicBlock getSchematicBlock(World world,
+                                                    BlockPos basePos,
+                                                    BlockPos pos,
+                                                    IBlockState blockState,
+                                                    Block block) {
         return getSchematicBlock(
             new SchematicBlockContext(
                 world,
@@ -52,8 +52,16 @@ public class SchematicBlockManager {
         );
     }
 
+    @SuppressWarnings("WeakerAccess")
+    public static <S extends ISchematicBlock> S createCleanCopy(S schematicBlock) {
+        return SchematicBlockFactoryRegistry
+            .getFactoryByInstance(schematicBlock)
+            .supplier
+            .get();
+    }
+
     @Nonnull
-    public static NBTTagCompound writeToNBT(ISchematicBlock<?> schematicBlock) {
+    public static <S extends ISchematicBlock> NBTTagCompound writeToNBT(S schematicBlock) {
         NBTTagCompound schematicBlockTag = new NBTTagCompound();
         schematicBlockTag.setString(
             "name",
@@ -67,13 +75,13 @@ public class SchematicBlockManager {
     }
 
     @Nonnull
-    public static ISchematicBlock<?> readFromNBT(NBTTagCompound schematicBlockTag) throws InvalidInputDataException {
+    public static ISchematicBlock readFromNBT(NBTTagCompound schematicBlockTag) throws InvalidInputDataException {
         ResourceLocation name = new ResourceLocation(schematicBlockTag.getString("name"));
         SchematicBlockFactory<?> factory = SchematicBlockFactoryRegistry.getFactoryByName(name);
         if (factory == null) {
             throw new InvalidInputDataException("Unknown schematic type " + name);
         }
-        ISchematicBlock<?> schematicBlock = factory.supplier.get();
+        ISchematicBlock schematicBlock = factory.supplier.get();
         NBTTagCompound data = schematicBlockTag.getCompoundTag("data");
         try {
             schematicBlock.deserializeNBT(data);

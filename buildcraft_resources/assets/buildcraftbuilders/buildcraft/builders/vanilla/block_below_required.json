@@ -33,7 +33,8 @@
             "minecraft:detector_rail",
             "minecraft:golden_rail",
             "minecraft:bed",
-            "minecraft:standing_sign"
+            "minecraft:standing_sign",
+            "minecraft:standing_banner"
         ],
         "requiredBlockOffsets": [[0, -1, 0]]
     }

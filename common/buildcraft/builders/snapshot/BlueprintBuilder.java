@@ -52,7 +52,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         super(tile);
     }
 
-    private ISchematicBlock<?> getSchematicBlock(BlockPos blockPos) {
+    private ISchematicBlock getSchematicBlock(BlockPos blockPos) {
         BlockPos snapshotPos = getBuildingInfo().fromWorld(blockPos);
         return getBuildingInfo().box.contains(blockPos) ? getBuildingInfo().rotatedPalette.get(
             getBuildingInfo().getSnapshot().data[getBuildingInfo().getSnapshot().posToIndex(snapshotPos)]
@@ -246,7 +246,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             );
             tile.getWorldBC().profiler.endSection();
             tile.getWorldBC().profiler.startSection("toSpawn");
-            List<ISchematicEntity<?>> toSpawn = buildingInfo.entities.stream()
+            List<ISchematicEntity> toSpawn = buildingInfo.entities.stream()
                 .filter(schematicEntity ->
                     entitiesWithinBox.stream()
                         .map(Entity::getPositionVector)

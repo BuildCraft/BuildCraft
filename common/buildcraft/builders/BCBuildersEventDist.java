@@ -102,13 +102,13 @@ public enum BCBuildersEventDist {
         if (header != null) {
             snapshot = ClientSnapshots.INSTANCE.getSnapshot(header.key);
         } else if (BCBuildersItems.schematicSingle != null) {
-            ISchematicBlock<?> schematic = ItemSchematicSingle.getSchematicSafe(stack);
-            if (schematic != null) {
+            ISchematicBlock schematicBlock = ItemSchematicSingle.getSchematicSafe(stack);
+            if (schematicBlock != null) {
                 Blueprint blueprint = new Blueprint();
                 blueprint.size = new BlockPos(1, 1, 1);
                 blueprint.offset = BlockPos.ORIGIN;
                 blueprint.data = new int[] {0};
-                blueprint.palette.add(schematic);
+                blueprint.palette.add(schematicBlock);
                 blueprint.computeKey();
                 snapshot = blueprint;
             }

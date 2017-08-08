@@ -35,9 +35,9 @@ import buildcraft.api.schematics.ISchematicEntity;
 import buildcraft.lib.misc.NBTUtilBC;
 
 public class Blueprint extends Snapshot {
-    public final List<ISchematicBlock<?>> palette = new ArrayList<>();
+    public final List<ISchematicBlock> palette = new ArrayList<>();
     public int[] data;
-    public final List<ISchematicEntity<?>> entities = new ArrayList<>();
+    public final List<ISchematicEntity> entities = new ArrayList<>();
 
     @Override
     public Blueprint copy() {
@@ -52,7 +52,7 @@ public class Blueprint extends Snapshot {
         return blueprint;
     }
 
-    public void replace(ISchematicBlock<?> from, ISchematicBlock<?> to) {
+    public void replace(ISchematicBlock from, ISchematicBlock to) {
         Collections.replaceAll(palette, from, to);
         // TODO: reallocate IDs
     }
@@ -130,10 +130,10 @@ public class Blueprint extends Snapshot {
     public class BuildingInfo extends Snapshot.BuildingInfo {
         public final List<ItemStack>[] toPlaceRequiredItems;
         public final List<FluidStack>[] toPlaceRequiredFluids;
-        public final List<ISchematicBlock<?>> rotatedPalette;
-        public final Set<ISchematicEntity<?>> entities;
-        public final Map<ISchematicEntity<?>, List<ItemStack>> entitiesRequiredItems;
-        public final Map<ISchematicEntity<?>, List<FluidStack>> entitiesRequiredFluids;
+        public final List<ISchematicBlock> rotatedPalette;
+        public final Set<ISchematicEntity> entities;
+        public final Map<ISchematicEntity, List<ItemStack>> entitiesRequiredItems;
+        public final Map<ISchematicEntity, List<FluidStack>> entitiesRequiredFluids;
 
         public BuildingInfo(BlockPos basePos, Rotation rotation) {
             super(basePos, rotation);
@@ -149,7 +149,7 @@ public class Blueprint extends Snapshot {
             for (int z = 0; z < getSnapshot().size.getZ(); z++) {
                 for (int y = 0; y < getSnapshot().size.getY(); y++) {
                     for (int x = 0; x < getSnapshot().size.getX(); x++) {
-                        ISchematicBlock<?> schematicBlock = rotatedPalette.get(data[posToIndex(x, y, z)]);
+                        ISchematicBlock schematicBlock = rotatedPalette.get(data[posToIndex(x, y, z)]);
                         if (!schematicBlock.isAir()) {
                             toPlaceRequiredItems[posToIndex(x, y, z)] = schematicBlock.computeRequiredItems(null);
                             toPlaceRequiredFluids[posToIndex(x, y, z)] = schematicBlock.computeRequiredFluids(null);
@@ -157,13 +157,13 @@ public class Blueprint extends Snapshot {
                     }
                 }
             }
-            ImmutableSet.Builder<ISchematicEntity<?>> entitiesBuilder = ImmutableSet.builder();
-            ImmutableMap.Builder<ISchematicEntity<?>, List<ItemStack>> entitiesRequiredItemsBuilder =
+            ImmutableSet.Builder<ISchematicEntity> entitiesBuilder = ImmutableSet.builder();
+            ImmutableMap.Builder<ISchematicEntity, List<ItemStack>> entitiesRequiredItemsBuilder =
                 ImmutableMap.builder();
-            ImmutableMap.Builder<ISchematicEntity<?>, List<FluidStack>> entitiesRequiredFluidsBuilder =
+            ImmutableMap.Builder<ISchematicEntity, List<FluidStack>> entitiesRequiredFluidsBuilder =
                 ImmutableMap.builder();
-            for (ISchematicEntity<?> schematicEntity : getSnapshot().entities) {
-                ISchematicEntity<?> rotatedSchematicEntity = schematicEntity.getRotated(rotation);
+            for (ISchematicEntity schematicEntity : getSnapshot().entities) {
+                ISchematicEntity rotatedSchematicEntity = schematicEntity.getRotated(rotation);
                 entitiesBuilder.add(rotatedSchematicEntity);
                 entitiesRequiredItemsBuilder.put(rotatedSchematicEntity, schematicEntity.computeRequiredItems(null));
                 entitiesRequiredFluidsBuilder.put(rotatedSchematicEntity, schematicEntity.computeRequiredFluids(null));

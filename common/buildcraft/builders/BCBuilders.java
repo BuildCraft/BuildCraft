@@ -4,8 +4,16 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
+import javax.annotation.Nonnull;
+
+import net.minecraft.block.BlockBanner;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemBanner;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.MinecraftForge;
@@ -17,6 +25,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.schematics.SchematicBlockContext;
 import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
 import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
 
@@ -79,6 +88,23 @@ public class BCBuilders {
             200,
             SchematicBlockFluid::predicate,
             SchematicBlockFluid::new
+        );
+        SchematicBlockFactoryRegistry.registerFactory(
+            "banner",
+            300,
+            context -> context.block instanceof BlockBanner,
+            () -> new SchematicBlockDefault() {
+                @Nonnull
+                @Override
+                public List<ItemStack> computeRequiredItems(SchematicBlockContext context) {
+                    return Collections.singletonList(
+                        ItemBanner.makeBanner(
+                            EnumDyeColor.byDyeDamage(tileNbt.getInteger("Base")),
+                            tileNbt.getTagList("Patterns", 10)
+                        )
+                    );
+                }
+            }
         );
 
         SchematicEntityFactoryRegistry.registerFactory(

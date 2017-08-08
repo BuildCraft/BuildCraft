@@ -24,7 +24,7 @@ import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.SchematicBlockContext;
 
-public final class SchematicBlockAir implements ISchematicBlock<SchematicBlockAir> {
+public final class SchematicBlockAir implements ISchematicBlock {
     @SuppressWarnings("unused")
     public static boolean predicate(SchematicBlockContext context) {
         return true;
@@ -59,7 +59,7 @@ public final class SchematicBlockAir implements ISchematicBlock<SchematicBlockAi
 
     @Override
     public SchematicBlockAir getRotated(Rotation rotation) {
-        return this;
+        return SchematicBlockManager.createCleanCopy(this);
     }
 
     @Override
