@@ -129,5 +129,33 @@
                 ]
             }
         ]
+    },
+    {
+        "selectors": ["minecraft:tallgrass[type=tall_grass]"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:tallgrass",
+                        "meta": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:tallgrass[type=fern]"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:tallgrass",
+                        "meta": 2
+                    }
+                ]
+            }
+        ]
     }
 ]
