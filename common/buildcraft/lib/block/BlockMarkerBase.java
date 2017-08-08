@@ -52,6 +52,7 @@ public abstract class BlockMarkerBase extends BlockBCTile_Neptune implements ICu
 
     public BlockMarkerBase(Material material, String id) {
         super(material, id);
+        setHardness(0.25f);
 
         IBlockState defaultState = getDefaultState();
         defaultState = defaultState.withProperty(BuildCraftProperties.BLOCK_FACING_6, EnumFacing.UP);
