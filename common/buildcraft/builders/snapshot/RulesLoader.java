@@ -101,7 +101,7 @@ public class RulesLoader {
         for (ModContainer modContainer : Loader.instance().getModList()) {
             String domain = modContainer.getModId();
             if (!READ_DOMAINS.contains(domain)) {
-                String base = "assets/" + domain + "/buildcraft/builders/";
+                String base = "assets/" + domain + "/compat/buildcraft/builders/";
                 if (modContainer.getMod() == null) {
                     continue;
                 }
