@@ -202,18 +202,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
     }
 
     public void cancel() {
-        breakTasks.forEach(breakTask ->
-            tile.getBattery().addPower(
-                Math.min(breakTask.getTarget(), tile.getBattery().getCapacity() - tile.getBattery().getStored()),
-                false
-            )
-        );
-        placeTasks.forEach(placeTask ->
-            tile.getBattery().addPower(
-                Math.min(placeTask.getTarget(), tile.getBattery().getCapacity() - tile.getBattery().getStored()),
-                false
-            )
-        );
+        breakTasks.forEach(this::cancelBreakTask);
+        placeTasks.forEach(this::cancelPlaceTask);
         breakTasks.clear();
         clientBreakTasks.clear();
         prevClientBreakTasks.clear();
