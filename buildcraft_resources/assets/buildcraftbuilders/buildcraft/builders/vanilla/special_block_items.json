@@ -115,5 +115,19 @@
                 ]
             }
         ]
+    },
+    {
+        "selectors": ["minecraft:double_plant[variant=double_grass]"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:double_plant",
+                        "meta": 2
+                    }
+                ]
+            }
+        ]
     }
 ]
