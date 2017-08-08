@@ -6,24 +6,15 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.Lists;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicEntity;
@@ -47,35 +38,13 @@ public class SchematicEntityManager {
     public static ISchematicEntity<?> getSchematicEntity(World world,
                                                          BlockPos basePos,
                                                          Entity entity) {
-        SchematicEntityContext context = new SchematicEntityContext(world, basePos, entity);
-        ISchematicEntity<?> schematicEntity = getSchematicEntity(context);
-        if (schematicEntity != null) {
-            return schematicEntity;
-        }
-        return null;
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    public static Pair<List<List<ItemStack>>, List<List<FluidStack>>> computeRequired(Blueprint blueprint) {
-        List<List<ItemStack>> requiredItems = new ArrayList<>(
-            Collections.nCopies(
-                blueprint.entities.size(),
-                Collections.emptyList()
+        return getSchematicEntity(
+            new SchematicEntityContext(
+                world,
+                basePos,
+                entity
             )
         );
-        List<List<FluidStack>> requiredFluids = new ArrayList<>(
-            Collections.nCopies(
-                blueprint.entities.size(),
-                Collections.emptyList()
-            )
-        );
-        int i = 0;
-        for (ISchematicEntity<?> schematicEntity : blueprint.entities) {
-            requiredItems.set(i, schematicEntity.computeRequiredItems(null));
-            requiredFluids.set(i, schematicEntity.computeRequiredFluids(null));
-            i++;
-        }
-        return Pair.of(requiredItems, requiredFluids);
     }
 
     @Nonnull

@@ -6,23 +6,16 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.List;
-
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.Lists;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
@@ -48,38 +41,15 @@ public class SchematicBlockManager {
                                                        BlockPos pos,
                                                        IBlockState blockState,
                                                        Block block) {
-        SchematicBlockContext context = new SchematicBlockContext(
-            world,
-            basePos,
-            pos,
-            blockState,
-            block
+        return getSchematicBlock(
+            new SchematicBlockContext(
+                world,
+                basePos,
+                pos,
+                blockState,
+                block
+            )
         );
-        return getSchematicBlock(context);
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    public static Pair<List<ItemStack>[][][], List<FluidStack>[][][]> computeRequired(Blueprint blueprint) {
-        @SuppressWarnings("unchecked") List<ItemStack>[][][] requiredItems = (List<ItemStack>[][][]) new List
-            [blueprint.size.getX()]
-            [blueprint.size.getY()]
-            [blueprint.size.getZ()];
-        @SuppressWarnings("unchecked") List<FluidStack>[][][] requiredFluids = (List<FluidStack>[][][]) new List
-            [blueprint.size.getX()]
-            [blueprint.size.getY()]
-            [blueprint.size.getZ()];
-        for (int z = 0; z < blueprint.size.getZ(); z++) {
-            for (int y = 0; y < blueprint.size.getY(); y++) {
-                for (int x = 0; x < blueprint.size.getX(); x++) {
-                    ISchematicBlock<?> schematicBlock = blueprint.palette.get(
-                        blueprint.data[blueprint.posToIndex(x, y, z)]
-                    );
-                    requiredItems[x][y][z] = schematicBlock.computeRequiredItems(null);
-                    requiredFluids[x][y][z] = schematicBlock.computeRequiredFluids(null);
-                }
-            }
-        }
-        return Pair.of(requiredItems, requiredFluids);
     }
 
     @Nonnull
