@@ -85,4 +85,11 @@ public class BuildCraftObjectCaches {
             cache.onClientWorldTick();
         }
     }
+
+    /** Called by BuildCraftLib on the client side whenever it joins a server. */
+    public static void onClientJoinServer() {
+        for (NetworkedObjectCache<?> cache : CACHES) {
+            cache.onClientJoinServer();
+        }
+    }
 }
