@@ -151,8 +151,8 @@ public class Blueprint extends Snapshot {
                     for (int x = 0; x < getSnapshot().size.getX(); x++) {
                         ISchematicBlock schematicBlock = rotatedPalette.get(data[posToIndex(x, y, z)]);
                         if (!schematicBlock.isAir()) {
-                            toPlaceRequiredItems[posToIndex(x, y, z)] = schematicBlock.computeRequiredItems(null);
-                            toPlaceRequiredFluids[posToIndex(x, y, z)] = schematicBlock.computeRequiredFluids(null);
+                            toPlaceRequiredItems[posToIndex(x, y, z)] = schematicBlock.computeRequiredItems();
+                            toPlaceRequiredFluids[posToIndex(x, y, z)] = schematicBlock.computeRequiredFluids();
                         }
                     }
                 }
@@ -165,8 +165,8 @@ public class Blueprint extends Snapshot {
             for (ISchematicEntity schematicEntity : getSnapshot().entities) {
                 ISchematicEntity rotatedSchematicEntity = schematicEntity.getRotated(rotation);
                 entitiesBuilder.add(rotatedSchematicEntity);
-                entitiesRequiredItemsBuilder.put(rotatedSchematicEntity, schematicEntity.computeRequiredItems(null));
-                entitiesRequiredFluidsBuilder.put(rotatedSchematicEntity, schematicEntity.computeRequiredFluids(null));
+                entitiesRequiredItemsBuilder.put(rotatedSchematicEntity, schematicEntity.computeRequiredItems());
+                entitiesRequiredFluidsBuilder.put(rotatedSchematicEntity, schematicEntity.computeRequiredFluids());
             }
             entities = entitiesBuilder.build();
             entitiesRequiredItems = entitiesRequiredItemsBuilder.build();

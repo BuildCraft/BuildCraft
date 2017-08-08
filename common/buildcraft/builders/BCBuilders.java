@@ -25,7 +25,6 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.schematics.SchematicBlockContext;
 import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
 import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
 
@@ -96,7 +95,7 @@ public class BCBuilders {
             () -> new SchematicBlockDefault() {
                 @Nonnull
                 @Override
-                public List<ItemStack> computeRequiredItems(SchematicBlockContext context) {
+                public List<ItemStack> computeRequiredItems() {
                     return Collections.singletonList(
                         ItemBanner.makeBanner(
                             EnumDyeColor.byDyeDamage(tileNbt.getInteger("Base")),

@@ -65,7 +65,7 @@ public class SchematicBlockPipe implements ISchematicBlock {
 
     @Nonnull
     @Override
-    public List<ItemStack> computeRequiredItems(SchematicBlockContext context) {
+    public List<ItemStack> computeRequiredItems() {
         try {
             ImmutableList.Builder<ItemStack> builder = ImmutableList.builder();
             PipeDefinition definition = PipeRegistry.INSTANCE.loadDefinition(
@@ -93,7 +93,7 @@ public class SchematicBlockPipe implements ISchematicBlock {
 
     @Nonnull
     @Override
-    public List<FluidStack> computeRequiredFluids(SchematicBlockContext context) {
+    public List<FluidStack> computeRequiredFluids() {
         return Collections.emptyList();
     }
 

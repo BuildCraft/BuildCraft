@@ -122,8 +122,8 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
                 ISchematicBlock schematicBlock = getSchematic(stack);
                 if (schematicBlock != null) {
                     if (!schematicBlock.isBuilt(world, placePos) && schematicBlock.canBuild(world, placePos)) {
-                        List<FluidStack> requiredFluids = schematicBlock.computeRequiredFluids(null);
-                        List<ItemStack> requiredItems = schematicBlock.computeRequiredItems(null);
+                        List<FluidStack> requiredFluids = schematicBlock.computeRequiredFluids();
+                        List<ItemStack> requiredItems = schematicBlock.computeRequiredItems();
                         if (requiredFluids.isEmpty()) {
                             InventoryWrapper itemTransactor = new InventoryWrapper(player.inventory);
                             if (StackUtil.mergeSameItems(requiredItems).stream().noneMatch(s ->

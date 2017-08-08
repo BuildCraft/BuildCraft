@@ -47,13 +47,13 @@ public final class SchematicBlockAir implements ISchematicBlock {
 
     @Nonnull
     @Override
-    public List<ItemStack> computeRequiredItems(SchematicBlockContext context) {
+    public List<ItemStack> computeRequiredItems() {
         return Collections.emptyList();
     }
 
     @Nonnull
     @Override
-    public List<FluidStack> computeRequiredFluids(SchematicBlockContext context) {
+    public List<FluidStack> computeRequiredFluids() {
         return Collections.emptyList();
     }
 

@@ -81,7 +81,7 @@ public class SchematicEntityDefault implements ISchematicEntity {
 
     @Nonnull
     @Override
-    public List<ItemStack> computeRequiredItems(SchematicEntityContext context) {
+    public List<ItemStack> computeRequiredItems() {
         Set<JsonRule> rules = RulesLoader.getRules(
             new ResourceLocation(entityNbt.getString("id")),
             entityNbt
@@ -100,7 +100,7 @@ public class SchematicEntityDefault implements ISchematicEntity {
 
     @Nonnull
     @Override
-    public List<FluidStack> computeRequiredFluids(SchematicEntityContext context) {
+    public List<FluidStack> computeRequiredFluids() {
         Set<JsonRule> rules = RulesLoader.getRules(
             new ResourceLocation(entityNbt.getString("id")),
             entityNbt

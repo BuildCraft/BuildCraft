@@ -208,7 +208,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
 
     @Nonnull
     @Override
-    public List<ItemStack> computeRequiredItems(SchematicBlockContext context) {
+    public List<ItemStack> computeRequiredItems() {
         Set<JsonRule> rules = RulesLoader.getRules(blockState, tileNbt);
         List<List<RequiredExtractor>> collect = rules.stream()
             .map(rule -> rule.requiredExtractors)
@@ -226,7 +226,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
 
     @Nonnull
     @Override
-    public List<FluidStack> computeRequiredFluids(SchematicBlockContext context) {
+    public List<FluidStack> computeRequiredFluids() {
         Set<JsonRule> rules = RulesLoader.getRules(blockState, tileNbt);
         return rules.stream()
             .map(rule -> rule.requiredExtractors)
