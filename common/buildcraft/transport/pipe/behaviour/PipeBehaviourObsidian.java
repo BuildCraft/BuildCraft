@@ -19,11 +19,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 
+import net.minecraftforge.common.capabilities.Capability;
+
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
+import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.transport.pipe.IFlowFluid;
 import buildcraft.api.transport.pipe.IFlowItems;
 import buildcraft.api.transport.pipe.IPipe;
@@ -42,6 +45,7 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
     private static final int DROP_GAP = 20;
 
     private final MjBattery battery = new MjBattery(256 * MjAPI.MJ);
+    private final MjCapabilityHelper mjCaps = new MjCapabilityHelper(this);
     /** Map of recently dropped item to the tick when it can be picked up */
     private final WeakHashMap<EntityItem, Long> entityDropTime = new WeakHashMap<>();
     private int toWaitTicks = 0;
@@ -208,5 +212,14 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
     @Override
     public long receivePower(long microJoules, boolean simulate) {
         return battery.addPowerChecking(microJoules, simulate);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        T cap = mjCaps.getCapability(capability, facing);
+        if (cap != null) {
+            return cap;
+        }
+        return super.getCapability(capability, facing);
     }
 }
