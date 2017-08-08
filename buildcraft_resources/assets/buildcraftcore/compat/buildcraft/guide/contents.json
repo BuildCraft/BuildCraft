@@ -1,5 +1,5 @@
 {
-    "entry_mask": "assets/<mod><sub_mod>/guide/<lang>/<type>/<page>",
+    "entry_mask": "<mod><sub_mod>:compat/buildcraft/guide/<lang>/<type>/<page>",
     "default_tags": 
     {
         "mod": "buildcraft",

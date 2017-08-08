@@ -6,29 +6,31 @@
 
 package buildcraft.lib.client.guide;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.resources.Language;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.client.guide.data.GuideEntryLoader;
 import buildcraft.lib.client.guide.data.JsonEntry;
-import buildcraft.lib.client.guide.loader.ILoadableResource;
 import buildcraft.lib.client.guide.loader.IPageLoader;
 import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
 import buildcraft.lib.client.guide.parts.GuidePageFactory;
@@ -40,7 +42,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
     private static final String DEFAULT_LANG = "en_us";
     private static final Map<String, IPageLoader> PAGE_LOADERS = new HashMap<>();
 
-    private final Map<PageEntry, ILoadableResource> entries = new HashMap<>();
+    private final List<PageEntry> entries = new ArrayList<>();
     private final Map<String, GuidePageFactory> pages = new HashMap<>();
     private final Map<ItemStack, GuidePageFactory> generatedPages = new HashMap<>();
 
@@ -52,9 +54,9 @@ public enum GuideManager implements IResourceManagerReloadListener {
     public void onResourceManagerReload(IResourceManager resourceManager) {
         Stopwatch watch = Stopwatch.createStarted();
         entries.clear();
-        Map<JsonEntry, ILoadableResource> loaded = GuideEntryLoader.loadAll();
-        for (Entry<JsonEntry, ILoadableResource> entry : loaded.entrySet()) {
-            entries.put(new PageEntry(entry.getKey()), entry.getValue());
+        List<JsonEntry> loaded = GuideEntryLoader.loadAll(resourceManager);
+        for (JsonEntry entry : loaded) {
+            entries.add(new PageEntry(entry));
         }
         pages.clear();
 
@@ -68,11 +70,11 @@ public enum GuideManager implements IResourceManagerReloadListener {
         }
 
         // load the default ones
-        loadLangInternal(DEFAULT_LANG);
+        loadLangInternal(resourceManager, DEFAULT_LANG);
         // replace any existing with the new ones.
 
         if (!DEFAULT_LANG.equals(langCode)) {
-            loadLangInternal(langCode);
+            loadLangInternal(resourceManager, langCode);
         }
         watch.stop();
         long time = watch.elapsed(TimeUnit.MILLISECONDS);
@@ -83,10 +85,8 @@ public enum GuideManager implements IResourceManagerReloadListener {
             + " not found) in " + time + "ms.");
     }
 
-    private void loadLangInternal(String lang) {
-        for (Entry<PageEntry, ILoadableResource> entry : entries.entrySet()) {
-            PageEntry data = entry.getKey();
-            ILoadableResource loadable = entry.getValue();
+    private void loadLangInternal(IResourceManager resourceManager, String lang) {
+        for (PageEntry data : entries) {
             String page = data.page.replaceAll("<lang>", lang);
             String ending = page.substring(page.lastIndexOf('.') + 1);
 
@@ -97,26 +97,24 @@ public enum GuideManager implements IResourceManagerReloadListener {
                     + ")");
                 continue;
             }
-            try (InputStream stream = loadable.getInputStreamFor(page)) {
-                if (stream == null) {
-                    BCLog.logger.warn("[lib.guide.loader] Unable to load guide page '" + page
-                        + "' because we couldn't find it in any resource pack!");
-                    continue;
-                }
+            try (InputStream stream = resourceManager.getResource(new ResourceLocation(page)).getInputStream()) {
                 GuidePageFactory factory = loader.loadPage(stream, data);
                 // put the original page in so that the different lang variants override it
                 pages.put(data.page, factory);
                 if (GuideEntryLoader.DEBUG) {
                     BCLog.logger.info("[lib.guide.loader] Loaded page '" + page + "'.");
                 }
+            } catch (FileNotFoundException fnfe) {
+                BCLog.logger.warn("[lib.guide.loader] Unable to load guide page '" + page
+                    + "' because we couldn't find it in any resource pack!");
             } catch (IOException io) {
                 io.printStackTrace();
             }
         }
     }
 
-    public ImmutableSet<PageEntry> getAllEntries() {
-        return ImmutableSet.copyOf(entries.keySet());
+    public ImmutableList<PageEntry> getAllEntries() {
+        return ImmutableList.copyOf(entries);
     }
 
     public GuidePageFactory getFactoryFor(PageEntry entry) {
@@ -124,7 +122,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
     }
 
     public PageEntry getEntryFor(@Nonnull ItemStack stack) {
-        for (PageEntry entry : entries.keySet()) {
+        for (PageEntry entry : entries) {
             if (entry.stackMatches(stack)) {
                 return entry;
             }
