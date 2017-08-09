@@ -30,10 +30,12 @@ import buildcraft.energy.generation.BiomeOilOcean;
 import buildcraft.energy.generation.OilGenerator;
 
 //@formatter:off
-@Mod(modid = BCEnergy.MODID,
- name = "BuildCraft Energy",
- version = BCLib.VERSION,
- dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+@Mod(
+    modid = BCEnergy.MODID,
+    name = "BuildCraft Energy",
+    version = BCLib.VERSION,
+    dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]"
+)
 //@formatter:on
 public class BCEnergy {
     public static final String MODID = "buildcraftenergy";

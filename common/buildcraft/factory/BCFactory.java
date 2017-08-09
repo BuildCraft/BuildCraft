@@ -22,10 +22,12 @@ import buildcraft.lib.registry.TagManager.TagEntry;
 import buildcraft.core.BCCore;
 
 //@formatter:off
-@Mod(modid = BCFactory.MODID,
-name = "BuildCraft Factory",
-version = BCLib.VERSION,
-dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+@Mod(
+    modid = BCFactory.MODID,
+    name = "BuildCraft Factory",
+    version = BCLib.VERSION,
+    dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]"
+)
 //@formatter:on
 public class BCFactory {
     public static final String MODID = "buildcraftfactory";

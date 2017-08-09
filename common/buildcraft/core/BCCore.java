@@ -33,13 +33,15 @@ import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.VolumeCache;
 import buildcraft.core.marker.volume.MessageVolumeBoxes;
 
-@Mod(//
-    modid = BCCore.MODID,//
-    name = "BuildCraft Core",//
-    version = BCLib.VERSION,//
-    dependencies = "required-after:buildcraftlib@[" + BCLib.VERSION + "]",//
-    guiFactory = "buildcraft.core.client.ConfigGuiFactoryBC"//
+//@formatter:off
+@Mod(
+    modid = BCCore.MODID,
+    name = "BuildCraft Core",
+    version = BCLib.VERSION,
+    dependencies = "required-after:buildcraftlib@[" + BCLib.VERSION + "]",
+    guiFactory = "buildcraft.core.client.ConfigGuiFactoryBC"
 )
+//@formatter:on
 public class BCCore {
     public static final String MODID = "buildcraftcore";
 

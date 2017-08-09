@@ -53,10 +53,12 @@ import buildcraft.core.BCCore;
 import buildcraft.core.marker.volume.AddonsRegistry;
 
 //@formatter:off
-@Mod(modid = BCBuilders.MODID,
+@Mod(
+    modid = BCBuilders.MODID,
     name = "BuildCraft Builders",
     version = BCLib.VERSION,
-    dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+    dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]"
+)
 //@formatter:on
 public class BCBuilders {
     public static final String MODID = "buildcraftbuilders";
