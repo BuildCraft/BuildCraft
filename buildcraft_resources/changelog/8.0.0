@@ -1,7 +1,44 @@
 Breaking Changes:
 
-* General:
-  * Volume Boxes (new):
+* Factory
+  * Chute:
+    * Does not extract from inventories
+    * Inserts into entities, blocks (including pipes)
+    * Is omnidirectional (the opening can face any of 6 sides, the pipe/chest exit can face any of the 5 remaining sides)
+    * When powered with a engine, it can pick up entities from the ground near it
+      * If facing up then it can pick up without a seperate power source (but slowly)
+
+* Transport:
+  * Actions and triggers on gates are based upon the side that they act on, rather than being generic and deciding which tile to use by themselves
+  * Gate expansions have been moved to separate pluggables
+    * The "Autarchic gate" expansion is now the "Pipe Pulsar" pluggable, and requires a redstone engine to craft
+
+* Silicon:
+  * Removed the emerald chipset and the pulsating chipset
+    * All recipes using those chipsets now use a different item
+  * Pipe wire is now placed on the 8 corners of a pipe, rather than anywhere on the pipe.
+    * Allows for up to 8 different colours of wire on a single pipe.
+    * Wires must be placed next to each other to transfer a signal.
+
+* Robotics:
+  * Zone Planner:
+    * 3D map
+    * Brushes slots are now not fake slots but slots for storing brushes in it (empty in new machine)
+    * By default all layers are displayed
+    * When taking colored brush from slot with mouse layer of its color will be displayed
+    * Left-click while having colored brush on your cursor to add rectangle to layer
+    * Right-click while having colored brush on your cursor to subtract rectangle to layer
+    * Now stores layers data relatively to its position (useful for copying it with architect table and builder)
+
+Additions:
+
+* Lib:
+  * Moved "buildcraft.core.lib" into its own module, which is contained within the "core" jar file, or can be downloaded seperatly
+    * This allows developers to use all of the BC library code, without forcing players to also have BuildCraft itself
+  * Added the guide book, a form of ingame documentation
+
+* Core:
+  * Added volume boxes
     * Right-click block with volume box to place in near this block
     * Right-click volume box with wrench to activate editing mode
       * Move and look to change size
@@ -11,51 +48,18 @@ Breaking Changes:
       * Right-click corner of volume box with addon to install it
       * Right-click addon with wrench to open its GUI
       * Shift+Right-click addon with wrench to remove it
-    * Most blocks support it as new alternative to old volume makers system
     * Shift+Right-click volume box with wrench to remove it
+    * Most blocks support it as new alternative to old land mark system
 
-* Factory
-  * Chute:
-    * Does not extract from inventories
-    * Inserts into entities, blocks (including pipes)
-    * Is omnidirectional (the opening can face any of 6 sides, the pipe/chest exit can face any of the 5 remaining sides)
-    * When powered with a engine, it can pick up entities from the ground near it
-      * If facing up then can pick up without engine (but slowly)
-
-* Transport:
-  * Actions and triggers on gates are based upon the side that they act on, rather than being generic and deciding which tile to use by themselves
-  * Gate expansions have been moved to separate pluggables
-    * The "Autarchic gate" expansion is now the "Pipe Pulsar" pluggable, and requires a redstone engine to craft
-
-* Silicon:
-  * Added the remaining 12 colours of pipe wire. Pipe wire is now placed manually on the 8 corners of a pipe
-    * Wires were optimized
-  * Removed the emerald chipset and the pulsating chipset
-    * All recipes using those chipsets now use a different item
-
-* Robotics:
- * Zone Planner:
-    * 3D map
-    * Brushes slots are now not fake slots but slots for storing brushes in it (empty in new machine)
-    * By default all layers are displayed
-    * When taking colored brush from slot with mouse layer of its color will be displayed
-    * Left-click while having colored brush on your cursor to add rectangle to layer
-    * Right-click while having colored brush on your cursor to subtract rectangle to layer
-    * Now stores layers data relatively to its position (useful for copying it with architect table and builder)
-
-* API
- * Some interfaces converted to capabilities
-
-Additions:
-
-* Lib:
-  * Moved "buildcraft.core.lib" into its own module, which is contained within the "core" jar file, or can be downloaded seperatly
-  * This allows developers to use all of the BC library code, without forcing players to also have BuildCraft itself
+* Builders:
+  * Filling planner (volume box addon):
+    * Visibly shows a filler pattern in the world, without having to set up a filler.
+    * Placing a filler down to use that volume box will make the filler use its pattern.
 
 Improvements:
 
 * General:
-  * All coloured items (pipes, paintbrushes, pipe wire) is displayed with an appropriate text colour infront
+  * All coloured items (pipes, paintbrushes, pipe wire) are displayed with an appropriate text colour infront
     * This behaviour can be toggled in the config (GUI or file)
   * Tanks in GUI's now display their contents
   * Tanks in GUI's can be added to or removed from by clicking on them with a bucket or other fluid container in hand
@@ -77,9 +81,6 @@ Improvements:
     * The drill bit has an animation while it is mining
     * The frame has a collision box (so you can walk on top of it)
     * The frame will break automatically when you break quarry
-  * Filling planner (new):
-    * It's addon for volume boxes that shows blocks which belongs to specified pattern (you a set its parameters in GUI)
-    * You can build these blocks manually or place builder near
   * Architect Table
     * Now has scanning animation
   * Builder:
@@ -106,3 +107,6 @@ Improvements:
     * Right-click empty one to record data
     * Right-click used to place recorded block (if they are need items in your inventory then they will be taken, else nothing will happen)
     * Shift+Right-click used to clear it
+
+* Silicon:
+  * Added the remaining 12 colours of pipe wire.

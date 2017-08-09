@@ -34,7 +34,7 @@ public enum FacadeSwapRecipe implements IRecipe, IRecipeViewable.IViewableGrid {
     private static final ChangingItemStack[] INPUTS = { null };
     private static ChangingItemStack OUTPUTS;
 
-    private static void genRecipes() {
+    public static void genRecipes() {
         NonNullList<ItemStack> list1 = NonNullList.create();
         NonNullList<ItemStack> list2 = NonNullList.create();
         for (FacadeBlockStateInfo info : FacadeStateManager.validFacadeStates.values()) {

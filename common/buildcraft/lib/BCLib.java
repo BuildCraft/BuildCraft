@@ -87,7 +87,7 @@ public class BCLib {
         MessageManager.addMessageType(MessageObjectCacheReq.class, MessageObjectCacheReq.HANDLER, Side.SERVER);
         MessageManager.addMessageType(MessageObjectCacheReply.class, MessageObjectCacheReply.HANDLER, Side.CLIENT);
 
-        MinecraftForge.EVENT_BUS.register(BCLibEventDist.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(BCLibEventDist.class);
 
         ForgeChunkManager.setForcedChunkLoadingCallback(BCLib.INSTANCE, ChunkLoaderManager::rebindTickets);
         MinecraftForge.EVENT_BUS.register(this);

@@ -59,6 +59,8 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.world.SingleBlockAccess;
 
+import buildcraft.transport.recipe.FacadeSwapRecipe;
+
 public class FacadeStateManager {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("transport.facade");
     public static final SortedMap<IBlockState, FacadeBlockStateInfo> validFacadeStates;
@@ -257,6 +259,7 @@ public class FacadeStateManager {
             }
         }
         previewState = validFacadeStates.get(Blocks.BRICK_BLOCK.getDefaultState());
+        FacadeSwapRecipe.genRecipes();
     }
 
     public static class FacadeBlockStateInfo {

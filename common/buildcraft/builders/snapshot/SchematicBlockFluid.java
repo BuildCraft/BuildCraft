@@ -34,7 +34,7 @@ import buildcraft.api.schematics.SchematicBlockContext;
 
 import buildcraft.lib.misc.BlockUtil;
 
-public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid> {
+public class SchematicBlockFluid implements ISchematicBlock {
     private IBlockState blockState;
     private boolean isFlowing;
 
@@ -67,13 +67,13 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
 
     @Nonnull
     @Override
-    public List<ItemStack> computeRequiredItems(SchematicBlockContext context) {
+    public List<ItemStack> computeRequiredItems() {
         return Collections.emptyList();
     }
 
     @Nonnull
     @Override
-    public List<FluidStack> computeRequiredFluids(SchematicBlockContext context) {
+    public List<FluidStack> computeRequiredFluids() {
         return Optional.ofNullable(BlockUtil.getFluidWithoutFlowing(blockState))
             .map(fluid -> new FluidStack(fluid, Fluid.BUCKET_VOLUME))
             .map(Collections::singletonList)
@@ -82,7 +82,7 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
 
     @Override
     public SchematicBlockFluid getRotated(Rotation rotation) {
-        SchematicBlockFluid schematicBlock = new SchematicBlockFluid();
+        SchematicBlockFluid schematicBlock = SchematicBlockManager.createCleanCopy(this);
         schematicBlock.blockState = blockState;
         schematicBlock.isFlowing = isFlowing;
         return schematicBlock;

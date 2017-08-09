@@ -48,7 +48,7 @@ public enum BCLibEventDist {
     INSTANCE;
 
     @SubscribeEvent
-    public void onEntityJoinWorld(EntityJoinWorldEvent event) {
+    public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
         Entity entity = event.getEntity();
         if (entity instanceof EntityPlayerMP) {
             EntityPlayerMP playerMP = (EntityPlayerMP) entity;
@@ -58,7 +58,7 @@ public enum BCLibEventDist {
     }
 
     @SubscribeEvent
-    public void onWorldUnload(WorldEvent.Unload event) {
+    public static void onWorldUnload(WorldEvent.Unload event) {
         MarkerCache.onWorldUnload(event.getWorld());
         if (event.getWorld() instanceof WorldServer) {
             FakePlayerProvider.INSTANCE.unloadWorld((WorldServer) event.getWorld());
@@ -67,7 +67,8 @@ public enum BCLibEventDist {
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public void onConnectToServer(ClientConnectedToServerEvent event) {
+    public static void onConnectToServer(ClientConnectedToServerEvent event) {
+        BuildCraftObjectCaches.onClientJoinServer();
         // Really obnoxious warning
         if (!BCLib.DEV) {
             /* If people are in a dev environment or have toggled the flag then they probably already know about this */
@@ -130,7 +131,7 @@ public enum BCLibEventDist {
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public void textureStitchPre(TextureStitchEvent.Pre event) {
+    public static void textureStitchPre(TextureStitchEvent.Pre event) {
         ReloadManager.INSTANCE.preReloadResources();
         TextureMap map = event.getMap();
         SpriteHolderRegistry.onTextureStitchPre(map);
@@ -140,7 +141,7 @@ public enum BCLibEventDist {
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public void textureStitchPost(TextureStitchEvent.Post event) {
+    public static void textureStitchPost(TextureStitchEvent.Post event) {
         TextureMap map = event.getMap();
         SpriteHolderRegistry.onTextureStitchPost();
         FluidRenderer.onTextureStitchPost(map);
@@ -148,7 +149,7 @@ public enum BCLibEventDist {
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public void modelBake(ModelBakeEvent event) {
+    public static void modelBake(ModelBakeEvent event) {
         SpriteHolderRegistry.exportTextureMap();
         LaserRenderer_BC8.clearModels();
         ModelHolderRegistry.onModelBake();
@@ -157,7 +158,7 @@ public enum BCLibEventDist {
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public void renderWorldLast(RenderWorldLastEvent event) {
+    public static void renderWorldLast(RenderWorldLastEvent event) {
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayer player = mc.player;
         if (player == null) return;
@@ -167,7 +168,7 @@ public enum BCLibEventDist {
     }
 
     @SubscribeEvent
-    public void serverTick(ServerTickEvent event) {
+    public static void serverTick(ServerTickEvent event) {
         if (event.phase == Phase.END) {
             BCAdvDebugging.INSTANCE.onServerPostTick();
             MessageUtil.postTick();
@@ -175,7 +176,7 @@ public enum BCLibEventDist {
     }
 
     @SubscribeEvent
-    public void clientTick(ClientTickEvent event) {
+    public static void clientTick(ClientTickEvent event) {
         if (event.phase == Phase.END) {
             BuildCraftObjectCaches.onClientTick();
             MessageUtil.postTick();

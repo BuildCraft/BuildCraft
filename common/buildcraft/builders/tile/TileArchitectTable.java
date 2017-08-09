@@ -94,9 +94,9 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     public final Box box = new Box();
     public boolean markerBox = false;
     private BitSet templateScannedBlocks;
-    private final List<ISchematicBlock<?>> blueprintScannedPalette = new ArrayList<>();
+    private final List<ISchematicBlock> blueprintScannedPalette = new ArrayList<>();
     private int[] blueprintScannedData;
-    private final List<ISchematicEntity<?>> blueprintScannedEntities = new ArrayList<>();
+    private final List<ISchematicEntity> blueprintScannedEntities = new ArrayList<>();
     private BoxIterator boxIterator;
     private boolean isValid = false;
     private boolean scanning = false;
@@ -225,7 +225,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             templateScannedBlocks.set(Snapshot.posToIndex(box.size(), schematicPos), !world.isAirBlock(worldScanPos));
         }
         if (snapshotType == EnumSnapshotType.BLUEPRINT) {
-            ISchematicBlock<?> schematicBlock = readSchematicBlock(worldScanPos);
+            ISchematicBlock schematicBlock = readSchematicBlock(worldScanPos);
             int index = blueprintScannedPalette.indexOf(schematicBlock);
             if (index == -1) {
                 index = blueprintScannedPalette.size();
@@ -247,7 +247,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         }
     }
 
-    private ISchematicBlock<?> readSchematicBlock(BlockPos worldScanPos) {
+    private ISchematicBlock readSchematicBlock(BlockPos worldScanPos) {
         return SchematicBlockManager.getSchematicBlock(
             world,
             pos.offset(world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite()),

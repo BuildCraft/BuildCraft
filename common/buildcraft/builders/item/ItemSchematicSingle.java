@@ -99,7 +99,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
         int damage = stack.getItemDamage();
         if (damage != DAMAGE_USED) {
             IBlockState state = world.getBlockState(pos);
-            ISchematicBlock<?> schematicBlock = SchematicBlockManager.getSchematicBlock(world, pos, pos, state, state.getBlock());
+            ISchematicBlock schematicBlock = SchematicBlockManager.getSchematicBlock(world, pos, pos, state, state.getBlock());
             if (schematicBlock.isAir()) {
                 return EnumActionResult.FAIL;
             }
@@ -119,11 +119,11 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
                 world.setBlockToAir(placePos);
             }
             try {
-                ISchematicBlock<?> schematicBlock = getSchematic(stack);
+                ISchematicBlock schematicBlock = getSchematic(stack);
                 if (schematicBlock != null) {
                     if (!schematicBlock.isBuilt(world, placePos) && schematicBlock.canBuild(world, placePos)) {
-                        List<FluidStack> requiredFluids = schematicBlock.computeRequiredFluids(null);
-                        List<ItemStack> requiredItems = schematicBlock.computeRequiredItems(null);
+                        List<FluidStack> requiredFluids = schematicBlock.computeRequiredFluids();
+                        List<ItemStack> requiredItems = schematicBlock.computeRequiredItems();
                         if (requiredFluids.isEmpty()) {
                             InventoryWrapper itemTransactor = new InventoryWrapper(player.inventory);
                             if (StackUtil.mergeSameItems(requiredItems).stream().noneMatch(s ->
@@ -177,14 +177,14 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
         }
     }
 
-    public static ISchematicBlock<?> getSchematic(@Nonnull ItemStack stack) throws InvalidInputDataException {
+    public static ISchematicBlock getSchematic(@Nonnull ItemStack stack) throws InvalidInputDataException {
         if (stack.getItem() instanceof ItemSchematicSingle) {
             return SchematicBlockManager.readFromNBT(NBTUtilBC.getItemData(stack).getCompoundTag(NBT_KEY));
         }
         return null;
     }
 
-    public static ISchematicBlock<?> getSchematicSafe(@Nonnull ItemStack stack) {
+    public static ISchematicBlock getSchematicSafe(@Nonnull ItemStack stack) {
         try {
             return getSchematic(stack);
         } catch (InvalidInputDataException e) {

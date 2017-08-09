@@ -108,7 +108,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                                 @Nonnull ItemStack after) {
         if (!world.isRemote) {
             if (handler == invResources) {
-                builder.invResourcesChanged();
+                builder.resourcesChanged();
             }
         }
         super.onSlotChange(handler, slot, before, after);

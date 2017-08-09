@@ -89,5 +89,73 @@
                 ]
             }
         ]
+    },
+    {
+        "selectors": ["minecraft:reeds"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:reeds"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:standing_sign", "minecraft:wall_sign"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:sign"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:double_plant[variant=double_grass]"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:double_plant",
+                        "meta": 2
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:tallgrass[type=tall_grass]"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:tallgrass",
+                        "meta": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:tallgrass[type=fern]"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:tallgrass",
+                        "meta": 2
+                    }
+                ]
+            }
+        ]
     }
 ]

@@ -6,24 +6,15 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.Lists;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicEntity;
@@ -33,10 +24,10 @@ import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
 
 public class SchematicEntityManager {
     @SuppressWarnings("WeakerAccess")
-    public static ISchematicEntity<?> getSchematicEntity(SchematicEntityContext context) {
+    public static ISchematicEntity getSchematicEntity(SchematicEntityContext context) {
         for (SchematicEntityFactory<?> schematicEntityFactory : Lists.reverse(SchematicEntityFactoryRegistry.getFactories())) {
             if (schematicEntityFactory.predicate.test(context)) {
-                ISchematicEntity<?> schematicEntity = schematicEntityFactory.supplier.get();
+                ISchematicEntity schematicEntity = schematicEntityFactory.supplier.get();
                 schematicEntity.init(context);
                 return schematicEntity;
             }
@@ -44,42 +35,28 @@ public class SchematicEntityManager {
         return null;
     }
 
-    public static ISchematicEntity<?> getSchematicEntity(World world,
-                                                         BlockPos basePos,
-                                                         Entity entity) {
-        SchematicEntityContext context = new SchematicEntityContext(world, basePos, entity);
-        ISchematicEntity<?> schematicEntity = getSchematicEntity(context);
-        if (schematicEntity != null) {
-            return schematicEntity;
-        }
-        return null;
+    public static ISchematicEntity getSchematicEntity(World world,
+                                                      BlockPos basePos,
+                                                      Entity entity) {
+        return getSchematicEntity(
+            new SchematicEntityContext(
+                world,
+                basePos,
+                entity
+            )
+        );
     }
 
     @SuppressWarnings("WeakerAccess")
-    public static Pair<List<List<ItemStack>>, List<List<FluidStack>>> computeRequired(Blueprint blueprint) {
-        List<List<ItemStack>> requiredItems = new ArrayList<>(
-            Collections.nCopies(
-                blueprint.entities.size(),
-                Collections.emptyList()
-            )
-        );
-        List<List<FluidStack>> requiredFluids = new ArrayList<>(
-            Collections.nCopies(
-                blueprint.entities.size(),
-                Collections.emptyList()
-            )
-        );
-        int i = 0;
-        for (ISchematicEntity<?> schematicEntity : blueprint.entities) {
-            requiredItems.set(i, schematicEntity.computeRequiredItems(null));
-            requiredFluids.set(i, schematicEntity.computeRequiredFluids(null));
-            i++;
-        }
-        return Pair.of(requiredItems, requiredFluids);
+    public static <S extends ISchematicEntity> S createCleanCopy(S schematicBlock) {
+        return SchematicEntityFactoryRegistry
+            .getFactoryByInstance(schematicBlock)
+            .supplier
+            .get();
     }
 
     @Nonnull
-    public static NBTTagCompound writeToNBT(ISchematicEntity<?> schematicEntity) {
+    public static <S extends ISchematicEntity> NBTTagCompound writeToNBT(S schematicEntity) {
         NBTTagCompound schematicEntityTag = new NBTTagCompound();
         schematicEntityTag.setString(
             "name",
@@ -93,13 +70,13 @@ public class SchematicEntityManager {
     }
 
     @Nonnull
-    public static ISchematicEntity<?> readFromNBT(NBTTagCompound schematicEntityTag) throws InvalidInputDataException {
+    public static ISchematicEntity readFromNBT(NBTTagCompound schematicEntityTag) throws InvalidInputDataException {
         ResourceLocation name = new ResourceLocation(schematicEntityTag.getString("name"));
         SchematicEntityFactory<?> factory = SchematicEntityFactoryRegistry.getFactoryByName(name);
         if (factory == null) {
             throw new InvalidInputDataException("Unknown schematic type " + name);
         }
-        ISchematicEntity<?> schematicEntity = factory.supplier.get();
+        ISchematicEntity schematicEntity = factory.supplier.get();
         NBTTagCompound data = schematicEntityTag.getCompoundTag("data");
         try {
             schematicEntity.deserializeNBT(data);

@@ -24,7 +24,7 @@ import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.SchematicBlockContext;
 
-public final class SchematicBlockAir implements ISchematicBlock<SchematicBlockAir> {
+public final class SchematicBlockAir implements ISchematicBlock {
     @SuppressWarnings("unused")
     public static boolean predicate(SchematicBlockContext context) {
         return true;
@@ -47,19 +47,19 @@ public final class SchematicBlockAir implements ISchematicBlock<SchematicBlockAi
 
     @Nonnull
     @Override
-    public List<ItemStack> computeRequiredItems(SchematicBlockContext context) {
+    public List<ItemStack> computeRequiredItems() {
         return Collections.emptyList();
     }
 
     @Nonnull
     @Override
-    public List<FluidStack> computeRequiredFluids(SchematicBlockContext context) {
+    public List<FluidStack> computeRequiredFluids() {
         return Collections.emptyList();
     }
 
     @Override
     public SchematicBlockAir getRotated(Rotation rotation) {
-        return this;
+        return SchematicBlockManager.createCleanCopy(this);
     }
 
     @Override

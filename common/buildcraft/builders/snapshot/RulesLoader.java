@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -30,14 +29,10 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 
@@ -55,29 +50,6 @@ public class RulesLoader {
                     json.getAsJsonArray().get(1).getAsInt(),
                     json.getAsJsonArray().get(2).getAsInt()
                 )
-        )
-        .registerTypeAdapter(
-            ItemStack.class,
-            (JsonDeserializer<ItemStack>) (json, typeOfT, context) ->
-                FluidRegistry.isFluidRegistered(json.getAsJsonObject().get("item").getAsString())
-                    ?
-                    new ItemStack(
-                        Objects.requireNonNull(Item.getByNameOrId(json.getAsJsonObject().get("item").getAsString())),
-                        json.getAsJsonObject().get("amount").getAsInt(),
-                        json.getAsJsonObject().get("meta").getAsInt()
-                    )
-                    : ItemStack.EMPTY
-        )
-        .registerTypeAdapter(
-            FluidStack.class,
-            (JsonDeserializer<FluidStack>) (json, typeOfT, context) ->
-                FluidRegistry.isFluidRegistered(json.getAsJsonObject().get("fluid").getAsString())
-                    ?
-                    new FluidStack(
-                        Objects.requireNonNull(FluidRegistry.getFluid(json.getAsJsonObject().get("fluid").getAsString())),
-                        json.getAsJsonObject().get("amount").getAsInt()
-                    )
-                    : null
         )
         .registerTypeAdapter(RequiredExtractor.class, RequiredExtractor.DESERIALIZER)
         .registerTypeAdapter(EnumNbtCompareOperation.class, EnumNbtCompareOperation.DESERIALIZER)
@@ -101,7 +73,7 @@ public class RulesLoader {
         for (ModContainer modContainer : Loader.instance().getModList()) {
             String domain = modContainer.getModId();
             if (!READ_DOMAINS.contains(domain)) {
-                String base = "assets/" + domain + "/buildcraft/builders/";
+                String base = "assets/" + domain + "/compat/buildcraft/builders/";
                 if (modContainer.getMod() == null) {
                     continue;
                 }

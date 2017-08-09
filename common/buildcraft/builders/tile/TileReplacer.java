@@ -50,11 +50,11 @@ public class TileReplacer extends TileBC_Neptune implements ITickable {
                 if (snapshot instanceof Blueprint) {
                     Blueprint blueprint = (Blueprint) snapshot;
                     try {
-                        ISchematicBlock<?> from = SchematicBlockManager.readFromNBT(
+                        ISchematicBlock from = SchematicBlockManager.readFromNBT(
                             NBTUtilBC.getItemData(invSchematicFrom.getStackInSlot(0))
                                 .getCompoundTag(ItemSchematicSingle.NBT_KEY)
                         );
-                        ISchematicBlock<?> to = SchematicBlockManager.readFromNBT(
+                        ISchematicBlock to = SchematicBlockManager.readFromNBT(
                             NBTUtilBC.getItemData(invSchematicTo.getStackInSlot(0))
                                 .getCompoundTag(ItemSchematicSingle.NBT_KEY)
                         );

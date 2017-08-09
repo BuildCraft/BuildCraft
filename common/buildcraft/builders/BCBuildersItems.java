@@ -30,11 +30,9 @@ public class BCBuildersItems {
     public static void registerItems(RegistryEvent.Register<Item> event) {
         event.getRegistry().registerAll(
             new ItemSnapshot("item.snapshot"),
-            new ItemFillingPlanner("item.filling_planner")
+            new ItemFillingPlanner("item.filling_planner"),
+            new ItemSchematicSingle("item.schematic.single")
         );
-        if (BCLib.DEV) {
-            event.getRegistry().register(new ItemSchematicSingle("item.schematic.single"));
-        }
     }
 
     @SubscribeEvent

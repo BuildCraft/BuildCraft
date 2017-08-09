@@ -8,14 +8,14 @@ package buildcraft.builders.snapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,9 +35,9 @@ import buildcraft.api.schematics.ISchematicEntity;
 import buildcraft.lib.misc.NBTUtilBC;
 
 public class Blueprint extends Snapshot {
-    public final List<ISchematicBlock<?>> palette = new ArrayList<>();
+    public final List<ISchematicBlock> palette = new ArrayList<>();
     public int[] data;
-    public final List<ISchematicEntity<?>> entities = new ArrayList<>();
+    public final List<ISchematicEntity> entities = new ArrayList<>();
 
     @Override
     public Blueprint copy() {
@@ -52,7 +52,7 @@ public class Blueprint extends Snapshot {
         return blueprint;
     }
 
-    public void replace(ISchematicBlock<?> from, ISchematicBlock<?> to) {
+    public void replace(ISchematicBlock from, ISchematicBlock to) {
         Collections.replaceAll(palette, from, to);
         // TODO: reallocate IDs
     }
@@ -130,9 +130,10 @@ public class Blueprint extends Snapshot {
     public class BuildingInfo extends Snapshot.BuildingInfo {
         public final List<ItemStack>[] toPlaceRequiredItems;
         public final List<FluidStack>[] toPlaceRequiredFluids;
-        public final Set<ISchematicEntity<?>> entities = new HashSet<>();
-        public final Map<ISchematicEntity<?>, List<ItemStack>> entitiesRequiredItems = new HashMap<>();
-        public final Map<ISchematicEntity<?>, List<FluidStack>> entitiesRequiredFluids = new HashMap<>();
+        public final List<ISchematicBlock> rotatedPalette;
+        public final Set<ISchematicEntity> entities;
+        public final Map<ISchematicEntity, List<ItemStack>> entitiesRequiredItems;
+        public final Map<ISchematicEntity, List<FluidStack>> entitiesRequiredFluids;
 
         public BuildingInfo(BlockPos basePos, Rotation rotation) {
             super(basePos, rotation);
@@ -140,29 +141,36 @@ public class Blueprint extends Snapshot {
             toPlaceRequiredItems = (List<ItemStack>[]) new List<?>[size.getX() * size.getY() * size.getZ()];
             // noinspection unchecked
             toPlaceRequiredFluids = (List<FluidStack>[]) new List<?>[size.getX() * size.getY() * size.getZ()];
-            Pair<List<ItemStack>[][][], List<FluidStack>[][][]> required =
-                SchematicBlockManager.computeRequired(getSnapshot());
-            Pair<List<List<ItemStack>>, List<List<FluidStack>>> requiredEntities =
-                SchematicEntityManager.computeRequired(getSnapshot());
+            rotatedPalette = ImmutableList.copyOf(
+                palette.stream()
+                    .map(schematicBlock -> schematicBlock.getRotated(rotation))
+                    .collect(Collectors.toList())
+            );
             for (int z = 0; z < getSnapshot().size.getZ(); z++) {
                 for (int y = 0; y < getSnapshot().size.getY(); y++) {
                     for (int x = 0; x < getSnapshot().size.getX(); x++) {
-                        ISchematicBlock<?> schematicBlock = palette.get(data[posToIndex(x, y, z)]);
+                        ISchematicBlock schematicBlock = rotatedPalette.get(data[posToIndex(x, y, z)]);
                         if (!schematicBlock.isAir()) {
-                            toPlaceRequiredItems[posToIndex(x, y, z)] = required.getLeft()[x][y][z];
-                            toPlaceRequiredFluids[posToIndex(x, y, z)] = required.getRight()[x][y][z];
+                            toPlaceRequiredItems[posToIndex(x, y, z)] = schematicBlock.computeRequiredItems();
+                            toPlaceRequiredFluids[posToIndex(x, y, z)] = schematicBlock.computeRequiredFluids();
                         }
                     }
                 }
             }
-            int i = 0;
-            for (ISchematicEntity<?> schematicEntity : getSnapshot().entities) {
-                ISchematicEntity<?> rotatedSchematicEntity = schematicEntity.getRotated(rotation);
-                entities.add(rotatedSchematicEntity);
-                entitiesRequiredItems.put(rotatedSchematicEntity, requiredEntities.getLeft().get(i));
-                entitiesRequiredFluids.put(rotatedSchematicEntity, requiredEntities.getRight().get(i));
-                i++;
+            ImmutableSet.Builder<ISchematicEntity> entitiesBuilder = ImmutableSet.builder();
+            ImmutableMap.Builder<ISchematicEntity, List<ItemStack>> entitiesRequiredItemsBuilder =
+                ImmutableMap.builder();
+            ImmutableMap.Builder<ISchematicEntity, List<FluidStack>> entitiesRequiredFluidsBuilder =
+                ImmutableMap.builder();
+            for (ISchematicEntity schematicEntity : getSnapshot().entities) {
+                ISchematicEntity rotatedSchematicEntity = schematicEntity.getRotated(rotation);
+                entitiesBuilder.add(rotatedSchematicEntity);
+                entitiesRequiredItemsBuilder.put(rotatedSchematicEntity, schematicEntity.computeRequiredItems());
+                entitiesRequiredFluidsBuilder.put(rotatedSchematicEntity, schematicEntity.computeRequiredFluids());
             }
+            entities = entitiesBuilder.build();
+            entitiesRequiredItems = entitiesRequiredItemsBuilder.build();
+            entitiesRequiredFluids = entitiesRequiredFluidsBuilder.build();
         }
 
         @Override

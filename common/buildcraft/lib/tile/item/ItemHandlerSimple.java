@@ -3,7 +3,6 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
-
 package buildcraft.lib.tile.item;
 
 import javax.annotation.Nonnull;
@@ -27,7 +26,8 @@ import buildcraft.lib.inventory.AbstractInvItemTransactor;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.item.StackInsertionFunction.InsertionResult;
 
-public class ItemHandlerSimple extends AbstractInvItemTransactor implements IItemHandlerModifiable, IItemHandlerAdv, INBTSerializable<NBTTagCompound> {
+public class ItemHandlerSimple extends AbstractInvItemTransactor
+    implements IItemHandlerModifiable, IItemHandlerAdv, INBTSerializable<NBTTagCompound> {
     // Function-called stuff (helpers etc)
     private final StackInsertionChecker checker;
     private final StackInsertionFunction inserter;
@@ -43,7 +43,8 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
         this(size, (slot, stack) -> true, StackInsertionFunction.getDefaultInserter(), callback);
     }
 
-    public ItemHandlerSimple(int size, StackInsertionChecker checker, StackInsertionFunction insertionFunction, StackChangeCallback callback) {
+    public ItemHandlerSimple(int size, StackInsertionChecker checker, StackInsertionFunction insertionFunction,
+        StackChangeCallback callback) {
         stacks = NonNullList.withSize(size, StackUtil.EMPTY);
         this.checker = checker;
         this.inserter = insertionFunction;
@@ -146,7 +147,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
         if (current.isEmpty()) return StackUtil.EMPTY;
         if (current.getCount() < amount) {
             if (simulate) {
-                return asValid(current);
+                return asValid(current.copy());
             }
             setStackInternal(slot, StackUtil.EMPTY);
             // no need to copy as we no longer have it
@@ -155,7 +156,6 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
             current = current.copy();
             ItemStack split = current.splitStack(amount);
             if (!simulate) {
-                if (current.getCount() <= 0) current = StackUtil.EMPTY;
                 setStackInternal(slot, current);
             }
             return split;
@@ -176,9 +176,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
                 return copy.splitStack(max);
             }
             ItemStack split = current.splitStack(max);
-            if (current.getCount() <= 0) {
-                stacks.set(slot, StackUtil.EMPTY);
-            }
+            setStackInternal(slot, current.copy());
             return split;
         }
         return StackUtil.EMPTY;
@@ -195,7 +193,8 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
         } else {
             // Someone miss-called this. Woops. Looks like they didn't call insert.
             // If this is *somehow* called from vanilla code then its probably a vanilla bug
-            throw new IllegalStateException("Attempted to set stack[" + slot + "] when it was invalid! (" + stack + ")");
+            throw new IllegalStateException(
+                "Attempted to set stack[" + slot + "] when it was invalid! (" + stack + ")");
         }
     }
 
@@ -225,9 +224,16 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
         } else if (!stack.isEmpty() && firstUsed > slot) {
             firstUsed = slot;
         }
+        fireCallback(slot, before);
+    }
 
-        if (callback != null) {
-            callback.onStackChange(this, slot, before, asValid(stack));
+    private void fireCallback(int slot, @Nonnull ItemStack before) {
+        if (callback == null) {
+            return;
+        }
+        ItemStack after = stacks.get(slot);
+        if (!ItemStack.areItemStacksEqual(before, after)) {
+            callback.onStackChange(this, slot, before, after);
         }
     }
 
