@@ -23,6 +23,7 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.item.ItemSchematicSingle;
+import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.snapshot.Blueprint;
 import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
 import buildcraft.builders.snapshot.SchematicBlockManager;
@@ -32,9 +33,27 @@ import buildcraft.builders.snapshot.Snapshot.Header;
 public class TileReplacer extends TileBC_Neptune implements ITickable {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("replacer");
 
-    public final ItemHandlerSimple invSnapshot = itemManager.addInvHandler("snapshot", 1, ItemHandlerManager.EnumAccess.NONE);
-    public final ItemHandlerSimple invSchematicFrom = itemManager.addInvHandler("schematicFrom", 1, ItemHandlerManager.EnumAccess.NONE);
-    public final ItemHandlerSimple invSchematicTo = itemManager.addInvHandler("schematicTo", 1, ItemHandlerManager.EnumAccess.NONE);
+    public final ItemHandlerSimple invSnapshot = itemManager.addInvHandler(
+        "snapshot",
+        1,
+        (slot, stack) -> stack.getItem() instanceof ItemSnapshot &&
+            ItemSnapshot.EnumItemSnapshotType.getFromStack(stack) == ItemSnapshot.EnumItemSnapshotType.BLUEPRINT_USED,
+        ItemHandlerManager.EnumAccess.NONE
+    );
+    public final ItemHandlerSimple invSchematicFrom = itemManager.addInvHandler(
+        "schematicFrom",
+        1,
+        (slot, stack) -> stack.getItem() instanceof ItemSchematicSingle &&
+            stack.getItemDamage() == ItemSchematicSingle.DAMAGE_USED,
+        ItemHandlerManager.EnumAccess.NONE
+    );
+    public final ItemHandlerSimple invSchematicTo = itemManager.addInvHandler(
+        "schematicTo",
+        1,
+        (slot, stack) -> stack.getItem() instanceof ItemSchematicSingle &&
+            stack.getItemDamage() == ItemSchematicSingle.DAMAGE_USED,
+        ItemHandlerManager.EnumAccess.NONE
+    );
 
     @Override
     public void update() {

@@ -8,6 +8,7 @@ package buildcraft.robotics.tile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
@@ -43,13 +44,50 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
     protected static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("zone_planner");
     public static final int NET_PLAN_CHANGE = IDS.allocId("PLAN_CHANGE");
 
-    public final ItemHandlerSimple invPaintbrushes = itemManager.addInvHandler("paintbrushes", 16, EnumAccess.NONE);
-    public final ItemHandlerSimple invInputPaintbrush = itemManager.addInvHandler("inputPaintbrush", 1, EnumAccess.NONE);
-    public final ItemHandlerSimple invInputMapLocation = itemManager.addInvHandler("inputMapLocation", 1, EnumAccess.NONE);
-    public final ItemHandlerSimple invInputResult = itemManager.addInvHandler("inputResult", 1, EnumAccess.NONE);
-    public final ItemHandlerSimple invOutputPaintbrush = itemManager.addInvHandler("outputPaintbrush", 1, EnumAccess.NONE);
-    public final ItemHandlerSimple invOutputMapLocation = itemManager.addInvHandler("outputMapLocation", 1, EnumAccess.NONE);
-    public final ItemHandlerSimple invOutputResult = itemManager.addInvHandler("outputResult", 1, EnumAccess.NONE);
+    public final ItemHandlerSimple invPaintbrushes = itemManager.addInvHandler(
+        "paintbrushes",
+        16,
+        (slot, stack) -> stack.getItem() instanceof ItemPaintbrush_BC8,
+        EnumAccess.NONE
+    );
+    public final ItemHandlerSimple invInputPaintbrush = itemManager.addInvHandler(
+        "inputPaintbrush",
+        1,
+        (slot, stack) -> stack.getItem() instanceof ItemPaintbrush_BC8,
+        EnumAccess.NONE
+    );
+    public final ItemHandlerSimple invInputMapLocation = itemManager.addInvHandler(
+        "inputMapLocation",
+        1,
+        (slot, stack) -> stack.getItem() instanceof ItemMapLocation &&
+            Optional.ofNullable(stack.getTagCompound())
+                .map(tagCompound -> tagCompound.hasKey("chunkMapping"))
+                .orElse(false) &&
+            stack.getCount() == 1,
+        EnumAccess.NONE
+    );
+    public final ItemHandlerSimple invInputResult = itemManager.addInvHandler(
+        "inputResult",
+        1,
+        EnumAccess.NONE
+    );
+    public final ItemHandlerSimple invOutputPaintbrush = itemManager.addInvHandler(
+        "outputPaintbrush",
+        1,
+        (slot, stack) -> stack.getItem() instanceof ItemPaintbrush_BC8,
+        EnumAccess.NONE
+    );
+    public final ItemHandlerSimple invOutputMapLocation = itemManager.addInvHandler(
+        "outputMapLocation",
+        1,
+        (slot, stack) -> stack.getItem() instanceof ItemMapLocation && stack.getCount() == 1,
+        EnumAccess.NONE
+    );
+    public final ItemHandlerSimple invOutputResult = itemManager.addInvHandler(
+        "outputResult",
+        1,
+        EnumAccess.NONE
+    );
     private int progressInput = 0;
     public final DeltaInt deltaProgressInput = deltaManager.addDelta("progressInput", EnumNetworkVisibility.GUI_ONLY);
     private int progressOutput = 0;

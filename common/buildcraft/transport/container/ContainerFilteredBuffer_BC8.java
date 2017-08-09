@@ -4,16 +4,12 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.transport.container;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.lib.gui.slot.SlotPhantom;
-import buildcraft.lib.misc.StackUtil;
 
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.tile.TileFilteredBuffer;
@@ -25,7 +21,8 @@ public class ContainerFilteredBuffer_BC8 extends ContainerBCTile<TileFilteredBuf
 
         for (int i = 0; i < 9; i++) {
             // Filtered Buffer filter slots
-            SlotPhantom phantom = new SlotPhantom(tile.invFilter, i, 8 + i * 18, 27) {
+            addSlotToContainer(new SlotPhantom(tile.invFilter, i, 8 + i * 18, 27) {
+                @SuppressWarnings("NullableProblems")
                 @Override
                 public TextureAtlasSprite getBackgroundSprite() {
                     return BCTransportSprites.EMPTY_FILTERED_BUFFER_SLOT.getSprite();
@@ -35,15 +32,9 @@ public class ContainerFilteredBuffer_BC8 extends ContainerBCTile<TileFilteredBuf
                 public boolean canAdjustCount() {
                     return false;
                 }
-            };
-            addSlotToContainer(phantom);
-            // Filtered Buffer inventory slots
-            addSlotToContainer(new SlotBase(tile.invMain, i, 8 + i * 18, 61) {
-                @Override
-                public boolean isItemValid(@Nonnull ItemStack stack) {
-                    return phantom.getHasStack() && StackUtil.canMerge(phantom.getStack(), stack);
-                }
             });
+            // Filtered Buffer inventory slots
+            addSlotToContainer(new SlotBase(tile.invMain, i, 8 + i * 18, 61));
         }
     }
 

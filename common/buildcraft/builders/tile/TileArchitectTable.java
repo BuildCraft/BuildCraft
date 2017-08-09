@@ -71,12 +71,15 @@ import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 
 public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("architect");
+    @SuppressWarnings("WeakerAccess")
     public static final int NET_BOX = IDS.allocId("BOX");
+    @SuppressWarnings("WeakerAccess")
     public static final int NET_SCAN = IDS.allocId("SCAN");
 
     public final ItemHandlerSimple invSnapshotIn = itemManager.addInvHandler(
         "in",
         1,
+        (slot, stack) -> stack.getItem() instanceof ItemSnapshot,
         EnumAccess.INSERT,
         EnumPipePart.VALUES
     );
@@ -386,6 +389,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
 
     // Rendering
 
+    @SuppressWarnings("NullableProblems")
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {

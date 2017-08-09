@@ -49,7 +49,6 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
-import buildcraft.lib.tile.item.StackInsertionFunction;
 
 import buildcraft.builders.addon.AddonFillingPlanner;
 import buildcraft.builders.filling.Filling;
@@ -76,12 +75,8 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     public final ItemHandlerSimple invResources =
         itemManager.addInvHandler(
             "resources",
-            new ItemHandlerSimple(
-                27,
-                (slot, stack) -> Filling.getItemBlocks().contains(stack.getItem()),
-                StackInsertionFunction.getDefaultInserter(),
-                this::onSlotChange
-            ),
+            27,
+            (slot, stack) -> Filling.getItemBlocks().contains(stack.getItem()),
             EnumAccess.INSERT,
             EnumPipePart.VALUES
         );

@@ -39,8 +39,10 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.lib.tile.item.StackInsertionFunction;
 
 import buildcraft.builders.BCBuildersItems;
+import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
 import buildcraft.builders.snapshot.Snapshot;
 
@@ -51,10 +53,37 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
     @SuppressWarnings("WeakerAccess")
     public static final int NET_UP = IDS.allocId("UP");
 
-    public final ItemHandlerSimple invDownIn = itemManager.addInvHandler("downIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
-    public final ItemHandlerSimple invDownOut = itemManager.addInvHandler("downOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
-    public final ItemHandlerSimple invUpIn = itemManager.addInvHandler("upIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
-    public final ItemHandlerSimple invUpOut = itemManager.addInvHandler("upOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invDownIn = itemManager.addInvHandler(
+        "downIn",
+        1,
+        (slot, stack) -> stack.getItem() instanceof ItemSnapshot &&
+            ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used,
+        StackInsertionFunction.getInsertionFunction(1),
+        EnumAccess.INSERT,
+        EnumPipePart.VALUES
+    );
+    public final ItemHandlerSimple invDownOut = itemManager.addInvHandler(
+        "downOut",
+        1,
+        StackInsertionFunction.getInsertionFunction(1),
+        EnumAccess.EXTRACT,
+        EnumPipePart.VALUES
+    );
+    public final ItemHandlerSimple invUpIn = itemManager.addInvHandler(
+        "upIn",
+        1,
+        (slot, stack) -> stack.getItem() instanceof ItemSnapshot,
+        StackInsertionFunction.getInsertionFunction(1),
+        EnumAccess.INSERT,
+        EnumPipePart.VALUES
+    );
+    public final ItemHandlerSimple invUpOut = itemManager.addInvHandler(
+        "upOut",
+        1,
+        StackInsertionFunction.getInsertionFunction(1),
+        EnumAccess.EXTRACT,
+        EnumPipePart.VALUES
+    );
     public Snapshot.Key selected = null;
     private int progressDown = -1;
     private int progressUp = -1;

@@ -82,8 +82,20 @@ public class TileBuilder extends TileBC_Neptune
     @SuppressWarnings("WeakerAccess")
     public static final int NET_SNAPSHOT_TYPE = IDS.allocId("SNAPSHOT_TYPE");
 
-    public final ItemHandlerSimple invSnapshot;
-    public final ItemHandlerSimple invResources;
+    public final ItemHandlerSimple invSnapshot = itemManager.addInvHandler(
+        "snapshot",
+        1,
+        (slot, stack) ->
+            stack.getItem() instanceof ItemSnapshot && ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used,
+        EnumAccess.BOTH,
+        EnumPipePart.VALUES
+    );
+    public final ItemHandlerSimple invResources = itemManager.addInvHandler(
+        "resources",
+        27,
+        EnumAccess.BOTH,
+        EnumPipePart.VALUES
+    );
 
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
     private boolean canExcavate = true;
@@ -110,8 +122,6 @@ public class TileBuilder extends TileBC_Neptune
     private boolean isDone = false;
 
     public TileBuilder() {
-        invSnapshot = itemManager.addInvHandler("snapshot", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
-        invResources = itemManager.addInvHandler("resources", 27, EnumAccess.BOTH, EnumPipePart.VALUES);
         for (int i = 1; i <= 4; i++) {
             tankManager.add(
                 new Tank("fluid" + i, Fluid.BUCKET_VOLUME * 8, this) {

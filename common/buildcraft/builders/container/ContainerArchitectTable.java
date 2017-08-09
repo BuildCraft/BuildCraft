@@ -8,10 +8,7 @@ package buildcraft.builders.container;
 
 import java.io.IOException;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -24,7 +21,6 @@ import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
-import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.tile.TileArchitectTable;
 
 public class ContainerArchitectTable extends ContainerBCTile<TileArchitectTable> {
@@ -35,12 +31,7 @@ public class ContainerArchitectTable extends ContainerBCTile<TileArchitectTable>
         super(player, tile);
         addFullPlayerInventory(88, 84);
 
-        addSlotToContainer(new SlotBase(tile.invSnapshotIn, 0, 135, 35) {
-            @Override
-            public boolean isItemValid(@Nonnull ItemStack stack) {
-                return stack.getItem() instanceof ItemSnapshot;
-            }
-        });
+        addSlotToContainer(new SlotBase(tile.invSnapshotIn, 0, 135, 35));
         addSlotToContainer(new SlotOutput(tile.invSnapshotOut, 0, 194, 35));
     }
     
