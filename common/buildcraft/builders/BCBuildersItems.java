@@ -12,7 +12,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.RegistryHelper;
 
 import buildcraft.builders.item.ItemFillingPlanner;

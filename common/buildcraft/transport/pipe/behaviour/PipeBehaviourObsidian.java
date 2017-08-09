@@ -8,6 +8,7 @@ package buildcraft.transport.pipe.behaviour;
 
 import java.util.List;
 import java.util.WeakHashMap;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.Entity;
