@@ -442,7 +442,6 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     @Override
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("");
         left.add("battery = " + battery.getDebugString());
         left.add("addon = " + addon);
     }

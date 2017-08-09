@@ -126,7 +126,6 @@ public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable, 
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         if (hasWorld() && world.isRemote) {
-            left.add("");
             left.add("coolable:");
             smoothedCoolableIn.getDebugInfo(left, right, side);
             left.add("");

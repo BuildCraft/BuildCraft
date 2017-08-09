@@ -172,7 +172,6 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("");
         left.add("progress_input = " + progressInput);
         left.add("progress_output = " + progressOutput);
     }

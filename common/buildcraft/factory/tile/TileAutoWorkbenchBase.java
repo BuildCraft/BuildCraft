@@ -78,7 +78,6 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("");
         left.add("recipe = " + currentRecipe);
     }
 
