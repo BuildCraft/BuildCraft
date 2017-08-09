@@ -385,6 +385,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
             );
         }
         nbt.setBoolean("prevInverted", prevInverted);
+        nbt.setTag("builder", builder.serializeNBT());
         return nbt;
     }
 
@@ -416,6 +417,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
             updateBuildingInfo();
         }
         builder.updateSnapshot();
+        builder.deserializeNBT(nbt.getCompoundTag("builder"));
     }
 
     // Rendering

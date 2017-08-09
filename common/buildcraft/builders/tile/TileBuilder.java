@@ -118,6 +118,7 @@ public class TileBuilder extends TileBC_Neptune
     @SuppressWarnings("WeakerAccess")
     public BlueprintBuilder blueprintBuilder = new BlueprintBuilder(this);
     private Box currentBox = new Box();
+    private Rotation rotation = null;
 
     private boolean isDone = false;
 
@@ -160,7 +161,7 @@ public class TileBuilder extends TileBC_Neptune
                         }
                     }
                 }
-                updateSnapshot();
+                updateSnapshot(true);
                 sendNetworkUpdate(NET_SNAPSHOT_TYPE);
             }
             if (handler == invResources) {
@@ -184,13 +185,18 @@ public class TileBuilder extends TileBC_Neptune
         blueprintBuilder.invalidate();
     }
 
-    private void updateSnapshot() {
+    private void updateSnapshot(boolean canGetFacing) {
         Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::cancel);
         if (snapshot != null && getCurrentBasePos() != null) {
             snapshotType = snapshot.getType();
-            EnumFacing facing = world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING);
-            Rotation rotation = Arrays.stream(Rotation.values()).filter(r -> r.rotate(snapshot.facing) == facing)
-                .findFirst().orElse(null);
+            if (canGetFacing) {
+                rotation = Arrays.stream(Rotation.values())
+                    .filter(r ->
+                        r.rotate(snapshot.facing) == world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING)
+                    )
+                    .findFirst()
+                    .orElse(null);
+            }
             if (snapshot.getType() == EnumSnapshotType.TEMPLATE) {
                 templateBuildingInfo = ((Template) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
             }
@@ -203,6 +209,7 @@ public class TileBuilder extends TileBC_Neptune
             Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::updateSnapshot);
         } else {
             snapshotType = null;
+            rotation = null;
             templateBuildingInfo = null;
             blueprintBuildingInfo = null;
             currentBox = null;
@@ -259,7 +266,7 @@ public class TileBuilder extends TileBC_Neptune
                     if (currentBasePosIndex >= basePoses.size()) {
                         currentBasePosIndex = basePoses.size() - 1;
                     }
-                    updateSnapshot();
+                    updateSnapshot(true);
                 }
             }
         }
@@ -360,6 +367,8 @@ public class TileBuilder extends TileBC_Neptune
         }
         nbt.setTag("basePoses", NBTUtilBC.writeCompoundList(basePoses.stream().map(NBTUtil::createPosTag)));
         nbt.setBoolean("canExcavate", canExcavate);
+        nbt.setTag("rotation", NBTUtilBC.writeEnum(rotation));
+        Optional.ofNullable(getBuilder()).ifPresent(builder -> nbt.setTag("builder", builder.serializeNBT()));
         return nbt;
     }
 
@@ -375,6 +384,9 @@ public class TileBuilder extends TileBC_Neptune
             .map(NBTUtil::getPosFromTag)
             .collect(Collectors.toList());
         canExcavate = nbt.getBoolean("canExcavate");
+        rotation = NBTUtilBC.readEnum(nbt.getTag("rotation"), Rotation.class);
+        updateSnapshot(false);
+        Optional.ofNullable(getBuilder()).ifPresent(builder -> builder.deserializeNBT(nbt.getCompoundTag("builder")));
     }
 
     // Rendering
