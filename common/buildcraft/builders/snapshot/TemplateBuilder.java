@@ -44,7 +44,7 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     }
 
     @Override
-    protected boolean readyToPlace(BlockPos blockPos) {
+    protected boolean isReadyToPlace(BlockPos blockPos) {
         return true;
     }
 

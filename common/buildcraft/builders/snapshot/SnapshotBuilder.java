@@ -110,7 +110,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
 
     protected abstract boolean canPlace(BlockPos blockPos);
 
-    protected abstract boolean readyToPlace(BlockPos blockPos);
+    protected abstract boolean isReadyToPlace(BlockPos blockPos);
 
     protected abstract boolean hasEnoughToPlaceItems(BlockPos blockPos);
 
@@ -348,7 +348,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                         return has;
                     })
                     .mapToObj(this::indexToPos)
-                    .filter(this::readyToPlace)
+                    .filter(this::isReadyToPlace)
                     .limit(MAX_QUEUE_SIZE - placeTasks.size())
                     .filter(this::canPlace)
                     .map(blockPos ->
