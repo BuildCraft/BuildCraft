@@ -6,10 +6,12 @@ package buildcraft.lib;
 
 import buildcraft.lib.item.ItemDebugger;
 import buildcraft.lib.item.ItemGuide;
+import buildcraft.lib.item.ItemGuideNote;
 import buildcraft.lib.item.ItemManager;
 
 public class BCLibItems {
     public static ItemGuide guide;
+    public static ItemGuideNote note;
     public static ItemDebugger debugger;
 
     private static boolean enableGuide, enableDebugger;
@@ -25,6 +27,7 @@ public class BCLibItems {
     public static void fmlPreInit() {
         if (enableGuide) {
             guide = ItemManager.register(new ItemGuide("item.guide"), true);
+            note = ItemManager.register(new ItemGuideNote("item.guide.note"), true);
         }
         if (enableDebugger) {
             debugger = ItemManager.register(new ItemDebugger("item.debugger"), true);

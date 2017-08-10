@@ -11,23 +11,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.api.core.BCLog;
 
+import buildcraft.lib.BCLib;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.guide.PageEntry;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.TypeOrder;
 import buildcraft.lib.client.guide.font.IFontRenderer;
+import buildcraft.lib.client.guide.loader.XmlPageLoader;
 import buildcraft.lib.client.guide.node.NodePageLine;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiStack;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.misc.LocaleUtil;
 
 /** The base menu for showing all the locations. Should never be registered with and guide managers, this is special and
  * controls them all. */
@@ -110,7 +114,37 @@ public class GuidePageContents extends GuidePageBase {
 
     @Override
     protected void renderPage(int x, int y, int width, int height, int index) {
-        PagePosition pos = new PagePosition(0, 0);
+        if (index == 0) {
+            IFontRenderer f = getFontRenderer();
+            String text = "BuildCraft";
+            float scale = 3;
+            int fWidth = (int) (f.getStringWidth(text) * scale);
+            GlStateManager.pushMatrix();
+            GlStateManager.scale(scale, scale, 1);
+            f.drawString(text, (int) ((x + (width - fWidth) / 2) / scale), (int) ((y + height / 2 - 62) / scale), 0);
+            GlStateManager.popMatrix();
+
+            text = "v" + BCLib.VERSION;
+            fWidth = f.getStringWidth(text);
+            f.drawString(text, x + (width - fWidth) / 2, y + height / 2 - 36, 0);
+
+            scale = 1.5f;
+            text = LocaleUtil.localize("options.title");
+            fWidth = (int) (f.getStringWidth(text) * scale);
+            GlStateManager.pushMatrix();
+            GlStateManager.scale(scale, scale, 1);
+            f.drawString(text, (int) ((x + (width - fWidth) / 2) / scale), (int) ((y + height / 2 - 4) / scale), 0);
+            GlStateManager.popMatrix();
+
+            text = XmlPageLoader.SHOW_LORE ? "Show Lore [x]" : "Show Lore [ ]";
+            fWidth = f.getStringWidth(text);
+            f.drawString(text, x + (width - fWidth) / 2, y + height / 2 + 12, 0);
+
+            text = XmlPageLoader.SHOW_HINTS ? "Show Hints [x]" : "Show Hints [ ]";
+            fWidth = f.getStringWidth(text);
+            f.drawString(text, x + (width - fWidth) / 2, y + height / 2 + 26, 0);
+        }
+        PagePosition pos = new PagePosition(1, 0);
         for (GuidePart part : parentNode.iterateNonNullLines()) {
             pos = part.renderIntoArea(x, y, width, height, pos, index);
         }
@@ -145,7 +179,8 @@ public class GuidePageContents extends GuidePageBase {
     }
 
     @Override
-    public void handleMouseClick(int x, int y, int width, int height, int mouseX, int mouseY, int mouseButton, int index, boolean isEditing) {
+    public void handleMouseClick(int x, int y, int width, int height, int mouseX, int mouseY, int mouseButton,
+        int index, boolean isEditing) {
         super.handleMouseClick(x, y, width, height, mouseX, mouseY, mouseButton, index, isEditing);
         if (index % 2 == 0) {
             int oX = x + ORDER_OFFSET_X;
@@ -162,7 +197,24 @@ public class GuidePageContents extends GuidePageBase {
                 oY += 14;
             }
         }
-        GuidePart part = getClicked(parentNode.iterateNonNullLines(), x, y, width, height, mouseX, mouseY, index);
+        if (index == 0 && mouseButton == 0) {
+            IFontRenderer f = getFontRenderer();
+            String text = XmlPageLoader.SHOW_LORE ? "Show Lore [x]" : "Show Lore [ ]";
+            int fWidth = f.getStringWidth(text);
+            GuiRectangle rect;
+            rect = new GuiRectangle(x + (width - fWidth) / 2, y + height / 2 + 12, fWidth, f.getFontHeight());
+            if (rect.contains(mouseX, mouseY)) {
+                XmlPageLoader.SHOW_LORE = !XmlPageLoader.SHOW_LORE;
+            }
+
+            text = XmlPageLoader.SHOW_HINTS ? "Show Hints [x]" : "Show Hints [ ]";
+            fWidth = f.getStringWidth(text);
+            rect = new GuiRectangle(x + (width - fWidth) / 2, y + height / 2 + 26, fWidth, f.getFontHeight());
+            if (rect.contains(mouseX, mouseY)) {
+                XmlPageLoader.SHOW_HINTS = !XmlPageLoader.SHOW_HINTS;
+            }
+        }
+        GuidePart part = getClicked(parentNode.iterateNonNullLines(), x, y, width, height, mouseX, mouseY, index - 1);
         if (part != null) {
             PageEntry entry = pageEntries.get(part);
             if (entry != null) {
@@ -170,7 +222,8 @@ public class GuidePageContents extends GuidePageBase {
                 if (factory != null) {
                     gui.openPage(factory.createNew(gui));
                 } else {
-                    BCLog.logger.warn("Somehow encountered a null link factory! (line = " + part + ", link = " + entry + ")");
+                    BCLog.logger
+                        .warn("Somehow encountered a null link factory! (line = " + part + ", link = " + entry + ")");
                 }
             } else {
                 BCLog.logger.warn("Somehow encountered a null link! (line = " + part + ")");

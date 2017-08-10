@@ -9,9 +9,6 @@ package buildcraft.lib.client.guide.parts;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.font.IFontRenderer;
@@ -19,7 +16,6 @@ import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.pos.GuiRectangle;
 
 /** Represents a single page, image or crafting recipe for displaying. Only exists on the client. */
-@SideOnly(Side.CLIENT)
 public abstract class GuidePart {
     public static final int INDENT_WIDTH = 16;
     public static final int LINE_HEIGHT = 17;
@@ -95,7 +91,8 @@ public abstract class GuidePart {
     public abstract PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index);
 
     /** Like {@link #renderIntoArea(int, int, int, int, PagePosition, int)} but for a mouse click. */
-    public abstract PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index, int mouseX, int mouseY);
+    public abstract PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
+        int mouseX, int mouseY);
 
     public void handleMouseDragPartial(int startX, int startY, int currentX, int currentY, int button) {}
 
@@ -109,7 +106,8 @@ public abstract class GuidePart {
      * @param width The width of rendering space available
      * @param height The height of rendering space available
      * @return The position for the next line to render at. Will automatically be the next page or line if necessary. */
-    protected PagePosition renderLine(PagePosition current, PageLine line, int x, int y, int width, int height, int pageRenderIndex) {
+    protected PagePosition renderLine(PagePosition current, PageLine line, int x, int y, int width, int height,
+        int pageRenderIndex) {
         wasHovered = false;
         wasIconHovered = false;
         // Firstly break off the last chunk if the total length is greater than the width allows
@@ -124,6 +122,9 @@ public abstract class GuidePart {
         while (current.pixel <= height) {
             if (toRender.length() == 0) {
                 break;
+            }
+            if (current.nextLine(LINE_HEIGHT, height).page != current.page) {
+                current = current.newPage();
             }
 
             // Find out the longest string we can render
@@ -157,7 +158,7 @@ public abstract class GuidePart {
             int linkY = y + current.pixel;
             int linkXEnd = linkX + stringWidth + 2;
             int linkYEnd = linkY + fontRenderer.getFontHeight() + 2;
-            GuiRectangle linkArea = new GuiRectangle(linkX, linkY, stringWidth + 2, fontRenderer.getFontHeight() + 2);
+            GuiRectangle linkArea = new GuiRectangle(linkX, linkY, stringWidth + 2, LINE_HEIGHT);
             if (line.link && linkArea.contains(gui.mouse)) {
                 wasHovered = true;
                 if (render) {
@@ -181,16 +182,18 @@ public abstract class GuidePart {
                     // icon.drawCutInside(iconBox);
                 }
             }
-            current = current.nextLine(LINE_HEIGHT, height);
-            if (current.pixel + LINE_HEIGHT > height) {
-                current = current.nextLine(LINE_HEIGHT, height);
-            }
+
+            int fontHeight = fontRenderer.getFontHeight() + 3;
+            current = current.nextLine(fontHeight, height);
             firstLine = false;
         }
+        int additional = LINE_HEIGHT - fontRenderer.getFontHeight() - 3;
+        current = current.nextLine(additional, height);
         return current;
     }
 
-    protected PagePosition renderLines(Iterable<PageLine> lines, PagePosition part, int x, int y, int width, int height, int index) {
+    protected PagePosition renderLines(Iterable<PageLine> lines, PagePosition part, int x, int y, int width, int height,
+        int index) {
         for (PageLine line : lines) {
             part = renderLine(part, line, x, y, width, height, index);
         }

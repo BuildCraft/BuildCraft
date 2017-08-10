@@ -51,7 +51,7 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon PAGE_RIGHT_BACK = new GuiIcon(RIGHT_PAGE_BACK, 0, 0, 193, 248);
 
     public static final GuiRectangle PAGE_LEFT_TEXT = new GuiRectangle(23, 25, 168, 190);
-    public static final GuiRectangle PAGE_RIGHT_TEXT = new GuiRectangle(2, 25, 168, 190);
+    public static final GuiRectangle PAGE_RIGHT_TEXT = new GuiRectangle(4, 25, 166, 190);
 
     public static final GuiIcon PEN_UP = new GuiIcon(ICONS_2, 0, 0, 14, 135);
     public static final GuiIcon PEN_ANGLED = new GuiIcon(ICONS_2, 17, 0, 100, 100);

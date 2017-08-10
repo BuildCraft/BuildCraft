@@ -21,12 +21,13 @@ public class TokenizerDefaults {
     public static final ITokenizerGobbler GOBBLER_QUOTE = (ctx) -> {
         // Quoted gobbler, takes a length of text in quotes. Does NOT allow EOL.
         int length = 1;
-        if (ctx.getCharAt(0) != '\'') return ResultSpecific.IGNORE;
+        char type = ctx.getCharAt(0);
+        if (type != '\'' && type != '"') return ResultSpecific.IGNORE;
         while (true) {
             char c = ctx.getCharAt(length);
             if (c == '\\') {
                 length++;
-            } else if (c == '\'') {
+            } else if (c == type) {
                 return new ResultConsume(length + 1);
             } else if (c == Tokenizer.END_OF_LINE) {
                 return new ResultInvalid(length + 1);

@@ -34,6 +34,7 @@ import buildcraft.lib.client.guide.data.GuideEntryLoader;
 import buildcraft.lib.client.guide.data.JsonEntry;
 import buildcraft.lib.client.guide.loader.IPageLoader;
 import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
+import buildcraft.lib.client.guide.loader.XmlPageLoader;
 import buildcraft.lib.client.guide.parts.GuidePageFactory;
 import buildcraft.lib.client.guide.parts.GuidePageStandInRecipes;
 
@@ -49,6 +50,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
 
     static {
         PAGE_LOADERS.put("md", MarkdownPageLoader.INSTANCE);
+        PAGE_LOADERS.put("xml", XmlPageLoader.INSTANCE);
     }
 
     @Override

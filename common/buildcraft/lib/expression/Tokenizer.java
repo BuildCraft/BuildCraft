@@ -7,7 +7,10 @@
 package buildcraft.lib.expression;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 import buildcraft.lib.expression.api.InvalidExpressionException;
 
@@ -17,7 +20,11 @@ public class Tokenizer {
     private final List<ITokenizerGobbler> tokenizers;
 
     public Tokenizer(List<ITokenizerGobbler> tokenizers) {
-        this.tokenizers = new ArrayList<>(tokenizers);
+        this.tokenizers = ImmutableList.copyOf(tokenizers);
+    }
+
+    public Tokenizer(ITokenizerGobbler... tokenizers) {
+        this(Arrays.asList(tokenizers));
     }
 
     public String[] tokenize(String src) throws InvalidExpressionException {
@@ -26,16 +33,7 @@ public class Tokenizer {
         int index = 0;
         while (index < src.length()) {
             final int contextStart = index;
-            ITokenizingContext ctx = (relStart, relEnd) -> {
-                int start = contextStart + relStart;
-                int end = contextStart + relEnd;
-                int stringEnd = src.length();
-                StringBuilder gotten = new StringBuilder(src.substring(start, Math.min(end, stringEnd)));
-                while (gotten.length() < end - start) {
-                    gotten.append(END_OF_LINE);
-                }
-                return gotten.toString();
-            };
+            ITokenizingContext ctx = ITokenizingContext.createFromString(contextStart, src);
             boolean consumed = false;
             for (ITokenizerGobbler token : tokenizers) {
                 TokenResult res = token.tokenizePart(ctx);
@@ -44,7 +42,8 @@ public class Tokenizer {
                     throw new InvalidExpressionException("Invalid src \"" + ctx.get(10).replace("\n", "\\n") + "\"");
                 }
                 if (res instanceof ResultInvalid) {
-                    throw new InvalidExpressionException("Invalid src \"" + ctx.get(((ResultInvalid) res).length).replace("\n", "\\n") + "\"");
+                    throw new InvalidExpressionException(
+                        "Invalid src \"" + ctx.get(((ResultInvalid) res).length).replace("\n", "\\n") + "\"");
                 }
                 if (res instanceof ResultDiscard) {
                     int discardLength = ((ResultDiscard) res).length;
@@ -78,6 +77,23 @@ public class Tokenizer {
 
         default char getCharAt(int rel) {
             return get(rel, rel + 1).charAt(0);
+        }
+
+        public static ITokenizingContext createFromString(String src) {
+            return createFromString(0, src);
+        }
+
+        public static ITokenizingContext createFromString(int contextStart, String src) {
+            return (relStart, relEnd) -> {
+                int start = contextStart + relStart;
+                int end = contextStart + relEnd;
+                int stringEnd = src.length();
+                StringBuilder gotten = new StringBuilder(src.substring(start, Math.min(end, stringEnd)));
+                while (gotten.length() < end - start) {
+                    gotten.append(END_OF_LINE);
+                }
+                return gotten.toString();
+            };
         }
     }
 

@@ -52,6 +52,9 @@ import buildcraft.lib.client.resource.TextureResourceHolder;
 public enum MarkdownPageLoader implements IPageLoaderText {
     INSTANCE;
 
+    // TODO: Make this change markdown syntax to XML, then pass
+    // the resulting string to XmlPageLoader
+
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.markdown") || World.class.getName().contains("World");
     public static final Map<String, SpecialParser> SPECIAL_FACTORIES = new HashMap<>();
 
