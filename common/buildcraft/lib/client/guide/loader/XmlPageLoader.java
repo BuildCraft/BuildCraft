@@ -57,6 +57,8 @@ public enum XmlPageLoader implements IPageLoaderText {
     
     public static boolean SHOW_LORE = true;
     public static boolean SHOW_HINTS = false;
+    public static boolean SHOW_DETAIL = false;
+    public static boolean SHOW_DESCRIPTION = true;
 
     @FunctionalInterface
     public interface SpecialParser {
@@ -83,8 +85,8 @@ public enum XmlPageLoader implements IPageLoaderText {
     static {
         // Note that text is done seperatly, so its not registered here
         putDuelMultiPartType("lore", () -> SHOW_LORE);
-        putDuelMultiPartType("description", () -> true);
-        putDuelMultiPartType("detail", () -> false);
+        putDuelMultiPartType("description", () -> SHOW_DESCRIPTION);
+        putDuelMultiPartType("detail", () -> SHOW_DETAIL);
         putDuelMultiPartType("hint", () -> SHOW_HINTS);
         putSingle("new_page", attr -> GuidePartNewPage::new);
         putSingle("chapter", XmlPageLoader::loadChapter);
