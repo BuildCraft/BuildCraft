@@ -37,13 +37,15 @@ import buildcraft.core.tile.TileEngineRedstone_BC8;
 import buildcraft.core.tile.TileMarkerPath;
 import buildcraft.core.tile.TileMarkerVolume;
 
-@Mod(//
-    modid = BCCore.MODID,//
-    name = "BuildCraft Core",//
-    version = BCLib.VERSION,//
-    dependencies = "required-after:buildcraftlib@[" + BCLib.VERSION + "]",//
-    guiFactory = "buildcraft.core.client.ConfigGuiFactoryBC"//
+//@formatter:off
+@Mod(
+    modid = BCCore.MODID,
+    name = "BuildCraft Core",
+    version = BCLib.VERSION,
+    dependencies = "required-after:buildcraftlib@[" + BCLib.VERSION + "]",
+    guiFactory = "buildcraft.core.client.ConfigGuiFactoryBC"
 )
+//@formatter:on
 public class BCCore {
     public static final String MODID = "buildcraftcore";
 

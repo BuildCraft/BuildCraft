@@ -20,8 +20,12 @@ import java.util.stream.IntStream;
 
 import javax.annotation.Nonnull;
 
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorldEventListener;
@@ -29,6 +33,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.world.BlockEvent;
 
 import buildcraft.api.core.BuildCraftAPI;
@@ -36,10 +41,11 @@ import buildcraft.api.mj.MjAPI;
 
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.world.WorldEventListenerAdapter;
 
-public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
+public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> implements INBTSerializable<NBTTagCompound> {
     private static final int MAX_QUEUE_SIZE = 64;
     @SuppressWarnings("WeakerAccess")
     protected static final byte CHECK_RESULT_UNKNOWN = 0;
@@ -110,7 +116,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
 
     protected abstract boolean canPlace(BlockPos blockPos);
 
-    protected abstract boolean readyToPlace(BlockPos blockPos);
+    protected abstract boolean isReadyToPlace(BlockPos blockPos);
 
     protected abstract boolean hasEnoughToPlaceItems(BlockPos blockPos);
 
@@ -348,7 +354,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
                         return has;
                     })
                     .mapToObj(this::indexToPos)
-                    .filter(this::readyToPlace)
+                    .filter(this::isReadyToPlace)
                     .limit(MAX_QUEUE_SIZE - placeTasks.size())
                     .filter(this::canPlace)
                     .map(blockPos ->
@@ -513,8 +519,30 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
         leftToPlace = buffer.readInt();
     }
 
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setTag("toCheck", NBTUtilBC.writeCompoundList(toCheck.stream().map(NBTUtil::createPosTag)));
+        nbt.setByteArray("checkResults", checkResults);
+        nbt.setTag("breakTasks", NBTUtilBC.writeCompoundList(breakTasks.stream().map(BreakTask::writeToNBT)));
+        nbt.setTag("placeTasks", NBTUtilBC.writeCompoundList(placeTasks.stream().map(PlaceTask::writeToNBT)));
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        updateSnapshot();
+        toCheck.clear();
+        NBTUtilBC.readCompoundList(nbt.getTag("toCheck")).map(NBTUtil::getPosFromTag).forEach(toCheck::add);
+        checkResults = nbt.getByteArray("checkResults");
+        breakTasks.clear();
+        NBTUtilBC.readCompoundList(nbt.getTag("breakTasks")).map(BreakTask::new).forEach(breakTasks::add);
+        placeTasks.clear();
+        NBTUtilBC.readCompoundList(nbt.getTag("placeTasks")).map(PlaceTask::new).forEach(placeTasks::add);
+    }
+
     public class BreakTask {
-        public BlockPos pos;
+        public final BlockPos pos;
         public long power;
 
         @SuppressWarnings("WeakerAccess")
@@ -529,6 +557,12 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             power = buffer.readLong();
         }
 
+        @SuppressWarnings("WeakerAccess")
+        public BreakTask(NBTTagCompound nbt) {
+            pos = NBTUtil.getPosFromTag(nbt.getCompoundTag("pos"));
+            power = nbt.getLong("power");
+        }
+
         public long getTarget() {
             return BlockUtil.computeBlockBreakPower(tile.getWorldBC(), pos);
         }
@@ -537,17 +571,24 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             MessageUtil.writeBlockPos(buffer, pos);
             buffer.writeLong(power);
         }
+
+        public NBTTagCompound writeToNBT() {
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setTag("pos", NBTUtil.createPosTag(pos));
+            nbt.setLong("power", power);
+            return nbt;
+        }
     }
 
     public class PlaceTask {
-        public BlockPos pos;
-        public List<ItemStack> items;
+        public final BlockPos pos;
+        public final List<ItemStack> items;
         public long power;
 
         @SuppressWarnings("WeakerAccess")
         public PlaceTask(BlockPos pos, List<ItemStack> items, long power) {
             this.pos = pos;
-            this.items = items;
+            this.items = ImmutableList.copyOf(items);
             this.power = power;
         }
 
@@ -564,6 +605,17 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             power = buffer.readLong();
         }
 
+        @SuppressWarnings("WeakerAccess")
+        public PlaceTask(NBTTagCompound nbt) {
+            pos = NBTUtil.getPosFromTag(nbt.getCompoundTag("pos"));
+            items = ImmutableList.copyOf(
+                NBTUtilBC.readCompoundList(nbt.getTag("items"))
+                    .map(ItemStack::new)
+                    .collect(Collectors.toList())
+            );
+            power = nbt.getLong("power");
+        }
+
         public long getTarget() {
             return (long) (Math.sqrt(pos.distanceSq(tile.getBuilderPos())) * 10 * MjAPI.MJ);
         }
@@ -573,6 +625,14 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> {
             buffer.writeInt(items.size());
             items.forEach(buffer::writeItemStack);
             buffer.writeLong(power);
+        }
+
+        public NBTTagCompound writeToNBT() {
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setTag("pos", NBTUtil.createPosTag(pos));
+            nbt.setTag("items", NBTUtilBC.writeCompoundList(items.stream().map(ItemStack::serializeNBT)));
+            nbt.setLong("power", power);
+            return nbt;
         }
     }
 }

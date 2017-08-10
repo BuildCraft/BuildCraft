@@ -165,11 +165,12 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     }
 
     @Override
-    protected boolean readyToPlace(BlockPos blockPos) {
+    protected boolean isReadyToPlace(BlockPos blockPos) {
         // noinspection ConstantConditions
         return getSchematicBlock(blockPos).getRequiredBlockOffsets().stream()
             .map(blockPos::add)
-            .allMatch(pos -> getSchematicBlock(pos) == null || checkResults[posToIndex(pos)] == CHECK_RESULT_CORRECT);
+            .allMatch(pos -> getSchematicBlock(pos) == null || checkResults[posToIndex(pos)] == CHECK_RESULT_CORRECT) &&
+            getSchematicBlock(blockPos).isReadyToBuild(tile.getWorldBC(), blockPos);
     }
 
     @Override

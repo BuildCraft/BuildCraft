@@ -41,10 +41,12 @@ import buildcraft.energy.tile.TileEngineStone_BC8;
 import buildcraft.energy.tile.TileSpringOil;
 
 //@formatter:off
-@Mod(modid = BCEnergy.MODID,
- name = "BuildCraft Energy",
- version = BCLib.VERSION,
- dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+@Mod(
+    modid = BCEnergy.MODID,
+    name = "BuildCraft Energy",
+    version = BCLib.VERSION,
+    dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]"
+)
 //@formatter:on
 @Mod.EventBusSubscriber(modid = BCEnergy.MODID)
 public class BCEnergy {

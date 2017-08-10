@@ -26,7 +26,6 @@ import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
-import buildcraft.lib.tile.item.StackInsertionFunction;
 
 import buildcraft.energy.BCEnergyGuis;
 
@@ -43,18 +42,13 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     long esum = 0;
 
     public final DeltaInt deltaFuelLeft = deltaManager.addDelta("fuel_left", EnumNetworkVisibility.GUI_ONLY);
-    public final ItemHandlerSimple invFuel;
-
-    public TileEngineStone_BC8() {
-        invFuel = new ItemHandlerSimple(1, this::canInsert, StackInsertionFunction.getDefaultInserter(), this::onSlotChange);
-        itemManager.addInvHandler("fuel", invFuel, EnumAccess.BOTH, EnumPipePart.VALUES);
-    }
-
-    // Item handler listeners
-
-    private boolean canInsert(int slot, ItemStack stack) {
-        return slot == 0 && TileEntityFurnace.getItemBurnTime(stack) > 0;
-    }
+    public final ItemHandlerSimple invFuel = itemManager.addInvHandler(
+        "fuel",
+        1,
+        (slot, stack) -> TileEntityFurnace.getItemBurnTime(stack) > 0,
+        EnumAccess.BOTH,
+        EnumPipePart.VALUES
+    );
 
     // TileEntity overrides
 

@@ -222,7 +222,6 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("");
         left.add("battery = " + battery.getDebugString());
         left.add("current = " + currentPos);
         left.add("wantedLength = " + wantedLength);

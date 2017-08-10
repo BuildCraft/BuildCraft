@@ -30,10 +30,12 @@ import buildcraft.silicon.tile.TileLaser;
 import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
 
 //@formatter:off
-@Mod(modid = BCSilicon.MODID,
-name = "BuildCraft Silicon",
-version = BCLib.VERSION,
-dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+@Mod(
+    modid = BCSilicon.MODID,
+    name = "BuildCraft Silicon",
+    version = BCLib.VERSION,
+    dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]"
+)
 //@formatter:on
 public class BCSilicon {
     public static final String MODID = "buildcraftsilicon";

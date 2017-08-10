@@ -195,11 +195,6 @@ public class SchematicBlockDefault implements ISchematicBlock {
         setCanBeReplacedWithBlocks /**/(context, rules);
     }
 
-    @Override
-    public boolean isAir() {
-        return false;
-    }
-
     @Nonnull
     @Override
     public Set<BlockPos> getRequiredBlockOffsets() {

@@ -610,7 +610,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("");
         left.add("battery = " + battery.getDebugString());
         left.add("rate = " + LocaleUtil.localizeMjFlow(debugPowerRate));
         left.add("frameBox");

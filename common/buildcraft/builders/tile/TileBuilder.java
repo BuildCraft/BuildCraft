@@ -85,8 +85,20 @@ public class TileBuilder extends TileBC_Neptune
     public static final int NET_SNAPSHOT_TYPE = IDS.allocId("SNAPSHOT_TYPE");
     private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftbuilders:paving_the_way");
 
-    public final ItemHandlerSimple invSnapshot;
-    public final ItemHandlerSimple invResources;
+    public final ItemHandlerSimple invSnapshot = itemManager.addInvHandler(
+        "snapshot",
+        1,
+        (slot, stack) ->
+            stack.getItem() instanceof ItemSnapshot && ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used,
+        EnumAccess.BOTH,
+        EnumPipePart.VALUES
+    );
+    public final ItemHandlerSimple invResources = itemManager.addInvHandler(
+        "resources",
+        27,
+        EnumAccess.BOTH,
+        EnumPipePart.VALUES
+    );
 
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
     private boolean canExcavate = true;
@@ -109,12 +121,11 @@ public class TileBuilder extends TileBC_Neptune
     @SuppressWarnings("WeakerAccess")
     public BlueprintBuilder blueprintBuilder = new BlueprintBuilder(this);
     private Box currentBox = new Box();
+    private Rotation rotation = null;
 
     private boolean isDone = false;
 
     public TileBuilder() {
-        invSnapshot = itemManager.addInvHandler("snapshot", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
-        invResources = itemManager.addInvHandler("resources", 27, EnumAccess.BOTH, EnumPipePart.VALUES);
         for (int i = 1; i <= 4; i++) {
             tankManager.add(
                 new Tank("fluid" + i, Fluid.BUCKET_VOLUME * 8, this) {
@@ -153,7 +164,7 @@ public class TileBuilder extends TileBC_Neptune
                         }
                     }
                 }
-                updateSnapshot();
+                updateSnapshot(true);
                 sendNetworkUpdate(NET_SNAPSHOT_TYPE);
             }
             if (handler == invResources) {
@@ -177,13 +188,18 @@ public class TileBuilder extends TileBC_Neptune
         blueprintBuilder.invalidate();
     }
 
-    private void updateSnapshot() {
+    private void updateSnapshot(boolean canGetFacing) {
         Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::cancel);
         if (snapshot != null && getCurrentBasePos() != null) {
             snapshotType = snapshot.getType();
-            EnumFacing facing = world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING);
-            Rotation rotation = Arrays.stream(Rotation.values()).filter(r -> r.rotate(snapshot.facing) == facing)
-                .findFirst().orElse(null);
+            if (canGetFacing) {
+                rotation = Arrays.stream(Rotation.values())
+                    .filter(r ->
+                        r.rotate(snapshot.facing) == world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING)
+                    )
+                    .findFirst()
+                    .orElse(null);
+            }
             if (snapshot.getType() == EnumSnapshotType.TEMPLATE) {
                 templateBuildingInfo = ((Template) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
             }
@@ -196,6 +212,7 @@ public class TileBuilder extends TileBC_Neptune
             Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::updateSnapshot);
         } else {
             snapshotType = null;
+            rotation = null;
             templateBuildingInfo = null;
             blueprintBuildingInfo = null;
             currentBox = null;
@@ -254,7 +271,7 @@ public class TileBuilder extends TileBC_Neptune
                     if (currentBasePosIndex >= basePoses.size()) {
                         currentBasePosIndex = basePoses.size() - 1;
                     }
-                    updateSnapshot();
+                    updateSnapshot(true);
                 }
             } else if (world.getTotalWorldTime() % 10 == 0){
                 sendNetworkUpdate(NET_RENDER_DATA); // FIXME
@@ -356,6 +373,8 @@ public class TileBuilder extends TileBC_Neptune
         }
         nbt.setTag("basePoses", NBTUtilBC.writeCompoundList(basePoses.stream().map(NBTUtil::createPosTag)));
         nbt.setBoolean("canExcavate", canExcavate);
+        nbt.setTag("rotation", NBTUtilBC.writeEnum(rotation));
+        Optional.ofNullable(getBuilder()).ifPresent(builder -> nbt.setTag("builder", builder.serializeNBT()));
         return nbt;
     }
 
@@ -371,6 +390,9 @@ public class TileBuilder extends TileBC_Neptune
             .map(NBTUtil::getPosFromTag)
             .collect(Collectors.toList());
         canExcavate = nbt.getBoolean("canExcavate");
+        rotation = NBTUtilBC.readEnum(nbt.getTag("rotation"), Rotation.class);
+        updateSnapshot(false);
+        Optional.ofNullable(getBuilder()).ifPresent(builder -> builder.deserializeNBT(nbt.getCompoundTag("builder")));
     }
 
     // Rendering
@@ -402,7 +424,6 @@ public class TileBuilder extends TileBC_Neptune
     @Override
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("");
         left.add("battery = " + battery.getDebugString());
         left.add("basePoses = " + (basePoses == null ? "null" : basePoses.size()));
         left.add("currentBasePosIndex = " + currentBasePosIndex);

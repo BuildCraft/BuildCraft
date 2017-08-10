@@ -6,9 +6,7 @@
 
 package buildcraft.transport.pipe;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -22,8 +20,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
@@ -52,17 +48,6 @@ public class SchematicBlockPipe implements ISchematicBlock {
         tileNbt = tileEntity.serializeNBT();
     }
 
-    @Override
-    public boolean isAir() {
-        return false;
-    }
-
-    @Nonnull
-    @Override
-    public Set<BlockPos> getRequiredBlockOffsets() {
-        return Collections.emptySet();
-    }
-
     @Nonnull
     @Override
     public List<ItemStack> computeRequiredItems() {
@@ -89,12 +74,6 @@ public class SchematicBlockPipe implements ISchematicBlock {
         } catch (InvalidInputDataException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Nonnull
-    @Override
-    public List<FluidStack> computeRequiredFluids() {
-        return Collections.emptyList();
     }
 
     @Override

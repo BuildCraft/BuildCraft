@@ -32,10 +32,12 @@ import buildcraft.factory.tile.TilePump;
 import buildcraft.factory.tile.TileTank;
 
 //@formatter:off
-@Mod(modid = BCFactory.MODID,
-name = "BuildCraft Factory",
-version = BCLib.VERSION,
-dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+@Mod(
+    modid = BCFactory.MODID,
+    name = "BuildCraft Factory",
+    version = BCLib.VERSION,
+    dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]"
+)
 //@formatter:on
 public class BCFactory {
     public static final String MODID = "buildcraftfactory";

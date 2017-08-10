@@ -581,7 +581,6 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     @Override
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("");
         left.add("facing = " + currentDirection);
         left.add("heat = " + LocaleUtil.localizeHeat(heat) + " -- " + String.format("%.2f %%", getHeatLevel()));
         left.add("power = " + LocaleUtil.localizeMj(power));

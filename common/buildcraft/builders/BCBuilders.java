@@ -7,14 +7,19 @@ package buildcraft.builders;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.StreamSupport;
 
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.BlockBanner;
+import net.minecraft.block.BlockVine;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemBanner;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -55,10 +60,12 @@ import buildcraft.core.BCCore;
 import buildcraft.core.marker.volume.AddonsRegistry;
 
 //@formatter:off
-@Mod(modid = BCBuilders.MODID,
-   name = "BuildCraft Builders",
-   version = BCLib.VERSION,
-   dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+@Mod(
+    modid = BCBuilders.MODID,
+    name = "BuildCraft Builders",
+    version = BCLib.VERSION,
+    dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]"
+)
 //@formatter:on
 public class BCBuilders {
     public static final String MODID = "buildcraftbuilders";
@@ -107,6 +114,22 @@ public class BCBuilders {
                             tileNbt.getTagList("Patterns", 10)
                         )
                     );
+                }
+            }
+        );
+        SchematicBlockFactoryRegistry.registerFactory(
+            "vine",
+            300,
+            context -> context.block instanceof BlockVine,
+            () -> new SchematicBlockDefault() {
+                @Override
+                public boolean isReadyToBuild(World world, BlockPos blockPos) {
+                    return super.isReadyToBuild(world, blockPos) &&
+                        (world.getBlockState(blockPos.up()).getBlock() instanceof BlockVine ||
+                            StreamSupport.stream(EnumFacing.Plane.HORIZONTAL.spliterator(), false)
+                                .map(blockPos::offset)
+                                .map(world::getBlockState)
+                                .anyMatch(state -> state.isFullCube() && state.getMaterial().blocksMovement()));
                 }
             }
         );

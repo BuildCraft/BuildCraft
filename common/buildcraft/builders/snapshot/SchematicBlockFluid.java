@@ -17,7 +17,6 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
@@ -51,11 +50,6 @@ public class SchematicBlockFluid implements ISchematicBlock {
         isFlowing = BlockUtil.getFluid(context.world, context.pos) == null;
     }
 
-    @Override
-    public boolean isAir() {
-        return false;
-    }
-
     @Nonnull
     @Override
     public Set<BlockPos> getRequiredBlockOffsets() {
@@ -63,12 +57,6 @@ public class SchematicBlockFluid implements ISchematicBlock {
             .map(EnumFacing::getDirectionVec)
             .map(BlockPos::new)
             .collect(Collectors.toSet());
-    }
-
-    @Nonnull
-    @Override
-    public List<ItemStack> computeRequiredItems() {
-        return Collections.emptyList();
     }
 
     @Nonnull

@@ -137,10 +137,8 @@ public class NbtPath {
             } else {
                 return null;
             }
-        } else if (elements.isEmpty()) {
-            return tag;
         } else {
-            return null;
+            return tag;
         }
     }
 

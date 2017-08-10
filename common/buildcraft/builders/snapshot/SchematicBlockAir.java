@@ -6,19 +6,10 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
@@ -37,24 +28,6 @@ public final class SchematicBlockAir implements ISchematicBlock {
     @Override
     public boolean isAir() {
         return true;
-    }
-
-    @Nonnull
-    @Override
-    public Set<BlockPos> getRequiredBlockOffsets() {
-        return Collections.emptySet();
-    }
-
-    @Nonnull
-    @Override
-    public List<ItemStack> computeRequiredItems() {
-        return Collections.emptyList();
-    }
-
-    @Nonnull
-    @Override
-    public List<FluidStack> computeRequiredFluids() {
-        return Collections.emptyList();
     }
 
     @Override

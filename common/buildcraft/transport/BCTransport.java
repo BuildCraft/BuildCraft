@@ -43,10 +43,12 @@ import buildcraft.transport.wire.MessageWireSystems;
 import buildcraft.transport.wire.MessageWireSystemsPowered;
 
 //@formatter:off
-@Mod(modid = BCTransport.MODID,
-name = "BuildCraft Transport",
-version = BCLib.VERSION,
-dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+@Mod(
+    modid = BCTransport.MODID,
+    name = "BuildCraft Transport",
+    version = BCLib.VERSION,
+    dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]"
+)
 //@formatter:on
 public class BCTransport {
     public static final String MODID = "buildcrafttransport";

@@ -45,11 +45,13 @@ import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
 
 //@formatter:off
-@Mod(modid = BCLib.MODID,
-     name = "BuildCraft Lib",
-     version = BCLib.VERSION,
-     acceptedMinecraftVersions = "(gradle_replace_mcversion,)",
-     dependencies = "required-after:forge@(gradle_replace_forgeversion,)")
+@Mod(
+    modid = BCLib.MODID,
+    name = "BuildCraft Lib",
+    version = BCLib.VERSION,
+    acceptedMinecraftVersions = "(gradle_replace_mcversion,)",
+    dependencies = "required-after:forge@(gradle_replace_forgeversion,)"
+)
 //@formatter:on
 public class BCLib {
     public static final String MODID = "buildcraftlib";
