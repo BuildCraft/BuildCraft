@@ -114,8 +114,8 @@ public class GuidePageContents extends GuidePageBase {
 
     @Override
     protected void renderPage(int x, int y, int width, int height, int index) {
+        IFontRenderer f = getFontRenderer();
         if (index == 0) {
-            IFontRenderer f = getFontRenderer();
             String text = "BuildCraft";
             float scale = 3;
             int fWidth = (int) (f.getStringWidth(text) * scale);
@@ -143,8 +143,32 @@ public class GuidePageContents extends GuidePageBase {
             text = XmlPageLoader.SHOW_HINTS ? "Show Hints [x]" : "Show Hints [ ]";
             fWidth = f.getStringWidth(text);
             f.drawString(text, x + (width - fWidth) / 2, y + height / 2 + 26, 0);
+        } else if (index == 1) {
+            int _height = GuideManager.loadedMods.size() + 1;
+            if (GuideManager.loadedOther.size() > 0) {
+                _height ++;
+                _height += GuideManager.loadedOther.size();
+            }
+            int perLineHeight = f.getFontHeight() + 3;
+            _height *= perLineHeight;
+            int _y = y + (height - _height) / 2;
+
+            drawCenteredText(TextFormatting.BOLD + "Loaded Mods:", x, _y, width);
+            _y += perLineHeight;
+            for (String text : GuideManager.loadedMods) {
+                drawCenteredText(text, x, _y, width);
+                _y += perLineHeight;
+            }
+            if (GuideManager.loadedOther.size() > 0) {
+                drawCenteredText(TextFormatting.BOLD + "Loaded Resource Packs:", x, _y, width);
+                _y += perLineHeight;
+                for (String text : GuideManager.loadedOther) {
+                    drawCenteredText(text, x, _y, width);
+                    _y += perLineHeight;
+                }
+            }
         }
-        PagePosition pos = new PagePosition(1, 0);
+        PagePosition pos = new PagePosition(2, 0);
         for (GuidePart part : parentNode.iterateNonNullLines()) {
             pos = part.renderIntoArea(x, y, width, height, pos, index);
         }
@@ -178,6 +202,25 @@ public class GuidePageContents extends GuidePageBase {
         }
     }
 
+    private void drawCenteredText(String text, int x, int y, int width) {
+        IFontRenderer f = getFontRenderer();
+        int fWidth = f.getStringWidth(text);
+        f.drawString(text, (x + (width - fWidth) / 2), y, 0);
+    }
+
+    private void drawScaledCenteredText(float scale, String text, int x, int y, int width) {
+        IFontRenderer f = getFontRenderer();
+        int fWidth = (int) (f.getStringWidth(text) * scale);
+        if (scale != 1) {
+            GlStateManager.pushMatrix();
+            GlStateManager.scale(scale, scale, 1);
+        }
+        f.drawString(text, (int) ((x + (width - fWidth) / 2) / scale), (int) (y / scale), 0);
+        if (scale != 1) {
+            GlStateManager.popMatrix();
+        }
+    }
+
     @Override
     public void handleMouseClick(int x, int y, int width, int height, int mouseX, int mouseY, int mouseButton,
         int index, boolean isEditing) {
@@ -197,24 +240,26 @@ public class GuidePageContents extends GuidePageBase {
                 oY += 14;
             }
         }
-        if (index == 0 && mouseButton == 0) {
-            IFontRenderer f = getFontRenderer();
-            String text = XmlPageLoader.SHOW_LORE ? "Show Lore [x]" : "Show Lore [ ]";
-            int fWidth = f.getStringWidth(text);
-            GuiRectangle rect;
-            rect = new GuiRectangle(x + (width - fWidth) / 2, y + height / 2 + 12, fWidth, f.getFontHeight());
-            if (rect.contains(mouseX, mouseY)) {
-                XmlPageLoader.SHOW_LORE = !XmlPageLoader.SHOW_LORE;
-            }
+        if (mouseButton == 0) {
+            if (index == 0) {
+                IFontRenderer f = getFontRenderer();
+                String text = XmlPageLoader.SHOW_LORE ? "Show Lore [x]" : "Show Lore [ ]";
+                int fWidth = f.getStringWidth(text);
+                GuiRectangle rect;
+                rect = new GuiRectangle(x + (width - fWidth) / 2, y + height / 2 + 12, fWidth, f.getFontHeight());
+                if (rect.contains(mouseX, mouseY)) {
+                    XmlPageLoader.SHOW_LORE = !XmlPageLoader.SHOW_LORE;
+                }
 
-            text = XmlPageLoader.SHOW_HINTS ? "Show Hints [x]" : "Show Hints [ ]";
-            fWidth = f.getStringWidth(text);
-            rect = new GuiRectangle(x + (width - fWidth) / 2, y + height / 2 + 26, fWidth, f.getFontHeight());
-            if (rect.contains(mouseX, mouseY)) {
-                XmlPageLoader.SHOW_HINTS = !XmlPageLoader.SHOW_HINTS;
+                text = XmlPageLoader.SHOW_HINTS ? "Show Hints [x]" : "Show Hints [ ]";
+                fWidth = f.getStringWidth(text);
+                rect = new GuiRectangle(x + (width - fWidth) / 2, y + height / 2 + 26, fWidth, f.getFontHeight());
+                if (rect.contains(mouseX, mouseY)) {
+                    XmlPageLoader.SHOW_HINTS = !XmlPageLoader.SHOW_HINTS;
+                }
             }
         }
-        GuidePart part = getClicked(parentNode.iterateNonNullLines(), x, y, width, height, mouseX, mouseY, index - 1);
+        GuidePart part = getClicked(parentNode.iterateNonNullLines(), x, y, width, height, mouseX, mouseY, index - 2);
         if (part != null) {
             PageEntry entry = pageEntries.get(part);
             if (entry != null) {

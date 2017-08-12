@@ -13,12 +13,19 @@ Some loric information that is totally not just a lot of really long filler text
 <no_lore>
 This should NOT appear in-game, unless lore has been turned off.
 </no_lore>
+<image src="buildcraftcore:textures/items/marker_path.png" width="64" height="64"/>
+<image src="buildcraftlib:textures/items/guide_book.png" width="64" height="64"/>
+<image src="buildcraftenergy:textures/gui/combustion_engine_gui.png"/>
+
+<hint>
+Path markers are really useless.
+</hint>
 <new_page/>
 To ensure that new pages <italic>work</italic>.
 HI THIS SHOULD BE ON ANOTER PAGE
 
-<note>
+<note id="mark_info">
 Hi there, I am a note!
-Just in case you wanted to know, this is how you make a stick
-<recipes stack="minecraft:stick"/>
+Just in case you wanted to know, this is how you make a path mark.
+<recipes stack="buildcraftcore:marker_path" join="false"/>
 </note>

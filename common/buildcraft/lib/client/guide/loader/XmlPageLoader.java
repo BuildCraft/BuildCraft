@@ -23,6 +23,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.oredict.OreDictionary;
@@ -33,12 +34,14 @@ import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.lib.client.guide.PageEntry;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.parts.GuideChapterWithin;
+import buildcraft.lib.client.guide.parts.GuideImageFactory;
 import buildcraft.lib.client.guide.parts.GuidePage;
 import buildcraft.lib.client.guide.parts.GuidePageFactory;
 import buildcraft.lib.client.guide.parts.GuidePart;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.client.guide.parts.GuidePartMulti;
 import buildcraft.lib.client.guide.parts.GuidePartNewPage;
+import buildcraft.lib.client.guide.parts.GuidePartNote;
 import buildcraft.lib.client.guide.parts.GuideText;
 import buildcraft.lib.client.guide.parts.recipe.IStackRecipes;
 import buildcraft.lib.client.guide.parts.recipe.RecipeLookupHelper;
@@ -54,7 +57,7 @@ public enum XmlPageLoader implements IPageLoaderText {
 
     public static final Map<String, SpecialParser> TAG_FACTORIES = new HashMap<>();
     public static final Map<String, MultiPartJoiner> GUIDE_PART_MULTIS = new HashMap<>();
-    
+
     public static boolean SHOW_LORE = true;
     public static boolean SHOW_HINTS = false;
     public static boolean SHOW_DETAIL = false;
@@ -79,7 +82,7 @@ public enum XmlPageLoader implements IPageLoaderText {
 
     @FunctionalInterface
     public interface MultiPartJoiner {
-        GuidePartFactory join(List<GuidePartFactory> factories);
+        GuidePartFactory join(XmlTag tag, List<GuidePartFactory> factories);
     }
 
     static {
@@ -88,21 +91,23 @@ public enum XmlPageLoader implements IPageLoaderText {
         putDuelMultiPartType("description", () -> SHOW_DESCRIPTION);
         putDuelMultiPartType("detail", () -> SHOW_DETAIL);
         putDuelMultiPartType("hint", () -> SHOW_HINTS);
+        putMultiPartType("note", XmlPageLoader::loadNote);
         putSingle("new_page", attr -> GuidePartNewPage::new);
         putSingle("chapter", XmlPageLoader::loadChapter);
         putSingle("recipe", XmlPageLoader::loadRecipe);
         putMulti("recipes", XmlPageLoader::loadAllRecipes);
         putMulti("usages", XmlPageLoader::loadAllUsages);
         putMulti("recipes_usages", XmlPageLoader::loadAllRecipesAndUsages);
+        putSingle("image", XmlPageLoader::loadImage);
     }
 
-    private static void putDuelMultiPartType(String name, BooleanSupplier isVisible) {
+    public static void putDuelMultiPartType(String name, BooleanSupplier isVisible) {
         putSimpleMultiPartType(name, isVisible);
         putSimpleMultiPartType("no_" + name, () -> !isVisible.getAsBoolean());
     }
 
-    private static void putSimpleMultiPartType(String name, BooleanSupplier isVisible) {
-        putMultiPartType(name, (factories) -> (gui) -> {
+    public static void putSimpleMultiPartType(String name, BooleanSupplier isVisible) {
+        putMultiPartType(name, (tag, factories) -> (gui) -> {
             List<GuidePart> subParts = new ArrayList<>(factories.size());
             for (GuidePartFactory factory : factories) {
                 subParts.add(factory.createNew(gui));
@@ -111,15 +116,15 @@ public enum XmlPageLoader implements IPageLoaderText {
         });
     }
 
-    private static void putMultiPartType(String name, MultiPartJoiner joiner) {
+    public static void putMultiPartType(String name, MultiPartJoiner joiner) {
         GUIDE_PART_MULTIS.put(name, joiner);
     }
 
-    private static void putSingle(String string, SpecialParserSingle parser) {
+    public static void putSingle(String string, SpecialParserSingle parser) {
         putMulti(string, parser);
     }
 
-    private static void putMulti(String string, SpecialParser parser) {
+    public static void putMulti(String string, SpecialParser parser) {
         TAG_FACTORIES.put(string, parser);
     }
 
@@ -147,13 +152,19 @@ public enum XmlPageLoader implements IPageLoaderText {
         // - - <recipes stack=""/>
         // - - <usages stack=""/>
         // - - <recipes_usages stack=""/>
-        // throw new AbstractMethodError("// TODO: Implement this!");
+        // - - <image src="" width="" height=""/>
+
+        // TODO: Flesh out the notes system, so that notes tore in ItemGuideNote, and can be opened in a gui.
 
         Deque<List<GuidePartFactory>> nestedParts = new ArrayDeque<>();
-        Deque<String> nestedTags = new ArrayDeque<>();
+        Deque<XmlTag> nestedTags = new ArrayDeque<>();
         nestedParts.push(new ArrayList<>());
         String line;
         while ((line = reader.readLine()) != null) {
+            if (line.startsWith("//")) {
+                // Ignore comments
+                continue;
+            }
             XmlTag tag = parseTag(line);
             if (tag != null) {
                 if (tag.state == XmlTagState.COMPLETE) {
@@ -165,7 +176,7 @@ public enum XmlPageLoader implements IPageLoaderText {
                 } else if (tag.state == XmlTagState.START) {
                     MultiPartJoiner joiner = GUIDE_PART_MULTIS.get(tag.name);
                     if (joiner != null) {
-                        nestedTags.push(tag.name);
+                        nestedTags.push(tag);
                         nestedParts.push(new ArrayList<>());
                         line = line.substring(tag.originalString.length());
                     }
@@ -175,13 +186,18 @@ public enum XmlPageLoader implements IPageLoaderText {
                         if (nestedTags.isEmpty()) {
                             throw new InvalidInputDataException("Tried to close " + tag.name + " before openining it!");
                         }
-                        String name = nestedTags.pop();
-                        if (!tag.name.equals(name)) {
+                        XmlTag name = nestedTags.pop();
+                        if (!tag.name.equals(name.name)) {
                             throw new InvalidInputDataException(
-                                "Tried to close " + tag.name + " before instead of " + name + "!");
+                                "Tried to close " + tag.name + " before instead of " + name.name + "!");
                         }
                         List<GuidePartFactory> subParts = nestedParts.pop();
-                        nestedParts.peek().add(joiner.join(subParts));
+                        GuidePartFactory joined = joiner.join(name, subParts);
+                        if (joined == null) {
+                            nestedParts.peek().addAll(subParts);
+                        } else {
+                            nestedParts.peek().add(joined);
+                        }
                         line = line.substring(tag.originalString.length());
                     }
                 }
@@ -287,20 +303,23 @@ public enum XmlPageLoader implements IPageLoaderText {
                 String after = attribs.substring(index + 1);
                 ITokenizingContext tokenCtx = ITokenizingContext.createFromString(after);
                 TokenResult result = TokenizerDefaults.GOBBLER_QUOTE.tokenizePart(tokenCtx);
+                int totalLength = index + 1;
                 String value;
                 if (result instanceof ResultConsume) {
                     value = tokenCtx.get(((ResultConsume) result).length);
+                    totalLength += value.length();
                     value = value.substring(1, value.length() - 1);
                 } else {
                     result = TokenizerDefaults.GOBBLER_WORD.tokenizePart(tokenCtx);
                     if (result instanceof ResultConsume) {
                         value = tokenCtx.get(((ResultConsume) result).length);
+                        totalLength += value.length();
                     } else {
                         throw new InvalidInputDataException("Not a valid tag value " + after);
                     }
                 }
                 attributes.put(key, value);
-                attribs = attribs.substring(key.length() + value.length() + 1);
+                attribs = attribs.substring(totalLength);
             }
         }
         XmlTagState state;
@@ -354,6 +373,31 @@ public enum XmlPageLoader implements IPageLoaderText {
             return null;
         }
         return chapter(name);
+    }
+
+    private static GuidePartFactory loadImage(XmlTag tag) {
+        String src = tag.get("src");
+        if (src == null) {
+            BCLog.logger.warn("[lib.guide.loader.xml] Found an image tag without an src!" + tag);
+            return null;
+        }
+        int width = parseInt("width", -1, tag);
+        int height = parseInt("height", -1, tag);
+        return new GuideImageFactory(src, width, height);
+    }
+
+    private static int parseInt(String name, int _default, XmlTag tag) {
+        String value = tag.get(name);
+        if (value == null) {
+            return _default;
+        }
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException nfe) {
+            BCLog.logger.warn("[lib.guide.loader.xml] Found an invalid number for image tag (" + name + ") " + tag
+                + nfe.getMessage());
+            return _default;
+        }
     }
 
     private static GuidePartFactory loadRecipe(XmlTag tag) {
@@ -492,5 +536,20 @@ public enum XmlPageLoader implements IPageLoaderText {
             }
         }
         return stack;
+    }
+
+    public static GuidePartFactory loadNote(XmlTag tag, List<GuidePartFactory> factories) {
+        String id = tag.get("id");
+        if (id == null) {
+            BCLog.logger.warn("[lib.guide.loader.xml] Found a note tag without an 'id' attribute!");
+            return null;
+        }
+        return (gui) -> {
+            List<GuidePart> parts = new ArrayList<>();
+            for (GuidePartFactory factory : factories) {
+                parts.add(factory.createNew(gui));
+            }
+            return new GuidePartNote(gui, id, parts);
+        };
     }
 }

@@ -11,5 +11,10 @@ public interface IFontRenderer {
 
     int getFontHeight();
 
-    int drawString(String text, int x, int y, int shade);
+    default int drawString(String text, int x, int y, int shade) {
+        return drawString(text, x, y, shade, 1);
+    }
+
+    /** @param scale The scale, relative to {@link #getFontHeight()} */
+    int drawString(String text, int x, int y, int shade, float scale);
 }

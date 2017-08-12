@@ -9,12 +9,12 @@ import buildcraft.lib.client.guide.font.IFontRenderer;
 public class GuidePartMulti extends GuidePart {
 
     public final List<GuidePart> parts;
-    public final BooleanSupplier isVisible;
+    public final BooleanSupplier visibleFuncion;
 
     public GuidePartMulti(GuiGuide gui, List<GuidePart> subParts, BooleanSupplier isVisible) {
         super(gui);
         this.parts = subParts;
-        this.isVisible = isVisible;
+        this.visibleFuncion = isVisible;
     }
 
     @Override
@@ -25,9 +25,21 @@ public class GuidePartMulti extends GuidePart {
         }
     }
 
+    protected boolean isVisible() {
+        return visibleFuncion.getAsBoolean();
+    }
+
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+        for (GuidePart part : parts) {
+            part.updateScreen();
+        }
+    }
+
     @Override
     public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
-        if (isVisible.getAsBoolean()) {
+        if (isVisible()) {
             for (GuidePart part : parts) {
                 current = part.renderIntoArea(x, y, width, height, current, index);
             }
@@ -38,7 +50,7 @@ public class GuidePartMulti extends GuidePart {
     @Override
     public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
         int mouseX, int mouseY) {
-        if (isVisible.getAsBoolean()) {
+        if (isVisible()) {
             for (GuidePart part : parts) {
                 current = part.handleMouseClick(x, y, width, height, current, index, mouseX, mouseY);
             }

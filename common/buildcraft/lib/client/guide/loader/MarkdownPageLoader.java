@@ -9,7 +9,6 @@ package buildcraft.lib.client.guide.loader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +24,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -46,23 +44,25 @@ import buildcraft.lib.client.guide.parts.GuideText;
 import buildcraft.lib.client.guide.parts.recipe.GuideCraftingFactory;
 import buildcraft.lib.client.guide.parts.recipe.GuideSmeltingFactory;
 import buildcraft.lib.client.guide.parts.recipe.RecipeLookupHelper;
-import buildcraft.lib.client.resource.ResourceRegistry;
-import buildcraft.lib.client.resource.TextureResourceHolder;
 
 public enum MarkdownPageLoader implements IPageLoaderText {
     INSTANCE;
 
     // TODO: Make this change markdown syntax to XML, then pass
     // the resulting string to XmlPageLoader
+    // Perhaps recipes should be forced xml?
 
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.markdown") || World.class.getName().contains("World");
+    @Deprecated
     public static final Map<String, SpecialParser> SPECIAL_FACTORIES = new HashMap<>();
 
+    @Deprecated
     @FunctionalInterface
     public interface SpecialParser {
         List<GuidePartFactory> parse(String after);
     }
 
+    @Deprecated
     @FunctionalInterface
     public interface SpecialParserSingle extends SpecialParser {
         @Override
@@ -93,14 +93,15 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         SPECIAL_FACTORIES.put(string, parser);
     }
 
+    @Deprecated
     public static List<GuidePartFactory> turnLineIntoPart(final String line) {
         List<GuidePartFactory> factories = null;
 
         // Ignore comments
         if (line.startsWith("//")) return null;
 
-        factories = loadImageLine(line);
-        if (factories != null) return factories;
+//        factories = loadImageLine(line);
+//        if (factories != null) return factories;
 
         factories = loadSpecialLine(line);
         if (factories != null) return factories;
@@ -137,61 +138,6 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         } else {
             return (gui) -> new GuideText(gui, text);
         }
-    }
-
-    private static List<GuidePartFactory> loadImageLine(String line) {
-        // ![path/to/image]
-        // ![path/to/image](width, height)
-
-        if (line.startsWith("![")) {
-            String substring = line.substring(2, line.length() - 1);
-            if (line.endsWith("]")) {
-                return ImmutableList.of(loadDefaultImage(substring));
-            } else if (line.endsWith(")")) {
-                int index = substring.indexOf("](");
-                String loc = substring.substring(0, index);
-                String args = substring.substring(index + 2);
-                String[] argsSplit = args.split(",");
-                BCLog.logger.info("[lib.guide.loader.markdown] Load image " + loc + ", " + args + " -> " + Arrays.toString(argsSplit));
-            }
-        }
-
-        // if (line.startsWith("![")) {
-        // line = line.substring(2);
-        // if (line.indexOf("]") > 2) {
-        // String location = line.substring(0, line.indexOf("]"));
-        // if (line.endsWith("]")) {
-        // line = line.substring(0, line.length() - 1);
-        // return ImageLoader.loadImage(new ResourceLocation(location + ".png"), -1, -1);
-        // } else if (line.endsWith(")") && line.indexOf("](") > 2) {
-        // String meta = line.substring(line.indexOf("]("), line.length() - 1);
-        // String[] args = meta.split(",");
-        // if (args.length == 2) {
-        // try {
-        // int width = Integer.parseInt(args[0]);
-        // int height = Integer.parseInt(args[1]);
-        // return ImageLoader.loadImage(new ResourceLocation(location + ".png"), width, height);
-        // } catch (NumberFormatException nfe) {
-        // BCLog.logger.warn(nfe);
-        // line = "![" + line;
-        // }
-        // }
-        // }
-        // }
-        // }
-        return null;
-    }
-
-    private static GuidePartFactory loadDefaultImage(String location) {
-        ResourceLocation resLoc = new ResourceLocation(location);
-        TextureResourceHolder holder = new TextureResourceHolder(resLoc);
-        return ResourceRegistry.INSTANCE.register(holder, TextureResourceHolder.class);
-    }
-
-    private static GuidePartFactory loadSizedImage(String location, int width, int height) {
-        ResourceLocation resLoc = new ResourceLocation(location);
-        TextureResourceHolder holder = new TextureResourceHolder(resLoc, width, height);
-        return ResourceRegistry.INSTANCE.register(holder, TextureResourceHolder.class);
     }
 
     private static List<GuidePartFactory> loadSpecialLine(String line) {
@@ -358,10 +304,10 @@ public enum MarkdownPageLoader implements IPageLoaderText {
     }
 
     @Override
-    public GuidePageFactory loadPage(BufferedReader bufferedReader, PageEntry entry) throws IOException {
+    public GuidePageFactory loadPage(BufferedReader reader, PageEntry entry) throws IOException {
         List<GuidePartFactory> factories = new ArrayList<>();
         String line;
-        while ((line = bufferedReader.readLine()) != null) {
+        while ((line = reader.readLine()) != null) {
             List<GuidePartFactory> lineFactories = turnLineIntoPart(line);
             if (lineFactories != null) {
                 factories.addAll(lineFactories);

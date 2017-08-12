@@ -53,6 +53,14 @@ public class GuidePage extends GuidePageBase {
     }
 
     @Override
+    public void updateScreen() {
+        super.updateScreen();
+        for (GuidePart part : parts) {
+            part.updateScreen();
+        }
+    }
+
+    @Override
     protected void renderPage(int x, int y, int width, int height, int index) {
         super.renderPage(x, y, width, height, index);
         PagePosition part = new PagePosition(0, 0);
@@ -68,7 +76,8 @@ public class GuidePage extends GuidePageBase {
     }
 
     @Override
-    public void handleMouseClick(int x, int y, int width, int height, int mouseX, int mouseY, int mouseButton, int index, boolean isEditing) {
+    public void handleMouseClick(int x, int y, int width, int height, int mouseX, int mouseY, int mouseButton,
+        int index, boolean isEditing) {
         super.handleMouseClick(x, y, width, height, mouseX, mouseY, mouseButton, index, isEditing);
 
         PagePosition part = new PagePosition(0, 0);
