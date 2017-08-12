@@ -385,8 +385,10 @@ public class TileBuilder extends TileBC_Neptune
             .collect(Collectors.toList());
         canExcavate = nbt.getBoolean("canExcavate");
         rotation = NBTUtilBC.readEnum(nbt.getTag("rotation"), Rotation.class);
-        updateSnapshot(false);
-        Optional.ofNullable(getBuilder()).ifPresent(builder -> builder.deserializeNBT(nbt.getCompoundTag("builder")));
+        if (nbt.hasKey("builder")) {
+            updateSnapshot(false);
+            Optional.ofNullable(getBuilder()).ifPresent(builder -> builder.deserializeNBT(nbt.getCompoundTag("builder")));
+        }
     }
 
     // Rendering
