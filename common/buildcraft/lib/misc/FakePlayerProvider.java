@@ -6,6 +6,7 @@
 
 package buildcraft.lib.misc;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -25,7 +26,7 @@ public enum FakePlayerProvider implements IFakePlayerProvider {
     private final Map<GameProfile, FakePlayerBC> players = new HashMap<>();
 
     private final GameProfile gameProfile = new GameProfile(
-        UUID.nameUUIDFromBytes("buildcraft.core".getBytes()),
+        UUID.nameUUIDFromBytes("buildcraft.core".getBytes(StandardCharsets.UTF_8)),
         "[BuildCraft]"
     );
 
