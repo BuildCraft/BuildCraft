@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -588,7 +589,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
         @SuppressWarnings("WeakerAccess")
         public PlaceTask(BlockPos pos, List<ItemStack> items, long power) {
             this.pos = pos;
-            this.items = ImmutableList.copyOf(items);
+            this.items = Optional.ofNullable(items).map(ImmutableList::copyOf).orElse(null);
             this.power = power;
         }
 
