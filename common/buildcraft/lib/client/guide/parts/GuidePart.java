@@ -6,8 +6,14 @@
 
 package buildcraft.lib.client.guide.parts;
 
+import java.util.EnumSet;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
@@ -119,8 +125,11 @@ public abstract class GuidePart {
         String toRender = line.text;
         ISimpleDrawable icon = line.startIcon;
         boolean firstLine = true;
+        Set<TextFormatting> activeFormats = EnumSet.noneOf(TextFormatting.class);
+        TextFormatting colour = null;
         while (current.pixel <= height) {
-            if (toRender.length() == 0) {
+            String minusFormats = TextFormatting.getTextWithoutFormattingCodes(toRender);
+            if (minusFormats.length() == 0) {
                 break;
             }
             if (current.nextLine(LINE_HEIGHT, height).page != current.page) {
@@ -146,6 +155,14 @@ public abstract class GuidePart {
                 else if (textLength == toRender.length()) {
                     wordEnd = textLength;
                 }
+            }
+            if (!activeFormats.isEmpty()) {
+                for (TextFormatting format : activeFormats) {
+                    toRender = format + toRender;
+                }
+            }
+            if (colour != null) {
+                toRender = colour + toRender;
             }
             if (wordEnd == 0) {
                 wordEnd = textLength;
@@ -186,6 +203,28 @@ public abstract class GuidePart {
             int fontHeight = fontRenderer.getFontHeight() + 3;
             current = current.nextLine(fontHeight, height);
             firstLine = false;
+            Pattern pattern = Pattern.compile("(?i)\u00a7[0-9A-FK-OR]");
+            Matcher match = pattern.matcher(thisLine);
+            while (match.find()) {
+                String str = match.group();
+                TextFormatting format = null;
+                for (TextFormatting f : TextFormatting.values()) {
+                    if (str.equals(f.toString())) {
+                        format = f;
+                        break;
+                    }
+                }
+                if (format != null) {
+                    if (format.isColor()) {
+                        colour = format;
+                    } else if (format == TextFormatting.RESET) {
+                        colour = null;
+                        activeFormats.clear();
+                    } else {
+                        activeFormats.add(format);
+                    }
+                }
+            }
         }
         int additional = LINE_HEIGHT - fontRenderer.getFontHeight() - 3;
         current = current.nextLine(additional, height);

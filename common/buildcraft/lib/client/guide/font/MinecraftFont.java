@@ -6,6 +6,8 @@
 
 package buildcraft.lib.client.guide.font;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -29,9 +31,20 @@ public enum MinecraftFont implements IFontRenderer {
     }
 
     @Override
-    public int drawString(String text, int x, int y, int colour) {
+    public int drawString(String text, int x, int y, int colour, float scale) {
+        boolean _scale = scale != 1;
+        if (_scale) {
+            GlStateManager.pushMatrix();
+            GL11.glScaled(scale, scale, 1);
+            x = (int) (x / scale);
+            y = (int) (y / scale);
+        }
         int v = getFontRenderer().drawString(text, x, y, colour);
         GlStateManager.color(1f, 1f, 1f);
+        if (_scale) {
+            GlStateManager.popMatrix();
+            v = (int) (v * scale);
+        }
         return v;
     }
 }

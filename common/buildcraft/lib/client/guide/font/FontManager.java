@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 
 public enum FontManager {
     INSTANCE;
+
     private final Map<String, IFontRenderer> fonts = new HashMap<>();
     private final Map<String, Supplier<IFontRenderer>> potentialFonts = new HashMap<>();
 

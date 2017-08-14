@@ -23,7 +23,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.oredict.OreDictionary;
@@ -154,7 +153,7 @@ public enum XmlPageLoader implements IPageLoaderText {
         // - - <recipes_usages stack=""/>
         // - - <image src="" width="" height=""/>
 
-        // TODO: Flesh out the notes system, so that notes tore in ItemGuideNote, and can be opened in a gui.
+        // TODO: Flesh out the notes system, so that notes store in ItemGuideNote, and can be opened in a gui.
 
         Deque<List<GuidePartFactory>> nestedParts = new ArrayDeque<>();
         Deque<XmlTag> nestedTags = new ArrayDeque<>();
@@ -170,8 +169,14 @@ public enum XmlPageLoader implements IPageLoaderText {
                 if (tag.state == XmlTagState.COMPLETE) {
                     SpecialParser parser = TAG_FACTORIES.get(tag.name);
                     if (parser != null) {
-                        nestedParts.peek().addAll(parser.parse(tag));
-                        continue;
+                        List<GuidePartFactory> factories = parser.parse(tag);
+                        if (factories != null) {
+                            nestedParts.peek().addAll(factories);
+                            line = line.substring(tag.originalString.length());
+                        } else {
+                            int len = tag.originalString.length();
+                            line = "<red>" + line.substring(0, len) + "</red>" + line.substring(len);
+                        }
                     }
                 } else if (tag.state == XmlTagState.START) {
                     MultiPartJoiner joiner = GUIDE_PART_MULTIS.get(tag.name);
@@ -179,6 +184,9 @@ public enum XmlPageLoader implements IPageLoaderText {
                         nestedTags.push(tag);
                         nestedParts.push(new ArrayList<>());
                         line = line.substring(tag.originalString.length());
+                    } else {
+                        int len = tag.originalString.length();
+                        line = "<red>" + line.substring(0, len) + "</red>" + line.substring(len);
                     }
                 } else /* tag.state == XmlTagState.END */ {
                     MultiPartJoiner joiner = GUIDE_PART_MULTIS.get(tag.name);
@@ -195,10 +203,12 @@ public enum XmlPageLoader implements IPageLoaderText {
                         GuidePartFactory joined = joiner.join(name, subParts);
                         if (joined == null) {
                             nestedParts.peek().addAll(subParts);
+                            int len = tag.originalString.length();
+                            line = "<red>" + line.substring(0, len) + "</red>" + line.substring(len);
                         } else {
                             nestedParts.peek().add(joined);
+                            line = line.substring(tag.originalString.length());
                         }
-                        line = line.substring(tag.originalString.length());
                     }
                 }
                 if (line.length() == 0) {
@@ -214,34 +224,45 @@ public enum XmlPageLoader implements IPageLoaderText {
             String completeLine = "";
             int i = 0;
             while (i < line.length()) {
-                XmlTag currentTag = parseTag(line.substring(i));
-                if (currentTag != null) {
-                    TextFormatting formatting = TextFormatting.getValueByName(currentTag.name.replace("_", ""));
-                    if (formatting != null) {
-                        if (currentTag.state == XmlTagState.END) {
-                            formattingElements.remove(formatting);
-                            if (formatColours.peek() == formatting) {
-                                formatColours.remove();
+                
+                
+                
+                
+                // TODO: Add "Segment" class that contains a string of a *single* formatting! (All text is same colour, italic?, bold?, etc)
+                
+                
+                
+                char c = line.charAt(i);
+                if (c == '<') {
+                    XmlTag currentTag = parseTag(line.substring(i));
+                    if (currentTag != null) {
+                        TextFormatting formatting = TextFormatting.getValueByName(currentTag.name.replace("_", ""));
+                        if (formatting != null) {
+                            if (currentTag.state == XmlTagState.END) {
+                                formattingElements.remove(formatting);
+                                if (formatColours.peek() == formatting) {
+                                    formatColours.remove();
+                                }
+                            } else if (currentTag.state == XmlTagState.START) {
+                                if (formatting.isColor()) {
+                                    formatColours.push(formatting);
+                                } else {
+                                    formattingElements.add(formatting);
+                                }
                             }
-                        } else if (currentTag.state == XmlTagState.START) {
-                            if (formatting.isColor()) {
-                                formatColours.push(formatting);
-                            } else {
-                                formattingElements.add(formatting);
+                            completeLine += TextFormatting.RESET;
+                            if (formatColours.peek() != null) {
+                                completeLine += formatColours.peek();
                             }
+                            for (TextFormatting format : formattingElements) {
+                                completeLine += format;
+                            }
+                            i += currentTag.originalString.length();
+                            continue;
                         }
-                        completeLine += TextFormatting.RESET;
-                        if (formatColours.peek() != null) {
-                            completeLine += formatColours.peek();
-                        }
-                        for (TextFormatting format : formattingElements) {
-                            completeLine += format;
-                        }
-                        i += currentTag.originalString.length();
-                        continue;
                     }
                 }
-                completeLine += line.charAt(i);
+                completeLine += c;
                 i++;
             }
 

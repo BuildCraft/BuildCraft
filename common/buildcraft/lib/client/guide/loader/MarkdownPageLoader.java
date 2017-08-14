@@ -8,6 +8,7 @@ package buildcraft.lib.client.guide.loader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -25,7 +26,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -35,9 +35,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.client.guide.PageEntry;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.parts.GuideChapterWithin;
-import buildcraft.lib.client.guide.parts.GuidePage;
 import buildcraft.lib.client.guide.parts.GuidePageFactory;
-import buildcraft.lib.client.guide.parts.GuidePart;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.client.guide.parts.GuidePartNewPage;
 import buildcraft.lib.client.guide.parts.GuideText;
@@ -52,7 +50,8 @@ public enum MarkdownPageLoader implements IPageLoaderText {
     // the resulting string to XmlPageLoader
     // Perhaps recipes should be forced xml?
 
-    public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.markdown") || World.class.getName().contains("World");
+    public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.markdown");
+
     @Deprecated
     public static final Map<String, SpecialParser> SPECIAL_FACTORIES = new HashMap<>();
 
@@ -100,8 +99,8 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         // Ignore comments
         if (line.startsWith("//")) return null;
 
-//        factories = loadImageLine(line);
-//        if (factories != null) return factories;
+        // factories = loadImageLine(line);
+        // if (factories != null) return factories;
 
         factories = loadSpecialLine(line);
         if (factories != null) return factories;
@@ -275,7 +274,8 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         try {
             stackSize = Integer.parseInt(args[1].trim());
         } catch (NumberFormatException nfe) {
-            BCLog.logger.warn("[lib.guide.loader.markdown] " + args[1] + " was not a valid number: " + nfe.getLocalizedMessage());
+            BCLog.logger.warn(
+                "[lib.guide.loader.markdown] " + args[1] + " was not a valid number: " + nfe.getLocalizedMessage());
         }
         stack.setCount(stackSize);
 
@@ -289,7 +289,8 @@ public enum MarkdownPageLoader implements IPageLoaderText {
             }
             stack = new ItemStack(stack.getItem(), stack.getCount(), meta);
         } catch (NumberFormatException nfe) {
-            BCLog.logger.warn("[lib.guide.loader.markdown] " + args[2] + " was not a valid number: " + nfe.getLocalizedMessage());
+            BCLog.logger.warn(
+                "[lib.guide.loader.markdown] " + args[2] + " was not a valid number: " + nfe.getLocalizedMessage());
         }
 
         if (args.length == 3) return stack;
@@ -298,28 +299,46 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         try {
             stack.setTagCompound(JsonToNBT.getTagFromJson(nbtString));
         } catch (NBTException e) {
-            BCLog.logger.warn("[lib.guide.loader.markdown] " + nbtString + " was not a valid nbt tag: " + e.getLocalizedMessage());
+            BCLog.logger.warn(
+                "[lib.guide.loader.markdown] " + nbtString + " was not a valid nbt tag: " + e.getLocalizedMessage());
         }
         return stack;
     }
 
     @Override
     public GuidePageFactory loadPage(BufferedReader reader, PageEntry entry) throws IOException {
-        List<GuidePartFactory> factories = new ArrayList<>();
+        StringBuilder replaced = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {
-            List<GuidePartFactory> lineFactories = turnLineIntoPart(line);
-            if (lineFactories != null) {
-                factories.addAll(lineFactories);
-            }
+            // First replace special tags (at the start of a line) with xml ones
+            line = replaceSpecialForXml(line);
+            replaced.append(line);
+            replaced.append('\n');
         }
-        return (gui) -> {
-            List<GuidePart> parts = new ArrayList<>();
-            for (GuidePartFactory factory : factories) {
-                parts.add(factory.createNew(gui));
+
+        return XmlPageLoader.INSTANCE.loadPage(new BufferedReader(new StringReader(replaced.toString())), entry);
+    }
+
+    private static String replaceSpecialForXml(String line) {
+        if (line.startsWith("$[special.") && line.indexOf(']') > 0) {
+            int end = line.indexOf(']');
+            String post = line.substring("$[special.".length(), end);
+            switch (post) {
+                case "new_page": {
+                    return "<new_page/>";
+                }
+                case "all_crafting": {
+                    String stack = line.substring(end + 1);
+                    return "<recipes_usages stack=\"" + stack + "\"/>";
+                }
             }
-            String title = I18n.format(entry.title);
-            return new GuidePage(gui, parts, title);
-        };
+        } else if (line.startsWith("#")) {
+            while (line.startsWith("#")) {
+                line = line.substring(1);
+            }
+            line = line.trim();
+            return "<chapter name=\"" + line + "\"/>";
+        }
+        return line;
     }
 }
