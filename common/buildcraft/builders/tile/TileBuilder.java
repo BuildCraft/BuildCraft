@@ -125,7 +125,7 @@ public class TileBuilder extends TileBC_Neptune
     public TileBuilder() {
         for (int i = 1; i <= 4; i++) {
             tankManager.add(
-                new Tank("fluid" + i, Fluid.BUCKET_VOLUME * 8, this) {
+                new Tank("tank" + i, Fluid.BUCKET_VOLUME * 8, this) {
                     @Override
                     protected void onContentsChanged() {
                         super.onContentsChanged();
