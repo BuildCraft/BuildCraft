@@ -43,7 +43,12 @@ public class TileAssemblyTable extends TileLaserTableBase {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("assembly_table");
     public static final int NET_RECIPE_STATE = IDS.allocId("RECIPE_STATE");
 
-    public final ItemHandlerSimple inv = itemManager.addInvHandler("inv", 3 * 4, ItemHandlerManager.EnumAccess.BOTH, EnumPipePart.VALUES);
+    public final ItemHandlerSimple inv = itemManager.addInvHandler(
+        "inv",
+        3 * 4,
+        ItemHandlerManager.EnumAccess.BOTH,
+        EnumPipePart.VALUES
+    );
     public SortedMap<AssemblyRecipe, EnumAssemblyRecipeState> recipesStates = new TreeMap<>();
 
     @Override

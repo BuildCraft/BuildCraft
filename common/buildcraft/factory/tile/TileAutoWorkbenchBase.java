@@ -31,7 +31,12 @@ import buildcraft.factory.util.WorkbenchCrafting;
 public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements ITickable, IDebuggable, IAutoCraft {
     public final ItemHandlerSimple invBlueprint;
     public final ItemHandlerSimple invMaterials;
-    public final ItemHandlerSimple invResult;
+    public final ItemHandlerSimple invResult = itemManager.addInvHandler(
+        "result",
+        1,
+        ItemHandlerManager.EnumAccess.EXTRACT,
+        EnumPipePart.VALUES
+    );
     public final ItemHandlerSimple invOverflow;
     private final WorkbenchCrafting crafting;
     private int progress = -1;
@@ -42,10 +47,23 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
 
     public TileAutoWorkbenchBase(int width, int height) {
         int slots = width * height;
-        invBlueprint = itemManager.addInvHandler("blueprint", slots, ItemHandlerManager.EnumAccess.PHANTOM);
-        invMaterials = itemManager.addInvHandler("materials", slots, ItemHandlerManager.EnumAccess.INSERT, EnumPipePart.VALUES);
-        invResult = itemManager.addInvHandler("result", 1, ItemHandlerManager.EnumAccess.EXTRACT, EnumPipePart.VALUES);
-        invOverflow = itemManager.addInvHandler("overflow", slots, ItemHandlerManager.EnumAccess.EXTRACT, EnumPipePart.VALUES);
+        invBlueprint = itemManager.addInvHandler(
+            "blueprint",
+            slots,
+            ItemHandlerManager.EnumAccess.PHANTOM
+        );
+        invMaterials = itemManager.addInvHandler(
+            "materials",
+            slots,
+            ItemHandlerManager.EnumAccess.INSERT,
+            EnumPipePart.VALUES
+        );
+        invOverflow = itemManager.addInvHandler(
+            "overflow",
+            slots,
+            ItemHandlerManager.EnumAccess.EXTRACT,
+            EnumPipePart.VALUES
+        );
         crafting = new WorkbenchCrafting(width, height, invBlueprint);
         caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, () -> progress >= 0, EnumPipePart.VALUES);
     }

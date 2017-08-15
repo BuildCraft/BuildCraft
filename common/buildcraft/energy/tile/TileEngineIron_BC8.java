@@ -52,8 +52,8 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     public static final double COOLDOWN_RATE = 0.05;
     public static final int MAX_COOLANT_PER_TICK = 40;
 
-    public final Tank tankFuel = new Tank("tankFuel", MAX_FLUID, this, this::isValidFuel);
-    public final Tank tankCoolant = new Tank("tankCoolant", MAX_FLUID, this, this::isValidCoolant) {
+    public final Tank tankFuel = new Tank("fuel", MAX_FLUID, this, this::isValidFuel);
+    public final Tank tankCoolant = new Tank("coolant", MAX_FLUID, this, this::isValidCoolant) {
         @Override
         protected FluidGetResult map(ItemStack stack, int space) {
             ISolidCoolant coolant = BuildcraftFuelRegistry.coolant.getSolidCoolant(stack);
@@ -67,7 +67,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
             return new FluidGetResult(StackUtil.EMPTY, fluidCoolant);
         }
     };
-    public final Tank tankResidue = new Tank("tankResidue", MAX_FLUID, this, this::isResidue);
+    public final Tank tankResidue = new Tank("residue", MAX_FLUID, this, this::isResidue);
     private final IFluidHandlerAdv fluidHandler = new InternalFluidHandler();
 
     private int penaltyCooling = 0;
@@ -105,6 +105,17 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
+        // TODO: remove in next version
+        NBTTagCompound tanksTag = nbt.getCompoundTag("tanks");
+        if (tanksTag.hasKey("tankFuel")) {
+            tanksTag.setTag("fuel", tanksTag.getTag("tankFuel"));
+        }
+        if (tanksTag.hasKey("tankCoolant")) {
+            tanksTag.setTag("coolant", tanksTag.getTag("tankCoolant"));
+        }
+        if (tanksTag.hasKey("tankResidue")) {
+            tanksTag.setTag("residue", tanksTag.getTag("tankResidue"));
+        }
         super.readFromNBT(nbt);
         penaltyCooling = nbt.getInteger("penaltyCooling");
         burnTime = nbt.getDouble("burnTime");

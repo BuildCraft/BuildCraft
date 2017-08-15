@@ -31,7 +31,7 @@ public enum StripesHandlerDispenser implements IStripesHandlerItem {
     public static final List<Item> ITEMS = new ArrayList<>();
     public static final List<Class<? extends Item>> ITEM_CLASSES = new ArrayList<>();
 
-    public class Source implements IBlockSource {
+    public static class Source implements IBlockSource {
         private final World world;
         private final BlockPos pos;
         private final EnumFacing side;

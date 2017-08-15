@@ -157,5 +157,18 @@
                 ]
             }
         ]
+    },
+    {
+        "selectors": ["minecraft:cauldron"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:cauldron"
+                    }
+                ]
+            }
+        ]
     }
 ]

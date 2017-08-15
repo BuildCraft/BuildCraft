@@ -416,8 +416,10 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
         if (addon == null) {
             updateBuildingInfo();
         }
-        builder.updateSnapshot();
-        builder.deserializeNBT(nbt.getCompoundTag("builder"));
+        if (nbt.hasKey("builder")) {
+            builder.updateSnapshot();
+            builder.deserializeNBT(nbt.getCompoundTag("builder"));
+        }
     }
 
     // Rendering

@@ -125,7 +125,7 @@ public class TileBuilder extends TileBC_Neptune
     public TileBuilder() {
         for (int i = 1; i <= 4; i++) {
             tankManager.add(
-                new Tank("fluid" + i, Fluid.BUCKET_VOLUME * 8, this) {
+                new Tank("tank" + i, Fluid.BUCKET_VOLUME * 8, this) {
                     @Override
                     protected void onContentsChanged() {
                         super.onContentsChanged();
@@ -385,8 +385,10 @@ public class TileBuilder extends TileBC_Neptune
             .collect(Collectors.toList());
         canExcavate = nbt.getBoolean("canExcavate");
         rotation = NBTUtilBC.readEnum(nbt.getTag("rotation"), Rotation.class);
-        updateSnapshot(false);
-        Optional.ofNullable(getBuilder()).ifPresent(builder -> builder.deserializeNBT(nbt.getCompoundTag("builder")));
+        if (nbt.hasKey("builder")) {
+            updateSnapshot(false);
+            Optional.ofNullable(getBuilder()).ifPresent(builder -> builder.deserializeNBT(nbt.getCompoundTag("builder")));
+        }
     }
 
     // Rendering
