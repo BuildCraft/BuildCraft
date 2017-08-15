@@ -144,8 +144,8 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
                                 break;
                             case Y:
                                 vertex.texf(
-                                        (float) (minU + (maxU - minU) * (positive ? (1 - newPos.xCoord) : newPos.xCoord)),
-                                        (float) (minV + (maxV - minV) * (1 - newPos.zCoord))
+                                        (float) (minU + (maxU - minU) * newPos.xCoord),
+                                        (float) (minV + (maxV - minV) * (positive ? newPos.zCoord : (1 - newPos.zCoord)))
                                 );
                                 break;
                             case Z:
