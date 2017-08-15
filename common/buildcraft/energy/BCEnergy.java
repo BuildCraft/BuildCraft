@@ -6,15 +6,12 @@ package buildcraft.energy;
 
 import java.util.function.Consumer;
 
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.MigrationManager;
@@ -24,10 +21,6 @@ import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
 
 import buildcraft.core.BCCore;
-import buildcraft.energy.generation.BiomeInitializer;
-import buildcraft.energy.generation.BiomeOilDesert;
-import buildcraft.energy.generation.BiomeOilOcean;
-import buildcraft.energy.generation.OilGenerator;
 
 //@formatter:off
 @Mod(
@@ -49,27 +42,14 @@ public class BCEnergy {
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
+        BCEnergyConfig.preInit();
         BCEnergyItems.preInit();
         BCEnergyFluids.preInit();
         BCEnergyBlocks.preInit();
         BCEnergyEntities.preInit();
-
-        GameRegistry.registerWorldGenerator(OilGenerator.INSTANCE, 0);
+        BCEnergyWorldGen.preInit();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCEnergyProxy.getProxy());
-        GameRegistry.register(BiomeOilOcean.INSTANCE);
-        GameRegistry.register(BiomeOilDesert.INSTANCE);
-        BiomeDictionary.addTypes(
-                BiomeOilOcean.INSTANCE,
-                BiomeDictionary.Type.OCEAN
-        );
-        BiomeDictionary.addTypes(
-                BiomeOilDesert.INSTANCE,
-                BiomeDictionary.Type.HOT,
-                BiomeDictionary.Type.DRY,
-                BiomeDictionary.Type.SANDY
-        );
-        MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
 
         BCEnergyProxy.getProxy().fmlPreInit();
     }
@@ -82,8 +62,8 @@ public class BCEnergy {
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
-//        MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
         BCEnergyProxy.getProxy().fmlPostInit();
+        BCEnergyConfig.validateBiomeNames();
         registerMigrations();
     }
 
@@ -108,7 +88,8 @@ public class BCEnergy {
         registerTag("tile.engine.iron").reg("engine.iron");
         registerTag("tile.spring.oil").reg("spring.oil");
 
-        endBatch(TagManager.prependTags("buildcraftenergy:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(TagManager.setTab("buildcraft.main")));
+        endBatch(TagManager.prependTags("buildcraftenergy:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION)
+            .andThen(TagManager.setTab("buildcraft.main")));
     }
 
     private static TagEntry registerTag(String id) {

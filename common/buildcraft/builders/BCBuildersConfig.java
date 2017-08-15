@@ -44,6 +44,7 @@ public class BCBuildersConfig {
         none.setTo(propQuarryFrameMoveBoth);
 
         reloadConfig(EnumRestartRequirement.GAME);
+        BCCoreConfig.addReloadListener(BCBuildersConfig::reloadConfig);
     }
 
     public static void reloadConfig(EnumRestartRequirement restarted) {

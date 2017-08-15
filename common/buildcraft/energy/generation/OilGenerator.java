@@ -20,10 +20,10 @@ import buildcraft.lib.misc.RandUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
+import buildcraft.energy.BCEnergyConfig;
 import buildcraft.energy.generation.OilGenStructure.GenByPredicate;
 import buildcraft.energy.generation.OilGenStructure.ReplaceType;
 import buildcraft.energy.generation.OilGenStructure.Spring;
-import buildcraft.energy.generation.OilPopulate.GenType;
 
 public enum OilGenerator implements IWorldGenerator {
     INSTANCE;
@@ -36,9 +36,21 @@ public enum OilGenerator implements IWorldGenerator {
      * is too big then oil generation will be slightly slower */
     private static final int MAX_CHUNK_RADIUS = 5;
 
+    public enum GenType {
+        LARGE,
+        MEDIUM,
+        LAKE,
+        NONE
+    }
+
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator gen,
         IChunkProvider provider) {
+
+        if (BCEnergyConfig.excludedDimensions.contains(world.provider.getDimension())) {
+            return;
+        }
+
         world.profiler.startSection("bc_oil");
         int x = chunkX * 16 + 8;
         int z = chunkZ * 16 + 8;
@@ -82,14 +94,14 @@ public enum OilGenerator implements IWorldGenerator {
         Biome biome = world.getBiome(new BlockPos(x, 0, z));
 
         // Do not generate oil in the End or Nether
-        if (OilPopulate.INSTANCE.excludedBiomes.contains(biome.getRegistryName())) {
+        if (BCEnergyConfig.excludedBiomes.contains(biome.getRegistryName())) {
             return ImmutableList.of();
         }
 
-        boolean oilBiome = OilPopulate.INSTANCE.surfaceDepositBiomes.contains(biome.getRegistryName());
+        boolean oilBiome = BCEnergyConfig.surfaceDepositBiomes.contains(biome.getRegistryName());
 
         double bonus = oilBiome ? 3.0 : 1.0;
-        if (OilPopulate.INSTANCE.excessiveBiomes.contains(biome.getRegistryName())) {
+        if (BCEnergyConfig.excessiveBiomes.contains(biome.getRegistryName())) {
             bonus *= 30.0;
         }
         final GenType type;

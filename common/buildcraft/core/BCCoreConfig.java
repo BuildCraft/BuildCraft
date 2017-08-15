@@ -7,7 +7,10 @@
 package buildcraft.core;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -27,6 +30,8 @@ import buildcraft.lib.misc.ConfigUtil;
 import buildcraft.lib.registry.RegistryHelper;
 
 public class BCCoreConfig {
+    private static final List<Consumer<EnumRestartRequirement>> reloadListeners = new ArrayList<>();
+    
     public static Configuration config;
     public static Configuration objConfig;
     public static FileConfigManager detailedConfigManager;
@@ -152,8 +157,13 @@ public class BCCoreConfig {
         none.setTo(propNetworkUpdateRate);
 
         reloadConfig(game);
+        addReloadListener(BCCoreConfig::reloadConfig);
 
         MinecraftForge.EVENT_BUS.register(BCCoreConfig.class);
+    }
+
+    public static void addReloadListener(Consumer<EnumRestartRequirement> listener) {
+        reloadListeners.add(listener);
     }
 
     @SubscribeEvent
@@ -164,7 +174,9 @@ public class BCCoreConfig {
                 // The loaders state will be LoaderState.SERVER_STARTED when we are in a world
                 req = EnumRestartRequirement.WORLD;
             }
-            reloadConfig(req);
+            for (Consumer<EnumRestartRequirement> listener : reloadListeners) {
+                listener.accept(req);
+            }
         }
     }
 
