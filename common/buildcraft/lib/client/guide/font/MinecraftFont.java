@@ -26,7 +26,7 @@ public enum MinecraftFont implements IFontRenderer {
     }
 
     @Override
-    public int getFontHeight() {
+    public int getFontHeight(String text) {
         return getFontRenderer().FONT_HEIGHT;
     }
 
@@ -40,6 +40,7 @@ public enum MinecraftFont implements IFontRenderer {
             y = (int) (y / scale);
         }
         int v = getFontRenderer().drawString(text, x, y, colour);
+        v -= x;
         GlStateManager.color(1f, 1f, 1f);
         if (_scale) {
             GlStateManager.popMatrix();

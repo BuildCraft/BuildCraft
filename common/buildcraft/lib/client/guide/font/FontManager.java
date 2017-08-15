@@ -6,31 +6,25 @@
 
 package buildcraft.lib.client.guide.font;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 public enum FontManager {
     INSTANCE;
 
     private final Map<String, IFontRenderer> fonts = new HashMap<>();
-    private final Map<String, Supplier<IFontRenderer>> potentialFonts = new HashMap<>();
 
-    public IFontRenderer getOrLoadFont(String name) {
-        if (fonts.containsKey(name)) {
-            return fonts.get(name);
-        }
-        if (potentialFonts.containsKey(name)) {
-            Supplier<IFontRenderer> supplier = potentialFonts.remove(name);
-            if (supplier != null) {
-                IFontRenderer render = supplier.get();
-                if (render != null) {
-                    fonts.put(name, render);
-                    return render;
-                }
-            }
-        }
+    public IFontRenderer getOrLoadFont(String name, int size) {
+        // if (fonts.containsKey(name)) {
+        // return fonts.get(name);
+        // }
+
+        // Try to get a Font object
+
+        // Font font = new Font(name, Font.PLAIN, size);
+        // GuideFont value = new GuideFont(font);
+        // fonts.put(name, value);
+        // return value;
         return MinecraftFont.INSTANCE;
     }
 
@@ -40,11 +34,5 @@ public enum FontManager {
             throw new IllegalStateException("Cannot register the font \"" + name + "\" twice!");
         }
         fonts.put(name, font);
-    }
-
-    public void registerGuideFont(String name, InputStream stream) throws Exception {
-        // registerFont(name, new GuideFont(stream));
-        throw new AbstractMethodError("TODO: implement this!");
-
     }
 }

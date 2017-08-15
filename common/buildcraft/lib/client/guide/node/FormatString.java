@@ -18,9 +18,25 @@ public class FormatString {
     private static final Pattern FORMATTING_CODE_PATTERN = Pattern.compile("(?i)\u00a7[0-9A-FK-OR]");
 
     public final FormatSegment[] segments;
+    private final String unformatted, formatted;
 
     public FormatString(FormatSegment[] segments) {
         this.segments = segments;
+        String s = "", sf = "";
+        for (FormatSegment seg : segments) {
+            s += seg.text;
+            sf += seg.toFormatString();
+        }
+        unformatted = s;
+        formatted = sf;
+    }
+
+    public String getFormatted() {
+        return formatted;
+    }
+
+    public String getUnformatted() {
+        return unformatted;
     }
 
     public static FormatString split(String formattedText) {
@@ -80,49 +96,64 @@ public class FormatString {
         List<FormatSegment> thisLine = new ArrayList<>();
         int widthUsed = 0;
 
-        for (FormatSegment segment : segments) {
-            String wholeText = segment.text;
-            // Join words, if appropriate
-            
+        for (int segmentIndex = 0; segmentIndex < segments.length; segmentIndex++) {
+            FormatSegment segment = segments[segmentIndex];
+
             // TODO: Ensure that this segment doesn't join with the NEXT segment as a word!
-            int width = font.getStringWidth(segment.text);
-            if (width + widthUsed < maxWidth) {
+            int width = font.getStringWidth(segment.toFormatString());
+            if (width + widthUsed <= maxWidth) {
                 thisLine.add(segment);
                 widthUsed += width;
             } else {
-                String text = segment.text;
-                for (int i = text.length(); i > 0; i--) {
-                    String c = text.substring(i, i + 1);
-                    if (onWords && !WORD_GAP.contains(c)) {
-                        continue;
+                String text = segment.toFormatString();
+                int allowedLength = 1;
+                boolean words = onWords;
+                outer: while(true) {
+                    for (int i = text.length(); i > 1; i--) {
+                        String c = text.substring(i - 1, i);
+                        if (words && !WORD_GAP.contains(c)) {
+                            continue;
+                        }
+                        String subText = text.substring(0, i);
+                        int w = font.getStringWidth(subText);
+                        if (w + widthUsed <= maxWidth) {
+                            allowedLength = i;
+                            break outer;
+                        }
+                    }
+                    if (words && segmentIndex == 0) {
+                        words = false;
+                    } else {
+                        break;
                     }
                 }
-            }
-        }
-
-        return new FormatString[] { this };
-
-        for (int i = text.length(); i > 0; i--) {
-            String c = text.substring(i, i + 1);
-            if (onWords && !WORD_GAP.contains(c)) {
-                continue;
-            }
-            String start = text.substring(0, i);
-            int w = font.getStringWidth(start);
-            if (w <= width) {
-                if (i == text.length()) {
-                    return new FormatSegment[] { this };
+                int i = allowedLength;
+                if (i > 1) {
+                    String subText = text.substring(0, allowedLength);
+                    int left = segments.length - segmentIndex;
+                    FormatSegment[] next = new FormatSegment[left];
+                    thisLine.add(new FormatSegment(subText, segment.colour, segment.misc));
+                    next[0] = new FormatSegment(text.substring(i), segment.colour, segment.misc);
+                    for (int j = 1; j < left; j++) {
+                        next[j] = segments[segmentIndex + j];
+                    }
+                    return new FormatString[] { //
+                        new FormatString(thisLine.toArray(new FormatSegment[0])), //
+                        new FormatString(next)//
+                    };
                 } else {
-                    return new FormatSegment[] { //
-                        new FormatSegment(start, colour, misc), //
-                        new FormatSegment(text.substring(i), colour, misc)//
+                    int left = segments.length - segmentIndex;
+                    FormatSegment[] next = new FormatSegment[left];
+                    for (int j = 0; j < left; j++) {
+                        next[j] = segments[j + 1];
+                    }
+                    return new FormatString[] { //
+                        new FormatString(thisLine.toArray(new FormatSegment[0])), //
+                        new FormatString(next)//
                     };
                 }
             }
         }
-        return new FormatSegment[] { //
-            new FormatSegment(text.substring(0, 1), colour, misc), //
-            new FormatSegment(text.substring(1), colour, misc)//
-        };
+        return new FormatString[] { this };
     }
 }

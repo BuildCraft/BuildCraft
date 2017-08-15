@@ -224,14 +224,6 @@ public enum XmlPageLoader implements IPageLoaderText {
             String completeLine = "";
             int i = 0;
             while (i < line.length()) {
-                
-                
-                
-                
-                // TODO: Add "Segment" class that contains a string of a *single* formatting! (All text is same colour, italic?, bold?, etc)
-                
-                
-                
                 char c = line.charAt(i);
                 if (c == '<') {
                     XmlTag currentTag = parseTag(line.substring(i));

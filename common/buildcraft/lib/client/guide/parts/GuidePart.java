@@ -18,6 +18,7 @@ import net.minecraft.util.text.TextFormatting;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.font.IFontRenderer;
+import buildcraft.lib.client.guide.node.FormatString;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.pos.GuiRectangle;
 
@@ -83,7 +84,7 @@ public abstract class GuidePart {
 
     /** Renders a raw line at the position, lowering it appropriately */
     protected void renderTextLine(String text, int x, int y, int colour) {
-        fontRenderer.drawString(text, x, y + 8 - (fontRenderer.getFontHeight() / 2), colour);
+        fontRenderer.drawString(text, x, y + 8 - (fontRenderer.getFontHeight(text) / 2), colour);
         GlStateManager.color(1, 1, 1);
     }
 
@@ -124,6 +125,54 @@ public abstract class GuidePart {
 
         String toRender = line.text;
         ISimpleDrawable icon = line.startIcon;
+
+        FormatString next = FormatString.split(line.text);
+
+        int neededSpace = fontRenderer.getFontHeight(line.text);
+        if (icon != null) {
+            neededSpace = Math.max(16, neededSpace);
+        }
+
+        current = current.guaranteeSpace(neededSpace, height);
+
+        int _x = x + INDENT_WIDTH * line.indent;
+        if (icon != null && current.page == pageRenderIndex) {
+            int iconX = _x - 18;
+            int iconY = y + current.pixel - 5;
+            GuiRectangle rect = new GuiRectangle(iconX, iconY, 16, 16);
+            if (rect.contains(gui.mouse) && line.startIconHovered != null) {
+                icon = line.startIconHovered;
+            }
+            icon.drawAt(iconX, iconY);
+        }
+
+        while (next != null) {
+            FormatString[] strings = next.wrap(fontRenderer, allowedWidth);
+
+            String text = strings[0].getFormatted();
+            boolean render = current.page == pageRenderIndex;
+
+            int _y = y + current.pixel;
+            int _w = fontRenderer.getStringWidth(text);
+            GuiRectangle rect = new GuiRectangle(_x, _y, _w, neededSpace);
+            wasHovered |= rect.contains(gui.mouse);
+            if (render) {
+                if (wasHovered && line.link) {
+                    Gui.drawRect(_x - 2, _y - 2, _x + _w + 2, _y + neededSpace, 0xFFD3AD6C);
+                }
+                fontRenderer.drawString(text, _x, _y, 0);
+            }
+
+            next = strings.length == 1 ? null : strings[1];
+            current = current.nextLine(fontRenderer.getFontHeight(text) + 3, height);
+        }
+
+        int additional = LINE_HEIGHT - fontRenderer.getFontHeight(toRender) - 3;
+        current = current.nextLine(additional, height);
+        if (true) return current;
+
+        // OLD:
+
         boolean firstLine = true;
         Set<TextFormatting> activeFormats = EnumSet.noneOf(TextFormatting.class);
         TextFormatting colour = null;
@@ -158,11 +207,11 @@ public abstract class GuidePart {
             }
             if (!activeFormats.isEmpty()) {
                 for (TextFormatting format : activeFormats) {
-                    toRender = format + toRender;
+                    // toRender = format + toRender;
                 }
             }
             if (colour != null) {
-                toRender = colour + toRender;
+                // toRender = colour + toRender;
             }
             if (wordEnd == 0) {
                 wordEnd = textLength;
@@ -171,10 +220,10 @@ public abstract class GuidePart {
             toRender = toRender.substring(wordEnd);
             boolean render = pageRenderIndex == current.page;
             int stringWidth = fontRenderer.getStringWidth(thisLine);
-            int linkX = x + INDENT_WIDTH * line.indent;
+            int linkX = _x;
             int linkY = y + current.pixel;
             int linkXEnd = linkX + stringWidth + 2;
-            int linkYEnd = linkY + fontRenderer.getFontHeight() + 2;
+            int linkYEnd = linkY + fontRenderer.getFontHeight(thisLine) + 2;
             GuiRectangle linkArea = new GuiRectangle(linkX, linkY, stringWidth + 2, LINE_HEIGHT);
             if (line.link && linkArea.contains(gui.mouse)) {
                 wasHovered = true;
@@ -200,7 +249,7 @@ public abstract class GuidePart {
                 }
             }
 
-            int fontHeight = fontRenderer.getFontHeight() + 3;
+            int fontHeight = fontRenderer.getFontHeight(thisLine) + 3;
             current = current.nextLine(fontHeight, height);
             firstLine = false;
             Pattern pattern = Pattern.compile("(?i)\u00a7[0-9A-FK-OR]");
@@ -226,7 +275,7 @@ public abstract class GuidePart {
                 }
             }
         }
-        int additional = LINE_HEIGHT - fontRenderer.getFontHeight() - 3;
+        additional = LINE_HEIGHT - fontRenderer.getFontHeight(toRender) - 3;
         current = current.nextLine(additional, height);
         return current;
     }

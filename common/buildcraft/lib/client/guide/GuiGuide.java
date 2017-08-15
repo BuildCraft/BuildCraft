@@ -149,7 +149,7 @@ public class GuiGuide extends GuiScreen {
     private final Deque<GuidePageBase> pages = Queues.newArrayDeque();
     private final List<GuideChapter> chapters = new ArrayList<>();
     private GuidePageBase currentPage;
-    private IFontRenderer currentFont = FontManager.INSTANCE.getOrLoadFont("DejaVu:13");
+    private IFontRenderer currentFont = FontManager.INSTANCE.getOrLoadFont("SansSerif", 9);
     private float lastPartialTicks;
 
     public GuiGuide() {
@@ -157,7 +157,8 @@ public class GuiGuide extends GuiScreen {
     }
 
     public GuiGuide(String noteId) {
-
+        // TODO (AlexIIL): add support for notes!
+        // TODO (AlexIIL): Seperate text drawing from everything else (layer [gl, buffered, gl])
     }
 
     public void initForExport() {

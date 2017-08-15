@@ -149,7 +149,7 @@ public class GuidePageContents extends GuidePageBase {
                 _height ++;
                 _height += GuideManager.loadedOther.size();
             }
-            int perLineHeight = f.getFontHeight() + 3;
+            int perLineHeight = f.getFontHeight("Ly") + 3;
             _height *= perLineHeight;
             int _y = y + (height - _height) / 2;
 
@@ -246,14 +246,14 @@ public class GuidePageContents extends GuidePageBase {
                 String text = XmlPageLoader.SHOW_LORE ? "Show Lore [x]" : "Show Lore [ ]";
                 int fWidth = f.getStringWidth(text);
                 GuiRectangle rect;
-                rect = new GuiRectangle(x + (width - fWidth) / 2, y + height / 2 + 12, fWidth, f.getFontHeight());
+                rect = new GuiRectangle(x + (width - fWidth) / 2, y + height / 2 + 12, fWidth, f.getFontHeight(text));
                 if (rect.contains(mouseX, mouseY)) {
                     XmlPageLoader.SHOW_LORE = !XmlPageLoader.SHOW_LORE;
                 }
 
                 text = XmlPageLoader.SHOW_HINTS ? "Show Hints [x]" : "Show Hints [ ]";
                 fWidth = f.getStringWidth(text);
-                rect = new GuiRectangle(x + (width - fWidth) / 2, y + height / 2 + 26, fWidth, f.getFontHeight());
+                rect = new GuiRectangle(x + (width - fWidth) / 2, y + height / 2 + 26, fWidth, f.getFontHeight(text));
                 if (rect.contains(mouseX, mouseY)) {
                     XmlPageLoader.SHOW_HINTS = !XmlPageLoader.SHOW_HINTS;
                 }
