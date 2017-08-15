@@ -3,7 +3,6 @@ package buildcraft.energy.generation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.TreeMap;
 import java.util.function.Predicate;
 
 import com.google.common.collect.ImmutableList;
@@ -71,44 +70,6 @@ public enum OilGenerator implements IWorldGenerator {
             }
         }
         world.profiler.endSection();
-    }
-
-    public static void main(String[] args) {
-        // Program to find (a) random seed with oil pretty close to spawn
-        final int SEED_COUNT = 1000000;
-        final int CHUNK_RADIUS = 8;
-        TreeMap<Integer, List<Integer>> orderedSeeds = new TreeMap<>();
-        for (int seed = 0; seed < SEED_COUNT; seed++) {
-            if (seed * 10 % SEED_COUNT == 0 && seed != 0) {
-                System.out.println("Search part " + (seed * 10 / SEED_COUNT) + " of " + (10));
-            }
-            int count = 0;
-            for (int x = -CHUNK_RADIUS; x <= CHUNK_RADIUS; x++) {
-                for (int z = -CHUNK_RADIUS; z <= CHUNK_RADIUS; z++) {
-                    Random rand = RandUtil.createRandomForChunk(seed, x, z, MAGIC_GEN_NUMBER);
-                    if (rand.nextDouble() <= 0.0004) {
-                        count += 7;
-                    } else if (rand.nextDouble() <= 0.001) {
-                        count += 5;
-                    } else if (rand.nextDouble() <= 0.02) {
-                        count++;
-                    }
-                }
-            }
-            orderedSeeds.computeIfAbsent(count, k -> new ArrayList<>()).add(seed);
-        }
-        for (Integer count : orderedSeeds.descendingKeySet()) {
-            System.out.println(count + ":");
-            int c = 0;
-            for (Integer seed : orderedSeeds.get(count)) {
-                System.out.println(" - " + seed);
-                c++;
-                if (c > 10) {
-                    System.out.println("...");
-                    break;
-                }
-            }
-        }
     }
 
     public static List<OilGenStructure> getStructures(World world, int cx, int cz) {
