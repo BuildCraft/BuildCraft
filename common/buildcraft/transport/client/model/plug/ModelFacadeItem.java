@@ -33,8 +33,8 @@ import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.transport.BCTransportModels;
 import buildcraft.transport.client.model.key.KeyPlugFacade;
 import buildcraft.transport.item.ItemPluggableFacade;
-import buildcraft.transport.plug.FacadeStateManager.FacadePhasedState;
-import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
+import buildcraft.transport.plug.FacadeInstance;
+import buildcraft.transport.plug.FacadePhasedState;
 
 public enum ModelFacadeItem implements IBakedModel {
     INSTANCE;
@@ -104,7 +104,7 @@ public enum ModelFacadeItem implements IBakedModel {
 
         @Override
         public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
-            FullFacadeInstance inst = ItemPluggableFacade.getStates(stack);
+            FacadeInstance inst = ItemPluggableFacade.getStates(stack);
             FacadePhasedState state = inst.getCurrentStateForStack();
             return cache.getUnchecked(new KeyPlugFacade(BlockRenderLayer.TRANSLUCENT, EnumFacing.WEST, state.stateInfo.state, state.isHollow));
         }

@@ -32,9 +32,9 @@ import buildcraft.lib.registry.TagManager.TagEntry;
 
 import buildcraft.core.BCCore;
 import buildcraft.transport.pipe.SchematicBlockPipe;
+import buildcraft.transport.plug.FacadeBlockStateInfo;
+import buildcraft.transport.plug.FacadeInstance;
 import buildcraft.transport.plug.FacadeStateManager;
-import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
-import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
 import buildcraft.transport.wire.MessageWireSystems;
 import buildcraft.transport.wire.MessageWireSystemsPowered;
 
@@ -112,7 +112,7 @@ public class BCTransport {
         FacadeStateManager.postInit();
         if (BCTransportItems.plugFacade != null) {
             FacadeBlockStateInfo state = FacadeStateManager.previewState;
-            FullFacadeInstance inst = FullFacadeInstance.createSingle(state, false);
+            FacadeInstance inst = FacadeInstance.createSingle(state, false);
             tabFacades.setItem(BCTransportItems.plugFacade.createItemStack(inst));
         }
     }

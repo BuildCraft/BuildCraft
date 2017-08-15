@@ -6,6 +6,7 @@
 
 package buildcraft.transport;
 
+import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.item.ItemBC_Neptune;
@@ -133,6 +134,7 @@ public class BCTransportItems {
         plugPulsar = ItemManager.register(new ItemPluggablePulsar("item.plug.pulsar"));
         plugLightSensor = ItemManager.register(new ItemPluggableSimple("item.plug.light_sensor", BCTransportPlugs.lightSensor));
         plugFacade = ItemManager.register(new ItemPluggableFacade("item.plug.facade"));
+        FacadeAPI.facadeItem = plugFacade;
 
         wire = ItemManager.register(new ItemWire("item.wire"));
     }

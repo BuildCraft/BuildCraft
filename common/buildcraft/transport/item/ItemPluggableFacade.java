@@ -27,6 +27,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.facades.FacadeType;
+import buildcraft.api.facades.IFacade;
 import buildcraft.api.facades.IFacadeItem;
 import buildcraft.api.transport.IItemPluggable;
 import buildcraft.api.transport.pipe.IPipeHolder;
@@ -40,10 +41,10 @@ import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.StackUtil;
 
 import buildcraft.transport.BCTransportPlugs;
+import buildcraft.transport.plug.FacadeBlockStateInfo;
+import buildcraft.transport.plug.FacadeInstance;
+import buildcraft.transport.plug.FacadePhasedState;
 import buildcraft.transport.plug.FacadeStateManager;
-import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
-import buildcraft.transport.plug.FacadeStateManager.FacadePhasedState;
-import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
 import buildcraft.transport.plug.PluggableFacade;
 
 public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggable, IFacadeItem {
@@ -54,21 +55,16 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
     }
 
     @Nonnull
-    public ItemStack createItemStack(FullFacadeInstance state) {
+    public ItemStack createItemStack(FacadeInstance state) {
         ItemStack item = new ItemStack(this);
         NBTTagCompound nbt = NBTUtilBC.getItemData(item);
         state.writeToNbt(nbt, "states");
         return item;
     }
 
-    public static FullFacadeInstance getStates(@Nonnull ItemStack item) {
+    public static FacadeInstance getStates(@Nonnull ItemStack item) {
         NBTTagCompound nbt = NBTUtilBC.getItemData(item);
-        return FullFacadeInstance.readFromNbt(nbt, "states");
-    }
-
-    @Override
-    public FacadeType getFacadeType(@Nonnull ItemStack facade) {
-        return getStates(facade).type;
+        return FacadeInstance.readFromNbt(nbt, "states");
     }
 
     @Nonnull
@@ -78,24 +74,14 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
         if (info == null) {
             return StackUtil.EMPTY;
         } else {
-            return createItemStack(FullFacadeInstance.createSingle(info, false));
+            return createItemStack(FacadeInstance.createSingle(info, false));
         }
-    }
-
-    @Override
-    public IBlockState[] getBlockStatesForFacade(@Nonnull ItemStack facade) {
-        FullFacadeInstance info = getStates(facade);
-        IBlockState[] states = new IBlockState[info.phasedStates.length];
-        for (int i = 0; i < states.length; i++) {
-            states[i] = info.phasedStates[i].stateInfo.state;
-        }
-        return states;
     }
 
     @Override
     public PipePluggable onPlace(@Nonnull ItemStack stack, IPipeHolder holder, EnumFacing side, EntityPlayer player,
         EnumHand hand) {
-        FullFacadeInstance fullState = getStates(stack);
+        FacadeInstance fullState = getStates(stack);
         SoundUtil.playBlockPlace(holder.getPipeWorld(), holder.getPipePos(), fullState.phasedStates[0].stateInfo.state);
         return new PluggableFacade(BCTransportPlugs.facade, holder, side, fullState);
     }
@@ -109,20 +95,20 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
             FacadeStateManager.getInfoForBlock(Blocks.PLANKS).createPhased(false, EnumDyeColor.RED),//
             FacadeStateManager.getInfoForBlock(Blocks.LOG).createPhased(false, EnumDyeColor.CYAN),//
         };
-        FullFacadeInstance inst = new FullFacadeInstance(states);
+        FacadeInstance inst = new FacadeInstance(states);
         subItems.add(createItemStack(inst));
 
         for (FacadeBlockStateInfo info : FacadeStateManager.validFacadeStates.values()) {
             if (info.isVisible) {
-                subItems.add(createItemStack(FullFacadeInstance.createSingle(info, false)));
-                subItems.add(createItemStack(FullFacadeInstance.createSingle(info, true)));
+                subItems.add(createItemStack(FacadeInstance.createSingle(info, false)));
+                subItems.add(createItemStack(FacadeInstance.createSingle(info, true)));
             }
         }
     }
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        FullFacadeInstance fullState = getStates(stack);
+        FacadeInstance fullState = getStates(stack);
         if (fullState.type == FacadeType.Basic) {
             String displayName = getFacadeStateDisplayName(fullState.phasedStates[0]);
             return super.getItemStackDisplayName(stack) + ": " + displayName;
@@ -142,7 +128,7 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
 
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
-        FullFacadeInstance states = getStates(stack);
+        FacadeInstance states = getStates(stack);
         if (states.type == FacadeType.Phased) {
             String stateString = LocaleUtil.localize("item.FacadePhased.state");
             FacadePhasedState defaultState = null;
@@ -164,5 +150,17 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
             BlockUtil.getPropertiesStringMap(info.state, info.varyingProperties)
                 .forEach((name, value) -> tooltip.add(propertiesStart + name + " = " + value));
         }
+    }
+
+    // IFacadeItem
+
+    @Override
+    public ItemStack createFacadeStack(IFacade facade) {
+        return createItemStack((FacadeInstance) facade);
+    }
+
+    @Override
+    public IFacade getFacade(ItemStack facade) {
+        return getStates(facade);
     }
 }

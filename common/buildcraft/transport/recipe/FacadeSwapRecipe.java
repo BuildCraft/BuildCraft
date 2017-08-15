@@ -20,9 +20,9 @@ import buildcraft.lib.recipe.IRecipeViewable;
 
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.item.ItemPluggableFacade;
+import buildcraft.transport.plug.FacadeBlockStateInfo;
+import buildcraft.transport.plug.FacadeInstance;
 import buildcraft.transport.plug.FacadeStateManager;
-import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
-import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
 
 public enum FacadeSwapRecipe implements IRecipe, IRecipeViewable.IViewableGrid {
     INSTANCE;
@@ -73,7 +73,7 @@ public enum FacadeSwapRecipe implements IRecipe, IRecipeViewable.IViewableGrid {
         if (stackIn.getItem() != BCTransportItems.plugFacade) {
             return StackUtil.EMPTY;
         }
-        FullFacadeInstance states = ItemPluggableFacade.getStates(stackIn);
+        FacadeInstance states = ItemPluggableFacade.getStates(stackIn);
         states = states.withSwappedIsHollow();
         return BCTransportItems.plugFacade.createItemStack(states);
     }
@@ -110,7 +110,7 @@ public enum FacadeSwapRecipe implements IRecipe, IRecipeViewable.IViewableGrid {
     }
 
     private static ItemStack createFacade(FacadeBlockStateInfo info, boolean isHollow) {
-        FullFacadeInstance state = FullFacadeInstance.createSingle(info, isHollow);
+        FacadeInstance state = FacadeInstance.createSingle(info, isHollow);
         return BCTransportItems.plugFacade.createItemStack(state);
     }
 
