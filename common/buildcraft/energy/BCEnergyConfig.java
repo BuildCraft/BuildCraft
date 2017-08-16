@@ -84,7 +84,7 @@ public class BCEnergyConfig {
             addBiomeNames(propExcessiveBiomes, excessiveBiomes);
             addBiomeNames(propSurfaceDepositBiomes, surfaceDepositBiomes);
             excludedDimensions.clear();
-            excludedDimensions.addAll(propExcludedBiomes.getIntList());
+            excludedDimensions.addAll(propExcludedDimensions.getIntList());
 
             if (EnumRestartRequirement.GAME.hasBeenRestarted(restarted)) {
                 enableOilGeneration = propEnableOilGeneration.getBoolean();
