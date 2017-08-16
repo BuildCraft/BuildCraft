@@ -68,7 +68,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                                       @Nonnull IBlockState oldState,
                                       @Nonnull IBlockState newState,
                                       int flags) {
-            if (tile.getBuilder() == SnapshotBuilder.this && getBuildingInfo() != null && getBuildingInfo().box.contains(pos)) {
+            if (tile.getBuilder() == SnapshotBuilder.this && getBuildingInfo().box.contains(pos)) {
                 if (check(pos)) {
                     afterChecks();
                 }
@@ -99,6 +99,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
         this.tile = tile;
     }
 
+    @Nonnull
     protected abstract Snapshot.BuildingInfo getBuildingInfo();
 
     public void validate() {
