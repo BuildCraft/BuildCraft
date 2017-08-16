@@ -66,10 +66,8 @@ public class BCFactory {
         TileBC_Neptune.registerTile(TileTank.class, "tile.tank");
         TileBC_Neptune.registerTile(TileChute.class, "tile.chute");
         TileBC_Neptune.registerTile(TileDistiller_BC8.class, "tile.distiller");
-        if (BCLib.DEV) {
-            TileBC_Neptune.registerTile(TileHeatExchangeStart.class, "tile.heat_exchange.start");
-            TileBC_Neptune.registerTile(TileHeatExchangeEnd.class, "tile.heat_exchange.end");
-        }
+        TileBC_Neptune.registerTile(TileHeatExchangeStart.class, "tile.heat_exchange.start");
+        TileBC_Neptune.registerTile(TileHeatExchangeEnd.class, "tile.heat_exchange.end");
     }
 
     @Mod.EventHandler
