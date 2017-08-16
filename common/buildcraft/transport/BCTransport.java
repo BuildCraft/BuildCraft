@@ -18,6 +18,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
 import buildcraft.api.transport.pipe.PipeApi;
 
@@ -37,8 +38,6 @@ import buildcraft.transport.pipe.SchematicBlockPipe;
 import buildcraft.transport.plug.FacadeBlockStateInfo;
 import buildcraft.transport.plug.FacadeInstance;
 import buildcraft.transport.plug.FacadeStateManager;
-import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
-import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
 import buildcraft.transport.tile.TileFilteredBuffer;
 import buildcraft.transport.tile.TilePipeHolder;
 import buildcraft.transport.wire.MessageWireSystems;
@@ -102,6 +101,8 @@ public class BCTransport {
 
         tabPipes.setItem(BCTransportItems.PIPE_DIAMOND_ITEM);
         tabPlugs.setItem(BCTransportItems.PLUG_GATE);
+
+        FacadeAPI.facadeItem = BCTransportItems.PLUG_FACADE;
     }
 
     @Mod.EventHandler

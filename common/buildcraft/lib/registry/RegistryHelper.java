@@ -121,7 +121,7 @@ public class RegistryHelper {
 
     public static boolean isEnabled(ModContainer activeMod, String category, String resourcePath, String langKey) {
         Configuration config = modObjectConfigs.get(activeMod);
-        if (config == null) throw new RuntimeException("No config exists for the mod " + activeMod.getModId());
+        if (config == null) return false; //throw new RuntimeException("No config exists for the mod " + activeMod.getModId());
         Property prop = config.get(category, resourcePath, true);
         prop.setLanguageKey(langKey);
         prop.setRequiresMcRestart(true);

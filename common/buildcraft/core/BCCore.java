@@ -7,6 +7,7 @@ package buildcraft.core;
 import java.io.File;
 import java.util.function.Consumer;
 
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 
 import net.minecraftforge.common.MinecraftForge;
@@ -95,6 +96,11 @@ public class BCCore {
         MarkerCache.registerCache(PathCache.INSTANCE);
 
         ((CreativeTabBC) CreativeTabManager.getTab("buildcraft.main")).setItem(BCCoreItems.WRENCH);
+
+        CreativeTabs mainTab = CreativeTabManager.getTab("buildcraft.main");
+        BCLibItems.GUIDE.setCreativeTab(mainTab);
+        BCLibItems.NOTE.setCreativeTab(mainTab);
+        BCLibItems.DEBUGGER.setCreativeTab(mainTab);
     }
 
     @Mod.EventHandler

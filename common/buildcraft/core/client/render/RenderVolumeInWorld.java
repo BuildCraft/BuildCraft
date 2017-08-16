@@ -138,16 +138,16 @@ public enum RenderVolumeInWorld implements DetachedRenderer.IDetachedRenderer {
     private static LaserData_BC8 makeLaser(LaserType type, Vec3d min, Vec3d max, Axis axis, double scale) {
         switch (axis) {
             case X:
-                min = new Vec3d(min.xCoord - 1 / 16D, min.yCoord, min.zCoord);
-                max = new Vec3d(max.xCoord + 1 / 16D, max.yCoord, max.zCoord);
+                min = new Vec3d(min.x - 1 / 16D, min.y, min.z);
+                max = new Vec3d(max.x + 1 / 16D, max.y, max.z);
                 break;
             case Y:
                 min = new Vec3d(min.x, min.y - 1 / 16D, min.z);
                 max = new Vec3d(max.x, max.y + 1 / 16D, max.z);
                 break;
             case Z:
-                min = new Vec3d(min.xCoord, min.yCoord, min.zCoord - 1 / 16D);
-                max = new Vec3d(max.xCoord, max.yCoord, max.zCoord + 1 / 16D);
+                min = new Vec3d(min.x, min.y, min.z - 1 / 16D);
+                max = new Vec3d(max.x, max.y, max.z + 1 / 16D);
                 break;
         }
         EnumFacing faceForMin = VecUtil.getFacing(axis, true);

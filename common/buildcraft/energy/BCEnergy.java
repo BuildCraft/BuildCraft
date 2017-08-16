@@ -6,17 +6,11 @@ package buildcraft.energy;
 
 import java.util.function.Consumer;
 
-import net.minecraft.world.biome.Biome;
-
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.enums.EnumEngineType;
@@ -31,10 +25,6 @@ import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.core.BCCore;
 import buildcraft.core.BCCoreBlocks;
-import buildcraft.energy.generation.BiomeInitializer;
-import buildcraft.energy.generation.BiomeOilDesert;
-import buildcraft.energy.generation.BiomeOilOcean;
-import buildcraft.energy.generation.OilGenerator;
 import buildcraft.energy.tile.TileEngineIron_BC8;
 import buildcraft.energy.tile.TileEngineStone_BC8;
 import buildcraft.energy.tile.TileSpringOil;
@@ -62,7 +52,6 @@ public class BCEnergy {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
         BCEnergyConfig.preInit();
         BCEnergyEntities.preInit();
-        BCEnergyWorldGen.preInit();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCEnergyProxy.getProxy());
 
@@ -72,6 +61,7 @@ public class BCEnergy {
     @Mod.EventHandler
     public static void init(FMLInitializationEvent evt) {
         BCEnergyRecipes.init();
+        BCEnergyWorldGen.init();
         BCEnergyProxy.getProxy().fmlInit();
 
         TileBC_Neptune.registerTile(TileEngineStone_BC8.class, "tile.engine.stone");
@@ -96,14 +86,6 @@ public class BCEnergy {
         // Fluid registration changed from "fluid_block_[FLUID]" to "fluid_block_heat_[HEAT]_[FLUID]"
         MigrationManager.INSTANCE.addBlockMigration(BCEnergyFluids.crudeOil[0].getBlock(), "fluid_block_oil");
         MigrationManager.INSTANCE.addBlockMigration(BCEnergyFluids.fuelLight[0].getBlock(), "fluid_block_fuel");
-    }
-
-    @SubscribeEvent
-    public static void registerBiomes(RegistryEvent.Register<Biome> event) {
-        event.getRegistry().registerAll(
-            new BiomeOilOcean(),
-            new BiomeOilDesert()
-        );
     }
 
     static {

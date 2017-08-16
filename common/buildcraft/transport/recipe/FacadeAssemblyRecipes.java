@@ -48,7 +48,7 @@ public class FacadeAssemblyRecipes extends AssemblyRecipe  implements IRecipeVie
     private static final ChangingObject<Long> MJ_COSTS = new ChangingObject<>(new Long[] { MJ_COST });
 
     public static ItemStack createFacadeStack(FacadeBlockStateInfo info, boolean isHollow) {
-        ItemStack stack = BCTransportItems.PLUG_FACADE.createItemStack(FullFacadeInstance.createSingle(info, isHollow));
+        ItemStack stack = BCTransportItems.PLUG_FACADE.createItemStack(FacadeInstance.createSingle(info, isHollow));
         stack.setCount(6);
         return stack;
     }
