@@ -18,7 +18,6 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.api.enums.EnumEngineType;
 
@@ -61,9 +60,9 @@ public class BCEnergy {
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
+        BCEnergyConfig.preInit();
         BCEnergyEntities.preInit();
-
-        GameRegistry.registerWorldGenerator(OilGenerator.INSTANCE, 0);
+        BCEnergyWorldGen.preInit();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCEnergyProxy.getProxy());
 
@@ -81,26 +80,14 @@ public class BCEnergy {
         TileBC_Neptune.registerTile(TileEngineIron_BC8.class, "tile.engine.iron");
         BCCoreBlocks.ENGINE.registerEngine(EnumEngineType.IRON, TileEngineIron_BC8::new);
 
-        BiomeDictionary.addTypes(
-            BiomeOilOcean.INSTANCE,
-            BiomeDictionary.Type.OCEAN
-        );
-        BiomeDictionary.addTypes(
-            BiomeOilDesert.INSTANCE,
-            BiomeDictionary.Type.HOT,
-            BiomeDictionary.Type.DRY,
-            BiomeDictionary.Type.SANDY
-        );
-        MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
-
         TileBC_Neptune.registerTile(TileSpringOil.class, "tile.spring.oil");
 
     }
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
-//        MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
         BCEnergyProxy.getProxy().fmlPostInit();
+        BCEnergyConfig.validateBiomeNames();
         registerMigrations();
     }
 
@@ -133,7 +120,8 @@ public class BCEnergy {
         registerTag("tile.engine.iron").reg("engine.iron");
         registerTag("tile.spring.oil").reg("spring.oil");
 
-        endBatch(TagManager.prependTags("buildcraftenergy:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(TagManager.setTab("buildcraft.main")));
+        endBatch(TagManager.prependTags("buildcraftenergy:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION)
+            .andThen(TagManager.setTab("buildcraft.main")));
     }
 
     private static TagEntry registerTag(String id) {
