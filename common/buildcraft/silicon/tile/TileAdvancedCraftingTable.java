@@ -25,9 +25,23 @@ import buildcraft.factory.util.WorkbenchCrafting;
 public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAutoCraft {
     private static final long POWER_REQ = 500 * MjAPI.MJ;
 
-    public final ItemHandlerSimple invBlueprint = itemManager.addInvHandler("blueprint", 3 * 3, ItemHandlerManager.EnumAccess.PHANTOM);
-    public final ItemHandlerSimple invMaterials = itemManager.addInvHandler("materials", 5 * 3, ItemHandlerManager.EnumAccess.INSERT, EnumPipePart.VALUES);
-    public final ItemHandlerSimple invResults = itemManager.addInvHandler("result", 3 * 3, ItemHandlerManager.EnumAccess.EXTRACT, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invBlueprint = itemManager.addInvHandler(
+        "blueprint",
+        3 * 3,
+        ItemHandlerManager.EnumAccess.PHANTOM
+    );
+    public final ItemHandlerSimple invMaterials = itemManager.addInvHandler(
+        "materials",
+        5 * 3,
+        ItemHandlerManager.EnumAccess.INSERT,
+        EnumPipePart.VALUES
+    );
+    public final ItemHandlerSimple invResults = itemManager.addInvHandler(
+        "result",
+        3 * 3,
+        ItemHandlerManager.EnumAccess.EXTRACT,
+        EnumPipePart.VALUES
+    );
     private final WorkbenchCrafting crafting = new WorkbenchCrafting(3, 3, invBlueprint);
     public IRecipe currentRecipe;
     private List<ItemStack> requirements = null;

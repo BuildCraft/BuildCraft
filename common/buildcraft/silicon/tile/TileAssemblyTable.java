@@ -46,7 +46,12 @@ public class TileAssemblyTable extends TileLaserTableBase {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("assembly_table");
     public static final int NET_RECIPE_STATE = IDS.allocId("RECIPE_STATE");
 
-    public final ItemHandlerSimple inv = itemManager.addInvHandler("inv", 3 * 4, ItemHandlerManager.EnumAccess.BOTH, EnumPipePart.VALUES);
+    public final ItemHandlerSimple inv = itemManager.addInvHandler(
+        "inv",
+        3 * 4,
+        ItemHandlerManager.EnumAccess.BOTH,
+        EnumPipePart.VALUES
+    );
     public SortedMap<AssemblyInstruction, EnumAssemblyRecipeState> recipesStates = new TreeMap<>();
 
     private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftsilicon:precision_crafting");
@@ -57,6 +62,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
     }
 
     private void updateRecipes() {
+        //TODO: rework this to not iterate over every recipe every tick
         int count = recipesStates.size();
         for (AssemblyRecipe recipe: AssemblyRecipeRegistry.REGISTRY) {
             Set<ItemStack> outputs = recipe.getOutputs(inv.stacks);

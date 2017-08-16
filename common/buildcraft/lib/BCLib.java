@@ -120,6 +120,7 @@ public class BCLib {
     static {
         startBatch();
         registerTag("item.guide").reg("guide").locale("guide").model("guide").tab("vanilla.misc");
+        registerTag("item.guide.note").reg("guide_note").locale("guide_note").model("guide_note").tab("vanilla.misc");
         registerTag("item.debugger").reg("debugger").locale("debugger").model("debugger").tab("vanilla.misc");
         endBatch(TagManager.prependTags("buildcraftlib:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
     }

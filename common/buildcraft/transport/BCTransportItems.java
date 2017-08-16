@@ -14,6 +14,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.item.ItemBC_Neptune;

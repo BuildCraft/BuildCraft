@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -58,7 +59,7 @@ public abstract class StreamConfigManager {
 
     protected final void read(InputStream streamIn) {
         if (streamIn != null) {
-            try (Reader reader = new InputStreamReader(streamIn)) {
+            try (Reader reader = new InputStreamReader(streamIn, StandardCharsets.UTF_8)) {
                 properties.load(reader);
                 reader.close();
             } catch (IOException e) {
@@ -71,7 +72,7 @@ public abstract class StreamConfigManager {
 
     protected final void write(OutputStream streamOut) {
         if (streamOut == null) return;
-        try (Writer writer = new OutputStreamWriter(streamOut)) {
+        try (Writer writer = new OutputStreamWriter(streamOut, StandardCharsets.UTF_8)) {
             properties.store(writer, comment());
             writer.close();
         } catch (IOException e) {

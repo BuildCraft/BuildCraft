@@ -10,16 +10,22 @@ package buildcraft.lib.client.guide;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
@@ -28,17 +34,28 @@ import net.minecraft.client.resources.Language;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+
+import buildcraft.api.BCModules;
+import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
-import buildcraft.lib.client.guide.data.GuideEntryLoader;
+import buildcraft.lib.client.guide.data.JsonContents;
 import buildcraft.lib.client.guide.data.JsonEntry;
 import buildcraft.lib.client.guide.loader.IPageLoader;
 import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
+import buildcraft.lib.client.guide.loader.XmlPageLoader;
 import buildcraft.lib.client.guide.parts.GuidePageFactory;
 import buildcraft.lib.client.guide.parts.GuidePageStandInRecipes;
+import buildcraft.lib.misc.LocaleUtil;
 
 public enum GuideManager implements IResourceManagerReloadListener {
     INSTANCE;
+
+    public static final List<String> loadedDomains = new ArrayList<>();
+    public static final List<String> loadedMods = new ArrayList<>();
+    public static final List<String> loadedOther = new ArrayList<>();
 
     private static final String DEFAULT_LANG = "en_us";
     private static final Map<String, IPageLoader> PAGE_LOADERS = new HashMap<>();
@@ -46,19 +63,61 @@ public enum GuideManager implements IResourceManagerReloadListener {
     private final List<PageEntry> entries = new ArrayList<>();
     private final Map<String, GuidePageFactory> pages = new HashMap<>();
     private final Map<ItemStack, GuidePageFactory> generatedPages = new HashMap<>();
+    public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.guide.loader");
 
     static {
         PAGE_LOADERS.put("md", MarkdownPageLoader.INSTANCE);
+        PAGE_LOADERS.put("xml", XmlPageLoader.INSTANCE);
     }
 
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager) {
         Stopwatch watch = Stopwatch.createStarted();
         entries.clear();
-        List<JsonEntry> loaded = GuideEntryLoader.loadAll(resourceManager);
+        loadedDomains.clear();
+        loadedMods.clear();
+        loadedOther.clear();
+        List<JsonEntry> loaded = loadAll(resourceManager);
         for (JsonEntry entry : loaded) {
             entries.add(new PageEntry(entry));
         }
+        Collections.sort(loadedDomains);
+        // Special sort -- replace mod domains with mod names
+
+        // Treat BC modules specially
+        Set<BCModules> modules = EnumSet.noneOf(BCModules.class);
+        for (BCModules module : BCModules.VALUES) {
+            if (loadedDomains.remove(module.getModId())) {
+                modules.add(module);
+            }
+        }
+
+        int moduleCount = modules.size();
+        int maxModuleCount = BCModules.VALUES.length;
+        if (moduleCount == maxModuleCount) {
+            loadedMods.add("BuildCraft (+Compat)");
+        } else if (moduleCount == maxModuleCount - 1 && !modules.contains(BCModules.COMPAT)) {
+            loadedMods.add("BuildCraft");
+        } else if (moduleCount > 2) {
+            loadedMods.add("BuildCraft (§o" + (moduleCount - 2) + " modules§r)");
+        } else if (moduleCount == 2) {
+            loadedMods.add("BuildCraft (Core)");
+        } else {
+            loadedMods.add("BuildCraft (Lib)");
+        }
+
+        Iterator<String> domainIter = loadedDomains.iterator();
+        String domain;
+        while (domainIter.hasNext()) {
+            domain = domainIter.next();
+            ModContainer mod = Loader.instance().getIndexedModList().get(domain);
+            if (mod != null) {
+                loadedMods.add(mod.getName());
+            } else {
+                loadedOther.add(LocaleUtil.localize(domain + ".compat.buildcraft.guide.domain_name"));
+            }
+        }
+
         pages.clear();
 
         Language currentLanguage = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage();
@@ -86,6 +145,50 @@ public enum GuideManager implements IResourceManagerReloadListener {
             + " not found) in " + time + "ms.");
     }
 
+    private static List<JsonEntry> loadAll(IResourceManager resourceManager) {
+        List<JsonEntry> allEntries = new ArrayList<>();
+
+        for (String domain : resourceManager.getResourceDomains()) {
+
+            JsonContents contents = loadContents(resourceManager, domain);
+
+            if (contents != null) {
+                GuideManager.loadedDomains.add(domain);
+                contents = contents.inheritMissingTags();
+                for (JsonEntry entry : contents.contents) {
+                    allEntries.add(entry);
+                }
+            }
+        }
+        return allEntries;
+    }
+
+    private static JsonContents loadContents(IResourceManager resourceManager, String domain) {
+        ResourceLocation location = new ResourceLocation(domain, "compat/buildcraft/guide/contents.json");
+
+        try (InputStream is = resourceManager.getResource(location).getInputStream()) {
+            if (is != null) {
+                InputStreamReader isr = new InputStreamReader(is);
+                return new Gson().fromJson(isr, JsonContents.class);
+            }
+            return null;
+        } catch (FileNotFoundException fnfe) {
+            if (GuideManager.DEBUG) {
+                BCLog.logger.warn(
+                    "[lib.guide.loader] Looks like there is no guide contents page for " + location + ", skipping.");
+            }
+            return null;
+        } catch (IOException io) {
+            if (GuideManager.DEBUG) {
+                BCLog.logger.warn("[lib.guide.loader] Failed to load the contents file for " + domain + "!", io);
+            } else {
+                BCLog.logger
+                    .warn("[lib.guide.loader] Failed to load the contents file for " + domain + ": " + io.getMessage());
+            }
+            return null;
+        }
+    }
+
     private void loadLangInternal(IResourceManager resourceManager, String lang) {
         for (PageEntry data : entries) {
             String page = data.page.replaceAll("<lang>", lang);
@@ -102,7 +205,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
                 GuidePageFactory factory = loader.loadPage(stream, data);
                 // put the original page in so that the different lang variants override it
                 pages.put(data.page, factory);
-                if (GuideEntryLoader.DEBUG) {
+                if (GuideManager.DEBUG) {
                     BCLog.logger.info("[lib.guide.loader] Loaded page '" + page + "'.");
                 }
             } catch (FileNotFoundException fnfe) {

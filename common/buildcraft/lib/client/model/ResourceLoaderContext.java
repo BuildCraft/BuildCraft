@@ -9,6 +9,7 @@ package buildcraft.lib.client.model;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
@@ -31,7 +32,7 @@ public class ResourceLoaderContext {
         loadingStack.push(location);
         try {
             IResource res = Minecraft.getMinecraft().getResourceManager().getResource(location);
-            return new InputStreamReader(res.getInputStream());
+            return new InputStreamReader(res.getInputStream(), StandardCharsets.UTF_8);
         } catch (FileNotFoundException e) {
             throw new JsonSyntaxException("Did not find the file " + location, e);
         } catch (IOException io) {

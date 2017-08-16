@@ -32,9 +32,9 @@ import buildcraft.lib.recipe.IRecipeViewable;
 
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.item.ItemPluggableFacade;
+import buildcraft.transport.plug.FacadeBlockStateInfo;
+import buildcraft.transport.plug.FacadeInstance;
 import buildcraft.transport.plug.FacadeStateManager;
-import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
-import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
 
 public class FacadeAssemblyRecipes extends AssemblyRecipe  implements IRecipeViewable.IRecipePowered {
     public static final FacadeAssemblyRecipes INSTANCE = new FacadeAssemblyRecipes();
@@ -87,8 +87,6 @@ public class FacadeAssemblyRecipes extends AssemblyRecipe  implements IRecipeVie
     public ChangingObject<Long> getMjCost() {
         return MJ_COSTS;
     }
-
-
 
     @Override
     public Set<ItemStack> getOutputs(NonNullList<ItemStack> inputs) {

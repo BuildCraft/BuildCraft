@@ -115,49 +115,39 @@ public enum RenderVolumeInWorld implements DetachedRenderer.IDetachedRenderer {
             }
         }
 
-        datas.add(makeLaser(type, vecs[0][0][0], vecs[1][0][0], Axis.X, scale, false));
-        datas.add(makeLaser(type, vecs[0][1][0], vecs[1][1][0], Axis.X, scale, true));
-        datas.add(makeLaser(type, vecs[0][1][1], vecs[1][1][1], Axis.X, scale, false));
-        datas.add(makeLaser(type, vecs[0][0][1], vecs[1][0][1], Axis.X, scale, true));
+        datas.add(makeLaser(type, vecs[0][0][0], vecs[1][0][0], Axis.X, scale));
+        datas.add(makeLaser(type, vecs[0][1][0], vecs[1][1][0], Axis.X, scale));
+        datas.add(makeLaser(type, vecs[0][1][1], vecs[1][1][1], Axis.X, scale));
+        datas.add(makeLaser(type, vecs[0][0][1], vecs[1][0][1], Axis.X, scale));
 
-        datas.add(makeLaser(type, vecs[0][0][0], vecs[0][1][0], Axis.Y, scale, false));
-        datas.add(makeLaser(type, vecs[1][0][0], vecs[1][1][0], Axis.Y, scale, true));
-        datas.add(makeLaser(type, vecs[1][0][1], vecs[1][1][1], Axis.Y, scale, false));
-        datas.add(makeLaser(type, vecs[0][0][1], vecs[0][1][1], Axis.Y, scale, true));
+        datas.add(makeLaser(type, vecs[0][0][0], vecs[0][1][0], Axis.Y, scale));
+        datas.add(makeLaser(type, vecs[1][0][0], vecs[1][1][0], Axis.Y, scale));
+        datas.add(makeLaser(type, vecs[1][0][1], vecs[1][1][1], Axis.Y, scale));
+        datas.add(makeLaser(type, vecs[0][0][1], vecs[0][1][1], Axis.Y, scale));
 
-        datas.add(makeLaser(type, vecs[0][0][0], vecs[0][0][1], Axis.Z, scale, false));
-        datas.add(makeLaser(type, vecs[1][0][0], vecs[1][0][1], Axis.Z, scale, true));
-        datas.add(makeLaser(type, vecs[1][1][0], vecs[1][1][1], Axis.Z, scale, false));
-        datas.add(makeLaser(type, vecs[0][1][0], vecs[0][1][1], Axis.Z, scale, true));
+        datas.add(makeLaser(type, vecs[0][0][0], vecs[0][0][1], Axis.Z, scale));
+        datas.add(makeLaser(type, vecs[1][0][0], vecs[1][0][1], Axis.Z, scale));
+        datas.add(makeLaser(type, vecs[1][1][0], vecs[1][1][1], Axis.Z, scale));
+        datas.add(makeLaser(type, vecs[0][1][0], vecs[0][1][1], Axis.Z, scale));
 
         box.laserData = datas.toArray(new LaserData_BC8[datas.size()]);
         box.lastMin = min;
         box.lastMax = max;
     }
 
-    private static LaserData_BC8 makeLaser(LaserType type, Vec3d min, Vec3d max, Axis axis, double scale, boolean second) {
+    private static LaserData_BC8 makeLaser(LaserType type, Vec3d min, Vec3d max, Axis axis, double scale) {
         switch (axis) {
             case X:
-                if (second) {
-                    min = new Vec3d(min.x - 1 / 16D, min.y, min.z);
-                    max = new Vec3d(max.x + 1 / 16D, max.y, max.z);
-                } else {
-                    min = new Vec3d(min.x - 1 / 16D, min.y, min.z);
-                    max = new Vec3d(max.x + 1 / 16D, max.y, max.z);
-                }
+                min = new Vec3d(min.xCoord - 1 / 16D, min.yCoord, min.zCoord);
+                max = new Vec3d(max.xCoord + 1 / 16D, max.yCoord, max.zCoord);
                 break;
             case Y:
                 min = new Vec3d(min.x, min.y - 1 / 16D, min.z);
                 max = new Vec3d(max.x, max.y + 1 / 16D, max.z);
                 break;
             case Z:
-                if (second) {
-                    min = new Vec3d(min.x, min.y, min.z - 1 / 16D);
-                    max = new Vec3d(max.x, max.y, max.z + 1 / 16D);
-                } else {
-                    min = new Vec3d(min.x, min.y, min.z - 1 / 16D);
-                    max = new Vec3d(max.x, max.y, max.z + 1 / 16D);
-                }
+                min = new Vec3d(min.xCoord, min.yCoord, min.zCoord - 1 / 16D);
+                max = new Vec3d(max.xCoord, max.yCoord, max.zCoord + 1 / 16D);
                 break;
         }
         EnumFacing faceForMin = VecUtil.getFacing(axis, true);

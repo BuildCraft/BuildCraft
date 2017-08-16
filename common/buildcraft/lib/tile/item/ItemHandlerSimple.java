@@ -6,6 +6,7 @@
 package buildcraft.lib.tile.item;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
@@ -29,8 +30,9 @@ import buildcraft.lib.tile.item.StackInsertionFunction.InsertionResult;
 public class ItemHandlerSimple extends AbstractInvItemTransactor
     implements IItemHandlerModifiable, IItemHandlerAdv, INBTSerializable<NBTTagCompound> {
     // Function-called stuff (helpers etc)
-    private final StackInsertionChecker checker;
-    private final StackInsertionFunction inserter;
+    private StackInsertionChecker checker;
+    private StackInsertionFunction inserter;
+    @Nullable
     private final StackChangeCallback callback;
 
     // Actual item stacks used
@@ -39,16 +41,28 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
     // Transactor speedup (small)
     private int firstUsed = Integer.MAX_VALUE;
 
-    public ItemHandlerSimple(int size, StackChangeCallback callback) {
+    public ItemHandlerSimple(int size, @Nullable StackChangeCallback callback) {
         this(size, (slot, stack) -> true, StackInsertionFunction.getDefaultInserter(), callback);
     }
 
     public ItemHandlerSimple(int size, StackInsertionChecker checker, StackInsertionFunction insertionFunction,
-        StackChangeCallback callback) {
+        @Nullable StackChangeCallback callback) {
         stacks = NonNullList.withSize(size, StackUtil.EMPTY);
         this.checker = checker;
         this.inserter = insertionFunction;
         this.callback = callback;
+    }
+
+    public void setChecker(StackInsertionChecker checker) {
+        this.checker = checker;
+    }
+
+    public void setInsertor(StackInsertionFunction insertor) {
+        this.inserter = insertor;
+    }
+
+    public void setLimitedInsertor(int maxStackSize) {
+        setInsertor(StackInsertionFunction.getInsertionFunction(maxStackSize));
     }
 
     @Override
@@ -228,12 +242,11 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
     }
 
     private void fireCallback(int slot, @Nonnull ItemStack before) {
-        if (callback == null) {
-            return;
-        }
         ItemStack after = stacks.get(slot);
         if (!ItemStack.areItemStacksEqual(before, after)) {
-            callback.onStackChange(this, slot, before, after);
+            if (callback != null) {
+                callback.onStackChange(this, slot, before, after);
+            }
         }
     }
 

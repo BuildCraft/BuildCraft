@@ -8,6 +8,8 @@ package buildcraft.lib.client.sprite;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
+import buildcraft.lib.misc.SpriteUtil;
+
 public class SpriteAtlas implements ISprite {
     public final TextureAtlasSprite sprite;
 
@@ -17,7 +19,7 @@ public class SpriteAtlas implements ISprite {
 
     @Override
     public void bindTexture() {
-        throw new IllegalStateException("You cannot bind these sprites!");
+        SpriteUtil.bindBlockTextureMap();
     }
 
     @Override

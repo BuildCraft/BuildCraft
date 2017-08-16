@@ -7,6 +7,7 @@ package buildcraft.builders;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
 
 import javax.annotation.Nonnull;
@@ -104,16 +105,21 @@ public class BCBuilders {
             "banner",
             300,
             context -> context.block instanceof BlockBanner,
-            () -> new SchematicBlockDefault() {
-                @Nonnull
+            new Supplier<SchematicBlockDefault>() {
                 @Override
-                public List<ItemStack> computeRequiredItems() {
-                    return Collections.singletonList(
-                        ItemBanner.makeBanner(
-                            EnumDyeColor.byDyeDamage(tileNbt.getInteger("Base")),
-                            tileNbt.getTagList("Patterns", 10)
-                        )
-                    );
+                public SchematicBlockDefault get() {
+                    return new SchematicBlockDefault() {
+                        @Nonnull
+                        @Override
+                        public List<ItemStack> computeRequiredItems() {
+                            return Collections.singletonList(
+                                ItemBanner.makeBanner(
+                                    EnumDyeColor.byDyeDamage(tileNbt.getInteger("Base")),
+                                    tileNbt.getTagList("Patterns", 10)
+                                )
+                            );
+                        }
+                    };
                 }
             }
         );
@@ -121,15 +127,20 @@ public class BCBuilders {
             "vine",
             300,
             context -> context.block instanceof BlockVine,
-            () -> new SchematicBlockDefault() {
+            new Supplier<SchematicBlockDefault>() {
                 @Override
-                public boolean isReadyToBuild(World world, BlockPos blockPos) {
-                    return super.isReadyToBuild(world, blockPos) &&
-                        (world.getBlockState(blockPos.up()).getBlock() instanceof BlockVine ||
-                            StreamSupport.stream(EnumFacing.Plane.HORIZONTAL.spliterator(), false)
-                                .map(blockPos::offset)
-                                .map(world::getBlockState)
-                                .anyMatch(state -> state.isFullCube() && state.getMaterial().blocksMovement()));
+                public SchematicBlockDefault get() {
+                    return new SchematicBlockDefault() {
+                        @Override
+                        public boolean isReadyToBuild(World world, BlockPos blockPos) {
+                            return super.isReadyToBuild(world, blockPos) &&
+                                (world.getBlockState(blockPos.up()).getBlock() instanceof BlockVine ||
+                                    StreamSupport.stream(EnumFacing.Plane.HORIZONTAL.spliterator(), false)
+                                        .map(blockPos::offset)
+                                        .map(world::getBlockState)
+                                        .anyMatch(state -> state.isFullCube() && state.getMaterial().blocksMovement()));
+                        }
+                    };
                 }
             }
         );

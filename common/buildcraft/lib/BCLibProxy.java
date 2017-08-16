@@ -34,7 +34,6 @@ import buildcraft.lib.client.reload.LibConfigChangeListener;
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.DetachedRenderer.RenderMatrixType;
 import buildcraft.lib.client.render.MarkerRenderer;
-import buildcraft.lib.client.resource.ResourceRegistry;
 import buildcraft.lib.debug.DebugRenderHelper;
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.fluid.FluidManager;
@@ -115,7 +114,6 @@ public abstract class BCLibProxy implements IGuiHandler {
             super.fmlInit();
             IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
             IReloadableResourceManager reloadable = (IReloadableResourceManager) manager;
-            reloadable.registerReloadListener(ResourceRegistry.INSTANCE);
             reloadable.registerReloadListener(GuideManager.INSTANCE);
         }
 

@@ -76,6 +76,16 @@
                 "type": "item",
                 "sub_type": "tool"
             }
+        },
+        {
+            "title": "tile.pathMarkerBlock.name",
+            "item_stack": "(buildcraftcore:marker_path)",
+            "page": "marker_path.xml",
+            "type_tags": 
+            {
+                "type": "item",
+                "sub_type": "tool"
+            }
         }
     ]
 }

@@ -34,6 +34,8 @@ import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.core.BCCore;
 import buildcraft.transport.pipe.SchematicBlockPipe;
+import buildcraft.transport.plug.FacadeBlockStateInfo;
+import buildcraft.transport.plug.FacadeInstance;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
 import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
@@ -115,7 +117,7 @@ public class BCTransport {
         FacadeStateManager.postInit();
         if (BCTransportItems.PLUG_FACADE != null) {
             FacadeBlockStateInfo state = FacadeStateManager.previewState;
-            FullFacadeInstance inst = FullFacadeInstance.createSingle(state, false);
+            FacadeInstance inst = FacadeInstance.createSingle(state, false);
             tabFacades.setItem(BCTransportItems.PLUG_FACADE.createItemStack(inst));
         }
     }
