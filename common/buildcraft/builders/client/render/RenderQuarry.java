@@ -160,7 +160,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                         new Vec3d(interpolatedPos.xCoord + 0.5, interpolatedPos.yCoord + yOffset, interpolatedPos.zCoord + 0.5),//
                         1 / 16D, true, true, 0));
             } else {
-                LaserBoxRenderer.renderLaserBoxStatic(tile.frameBox, BuildCraftLaserManager.STRIPES_WRITE);
+                LaserBoxRenderer.renderLaserBoxStatic(tile.frameBox, BuildCraftLaserManager.STRIPES_WRITE, true);
             }
             profiler.endSection();
         }

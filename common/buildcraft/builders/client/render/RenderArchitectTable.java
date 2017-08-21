@@ -27,7 +27,7 @@ public class RenderArchitectTable extends FastTESR<TileArchitectTable> {
         Minecraft.getMinecraft().mcProfiler.startSection("box");
         if (tile.markerBox) {
             vb.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
-            LaserBoxRenderer.renderLaserBoxDynamic(tile.box, BuildCraftLaserManager.STRIPES_READ, vb);
+            LaserBoxRenderer.renderLaserBoxDynamic(tile.box, BuildCraftLaserManager.STRIPES_READ, vb, false);
             vb.setTranslation(0, 0, 0);
         }
         Minecraft.getMinecraft().mcProfiler.endSection();

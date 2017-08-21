@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.client.guide.GuiGuide;
-import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
+import buildcraft.lib.client.guide.loader.XmlPageLoader;
 
 public class GuidePageStandInRecipes extends GuidePage {
     public GuidePageStandInRecipes(GuiGuide gui, List<GuidePart> parts, ItemStack stack) {
@@ -23,7 +23,7 @@ public class GuidePageStandInRecipes extends GuidePage {
 
     @Nonnull
     public static GuidePageFactory createFactory(@Nonnull ItemStack stack) {
-        List<GuidePartFactory> factories = MarkdownPageLoader.loadAllCrafting(stack);
+        List<GuidePartFactory> factories = XmlPageLoader.loadAllCrafting(stack);
         return (gui) -> {
             List<GuidePart> parts = new ArrayList<>();
             for (GuidePartFactory factory : factories) {

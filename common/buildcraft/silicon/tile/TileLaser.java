@@ -231,7 +231,6 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("");
         left.add("battery = " + battery.getDebugString());
         left.add("target = " + targetPos);
         left.add("laser = " + laserPos);

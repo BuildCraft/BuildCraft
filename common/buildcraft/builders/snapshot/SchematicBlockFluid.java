@@ -6,10 +6,10 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,7 +17,6 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
@@ -25,6 +24,7 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.core.InvalidInputDataException;
@@ -33,24 +33,21 @@ import buildcraft.api.schematics.SchematicBlockContext;
 
 import buildcraft.lib.misc.BlockUtil;
 
-public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid> {
+public class SchematicBlockFluid implements ISchematicBlock {
     private IBlockState blockState;
     private boolean isFlowing;
 
     @SuppressWarnings("unused")
     public static boolean predicate(SchematicBlockContext context) {
-        return BlockUtil.getFluidWithFlowing(context.world, context.pos) != null;
+        return BlockUtil.getFluidWithFlowing(context.world, context.pos) != null &&
+            (BlockUtil.getFluid(context.world, context.pos) == null ||
+                BlockUtil.getFluidWithoutFlowing(context.world.getBlockState(context.pos)) != null);
     }
 
     @Override
     public void init(SchematicBlockContext context) {
         blockState = context.blockState;
         isFlowing = BlockUtil.getFluid(context.world, context.pos) == null;
-    }
-
-    @Override
-    public boolean isAir() {
-        return false;
     }
 
     @Nonnull
@@ -64,24 +61,16 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
 
     @Nonnull
     @Override
-    public List<ItemStack> computeRequiredItems(SchematicBlockContext context) {
-        return Collections.emptyList();
-    }
-
-    @Nonnull
-    @Override
-    public List<FluidStack> computeRequiredFluids(SchematicBlockContext context) {
-        List<FluidStack> requiredFluids = new ArrayList<>();
-        FluidStack fluid = BlockUtil.drainBlock(context.world, context.pos, false);
-        if (fluid != null) {
-            requiredFluids.add(fluid);
-        }
-        return requiredFluids;
+    public List<FluidStack> computeRequiredFluids() {
+        return Optional.ofNullable(BlockUtil.getFluidWithoutFlowing(blockState))
+            .map(fluid -> new FluidStack(fluid, Fluid.BUCKET_VOLUME))
+            .map(Collections::singletonList)
+            .orElseGet(Collections::emptyList);
     }
 
     @Override
     public SchematicBlockFluid getRotated(Rotation rotation) {
-        SchematicBlockFluid schematicBlock = new SchematicBlockFluid();
+        SchematicBlockFluid schematicBlock = SchematicBlockManager.createCleanCopy(this);
         schematicBlock.blockState = blockState;
         schematicBlock.isFlowing = isFlowing;
         return schematicBlock;
@@ -90,7 +79,7 @@ public class SchematicBlockFluid implements ISchematicBlock<SchematicBlockFluid>
     @Override
     public boolean canBuild(World world, BlockPos blockPos) {
         return world.isAirBlock(blockPos) ||
-            BlockUtil.getFluidWithFlowing(world, blockPos) != BlockUtil.getFluidWithFlowing(blockState.getBlock()) &&
+            BlockUtil.getFluidWithFlowing(world, blockPos) == BlockUtil.getFluidWithFlowing(blockState.getBlock()) &&
                 BlockUtil.getFluid(world, blockPos) == null;
     }
 

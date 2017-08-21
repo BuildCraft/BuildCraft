@@ -42,11 +42,13 @@ import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
 
 //@formatter:off
-@Mod(modid = BCLib.MODID,
-     name = "BuildCraft Lib",
-     version = BCLib.VERSION,
-     acceptedMinecraftVersions = "(gradle_replace_mcversion,)",
-     dependencies = "required-after:forge@(gradle_replace_forgeversion,)")
+@Mod(
+    modid = BCLib.MODID,
+    name = "BuildCraft Lib",
+    version = BCLib.VERSION,
+    acceptedMinecraftVersions = "(gradle_replace_mcversion,)",
+    dependencies = "required-after:forge@(gradle_replace_forgeversion,)"
+)
 //@formatter:on
 public class BCLib {
     public static final String MODID = "buildcraftlib";
@@ -86,7 +88,7 @@ public class BCLib {
         MessageManager.addMessageType(MessageObjectCacheReq.class, MessageObjectCacheReq.HANDLER, Side.SERVER);
         MessageManager.addMessageType(MessageObjectCacheReply.class, MessageObjectCacheReply.HANDLER, Side.CLIENT);
 
-        MinecraftForge.EVENT_BUS.register(BCLibEventDist.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(BCLibEventDist.class);
 
         ForgeChunkManager.setForcedChunkLoadingCallback(BCLib.INSTANCE, ChunkLoaderManager::rebindTickets);
     }
@@ -122,6 +124,7 @@ public class BCLib {
     static {
         startBatch();
         registerTag("item.guide").reg("guide").locale("guide").model("guide").tab("vanilla.misc");
+        registerTag("item.guide.note").reg("guide_note").locale("guide_note").model("guide_note").tab("vanilla.misc");
         registerTag("item.debugger").reg("debugger").locale("debugger").model("debugger").tab("vanilla.misc");
         endBatch(TagManager.prependTags("buildcraftlib:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
     }

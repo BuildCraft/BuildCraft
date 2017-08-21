@@ -75,7 +75,6 @@ public class TileSpringOil extends TileEntity implements IDebuggable {
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("");
         left.add("totalSources = " + totalSources);
         boolean added = false;
         for (PlayerPumpInfo info : pumpProgress.values()) {

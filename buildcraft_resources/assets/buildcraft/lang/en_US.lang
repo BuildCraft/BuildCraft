@@ -472,6 +472,7 @@ item.debugger.name=Debugger
 item.debugger.warning=Use only for testing! Leaks secrets.
 item.package.name=Package
 item.guide.name=Guide Book
+item.guide_note.name=Guide Note
 item.robot_goggles.name=Robot Goggles
 item.filler_planner.name=Filler Planner
 

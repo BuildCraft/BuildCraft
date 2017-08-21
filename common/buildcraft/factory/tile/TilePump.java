@@ -8,18 +8,19 @@ package buildcraft.factory.tile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.Set;
+
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.MinMaxPriorityQueue;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -57,19 +58,14 @@ public class TilePump extends TileMiner {
     private boolean queueBuilt = false;
     private final Map<BlockPos, List<BlockPos>> paths = new HashMap<>();
     private BlockPos fluidConnection;
-    private final Queue<BlockPos> queue = new PriorityQueue<>(
+    private final MinMaxPriorityQueue<BlockPos> queue = MinMaxPriorityQueue.orderedBy(
         BlockUtil.uniqueBlockPosComparator(
-            Comparator.<BlockPos>comparingInt(blockPos ->
-                paths.get(blockPos).size()
-            ).reversed()
-                .thenComparing(
-                    Comparator.<BlockPos>comparingInt(blockPos ->
-                        (blockPos.getX() - pos.getX()) * (blockPos.getX() - pos.getX()) +
-                            (blockPos.getZ() - pos.getZ()) * (blockPos.getZ() - pos.getZ())
-                    ).reversed()
-                )
+            Comparator.comparing(
+                blockPos -> paths.get(blockPos).size()
+            )
         )
-    );
+    ).create();
+    private Fluid queueFluid;
 
     @Nullable
     private BlockPos oilSpringPos;
@@ -89,20 +85,22 @@ public class TilePump extends TileMiner {
         world.profiler.startSection("prepare");
         queue.clear();
         paths.clear();
+        queueFluid = null;
         Set<BlockPos> checked = new HashSet<>();
         List<BlockPos> nextPosesToCheck = new ArrayList<>();
-        Fluid fluid = null;
         for (BlockPos posToCheck = pos.down(); posToCheck.getY() > 0; posToCheck = posToCheck.down()) {
             if (BlockUtil.getFluidWithFlowing(world, posToCheck) != null) {
-                fluid = BlockUtil.getFluidWithFlowing(world, posToCheck);
+                queueFluid = BlockUtil.getFluidWithFlowing(world, posToCheck);
                 nextPosesToCheck.add(posToCheck);
                 paths.put(posToCheck, Collections.singletonList(posToCheck));
+                checked.add(posToCheck);
                 if (BlockUtil.getFluid(world, posToCheck) != null) {
                     queue.add(posToCheck);
                 }
                 fluidConnection = posToCheck;
                 break;
-            } else if (!world.isAirBlock(posToCheck) && world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.tube) {
+            } else if (!world.isAirBlock(posToCheck) &&
+                world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.tube) {
                 break;
             }
         }
@@ -128,7 +126,7 @@ public class TilePump extends TileMiner {
                         continue;
                     }
                     if (checked.add(offsetPos)) {
-                        if (BlockUtil.getFluidWithFlowing(world, offsetPos) == fluid) {
+                        if (FluidUtilBC.areFluidsEqual(BlockUtil.getFluidWithFlowing(world, offsetPos), queueFluid)) {
                             ImmutableList.Builder<BlockPos> pathBuilder = new ImmutableList.Builder<>();
                             pathBuilder.addAll(paths.get(posToCheck));
                             pathBuilder.add(offsetPos);
@@ -143,7 +141,7 @@ public class TilePump extends TileMiner {
             }
         }
         world.profiler.endStartSection("oil_spring_search");
-        if (FluidUtilBC.areFluidsEqual(fluid, BCEnergyFluids.crudeOil[0])) {
+        if (FluidUtilBC.areFluidsEqual(queueFluid, BCEnergyFluids.crudeOil[0])) {
             List<BlockPos> springPositions = new ArrayList<>();
             BlockPos center = VecUtil.replaceValue(getPos(), Axis.Y, 0);
             for (BlockPos spring : BlockPos.getAllInBox(center.add(-10, 0, -10), center.add(10, 0, 10))) {
@@ -173,12 +171,14 @@ public class TilePump extends TileMiner {
 
     private boolean canDrain(BlockPos blockPos) {
         Fluid fluid = BlockUtil.getFluid(world, blockPos);
-        return tank.isEmpty() ? fluid != null : fluid == tank.getFluidType();
+        return tank.isEmpty() ? fluid != null : FluidUtilBC.areFluidsEqual(fluid, tank.getFluidType());
     }
 
     private void nextPos() {
         while (!queue.isEmpty()) {
-            currentPos = queue.poll();
+            currentPos = (queueFluid == null || !FluidUtilBC.areFluidsEqual(queueFluid, FluidRegistry.WATER))
+                ? queue.pollLast()
+                : queue.pollFirst();
             if (canDrain(currentPos)) {
                 updateLength();
                 return;
@@ -234,18 +234,12 @@ public class TilePump extends TileMiner {
                         canDrain(currentPos)) {
                         tank.fillInternal(drain, true);
                         progress = 0;
-                        int count = 0;
-                        if (drain.getFluid() == FluidRegistry.WATER) {
-                            for (int x = -1; x <= 1; x++) {
-                                for (int z = -1; z <= 1; z++) {
-                                    BlockPos waterPos = currentPos.add(new BlockPos(x, 0, z));
-                                    if (BlockUtil.getFluid(world, waterPos) == FluidRegistry.WATER) {
-                                        count++;
-                                    }
-                                }
-                            }
-                        }
-                        if (count < 4) {
+                        if (drain.getFluid() != FluidRegistry.WATER ||
+                            Arrays.stream(EnumFacing.HORIZONTALS)
+                                .map(currentPos::offset)
+                                .map(p -> BlockUtil.getFluid(world, p))
+                                .filter(f -> FluidUtilBC.areFluidsEqual(f, FluidRegistry.WATER))
+                                .count() < 2) {
                             BlockUtil.drainBlock(world, currentPos, true);
                             if (FluidUtilBC.areFluidsEqual(drain.getFluid(), BCEnergyFluids.crudeOil[0])) {
                                 if (oilSpringPos != null) {

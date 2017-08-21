@@ -6,44 +6,20 @@
 
 package buildcraft.builders.container;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 
-import buildcraft.builders.item.ItemSchematicSingle;
-import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.tile.TileReplacer;
 
 public class ContainerReplacer extends ContainerBCTile<TileReplacer> {
     public ContainerReplacer(EntityPlayer player, TileReplacer tile) {
         super(player, tile);
 
-        addSlotToContainer(new SlotBase(tile.invSnapshot, 0, 8, 115) {
-            @Override
-            public boolean isItemValid(@Nonnull ItemStack stack) {
-                return stack.getItem() instanceof ItemSnapshot &&
-                    ItemSnapshot.EnumItemSnapshotType.getFromStack(stack) ==
-                        ItemSnapshot.EnumItemSnapshotType.BLUEPRINT_USED;
-            }
-        });
-        addSlotToContainer(new SlotBase(tile.invSchematicFrom, 0, 8, 137) {
-            @Override
-            public boolean isItemValid(@Nonnull ItemStack stack) {
-                return stack.getItem() instanceof ItemSchematicSingle &&
-                    stack.getItemDamage() == ItemSchematicSingle.DAMAGE_USED;
-            }
-        });
-        addSlotToContainer(new SlotBase(tile.invSchematicTo, 0, 56, 137) {
-            @Override
-            public boolean isItemValid(@Nonnull ItemStack stack) {
-                return stack.getItem() instanceof ItemSchematicSingle &&
-                    stack.getItemDamage() == ItemSchematicSingle.DAMAGE_USED;
-            }
-        });
+        addSlotToContainer(new SlotBase(tile.invSnapshot, 0, 8, 115));
+        addSlotToContainer(new SlotBase(tile.invSchematicFrom, 0, 8, 137));
+        addSlotToContainer(new SlotBase(tile.invSchematicTo, 0, 56, 137));
 
         addFullPlayerInventory(159);
     }

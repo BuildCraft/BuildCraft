@@ -8,6 +8,7 @@ package buildcraft.builders.filling;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -187,7 +188,14 @@ public class Filling {
         if (inverted) {
             fillingPlan = Filling.invertFillingPlan(size, fillingPlan);
         }
-        template.data = fillingPlan;
+        template.data = new BitSet(size.getX() * size.getY() * size.getZ());
+        for (int z = 0; z < size.getZ(); z++) {
+            for (int y = 0; y < size.getY(); y++) {
+                for (int x = 0; x < size.getX(); x++) {
+                    template.data.set(template.posToIndex(x, y, z), fillingPlan[x][y][z]);
+                }
+            }
+        }
         return template.new BuildingInfo(basePos, Rotation.NONE);
     }
 

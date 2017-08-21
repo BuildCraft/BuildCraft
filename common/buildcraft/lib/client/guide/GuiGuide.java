@@ -36,10 +36,15 @@ public class GuiGuide extends GuiScreen {
     public static final ResourceLocation ICONS_1 = Gui.ICONS;
     public static final ResourceLocation ICONS_2 = new ResourceLocation("buildcraftlib:textures/gui/guide/icons.png");
     public static final ResourceLocation COVER = new ResourceLocation("buildcraftlib:textures/gui/guide/cover.png");
-    public static final ResourceLocation LEFT_PAGE = new ResourceLocation("buildcraftlib:textures/gui/guide/left_page.png");
-    public static final ResourceLocation RIGHT_PAGE = new ResourceLocation("buildcraftlib:textures/gui/guide/right_page.png");
-    public static final ResourceLocation LEFT_PAGE_BACK = new ResourceLocation("buildcraftlib:textures/gui/guide/left_page_back.png");
-    public static final ResourceLocation RIGHT_PAGE_BACK = new ResourceLocation("buildcraftlib:textures/gui/guide/right_page_back.png");
+    public static final ResourceLocation LEFT_PAGE =
+        new ResourceLocation("buildcraftlib:textures/gui/guide/left_page.png");
+    public static final ResourceLocation RIGHT_PAGE =
+        new ResourceLocation("buildcraftlib:textures/gui/guide/right_page.png");
+    public static final ResourceLocation LEFT_PAGE_BACK =
+        new ResourceLocation("buildcraftlib:textures/gui/guide/left_page_back.png");
+    public static final ResourceLocation RIGHT_PAGE_BACK =
+        new ResourceLocation("buildcraftlib:textures/gui/guide/right_page_back.png");
+    public static final ResourceLocation NOTE = new ResourceLocation("buildcraftlib:textures/gui/guide/note.png");
 
     public static final GuiIcon BOOK_COVER = new GuiIcon(COVER, 0, 0, 202, 248);
     public static final GuiIcon BOOK_BINDING = new GuiIcon(COVER, 204, 0, 11, 248);
@@ -51,7 +56,7 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon PAGE_RIGHT_BACK = new GuiIcon(RIGHT_PAGE_BACK, 0, 0, 193, 248);
 
     public static final GuiRectangle PAGE_LEFT_TEXT = new GuiRectangle(23, 25, 168, 190);
-    public static final GuiRectangle PAGE_RIGHT_TEXT = new GuiRectangle(2, 25, 168, 190);
+    public static final GuiRectangle PAGE_RIGHT_TEXT = new GuiRectangle(4, 25, 166, 190);
 
     public static final GuiIcon PEN_UP = new GuiIcon(ICONS_2, 0, 0, 14, 135);
     public static final GuiIcon PEN_ANGLED = new GuiIcon(ICONS_2, 17, 0, 100, 100);
@@ -93,13 +98,18 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon CHAPTER_MARKER_SPACE = new GuiIcon(ICONS_2, 6, 223, 19, 16);
     public static final GuiIcon CHAPTER_MARKER_RIGHT = new GuiIcon(ICONS_2, 27, 223, 5, 16);
 
+    public static final GuiIcon NOTE_PAGE = new GuiIcon(NOTE, 0, 0, 131, 164);
+    public static final GuiIcon NOTE_UNDERLAY = new GuiIcon(ICONS_2, 0, 1, 3, 4);
+    public static final GuiIcon NOTE_OVERLAY = new GuiIcon(ICONS_2, 0, 1, 2, 3);
+
     public static final GuiIcon[] ORDERS = { ORDER_TYPE, ORDER_MOD_TYPE, ORDER_MOD };
 
-    public static final GuiRectangle BACK_POSITION = new GuiRectangle(PAGE_LEFT.width - BACK.width / 2, PAGE_LEFT.height - BACK.height - 2, BACK.width, BACK.height);
+    public static final GuiRectangle BACK_POSITION =
+        new GuiRectangle(PAGE_LEFT.width - BACK.width / 2, PAGE_LEFT.height - BACK.height - 2, BACK.width, BACK.height);
 
     public static final TypeOrder[] SORTING_TYPES = { //
-        new TypeOrder(ETypeTag.TYPE, ETypeTag.SUB_TYPE),//
-        new TypeOrder(ETypeTag.MOD, ETypeTag.TYPE),//
+        new TypeOrder(ETypeTag.TYPE, ETypeTag.SUB_TYPE), //
+        new TypeOrder(ETypeTag.MOD, ETypeTag.TYPE), //
         new TypeOrder(ETypeTag.MOD, ETypeTag.SUB_MOD),//
     };
 
@@ -108,7 +118,8 @@ public class GuiGuide extends GuiScreen {
     private static final int PEN_HIDDEN_HEIGHT_MIN = 5, PEN_HIDDEN_HEIGHT_MAX = 15;
     // TO HERE
 
-    public static final GuiRectangle PEN_HIDDEN_AREA = new GuiRectangle(PAGE_LEFT.width - PEN_HIDDEN_WIDTH / 2, -PEN_HIDDEN_HEIGHT_MAX, PEN_HIDDEN_WIDTH, PEN_HIDDEN_HEIGHT_MAX);
+    public static final GuiRectangle PEN_HIDDEN_AREA = new GuiRectangle(PAGE_LEFT.width - PEN_HIDDEN_WIDTH / 2,
+        -PEN_HIDDEN_HEIGHT_MAX, PEN_HIDDEN_WIDTH, PEN_HIDDEN_HEIGHT_MAX);
 
     // private static final int PEN_HIDDEN_BOX_X_MIN = PAGE_LEFT.width - PEN_HIDDEN_WIDTH / 2;
     // private static final int PEN_HIDDEN_BOX_Y_MIN = -PEN_HIDDEN_HEIGHT_MAX;
@@ -138,10 +149,16 @@ public class GuiGuide extends GuiScreen {
     private final Deque<GuidePageBase> pages = Queues.newArrayDeque();
     private final List<GuideChapter> chapters = new ArrayList<>();
     private GuidePageBase currentPage;
-    private IFontRenderer currentFont = FontManager.INSTANCE.getOrLoadFont("DejaVu:13");
+    private IFontRenderer currentFont = FontManager.INSTANCE.getOrLoadFont("SansSerif", 9);
+    private float lastPartialTicks;
 
     public GuiGuide() {
         openPage(new GuidePageContents(this));
+    }
+
+    public GuiGuide(String noteId) {
+        // TODO (AlexIIL): add support for notes!
+        // TODO (AlexIIL): Seperate text drawing from everything else (layer [gl, buffered, gl])
     }
 
     public void initForExport() {
@@ -233,6 +250,7 @@ public class GuiGuide extends GuiScreen {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        lastPartialTicks = partialTicks;
         minX = (width - PAGE_LEFT.width * 2) / 2;
         minY = (height - BOOK_COVER.height) / 2;
         mouse.setMousePosition(mouseX, mouseY);
@@ -249,6 +267,10 @@ public class GuiGuide extends GuiScreen {
             t.printStackTrace();
             throw Throwables.propagate(t);
         }
+    }
+
+    public float getLastPartialTicks() {
+        return this.lastPartialTicks;
     }
 
     public void drawTooltip(ItemStack stack, int x, int y) {
@@ -296,9 +318,11 @@ public class GuiGuide extends GuiScreen {
             // minX + coverWidth, minY,
             // minX, minY
             // ); // like drawScaledInside, but using drawCustomQuad
-            BOOK_COVER.drawCustomQuad(minX, minY + BOOK_COVER.height, minX + coverWidth, minY + BOOK_COVER.height + offset, minX + coverWidth, minY - offset, minX, minY);
+            BOOK_COVER.drawCustomQuad(minX, minY + BOOK_COVER.height, minX + coverWidth,
+                minY + BOOK_COVER.height + offset, minX + coverWidth, minY - offset, minX, minY);
 
-            BOOK_BINDING.drawScaledInside((int) (minX + coverWidth - bindingWidth * 0.5), (int) (minY - offset), bindingWidth, (int) (BOOK_BINDING.height + offset * 2));
+            BOOK_BINDING.drawScaledInside((int) (minX + coverWidth - bindingWidth * 0.5), (int) (minY - offset),
+                bindingWidth, (int) (BOOK_BINDING.height + offset * 2));
 
         } else if (openingAngle == 0) {
             minX = (width - BOOK_COVER.width) / 2;
@@ -329,15 +353,18 @@ public class GuiGuide extends GuiScreen {
             // minX + bindingWidth + pageWidth, minY,
             // minX + bindingWidth, minY - offset
             // );
-            PAGE_LEFT.drawCustomQuad(minX + bindingWidth, minY + PAGE_LEFT.height + offset, minX + bindingWidth + pageWidth, minY + PAGE_LEFT.height, minX + bindingWidth + pageWidth, minY, minX
-                + bindingWidth, minY - offset);
+            PAGE_LEFT.drawCustomQuad(minX + bindingWidth, minY + PAGE_LEFT.height + offset,
+                minX + bindingWidth + pageWidth, minY + PAGE_LEFT.height, minX + bindingWidth + pageWidth, minY,
+                minX + bindingWidth, minY - offset);
             // PAGE_LEFT.drawScaledInside(minX + bindingWidth, minY, pageWidth, PAGE_LEFT.height);
 
             mc.renderEngine.bindTexture(COVER);
-            BOOK_BINDING.drawScaledInside((int) (minX + bindingWidth * 0.5), (int) (minY - offset), bindingWidth, (int) (BOOK_BINDING.height + offset * 2));
+            BOOK_BINDING.drawScaledInside((int) (minX + bindingWidth * 0.5), (int) (minY - offset), bindingWidth,
+                (int) (BOOK_BINDING.height + offset * 2));
 
             mc.renderEngine.bindTexture(ICONS_2);
-            drawTexturedModalRect(minX + pageWidth + bindingWidth - (PEN_HIDDEN_WIDTH / 2), minY - penHeight, PEN_HIDDEN_X, PEN_HIDDEN_Y, PEN_HIDDEN_WIDTH, penHeight);
+            drawTexturedModalRect(minX + pageWidth + bindingWidth - (PEN_HIDDEN_WIDTH / 2), minY - penHeight,
+                PEN_HIDDEN_X, PEN_HIDDEN_Y, PEN_HIDDEN_WIDTH, penHeight);
         }
     }
 
@@ -401,7 +428,8 @@ public class GuiGuide extends GuiScreen {
 
             // Draw pen
             mc.renderEngine.bindTexture(ICONS_2);
-            drawTexturedModalRect(minX + PAGE_LEFT.width - PEN_HIDDEN_WIDTH / 2, minY - h, PEN_HIDDEN_X, PEN_HIDDEN_Y, PEN_HIDDEN_WIDTH, h);
+            drawTexturedModalRect(minX + PAGE_LEFT.width - PEN_HIDDEN_WIDTH / 2, minY - h, PEN_HIDDEN_X, PEN_HIDDEN_Y,
+                PEN_HIDDEN_WIDTH, h);
 
             if (tooltipStack != null) {
                 renderToolTip(tooltipStack, (int) mouse.getX(), (int) mouse.getY());
@@ -437,8 +465,10 @@ public class GuiGuide extends GuiScreen {
                     }
                 }
 
-                current.handleMouseClick(page0xMin, pageYMin, page0xMax - page0xMin, pageYMax - pageYMin, mouseX, mouseY, mouseButton, currentPage.getPage(), isEditing);
-                current.handleMouseClick(page1xMin, pageYMin, page1xMax - page1xMin, pageYMax - pageYMin, mouseX, mouseY, mouseButton, currentPage.getPage() + 1, isEditing);
+                current.handleMouseClick(page0xMin, pageYMin, page0xMax - page0xMin, pageYMax - pageYMin, mouseX,
+                    mouseY, mouseButton, currentPage.getPage(), isEditing);
+                current.handleMouseClick(page1xMin, pageYMin, page1xMax - page1xMin, pageYMax - pageYMin, mouseX,
+                    mouseY, mouseButton, currentPage.getPage() + 1, isEditing);
 
                 if ((!pages.isEmpty()) && BACK_POSITION.offset(minX, minY).contains(mouse)) {
                     closePage();
@@ -451,7 +481,8 @@ public class GuiGuide extends GuiScreen {
                     }
                 }
             } else {
-                if (mouseX >= minX && mouseY >= minY && mouseX <= minX + BOOK_COVER.width && mouseY <= minY + BOOK_COVER.height) {
+                if (mouseX >= minX && mouseY >= minY && mouseX <= minX + BOOK_COVER.width
+                    && mouseY <= minY + BOOK_COVER.height) {
                     if (isOpening) {// So you can double-click to open it instantly
                         isOpen = true;
                     }

@@ -44,16 +44,25 @@ import buildcraft.api.schematics.SchematicBlockContext;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 
-public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefault> {
-    private final Set<BlockPos> requiredBlockOffsets = new HashSet<>();
-    private IBlockState blockState;
-    private final List<IProperty<?>> ignoredProperties = new ArrayList<>();
-    private NBTTagCompound tileNbt;
-    private final List<String> ignoredTags = new ArrayList<>();
-    private Rotation tileRotation = Rotation.NONE;
-    private Block placeBlock;
-    private final Set<BlockPos> updateBlockOffsets = new HashSet<>();
-    private final Set<Block> canBeReplacedWithBlocks = new HashSet<>();
+public class SchematicBlockDefault implements ISchematicBlock {
+    @SuppressWarnings("WeakerAccess")
+    protected final Set<BlockPos> requiredBlockOffsets = new HashSet<>();
+    @SuppressWarnings("WeakerAccess")
+    protected IBlockState blockState;
+    @SuppressWarnings("WeakerAccess")
+    protected final List<IProperty<?>> ignoredProperties = new ArrayList<>();
+    @SuppressWarnings("WeakerAccess")
+    protected NBTTagCompound tileNbt;
+    @SuppressWarnings("WeakerAccess")
+    protected final List<String> ignoredTags = new ArrayList<>();
+    @SuppressWarnings("WeakerAccess")
+    protected Rotation tileRotation = Rotation.NONE;
+    @SuppressWarnings("WeakerAccess")
+    protected Block placeBlock;
+    @SuppressWarnings("WeakerAccess")
+    protected final Set<BlockPos> updateBlockOffsets = new HashSet<>();
+    @SuppressWarnings("WeakerAccess")
+    protected final Set<Block> canBeReplacedWithBlocks = new HashSet<>();
 
     @SuppressWarnings("unused")
     public static boolean predicate(SchematicBlockContext context) {
@@ -186,11 +195,6 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         setCanBeReplacedWithBlocks /**/(context, rules);
     }
 
-    @Override
-    public boolean isAir() {
-        return false;
-    }
-
     @Nonnull
     @Override
     public Set<BlockPos> getRequiredBlockOffsets() {
@@ -199,7 +203,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
 
     @Nonnull
     @Override
-    public List<ItemStack> computeRequiredItems(SchematicBlockContext context) {
+    public List<ItemStack> computeRequiredItems() {
         Set<JsonRule> rules = RulesLoader.getRules(blockState, tileNbt);
         List<List<RequiredExtractor>> collect = rules.stream()
             .map(rule -> rule.requiredExtractors)
@@ -217,7 +221,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
 
     @Nonnull
     @Override
-    public List<FluidStack> computeRequiredFluids(SchematicBlockContext context) {
+    public List<FluidStack> computeRequiredFluids() {
         Set<JsonRule> rules = RulesLoader.getRules(blockState, tileNbt);
         return rules.stream()
             .map(rule -> rule.requiredExtractors)
@@ -230,7 +234,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
 
     @Override
     public SchematicBlockDefault getRotated(Rotation rotation) {
-        SchematicBlockDefault schematicBlock = new SchematicBlockDefault();
+        SchematicBlockDefault schematicBlock = SchematicBlockManager.createCleanCopy(this);
         requiredBlockOffsets.stream()
             .map(blockPos -> blockPos.rotate(rotation))
             .forEach(schematicBlock.requiredBlockOffsets::add);
@@ -258,6 +262,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
         if (placeBlock == Blocks.AIR) {
             return true;
         }
+        world.profiler.startSection("prepare block");
         IBlockState newBlockState = blockState;
         if (placeBlock != blockState.getBlock()) {
             newBlockState = placeBlock.getDefaultState();
@@ -278,11 +283,18 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
                 placeBlock.getDefaultState()
             );
         }
-        if (world.setBlockState(blockPos, newBlockState, 11)) {
+        world.profiler.endSection();
+        world.profiler.startSection("place block");
+        boolean b = world.setBlockState(blockPos, newBlockState, 11);
+        world.profiler.endSection();
+        if (b) {
+            world.profiler.startSection("notify");
             updateBlockOffsets.stream()
                 .map(blockPos::add)
                 .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, placeBlock, false));
+            world.profiler.endSection();
             if (tileNbt != null && blockState.getBlock().hasTileEntity(blockState)) {
+                world.profiler.startSection("prepare tile");
                 NBTTagCompound newTileNbt = new NBTTagCompound();
                 tileNbt.getKeySet().stream()
                     .map(key -> Pair.of(key, tileNbt.getTag(key)))
@@ -293,6 +305,8 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
                 ignoredTags.stream()
                     .filter(newTileNbt::hasKey)
                     .forEach(newTileNbt::removeTag);
+                world.profiler.endSection();
+                world.profiler.startSection("place tile");
                 TileEntity tileEntity = TileEntity.create(world, newTileNbt);
                 if (tileEntity != null) {
                     tileEntity.setWorld(world);
@@ -301,6 +315,7 @@ public class SchematicBlockDefault implements ISchematicBlock<SchematicBlockDefa
                         tileEntity.rotate(tileRotation);
                     }
                 }
+                world.profiler.endSection();
             }
             return true;
         }

@@ -38,6 +38,8 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
+import buildcraft.lib.inventory.TransactorEntityItem;
+import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
@@ -48,7 +50,13 @@ import buildcraft.factory.block.BlockChute;
 public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable {
     private static final int PICKUP_RADIUS = 3;
     private static final int PICKUP_MAX = 3;
-    public final ItemHandlerSimple inv = itemManager.addInvHandler("inv", 4, EnumAccess.INSERT, EnumPipePart.VALUES);
+    public final ItemHandlerSimple inv = itemManager.addInvHandler(
+        "inv",
+        4,
+        EnumAccess.INSERT,
+        EnumPipePart.VALUES
+    );
+    @SuppressWarnings("PointlessArithmeticExpression")
     private final MjBattery battery = new MjBattery(1 * MjAPI.MJ);
     private int progress = 0;
 
@@ -63,19 +71,34 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
 
     private void pickupItems(EnumFacing currentSide) {
         world.getEntitiesWithinAABB(
-                EntityItem.class,
-                new AxisAlignedBB(pos.offset(currentSide, PICKUP_RADIUS)).expandXyz(PICKUP_RADIUS)
+            EntityItem.class,
+            new AxisAlignedBB(pos.offset(currentSide, PICKUP_RADIUS)).expandXyz(PICKUP_RADIUS)
         ).stream()
-                .limit(PICKUP_MAX)
-                .forEach(entityItem -> {
-                    ItemStack stack = entityItem.getEntityItem();
-                    stack = inv.insert(stack, false, false);
-                    if (stack.isEmpty()) {
-                        entityItem.setDead();
-                    } else {
-                        entityItem.setEntityItemStack(stack);
-                    }
-                });
+            .limit(PICKUP_MAX)
+            .map(TransactorEntityItem::new)
+            .forEach(transactor -> {
+                if (inv.insert(
+                    transactor.extract(
+                        StackFilter.ALL,
+                        0,
+                        Integer.MAX_VALUE,
+                        true
+                    ),
+                    true,
+                    true
+                ).isEmpty()) {
+                    inv.insert(
+                        transactor.extract(
+                            StackFilter.ALL,
+                            0,
+                            Integer.MAX_VALUE,
+                            false
+                        ),
+                        true,
+                        false
+                    );
+                }
+            });
     }
 
     private void putInNearInventories(EnumFacing currentSide) {
@@ -83,31 +106,30 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
         Collections.shuffle(sides, new Random());
         sides.removeIf(Predicate.isEqual(currentSide));
         Stream.<Pair<EnumFacing, ICapabilityProvider>>concat(
-                sides.stream()
-                        .map(side -> Pair.of(side, world.getTileEntity(pos.offset(side)))),
-                sides.stream()
-                        .flatMap(side ->
-                                world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos.offset(side))).stream()
-                                        .map(entity -> Pair.of(side, entity))
-                        )
+            sides.stream()
+                .map(side -> Pair.of(side, world.getTileEntity(pos.offset(side)))),
+            sides.stream()
+                .flatMap(side ->
+                    world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos.offset(side))).stream()
+                        .map(entity -> Pair.of(side, entity))
+                )
         )
-                .map(sideProvider -> ItemTransactorHelper.getTransactor(sideProvider.getRight(), sideProvider.getLeft().getOpposite()))
-                .filter(Predicate.isEqual(NoSpaceTransactor.INSTANCE).negate())
-                .forEach(transactor ->
-                        transactor.insert(
-                                inv.extract(
-                                        stack -> {
-                                            ItemStack leftOver = transactor.insert(stack.copy(), false, true);
-                                            return leftOver.isEmpty() || leftOver.getCount() < stack.getCount();
-                                        },
-                                        1,
-                                        1,
-                                        false
-                                ),
-                                false,
-                                false
-                        )
+            .map(sideProvider -> ItemTransactorHelper.getTransactor(sideProvider.getRight(), sideProvider.getLeft().getOpposite()))
+            .filter(Predicate.isEqual(NoSpaceTransactor.INSTANCE).negate())
+            .forEach(transactor -> {
+                ItemStack item = inv.extract(
+                    stack -> {
+                        ItemStack leftOver = transactor.insert(stack.copy(), false, true);
+                        return leftOver.isEmpty() || leftOver.getCount() < stack.getCount();
+                    },
+                    1,
+                    1,
+                    false
                 );
+                if (!item.isEmpty()) {
+                    transactor.insert(item, false, false);
+                }
+            });
     }
 
     // ITickable
@@ -144,14 +166,14 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         progress = nbt.getInteger("progress");
-        battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
+        battery.deserializeNBT(nbt.getCompoundTag("battery"));
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         nbt.setInteger("progress", progress);
-        nbt.setTag("mj_battery", battery.serializeNBT());
+        nbt.setTag("battery", battery.serializeNBT());
         return nbt;
     }
 
@@ -159,7 +181,6 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("");
         left.add("battery = " + battery.getDebugString());
         left.add("progress = " + progress);
     }

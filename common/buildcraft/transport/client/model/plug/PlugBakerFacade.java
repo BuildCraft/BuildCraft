@@ -37,7 +37,8 @@ import buildcraft.transport.plug.PluggableFacade;
 public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
     INSTANCE;
 
-    private int getVertexIndex(List<Vec3d> positions, EnumFacing.Axis axis,
+    private int getVertexIndex(List<Vec3d> positions,
+                               EnumFacing.Axis axis,
                                boolean minOrMax1, boolean minOrMax2) {
         EnumFacing.Axis axis1, axis2;
         switch (axis) {
@@ -63,104 +64,108 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
         double center1 = (min1 + max1) / 2;
         double center2 = (min2 + max2) / 2;
         return positions.indexOf(
-                positions.stream()
-                        .filter(pos ->
-                                (minOrMax1 ? VecUtil.getValue(pos, axis1) < center1 : VecUtil.getValue(pos, axis1) > center1) &&
-                                        (minOrMax2 ? VecUtil.getValue(pos, axis2) < center2 : VecUtil.getValue(pos, axis2) > center2)
-                        )
-                        .findFirst()
-                        .orElse(positions.get(0))
+            positions.stream()
+                .filter(pos ->
+                    (minOrMax1 ? VecUtil.getValue(pos, axis1) < center1 : VecUtil.getValue(pos, axis1) > center1) &&
+                        (minOrMax2 ? VecUtil.getValue(pos, axis2) < center2 : VecUtil.getValue(pos, axis2) > center2)
+                )
+                .findFirst()
+                .orElse(positions.get(0))
         );
     }
 
-    private List<MutableQuad> getTransformedQuads(IBlockState state, IBakedModel model, EnumFacing side,
-                                                Vec3d pos0, Vec3d pos1, Vec3d pos2, Vec3d pos3) {
+    @SuppressWarnings("SuspiciousNameCombination")
+    private List<MutableQuad> getTransformedQuads(IBlockState state,
+                                                  IBakedModel model,
+                                                  EnumFacing side,
+                                                  Vec3d pos0, Vec3d pos1, Vec3d pos2, Vec3d pos3) {
         return model.getQuads(state, side, 0).stream()
-                .map(quad -> {
-                    MutableQuad mutableQuad = new MutableQuad().fromBakedItem(quad);
-                    boolean positive = side.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE;
-                    Function<Vec3d, Vec3d> transformPosition = pos -> {
-                        switch (side.getAxis()) {
-                            case X:
-                                return new Vec3d(
-                                        positive ? 1 - pos.zCoord : pos.zCoord,
-                                        pos.yCoord,
-                                        pos.xCoord
-                                );
-                            case Y:
-                                return new Vec3d(
-                                        pos.xCoord,
-                                        positive ? 1 - pos.zCoord : pos.zCoord,
-                                        pos.yCoord
-                                );
-                            case Z:
-                                return new Vec3d(
-                                        pos.yCoord,
-                                        pos.xCoord,
-                                        positive ? 1 - pos.zCoord : pos.zCoord
-                                );
-                            default:
-                                throw new IllegalArgumentException();
-                        }
-                    };
-                    List<Vec3d> poses = Arrays.asList(
-                            transformPosition.apply(pos0),
-                            transformPosition.apply(pos1),
-                            transformPosition.apply(pos2),
-                            transformPosition.apply(pos3)
+            .map(quad -> {
+                MutableQuad mutableQuad = new MutableQuad().fromBakedItem(quad);
+                boolean positive = side.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE;
+                Function<Vec3d, Vec3d> transformPosition = pos -> {
+                    switch (side.getAxis()) {
+                        case X:
+                            return new Vec3d(
+                                positive ? 1 - pos.zCoord : pos.zCoord,
+                                pos.yCoord,
+                                pos.xCoord
+                            );
+                        case Y:
+                            return new Vec3d(
+                                pos.xCoord,
+                                positive ? 1 - pos.zCoord : pos.zCoord,
+                                pos.yCoord
+                            );
+                        case Z:
+                            return new Vec3d(
+                                pos.yCoord,
+                                pos.xCoord,
+                                positive ? 1 - pos.zCoord : pos.zCoord
+                            );
+                        default:
+                            throw new IllegalArgumentException();
+                    }
+                };
+                List<Vec3d> poses = Arrays.asList(
+                    transformPosition.apply(pos0),
+                    transformPosition.apply(pos1),
+                    transformPosition.apply(pos2),
+                    transformPosition.apply(pos3)
+                );
+                List<MutableVertex> vertexes = Arrays.asList(
+                    mutableQuad.vertex_0,
+                    mutableQuad.vertex_1,
+                    mutableQuad.vertex_2,
+                    mutableQuad.vertex_3
+                );
+                List<Vec3d> vertexesPoses = vertexes.stream()
+                    .map(vertex -> new Vec3d(vertex.position_x, vertex.position_y, vertex.position_z))
+                    .collect(Collectors.toList());
+                double minU = vertexes.stream().mapToDouble(vertex -> vertex.tex_u).min().orElse(0);
+                double minV = vertexes.stream().mapToDouble(vertex -> vertex.tex_v).min().orElse(0);
+                double maxU = vertexes.stream().mapToDouble(vertex -> vertex.tex_u).max().orElse(0);
+                double maxV = vertexes.stream().mapToDouble(vertex -> vertex.tex_v).max().orElse(0);
+                Stream.of(
+                    Pair.of(false, false),
+                    Pair.of(false, true),
+                    Pair.of(true, true),
+                    Pair.of(true, false)
+                ).forEach(minOrMaxPair -> {
+                    Vec3d newPos = poses.get(
+                        getVertexIndex(poses, side.getAxis(), minOrMaxPair.getLeft(), minOrMaxPair.getRight())
                     );
-                    List<MutableVertex> vertexes = Arrays.asList(
-                            mutableQuad.vertex_0,
-                            mutableQuad.vertex_1,
-                            mutableQuad.vertex_2,
-                            mutableQuad.vertex_3
+                    MutableVertex vertex = vertexes.get(
+                        getVertexIndex(vertexesPoses, side.getAxis(), minOrMaxPair.getLeft(), minOrMaxPair.getRight())
                     );
-                    List<Vec3d> vertexesPoses = vertexes.stream()
-                            .map(vertex -> new Vec3d(vertex.position_x, vertex.position_y, vertex.position_z))
-                            .collect(Collectors.toList());
-                    double minU = vertexes.stream().mapToDouble(vertex -> vertex.tex_u).min().orElse(0);
-                    double minV = vertexes.stream().mapToDouble(vertex -> vertex.tex_v).min().orElse(0);
-                    double maxU = vertexes.stream().mapToDouble(vertex -> vertex.tex_u).max().orElse(0);
-                    double maxV = vertexes.stream().mapToDouble(vertex -> vertex.tex_v).max().orElse(0);
-                    Stream.of(
-                            Pair.of(false, false),
-                            Pair.of(false, true),
-                            Pair.of(true, true),
-                            Pair.of(true, false)
-                    ).forEach(minOrMaxPair -> {
-                        Vec3d newPos = poses.get(
-                                getVertexIndex(poses, side.getAxis(), minOrMaxPair.getLeft(), minOrMaxPair.getRight())
-                        );
-                        MutableVertex vertex = vertexes.get(
-                                getVertexIndex(vertexesPoses, side.getAxis(), minOrMaxPair.getLeft(), minOrMaxPair.getRight())
-                        );
-                        vertex.positiond(newPos.xCoord, newPos.yCoord, newPos.zCoord);
-                        switch (side.getAxis()) {
-                            case X:
-                                vertex.texf(
-                                        (float) (minU + (maxU - minU) * (positive ? (1 - newPos.zCoord) : newPos.zCoord)),
-                                        (float) (minV + (maxV - minV) * (1 - newPos.yCoord))
-                                );
-                                break;
-                            case Y:
-                                vertex.texf(
-                                        (float) (minU + (maxU - minU) * (positive ? (1 - newPos.xCoord) : newPos.xCoord)),
-                                        (float) (minV + (maxV - minV) * (1 - newPos.zCoord))
-                                );
-                                break;
-                            case Z:
-                                vertex.texf(
-                                        (float) (minU + (maxU - minU) * (positive ? newPos.xCoord : (1 - newPos.xCoord))),
-                                        (float) (minV + (maxV - minV) * (1 - newPos.yCoord))
-                                );
-                                break;
-                        }
-                    });
-                    return mutableQuad;
-                })
-                .collect(Collectors.toList());
+                    vertex.positiond(newPos.xCoord, newPos.yCoord, newPos.zCoord);
+                    switch (side.getAxis()) {
+                        case X:
+                            vertex.texf(
+                                (float) (minU + (maxU - minU) * (positive ? (1 - newPos.zCoord) : newPos.zCoord)),
+                                (float) (minV + (maxV - minV) * (1 - newPos.yCoord))
+                            );
+                            break;
+                        case Y:
+                            vertex.texf(
+                                (float) (minU + (maxU - minU) * newPos.xCoord),
+                                (float) (minV + (maxV - minV) * (positive ? newPos.zCoord : (1 - newPos.zCoord)))
+                            );
+                            break;
+                        case Z:
+                            vertex.texf(
+                                (float) (minU + (maxU - minU) * (positive ? newPos.xCoord : (1 - newPos.xCoord))),
+                                (float) (minV + (maxV - minV) * (1 - newPos.yCoord))
+                            );
+                            break;
+                    }
+                });
+                return mutableQuad;
+            })
+            .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("SuspiciousNameCombination")
     private Vec3d rotate(Vec3d vec, Rotation rotation) {
         switch (rotation) {
             case NONE:
@@ -175,14 +180,18 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
         throw new IllegalArgumentException();
     }
 
-    private void addRotatedQuads(List<MutableQuad> quads, IBlockState state, IBakedModel model, EnumFacing side, Rotation rotation,
+    private void addRotatedQuads(List<MutableQuad> quads,
+                                 IBlockState state,
+                                 IBakedModel model,
+                                 EnumFacing side,
+                                 Rotation rotation,
                                  Vec3d pos0, Vec3d pos1, Vec3d pos2, Vec3d pos3) {
         quads.addAll(getTransformedQuads(
-                state, model, side,
-                rotate(pos0, rotation),
-                rotate(pos1, rotation),
-                rotate(pos2, rotation),
-                rotate(pos3, rotation)
+            state, model, side,
+            rotate(pos0, rotation),
+            rotate(pos1, rotation),
+            rotate(pos2, rotation),
+            rotate(pos3, rotation)
         ));
     }
 
@@ -193,44 +202,44 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
         int nS = 16 - pS;
         if (!key.isHollow) {
             quads.addAll(getTransformedQuads(
-                    key.state, model, key.side,
-                    new Vec3d(0 / 16D, 16 / 16D, 0 / 16D),
-                    new Vec3d(16 / 16D, 16 / 16D, 0 / 16D),
-                    new Vec3d(16 / 16D, 0 / 16D, 0 / 16D),
-                    new Vec3d(0 / 16D, 0 / 16D, 0 / 16D)
+                key.state, model, key.side,
+                new Vec3d(0 / 16D, 16 / 16D, 0 / 16D),
+                new Vec3d(16 / 16D, 16 / 16D, 0 / 16D),
+                new Vec3d(16 / 16D, 0 / 16D, 0 / 16D),
+                new Vec3d(0 / 16D, 0 / 16D, 0 / 16D)
             ));
             quads.addAll(getTransformedQuads(
-                    key.state, model, key.side.getOpposite(),
-                    new Vec3d(pS / 16D, nS / 16D, nS / 16D),
-                    new Vec3d(nS / 16D, nS / 16D, nS / 16D),
-                    new Vec3d(nS / 16D, pS / 16D, nS / 16D),
-                    new Vec3d(pS / 16D, pS / 16D, nS / 16D)
+                key.state, model, key.side.getOpposite(),
+                new Vec3d(pS / 16D, nS / 16D, nS / 16D),
+                new Vec3d(nS / 16D, nS / 16D, nS / 16D),
+                new Vec3d(nS / 16D, pS / 16D, nS / 16D),
+                new Vec3d(pS / 16D, pS / 16D, nS / 16D)
             ));
         }
         for (Rotation rotation : Rotation.values()) {
             if (key.isHollow) {
                 addRotatedQuads(
-                        quads, key.state, model, key.side, rotation,
-                        new Vec3d(0 / 16D, rotation.ordinal() % 2 == 0 ? 4 / 16D : 0 / 16D, 0 / 16D),
-                        new Vec3d(4 / 16D, rotation.ordinal() % 2 == 0 ? 4 / 16D : 0 / 16D, 0 / 16D),
-                        new Vec3d(4 / 16D, rotation.ordinal() % 2 == 0 ? 16 / 16D : 12 / 16D, 0 / 16D),
-                        new Vec3d(0 / 16D, rotation.ordinal() % 2 == 0 ? 16 / 16D : 12 / 16D, 0 / 16D)
+                    quads, key.state, model, key.side, rotation,
+                    new Vec3d(0 / 16D, rotation.ordinal() % 2 == 0 ? 4 / 16D : 0 / 16D, 0 / 16D),
+                    new Vec3d(4 / 16D, rotation.ordinal() % 2 == 0 ? 4 / 16D : 0 / 16D, 0 / 16D),
+                    new Vec3d(4 / 16D, rotation.ordinal() % 2 == 0 ? 16 / 16D : 12 / 16D, 0 / 16D),
+                    new Vec3d(0 / 16D, rotation.ordinal() % 2 == 0 ? 16 / 16D : 12 / 16D, 0 / 16D)
                 );
             }
             addRotatedQuads(
-                    quads, key.state, model, key.side.getOpposite(), rotation,
-                    new Vec3d(0 / 16D, 16 / 16D, 16 / 16D),
-                    new Vec3d(pS / 16D, nS / 16D, nS / 16D),
-                    new Vec3d(pS / 16D, pS / 16D, nS / 16D),
-                    new Vec3d(0 / 16D, 0 / 16D, 16 / 16D)
+                quads, key.state, model, key.side.getOpposite(), rotation,
+                new Vec3d(0 / 16D, 16 / 16D, 16 / 16D),
+                new Vec3d(pS / 16D, nS / 16D, nS / 16D),
+                new Vec3d(pS / 16D, pS / 16D, nS / 16D),
+                new Vec3d(0 / 16D, 0 / 16D, 16 / 16D)
             );
             if (key.isHollow) {
                 addRotatedQuads(
-                        quads, key.state, model, key.side.getOpposite(), rotation,
-                        new Vec3d(pS / 16D, rotation.ordinal() % 2 == 0 ? nS / 16D : 12 / 16D, nS / 16D),
-                        new Vec3d(4 / 16D, rotation.ordinal() % 2 == 0 ? nS / 16D : 12 / 16D, nS / 16D),
-                        new Vec3d(4 / 16D, rotation.ordinal() % 2 == 0 ? 4 / 16D : pS / 16D, nS / 16D),
-                        new Vec3d(pS / 16D, rotation.ordinal() % 2 == 0 ? 4 / 16D : pS / 16D, nS / 16D)
+                    quads, key.state, model, key.side.getOpposite(), rotation,
+                    new Vec3d(pS / 16D, rotation.ordinal() % 2 == 0 ? nS / 16D : 12 / 16D, nS / 16D),
+                    new Vec3d(4 / 16D, rotation.ordinal() % 2 == 0 ? nS / 16D : 12 / 16D, nS / 16D),
+                    new Vec3d(4 / 16D, rotation.ordinal() % 2 == 0 ? 4 / 16D : pS / 16D, nS / 16D),
+                    new Vec3d(pS / 16D, rotation.ordinal() % 2 == 0 ? 4 / 16D : pS / 16D, nS / 16D)
                 );
             }
         }
@@ -239,22 +248,22 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
                 if (facing.getAxis() != key.side.getAxis()) {
                     boolean positive = key.side.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE;
                     if (key.side.getAxis() == EnumFacing.Axis.Z && facing.getAxis() == EnumFacing.Axis.X ||
-                            key.side.getAxis() == EnumFacing.Axis.X && facing.getAxis() == EnumFacing.Axis.Y ||
-                            key.side.getAxis() == EnumFacing.Axis.Y && facing.getAxis() == EnumFacing.Axis.Z) {
+                        key.side.getAxis() == EnumFacing.Axis.X && facing.getAxis() == EnumFacing.Axis.Y ||
+                        key.side.getAxis() == EnumFacing.Axis.Y && facing.getAxis() == EnumFacing.Axis.Z) {
                         quads.addAll(getTransformedQuads(
-                                key.state, model, facing,
-                                new Vec3d(positive ? 16 / 16D : pS / 16D, 4 / 16D, 12.003 / 16D),
-                                new Vec3d(positive ? 16 / 16D : pS / 16D, 12 / 16D, 12.003 / 16D),
-                                new Vec3d(positive ? nS / 16D : 0 / 16D, 12 / 16D, 12.003 / 16D),
-                                new Vec3d(positive ? nS / 16D : 0 / 16D, 4 / 16D, 12.003 / 16D)
+                            key.state, model, facing,
+                            new Vec3d(positive ? 16 / 16D : pS / 16D, 4 / 16D, 12.003 / 16D),
+                            new Vec3d(positive ? 16 / 16D : pS / 16D, 12 / 16D, 12.003 / 16D),
+                            new Vec3d(positive ? nS / 16D : 0 / 16D, 12 / 16D, 12.003 / 16D),
+                            new Vec3d(positive ? nS / 16D : 0 / 16D, 4 / 16D, 12.003 / 16D)
                         ));
                     } else {
                         quads.addAll(getTransformedQuads(
-                                key.state, model, facing,
-                                new Vec3d(4 / 16D, positive ? 16 / 16D : pS / 16D, 12.003 / 16D),
-                                new Vec3d(4 / 16D, positive ? nS / 16D : 0 / 16D, 12.003 / 16D),
-                                new Vec3d(12 / 16D, positive ? nS / 16D : 0 / 16D, 12.003 / 16D),
-                                new Vec3d(12 / 16D, positive ? 16 / 16D : pS / 16D, 12.003 / 16D)
+                            key.state, model, facing,
+                            new Vec3d(4 / 16D, positive ? 16 / 16D : pS / 16D, 12.003 / 16D),
+                            new Vec3d(4 / 16D, positive ? nS / 16D : 0 / 16D, 12.003 / 16D),
+                            new Vec3d(12 / 16D, positive ? nS / 16D : 0 / 16D, 12.003 / 16D),
+                            new Vec3d(12 / 16D, positive ? 16 / 16D : pS / 16D, 12.003 / 16D)
                         ));
                     }
                 }
@@ -268,7 +277,7 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
         }
         return quads;
     }
-    
+
     @Override
     public List<BakedQuad> bake(KeyPlugFacade key) {
         List<MutableQuad> mutableQuads = bakeForKey(key);

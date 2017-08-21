@@ -137,10 +137,8 @@ public class NbtPath {
             } else {
                 return null;
             }
-        } else if (elements.isEmpty()) {
-            return tag;
         } else {
-            return null;
+            return tag;
         }
     }
 
@@ -191,6 +189,11 @@ public class NbtPath {
             default:
                 return null;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "NbtPath{" + elements + "}";
     }
 
     @SuppressWarnings("WeakerAccess")

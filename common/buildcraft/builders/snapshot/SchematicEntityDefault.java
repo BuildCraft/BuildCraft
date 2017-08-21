@@ -41,7 +41,7 @@ import buildcraft.api.schematics.SchematicEntityContext;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.RotationUtil;
 
-public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityDefault> {
+public class SchematicEntityDefault implements ISchematicEntity {
     private NBTTagCompound entityNbt;
     private Vec3d pos;
     private BlockPos hangingPos;
@@ -81,7 +81,7 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
 
     @Nonnull
     @Override
-    public List<ItemStack> computeRequiredItems(SchematicEntityContext context) {
+    public List<ItemStack> computeRequiredItems() {
         Set<JsonRule> rules = RulesLoader.getRules(
             new ResourceLocation(entityNbt.getString("id")),
             entityNbt
@@ -100,7 +100,7 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
 
     @Nonnull
     @Override
-    public List<FluidStack> computeRequiredFluids(SchematicEntityContext context) {
+    public List<FluidStack> computeRequiredFluids() {
         Set<JsonRule> rules = RulesLoader.getRules(
             new ResourceLocation(entityNbt.getString("id")),
             entityNbt
@@ -116,7 +116,7 @@ public class SchematicEntityDefault implements ISchematicEntity<SchematicEntityD
 
     @Override
     public SchematicEntityDefault getRotated(Rotation rotation) {
-        SchematicEntityDefault schematicEntity = new SchematicEntityDefault();
+        SchematicEntityDefault schematicEntity = SchematicEntityManager.createCleanCopy(this);
         schematicEntity.entityNbt = entityNbt;
         schematicEntity.pos = RotationUtil.rotateVec3d(pos, rotation);
         schematicEntity.hangingPos = hangingPos.rotate(rotation);

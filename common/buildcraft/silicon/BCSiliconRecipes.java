@@ -140,7 +140,7 @@ public class BCSiliconRecipes {
         }
 
         String name = String.format("chipset-%s", type);
-        AssemblyRecipe recp = new AssemblyRecipe(name, multiplier * 10_000 * MjAPI.MJ, inputs.build(), output);
+        AssemblyRecipe recp = new AssemblyRecipe(name, multiplier * 10_000L * MjAPI.MJ, inputs.build(), output);
         AssemblyRecipeRegistry.INSTANCE.addRecipe(recp);
     }
 }

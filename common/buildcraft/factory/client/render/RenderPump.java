@@ -94,7 +94,6 @@ public class RenderPump extends FastTESR<TilePump> {
         TUBE_LASER = new LaserType(cap, middle, middles, null, cap);
     }
 
-    /** TODO: Call this! */
     public static void textureStitchPost() {
         for (int i = 0; i < 4; i++) {
             LED_POWER[i].setWhiteTex();

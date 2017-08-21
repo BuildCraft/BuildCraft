@@ -9,8 +9,6 @@ package buildcraft.builders.container;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -21,7 +19,6 @@ import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.lib.gui.slot.SlotDisplay;
 import buildcraft.lib.gui.widget.WidgetFluidTank;
 
-import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.tile.TileBuilder;
 
 public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
@@ -32,12 +29,7 @@ public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
 
         addFullPlayerInventory(140);
 
-        addSlotToContainer(new SlotBase(tile.invSnapshot, 0, 80, 27) {
-            @Override
-            public boolean isItemValid(@Nonnull ItemStack stack) {
-                return stack.getItem() instanceof ItemSnapshot && ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used;
-            }
-        });
+        addSlotToContainer(new SlotBase(tile.invSnapshot, 0, 80, 27));
 
         for (int sy = 0; sy < 3; sy++) {
             for (int sx = 0; sx < 9; sx++) {

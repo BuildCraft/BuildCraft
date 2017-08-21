@@ -1,0 +1,24 @@
+{
+	"entry_mask": "<mod><sub_mod>:compat/buildcraft/guide/<lang>/<type>/<page>",
+	"default_tags": {
+		"mod": "buildcraft",
+		"sub_mod": "energy"
+	},
+	"contents": [{
+			"title": "tile.engineStone.name",
+			"item_stack": "{buildcraftcore:engine,1,1}",
+			"page": "engine_stone.md",
+			"type_tags": {
+				"type": "block",
+				"sub_type": "engine"
+			}
+		},{
+			"title": "tile.engineIron.name",
+			"item_stack": "{buildcraftcore:engine,1,2}",
+			"page": "engine_iron.md",
+			"type_tags": {
+				"type": "block",
+				"sub_type": "engine"
+			}
+		}]
+}

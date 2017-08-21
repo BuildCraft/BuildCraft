@@ -6,13 +6,14 @@
 
 package buildcraft.builders.snapshot;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -29,16 +30,15 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 
 import buildcraft.lib.BCLib;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.JsonUtil;
 
 public class RulesLoader {
@@ -51,29 +51,6 @@ public class RulesLoader {
                     json.getAsJsonArray().get(1).getAsInt(),
                     json.getAsJsonArray().get(2).getAsInt()
                 )
-        )
-        .registerTypeAdapter(
-            ItemStack.class,
-            (JsonDeserializer<ItemStack>) (json, typeOfT, context) ->
-                FluidRegistry.isFluidRegistered(json.getAsJsonObject().get("item").getAsString())
-                    ?
-                    new ItemStack(
-                        Objects.requireNonNull(Item.getByNameOrId(json.getAsJsonObject().get("item").getAsString())),
-                        json.getAsJsonObject().get("amount").getAsInt(),
-                        json.getAsJsonObject().get("meta").getAsInt()
-                    )
-                    : ItemStack.EMPTY
-        )
-        .registerTypeAdapter(
-            FluidStack.class,
-            (JsonDeserializer<FluidStack>) (json, typeOfT, context) ->
-                FluidRegistry.isFluidRegistered(json.getAsJsonObject().get("fluid").getAsString())
-                    ?
-                    new FluidStack(
-                        Objects.requireNonNull(FluidRegistry.getFluid(json.getAsJsonObject().get("fluid").getAsString())),
-                        json.getAsJsonObject().get("amount").getAsInt()
-                    )
-                    : null
         )
         .registerTypeAdapter(RequiredExtractor.class, RequiredExtractor.DESERIALIZER)
         .registerTypeAdapter(EnumNbtCompareOperation.class, EnumNbtCompareOperation.DESERIALIZER)
@@ -94,28 +71,45 @@ public class RulesLoader {
     public static void loadAll() {
         RULES.clear();
         READ_DOMAINS.clear();
-        Block.REGISTRY.forEach(block -> {
-            if (block == null || block.getRegistryName() == null) {
-                return;
-            }
-            String domain = block.getRegistryName().getResourceDomain();
+        for (ModContainer modContainer : Loader.instance().getModList()) {
+            String domain = modContainer.getModId();
             if (!READ_DOMAINS.contains(domain)) {
-                InputStream inputStream = block.getClass().getClassLoader().getResourceAsStream(
-                    "assets/" + domain + "/buildcraft/builders/rules.json"
+                String base = "assets/" + domain + "/compat/buildcraft/builders/";
+                if (modContainer.getMod() == null) {
+                    continue;
+                }
+                InputStream inputStream = modContainer.getMod().getClass().getClassLoader().getResourceAsStream(
+                    base + "index.json"
                 );
                 if (inputStream != null) {
-                    RULES.addAll(
-                        GSON
-                            .fromJson(
-                                new InputStreamReader(inputStream),
+                    GSON.<List<String>>fromJson(
+                        new InputStreamReader(inputStream, StandardCharsets.UTF_8),
+                        new TypeToken<List<String>>() {
+                        }.getType()
+                    ).stream()
+                        .map(name -> base + name + ".json")
+                        .map(name -> {
+                            InputStream resourceAsStream = modContainer.getMod()
+                                .getClass()
+                                .getClassLoader()
+                                .getResourceAsStream(name);
+                            if (resourceAsStream == null) {
+                                throw new RuntimeException(new IOException("Can't read " + name));
+                            }
+                            return resourceAsStream;
+                        })
+                        .flatMap(localInputStream ->
+                            GSON.<List<JsonRule>>fromJson(
+                                new InputStreamReader(localInputStream),
                                 new TypeToken<List<JsonRule>>() {
                                 }.getType()
-                            )
-                    );
+                            ).stream()
+                        )
+                        .forEach(RULES::add);
                     READ_DOMAINS.add(domain);
                 }
             }
-        });
+        }
         READ_DOMAINS.add("minecraft");
         READ_DOMAINS.add("buildcraftcore");
         READ_DOMAINS.add("buildcraftlib");
@@ -155,12 +149,14 @@ public class RulesLoader {
                                             .map(nameValue -> nameValue.split("="))
                                             .allMatch(nameValue ->
                                                 blockState.getPropertyKeys().stream()
-                                                    .filter(property ->
-                                                        property.getName().equals(nameValue[0])
-                                                    )
+                                                    .filter(property -> property.getName().equals(nameValue[0]))
                                                     .findFirst()
-                                                    .map(blockState::getValue)
-                                                    .map(Object::toString)
+                                                    .map(property ->
+                                                        BlockUtil.getPropertyStringValue(
+                                                            blockState,
+                                                            property
+                                                        )
+                                                    )
                                                     .map(nameValue[1]::equals)
                                                     .orElse(false)
                                             )

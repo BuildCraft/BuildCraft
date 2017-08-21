@@ -7,7 +7,7 @@
 package buildcraft.transport.plug;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +19,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -33,15 +32,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -49,17 +42,20 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.facades.FacadeAPI;
-import buildcraft.api.facades.FacadeType;
+import buildcraft.api.facades.IFacade;
+import buildcraft.api.facades.IFacadePhasedState;
+import buildcraft.api.facades.IFacadeRegistry;
+import buildcraft.api.facades.IFacadeState;
 
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.ItemStackKey;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.world.SingleBlockAccess;
 
-public class FacadeStateManager {
+import buildcraft.transport.recipe.FacadeSwapRecipe;
+
+public enum FacadeStateManager implements IFacadeRegistry {
+    INSTANCE;
+
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("transport.facade");
     public static final SortedMap<IBlockState, FacadeBlockStateInfo> validFacadeStates;
     public static final Map<ItemStackKey, List<FacadeBlockStateInfo>> stackFacades;
@@ -139,7 +135,7 @@ public class FacadeStateManager {
      *         {@link #isValidFacadeState(IBlockState)}</li>
      *         <li>OR {@link #STR_SUCCESS} if every state of the block is valid for a facade.
      *         </ul>
-     */
+    */
     private static String isValidFacadeBlock(Block block) {
         String disablingMod = disabledBlocks.get(block);
         if (disablingMod != null) {
@@ -159,11 +155,10 @@ public class FacadeStateManager {
 
     /** @return Any of:
      *         <ul>
-     *         <li>A string describing the problem with this state (if it is not valid for a facade)
-     *         </li>
+     *         <li>A string describing the problem with this state (if it is not valid for a facade)</li>
      *         <li>OR {@link #STR_SUCCESS} if this state is valid for a facade.
      *         </ul>
-     */
+    */
     private static String isValidFacadeState(IBlockState state) {
         if (state.getBlock().hasTileEntity(state)) {
             return "it has a tile entity";
@@ -257,211 +252,27 @@ public class FacadeStateManager {
             }
         }
         previewState = validFacadeStates.get(Blocks.BRICK_BLOCK.getDefaultState());
+        FacadeSwapRecipe.genRecipes();
     }
 
-    public static class FacadeBlockStateInfo {
-        public final IBlockState state;
-        public final ItemStack requiredStack;
-        public final ImmutableSet<IProperty<?>> varyingProperties;
-        public final boolean isTransparent;
-        public final boolean isVisible;
-        public final boolean[] isSideSolid = new boolean[6];
+    // IFacadeRegistry
 
-        public FacadeBlockStateInfo(
-            IBlockState state,
-            ItemStack requiredStack,
-            ImmutableSet<IProperty<?>> varyingProperties) {
-            this.state = state;
-            this.requiredStack = requiredStack;
-            this.varyingProperties = varyingProperties;
-            this.isTransparent = !state.isOpaqueCube();
-            this.isVisible = !requiredStack.isEmpty();
-            IBlockAccess access = new SingleBlockAccess(state);
-            for (EnumFacing side : EnumFacing.VALUES) {
-                isSideSolid[side.ordinal()] = state.isSideSolid(access, BlockPos.ORIGIN, side);
-            }
-        }
-
-        // Helper methods
-
-        public FacadePhasedState createPhased(boolean isHollow, EnumDyeColor activeColour) {
-            return new FacadePhasedState(this, isHollow, activeColour);
-        }
+    @Override
+    public Collection<? extends IFacadeState> getValidFacades() {
+        return validFacadeStates.values();
     }
 
-    public static class FacadePhasedState {
-        public final FacadeBlockStateInfo stateInfo;
-        public final boolean isHollow;
-        @Nullable
-        public final EnumDyeColor activeColour;
-
-        public FacadePhasedState(FacadeBlockStateInfo stateInfo, boolean isHollow, EnumDyeColor activeColour) {
-            this.stateInfo = stateInfo;
-            this.isHollow = isHollow;
-            this.activeColour = activeColour;
-        }
-
-        public static FacadePhasedState readFromNbt(NBTTagCompound nbt) {
-            FacadeBlockStateInfo stateInfo = defaultState;
-            if (nbt.hasKey("state")) {
-                try {
-                    IBlockState blockState = NBTUtil.readBlockState(nbt.getCompoundTag("state"));
-                    stateInfo = validFacadeStates.get(blockState);
-                    if (stateInfo == null) {
-                        stateInfo = defaultState;
-                    }
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
-            }
-            boolean isHollow = nbt.getBoolean("isHollow");
-            EnumDyeColor colour = NBTUtilBC.readEnum(nbt.getTag("activeColour"), EnumDyeColor.class);
-            return new FacadePhasedState(stateInfo, isHollow, colour);
-        }
-
-        public NBTTagCompound writeToNbt() {
-            NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setTag("state", NBTUtil.writeBlockState(new NBTTagCompound(), stateInfo.state));
-            nbt.setBoolean("isHollow", isHollow);
-            if (activeColour != null) {
-                nbt.setTag("activeColour", NBTUtilBC.writeEnum(activeColour));
-            }
-            return nbt;
-        }
-
-        public static FacadePhasedState readFromBuffer(PacketBufferBC buf) {
-            IBlockState state = MessageUtil.readBlockState(buf);
-            boolean isHollow = buf.readBoolean();
-            EnumDyeColor colour = MessageUtil.readEnumOrNull(buf, EnumDyeColor.class);
-            FacadeBlockStateInfo info = validFacadeStates.get(state);
-            if (info == null) {
-                info = defaultState;
-            }
-            return new FacadePhasedState(info, isHollow, colour);
-        }
-
-        public void writeToBuffer(PacketBufferBC buf) {
-            MessageUtil.writeBlockState(buf, stateInfo.state);
-            buf.writeBoolean(isHollow);
-            MessageUtil.writeEnumOrNull(buf, activeColour);
-        }
-
-        public FacadePhasedState withSwappedIsHollow() {
-            return new FacadePhasedState(stateInfo, !isHollow, activeColour);
-        }
-
-        public FacadePhasedState withColour(EnumDyeColor colour) {
-            return new FacadePhasedState(stateInfo, isHollow, colour);
-        }
-
-        public boolean isSideSolid(EnumFacing side) {
-            return stateInfo.isSideSolid[side.ordinal()];
-        }
+    @Override
+    public IFacadePhasedState createPhasedState(IFacadeState state, boolean isHollow, EnumDyeColor activeColor) {
+        return new FacadePhasedState((FacadeBlockStateInfo) state, isHollow, activeColor);
     }
 
-    public static class FullFacadeInstance {
-        public final FacadePhasedState[] phasedStates;
-        public final FacadeType type;
-
-        public FullFacadeInstance(FacadePhasedState[] phasedStates) {
-            if (phasedStates == null) throw new NullPointerException("phasedStates");
-            if (phasedStates.length == 0) throw new IllegalArgumentException("phasedStates.length was 0");
-            // Maximum of 17 states - 16 for each colour, 1 for no colour
-            if (phasedStates.length > 17) throw new IllegalArgumentException("phasedStates.length was > 17");
-            this.phasedStates = phasedStates;
-            if (phasedStates.length == 1) {
-                type = FacadeType.Basic;
-            } else {
-                type = FacadeType.Phased;
-            }
+    @Override
+    public IFacade createPhasedFacade(IFacadePhasedState[] states) {
+        FacadePhasedState[] realStates = new FacadePhasedState[states.length];
+        for (int i = 0; i < states.length; i++) {
+            realStates[i] = (FacadePhasedState) states[i];
         }
-
-        public static FullFacadeInstance createSingle(FacadeBlockStateInfo info, boolean isHollow) {
-            return new FullFacadeInstance(new FacadePhasedState[] { new FacadePhasedState(info, isHollow, null) });
-        }
-
-        public static FullFacadeInstance readFromNbt(NBTTagCompound nbt, String subTag) {
-            NBTTagList list = nbt.getTagList(subTag, Constants.NBT.TAG_COMPOUND);
-            if (list.hasNoTags()) {
-                return new FullFacadeInstance(
-                    new FacadePhasedState[] { new FacadePhasedState(defaultState, false, null) });
-            }
-            FacadePhasedState[] states = new FacadePhasedState[list.tagCount()];
-            for (int i = 0; i < list.tagCount(); i++) {
-                states[i] = FacadePhasedState.readFromNbt(list.getCompoundTagAt(i));
-            }
-            return new FullFacadeInstance(states);
-        }
-
-        public void writeToNbt(NBTTagCompound nbt, String subTag) {
-            NBTTagList list = new NBTTagList();
-            for (FacadePhasedState state : phasedStates) {
-                list.appendTag(state.writeToNbt());
-            }
-            nbt.setTag(subTag, list);
-        }
-
-        public static FullFacadeInstance readFromBuffer(PacketBufferBC buf) {
-            int count = buf.readFixedBits(5);
-            FacadePhasedState[] states = new FacadePhasedState[count];
-            for (int i = 0; i < count; i++) {
-                states[i] = FacadePhasedState.readFromBuffer(buf);
-            }
-            return new FullFacadeInstance(states);
-        }
-
-        public void writeToBuffer(PacketBufferBC buf) {
-            buf.writeFixedBits(phasedStates.length, 5);
-            for (FacadePhasedState phasedState : phasedStates) {
-                phasedState.writeToBuffer(buf);
-            }
-        }
-
-        public boolean canAddColour(EnumDyeColor colour) {
-            for (FacadePhasedState state : phasedStates) {
-                if (state.activeColour == colour) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        @Nullable
-        public FullFacadeInstance withState(FacadePhasedState state) {
-            if (canAddColour(state.activeColour)) {
-                FacadePhasedState[] newStates = Arrays.copyOf(phasedStates, phasedStates.length + 1);
-                newStates[newStates.length - 1] = state;
-                return new FullFacadeInstance(newStates);
-            } else {
-                return null;
-            }
-        }
-
-        public FacadePhasedState getCurrentStateForStack() {
-            int count = phasedStates.length;
-            if (count == 1) {
-                return phasedStates[0];
-            } else {
-                int now = (int) (System.currentTimeMillis() % 100_000);
-                return phasedStates[(now / 500) % count];
-            }
-        }
-
-        public FullFacadeInstance withSwappedIsHollow() {
-            FacadePhasedState[] newStates = Arrays.copyOf(phasedStates, phasedStates.length);
-            for (int i = 0; i < newStates.length; i++) {
-                newStates[i] = newStates[i].withSwappedIsHollow();
-            }
-            return new FullFacadeInstance(newStates);
-        }
-
-        public boolean areAllStatesSolid(EnumFacing side) {
-            for (FacadePhasedState state : phasedStates) {
-                if (!state.isSideSolid(side)) {
-                    return false;
-                }
-            }
-            return true;
-        }
+        return new FacadeInstance(realStates);
     }
 }

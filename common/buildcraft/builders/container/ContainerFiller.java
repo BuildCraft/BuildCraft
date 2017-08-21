@@ -6,15 +6,11 @@
 
 package buildcraft.builders.container;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 
-import buildcraft.builders.filling.Filling;
 import buildcraft.builders.tile.TileFiller;
 
 public class ContainerFiller extends ContainerBCTile<TileFiller> {
@@ -25,12 +21,7 @@ public class ContainerFiller extends ContainerBCTile<TileFiller> {
 
         for (int sy = 0; sy < 3; sy++) {
             for (int sx = 0; sx < 9; sx++) {
-                addSlotToContainer(new SlotBase(tile.invResources, sx + sy * 9, 8 + sx * 18, 85 + sy * 18) {
-                    @Override
-                    public boolean isItemValid(@Nonnull ItemStack stack) {
-                        return Filling.getItemBlocks().contains(stack.getItem());
-                    }
-                });
+                addSlotToContainer(new SlotBase(tile.invResources, sx + sy * 9, sx * 18 + 8, sy * 18 + 40));
             }
         }
     }

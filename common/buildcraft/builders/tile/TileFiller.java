@@ -8,6 +8,7 @@ package buildcraft.builders.tile;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
@@ -171,15 +172,15 @@ public class TileFiller extends TileBC_Neptune
                 int sx = patternTemplate.sizeX;
                 int sy = patternTemplate.sizeY;
                 int sz = patternTemplate.sizeZ;
-                blueprintTemplate.data = new boolean[sx][sy][sz];
+                blueprintTemplate.data = new BitSet();
                 for (int x = 0; x < sx; x++) {
                     for (int y = 0; y < sy; y++) {
                         for (int z = 0; z < sz; z++) {
-                            blueprintTemplate.data[x][y][z] = patternTemplate.get(x, y, z) ^ invertPattern;
+                            blueprintTemplate.data.set(blueprintTemplate.posToIndex(x, y, z), patternTemplate.get(x, y, z) ^ invertPattern);
                         }
                     }
                 }
-                buildingInfo = blueprintTemplate.new BuildingInfo(patternTemplate.min, Rotation.NONE);
+                buildingInfo = blueprintTemplate.new BuildingInfo(box.min(), Rotation.NONE);
                 builder.updateSnapshot();
             }
         }
@@ -443,6 +444,8 @@ public class TileFiller extends TileBC_Neptune
         }
         finished = false;
         lockedTicks = 3;
+//        patternTemplate = null;
+//        blueprintTemplate = null;
     }
 
     // IControllable

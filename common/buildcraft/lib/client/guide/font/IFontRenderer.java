@@ -9,7 +9,12 @@ package buildcraft.lib.client.guide.font;
 public interface IFontRenderer {
     int getStringWidth(String text);
 
-    int getFontHeight();
+    int getFontHeight(String text);
 
-    int drawString(String text, int x, int y, int shade);
+    default int drawString(String text, int x, int y, int colour) {
+        return drawString(text, x, y, colour, 1);
+    }
+
+    /** @param scale The scale, relative to {@link #getFontHeight(String)} */
+    int drawString(String text, int x, int y, int colour, float scale);
 }

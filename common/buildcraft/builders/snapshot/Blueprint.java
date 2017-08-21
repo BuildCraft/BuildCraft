@@ -8,15 +8,14 @@ package buildcraft.builders.snapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import org.apache.commons.lang3.tuple.Pair;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,33 +33,26 @@ import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.ISchematicEntity;
 
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.data.Box;
 
 public class Blueprint extends Snapshot {
-    public final List<ISchematicBlock<?>> palette = new ArrayList<>();
-    public int[][][] data;
-    public final List<ISchematicEntity<?>> entities = new ArrayList<>();
+    public final List<ISchematicBlock> palette = new ArrayList<>();
+    public int[] data;
+    public final List<ISchematicEntity> entities = new ArrayList<>();
 
+    @Override
     public Blueprint copy() {
         Blueprint blueprint = new Blueprint();
         blueprint.size = size;
         blueprint.facing = facing;
         blueprint.offset = offset;
         blueprint.palette.addAll(palette);
-        blueprint.data = new int[size.getX()][size.getY()][size.getZ()];
-        for (int z = 0; z < size.getZ(); z++) {
-            for (int y = 0; y < size.getY(); y++) {
-                for (int x = 0; x < size.getX(); x++) {
-                    blueprint.data[x][y][z] = data[x][y][z];
-                }
-            }
-        }
+        blueprint.data = data.clone();
         blueprint.entities.addAll(entities);
         blueprint.computeKey();
         return blueprint;
     }
 
-    public void replace(ISchematicBlock<?> from, ISchematicBlock<?> to) {
+    public void replace(ISchematicBlock from, ISchematicBlock to) {
         Collections.replaceAll(palette, from, to);
         // TODO: reallocate IDs
     }
@@ -73,7 +65,7 @@ public class Blueprint extends Snapshot {
         for (int z = 0; z < size.getZ(); z++) {
             for (int y = 0; y < size.getY(); y++) {
                 for (int x = 0; x < size.getX(); x++) {
-                    list.appendTag(new NBTTagInt(data[x][y][z]));
+                    list.appendTag(new NBTTagInt(data[posToIndex(x, y, z)]));
                 }
             }
         }
@@ -94,25 +86,32 @@ public class Blueprint extends Snapshot {
             // schematics through mod additions/deletions)
             palette.add(SchematicBlockManager.readFromNBT(schematicBlockTag));
         }
-        data = new int[size.getX()][size.getY()][size.getZ()];
-
-        NBTTagList list = nbt.hasKey("data", Constants.NBT.TAG_LIST) ? nbt.getTagList("data", Constants.NBT.TAG_INT)
+        data = new int[size.getX() * size.getY() * size.getZ()];
+        NBTTagList serializedDataList = nbt.hasKey("data", Constants.NBT.TAG_LIST)
+            ? nbt.getTagList("data", Constants.NBT.TAG_INT)
             : null;
-        int[] serializedData = nbt.hasKey("data", Constants.NBT.TAG_INT_ARRAY) ? nbt.getIntArray("data") : new int[0];
-        if (serializedData == null && list == null) {
+        int[] serializedDataIntArray = nbt.hasKey("data", Constants.NBT.TAG_INT_ARRAY)
+            ? nbt.getIntArray("data")
+            : null;
+        if (serializedDataIntArray == null && serializedDataList == null) {
             throw new InvalidInputDataException("Can't read a blueprint with no data!");
         }
-        int len = list == null ? serializedData.length : list.tagCount();
-        if (len != size.getX() * size.getY() * size.getZ()) {
-            throw new InvalidInputDataException("Palette has length of " + len
-                + ", but we expected " + size.getX() * size.getY() * size.getZ() + size.toString());
+        int serializedDataLength = serializedDataList == null
+            ? serializedDataIntArray.length
+            : serializedDataList.tagCount();
+        if (serializedDataLength != size.getX() * size.getY() * size.getZ()) {
+            throw new InvalidInputDataException(
+                "Serialized data has length of " + serializedDataLength +
+                    ", but we expected " +
+                    size.getX() * size.getY() * size.getZ() + " (" + size.toString() + ")"
+            );
         }
-        int i = 0;
         for (int z = 0; z < size.getZ(); z++) {
             for (int y = 0; y < size.getY(); y++) {
                 for (int x = 0; x < size.getX(); x++) {
-                    data[x][y][z] = list == null ? serializedData[i] : list.getIntAt(i);
-                    i++;
+                    data[posToIndex(x, y, z)] = serializedDataList == null
+                        ? serializedDataIntArray[posToIndex(x, y, z)]
+                        : serializedDataList.getIntAt(posToIndex(x, y, z));
                 }
             }
         }
@@ -127,59 +126,56 @@ public class Blueprint extends Snapshot {
         return EnumSnapshotType.BLUEPRINT;
     }
 
-    public class BuildingInfo {
-        public final BlockPos basePos;
-        public final Rotation rotation;
-        private final Box box;
-        public final Set<BlockPos> toBreak = new HashSet<>();
-        public final Map<BlockPos, ISchematicBlock<?>> toPlace = new HashMap<>();
-        public final Map<BlockPos, List<ItemStack>> toPlaceRequiredItems = new HashMap<>();
-        public final Map<BlockPos, List<FluidStack>> toPlaceRequiredFluids = new HashMap<>();
-        public final Set<ISchematicEntity<?>> entities = new HashSet<>();
-        public final Map<ISchematicEntity<?>, List<ItemStack>> entitiesRequiredItems = new HashMap<>();
-        public final Map<ISchematicEntity<?>, List<FluidStack>> entitiesRequiredFluids = new HashMap<>();
+    @SuppressWarnings("WeakerAccess")
+    public class BuildingInfo extends Snapshot.BuildingInfo {
+        public final List<ItemStack>[] toPlaceRequiredItems;
+        public final List<FluidStack>[] toPlaceRequiredFluids;
+        public final List<ISchematicBlock> rotatedPalette;
+        public final Set<ISchematicEntity> entities;
+        public final Map<ISchematicEntity, List<ItemStack>> entitiesRequiredItems;
+        public final Map<ISchematicEntity, List<FluidStack>> entitiesRequiredFluids;
 
         public BuildingInfo(BlockPos basePos, Rotation rotation) {
-            this.basePos = basePos;
-            this.rotation = rotation;
-            Pair<List<ItemStack>[][][], List<FluidStack>[][][]> required = SchematicBlockManager.computeRequired(
-                getSnapshot());
-            Pair<List<List<ItemStack>>, List<List<FluidStack>>> requiredEntities = SchematicEntityManager
-                .computeRequired(getSnapshot());
+            super(basePos, rotation);
+            // noinspection unchecked
+            toPlaceRequiredItems = (List<ItemStack>[]) new List<?>[size.getX() * size.getY() * size.getZ()];
+            // noinspection unchecked
+            toPlaceRequiredFluids = (List<FluidStack>[]) new List<?>[size.getX() * size.getY() * size.getZ()];
+            rotatedPalette = ImmutableList.copyOf(
+                palette.stream()
+                    .map(schematicBlock -> schematicBlock.getRotated(rotation))
+                    .collect(Collectors.toList())
+            );
             for (int z = 0; z < getSnapshot().size.getZ(); z++) {
                 for (int y = 0; y < getSnapshot().size.getY(); y++) {
                     for (int x = 0; x < getSnapshot().size.getX(); x++) {
-                        ISchematicBlock<?> schematicBlock = palette.get(data[x][y][z]);
-                        BlockPos blockPos = new BlockPos(x, y, z).rotate(rotation).add(basePos).add(offset.rotate(
-                            rotation));
-                        if (schematicBlock.isAir()) {
-                            toBreak.add(blockPos);
-                        } else {
-                            toPlace.put(blockPos, schematicBlock.getRotated(rotation));
-                            toPlaceRequiredItems.put(blockPos, required.getLeft()[x][y][z]);
-                            toPlaceRequiredFluids.put(blockPos, required.getRight()[x][y][z]);
+                        ISchematicBlock schematicBlock = rotatedPalette.get(data[posToIndex(x, y, z)]);
+                        if (!schematicBlock.isAir()) {
+                            toPlaceRequiredItems[posToIndex(x, y, z)] = schematicBlock.computeRequiredItems();
+                            toPlaceRequiredFluids[posToIndex(x, y, z)] = schematicBlock.computeRequiredFluids();
                         }
                     }
                 }
             }
-            int i = 0;
-            for (ISchematicEntity<?> schematicEntity : getSnapshot().entities) {
-                ISchematicEntity<?> rotatedSchematicEntity = schematicEntity.getRotated(rotation);
-                entities.add(rotatedSchematicEntity);
-                entitiesRequiredItems.put(rotatedSchematicEntity, requiredEntities.getLeft().get(i));
-                entitiesRequiredFluids.put(rotatedSchematicEntity, requiredEntities.getRight().get(i));
-                i++;
+            ImmutableSet.Builder<ISchematicEntity> entitiesBuilder = ImmutableSet.builder();
+            ImmutableMap.Builder<ISchematicEntity, List<ItemStack>> entitiesRequiredItemsBuilder =
+                ImmutableMap.builder();
+            ImmutableMap.Builder<ISchematicEntity, List<FluidStack>> entitiesRequiredFluidsBuilder =
+                ImmutableMap.builder();
+            for (ISchematicEntity schematicEntity : getSnapshot().entities) {
+                ISchematicEntity rotatedSchematicEntity = schematicEntity.getRotated(rotation);
+                entitiesBuilder.add(rotatedSchematicEntity);
+                entitiesRequiredItemsBuilder.put(rotatedSchematicEntity, schematicEntity.computeRequiredItems());
+                entitiesRequiredFluidsBuilder.put(rotatedSchematicEntity, schematicEntity.computeRequiredFluids());
             }
-            box = new Box();
-            Stream.concat(toBreak.stream(), toPlace.keySet().stream()).forEach(box::extendToEncompass);
+            entities = entitiesBuilder.build();
+            entitiesRequiredItems = entitiesRequiredItemsBuilder.build();
+            entitiesRequiredFluids = entitiesRequiredFluidsBuilder.build();
         }
 
+        @Override
         public Blueprint getSnapshot() {
             return Blueprint.this;
-        }
-
-        public Box getBox() {
-            return box;
         }
     }
 }

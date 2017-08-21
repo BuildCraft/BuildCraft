@@ -147,7 +147,6 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         super.getDebugInfo(left, right, side);
-        left.add("");
         left.add("Min = " + min());
         left.add("Max = " + max());
         left.add("Signals = " + showSignals);

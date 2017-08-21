@@ -1,0 +1,174 @@
+[
+    {
+        "selectors": ["minecraft:cake"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:cake"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:wheat"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:wheat_seeds"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:pumpkin_stem"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:pumpkin_seeds"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:melon_stem"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:melon_seeds"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:beetroots"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:beetroot_seeds"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:carrots"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:carrot"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:potatoes"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:potato"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:reeds"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:reeds"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:standing_sign", "minecraft:wall_sign"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:sign"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:double_plant[variant=double_grass]"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:double_plant",
+                        "meta": 2
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:tallgrass[type=tall_grass]"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:tallgrass",
+                        "meta": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:tallgrass[type=fern]"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:tallgrass",
+                        "meta": 2
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:cauldron"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:cauldron"
+                    }
+                ]
+            }
+        ]
+    }
+]

@@ -39,8 +39,8 @@ import buildcraft.transport.item.ItemPluggableFacade;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
-import buildcraft.transport.plug.FacadeStateManager.FacadePhasedState;
-import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
+import buildcraft.transport.plug.FacadeInstance;
+import buildcraft.transport.plug.FacadePhasedState;
 import buildcraft.transport.plug.PluggableGate;
 import buildcraft.transport.tile.TileFilteredBuffer;
 import buildcraft.transport.tile.TilePipeHolder;
@@ -170,7 +170,7 @@ public abstract class BCTransportProxy implements IGuiHandler {
                 return -1;
             }, BCTransportBlocks.pipeHolder);
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler((item, tintIndex) -> {
-                FullFacadeInstance states = ItemPluggableFacade.getStates(item);
+                FacadeInstance states = ItemPluggableFacade.getStates(item);
                 FacadePhasedState state = states.getCurrentStateForStack();
                 return Minecraft.getMinecraft().getBlockColors().getColor(state.stateInfo.state);
             }, BCTransportItems.plugFacade);

@@ -13,6 +13,7 @@ import net.minecraft.item.ItemMinecart;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.EnumHandlerPriority;
+import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.transport.pipe.ICustomPipeConnection;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeConnectionAPI;
@@ -24,6 +25,7 @@ import buildcraft.transport.pipe.flow.PipeFlowFluids;
 import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.pipe.flow.PipeFlowStructure;
+import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.PluggableRegistry;
 import buildcraft.transport.stripes.StripesHandlerDispenser;
 import buildcraft.transport.stripes.StripesHandlerEntityInteract;
@@ -36,6 +38,8 @@ import buildcraft.transport.stripes.StripesHandlerUse;
 
 public class BCTransportRegistries {
     public static void preInit() {
+        FacadeAPI.registry = FacadeStateManager.INSTANCE;
+
         PipeApi.pipeRegistry = PipeRegistry.INSTANCE;
         PipeApi.pluggableRegistry = PluggableRegistry.INSTANCE;
         PipeApi.stripeRegistry = StripesRegistry.INSTANCE;

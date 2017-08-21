@@ -39,7 +39,7 @@ public class AverageDouble implements INBTSerializable<NBTTagCompound> {
     }
 
     private void internalTick(double value) {
-        pos = ++pos % precise;
+        pos = (pos + 1) % precise;
         double oldValue = data[pos];
         data[pos] = value;
         if (pos == 0) {

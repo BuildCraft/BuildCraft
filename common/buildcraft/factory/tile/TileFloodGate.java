@@ -299,7 +299,6 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     @Override
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("");
         left.add("fluid = " + tank.getDebugString());
         left.add("open sides = " + openSides.entrySet().stream()
             .filter(Entry::getValue)

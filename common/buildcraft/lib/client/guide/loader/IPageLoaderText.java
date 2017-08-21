@@ -23,5 +23,5 @@ public interface IPageLoaderText extends IPageLoader {
         return loadPage(new BufferedReader(reader), entry);
     }
 
-    GuidePageFactory loadPage(BufferedReader bufferedReader, PageEntry entry) throws IOException;
+    GuidePageFactory loadPage(BufferedReader reader, PageEntry entry) throws IOException;
 }

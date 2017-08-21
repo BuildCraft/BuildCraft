@@ -295,7 +295,6 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
     @Override
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("");
         left.add("In = " + tankIn.getDebugString());
         left.add("OutGas = " + tankOutGas.getDebugString());
         left.add("OutLiquid = " + tankOutLiquid.getDebugString());

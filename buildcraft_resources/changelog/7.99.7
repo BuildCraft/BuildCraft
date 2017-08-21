@@ -1,0 +1,29 @@
+Breaking changes:
+
+ * The guide book loads entries differently (A breaking change for addon devs)
+   * The contents pages is now loaded from "assets/<domain>/compat/buildcraft/contents.json", rather than "assets/<domain>/guide/contents.json"
+
+Improvements:
+
+ * Guide book entries are loaded from any resource pack, rather than just mod jar files.
+ * All loaded contnts pages are listed at the start of the book, along with the mod version
+ * [#3773] Facade API has been expanded to give more information.
+   * The facade pluggable now implements "buildcraft.api.facades.IFacade" - addon devs can use this for more detailed interaction
+   * Many methods and classes have been added to give information about phased facades.
+
+Bugs fixed:
+
+ * [#3700] Fix crash with sponge (using a fakeworld to get block and entity requirements) (afdw)
+ * [#3711] Guide images crash when used. (AlexIIL)
+ * [#3721] Concurrent issue when looking at the autoworkbench in debug mode (F3) (AlexIIL)
+ * [#3724] Oil generation code crashes on the server (AEnterprise)
+ * [#3725] The autoworkbench throws out excess items (such as a bucket) (AEnterprise)
+ * [#3726] The advanced crafting table cannot craft even if its fully charged (AEnterprise)
+ * [#3745] Landmarks needed 8 seconds to be broken by hand. (AlexIIL)
+ * [#3763] Fluid and Item pipes sometimes display the wrong item or fluid on the client side (AlexIIL)
+ * [#3764] Obsidian pipes can't accept power from anything other than a pipe pulsar. (AlexIIL)
+ * [#3766] Blueprints sometimes don't sync correctly (afdw)
+ * [#3767] Tooltip render crash (afdw)
+ * [#3770] Oil generation config options are missing. (AlexIIL)
+ * [#3777] Facades textures are sometime rotated incorrectly (afdw)
+

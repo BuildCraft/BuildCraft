@@ -4,6 +4,9 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.item;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.annotation.Nonnull;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -21,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -28,6 +32,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
 
+import buildcraft.lib.inventory.InventoryWrapper;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.SoundUtil;
@@ -94,7 +99,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
         int damage = stack.getItemDamage();
         if (damage != DAMAGE_USED) {
             IBlockState state = world.getBlockState(pos);
-            ISchematicBlock<?> schematicBlock = SchematicBlockManager.getSchematicBlock(world, pos, pos, state, state.getBlock());
+            ISchematicBlock schematicBlock = SchematicBlockManager.getSchematicBlock(world, pos, pos, state, state.getBlock());
             if (schematicBlock.isAir()) {
                 return EnumActionResult.FAIL;
             }
@@ -114,35 +119,72 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
                 world.setBlockToAir(placePos);
             }
             try {
-                ISchematicBlock<?> schematicBlock = getSchematic(stack);
-
-                // TODO: extract required items and fluids from player's inventory
-                if (!schematicBlock.isBuilt(world, placePos)//
-                    && schematicBlock.canBuild(world, placePos)//
-                    && schematicBlock.build(world, placePos)) {
-                    SoundUtil.playBlockPlace(world, placePos);
-                    player.swingArm(hand);
-                    return EnumActionResult.SUCCESS;
-                } else {
-                    return EnumActionResult.FAIL;
+                ISchematicBlock schematicBlock = getSchematic(stack);
+                if (schematicBlock != null) {
+                    if (!schematicBlock.isBuilt(world, placePos) && schematicBlock.canBuild(world, placePos)) {
+                        List<FluidStack> requiredFluids = schematicBlock.computeRequiredFluids();
+                        List<ItemStack> requiredItems = schematicBlock.computeRequiredItems();
+                        if (requiredFluids.isEmpty()) {
+                            InventoryWrapper itemTransactor = new InventoryWrapper(player.inventory);
+                            if (StackUtil.mergeSameItems(requiredItems).stream().noneMatch(s ->
+                                itemTransactor.extract(
+                                    extracted -> StackUtil.canMerge(s, extracted),
+                                    s.getCount(),
+                                    s.getCount(),
+                                    true
+                                ).isEmpty()
+                            )) {
+                                if (schematicBlock.build(world, placePos)) {
+                                    StackUtil.mergeSameItems(requiredItems).forEach(s ->
+                                        itemTransactor.extract(
+                                            extracted -> StackUtil.canMerge(s, extracted),
+                                            s.getCount(),
+                                            s.getCount(),
+                                            false
+                                        )
+                                    );
+                                    SoundUtil.playBlockPlace(world, placePos);
+                                    player.swingArm(hand);
+                                    return EnumActionResult.SUCCESS;
+                                }
+                            } else {
+                                player.sendStatusMessage(
+                                    new TextComponentString(
+                                        "Not enough items. Total needed: " +
+                                            StackUtil.mergeSameItems(requiredItems).stream()
+                                                .map(s -> s.getTextComponent().getFormattedText() + " x " + s.getCount())
+                                                .collect(Collectors.joining(", "))
+                                    ),
+                                    true
+                                );
+                            }
+                        } else {
+                            player.sendStatusMessage(
+                                new TextComponentString("Schematic requires fluids"),
+                                true
+                            );
+                        }
+                    }
                 }
             } catch (InvalidInputDataException e) {
-                player.sendStatusMessage(new TextComponentString("Invalid schematic: " + e.getMessage()), true);
+                player.sendStatusMessage(
+                    new TextComponentString("Invalid schematic: " + e.getMessage()),
+                    true
+                );
                 e.printStackTrace();
-                return EnumActionResult.FAIL;
             }
+            return EnumActionResult.FAIL;
         }
     }
 
-    public static ISchematicBlock<?> getSchematic(@Nonnull ItemStack stack) throws InvalidInputDataException {
+    public static ISchematicBlock getSchematic(@Nonnull ItemStack stack) throws InvalidInputDataException {
         if (stack.getItem() instanceof ItemSchematicSingle) {
-            NBTTagCompound tag = NBTUtilBC.getItemData(stack).getCompoundTag(NBT_KEY);
-            return SchematicBlockManager.readFromNBT(tag);
+            return SchematicBlockManager.readFromNBT(NBTUtilBC.getItemData(stack).getCompoundTag(NBT_KEY));
         }
         return null;
     }
 
-    public static ISchematicBlock<?> getSchematicSafe(@Nonnull ItemStack stack) {
+    public static ISchematicBlock getSchematicSafe(@Nonnull ItemStack stack) {
         try {
             return getSchematic(stack);
         } catch (InvalidInputDataException e) {

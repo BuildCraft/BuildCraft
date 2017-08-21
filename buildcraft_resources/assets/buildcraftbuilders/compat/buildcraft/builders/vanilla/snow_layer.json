@@ -1,0 +1,114 @@
+[
+    {
+        "selectors": ["minecraft:snow_layer[layers=1]"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:snow_layer",
+                        "amount": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:snow_layer[layers=2]"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:snow_layer",
+                        "amount": 2
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:snow_layer[layers=3]"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:snow_layer",
+                        "amount": 3
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:snow_layer[layers=4]"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:snow_layer",
+                        "amount": 4
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:snow_layer[layers=5]"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:snow_layer",
+                        "amount": 5
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:snow_layer[layers=6]"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:snow_layer",
+                        "amount": 6
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:snow_layer[layers=7]"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:snow_layer",
+                        "amount": 7
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "selectors": ["minecraft:snow_layer[layers=8]"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:snow_layer",
+                        "amount": 8
+                    }
+                ]
+            }
+        ]
+    }
+]

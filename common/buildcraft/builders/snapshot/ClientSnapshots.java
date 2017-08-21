@@ -25,14 +25,11 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.api.schematics.ISchematicEntity;
 
 import buildcraft.lib.net.MessageManager;
 
@@ -74,26 +71,7 @@ public enum ClientSnapshots {
     public void renderSnapshot(Snapshot snapshot, int offsetX, int offsetY, int sizeX, int sizeY) {
         FakeWorld world = worlds.computeIfAbsent(snapshot.key, key -> {
             FakeWorld localWorld = new FakeWorld();
-            if (snapshot instanceof Blueprint) {
-                localWorld.uploadBlueprint((Blueprint) snapshot, false);
-                for (ISchematicEntity<?> schematicEntity : ((Blueprint) snapshot).entities) {
-                    schematicEntity.build(localWorld, FakeWorld.BLUEPRINT_OFFSET);
-                }
-            }
-            if (snapshot instanceof Template) {
-                for (int z = 0; z < snapshot.size.getZ(); z++) {
-                    for (int y = 0; y < snapshot.size.getY(); y++) {
-                        for (int x = 0; x < snapshot.size.getX(); x++) {
-                            if (((Template) snapshot).data[x][y][z]) {
-                                localWorld.setBlockState(
-                                    new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET),
-                                    Blocks.QUARTZ_BLOCK.getDefaultState()
-                                );
-                            }
-                        }
-                    }
-                }
-            }
+            localWorld.uploadSnapshot(snapshot);
             return localWorld;
         });
         VertexBuffer vertexBuffer = buffers.computeIfAbsent(snapshot.key, key -> {
@@ -128,17 +106,29 @@ public enum ClientSnapshots {
         GlStateManager.pushAttrib();
         GlStateManager.enableDepth();
         GlStateManager.enableBlend();
-        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT); // TODO: save depth buffer?
         GlStateManager.pushMatrix();
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+        int viewportX = offsetX * scaledResolution.getScaleFactor();
+        int viewportY = Minecraft.getMinecraft().displayHeight - (sizeY + offsetY) * scaledResolution.getScaleFactor();
+        int viewportWidth = sizeX * scaledResolution.getScaleFactor();
+        int viewportHeight = sizeY * scaledResolution.getScaleFactor();
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor(
+            viewportX,
+            viewportY,
+            viewportWidth,
+            viewportHeight
+        );
+        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
         GlStateManager.viewport(
-            offsetX * scaledResolution.getScaleFactor(),
-            Minecraft.getMinecraft().displayHeight - (sizeY + offsetY) * scaledResolution.getScaleFactor(),
-            sizeX * scaledResolution.getScaleFactor(),
-            sizeY * scaledResolution.getScaleFactor()
+            viewportX,
+            viewportY,
+            viewportWidth,
+            viewportHeight
         );
         GlStateManager.scale(scaledResolution.getScaleFactor(), scaledResolution.getScaleFactor(), 1);
         GLU.gluPerspective(70.0F, (float) sizeX / sizeY, 0.1F, 1000.0F);

@@ -80,32 +80,57 @@ public class TileBuilder extends TileBC_Neptune
     public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
     public static final int NET_SNAPSHOT_TYPE = IDS.allocId("SNAPSHOT_TYPE");
 
-    public final ItemHandlerSimple invSnapshot;
-    public final ItemHandlerSimple invResources;
+    public final ItemHandlerSimple invSnapshot = itemManager.addInvHandler(
+        "snapshot",
+        1,
+        (slot, stack) ->
+            stack.getItem() instanceof ItemSnapshot && ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used,
+        EnumAccess.BOTH,
+        EnumPipePart.VALUES
+    );
+    public final ItemHandlerSimple invResources = itemManager.addInvHandler(
+        "resources",
+        27,
+        EnumAccess.BOTH,
+        EnumPipePart.VALUES
+    );
 
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
     private boolean canExcavate = true;
 
-    /** Stores the real path - just a few block positions. */
+    /**
+     * Stores the real path - just a few block positions.
+     */
     public List<BlockPos> path = null;
-    /** Stores the real path plus all possible block positions inbetween. */
+    /**
+     * Stores the real path plus all possible block positions inbetween.
+     */
     private List<BlockPos> basePoses = new ArrayList<>();
     private int currentBasePosIndex = 0;
     private Snapshot snapshot = null;
     public EnumSnapshotType snapshotType = null;
     private Template.BuildingInfo templateBuildingInfo = null;
     private Blueprint.BuildingInfo blueprintBuildingInfo = null;
+    @SuppressWarnings("WeakerAccess")
     public TemplateBuilder templateBuilder = new TemplateBuilder(this);
+    @SuppressWarnings("WeakerAccess")
     public BlueprintBuilder blueprintBuilder = new BlueprintBuilder(this);
     private Box currentBox = new Box();
+    private Rotation rotation = null;
 
     private boolean isDone = false;
 
     public TileBuilder() {
-        invSnapshot = itemManager.addInvHandler("snapshot", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
-        invResources = itemManager.addInvHandler("resources", 27, EnumAccess.BOTH, EnumPipePart.VALUES);
         for (int i = 1; i <= 4; i++) {
-            tankManager.add(new Tank("fluid" + i, Fluid.BUCKET_VOLUME * 8, this));
+            tankManager.add(
+                new Tank("tank" + i, Fluid.BUCKET_VOLUME * 8, this) {
+                    @Override
+                    protected void onContentsChanged() {
+                        super.onContentsChanged();
+                        Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::resourcesChanged);
+                    }
+                }
+            );
         }
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankManager, EnumPipePart.VALUES);
@@ -117,10 +142,12 @@ public class TileBuilder extends TileBC_Neptune
     }
 
     @Override
-    protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, @Nonnull ItemStack before,
-        @Nonnull ItemStack after) {
-        if (itemHandler == invSnapshot) {
-            if (!world.isRemote) {
+    protected void onSlotChange(IItemHandlerModifiable handler,
+                                int slot,
+                                @Nonnull ItemStack before,
+                                @Nonnull ItemStack after) {
+        if (!world.isRemote) {
+            if (handler == invSnapshot) {
                 currentBasePosIndex = 0;
                 snapshot = null;
                 if (after.getItem() instanceof ItemSnapshot) {
@@ -132,11 +159,14 @@ public class TileBuilder extends TileBC_Neptune
                         }
                     }
                 }
-                updateSnapshot();
+                updateSnapshot(true);
                 sendNetworkUpdate(NET_SNAPSHOT_TYPE);
             }
+            if (handler == invResources) {
+                Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::resourcesChanged);
+            }
         }
-        super.onSlotChange(itemHandler, slot, before, after);
+        super.onSlotChange(handler, slot, before, after);
     }
 
     @Override
@@ -153,24 +183,31 @@ public class TileBuilder extends TileBC_Neptune
         blueprintBuilder.invalidate();
     }
 
-    private void updateSnapshot() {
-        world.profiler.startSection("updateSnapshot");
+    private void updateSnapshot(boolean canGetFacing) {
         Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::cancel);
         if (snapshot != null && getCurrentBasePos() != null) {
             snapshotType = snapshot.getType();
-            EnumFacing facing = world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING);
-            Rotation rotation = Arrays.stream(Rotation.values()).filter(r -> r.rotate(snapshot.facing) == facing)
-                .findFirst().orElse(null);
+            if (canGetFacing) {
+                rotation = Arrays.stream(Rotation.values())
+                    .filter(r ->
+                        r.rotate(snapshot.facing) == world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING)
+                    )
+                    .findFirst()
+                    .orElse(null);
+            }
             if (snapshot.getType() == EnumSnapshotType.TEMPLATE) {
                 templateBuildingInfo = ((Template) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
             }
             if (snapshot.getType() == EnumSnapshotType.BLUEPRINT) {
                 blueprintBuildingInfo = ((Blueprint) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
             }
-            currentBox = Optional.ofNullable(getBuilder()).map(SnapshotBuilder::getBox).orElse(null);
+            currentBox = Optional.ofNullable(getBuildingInfo())
+                .map(buildingInfo -> buildingInfo.box)
+                .orElse(null);
             Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::updateSnapshot);
         } else {
             snapshotType = null;
+            rotation = null;
             templateBuildingInfo = null;
             blueprintBuildingInfo = null;
             currentBox = null;
@@ -178,7 +215,6 @@ public class TileBuilder extends TileBC_Neptune
         if (currentBox == null) {
             currentBox = new Box();
         }
-        world.profiler.endSection();
     }
 
     private void updateBasePoses() {
@@ -231,7 +267,7 @@ public class TileBuilder extends TileBC_Neptune
                     if (currentBasePosIndex >= basePoses.size()) {
                         currentBasePosIndex = basePoses.size() - 1;
                     }
-                    updateSnapshot();
+                    updateSnapshot(true);
                 }
             }
         }
@@ -334,6 +370,8 @@ public class TileBuilder extends TileBC_Neptune
         }
         nbt.setTag("basePoses", NBTUtilBC.writeCompoundList(basePoses.stream().map(NBTUtil::createPosTag)));
         nbt.setBoolean("canExcavate", canExcavate);
+        nbt.setTag("rotation", NBTUtilBC.writeEnum(rotation));
+        Optional.ofNullable(getBuilder()).ifPresent(builder -> nbt.setTag("builder", builder.serializeNBT()));
         return nbt;
     }
 
@@ -349,6 +387,11 @@ public class TileBuilder extends TileBC_Neptune
             .map(NBTUtil::getPosFromTag)
             .collect(Collectors.toList());
         canExcavate = nbt.getBoolean("canExcavate");
+        rotation = NBTUtilBC.readEnum(nbt.getTag("rotation"), Rotation.class);
+        if (nbt.hasKey("builder")) {
+            updateSnapshot(false);
+            Optional.ofNullable(getBuilder()).ifPresent(builder -> builder.deserializeNBT(nbt.getCompoundTag("builder")));
+        }
     }
 
     // Rendering
@@ -364,6 +407,7 @@ public class TileBuilder extends TileBC_Neptune
         return true;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
@@ -379,7 +423,6 @@ public class TileBuilder extends TileBC_Neptune
     @Override
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("");
         left.add("battery = " + battery.getDebugString());
         left.add("basePoses = " + (basePoses == null ? "null" : basePoses.size()));
         left.add("currentBasePosIndex = " + currentBasePosIndex);
@@ -413,6 +456,16 @@ public class TileBuilder extends TileBC_Neptune
         }
         if (snapshotType == EnumSnapshotType.BLUEPRINT) {
             return blueprintBuilder;
+        }
+        return null;
+    }
+
+    private Snapshot.BuildingInfo getBuildingInfo() {
+        if (snapshotType == EnumSnapshotType.TEMPLATE) {
+            return templateBuildingInfo;
+        }
+        if (snapshotType == EnumSnapshotType.BLUEPRINT) {
+            return blueprintBuildingInfo;
         }
         return null;
     }

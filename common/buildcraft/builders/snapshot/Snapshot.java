@@ -10,11 +10,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -25,11 +28,13 @@ import buildcraft.api.enums.EnumSnapshotType;
 
 import buildcraft.lib.misc.HashUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.RotationUtil;
 import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.net.PacketBufferBC;
 
 public abstract class Snapshot {
-    public Key key = new Key(new byte[0]);
+    public Key key = new Key();
     public BlockPos size;
     public EnumFacing facing;
     public BlockPos offset;
@@ -42,6 +47,46 @@ public abstract class Snapshot {
                 return new Blueprint();
         }
         throw new UnsupportedOperationException();
+    }
+
+    public static int posToIndex(int sizeX, int sizeY, int sizeZ, int x, int y, int z) {
+        return ((z * sizeY) + y) * sizeX + x;
+    }
+
+    public static int posToIndex(BlockPos size, int x, int y, int z) {
+        return posToIndex(size.getX(), size.getY(), size.getZ(), x, y, z);
+    }
+
+    public static int posToIndex(int sizeX, int sizeY, int sizeZ, BlockPos pos) {
+        return posToIndex(sizeX, sizeY, sizeZ, pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    public static int posToIndex(BlockPos size, BlockPos pos) {
+        return posToIndex(size.getX(), size.getY(), size.getZ(), pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    public int posToIndex(int x, int y, int z) {
+        return posToIndex(size, x, y, z);
+    }
+
+    public int posToIndex(BlockPos pos) {
+        return posToIndex(size, pos);
+    }
+
+    public static BlockPos indexToPos(int sizeX, int sizeY, int sizeZ, int i) {
+        return new BlockPos(
+            i % sizeX,
+            (i / sizeX) % sizeY,
+            i / (sizeY * sizeX)
+        );
+    }
+
+    public static BlockPos indexToPos(BlockPos size, int i) {
+        return indexToPos(size.getX(), size.getY(), size.getZ(), i);
+    }
+
+    public BlockPos indexToPos(int i) {
+        return indexToPos(size, i);
     }
 
     public static NBTTagCompound writeToNBT(Snapshot snapshot) {
@@ -77,6 +122,8 @@ public abstract class Snapshot {
         offset = NBTUtil.getPosFromTag(nbt.getCompoundTag("offset"));
     }
 
+    abstract public Snapshot copy();
+
     abstract public EnumSnapshotType getType();
 
     public void computeKey() {
@@ -84,7 +131,7 @@ public abstract class Snapshot {
         if (nbt.hasKey("key", Constants.NBT.TAG_COMPOUND)) {
             nbt.removeTag("key");
         }
-        key = new Key(HashUtil.computeHash(nbt));
+        key = new Key(key, HashUtil.computeHash(nbt));
     }
 
     @Override
@@ -99,35 +146,58 @@ public abstract class Snapshot {
 
     public static class Key {
         public final byte[] hash;
+        @Nullable // for client storage
+        public final Header header;
 
-        @SuppressWarnings("WeakerAccess")
-        public Key(byte[] hash) {
-            this.hash = hash;
+        public Key() {
+            this.hash = new byte[0];
+            this.header = null;
         }
 
-        @SuppressWarnings("WeakerAccess")
+        public Key(Key oldKey, byte[] hash) {
+            this.hash = hash;
+            this.header = oldKey.header;
+        }
+
+        public Key(Key oldKey, @Nullable Header header) {
+            this.hash = oldKey.hash;
+            this.header = header;
+        }
+
         public Key(NBTTagCompound nbt) {
             hash = nbt.getByteArray("hash");
+            header = nbt.hasKey("header") ? new Header(nbt.getCompoundTag("header")) : null;
         }
 
-        @SuppressWarnings("WeakerAccess")
         public Key(PacketBufferBC buffer) {
             hash = buffer.readByteArray();
+            header = buffer.readBoolean() ? new Header(buffer) : null;
         }
 
         public NBTTagCompound serializeNBT() {
             NBTTagCompound nbt = new NBTTagCompound();
             nbt.setByteArray("hash", hash);
+            if (header != null) {
+                nbt.setTag("header", header.serializeNBT());
+            }
             return nbt;
         }
 
         public void writeToByteBuf(PacketBufferBC buffer) {
             buffer.writeByteArray(hash);
+            buffer.writeBoolean(header != null);
+            if (header != null) {
+                header.writeToByteBuf(buffer);
+            }
         }
 
         @Override
         public boolean equals(Object o) {
-            return this == o || !(o == null || getClass() != o.getClass()) && Arrays.equals(hash, ((Key) o).hash);
+            return this == o ||
+                o != null &&
+                    getClass() == o.getClass() &&
+                    Arrays.equals(hash, ((Key) o).hash) &&
+                    (header != null ? header.equals(((Key) o).header) : ((Key) o).header == null);
         }
 
         @Override
@@ -187,5 +257,59 @@ public abstract class Snapshot {
         public EntityPlayer getOwnerPlayer(World world) {
             return world.getPlayerEntityByUUID(owner);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o ||
+                o != null &&
+                    getClass() == o.getClass() &&
+                    key.equals(((Header) o).key) &&
+                    owner.equals(((Header) o).owner) &&
+                    created.equals(((Header) o).created) &&
+                    name.equals(((Header) o).name);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = key.hashCode();
+            result = 31 * result + owner.hashCode();
+            result = 31 * result + created.hashCode();
+            result = 31 * result + name.hashCode();
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
+    public abstract class BuildingInfo {
+        public final BlockPos basePos;
+        public final Rotation rotation;
+        public final Box box = new Box();
+
+        protected BuildingInfo(BlockPos basePos, Rotation rotation) {
+            this.basePos = basePos;
+            this.rotation = rotation;
+            this.box.extendToEncompass(toWorld(BlockPos.ORIGIN));
+            this.box.extendToEncompass(toWorld(size.subtract(new BlockPos(1, 1, 1))));
+        }
+
+        public BlockPos toWorld(BlockPos blockPos) {
+            return blockPos
+                .rotate(rotation)
+                .add(basePos)
+                .add(offset.rotate(rotation));
+        }
+
+        public BlockPos fromWorld(BlockPos blockPos) {
+            return blockPos
+                .subtract(offset.rotate(rotation))
+                .subtract(basePos)
+                .rotate(RotationUtil.invert(rotation));
+        }
+
+        public abstract Snapshot getSnapshot();
     }
 }

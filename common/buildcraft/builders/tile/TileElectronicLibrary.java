@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +39,10 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.lib.tile.item.StackInsertionFunction;
 
 import buildcraft.builders.BCBuildersItems;
+import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
 import buildcraft.builders.snapshot.Snapshot;
 
@@ -52,10 +53,37 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
     @SuppressWarnings("WeakerAccess")
     public static final int NET_UP = IDS.allocId("UP");
 
-    public final ItemHandlerSimple invDownIn = itemManager.addInvHandler("downIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
-    public final ItemHandlerSimple invDownOut = itemManager.addInvHandler("downOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
-    public final ItemHandlerSimple invUpIn = itemManager.addInvHandler("upIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
-    public final ItemHandlerSimple invUpOut = itemManager.addInvHandler("upOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
+    public final ItemHandlerSimple invDownIn = itemManager.addInvHandler(
+        "downIn",
+        1,
+        (slot, stack) -> stack.getItem() instanceof ItemSnapshot &&
+            ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used,
+        StackInsertionFunction.getInsertionFunction(1),
+        EnumAccess.INSERT,
+        EnumPipePart.VALUES
+    );
+    public final ItemHandlerSimple invDownOut = itemManager.addInvHandler(
+        "downOut",
+        1,
+        StackInsertionFunction.getInsertionFunction(1),
+        EnumAccess.EXTRACT,
+        EnumPipePart.VALUES
+    );
+    public final ItemHandlerSimple invUpIn = itemManager.addInvHandler(
+        "upIn",
+        1,
+        (slot, stack) -> stack.getItem() instanceof ItemSnapshot,
+        StackInsertionFunction.getInsertionFunction(1),
+        EnumAccess.INSERT,
+        EnumPipePart.VALUES
+    );
+    public final ItemHandlerSimple invUpOut = itemManager.addInvHandler(
+        "upOut",
+        1,
+        StackInsertionFunction.getInsertionFunction(1),
+        EnumAccess.EXTRACT,
+        EnumPipePart.VALUES
+    );
     public Snapshot.Key selected = null;
     private int progressDown = -1;
     private int progressUp = -1;
@@ -149,6 +177,8 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                 if (header != null) {
                     Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(header.key);
                     if (snapshot != null) {
+                        snapshot = snapshot.copy();
+                        snapshot.key = new Snapshot.Key(snapshot.key, header);
                         buffer.writeBoolean(true);
                         NbtSquisher.squish(
                             Snapshot.writeToNBT(snapshot),
@@ -252,21 +282,13 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                                 )
                             )
                         );
-                        invUpIn.setStackInSlot(0, StackUtil.EMPTY);
+                        Snapshot.Header header = snapshot.key.header;
+                        snapshot = snapshot.copy();
+                        snapshot.key = new Snapshot.Key(snapshot.key, (Snapshot.Header) null);
                         snapshot.computeKey();
                         GlobalSavedDataSnapshots.get(world).addSnapshot(snapshot);
-                        invUpOut.setStackInSlot(
-                            0,
-                            BCBuildersItems.snapshot.getUsed(
-                                snapshot.getType(),
-                                new Snapshot.Header(
-                                    snapshot.key,
-                                    getOwner().getId(),
-                                    new Date(),
-                                    "From library"
-                                )
-                            )
-                        );
+                        invUpOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshot.getType(), header));
+                        invUpIn.setStackInSlot(0, StackUtil.EMPTY);
                     } finally {
                         upSnapshotsParts.remove(pair);
                     }

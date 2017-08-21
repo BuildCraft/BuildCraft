@@ -1,7 +1,9 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
+/*
+ * Copyright (c) 2016 SpaceToad and the BuildCraft team
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 package buildcraft.lib;
 
 import java.io.FileNotFoundException;
@@ -33,7 +35,6 @@ import buildcraft.lib.client.reload.LibConfigChangeListener;
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.DetachedRenderer.RenderMatrixType;
 import buildcraft.lib.client.render.MarkerRenderer;
-import buildcraft.lib.client.resource.ResourceRegistry;
 import buildcraft.lib.debug.DebugRenderHelper;
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.fluid.FluidManager;
@@ -115,7 +116,7 @@ public abstract class BCLibProxy implements IGuiHandler {
             DetachedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, MarkerRenderer.INSTANCE);
             DetachedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, DebugRenderHelper.INSTANCE);
             // various sprite registers
-            BCLibSprites.fmlPreInitClient(); 
+            BCLibSprites.fmlPreInitClient();
             BCLibConfig.configChangeListeners.add(LibConfigChangeListener.INSTANCE);
         }
 
@@ -124,7 +125,7 @@ public abstract class BCLibProxy implements IGuiHandler {
             super.fmlInit();
             IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
             IReloadableResourceManager reloadable = (IReloadableResourceManager) manager;
-            reloadable.registerReloadListener(ResourceRegistry.INSTANCE);
+            reloadable.registerReloadListener(GuideManager.INSTANCE);
             ItemManager.fmlInitClient();
         }
 

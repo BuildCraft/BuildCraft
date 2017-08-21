@@ -4,7 +4,6 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import buildcraft.lib.BCLib;
 import buildcraft.lib.item.ItemManager;
 
 import buildcraft.builders.item.ItemFillingPlanner;
@@ -17,9 +16,7 @@ public class BCBuildersItems {
     public static ItemFillingPlanner fillingPlanner;
 
     public static void preInit() {
-        if (BCLib.DEV) {
-            schematicSingle = ItemManager.register(new ItemSchematicSingle("item.schematic.single"));
-        }
+        schematicSingle = ItemManager.register(new ItemSchematicSingle("item.schematic.single"));
         snapshot = ItemManager.register(new ItemSnapshot("item.snapshot"));
         fillingPlanner = ItemManager.register(new ItemFillingPlanner("item.filling_planner"));
     }

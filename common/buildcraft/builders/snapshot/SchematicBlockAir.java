@@ -6,25 +6,16 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.SchematicBlockContext;
 
-public final class SchematicBlockAir implements ISchematicBlock<SchematicBlockAir> {
+public final class SchematicBlockAir implements ISchematicBlock {
     @SuppressWarnings("unused")
     public static boolean predicate(SchematicBlockContext context) {
         return true;
@@ -39,27 +30,9 @@ public final class SchematicBlockAir implements ISchematicBlock<SchematicBlockAi
         return true;
     }
 
-    @Nonnull
-    @Override
-    public Set<BlockPos> getRequiredBlockOffsets() {
-        return Collections.emptySet();
-    }
-
-    @Nonnull
-    @Override
-    public List<ItemStack> computeRequiredItems(SchematicBlockContext context) {
-        return Collections.emptyList();
-    }
-
-    @Nonnull
-    @Override
-    public List<FluidStack> computeRequiredFluids(SchematicBlockContext context) {
-        return Collections.emptyList();
-    }
-
     @Override
     public SchematicBlockAir getRotated(Rotation rotation) {
-        return this;
+        return SchematicBlockManager.createCleanCopy(this);
     }
 
     @Override

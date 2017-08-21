@@ -33,9 +33,12 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 /** Provides a way of defining a cache of *some object* that will be sent from server to every client (when they are
  * needed). Each object has a specific integer ID.
- * 
+ * <p>
  * This class is NOT thread safe -- the client view may ONLY be used on the client thread, and the server view may ONLY
- * be used the server thread. */
+ * be used the server thread.
+ * <p>
+ * Note that all custom instances should be added to {@link BuildCraftObjectCaches#registerCache(NetworkedObjectCache)},
+ * in order to work properly */
 public abstract class NetworkedObjectCache<T> {
 
     static final boolean DEBUG_LOG = BCDebugging.shouldDebugLog("lib.net.cache");
@@ -285,5 +288,10 @@ public abstract class NetworkedObjectCache<T> {
             }
             MessageManager.sendToServer(new MessageObjectCacheReq(this, ids));
         }
+    }
+
+    void onClientJoinServer() {
+        clientObjects.clear();
+        clientUnknowns.clear();
     }
 }

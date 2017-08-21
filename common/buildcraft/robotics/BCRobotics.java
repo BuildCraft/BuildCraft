@@ -27,10 +27,12 @@ import buildcraft.robotics.zone.MessageZoneMapRequest;
 import buildcraft.robotics.zone.MessageZoneMapResponse;
 
 //@formatter:off
-@Mod(modid = BCRobotics.MODID,
-name = "BuildCraft Robotics",
-version = BCLib.VERSION,
-dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+@Mod(
+    modid = BCRobotics.MODID,
+    name = "BuildCraft Robotics",
+    version = BCLib.VERSION,
+    dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]"
+)
 //@formatter:on
 public class BCRobotics {
     public static final String MODID = "buildcraftrobotics";

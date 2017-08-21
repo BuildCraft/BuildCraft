@@ -30,9 +30,11 @@ public class RenderFiller extends FastTESR<TileFiller> {
         Minecraft.getMinecraft().mcProfiler.endSection();
 
         Minecraft.getMinecraft().mcProfiler.startSection("box");
-        vb.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
-        LaserBoxRenderer.renderLaserBoxDynamic(tile.box, BuildCraftLaserManager.STRIPES_WRITE, vb);
-        vb.setTranslation(0, 0, 0);
+//        if (tile.markerBox) {
+            vb.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
+            LaserBoxRenderer.renderLaserBoxDynamic(tile.box, BuildCraftLaserManager.STRIPES_WRITE, vb, true);
+            vb.setTranslation(0, 0, 0);
+//        }
         Minecraft.getMinecraft().mcProfiler.endSection();
 
         Minecraft.getMinecraft().mcProfiler.endSection();

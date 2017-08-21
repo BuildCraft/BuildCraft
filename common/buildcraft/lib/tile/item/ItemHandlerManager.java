@@ -97,6 +97,49 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
         return addInvHandler(key, handler, access, parts);
     }
 
+    public ItemHandlerSimple addInvHandler(String key,
+                                           int size,
+                                           StackInsertionChecker checker,
+                                           EnumAccess access,
+                                           EnumPipePart... parts) {
+        ItemHandlerSimple handler = new ItemHandlerSimple(
+            size,
+            checker,
+            StackInsertionFunction.getDefaultInserter(),
+            callback
+        );
+        return addInvHandler(key, handler, access, parts);
+    }
+
+    public ItemHandlerSimple addInvHandler(String key,
+                                           int size,
+                                           StackInsertionFunction insertionFunction,
+                                           EnumAccess access,
+                                           EnumPipePart... parts) {
+        ItemHandlerSimple handler = new ItemHandlerSimple(
+            size,
+            (slot, stack) -> true,
+            insertionFunction,
+            callback
+        );
+        return addInvHandler(key, handler, access, parts);
+    }
+
+    public ItemHandlerSimple addInvHandler(String key,
+                                           int size,
+                                           StackInsertionChecker checker,
+                                           StackInsertionFunction insertionFunction,
+                                           EnumAccess access,
+                                           EnumPipePart... parts) {
+        ItemHandlerSimple handler = new ItemHandlerSimple(
+            size,
+            checker,
+            insertionFunction,
+            callback
+        );
+        return addInvHandler(key, handler, access, parts);
+    }
+
     public void addDrops(NonNullList<ItemStack> toDrop) {
         for (IItemHandlerModifiable itemHandler : handlersToDrop) {
             InventoryUtil.addAll(itemHandler, toDrop);

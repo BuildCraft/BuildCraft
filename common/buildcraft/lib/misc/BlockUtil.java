@@ -49,6 +49,7 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -63,6 +64,7 @@ import buildcraft.api.mj.MjAPI;
 
 import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.compat.CompatManager;
+import buildcraft.lib.world.SingleBlockAccess;
 
 public final class BlockUtil {
     public static NonNullList<ItemStack> getItemStackFromBlock(WorldServer world, BlockPos pos, GameProfile owner) {
@@ -263,6 +265,30 @@ public final class BlockUtil {
         return FluidRegistry.lookupFluidForBlock(block);
     }
 
+    public static Fluid getFluidWithoutFlowing(IBlockState state) {
+        if (state.getBlock() instanceof BlockFluidClassic) {
+            if (((BlockFluidClassic) state.getBlock()).isSourceBlock(
+                new SingleBlockAccess(state),
+                SingleBlockAccess.POS
+            )) {
+                return getFluid(state.getBlock());
+            }
+        }
+        if (state.getBlock() == Blocks.WATER) {
+            return FluidRegistry.WATER;
+        }
+        if (state.getBlock() == Blocks.FLOWING_WATER && state.getValue(BlockLiquid.LEVEL) == 0) {
+            return FluidRegistry.WATER;
+        }
+        if (state.getBlock() == Blocks.LAVA) {
+            return FluidRegistry.LAVA;
+        }
+        if (state.getBlock() == Blocks.FLOWING_LAVA && state.getValue(BlockLiquid.LEVEL) == 0) {
+            return FluidRegistry.LAVA;
+        }
+        return null;
+    }
+
     public static Fluid getFluidWithFlowing(Block block) {
         Fluid fluid = null;
         if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
@@ -423,26 +449,26 @@ public final class BlockUtil {
     }
 
     public static boolean blockStatesWithoutBlockEqual(IBlockState a, IBlockState b, Collection<IProperty<?>> ignoredProperties) {
-        return Sets.union(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
+        return Sets.intersection(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
                 .filter(property -> !ignoredProperties.contains(property))
                 .allMatch(property -> Objects.equals(a.getValue(property), b.getValue(property)));
     }
 
     public static boolean blockStatesWithoutBlockEqual(IBlockState a, IBlockState b) {
-        return Sets.union(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
+        return Sets.intersection(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
                 .allMatch(property -> Objects.equals(a.getValue(property), b.getValue(property)));
     }
 
     public static boolean blockStatesEqual(IBlockState a, IBlockState b, Collection<IProperty<?>> ignoredProperties) {
         return a.getBlock() == b.getBlock() &&
-                Sets.union(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
+                Sets.intersection(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
                 .filter(property -> !ignoredProperties.contains(property))
                 .allMatch(property -> Objects.equals(a.getValue(property), b.getValue(property)));
     }
 
     public static boolean blockStatesEqual(IBlockState a, IBlockState b) {
         return a.getBlock() == b.getBlock() &&
-                Sets.union(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
+                Sets.intersection(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
                 .allMatch(property -> Objects.equals(a.getValue(property), b.getValue(property)));
     }
 

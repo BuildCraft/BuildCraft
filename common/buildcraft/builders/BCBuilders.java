@@ -4,9 +4,23 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.StreamSupport;
 
+import javax.annotation.Nonnull;
+
+import net.minecraft.block.BlockBanner;
+import net.minecraft.block.BlockVine;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemBanner;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -40,10 +54,12 @@ import buildcraft.core.BCCore;
 import buildcraft.core.marker.volume.AddonsRegistry;
 
 //@formatter:off
-@Mod(modid = BCBuilders.MODID,
-   name = "BuildCraft Builders",
-   version = BCLib.VERSION,
-   dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+@Mod(
+    modid = BCBuilders.MODID,
+    name = "BuildCraft Builders",
+    version = BCLib.VERSION,
+    dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]"
+)
 //@formatter:on
 public class BCBuilders {
     public static final String MODID = "buildcraftbuilders";
@@ -63,29 +79,72 @@ public class BCBuilders {
         AddonsRegistry.INSTANCE.register(new ResourceLocation("buildcraftbuilders", "filling_planner"), AddonFillingPlanner.class);
 
         SchematicBlockFactoryRegistry.registerFactory(
-                "air",
-                0,
-                SchematicBlockAir::predicate,
-                SchematicBlockAir::new
+            "air",
+            0,
+            SchematicBlockAir::predicate,
+            SchematicBlockAir::new
         );
         SchematicBlockFactoryRegistry.registerFactory(
-                "default",
-                100,
-                SchematicBlockDefault::predicate,
-                SchematicBlockDefault::new
+            "default",
+            100,
+            SchematicBlockDefault::predicate,
+            SchematicBlockDefault::new
         );
         SchematicBlockFactoryRegistry.registerFactory(
-                "fluid",
-                200,
-                SchematicBlockFluid::predicate,
-                SchematicBlockFluid::new
+            "fluid",
+            200,
+            SchematicBlockFluid::predicate,
+            SchematicBlockFluid::new
+        );
+        SchematicBlockFactoryRegistry.registerFactory(
+            "banner",
+            300,
+            context -> context.block instanceof BlockBanner,
+            new Supplier<SchematicBlockDefault>() {
+                @Override
+                public SchematicBlockDefault get() {
+                    return new SchematicBlockDefault() {
+                        @Nonnull
+                        @Override
+                        public List<ItemStack> computeRequiredItems() {
+                            return Collections.singletonList(
+                                ItemBanner.makeBanner(
+                                    EnumDyeColor.byDyeDamage(tileNbt.getInteger("Base")),
+                                    tileNbt.getTagList("Patterns", 10)
+                                )
+                            );
+                        }
+                    };
+                }
+            }
+        );
+        SchematicBlockFactoryRegistry.registerFactory(
+            "vine",
+            300,
+            context -> context.block instanceof BlockVine,
+            new Supplier<SchematicBlockDefault>() {
+                @Override
+                public SchematicBlockDefault get() {
+                    return new SchematicBlockDefault() {
+                        @Override
+                        public boolean isReadyToBuild(World world, BlockPos blockPos) {
+                            return super.isReadyToBuild(world, blockPos) &&
+                                (world.getBlockState(blockPos.up()).getBlock() instanceof BlockVine ||
+                                    StreamSupport.stream(EnumFacing.Plane.HORIZONTAL.spliterator(), false)
+                                        .map(blockPos::offset)
+                                        .map(world::getBlockState)
+                                        .anyMatch(state -> state.isFullCube() && state.getMaterial().blocksMovement()));
+                        }
+                    };
+                }
+            }
         );
 
         SchematicEntityFactoryRegistry.registerFactory(
-                "default",
-                100,
-                SchematicEntityDefault::predicate,
-                SchematicEntityDefault::new
+            "default",
+            100,
+            SchematicEntityDefault::predicate,
+            SchematicEntityDefault::new
         );
 
         BCBuildersProxy.getProxy().fmlPreInit();

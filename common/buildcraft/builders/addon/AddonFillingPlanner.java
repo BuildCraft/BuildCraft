@@ -8,6 +8,7 @@ package buildcraft.builders.addon;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.BitSet;
 
 import javax.annotation.Nullable;
 
@@ -58,11 +59,11 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerS
             int sx = patternTemplate.sizeX;
             int sy = patternTemplate.sizeY;
             int sz = patternTemplate.sizeZ;
-            blueprintTemplate.data = new boolean[sx][sy][sz];
+            blueprintTemplate.data = new BitSet();
             for (int x = 0; x < sx; x++) {
                 for (int y = 0; y < sy; y++) {
                     for (int z = 0; z < sz; z++) {
-                        blueprintTemplate.data[x][y][z] = patternTemplate.get(x, y, z) ^ inverted;
+                        blueprintTemplate.data.set(blueprintTemplate.posToIndex(x, y, z), patternTemplate.get(x, y, z) ^ inverted);
                     }
                 }
             }

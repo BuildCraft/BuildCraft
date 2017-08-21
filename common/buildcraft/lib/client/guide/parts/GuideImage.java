@@ -6,49 +6,42 @@
 
 package buildcraft.lib.client.guide.parts;
 
-import net.minecraft.util.ResourceLocation;
+import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.client.guide.GuiGuide;
-import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.GuiSpriteScaled;
 
 public class GuideImage extends GuidePart {
     public static final int PIXEL_HEIGHT = 42;
-    final ResourceLocation location;
-    final GuiIcon icon, fullPicture;
-    final int imageWidth, imageHeight;
+    final ISprite sprite;
+    final GuiSpriteScaled icon, full;
     final int width, height;
 
-    public GuideImage(GuiGuide gui, ResourceLocation boundLocation, int imageWidth, int imageHeight, int width, int height) {
+    public GuideImage(GuiGuide gui, ISprite sprite, int srcWidth, int srcHeight, int width, int height) {
         super(gui);
-        this.location = boundLocation;
-        this.imageWidth = imageWidth;
-        this.imageHeight = imageHeight;
+        this.sprite = sprite;
+/*
         int w = width;
         int h = height;
         if (h <= 0) {
-            h = imageHeight;
+            h = srcHeight;
         }
         if (w <= 0) {
-            double sf = GuiGuide.PAGE_LEFT_TEXT.width / imageWidth;
+            int sf = GuiGuide.PAGE_LEFT_TEXT.width / srcWidth;
             if (sf == 0) {
-                double df = 1 + imageWidth / GuiGuide.PAGE_LEFT_TEXT.width;
-                w = (int)(imageWidth / df);
+                int df = 1 + srcWidth / GuiGuide.PAGE_LEFT_TEXT.width;
+                w = srcWidth / df;
                 h /= df;
             } else {
-                w = (int) (imageWidth * sf);
+                w = srcWidth * sf;
                 h *= sf;
             }
         }
-        int vDiff = 256;
-        if (h > GuiGuide.PAGE_LEFT_TEXT.height) {
-            h = (int) GuiGuide.PAGE_LEFT_TEXT.height - 10;
-            vDiff = (int) (256 * (double) h / (GuiGuide.PAGE_LEFT_TEXT.height - 10));
-        }
-
-        this.width = w;
-        this.height = h;
-        icon = new GuiIcon(location, 0, 0, 256, vDiff);
-        fullPicture = new GuiIcon(location, 0, 0, 256, 256);
+*/
+        this.width = width;
+        this.height = height;
+        icon = new GuiSpriteScaled(sprite, width, height);
+        full = new GuiSpriteScaled(sprite, srcWidth, srcHeight);
     }
 
     @Override
@@ -57,13 +50,22 @@ public class GuideImage extends GuidePart {
             current = current.nextPage();
         }
         if (index == current.page) {
-            icon.drawScaledInside(x, y + current.pixel, this.width, this.height);
+            y+= current.pixel;
+            int w = this.width;
+            int h = this.height;
+            icon.drawAt(x, y);
+            
+            GuiGuide.BORDER_TOP_LEFT.drawAt(x, y);
+            GuiGuide.BORDER_TOP_RIGHT.drawAt(x + w - GuiGuide.BORDER_TOP_RIGHT.width, y);
+            GuiGuide.BORDER_BOTTOM_LEFT.drawAt(x, y + h - GuiGuide.BORDER_BOTTOM_LEFT.height);
+            GuiGuide.BORDER_BOTTOM_RIGHT.drawAt(x + w - GuiGuide.BORDER_BOTTOM_RIGHT.width, y + h - GuiGuide.BORDER_BOTTOM_RIGHT.height);
         }
         return current.nextLine(this.height + 1, height);
     }
 
     @Override
-    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index, int mouseX, int mouseY) {
+    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
+        int mouseX, int mouseY) {
         if (height - current.pixel < this.height) {
             current = current.nextPage();
         }

@@ -37,7 +37,6 @@ import buildcraft.api.transport.pipe.PipeFlow;
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.VecUtil;
 
 public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneReceiver {
@@ -208,6 +207,10 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        return mjCaps.getCapability(capability, facing);
+        T cap = mjCaps.getCapability(capability, facing);
+        if (cap != null) {
+            return cap;
+        }
+        return super.getCapability(capability, facing);
     }
 }

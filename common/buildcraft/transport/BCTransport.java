@@ -18,6 +18,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
+
 import buildcraft.lib.BCLib;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.net.MessageManager;
@@ -29,17 +31,20 @@ import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
 
 import buildcraft.core.BCCore;
+import buildcraft.transport.pipe.SchematicBlockPipe;
+import buildcraft.transport.plug.FacadeBlockStateInfo;
+import buildcraft.transport.plug.FacadeInstance;
 import buildcraft.transport.plug.FacadeStateManager;
-import buildcraft.transport.plug.FacadeStateManager.FacadeBlockStateInfo;
-import buildcraft.transport.plug.FacadeStateManager.FullFacadeInstance;
 import buildcraft.transport.wire.MessageWireSystems;
 import buildcraft.transport.wire.MessageWireSystemsPowered;
 
 //@formatter:off
-@Mod(modid = BCTransport.MODID,
-name = "BuildCraft Transport",
-version = BCLib.VERSION,
-dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]")
+@Mod(
+    modid = BCTransport.MODID,
+    name = "BuildCraft Transport",
+    version = BCLib.VERSION,
+    dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]"
+)
 //@formatter:on
 public class BCTransport {
     public static final String MODID = "buildcrafttransport";
@@ -73,6 +78,13 @@ public class BCTransport {
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCTransportProxy.getProxy());
 
+        SchematicBlockFactoryRegistry.registerFactory(
+            "pipe",
+            300,
+            SchematicBlockPipe::predicate,
+            SchematicBlockPipe::new
+        );
+
         BCTransportProxy.getProxy().fmlPreInit();
 
         MinecraftForge.EVENT_BUS.register(BCTransportEventDist.INSTANCE);
@@ -100,7 +112,7 @@ public class BCTransport {
         FacadeStateManager.postInit();
         if (BCTransportItems.plugFacade != null) {
             FacadeBlockStateInfo state = FacadeStateManager.previewState;
-            FullFacadeInstance inst = FullFacadeInstance.createSingle(state, false);
+            FacadeInstance inst = FacadeInstance.createSingle(state, false);
             tabFacades.setItem(BCTransportItems.plugFacade.createItemStack(inst));
         }
     }
