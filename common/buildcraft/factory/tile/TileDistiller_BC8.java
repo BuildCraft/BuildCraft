@@ -151,6 +151,10 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         tankManager.deserializeNBT(nbt.getCompoundTag("tanks"));
+        // TODO: remove in next version
+        if (nbt.hasKey("mjBattery")) {
+            nbt.setTag("battery", nbt.getTag("mjBattery"));
+        }
         mjBattery.deserializeNBT(nbt.getCompoundTag("battery"));
         distillPower = nbt.getLong("distillPower");
         powerAvg.readFromNbt(nbt, "powerAvg");

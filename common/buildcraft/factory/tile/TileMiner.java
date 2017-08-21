@@ -183,6 +183,10 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
         }
         wantedLength = nbt.getInteger("wantedLength");
         progress = nbt.getInteger("progress");
+        // TODO: remove in next version
+        if (nbt.hasKey("mj_battery")) {
+            nbt.setTag("battery", nbt.getTag("mj_battery"));
+        }
         battery.deserializeNBT(nbt.getCompoundTag("battery"));
     }
 
