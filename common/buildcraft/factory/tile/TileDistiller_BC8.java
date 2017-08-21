@@ -141,7 +141,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         nbt.setTag("tanks", tankManager.serializeNBT());
-        nbt.setTag("mjBattery", mjBattery.serializeNBT());
+        nbt.setTag("battery", mjBattery.serializeNBT());
         nbt.setLong("distillPower", distillPower);
         powerAvg.writeToNbt(nbt, "powerAvg");
         return nbt;
@@ -151,7 +151,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         tankManager.deserializeNBT(nbt.getCompoundTag("tanks"));
-        mjBattery.deserializeNBT(nbt.getCompoundTag("mjBattery"));
+        mjBattery.deserializeNBT(nbt.getCompoundTag("battery"));
         distillPower = nbt.getLong("distillPower");
         powerAvg.readFromNbt(nbt, "powerAvg");
     }

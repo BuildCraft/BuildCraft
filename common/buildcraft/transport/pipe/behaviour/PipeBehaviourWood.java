@@ -47,13 +47,13 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
 
     public PipeBehaviourWood(IPipe pipe, NBTTagCompound nbt) {
         super(pipe, nbt);
-        mjBattery.deserializeNBT(nbt.getCompoundTag("mjBattery"));
+        mjBattery.deserializeNBT(nbt.getCompoundTag("battery"));
     }
 
     @Override
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = super.writeToNbt();
-        nbt.setTag("mjBattery", mjBattery.serializeNBT());
+        nbt.setTag("battery", mjBattery.serializeNBT());
         return nbt;
     }
 

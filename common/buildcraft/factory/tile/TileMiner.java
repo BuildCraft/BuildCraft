@@ -171,7 +171,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
         }
         nbt.setInteger("wantedLength", wantedLength);
         nbt.setInteger("progress", progress);
-        nbt.setTag("mj_battery", battery.serializeNBT());
+        nbt.setTag("battery", battery.serializeNBT());
         return nbt;
     }
 
@@ -183,7 +183,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
         }
         wantedLength = nbt.getInteger("wantedLength");
         progress = nbt.getInteger("progress");
-        battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
+        battery.deserializeNBT(nbt.getCompoundTag("battery"));
     }
 
     // Networking
