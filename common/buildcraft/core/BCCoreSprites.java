@@ -47,6 +47,14 @@ public class BCCoreSprites {
     public static final SpriteHolder FILLER_CYLINDER;
     public static final SpriteHolder FILLER_PYRAMID;
     public static final SpriteHolder FILLER_STAIRS;
+    public static final SpriteHolder FILLER_2D_TRIANGLE;
+    public static final SpriteHolder FILLER_2D_SQUARE;
+    public static final SpriteHolder FILLER_2D_PENTAGON;
+    public static final SpriteHolder FILLER_2D_HEXAGON;
+    public static final SpriteHolder FILLER_2D_OCTAGON;
+    public static final SpriteHolder FILLER_2D_CIRCLE;
+    public static final SpriteHolder FILLER_2D_HALF_CIRCLE;
+    public static final SpriteHolder FILLER_2D_ARC;
 
     public static final SpriteHolder PARAM_HOLLOW;
     public static final SpriteHolder PARAM_FILLED;
@@ -88,6 +96,14 @@ public class BCCoreSprites {
         FILLER_CYLINDER = getHolder("filler/patterns/cylinder");
         FILLER_PYRAMID = getHolder("filler/patterns/pyramid");
         FILLER_STAIRS = getHolder("filler/patterns/stairs");
+        FILLER_2D_TRIANGLE = getHolder("filler/patterns/2d_triangle");
+        FILLER_2D_SQUARE = getHolder("filler/patterns/2d_square");
+        FILLER_2D_PENTAGON = getHolder("filler/patterns/2d_pentagon");
+        FILLER_2D_HEXAGON = getHolder("filler/patterns/2d_hexagon");
+        FILLER_2D_OCTAGON = getHolder("filler/patterns/2d_octagon");
+        FILLER_2D_CIRCLE = getHolder("filler/patterns/2d_circle");
+        FILLER_2D_HALF_CIRCLE = getHolder("filler/patterns/2d_half_circle");
+        FILLER_2D_ARC = getHolder("filler/patterns/2d_arc");
 
         PARAM_HOLLOW = getHolder("filler/parameters/hollow");
         PARAM_FILLED = getHolder("filler/parameters/filled");

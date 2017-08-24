@@ -11,36 +11,41 @@ import buildcraft.api.filler.IFillerPattern;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.statement.StatementContext;
 
+import buildcraft.core.builders.patterns.PatternShape2d;
+
 public enum FillerStatementContext implements StatementContext<IFillerPattern> {
     CONTEXT_ALL;
 
-    /*
-     * All immutable - the filler always shows everything, and for
-     * now there aren't enough shapes to require multiple groups.
-     */
-
-    private static final List<Group> actualGroup = ImmutableList.of(Group.INSTANCE);
-    private static final List<IFillerPattern> possibleValues;
+    private static final List<Group> groups = ImmutableList.copyOf(Group.values());
 
     static {
-        possibleValues = new ArrayList<>();
         setupPossible();
     }
 
-    private static void setupPossible() {
-        possibleValues.clear();
+    public static void setupPossible() {
+        for (Group group : Group.values()) {
+            group.patterns.clear();
+        }
         for (IFillerPattern pattern : FillerManager.registry.getPatterns()) {
-            possibleValues.add(pattern);
+            // TODO (AlexIIL): 8.1.x: add support for other groups
+            if (pattern instanceof PatternShape2d) {
+                Group.SHAPES_2D.patterns.add(pattern);
+            } else {
+                Group.DEFAULT.patterns.add(pattern);
+            }
         }
     }
 
     @Override
     public List<Group> getAllPossible() {
-        return actualGroup;
+        return groups;
     }
 
-    static enum Group implements StatementGroup<IFillerPattern> {
-        INSTANCE;
+    enum Group implements StatementGroup<IFillerPattern> {
+        DEFAULT,
+        SHAPES_2D;
+
+        final List<IFillerPattern> patterns = new ArrayList<>();
 
         @Override
         public ISimpleDrawable getSourceIcon() {
@@ -49,7 +54,7 @@ public enum FillerStatementContext implements StatementContext<IFillerPattern> {
 
         @Override
         public List<IFillerPattern> getValues() {
-            return possibleValues;
+            return patterns;
         }
     }
 }

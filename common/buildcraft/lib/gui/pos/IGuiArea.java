@@ -61,11 +61,15 @@ public interface IGuiArea extends IGuiPosition {
     }
 
     default IGuiPosition getCenter() {
-        return new PositionCallable(this::getCenterX, this::getCenterY);
+        return getPosition(0, 0);
     }
 
     default IGuiPosition getEnd() {
-        return new PositionCallable(this::getEndX, this::getEndY);
+        return getPosition(1, 1);
+    }
+
+    default IGuiPosition getCenterTop() {
+        return getPosition(0, 0);
     }
 
     /** @param partX -1, 0 or 1. -1 equals the start, 0 equals the centre and 1 equals the end

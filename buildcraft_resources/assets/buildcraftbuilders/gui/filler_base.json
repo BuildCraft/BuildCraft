@@ -46,7 +46,8 @@
 		},
 		"pattern_possible": {
 			"type": "buildcraftlib:statement/source",
-			"source": "filler.possible"
+			"source": "filler.possible",
+			"side": "left"
 		},
 		"button_invert": {
 			"type": "four_button",

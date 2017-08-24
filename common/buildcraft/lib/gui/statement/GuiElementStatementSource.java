@@ -63,7 +63,10 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
     }
 
     private void iterateSlots(ISlotIter<S> iter) {
-        int x = 0;
+        int dx = left ? -1 : 1;
+        int sx = left ? 3 : 0;
+        int ex = sx + dx * 4;
+        int x = sx;
         int y = 0;
         for (StatementGroup<S> group : ctx.getAllPossible()) {
             int visited = 0;
@@ -72,14 +75,15 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
                 double py = getY() + y * 18;
                 iter.iterate(slot, new GuiRectangle(px, py, 18, 18));
                 visited++;
-                x++;
-                if (x > 3) {
-                    x = 0;
+                x += dx;
+                if (x == ex) {
+                    x = sx;
                     y++;
                 }
             }
 
-            if (visited > 0) {
+            if (visited > 0 && x != sx) {
+                x = sx;
                 y++;
             }
         }

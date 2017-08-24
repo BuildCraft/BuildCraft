@@ -33,7 +33,7 @@ import buildcraft.builders.container.ContainerReplacer;
 import buildcraft.builders.gui.GuiArchitectTable;
 import buildcraft.builders.gui.GuiBuilder;
 import buildcraft.builders.gui.GuiElectronicLibrary;
-import buildcraft.builders.gui.GuiFiller2;
+import buildcraft.builders.gui.GuiFiller;
 import buildcraft.builders.gui.GuiFillerPlanner;
 import buildcraft.builders.gui.GuiFilling;
 import buildcraft.builders.gui.GuiReplacer;
@@ -129,7 +129,7 @@ public abstract class BCBuildersProxy implements IGuiHandler {
             if (id == BCBuildersGuis.FILLER.ordinal()) {
                 if (tile instanceof TileFiller) {
                     TileFiller filler = (TileFiller) tile;
-                    return new GuiFiller2(new ContainerFiller(player, filler));
+                    return new GuiFiller(new ContainerFiller(player, filler));
                 }
             }
             if (id == BCBuildersGuis.ARCHITECT.ordinal()) {

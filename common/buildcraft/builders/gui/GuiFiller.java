@@ -18,13 +18,13 @@ import buildcraft.builders.container.ContainerFiller;
 import buildcraft.builders.filler.FillerStatementContext;
 import buildcraft.core.BCCoreSprites;
 
-public class GuiFiller2 extends GuiJson<ContainerFiller> {
+public class GuiFiller extends GuiJson<ContainerFiller> {
 
     public static final ResourceLocation LOCATION = new ResourceLocation("buildcraftbuilders:gui/filler.json");
     private static final SpriteDelegate SPRITE_PATTERN = new SpriteDelegate();
     private static final SpriteDelegate SPRITE_CONTROL_MODE = new SpriteDelegate();
 
-    public GuiFiller2(ContainerFiller container) {
+    public GuiFiller(ContainerFiller container) {
         super(container, LOCATION);
     }
 

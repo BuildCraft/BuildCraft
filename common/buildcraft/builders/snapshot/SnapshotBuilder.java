@@ -46,6 +46,8 @@ import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.world.WorldEventListenerAdapter;
 
+import buildcraft.builders.snapshot.Snapshot.BuildingInfo;
+
 public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> implements INBTSerializable<NBTTagCompound> {
     private static final int MAX_QUEUE_SIZE = 64;
     protected static final byte CHECK_RESULT_UNKNOWN = 0;
@@ -64,7 +66,11 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                                       @Nonnull IBlockState oldState,
                                       @Nonnull IBlockState newState,
                                       int flags) {
-            if (tile.getBuilder() == SnapshotBuilder.this && getBuildingInfo().box.contains(pos)) {
+            if (tile.getBuilder() != SnapshotBuilder.this) {
+                return;
+            }
+            BuildingInfo buildingInfo = getBuildingInfo();
+            if (buildingInfo != null && buildingInfo.box.contains(pos)) {
                 if (check(pos)) {
                     afterChecks();
                 }

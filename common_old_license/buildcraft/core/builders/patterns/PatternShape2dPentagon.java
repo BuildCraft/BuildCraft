@@ -21,7 +21,7 @@ public class PatternShape2dPentagon extends PatternShape2d {
 
     @Override
     public ISprite getSprite() {
-        return BCCoreSprites.TRIGGER_TRUE;
+        return BCCoreSprites.FILLER_2D_PENTAGON;
     }
 
     @Override

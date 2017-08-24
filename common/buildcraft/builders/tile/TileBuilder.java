@@ -274,6 +274,7 @@ public class TileBuilder extends TileBC_Neptune
         world.profiler.endStartSection("net_update");
         sendNetworkUpdate(NET_RENDER_DATA); // FIXME
         world.profiler.endSection();
+        world.profiler.endSection();
     }
 
     // Networking

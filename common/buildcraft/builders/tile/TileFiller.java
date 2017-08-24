@@ -396,7 +396,7 @@ public class TileFiller extends TileBC_Neptune
     }
 
     @Override
-    public SnapshotBuilder getBuilder() {
+    public TemplateBuilder getBuilder() {
         return builder;
     }
 

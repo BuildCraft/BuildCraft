@@ -29,10 +29,6 @@ public abstract class StatementWrapper implements IStatement, Comparable<Stateme
         this.sourcePart = sourcePart;
     }
 
-    public abstract NBTTagCompound writeToNbt();
-
-    public abstract void writeToBuf(PacketBufferBC buf);
-
     /** @see buildcraft.api.statements.IStatement#getUniqueTag() */
     @Override
     public String getUniqueTag() {

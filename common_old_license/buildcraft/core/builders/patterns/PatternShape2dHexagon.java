@@ -4,6 +4,8 @@ import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.BCLibSprites;
 
+import buildcraft.core.BCCoreSprites;
+
 public class PatternShape2dHexagon extends PatternShape2d {
 
     public PatternShape2dHexagon() {
@@ -12,7 +14,7 @@ public class PatternShape2dHexagon extends PatternShape2d {
 
     @Override
     public ISprite getSprite() {
-        return BCLibSprites.LOCK;
+        return BCCoreSprites.FILLER_2D_HEXAGON;
     }
 
     @Override

@@ -2,7 +2,7 @@ package buildcraft.core.builders.patterns;
 
 import buildcraft.api.core.render.ISprite;
 
-import buildcraft.lib.BCLibSprites;
+import buildcraft.core.BCCoreSprites;
 
 public class PatternShape2dTriangle extends PatternShape2d {
 
@@ -12,7 +12,7 @@ public class PatternShape2dTriangle extends PatternShape2d {
 
     @Override
     public ISprite getSprite() {
-        return BCLibSprites.WARNING_MAJOR;
+        return BCCoreSprites.FILLER_2D_TRIANGLE;
     }
 
     @Override

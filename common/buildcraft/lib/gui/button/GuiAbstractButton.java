@@ -35,10 +35,7 @@ public abstract class GuiAbstractButton<G extends GuiBC8<?>> extends GuiElementS
     }
 
     public GuiElementText createTextElement(String text) {
-        double width = gui.getFontRenderer().getStringWidth(text);
-        double height = gui.getFontRenderer().FONT_HEIGHT;
-        IGuiPosition pos = getCenter().offset(-width / 2, -height / 2);
-        return new GuiElementText(gui, pos, () -> text, this::getColourForText);
+        return createTextElement(() -> text);
     }
 
     public GuiElementText createTextElement(Supplier<String> text) {

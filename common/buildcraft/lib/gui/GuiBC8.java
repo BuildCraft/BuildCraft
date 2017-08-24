@@ -96,6 +96,22 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         return lastPartialTicks;
     }
 
+    // Gui -- double -> int
+
+    public void drawTexturedModalRect(double posX, double posY, double textureX, double textureY, double width, double height) {
+        int x = MathHelper.floor(posX);
+        int y = MathHelper.floor(posY);
+        int u = MathHelper.floor(textureX);
+        int v = MathHelper.floor(textureY);
+        int w = MathHelper.floor(width);
+        int h = MathHelper.floor(height);
+        drawTexturedModalRect(x, y, u, v, w, h);
+    }
+
+    public void drawString(FontRenderer fontRenderer, String text, double x, double y, int colour) {
+        fontRenderer.drawStringWithShadow(text, (float) x, (float) y, colour);
+    }
+
     // Other
 
     public List<IGuiElement> getElementsAt(double x, double y) {

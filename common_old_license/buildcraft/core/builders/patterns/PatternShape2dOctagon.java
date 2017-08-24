@@ -22,7 +22,7 @@ public class PatternShape2dOctagon extends PatternShape2d {
 
     @Override
     public ISprite getSprite() {
-        return BCCoreSprites.TRIGGER_POWER_LOW;
+        return BCCoreSprites.FILLER_2D_OCTAGON;
     }
 
     @Override

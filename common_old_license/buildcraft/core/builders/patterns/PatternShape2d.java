@@ -211,6 +211,16 @@ public abstract class PatternShape2d extends Pattern {
             moveTo(a, b);
         }
 
-        // TODO: Curves
+        public void arcTo(int a, int b, int degrees) {
+            
+        }
+
+        public void arcFrom(int a, int b, int degrees) {
+            int a2 = lastA;
+            int b2 = lastB;
+            moveTo(a, b);
+            arcTo(a2, b2, -degrees);
+            moveTo(a, b);
+        }
     }
 }
