@@ -6,14 +6,17 @@
 
 package buildcraft.silicon;
 
-import buildcraft.api.BCModules;
-import buildcraft.core.BCCoreConfig;
-import buildcraft.lib.config.EnumRestartRequirement;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import buildcraft.api.BCModules;
+
+import buildcraft.lib.config.EnumRestartRequirement;
+
+import buildcraft.core.BCCoreConfig;
 
 public class BCSiliconConfig {
 
