@@ -8,9 +8,6 @@ package buildcraft.silicon.client.render;
 
 import javax.annotation.Nonnull;
 
-import buildcraft.core.item.ItemGoggles;
-import buildcraft.silicon.BCSiliconConfig;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -26,6 +23,8 @@ import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 
 import buildcraft.core.client.BuildCraftLaserManager;
+import buildcraft.core.item.ItemGoggles;
+import buildcraft.silicon.BCSiliconConfig;
 import buildcraft.silicon.tile.TileLaser;
 
 public class RenderLaser extends FastTESR<TileLaser> {
