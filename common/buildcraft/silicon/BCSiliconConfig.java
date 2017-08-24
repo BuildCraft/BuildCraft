@@ -13,24 +13,22 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class BCSiliconConfig {
 
-    public static Boolean renderLaserBeams = true;
+    public static boolean renderLaserBeams = true;
 
     private static Property propRenderLaserBeams;
 
     public static void preInit() {
 
         Configuration config = BCCoreConfig.config;
-        //TODO change the category and update the comment once visible with goggles is implemented
-        propRenderLaserBeams = config.get("experimental", "renderLaserBeams", true,
+        //TODO update the comment once visible with goggles is implemented
+        propRenderLaserBeams = config.get("display", "renderLaserBeams", true,
                 "When false laser beams will not be visible while transmitting power");
-        EnumRestartRequirement.WORLD.setTo(propRenderLaserBeams);
 
+        reloadConfig(EnumRestartRequirement.NONE);
         MinecraftForge.EVENT_BUS.register(BCSiliconConfig.class);
     }
 
@@ -41,12 +39,7 @@ public class BCSiliconConfig {
     @SubscribeEvent
     public static void onConfigChange(OnConfigChangedEvent cce) {
         if (BCModules.isBcMod(cce.getModID())) {
-            EnumRestartRequirement req = EnumRestartRequirement.NONE;
-            if (Loader.instance().isInState(LoaderState.AVAILABLE)) {
-                // The loaders state will be LoaderState.SERVER_STARTED when we are in a world
-                req = EnumRestartRequirement.WORLD;
-            }
-            reloadConfig(req);
+            reloadConfig(EnumRestartRequirement.NONE);
         }
     }
 }

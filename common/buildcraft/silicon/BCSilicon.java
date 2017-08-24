@@ -8,7 +8,6 @@ package buildcraft.silicon;
 
 import java.util.function.Consumer;
 
-import buildcraft.lib.config.EnumRestartRequirement;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -44,9 +43,6 @@ public class BCSilicon {
         BCSiliconConfig.preInit();
         BCSiliconItems.preInit();
         BCSiliconBlocks.preInit();
-
-        // Reload after all of the definitions have been created.
-        BCSiliconConfig.reloadConfig(EnumRestartRequirement.GAME);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCSiliconProxy.getProxy());
 
