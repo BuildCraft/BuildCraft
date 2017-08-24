@@ -8,6 +8,7 @@ package buildcraft.silicon.client.render;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.silicon.BCSiliconConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.EnumFacing;
@@ -29,29 +30,31 @@ public class RenderLaser extends FastTESR<TileLaser> {
     @Override
     public void renderTileEntityFast(@Nonnull TileLaser tile, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer buffer) {
 
-        Minecraft.getMinecraft().mcProfiler.startSection("bc");
-        Minecraft.getMinecraft().mcProfiler.startSection("laser");
+        if (BCSiliconConfig.renderLaserBeams) {
+            Minecraft.getMinecraft().mcProfiler.startSection("bc");
+            Minecraft.getMinecraft().mcProfiler.startSection("laser");
 
-        buffer.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
+            buffer.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
 
-        if (tile.laserPos != null) {
-            long avg = tile.getAverageClient();
-            if (avg > 200_000) {
-                avg += 200_000;
-                EnumFacing side = tile.getWorld().getBlockState(tile.getPos()).getValue(BuildCraftProperties.BLOCK_FACING_6);
-                Vec3d offset = new Vec3d(0.5, 0.5, 0.5).add(new Vec3d(side.getDirectionVec()).scale(4 / 16D));
-                int index = (int) (avg * MAX_POWER / tile.getMaxPowerPerTick());
-                if (index > MAX_POWER) {
-                    index = MAX_POWER;
+            if (tile.laserPos != null) {
+                long avg = tile.getAverageClient();
+                if (avg > 200_000) {
+                    avg += 200_000;
+                    EnumFacing side = tile.getWorld().getBlockState(tile.getPos()).getValue(BuildCraftProperties.BLOCK_FACING_6);
+                    Vec3d offset = new Vec3d(0.5, 0.5, 0.5).add(new Vec3d(side.getDirectionVec()).scale(4 / 16D));
+                    int index = (int) (avg * MAX_POWER / tile.getMaxPowerPerTick());
+                    if (index > MAX_POWER) {
+                        index = MAX_POWER;
+                    }
+                    LaserData_BC8 laser = new LaserData_BC8(BuildCraftLaserManager.POWERS[index], new Vec3d(tile.getPos()).add(offset), tile.laserPos, 1 / 16D);
+                    LaserRenderer_BC8.renderLaserDynamic(laser, buffer);
                 }
-                LaserData_BC8 laser = new LaserData_BC8(BuildCraftLaserManager.POWERS[index], new Vec3d(tile.getPos()).add(offset), tile.laserPos, 1 / 16D);
-                LaserRenderer_BC8.renderLaserDynamic(laser, buffer);
             }
+
+            buffer.setTranslation(0, 0, 0);
+
+            Minecraft.getMinecraft().mcProfiler.endSection();
+            Minecraft.getMinecraft().mcProfiler.endSection();
         }
-
-        buffer.setTranslation(0, 0, 0);
-
-        Minecraft.getMinecraft().mcProfiler.endSection();
-        Minecraft.getMinecraft().mcProfiler.endSection();
     }
 }

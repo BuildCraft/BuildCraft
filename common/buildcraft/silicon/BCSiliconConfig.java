@@ -28,16 +28,14 @@ public class BCSiliconConfig {
         Configuration config = BCCoreConfig.config;
         //TODO change the category and update the comment once visible with goggles is implemented
         propRenderLaserBeams = config.get("experimental", "renderLaserBeams", true,
-                "When set to false Laser beams will not be visible. Default: true");
+                "When false laser beams will not be visible while transmitting power");
         EnumRestartRequirement.WORLD.setTo(propRenderLaserBeams);
 
         MinecraftForge.EVENT_BUS.register(BCSiliconConfig.class);
     }
 
     public static void reloadConfig(EnumRestartRequirement restarted) {
-        if (EnumRestartRequirement.WORLD.hasBeenRestarted(restarted)) {
-            renderLaserBeams = propRenderLaserBeams.getBoolean();
-        }
+        renderLaserBeams = propRenderLaserBeams.getBoolean();
     }
 
     @SubscribeEvent
