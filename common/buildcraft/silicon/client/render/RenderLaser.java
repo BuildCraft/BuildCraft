@@ -8,9 +8,11 @@ package buildcraft.silicon.client.render;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.core.item.ItemGoggles;
 import buildcraft.silicon.BCSiliconConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 
@@ -30,7 +32,7 @@ public class RenderLaser extends FastTESR<TileLaser> {
     @Override
     public void renderTileEntityFast(@Nonnull TileLaser tile, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer buffer) {
 
-        if (BCSiliconConfig.renderLaserBeams) {
+        if (BCSiliconConfig.renderLaserBeams || isPlayerWearingBCGoggles()) {
             Minecraft.getMinecraft().mcProfiler.startSection("bc");
             Minecraft.getMinecraft().mcProfiler.startSection("laser");
 
@@ -56,5 +58,16 @@ public class RenderLaser extends FastTESR<TileLaser> {
             Minecraft.getMinecraft().mcProfiler.endSection();
             Minecraft.getMinecraft().mcProfiler.endSection();
         }
+    }
+
+    private boolean isPlayerWearingBCGoggles () {
+        Iterable<ItemStack> armorList = Minecraft.getMinecraft().player.getArmorInventoryList();
+
+        for (ItemStack armorPiece : armorList) {
+            if (armorPiece.getItem() instanceof ItemGoggles) {
+                return true;
+            }
+        }
+        return false;
     }
 }

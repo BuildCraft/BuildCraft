@@ -24,9 +24,8 @@ public class BCSiliconConfig {
     public static void preInit() {
 
         Configuration config = BCCoreConfig.config;
-        //TODO update the comment once visible with goggles is implemented
         propRenderLaserBeams = config.get("display", "renderLaserBeams", true,
-                "When false laser beams will not be visible while transmitting power");
+                "When false laser beams will not be visible while transmitting power without wearing the BC Goggles");
 
         reloadConfig(EnumRestartRequirement.NONE);
         MinecraftForge.EVENT_BUS.register(BCSiliconConfig.class);
