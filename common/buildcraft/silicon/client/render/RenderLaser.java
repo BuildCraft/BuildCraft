@@ -12,7 +12,8 @@ import buildcraft.core.item.ItemGoggles;
 import buildcraft.silicon.BCSiliconConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.item.ItemStack;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 
@@ -32,7 +33,7 @@ public class RenderLaser extends FastTESR<TileLaser> {
     @Override
     public void renderTileEntityFast(@Nonnull TileLaser tile, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer buffer) {
 
-        if (BCSiliconConfig.renderLaserBeams || isPlayerWearingBCGoggles()) {
+        if (BCSiliconConfig.renderLaserBeams || isPlayerWearingGoggles()) {
             Minecraft.getMinecraft().mcProfiler.startSection("bc");
             Minecraft.getMinecraft().mcProfiler.startSection("laser");
 
@@ -60,14 +61,8 @@ public class RenderLaser extends FastTESR<TileLaser> {
         }
     }
 
-    private boolean isPlayerWearingBCGoggles () {
-        Iterable<ItemStack> armorList = Minecraft.getMinecraft().player.getArmorInventoryList();
-
-        for (ItemStack armorPiece : armorList) {
-            if (armorPiece.getItem() instanceof ItemGoggles) {
-                return true;
-            }
-        }
-        return false;
+    private boolean isPlayerWearingGoggles() {
+        Item headArmor = Minecraft.getMinecraft().player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem();
+        return headArmor instanceof ItemGoggles;
     }
 }
