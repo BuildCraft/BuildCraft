@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 
 import buildcraft.core.item.ItemGoggles;
 import buildcraft.silicon.BCSiliconConfig;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.inventory.EntityEquipmentSlot;
