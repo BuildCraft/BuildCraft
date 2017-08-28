@@ -145,8 +145,4 @@ public class BCLibConfig {
         /** All {@link TileEntity}'s in the world. */
         ALL_TILES;
     }
-
-    static {
-        configChangeListeners.add(LocaleUtil::onConfigChanged);
-    }
 }
