@@ -41,7 +41,7 @@ public enum FillerStatementContext implements StatementContext<IFillerPattern> {
         return groups;
     }
 
-    enum Group implements StatementGroup<IFillerPattern> {
+    public enum Group implements StatementGroup<IFillerPattern> {
         DEFAULT,
         SHAPES_2D;
 

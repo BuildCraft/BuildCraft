@@ -211,16 +211,70 @@ public abstract class PatternShape2d extends Pattern {
             moveTo(a, b);
         }
 
-        public void arcTo(int a, int b, int degrees) {
-            
+        public void arc(int ca, int cb, double ra, double rb) {
+            arc(ca, cb, ra, rb, 0, 0, ArcType.ARC);
         }
 
-        public void arcFrom(int a, int b, int degrees) {
-            int a2 = lastA;
-            int b2 = lastB;
-            moveTo(a, b);
-            arcTo(a2, b2, -degrees);
-            moveTo(a, b);
+        public void arc(int ca, int cb, double ra, double rb, int da, int db, ArcType type) {
+            ra = Math.max(1, ra);
+            rb = Math.max(1, rb);
+            double ra2 = ra * ra;
+            double rb2 = rb * rb;
+
+            double sigma = 2 * rb2 + ra2 * (1 - 2 * rb);
+            for (int a = 0, b = (int) rb; rb2 * a <= ra2 * b; a++) {
+                iterator.iterate(ca - a, cb - b);
+                if (type.shouldDrawSecondQuadrant()) {
+                    iterator.iterate(ca + a + da, cb - b);
+                    if (type.shouldDrawAllQuadrants()) {
+                        iterator.iterate(ca - a, cb + b + db);
+                        iterator.iterate(ca + a + da, cb + b + db);
+                    }
+                }
+                if (sigma >= 0) {
+                    sigma += 4 * ra2 * (1 - b);
+                    b--;
+                }
+                sigma += rb2 * ((4 * a) + 6);
+            }
+
+            sigma = 2 * ra2 + rb2 * (1 - 2 * ra);
+            for (int a = (int) ra, b = 0; ra2 * b <= rb2 * a; b++) {
+                iterator.iterate(ca - a, cb - b);
+                if (type.shouldDrawSecondQuadrant()) {
+                    iterator.iterate(ca + a + da, cb - b);
+                    if (type.shouldDrawAllQuadrants()) {
+                        iterator.iterate(ca - a, cb + b + db);
+                        iterator.iterate(ca + a + da, cb + b + db);
+                    }
+                }
+                if (sigma >= 0) {
+                    sigma += 4 * rb2 * (1 - a);
+                    a--;
+                }
+                sigma += ra2 * ((4 * b) + 6);
+            }
+        }
+    }
+
+    public enum ArcType {
+        ARC(false, false),
+        SEMI_CIRCLE(true, false),
+        FULL_CIRCLE(true, true);
+
+        final boolean second, all;
+
+        private ArcType(boolean second, boolean all) {
+            this.second = second;
+            this.all = all;
+        }
+
+        public boolean shouldDrawSecondQuadrant() {
+            return second;
+        }
+
+        public boolean shouldDrawAllQuadrants() {
+            return all;
         }
     }
 }

@@ -17,6 +17,8 @@ import buildcraft.lib.misc.data.IReference;
 import buildcraft.lib.statement.StatementContext;
 import buildcraft.lib.statement.StatementContext.StatementGroup;
 
+import buildcraft.transport.gui.GuiGate;
+
 public class GuiElementStatementSource<S extends IGuiSlot> implements IInteractionElement {
     public final GuiJson<?> gui;
     public final IGuiPosition position;
@@ -108,6 +110,7 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
 
     private void drawAt(S slot, double x, double y) {
         ISprite sprite = slot.getSprite();
+        GuiGate.SLOT_COLOUR.drawAt(x, y);
         if (sprite != null) {
             GuiIcon.drawAt(sprite, x + 1, y + 1, 16);
         }

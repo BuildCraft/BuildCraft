@@ -11,25 +11,18 @@ import buildcraft.lib.expression.api.IVariableNode.IVariableNodeObject;
 import buildcraft.lib.expression.api.NodeType2;
 import buildcraft.lib.expression.api.NodeTypes;
 
-public class NodeVariableObject<T> implements IVariableNodeObject<T> {
-    public final String name;
+public class NodeVariableObject<T> extends NodeVariable implements IVariableNodeObject<T> {
     public final Class<T> type;
     public T value;
-    private boolean isConst = false;
 
     public NodeVariableObject(String name, Class<T> type) {
-        this.name = name;
+        super(name);
         this.type = type;
         NodeType2<T> nodeType = NodeTypes.getType(type);
         if (nodeType == null) {
             throw new IllegalArgumentException("Unknown NodeType " + type);
         }
         this.value = nodeType.defaultValue;
-    }
-
-    @Override
-    public void setConstant(boolean isConst) {
-        this.isConst = isConst;
     }
 
     @Override
@@ -57,15 +50,5 @@ public class NodeVariableObject<T> implements IVariableNodeObject<T> {
             throw new IllegalArgumentException("Wrong type! Expected " + getType() + " but got " + nodeFrom.getType());
         }
         value = (T) nodeFrom.evaluate();
-    }
-
-    @Override
-    public String toString() {
-        return name + " = " + evaluateAsString();
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 }

@@ -7,7 +7,7 @@ import buildcraft.core.BCCoreSprites;
 public class PatternShape2dCircle extends PatternShape2d {
 
     public PatternShape2dCircle() {
-        super("circle");
+        super("2d_circle");
     }
 
     @Override
@@ -17,6 +17,11 @@ public class PatternShape2dCircle extends PatternShape2d {
 
     @Override
     protected void genShape(int maxA, int maxB, LineList list) {
-//        list.moveTo
+        int halfA = maxA / 2;
+        int halfB = maxB / 2;
+        int halfAUpper = maxA - halfA;
+        int halfBUpper = maxB - halfB;
+        list.setFillPoint(halfA, halfB);
+        list.arc(halfA, halfB, maxA / 2.0, maxB / 2.0, halfAUpper - halfA, halfBUpper - halfB, ArcType.FULL_CIRCLE);
     }
 }

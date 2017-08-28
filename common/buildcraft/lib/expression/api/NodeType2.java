@@ -1,10 +1,6 @@
 package buildcraft.lib.expression.api;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import buildcraft.lib.expression.NodeTypeBase;
-import buildcraft.lib.expression.node.func.NodeFuncObjectToObject.IFuncObjectToObject;
 
 public final class NodeType2<T> extends NodeTypeBase<T> {
     public final Class<T> type;

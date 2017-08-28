@@ -36,7 +36,7 @@
 			"type": "buildcraftlib:drawable",
 			"source": {
 				"sprite": "filler.pattern.sprite",
-				"area": [4,4,8,8]
+				"area": [0, 0, 16, 16]
 			},
 			"area": [20,40,16,16]
 		},
@@ -46,8 +46,7 @@
 		},
 		"pattern_possible": {
 			"type": "buildcraftlib:statement/source",
-			"source": "filler.possible",
-			"side": "left"
+			"source": "filler.possible"
 		},
 		"button_invert": {
 			"type": "four_button",

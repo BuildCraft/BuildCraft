@@ -22,6 +22,7 @@ import buildcraft.core.builders.patterns.PatternParameterHollow;
 import buildcraft.core.builders.patterns.PatternParameterXZDir;
 import buildcraft.core.builders.patterns.PatternParameterYDir;
 import buildcraft.core.builders.patterns.PatternPyramid;
+import buildcraft.core.builders.patterns.PatternShape2dCircle;
 import buildcraft.core.builders.patterns.PatternShape2dHexagon;
 import buildcraft.core.builders.patterns.PatternShape2dOctagon;
 import buildcraft.core.builders.patterns.PatternShape2dPentagon;
@@ -119,12 +120,13 @@ public class BCCoreStatements {
     public static final PatternShape2dPentagon PATTERN_PENTAGON = new PatternShape2dPentagon();
     public static final PatternShape2dHexagon PATTERN_HEXAGON = new PatternShape2dHexagon();
     public static final PatternShape2dOctagon PATTERN_OCTAGON = new PatternShape2dOctagon();
+    public static final PatternShape2dCircle PATTERN_CIRCLE = new PatternShape2dCircle();
 
     public static final Pattern[] PATTERNS = {//
         PATTERN_NONE, PATTERN_CLEAR, PATTERN_FILL, PATTERN_BOX, PATTERN_FRAME,//
         PATTERN_CYLINDER, PATTERN_HORIZON, PATTERN_PYRAMID, PATTERN_STAIRS,//
         PATTERN_FLATTEN, PATTERN_TRIANGLE, PATTERN_SQUARE, PATTERN_PENTAGON,//
-        PATTERN_HEXAGON,//
+        PATTERN_HEXAGON, PATTERN_OCTAGON, PATTERN_CIRCLE//
     };
 
     static {

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -29,7 +30,9 @@ import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumBlockRenderType;
@@ -179,8 +182,11 @@ public enum FacadeStateManager implements IFacadeRegistry {
             return stack;
         }
         Block block = state.getBlock();
-        // Inlined block.getPickStack(), but this doesn't require a world
-        return new ItemStack(block, 1, block.damageDropped(state));
+        Item item = Item.getItemFromBlock(block);
+        if (item == Items.AIR || item == null) {
+            item = block.getItemDropped(state, new Random(0), 0);
+        }
+        return new ItemStack(item, 1, block.damageDropped(state));
     }
 
     public static void postInit() {

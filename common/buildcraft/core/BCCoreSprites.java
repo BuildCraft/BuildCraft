@@ -53,7 +53,7 @@ public class BCCoreSprites {
     public static final SpriteHolder FILLER_2D_HEXAGON;
     public static final SpriteHolder FILLER_2D_OCTAGON;
     public static final SpriteHolder FILLER_2D_CIRCLE;
-    public static final SpriteHolder FILLER_2D_HALF_CIRCLE;
+    public static final SpriteHolder FILLER_2D_SEMI_CIRCLE;
     public static final SpriteHolder FILLER_2D_ARC;
 
     public static final SpriteHolder PARAM_HOLLOW;
@@ -102,7 +102,7 @@ public class BCCoreSprites {
         FILLER_2D_HEXAGON = getHolder("filler/patterns/2d_hexagon");
         FILLER_2D_OCTAGON = getHolder("filler/patterns/2d_octagon");
         FILLER_2D_CIRCLE = getHolder("filler/patterns/2d_circle");
-        FILLER_2D_HALF_CIRCLE = getHolder("filler/patterns/2d_half_circle");
+        FILLER_2D_SEMI_CIRCLE = getHolder("filler/patterns/2d_semi_circle");
         FILLER_2D_ARC = getHolder("filler/patterns/2d_arc");
 
         PARAM_HOLLOW = getHolder("filler/parameters/hollow");
