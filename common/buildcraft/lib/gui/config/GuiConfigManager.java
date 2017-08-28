@@ -24,8 +24,9 @@ public class GuiConfigManager {
     private static final Map<ResourceLocation, GuiConfigSet> properties = new HashMap<>();
 
     static {
-        // TODO (AlexIIL): Flesh this system out more! Add settings that can be loaded from json GUI's
-        // TODO: Move config file loading from core -> lib, and also read/write this out as a file.
+        // TODO (AlexIIL): Read/write this out as a file.
+        // TODO (AlexIIL, post 1.12 move): Flesh this system out more! Add settings that can be loaded from json GUI's
+        // TODO (AlexIIL, post 1.12 move): Move config file loading from core -> lib
         customGuiProperties.put(NodeTypes.getName(boolean.class), GuiPropertyBoolean::new);
         // customGuiProperties.put(NodeTypes.getName(long.class), GuiPropertyLong::new);
         // customGuiProperties.put(NodeTypes.getName(double.class), GuiPropertyDouble::new);
