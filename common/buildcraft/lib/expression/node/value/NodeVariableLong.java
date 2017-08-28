@@ -6,7 +6,6 @@
 
 package buildcraft.lib.expression.node.value;
 
-import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeLong;
 
 public class NodeVariableLong extends NodeVariable implements IVariableNodeLong {
@@ -30,7 +29,7 @@ public class NodeVariableLong extends NodeVariable implements IVariableNodeLong 
     }
 
     @Override
-    public void set(IExpressionNode from) {
-        value = ((INodeLong) from).evaluate();
+    public void set(long value) {
+        this.value = value;
     }
 }

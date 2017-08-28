@@ -1,5 +1,6 @@
 package buildcraft.lib.expression.node.value;
 
+import buildcraft.lib.expression.api.IConstantNode;
 import buildcraft.lib.expression.api.IVariableNode;
 
 public abstract class NodeVariable implements IVariableNode {
@@ -11,7 +12,8 @@ public abstract class NodeVariable implements IVariableNode {
         this.name = name;
     }
 
-    @Override
+    /** If isConstant is true, then calls to {@link #inline()} will return an {@link IConstantNode} (which is
+     * independent to this node), but if false then {@link #inline()} will return this variable. */
     public void setConstant(boolean isConst) {
         this.isConst = isConst;
     }
@@ -19,10 +21,5 @@ public abstract class NodeVariable implements IVariableNode {
     @Override
     public String toString() {
         return name + " = " + evaluateAsString();
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 }

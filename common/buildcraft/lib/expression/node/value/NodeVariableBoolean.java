@@ -6,7 +6,6 @@
 
 package buildcraft.lib.expression.node.value;
 
-import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
 
 public class NodeVariableBoolean extends NodeVariable implements IVariableNodeBoolean {
@@ -30,7 +29,7 @@ public class NodeVariableBoolean extends NodeVariable implements IVariableNodeBo
     }
 
     @Override
-    public void set(IExpressionNode from) {
-        value = ((INodeBoolean) from).evaluate();
+    public void set(boolean value) {
+        this.value = value;
     }
 }

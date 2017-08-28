@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -21,6 +23,8 @@ import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
+import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IContainingElement;
 import buildcraft.lib.gui.IGuiElement;
@@ -77,6 +81,9 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
     /** -1 means shrinking, 0 no change, 1 expanding */
     private int currentDifference = 0;
 
+    @Nullable
+    private IVariableNodeBoolean isOpenProperty;
+
     public Ledger_Neptune(GuiBC8<?> gui, int colour, boolean expandPositive) {
         this.gui = gui;
         this.colour = colour;
@@ -122,6 +129,19 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
         this.title = title;
     }
 
+    public void setOpenProperty(IVariableNodeBoolean prop) {
+        this.isOpenProperty = prop;
+        if (prop.evaluate()) {
+            currentDifference = 1;
+            lastWidth = currentWidth = maxWidth;
+            lastHeight = currentHeight = maxHeight;
+        } else {
+            currentDifference = -1;
+            lastWidth = currentWidth = CLOSED_WIDTH;
+            lastHeight = currentHeight = CLOSED_HEIGHT;
+        }
+    }
+
     /** The default implementation only works if all the elements are based around {@link #positionLedgerStart} */
     public void calculateMaxSize() {
         double w = CLOSED_WIDTH;
@@ -136,6 +156,9 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
 
         maxWidth = w + LEDGER_GAP * 2;
         maxHeight = h + LEDGER_GAP * 2;
+        if (isOpenProperty != null) {
+            setOpenProperty(isOpenProperty);
+        }
     }
 
     @Override
@@ -290,10 +313,15 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
             }
         }
         if (!childClicked && contains(gui.mouse)) {
+            boolean nowOpen = false;
             if (currentDifference == 1) {
                 currentDifference = -1;
             } else {
                 currentDifference = 1;
+                nowOpen = true;
+            }
+            if (isOpenProperty != null) {
+                isOpenProperty.set(nowOpen);
             }
         }
     }

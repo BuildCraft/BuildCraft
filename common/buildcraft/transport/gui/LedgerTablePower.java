@@ -6,10 +6,13 @@
 
 package buildcraft.transport.gui;
 
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.config.GuiConfigManager;
 import buildcraft.lib.gui.ledger.Ledger_Neptune;
 import buildcraft.lib.misc.LocaleUtil;
 
@@ -35,6 +38,8 @@ public class LedgerTablePower extends Ledger_Neptune {
         appendText(LocaleUtil.localize("gui.assemblyRate") + ":", SUB_HEADER_COLOUR).setDropShadow(true);
         appendText(() -> LocaleUtil.localizeMjFlow(tile.avgPowerClient), TEXT_COLOUR);
         calculateMaxSize();
+
+        setOpenProperty(GuiConfigManager.getOrAddBoolean(new ResourceLocation("buildcraftsilicon:all_tables"), "ledger.power.is_open", false));
     }
 
     @Override

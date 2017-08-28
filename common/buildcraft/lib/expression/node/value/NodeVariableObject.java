@@ -6,7 +6,6 @@
 
 package buildcraft.lib.expression.node.value;
 
-import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeObject;
 import buildcraft.lib.expression.api.NodeType2;
 import buildcraft.lib.expression.api.NodeTypes;
@@ -44,11 +43,7 @@ public class NodeVariableObject<T> extends NodeVariable implements IVariableNode
     }
 
     @Override
-    public void set(IExpressionNode from) {
-        INodeObject<?> nodeFrom = (INodeObject<?>) from;
-        if (nodeFrom.getType() != getType()) {
-            throw new IllegalArgumentException("Wrong type! Expected " + getType() + " but got " + nodeFrom.getType());
-        }
-        value = (T) nodeFrom.evaluate();
+    public void set(T value) {
+        this.value = value;
     }
 }

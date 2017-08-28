@@ -1,5 +1,6 @@
 package buildcraft.lib.expression.api;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -185,6 +186,10 @@ public class NodeTypes {
 
     public static String getName(Class<?> clazz) {
         return namesByType.get(clazz);
+    }
+
+    public static Collection<String> getValidTypeNames() {
+        return typesByName.keySet();
     }
 
     public static FunctionContext getContext(Class<?> clazz) {

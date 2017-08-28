@@ -32,7 +32,7 @@ import buildcraft.lib.misc.collect.TypedMap;
  * {@link ISprite}'s and configure buttons in code - currently this only allows for completely defining simple elements
  * via json, more complex ones must be implemented in code. */
 public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
-    private final ResourceLocation guiDefinition;
+    public final ResourceLocation guiDefinition;
     protected final TypedKeyMap<String, Object> properties = TypedKeyMap.createHierachy();
     private ITickableNode[] tickableNodes = new ITickableNode[0];
     private final NodeVariableDouble time;

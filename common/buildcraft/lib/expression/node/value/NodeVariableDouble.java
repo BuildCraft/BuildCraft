@@ -6,7 +6,6 @@
 
 package buildcraft.lib.expression.node.value;
 
-import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeDouble;
 
 public class NodeVariableDouble extends NodeVariable implements IVariableNodeDouble {
@@ -30,7 +29,7 @@ public class NodeVariableDouble extends NodeVariable implements IVariableNodeDou
     }
 
     @Override
-    public void set(IExpressionNode from) {
-        value = ((INodeDouble) from).evaluate();
+    public void set(double value) {
+        this.value = value;
     }
 }

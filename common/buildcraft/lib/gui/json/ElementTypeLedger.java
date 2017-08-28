@@ -1,9 +1,12 @@
 package buildcraft.lib.gui.json;
 
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.IGuiElement;
+import buildcraft.lib.gui.config.GuiConfigManager;
 import buildcraft.lib.gui.ledger.Ledger_Neptune;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
@@ -28,6 +31,7 @@ public class ElementTypeLedger extends ElementType {
         boolean positive = "right".equalsIgnoreCase(side);
 
         Ledger_Neptune ledger = new Ledger_Neptune(gui, colour, positive);
+        ledger.setOpenProperty(GuiConfigManager.getOrAddBoolean(gui.guiDefinition, json.name + ".is_open", false));
         ledger.setTitle(title);
 
         for (JsonGuiElement c : json.getChildren(info, "children")) {

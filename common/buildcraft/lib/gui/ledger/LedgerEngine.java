@@ -6,6 +6,8 @@
 
 package buildcraft.lib.gui.ledger;
 
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.BCLibSprites;
@@ -13,6 +15,7 @@ import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.config.GuiConfigManager;
 import buildcraft.lib.misc.LocaleUtil;
 
 public class LedgerEngine extends Ledger_Neptune {
@@ -35,6 +38,8 @@ public class LedgerEngine extends Ledger_Neptune {
         appendText(LocaleUtil.localize("gui.heat") + ":", SUB_HEADER_COLOUR).setDropShadow(true);
         appendText(() -> LocaleUtil.localizeHeat(engine.getHeat()), TEXT_COLOUR);
         calculateMaxSize();
+
+        setOpenProperty(GuiConfigManager.getOrAddBoolean(new ResourceLocation("buildcraftlib:all_engines"), "ledger.power.is_open", false));
     }
 
     @Override
