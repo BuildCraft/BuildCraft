@@ -122,33 +122,6 @@
                 "type": "item",
                 "sub_type": "infomation_storage"
             }
-        },{
-            "title": "item.mapLocation.name",
-            "item_stack": "(buildcraftcore:map_location)",
-            "page": "map_location.xml",
-            "type_tags": 
-			{
-                "type": "item",
-                "sub_type": "infomation_storage"
-            }
-        },{
-            "title": "tile.decorated.blueprint.name",
-            "item_stack": "{buildcraftcore:decorated,1,1}",
-            "page": "blueprint_block.xml",
-            "type_tags": 
-			{
-                "type": "block",
-                "sub_type": "decoration"
-            }
-        },{
-            "title": "tile.decorated.template.name",
-            "item_stack": "{buildcraftcore:decorated,1,2}",
-            "page": "template_block.xml",
-            "type_tags": 
-			{
-                "type": "block",
-                "sub_type": "decoration"
-            }
         }
     ]
 }
