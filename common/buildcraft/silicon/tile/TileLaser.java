@@ -48,6 +48,7 @@ import buildcraft.silicon.client.render.AdvDebuggerLaser;
 public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable {
     private int ticks = 0;
     private BlockPos targetPos;
+    private BlockPos previousTarget;
     private final AverageLong avgPower = new AverageLong(100);
     private long averageClient;
     private final MjBattery battery;
@@ -107,7 +108,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     }
 
     private void updateLaser() {
-        if (getTarget() != null) {
+        if (targetPos != null) {
             laserPos = new Vec3d(targetPos)
                 .addVector(
                     (5 + world.rand.nextInt(6) + 0.5) / 16D,
@@ -116,6 +117,20 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
                 );
         } else {
             laserPos = null;
+        }
+    }
+
+    private boolean changedTarget() {
+        if (previousTarget == null && targetPos != null) {
+            return true;
+        }
+        if (previousTarget != null && targetPos == null) {
+            return true;
+        }
+        if (previousTarget != null) {
+            return !previousTarget.equals(targetPos);
+        } else {
+            return false;
         }
     }
 
@@ -129,41 +144,46 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
 
     @Override
     public void update() {
-        if (world.isRemote) {
-            return;
-        }
-        avgPower.tick();
         ticks++;
-
-        if (getTarget() == null) {
-            targetPos = null;
-        }
-
-        if (ticks % (10 + world.rand.nextInt(20)) == 0 || getTarget() == null) {
-            findTarget();
-        }
-
-        if (ticks % (5 + world.rand.nextInt(10)) == 0 || getTarget() == null) {
-            updateLaser();
-        }
-
-        ILaserTarget target = getTarget();
-        if (target != null) {
-            long max = getMaxPowerPerTick();
-            max *= battery.getStored() + max;
-            max /= battery.getCapacity() / 2;
-            max = Math.min(Math.min(max, getMaxPowerPerTick()), target.getRequiredLaserPower());
-            long power = battery.extractPower(0, max);
-            long excess = target.receiveLaserPower(power);
-            if (excess > 0) {
-                battery.addPowerChecking(excess, false);
+        if (world.isRemote) {
+            // set laser render position on client side
+            if (ticks % (5 + world.rand.nextInt(10)) == 0 || targetPos == null) {
+                updateLaser();
             }
-            avgPower.push(power - excess);
         } else {
-            avgPower.clear();
-        }
+            // set target tile on server side
+            avgPower.tick();
 
-        sendNetworkUpdate(NET_RENDER_DATA);
+            previousTarget = targetPos != null ? targetPos.toImmutable() : null;
+
+            if (getTarget() == null) {
+                targetPos = null;
+            }
+
+            if (ticks % (10 + world.rand.nextInt(20)) == 0 || getTarget() == null) {
+                findTarget();
+            }
+
+            ILaserTarget target = getTarget();
+            if (target != null) {
+                long max = getMaxPowerPerTick();
+                max *= battery.getStored() + max;
+                max /= battery.getCapacity() / 2;
+                max = Math.min(Math.min(max, getMaxPowerPerTick()), target.getRequiredLaserPower());
+                long power = battery.extractPower(0, max);
+                long excess = target.receiveLaserPower(power);
+                if (excess > 0) {
+                    battery.addPowerChecking(excess, false);
+                }
+                avgPower.push(power - excess);
+            } else {
+                avgPower.clear();
+            }
+
+            if (changedTarget()) {
+                sendNetworkUpdate(NET_RENDER_DATA);
+            }
+        }
     }
 
     @Override
@@ -203,10 +223,6 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
                 if (targetPos != null) {
                     MessageUtil.writeBlockPos(buffer, targetPos);
                 }
-                buffer.writeBoolean(laserPos != null);
-                if (laserPos != null) {
-                    MessageUtil.writeVec3d(buffer, laserPos);
-                }
                 buffer.writeLong((long) avgPower.getAverage());
             }
         }
@@ -222,11 +238,6 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
                     targetPos = MessageUtil.readBlockPos(buffer);
                 } else {
                     targetPos = null;
-                }
-                if (buffer.readBoolean()) {
-                    laserPos = MessageUtil.readVec3d(buffer);
-                } else {
-                    laserPos = null;
                 }
                 averageClient = buffer.readLong();
             }
