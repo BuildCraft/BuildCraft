@@ -11,9 +11,9 @@ Due to the little amount of MJ they produce, they are only really suitable to op
 
 
 <chapter name="Engine Mechanics"/>
-BuildCraft engines have 5 temperature stages, which detemines the speed the engine runs at: Blue, Green, Yellow, Red and Black.
-Unlike more powerful engines when acivated, Redstone Engines <bold>cannot overheat</bold> and turn black when the power has nowhere to go and it will keep running.
-Engines will always connect to the nearest commpatible MJ consumer but Redstone engines will not connect to kinesis pipes and will only connect to certain machines. 
+BuildCraft engines have 5 temperature stages, which determines the speed the engine runs at: Blue, Green, Yellow, Red and Black.
+Unlike more powerful engines when activated, Redstone Engines <bold>cannot overheat</bold> and turn black when the power has nowhere to go and it will keep running.
+Engines will always connect to the nearest compatible MJ consumer but Redstone engines will not connect to kinesis pipes and will only connect to certain machines.
 You can use a Wrench to rotate it to change which block it is powering.
 
 As with all engines, it <bold>requires a redstone signal to run.</bold>

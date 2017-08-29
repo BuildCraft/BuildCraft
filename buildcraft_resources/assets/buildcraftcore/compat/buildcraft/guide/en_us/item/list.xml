@@ -12,9 +12,9 @@ To access the Lists GUI, hold it in your hand and click it. You can then name yo
 <chapter name="Buttons"/>
 Just insert the item you want the other items to revolve around in the furthest left slot and select the right button you want.
 
-Having to collect insert every single item of a certain item you want to filter can be tedious, thats why the List has different modes:
+Having to collect insert every single item of a certain item you want to filter can be tedious, that's why the List has different modes:
 Exact Match: The item inserted is the same item. E.g.Has the same amount of damage and enchantments.
-Type: Items which the same but made of a differant materials. E.g. All types of gears made of differant materials.
+Type: Items which the same but made of a different materials. E.g. All types of gears made of different materials.
 Material: Items which are made of exactly the same material. E.g. All items made of Copper and all the different types of copper.
 <note id="mark_info">
 The items provided by the buttons may not provide all types/material of items.
