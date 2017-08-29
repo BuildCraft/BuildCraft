@@ -8,7 +8,7 @@
     " g ",
     "GpG"
   ],
-  "type": "buildcraftlib:BC_recipe_shaped",
+  "type": "forge:ore_shaped",
   "key": {
     "w": {
       "type": "forge:ore_dict",
@@ -25,5 +25,11 @@
     "p": {
       "item": "minecraft:piston"
     }
-  }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftcore:engine"
+    }
+  ]
 }

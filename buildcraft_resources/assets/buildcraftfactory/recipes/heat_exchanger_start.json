@@ -19,5 +19,11 @@
       "type": "forge:ore_dict",
       "ore": "blockGlass"
     }
-  }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftfactory:heat_exchange_start"
+    }
+  ]
 }

@@ -40,7 +40,7 @@ public class BCBuildersBlocks{
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
 
-        event.getRegistry().registerAll(
+        RegistryHelper.registerBlocks(event,
             new BlockArchitectTable(Material.IRON, "block.architect"),
             new BlockBuilder(Material.IRON, "block.builder"),
             new BlockFiller(Material.IRON, "block.filler"),
@@ -49,7 +49,7 @@ public class BCBuildersBlocks{
             new BlockQuarry(Material.ROCK, "block.quarry")
         );
         if (BCLib.DEV) {
-            event.getRegistry().register(new BlockReplacer(Material.IRON, "block.replacer"));
+            RegistryHelper.registerBlocks(event, new BlockReplacer(Material.IRON, "block.replacer"));
         }
     }
 

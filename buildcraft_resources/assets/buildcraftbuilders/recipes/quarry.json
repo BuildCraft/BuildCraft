@@ -28,5 +28,11 @@
   },
   "result": {
     "item": "buildcraftbuilders:quarry"
-  }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftbuilders:quarry"
+    }
+  ]
 }

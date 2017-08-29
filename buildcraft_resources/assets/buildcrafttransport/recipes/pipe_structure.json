@@ -7,7 +7,7 @@
   "pattern": [
     "cgc"
   ],
-  "type": "buildcraftlib:BC_recipe_shaped",
+  "type": "forge:ore_shaped",
   "key": {
     "c": {
       "item": "#cobblestone"
@@ -15,5 +15,11 @@
     "g": {
       "item": "minecraft:gravel"
     }
-  }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftbuilders:quarry"
+    }
+  ]
 }

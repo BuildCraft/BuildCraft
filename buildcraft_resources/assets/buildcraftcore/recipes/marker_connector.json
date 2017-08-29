@@ -7,7 +7,7 @@
     "g",
     "w"
   ],
-  "type": "buildcraftlib:BC_recipe_shaped",
+  "type": "forge:ore_shaped",
   "key": {
     "r": {
       "item": "minecraft:redstone_torch"
@@ -18,5 +18,19 @@
     "w": {
       "item": "buildcraftcore:wrench"
     }
-  }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftcore:marker_connector"
+    },
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftcore:gear_wood"
+    },
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftcore:wrench"
+    }
+  ]
 }

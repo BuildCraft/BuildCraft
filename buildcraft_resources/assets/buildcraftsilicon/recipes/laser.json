@@ -7,7 +7,7 @@
     "rdd",
     "rro"
   ],
-  "type": "buildcraftlib:BC_recipe_shaped",
+  "type": "forge:ore_shaped",
   "key": {
     "r": {
       "item": "#dustRedstone"
@@ -19,5 +19,11 @@
     "o": {
       "item": "minecraft:obsidian"
     }
-  }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftbuilders:quarry"
+    }
+  ]
 }

@@ -31,5 +31,19 @@
   },
   "result": {
     "item": "buildcraftbuilders:architect"
-  }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftbuilders:architect"
+    },
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftbuilders:snapshot"
+    },
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftcore:marker_volume"
+    }
+  ]
 }

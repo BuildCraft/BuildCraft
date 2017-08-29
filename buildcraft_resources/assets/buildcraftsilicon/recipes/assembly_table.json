@@ -7,7 +7,7 @@
     "OrO",
     "OgO"
   ],
-  "type": "buildcraftlib:BC_recipe_shaped",
+  "type": "forge:ore_shaped",
   "key": {
     "r": {
       "item": "#dustRedstone"
@@ -22,5 +22,11 @@
     "O": {
       "item": "minecraft:obsidian"
     }
-  }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftsilicon:assembly_table"
+    }
+  ]
 }

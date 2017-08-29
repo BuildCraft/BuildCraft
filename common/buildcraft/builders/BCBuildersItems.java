@@ -27,7 +27,7 @@ public class BCBuildersItems {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        event.getRegistry().registerAll(
+        RegistryHelper.registerItems(event,
             new ItemSnapshot("item.snapshot"),
             new ItemFillingPlanner("item.filling_planner"),
             new ItemSchematicSingle("item.schematic.single")

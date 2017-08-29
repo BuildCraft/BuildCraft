@@ -30,5 +30,15 @@
   },
   "result": {
     "item": "buildcraftbuilders:builder"
-  }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftbuilders:builder"
+    },
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftcore:marker_volume"
+    }
+  ]
 }

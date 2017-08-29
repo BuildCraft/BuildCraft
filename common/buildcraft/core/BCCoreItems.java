@@ -44,7 +44,7 @@ public class BCCoreItems {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        event.getRegistry().registerAll(
+        RegistryHelper.registerItems(event,
             new ItemWrench_Neptune("item.wrench"),
             new ItemBC_Neptune("item.gear.wood"),
             new ItemBC_Neptune("item.gear.stone"),
@@ -58,7 +58,7 @@ public class BCCoreItems {
             new ItemBC_Neptune("item.diamond.shard")
         );
         if (BCLib.DEV) {
-            event.getRegistry().registerAll(
+            RegistryHelper.registerItems(event,
                 new ItemMapLocation("item.map_location"),
                 new ItemGoggles("item.goggles")
             );

@@ -19,7 +19,7 @@
     "rer",
     "gpg"
   ],
-  "type": "buildcraftlib:BC_recipe_shaped",
+  "type": "forge:ore_shaped",
   "key": {
     "r": {
       "item": "#dustRedstone"

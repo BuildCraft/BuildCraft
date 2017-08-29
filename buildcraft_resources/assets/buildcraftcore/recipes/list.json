@@ -6,6 +6,10 @@
         "type": "forge:mod_loaded",
         "modid": "buildcraftsilicon"
       }
+    },
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftcore:list"
     }
   ],
   "result": {
@@ -16,7 +20,7 @@
     "pGp",
     "ppp"
   ],
-  "type": "buildcraftlib:BC_recipe_shaped",
+  "type": "forge:ore_shaped",
   "key": {
     "p": {
       "item": "minecraft:paper"

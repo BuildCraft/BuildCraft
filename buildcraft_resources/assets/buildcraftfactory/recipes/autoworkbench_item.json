@@ -14,5 +14,11 @@
       "type": "forge:ore_dict",
       "ore": "craftingTableWood"
     }
-  }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftfactory:autoworkbench_item"
+    }
+  ]
 }

@@ -29,7 +29,7 @@ public class BCRoboticsBlocks {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        event.getRegistry().register(new BlockZonePlanner(Material.ROCK, "block.zone_planner"));
+        RegistryHelper.registerBlocks(event, new BlockZonePlanner(Material.ROCK, "block.zone_planner"));
     }
 
     @SubscribeEvent

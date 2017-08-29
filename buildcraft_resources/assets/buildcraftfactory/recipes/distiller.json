@@ -17,5 +17,11 @@
     "g": {
       "item": "#gearDiamond"
     }
-  }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftfactory:chute"
+    }
+  ]
 }

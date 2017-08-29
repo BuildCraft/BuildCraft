@@ -1,6 +1,0 @@
-{
-  "recipes": {
-    "BC_recipe_shaped": "buildcraft.lib.recipe.BCRecipeShapedFactory",
-    "BC_recipe_shapeless": "buildcraft.lib.recipe.BCRecipeShapelessFactory"
-  }
-}

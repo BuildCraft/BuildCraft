@@ -37,7 +37,7 @@ public class BCSiliconBlocks {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        event.getRegistry().registerAll(
+        RegistryHelper.registerBlocks(event,
             new BlockLaser(Material.ROCK, "block.laser"),
             new BlockLaserTable(EnumLaserTableType.ASSEMBLY_TABLE, Material.ROCK, "block.assembly_table"),
             new BlockLaserTable(EnumLaserTableType.ADVANCED_CRAFTING_TABLE, Material.ROCK, "block.advanced_crafting_table"),
@@ -45,7 +45,7 @@ public class BCSiliconBlocks {
         );
 
         if (BCLib.DEV) {
-            event.getRegistry().registerAll(
+            RegistryHelper.registerBlocks(event,
                 new BlockLaserTable(EnumLaserTableType.CHARGING_TABLE, Material.ROCK, "block.charging_table"),
                 new BlockLaserTable(EnumLaserTableType.PROGRAMMING_TABLE, Material.ROCK, "block.programming_table")
             );

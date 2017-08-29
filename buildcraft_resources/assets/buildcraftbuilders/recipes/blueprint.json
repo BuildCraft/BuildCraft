@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "group": "random_things",
   "pattern": [
     "ppp",
     "pbp",
@@ -18,5 +17,11 @@
   "result": {
     "item": "buildcraftbuilders:snapshot",
     "data": 2
-  }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftbuilders:snapshot"
+    }
+  ]
 }

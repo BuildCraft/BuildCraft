@@ -24,5 +24,11 @@
     "i": {
       "item": "#ingotIron"
     }
-  }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftfactory:pump"
+    }
+  ]
 }

@@ -45,7 +45,7 @@ public class BCCoreBlocks {
         BlockEngine_BC8 tempEngine = new BlockEngine_BC8(Material.IRON, "block.engine.bc");
         tempEngine.registerEngine(EnumEngineType.WOOD, TileEngineRedstone_BC8::new);
         tempEngine.registerEngine(EnumEngineType.CREATIVE, TileEngineCreative::new);
-        event.getRegistry().registerAll(
+        RegistryHelper.registerBlocks(event,
             new BlockSpring("block.spring"),
             new BlockMarkerVolume(Material.CIRCUITS, "block.marker.volume"),
             new BlockMarkerPath(Material.CIRCUITS, "block.marker.path"),
@@ -53,7 +53,7 @@ public class BCCoreBlocks {
         );
 
         if (BCLib.DEV) {
-            event.getRegistry().register(new BlockDecoration("block.decorated"));
+            RegistryHelper.registerBlocks(event, new BlockDecoration("block.decorated"));
         }
     }
 

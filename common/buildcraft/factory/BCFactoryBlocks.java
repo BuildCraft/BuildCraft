@@ -50,7 +50,7 @@ public class BCFactoryBlocks {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        event.getRegistry().registerAll(
+        RegistryHelper.registerBlocks(event,
             new BlockAutoWorkbenchItems(Material.ROCK, "block.autoworkbench.item"),
             new BlockMiningWell(Material.ROCK, "block.mining_well"),
             new BlockPump(Material.ROCK, "block.pump"),
@@ -66,7 +66,7 @@ public class BCFactoryBlocks {
             );
 
         if (BCLib.DEV) {
-            event.getRegistry().registerAll(
+            RegistryHelper.registerBlocks(event,
                 new BlockWaterGel(Material.CLAY, "block.water_gel")
             );
         }

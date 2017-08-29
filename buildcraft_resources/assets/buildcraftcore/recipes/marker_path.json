@@ -6,7 +6,7 @@
     "g",
     "t"
   ],
-  "type": "buildcraftlib:BC_recipe_shaped",
+  "type": "forge:ore_shaped",
   "key": {
     "t": {
       "item": "minecraft:redstone_torch"
@@ -15,5 +15,11 @@
       "item": "minecraft:dye",
       "data": 2
     }
-  }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftcore:marker_path"
+    }
+  ]
 }

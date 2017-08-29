@@ -21,5 +21,15 @@
     "i": {
       "item": "#ingotIron"
     }
-  }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftfactory:flood_gate"
+    },
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftfactory:tank"
+    }
+  ]
 }

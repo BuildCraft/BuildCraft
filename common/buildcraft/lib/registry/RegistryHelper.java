@@ -59,6 +59,13 @@ public class RegistryHelper {
     //
     // #######################
 
+    public static void registerBlocks(RegistryEvent.Register<Block> event, Block...blocks) {
+        for (Block block: blocks) {
+            if (isEnabled(block))
+                event.getRegistry().register(block);
+        }
+    }
+
     public static void registerItems(RegistryEvent.Register<Item> event, Object...items) {
         for (Object o: items) {
             Item item = null;
@@ -67,7 +74,7 @@ public class RegistryHelper {
             } else if (o instanceof BlockBCBase_Neptune) {
                 item = new ItemBlockBC_Neptune((BlockBCBase_Neptune) o);
             }
-            if (item != null)
+            if (item != null && (!(item instanceof ItemBlockBC_Neptune) || isEnabled(item)))
                 event.getRegistry().register(item);
         }
     }

@@ -7,7 +7,7 @@
     "oio",
     " o "
   ],
-  "type": "buildcraftlib:BC_recipe_shaped",
+  "type": "forge:ore_shaped",
   "key": {
     "i": {
       "type": "forge:ore_dict",
@@ -17,5 +17,11 @@
       "type": "forge:ore_dict",
       "ore": "cobblestone"
     }
-  }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftcore:gear_stone"
+    }
+  ]
 }

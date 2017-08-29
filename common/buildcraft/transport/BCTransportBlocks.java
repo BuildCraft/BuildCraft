@@ -30,8 +30,8 @@ public class BCTransportBlocks {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
+        RegistryHelper.registerBlocks(event,new BlockFilteredBuffer(Material.ROCK, "block.filtered_buffer"));
         event.getRegistry().registerAll(
-            new BlockFilteredBuffer(Material.ROCK, "block.filtered_buffer"),
             new BlockPipeHolder(Material.IRON, "block.pipe_holder")
         );
     }

@@ -7,7 +7,7 @@
     " G ",
     " I "
   ],
-  "type": "buildcraftlib:BC_recipe_shaped",
+  "type": "forge:ore_shaped",
   "key": {
     "G": {
       "type": "forge:ore_dict",
@@ -17,5 +17,11 @@
       "type": "forge:ore_dict",
       "ore": "ingotIron"
     }
-  }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftcore:wrench"
+    }
+  ]
 }
