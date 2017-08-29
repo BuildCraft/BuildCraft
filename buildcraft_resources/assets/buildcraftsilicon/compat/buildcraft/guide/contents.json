@@ -8,7 +8,7 @@
         {
             "title": "tile.laserBlock.name",
             "item_stack": "(buildcraftsilicon:laser)",
-            "page": "laser.xml",
+            "page": "laser.md",
             "type_tags": {
                 "type": "block",
                 "sub_type": "Lasers"
@@ -17,7 +17,7 @@
         {
             "title": "tile.assemblyTableBlock.name",
             "item_stack": "(buildcraftsilicon:assembly_table)",
-            "page": "assembly.xml",
+            "page": "assembly.md",
             "type_tags": {
                 "type": "block",
                 "sub_type": "Lasers"
@@ -26,7 +26,7 @@
         {
             "title": "tile.integrationTableBlock.name",
             "item_stack": "(buildcraftsilicon:integration_table)",
-            "page": "integration.xml",
+            "page": "integration.md",
             "type_tags": {
                 "type": "block",
                 "sub_type": "Lasers"
@@ -35,7 +35,7 @@
         {
             "title": "tile.chargingTableBlock.name",
             "item_stack": "(buildcraftsilicon:charging_table)",
-            "page": "charging.xml",
+            "page": "charging.md",
             "type_tags": {
                 "type": "block",
                 "sub_type": "Lasers"
@@ -44,7 +44,7 @@
         {
             "title": "tile.programmingTableBlock.name",
             "item_stack": "(buildcraftsilicon:programming_table)",
-            "page": "programming.xml",
+            "page": "programming.md",
             "type_tags": {
                 "type": "block",
                 "sub_type": "Lasers"
@@ -53,7 +53,7 @@
         {
             "title": "tile.assemblyWorkbenchBlock.name",
             "item_stack": "(buildcraftsilicon:advanced_crafting_table)",
-            "page": "advanced_crafting.xml",
+            "page": "advanced_crafting.md",
             "type_tags": {
                 "type": "block",
                 "sub_type": "Lasers"
