@@ -1,6 +1,6 @@
 <chapter name="tile.distiller.name"/>
 <lore>
-On a quest to make better use out of the recently discovered combustable fluids, you discover The Distiller which is used to distill raw and undistilled fluids into a different liquid and gas fluid.
+On a quest to make better use out of the recently discovered combustable fluids, you discover The Distiller which is used to many distillable fluids into a different liquid and gas fluid.
 </lore>
 <no_lore>
 To get more from your fuel, a Distiller is used to distill a fluid into a liquid and a gas which can be either heated/cooled or distilled again to be used as a better fuel
@@ -12,4 +12,3 @@ The type of fluid and temperature of the inserted fluid all have an effect on wh
 Bear in mind that the distller outputs fluids of the same temperature that the input fluid was.
 <chapter name="Machine Mechanics"/>
 As with most machines, it requires power. The more power you supply it, the faster it will distill.
-If you apply it with a redstone signal, the Distiller will stop running.

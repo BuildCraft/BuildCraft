@@ -16,7 +16,8 @@
 				"type": "block",
 				"sub_type": "engine"
 			}
-		},{
+		},
+		{
 			"title": "tile.engineIron.name",
 			"item_stack": "{buildcraftcore:engine,1,2}",
 			"page": "engine_iron.xml",

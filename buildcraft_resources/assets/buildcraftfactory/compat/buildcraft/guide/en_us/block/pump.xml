@@ -1,6 +1,6 @@
 <chapter name="tile.pumpBlock.name"/>
 <lore>
-With the collection of fluids by hand can often be quite tedious and dangerous at times, the need for an automated way to gather fluids was required.
+The collection of fluids by hand can be quite tedious and dangerous at times, having the need for an automated way to gather fluids is required.
 </lore>
 <no_lore>
 The pump is a way to automatically pick up any fluid sources found directly below it and any sources connected to it.
@@ -12,4 +12,4 @@ The fluids souces found below will be 'sucked' up from the top source downwards 
 It will pump fluids in a 64 blocks radius from top to bottom and the outer edges of the connecting fluids inwards.
 <chapter name="Machine Mechanics"/>
 As with most machines, it requires power. The more power you supply it, the faster it will pump.
-Applying a pump with a redstone signal will stop the pump from pumping so be careful where you place your levers.
+Applying a redstone signal to the pump will stop the pump from pumping so be careful where you place your levers.

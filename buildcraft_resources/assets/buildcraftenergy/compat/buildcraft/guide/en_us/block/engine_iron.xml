@@ -1,23 +1,23 @@
 <chapter name="tile.engineIron.name"/>
 <lore>
-While furnace fuels are nice and with the discovery of combustable fluids, A more powerful engine is in demand to harness their power.
+While furnace fuels are nice. With the discovery of combustable fluids, a more powerful engine is in demand to harness their power.
 </lore>
 <no_lore>
-The Combustion Engine is the most powerful engine in BuildCraft and is able to use combustable fluid fluids as a way to produce power.
+The Combustion Engine is the most powerful engine in BuildCraft and is able to use combustable fuels as a way to produce power.
 </no_lore>
 <chapter name="Information"/>
 To make use of these combustable fluids, they must be piped into the engine along with a coolant to keep them from over heating.
 <recipes_usages stack="buildcraftcore:engine" data="2"/>
 <chapter name="Different Fuels"/>
 With all combustable fluids, they produce different amounts of power for different amounts of time depending on which fuel is used.
-<note id="mark_info">
+
 Using dirty fuels in an engine will cause it to get clogged up with residue which you would need to extract.
-</note>
+
 <chapter name="Engine Mechanics"/>
 BuildCraft engines have 5 temperature stages, which detemines the speed the engine runs at: Blue, Green, Yellow, Red and Black.
 Combustion engines will only turn black if the engines internal power buffer fills up as the power has nowhere to go, thus the engine will overheat and needs to be wrenched to be cooled.
 Engines will always connect to the nearest compatible MJ consumer.
 You can use a Wrench to rotate it to change which block it is powering.
-<note id="mark_info">
+
 As with all engines, it <bold>requires a redstone signal to run.</bold>
-</note>
+Gates can be used to detect the engines temperature stages to help you control them.

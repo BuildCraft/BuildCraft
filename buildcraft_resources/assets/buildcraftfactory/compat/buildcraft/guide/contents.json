@@ -16,7 +16,8 @@
 				"type": "block",
 				"sub_type": "refining"
 			}
-		},{
+		},
+		{
 			"title": "tile.heat_exchange_start.name",
 			"item_stack": "(buildcraftfactory:heat_exchange_start)",
 			"page": "heat_exchange.xml",
@@ -25,7 +26,8 @@
 				"type": "block",
 				"sub_type": "refining"
 			}
-		},{
+		},
+		{
 			"title": "tile.heat_exchange_middle.name",
 			"item_stack": "(buildcraftfactory:heat_exchange_middle)",
 			"page": "heat_exchange.xml",
@@ -34,7 +36,8 @@
 				"type": "block",
 				"sub_type": "refining"
 			}
-		},{
+		},
+		{
 			"title": "tile.heat_exchange_end.name",
 			"item_stack": "(buildcraftfactory:heat_exchange_end)",
 			"page": "heat_exchange.xml",
@@ -43,7 +46,8 @@
 				"type": "block",
 				"sub_type": "refining"
 			}
-		},{
+		},
+		{
 			"title": "tile.pumpBlock.name",
 			"item_stack": "(buildcraftfactory:pump)",
 			"page": "pump.xml",
@@ -52,7 +56,8 @@
 				"type": "block",
 				"sub_type": "fluid"
 			}
-		},{
+		},
+		{
 			"title": "tile.floodGateBlock.name",
 			"item_stack": "(buildcraftfactory:flood_gate)",
 			"page": "flood_gate.xml",
@@ -61,7 +66,8 @@
 				"type": "block",
 				"sub_type": "fluid"
 			}
-		},{
+		},
+		{
 			"title": "tile.miningWellBlock.name",
 			"item_stack": "(buildcraftfactory:mining_well)",
 			"page": "mining_well.xml",
@@ -70,7 +76,8 @@
 				"type": "block",
 				"sub_type": "mining"
 			}
-		},{
+		},
+		{
 			"title": "tile.tankBlock.name",
 			"item_stack": "(buildcraftfactory:tank)",
 			"page": "tank.xml",
@@ -79,7 +86,8 @@
 				"type": "block",
 				"sub_type": "fluid"
 			}
-		},{
+		},
+		{
 			"title": "tile.autoWorkbenchBlock.name",
 			"item_stack": "(buildcraftfactory:autoworkbench_item)",
 			"page": "auto_workbench.xml",
@@ -88,7 +96,8 @@
 				"type": "block",
 				"sub_type": "automation"
 			}
-		},{
+		},
+		{
 			"title": "tile.chuteBlock.name",
 			"item_stack": "(buildcraftfactory:chute)",
 			"page": "chute.xml",
