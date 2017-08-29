@@ -12,7 +12,6 @@ Breaking Changes:
   * Actions and triggers on gates are based upon the side that they act on, rather than being generic and deciding which tile to use by themselves
   * Gate expansions have been moved to separate pluggables
     * The "Autarchic gate" expansion is now the "Pipe Pulsar" pluggable, and requires a redstone engine to craft
-  * Stripes pipe mining speed is now determined by how much power you give it, it is no longer instant
 
 * Silicon:
   * Removed the emerald chipset and the pulsating chipset
