@@ -6,28 +6,17 @@
 
 package buildcraft.lib.misc;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.BitSet;
 import java.util.EnumSet;
-import java.util.Locale;
-import java.util.UUID;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
+import com.google.common.collect.Sets;
+
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagByteArray;
@@ -36,30 +25,52 @@ import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.InvalidInputDataException;
 
+@SuppressWarnings("WeakerAccess")
 public final class NBTUtilBC {
     /** Deactivate constructor */
     private NBTUtilBC() {
-
     }
 
-    public static NBTTagCompound load(byte[] data) {
-        try {
-            NBTTagCompound nbt = CompressedStreamTools.readCompressed(new ByteArrayInputStream(data));
-            return nbt;
-        } catch (IOException e) {
-            e.printStackTrace();
+    @SuppressWarnings("ConstantConditions")
+    public static NBTBase merge(NBTBase destination, NBTBase source) {
+        if (source == null) {
+            return null;
         }
-
-        return null;
+        if (destination == null) {
+            return source;
+        }
+        if (destination.getId() == Constants.NBT.TAG_COMPOUND && source.getId() == Constants.NBT.TAG_COMPOUND) {
+            NBTTagCompound result = new NBTTagCompound();
+            for (String key : Sets.union(
+                ((NBTTagCompound) destination).getKeySet(),
+                ((NBTTagCompound) source).getKeySet()
+            )) {
+                if (!((NBTTagCompound) source).hasKey(key)) {
+                    result.setTag(key, ((NBTTagCompound) destination).getTag(key));
+                } else if (((NBTTagCompound) source).getTag(key) != null) {
+                    if (!((NBTTagCompound) destination).hasKey(key)) {
+                        result.setTag(key, ((NBTTagCompound) source).getTag(key));
+                    } else {
+                        result.setTag(
+                            key,
+                            merge(
+                                ((NBTTagCompound) destination).getTag(key),
+                                ((NBTTagCompound) source).getTag(key)
+                            )
+                        );
+                    }
+                }
+            }
+            return result;
+        }
+        return source;
     }
 
     public static NBTTagCompound getItemData(@Nonnull ItemStack stack) {
@@ -74,35 +85,6 @@ public final class NBTUtilBC {
         return nbt;
     }
 
-    public static void writeUUID(NBTTagCompound data, String tag, UUID uuid) {
-        if (uuid == null) {
-            return;
-        }
-        NBTTagCompound nbtTag = new NBTTagCompound();
-        nbtTag.setLong("most", uuid.getMostSignificantBits());
-        nbtTag.setLong("least", uuid.getLeastSignificantBits());
-        data.setTag(tag, nbtTag);
-    }
-
-    public static UUID readUUID(NBTTagCompound data, String tag) {
-        if (data.hasKey(tag)) {
-            NBTTagCompound nbtTag = data.getCompoundTag(tag);
-            return new UUID(nbtTag.getLong("most"), nbtTag.getLong("least"));
-        }
-        return null;
-    }
-
-    public static byte[] save(NBTTagCompound compound) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            CompressedStreamTools.writeCompressed(compound, baos);
-            return baos.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new byte[0];
-        }
-    }
-
     public static NBTTagIntArray writeBlockPos(BlockPos pos) {
         if (pos == null) {
             throw new NullPointerException("Cannot return a null NBTTag -- pos was null!");
@@ -110,6 +92,7 @@ public final class NBTUtilBC {
         return new NBTTagIntArray(new int[] { pos.getX(), pos.getY(), pos.getZ() });
     }
 
+    @SuppressWarnings("unused")
     public static NBTTagCompound writeBlockPosAsCompound(BlockPos pos) {
         if (pos == null) {
             throw new NullPointerException("Cannot return a null NBTTag -- pos was null!");
@@ -175,10 +158,6 @@ public final class NBTUtilBC {
         return null;
     }
 
-    public static Vec3d readVec3d(NBTTagCompound nbt, String tagName) {
-        return readVec3d(nbt.getTagList(tagName, Constants.NBT.TAG_DOUBLE));
-    }
-
     public static Vec3d readVec3d(NBTTagList list) {
         return new Vec3d(list.getDoubleAt(0), list.getDoubleAt(1), list.getDoubleAt(2));
     }
@@ -237,80 +216,6 @@ public final class NBTUtilBC {
             }
         }
         return arr;
-    }
-
-    public static NBTTagCompound writeEntireBlockState(IBlockState state) {
-        if (state == null || state == Blocks.AIR.getDefaultState()) {
-            return new NBTTagCompound();
-        }
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("block", state.getBlock().getRegistryName().toString());
-        nbt.setTag("state", writeBlockStateProperties(state));
-        return nbt;
-    }
-
-    /** @deprecated Use {@link NBTUtil#readBlockState(NBTTagCompound)} instead! */
-    public static IBlockState readEntireBlockState(NBTTagCompound nbt) throws InvalidInputDataException {
-        if (nbt.hasNoTags()) {
-            return Blocks.AIR.getDefaultState();
-        }
-        Block block = Block.getBlockFromName(nbt.getString("block"));
-        if (block == null || block == Blocks.AIR) {
-            throw new InvalidInputDataException("Unknown block " + nbt.getString("block"));
-        }
-        return readBlockStateProperties(block.getDefaultState(), nbt.getCompoundTag("state"));
-    }
-
-    public static NBTTagCompound writeBlockStateProperties(IBlockState state) {
-        NBTTagCompound nbt = new NBTTagCompound();
-        for (IProperty<?> prop : state.getPropertyKeys()) {
-            nbt.setString(prop.getName().toLowerCase(Locale.ROOT), getPropName(state, prop));
-        }
-        return nbt;
-    }
-
-    private static <V extends Comparable<V>> String getPropName(IBlockState state, IProperty<V> prop) {
-        return prop.getName(state.getValue(prop)).toLowerCase(Locale.ROOT);
-    }
-
-    public static IBlockState readBlockStateProperties(IBlockState state, NBTTagCompound nbt) {
-        for (IProperty<?> prop : state.getPropertyKeys()) {
-            state = updateState(state, prop, nbt.getString(prop.getName().toLowerCase(Locale.ROOT)));
-        }
-        return state;
-    }
-
-    private static <V extends Comparable<V>> IBlockState updateState(IBlockState state, IProperty<V> prop, String string) {
-        for (V val : prop.getAllowedValues()) {
-            if (prop.getName(val).equalsIgnoreCase(string)) {
-                return state.withProperty(prop, val);
-            }
-        }
-        BCLog.logger.warn("[lib.nbt] Failed to read the state property " + string + " as " + prop);
-        return state;
-    }
-
-    public static NBTTagCompound writeLocalDateTime(LocalDateTime localDateTime) {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setInteger("year", localDateTime.getYear());
-        nbt.setInteger("month", localDateTime.getMonthValue());
-        nbt.setInteger("day", localDateTime.getDayOfMonth());
-        nbt.setInteger("hour", localDateTime.getHour());
-        nbt.setInteger("minute", localDateTime.getMinute());
-        nbt.setInteger("second", localDateTime.getSecond());
-        return nbt;
-    }
-
-    public static LocalDateTime readLocalDateTime(NBTTagCompound nbt) {
-        int year = nbt.getInteger("year");
-        int month = nbt.getInteger("month");
-        int dayOfMonth = nbt.getInteger("day");
-        LocalDate date = LocalDate.of(year, month, dayOfMonth);
-        int hour = nbt.getInteger("hour");
-        int minute = nbt.getInteger("minute");
-        int second = nbt.getInteger("second");
-        LocalTime time = LocalTime.of(hour, minute, second);
-        return LocalDateTime.of(date, time);
     }
 
     /** Writes an {@link EnumSet} to an {@link NBTBase}. The returned type will either be {@link NBTTagByte} or

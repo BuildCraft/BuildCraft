@@ -40,6 +40,7 @@ public class BCSilicon {
     public void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
+        BCSiliconConfig.preInit();
         BCSiliconItems.preInit();
         BCSiliconBlocks.preInit();
 

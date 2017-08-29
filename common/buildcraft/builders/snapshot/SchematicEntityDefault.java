@@ -23,6 +23,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.EntityList;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
@@ -127,6 +128,17 @@ public class SchematicEntityDefault implements ISchematicEntity {
 
     @Override
     public Entity build(World world, BlockPos basePos) {
+        Set<JsonRule> rules = RulesLoader.getRules(
+            new ResourceLocation(entityNbt.getString("id")),
+            entityNbt
+        );
+        NBTTagCompound replaceNbt = rules.stream()
+            .map(rule -> rule.replaceNbt)
+            .filter(Objects::nonNull)
+            .map(NBTBase.class::cast)
+            .reduce(NBTUtilBC::merge)
+            .map(NBTTagCompound.class::cast)
+            .orElse(null);
         Vec3d placePos = new Vec3d(basePos).add(pos);
         BlockPos placeHangingPos = basePos.add(hangingPos);
         NBTTagCompound newEntityNbt = new NBTTagCompound();
@@ -144,7 +156,12 @@ public class SchematicEntityDefault implements ISchematicEntity {
         } else {
             rotate = true;
         }
-        Entity entity = EntityList.createEntityFromNBT(newEntityNbt, world);
+        Entity entity = EntityList.createEntityFromNBT(
+            replaceNbt != null
+                ? (NBTTagCompound) NBTUtilBC.merge(newEntityNbt, replaceNbt)
+                : newEntityNbt,
+            world
+        );
         if (entity != null) {
             if (rotate) {
                 entity.setLocationAndAngles(

@@ -105,17 +105,6 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-        // TODO: remove in next version
-        NBTTagCompound tanksTag = nbt.getCompoundTag("tanks");
-        if (tanksTag.hasKey("tankFuel")) {
-            tanksTag.setTag("fuel", tanksTag.getTag("tankFuel"));
-        }
-        if (tanksTag.hasKey("tankCoolant")) {
-            tanksTag.setTag("coolant", tanksTag.getTag("tankCoolant"));
-        }
-        if (tanksTag.hasKey("tankResidue")) {
-            tanksTag.setTag("residue", tanksTag.getTag("tankResidue"));
-        }
         super.readFromNBT(nbt);
         penaltyCooling = nbt.getInteger("penaltyCooling");
         burnTime = nbt.getDouble("burnTime");

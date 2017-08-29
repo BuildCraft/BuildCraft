@@ -24,10 +24,10 @@
                 "path": ["tanks", "in"]
             }, {
                 "type": "tank",
-                "path": ["tanks", "out_gas"]
+                "path": ["tanks", "gasOut"]
             }, {
                 "type": "tank",
-                "path": ["tanks", "out_liquid"]
+                "path": ["tanks", "liquidOut"]
             }
         ]
     },
@@ -53,10 +53,10 @@
                 "type": "item_from_block"
             }, {
                 "type": "tank",
-                "path": ["tanks", "heatable_in"]
+                "path": ["tanks", "heatableIn"]
             }, {
                 "type": "tank",
-                "path": ["tanks", "coolable_out"]
+                "path": ["tanks", "coolableOut"]
             }
         ]
     },
@@ -69,10 +69,10 @@
                 "type": "item_from_block"
             }, {
                 "type": "tank",
-                "path": ["tanks", "heatable_out"]
+                "path": ["tanks", "heatableOut"]
             }, {
                 "type": "tank",
-                "path": ["tanks", "coolable_in"]
+                "path": ["tanks", "coolableIn"]
             }
         ]
     },
