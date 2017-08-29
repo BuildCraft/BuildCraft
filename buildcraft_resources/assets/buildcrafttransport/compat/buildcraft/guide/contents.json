@@ -1,408 +1,366 @@
 {
     "entry_mask": "<mod><sub_mod>:compat/buildcraft/guide/<lang>/<type>/<page>",
-    "default_tags": 
-    {
+    "default_tags": {
         "mod": "buildcraft",
         "sub_mod": "transport"
     },
-    "contents": 
-    [
+    "contents": [
         {
             "title": "item.PipeItemsWood.name",
             "item_stack": "(buildcrafttransport:pipe_wood_item)",
             "page": "wood_item.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_item"
             }
         },
-		{
+        {
             "title": "item.PipeItemsCobblestone.name",
             "item_stack": "(buildcrafttransport:pipe_cobble_item)",
             "page": "cobblestone_item.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_item"
             }
         },
-		{
+        {
             "title": "item.PipeItemsStone.name",
             "item_stack": "(buildcrafttransport:pipe_stone_item)",
             "page": "Stone_item.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_item"
             }
         },
-		{
+        {
             "title": "item.PipeItemsQuartz.name",
             "item_stack": "(buildcrafttransport:pipe_quartz_item)",
             "page": "quartz_item.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_item"
             }
-		},
-		{
+        },
+        {
             "title": "item.PipeItemsIron.name",
             "item_stack": "(buildcrafttransport:pipe_iron_item)",
             "page": "iron_item.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_item"
             }
         },
-		{
+        {
             "title": "item.PipeItemsGold.name",
             "item_stack": "(buildcrafttransport:pipe_gold_item)",
             "page": "gold_item.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_item"
             }
         },
-		{
+        {
             "title": "item.PipeItemsClay.name",
             "item_stack": "(buildcrafttransport:pipe_clay_item)",
             "page": "clay_item.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_item"
             }
         },
-		{
+        {
             "title": "item.PipeItemsSandstone.name",
             "item_stack": "(buildcrafttransport:pipe_sandstone_item)",
             "page": "sandstone_item.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_item"
             }
         },
-		{
+        {
             "title": "item.PipeItemsDiamond.name",
             "item_stack": "(buildcrafttransport:pipe_diamond_item)",
             "page": "diamond_item.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_item"
             }
         },
-		{
+        {
             "title": "item.PipeItemsVoid.name",
             "item_stack": "(buildcrafttransport:pipe_void_item)",
             "page": "void_item.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_item"
             }
         },
-		{
+        {
             "title": "item.PipeItemsObsidian.name",
             "item_stack": "(buildcrafttransport:pipe_obsidian_item)",
             "page": "obsidian_item.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_item"
             }
         },
-		{
+        {
             "title": "item.PipeItemsEmerald.name",
             "item_stack": "(buildcrafttransport:pipe_diamond_wood_item)",
             "page": "diamond_wood_item.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_item"
             }
         },
-		{
+        {
             "title": "item.PipeItemsLapis.name",
             "item_stack": "(buildcrafttransport:pipe_lapis_item)",
             "page": "lapis_item.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_item"
             }
         },
-		{
+        {
             "title": "item.PipeItemsDaizuli.name",
             "item_stack": "(buildcrafttransport:pipe_daizuli_item)",
             "page": "daizuli_item.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_item"
             }
         },
-		{
+        {
             "title": "item.PipeItemsEmzuli.name",
             "item_stack": "(buildcrafttransport:pipe_emzuli_item)",
             "page": "emzuli_item.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_item"
             }
         },
-		{
+        {
             "title": "item.PipeItemsStripes.name",
             "item_stack": "(buildcrafttransport:pipe_stripes_item)",
             "page": "stripes_item.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_item"
             }
-		},
-		{
+        },
+        {
             "title": "item.PipeFluidsWood.name",
             "item_stack": "(buildcrafttransport:pipe_wood_fluid)",
             "page": "wood_fluid.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_fluid"
             }
         },
-		{
+        {
             "title": "item.PipeFluidsCobblestone.name",
             "item_stack": "(buildcrafttransport:pipe_cobble_fluid)",
             "page": "cobblestone_fluid.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_fluid"
             }
         },
-		{
+        {
             "title": "item.PipeFluidsStone.name",
             "item_stack": "(buildcrafttransport:pipe_stone_fluid)",
             "page": "Stone_fluid.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_fluid"
             }
         },
-		{
+        {
             "title": "item.PipeFluidsQuartz.name",
             "item_stack": "(buildcrafttransport:pipe_quartz_fluid)",
             "page": "quartz_fluid.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_fluid"
             }
-		},
-		{
+        },
+        {
             "title": "item.PipeFluidsIron.name",
             "item_stack": "(buildcrafttransport:pipe_iron_fluid)",
             "page": "iron_fluid.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_fluid"
             }
         },
-		{
+        {
             "title": "item.PipeFluidsGold.name",
             "item_stack": "(buildcrafttransport:pipe_gold_fluid)",
             "page": "gold_fluid.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_fluid"
             }
         },
-		{
+        {
             "title": "item.PipeFluidsClay.name",
             "item_stack": "(buildcrafttransport:pipe_clay_fluid)",
             "page": "clay_fluid.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_fluid"
             }
         },
-		{
+        {
             "title": "item.PipeFluidsSandstone.name",
             "item_stack": "(buildcrafttransport:pipe_sandstone_fluid)",
             "page": "sandstone_fluid.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_fluid"
             }
         },
-		{
+        {
             "title": "item.PipeFluidsDiamond.name",
             "item_stack": "(buildcrafttransport:pipe_diamond_fluid)",
             "page": "diamond_fluid.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_fluid"
             }
         },
-		{
+        {
             "title": "item.PipeFluidsVoid.name",
             "item_stack": "(buildcrafttransport:pipe_void_fluid)",
             "page": "void_fluid.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_fluid"
             }
         },
-		{
+        {
             "title": "item.PipeFluidsEmerald.name",
             "item_stack": "(buildcrafttransport:pipe_diamond_wood_fluid)",
             "page": "diamond_wood_fluid.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_fluid"
             }
         },
-		{
+        {
             "title": "item.PipePowerWood.name",
             "item_stack": "(buildcrafttransport:pipe_wood_power)",
             "page": "wood_power.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_power"
             }
         },
-		{
+        {
             "title": "item.PipePowerCobblestone.name",
             "item_stack": "(buildcrafttransport:pipe_cobble_power)",
             "page": "cobblestone_power.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_power"
             }
         },
-		{
+        {
             "title": "item.PipePowerStone.name",
             "item_stack": "(buildcrafttransport:pipe_stone_power)",
             "page": "stone_power.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_power"
             }
         },
-		{
+        {
             "title": "item.PipePowerQuartz.name",
             "item_stack": "(buildcrafttransport:pipe_quartz_power)",
             "page": "quartz_power.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_power"
             }
         },
-		{
+        {
             "title": "item.PipePowerGold.name",
             "item_stack": "(buildcrafttransport:pipe_gold_power)",
             "page": "gold_power.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_power"
             }
         },
-		{
+        {
             "title": "item.PipePowerSandstone.name",
             "item_stack": "(buildcrafttransport:pipe_sandstone_power)",
             "page": "sandstone_power.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_power"
             }
         },
-		{
+        {
             "title": "item.PipePlug.name",
             "item_stack": "(buildcrafttransport:plug_blocker)",
             "page": "plug_blocker.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_plug"
             }
         },
-		{
+        {
             "title": "buildcraft.guide.chapter.title.gate_base",
             "item_stack": "(buildcrafttransport:plug_gate)",
             "page": "gate_base.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_plug"
             }
-		},
-		{
+        },
+        {
             "title": "item.pulsar.name",
             "item_stack": "(buildcrafttransport:plug_pulsar)",
             "page": "plug_pulsar.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_plug"
             }
-		},
-		{
+        },
+        {
             "title": "item.light_sensor.name",
             "item_stack": "(buildcrafttransport:plug_light_sensor)",
             "page": "plug_light_sensor.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_plug"
             }
-		},
-		{
+        },
+        {
             "title": "item.Lens.name",
             "item_stack": "(buildcrafttransport:plug_lens)",
             "page": "plug_lens.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_plug"
             }
-		},
-		{
+        },
+        {
             "title": "item.Filter.name",
             "item_stack": "{buildcrafttransport:plug_lens,1,16}",
             "page": "plug_filter.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_plug"
             }
-		},
-		{
+        },
+        {
             "title": "item.pipeWire.name",
             "item_stack": "{buildcrafttransport:wire,1,2}",
             "page": "pipe_wire.xml",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "pipe",
                 "sub_type": "pipe_plug"
             }

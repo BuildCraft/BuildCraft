@@ -4,20 +4,18 @@
         "mod": "buildcraft",
         "sub_mod": "core"
     },
-    "contents": 
-    [
+    "contents": [
         {
             "title": "item.woodenGearItem.name",
             "item_stack": "(buildcraftcore:gear_wood)",
             "page": "gear_wood.xml",
-            "type_tags": 
-			{
+            "type_tags": {
                 "type": "item",
                 "sub_type": "gear"
             }
         },
-		{
-          	"title": "item.stoneGearItem.name",
+        {
+            "title": "item.stoneGearItem.name",
             "item_stack": "(buildcraftcore:gear_stone)",
             "page": "gear_stone.xml",
             "type_tags": {
@@ -25,112 +23,101 @@
                 "sub_type": "gear"
             }
         },
-		{
+        {
             "title": "item.ironGearItem.name",
             "item_stack": "(buildcraftcore:gear_iron)",
             "page": "gear_iron.xml",
-            "type_tags": 
-			{
+            "type_tags": {
                 "type": "item",
                 "sub_type": "gear"
             }
         },
-		{
+        {
             "title": "item.goldGearItem.name",
             "item_stack": "(buildcraftcore:gear_gold)",
             "page": "gear_gold.xml",
-            "type_tags": 
-			{
+            "type_tags": {
                 "type": "item",
                 "sub_type": "gear"
             }
         },
-		{
+        {
             "title": "item.diamondGearItem.name",
             "item_stack": "(buildcraftcore:gear_diamond)",
             "page": "gear_diamond.xml",
-            "type_tags": 
-			{
+            "type_tags": {
                 "type": "item",
                 "sub_type": "gear"
             }
         },
-		{
+        {
             "title": "item.wrenchItem.name",
             "item_stack": "(buildcraftcore:wrench)",
             "page": "wrench.xml",
-            "type_tags": 
-			{
+            "type_tags": {
                 "type": "item",
                 "sub_type": "tool"
             }
         },
-		{
+        {
             "title": "item.paintbrush.name",
             "item_stack": "(buildcraftcore:paintbrush)",
             "page": "paintbrush.xml",
-            "type_tags": 
-			{
+            "type_tags": {
                 "type": "item",
                 "sub_type": "tool"
             }
         },
-		{
+        {
             "title": "item.markerConnector.name",
             "item_stack": "(buildcraftcore:marker_connector)",
             "page": "marker_connector.xml",
-            "type_tags": 
-			{
+            "type_tags": {
                 "type": "item",
                 "sub_type": "tool"
             }
         },
-		{
+        {
             "title": "item.volume_box.name",
             "item_stack": "(buildcraftcore:volume_box)",
             "page": "box_volume.xml",
-            "type_tags": 
-			{
+            "type_tags": {
                 "type": "item",
                 "sub_type": "marking"
             }
         },
-		{
+        {
             "title": "tile.markerBlock.name",
             "item_stack": "(buildcraftcore:marker_volume)",
             "page": "marker_land.xml",
-            "type_tags": 
-			{
+            "type_tags": {
                 "type": "item",
                 "sub_type": "marking"
             }
         },
-		{
+        {
             "title": "tile.pathMarkerBlock.name",
             "item_stack": "(buildcraftcore:marker_path)",
             "page": "marker_path.xml",
-            "type_tags": 
-			{
+            "type_tags": {
                 "type": "item",
                 "sub_type": "marking"
             }
         },
-		{
+        {
             "title": "tile.engineWood.name",
             "item_stack": "{buildcraftcore:engine,1,0}",
             "page": "engine_wood.xml",
-            "type_tags": 
-			{
+            "type_tags": {
                 "type": "block",
                 "sub_type": "engine"
             }
         },
-		{
+        {
             "title": "item.list.name",
             "item_stack": "(buildcraftcore:list)",
             "page": "list.xml",
-            "type_tags": 
-			{
+            "type_tags": {
                 "type": "item",
                 "sub_type": "information_storage"
             }

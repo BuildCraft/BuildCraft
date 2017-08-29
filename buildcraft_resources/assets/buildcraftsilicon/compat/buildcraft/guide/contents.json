@@ -1,71 +1,63 @@
 {
-	"entry_mask": "<mod><sub_mod>:compat/buildcraft/guide/<lang>/<type>/<page>",
-	"default_tags": 
-	{
-		"mod": "buildcraft",
-		"sub_mod": "silicon"
-	},
-	"contents": 
-	[
-		{
-			"title": "tile.laserBlock.name",
-			"item_stack": "(buildcraftsilicon:laser)",
-			"page": "laser.xml",
-			"type_tags": 
-			{
-				"type": "block",
-				"sub_type": "Lasers"
-			}
-		},
-		{
-			"title": "tile.assemblyTableBlock.name",
-			"item_stack": "(buildcraftsilicon:assembly_table)",
-			"page": "assembly.xml",
-			"type_tags": 
-			{
-				"type": "block",
-				"sub_type": "Lasers"
-			}
-		},
-		{
-			"title": "tile.integrationTableBlock.name",
-			"item_stack": "(buildcraftsilicon:integration_table)",
-			"page": "integration.xml",
-			"type_tags": 
-			{
-				"type": "block",
-				"sub_type": "Lasers"
-			}
-		},
-		{
-			"title": "tile.chargingTableBlock.name",
-			"item_stack": "(buildcraftsilicon:charging_table)",
-			"page": "charging.xml",
-			"type_tags": 
-			{
-				"type": "block",
-				"sub_type": "Lasers"
-			}
-		},
-		{
-			"title": "tile.programmingTableBlock.name",
-			"item_stack": "(buildcraftsilicon:programming_table)",
-			"page": "programming.xml",
-			"type_tags": 
-			{
-				"type": "block",
-				"sub_type": "Lasers"
-			}
-		},
-		{
-			"title": "tile.assemblyWorkbenchBlock.name",
-			"item_stack": "(buildcraftsilicon:advanced_crafting_table)",
-			"page": "advanced_crafting.xml",
-			"type_tags": 
-			{
-				"type": "block",
-				"sub_type": "Lasers"
-			}
-		}
-	]
+    "entry_mask": "<mod><sub_mod>:compat/buildcraft/guide/<lang>/<type>/<page>",
+    "default_tags": {
+        "mod": "buildcraft",
+        "sub_mod": "silicon"
+    },
+    "contents": [
+        {
+            "title": "tile.laserBlock.name",
+            "item_stack": "(buildcraftsilicon:laser)",
+            "page": "laser.xml",
+            "type_tags": {
+                "type": "block",
+                "sub_type": "Lasers"
+            }
+        },
+        {
+            "title": "tile.assemblyTableBlock.name",
+            "item_stack": "(buildcraftsilicon:assembly_table)",
+            "page": "assembly.xml",
+            "type_tags": {
+                "type": "block",
+                "sub_type": "Lasers"
+            }
+        },
+        {
+            "title": "tile.integrationTableBlock.name",
+            "item_stack": "(buildcraftsilicon:integration_table)",
+            "page": "integration.xml",
+            "type_tags": {
+                "type": "block",
+                "sub_type": "Lasers"
+            }
+        },
+        {
+            "title": "tile.chargingTableBlock.name",
+            "item_stack": "(buildcraftsilicon:charging_table)",
+            "page": "charging.xml",
+            "type_tags": {
+                "type": "block",
+                "sub_type": "Lasers"
+            }
+        },
+        {
+            "title": "tile.programmingTableBlock.name",
+            "item_stack": "(buildcraftsilicon:programming_table)",
+            "page": "programming.xml",
+            "type_tags": {
+                "type": "block",
+                "sub_type": "Lasers"
+            }
+        },
+        {
+            "title": "tile.assemblyWorkbenchBlock.name",
+            "item_stack": "(buildcraftsilicon:advanced_crafting_table)",
+            "page": "advanced_crafting.xml",
+            "type_tags": {
+                "type": "block",
+                "sub_type": "Lasers"
+            }
+        }
+    ]
 }
