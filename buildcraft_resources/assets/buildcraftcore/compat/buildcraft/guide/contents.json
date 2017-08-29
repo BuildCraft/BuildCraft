@@ -8,7 +8,7 @@
         {
             "title": "item.woodenGearItem.name",
             "item_stack": "(buildcraftcore:gear_wood)",
-            "page": "gear_wood.xml",
+            "page": "gear_wood.md",
             "type_tags": {
                 "type": "item",
                 "sub_type": "gear"
@@ -17,7 +17,7 @@
         {
             "title": "item.stoneGearItem.name",
             "item_stack": "(buildcraftcore:gear_stone)",
-            "page": "gear_stone.xml",
+            "page": "gear_stone.md",
             "type_tags": {
                 "type": "item",
                 "sub_type": "gear"
@@ -26,7 +26,7 @@
         {
             "title": "item.ironGearItem.name",
             "item_stack": "(buildcraftcore:gear_iron)",
-            "page": "gear_iron.xml",
+            "page": "gear_iron.md",
             "type_tags": {
                 "type": "item",
                 "sub_type": "gear"
@@ -35,7 +35,7 @@
         {
             "title": "item.goldGearItem.name",
             "item_stack": "(buildcraftcore:gear_gold)",
-            "page": "gear_gold.xml",
+            "page": "gear_gold.md",
             "type_tags": {
                 "type": "item",
                 "sub_type": "gear"
@@ -44,7 +44,7 @@
         {
             "title": "item.diamondGearItem.name",
             "item_stack": "(buildcraftcore:gear_diamond)",
-            "page": "gear_diamond.xml",
+            "page": "gear_diamond.md",
             "type_tags": {
                 "type": "item",
                 "sub_type": "gear"
@@ -53,7 +53,7 @@
         {
             "title": "item.wrenchItem.name",
             "item_stack": "(buildcraftcore:wrench)",
-            "page": "wrench.xml",
+            "page": "wrench.md",
             "type_tags": {
                 "type": "item",
                 "sub_type": "tool"
@@ -62,7 +62,7 @@
         {
             "title": "item.paintbrush.name",
             "item_stack": "(buildcraftcore:paintbrush)",
-            "page": "paintbrush.xml",
+            "page": "paintbrush.md",
             "type_tags": {
                 "type": "item",
                 "sub_type": "tool"
@@ -71,7 +71,7 @@
         {
             "title": "item.markerConnector.name",
             "item_stack": "(buildcraftcore:marker_connector)",
-            "page": "marker_connector.xml",
+            "page": "marker_connector.md",
             "type_tags": {
                 "type": "item",
                 "sub_type": "tool"
@@ -80,7 +80,7 @@
         {
             "title": "item.volume_box.name",
             "item_stack": "(buildcraftcore:volume_box)",
-            "page": "box_volume.xml",
+            "page": "box_volume.md",
             "type_tags": {
                 "type": "item",
                 "sub_type": "marking"
@@ -89,7 +89,7 @@
         {
             "title": "tile.markerBlock.name",
             "item_stack": "(buildcraftcore:marker_volume)",
-            "page": "marker_land.xml",
+            "page": "marker_land.md",
             "type_tags": {
                 "type": "item",
                 "sub_type": "marking"
@@ -98,7 +98,7 @@
         {
             "title": "tile.pathMarkerBlock.name",
             "item_stack": "(buildcraftcore:marker_path)",
-            "page": "marker_path.xml",
+            "page": "marker_path.md",
             "type_tags": {
                 "type": "item",
                 "sub_type": "marking"
@@ -107,7 +107,7 @@
         {
             "title": "tile.engineWood.name",
             "item_stack": "{buildcraftcore:engine,1,0}",
-            "page": "engine_wood.xml",
+            "page": "engine_wood.md",
             "type_tags": {
                 "type": "block",
                 "sub_type": "engine"
@@ -116,7 +116,7 @@
         {
             "title": "item.list.name",
             "item_stack": "(buildcraftcore:list)",
-            "page": "list.xml",
+            "page": "list.md",
             "type_tags": {
                 "type": "item",
                 "sub_type": "information_storage"

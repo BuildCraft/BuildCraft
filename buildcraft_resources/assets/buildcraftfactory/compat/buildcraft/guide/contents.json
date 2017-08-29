@@ -8,7 +8,7 @@
         {
             "title": "tile.distiller.name",
             "item_stack": "(buildcraftfactory:distiller)",
-            "page": "distiller.xml",
+            "page": "distiller.md",
             "type_tags": {
                 "type": "block",
                 "sub_type": "refining"
@@ -17,7 +17,7 @@
         {
             "title": "tile.heat_exchange_start.name",
             "item_stack": "(buildcraftfactory:heat_exchange_start)",
-            "page": "heat_exchange.xml",
+            "page": "heat_exchange.md",
             "type_tags": {
                 "type": "block",
                 "sub_type": "refining"
@@ -26,7 +26,7 @@
         {
             "title": "tile.heat_exchange_middle.name",
             "item_stack": "(buildcraftfactory:heat_exchange_middle)",
-            "page": "heat_exchange.xml",
+            "page": "heat_exchange.md",
             "type_tags": {
                 "type": "block",
                 "sub_type": "refining"
@@ -35,7 +35,7 @@
         {
             "title": "tile.heat_exchange_end.name",
             "item_stack": "(buildcraftfactory:heat_exchange_end)",
-            "page": "heat_exchange.xml",
+            "page": "heat_exchange.md",
             "type_tags": {
                 "type": "block",
                 "sub_type": "refining"
@@ -44,7 +44,7 @@
         {
             "title": "tile.pumpBlock.name",
             "item_stack": "(buildcraftfactory:pump)",
-            "page": "pump.xml",
+            "page": "pump.md",
             "type_tags": {
                 "type": "block",
                 "sub_type": "fluid"
@@ -53,7 +53,7 @@
         {
             "title": "tile.floodGateBlock.name",
             "item_stack": "(buildcraftfactory:flood_gate)",
-            "page": "flood_gate.xml",
+            "page": "flood_gate.md",
             "type_tags": {
                 "type": "block",
                 "sub_type": "fluid"
@@ -62,7 +62,7 @@
         {
             "title": "tile.miningWellBlock.name",
             "item_stack": "(buildcraftfactory:mining_well)",
-            "page": "mining_well.xml",
+            "page": "mining_well.md",
             "type_tags": {
                 "type": "block",
                 "sub_type": "mining"
@@ -71,7 +71,7 @@
         {
             "title": "tile.tankBlock.name",
             "item_stack": "(buildcraftfactory:tank)",
-            "page": "tank.xml",
+            "page": "tank.md",
             "type_tags": {
                 "type": "block",
                 "sub_type": "fluid"
@@ -80,7 +80,7 @@
         {
             "title": "tile.autoWorkbenchBlock.name",
             "item_stack": "(buildcraftfactory:autoworkbench_item)",
-            "page": "auto_workbench.xml",
+            "page": "auto_workbench.md",
             "type_tags": {
                 "type": "block",
                 "sub_type": "automation"
@@ -89,7 +89,7 @@
         {
             "title": "tile.chuteBlock.name",
             "item_stack": "(buildcraftfactory:chute)",
-            "page": "chute.xml",
+            "page": "chute.md",
             "type_tags": {
                 "type": "block",
                 "sub_type": "automation"
