@@ -9,6 +9,7 @@ package buildcraft.silicon.tile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -48,7 +49,6 @@ import buildcraft.silicon.client.render.AdvDebuggerLaser;
 public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable {
     private int ticks = 0;
     private BlockPos targetPos;
-    private BlockPos previousTarget;
     private final AverageLong avgPower = new AverageLong(100);
     private long averageClient;
     private final MjBattery battery;
@@ -120,20 +120,6 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         }
     }
 
-    private boolean changedTarget() {
-        if (previousTarget == null && targetPos != null) {
-            return true;
-        }
-        if (previousTarget != null && targetPos == null) {
-            return true;
-        }
-        if (previousTarget != null) {
-            return !previousTarget.equals(targetPos);
-        } else {
-            return false;
-        }
-    }
-
     public long getAverageClient() {
         return averageClient;
     }
@@ -150,39 +136,39 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             if (ticks % (5 + world.rand.nextInt(10)) == 0 || targetPos == null) {
                 updateLaser();
             }
+            return;
+        }
+        // set target tile on server side
+        avgPower.tick();
+
+        BlockPos previousTargetPos = targetPos != null ? targetPos.toImmutable() : null;
+
+        if (getTarget() == null) {
+            targetPos = null;
+        }
+
+        if (ticks % (10 + world.rand.nextInt(20)) == 0 || getTarget() == null) {
+            findTarget();
+        }
+
+        ILaserTarget target = getTarget();
+        if (target != null) {
+            long max = getMaxPowerPerTick();
+            max *= battery.getStored() + max;
+            max /= battery.getCapacity() / 2;
+            max = Math.min(Math.min(max, getMaxPowerPerTick()), target.getRequiredLaserPower());
+            long power = battery.extractPower(0, max);
+            long excess = target.receiveLaserPower(power);
+            if (excess > 0) {
+                battery.addPowerChecking(excess, false);
+            }
+            avgPower.push(power - excess);
         } else {
-            // set target tile on server side
-            avgPower.tick();
+            avgPower.clear();
+        }
 
-            previousTarget = targetPos != null ? targetPos.toImmutable() : null;
-
-            if (getTarget() == null) {
-                targetPos = null;
-            }
-
-            if (ticks % (10 + world.rand.nextInt(20)) == 0 || getTarget() == null) {
-                findTarget();
-            }
-
-            ILaserTarget target = getTarget();
-            if (target != null) {
-                long max = getMaxPowerPerTick();
-                max *= battery.getStored() + max;
-                max /= battery.getCapacity() / 2;
-                max = Math.min(Math.min(max, getMaxPowerPerTick()), target.getRequiredLaserPower());
-                long power = battery.extractPower(0, max);
-                long excess = target.receiveLaserPower(power);
-                if (excess > 0) {
-                    battery.addPowerChecking(excess, false);
-                }
-                avgPower.push(power - excess);
-            } else {
-                avgPower.clear();
-            }
-
-            if (changedTarget()) {
-                sendNetworkUpdate(NET_RENDER_DATA);
-            }
+        if (!Objects.equals(previousTargetPos, targetPos)) {
+            sendNetworkUpdate(NET_RENDER_DATA);
         }
     }
 
