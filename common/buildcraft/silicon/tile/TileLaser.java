@@ -141,7 +141,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         // set target tile on server side
         avgPower.tick();
 
-        BlockPos previousTargetPos = targetPos != null ? targetPos.toImmutable() : null;
+        BlockPos previousTargetPos = targetPos;
 
         if (getTarget() == null) {
             targetPos = null;
