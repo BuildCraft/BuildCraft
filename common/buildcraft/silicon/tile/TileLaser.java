@@ -9,6 +9,7 @@ package buildcraft.silicon.tile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,6 +24,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.ILaserTarget;
 import buildcraft.api.mj.ILaserTargetBlock;
 import buildcraft.api.mj.MjAPI;
@@ -46,13 +48,15 @@ import buildcraft.silicon.BCSiliconBlocks;
 import buildcraft.silicon.client.render.AdvDebuggerLaser;
 
 public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable {
-    private int ticks = 0;
     private BlockPos targetPos;
     private final AverageLong avgPower = new AverageLong(100);
     private long averageClient;
     private final MjBattery battery;
 
     public Vec3d laserPos;
+
+    private final SafeTimeTracker clientLaserMoveInterval = new SafeTimeTracker(5, 10);
+    private final SafeTimeTracker serverTargetMoveInterval = new SafeTimeTracker(10, 20);
 
     public TileLaser() {
         super();
@@ -107,7 +111,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     }
 
     private void updateLaser() {
-        if (getTarget() != null) {
+        if (targetPos != null) {
             laserPos = new Vec3d(targetPos)
                 .addVector(
                     (5 + world.rand.nextInt(6) + 0.5) / 16D,
@@ -130,21 +134,23 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     @Override
     public void update() {
         if (world.isRemote) {
+            // set laser render position on client side
+            if (clientLaserMoveInterval.markTimeIfDelay(world) || targetPos == null) {
+                updateLaser();
+            }
             return;
         }
+        // set target tile on server side
         avgPower.tick();
-        ticks++;
+
+        BlockPos previousTargetPos = targetPos;
 
         if (getTarget() == null) {
             targetPos = null;
         }
 
-        if (ticks % (10 + world.rand.nextInt(20)) == 0 || getTarget() == null) {
+        if (serverTargetMoveInterval.markTimeIfDelay(world) || getTarget() == null) {
             findTarget();
-        }
-
-        if (ticks % (5 + world.rand.nextInt(10)) == 0 || getTarget() == null) {
-            updateLaser();
         }
 
         ILaserTarget target = getTarget();
@@ -163,7 +169,9 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             avgPower.clear();
         }
 
-        sendNetworkUpdate(NET_RENDER_DATA);
+        if (!Objects.equals(previousTargetPos, targetPos)) {
+            sendNetworkUpdate(NET_RENDER_DATA);
+        }
     }
 
     @Override
@@ -203,10 +211,6 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
                 if (targetPos != null) {
                     MessageUtil.writeBlockPos(buffer, targetPos);
                 }
-                buffer.writeBoolean(laserPos != null);
-                if (laserPos != null) {
-                    MessageUtil.writeVec3d(buffer, laserPos);
-                }
                 buffer.writeLong((long) avgPower.getAverage());
             }
         }
@@ -222,11 +226,6 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
                     targetPos = MessageUtil.readBlockPos(buffer);
                 } else {
                     targetPos = null;
-                }
-                if (buffer.readBoolean()) {
-                    laserPos = MessageUtil.readVec3d(buffer);
-                } else {
-                    laserPos = null;
                 }
                 averageClient = buffer.readLong();
             }
