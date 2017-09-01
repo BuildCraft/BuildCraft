@@ -24,6 +24,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.ILaserTarget;
 import buildcraft.api.mj.ILaserTargetBlock;
 import buildcraft.api.mj.MjAPI;
@@ -47,13 +48,15 @@ import buildcraft.silicon.BCSiliconBlocks;
 import buildcraft.silicon.client.render.AdvDebuggerLaser;
 
 public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable {
-    private int ticks = 0;
     private BlockPos targetPos;
     private final AverageLong avgPower = new AverageLong(100);
     private long averageClient;
     private final MjBattery battery;
 
     public Vec3d laserPos;
+
+    private final SafeTimeTracker clientLaserMoveInterval = new SafeTimeTracker(5, 10);
+    private final SafeTimeTracker serverTargetMoveInterval = new SafeTimeTracker(10, 20);
 
     public TileLaser() {
         super();
@@ -130,10 +133,9 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
 
     @Override
     public void update() {
-        ticks++;
         if (world.isRemote) {
             // set laser render position on client side
-            if (ticks % (5 + world.rand.nextInt(10)) == 0 || targetPos == null) {
+            if (clientLaserMoveInterval.markTimeIfDelay(world) || targetPos == null) {
                 updateLaser();
             }
             return;
@@ -147,7 +149,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             targetPos = null;
         }
 
-        if (ticks % (10 + world.rand.nextInt(20)) == 0 || getTarget() == null) {
+        if (serverTargetMoveInterval.markTimeIfDelay(world) || getTarget() == null) {
             findTarget();
         }
 
