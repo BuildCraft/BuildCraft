@@ -18,18 +18,25 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.core.BCCoreSprites;
 
 public enum PatternParameterHollow implements IStatementParameter {
-    FILLED(true),
-    HOLLOW(false);
+    FILLED_INNER(true, false),
+    FILLED_OUTER(true, true),
+    HOLLOW(false, false);
 
     public final boolean filled;
+    public final boolean outerFilled;
 
-    PatternParameterHollow(boolean filled) {
+    PatternParameterHollow(boolean filled, boolean outerFilled) {
         this.filled = filled;
+        this.outerFilled = outerFilled;
     }
 
     public static PatternParameterHollow readFromNbt(NBTTagCompound nbt) {
         if (nbt.getBoolean("filled")) {
-            return FILLED;
+            if (nbt.getBoolean("outer")) {
+                return FILLED_OUTER;
+            } else {
+                return FILLED_INNER;
+            }
         }
         return HOLLOW;
     }
@@ -37,6 +44,9 @@ public enum PatternParameterHollow implements IStatementParameter {
     @Override
     public void writeToNbt(NBTTagCompound compound) {
         compound.setBoolean("filled", filled);
+        if (filled) {
+            compound.setBoolean("outer", outerFilled);
+        }
     }
 
     @Override
@@ -47,7 +57,14 @@ public enum PatternParameterHollow implements IStatementParameter {
     @Override
     @SideOnly(Side.CLIENT)
     public ISprite getSprite() {
-        return filled ? BCCoreSprites.PARAM_FILLED : BCCoreSprites.PARAM_HOLLOW;
+        if (filled) {
+            if (outerFilled) {
+                return BCCoreSprites.PARAM_FILLED_OUTER;
+            } else {
+                return BCCoreSprites.PARAM_FILLED_INNER;
+            }
+        }
+        return BCCoreSprites.PARAM_HOLLOW;
     }
 
     @Override
@@ -57,7 +74,8 @@ public enum PatternParameterHollow implements IStatementParameter {
 
     @Override
     public String getDescription() {
-        return LocaleUtil.localize("fillerpattern.parameter." + (filled ? "filled" : "hollow"));
+        String after = filled ? (outerFilled ? "filled_outer" : "filled") : "hollow";
+        return LocaleUtil.localize("fillerpattern.parameter." + after);
     }
 
     @Override

@@ -18,16 +18,23 @@ import buildcraft.core.builders.patterns.PatternHorizon;
 import buildcraft.core.builders.patterns.PatternNone;
 import buildcraft.core.builders.patterns.PatternParameterAxis;
 import buildcraft.core.builders.patterns.PatternParameterCenter;
+import buildcraft.core.builders.patterns.PatternParameterFacing;
 import buildcraft.core.builders.patterns.PatternParameterHollow;
+import buildcraft.core.builders.patterns.PatternParameterRotation;
 import buildcraft.core.builders.patterns.PatternParameterXZDir;
 import buildcraft.core.builders.patterns.PatternParameterYDir;
 import buildcraft.core.builders.patterns.PatternPyramid;
+import buildcraft.core.builders.patterns.PatternShape2dArc;
 import buildcraft.core.builders.patterns.PatternShape2dCircle;
 import buildcraft.core.builders.patterns.PatternShape2dHexagon;
 import buildcraft.core.builders.patterns.PatternShape2dOctagon;
 import buildcraft.core.builders.patterns.PatternShape2dPentagon;
+import buildcraft.core.builders.patterns.PatternShape2dSemiCircle;
 import buildcraft.core.builders.patterns.PatternShape2dSquare;
 import buildcraft.core.builders.patterns.PatternShape2dTriangle;
+import buildcraft.core.builders.patterns.PatternSphere;
+import buildcraft.core.builders.patterns.PatternSpherePart;
+import buildcraft.core.builders.patterns.PatternSpherePart.SpherePartType;
 import buildcraft.core.builders.patterns.PatternStairs;
 import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.statements.ActionRedstoneOutput;
@@ -120,13 +127,19 @@ public class BCCoreStatements {
     public static final PatternShape2dPentagon PATTERN_PENTAGON = new PatternShape2dPentagon();
     public static final PatternShape2dHexagon PATTERN_HEXAGON = new PatternShape2dHexagon();
     public static final PatternShape2dOctagon PATTERN_OCTAGON = new PatternShape2dOctagon();
+    public static final PatternShape2dArc PATTERN_ARC = new PatternShape2dArc();
+    public static final PatternShape2dSemiCircle PATTERN_SEMI_CIRCLE = new PatternShape2dSemiCircle();
     public static final PatternShape2dCircle PATTERN_CIRCLE = new PatternShape2dCircle();
+    public static final PatternSphere PATTERN_SPHERE = new PatternSphere();
+    public static final PatternSpherePart PATTERN_HEMI_SPHERE = new PatternSpherePart(SpherePartType.HALF);
+    public static final PatternSpherePart PATTERN_QUARTER_SPHERE = new PatternSpherePart(SpherePartType.QUARTER);
 
     public static final Pattern[] PATTERNS = {//
         PATTERN_NONE, PATTERN_CLEAR, PATTERN_FILL, PATTERN_BOX, PATTERN_FRAME,//
         PATTERN_CYLINDER, PATTERN_HORIZON, PATTERN_PYRAMID, PATTERN_STAIRS,//
         PATTERN_FLATTEN, PATTERN_TRIANGLE, PATTERN_SQUARE, PATTERN_PENTAGON,//
-        PATTERN_HEXAGON, PATTERN_OCTAGON, PATTERN_CIRCLE//
+        PATTERN_HEXAGON, PATTERN_OCTAGON, PATTERN_ARC, PATTERN_SEMI_CIRCLE,//
+        PATTERN_CIRCLE, PATTERN_SPHERE, PATTERN_HEMI_SPHERE, PATTERN_QUARTER_SPHERE //
     };
 
     static {
@@ -140,6 +153,8 @@ public class BCCoreStatements {
 
         StatementManager.registerParameter(StatementParamGateSideOnly::readFromNbt);
         StatementManager.registerParameter(PatternParameterXZDir::readFromNbt);
+        StatementManager.registerParameter(PatternParameterRotation::readFromNbt);
+        StatementManager.registerParameter(PatternParameterFacing::readFromNbt);
         StatementManager.registerParameter(PatternParameterYDir::readFromNbt);
         StatementManager.registerParameter(PatternParameterCenter::readFromNbt);
         StatementManager.registerParameter(PatternParameterHollow::readFromNbt);

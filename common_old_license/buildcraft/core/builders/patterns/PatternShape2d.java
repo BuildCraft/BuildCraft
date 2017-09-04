@@ -5,9 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumFacing.AxisDirection;
-
 import buildcraft.api.core.IBox;
 import buildcraft.api.filler.FilledTemplate;
 import buildcraft.api.statements.IStatementParameter;
@@ -40,7 +37,7 @@ public abstract class PatternShape2d extends Pattern {
             case 1:
                 return PatternParameterHollow.HOLLOW;
             case 2:
-                return PatternParameterXZDir.NORTH;
+                return PatternParameterRotation.NONE;
         }
         return null;
     }
@@ -51,21 +48,24 @@ public abstract class PatternShape2d extends Pattern {
         FilledTemplate template = new FilledTemplate(box);
 
         PatternParameterAxis axis = getParam(0, params, PatternParameterAxis.Y);
-        PatternParameterXZDir dir = getParam(2, params, PatternParameterXZDir.NORTH);
+        PatternParameterRotation dir = getParam(2, params, PatternParameterRotation.NONE);
 
         PathIterator2d iterator = getIterator(template, axis);
 
         int maxA = axis == PatternParameterAxis.X ? template.maxY : template.maxX;
         int maxB = axis == PatternParameterAxis.Z ? template.maxY : template.maxZ;
 
-        if (dir.dir.getAxis() == Axis.X) {
+        int normMaxA = maxA;
+        int normMaxB = maxB;
+
+        if (dir.rotationCount % 2 == 1) {
             int maxT = maxA;
             maxA = maxB;
             maxB = maxT;
             final PathIterator2d old = iterator;
             iterator = (a, b) -> old.iterate(b, a);
         }
-        if (dir.dir.getAxisDirection() == AxisDirection.POSITIVE) {
+        if (dir.rotationCount > 1) {
             final PathIterator2d old = iterator;
             final int max_a = maxA;
             final int max_b = maxB;
@@ -77,11 +77,29 @@ public abstract class PatternShape2d extends Pattern {
         LineList list = new LineList(iterator);
         genShape(maxA, maxB, list);
 
-        if (getParam(1, params, PatternParameterHollow.HOLLOW).filled) {
-            int fillA = list.fillA;
-            int fillB = list.fillB;
+        PatternParameterHollow filled = getParam(1, params, PatternParameterHollow.HOLLOW);
+        if (filled.filled) {
+            int fillA = list.fillInA;
+            int fillB = list.fillInB;
             if (fillA != -1 && fillB != -1) {
+                maxA = normMaxA;
+                maxB = normMaxB;
+
+                if (dir.rotationCount % 2 == 1) {
+                    int fillT = fillA;
+                    fillA = fillB;
+                    fillB = fillT;
+                }
+                if (dir.rotationCount > 1) {
+                    fillA = maxA - fillA;
+                    fillB = maxB - fillB;
+                }
+                iterator = getIterator(template, axis);
                 PositionGetter getter = getFillGetter(template, axis);
+
+                if (filled.outerFilled) {
+                    iterator = (a, b) -> {};
+                }
 
                 // Expand outwards from the point
                 Set<Point> visited = new HashSet<>();
@@ -90,10 +108,10 @@ public abstract class PatternShape2d extends Pattern {
                 while (!open.isEmpty()) {
                     List<Point> next = new ArrayList<>();
                     for (Point p : open) {
-                        if (p.a < 0 || p.a >= template.sizeX) {
+                        if (p.a < 0 || p.a > maxA) {
                             continue;
                         }
-                        if (p.b < 0 || p.b >= template.sizeZ) {
+                        if (p.b < 0 || p.b > maxB) {
                             continue;
                         }
                         if (!visited.add(p)) {
@@ -109,6 +127,18 @@ public abstract class PatternShape2d extends Pattern {
                         next.add(new Point(p.a, p.b - 1));
                     }
                     open = next;
+                }
+
+                if (filled.outerFilled) {
+                    iterator = getIterator(template, axis);
+                    for (int a = 0; a <= maxA; a++) {
+                        for (int b = 0; b <= maxB; b++) {
+                            if (visited.contains(new Point(a, b))) {
+                                continue;
+                            }
+                            iterator.iterate(a, b);
+                        }
+                    }
                 }
             }
         }
@@ -182,15 +212,15 @@ public abstract class PatternShape2d extends Pattern {
     public static class LineList {
         private PathIterator2d iterator;
         private int lastA, lastB;
-        private int fillA = -1, fillB = -1;
+        private int fillInA = -1, fillInB = -1;
 
         public LineList(PathIterator2d iterator) {
             this.iterator = iterator;
         }
 
         public void setFillPoint(int a, int b) {
-            fillA = a;
-            fillB = b;
+            fillInA = a;
+            fillInB = b;
         }
 
         public void moveTo(int a, int b) {
@@ -220,6 +250,8 @@ public abstract class PatternShape2d extends Pattern {
             rb = Math.max(1, rb);
             double ra2 = ra * ra;
             double rb2 = rb * rb;
+            
+            // TODO: Fix (or replace) this algorithm with one that doesn't miss ends
 
             double sigma = 2 * rb2 + ra2 * (1 - 2 * rb);
             for (int a = 0, b = (int) rb; rb2 * a <= ra2 * b; a++) {

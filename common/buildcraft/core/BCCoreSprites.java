@@ -18,6 +18,7 @@ import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
 import buildcraft.core.builders.patterns.PatternParameterCenter;
+import buildcraft.core.builders.patterns.PatternSpherePart.SpherePartType;
 import buildcraft.core.statements.TriggerFluidContainer;
 import buildcraft.core.statements.TriggerFluidContainerLevel;
 import buildcraft.core.statements.TriggerInventory;
@@ -47,6 +48,7 @@ public class BCCoreSprites {
     public static final SpriteHolder FILLER_CYLINDER;
     public static final SpriteHolder FILLER_PYRAMID;
     public static final SpriteHolder FILLER_STAIRS;
+    public static final SpriteHolder FILLER_SPHERE;
     public static final SpriteHolder FILLER_2D_TRIANGLE;
     public static final SpriteHolder FILLER_2D_SQUARE;
     public static final SpriteHolder FILLER_2D_PENTAGON;
@@ -57,12 +59,14 @@ public class BCCoreSprites {
     public static final SpriteHolder FILLER_2D_ARC;
 
     public static final SpriteHolder PARAM_HOLLOW;
-    public static final SpriteHolder PARAM_FILLED;
+    public static final SpriteHolder PARAM_FILLED_INNER;
+    public static final SpriteHolder PARAM_FILLED_OUTER;
 
     public static final SpriteHolder PARAM_STAIRS_DOWN;
     public static final SpriteHolder PARAM_STAIRS_UP;
 
     public static final SpriteHolder[] PARAM_REDSTONE_LEVEL;
+    public static final SpriteHolder[] PARAM_ROTATION;
 
     public static final Map<IControllable.Mode, SpriteHolder> ACTION_MACHINE_CONTROL;
     public static final Map<TriggerInventory.State, SpriteHolder> TRIGGER_INVENTORY;
@@ -71,6 +75,9 @@ public class BCCoreSprites {
     public static final Map<TriggerFluidContainerLevel.TriggerType, SpriteHolder> TRIGGER_FLUID_LEVEL;
     public static final Map<EnumFacing, SpriteHolder> PARAM_XZ_DIR;
     public static final Map<PatternParameterCenter, SpriteHolder> PARAM_CENTER;
+    public static final Map<EnumFacing.Axis, SpriteHolder> PARAM_AXIS;
+    public static final Map<EnumFacing, SpriteHolder> PARAM_FACE;
+    public static final Map<SpherePartType, SpriteHolder> FILLER_SPHERE_PART;
 
     static {
         TRIGGER_TRUE = getHolder("triggers/trigger_true");
@@ -96,6 +103,7 @@ public class BCCoreSprites {
         FILLER_CYLINDER = getHolder("filler/patterns/cylinder");
         FILLER_PYRAMID = getHolder("filler/patterns/pyramid");
         FILLER_STAIRS = getHolder("filler/patterns/stairs");
+        FILLER_SPHERE = getHolder("filler/patterns/sphere");
         FILLER_2D_TRIANGLE = getHolder("filler/patterns/2d_triangle");
         FILLER_2D_SQUARE = getHolder("filler/patterns/2d_square");
         FILLER_2D_PENTAGON = getHolder("filler/patterns/2d_pentagon");
@@ -106,7 +114,8 @@ public class BCCoreSprites {
         FILLER_2D_ARC = getHolder("filler/patterns/2d_arc");
 
         PARAM_HOLLOW = getHolder("filler/parameters/hollow");
-        PARAM_FILLED = getHolder("filler/parameters/filled");
+        PARAM_FILLED_INNER = getHolder("filler/parameters/filled_inner");
+        PARAM_FILLED_OUTER = getHolder("filler/parameters/filled_outer");
 
         PARAM_STAIRS_UP = getHolder("filler/parameters/stairs_ascend");
         PARAM_STAIRS_DOWN = getHolder("filler/parameters/stairs_descend");
@@ -114,6 +123,11 @@ public class BCCoreSprites {
         PARAM_REDSTONE_LEVEL = new SpriteHolder[16];
         for (int i = 0; i < PARAM_REDSTONE_LEVEL.length; i++) {
             PARAM_REDSTONE_LEVEL[i] = getHolder("triggers/parameter_redstone_" + i);
+        }
+
+        PARAM_ROTATION = new SpriteHolder[4];
+        for (int r = 0; r < 4; r++) {
+            PARAM_ROTATION[r] = getHolder("filler/parameters/rotation_" + r);
         }
 
         ACTION_MACHINE_CONTROL = new EnumMap<>(IControllable.Mode.class);
@@ -155,6 +169,21 @@ public class BCCoreSprites {
         PARAM_CENTER = new EnumMap<>(PatternParameterCenter.class);
         for (PatternParameterCenter param : PatternParameterCenter.values()) {
             PARAM_CENTER.put(param, getHolder("filler/parameters/center_" + param.ordinal()));
+        }
+
+        PARAM_AXIS = new EnumMap<>(EnumFacing.Axis.class);
+        for (EnumFacing.Axis axis : EnumFacing.Axis.values()) {
+            PARAM_AXIS.put(axis, getHolder("filler/parameters/axis_" + axis.getName()));
+        }
+
+        PARAM_FACE = new EnumMap<>(EnumFacing.class);
+        for (EnumFacing face : EnumFacing.VALUES) {
+            PARAM_FACE.put(face, getHolder("filler/parameters/face_" + face.getName()));
+        }
+
+        FILLER_SPHERE_PART = new EnumMap<>(SpherePartType.class);
+        for (SpherePartType type : SpherePartType.values()) {
+            FILLER_SPHERE_PART.put(type, getHolder("filler/patterns/sphere_" + type.lowerCaseName));
         }
     }
 

@@ -208,6 +208,7 @@ fillerpattern.frame=Frame
 fillerpattern.none=None
 fillerpattern.parameter.hollow=Hollow
 fillerpattern.parameter.filled=Filled
+fillerpattern.parameter.filled_outer=Surrounded
 
 fluid.oil=Oil
 fluid.fuel=Fuel

@@ -29,8 +29,8 @@
 		"pattern_drag_target": {
 			"type": "buildcraftlib:statement/slot",
 			"source": "filler.pattern",
-			"area": [16,36,24,24],
-			"draw": false
+			"area": [12,32,32,32],
+			"draw":false
 		},
 		"pattern_drawable": {
 			"type": "buildcraftlib:drawable",
@@ -38,7 +38,7 @@
 				"sprite": "filler.pattern.sprite",
 				"area": [0, 0, 16, 16]
 			},
-			"area": [20,40,16,16]
+			"area": [12,32,32,32]
 		},
 		"params": {
 			"iterator": "index = [0, 4)",

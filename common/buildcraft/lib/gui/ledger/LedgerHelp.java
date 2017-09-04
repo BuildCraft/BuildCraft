@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.render.ISprite;
 
@@ -18,6 +19,7 @@ import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
+import buildcraft.lib.gui.config.GuiConfigManager;
 import buildcraft.lib.gui.elem.GuiElementContainer;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
@@ -47,6 +49,8 @@ public class LedgerHelp extends Ledger_Neptune {
         super(gui, 0xFF_CC_99_FF, expandPositive);
         title = LocaleUtil.localize("gui.ledger.help");
         calculateMaxSize();
+
+        setOpenProperty(GuiConfigManager.getOrAddBoolean(new ResourceLocation("buildcraftlib:help"), "ledger.help.is_open", false));
     }
 
     @Override

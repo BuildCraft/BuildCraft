@@ -11,9 +11,10 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
-import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
+
+import buildcraft.core.BCCoreSprites;
 
 public enum PatternParameterAxis implements IStatementParameter {
     X(Axis.X),
@@ -49,16 +50,7 @@ public enum PatternParameterAxis implements IStatementParameter {
 
     @Override
     public ISprite getSprite() {
-        switch (this) {
-            case X:
-                return BCLibSprites.ENGINE_INACTIVE;
-            case Y:
-                return BCLibSprites.ENGINE_ACTIVE;
-            case Z:
-                return BCLibSprites.ENGINE_WARM;
-            default:
-                throw new IllegalStateException("Unknown axis " + this);
-        }
+        return BCCoreSprites.PARAM_AXIS.get(axis);
     }
 
     @Override
