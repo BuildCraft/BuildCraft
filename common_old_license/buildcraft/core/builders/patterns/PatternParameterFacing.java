@@ -1,5 +1,8 @@
 package buildcraft.core.builders.patterns;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -29,12 +32,25 @@ public enum PatternParameterFacing implements IStatementParameter {
 
     public final EnumFacing face;
 
+    private static final Map<EnumFacing, PatternParameterFacing> faceToParam;
+
+    static {
+        faceToParam = new EnumMap<>(EnumFacing.class);
+        for (PatternParameterFacing param : values()) {
+            faceToParam.put(param.face, param);
+        }
+    }
+
     PatternParameterFacing(EnumFacing face) {
         this.face = face;
     }
 
     public static PatternParameterFacing readFromNbt(NBTTagCompound nbt) {
         return values()[MathUtil.clamp(nbt.getByte("v"), 0, 6)];
+    }
+
+    public static PatternParameterFacing get(EnumFacing face) {
+        return faceToParam.get(face);
     }
 
     @Override

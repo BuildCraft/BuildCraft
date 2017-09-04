@@ -17,6 +17,11 @@ public class PatternShape2dArc extends PatternShape2d {
 
     @Override
     protected void genShape(int maxA, int maxB, LineList list) {
+        if (maxA == 0 || maxB == 0) {
+            list.moveTo(0, 0);
+            list.lineTo(maxA, maxB);
+            return;
+        }
         list.setFillPoint(maxA, maxB);
         list.arc(maxA, maxB, maxA, maxB);
     }

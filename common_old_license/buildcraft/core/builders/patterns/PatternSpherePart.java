@@ -8,7 +8,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.filler.FilledTemplate;
 import buildcraft.api.statements.IStatementParameter;
@@ -97,7 +96,6 @@ public final class PatternSpherePart extends Pattern {
         radius = VecUtil.replaceValue(radius, axis, VecUtil.getValue(radius, axis) * 2);
 
         if (type.openFaces > 1) {
-
             Axis secondaryAxis;
             if (rotation.rotationCount % 2 == 1) {
                 secondaryAxis = axis == Axis.X ? Axis.Y : axis == Axis.Y ? Axis.Z : Axis.X;
@@ -127,9 +125,6 @@ public final class PatternSpherePart extends Pattern {
                 radius = VecUtil.replaceValue(radius, tertiaryAxis, VecUtil.getValue(radius, tertiaryAxis) * 2);
             }
         }
-
-//        radius = radius;
-        BCLog.logger.info("PatternSpherePart: c = " + center.add(new Vec3d(tpl.min)) + ", r = " + radius);
 
         double cx = center.xCoord;
         double cy = center.yCoord;

@@ -246,11 +246,15 @@ public abstract class PatternShape2d extends Pattern {
         }
 
         public void arc(int ca, int cb, double ra, double rb, int da, int db, ArcType type) {
-            ra = Math.max(1, ra);
-            rb = Math.max(1, rb);
+            if (ra <= 0) {
+                throw new IllegalArgumentException("'ra' was less than or equal to 0! (Was " + ra + ")");
+            }
+            if (rb <= 0) {
+                throw new IllegalArgumentException("'rb' was less than or equal to 0! (Was " + rb + ")");
+            }
             double ra2 = ra * ra;
             double rb2 = rb * rb;
-            
+
             // TODO: Fix (or replace) this algorithm with one that doesn't miss ends
 
             double sigma = 2 * rb2 + ra2 * (1 - 2 * rb);

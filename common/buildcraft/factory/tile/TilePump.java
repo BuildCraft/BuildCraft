@@ -34,7 +34,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
@@ -146,11 +145,9 @@ public class TilePump extends TileMiner {
             BlockPos center = VecUtil.replaceValue(getPos(), Axis.Y, 0);
             for (BlockPos spring : BlockPos.getAllInBox(center.add(-10, 0, -10), center.add(10, 0, 10))) {
                 if (world.getBlockState(spring).getBlock() == BCCoreBlocks.spring) {
-                    BCLog.logger.info("Found block at " + spring);
                     TileEntity tile = world.getTileEntity(spring);
                     if (tile instanceof TileSpringOil) {
                         springPositions.add(spring);
-                        BCLog.logger.info("Found a spring tile at " + spring);
                     }
                 }
             }
