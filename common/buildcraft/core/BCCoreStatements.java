@@ -133,13 +133,15 @@ public class BCCoreStatements {
     public static final PatternSphere PATTERN_SPHERE = new PatternSphere();
     public static final PatternSpherePart PATTERN_HEMI_SPHERE = new PatternSpherePart(SpherePartType.HALF);
     public static final PatternSpherePart PATTERN_QUARTER_SPHERE = new PatternSpherePart(SpherePartType.QUARTER);
+    public static final PatternSpherePart PATTERN_EIGHTH_SPHERE = new PatternSpherePart(SpherePartType.EIGHTH);
 
     public static final Pattern[] PATTERNS = {//
         PATTERN_NONE, PATTERN_CLEAR, PATTERN_FILL, PATTERN_BOX, PATTERN_FRAME,//
         PATTERN_CYLINDER, PATTERN_HORIZON, PATTERN_PYRAMID, PATTERN_STAIRS,//
         PATTERN_FLATTEN, PATTERN_TRIANGLE, PATTERN_SQUARE, PATTERN_PENTAGON,//
         PATTERN_HEXAGON, PATTERN_OCTAGON, PATTERN_ARC, PATTERN_SEMI_CIRCLE,//
-        PATTERN_CIRCLE, PATTERN_SPHERE, PATTERN_HEMI_SPHERE, PATTERN_QUARTER_SPHERE //
+        PATTERN_CIRCLE, PATTERN_SPHERE, PATTERN_HEMI_SPHERE, PATTERN_QUARTER_SPHERE,//
+        PATTERN_EIGHTH_SPHERE //
     };
 
     static {

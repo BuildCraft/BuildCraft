@@ -1,5 +1,8 @@
 package buildcraft.core.builders.patterns;
 
+import net.minecraft.util.math.Vec3d;
+
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.filler.FilledTemplate;
 import buildcraft.api.statements.IStatementParameter;
@@ -50,6 +53,8 @@ public class PatternSphere extends Pattern {
         double rx = cx + 0.5;
         double ry = cy + 0.5;
         double rz = cz + 0.5;
+
+        BCLog.logger.info("PatternSphere: c = " + new Vec3d(cx, cy, cz).add(new Vec3d(tpl.min)) + ", r = " + new Vec3d(rx, ry, rz));
 
         for (int x = 0; x <= tpl.maxX; x++) {
             double dx = Math.abs(x - cx) / rx;
