@@ -21,7 +21,6 @@ public class SlotPhantom extends SlotBase implements IPhantomSlot {
         this.canAdjustCount = adjustableCount;
     }
 
-
     public SlotPhantom(IItemHandlerAdv itemHandler, int slotIndex, int posX, int posY) {
         this(itemHandler, slotIndex, posX, posY, true);
     }

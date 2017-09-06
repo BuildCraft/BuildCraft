@@ -1,7 +1,9 @@
 package buildcraft.lib.gui.statement;
 
+import java.util.Arrays;
 import java.util.List;
 
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IGuiSlot;
 import buildcraft.api.statements.IStatement;
@@ -13,9 +15,12 @@ import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.data.IReference;
 import buildcraft.lib.statement.StatementContext;
 import buildcraft.lib.statement.StatementContext.StatementGroup;
+import buildcraft.lib.statement.StatementWrapper;
 
 import buildcraft.transport.gui.GuiGate;
 
@@ -110,7 +115,14 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
 
     private void drawAt(S slot, double x, double y) {
         ISprite sprite = slot.getSprite();
-        GuiGate.SLOT_COLOUR.drawAt(x, y);
+        GuiIcon background = GuiGate.SLOT_COLOUR;
+        if (slot instanceof StatementWrapper) {
+            EnumPipePart part = ((StatementWrapper) slot).sourcePart;
+            if (part != EnumPipePart.CENTER) {
+                background = background.offset(0, (1 + part.getIndex()) * 18);
+            }
+        }
+        background.drawAt(x, y);
         if (sprite != null) {
             GuiIcon.drawAt(sprite, x + 1, y + 1, 16);
         }
@@ -120,7 +132,16 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
     public void addToolTips(List<ToolTip> tooltips) {
         iterateSlots((slot, area) -> {
             if (area.contains(gui.mouse)) {
-                tooltips.add(new ToolTip(slot.getDescription()));
+                String[] lines = {slot.getDescription()};
+                if (slot instanceof StatementWrapper) {
+                    EnumPipePart part = ((StatementWrapper) slot).sourcePart;
+                    if (part != EnumPipePart.CENTER) {
+                        lines = Arrays.copyOf(lines, 2);
+                        String translated = ColourUtil.getTextFullTooltip(part.face);
+                        lines[1] = LocaleUtil.localize("gate.side", translated);
+                    }
+                }
+                tooltips.add(new ToolTip(lines));
             }
         });
     }

@@ -17,6 +17,7 @@ import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.client.model.ResourceLoaderContext;
+import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.json.JsonVariableObject;
 import buildcraft.lib.misc.JsonUtil;
 
@@ -29,7 +30,10 @@ public class JsonGuiInfo extends JsonVariableObject {
 
     public JsonGuiInfo(JsonObject json, ResourceLoaderContext context) {
         if (json.has("values")) {
-
+            // TODO (AlexIIL): Add support for function contexts going down through layers. Also, perhaps deseralise *everything* here?
+            // That way we can use every the func context properly here, rather than delaying its usage until later
+            context = new FunctionContext();
+            putVariables(JsonUtils.getJsonObject(json, "values"), fnCtx);
         }
 
         if (json.has("elements_below")) {

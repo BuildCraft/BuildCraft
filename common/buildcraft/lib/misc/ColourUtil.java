@@ -49,6 +49,7 @@ public class ColourUtil {
     };
     private static final String[] DYES = new String[16];
     private static final Map<String, EnumDyeColor> nameToColourMap;
+    private static final int[] FACE_TO_COLOUR;
 
     private static final TextFormatting[] FORMATTING_VALUES = TextFormatting.values();
 
@@ -111,6 +112,10 @@ public class ColourUtil {
             builder.put(c.getName(), c);
         }
         nameToColourMap = builder.build();
+
+        FACE_TO_COLOUR = new int[6];
+        FACE_TO_COLOUR[EnumFacing.DOWN.ordinal()] = 0xFF_33_33_33;
+        FACE_TO_COLOUR[EnumFacing.UP.ordinal()] = 0xFF_CC_CC_CC;
     }
 
     private static void replaceColourForBlack(TextFormatting colour, TextFormatting with) {
@@ -150,6 +155,10 @@ public class ColourUtil {
 
     public static int getLightHex(EnumDyeColor colour) {
         return LIGHT_HEX[colour.getDyeDamage()];
+    }
+
+    public static int getColourForSide(EnumFacing face) {
+        return FACE_TO_COLOUR[face.ordinal()];
     }
 
     public static String[] getNameArray() {
@@ -232,7 +241,6 @@ public class ColourUtil {
         return FACE_TO_FORMAT[face.ordinal()];
     }
 
-    @SuppressWarnings("PointlessBitwiseExpression")
     public static int swapArgbToAbgr(int argb) {
         int a = (argb >> 24) & 0xFF;
         int r = (argb >> 16) & 0xFF;

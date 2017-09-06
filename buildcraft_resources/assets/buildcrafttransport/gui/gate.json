@@ -1,0 +1,29 @@
+{
+    "values": {
+        "vertical_slot_count": "gate.slots / (gate.two_columns ? 2 : 1)"
+    },
+    "size": [176, "101 + 16 + vertical_slot_count * 18"],
+    "texture": "buildcrafttransport:gui/gate_interface",
+    "elements": {
+        "background": {
+            "type": "buildcraftlib:drawable",
+            "size": [176, 241]
+        },
+        "triggers_possible": {
+            "type": "buildcraftlib:statement/source",
+            "source": "gate.triggers.possible"
+        },
+        "actions_possible": {
+            "type": "buildcraftlib:statement/source",
+            "source": "gate.actions.possible",
+            "side": "right"
+        },
+        "statement_row": {
+            "iterator": { "name": "index", "start": 0, "end": "vertical_slot_count - 1" },
+            "type": "buildcraftlib:container",
+            "children": {
+                
+            }
+        }
+    }
+}

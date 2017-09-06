@@ -1,6 +1,7 @@
 package buildcraft.lib.statement;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -17,7 +18,8 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
     public final int maxParams;
     public boolean canInteract = true;
     private final IStatementChangeListener listener;
-    private final ParamSlot[] params;
+    private final IStatementParameter[] params;
+    private final ParamRef[] paramRefs;
     private S statement;
 
     public FullStatement(StatementType<S> type, int maxParams, IStatementChangeListener listener) {
@@ -25,9 +27,10 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
         this.statement = type.defaultStatement;
         this.listener = listener;
         this.maxParams = maxParams;
-        this.params = new ParamSlot[maxParams];
+        this.params = new IStatementParameter[maxParams];
+        this.paramRefs = new FullStatement.ParamRef[maxParams];
         for (int i = 0; i < maxParams; i++) {
-            params[i] = new ParamSlot();
+            paramRefs[i] = new ParamRef(params, i);
         }
     }
 
@@ -36,14 +39,11 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
     public void readFromNbt(NBTTagCompound nbt) {
         statement = type.readFromNbt(nbt.getCompoundTag("s"));
         if (statement == null) {
-            for (ParamSlot p : params) {
-                p.set(null);
-            }
+            Arrays.fill(params, null);
         } else {
             for (int p = 0; p < params.length; p++) {
-                ParamSlot slot = params[p];
                 NBTTagCompound pNbt = nbt.getCompoundTag(Integer.toString(p));
-                slot.set(StatementTypeParam.INSTANCE.readFromNbt(pNbt));
+                params[p] = StatementTypeParam.INSTANCE.readFromNbt(pNbt);
             }
         }
     }
@@ -53,7 +53,7 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
         if (statement != null) {
             nbt.setTag("s", type.writeToNbt(statement));
             for (int p = 0; p < params.length; p++) {
-                IStatementParameter param = params[p].get();
+                IStatementParameter param = params[p];
                 if (param != null) {
                     nbt.setTag(Integer.toString(p), StatementTypeParam.INSTANCE.writeToNbt(param));
                 }
@@ -68,13 +68,11 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
         if (buffer.readBoolean()) {
             statement = type.readFromBuffer(buffer);
             for (int p = 0; p < params.length; p++) {
-                params[p].set(StatementTypeParam.INSTANCE.readFromBuffer(buffer));
+                params[p] = StatementTypeParam.INSTANCE.readFromBuffer(buffer);
             }
         } else {
             statement = type.defaultStatement;
-            for (ParamSlot p : params) {
-                p.set(null);
-            }
+            Arrays.fill(params, null);
         }
     }
 
@@ -85,7 +83,7 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
             buffer.writeBoolean(true);
             type.writeToBuffer(buffer, statement);
             for (int p = 0; p < params.length; p++) {
-                IStatementParameter param = params[p].get();
+                IStatementParameter param = params[p];
                 StatementTypeParam.INSTANCE.writeToBuffer(buffer, param);
             }
         }
@@ -101,20 +99,59 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
     @Override
     public void set(S to) {
         statement = to;
+        if (statement == null) {
+            Arrays.fill(params, null);
+            return;
+        }
         for (int i = 0; i < params.length; i++) {
-            params[i].onSetMain(to, i);
+            if (i > statement.maxParameters()) {
+                params[i] = null;
+            } else {
+                params[i] = statement.createParameter(params[i], i);
+            }
         }
     }
 
     @Override
     public boolean canSet(Object value) {
-        return type.clazz.isInstance(value);
+        if (value == null) {
+            return true;
+        }
+        if (!type.clazz.isInstance(value)) {
+            return false;
+        }
+        return ((IStatement) value).minParameters() <= params.length;
+    }
+
+    static class ParamRef implements IReference<IStatementParameter> {
+        public final IStatementParameter[] array;
+        public final int index;
+
+        public ParamRef(IStatementParameter[] array, int index) {
+            this.array = array;
+            this.index = index;
+        }
+
+        @Override
+        public IStatementParameter get() {
+            return array[index];
+        }
+
+        @Override
+        public void set(IStatementParameter to) {
+            array[index] = to;
+        }
+
+        @Override
+        public boolean canSet(Object value) {
+            return value == null || value instanceof IStatementParameter;
+        }
     }
 
     // Params
 
     public IReference<IStatementParameter> getParamRef(int i) {
-        return params[i];
+        return paramRefs[i];
     }
 
     public IStatementParameter get(int index) {
@@ -127,6 +164,14 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
 
     public boolean canSet(int index, Object param) {
         return getParamRef(index).canSet(param);
+    }
+
+    public int getParamCount() {
+        return params.length;
+    }
+
+    public IStatementParameter[] getParameters() {
+        return params;
     }
 
     // Gui change listeners

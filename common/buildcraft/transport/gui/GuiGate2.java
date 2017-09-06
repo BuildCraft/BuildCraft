@@ -6,7 +6,9 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 import buildcraft.lib.expression.node.value.NodeConstantObject;
+import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.json.GuiJson;
+import buildcraft.lib.misc.MessageUtil;
 
 import buildcraft.transport.container.ContainerGate2;
 import buildcraft.transport.gate.GateLogic;
@@ -17,6 +19,10 @@ public class GuiGate2 extends GuiJson<ContainerGate2> {
 
     public GuiGate2(ContainerGate2 container) {
         super(container, GUI_DEFINITION);
+
+        MessageUtil.doDelayed(() -> {
+            container.sendMessage(ContainerGate2.ID_VALID_STATEMENTS);
+        });
     }
 
     @Override
@@ -26,13 +32,15 @@ public class GuiGate2 extends GuiJson<ContainerGate2> {
         properties.put("statement.container", gate);
         properties.put("gate.two_columns", NodeConstantBoolean.of(gate.isSplitInTwo()));
         properties.put("gate.slots", NodeConstantLong.of(gate.variant.numSlots));
-        properties.put("gate.triggers.args", NodeConstantLong.of( gate.variant.numTriggerArgs));
+        properties.put("gate.triggers.args", NodeConstantLong.of(gate.variant.numTriggerArgs));
         properties.put("gate.actions.args", NodeConstantLong.of(gate.variant.numActionArgs));
         properties.put("gate.is_on", (INodeBoolean) () -> gate.isOn);
-        properties.put("gate.material",new NodeConstantObject<>(String.class,gate.variant.material.tag));
-        properties.put("gate.modifier", new NodeConstantObject<>(String.class,gate.variant.modifier.tag));
-        properties.put("gate.logic", new NodeConstantObject<>(String.class,gate.variant.logic.tag));
+        properties.put("gate.material", new NodeConstantObject<>(String.class, gate.variant.material.tag));
+        properties.put("gate.modifier", new NodeConstantObject<>(String.class, gate.variant.modifier.tag));
+        properties.put("gate.logic", new NodeConstantObject<>(String.class, gate.variant.logic.tag));
         properties.put("gate.variant", new NodeConstantObject<>(String.class, gate.variant.getLocalizedName()));
+        properties.put("gate.triggers.possible", container.possibleTriggersContext);
+        properties.put("gate.actions.possible", container.possibleActionsContext);
 
         for (int s = 0; s < gate.variant.numSlots; s++) {
             final int i = s;
@@ -54,6 +62,16 @@ public class GuiGate2 extends GuiJson<ContainerGate2> {
     @Override
     protected void postLoad() {
         super.postLoad();
+        GateLogic gate = container.gate;
+        for (int s = 0; s < gate.variant.numSlots; s++) {
+            final int i = s;
+            setupButton("gate_connection[" + s + "]", (button) -> {
+                button.setBehaviour(IButtonBehaviour.TOGGLE);
+                button.setActive(gate.connections[i]);
+                button.registerListener((b2, k) -> {
+                    container.setConnected(i, button.isActive());
+                });
+            });
+        }
     }
-
 }

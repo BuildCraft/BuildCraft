@@ -145,12 +145,12 @@ public class PluggableGate extends PipePluggable {
 
     public PluggableGate(PluggableDefinition def, IPipeHolder holder, EnumFacing side, PacketBuffer buffer) {
         super(def, holder, side);
-        logic = new GateLogic(this, buffer);
+        logic = new GateLogic(this, PacketBufferBC.asPacketBufferBc(buffer));
     }
 
     @Override
     public void writeCreationPayload(PacketBuffer buffer) {
-        logic.writeCreationToBuf(buffer);
+        logic.writeCreationToBuf(PacketBufferBC.asPacketBufferBc(buffer));
     }
 
     public void sendMessage(int id, IPayloadWriter writer) {
@@ -176,7 +176,8 @@ public class PluggableGate extends PipePluggable {
     }
 
     @Override
-    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(PacketBuffer b, Side side, MessageContext ctx) throws IOException {
+        PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(b);
         int id = buffer.readUnsignedByte();
         logic.readPayload(id, buffer, side, ctx);
     }

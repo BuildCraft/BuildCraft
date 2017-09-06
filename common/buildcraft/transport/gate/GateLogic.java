@@ -6,6 +6,7 @@
 
 package buildcraft.transport.gate;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -15,7 +16,6 @@ import java.util.TreeSet;
 
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
@@ -24,7 +24,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
@@ -35,17 +35,18 @@ import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.ITriggerInternalSided;
 import buildcraft.api.statements.StatementManager;
-import buildcraft.api.statements.StatementManager.IParameterReader;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.transport.IWireManager;
 import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeEvent;
 import buildcraft.api.transport.pipe.PipeEventActionActivate;
 
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.IPayloadWriter;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.FullStatement;
-import buildcraft.lib.statement.StatementWrapper;
+import buildcraft.lib.statement.FullStatement.IStatementChangeListener;
 
 import buildcraft.transport.gate.ActionWrapper.ActionWrapperExternal;
 import buildcraft.transport.gate.ActionWrapper.ActionWrapperInternal;
@@ -59,21 +60,16 @@ import buildcraft.transport.wire.WorldSavedDataWireSystems;
 
 public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContainer {
     public static final int NET_ID_RESOLVE = 3;
+    public static final int NET_ID_CHANGE = 4;
 
+    /*
+     * Ideally we wouldn't use a pluggable, but we would use a more generic way of looking at a gate -- perhaps one
+     * that's embedded in a robot, or in a minecart.
+     */
     @Deprecated
     public final PluggableGate pluggable;
     public final GateVariant variant;
     public final StatementPair[] statements;
-
-    @Deprecated
-    public final TriggerWrapper[] triggers;
-    @Deprecated
-    public final IStatementParameter[][] triggerParameters;
-
-    @Deprecated
-    public final ActionWrapper[] actions;
-    @Deprecated
-    public final IStatementParameter[][] actionParameters;
 
     public final List<StatementSlot> activeActions = new ArrayList<>();
 
@@ -95,13 +91,8 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
         this.variant = variant;
         statements = new StatementPair[variant.numSlots];
         for (int s = 0; s < variant.numSlots; s++) {
-            statements[s] = new StatementPair();
+            statements[s] = new StatementPair(s);
         }
-        triggers = new TriggerWrapper[variant.numSlots];
-        triggerParameters = new IStatementParameter[variant.numSlots][variant.numTriggerArgs];
-
-        actions = new ActionWrapper[variant.numSlots];
-        actionParameters = new IStatementParameter[variant.numSlots][variant.numActionArgs];
 
         connections = new boolean[variant.numSlots - 1];
         triggerOn = new boolean[variant.numSlots];
@@ -164,7 +155,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
 
     // Networking
 
-    public GateLogic(PluggableGate pluggable, PacketBuffer buffer) {
+    public GateLogic(PluggableGate pluggable, PacketBufferBC buffer) {
         this(pluggable, new GateVariant(buffer));
 
         MessageUtil.readBooleanArray(buffer, triggerOn);
@@ -177,7 +168,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
         isOn = on;
     }
 
-    public void writeCreationToBuf(PacketBuffer buffer) {
+    public void writeCreationToBuf(PacketBufferBC buffer) {
         variant.writeToBuffer(buffer);
 
         MessageUtil.writeBooleanArray(buffer, triggerOn);
@@ -190,7 +181,18 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
         pluggable.sendMessage(id, writer);
     }
 
-    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) {
+    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+        if (id == NET_ID_CHANGE) {
+            boolean isAction = buffer.readBoolean();
+            int slot = buffer.readUnsignedByte();
+            if (slot < 0 || slot >= statements.length) {
+                throw new InvalidInputDataException(
+                    "Slot index out of range! (" + slot + ", must be within " + statements.length + ")");
+            }
+            StatementPair s = statements[slot];
+            (isAction ? s.action : s.trigger).readFromBuffer(buffer);
+            return;
+        }
         if (side == Side.CLIENT) {
             if (id == NET_ID_RESOLVE) {
                 MessageUtil.readBooleanArray(buffer, triggerOn);
@@ -207,6 +209,15 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
         } else {
             BCLog.logger.warn("Unknown side + ID" + id);
         }
+    }
+
+    public void sendStatementUpdate(boolean isAction, int slot) {
+        pluggable.sendMessage(NET_ID_CHANGE, (buffer) -> {
+            buffer.writeBoolean(isAction);
+            buffer.writeByte(slot);
+            StatementPair s = statements[slot];
+            (isAction ? s.action : s.trigger).writeToBuffer(buffer);
+        });
     }
 
     public void sendResolveData() {
@@ -226,7 +237,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
 
     @Override
     public TileEntity getTile() {
-        return pluggable.holder.getPipeTile();
+        return getPipeHolder().getPipeTile();
     }
 
     @Override
@@ -241,12 +252,22 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
 
     @Override
     public List<IStatement> getTriggers() {
-        return Arrays.asList(triggers);
+        List<IStatement> list = new ArrayList<>(statements.length);
+        for (StatementPair pair : statements) {
+            TriggerWrapper e = pair.trigger.get();
+            list.add(e == null ? e : e.delegate);
+        }
+        return list;
     }
 
     @Override
     public List<IStatement> getActions() {
-        return Arrays.asList(actions);
+        List<IStatement> list = new ArrayList<>(statements.length);
+        for (StatementPair pair : statements) {
+            ActionWrapper e = pair.action.get();
+            list.add(e == null ? e : e.delegate);
+        }
+        return list;
     }
 
     @Override
@@ -256,79 +277,22 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
 
     @Override
     public List<IStatementParameter> getTriggerParameters(int slot) {
-        return Arrays.asList(triggerParameters[slot]);
+        return Arrays.asList(statements[slot].trigger.getParameters());
     }
 
     @Override
     public List<IStatementParameter> getActionParameters(int slot) {
-        return Arrays.asList(actionParameters[slot]);
+        return Arrays.asList(statements[slot].action.getParameters());
     }
 
     @Override
     public int getRedstoneInput(EnumFacing side) {
-        return pluggable.holder.getRedstoneInput(side);
+        return getPipeHolder().getRedstoneInput(side);
     }
 
     @Override
     public boolean setRedstoneOutput(EnumFacing side, int value) {
-        return pluggable.holder.setRedstoneOutput(side, value);
-    }
-
-    // Gate helpers
-
-    public void setTrigger(int index, TriggerWrapper trigger) {
-        setStatementInternal(index, triggers, triggerParameters, trigger);
-    }
-
-    public StatementWrapper getTrigger(int index) {
-        return triggers[index];
-    }
-
-    public void setTriggerParam(int index, int pIndex, IStatementParameter param) {
-        triggerParameters[index][pIndex] = param;
-    }
-
-    public IStatementParameter getTriggerParam(int index, int pIndex) {
-        return triggerParameters[index][pIndex];
-    }
-
-    public void setAction(int index, ActionWrapper action) {
-        setStatementInternal(index, actions, actionParameters, action);
-    }
-
-    public StatementWrapper getAction(int index) {
-        return actions[index];
-    }
-
-    public void setActionParam(int index, int pIndex, IStatementParameter param) {
-        actionParameters[index][pIndex] = param;
-    }
-
-    public IStatementParameter getActionParam(int index, int pIndex) {
-        return actionParameters[index][pIndex];
-    }
-
-    /** Sets up the given trigger or action statements to the given ones. */
-    private static void setStatementInternal(int index, StatementWrapper[] array, IStatementParameter[][] parameters,
-        StatementWrapper statement) {
-        StatementWrapper old = array[index];
-        array[index] = statement;
-        if (statement == null) {
-            Arrays.fill(parameters[index], null);
-        } else {
-            if (old != null && old.delegate == statement.delegate) {
-                // Don't clear out parameters if its the same statement with a different side.
-                return;
-            }
-            int max = parameters[index].length;
-            int maxTrigger = statement.maxParameters();
-            for (int i = 0; i < maxTrigger && i < max; i++) {
-                parameters[index][i] = statement.createParameter(i);
-            }
-            for (int i = maxTrigger; i < max; i++) {
-                parameters[index][i] = null;
-            }
-        }
+        return getPipeHolder().setRedstoneOutput(side, value);
     }
 
     // Wire related
@@ -366,34 +330,45 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
         EnumSet<EnumDyeColor> previousBroadcasts = EnumSet.copyOf(wireBroadcasts);
         wireBroadcasts.clear();
 
-        for (int triggerIndex = 0; triggerIndex < triggers.length; triggerIndex++) {
-            TriggerWrapper trigger = triggers[triggerIndex];
+        for (int triggerIndex = 0; triggerIndex < statements.length; triggerIndex++) {
+            StatementPair pair = statements[triggerIndex];
+            TriggerWrapper trigger = pair.trigger.get();
             groupCount++;
             if (trigger != null) {
-                if (trigger.isTriggerActive(this, triggerParameters[triggerIndex])) {
+                IStatementParameter[] params = new IStatementParameter[pair.trigger.getParamCount()];
+                for (int p = 0; p < pair.trigger.getParamCount(); p++) {
+                    params[p] = pair.trigger.getParamRef(p).get();
+                }
+                if (trigger.isTriggerActive(this, params)) {
                     groupActive++;
                     triggerOn[triggerIndex] = true;
                 }
             }
             if (connections.length == triggerIndex || !connections[triggerIndex]) {
-                boolean allActionsActive =
-                    variant.logic == EnumGateLogic.AND ? groupActive == groupCount : groupActive > 0;
+                boolean allActionsActive;
+                if (variant.logic == EnumGateLogic.AND) {
+                    allActionsActive = groupActive == groupCount;
+                } else {
+                    allActionsActive = groupActive > 0;
+                }
                 for (int i = groupCount - 1; i >= 0; i--) {
                     int actionIndex = triggerIndex - i;
-                    ActionWrapper action = actions[actionIndex];
+                    StatementPair fullAction = statements[actionIndex];
+                    ActionWrapper action = fullAction.action.get();
                     actionOn[actionIndex] = allActionsActive;
                     if (action != null) {
                         if (allActionsActive) {
                             StatementSlot slot = new StatementSlot();
                             slot.statement = action.delegate;
-                            slot.parameters = actionParameters[actionIndex];
+                            slot.parameters = fullAction.action.getParameters().clone();
                             slot.part = action.sourcePart;
                             activeActions.add(slot);
-                            action.actionActivate(this, actionParameters[actionIndex]);
-                            getPipeHolder().fireEvent(new PipeEventActionActivate(getPipeHolder(), action.getDelegate(),
-                                actionParameters[actionIndex], action.sourcePart));
+                            action.actionActivate(this, slot.parameters);
+                            PipeEvent evt = new PipeEventActionActivate(getPipeHolder(), action.getDelegate(),
+                                slot.parameters, action.sourcePart);
+                            getPipeHolder().fireEvent(evt);
                         } else {
-                            action.actionDeactivated(this, actionParameters[actionIndex]);
+                            action.actionDeactivated(this, fullAction.action.getParameters());
                         }
                     }
                 }
@@ -491,9 +466,15 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
         public final FullStatement<TriggerWrapper> trigger;
         public final FullStatement<ActionWrapper> action;
 
-        public StatementPair() {
-            trigger = new FullStatement<>(TriggerType.INSTANCE, variant.numTriggerArgs, null);
-            action = new FullStatement<>(ActionType.INSTANCE, variant.numActionArgs, null);
+        public StatementPair(int index) {
+            IStatementChangeListener tChange = (s, i) -> {
+                sendStatementUpdate(false, index);
+            };
+            IStatementChangeListener aChange = (s, i) -> {
+                sendStatementUpdate(true, index);
+            };
+            trigger = new FullStatement<>(TriggerType.INSTANCE, variant.numTriggerArgs, tChange);
+            action = new FullStatement<>(ActionType.INSTANCE, variant.numActionArgs, aChange);
         }
     }
 }
