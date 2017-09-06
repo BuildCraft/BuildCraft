@@ -17,6 +17,7 @@ import buildcraft.lib.client.model.ResourceLoaderContext;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.node.value.ITickableNode;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.gui.ContainerBC_Neptune;
@@ -115,7 +116,9 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
     }
 
     /** Fill up {@link #properties} */
-    protected void preLoad() {}
+    protected void preLoad() {
+        properties.put("player.inventory", new InventorySlotHolder(container, container.player.inventory));
+    }
 
     /** Setup objects contained in {@link #properties}. Usually via {@link #setup(String, Class, Consumer)}. */
     protected void postLoad() {}

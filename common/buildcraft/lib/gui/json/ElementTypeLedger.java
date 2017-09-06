@@ -31,7 +31,6 @@ public class ElementTypeLedger extends ElementType {
         boolean positive = "right".equalsIgnoreCase(side);
 
         Ledger_Neptune ledger = new Ledger_Neptune(gui, colour, positive);
-        ledger.setOpenProperty(GuiConfigManager.getOrAddBoolean(gui.guiDefinition, json.name + ".is_open", false));
         ledger.setTitle(title);
 
         for (JsonGuiElement c : json.getChildren(info, "children")) {
@@ -59,6 +58,7 @@ public class ElementTypeLedger extends ElementType {
         }
 
         ledger.calculateMaxSize();
+        ledger.setOpenProperty(GuiConfigManager.getOrAddBoolean(gui.guiDefinition, json.name + ".is_open", false));
         return ledger;
     }
 }

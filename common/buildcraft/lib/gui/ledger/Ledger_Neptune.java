@@ -156,9 +156,6 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
 
         maxWidth = w + LEDGER_GAP * 2;
         maxHeight = h + LEDGER_GAP * 2;
-        if (isOpenProperty != null) {
-            setOpenProperty(isOpenProperty);
-        }
     }
 
     @Override

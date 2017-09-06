@@ -7,7 +7,6 @@ package buildcraft.lib.statement;
 
 import java.util.Arrays;
 
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
 import buildcraft.api.core.EnumPipePart;
@@ -15,8 +14,6 @@ import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-
-import buildcraft.lib.net.PacketBufferBC;
 
 public abstract class StatementWrapper implements IStatement, Comparable<StatementWrapper> {
     public final IStatement delegate;

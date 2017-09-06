@@ -31,7 +31,6 @@ public class GuiFiller extends GuiJson<ContainerFiller> {
     @Override
     protected void preLoad() {
         super.preLoad();
-        properties.put("player.inventory", new InventorySlotHolder(container, container.player.inventory));
         properties.put("filler.inventory", new InventorySlotHolder(container, container.tile.invResources));
         properties.put("statement.container", container.tile);
         properties.put("controllable", container.tile);

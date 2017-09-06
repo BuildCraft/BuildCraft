@@ -294,6 +294,9 @@ public final class NBTUtilBC {
         return IntStream.range(0, ((NBTTagList) list).tagCount()).mapToObj(((NBTTagList) list)::getStringTagAt);
     }
 
+    /**
+     * @deprecated As the only use should be a set...
+     */
     public static NBTTagByteArray writeBooleanList(Stream<Boolean> stream) {
         Boolean[] booleans = stream.toArray(Boolean[]::new);
         BitSet bitSet = new BitSet(booleans.length);

@@ -126,4 +126,13 @@ public interface IExpressionNode {
             };
         }
     }
+
+    /** Common object types (Provided as functional interfaces, these should NEVER be tested against with instanceof */
+    @FunctionalInterface
+    public interface INodeString extends INodeObject<String> {
+        @Override
+        default Class<String> getType() {
+            return String.class;
+        }
+    }
 }

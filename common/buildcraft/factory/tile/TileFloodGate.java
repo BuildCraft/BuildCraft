@@ -74,6 +74,10 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     };
 
     private final Tank tank = new Tank("tank", 2 * Fluid.BUCKET_VOLUME, this);
+    /**
+     * @deprecated TODO (AlexIIL): Convert this to an {@code EnumSet<EnumFacing>}
+     */
+    @Deprecated
     public final EnumMap<EnumFacing, Boolean> openSides = new EnumMap<>(EnumFacing.class);
     public final Queue<BlockPos> queue = new PriorityQueue<>(
         Comparator.<BlockPos>comparingInt(blockPos ->

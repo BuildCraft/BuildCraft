@@ -1,5 +1,7 @@
 package buildcraft.lib.statement;
 
+import java.io.IOException;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.statements.IGuiSlot;
@@ -24,7 +26,7 @@ public abstract class StatementType<S extends IGuiSlot> {
 
     /** Reads a {@link StatementWrapper} from the given {@link PacketBufferBC}. The buffer will return the data
      * written to a different buffer by {@link StatementWrapper#writeToBuf(PacketBufferBC)}. */
-    public abstract S readFromBuffer(PacketBufferBC buffer);
+    public abstract S readFromBuffer(PacketBufferBC buffer) throws IOException;
 
     public abstract void writeToBuffer(PacketBufferBC buffer, S slot);
 }

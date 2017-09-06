@@ -4,13 +4,8 @@ import java.io.IOException;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.StatementManager;
-import buildcraft.api.statements.StatementManager.IParamReaderBuf;
-import buildcraft.api.statements.StatementManager.IParameterReader;
 
 import buildcraft.lib.misc.data.IReference;
 import buildcraft.lib.net.PacketBufferBC;
@@ -48,13 +43,7 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
             for (int p = 0; p < params.length; p++) {
                 ParamSlot slot = params[p];
                 NBTTagCompound pNbt = nbt.getCompoundTag(Integer.toString(p));
-                String kind = pNbt.getString("kind");
-                IParameterReader reader = StatementManager.getParameterReader(kind);
-                if (reader == null) {
-                    slot.set(null);
-                } else {
-                    slot.set(reader.readFromNbt(pNbt));
-                }
+                slot.set(StatementTypeParam.INSTANCE.readFromNbt(pNbt));
             }
         }
     }
@@ -66,10 +55,7 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
             for (int p = 0; p < params.length; p++) {
                 IStatementParameter param = params[p].get();
                 if (param != null) {
-                    NBTTagCompound tag = new NBTTagCompound();
-                    param.writeToNbt(tag);
-                    tag.setString("kind", param.getUniqueTag());
-                    nbt.setTag(Integer.toString(p), tag);
+                    nbt.setTag(Integer.toString(p), StatementTypeParam.INSTANCE.writeToNbt(param));
                 }
             }
         }
@@ -82,16 +68,7 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
         if (buffer.readBoolean()) {
             statement = type.readFromBuffer(buffer);
             for (int p = 0; p < params.length; p++) {
-                if (buffer.readBoolean()) {
-                    String tag = buffer.readString();
-                    IParamReaderBuf reader = StatementManager.paramsBuf.get(tag);
-                    if (reader == null) {
-                        throw new InvalidInputDataException("Unknown paramater type " + tag);
-                    }
-                    params[p].set(reader.readFromBuf(buffer));
-                } else {
-                    params[p].set(null);
-                }
+                params[p].set(StatementTypeParam.INSTANCE.readFromBuffer(buffer));
             }
         } else {
             statement = type.defaultStatement;
@@ -109,13 +86,7 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
             type.writeToBuffer(buffer, statement);
             for (int p = 0; p < params.length; p++) {
                 IStatementParameter param = params[p].get();
-                if (param == null) {
-                    buffer.writeBoolean(false);
-                } else {
-                    buffer.writeBoolean(true);
-                    buffer.writeString(param.getUniqueTag());
-                    param.writeToBuf(buffer);
-                }
+                StatementTypeParam.INSTANCE.writeToBuffer(buffer, param);
             }
         }
     }

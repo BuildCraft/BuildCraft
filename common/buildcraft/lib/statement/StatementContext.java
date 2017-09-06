@@ -17,12 +17,16 @@ public interface StatementContext<S extends IGuiSlot> {
     List<? extends StatementGroup<S>> getAllPossible();
 
     public interface StatementGroup<S extends IGuiSlot> {
+        List<S> getValues();
 
         /** @return Something that can be drawn to identify what this is, or null if nothing exists that could identify
          *         a source. */
         @Nullable
         ISimpleDrawable getSourceIcon();
 
-        List<S> getValues();
+        /** @return The colour for the ledger (Must include alpha), or 0 if this shouldn't have a colour. */
+        default int getLedgerColour() {
+            return 0;
+        }
     }
 }
