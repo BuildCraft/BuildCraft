@@ -258,7 +258,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
                 capacity += t.tank.getCapacity();
             }
         }
-        return new IFluidTankProperties[]{new FluidTankProperties(total, capacity)};
+        return new IFluidTankProperties[] { new FluidTankProperties(total, capacity) };
     }
 
     @Override
