@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -19,6 +21,8 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IWorldEventListener;
+import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -43,11 +47,13 @@ import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.world.WorldEventListenerAdapter;
 
 import buildcraft.silicon.BCSiliconBlocks;
 import buildcraft.silicon.client.render.AdvDebuggerLaser;
 
 public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable {
+    private List<BlockPos> possible;
     private BlockPos targetPos;
     private final AverageLong avgPower = new AverageLong(100);
     private long averageClient;
@@ -58,20 +64,28 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     private final SafeTimeTracker clientLaserMoveInterval = new SafeTimeTracker(5, 10);
     private final SafeTimeTracker serverTargetMoveInterval = new SafeTimeTracker(10, 20);
 
+    private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
+        @Override
+        public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState oldState,
+                                      @Nonnull IBlockState newState, int flags) {
+            findPossibleTargets();
+        }
+    };
+
     public TileLaser() {
         super();
         battery = new MjBattery(1024 * MjAPI.MJ);
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
     }
 
-    private void findTarget() {
+    private void findPossibleTargets() {
+        possible = new ArrayList<>();
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() != BCSiliconBlocks.laser) {
             return;
         }
         EnumFacing face = state.getValue(BuildCraftProperties.BLOCK_FACING_6);
 
-        List<BlockPos> possible = new ArrayList<>();
         VolumeUtil.iterateCone(world, pos, face, 6, true, (w, s, p, visible) -> {
             if (!visible) {
                 return;
@@ -87,12 +101,13 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
                 }
             }
         });
+    }
 
+    private void randomlyChooseTargetPos() {
         if (possible.isEmpty()) {
             targetPos = null;
             return;
         }
-
         targetPos = possible.get(world.rand.nextInt(possible.size()));
     }
 
@@ -103,6 +118,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
                 ILaserTarget target = (ILaserTarget) tile;
                 return target.getRequiredLaserPower() > 0 ? target : null;
             } else {
+                possible.remove(targetPos);
                 return null;
             }
         } else {
@@ -144,13 +160,16 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         avgPower.tick();
 
         BlockPos previousTargetPos = targetPos;
+        if (possible == null) {
+            findPossibleTargets();
+        }
 
         if (getTarget() == null) {
             targetPos = null;
         }
 
         if (serverTargetMoveInterval.markTimeIfDelay(world) || getTarget() == null) {
-            findTarget();
+            randomlyChooseTargetPos();
         }
 
         ILaserTarget target = getTarget();
@@ -238,6 +257,22 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         left.add("target = " + targetPos);
         left.add("laser = " + laserPos);
         left.add("average = " + LocaleUtil.localizeMjFlow(averageClient == 0 ? (long) avgPower.getAverage() : averageClient));
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        if (!world.isRemote) {
+            world.addEventListener(worldEventListener);
+        }
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        if (!world.isRemote) {
+            world.removeEventListener(worldEventListener);
+        }
     }
 
     @Override
