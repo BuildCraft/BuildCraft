@@ -60,56 +60,6 @@ public class FluidUtilBC {
         }
     }
 
-    public static void pullFluidAround(IBlockAccess world, BlockPos pos, Tank tank) {
-        int max = tank.getCapacity() - tank.getFluidAmount();
-        if (max <= 0) {
-            return;
-        }
-        max = Math.min(max, 1000);
-
-        for (EnumFacing side : EnumFacing.VALUES) {
-            TileEntity target = world.getTileEntity(pos.offset(side));
-            if (target == null) {
-                continue;
-            }
-            IFluidHandler handler = target.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite());
-            if (handler == null) {
-                continue;
-            }
-
-            FluidStack fluidFilter = tank.getFluid();
-            if (fluidFilter == null) {
-                FluidStack drained = handler.drain(max, false);
-                if (drained == null) continue;
-                int filled = tank.fill(drained, true);
-                if (filled > 0) {
-                    FluidStack reallyDrained = handler.drain(filled, true);
-                    if (reallyDrained == null || reallyDrained.amount != filled) {
-                        throw new IllegalStateException("Bad IFluidHandler.drain implementation! ( drained = " + drained
-                            + " reallyDrained = " + reallyDrained + " handler " + handler.getClass());
-                    }
-                    max -= filled;
-                }
-            } else {
-                fluidFilter = fluidFilter.copy();
-                fluidFilter.amount = max;
-                FluidStack drained = handler.drain(fluidFilter, false);
-                if (drained == null) continue;
-                int filled = tank.fill(drained, true);
-                if (filled > 0) {
-                    fluidFilter.amount = filled;
-                    FluidStack reallyDrained = handler.drain(fluidFilter, true);
-                    if (reallyDrained == null || reallyDrained.amount != filled) {
-                        throw new IllegalStateException("Bad IFluidHandler.drain implementation! ( drained = " + drained
-                            + " reallyDrained = " + reallyDrained + " handler " + handler.getClass());
-                    }
-                    max -= filled;
-                }
-
-            }
-        }
-    }
-
     public static List<FluidStack> mergeSameFluids(List<FluidStack> fluids) {
         List<FluidStack> stacks = new ArrayList<>();
         fluids.forEach(toAdd -> {

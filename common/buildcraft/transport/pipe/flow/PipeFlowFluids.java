@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -249,6 +250,22 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 + " (handler = " + fluidHandler.getClass() + ") @" + pipe.getHolder().getPipePos());
         }
         return ActionResult.newResult(EnumActionResult.SUCCESS, toAdd);
+    }
+
+    @Override
+    public int insertFluidsForce(FluidStack fluid, @Nullable EnumFacing from, boolean simulate) {
+        Section s = sections.get(EnumPipePart.CENTER);
+        int filled = s.fill(fluid, !simulate);
+        if (filled == 0) {
+            return 0;
+        }
+        if (simulate) {
+            return filled;
+        }
+        if (from != null) {
+            sections.get(EnumPipePart.fromFacing(from)).ticksInDirection = COOLDOWN_INPUT;
+        }
+        return filled;
     }
 
     // IDebuggable
