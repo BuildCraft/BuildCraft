@@ -8,6 +8,7 @@ package buildcraft.lib.gui;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -21,6 +22,7 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -49,6 +51,7 @@ public abstract class ContainerBC_Neptune extends Container {
     public static final int NET_DATA = IDS.allocId("DATA");
     public static final int NET_WIDGET = IDS.allocId("WIDGET");
     public static final int NET_SET_PHANTOM = IDS.allocId("SET_PHANTOM");
+    public static final int NET_SET_PHANTOM_MULTI = IDS.allocId("NET_SET_PHANTOM_MULTI");
 
     public final EntityPlayer player;
     private final List<Widget_Neptune<?>> widgets = new ArrayList<>();
@@ -225,15 +228,16 @@ public abstract class ContainerBC_Neptune extends Container {
                     widget.handleWidgetDataClient(ctx, buffer);
                 }
             }
-        } else if (id == NET_SET_PHANTOM && side == Side.SERVER) {
-            int index = buffer.readVarInt();
-            ItemStack stack = buffer.readItemStack();
+        } else if (side == Side.SERVER) {
+            if (id == NET_SET_PHANTOM) {
+                int index = buffer.readVarInt();
+                ItemStack stack = buffer.readItemStack();
 
-            int i = 0;
-            boolean found = false;
-            for (Slot s : inventorySlots) {
-                if (s instanceof SlotPhantom) {
-                    if (i == index) {
+                int i = 0;
+                boolean found = false;
+                if (index >= 0 && index < inventorySlots.size()) {
+                    Slot s = inventorySlots.get(index);
+                    if (s instanceof SlotPhantom) {
                         SlotPhantom ph = (SlotPhantom) s;
                         IItemHandlerAdv handler = ph.itemHandler;
                         if (handler instanceof IItemHandlerModifiable && handler.canSet(ph.handlerIndex, stack)) {
@@ -247,31 +251,93 @@ public abstract class ContainerBC_Neptune extends Container {
                             BCLog.logger.warn(s2);
                         }
                         found = true;
-                        break;
                     }
-                    i++;
                 }
-            }
-            if (!found) {
-                // log rather than throw an exception because of bugged/naughty clients
-                String s2 = "[lib.container] Received an illegal phantom slot setting request! ";
-                s2 += "[Didn't find a phantom slot for the given index] (Client = ";
-                s2 += ctx.getServerHandler().player.getName() + ", slot_index = " + i;
-                s2 += ", stack = " + stack + ")";
-                BCLog.logger.warn(s2);
+                if (!found) {
+                    // log rather than throw an exception because of bugged/naughty clients
+                    String s2 = "[lib.container] Received an illegal phantom slot setting request! ";
+                    s2 += "[Didn't find a phantom slot for the given index] (Client = ";
+                    s2 += ctx.getServerHandler().player.getName() + ", slot_index = " + i;
+                    s2 += ", stack = " + stack + ")";
+                    BCLog.logger.warn(s2);
+                }
+            } else if (id == NET_SET_PHANTOM_MULTI) {
+                int count = buffer.readUnsignedByte();
+                int rel = 0;
+                for (int i = 0; i < count; i++) {
+                    int idx = buffer.readVarInt();
+                    ItemStack stack = buffer.readItemStack();
+                    idx += rel;
+                    rel += idx;
+                    if (idx >= 0 && idx < inventorySlots.size()) {
+                        Slot s = inventorySlots.get(idx);
+                        if (s instanceof SlotPhantom) {
+                            SlotPhantom ph = (SlotPhantom) s;
+                            IItemHandlerAdv handler = ph.itemHandler;
+                            if (handler instanceof IItemHandlerModifiable && handler.canSet(ph.handlerIndex, stack)) {
+                                ((IItemHandlerModifiable) handler).setStackInSlot(ph.handlerIndex, stack);
+                            } else {
+                                // log rather than throw an exception because of bugged/naughty clients
+                                String s2 = "[lib.container] Received an illegal phantom slot setting request! ";
+                                s2 += "[The item handler disallowed the replacement] (Client = ";
+                                s2 += ctx.getServerHandler().player.getName() + ", slot_index = " + idx;
+                                s2 += ", stack = " + stack + ")";
+                                BCLog.logger.warn(s2);
+                            }
+                            continue;
+                        }
+                    }
+
+                    // log rather than throw an exception because of bugged/naughty clients
+                    String s2 = "[lib.container] Received an illegal phantom slot setting request! ";
+                    s2 += "[Didn't find a phantom slot for the given index] (Client = ";
+                    s2 += ctx.getServerHandler().player.getName() + ", slot_index = " + idx;
+                    s2 += ", stack = " + stack + ")";
+                    BCLog.logger.warn(s2);
+                }
             }
         }
     }
 
     /** @throws IllegalArgumentException if a {@link SlotPhantom} couldn't be found with that handler and index */
     public void sendSetPhantomSlot(IItemHandler handler, int index, ItemStack to) {
+        sendSetPhantomSlot(findPhantomSlot(handler, index), to);
+    }
+
+    /** @param stacks The list of stacks to send. NOTE: this list CAN include nulls -- that indicates that the item
+     *            should not be changed.
+     * @throws IllegalArgumentException if {@link List#size() stacks.size()} differs from {@link IItemHandler#getSlots()
+     *             handler.getSlots()}, or if a {@link SlotPhantom} couldn't be found for that handler and any of the
+     *             indexes associated with it. */
+    public void sendSetPhantomSlots(IItemHandler handler, List<ItemStack> stacks) {
+        if (handler.getSlots() < stacks.size()) {
+            throw new IllegalStateException("Too many ItemStacks's in the list to change, compared to the "
+                + "size of the inventory! (list = " + stacks + ", handler = " + handler + ")");
+        }
+        int[] indexes = new int[stacks.size()];
+        NonNullList<ItemStack> destinationStacks = NonNullList.create();
+        int i2 = 0;
+        for (int i = 0; i < stacks.size(); i++) {
+            ItemStack stack = stacks.get(i);
+            if (stack == null) {
+                continue;
+            }
+            destinationStacks.add(stack);
+            indexes[i2] = findPhantomSlot(handler, i);
+            i2++;
+        }
+        indexes = Arrays.copyOf(indexes, i2);
+        sendSetPhantomSlots(indexes, destinationStacks);
+    }
+
+    /** @throws IllegalArgumentException if a phantom slot cannot be found */
+    private int findPhantomSlot(IItemHandler handler, int index) {
         int i = 0;
         for (Slot slot : inventorySlots) {
             if (slot instanceof SlotPhantom) {
                 SlotPhantom ph = (SlotPhantom) slot;
                 if (ph.itemHandler == handler && ph.handlerIndex == index) {
-                    sendSetPhantomSlot(i, to);
-                    return;
+                    return i;
                 }
                 i++;
             }
@@ -280,22 +346,35 @@ public abstract class ContainerBC_Neptune extends Container {
     }
 
     public void sendSetPhantomSlot(SlotPhantom slot, ItemStack to) {
-        int i = 0;
-        for (Slot s : inventorySlots) {
-            if (s instanceof SlotPhantom) {
-                if (s == slot) {
-                    sendSetPhantomSlot(i, to);
-                    return;
-                }
-                i++;
-            }
+        int index = inventorySlots.indexOf(slot);
+        if (index == -1) {
+            throw new IllegalArgumentException("Couldn't find a slot for " + slot + " in " + getClass());
         }
+        sendSetPhantomSlot(index, to);
     }
 
     private void sendSetPhantomSlot(int phIndex, ItemStack to) {
         sendMessage(NET_SET_PHANTOM, (buffer) -> {
             buffer.writeVarInt(phIndex);
             buffer.writeItemStack(to);
+        });
+    }
+
+    private void sendSetPhantomSlots(int[] indexes, NonNullList<ItemStack> stacks) {
+        if (indexes.length != stacks.size()) {
+            throw new IllegalArgumentException("Sizes don't match! (" + indexes.length + " vs " + stacks.size() + ")");
+        }
+        sendMessage(NET_SET_PHANTOM_MULTI, (buffer) -> {
+            int rel = 0;
+            buffer.writeByte(indexes.length);
+            for (int i = 0; i < indexes.length; i++) {
+                int index = indexes[i];
+                ItemStack stack = stacks.get(i);
+                index -= rel;
+                rel += index;
+                buffer.writeVarInt(index);
+                buffer.writeItemStack(stack);
+            }
         });
     }
 }
