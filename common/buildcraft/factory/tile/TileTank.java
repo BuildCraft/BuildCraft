@@ -14,6 +14,7 @@ import java.util.List;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -39,6 +40,7 @@ import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;
+import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
@@ -53,6 +55,9 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     public final Tank tank = new Tank("tank", 16000, this);
     public final FluidSmoother smoothedTank = new FluidSmoother(w -> createAndSendMessage(NET_FLUID_DELTA, w), tank);
 
+    public int comparatorLevel;
+    private int fluidAmountPrev;
+
     public TileTank() {
         tankManager.add(tank);// FIXME: SAVING IS ALL SORTS OF BUGGED
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, this, EnumPipePart.VALUES);
@@ -63,11 +68,25 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         return IDS;
     }
 
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+
+        fluidAmountPrev = tank.getFluidAmount();
+        comparatorLevel = MathUtil.scaledClamp(tank.getFluidAmount(), tank.getCapacity(), 15);
+    }
+
     // ITickable
 
     @Override
     public void update() {
         smoothedTank.tick(getWorld());
+
+        if (tank.getFluidAmount() != fluidAmountPrev) {
+            fluidAmountPrev = tank.getFluidAmount();
+            comparatorLevel = MathUtil.scaledClamp(tank.getFluidAmount(), tank.getCapacity(), 15);
+            markDirty();
+        }
     }
 
     // TileEntity
@@ -239,7 +258,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
                 capacity += t.tank.getCapacity();
             }
         }
-        return new IFluidTankProperties[] { new FluidTankProperties(total, capacity) };
+        return new IFluidTankProperties[]{new FluidTankProperties(total, capacity)};
     }
 
     @Override
