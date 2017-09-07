@@ -188,6 +188,14 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
     }
 
     @Override
+    protected void onContentsChanged() {
+        super.onContentsChanged();
+        if (tile != null) {
+            tile.markDirty();
+        }
+    }
+
+    @Override
     public String toString() {
         return "Tank [" + getContentsString() + "]";
     }
