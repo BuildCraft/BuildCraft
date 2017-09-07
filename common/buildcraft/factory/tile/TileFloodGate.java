@@ -195,7 +195,6 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                             }
                         }
                     }
-                    // TODO: SORT OUT PATHS!!!!
                     if (canFill && canFill(currentPos)) {
                         FakePlayer fakePlayer =
                             BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) world, getOwner(), currentPos);
