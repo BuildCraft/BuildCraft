@@ -11,6 +11,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -47,8 +48,8 @@ public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable, 
     }
 
     // Package-private to allow TileHeatExchangeStart to access them
-    final Tank tankHeatableOut = new Tank("heatable_out", 2 * Fluid.BUCKET_VOLUME, this);
-    final Tank tankCoolableIn = new Tank("coolable_in", 2 * Fluid.BUCKET_VOLUME, this, this::isCoolant);
+    final Tank tankHeatableOut = new Tank("heatableOut", 2 * Fluid.BUCKET_VOLUME, this);
+    final Tank tankCoolableIn = new Tank("coolableIn", 2 * Fluid.BUCKET_VOLUME, this, this::isCoolant);
 
     public final FluidSmoother smoothedHeatableOut;
     public final FluidSmoother smoothedCoolableIn;
@@ -81,6 +82,19 @@ public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable, 
             return null;
         }
         return tankCoolableIn;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        // TODO: remove in next version
+        NBTTagCompound tanksTag = nbt.getCompoundTag("tanks");
+        if (tanksTag.hasKey("heatable_out")) {
+            tanksTag.setTag("heatableOut", tanksTag.getTag("heatable_out"));
+        }
+        if (tanksTag.hasKey("coolable_in")) {
+            tanksTag.setTag("coolableIn", tanksTag.getTag("coolable_in"));
+        }
+        super.readFromNBT(nbt);
     }
 
     @Override

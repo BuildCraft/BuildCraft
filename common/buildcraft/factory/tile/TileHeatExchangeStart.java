@@ -68,8 +68,8 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
 
     private static final int[] FLUID_MULT = { 10, 16, 20 };
 
-    private final Tank tankHeatableIn = new Tank("heatable_in", 2 * Fluid.BUCKET_VOLUME, this, this::isHeatant);
-    private final Tank tankCoolableOut = new Tank("coolable_out", 2 * Fluid.BUCKET_VOLUME, this);
+    private final Tank tankHeatableIn = new Tank("heatableIn", 2 * Fluid.BUCKET_VOLUME, this, this::isHeatant);
+    private final Tank tankCoolableOut = new Tank("coolableOut", 2 * Fluid.BUCKET_VOLUME, this);
 
     public final FluidSmoother smoothedHeatableIn;
     public final FluidSmoother smoothedCoolableOut;
@@ -124,6 +124,14 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
+        // TODO: remove in next version
+        NBTTagCompound tanksTag = nbt.getCompoundTag("tanks");
+        if (tanksTag.hasKey("heatable_in")) {
+            tanksTag.setTag("heatableIn", tanksTag.getTag("heatable_in"));
+        }
+        if (tanksTag.hasKey("coolable_out")) {
+            tanksTag.setTag("coolableOut", tanksTag.getTag("coolable_out"));
+        }
         super.readFromNBT(nbt);
         coolingProvided = nbt.getInteger("coolingProvided");
         heatProvided = nbt.getInteger("heatProvided");

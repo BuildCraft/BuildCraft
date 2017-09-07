@@ -26,6 +26,7 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
@@ -53,8 +54,6 @@ public class SchematicBlockDefault implements ISchematicBlock {
     protected final List<IProperty<?>> ignoredProperties = new ArrayList<>();
     @SuppressWarnings("WeakerAccess")
     protected NBTTagCompound tileNbt;
-    @SuppressWarnings("WeakerAccess")
-    protected final List<String> ignoredTags = new ArrayList<>();
     @SuppressWarnings("WeakerAccess")
     protected Rotation tileRotation = Rotation.NONE;
     @SuppressWarnings("WeakerAccess")
@@ -126,16 +125,6 @@ public class SchematicBlockDefault implements ISchematicBlock {
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
-    protected void setIgnoredTags(SchematicBlockContext context, Set<JsonRule> rules) {
-        ignoredTags.clear();
-        rules.stream()
-            .map(rule -> rule.ignoredTags)
-            .filter(Objects::nonNull)
-            .flatMap(Collection::stream)
-            .forEach(ignoredTags::add);
-    }
-
-    @SuppressWarnings({"unused", "WeakerAccess"})
     protected void setPlaceBlock(SchematicBlockContext context, Set<JsonRule> rules) {
         placeBlock = rules.stream()
             .map(rule -> rule.placeBlock)
@@ -189,7 +178,6 @@ public class SchematicBlockDefault implements ISchematicBlock {
         setBlockState /*             */(context, rules);
         setIgnoredProperties /*      */(context, rules);
         setTileNbt /*                */(context, rules);
-        setIgnoredTags /*            */(context, rules);
         setPlaceBlock /*             */(context, rules);
         setUpdateBlockOffsets /*     */(context, rules);
         setCanBeReplacedWithBlocks /**/(context, rules);
@@ -241,7 +229,6 @@ public class SchematicBlockDefault implements ISchematicBlock {
         schematicBlock.blockState = blockState.withRotation(rotation);
         schematicBlock.ignoredProperties.addAll(ignoredProperties);
         schematicBlock.tileNbt = tileNbt;
-        schematicBlock.ignoredTags.addAll(ignoredTags);
         schematicBlock.tileRotation = tileRotation.add(rotation);
         schematicBlock.placeBlock = placeBlock;
         updateBlockOffsets.stream()
@@ -295,6 +282,14 @@ public class SchematicBlockDefault implements ISchematicBlock {
             world.profiler.endSection();
             if (tileNbt != null && blockState.getBlock().hasTileEntity(blockState)) {
                 world.profiler.startSection("prepare tile");
+                Set<JsonRule> rules = RulesLoader.getRules(blockState, tileNbt);
+                NBTTagCompound replaceNbt = rules.stream()
+                    .map(rule -> rule.replaceNbt)
+                    .filter(Objects::nonNull)
+                    .map(NBTBase.class::cast)
+                    .reduce(NBTUtilBC::merge)
+                    .map(NBTTagCompound.class::cast)
+                    .orElse(null);
                 NBTTagCompound newTileNbt = new NBTTagCompound();
                 tileNbt.getKeySet().stream()
                     .map(key -> Pair.of(key, tileNbt.getTag(key)))
@@ -302,12 +297,14 @@ public class SchematicBlockDefault implements ISchematicBlock {
                 newTileNbt.setInteger("x", blockPos.getX());
                 newTileNbt.setInteger("y", blockPos.getY());
                 newTileNbt.setInteger("z", blockPos.getZ());
-                ignoredTags.stream()
-                    .filter(newTileNbt::hasKey)
-                    .forEach(newTileNbt::removeTag);
                 world.profiler.endSection();
                 world.profiler.startSection("place tile");
-                TileEntity tileEntity = TileEntity.create(world, newTileNbt);
+                TileEntity tileEntity = TileEntity.create(
+                    world,
+                    replaceNbt != null
+                        ? (NBTTagCompound) NBTUtilBC.merge(newTileNbt, replaceNbt)
+                        : newTileNbt
+                );
                 if (tileEntity != null) {
                     tileEntity.setWorld(world);
                     world.setTileEntity(blockPos, tileEntity);
@@ -376,7 +373,6 @@ public class SchematicBlockDefault implements ISchematicBlock {
         if (tileNbt != null) {
             nbt.setTag("tileNbt", tileNbt);
         }
-        nbt.setTag("ignoredTags", NBTUtilBC.writeStringList(ignoredTags.stream()));
         nbt.setTag("tileRotation", NBTUtilBC.writeEnum(tileRotation));
         nbt.setString("placeBlock", Block.REGISTRY.getNameForObject(placeBlock).toString());
         nbt.setTag(
@@ -414,7 +410,6 @@ public class SchematicBlockDefault implements ISchematicBlock {
         if (nbt.hasKey("tileNbt")) {
             tileNbt = nbt.getCompoundTag("tileNbt");
         }
-        NBTUtilBC.readStringList(nbt.getTag("ignoredTags")).forEach(ignoredTags::add);
         tileRotation = NBTUtilBC.readEnum(nbt.getTag("tileRotation"), Rotation.class);
         placeBlock = Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("placeBlock")));
         NBTUtilBC.readCompoundList(nbt.getTag("updateBlockOffsets"))
@@ -441,7 +436,6 @@ public class SchematicBlockDefault implements ISchematicBlock {
             blockState.equals(that.blockState) &&
             ignoredProperties.equals(that.ignoredProperties) &&
             (tileNbt != null ? tileNbt.equals(that.tileNbt) : that.tileNbt == null) &&
-            ignoredTags.equals(that.ignoredTags) &&
             tileRotation == that.tileRotation &&
             placeBlock.equals(that.placeBlock) &&
             updateBlockOffsets.equals(that.updateBlockOffsets) &&
@@ -454,7 +448,6 @@ public class SchematicBlockDefault implements ISchematicBlock {
         result = 31 * result + blockState.hashCode();
         result = 31 * result + ignoredProperties.hashCode();
         result = 31 * result + (tileNbt != null ? tileNbt.hashCode() : 0);
-        result = 31 * result + ignoredTags.hashCode();
         result = 31 * result + tileRotation.hashCode();
         result = 31 * result + placeBlock.hashCode();
         result = 31 * result + updateBlockOffsets.hashCode();

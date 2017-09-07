@@ -9,6 +9,8 @@ package buildcraft.builders.snapshot;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
@@ -23,6 +25,7 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
         super(tile);
     }
 
+    @Nonnull
     @Override
     protected Template.BuildingInfo getBuildingInfo() {
         return tile.getTemplateBuildingInfo();

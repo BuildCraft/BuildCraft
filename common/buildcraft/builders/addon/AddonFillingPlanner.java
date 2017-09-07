@@ -7,7 +7,9 @@
 package buildcraft.builders.addon;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import io.netty.buffer.ByteBuf;
@@ -28,6 +30,7 @@ import buildcraft.core.marker.volume.IFastAddonRenderer;
 import buildcraft.core.marker.volume.ISingleAddon;
 
 public class AddonFillingPlanner extends Addon implements ISingleAddon {
+    public final Set<Runnable> updateBuildingInfoListeners = new HashSet<>();
     public final List<IParameter> parameters = new ArrayList<>();
     public boolean inverted;
     public Template.BuildingInfo buildingInfo;
@@ -39,6 +42,7 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon {
             parameters,
             inverted
         );
+        updateBuildingInfoListeners.forEach(Runnable::run);
     }
 
     @Override

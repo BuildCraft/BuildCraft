@@ -49,9 +49,9 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
     static {
         EnumFacing face = EnumFacing.WEST;
         TankSize tankIn = new TankSize(0, 0, 4, 8, 16, 12).shrink(1 / 64.0);
-        TankSize tankOutGas = new TankSize(8, 8, 0, 16, 16, 16).shrink(1 / 64.0);
-        TankSize tankOutLiquid = new TankSize(8, 0, 0, 16, 8, 16).shrink(1 / 64.0);
-        TankRenderSizes sizes = new TankRenderSizes(tankIn, tankOutGas, tankOutLiquid);
+        TankSize tankGasOut = new TankSize(8, 8, 0, 16, 16, 16).shrink(1 / 64.0);
+        TankSize tankLiquidOut = new TankSize(8, 0, 0, 16, 8, 16).shrink(1 / 64.0);
+        TankRenderSizes sizes = new TankRenderSizes(tankIn, tankGasOut, tankLiquidOut);
         for (int i = 0; i < 4; i++) {
             TANK_SIZES.put(face, sizes);
             face = face.rotateY();
@@ -113,8 +113,8 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         profiler.endStartSection("fluid");
 
         renderTank(sizes.tankIn, tile.smoothedTankIn, combinedLight, partialTicks, bb);
-        renderTank(sizes.tankOutGas, tile.smoothedTankOutGas, combinedLight, partialTicks, bb);
-        renderTank(sizes.tankOutLiquid, tile.smoothedTankOutLiquid, combinedLight, partialTicks, bb);
+        renderTank(sizes.tankOutGas, tile.smoothedTankGasOut, combinedLight, partialTicks, bb);
+        renderTank(sizes.tankOutLiquid, tile.smoothedTankLiquidOut, combinedLight, partialTicks, bb);
 
         // buffer finish
         bb.setTranslation(0, 0, 0);

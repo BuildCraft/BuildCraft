@@ -9,6 +9,7 @@ package buildcraft.silicon.tile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,6 +24,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.ILaserTarget;
 import buildcraft.api.mj.ILaserTargetBlock;
 import buildcraft.api.mj.MjAPI;
@@ -46,13 +48,15 @@ import buildcraft.silicon.BCSiliconBlocks;
 import buildcraft.silicon.client.render.AdvDebuggerLaser;
 
 public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable {
-    private int ticks = 0;
     private BlockPos targetPos;
     private final AverageLong avgPower = new AverageLong(100);
     private long averageClient;
     private final MjBattery battery;
 
     public Vec3d laserPos;
+
+    private final SafeTimeTracker clientLaserMoveInterval = new SafeTimeTracker(5, 10);
+    private final SafeTimeTracker serverTargetMoveInterval = new SafeTimeTracker(10, 20);
 
     public TileLaser() {
         super();
@@ -62,7 +66,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
 
     private void findTarget() {
         IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() != BCSiliconBlocks.LASER) {
+        if (state.getBlock() != BCSiliconBlocks.laser) {
             return;
         }
         EnumFacing face = state.getValue(BuildCraftProperties.BLOCK_FACING_6);
@@ -107,14 +111,13 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     }
 
     private void updateLaser() {
-        if (getTarget() != null) {
+        if (targetPos != null) {
             laserPos = new Vec3d(targetPos)
                 .addVector(
                     (5 + world.rand.nextInt(6) + 0.5) / 16D,
                     9 / 16D,
                     (5 + world.rand.nextInt(6) + 0.5) / 16D
                 );
-            sendNetworkUpdate(NET_RENDER_DATA);
         } else {
             laserPos = null;
         }
@@ -131,21 +134,23 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     @Override
     public void update() {
         if (world.isRemote) {
+            // set laser render position on client side
+            if (clientLaserMoveInterval.markTimeIfDelay(world) || targetPos == null) {
+                updateLaser();
+            }
             return;
         }
+        // set target tile on server side
         avgPower.tick();
-        ticks++;
+
+        BlockPos previousTargetPos = targetPos;
 
         if (getTarget() == null) {
             targetPos = null;
         }
 
-        if (ticks % (10 + world.rand.nextInt(20)) == 0 || getTarget() == null) {
+        if (serverTargetMoveInterval.markTimeIfDelay(world) || getTarget() == null) {
             findTarget();
-        }
-
-        if (ticks % (5 + world.rand.nextInt(10)) == 0 || getTarget() == null) {
-            updateLaser();
         }
 
         ILaserTarget target = getTarget();
@@ -163,12 +168,16 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         } else {
             avgPower.clear();
         }
+
+        if (!Objects.equals(previousTargetPos, targetPos)) {
+            sendNetworkUpdate(NET_RENDER_DATA);
+        }
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
-        nbt.setTag("mj_battery", battery.serializeNBT());
+        nbt.setTag("battery", battery.serializeNBT());
         if (laserPos != null) {
             nbt.setTag("laser_pos", NBTUtilBC.writeVec3d(laserPos));
         }
@@ -182,7 +191,11 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
+        // TODO: remove in next version
+        if (nbt.hasKey("mj_battery")) {
+            nbt.setTag("battery", nbt.getTag("mj_battery"));
+        }
+        battery.deserializeNBT(nbt.getCompoundTag("battery"));
         targetPos = NBTUtilBC.readBlockPos(nbt.getTag("target_pos"));
         laserPos = NBTUtilBC.readVec3d(nbt.getTag("laser_pos"));
         avgPower.readFromNbt(nbt, "average_power");
@@ -197,10 +210,6 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
                 buffer.writeBoolean(targetPos != null);
                 if (targetPos != null) {
                     MessageUtil.writeBlockPos(buffer, targetPos);
-                }
-                buffer.writeBoolean(laserPos != null);
-                if (laserPos != null) {
-                    MessageUtil.writeVec3d(buffer, laserPos);
                 }
                 buffer.writeLong((long) avgPower.getAverage());
             }
@@ -217,11 +226,6 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
                     targetPos = MessageUtil.readBlockPos(buffer);
                 } else {
                     targetPos = null;
-                }
-                if (buffer.readBoolean()) {
-                    laserPos = MessageUtil.readVec3d(buffer);
-                } else {
-                    laserPos = null;
                 }
                 averageClient = buffer.readLong();
             }

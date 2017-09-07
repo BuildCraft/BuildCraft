@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
@@ -91,6 +92,8 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     private List<IParameter> prevParameters;
     private boolean prevInverted;
     public final TemplateBuilder builder = new TemplateBuilder(this);
+    private final Runnable updateBuildingInfoListener = () ->
+        Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::updateSnapshot);
 
     public TileFiller() {
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
@@ -103,7 +106,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                                 @Nonnull ItemStack after) {
         if (!world.isRemote) {
             if (handler == invResources) {
-                builder.resourcesChanged();
+                Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::resourcesChanged);
             }
         }
         super.onSlotChange(handler, slot, before, after);
@@ -139,7 +142,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
                     )
                 );
                 volumeBoxes.markDirty();
-                builder.updateSnapshot();
+                addon.updateBuildingInfo();
             } else {
                 box.reset();
                 box.setMin(volumeBox.box.min());
@@ -180,15 +183,21 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     public void invalidate() {
         super.invalidate();
         builder.invalidate();
+        if (addon != null) {
+            addon.updateBuildingInfoListeners.remove(updateBuildingInfoListener);
+        }
     }
 
     @Override
     public void update() {
+        battery.tick(getWorld(), getPos());
+        battery.addPowerChecking(64 * MjAPI.MJ, false);
         if (!isValid()) {
             return;
         }
-        battery.tick(getWorld(), getPos());
-        battery.addPowerChecking(64 * MjAPI.MJ, false);
+        if (addon != null) {
+            addon.updateBuildingInfoListeners.add(updateBuildingInfoListener);
+        }
         if (!world.isRemote) {
             if (prevParameters == null ||
                 !Arrays.equals(prevParameters.toArray(), getParameters().toArray()) ||
@@ -211,12 +220,14 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
     }
 
     private void updateBuildingInfo() {
+        Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::cancel);
         buildingInfo = Filling.createBuildingInfo(
             box.min(),
             box.size(),
             parameters,
             inverted
         );
+        Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::updateSnapshot);
     }
 
     public void sendInverted(boolean value) {
@@ -386,7 +397,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
             );
         }
         nbt.setBoolean("prevInverted", prevInverted);
-        nbt.setTag("builder", builder.serializeNBT());
+        Optional.ofNullable(getBuilder()).ifPresent(builder -> nbt.setTag("builder", builder.serializeNBT()));
         return nbt;
     }
 
@@ -418,8 +429,8 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
             updateBuildingInfo();
         }
         if (nbt.hasKey("builder")) {
-            builder.updateSnapshot();
-            builder.deserializeNBT(nbt.getCompoundTag("builder"));
+            Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::updateSnapshot);
+            Optional.ofNullable(getBuilder()).ifPresent(builder -> builder.deserializeNBT(nbt.getCompoundTag("builder")));
         }
     }
 
@@ -473,7 +484,7 @@ public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable
 
     @Override
     public SnapshotBuilder getBuilder() {
-        return builder;
+        return isValid() ? builder : null;
     }
 
     @Override

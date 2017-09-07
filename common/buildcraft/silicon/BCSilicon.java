@@ -47,6 +47,8 @@ public class BCSilicon {
     public void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
+        BCSiliconConfig.preInit();
+
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCSiliconProxy.getProxy());
 
         BCSiliconProxy.getProxy().fmlPreInit();

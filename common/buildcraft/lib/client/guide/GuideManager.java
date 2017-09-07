@@ -67,7 +67,6 @@ public enum GuideManager implements IResourceManagerReloadListener {
 
     static {
         PAGE_LOADERS.put("md", MarkdownPageLoader.INSTANCE);
-        PAGE_LOADERS.put("xml", XmlPageLoader.INSTANCE);
     }
 
     @Override

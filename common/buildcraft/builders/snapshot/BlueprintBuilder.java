@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.entity.Entity;
@@ -65,6 +67,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         return getSchematicBlock(blockPos) == null || getSchematicBlock(blockPos).isAir();
     }
 
+    @Nonnull
     @Override
     protected Blueprint.BuildingInfo getBuildingInfo() {
         return tile.getBlueprintBuildingInfo();
@@ -175,23 +178,19 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     protected boolean hasEnoughToPlaceItems(BlockPos blockPos) {
-        return Optional.ofNullable(getBuildingInfo()).flatMap(buildingInfo ->
-            tryExtractRequired(
-                buildingInfo.toPlaceRequiredItems[posToIndex(blockPos)],
-                buildingInfo.toPlaceRequiredFluids[posToIndex(blockPos)],
-                true
-            )
+        return tryExtractRequired(
+            getBuildingInfo().toPlaceRequiredItems[posToIndex(blockPos)],
+            getBuildingInfo().toPlaceRequiredFluids[posToIndex(blockPos)],
+            true
         ).isPresent();
     }
 
     @Override
     protected List<ItemStack> getToPlaceItems(BlockPos blockPos) {
-        return Optional.ofNullable(getBuildingInfo()).flatMap(buildingInfo ->
-            tryExtractRequired(
-                buildingInfo.toPlaceRequiredItems[posToIndex(blockPos)],
-                buildingInfo.toPlaceRequiredFluids[posToIndex(blockPos)],
-                false
-            )
+        return tryExtractRequired(
+            getBuildingInfo().toPlaceRequiredItems[posToIndex(blockPos)],
+            getBuildingInfo().toPlaceRequiredFluids[posToIndex(blockPos)],
+            false
         ).orElse(null);
     }
 
@@ -237,101 +236,99 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         if (tile.getWorldBC().isRemote) {
             return super.tick();
         }
-        return Optional.ofNullable(getBuildingInfo()).map(buildingInfo -> {
-            tile.getWorldBC().profiler.startSection("entitiesWithinBox");
-            List<Entity> entitiesWithinBox = tile.getWorldBC().getEntitiesWithinAABB(
-                Entity.class,
-                buildingInfo.box.getBoundingBox(),
-                Objects::nonNull
-            );
-            tile.getWorldBC().profiler.endSection();
-            tile.getWorldBC().profiler.startSection("toSpawn");
-            List<ISchematicEntity> toSpawn = buildingInfo.entities.stream()
-                .filter(schematicEntity ->
-                    entitiesWithinBox.stream()
-                        .map(Entity::getPositionVector)
-                        .map(schematicEntity.getPos().add(new Vec3d(buildingInfo.basePos))::distanceTo)
-                        .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE)
-                )
-                .collect(Collectors.toList());
-            tile.getWorldBC().profiler.endSection();
-            // Compute needed stacks
-            tile.getWorldBC().profiler.startSection("remainingDisplayRequired");
-            remainingDisplayRequired.clear();
-            remainingDisplayRequired.addAll(StackUtil.mergeSameItems(
-                Stream.concat(
-                    remainingDisplayRequiredBlocksConcat.stream(),
-                    toSpawn.stream()
-                        .flatMap(schematicEntity ->
-                            getDisplayRequired(
-                                buildingInfo.entitiesRequiredItems.get(schematicEntity),
-                                buildingInfo.entitiesRequiredFluids.get(schematicEntity)
-                            )
+        tile.getWorldBC().profiler.startSection("entitiesWithinBox");
+        List<Entity> entitiesWithinBox = tile.getWorldBC().getEntitiesWithinAABB(
+            Entity.class,
+            getBuildingInfo().box.getBoundingBox(),
+            Objects::nonNull
+        );
+        tile.getWorldBC().profiler.endSection();
+        tile.getWorldBC().profiler.startSection("toSpawn");
+        List<ISchematicEntity> toSpawn = getBuildingInfo().entities.stream()
+            .filter(schematicEntity ->
+                entitiesWithinBox.stream()
+                    .map(Entity::getPositionVector)
+                    .map(schematicEntity.getPos().add(new Vec3d(getBuildingInfo().basePos))::distanceTo)
+                    .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE)
+            )
+            .collect(Collectors.toList());
+        tile.getWorldBC().profiler.endSection();
+        // Compute needed stacks
+        tile.getWorldBC().profiler.startSection("remainingDisplayRequired");
+        remainingDisplayRequired.clear();
+        remainingDisplayRequired.addAll(StackUtil.mergeSameItems(
+            Stream.concat(
+                remainingDisplayRequiredBlocksConcat.stream(),
+                toSpawn.stream()
+                    .flatMap(schematicEntity ->
+                        getDisplayRequired(
+                            getBuildingInfo().entitiesRequiredItems.get(schematicEntity),
+                            getBuildingInfo().entitiesRequiredFluids.get(schematicEntity)
                         )
-                ).collect(Collectors.toList())
-            ));
-            tile.getWorldBC().profiler.endSection();
-            // Kill not needed entities
-            tile.getWorldBC().profiler.startSection("toKill");
-            List<Entity> toKill = entitiesWithinBox.stream()
-                .filter(entity ->
-                    entity != null &&
-                        buildingInfo.entities.stream()
-                            .map(ISchematicEntity::getPos)
-                            .map(new Vec3d(buildingInfo.basePos)::add)
-                            .map(entity.getPositionVector()::distanceTo)
-                            .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE) &&
-                        SchematicEntityManager.getSchematicEntity(
-                            tile.getWorldBC(),
-                            BlockPos.ORIGIN,
-                            entity
-                        ) != null
-                )
-                .collect(Collectors.toList());
-            if (!toKill.isEmpty()) {
+                    )
+            ).collect(Collectors.toList())
+        ));
+        tile.getWorldBC().profiler.endSection();
+        // Kill not needed entities
+        tile.getWorldBC().profiler.startSection("toKill");
+        List<Entity> toKill = entitiesWithinBox.stream()
+            .filter(entity ->
+                entity != null &&
+                    getBuildingInfo().entities.stream()
+                        .map(ISchematicEntity::getPos)
+                        .map(new Vec3d(getBuildingInfo().basePos)::add)
+                        .map(entity.getPositionVector()::distanceTo)
+                        .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE) &&
+                    SchematicEntityManager.getSchematicEntity(
+                        tile.getWorldBC(),
+                        BlockPos.ORIGIN,
+                        entity
+                    ) != null
+            )
+            .collect(Collectors.toList());
+        if (!toKill.isEmpty()) {
+            if (!tile.getBattery().isFull()) {
+                return false;
+            } else {
+                tile.getWorldBC().profiler.startSection("kill");
+                toKill.forEach(Entity::setDead);
+                tile.getWorldBC().profiler.endSection();
+            }
+        }
+        tile.getWorldBC().profiler.endSection();
+        // Call superclass method
+        if (super.tick()) {
+            // Spawn needed entities
+            if (!toSpawn.isEmpty()) {
                 if (!tile.getBattery().isFull()) {
                     return false;
                 } else {
-                    tile.getWorldBC().profiler.startSection("kill");
-                    toKill.forEach(Entity::setDead);
+                    tile.getWorldBC().profiler.startSection("spawn");
+                    toSpawn.stream()
+                        .filter(schematicEntity ->
+                            tryExtractRequired(
+                                getBuildingInfo().entitiesRequiredItems.get(schematicEntity),
+                                getBuildingInfo().entitiesRequiredFluids.get(schematicEntity),
+                                true
+                            ).isPresent()
+                        )
+                        .filter(schematicEntity ->
+                            schematicEntity.build(tile.getWorldBC(), getBuildingInfo().basePos) != null
+                        )
+                        .forEach(schematicEntity ->
+                            tryExtractRequired(
+                                getBuildingInfo().entitiesRequiredItems.get(schematicEntity),
+                                getBuildingInfo().entitiesRequiredFluids.get(schematicEntity),
+                                false
+                            )
+                        );
                     tile.getWorldBC().profiler.endSection();
                 }
             }
-            tile.getWorldBC().profiler.endSection();
-            // Call superclass method
-            if (super.tick()) {
-                // Spawn needed entities
-                if (!toSpawn.isEmpty()) {
-                    if (!tile.getBattery().isFull()) {
-                        return false;
-                    } else {
-                        tile.getWorldBC().profiler.startSection("spawn");
-                        toSpawn.stream()
-                            .filter(schematicEntity ->
-                                tryExtractRequired(
-                                    buildingInfo.entitiesRequiredItems.get(schematicEntity),
-                                    buildingInfo.entitiesRequiredFluids.get(schematicEntity),
-                                    true
-                                ).isPresent()
-                            )
-                            .filter(schematicEntity ->
-                                schematicEntity.build(tile.getWorldBC(), buildingInfo.basePos) != null
-                            )
-                            .forEach(schematicEntity ->
-                                tryExtractRequired(
-                                    buildingInfo.entitiesRequiredItems.get(schematicEntity),
-                                    buildingInfo.entitiesRequiredFluids.get(schematicEntity),
-                                    false
-                                )
-                            );
-                        tile.getWorldBC().profiler.endSection();
-                    }
-                }
-                return true;
-            } else {
-                return false;
-            }
-        }).orElseGet(super::tick);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
