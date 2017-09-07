@@ -96,7 +96,7 @@ public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnect
     public int getComparatorInputOverride(IBlockState blockState, World world, BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileTank) {
-            return ((TileTank) tile).comparatorLevel;
+            return ((TileTank) tile).getComparatorLevel();
         }
         return 0;
     }

@@ -55,7 +55,6 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     public final Tank tank = new Tank("tank", 16000, this);
     public final FluidSmoother smoothedTank = new FluidSmoother(w -> createAndSendMessage(NET_FLUID_DELTA, w), tank);
 
-    public int comparatorLevel;
     private int fluidAmountPrev;
 
     public TileTank() {
@@ -68,12 +67,15 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         return IDS;
     }
 
+    public int getComparatorLevel() {
+        return MathUtil.scaledClamp(tank.getFluidAmount(), tank.getCapacity(), 15);
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
 
         fluidAmountPrev = tank.getFluidAmount();
-        comparatorLevel = MathUtil.scaledClamp(tank.getFluidAmount(), tank.getCapacity(), 15);
     }
 
     // ITickable
@@ -84,7 +86,6 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
 
         if (tank.getFluidAmount() != fluidAmountPrev) {
             fluidAmountPrev = tank.getFluidAmount();
-            comparatorLevel = MathUtil.scaledClamp(tank.getFluidAmount(), tank.getCapacity(), 15);
             markDirty();
         }
     }
