@@ -40,7 +40,6 @@ import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;
-import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
@@ -68,7 +67,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     }
 
     public int getComparatorLevel() {
-        return MathUtil.scaledClamp(tank.getFluidAmount(), tank.getCapacity(), 15);
+        return tank.getFluidAmount() * 15 / tank.getCapacity();
     }
 
     @Override
