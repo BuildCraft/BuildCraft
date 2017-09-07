@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -74,8 +76,9 @@ public class TileAssemblyTable extends TileLaserTableBase {
                         break;
                     }
                 }
-                if (!found) {
-                    recipesStates.put(new AssemblyInstruction(recipe, out), EnumAssemblyRecipeState.POSSIBLE);
+                AssemblyInstruction instruction = new AssemblyInstruction(recipe, out);
+                if (!found && !recipesStates.containsKey(instruction)) {
+                    recipesStates.put(instruction, EnumAssemblyRecipeState.POSSIBLE);
                 }
             }
         }
@@ -215,8 +218,11 @@ public class TileAssemblyTable extends TileLaserTableBase {
         for (int i = 0; i < recipesStatesTag.tagCount(); i++) {
             NBTTagCompound entryTag = recipesStatesTag.getCompoundTagAt(i);
             String name = entryTag.getString("recipe");
-            if (entryTag.hasKey("output"))
-                recipesStates.put(lookupRecipe(name, new ItemStack(entryTag.getCompoundTag("output"))), EnumAssemblyRecipeState.values()[entryTag.getInteger("state")]);
+            if (entryTag.hasKey("output")) {
+                AssemblyInstruction instruction = lookupRecipe(name, new ItemStack(entryTag.getCompoundTag("output")));
+                if (instruction != null)
+                    recipesStates.put(instruction, EnumAssemblyRecipeState.values()[entryTag.getInteger("state")]);
+            }
         }
     }
 
@@ -272,8 +278,10 @@ public class TileAssemblyTable extends TileLaserTableBase {
         left.add("target - " + LocaleUtil.localizeMj(getTarget()));
     }
 
+    @Nullable
     private AssemblyInstruction lookupRecipe(String name, ItemStack output) {
-        return new AssemblyInstruction(AssemblyRecipeRegistry.REGISTRY.getValue(new ResourceLocation(name)), output);
+        AssemblyRecipe recipe = AssemblyRecipeRegistry.REGISTRY.getValue(new ResourceLocation(name));
+        return recipe != null ? new AssemblyInstruction(recipe, output) : null;
     }
 
     public class AssemblyInstruction implements Comparable<AssemblyInstruction> {
@@ -288,6 +296,13 @@ public class TileAssemblyTable extends TileLaserTableBase {
         @Override
         public int compareTo(AssemblyInstruction o) {
             return recipe.compareTo(o.recipe) + output.serializeNBT().toString().compareTo(o.output.serializeNBT().toString());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof AssemblyInstruction)) return false;
+            AssemblyInstruction instruction = (AssemblyInstruction) obj;
+            return recipe.getRegistryName().equals(instruction.recipe.getRegistryName()) && ItemStack.areItemStacksEqual(output, instruction.output);
         }
     }
 }
