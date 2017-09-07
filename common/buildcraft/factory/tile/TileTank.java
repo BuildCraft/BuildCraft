@@ -50,7 +50,14 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
 
     private static boolean isPlayerInteracting = false;
 
-    public final Tank tank = new Tank("tank", 16000, this);
+    public final Tank tank = new Tank("tank", 16000, this) {
+
+        @Override
+        protected void onContentsChanged() {
+            super.onContentsChanged();
+            dirty = true;
+        }
+    };
     public final FluidSmoother smoothedTank = new FluidSmoother(w -> createAndSendMessage(NET_FLUID_DELTA, w), tank);
 
     private boolean dirty = false;
@@ -71,7 +78,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     public void update() {
         smoothedTank.tick(getWorld());
 
-        if (dirty) {
+        if (!world.isRemote && dirty) {
             markDirty();
             dirty = false;
         }
@@ -272,9 +279,6 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
                 if (isPlayerInteracting & doFill) {
                     t.sendNetworkUpdate(NET_RENDER_DATA);
                 }
-                if (doFill) {
-                    t.dirty = true;
-                }
                 resource.amount -= tankFilled;
                 filled += tankFilled;
                 if (resource.amount == 0) {
@@ -327,9 +331,6 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
             if (drained == null) continue;
             if (isPlayerInteracting & doDrain) {
                 t.sendNetworkUpdate(NET_RENDER_DATA);
-            }
-            if (doDrain) {
-                t.dirty = true;
             }
             if (total == null) {
                 total = drained.copy();
