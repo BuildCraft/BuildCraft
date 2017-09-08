@@ -9,7 +9,6 @@ package buildcraft.factory.tile;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
@@ -223,12 +222,13 @@ public class TilePump extends TileMiner {
                         canDrain(currentPos)) {
                         tank.fillInternal(drain, true);
                         progress = 0;
-                        if (drain.getFluid() != FluidRegistry.WATER ||
-                            Arrays.stream(EnumFacing.HORIZONTALS)
-                                .map(currentPos::offset)
-                                .map(p -> BlockUtil.getFluid(world, p))
-                                .filter(f -> FluidUtilBC.areFluidsEqual(f, FluidRegistry.WATER))
-                                .count() < 2) {
+                        boolean isInfiniteSource = false;
+                        if (FluidUtilBC.areFluidsEqual(drain.getFluid(), FluidRegistry.WATER)) {
+                            // TODO: This is a temprarary fix -- this isn't necessarily accurate if the y-level differs
+                            // or if their isn't a solid block underneath the water (or if a finite water mod is installed)
+                            isInfiniteSource = queue.size() > 2;
+                        }
+                        if (!isInfiniteSource) {
                             BlockUtil.drainBlock(world, currentPos, true);
                             if (FluidUtilBC.areFluidsEqual(drain.getFluid(), BCEnergyFluids.crudeOil[0])) {
                                 if (oilSpringPos != null) {
