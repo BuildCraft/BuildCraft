@@ -230,70 +230,44 @@ public abstract class ContainerBC_Neptune extends Container {
             }
         } else if (side == Side.SERVER) {
             if (id == NET_SET_PHANTOM) {
-                int index = buffer.readVarInt();
-                ItemStack stack = buffer.readItemStack();
-
-                int i = 0;
-                boolean found = false;
-                if (index >= 0 && index < inventorySlots.size()) {
-                    Slot s = inventorySlots.get(index);
-                    if (s instanceof SlotPhantom) {
-                        SlotPhantom ph = (SlotPhantom) s;
-                        IItemHandlerAdv handler = ph.itemHandler;
-                        if (handler instanceof IItemHandlerModifiable && handler.canSet(ph.handlerIndex, stack)) {
-                            ((IItemHandlerModifiable) handler).setStackInSlot(ph.handlerIndex, stack);
-                        } else {
-                            // log rather than throw an exception because of bugged/naughty clients
-                            String s2 = "[lib.container] Received an illegal phantom slot setting request! ";
-                            s2 += "[The item handler disallowed the replacement] (Client = ";
-                            s2 += ctx.getServerHandler().player.getName() + ", slot_index = " + i;
-                            s2 += ", stack = " + stack + ")";
-                            BCLog.logger.warn(s2);
-                        }
-                        found = true;
-                    }
-                }
-                if (!found) {
-                    // log rather than throw an exception because of bugged/naughty clients
-                    String s2 = "[lib.container] Received an illegal phantom slot setting request! ";
-                    s2 += "[Didn't find a phantom slot for the given index] (Client = ";
-                    s2 += ctx.getServerHandler().player.getName() + ", slot_index = " + i;
-                    s2 += ", stack = " + stack + ")";
-                    BCLog.logger.warn(s2);
-                }
+                readSingleSetPhantom(buffer, ctx);
             } else if (id == NET_SET_PHANTOM_MULTI) {
                 int count = buffer.readUnsignedByte();
                 for (int i = 0; i < count; i++) {
-                    int idx = buffer.readVarInt();
-                    ItemStack stack = buffer.readItemStack();
-                    if (idx >= 0 && idx < inventorySlots.size()) {
-                        Slot s = inventorySlots.get(idx);
-                        if (s instanceof SlotPhantom) {
-                            SlotPhantom ph = (SlotPhantom) s;
-                            IItemHandlerAdv handler = ph.itemHandler;
-                            if (handler instanceof IItemHandlerModifiable && handler.canSet(ph.handlerIndex, stack)) {
-                                ((IItemHandlerModifiable) handler).setStackInSlot(ph.handlerIndex, stack);
-                            } else {
-                                // log rather than throw an exception because of bugged/naughty clients
-                                String s2 = "[lib.container] Received an illegal phantom slot setting request! ";
-                                s2 += "[The item handler disallowed the replacement] (Client = ";
-                                s2 += ctx.getServerHandler().player.getName() + ", slot_index = " + idx;
-                                s2 += ", stack = " + stack + ")";
-                                BCLog.logger.warn(s2);
-                            }
-                            continue;
-                        }
-                    }
+                    readSingleSetPhantom(buffer, ctx);
+                }
+            }
+        }
+    }
 
+    private void readSingleSetPhantom(PacketBufferBC buffer, MessageContext ctx) throws IOException {
+        int idx = buffer.readVarInt();
+        ItemStack stack = buffer.readItemStack();
+        if (idx >= 0 && idx < inventorySlots.size()) {
+            Slot s = inventorySlots.get(idx);
+            if (s instanceof SlotPhantom) {
+                SlotPhantom ph = (SlotPhantom) s;
+                IItemHandlerAdv handler = ph.itemHandler;
+                if (handler instanceof IItemHandlerModifiable && handler.canSet(ph.handlerIndex, stack)) {
+                    ((IItemHandlerModifiable) handler).setStackInSlot(ph.handlerIndex, stack);
+                } else {
                     // log rather than throw an exception because of bugged/naughty clients
                     String s2 = "[lib.container] Received an illegal phantom slot setting request! ";
-                    s2 += "[Didn't find a phantom slot for the given index] (Client = ";
+                    s2 += "[The item handler disallowed the replacement] (Client = ";
                     s2 += ctx.getServerHandler().player.getName() + ", slot_index = " + idx;
                     s2 += ", stack = " + stack + ")";
                     BCLog.logger.warn(s2);
                 }
+                return;
             }
         }
+
+        // log rather than throw an exception because of bugged/naughty clients
+        String s2 = "[lib.container] Received an illegal phantom slot setting request! ";
+        s2 += "[Didn't find a phantom slot for the given index] (Client = ";
+        s2 += ctx.getServerHandler().player.getName() + ", slot_index = " + idx;
+        s2 += ", stack = " + stack + ")";
+        BCLog.logger.warn(s2);
     }
 
     /** @throws IllegalArgumentException if a {@link SlotPhantom} couldn't be found with that handler and index */
