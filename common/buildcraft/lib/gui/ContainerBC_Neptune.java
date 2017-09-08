@@ -336,8 +336,8 @@ public abstract class ContainerBC_Neptune extends Container {
                 if (ph.itemHandler == handler && ph.handlerIndex == index) {
                     return i;
                 }
-                i++;
             }
+            i++;
         }
         throw new IllegalArgumentException("Couldn't find a slot for " + index + " @ " + handler + " in " + getClass());
     }
