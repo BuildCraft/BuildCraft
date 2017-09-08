@@ -263,12 +263,9 @@ public abstract class ContainerBC_Neptune extends Container {
                 }
             } else if (id == NET_SET_PHANTOM_MULTI) {
                 int count = buffer.readUnsignedByte();
-                int rel = 0;
                 for (int i = 0; i < count; i++) {
                     int idx = buffer.readVarInt();
                     ItemStack stack = buffer.readItemStack();
-                    idx += rel;
-                    rel += idx;
                     if (idx >= 0 && idx < inventorySlots.size()) {
                         Slot s = inventorySlots.get(idx);
                         if (s instanceof SlotPhantom) {
@@ -365,13 +362,10 @@ public abstract class ContainerBC_Neptune extends Container {
             throw new IllegalArgumentException("Sizes don't match! (" + indexes.length + " vs " + stacks.size() + ")");
         }
         sendMessage(NET_SET_PHANTOM_MULTI, (buffer) -> {
-            int rel = 0;
             buffer.writeByte(indexes.length);
             for (int i = 0; i < indexes.length; i++) {
                 int index = indexes[i];
                 ItemStack stack = stacks.get(i);
-                index -= rel;
-                rel += index;
                 buffer.writeVarInt(index);
                 buffer.writeItemStack(stack);
             }
