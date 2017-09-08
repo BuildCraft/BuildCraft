@@ -77,8 +77,10 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
     private final FluidTransferInfo fluidTransferInfo = PipeApi.getFluidTransferInfo(pipe.getDefinition());
 
-    /* Default to an additional second of fluid inserting and removal. This means that (for a normal pipe like cobble)
-     * it will be 20 * (10 + 12) = 20 * 22 = 440 - oh that's not good is it */
+    /*
+     * Default to an additional second of fluid inserting and removal. This means that (for a normal pipe like cobble)
+     * it will be 20 * (10 + 12) = 20 * 22 = 440 - oh that's not good is it
+     */
     public final int capacity = fluidTransferInfo.transferPerTick * (10);// TEMP!
 
     private final Map<EnumPipePart, Section> sections = new EnumMap<>(EnumPipePart.class);
@@ -255,7 +257,16 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     @Override
     public int insertFluidsForce(FluidStack fluid, @Nullable EnumFacing from, boolean simulate) {
         Section s = sections.get(EnumPipePart.CENTER);
-        int filled = s.fill(fluid, !simulate);
+        if (fluid == null || fluid.amount == 0) {
+            return 0;
+        }
+        if (currentFluid != null && !currentFluid.isFluidEqual(fluid)) {
+            return 0;
+        }
+        if (currentFluid == null && !simulate) {
+            setFluid(fluid.copy());
+        }
+        int filled = s.fill(fluid.amount, !simulate);
         if (filled == 0) {
             return 0;
         }
@@ -287,7 +298,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             int amount = isRemote ? section.target : section.amount;
             line.append(amount > 0 ? TextFormatting.GREEN : "");
             line.append(amount).append("").append(TextFormatting.RESET).append("mB");
-            line.append(" ").append(section.getCurrentDirection()).append(" (").append(section.ticksInDirection).append(")");
+            line.append(" ").append(section.getCurrentDirection()).append(" (").append(section.ticksInDirection)
+                .append(")");
 
             line.append(" [");
             int last = -1;
@@ -444,7 +456,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                     IFluidHandler fluidHandler = pipe.getHolder().getCapabilityFromPipe(part.face, CapUtil.CAP_FLUIDS);
                     if (fluidHandler == null) continue;
 
-                    FluidStack fluidToPush = new FluidStack(currentFluid, section.drainInternal(fluidTransferInfo.transferPerTick, false));
+                    FluidStack fluidToPush =
+                        new FluidStack(currentFluid, section.drainInternal(fluidTransferInfo.transferPerTick, false));
 
                     if (fluidToPush.amount > 0) {
                         int filled = fluidHandler.fill(fluidToPush, true);
@@ -475,7 +488,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             if (!section.getCurrentDirection().canOutput()) {
                 continue;
             }
-            if (section.getMaxFilled() > 0 && pipe.getHolder().getCapabilityFromPipe(direction, CapUtil.CAP_FLUIDS) != null) {
+            if (section.getMaxFilled() > 0
+                && pipe.getHolder().getCapabilityFromPipe(direction, CapUtil.CAP_FLUIDS) != null) {
                 realDirections.add(direction);
             }
         }
@@ -490,7 +504,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             List<EnumFacing> random = new ArrayList<>(set);
             Collections.shuffle(random);
 
-            float min = Math.min(flowRate * realDirections.size(), totalAvailable) / (float) flowRate / realDirections.size();
+            float min =
+                Math.min(flowRate * realDirections.size(), totalAvailable) / (float) flowRate / realDirections.size();
 
             for (EnumFacing direction : random) {
                 Section section = sections.get(EnumPipePart.fromFacing(direction));
@@ -537,7 +552,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         }
 
         int[] totalOffered = Arrays.copyOf(inputPerTick, 6);
-        PreMoveToCentre preMove = new PreMoveToCentre(pipe.getHolder(), this, currentFluid, Math.min(flowRate, spaceAvailable), totalOffered, inputPerTick);
+        PreMoveToCentre preMove = new PreMoveToCentre(pipe.getHolder(), this, currentFluid,
+            Math.min(flowRate, spaceAvailable), totalOffered, inputPerTick);
         // Event handlers edit the array in-place
         pipe.getHolder().fireEvent(preMove);
 
@@ -567,7 +583,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         }
 
         int[] fluidEnteringCentre = Arrays.copyOf(fluidLeavingSide, 6);
-        OnMoveToCentre move = new OnMoveToCentre(pipe.getHolder(), this, currentFluid, fluidLeavingSide, fluidEnteringCentre);
+        OnMoveToCentre move =
+            new OnMoveToCentre(pipe.getHolder(), this, currentFluid, fluidLeavingSide, fluidEnteringCentre);
         pipe.getHolder().fireEvent(move);
 
         for (EnumPipePart part : EnumPipePart.FACES) {
@@ -577,7 +594,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             if (leaving > 0) {
                 int actuallyDrained = section.drainInternal(leaving, true);
                 if (actuallyDrained != leaving) {
-                    throw new IllegalStateException("Couldn't drain " + leaving + " from " + part + ", only drained " + actuallyDrained);
+                    throw new IllegalStateException(
+                        "Couldn't drain " + leaving + " from " + part + ", only drained " + actuallyDrained);
                 }
                 if (actuallyDrained > 0) {
                     section.ticksInDirection = COOLDOWN_INPUT;
@@ -586,7 +604,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 if (entering > 0) {
                     int actuallyFilled = center.fill(entering, true);
                     if (actuallyFilled != entering) {
-                        throw new IllegalStateException("Couldn't fill " + entering + " from " + part + ", only filled " + actuallyFilled);
+                        throw new IllegalStateException(
+                            "Couldn't fill " + entering + " from " + part + ", only filled " + actuallyFilled);
                     }
                 }
             }
@@ -664,16 +683,12 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
         int currentTime;
 
-        /** Map of [time] -> [amount inserted].
-         * 
-         * Used to implement the delayed fluid travelling. */
+        /** Map of [time] -> [amount inserted]. Used to implement the delayed fluid travelling. */
         int[] incoming = new int[1];
 
-        /** If 0 then fluids can move from this in either direction.
-         * 
-         * If less than 0 then fluids can only move into this section from other tiles, and outputs to other sections.
-         * 
-         * If greater than 0 then fluids can only move out of this section into other tiles. */
+        /** If 0 then fluids can move from this in either direction. If less than 0 then fluids can only move into this
+         * section from other tiles, and outputs to other sections. If greater than 0 then fluids can only move out of
+         * this section into other tiles. */
         int ticksInDirection = 0;
 
         // Client side fields
@@ -841,7 +856,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             if (!getCurrentDirection().canInput() || !pipe.isConnected(part.face) || resource == null) {
                 return 0;
             }
-            PipeEventFluid.TryInsert tryInsert = new PipeEventFluid.TryInsert(pipe.getHolder(), PipeFlowFluids.this, part.face, resource);
+            PipeEventFluid.TryInsert tryInsert =
+                new PipeEventFluid.TryInsert(pipe.getHolder(), PipeFlowFluids.this, part.face, resource);
             pipe.getHolder().fireEvent(tryInsert);
             if (tryInsert.isCanceled()) {
                 return 0;
