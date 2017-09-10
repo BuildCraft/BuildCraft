@@ -108,6 +108,7 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
         generateType(_long, _long);
         generateType(_long, _long, _long);
         generateType(_long, _double);
+        generateType(_long, _bool);
         generateType(_long, _obj);
         generateType(_long, _obj, _long);
         generateType(_long, _obj, _long, _long);
@@ -119,6 +120,7 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
         generateType(_double, _obj);
         generateType(_double, _obj, _obj);
 
+        generateType(_bool, _long);
         generateType(_bool, _long, _long);
         generateType(_bool, _double, _double);
         generateType(_bool, _bool);

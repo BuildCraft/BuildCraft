@@ -4,9 +4,6 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.tiles.IControllable.Mode;
 
-import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
-import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.node.func.NodeFuncToObject;
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.button.IButtonClickEventListener;
 import buildcraft.lib.gui.elem.ToolTip;
@@ -35,11 +32,11 @@ public class GuiFiller extends GuiJson<ContainerFiller> {
         properties.put("statement.container", container.tile);
         properties.put("controllable", container.tile);
         properties.put("controllable.sprite", SPRITE_CONTROL_MODE);
-        properties.put("controllable.mode", new NodeFuncToObject<>("mode", Mode.class, container.tile::getControlMode));
-        properties.put("filler.is_finished", (INodeBoolean) container.tile::isFinished);
-        properties.put("filler.is_locked", (INodeBoolean) container.tile::isLocked);
-        properties.put("filler.to_break", (INodeLong) container.tile::getCountToBreak);
-        properties.put("filler.to_place", (INodeLong) container.tile::getCountToPlace);
+        context.put_o("controllable.mode", Mode.class, container.tile::getControlMode);
+        context.put_b("filler.is_finished", container.tile::isFinished);
+        context.put_b("filler.is_locked", container.tile::isLocked);
+        context.put_l("filler.to_break", container.tile::getCountToBreak);
+        context.put_l("filler.to_place", container.tile::getCountToPlace);
         properties.put("filler.possible", FillerStatementContext.CONTEXT_ALL);
         properties.put("filler.pattern", container.tile.pattern);
         properties.put("filler.pattern.sprite", SPRITE_PATTERN);

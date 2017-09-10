@@ -15,12 +15,14 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Table;
 
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.INodeFunc;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
 import buildcraft.lib.expression.api.IVariableNode;
@@ -31,6 +33,10 @@ import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToObject.IFuncObj
 import buildcraft.lib.expression.node.func.NodeFuncObjectToLong.IFuncObjectToLong;
 import buildcraft.lib.expression.node.func.NodeFuncToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncToBoolean.IFuncToBoolean;
+import buildcraft.lib.expression.node.func.NodeFuncToDouble;
+import buildcraft.lib.expression.node.func.NodeFuncToDouble.IFuncToDouble;
+import buildcraft.lib.expression.node.func.NodeFuncToLong;
+import buildcraft.lib.expression.node.func.NodeFuncToLong.IFuncToLong;
 import buildcraft.lib.expression.node.func.NodeFuncToObject;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
@@ -77,6 +83,15 @@ public class FunctionContext extends FunctionContextBase {
         for (FunctionContext parent : parents) {
             IExpressionNode node = parent.getVariable(name);
             if (node != null) return node;
+        }
+        INodeFunc func = getFunction(name, ImmutableList.of());
+        if (func != null) {
+            try {
+                return func.getNode(new NodeStack());
+            } catch (InvalidExpressionException e) {
+                throw new IllegalStateException("Found a 0-args function that didn't allow us to get a node for it!",
+                    e);
+            }
         }
         return null;
     }
@@ -228,6 +243,14 @@ public class FunctionContext extends FunctionContextBase {
     }
 
     // Various putFunction_in_out methods that make adding a function quicker
+
+    public INodeFuncLong put_l(String name, IFuncToLong func) {
+        return putFunction(name, new NodeFuncToLong(name, func));
+    }
+
+    public INodeFuncDouble put_d(String name, IFuncToDouble func) {
+        return putFunction(name, new NodeFuncToDouble(name, func));
+    }
 
     public INodeFuncBoolean put_b(String name, IFuncToBoolean func) {
         return putFunction(name, new NodeFuncToBoolean(name, func));

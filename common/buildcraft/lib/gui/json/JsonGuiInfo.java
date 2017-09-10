@@ -22,17 +22,14 @@ import buildcraft.lib.json.JsonVariableObject;
 import buildcraft.lib.misc.JsonUtil;
 
 public class JsonGuiInfo extends JsonVariableObject {
-    public final int sizeX;
-    public final int sizeY;
+    public final String sizeX;
+    public final String sizeY;
     public final String defaultTexture;
     public final Map<String, JsonGuiElement> types = new HashMap<>();
     public final List<JsonGuiElement> elements = new ArrayList<>();
 
-    public JsonGuiInfo(JsonObject json, ResourceLoaderContext context) {
+    public JsonGuiInfo(JsonObject json, FunctionContext fnCtx, ResourceLoaderContext loadHistory) {
         if (json.has("values")) {
-            // TODO (AlexIIL): Add support for function contexts going down through layers. Also, perhaps deseralise *everything* here?
-            // That way we can use every the func context properly here, rather than delaying its usage until later
-            context = new FunctionContext();
             putVariables(JsonUtils.getJsonObject(json, "values"), fnCtx);
         }
 
@@ -49,21 +46,28 @@ public class JsonGuiInfo extends JsonVariableObject {
         if (json.has("parent")) {
             String parent = JsonUtils.getString(json, "parent");
             ResourceLocation location = new ResourceLocation(parent + ".json");
-            try (InputStreamReader reader = context.startLoading(location)) {
+            try (InputStreamReader reader = loadHistory.startLoading(location)) {
                 JsonObject obj = new Gson().fromJson(reader, JsonObject.class);
-                JsonGuiInfo info = new JsonGuiInfo(obj, context);
+                JsonGuiInfo info = new JsonGuiInfo(obj, fnCtx, loadHistory);
                 types.putAll(info.types);
                 elements.addAll(info.elements);
+                variables.putAll(info.variables);
             } catch (Exception e) {
                 throw new JsonSyntaxException("Failed to load parent " + parent, e);
             }
-            context.finishLoading();
+            finally {
+                loadHistory.finishLoading();
+            }
+        }
+
+        if (json.has("variables")) {
+            putVariables(JsonUtils.getJsonObject(json, "variables"), fnCtx);
         }
 
         if (json.has("size")) {
             JsonElement size = json.get("size");
-            sizeX = size.getAsJsonArray().get(0).getAsInt();
-            sizeY = size.getAsJsonArray().get(1).getAsInt();
+            sizeX = size.getAsJsonArray().get(0).getAsString();
+            sizeY = size.getAsJsonArray().get(1).getAsString();
         } else {
             throw new JsonSyntaxException("Expected size as an array!");
         }
@@ -85,6 +89,7 @@ public class JsonGuiInfo extends JsonVariableObject {
                 elements.addAll(elem.iterate());
             }
         }
+        finaliseVariables();
     }
 
     public void printOut(Consumer<String> logger) {

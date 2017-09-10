@@ -19,6 +19,7 @@ import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
+import buildcraft.lib.gui.IContainingElement;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
@@ -35,13 +36,29 @@ public abstract class ElementType {
 
     public final IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         IGuiElement element = deserialize0(gui, parent, info, json);
-        gui.elementContext.putConstant(json.fullName + ".pos", IGuiPosition.class, element);
-        gui.elementContext.putConstant(json.fullName + ".area", IGuiArea.class, element);
+        gui.context.putConstant(json.fullName + ".pos", IGuiPosition.class, element);
+        gui.context.putConstant(json.fullName + ".area", IGuiArea.class, element);
+
+        if (element instanceof IContainingElement) {
+            IContainingElement container = (IContainingElement) element;
+            for (JsonGuiElement c : json.getChildren(info, "children")) {
+                String typeName = c.properties.get("type");
+                ElementType type = JsonGuiTypeRegistry.TYPES.get(typeName);
+                if (type == null) {
+                    BCLog.logger.warn("Unknown type " + typeName);
+                } else {
+                    IGuiElement e = type.deserialize(gui, container.getChildElementPosition(), info, c);
+                    gui.properties.put("custom." + json.name + "." + c.name, e);
+                    container.getChildElements().add(e);
+                }
+            }
+            container.calculateSizes();
+        }
         return element;
     }
 
     public static FunctionContext createContext(GuiJson<?> gui, JsonGuiElement json) {
-        FunctionContext ctx = gui.elementContext;
+        FunctionContext ctx = gui.context;
 
         // if json overrides variables then its ok
         ctx = new FunctionContext(ctx);

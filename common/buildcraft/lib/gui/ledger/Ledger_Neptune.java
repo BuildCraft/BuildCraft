@@ -23,7 +23,6 @@ import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
-import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IContainingElement;
@@ -142,6 +141,14 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
         }
     }
 
+    @Override
+    public void calculateSizes() {
+        calculateMaxSize();
+        if (isOpenProperty != null) {
+            setOpenProperty(isOpenProperty);
+        }
+    }
+
     /** The default implementation only works if all the elements are based around {@link #positionLedgerStart} */
     public void calculateMaxSize() {
         double w = CLOSED_WIDTH;
@@ -230,6 +237,11 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
     @Override
     public List<IGuiElement> getChildElements() {
         return openElements;
+    }
+
+    @Override
+    public IGuiPosition getChildElementPosition() {
+        return positionLedgerInnerStart;
     }
 
     public List<IGuiElement> getClosedElements() {

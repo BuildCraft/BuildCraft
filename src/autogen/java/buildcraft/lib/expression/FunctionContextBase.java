@@ -17,6 +17,8 @@ import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong.IFuncLongLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleToLong;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleToLong.IFuncDoubleToLong;
+import buildcraft.lib.expression.node.func.NodeFuncBooleanToLong;
+import buildcraft.lib.expression.node.func.NodeFuncBooleanToLong.IFuncBooleanToLong;
 import buildcraft.lib.expression.node.func.NodeFuncObjectToLong;
 import buildcraft.lib.expression.node.func.NodeFuncObjectToLong.IFuncObjectToLong;
 import buildcraft.lib.expression.node.func.NodeFuncObjectLongToLong;
@@ -35,6 +37,8 @@ import buildcraft.lib.expression.node.func.NodeFuncObjectToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncObjectToDouble.IFuncObjectToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToDouble.IFuncObjectObjectToDouble;
+import buildcraft.lib.expression.node.func.NodeFuncLongToBoolean;
+import buildcraft.lib.expression.node.func.NodeFuncLongToBoolean.IFuncLongToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncLongLongToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncLongLongToBoolean.IFuncLongLongToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleToBoolean;
@@ -96,6 +100,10 @@ public abstract class FunctionContextBase {
         return putFunction(name, new NodeFuncDoubleToLong(name, func));
     }
 
+    public  INodeFuncLong put_b_l(String name, IFuncBooleanToLong func) {
+        return putFunction(name, new NodeFuncBooleanToLong(name, func));
+    }
+
     public <A> INodeFuncLong put_o_l(String name, Class<A> argTypeA, IFuncObjectToLong<A> func) {
         return putFunction(name, new NodeFuncObjectToLong<>(name, argTypeA, func));
     }
@@ -130,6 +138,10 @@ public abstract class FunctionContextBase {
 
     public <A, B> INodeFuncDouble put_oo_d(String name, Class<A> argTypeA, Class<B> argTypeB, IFuncObjectObjectToDouble<A, B> func) {
         return putFunction(name, new NodeFuncObjectObjectToDouble<>(name, argTypeA, argTypeB, func));
+    }
+
+    public  INodeFuncBoolean put_l_b(String name, IFuncLongToBoolean func) {
+        return putFunction(name, new NodeFuncLongToBoolean(name, func));
     }
 
     public  INodeFuncBoolean put_ll_b(String name, IFuncLongLongToBoolean func) {

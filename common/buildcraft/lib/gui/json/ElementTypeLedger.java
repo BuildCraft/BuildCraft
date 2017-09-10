@@ -1,7 +1,5 @@
 package buildcraft.lib.gui.json;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.expression.FunctionContext;
@@ -32,18 +30,6 @@ public class ElementTypeLedger extends ElementType {
 
         Ledger_Neptune ledger = new Ledger_Neptune(gui, colour, positive);
         ledger.setTitle(title);
-
-        for (JsonGuiElement c : json.getChildren(info, "children")) {
-            String typeName = c.properties.get("type");
-            ElementType type = JsonGuiTypeRegistry.TYPES.get(typeName);
-            if (type == null) {
-                BCLog.logger.warn("Unknown type " + typeName);
-            } else {
-                IGuiElement e = type.deserialize(gui, ledger.positionLedgerInnerStart, info, c);
-                gui.properties.put("custom." + json.name + "." + c.name, e);
-                ledger.getChildElements().add(e);
-            }
-        }
 
         for (JsonGuiElement c : json.getChildren(info, "closed")) {
             String typeName = c.properties.get("type");

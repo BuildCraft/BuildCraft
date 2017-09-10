@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.gson.JsonArray;
@@ -25,6 +27,8 @@ public class JsonGuiElement {
      * For example: "size": [25, 30] is added to the map as two entries: "size[0]"="25", and "size[1]"="30". "data":
      * {"prop": "" */
     public final Map<String, String> properties = new LinkedHashMap<>();
+    @Nullable
+    public final JsonGuiIterator iterator;
 
     private JsonGuiElement(String name, String fullName, Map<String, String> properties) {
         this.name = name;
@@ -72,6 +76,11 @@ public class JsonGuiElement {
 
     public List<JsonGuiElement> iterate() {
         List<JsonGuiElement> list = new ArrayList<>();
+        if (iterator == null) {
+            list.add(this);
+        } else {
+            // TODO: Iterate!
+        }
         if (!properties.containsKey("iterator")) {
             list.add(this);
         } else {

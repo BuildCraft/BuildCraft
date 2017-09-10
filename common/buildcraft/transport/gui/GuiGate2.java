@@ -3,7 +3,6 @@ package buildcraft.transport.gui;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
-import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 import buildcraft.lib.expression.node.value.NodeConstantObject;
 import buildcraft.lib.gui.button.IButtonBehaviour;
@@ -30,17 +29,29 @@ public class GuiGate2 extends GuiJson<ContainerGate2> {
         super.preLoad();
         GateLogic gate = container.gate;
         properties.put("statement.container", gate);
-        properties.put("gate.two_columns", NodeConstantBoolean.of(gate.isSplitInTwo()));
-        properties.put("gate.slots", NodeConstantLong.of(gate.variant.numSlots));
-        properties.put("gate.triggers.args", NodeConstantLong.of(gate.variant.numTriggerArgs));
-        properties.put("gate.actions.args", NodeConstantLong.of(gate.variant.numActionArgs));
-        properties.put("gate.is_on", (INodeBoolean) () -> gate.isOn);
-        properties.put("gate.material", new NodeConstantObject<>(String.class, gate.variant.material.tag));
-        properties.put("gate.modifier", new NodeConstantObject<>(String.class, gate.variant.modifier.tag));
-        properties.put("gate.logic", new NodeConstantObject<>(String.class, gate.variant.logic.tag));
-        properties.put("gate.variant", new NodeConstantObject<>(String.class, gate.variant.getLocalizedName()));
+        context.putConstantBoolean("gate.two_columns", gate.isSplitInTwo());
+        context.putConstantLong("gate.slots", gate.variant.numSlots);
+        context.putConstantLong("gate.triggers.args", gate.variant.numTriggerArgs);
+        context.putConstantLong("gate.actions.args", gate.variant.numActionArgs);
+        context.put_b("gate.two_columns", () -> gate.isOn);
+        context.putConstant("gate.material", String.class, gate.variant.material.tag);
+        context.putConstant("gate.modifier", String.class, gate.variant.modifier.tag);
+        context.putConstant("gate.logic", String.class, gate.variant.logic.tag);
+        context.putConstant("gate.variant", String.class, gate.variant.getLocalizedName());
         properties.put("gate.triggers.possible", container.possibleTriggersContext);
         properties.put("gate.actions.possible", container.possibleActionsContext);
+
+        context.put_l_b("gate.is_connected", (i) -> {
+            return gate.connections[(int) i];
+        });
+
+        context.put_l_b("gate.trigger.is_on", (i) -> {
+            return gate.triggerOn[(int) i];
+        });
+
+        context.put_l_b("gate.action.is_on", (i) -> {
+            return gate.actionOn[(int) i];
+        });
 
         for (int s = 0; s < gate.variant.numSlots; s++) {
             final int i = s;
@@ -48,14 +59,6 @@ public class GuiGate2 extends GuiJson<ContainerGate2> {
             String aName = "gate.action[" + i + "]";
             properties.put(tName, gate.statements[i].trigger);
             properties.put(aName, gate.statements[i].trigger);
-
-            properties.put(tName + ".is_on", (INodeBoolean) () -> gate.triggerOn[i]);
-            properties.put(aName + ".is_on", (INodeBoolean) () -> gate.actionOn[i]);
-
-            if (s > 0) {
-                final int j = i - 1;
-                properties.put("gate.is_connected[" + j + "]", (INodeBoolean) () -> gate.connections[j]);
-            }
         }
     }
 
