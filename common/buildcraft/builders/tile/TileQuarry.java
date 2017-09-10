@@ -968,9 +968,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         @Override
         public boolean equals(Object o) {
             return this == o ||
-                    !(o == null || getClass() != o.getClass()) &&
-                            from.equals(((TaskMoveDrill) o).from) &&
-                            to.equals(((TaskMoveDrill) o).to);
+                !(o == null || getClass() != o.getClass()) &&
+                    from.equals(((TaskMoveDrill) o).from) &&
+                    to.equals(((TaskMoveDrill) o).to);
 
         }
     }
