@@ -99,7 +99,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     private final Set<BlockPos> firstCheckedPoses = new HashSet<>();
     private boolean firstChecked = false;
     private final Set<BlockPos> frameBreakBlockPoses = new TreeSet<>(
-            Comparator.<BlockPos>comparingDouble(pos::distanceSq)
+        Comparator.<BlockPos>comparingDouble(pos::distanceSq)
     );
     private final Set<BlockPos> framePlaceFramePoses = new HashSet<>();
     public Task currentTask = null;
@@ -151,9 +151,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         framePositions = new ArrayList<>(new HashSet<>(framePositions));
 
         framePositions.sort(Comparator.comparing(blockPos ->
-                Math.pow(blockPos.getX() - pos.getX(), 2) +
-                        Math.pow(blockPos.getY() - pos.getY(), 2) +
-                        Math.pow(blockPos.getZ() - pos.getZ(), 2)
+            Math.pow(blockPos.getX() - pos.getX(), 2) +
+                Math.pow(blockPos.getY() - pos.getY(), 2) +
+                Math.pow(blockPos.getZ() - pos.getZ(), 2)
         ));
 
         List<BlockPos> framePositionsSorted = new ArrayList<>();
@@ -163,8 +163,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             for (BlockPos blockPos : framePositions) {
                 if (!framePositionsSorted.contains(blockPos)) {
                     if (framePositionsSorted.stream()
-                            .flatMap(blockPosLocal -> Arrays.stream(EnumFacing.VALUES).map(blockPosLocal::offset))
-                            .anyMatch(Predicate.isEqual(blockPos))) {
+                        .flatMap(blockPosLocal -> Arrays.stream(EnumFacing.VALUES).map(blockPosLocal::offset))
+                        .anyMatch(Predicate.isEqual(blockPos))) {
                         framePositionsSorted.add(blockPos);
                         break;
                     }
@@ -176,11 +176,11 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
     private boolean shouldBeFrame(BlockPos p) {
         boolean shouldBeFrameXY = (p.getX() == frameBox.min().getX() || p.getX() == frameBox.max().getX()) &&
-                (p.getY() == frameBox.min().getY() || p.getY() == frameBox.max().getY());
+            (p.getY() == frameBox.min().getY() || p.getY() == frameBox.max().getY());
         boolean shouldBeFrameYZ = (p.getY() == frameBox.min().getY() || p.getY() == frameBox.max().getY()) &&
-                (p.getZ() == frameBox.min().getZ() || p.getZ() == frameBox.max().getZ());
+            (p.getZ() == frameBox.min().getZ() || p.getZ() == frameBox.max().getZ());
         boolean shouldBeFrameZX = (p.getZ() == frameBox.min().getZ() || p.getZ() == frameBox.max().getZ()) &&
-                (p.getX() == frameBox.min().getX() || p.getX() == frameBox.max().getX());
+            (p.getX() == frameBox.min().getX() || p.getX() == frameBox.max().getX());
         return shouldBeFrameXY || shouldBeFrameYZ || shouldBeFrameZX;
     }
 
@@ -468,12 +468,12 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         nbt.setTag("battery", battery.serializeNBT());
         if (currentTask != null) {
             nbt.setByte(
-                    "currentTaskId",
-                    (byte) Arrays.stream(EnumTaskType.values())
-                            .filter(type -> type.clazz == currentTask.getClass())
-                            .findFirst()
-                            .orElse(null)
-                            .ordinal()
+                "currentTaskId",
+                (byte) Arrays.stream(EnumTaskType.values())
+                    .filter(type -> type.clazz == currentTask.getClass())
+                    .findFirst()
+                    .orElse(null)
+                    .ordinal()
             );
             nbt.setTag("currentTaskData", currentTask.serializeNBT());
         }
@@ -515,11 +515,11 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 buffer.writeBoolean(currentTask != null);
                 if (currentTask != null) {
                     buffer.writeByte(
-                            (byte) Arrays.stream(EnumTaskType.values())
-                                    .filter(type -> type.clazz == currentTask.getClass())
-                                    .findFirst()
-                                    .orElse(null)
-                                    .ordinal()
+                        (byte) Arrays.stream(EnumTaskType.values())
+                            .filter(type -> type.clazz == currentTask.getClass())
+                            .findFirst()
+                            .orElse(null)
+                            .ordinal()
                     );
                     for (int i = 0; i < 2; i++) {
                         currentTask.toBytes(buffer);
@@ -770,16 +770,16 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 if (drillPos != null) {
                     world.destroyBlock(breakPos, true);
                     for (EntityItem entity : world.getEntitiesWithinAABB(
-                            EntityItem.class,
-                            new AxisAlignedBB(breakPos).expandXyz(1)
+                        EntityItem.class,
+                        new AxisAlignedBB(breakPos).expandXyz(1)
                     )) {
                         TransactorEntityItem transactor = new TransactorEntityItem(entity);
                         ItemStack stack;
                         while (!(stack = transactor.extract(
-                                StackFilter.ALL,
-                                0,
-                                Integer.MAX_VALUE,
-                                false
+                            StackFilter.ALL,
+                            0,
+                            Integer.MAX_VALUE,
+                            false
                         )).isEmpty()) {
                             InventoryUtil.addToBestAcceptor(world, pos, null, stack);
                         }
@@ -796,8 +796,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         @Override
         public boolean equals(Object o) {
             return this == o ||
-                    !(o == null || getClass() != o.getClass()) &&
-                            breakPos.equals(((TaskBreakBlock) o).breakPos);
+                !(o == null || getClass() != o.getClass()) &&
+                    breakPos.equals(((TaskBreakBlock) o).breakPos);
 
         }
     }
@@ -864,8 +864,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         @Override
         public boolean equals(Object o) {
             return this == o ||
-                    !(o == null || getClass() != o.getClass()) &&
-                            framePos.equals(((TaskAddFrame) o).framePos);
+                !(o == null || getClass() != o.getClass()) &&
+                    framePos.equals(((TaskAddFrame) o).framePos);
 
         }
     }
