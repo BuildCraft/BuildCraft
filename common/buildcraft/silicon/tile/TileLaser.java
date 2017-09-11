@@ -53,7 +53,7 @@ import buildcraft.silicon.BCSiliconBlocks;
 import buildcraft.silicon.client.render.AdvDebuggerLaser;
 
 public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable {
-    private List<BlockPos> possible;
+    private List<BlockPos> targetPositions;
     private BlockPos targetPos;
     private final AverageLong avgPower = new AverageLong(100);
     private long averageClient;
@@ -84,7 +84,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     }
 
     private void findPossibleTargets() {
-        possible = new ArrayList<>();
+        targetPositions = new ArrayList<>();
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() != BCSiliconBlocks.laser) {
             return;
@@ -99,36 +99,43 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             if (stateAt.getBlock() instanceof ILaserTargetBlock) {
                 TileEntity tileAt = world.getTileEntity(p);
                 if (tileAt instanceof ILaserTarget) {
-                    ILaserTarget targetAt = (ILaserTarget) tileAt;
-                    if (targetAt.getRequiredLaserPower() > 0) {
-                        possible.add(p);
-                    }
+                    targetPositions.add(p);
+
                 }
             }
         });
     }
 
     private void randomlyChooseTargetPos() {
-        if (possible.isEmpty()) {
+        List<BlockPos> targetsNeedingPower = new ArrayList<>();
+        for(BlockPos position: targetPositions) {
+            if (powerNeededAt(position)) {
+                targetsNeedingPower.add(position);
+            }
+        }
+        if (targetsNeedingPower.isEmpty()) {
             targetPos = null;
             return;
         }
-        targetPos = possible.get(world.rand.nextInt(possible.size()));
+        targetPos = targetsNeedingPower.get(world.rand.nextInt(targetsNeedingPower.size()));
+    }
+
+    private boolean powerNeededAt(BlockPos position) {
+        if (position != null) {
+            TileEntity tile = world.getTileEntity(position);
+            if (tile instanceof ILaserTarget) {
+                ILaserTarget target = (ILaserTarget) tile;
+                return target.getRequiredLaserPower() > 0;
+            }
+        }
+        return false;
     }
 
     private ILaserTarget getTarget() {
         if (targetPos != null) {
-            TileEntity tile = world.getTileEntity(targetPos);
-            if (tile instanceof ILaserTarget) {
-                ILaserTarget target = (ILaserTarget) tile;
-                return target.getRequiredLaserPower() > 0 ? target : null;
-            } else {
-                possible.remove(targetPos);
-                return null;
-            }
-        } else {
-            return null;
+            return (ILaserTarget) world.getTileEntity(targetPos);
         }
+        return null;
     }
 
     private void updateLaser() {
@@ -165,15 +172,15 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         avgPower.tick();
 
         BlockPos previousTargetPos = targetPos;
-        if (possible == null) {
+        if (targetPositions == null) {
             findPossibleTargets();
         }
 
-        if (getTarget() == null) {
+        if (!powerNeededAt(targetPos)) {
             targetPos = null;
         }
 
-        if (serverTargetMoveInterval.markTimeIfDelay(world) || getTarget() == null) {
+        if (serverTargetMoveInterval.markTimeIfDelay(world) || !powerNeededAt(targetPos)) {
             randomlyChooseTargetPos();
         }
 
