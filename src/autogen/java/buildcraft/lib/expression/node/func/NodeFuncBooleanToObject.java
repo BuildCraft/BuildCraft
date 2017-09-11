@@ -26,10 +26,10 @@ public class NodeFuncBooleanToObject<R> implements INodeFuncObject<R> {
     private final Class<R> returnType;
 
     public NodeFuncBooleanToObject(String name, Class<R> returnType, IFuncBooleanToObject<R> function) {
-        this(returnType, (a) -> "[ boolean -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a +  ")", function);
+        this(returnType, function, (a) -> "[ boolean -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a +  ")");
     }
 
-    public NodeFuncBooleanToObject(Class<R> returnType, StringFunctionBi stringFunction, IFuncBooleanToObject<R> function) {
+    public NodeFuncBooleanToObject(Class<R> returnType, IFuncBooleanToObject<R> function, StringFunctionBi stringFunction) {
         this.returnType = returnType;
 
         this.function = function;

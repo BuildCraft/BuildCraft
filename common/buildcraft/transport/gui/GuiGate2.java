@@ -2,9 +2,6 @@ package buildcraft.transport.gui;
 
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
-import buildcraft.lib.expression.node.value.NodeConstantLong;
-import buildcraft.lib.expression.node.value.NodeConstantObject;
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.misc.MessageUtil;
@@ -55,10 +52,10 @@ public class GuiGate2 extends GuiJson<ContainerGate2> {
 
         for (int s = 0; s < gate.variant.numSlots; s++) {
             final int i = s;
-            String tName = "gate.trigger[" + i + "]";
-            String aName = "gate.action[" + i + "]";
+            String tName = "gate.trigger/" + i;
+            String aName = "gate.action/" + i;
             properties.put(tName, gate.statements[i].trigger);
-            properties.put(aName, gate.statements[i].trigger);
+            properties.put(aName, gate.statements[i].action);
         }
     }
 

@@ -15,7 +15,7 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.api.NodeType2;
+import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
@@ -53,7 +53,7 @@ public class NodeStackRecording implements INodeStack {
     @Override
     public <T> INodeObject<T> popObject(Class<T> type) throws InvalidExpressionException {
         types.add(type);
-        NodeType2<T> nodeType = NodeTypes.getType(type);
+        NodeType<T> nodeType = NodeTypes.getType(type);
         if (nodeType == null) {
             throw new IllegalStateException("Unknown " + type);
         }

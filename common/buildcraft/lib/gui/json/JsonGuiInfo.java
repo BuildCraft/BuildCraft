@@ -38,8 +38,8 @@ public class JsonGuiInfo extends JsonVariableObject {
             for (Entry<String, JsonElement> entry : jElems.entrySet()) {
                 String name = entry.getKey();
                 JsonObject obj = (JsonObject) entry.getValue();
-                JsonGuiElement elem = new JsonGuiElement(obj, name, name, types);
-                elements.addAll(elem.iterate());
+                JsonGuiElement elem = new JsonGuiElement(obj, name, name, types, fnCtx);
+                elements.addAll(elem.iterate(fnCtx));
             }
         }
 
@@ -54,8 +54,7 @@ public class JsonGuiInfo extends JsonVariableObject {
                 variables.putAll(info.variables);
             } catch (Exception e) {
                 throw new JsonSyntaxException("Failed to load parent " + parent, e);
-            }
-            finally {
+            } finally {
                 loadHistory.finishLoading();
             }
         }
@@ -77,7 +76,7 @@ public class JsonGuiInfo extends JsonVariableObject {
             for (Entry<String, JsonElement> entry : jTypes.entrySet()) {
                 String name = entry.getKey();
                 JsonObject obj = (JsonObject) entry.getValue();
-                types.put(name, new JsonGuiElement(obj, name, name, types));
+                types.put(name, new JsonGuiElement(obj, name, name, types, fnCtx));
             }
         }
         if (json.has("elements")) {
@@ -85,8 +84,8 @@ public class JsonGuiInfo extends JsonVariableObject {
             for (Entry<String, JsonElement> entry : jElems.entrySet()) {
                 String name = entry.getKey();
                 JsonObject obj = (JsonObject) entry.getValue();
-                JsonGuiElement elem = new JsonGuiElement(obj, name, name, types);
-                elements.addAll(elem.iterate());
+                JsonGuiElement elem = new JsonGuiElement(obj, name, name, types, fnCtx);
+                elements.addAll(elem.iterate(fnCtx));
             }
         }
         finaliseVariables();

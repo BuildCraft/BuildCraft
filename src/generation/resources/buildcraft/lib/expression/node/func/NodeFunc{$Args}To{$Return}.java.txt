@@ -25,10 +25,10 @@ public class NodeFunc{$Args}To{$ReturnOnly}{$TypeArgs} implements INodeFunc{$Ret
     private final {$StringFunction} stringFunction;
 {$ObjectClassFields}
     public NodeFunc{$Args}To{$ReturnOnly}(String name, {$ObjectClassArgs}IFunc{$Args}To{$ReturnOnly}{$TypeArgs} function) {
-        this({$ObjectClassArgsPass}({$StringFunctionArgs}) -> "[ {$ToStringName} ] " + name + "(" + {$StringFunctionArgsPlus} ")", function);
+        this({$ObjectClassArgsPass}function, ({$StringFunctionArgs}) -> "[ {$ToStringName} ] " + name + "(" + {$StringFunctionArgsPlus} ")");
     }
 
-    public NodeFunc{$Args}To{$ReturnOnly}({$ObjectClassArgs}{$StringFunction} stringFunction, IFunc{$Args}To{$ReturnOnly}{$TypeArgs} function) {
+    public NodeFunc{$Args}To{$ReturnOnly}({$ObjectClassArgs}IFunc{$Args}To{$ReturnOnly}{$TypeArgs} function, {$StringFunction} stringFunction) {
 {$ObjectClassFieldSet}
         this.function = function;
         this.stringFunction = stringFunction;

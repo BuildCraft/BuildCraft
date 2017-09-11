@@ -20,6 +20,6 @@ public abstract class NodeVariable implements IVariableNode {
 
     @Override
     public String toString() {
-        return name + " = " + evaluateAsString();
+        return "variable: " + name + " = " + evaluateAsString();
     }
 }

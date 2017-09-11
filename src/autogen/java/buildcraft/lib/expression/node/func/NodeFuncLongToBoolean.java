@@ -25,10 +25,10 @@ public class NodeFuncLongToBoolean implements INodeFuncBoolean {
     private final StringFunctionBi stringFunction;
 
     public NodeFuncLongToBoolean(String name, IFuncLongToBoolean function) {
-        this((a) -> "[ long -> boolean ] " + name + "(" + a +  ")", function);
+        this(function, (a) -> "[ long -> boolean ] " + name + "(" + a +  ")");
     }
 
-    public NodeFuncLongToBoolean(StringFunctionBi stringFunction, IFuncLongToBoolean function) {
+    public NodeFuncLongToBoolean(IFuncLongToBoolean function, StringFunctionBi stringFunction) {
 
         this.function = function;
         this.stringFunction = stringFunction;

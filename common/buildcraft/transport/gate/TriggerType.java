@@ -27,12 +27,15 @@ public class TriggerType extends StatementType<TriggerWrapper> {
             return null;
         }
         String kind = nbt.getString("kind");
+        if (kind == null || kind.isEmpty()) {
+            return null;
+        }
         EnumPipePart side = EnumPipePart.fromMeta(nbt.getByte("side"));
         IStatement statement = StatementManager.statements.get(kind);
         if (statement instanceof ITrigger) {
             return TriggerWrapper.wrap(statement, side.face);
         }
-        BCLog.logger.warn("[gate.trigger] Couldn't find a trigger called '%s'! (found %s)", kind, statement);
+        BCLog.logger.warn("[gate.trigger] Couldn't find a trigger called '{}'! (found {})", kind, statement);
         return null;
     }
 

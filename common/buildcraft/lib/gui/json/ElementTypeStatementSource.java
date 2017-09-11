@@ -22,7 +22,7 @@ public class ElementTypeStatementSource extends ElementType {
 
     @Override
     public IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
-        FunctionContext ctx = createContext(gui, json);
+        FunctionContext ctx = createContext(json);
 
         String source = json.properties.get("source");
 

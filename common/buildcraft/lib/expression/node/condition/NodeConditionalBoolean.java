@@ -29,12 +29,17 @@ public class NodeConditionalBoolean implements INodeBoolean {
         INodeBoolean c = condition.inline();
         INodeBoolean t = ifTrue.inline();
         INodeBoolean f = ifFalse.inline();
-        if (c instanceof NodeConstantBoolean && t instanceof NodeConstantBoolean && f instanceof NodeConstantBoolean) {
-            return NodeConstantBoolean.of(((NodeConstantBoolean) c).value ? ((NodeConstantBoolean) t).value : ((NodeConstantBoolean) f).value);
+        if (c instanceof NodeConstantBoolean) {
+            return ((NodeConstantBoolean) c).value ? t : f;
         } else if (c != condition || t != ifTrue || f != ifFalse) {
             return new NodeConditionalBoolean(c, t, f);
         } else {
             return this;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "(" + condition + ") ? (" + ifTrue + ") : (" + ifFalse + ")";
     }
 }

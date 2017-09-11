@@ -8,11 +8,20 @@ import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.util.JsonUtils;
 
+import buildcraft.api.core.BCLog;
+
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.GenericExpressionCompiler;
+import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
+import buildcraft.lib.expression.api.InvalidExpressionException;
+import buildcraft.lib.expression.node.value.NodeVariableLong;
+
 public class JsonGuiIterator {
     public final String name;
     public final String start;
-    public final String end;
     public final String step;
+    public final String shouldContinue;
 
     @Nullable
     public final JsonGuiIterator childIterator;
@@ -22,8 +31,14 @@ public class JsonGuiIterator {
             JsonObject obj = element.getAsJsonObject();
             name = JsonUtils.getString(obj, "name", "index");
             start = JsonUtils.getString(obj, "start", "0");
-            end = JsonUtils.getString(obj, "end");
             step = JsonUtils.getString(obj, "step", "1");
+            if (obj.has("while")) {
+                shouldContinue = JsonUtils.getString(obj, "while");
+            } else {
+                String end = JsonUtils.getString(obj, "end");
+                shouldContinue = "step > 0 ? ($name <= $end) : ($name >= $end)"//
+                    .replace("$end", end).replace("$name", name);
+            }
             if (obj.has("iterator")) {
                 childIterator = new JsonGuiIterator(obj.get("iterator"));
             } else {
@@ -34,14 +49,16 @@ public class JsonGuiIterator {
             name = iter.substring(0, iter.indexOf('=')).trim();
             String bounds = iter.substring(iter.indexOf('=') + 1);
             start = bounds.substring(0, bounds.indexOf(',')).trim().replace(" ", "");
-            end = bounds.substring(bounds.indexOf(',') + 1).trim().replace(" ", "");
+            String end = bounds.substring(bounds.indexOf(',') + 1).trim().replace(" ", "");
             try {
                 int s = Integer.parseInt(start.substring(1)) + (start.startsWith("(") ? 1 : 0);
                 int e = Integer.parseInt(end.substring(0, end.length() - 1)) - (end.endsWith(")") ? 1 : 0);
                 if (s < e) {
                     step = "1";
+                    shouldContinue = name + " <= " + e;
                 } else if (s > e) {
                     step = "-1";
+                    shouldContinue = name + " >= " + e;
                 } else {
                     throw new JsonSyntaxException("Don't iterate statically from a value to itself!");
                 }
@@ -51,6 +68,83 @@ public class JsonGuiIterator {
             childIterator = null;
         } else {
             throw new JsonSyntaxException("Expected an object or a string, got " + element);
+        }
+    }
+
+    public class ResolvedIterator {
+        public final long valStart;
+        public final INodeLong valStep;
+        public final INodeBoolean valShouldContinue;
+        public final NodeVariableLong value;
+        private int count = 0;
+
+        @Nullable
+        public final ResolvedIterator child;
+
+        public ResolvedIterator(FunctionContext ctx) {
+            try {
+                valStart = GenericExpressionCompiler.compileExpressionLong(start, ctx).evaluate();
+                ctx = new FunctionContext(ctx);
+                ctx.putConstantLong("start", valStart);
+                value = ctx.putVariableLong(name);
+                value.value = valStart;
+                valStep = GenericExpressionCompiler.compileExpressionLong(step, ctx);
+                ctx.putVariable("step", valStep);
+                valShouldContinue = GenericExpressionCompiler.compileExpressionBoolean(shouldContinue, ctx);
+                BCLog.logger
+                    .info("[lib.gui.json] Compiled while statement '" + shouldContinue + "' to " + valShouldContinue);
+            } catch (InvalidExpressionException iee) {
+                throw new JsonSyntaxException("Invalid iterator!", iee);
+            }
+            if (childIterator == null) {
+                child = null;
+            } else {
+                child = childIterator.new ResolvedIterator(ctx);
+            }
+        }
+
+        public boolean start() {
+            value.value = valStart;
+            boolean canIterate = valShouldContinue.evaluate();
+            if (child != null) {
+                canIterate &= child.start();
+            }
+            return canIterate;
+        }
+
+        /** @return True if the iteration has finished, false if not.
+         * @throws JsonSyntaxException if {@link #count} exceded 1000 */
+        public boolean iterate() {
+            count++;
+            if (count > 1000) {
+                throw new JsonSyntaxException("Too many total iterations (max 1000)!");
+            }
+            ResolvedIterator c = child;
+            if (c != null) {
+                if (!c.iterate()) {
+                    return false;
+                }
+                c.value.value = c.valStart;
+            }
+            long stepValue = valStep.evaluate();
+            if (stepValue == 0) {
+                throw new JsonSyntaxException("Step was 0!");
+            }
+            BCLog.logger.info("Step " + count + ", " + name + " = " + value.value);
+            value.value += stepValue;
+            return !valShouldContinue.evaluate();
+        }
+
+        private JsonGuiIterator getJson() {
+            return JsonGuiIterator.this;
+        }
+
+        public void putProperties(FunctionContext ctx) {
+            ResolvedIterator iter = this;
+            while (iter != null) {
+                ctx.putConstantLong(iter.getJson().name, iter.value.value);
+                iter = iter.child;
+            }
         }
     }
 }

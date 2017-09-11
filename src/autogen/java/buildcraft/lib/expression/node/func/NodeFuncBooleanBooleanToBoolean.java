@@ -25,10 +25,10 @@ public class NodeFuncBooleanBooleanToBoolean implements INodeFuncBoolean {
     private final StringFunctionTri stringFunction;
 
     public NodeFuncBooleanBooleanToBoolean(String name, IFuncBooleanBooleanToBoolean function) {
-        this((a, b) -> "[ boolean, boolean -> boolean ] " + name + "(" + a + ", " + b +  ")", function);
+        this(function, (a, b) -> "[ boolean, boolean -> boolean ] " + name + "(" + a + ", " + b +  ")");
     }
 
-    public NodeFuncBooleanBooleanToBoolean(StringFunctionTri stringFunction, IFuncBooleanBooleanToBoolean function) {
+    public NodeFuncBooleanBooleanToBoolean(IFuncBooleanBooleanToBoolean function, StringFunctionTri stringFunction) {
 
         this.function = function;
         this.stringFunction = stringFunction;

@@ -27,10 +27,10 @@ public class NodeFuncObjectObjectToDouble<A, B> implements INodeFuncDouble {
     private final Class<B> argTypeB;
 
     public NodeFuncObjectObjectToDouble(String name, Class<A> argTypeA, Class<B> argTypeB, IFuncObjectObjectToDouble<A, B> function) {
-        this(argTypeA, argTypeB, (a, b) -> "[ " + NodeTypes.getName(argTypeA) + ", " + NodeTypes.getName(argTypeB) + " -> double ] " + name + "(" + a + ", " + b +  ")", function);
+        this(argTypeA, argTypeB, function, (a, b) -> "[ " + NodeTypes.getName(argTypeA) + ", " + NodeTypes.getName(argTypeB) + " -> double ] " + name + "(" + a + ", " + b +  ")");
     }
 
-    public NodeFuncObjectObjectToDouble(Class<A> argTypeA, Class<B> argTypeB, StringFunctionTri stringFunction, IFuncObjectObjectToDouble<A, B> function) {
+    public NodeFuncObjectObjectToDouble(Class<A> argTypeA, Class<B> argTypeB, IFuncObjectObjectToDouble<A, B> function, StringFunctionTri stringFunction) {
         this.argTypeA = argTypeA;
         this.argTypeB = argTypeB;
 

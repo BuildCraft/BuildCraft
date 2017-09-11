@@ -25,7 +25,7 @@ public class ElementTypeSlot extends ElementType {
 
     @Override
     protected IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
-        FunctionContext ctx = createContext(gui, json);
+        FunctionContext ctx = createContext(json);
 
         String slotName = json.properties.get("slot");
         IGuiPosition pos = resolvePosition(json, "pos", parent, ctx);

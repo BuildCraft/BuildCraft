@@ -25,10 +25,10 @@ public class NodeFuncLongToLong implements INodeFuncLong {
     private final StringFunctionBi stringFunction;
 
     public NodeFuncLongToLong(String name, IFuncLongToLong function) {
-        this((a) -> "[ long -> long ] " + name + "(" + a +  ")", function);
+        this(function, (a) -> "[ long -> long ] " + name + "(" + a +  ")");
     }
 
-    public NodeFuncLongToLong(StringFunctionBi stringFunction, IFuncLongToLong function) {
+    public NodeFuncLongToLong(IFuncLongToLong function, StringFunctionBi stringFunction) {
 
         this.function = function;
         this.stringFunction = stringFunction;

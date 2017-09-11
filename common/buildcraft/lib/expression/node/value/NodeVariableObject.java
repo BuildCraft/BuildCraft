@@ -7,7 +7,7 @@
 package buildcraft.lib.expression.node.value;
 
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeObject;
-import buildcraft.lib.expression.api.NodeType2;
+import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.api.NodeTypes;
 
 public class NodeVariableObject<T> extends NodeVariable implements IVariableNodeObject<T> {
@@ -17,7 +17,7 @@ public class NodeVariableObject<T> extends NodeVariable implements IVariableNode
     public NodeVariableObject(String name, Class<T> type) {
         super(name);
         this.type = type;
-        NodeType2<T> nodeType = NodeTypes.getType(type);
+        NodeType<T> nodeType = NodeTypes.getType(type);
         if (nodeType == null) {
             throw new IllegalArgumentException("Unknown NodeType " + type);
         }

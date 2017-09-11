@@ -26,6 +26,7 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc;
+import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
@@ -443,17 +444,35 @@ public class InternalCompiler {
                 }
                 INodeFunc caster;
                 if (from == long.class && to == INodeLong.class) {
-                    caster = s -> new NodeConstantObject<>(INodeLong.class, s.popLong());
+                    caster = new NodeFuncWrapper() {
+                        @Override
+                        public IExpressionNode getNode(INodeStack s) throws InvalidExpressionException {
+                            return new NodeConstantObject<>(INodeLong.class, s.popLong());
+                        }
+                    };
                 } else if (from == double.class && to == INodeDouble.class) {
-                    caster = s -> new NodeConstantObject<>(INodeDouble.class, s.popDouble());
+                    caster = new NodeFuncWrapper() {
+                        @Override
+                        public IExpressionNode getNode(INodeStack s) throws InvalidExpressionException {
+                            return new NodeConstantObject<>(INodeDouble.class, s.popDouble());
+                        }
+                    };
                 } else if (from == long.class && to == INodeDouble.class) {
-                    caster = s -> {
-                        INodeLong node = s.popLong();
-                        INodeDouble nodeD = new NodeCastLongToDouble(node);
-                        return new NodeConstantObject<>(INodeDouble.class, nodeD.inline());
+                    caster = new NodeFuncWrapper() {
+                        @Override
+                        public IExpressionNode getNode(INodeStack s) throws InvalidExpressionException {
+                            INodeLong node = s.popLong();
+                            INodeDouble nodeD = new NodeCastLongToDouble(node);
+                            return new NodeConstantObject<>(INodeDouble.class, nodeD.inline());
+                        }
                     };
                 } else if (from == boolean.class && to == INodeBoolean.class) {
-                    caster = s -> new NodeConstantObject<>(INodeBoolean.class, s.popBoolean());
+                    caster = new NodeFuncWrapper() {
+                        @Override
+                        public IExpressionNode getNode(INodeStack s) throws InvalidExpressionException {
+                            return new NodeConstantObject<>(INodeBoolean.class, s.popBoolean());
+                        }
+                    };
                 } else {
                     FunctionContext castingCtx =
                         new FunctionContext(NodeTypes.getContext(from), NodeTypes.getContext(to));
@@ -535,5 +554,14 @@ public class InternalCompiler {
     private static FunctionContext getContext(String type) throws InvalidExpressionException {
         Class<?> clazz = NodeTypes.getType(type);
         return NodeTypes.getType(clazz);
+    }
+
+    /** Provided for wrapping types -- such as long -> INodeLong (Specifically INodeLong ->
+     * INodeObject{@code <INodeLong>}) */
+    private static abstract class NodeFuncWrapper implements INodeFunc {
+        @Override
+        public String toString() {
+            return "[Internal Type Wrapper]";
+        }
     }
 }

@@ -30,10 +30,10 @@ public class NodeFuncObjectObjectObjectObjectToObject<A, B, C, D, R> implements 
     private final Class<R> returnType;
 
     public NodeFuncObjectObjectObjectObjectToObject(String name, Class<A> argTypeA, Class<B> argTypeB, Class<C> argTypeC, Class<D> argTypeD, Class<R> returnType, IFuncObjectObjectObjectObjectToObject<A, B, C, D, R> function) {
-        this(argTypeA, argTypeB, argTypeC, argTypeD, returnType, (a, b, c, d) -> "[ " + NodeTypes.getName(argTypeA) + ", " + NodeTypes.getName(argTypeB) + ", " + NodeTypes.getName(argTypeC) + ", " + NodeTypes.getName(argTypeD) + " -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a + ", " + b + ", " + c + ", " + d +  ")", function);
+        this(argTypeA, argTypeB, argTypeC, argTypeD, returnType, function, (a, b, c, d) -> "[ " + NodeTypes.getName(argTypeA) + ", " + NodeTypes.getName(argTypeB) + ", " + NodeTypes.getName(argTypeC) + ", " + NodeTypes.getName(argTypeD) + " -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a + ", " + b + ", " + c + ", " + d +  ")");
     }
 
-    public NodeFuncObjectObjectObjectObjectToObject(Class<A> argTypeA, Class<B> argTypeB, Class<C> argTypeC, Class<D> argTypeD, Class<R> returnType, StringFunctionPenta stringFunction, IFuncObjectObjectObjectObjectToObject<A, B, C, D, R> function) {
+    public NodeFuncObjectObjectObjectObjectToObject(Class<A> argTypeA, Class<B> argTypeB, Class<C> argTypeC, Class<D> argTypeD, Class<R> returnType, IFuncObjectObjectObjectObjectToObject<A, B, C, D, R> function, StringFunctionPenta stringFunction) {
         this.argTypeA = argTypeA;
         this.argTypeB = argTypeB;
         this.argTypeC = argTypeC;

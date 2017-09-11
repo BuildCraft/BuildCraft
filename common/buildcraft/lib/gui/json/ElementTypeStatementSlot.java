@@ -1,5 +1,7 @@
 package buildcraft.lib.gui.json;
 
+import com.google.gson.JsonSyntaxException;
+
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.GuiRectangle;
@@ -24,7 +26,7 @@ public class ElementTypeStatementSlot extends ElementType {
 
     @Override
     public IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
-        FunctionContext ctx = createContext(gui, json);
+        FunctionContext ctx = createContext(json);
 
         inheritProperty(json, "area[0]", "pos[0]");
         inheritProperty(json, "area[1]", "pos[1]");
@@ -36,7 +38,15 @@ public class ElementTypeStatementSlot extends ElementType {
         int sizeX = resolveEquationInt(json, "size[0]", ctx);
         int sizeY = resolveEquationInt(json, "size[1]", ctx);
 
-        String source = json.properties.get("source");
+        String source;
+        if (json.properties.containsKey("source")) {
+            source = json.properties.get("source");
+        } else {
+            source = resolveEquation(json, "source_expression", ctx);
+            if (source == null) {
+                throw new JsonSyntaxException("Expected either 'source' or 'source_expression' for " + NAME);
+            }
+        }
 
         boolean draw = !"false".equals(json.properties.get("draw"));
 

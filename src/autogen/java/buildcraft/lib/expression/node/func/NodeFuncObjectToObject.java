@@ -27,10 +27,10 @@ public class NodeFuncObjectToObject<A, R> implements INodeFuncObject<R> {
     private final Class<R> returnType;
 
     public NodeFuncObjectToObject(String name, Class<A> argTypeA, Class<R> returnType, IFuncObjectToObject<A, R> function) {
-        this(argTypeA, returnType, (a) -> "[ " + NodeTypes.getName(argTypeA) + " -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a +  ")", function);
+        this(argTypeA, returnType, function, (a) -> "[ " + NodeTypes.getName(argTypeA) + " -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a +  ")");
     }
 
-    public NodeFuncObjectToObject(Class<A> argTypeA, Class<R> returnType, StringFunctionBi stringFunction, IFuncObjectToObject<A, R> function) {
+    public NodeFuncObjectToObject(Class<A> argTypeA, Class<R> returnType, IFuncObjectToObject<A, R> function, StringFunctionBi stringFunction) {
         this.argTypeA = argTypeA;
         this.returnType = returnType;
 

@@ -96,6 +96,13 @@ public class NodeTypeBase_Adder extends AutoGenerateFile {
                 method += "\n\t\treturn put_{$a}_{$r}(name, {$ObjectClassArgsPass2}func);";
                 method.replace(" ", " ");
                 method += "\n\t}\n";
+
+                method += "\n\tpublic {$TypeArgs2} INodeFunc{$Return} put_{$a2}_{$r2}("
+                    + "String name{$ObjectClassArgs2}IFunc{$Args}To{$ReturnOnly}{$TypeArgsPass2} func, {$StringFunction} stringFunction) {";
+                method += "\n\t\treturn put_{$a}_{$r}(name, {$ObjectClassArgsPass2}func, stringFunction);";
+                method.replace(" ", " ");
+                method += "\n\t}\n";
+
                 method = replaceAll(method, map);
 
                 replace += method;

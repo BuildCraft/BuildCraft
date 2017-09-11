@@ -18,6 +18,11 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.util.JsonUtils;
 
+import buildcraft.api.core.BCLog;
+
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.gui.json.JsonGuiIterator.ResolvedIterator;
+
 public class JsonGuiElement {
     public final String name;
     public final String fullName;
@@ -29,16 +34,22 @@ public class JsonGuiElement {
     public final Map<String, String> properties = new LinkedHashMap<>();
     @Nullable
     public final JsonGuiIterator iterator;
+    public final FunctionContext context;
 
-    private JsonGuiElement(String name, String fullName, Map<String, String> properties) {
+    private JsonGuiElement(String name, String fullName, Map<String, String> properties, JsonGuiIterator iter,
+        FunctionContext context) {
         this.name = name;
         this.fullName = fullName;
         this.properties.putAll(properties);
+        this.iterator = iter;
+        this.context = new FunctionContext(context);
     }
 
-    public JsonGuiElement(JsonObject json, String name, String fullName, Map<String, JsonGuiElement> typeLookup) {
+    public JsonGuiElement(JsonObject json, String name, String fullName, Map<String, JsonGuiElement> typeLookup,
+        FunctionContext context) {
         this.name = name;
         this.fullName = fullName;
+        this.context = new FunctionContext(context);
         String str = JsonUtils.getString(json, "type", null);
         if (str != null) {
             JsonGuiElement parent = typeLookup.get(str);
@@ -53,6 +64,11 @@ public class JsonGuiElement {
             }
             JsonElement value = entry.getValue();
             putProperties(key, value);
+        }
+        if (json.has("iterator")) {
+            iterator = new JsonGuiIterator(json.get("iterator"));
+        } else {
+            iterator = null;
         }
     }
 
@@ -74,30 +90,21 @@ public class JsonGuiElement {
         }
     }
 
-    public List<JsonGuiElement> iterate() {
+    public List<JsonGuiElement> iterate(FunctionContext fnCtx) {
         List<JsonGuiElement> list = new ArrayList<>();
         if (iterator == null) {
             list.add(this);
         } else {
-            // TODO: Iterate!
-        }
-        if (!properties.containsKey("iterator")) {
-            list.add(this);
-        } else {
-            String iter = properties.get("iterator");
-            // TODO: Parse this properly!
-            String iterName = iter.substring(0, iter.indexOf('=')).trim();
-            String bounds = iter.substring(iter.indexOf('=') + 1);
-            String lower = bounds.substring(0, bounds.indexOf(',')).trim().replace(" ", "");
-            String upper = bounds.substring(bounds.indexOf(',') + 1).trim().replace(" ", "");
-            int l = Integer.parseInt(lower.substring(1)) + (lower.startsWith("(") ? 1 : 0);
-            int u = Integer.parseInt(upper.substring(0, upper.length() - 1)) - (upper.endsWith(")") ? 1 : 0);
-            if (u >= l) {
-                for (int i = l; i <= u; i++) {
-                    JsonGuiElement elem = new JsonGuiElement(name, fullName, properties);
-                    elem.properties.put(iterName, Integer.toString(i));
+            ResolvedIterator resolvedIterator = iterator.new ResolvedIterator(fnCtx);
+            if (resolvedIterator.start()) {
+                do {
+                    JsonGuiElement elem = new JsonGuiElement(name, fullName, properties, null, context);
+                    resolvedIterator.putProperties(elem.context);
                     list.add(elem);
-                }
+                } while (!resolvedIterator.iterate());
+            } else {
+                BCLog.logger
+                    .info("[lib.gui.json] Skipping " + fullName + " as its condition didn't include its start!");
             }
         }
         return list;
@@ -137,7 +144,8 @@ public class JsonGuiElement {
                 props2.put("type", parent.properties.get("type"));
                 childProperties = props2;
             }
-            list.add(new JsonGuiElement(childName, fullName + "." + childName, childProperties));
+            // TODO: Allow children to iterate!
+            list.add(new JsonGuiElement(childName, fullName + "." + childName, childProperties, null, context));
         }
         return list;
     }

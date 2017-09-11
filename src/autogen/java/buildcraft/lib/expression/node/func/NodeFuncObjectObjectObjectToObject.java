@@ -29,10 +29,10 @@ public class NodeFuncObjectObjectObjectToObject<A, B, C, R> implements INodeFunc
     private final Class<R> returnType;
 
     public NodeFuncObjectObjectObjectToObject(String name, Class<A> argTypeA, Class<B> argTypeB, Class<C> argTypeC, Class<R> returnType, IFuncObjectObjectObjectToObject<A, B, C, R> function) {
-        this(argTypeA, argTypeB, argTypeC, returnType, (a, b, c) -> "[ " + NodeTypes.getName(argTypeA) + ", " + NodeTypes.getName(argTypeB) + ", " + NodeTypes.getName(argTypeC) + " -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a + ", " + b + ", " + c +  ")", function);
+        this(argTypeA, argTypeB, argTypeC, returnType, function, (a, b, c) -> "[ " + NodeTypes.getName(argTypeA) + ", " + NodeTypes.getName(argTypeB) + ", " + NodeTypes.getName(argTypeC) + " -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a + ", " + b + ", " + c +  ")");
     }
 
-    public NodeFuncObjectObjectObjectToObject(Class<A> argTypeA, Class<B> argTypeB, Class<C> argTypeC, Class<R> returnType, StringFunctionQuad stringFunction, IFuncObjectObjectObjectToObject<A, B, C, R> function) {
+    public NodeFuncObjectObjectObjectToObject(Class<A> argTypeA, Class<B> argTypeB, Class<C> argTypeC, Class<R> returnType, IFuncObjectObjectObjectToObject<A, B, C, R> function, StringFunctionQuad stringFunction) {
         this.argTypeA = argTypeA;
         this.argTypeB = argTypeB;
         this.argTypeC = argTypeC;

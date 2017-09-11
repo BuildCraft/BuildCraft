@@ -25,10 +25,10 @@ public class NodeFuncDoubleDoubleToDouble implements INodeFuncDouble {
     private final StringFunctionTri stringFunction;
 
     public NodeFuncDoubleDoubleToDouble(String name, IFuncDoubleDoubleToDouble function) {
-        this((a, b) -> "[ double, double -> double ] " + name + "(" + a + ", " + b +  ")", function);
+        this(function, (a, b) -> "[ double, double -> double ] " + name + "(" + a + ", " + b +  ")");
     }
 
-    public NodeFuncDoubleDoubleToDouble(StringFunctionTri stringFunction, IFuncDoubleDoubleToDouble function) {
+    public NodeFuncDoubleDoubleToDouble(IFuncDoubleDoubleToDouble function, StringFunctionTri stringFunction) {
 
         this.function = function;
         this.stringFunction = stringFunction;

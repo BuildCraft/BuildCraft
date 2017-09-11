@@ -35,29 +35,29 @@ public class NodeTypes {
     public static final FunctionContext LONG;
     public static final FunctionContext DOUBLE;
     public static final FunctionContext BOOLEAN;
-    public static final NodeType2<String> STRING;
-    public static final NodeType2<VecLong> VEC_LONG;
-    public static final NodeType2<VecDouble> VEC_DOUBLE;
-    public static final NodeType2<INodeLong> NODE_LONG;
-    public static final NodeType2<INodeDouble> NODE_DOUBLE;
-    public static final NodeType2<INodeBoolean> NODE_BOOLEAN;
+    public static final NodeType<String> STRING;
+    public static final NodeType<VecLong> VEC_LONG;
+    public static final NodeType<VecDouble> VEC_DOUBLE;
+    public static final NodeType<INodeLong> NODE_LONG;
+    public static final NodeType<INodeDouble> NODE_DOUBLE;
+    public static final NodeType<INodeBoolean> NODE_BOOLEAN;
 
     private static final Map<String, Class<?>> typesByName = new HashMap<>();
     private static final Map<Class<?>, String> namesByType = new HashMap<>();
 
     /** All of the OBJECT types. Unlike {@link #typesByName} that this doesn't include long, double, or boolean */
-    public static final BiMap<Class<?>, NodeType2<?>> typesByClass = HashBiMap.create();
+    public static final BiMap<Class<?>, NodeType<?>> typesByClass = HashBiMap.create();
 
     static {
         LONG = new FunctionContext();
         DOUBLE = new FunctionContext();
         BOOLEAN = new FunctionContext();
-        STRING = new NodeType2<>("");
-        VEC_LONG = new NodeType2<>(VecLong.ZERO);
-        VEC_DOUBLE = new NodeType2<>(VecDouble.ZERO);
-        NODE_LONG = new NodeType2<>(INodeLong.class, NodeConstantLong.ZERO);
-        NODE_DOUBLE = new NodeType2<>(INodeDouble.class, NodeConstantDouble.ZERO);
-        NODE_BOOLEAN = new NodeType2<>(INodeBoolean.class, NodeConstantBoolean.FALSE);
+        STRING = new NodeType<>("");
+        VEC_LONG = new NodeType<>(VecLong.ZERO);
+        VEC_DOUBLE = new NodeType<>(VecDouble.ZERO);
+        NODE_LONG = new NodeType<>(INodeLong.class, NodeConstantLong.ZERO);
+        NODE_DOUBLE = new NodeType<>(INodeDouble.class, NodeConstantDouble.ZERO);
+        NODE_BOOLEAN = new NodeType<>(INodeBoolean.class, NodeConstantBoolean.FALSE);
 
         typesByName.put("long", long.class);
         typesByName.put("double", double.class);
@@ -72,64 +72,64 @@ public class NodeTypes {
         addType("NodeDouble", NODE_DOUBLE);
         addType("NodeBoolean", NODE_BOOLEAN);
 
-        LONG.put_l_l("-", (a) -> -a);
-        LONG.put_l_l("~", (a) -> ~a);
-        LONG.put_ll_l("+", (a, b) -> a + b);
-        LONG.put_ll_l("-", (a, b) -> a - b);
-        LONG.put_ll_l("*", (a, b) -> a * b);
-        LONG.put_ll_l("/", (a, b) -> a / b);
-        LONG.put_ll_l("%", (a, b) -> a % b);
-        LONG.put_ll_l("^", (a, b) -> a ^ b);
-        LONG.put_ll_l("&", (a, b) -> a & b);
-        LONG.put_ll_l("|", (a, b) -> a | b);
-        LONG.put_ll_b("<", (a, b) -> a < b);
-        LONG.put_ll_b(">", (a, b) -> a > b);
-        LONG.put_ll_b("<=", (a, b) -> a <= b);
-        LONG.put_ll_b(">=", (a, b) -> a >= b);
-        LONG.put_ll_b("==", (a, b) -> a == b);
-        LONG.put_ll_b("!=", (a, b) -> a != b);
-        LONG.put_ll_l("<<", (a, b) -> a << b);
-        LONG.put_ll_l(">>", (a, b) -> a >> b);
-        LONG.put_ll_l(">>>", (a, b) -> a >>> b);
-        LONG.put_l_d("(double)", a -> a);
-        LONG.put_l_o("(string)", String.class, a -> "" + a);
+        LONG.put_l_l("-", (a) -> -a, a -> "-(" + a + ")");
+        LONG.put_l_l("~", (a) -> ~a, a -> "~(" + a + ")");
+        LONG.put_ll_l("+", (a, b) -> a + b, (a, b) -> "(" + a + " + " + b + ")");
+        LONG.put_ll_l("-", (a, b) -> a - b, (a, b) -> "(" + a + " - " + b + ")");
+        LONG.put_ll_l("*", (a, b) -> a * b, (a, b) -> "(" + a + " * " + b + ")");
+        LONG.put_ll_l("/", (a, b) -> a / b, (a, b) -> "(" + a + " / " + b + ")");
+        LONG.put_ll_l("%", (a, b) -> a % b, (a, b) -> "(" + a + " % " + b + ")");
+        LONG.put_ll_l("^", (a, b) -> a ^ b, (a, b) -> "(" + a + " ^ " + b + ")");
+        LONG.put_ll_l("&", (a, b) -> a & b, (a, b) -> "(" + a + " & " + b + ")");
+        LONG.put_ll_l("|", (a, b) -> a | b, (a, b) -> "(" + a + " | " + b + ")");
+        LONG.put_ll_b("<", (a, b) -> a < b, (a, b) -> "(" + a + " < " + b + ")");
+        LONG.put_ll_b(">", (a, b) -> a > b, (a, b) -> "(" + a + " > " + b + ")");
+        LONG.put_ll_b("<=", (a, b) -> a <= b, (a, b) -> "(" + a + " <= " + b + ")");
+        LONG.put_ll_b(">=", (a, b) -> a >= b, (a, b) -> "(" + a + " >= " + b + ")");
+        LONG.put_ll_b("==", (a, b) -> a == b, (a, b) -> "(" + a + " == " + b + ")");
+        LONG.put_ll_b("!=", (a, b) -> a != b, (a, b) -> "(" + a + " != " + b + ")");
+        LONG.put_ll_l("<<", (a, b) -> a << b, (a, b) -> "(" + a + " << " + b + ")");
+        LONG.put_ll_l(">>", (a, b) -> a >> b, (a, b) -> "(" + a + " >> " + b + ")");
+        LONG.put_ll_l(">>>", (a, b) -> a >>> b, (a, b) -> a + " >>> " + b);
+        LONG.put_l_d("(double)", a -> a, (a) -> "((double) " + a + ")");
+        LONG.put_l_o("(string)", String.class, a -> "" + a, (a) -> "((string) " + a + ")");
 
-        DOUBLE.put_d_d("-", (a) -> -a);
-        DOUBLE.put_dd_d("+", (a, b) -> a + b);
-        DOUBLE.put_dd_d("-", (a, b) -> a - b);
-        DOUBLE.put_dd_d("*", (a, b) -> a * b);
-        DOUBLE.put_dd_d("/", (a, b) -> a / b);
-        DOUBLE.put_dd_d("%", (a, b) -> a % b);
-        DOUBLE.put_dd_b("<", (a, b) -> a < b);
-        DOUBLE.put_dd_b(">", (a, b) -> a > b);
-        DOUBLE.put_dd_b("<=", (a, b) -> a <= b);
-        DOUBLE.put_dd_b(">=", (a, b) -> a >= b);
-        DOUBLE.put_dd_b("==", (a, b) -> a == b);
-        DOUBLE.put_dd_b("!=", (a, b) -> a != b);
-        DOUBLE.put_d_o("(string)", String.class, a -> "" + a);
+        DOUBLE.put_d_d("-", (a) -> -a, a -> "-" + a);
+        DOUBLE.put_dd_d("+", (a, b) -> a + b, (a, b) -> "(" + a + " + " + b + ")");
+        DOUBLE.put_dd_d("-", (a, b) -> a - b, (a, b) -> "(" + a + " - " + b + ")");
+        DOUBLE.put_dd_d("*", (a, b) -> a * b, (a, b) -> "(" + a + " * " + b + ")");
+        DOUBLE.put_dd_d("/", (a, b) -> a / b, (a, b) -> "(" + a + " / " + b + ")");
+        DOUBLE.put_dd_d("%", (a, b) -> a % b, (a, b) -> "(" + a + " % " + b + ")");
+        DOUBLE.put_dd_b("<", (a, b) -> a < b, (a, b) -> "(" + a + " < " + b + ")");
+        DOUBLE.put_dd_b(">", (a, b) -> a > b, (a, b) -> "(" + a + " > " + b + ")");
+        DOUBLE.put_dd_b("<=", (a, b) -> a <= b, (a, b) -> "(" + a + " <= " + b + ")");
+        DOUBLE.put_dd_b(">=", (a, b) -> a >= b, (a, b) -> "(" + a + " >= " + b + ")");
+        DOUBLE.put_dd_b("==", (a, b) -> a == b, (a, b) -> "(" + a + " == " + b + ")");
+        DOUBLE.put_dd_b("!=", (a, b) -> a != b, (a, b) -> "(" + a + " != " + b + ")");
+        DOUBLE.put_d_o("(string)", String.class, a -> "" + a, (a) -> "((string) " + a + ")");
 
-        BOOLEAN.put_b_b("!", (a) -> !a);
-        BOOLEAN.put_bb_b("^", (a, b) -> a ^ b);
-        BOOLEAN.put_bb_b("&", (a, b) -> a & b);
-        BOOLEAN.put_bb_b("|", (a, b) -> a | b);
-        BOOLEAN.put_bb_b("&&", (a, b) -> a && b);
-        BOOLEAN.put_bb_b("||", (a, b) -> a || b);
-        BOOLEAN.put_bb_b("==", (a, b) -> a == b);
-        BOOLEAN.put_bb_b("!=", (a, b) -> a != b);
-        BOOLEAN.put_b_o("(string)", String.class, a -> "" + a);
+        BOOLEAN.put_b_b("!", (a) -> !a, a -> "!" + a);
+        BOOLEAN.put_bb_b("^", (a, b) -> a ^ b, (a, b) -> "(" + a + "^" + b + ")");
+        BOOLEAN.put_bb_b("&", (a, b) -> a & b, (a, b) -> "(" + a + "&" + b + ")");
+        BOOLEAN.put_bb_b("|", (a, b) -> a | b, (a, b) -> "(" + a + "|" + b + ")");
+        BOOLEAN.put_bb_b("&&", (a, b) -> a && b, (a, b) -> "(" + a + "&&" + b + ")");
+        BOOLEAN.put_bb_b("||", (a, b) -> a || b, (a, b) -> "(" + a + "||" + b + ")");
+        BOOLEAN.put_bb_b("==", (a, b) -> a == b, (a, b) -> "(" + a + "==" + b + ")");
+        BOOLEAN.put_bb_b("!=", (a, b) -> a != b, (a, b) -> "(" + a + "!=" + b + ")");
+        BOOLEAN.put_b_o("(string)", String.class, a -> "" + a, (a) -> "((string) " + a + ")");
 
-        STRING.put_tt_t("+", (a, b) -> a + b);
-        STRING.put_tt_t("&", (a, b) -> a + b);
-        STRING.put_tt_b("==", (a, b) -> Objects.equal(a, b));
-        STRING.put_tt_b("!=", (a, b) -> !Objects.equal(a, b));
-        STRING.put_tt_b("<", (a, b) -> a.compareTo(b) < 0);
-        STRING.put_tt_b(">", (a, b) -> a.compareTo(b) > 0);
-        STRING.put_tt_b("<=", (a, b) -> a.compareTo(b) <= 0);
-        STRING.put_tt_b(">=", (a, b) -> a.compareTo(b) >= 0);
+        STRING.put_tt_t("+", (a, b) -> a + b, (a, b) -> "(" + a + " + " + b + ")");
+        STRING.put_tt_t("&", (a, b) -> a + b, (a, b) -> "(" + a + " + " + b + ")");
+        STRING.put_tt_b("<", (a, b) -> a.compareTo(b) < 0, (a, b) -> "(" + a + " < " + b + ")");
+        STRING.put_tt_b(">", (a, b) -> a.compareTo(b) > 0, (a, b) -> "(" + a + " > " + b + ")");
+        STRING.put_tt_b("==", (a, b) -> Objects.equal(a, b), (a, b) -> "(" + a + " == " + b + ")");
+        STRING.put_tt_b("!=", (a, b) -> !Objects.equal(a, b), (a, b) -> "(" + a + " != " + b + ")");
+        STRING.put_tt_b("<=", (a, b) -> a.compareTo(b) <= 0, (a, b) -> "(" + a + " <= " + b + ")");
+        STRING.put_tt_b(">=", (a, b) -> a.compareTo(b) >= 0, (a, b) -> "(" + a + " >= " + b + ")");
 
-        STRING.put_t_l("length", String::length);
-        STRING.put_t_t("toLowerCase", a -> a.toLowerCase(Locale.ROOT));
-        STRING.put_t_t("toUpperCase", a -> a.toUpperCase(Locale.ROOT));
+        STRING.put_t_l("length", String::length, a -> a + ".length()");
+        STRING.put_t_t("toLowerCase", a -> a.toLowerCase(Locale.ROOT), a -> a + ".toLowerCase()");
+        STRING.put_t_t("toUpperCase", a -> a.toUpperCase(Locale.ROOT), a -> a + ".toUpperCase()");
 
         VEC_LONG.putConstant("ZERO", VecLong.ZERO);
         VEC_LONG.put_l_t("vec", VecLong::new);
@@ -180,8 +180,8 @@ public class NodeTypes {
         throw new InvalidExpressionException("Unknown type " + type + ", must be one of " + typesByName.keySet());
     }
 
-    public static <T> NodeType2<T> getType(Class<T> clazz) {
-        return (NodeType2<T>) typesByClass.get(clazz);
+    public static <T> NodeType<T> getType(Class<T> clazz) {
+        return (NodeType<T>) typesByClass.get(clazz);
     }
 
     public static String getName(Class<?> clazz) {
@@ -199,7 +199,7 @@ public class NodeTypes {
         return typesByClass.get(clazz);
     }
 
-    public static <T> void addType(String key, NodeType2<T> type) {
+    public static <T> void addType(String key, NodeType<T> type) {
         key = key.toLowerCase(Locale.ROOT);
         namesByType.put(type.type, key);
         typesByName.put(key, type.type);

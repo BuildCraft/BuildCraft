@@ -25,10 +25,10 @@ public class NodeFuncLongToDouble implements INodeFuncDouble {
     private final StringFunctionBi stringFunction;
 
     public NodeFuncLongToDouble(String name, IFuncLongToDouble function) {
-        this((a) -> "[ long -> double ] " + name + "(" + a +  ")", function);
+        this(function, (a) -> "[ long -> double ] " + name + "(" + a +  ")");
     }
 
-    public NodeFuncLongToDouble(StringFunctionBi stringFunction, IFuncLongToDouble function) {
+    public NodeFuncLongToDouble(IFuncLongToDouble function, StringFunctionBi stringFunction) {
 
         this.function = function;
         this.stringFunction = stringFunction;

@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import buildcraft.lib.client.model.ResourceLoaderContext;
+import buildcraft.lib.expression.DefaultContexts;
 
 /** Turns several json elements into some functional gui data. */
 public class JsonGuiTypeRegistry {
@@ -23,6 +24,7 @@ public class JsonGuiTypeRegistry {
         registerType(ElementTypeButton.INSTANCE);
         registerType(ElementTypeLedger.INSTANCE);
         registerType(ElementTypeToolTip.INSTANCE);
+        registerType(ElementTypeContainer.INSTANCE);
         registerType(ElementTypeStatementSlot.INSTANCE);
         registerType(ElementTypeStatementParam.INSTANCE);
         registerType(ElementTypeStatementSource.INSTANCE);
@@ -41,7 +43,7 @@ public class JsonGuiTypeRegistry {
             obj = new Gson().fromJson(isr, JsonObject.class);
         }
 
-        JsonGuiInfo info = new JsonGuiInfo(obj, new ResourceLoaderContext());
+        JsonGuiInfo info = new JsonGuiInfo(obj, DefaultContexts.createWithAll(), new ResourceLoaderContext());
         info.printOut(System.out::println);
     }
 }

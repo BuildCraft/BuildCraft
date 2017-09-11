@@ -25,10 +25,10 @@ public class NodeFuncDoubleDoubleToBoolean implements INodeFuncBoolean {
     private final StringFunctionTri stringFunction;
 
     public NodeFuncDoubleDoubleToBoolean(String name, IFuncDoubleDoubleToBoolean function) {
-        this((a, b) -> "[ double, double -> boolean ] " + name + "(" + a + ", " + b +  ")", function);
+        this(function, (a, b) -> "[ double, double -> boolean ] " + name + "(" + a + ", " + b +  ")");
     }
 
-    public NodeFuncDoubleDoubleToBoolean(StringFunctionTri stringFunction, IFuncDoubleDoubleToBoolean function) {
+    public NodeFuncDoubleDoubleToBoolean(IFuncDoubleDoubleToBoolean function, StringFunctionTri stringFunction) {
 
         this.function = function;
         this.stringFunction = stringFunction;

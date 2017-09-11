@@ -6,7 +6,9 @@
 
 package buildcraft.lib.misc;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -31,10 +33,14 @@ import buildcraft.lib.client.sprite.SubSprite;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
 public class GuiUtil {
+
+    private static final Deque<GuiRectangle> scissorRegions = new ArrayDeque<>();
+
     public static ToolTip createToolTip(GuiBC8<?> gui, Supplier<ItemStack> stackRef) {
         return new ToolTip() {
             @Override
@@ -66,11 +72,10 @@ public class GuiUtil {
     }
 
     /** Straight copy of {@link GuiUtils#drawHoveringText(List, int, int, int, int, int, FontRenderer)}, except that we
-     * return the size of the box that was drawn.
-     * 
-     * Draws a tooltip box on the screen with text in it. Automatically positions the box relative to the mouse to match
-     * Mojang's implementation. Automatically wraps text when there is not enough space on the screen to display the
-     * text without wrapping. Can have a maximum width set to avoid creating very wide tooltips.
+     * return the size of the box that was drawn. Draws a tooltip box on the screen with text in it. Automatically
+     * positions the box relative to the mouse to match Mojang's implementation. Automatically wraps text when there is
+     * not enough space on the screen to display the text without wrapping. Can have a maximum width set to avoid
+     * creating very wide tooltips.
      *
      * @param textLines the lines of text to be drawn in a hovering tooltip box.
      * @param mouseX the mouse X position
@@ -234,7 +239,39 @@ public class GuiUtil {
         FluidRenderer.drawFluidForGui(fluid, startX, startY, endX, endY);
     }
 
-    public static void scissor(double x, double y, double width, double height) {
+    public static AutoGlScissor scissor(double x, double y, double width, double height) {
+        return scissor(new GuiRectangle(x, y, width, height));
+    }
+
+    public static AutoGlScissor scissor(IGuiArea area) {
+        GuiRectangle rect = area.asImmutable();
+        if (scissorRegions.isEmpty()) {
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        }
+        scissorRegions.push(rect);
+        scissor0(rect);
+        return new AutoGlScissor() {
+            @Override
+            public void close() {
+                GuiRectangle last = scissorRegions.pop();
+                if (last != rect) {
+                    throw new IllegalStateException("Popped rectangles in the wrong order!");
+                }
+                GuiRectangle next = scissorRegions.peek();
+                if (next == null) {
+                    GL11.glDisable(GL11.GL_SCISSOR_TEST);
+                } else {
+                    scissor0(next);
+                }
+            }
+        };
+    }
+
+    private static void scissor0(IGuiArea area) {
+        scissor0(area.getX(), area.getY(), area.getWidth(), area.getHeight());
+    }
+
+    private static void scissor0(double x, double y, double width, double height) {
         Minecraft mc = Minecraft.getMinecraft();
         ScaledResolution res = new ScaledResolution(mc);
         double scaleW = mc.displayWidth / res.getScaledWidth_double();
@@ -272,5 +309,11 @@ public class GuiUtil {
     public static SpriteNineSliced slice(ISprite sprite, double uMin, double vMin, double uMax, double vMax,
         double scale) {
         return new SpriteNineSliced(sprite, uMin, vMin, uMax, vMax, scale);
+    }
+
+    /** A type of {@link AutoCloseable} that will pop off the current {@link GL11#glScissor(int, int, int, int)}. */
+    public interface AutoGlScissor extends AutoCloseable {
+        @Override
+        void close();
     }
 }

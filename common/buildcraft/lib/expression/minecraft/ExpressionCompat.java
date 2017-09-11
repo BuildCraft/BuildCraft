@@ -8,7 +8,7 @@ import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.tiles.IControllable;
 
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
-import buildcraft.lib.expression.api.NodeType2;
+import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
@@ -20,26 +20,26 @@ import buildcraft.lib.misc.ColourUtil;
 public class ExpressionCompat {
 
     // Minecraft Types
-    public static final NodeType2<Axis> ENUM_AXIS;
-    public static final NodeType2<EnumFacing> ENUM_FACING;
-    public static final NodeType2<EnumDyeColor> ENUM_DYE_COLOUR;
+    public static final NodeType<Axis> ENUM_AXIS;
+    public static final NodeType<EnumFacing> ENUM_FACING;
+    public static final NodeType<EnumDyeColor> ENUM_DYE_COLOUR;
 
     // BuildCraft API types
-    public static final NodeType2<EnumPowerStage> ENUM_POWER_STAGE;
-    public static final NodeType2<IControllable.Mode> ENUM_CONTROL_MODE;
+    public static final NodeType<EnumPowerStage> ENUM_POWER_STAGE;
+    public static final NodeType<IControllable.Mode> ENUM_CONTROL_MODE;
 
     // BuildCraft Lib types
-    public static final NodeType2<IGuiPosition> GUI_POSITION;
-    public static final NodeType2<IGuiArea> GUI_AREA;
+    public static final NodeType<IGuiPosition> GUI_POSITION;
+    public static final NodeType<IGuiArea> GUI_AREA;
 
     static {
-        ENUM_AXIS = new NodeType2<>(Axis.X);
+        ENUM_AXIS = new NodeType<>(Axis.X);
         NodeTypes.addType("Axis", ENUM_AXIS);
         for (Axis a : Axis.values()) {
             ENUM_AXIS.putConstant("" + a, a);
         }
 
-        ENUM_FACING = new NodeType2<>(EnumFacing.UP);
+        ENUM_FACING = new NodeType<>(EnumFacing.UP);
         NodeTypes.addType("Facing", ENUM_FACING);
         ENUM_FACING.put_t_t("getOpposite", EnumFacing::getOpposite);
         ENUM_FACING.put_t_o("getAxis", Axis.class, EnumFacing::getAxis);
@@ -48,7 +48,7 @@ public class ExpressionCompat {
             ENUM_FACING.putConstant("" + f, f);
         }
 
-        ENUM_DYE_COLOUR = new NodeType2<>(EnumDyeColor.WHITE);
+        ENUM_DYE_COLOUR = new NodeType<>(EnumDyeColor.WHITE);
         NodeTypes.addType("DyeColor", ENUM_DYE_COLOUR);
         NodeTypes.addType("DyeColour", ENUM_DYE_COLOUR);
         ENUM_DYE_COLOUR.put_t_l("to_argb", c -> 0xFF_00_00_00 | ColourUtil.getLightHex(c));
@@ -57,22 +57,22 @@ public class ExpressionCompat {
             ENUM_DYE_COLOUR.putConstant("" + c, c);
         }
 
-        ENUM_POWER_STAGE = new NodeType2<>(EnumPowerStage.BLUE);
+        ENUM_POWER_STAGE = new NodeType<>(EnumPowerStage.BLUE);
         NodeTypes.addType("EnginePowerStage", ENUM_POWER_STAGE);
         ENUM_POWER_STAGE.put_t_o("(string)", String.class, EnumPowerStage::getName);
         for (EnumPowerStage stage : EnumPowerStage.VALUES) {
             ENUM_POWER_STAGE.putConstant("" + stage, stage);
         }
 
-        ENUM_CONTROL_MODE = new NodeType2<>(IControllable.Mode.class, IControllable.Mode.ON);
+        ENUM_CONTROL_MODE = new NodeType<>(IControllable.Mode.class, IControllable.Mode.ON);
         NodeTypes.addType("ControlMode", ENUM_CONTROL_MODE);
         ENUM_CONTROL_MODE.put_t_o("(string)", String.class, e -> e.lowerCaseName);
         for (IControllable.Mode mode : IControllable.Mode.VALUES) {
             ENUM_CONTROL_MODE.putConstant("" + mode, mode);
         }
 
-        GUI_POSITION = new NodeType2<>(IGuiPosition.class, new PositionAbsolute(0, 0));
-        GUI_AREA = new NodeType2<>(IGuiArea.class, new GuiRectangle(0, 0));
+        GUI_POSITION = new NodeType<>(IGuiPosition.class, new PositionAbsolute(0, 0));
+        GUI_AREA = new NodeType<>(IGuiArea.class, new GuiRectangle(0, 0));
         NodeTypes.addType("GuiPosition", GUI_POSITION);
         NodeTypes.addType("GuiArea", GUI_AREA);
 

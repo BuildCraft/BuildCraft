@@ -20,7 +20,7 @@ import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.config.GuiConfigManager;
-import buildcraft.lib.gui.elem.GuiElementContainer;
+import buildcraft.lib.gui.elem.GuiElementContainerHelp;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.GuiUtil;
@@ -98,7 +98,7 @@ public class LedgerHelp extends Ledger_Neptune {
                 if (isHovered) {
                     if (selected != element && !set) {
                         selected = element;
-                        GuiElementContainer container = new GuiElementContainer(gui, positionLedgerInnerStart);
+                        GuiElementContainerHelp container = new GuiElementContainerHelp(gui, positionLedgerInnerStart);
                         info.info.addGuiElements(container);
                         if (openElements.size() == 2) {
                             openElements.remove(1);

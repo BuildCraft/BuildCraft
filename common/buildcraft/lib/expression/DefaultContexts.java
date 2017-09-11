@@ -20,8 +20,6 @@ public class DefaultContexts {
 
     public static final NodeVariableDouble RENDER_PARTIAL_TICKS;
 
-    public static final INodeFuncLong MATH_SCALAR_FUNC_ROUND;
-
     private static final FunctionContext[] CTX_ARRAY_ALL = { NodeTypes.STRING, MATH_SCALAR, MATH_VECTOR, RENDERING };
 
     /** Creates a new {@link FunctionContext} with all of the functions given in this class. */
@@ -38,13 +36,13 @@ public class DefaultContexts {
         MATH_SCALAR.putConstantDouble("pi", Math.PI);
         MATH_SCALAR.putConstantDouble("e", Math.E);
 
-        MATH_SCALAR.put_l_l("abs_long", Math::abs);
-        MATH_SCALAR.put_d_d("abs_double", Math::abs);
+        MATH_SCALAR.put_l_l("abs", Math::abs, a -> "abs( " + a + ")");
+        MATH_SCALAR.put_d_d("abs", Math::abs, a -> "abs( " + a + ")");
 
-        MATH_SCALAR_FUNC_ROUND = MATH_SCALAR.put_d_l("round", Math::round);
-        MATH_SCALAR.put_d_l("floor", (a) -> (long) Math.floor(a));
-        MATH_SCALAR.put_d_l("ceil", (a) -> (long) Math.ceil(a));
-        MATH_SCALAR.put_d_l("sign", (a) -> a == 0 ? 0 : a < 0 ? -1 : 1);
+        MATH_SCALAR.put_d_l("round", Math::round, a -> "round( " + a + ")");
+        MATH_SCALAR.put_d_l("floor", (a) -> (long) Math.floor(a), a -> "floor( " + a + ")");
+        MATH_SCALAR.put_d_l("ceil", (a) -> (long) Math.ceil(a), a -> "ceil( " + a + ")");
+        MATH_SCALAR.put_d_l("sign", (a) -> a == 0 ? 0 : a < 0 ? -1 : 1, a -> "sign( " + a + ")");
 
         MATH_SCALAR.put_d_d("log", Math::log);
         MATH_SCALAR.put_d_d("log10", Math::log10);

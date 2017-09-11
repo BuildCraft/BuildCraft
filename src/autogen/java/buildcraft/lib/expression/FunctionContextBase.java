@@ -11,6 +11,11 @@ import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
+import buildcraft.lib.expression.node.func.StringFunctionBi;
+import buildcraft.lib.expression.node.func.StringFunctionTri;
+import buildcraft.lib.expression.node.func.StringFunctionQuad;
+import buildcraft.lib.expression.node.func.StringFunctionPenta;
+import buildcraft.lib.expression.node.func.StringFunctionHex;
 import buildcraft.lib.expression.node.func.NodeFuncLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongToLong.IFuncLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong;
@@ -92,140 +97,280 @@ public abstract class FunctionContextBase {
         return putFunction(name, new NodeFuncLongToLong(name, func));
     }
 
+    public  INodeFuncLong put_l_l(String name, IFuncLongToLong func, StringFunctionBi stringFunction) {
+        return putFunction(name, new NodeFuncLongToLong(func, stringFunction));
+    }
+
     public  INodeFuncLong put_ll_l(String name, IFuncLongLongToLong func) {
         return putFunction(name, new NodeFuncLongLongToLong(name, func));
+    }
+
+    public  INodeFuncLong put_ll_l(String name, IFuncLongLongToLong func, StringFunctionTri stringFunction) {
+        return putFunction(name, new NodeFuncLongLongToLong(func, stringFunction));
     }
 
     public  INodeFuncLong put_d_l(String name, IFuncDoubleToLong func) {
         return putFunction(name, new NodeFuncDoubleToLong(name, func));
     }
 
+    public  INodeFuncLong put_d_l(String name, IFuncDoubleToLong func, StringFunctionBi stringFunction) {
+        return putFunction(name, new NodeFuncDoubleToLong(func, stringFunction));
+    }
+
     public  INodeFuncLong put_b_l(String name, IFuncBooleanToLong func) {
         return putFunction(name, new NodeFuncBooleanToLong(name, func));
+    }
+
+    public  INodeFuncLong put_b_l(String name, IFuncBooleanToLong func, StringFunctionBi stringFunction) {
+        return putFunction(name, new NodeFuncBooleanToLong(func, stringFunction));
     }
 
     public <A> INodeFuncLong put_o_l(String name, Class<A> argTypeA, IFuncObjectToLong<A> func) {
         return putFunction(name, new NodeFuncObjectToLong<>(name, argTypeA, func));
     }
 
+    public <A> INodeFuncLong put_o_l(String name, Class<A> argTypeA, IFuncObjectToLong<A> func, StringFunctionBi stringFunction) {
+        return putFunction(name, new NodeFuncObjectToLong<>(argTypeA, func, stringFunction));
+    }
+
     public <A> INodeFuncLong put_ol_l(String name, Class<A> argTypeA, IFuncObjectLongToLong<A> func) {
         return putFunction(name, new NodeFuncObjectLongToLong<>(name, argTypeA, func));
+    }
+
+    public <A> INodeFuncLong put_ol_l(String name, Class<A> argTypeA, IFuncObjectLongToLong<A> func, StringFunctionTri stringFunction) {
+        return putFunction(name, new NodeFuncObjectLongToLong<>(argTypeA, func, stringFunction));
     }
 
     public <A> INodeFuncLong put_oll_l(String name, Class<A> argTypeA, IFuncObjectLongLongToLong<A> func) {
         return putFunction(name, new NodeFuncObjectLongLongToLong<>(name, argTypeA, func));
     }
 
+    public <A> INodeFuncLong put_oll_l(String name, Class<A> argTypeA, IFuncObjectLongLongToLong<A> func, StringFunctionQuad stringFunction) {
+        return putFunction(name, new NodeFuncObjectLongLongToLong<>(argTypeA, func, stringFunction));
+    }
+
     public <A, B> INodeFuncLong put_oo_l(String name, Class<A> argTypeA, Class<B> argTypeB, IFuncObjectObjectToLong<A, B> func) {
         return putFunction(name, new NodeFuncObjectObjectToLong<>(name, argTypeA, argTypeB, func));
+    }
+
+    public <A, B> INodeFuncLong put_oo_l(String name, Class<A> argTypeA, Class<B> argTypeB, IFuncObjectObjectToLong<A, B> func, StringFunctionTri stringFunction) {
+        return putFunction(name, new NodeFuncObjectObjectToLong<>(argTypeA, argTypeB, func, stringFunction));
     }
 
     public  INodeFuncDouble put_l_d(String name, IFuncLongToDouble func) {
         return putFunction(name, new NodeFuncLongToDouble(name, func));
     }
 
+    public  INodeFuncDouble put_l_d(String name, IFuncLongToDouble func, StringFunctionBi stringFunction) {
+        return putFunction(name, new NodeFuncLongToDouble(func, stringFunction));
+    }
+
     public  INodeFuncDouble put_d_d(String name, IFuncDoubleToDouble func) {
         return putFunction(name, new NodeFuncDoubleToDouble(name, func));
+    }
+
+    public  INodeFuncDouble put_d_d(String name, IFuncDoubleToDouble func, StringFunctionBi stringFunction) {
+        return putFunction(name, new NodeFuncDoubleToDouble(func, stringFunction));
     }
 
     public  INodeFuncDouble put_dd_d(String name, IFuncDoubleDoubleToDouble func) {
         return putFunction(name, new NodeFuncDoubleDoubleToDouble(name, func));
     }
 
+    public  INodeFuncDouble put_dd_d(String name, IFuncDoubleDoubleToDouble func, StringFunctionTri stringFunction) {
+        return putFunction(name, new NodeFuncDoubleDoubleToDouble(func, stringFunction));
+    }
+
     public <A> INodeFuncDouble put_o_d(String name, Class<A> argTypeA, IFuncObjectToDouble<A> func) {
         return putFunction(name, new NodeFuncObjectToDouble<>(name, argTypeA, func));
+    }
+
+    public <A> INodeFuncDouble put_o_d(String name, Class<A> argTypeA, IFuncObjectToDouble<A> func, StringFunctionBi stringFunction) {
+        return putFunction(name, new NodeFuncObjectToDouble<>(argTypeA, func, stringFunction));
     }
 
     public <A, B> INodeFuncDouble put_oo_d(String name, Class<A> argTypeA, Class<B> argTypeB, IFuncObjectObjectToDouble<A, B> func) {
         return putFunction(name, new NodeFuncObjectObjectToDouble<>(name, argTypeA, argTypeB, func));
     }
 
+    public <A, B> INodeFuncDouble put_oo_d(String name, Class<A> argTypeA, Class<B> argTypeB, IFuncObjectObjectToDouble<A, B> func, StringFunctionTri stringFunction) {
+        return putFunction(name, new NodeFuncObjectObjectToDouble<>(argTypeA, argTypeB, func, stringFunction));
+    }
+
     public  INodeFuncBoolean put_l_b(String name, IFuncLongToBoolean func) {
         return putFunction(name, new NodeFuncLongToBoolean(name, func));
+    }
+
+    public  INodeFuncBoolean put_l_b(String name, IFuncLongToBoolean func, StringFunctionBi stringFunction) {
+        return putFunction(name, new NodeFuncLongToBoolean(func, stringFunction));
     }
 
     public  INodeFuncBoolean put_ll_b(String name, IFuncLongLongToBoolean func) {
         return putFunction(name, new NodeFuncLongLongToBoolean(name, func));
     }
 
+    public  INodeFuncBoolean put_ll_b(String name, IFuncLongLongToBoolean func, StringFunctionTri stringFunction) {
+        return putFunction(name, new NodeFuncLongLongToBoolean(func, stringFunction));
+    }
+
     public  INodeFuncBoolean put_dd_b(String name, IFuncDoubleDoubleToBoolean func) {
         return putFunction(name, new NodeFuncDoubleDoubleToBoolean(name, func));
+    }
+
+    public  INodeFuncBoolean put_dd_b(String name, IFuncDoubleDoubleToBoolean func, StringFunctionTri stringFunction) {
+        return putFunction(name, new NodeFuncDoubleDoubleToBoolean(func, stringFunction));
     }
 
     public  INodeFuncBoolean put_b_b(String name, IFuncBooleanToBoolean func) {
         return putFunction(name, new NodeFuncBooleanToBoolean(name, func));
     }
 
+    public  INodeFuncBoolean put_b_b(String name, IFuncBooleanToBoolean func, StringFunctionBi stringFunction) {
+        return putFunction(name, new NodeFuncBooleanToBoolean(func, stringFunction));
+    }
+
     public  INodeFuncBoolean put_bb_b(String name, IFuncBooleanBooleanToBoolean func) {
         return putFunction(name, new NodeFuncBooleanBooleanToBoolean(name, func));
+    }
+
+    public  INodeFuncBoolean put_bb_b(String name, IFuncBooleanBooleanToBoolean func, StringFunctionTri stringFunction) {
+        return putFunction(name, new NodeFuncBooleanBooleanToBoolean(func, stringFunction));
     }
 
     public <A> INodeFuncBoolean put_o_b(String name, Class<A> argTypeA, IFuncObjectToBoolean<A> func) {
         return putFunction(name, new NodeFuncObjectToBoolean<>(name, argTypeA, func));
     }
 
+    public <A> INodeFuncBoolean put_o_b(String name, Class<A> argTypeA, IFuncObjectToBoolean<A> func, StringFunctionBi stringFunction) {
+        return putFunction(name, new NodeFuncObjectToBoolean<>(argTypeA, func, stringFunction));
+    }
+
     public <A, B> INodeFuncBoolean put_oo_b(String name, Class<A> argTypeA, Class<B> argTypeB, IFuncObjectObjectToBoolean<A, B> func) {
         return putFunction(name, new NodeFuncObjectObjectToBoolean<>(name, argTypeA, argTypeB, func));
+    }
+
+    public <A, B> INodeFuncBoolean put_oo_b(String name, Class<A> argTypeA, Class<B> argTypeB, IFuncObjectObjectToBoolean<A, B> func, StringFunctionTri stringFunction) {
+        return putFunction(name, new NodeFuncObjectObjectToBoolean<>(argTypeA, argTypeB, func, stringFunction));
     }
 
     public <R> INodeFuncObject<R> put_l_o(String name, Class<R> returnType, IFuncLongToObject<R> func) {
         return putFunction(name, new NodeFuncLongToObject<>(name, returnType, func));
     }
 
+    public <R> INodeFuncObject<R> put_l_o(String name, Class<R> returnType, IFuncLongToObject<R> func, StringFunctionBi stringFunction) {
+        return putFunction(name, new NodeFuncLongToObject<>(returnType, func, stringFunction));
+    }
+
     public <R> INodeFuncObject<R> put_ll_o(String name, Class<R> returnType, IFuncLongLongToObject<R> func) {
         return putFunction(name, new NodeFuncLongLongToObject<>(name, returnType, func));
+    }
+
+    public <R> INodeFuncObject<R> put_ll_o(String name, Class<R> returnType, IFuncLongLongToObject<R> func, StringFunctionTri stringFunction) {
+        return putFunction(name, new NodeFuncLongLongToObject<>(returnType, func, stringFunction));
     }
 
     public <R> INodeFuncObject<R> put_lll_o(String name, Class<R> returnType, IFuncLongLongLongToObject<R> func) {
         return putFunction(name, new NodeFuncLongLongLongToObject<>(name, returnType, func));
     }
 
+    public <R> INodeFuncObject<R> put_lll_o(String name, Class<R> returnType, IFuncLongLongLongToObject<R> func, StringFunctionQuad stringFunction) {
+        return putFunction(name, new NodeFuncLongLongLongToObject<>(returnType, func, stringFunction));
+    }
+
     public <R> INodeFuncObject<R> put_llll_o(String name, Class<R> returnType, IFuncLongLongLongLongToObject<R> func) {
         return putFunction(name, new NodeFuncLongLongLongLongToObject<>(name, returnType, func));
+    }
+
+    public <R> INodeFuncObject<R> put_llll_o(String name, Class<R> returnType, IFuncLongLongLongLongToObject<R> func, StringFunctionPenta stringFunction) {
+        return putFunction(name, new NodeFuncLongLongLongLongToObject<>(returnType, func, stringFunction));
     }
 
     public <R> INodeFuncObject<R> put_d_o(String name, Class<R> returnType, IFuncDoubleToObject<R> func) {
         return putFunction(name, new NodeFuncDoubleToObject<>(name, returnType, func));
     }
 
+    public <R> INodeFuncObject<R> put_d_o(String name, Class<R> returnType, IFuncDoubleToObject<R> func, StringFunctionBi stringFunction) {
+        return putFunction(name, new NodeFuncDoubleToObject<>(returnType, func, stringFunction));
+    }
+
     public <R> INodeFuncObject<R> put_dd_o(String name, Class<R> returnType, IFuncDoubleDoubleToObject<R> func) {
         return putFunction(name, new NodeFuncDoubleDoubleToObject<>(name, returnType, func));
+    }
+
+    public <R> INodeFuncObject<R> put_dd_o(String name, Class<R> returnType, IFuncDoubleDoubleToObject<R> func, StringFunctionTri stringFunction) {
+        return putFunction(name, new NodeFuncDoubleDoubleToObject<>(returnType, func, stringFunction));
     }
 
     public <R> INodeFuncObject<R> put_ddd_o(String name, Class<R> returnType, IFuncDoubleDoubleDoubleToObject<R> func) {
         return putFunction(name, new NodeFuncDoubleDoubleDoubleToObject<>(name, returnType, func));
     }
 
+    public <R> INodeFuncObject<R> put_ddd_o(String name, Class<R> returnType, IFuncDoubleDoubleDoubleToObject<R> func, StringFunctionQuad stringFunction) {
+        return putFunction(name, new NodeFuncDoubleDoubleDoubleToObject<>(returnType, func, stringFunction));
+    }
+
     public <R> INodeFuncObject<R> put_dddd_o(String name, Class<R> returnType, IFuncDoubleDoubleDoubleDoubleToObject<R> func) {
         return putFunction(name, new NodeFuncDoubleDoubleDoubleDoubleToObject<>(name, returnType, func));
+    }
+
+    public <R> INodeFuncObject<R> put_dddd_o(String name, Class<R> returnType, IFuncDoubleDoubleDoubleDoubleToObject<R> func, StringFunctionPenta stringFunction) {
+        return putFunction(name, new NodeFuncDoubleDoubleDoubleDoubleToObject<>(returnType, func, stringFunction));
     }
 
     public <R> INodeFuncObject<R> put_b_o(String name, Class<R> returnType, IFuncBooleanToObject<R> func) {
         return putFunction(name, new NodeFuncBooleanToObject<>(name, returnType, func));
     }
 
+    public <R> INodeFuncObject<R> put_b_o(String name, Class<R> returnType, IFuncBooleanToObject<R> func, StringFunctionBi stringFunction) {
+        return putFunction(name, new NodeFuncBooleanToObject<>(returnType, func, stringFunction));
+    }
+
     public <A, R> INodeFuncObject<R> put_o_o(String name, Class<A> argTypeA, Class<R> returnType, IFuncObjectToObject<A, R> func) {
         return putFunction(name, new NodeFuncObjectToObject<>(name, argTypeA, returnType, func));
+    }
+
+    public <A, R> INodeFuncObject<R> put_o_o(String name, Class<A> argTypeA, Class<R> returnType, IFuncObjectToObject<A, R> func, StringFunctionBi stringFunction) {
+        return putFunction(name, new NodeFuncObjectToObject<>(argTypeA, returnType, func, stringFunction));
     }
 
     public <A, R> INodeFuncObject<R> put_ol_o(String name, Class<A> argTypeA, Class<R> returnType, IFuncObjectLongToObject<A, R> func) {
         return putFunction(name, new NodeFuncObjectLongToObject<>(name, argTypeA, returnType, func));
     }
 
+    public <A, R> INodeFuncObject<R> put_ol_o(String name, Class<A> argTypeA, Class<R> returnType, IFuncObjectLongToObject<A, R> func, StringFunctionTri stringFunction) {
+        return putFunction(name, new NodeFuncObjectLongToObject<>(argTypeA, returnType, func, stringFunction));
+    }
+
     public <A, R> INodeFuncObject<R> put_oll_o(String name, Class<A> argTypeA, Class<R> returnType, IFuncObjectLongLongToObject<A, R> func) {
         return putFunction(name, new NodeFuncObjectLongLongToObject<>(name, argTypeA, returnType, func));
+    }
+
+    public <A, R> INodeFuncObject<R> put_oll_o(String name, Class<A> argTypeA, Class<R> returnType, IFuncObjectLongLongToObject<A, R> func, StringFunctionQuad stringFunction) {
+        return putFunction(name, new NodeFuncObjectLongLongToObject<>(argTypeA, returnType, func, stringFunction));
     }
 
     public <A, B, R> INodeFuncObject<R> put_oo_o(String name, Class<A> argTypeA, Class<B> argTypeB, Class<R> returnType, IFuncObjectObjectToObject<A, B, R> func) {
         return putFunction(name, new NodeFuncObjectObjectToObject<>(name, argTypeA, argTypeB, returnType, func));
     }
 
+    public <A, B, R> INodeFuncObject<R> put_oo_o(String name, Class<A> argTypeA, Class<B> argTypeB, Class<R> returnType, IFuncObjectObjectToObject<A, B, R> func, StringFunctionTri stringFunction) {
+        return putFunction(name, new NodeFuncObjectObjectToObject<>(argTypeA, argTypeB, returnType, func, stringFunction));
+    }
+
     public <A, B, C, R> INodeFuncObject<R> put_ooo_o(String name, Class<A> argTypeA, Class<B> argTypeB, Class<C> argTypeC, Class<R> returnType, IFuncObjectObjectObjectToObject<A, B, C, R> func) {
         return putFunction(name, new NodeFuncObjectObjectObjectToObject<>(name, argTypeA, argTypeB, argTypeC, returnType, func));
     }
 
+    public <A, B, C, R> INodeFuncObject<R> put_ooo_o(String name, Class<A> argTypeA, Class<B> argTypeB, Class<C> argTypeC, Class<R> returnType, IFuncObjectObjectObjectToObject<A, B, C, R> func, StringFunctionQuad stringFunction) {
+        return putFunction(name, new NodeFuncObjectObjectObjectToObject<>(argTypeA, argTypeB, argTypeC, returnType, func, stringFunction));
+    }
+
     public <A, B, C, D, R> INodeFuncObject<R> put_oooo_o(String name, Class<A> argTypeA, Class<B> argTypeB, Class<C> argTypeC, Class<D> argTypeD, Class<R> returnType, IFuncObjectObjectObjectObjectToObject<A, B, C, D, R> func) {
         return putFunction(name, new NodeFuncObjectObjectObjectObjectToObject<>(name, argTypeA, argTypeB, argTypeC, argTypeD, returnType, func));
+    }
+
+    public <A, B, C, D, R> INodeFuncObject<R> put_oooo_o(String name, Class<A> argTypeA, Class<B> argTypeB, Class<C> argTypeC, Class<D> argTypeD, Class<R> returnType, IFuncObjectObjectObjectObjectToObject<A, B, C, D, R> func, StringFunctionPenta stringFunction) {
+        return putFunction(name, new NodeFuncObjectObjectObjectObjectToObject<>(argTypeA, argTypeB, argTypeC, argTypeD, returnType, func, stringFunction));
     }
 
 }

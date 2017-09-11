@@ -35,7 +35,7 @@ public class ElementTypeToolTip extends ElementType {
 
     @Override
     public IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
-        FunctionContext ctx = createContext(gui, json);
+        FunctionContext ctx = createContext(json);
 
         List<String> text = new ArrayList<>();
         String key = "text";

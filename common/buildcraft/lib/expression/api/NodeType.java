@@ -2,15 +2,15 @@ package buildcraft.lib.expression.api;
 
 import buildcraft.lib.expression.NodeTypeBase;
 
-public final class NodeType2<T> extends NodeTypeBase<T> {
+public final class NodeType<T> extends NodeTypeBase<T> {
     public final Class<T> type;
     public final T defaultValue;
 
-    public NodeType2(T defaultValue) {
+    public NodeType(T defaultValue) {
         this((Class<T>) defaultValue.getClass(), defaultValue);
     }
 
-    public NodeType2(Class<T> type, T defaultValue) {
+    public NodeType(Class<T> type, T defaultValue) {
         this.type = type;
         this.defaultValue = defaultValue;
     }
@@ -32,7 +32,7 @@ public final class NodeType2<T> extends NodeTypeBase<T> {
         if (obj.getClass() != getClass()) {
             return false;
         }
-        return type == ((NodeType2<?>) obj).type;
+        return type == ((NodeType<?>) obj).type;
     }
 
     public void putConstant(String name, T value) {

@@ -15,7 +15,8 @@ public interface IContainingElement extends IGuiElement {
         return this;
     }
 
-    /** Called after {@link #getChildElements()} is addedd to, possibly last. */
+    /** Called after {@link #getChildElements()} is added to, possibly last (so it might not be called after every
+     * addition). */
     default void calculateSizes() {
 
     }

@@ -57,8 +57,8 @@ public abstract class ElementType {
         return element;
     }
 
-    public static FunctionContext createContext(GuiJson<?> gui, JsonGuiElement json) {
-        FunctionContext ctx = gui.context;
+    public static FunctionContext createContext(JsonGuiElement json) {
+        FunctionContext ctx = json.context;
 
         // if json overrides variables then its ok
         ctx = new FunctionContext(ctx);

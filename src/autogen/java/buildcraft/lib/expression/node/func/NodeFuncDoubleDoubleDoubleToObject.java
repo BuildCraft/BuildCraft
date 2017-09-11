@@ -26,10 +26,10 @@ public class NodeFuncDoubleDoubleDoubleToObject<R> implements INodeFuncObject<R>
     private final Class<R> returnType;
 
     public NodeFuncDoubleDoubleDoubleToObject(String name, Class<R> returnType, IFuncDoubleDoubleDoubleToObject<R> function) {
-        this(returnType, (a, b, c) -> "[ double, double, double -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a + ", " + b + ", " + c +  ")", function);
+        this(returnType, function, (a, b, c) -> "[ double, double, double -> " + NodeTypes.getName(returnType) + " ] " + name + "(" + a + ", " + b + ", " + c +  ")");
     }
 
-    public NodeFuncDoubleDoubleDoubleToObject(Class<R> returnType, StringFunctionQuad stringFunction, IFuncDoubleDoubleDoubleToObject<R> function) {
+    public NodeFuncDoubleDoubleDoubleToObject(Class<R> returnType, IFuncDoubleDoubleDoubleToObject<R> function, StringFunctionQuad stringFunction) {
         this.returnType = returnType;
 
         this.function = function;
