@@ -58,7 +58,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     private final AverageLong avgPower = new AverageLong(100);
     private long averageClient;
     private final MjBattery battery;
-
+    private final int TARGETING_RANGE = 6;
     public Vec3d laserPos;
 
     private final SafeTimeTracker clientLaserMoveInterval = new SafeTimeTracker(5, 10);
@@ -66,9 +66,14 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
 
     private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
         @Override
-        public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState oldState,
+        public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos eventPos, @Nonnull IBlockState oldState,
                                       @Nonnull IBlockState newState, int flags) {
-            findPossibleTargets();
+            // only scan for new targets if the update was within targeting range of the laser
+            if (Math.abs(pos.getX() - eventPos.getX()) <= TARGETING_RANGE &&
+                    Math.abs(pos.getY() - eventPos.getY()) <= TARGETING_RANGE &&
+                    Math.abs(pos.getZ() - eventPos.getZ()) <= TARGETING_RANGE ) {
+                findPossibleTargets();
+            }
         }
     };
 
@@ -86,7 +91,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         }
         EnumFacing face = state.getValue(BuildCraftProperties.BLOCK_FACING_6);
 
-        VolumeUtil.iterateCone(world, pos, face, 6, true, (w, s, p, visible) -> {
+        VolumeUtil.iterateCone(world, pos, face, TARGETING_RANGE, true, (w, s, p, visible) -> {
             if (!visible) {
                 return;
             }
