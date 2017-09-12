@@ -40,7 +40,6 @@ import buildcraft.api.schematics.SchematicBlockContext;
 import buildcraft.api.schematics.SchematicEntityContext;
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.misc.BoundingBoxUtil;
@@ -252,7 +251,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     private ISchematicBlock readSchematicBlock(BlockPos worldScanPos) {
         return SchematicBlockManager.getSchematicBlock(new SchematicBlockContext(
             world,
-            pos.offset(world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite()),
+            box.min(),
             worldScanPos,
             world.getBlockState(worldScanPos),
             world.getBlockState(worldScanPos).getBlock()
@@ -260,7 +259,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     private void scanEntities() {
-        BlockPos basePos = pos.offset(world.getBlockState(pos).getValue(BlockArchitectTable.PROP_FACING).getOpposite());
+        BlockPos basePos = box.min();
         world.getEntitiesWithinAABB(Entity.class, box.getBoundingBox()).stream()
             .map(entity ->
                 SchematicEntityManager.getSchematicEntity(new SchematicEntityContext(

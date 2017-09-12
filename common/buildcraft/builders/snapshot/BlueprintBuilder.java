@@ -250,7 +250,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             .filter(schematicEntity ->
                 entitiesWithinBox.stream()
                     .map(Entity::getPositionVector)
-                    .map(schematicEntity.getPos().add(new Vec3d(getBuildingInfo().basePos))::distanceTo)
+                    .map(schematicEntity.getPos().add(new Vec3d(getBuildingInfo().offsetPos))::distanceTo)
                     .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE)
             )
             .collect(Collectors.toList());
@@ -278,7 +278,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 entity != null &&
                     getBuildingInfo().entities.stream()
                         .map(ISchematicEntity::getPos)
-                        .map(new Vec3d(getBuildingInfo().basePos)::add)
+                        .map(new Vec3d(getBuildingInfo().offsetPos)::add)
                         .map(entity.getPositionVector()::distanceTo)
                         .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE) &&
                     SchematicEntityManager.getSchematicEntity(new SchematicEntityContext(
@@ -315,7 +315,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                             ).isPresent()
                         )
                         .filter(schematicEntity ->
-                            schematicEntity.build(tile.getWorldBC(), getBuildingInfo().basePos) != null
+                            schematicEntity.build(tile.getWorldBC(), getBuildingInfo().offsetPos) != null
                         )
                         .forEach(schematicEntity ->
                             tryExtractRequired(
