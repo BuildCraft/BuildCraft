@@ -259,12 +259,11 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     private void scanEntities() {
-        BlockPos basePos = box.min();
         world.getEntitiesWithinAABB(Entity.class, box.getBoundingBox()).stream()
             .map(entity ->
                 SchematicEntityManager.getSchematicEntity(new SchematicEntityContext(
                     world,
-                    basePos,
+                    box.min(),
                     entity
                 ))
             )
