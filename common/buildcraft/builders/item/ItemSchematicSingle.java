@@ -31,6 +31,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.api.schematics.SchematicBlockContext;
 
 import buildcraft.lib.inventory.InventoryWrapper;
 import buildcraft.lib.item.ItemBC_Neptune;
@@ -99,7 +100,13 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
         int damage = stack.getItemDamage();
         if (damage != DAMAGE_USED) {
             IBlockState state = world.getBlockState(pos);
-            ISchematicBlock schematicBlock = SchematicBlockManager.getSchematicBlock(world, pos, pos, state, state.getBlock());
+            ISchematicBlock schematicBlock = SchematicBlockManager.getSchematicBlock(new SchematicBlockContext(
+                world,
+                pos,
+                pos,
+                state,
+                state.getBlock()
+            ));
             if (schematicBlock.isAir()) {
                 return EnumActionResult.FAIL;
             }

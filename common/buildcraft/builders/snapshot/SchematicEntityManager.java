@@ -35,18 +35,6 @@ public class SchematicEntityManager {
         return null;
     }
 
-    public static ISchematicEntity getSchematicEntity(World world,
-                                                      BlockPos basePos,
-                                                      Entity entity) {
-        return getSchematicEntity(
-            new SchematicEntityContext(
-                world,
-                basePos,
-                entity
-            )
-        );
-    }
-
     @SuppressWarnings("WeakerAccess")
     public static <S extends ISchematicEntity> S createCleanCopy(S schematicBlock) {
         return SchematicEntityFactoryRegistry

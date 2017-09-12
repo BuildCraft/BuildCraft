@@ -35,6 +35,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.ISchematicEntity;
+import buildcraft.api.schematics.SchematicEntityContext;
 
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.FluidUtilBC;
@@ -280,11 +281,11 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                         .map(new Vec3d(getBuildingInfo().basePos)::add)
                         .map(entity.getPositionVector()::distanceTo)
                         .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE) &&
-                    SchematicEntityManager.getSchematicEntity(
+                    SchematicEntityManager.getSchematicEntity(new SchematicEntityContext(
                         tile.getWorldBC(),
                         BlockPos.ORIGIN,
                         entity
-                    ) != null
+                    )) != null
             )
             .collect(Collectors.toList());
         if (!toKill.isEmpty()) {

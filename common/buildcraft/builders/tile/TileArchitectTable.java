@@ -36,6 +36,8 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.ISchematicEntity;
+import buildcraft.api.schematics.SchematicBlockContext;
+import buildcraft.api.schematics.SchematicEntityContext;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
@@ -248,19 +250,25 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     private ISchematicBlock readSchematicBlock(BlockPos worldScanPos) {
-        return SchematicBlockManager.getSchematicBlock(
+        return SchematicBlockManager.getSchematicBlock(new SchematicBlockContext(
             world,
             pos.offset(world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite()),
             worldScanPos,
             world.getBlockState(worldScanPos),
             world.getBlockState(worldScanPos).getBlock()
-        );
+        ));
     }
 
     private void scanEntities() {
         BlockPos basePos = pos.offset(world.getBlockState(pos).getValue(BlockArchitectTable.PROP_FACING).getOpposite());
         world.getEntitiesWithinAABB(Entity.class, box.getBoundingBox()).stream()
-            .map(entity -> SchematicEntityManager.getSchematicEntity(world, basePos, entity))
+            .map(entity ->
+                SchematicEntityManager.getSchematicEntity(new SchematicEntityContext(
+                    world,
+                    basePos,
+                    entity
+                ))
+            )
             .filter(Objects::nonNull)
             .forEach(blueprintScannedEntities::add);
     }

@@ -36,22 +36,6 @@ public class SchematicBlockManager {
         throw new UnsupportedOperationException();
     }
 
-    public static ISchematicBlock getSchematicBlock(World world,
-                                                    BlockPos basePos,
-                                                    BlockPos pos,
-                                                    IBlockState blockState,
-                                                    Block block) {
-        return getSchematicBlock(
-            new SchematicBlockContext(
-                world,
-                basePos,
-                pos,
-                blockState,
-                block
-            )
-        );
-    }
-
     @SuppressWarnings("WeakerAccess")
     public static <S extends ISchematicBlock> S createCleanCopy(S schematicBlock) {
         return SchematicBlockFactoryRegistry
