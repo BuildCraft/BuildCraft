@@ -61,7 +61,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     private static final int[] REBUILD_DELAYS = { 16, 32, 64, 128, 256 };
 
     private final Tank tank = new Tank("tank", 2 * Fluid.BUCKET_VOLUME, this);
-    public final Set<EnumFacing> openSides = EnumSet.noneOf(EnumFacing.class);
+    public final Set<EnumFacing> openSides = EnumSet.copyOf(BlockFloodGate.CONNECTED_MAP.keySet());
     public final Deque<BlockPos> queue = new ArrayDeque<>();
     private final Map<BlockPos, List<BlockPos>> paths = new HashMap<>();
     private int delayIndex = 0;
@@ -70,11 +70,6 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     public TileFloodGate() {
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank, EnumPipePart.VALUES);
         tankManager.add(tank);
-        for (EnumFacing face : EnumFacing.VALUES) {
-            if (BlockFloodGate.CONNECTED_MAP.containsKey(face)) {
-                openSides.add(face);
-            }
-        }
     }
 
     private int getCurrentDelay() {
