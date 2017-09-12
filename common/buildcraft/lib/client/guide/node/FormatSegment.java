@@ -31,7 +31,7 @@ public final class FormatSegment {
         for (TextFormatting format : misc) {
             miscString.append(format.toString());
         }
-        return (colour == null ? "" : colour.toString()) + miscString + text;
+        return TextFormatting.RESET + (colour == null ? "" : colour.toString()) + miscString + text;
     }
 
     @Override

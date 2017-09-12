@@ -19,13 +19,9 @@ public enum MarkerRenderer implements IDetachedRenderer {
     @Override
     public void render(EntityPlayer player, float partialTicks) {
         for (MarkerCache<? extends MarkerSubCache<?>> cache : MarkerCache.CACHES) {
-            renderCache(cache.getSubCache(player.world));
-        }
-    }
-
-    private static <C extends MarkerConnection<C>> void renderCache(MarkerSubCache<C> cache) {
-        for (C connection : cache.getConnections()) {
-            connection.renderInWorld();
+            for (MarkerConnection<?> connection : cache.getSubCache(player.world).getConnections()) {
+                connection.renderInWorld();
+            }
         }
     }
 }

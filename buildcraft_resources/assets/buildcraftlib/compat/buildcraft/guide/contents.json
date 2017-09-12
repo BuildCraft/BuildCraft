@@ -1,18 +1,15 @@
 {
     "entry_mask": "<mod><sub_mod>:compat/buildcraft/guide/<lang>/<type>/<page>",
-    "default_tags": 
-    {
+    "default_tags": {
         "mod": "buildcraft",
         "sub_mod": "lib"
     },
-    "contents": 
-    [
+    "contents": [
         {
             "title": "item.guide.name",
             "item_stack": "(buildcraftlib:guide)",
             "page": "guide.md",
-            "type_tags": 
-            {
+            "type_tags": {
                 "type": "item",
                 "sub_type": "tool"
             }
