@@ -51,10 +51,9 @@ public class BCTransportRegistries {
     }
 
     public static void init() {
-        ICustomPipeConnection smallerBlockConnection = (world, pos, face, state) -> face == EnumFacing.UP ? 0 : 2 / 16f;
+        ICustomPipeConnection smallerBlockConnection = (world, pos, face, state) -> face == EnumFacing.UP ? 0 : 1 / 16f;
         PipeConnectionAPI.registerConnection(Blocks.CHEST, smallerBlockConnection);
         PipeConnectionAPI.registerConnection(Blocks.TRAPPED_CHEST, smallerBlockConnection);
-        PipeConnectionAPI.registerConnection(Blocks.HOPPER, smallerBlockConnection);
 
         // Item use stripes handlers
         PipeApi.stripeRegistry.addHandler(StripesHandlerPlant.INSTANCE);
