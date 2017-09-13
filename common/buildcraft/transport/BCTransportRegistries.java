@@ -51,7 +51,8 @@ public class BCTransportRegistries {
     }
 
     public static void init() {
-        ICustomPipeConnection smallerBlockConnection = (world, pos, face, state) -> face == EnumFacing.UP ? 0 : 1 / 16f;
+        ICustomPipeConnection smallerBlockConnection = (world, pos, face, state) ->
+            face == EnumFacing.UP ? 2 / 16f : face == EnumFacing.DOWN ? 0 : 1 / 16f;
         PipeConnectionAPI.registerConnection(Blocks.CHEST, smallerBlockConnection);
         PipeConnectionAPI.registerConnection(Blocks.TRAPPED_CHEST, smallerBlockConnection);
 
