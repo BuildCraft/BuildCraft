@@ -14,7 +14,6 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.EnumHandlerPriority;
 import buildcraft.api.facades.FacadeAPI;
-import buildcraft.api.transport.pipe.ICustomPipeConnection;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeConnectionAPI;
 import buildcraft.api.transport.pipe.PipeFlowType;
@@ -51,10 +50,10 @@ public class BCTransportRegistries {
     }
 
     public static void init() {
-        ICustomPipeConnection smallerBlockConnection = (world, pos, face, state) ->
-            face == EnumFacing.UP ? 2 / 16f : face == EnumFacing.DOWN ? 0 : 1 / 16f;
-        PipeConnectionAPI.registerConnection(Blocks.CHEST, smallerBlockConnection);
-        PipeConnectionAPI.registerConnection(Blocks.TRAPPED_CHEST, smallerBlockConnection);
+        PipeConnectionAPI.registerConnection(
+            Blocks.BREWING_STAND,
+            (world, pos, face, state) -> face.getAxis().getPlane() == EnumFacing.Plane.HORIZONTAL ? 4 / 16F : 0
+        );
 
         // Item use stripes handlers
         PipeApi.stripeRegistry.addHandler(StripesHandlerPlant.INSTANCE);
