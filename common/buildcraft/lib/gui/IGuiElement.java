@@ -42,4 +42,12 @@ public interface IGuiElement extends IGuiArea, ITooltipElement, IHelpElement {
             return ImmutableList.of();
         }
     }
+
+    /** Add debugging information to the list. Note that a lot of elements will be called for this, so keep the amount
+     * of information minimal.
+     * 
+     * @return An identifier for this element (usually a name) */
+    default String getDebugInfo(List<String> info) {
+        return toString();
+    }
 }

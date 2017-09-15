@@ -70,16 +70,17 @@
 		},
 		"button_no_excavate": {
 			"type": "four_button",
-			"source": "filler.no_excavate",
+			"button": "filler.excavate",
 			"u_start": 192,
-			"area": [130,40,16,16]
-		},
-		"button_no_excavate_help": {
-			"type": "buildcraftlib:help",
-			"area": [128,38,20,20],
-			"colour": "0xFF_CC_AA_88",
-			"title": "buildcraft.help.filler.excavate.title",
-			"text": "buildcraft.help.filler.excavate.desc"
+			"area": [130,40,16,16],
+            "tooltip": {
+                "expression": "'tip.filler.excavate.' + (filler.excavate ? 'on' : 'off')"
+            },
+			"help": {
+                "colour": "0xFF_CC_AA_88",
+                "title": "buildcraft.help.filler.excavate.title",
+                "text": "buildcraft.help.filler.excavate.desc"
+			}
 		},
 		"is_locked_icon": {
 			"type": "buildcraftlib:drawable",

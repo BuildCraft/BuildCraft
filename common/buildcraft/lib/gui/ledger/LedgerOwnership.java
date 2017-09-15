@@ -31,7 +31,7 @@ public class LedgerOwnership extends Ledger_Neptune {
         appendText(this::getOwnerName, 0);
 
         calculateMaxSize();
-        setOpenProperty(GuiConfigManager.getOrAddBoolean(new ResourceLocation("buildcraftlib:owner"), "ledger.owner.is_open", false));
+        setOpenProperty(GuiConfigManager.getOrAddBoolean(new ResourceLocation("buildcraftlib:base"), "ledger.owner.is_open", false));
     }
 
     @Override

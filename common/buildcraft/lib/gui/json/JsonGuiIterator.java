@@ -1,5 +1,7 @@
 package buildcraft.lib.gui.json;
 
+import java.util.Map;
+
 import javax.annotation.Nullable;
 
 import com.google.gson.JsonElement;
@@ -7,8 +9,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.util.JsonUtils;
-
-import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
@@ -31,7 +31,7 @@ public class JsonGuiIterator {
             JsonObject obj = element.getAsJsonObject();
             name = JsonUtils.getString(obj, "name", "index");
             start = JsonUtils.getString(obj, "start", "0");
-            step = JsonUtils.getString(obj, "step", "1");
+            step = JsonUtils.getString(obj, "step");
             if (obj.has("while")) {
                 shouldContinue = JsonUtils.getString(obj, "while");
             } else {
@@ -47,11 +47,11 @@ public class JsonGuiIterator {
         } else if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isString()) {
             String iter = element.getAsString();
             name = iter.substring(0, iter.indexOf('=')).trim();
-            String bounds = iter.substring(iter.indexOf('=') + 1);
-            start = bounds.substring(0, bounds.indexOf(',')).trim().replace(" ", "");
+            String bounds = iter.substring(iter.indexOf('=') + 1).trim();
+            start = bounds.substring(1, bounds.indexOf(',')).replace(" ", "");
             String end = bounds.substring(bounds.indexOf(',') + 1).trim().replace(" ", "");
             try {
-                int s = Integer.parseInt(start.substring(1)) + (start.startsWith("(") ? 1 : 0);
+                int s = Integer.parseInt(start) + (start.startsWith("(") ? 1 : 0);
                 int e = Integer.parseInt(end.substring(0, end.length() - 1)) - (end.endsWith(")") ? 1 : 0);
                 if (s < e) {
                     step = "1";
@@ -91,8 +91,6 @@ public class JsonGuiIterator {
                 valStep = GenericExpressionCompiler.compileExpressionLong(step, ctx);
                 ctx.putVariable("step", valStep);
                 valShouldContinue = GenericExpressionCompiler.compileExpressionBoolean(shouldContinue, ctx);
-                BCLog.logger
-                    .info("[lib.gui.json] Compiled while statement '" + shouldContinue + "' to " + valShouldContinue);
             } catch (InvalidExpressionException iee) {
                 throw new JsonSyntaxException("Invalid iterator!", iee);
             }
@@ -130,7 +128,6 @@ public class JsonGuiIterator {
             if (stepValue == 0) {
                 throw new JsonSyntaxException("Step was 0!");
             }
-            BCLog.logger.info("Step " + count + ", " + name + " = " + value.value);
             value.value += stepValue;
             return !valShouldContinue.evaluate();
         }
@@ -139,10 +136,12 @@ public class JsonGuiIterator {
             return JsonGuiIterator.this;
         }
 
-        public void putProperties(FunctionContext ctx) {
+        public void putProperties(FunctionContext ctx, Map<String, String> properties) {
             ResolvedIterator iter = this;
             while (iter != null) {
-                ctx.putConstantLong(iter.getJson().name, iter.value.value);
+                String n = iter.getJson().name;
+                ctx.putConstantLong(n, iter.value.value);
+                properties.put(n, iter.value.evaluateAsString());
                 iter = iter.child;
             }
         }

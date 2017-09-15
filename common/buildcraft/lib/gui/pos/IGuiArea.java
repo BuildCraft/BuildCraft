@@ -9,6 +9,7 @@ package buildcraft.lib.gui.pos;
 import java.util.function.DoubleSupplier;
 
 import buildcraft.lib.expression.api.IConstantNode;
+import buildcraft.lib.expression.node.value.NodeConstantDouble;
 
 /** Defines an area somewhere on the screen. */
 public interface IGuiArea extends IGuiPosition {
@@ -83,17 +84,28 @@ public interface IGuiArea extends IGuiPosition {
 
     @Override
     default IGuiArea offset(IGuiPosition by) {
+        if (by instanceof PositionAbsolute) {
+            if (by.getX() == 0 && by.getY() == 0) {
+                return this;
+            }
+        }
         return offset(by::getX, by::getY);
     }
 
     @Override
     default IGuiArea offset(double x, DoubleSupplier y) {
-        return offset(() -> x, y);
+        if (y instanceof IConstantNode) {
+            return offset(x, y.getAsDouble());
+        }
+        return offset(NodeConstantDouble.of(x), y);
     }
 
     @Override
     default IGuiArea offset(DoubleSupplier x, double y) {
-        return offset(x, () -> y);
+        if (x instanceof IConstantNode) {
+            return offset(x.getAsDouble(), y);
+        }
+        return offset(x, NodeConstantDouble.of(y));
     }
 
     @Override
@@ -103,6 +115,7 @@ public interface IGuiArea extends IGuiPosition {
 
     @Override
     default IGuiArea offset(double x, double y) {
+        if (x == 0 && y == 0) return this;
         return create(() -> getX() + x, () -> getY() + y, this::getWidth, this::getHeight);
     }
 
@@ -134,9 +147,9 @@ public interface IGuiArea extends IGuiPosition {
             return expand(dX.getAsDouble(), dY.getAsDouble());
         }
         return create(//
-            () -> getX() - dX.getAsDouble(),//
-            () -> getY() - dY.getAsDouble(),//
-            () -> getWidth() + dX.getAsDouble() * 2,//
+            () -> getX() - dX.getAsDouble(), //
+            () -> getY() - dY.getAsDouble(), //
+            () -> getWidth() + dX.getAsDouble() * 2, //
             () -> getHeight() + dY.getAsDouble() * 2//
         );
     }

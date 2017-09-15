@@ -76,7 +76,8 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
     /** Used to determine if gate logic should go across several trigger/action pairs. */
     public final boolean[] connections;
 
-    /** Used at the client to display if an action is activated, or a trigger is currently triggering. */
+    /** Used at the client to display if an action is activated (or would be activated if its not null), or a trigger is
+     * currently triggering. */
     public final boolean[] triggerOn, actionOn;
 
     public int redstoneOutput, redstoneOutputSide;
@@ -161,11 +162,21 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
         MessageUtil.readBooleanArray(buffer, triggerOn);
         MessageUtil.readBooleanArray(buffer, actionOn);
         MessageUtil.readBooleanArray(buffer, connections);
+        try {
+            for (StatementPair pair : statements) {
+                pair.trigger.readFromBuffer(buffer);
+                pair.action.readFromBuffer(buffer);
+            }
+        } catch (IOException io) {
+            throw new Error(io);
+        }
         boolean on = false;
-        for (boolean b : actionOn) {
-            on |= b;
+        for (int i = 0; i < statements.length; i++) {
+            boolean b = actionOn[i];
+            on |= b && (statements[i].action.get() != null);
         }
         isOn = on;
+
     }
 
     public void writeCreationToBuf(PacketBufferBC buffer) {
@@ -174,6 +185,11 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
         MessageUtil.writeBooleanArray(buffer, triggerOn);
         MessageUtil.writeBooleanArray(buffer, actionOn);
         MessageUtil.writeBooleanArray(buffer, connections);
+
+        for (StatementPair pair : statements) {
+            pair.trigger.writeToBuffer(buffer);
+            pair.action.writeToBuffer(buffer);
+        }
     }
 
     /** Helper method to send a custom payload to the other side via the pluggable. */
@@ -199,8 +215,9 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                 MessageUtil.readBooleanArray(buffer, actionOn);
                 MessageUtil.readBooleanArray(buffer, connections);
                 boolean on = false;
-                for (boolean b : actionOn) {
-                    on |= b;
+                for (int i = 0; i < statements.length; i++) {
+                    boolean b = actionOn[i];
+                    on |= b && (statements[i].action.get() != null);
                 }
                 isOn = on;
             } else {

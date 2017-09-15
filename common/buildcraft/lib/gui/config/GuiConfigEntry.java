@@ -1,8 +1,8 @@
 package buildcraft.lib.gui.config;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,7 +14,7 @@ import buildcraft.lib.expression.api.NodeTypes;
 
 class GuiConfigEntry {
     final String name;
-    final Map<String, GuiProperty> typeToProperty = new HashMap<>();
+    final Map<String, GuiProperty> typeToProperty = new TreeMap<>();
 
     GuiConfigEntry(String name) {
         this.name = name;
@@ -32,6 +32,7 @@ class GuiConfigEntry {
             prop = constructor.create(name);
             prop.set(value);
             typeToProperty.put(type, prop);
+            GuiConfigManager.markDirty();
         }
         return prop;
     }

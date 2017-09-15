@@ -30,7 +30,7 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
         this.params = new IStatementParameter[maxParams];
         this.paramRefs = new FullStatement.ParamRef[maxParams];
         for (int i = 0; i < maxParams; i++) {
-            paramRefs[i] = new ParamRef(params, i);
+            paramRefs[i] = new ParamRef(this, i);
         }
     }
 
@@ -124,11 +124,13 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
     }
 
     static class ParamRef implements IReference<IStatementParameter> {
+        public final IReference<? extends IStatement> statementRef;
         public final IStatementParameter[] array;
         public final int index;
 
-        public ParamRef(IStatementParameter[] array, int index) {
-            this.array = array;
+        public ParamRef(FullStatement<?> full, int index) {
+            statementRef = full;
+            this.array = full.params;
             this.index = index;
         }
 
@@ -144,7 +146,15 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
 
         @Override
         public boolean canSet(Object value) {
-            return value == null || value instanceof IStatementParameter;
+            IStatement statement = statementRef.get();
+            if (statement == null) {
+                return false;
+            }
+            if (value == null || value instanceof IStatementParameter) {
+                IStatementParameter param = (IStatementParameter) value;
+                return statement.createParameter(param, index) == param;
+            }
+            return false;
         }
     }
 

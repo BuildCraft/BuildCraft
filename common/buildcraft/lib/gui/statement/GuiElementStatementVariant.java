@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.GlStateManager;
 
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IGuiSlot;
+import buildcraft.api.statements.IStatementParameter;
 
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.gui.GuiBC8;
@@ -82,12 +83,16 @@ public class GuiElementStatementVariant extends GuiElementSimple<GuiBC8<?>> impl
         GlStateManager.color(1, 1, 1);
         SELECTION_HOVER.draw(this);
         iteratePossible((pos, slot) -> {
-            ISprite sprite = slot.getSprite();
             double x = pos.getX();
             double y = pos.getY();
-            GuiElementStatement.SLOT_COLOUR.drawAt(pos);
-            if (sprite != null) {
-                GuiIcon.drawAt(sprite, x + 1, y + 1, 16);
+            if (slot instanceof IStatementParameter) {
+                ParameterRenderer.draw((IStatementParameter) slot, x, y);
+            } else {
+                ISprite sprite = slot.getSprite();
+                GuiElementStatement.SLOT_COLOUR.drawAt(pos);
+                if (sprite != null) {
+                    GuiIcon.drawAt(sprite, x + 1, y + 1, 16);
+                }
             }
         });
     }

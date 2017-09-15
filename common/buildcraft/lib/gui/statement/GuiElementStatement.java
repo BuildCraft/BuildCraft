@@ -3,9 +3,9 @@ package buildcraft.lib.gui.statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 
 import buildcraft.lib.BCLibSprites;
@@ -91,12 +91,7 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple<
             S stmnt = ref.get();
             double x = getX();
             double y = getY();
-            if (stmnt != null) {
-                ISprite sprite = stmnt.getSprite();
-                if (sprite != null) {
-                    GuiIcon.drawAt(sprite, x + 1, y + 1, 16);
-                }
-            }
+            GuiElementStatementSource.drawGuiSlot(stmnt, x, y);
             if (!ref.canInteract) {
                 GuiIcon.drawAt(BCLibSprites.LOCK, x + 1, y + 1, 16);
             }
@@ -111,6 +106,10 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple<
             return;
         }
         if (ref.canInteract && button == 0) {
+            if (GuiScreen.isShiftKeyDown()) {
+                set(null);
+                return;
+            }
             S s = get();
             if (s == null) {
                 return;

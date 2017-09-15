@@ -14,7 +14,6 @@ import buildcraft.lib.expression.Tokenizer.ResultConsume;
 import buildcraft.lib.expression.Tokenizer.ResultDiscard;
 import buildcraft.lib.expression.Tokenizer.ResultInvalid;
 import buildcraft.lib.expression.Tokenizer.ResultSpecific;
-import buildcraft.lib.expression.api.NodeTypes;
 
 public class TokenizerDefaults {
     // Lots of gobblers.
@@ -99,40 +98,19 @@ public class TokenizerDefaults {
         }
     };
     public static final ITokenizerGobbler GOBBLER_WORD = (ctx) -> {
-        /*
-         * Allow words to start with ".", so that object method calling works. (for example "5.sub(6)", where ".sub" is
-         * treated as a single token)
-         * 
-         * Allow words to contain "." so that full names work.
-         * 
-         * Except in the case where "engine.stage.toLowerCase()" -- only take "engine.stage"
-         * 
-         * I have no idea how this will work in regards to object properties... although they aren't implemented yet
-         */
-        int firstDot = Integer.MAX_VALUE;
-        int lastDot = -1;
+        /* Allow words to start with ".", so that object method calling works. (for example "5.sub(6)", where ".sub" is
+         * treated as a single token) */
         int i = 0;
-        for (;; i++) {
+        while (true) {
             char c = ctx.getCharAt(i);
-            if (c == '.') {
-                firstDot = Math.min(i, firstDot);
-                lastDot = i;
-            } else if (c == '(') {
-                if (lastDot == -1) {
-                    break;
-                } else if (lastDot == 0) {
-                    break;
-                } else if (NodeTypes.getType(ctx.get(0, firstDot + 1)) == null) {
-                    if (firstDot != lastDot) {
-                        i = lastDot;
-                    }
-                    break;
-                } else {
+            if (i == 0) {
+                if (c != '.' && !Character.isJavaIdentifierStart(c)) {
                     break;
                 }
             } else if (!Character.isJavaIdentifierPart(c)) {
                 break;
             }
+            i++;
         }
         return i == 0 ? ResultSpecific.IGNORE : new ResultConsume(i);
     };

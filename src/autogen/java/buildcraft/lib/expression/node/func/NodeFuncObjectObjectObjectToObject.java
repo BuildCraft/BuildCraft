@@ -16,10 +16,11 @@ import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.StringFunctionQuad;
+import buildcraft.lib.expression.node.func.NodeFuncBase;
 import buildcraft.lib.expression.node.value.NodeConstantObject;
 
 // AUTO_GENERATED FILE, DO NOT EDIT MANUALLY!
-public class NodeFuncObjectObjectObjectToObject<A, B, C, R> implements INodeFuncObject<R> {
+public class NodeFuncObjectObjectObjectToObject<A, B, C, R> extends NodeFuncBase implements INodeFuncObject<R> {
 
     public final IFuncObjectObjectObjectToObject<A, B, C, R> function;
     private final StringFunctionQuad stringFunction;
@@ -86,8 +87,16 @@ public class NodeFuncObjectObjectObjectToObject<A, B, C, R> implements INodeFunc
 
         @Override
         public INodeObject<R> inline() {
-            return NodeInliningHelper.tryInline(this, argA, argB, argC, (a, b, c) -> new Func(a, b, c),
-                    (a, b, c) -> new NodeConstantObject<>(returnType, function.apply(a.evaluate(), b.evaluate(), c.evaluate()))
+            if (!canInline) {
+                // Note that we can still inline the arguments, just not *this* function
+                return NodeInliningHelper.tryInline(this, argA, argB, argC,
+                    (a, b, c) -> new Func(a, b, c),
+                    (a, b, c) -> new Func(a, b, c)
+                );
+            }
+            return NodeInliningHelper.tryInline(this, argA, argB, argC,
+                (a, b, c) -> new Func(a, b, c),
+                (a, b, c) -> new NodeConstantObject<>(returnType, function.apply(a.evaluate(), b.evaluate(), c.evaluate()))
             );
         }
 

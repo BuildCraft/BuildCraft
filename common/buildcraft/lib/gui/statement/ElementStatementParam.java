@@ -13,6 +13,7 @@ import buildcraft.api.statements.StatementMouseClick;
 
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.data.IReference;
 
 @Deprecated
@@ -39,7 +40,7 @@ public class ElementStatementParam extends ElementGuiSlot<GuiStatementSelector<?
             super.drawBackground(partialTicks);
             ItemStack stack = param.getItemStack();
             if (!stack.isEmpty()) {
-                gui.drawItemStackAt(stack, (int) getX() + 1, (int) getY() + 1);
+                GuiUtil.drawItemStackAt(stack, (int) getX() + 1, (int) getY() + 1);
             }
         }
     }
@@ -53,7 +54,7 @@ public class ElementStatementParam extends ElementGuiSlot<GuiStatementSelector<?
             super.draw(val, element);
             ItemStack stack = val.getItemStack();
             if (!stack.isEmpty()) {
-                gui.drawItemStackAt(stack, (int) getX() + 1, (int) getY() + 1);
+                GuiUtil.drawItemStackAt(stack, (int) getX() + 1, (int) getY() + 1);
             }
         }
     }

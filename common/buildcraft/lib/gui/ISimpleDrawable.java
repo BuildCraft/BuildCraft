@@ -15,4 +15,12 @@ public interface ISimpleDrawable {
     default void drawAt(IGuiPosition element) {
         drawAt(element.getX(), element.getY());
     }
+
+    default ISimpleDrawable andThen(ISimpleDrawable after) {
+        ISimpleDrawable t = this;
+        return (x, y) -> {
+            t.drawAt(x, y);
+            after.drawAt(x, y);
+        };
+    }
 }

@@ -2,8 +2,6 @@ package buildcraft.lib.gui.elem;
 
 import java.util.List;
 
-import net.minecraft.client.gui.Gui;
-
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.IGuiPosition;
@@ -28,12 +26,12 @@ public class GuiElementContainerResizing extends GuiElementContainer2 {
 
     @Override
     public double getX() {
-        return minX;
+        return childRoot.getX() + minX;
     }
 
     @Override
     public double getY() {
-        return minY;
+        return childRoot.getY() + minY;
     }
 
     @Override
@@ -48,25 +46,25 @@ public class GuiElementContainerResizing extends GuiElementContainer2 {
 
     @Override
     public void calculateSizes() {
-        // FIXME: THis is broken!
-        double x0 = 0, x1 = 0, y0 = 0, y1 = 0;
-        x0 = x1 = minX = maxX = childRoot.getX();
-        y0 = y1 = minY = maxY = childRoot.getY();
+        double x0, x1, y0, y1;
+        double x = childRoot.getX();
+        double y = childRoot.getY();
+        x0 = x1 = x;
+        y0 = y1 = y;
         for (IGuiElement elem : getChildElements()) {
             x0 = Math.min(x0, elem.getX());
             y0 = Math.min(y0, elem.getY());
             x1 = Math.max(x1, elem.getEndX());
             y1 = Math.max(y1, elem.getEndY());
         }
-        minX = x0;
-        maxX = x1;
-        minY = y0;
-        maxY = y1;
+        minX = x0 - x;
+        maxX = x1 - x;
+        minY = y0 - y;
+        maxY = y1 - y;
     }
 
     @Override
     public void drawBackground(float partialTicks) {
-        Gui.drawRect((int) getX(), (int) getY(), (int) getEndX(), (int) getEndY(), hashCode() | 0xFF_00_00_00);
         for (IGuiElement elem : getChildElements()) {
             elem.drawBackground(partialTicks);
         }
@@ -81,12 +79,6 @@ public class GuiElementContainerResizing extends GuiElementContainer2 {
 
     @Override
     public void addToolTips(List<ToolTip> tooltips) {
-        if (contains(gui.mouse)) {
-            // temp for testing
-            tooltips.add(new ToolTip("Container"));
-        } else {
-            tooltips.add(new ToolTip((gui.mouse.getX() - getX()) + ", " + (gui.mouse.getY() - getY())));
-        }
         super.addToolTips(tooltips);
     }
 }

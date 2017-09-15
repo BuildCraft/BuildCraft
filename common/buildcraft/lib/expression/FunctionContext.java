@@ -27,6 +27,7 @@ import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
 import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
+import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.NodeFuncObjectLongLongToLong.IFuncObjectLongLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncObjectLongToLong.IFuncObjectLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToObject.IFuncObjectObjectToObject;
@@ -103,6 +104,10 @@ public class FunctionContext extends FunctionContextBase {
 
     public <E extends IExpressionNode> E putVariable(String name, E node) {
         name = name.toLowerCase(Locale.ROOT);
+        if (NodeTypes.getType(name) != null) {
+            throw new IllegalArgumentException("Cannot add a variable that clashes with a type! (Name = '" + name
+                + "', Types = " + NodeTypes.getValidTypeNames() + ")");
+        }
         variables.put(name, node);
         return node;
     }

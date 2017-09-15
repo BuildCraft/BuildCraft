@@ -66,7 +66,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
 
     static {
         MODEL_FUNC_CTX = DefaultContexts.createWithAll();
-        MODEL_FACING = MODEL_FUNC_CTX.putVariableObject("facing", EnumFacing.class);
+        MODEL_FACING = MODEL_FUNC_CTX.putVariableObject("direction", EnumFacing.class);
         MODEL_POWER_AVG = MODEL_FUNC_CTX.putVariableLong("power_average");
         MODEL_POWER_MAX = MODEL_FUNC_CTX.putVariableLong("power_max");
         MODEL_ACTIVE = MODEL_FUNC_CTX.putVariableBoolean("active");

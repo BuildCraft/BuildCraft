@@ -6,7 +6,6 @@ import buildcraft.api.tiles.IControllable.Mode;
 
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.button.IButtonClickEventListener;
-import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.gui.json.InventorySlotHolder;
 import buildcraft.lib.gui.json.SpriteDelegate;
@@ -40,34 +39,19 @@ public class GuiFiller extends GuiJson<ContainerFiller> {
         properties.put("filler.possible", FillerStatementContext.CONTEXT_ALL);
         properties.put("filler.pattern", container.tile.pattern);
         properties.put("filler.pattern.sprite", SPRITE_PATTERN);
-    }
 
-    @Override
-    protected void postLoad() {
-        super.postLoad();
-        setupButton("filler.no_excavate", b -> {
-            b.setBehaviour(IButtonBehaviour.TOGGLE);
-            final ToolTip active = ToolTip.createLocalized("tip.filler.excavate.off");
-            final ToolTip inactive = ToolTip.createLocalized("tip.filler.excavate.on");
-            b.setActive(!container.tile.canExcavate());
-            IButtonClickEventListener listener = (b2, k) -> {
-                b.setToolTip(b.active ? active : inactive);
-                container.tile.sendCanExcavate(!b.active);
-            };
-            listener.handleButtonClick(b, 0);
-            b.registerListener(listener);
+        context.put_b("filler.invert", container.tile::shouldInvert);
+        properties.put("filler.invert", IButtonBehaviour.TOGGLE);
+        properties.put("filler.invert", container.tile.shouldInvert());
+        properties.put("filler.invert", (IButtonClickEventListener) (b, k) -> {
+            container.tile.sendInvert(b.isButtonActive());
         });
-        setupButton("filler.invert", b -> {
-            b.setBehaviour(IButtonBehaviour.TOGGLE);
-            final ToolTip on = ToolTip.createLocalized("tip.filler.invert.on");
-            final ToolTip off = ToolTip.createLocalized("tip.filler.invert.off");
-            b.setActive(container.tile.shouldInvert());
-            IButtonClickEventListener listener = (b2, k) -> {
-                b.setToolTip(b.active ? on : off);
-                container.tile.sendInvert(b.active);
-            };
-            listener.handleButtonClick(b, 0);
-            b.registerListener(listener);
+
+        context.put_b("filler.excavate", container.tile::canExcavate);
+        properties.put("filler.excavate", IButtonBehaviour.TOGGLE);
+        properties.put("filler.excavate", container.tile.canExcavate());
+        properties.put("filler.excavate", (IButtonClickEventListener) (b, k) -> {
+            container.tile.sendCanExcavate(b.isButtonActive());
         });
     }
 

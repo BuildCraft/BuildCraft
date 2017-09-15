@@ -1,8 +1,8 @@
 package buildcraft.lib.gui.config;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -13,7 +13,7 @@ import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IVariableNode;
 
 class GuiConfigSet {
-    final Map<String, GuiConfigEntry> properties = new HashMap<>();
+    final Map<String, GuiConfigEntry> properties = new TreeMap<>();
 
     IVariableNode getOrAddProperty(String name, IExpressionNode value) {
         return properties.computeIfAbsent(name, GuiConfigEntry::new).getOrAdd(value);

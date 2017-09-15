@@ -176,6 +176,12 @@ public class PluggableGate extends PipePluggable {
     }
 
     @Override
+    public void writePayload(PacketBuffer buffer, Side side) {
+        // What???
+        buffer.writeByte(0);
+    }
+
+    @Override
     public void readPayload(PacketBuffer b, Side side, MessageContext ctx) throws IOException {
         PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(b);
         int id = buffer.readUnsignedByte();

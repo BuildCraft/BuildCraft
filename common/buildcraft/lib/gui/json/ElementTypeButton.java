@@ -2,6 +2,7 @@ package buildcraft.lib.gui.json;
 
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.client.sprite.SpriteRaw;
@@ -10,6 +11,8 @@ import buildcraft.lib.gui.GuiSpriteScaled;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.button.GuiButtonDrawable;
+import buildcraft.lib.gui.button.IButtonBehaviour;
+import buildcraft.lib.gui.button.IButtonClickEventListener;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.GuiUtil;
@@ -71,10 +74,16 @@ public class ElementTypeButton extends ElementType {
         int sizeX = resolveEquationInt(json, "size[0]", ctx);
         int sizeY = resolveEquationInt(json, "size[1]", ctx);
 
+        String buttonId;
+        if (json.properties.containsKey("button")) {
+            buttonId = json.properties.get("button");
+        } else {
+            buttonId = resolveEquation(json, "button_expression", ctx);
+        }
+
         ISimpleDrawable drEnabled = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.enabled");
         GuiRectangle rect = new GuiRectangle(posX, posY, sizeX, sizeY);
         GuiButtonDrawable.Builder buttonBuilder = new GuiButtonDrawable.Builder(rect, drEnabled);
-        String src = json.properties.get("source");
 
         buttonBuilder.active = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.active");
         buttonBuilder.hovered = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.hovered");
@@ -82,7 +91,20 @@ public class ElementTypeButton extends ElementType {
         buttonBuilder.disabled = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.disabled");
         buttonBuilder.disabledActive = resolveDrawable(ctx, info, json, gui, sizeX, sizeY, "modes.active_disabled");
         GuiButtonDrawable button = new GuiButtonDrawable(gui, json.name, parent, buttonBuilder);
-        gui.properties.put(src, button);
+        IButtonBehaviour behaviour = gui.properties.get(buttonId, IButtonBehaviour.class);
+        if (behaviour != null) {
+            button.setBehaviour(behaviour);
+        }
+        Boolean current = gui.properties.get(buttonId, Boolean.class);
+        if (current != null) {
+            button.setActive(current.booleanValue());
+        }
+        IButtonClickEventListener listener = gui.properties.get(buttonId, IButtonClickEventListener.class);
+        if (listener == null) {
+            BCLog.logger.warn("[lib.gui.json] Unknown button id '" + buttonId + "'");
+        } else {
+            button.registerListener(listener);
+        }
         return button;
     }
 

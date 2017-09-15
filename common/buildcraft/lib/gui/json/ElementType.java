@@ -1,7 +1,10 @@
 package buildcraft.lib.gui.json;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import com.google.gson.JsonSyntaxException;
 
@@ -19,8 +22,10 @@ import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
+import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.IContainingElement;
 import buildcraft.lib.gui.IGuiElement;
+import buildcraft.lib.gui.elem.GuiElementContainerResizing;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
@@ -36,25 +41,66 @@ public abstract class ElementType {
 
     public final IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         IGuiElement element = deserialize0(gui, parent, info, json);
+        if (element instanceof GuiElementSimple<?>) {
+            ((GuiElementSimple<?>) element).name = json.fullName;
+        }
         gui.context.putConstant(json.fullName + ".pos", IGuiPosition.class, element);
         gui.context.putConstant(json.fullName + ".area", IGuiArea.class, element);
+        gui.varData.addNodes(json.createTickableNodes());
 
+        List<IGuiElement> children = new ArrayList<>();
+        IContainingElement container;
         if (element instanceof IContainingElement) {
-            IContainingElement container = (IContainingElement) element;
-            for (JsonGuiElement c : json.getChildren(info, "children")) {
+            container = (IContainingElement) element;
+        } else {
+            container = new GuiElementContainerResizing(gui, element);
+            container.getChildElements().add(element);
+        }
+
+        addChildren(gui, container.getChildElementPosition(), info, json, "children", children::add);
+
+        // Special case tooltips + help
+        if (json.json.has("help") && !(this instanceof ElementTypeHelp)) {
+            addType(gui, parent, info, json, "help", children::add, ElementTypeHelp.INSTANCE);
+        }
+
+        if (json.json.has("tooltip") && !(this instanceof ElementTypeToolTip)) {
+            addType(gui, parent, info, json, "tooltip", children::add, ElementTypeToolTip.INSTANCE);
+        }
+
+        if (!children.isEmpty()) {
+            element = container;
+            container.getChildElements().addAll(children);
+            container.calculateSizes();
+        }
+
+        return element;
+    }
+
+    protected static void addChildren(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json,
+        String subName, Consumer<IGuiElement> to) {
+        List<JsonGuiElement> children = json.getChildren(subName);
+        for (JsonGuiElement child : children) {
+            for (JsonGuiElement c : child.iterate(child.context)) {
                 String typeName = c.properties.get("type");
                 ElementType type = JsonGuiTypeRegistry.TYPES.get(typeName);
                 if (type == null) {
                     BCLog.logger.warn("Unknown type " + typeName);
                 } else {
-                    IGuiElement e = type.deserialize(gui, container.getChildElementPosition(), info, c);
-                    gui.properties.put("custom." + json.name + "." + c.name, e);
-                    container.getChildElements().add(e);
+                    to.accept(type.deserialize(gui, parent, info, c));
                 }
             }
-            container.calculateSizes();
         }
-        return element;
+    }
+
+    protected static void addType(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json,
+        String subName, Consumer<IGuiElement> to, ElementType type) {
+        JsonGuiElement ch = json.getChildElement(subName, json.json.get(subName));
+        if (!ch.properties.containsKey("area") && !ch.properties.containsKey("area[0]")
+            && !ch.properties.containsKey("pos[0]")) {
+            ch.properties.put("area", json.fullName + ".area");
+        }
+        to.accept(type.deserialize(gui, parent, info, ch));
     }
 
     public static FunctionContext createContext(JsonGuiElement json) {

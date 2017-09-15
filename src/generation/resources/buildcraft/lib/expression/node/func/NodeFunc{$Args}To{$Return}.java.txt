@@ -16,10 +16,11 @@ import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.{$StringFunction};
+import buildcraft.lib.expression.node.func.NodeFuncBase;
 import buildcraft.lib.expression.node.value.NodeConstant{$ReturnOnly};
 
 {$AutoGenWarning}
-public class NodeFunc{$Args}To{$ReturnOnly}{$TypeArgs} implements INodeFunc{$Return} {
+public class NodeFunc{$Args}To{$ReturnOnly}{$TypeArgs} extends NodeFuncBase implements INodeFunc{$Return} {
 
     public final IFunc{$Args}To{$ReturnOnly}{$TypeArgs} function;
     private final {$StringFunction} stringFunction;
@@ -58,8 +59,16 @@ public class NodeFunc{$Args}To{$ReturnOnly}{$TypeArgs} implements INodeFunc{$Ret
 
         @Override
         public INode{$Return} inline() {
-            return NodeInliningHelper.tryInline(this, {$StringFunctionArgsL}, ({$StringFunctionArgs}) -> new Func({$StringFunctionArgs}),
-                    ({$StringFunctionArgs}) -> {$NodeConstantGetter}function.apply({$NodeEvaluations}))
+            if (!canInline) {
+                // Note that we can still inline the arguments, just not *this* function
+                return NodeInliningHelper.tryInline(this, {$StringFunctionArgsL},
+                    ({$StringFunctionArgs}) -> new Func({$StringFunctionArgs}),
+                    ({$StringFunctionArgs}) -> new Func({$StringFunctionArgs})
+                );
+            }
+            return NodeInliningHelper.tryInline(this, {$StringFunctionArgsL},
+                ({$StringFunctionArgs}) -> new Func({$StringFunctionArgs}),
+                ({$StringFunctionArgs}) -> {$NodeConstantGetter}function.apply({$NodeEvaluations}))
             );
         }
 

@@ -6,9 +6,12 @@
 
 package buildcraft.lib.gui;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import gnu.trove.set.hash.TIntHashSet;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -16,9 +19,12 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
 import buildcraft.lib.BCLibSprites;
+import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
+import buildcraft.lib.gui.config.GuiConfigManager;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.ledger.LedgerHelp;
 import buildcraft.lib.gui.ledger.LedgerOwnership;
@@ -30,7 +36,15 @@ import buildcraft.lib.misc.GuiUtil;
 
 public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer {
     /** Used to control if this gui should show debugging lines, and other oddities that help development. */
-    public static boolean debugging = false;
+    public static final IVariableNodeBoolean isDebuggingEnabled;
+    /** If true then the debug icon will be shown. */
+    private static final IVariableNodeBoolean isDebuggingShown;
+
+    static {
+        ResourceLocation debugDef = new ResourceLocation("buildcraftlib", "base");
+        isDebuggingShown = GuiConfigManager.getOrAddBoolean(debugDef, "debugging_is_shown", false);
+        isDebuggingEnabled = GuiConfigManager.getOrAddBoolean(debugDef, "debugging_is_enabled", false);
+    }
 
     public static final GuiSpriteScaled SPRITE_DEBUG = new GuiSpriteScaled(BCLibSprites.DEBUG, 16, 16);
 
@@ -59,7 +73,6 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         }
     }
 
-    /** Checks to see if the main */
     protected boolean shouldAddHelpLedger() {
         return true;
     }
@@ -98,7 +111,8 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     // Gui -- double -> int
 
-    public void drawTexturedModalRect(double posX, double posY, double textureX, double textureY, double width, double height) {
+    public void drawTexturedModalRect(double posX, double posY, double textureX, double textureY, double width,
+        double height) {
         int x = MathHelper.floor(posX);
         int y = MathHelper.floor(posY);
         int u = MathHelper.floor(textureX);
@@ -119,7 +133,9 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         IMenuElement m = currentMenu;
         if (m != null) {
             elements.addAll(m.getThisAndChildrenAt(x, y));
-            return elements;
+            if (m.shouldFullyOverride()) {
+                return elements;
+            }
         }
         for (IGuiElement elem : shownElements) {
             elements.addAll(elem.getThisAndChildrenAt(x, y));
@@ -127,11 +143,10 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         return elements;
     }
 
-    public void drawItemStackAt(ItemStack stack, int x, int y) {
-        RenderHelper.enableGUIStandardItemLighting();
-        itemRender.renderItemAndEffectIntoGUI(mc.player, stack, x, y);
-        itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, stack, x, y, null);
-        RenderHelper.disableStandardItemLighting();
+    /** @deprecated Use {@link GuiUtil#drawItemStackAt(ItemStack,int,int)} instead */
+    @Deprecated
+    public static void drawItemStackAt(ItemStack stack, int x, int y) {
+        GuiUtil.drawItemStackAt(stack, x, y);
     }
 
     @Override
@@ -145,26 +160,28 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
     @Override
     protected final void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1, 1, 1, 1);
-        SPRITE_DEBUG.drawAt(0, 0);
-        if (debugging) {
-            drawRect(0, 0, 16, 16, 0x33_FF_FF_FF);
+        if (isDebuggingShown.evaluate()) {
+            SPRITE_DEBUG.drawAt(0, 0);
+            if (isDebuggingEnabled.evaluate()) {
+                drawRect(0, 0, 16, 16, 0x33_FF_FF_FF);
 
-            // draw the outer resizing edges
-            int w = 320;
-            int h = 240;
+                // draw the outer resizing edges
+                int w = 320;
+                int h = 240;
 
-            int sx = (width - w) / 2;
-            int sy = (height - h) / 2;
-            int ex = sx + w + 1;
-            int ey = sy + h + 1;
-            sx--;
-            sy--;
+                int sx = (width - w) / 2;
+                int sy = (height - h) / 2;
+                int ex = sx + w + 1;
+                int ey = sy + h + 1;
+                sx--;
+                sy--;
 
-            drawRect(sx, sy, ex + 1, sy + 1, -1);
-            drawRect(sx, ey, ex + 1, ey + 1, -1);
+                drawRect(sx, sy, ex + 1, sy + 1, -1);
+                drawRect(sx, ey, ex + 1, ey + 1, -1);
 
-            drawRect(sx, sy, sx + 1, ey + 1, -1);
-            drawRect(ex, sy, ex + 1, ey + 1, -1);
+                drawRect(sx, sy, sx + 1, ey + 1, -1);
+                drawRect(ex, sy, ex + 1, ey + 1, -1);
+            }
         }
 
         RenderHelper.disableStandardItemLighting();
@@ -174,7 +191,9 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         drawBackgroundLayer(partialTicks);
 
         for (IGuiElement element : shownElements) {
-            element.drawBackground(partialTicks);
+            if (element != currentMenu) {
+                element.drawBackground(partialTicks);
+            }
         }
     }
 
@@ -186,7 +205,9 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         drawForegroundLayer();
 
         for (IGuiElement element : shownElements) {
-            element.drawForeground(lastPartialTicks);
+            if (element != currentMenu) {
+                element.drawForeground(lastPartialTicks);
+            }
         }
 
         IMenuElement m = currentMenu;
@@ -202,6 +223,60 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         }
 
         GuiUtil.drawVerticallyAppending(mouse, getAllTooltips(), this::drawTooltip);
+
+        if (isDebuggingEnabled.evaluate()) {
+            int x = 6;
+            int y = 18;
+            List<String> info = new ArrayList<>();
+            TIntHashSet xAxisFilled = new TIntHashSet();
+            for (IGuiElement elem : this.getElementsAt(mouse.getX(), mouse.getY())) {
+                String name = elem.getDebugInfo(info);
+                int sx = (int) elem.getX();
+                int sy = (int) elem.getY();
+                int ex = sx + (int) elem.getWidth() + 1;
+                int ey = sy + (int) elem.getHeight() + 1;
+                sx--;
+                sy--;
+
+                int colour = (name.hashCode() | 0xFF_00_00_00);
+                float[] hsb = Color.RGBtoHSB(colour & 0xFF, (colour >> 8) & 0xFF, (colour >> 16) & 0xFF, null);
+                int colourDark = Color.HSBtoRGB(hsb[0], hsb[1], Math.max(hsb[2] - 0.25f, 0)) | 0xFF_00_00_00;
+
+                drawRect(sx, sy, ex + 1, sy + 1, colour);
+                drawRect(sx, ey, ex + 1, ey + 1, colour);
+
+                drawRect(sx, sy, sx + 1, ey + 1, colour);
+                drawRect(ex, sy, ex + 1, ey + 1, colour);
+
+                drawRect(sx - 1, sy - 1, ex + 2, sy, colourDark);
+                drawRect(sx - 1, ey + 1, ex + 2, ey + 2, colourDark);
+
+                drawRect(sx - 1, sy - 1, sx, ey + 2, colourDark);
+                drawRect(ex + 1, sy - 1, ex + 2, ey + 2, colourDark);
+
+                drawString(getFontRenderer(), name, x, y, -1);
+
+                int w = getFontRenderer().getStringWidth(name) + 3;
+
+                int mx = ((sx + 3) >> 2) << 2;
+                for (int x2 = mx; x2 < ex; x2 += 4) {
+                    if (xAxisFilled.add(x2)) {
+                        mx = x2;
+                        break;
+                    }
+                }
+
+                drawHorizontalLine(x + w, mx, y + 4, colour);
+                drawVerticalLine(mx, y + 4, sy, colour);
+                y += getFontRenderer().FONT_HEIGHT + 2;
+
+                for (String line : info) {
+                    drawString(getFontRenderer(), line, x + 7, y, -1);
+                    y += getFontRenderer().FONT_HEIGHT + 2;
+                }
+                info.clear();
+            }
+        }
 
         GlStateManager.translate(guiLeft, guiTop, 0);
     }
@@ -250,9 +325,11 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
         mouse.setMousePosition(mouseX, mouseY);
 
-        GuiRectangle debugRect = new GuiRectangle(0, 0, 16, 16);
-        if (debugRect.contains(mouse)) {
-            debugging = !debugging;
+        if (isDebuggingShown.evaluate()) {
+            GuiRectangle debugRect = new GuiRectangle(0, 0, 16, 16);
+            if (debugRect.contains(mouse)) {
+                isDebuggingEnabled.set(!isDebuggingEnabled.evaluate());
+            }
         }
 
         IMenuElement m = currentMenu;

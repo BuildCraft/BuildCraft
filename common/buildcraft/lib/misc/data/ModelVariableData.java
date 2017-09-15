@@ -6,6 +6,7 @@
 
 package buildcraft.lib.misc.data;
 
+import java.util.Arrays;
 import java.util.List;
 
 import buildcraft.lib.expression.node.value.ITickableNode;
@@ -30,6 +31,12 @@ public class ModelVariableData {
     public void setNodes(ITickableNode[] nodes) {
         bakeId = currentBakeId;
         tickableNodes = nodes;
+    }
+
+    public void addNodes(ITickableNode[] additional) {
+        int originalLength = tickableNodes.length;
+        tickableNodes = Arrays.copyOf(tickableNodes, originalLength + additional.length);
+        System.arraycopy(additional, 0, tickableNodes, originalLength, additional.length);
     }
 
     private boolean checkModelBake() {

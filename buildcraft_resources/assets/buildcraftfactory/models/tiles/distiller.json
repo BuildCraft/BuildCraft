@@ -1,10 +1,10 @@
 {
 	"rules": [
 		{
-			"when": "facing != Facing.west",
+			"when": "direction != Facing.west",
 			"type": "builtin:rotate_facing",
 			"from": "Facing.west",
-			"to": "facing"
+			"to": "direction"
 		}
 	],
 	"variables": {
@@ -16,8 +16,8 @@
 			"rounder": "last >= 1.5 && var >= 1.5 ? value - 1 : value",
 			"comment": "Starts at 0 when off, goes up to 1.5 then resets back down to 0.5 while active."
 		},
-		"y1": "1 - abs_double( (state                            % 1) - 0.5) * 2",
-		"y2": "1 - abs_double( (state <= 0.5 ? 0 : (state - 0.5) % 1) - 0.5) * 2",
+		"y1": "1 - abs( (state                            % 1) - 0.5) * 2",
+		"y2": "1 - abs( (state <= 0.5 ? 0 : (state - 0.5) % 1) - 0.5) * 2",
 		"tex": "power_average <= 0 ? '#off' : '#power_' + (power_average * 6 / power_max)"
 	},
 	"textures": {

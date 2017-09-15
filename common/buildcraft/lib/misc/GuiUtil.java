@@ -19,6 +19,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -64,6 +65,15 @@ public class GuiUtil {
         for (D drawable : iterable) {
             y += drawer.draw(drawable, x, y);
         }
+    }
+
+    public static void drawItemStackAt(ItemStack stack, int x, int y) {
+        RenderHelper.enableGUIStandardItemLighting();
+        Minecraft mc = Minecraft.getMinecraft();
+        RenderItem itemRender = mc.getRenderItem();
+        itemRender.renderItemAndEffectIntoGUI(mc.player, stack, x, y);
+        itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, stack, x, y, null);
+        RenderHelper.disableStandardItemLighting();
     }
 
     @FunctionalInterface

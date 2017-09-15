@@ -57,8 +57,12 @@ public final class GuiRectangle implements IGuiArea {
         return "Rectangle [x=" + x + ", y=" + y + ", width=" + width + ", height=" + height + "]";
     }
 
-    public GuiRectangle offset(PositionAbsolute by) {
-        return offset(by.getX(), by.getY());
+    @Override
+    public IGuiArea offset(IGuiPosition by) {
+        if (by instanceof PositionAbsolute) {
+            return offset(by.getX(), by.getY());
+        }
+        return IGuiArea.super.offset(by);
     }
 
     @Override

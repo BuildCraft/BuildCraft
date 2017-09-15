@@ -6,11 +6,14 @@
 
 package buildcraft.lib.gui;
 
+import java.util.List;
+
 import buildcraft.lib.gui.pos.IGuiArea;
 
 public class GuiElementSimple<G extends GuiBC8<?>> implements IGuiElement {
     public final G gui;
     private final IGuiArea element;
+    public String name = null;
 
     public GuiElementSimple(G gui, IGuiArea element) {
         this.gui = gui;
@@ -35,5 +38,10 @@ public class GuiElementSimple<G extends GuiBC8<?>> implements IGuiElement {
     @Override
     public double getHeight() {
         return element.getHeight();
+    }
+
+    @Override
+    public String getDebugInfo(List<String> info) {
+        return name == null ? toString() : name;
     }
 }

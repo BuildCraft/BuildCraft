@@ -6,12 +6,14 @@
 
 package buildcraft.lib.misc;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.util.internal.StringUtil;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -244,23 +246,44 @@ public class MessageUtil {
      * over */
     public static void ensureEmpty(ByteBuf buf, boolean throwError, String extra) {
         int readableBytes = buf.readableBytes();
-        if (readableBytes > 0) {
+        int rb = readableBytes;
+        if ( readableBytes > 0) {
+            int ri = buf.readerIndex();
             // Get a (small) bit of the data
-            byte[] selection = new byte[readableBytes > 10 ? 10 : readableBytes];
-            buf.readBytes(selection);
-            StringBuilder sb = new StringBuilder();
-            for (byte b : selection) {
-                String h = Integer.toHexString(Byte.toUnsignedInt(b));
-                if (h.length() == 1) {
-                    sb.append(" 0");
-                } else {
-                    sb.append(" ");
+            byte[] selection = new byte[buf.writerIndex()];
+            buf.getBytes(0, selection);
+            StringBuilder sb = new StringBuilder("\n");
+
+            for (int i = 0; true; i++) {
+                int from = i * 20;
+                int to = Math.min(from + 20, selection.length);
+                if (from >= to) break;
+                byte[] part = Arrays.copyOfRange(selection, from, to);
+                for (int j = 0; j < part.length; j++) {
+                    byte b = part[j];
+                    sb.append(StringUtil.byteToHexStringPadded(b));
+                    if (from + j + 1 == ri) {
+                        sb.append('#');
+                    } else {
+                        sb.append(' ');
+                    }
                 }
-                sb.append(h);
+                int leftOver = from - to + 20;
+                for (int j = 0; j < leftOver; j++) {
+                    sb.append("   ");
+                }
+
+                sb.append("| ");
+                for (byte b : part) {
+                    char c = (char) b;
+                    if (c < 32 || c > 127) {
+                        c = ' ';
+                    }
+                    sb.append(c);
+                }
+                sb.append('\n');
             }
-            if (readableBytes > 10) {
-                sb.append(" (+").append(readableBytes - 10).append(")");
-            }
+            sb.append("-- " + rb);
 
             IllegalStateException ex = new IllegalStateException("Did not fully read the data! [" + extra + "]" + sb);
             if (throwError) {

@@ -19,10 +19,10 @@
     },
     "rules": [
         {
-            "when": "facing != Facing.UP",
+            "when": "direction != Facing.UP",
             "type": "builtin:rotate_facing",
             "from": "Facing.UP",
-            "to": "facing"
+            "to": "direction"
         }
     ],
     "elements": [

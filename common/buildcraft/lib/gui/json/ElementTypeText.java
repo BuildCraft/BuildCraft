@@ -1,13 +1,12 @@
 package buildcraft.lib.gui.json;
 
-import java.util.function.Supplier;
-
 import com.google.gson.JsonSyntaxException;
 
 import buildcraft.lib.expression.FunctionContext;
-import buildcraft.lib.expression.InternalCompiler;
-import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.GenericExpressionCompiler;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.InvalidExpressionException;
+import buildcraft.lib.expression.node.value.NodeConstantObject;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.pos.IGuiPosition;
@@ -33,17 +32,16 @@ public class ElementTypeText extends ElementType {
         int posX = resolveEquationInt(json, "pos[0]", ctx);
         int posY = resolveEquationInt(json, "pos[1]", ctx);
 
-        Supplier<String> text;
+        INodeObject<String> text;
 
         String prop;
 
         if ((prop = json.properties.get("text")) != null) {
             String localized = LocaleUtil.localize(prop);
-            text = () -> localized;
+            text = new NodeConstantObject<>(String.class, localized);
         } else if ((prop = json.properties.get("expression")) != null) {
             try {
-                IExpressionNode exp = InternalCompiler.compileExpression(prop, ctx);
-                text = () -> exp.evaluateAsString();
+                text = GenericExpressionCompiler.compileExpressionString(prop, ctx);
             } catch (InvalidExpressionException e) {
                 throw new JsonSyntaxException("Invalid expression for '" + json.name + "'", e);
             }
@@ -60,6 +58,7 @@ public class ElementTypeText extends ElementType {
         GuiElementText element = new GuiElementText(gui, parent.offset(posX, posY), text, colour);
         element.setCentered("true".equals(json.properties.get("centered")));
         element.setDropShadow("true".equals(json.properties.get("shadow")));
+        element.setForeground("true".equals(json.properties.get("foreground")));
         return element;
     }
 }

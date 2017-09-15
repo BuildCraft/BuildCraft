@@ -13,6 +13,7 @@ import net.minecraft.util.JsonUtils;
 
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.InternalCompiler;
+import buildcraft.lib.expression.api.IConstantNode;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
@@ -90,6 +91,11 @@ public class JsonVariableObject {
                 node = InternalCompiler.compileExpression(expression, fnCtx);
             } catch (InvalidExpressionException e) {
                 throw new JsonSyntaxException("Invalid expression " + expression, e);
+            }
+            if (node instanceof IConstantNode) {
+                // No point in adding it to variables
+                fnCtx.putVariable(name, node);
+                continue;
             }
             if (variables.containsKey(name)) {
                 ITickableNode.Source existing = variables.get(name);

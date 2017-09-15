@@ -9,6 +9,8 @@ import com.google.common.collect.ImmutableList;
 import org.junit.Assert;
 import org.junit.Test;
 
+import net.minecraft.util.EnumFacing;
+
 import buildcraft.lib.expression.Argument;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.ExpressionDebugManager;
@@ -275,6 +277,9 @@ public class ExpressionTester {
         ctx.putConstantLong("engine.rate", 6);
         bakeAndCallLong("engine.rate", 6, ctx);
 
+        ctx.putConstantLong("engine.other_rate", 5);
+        bakeAndCallBoolean("engine.rate != engine.other_rate", true, ctx);
+
         ctx.putConstant("engine.stage", String.class, "blue");
         bakeAndCallString("engine.stage.toUpperCase()", "BLUE", ctx);
     }
@@ -294,7 +299,11 @@ public class ExpressionTester {
 
         bakeAndCallBoolean("Axis.X == Axis.X", true);
         bakeAndCallBoolean("Axis.Y == Axis.X", false);
+        bakeAndCallBoolean("Facing.up == Facing.west", false);
         bakeAndCallBoolean("Facing.up.getOpposite().getAxis() == Axis.X", false);
+
+        ctx.putConstant("face", EnumFacing.class, EnumFacing.DOWN);
+        bakeAndCallBoolean("face == Facing.down", true, ctx);
     }
 
     @Test

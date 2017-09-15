@@ -6,7 +6,6 @@ import buildcraft.api.statements.IStatementContainer;
 
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.IGuiElement;
-import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.statement.GuiElementStatementParam;
@@ -31,15 +30,19 @@ public class ElementTypeStatementParam extends ElementType {
     public IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(json);
 
-        inheritProperty(json, "area[0]", "pos[0]");
-        inheritProperty(json, "area[1]", "pos[1]");
-        inheritProperty(json, "area[2]", "size[0]");
-        inheritProperty(json, "area[3]", "size[1]");
+        if (!json.properties.containsKey("size[0]")) {
+            json.properties.put("size[0]", "18");
+        }
+        if (!json.properties.containsKey("size[1]")) {
+            json.properties.put("size[1]", "18");
+        }
 
-        int posX = resolveEquationInt(json, "pos[0]", ctx);
-        int posY = resolveEquationInt(json, "pos[1]", ctx);
-        int sizeX = resolveEquationInt(json, "size[0]", ctx);
-        int sizeY = resolveEquationInt(json, "size[1]", ctx);
+        inheritProperty(json, "pos[0]", "area[0]");
+        inheritProperty(json, "pos[1]", "area[1]");
+        inheritProperty(json, "size[0]", "area[2]");
+        inheritProperty(json, "size[1]", "area[3]");
+
+        IGuiArea area = resolveArea(json, "area", parent, ctx);
 
         String source;
         if (json.properties.containsKey("source")) {
@@ -56,7 +59,6 @@ public class ElementTypeStatementParam extends ElementType {
         int index = resolveEquationInt(json, "index", ctx);
 
         FullStatement<?> stmnt = gui.properties.get(source, FullStatement.class);
-        IGuiArea area = new GuiRectangle(posX, posY, sizeX, sizeY).offset(parent);
         IStatementContainer stmntContainer = gui.properties.get("statement.container", IStatementContainer.class);
         return new GuiElementStatementParam(gui, area, stmntContainer, stmnt, index, draw);
     }

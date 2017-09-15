@@ -53,7 +53,7 @@ public class BCEnergyModels {
         FunctionContext fnCtx = new FunctionContext(ExpressionCompat.ENUM_POWER_STAGE, DefaultContexts.createWithAll());
         ENGINE_PROGRESS = fnCtx.putVariableDouble("progress");
         ENGINE_STAGE = fnCtx.putVariableObject("stage", EnumPowerStage.class);
-        ENGINE_FACING = fnCtx.putVariableObject("facing", EnumFacing.class);
+        ENGINE_FACING = fnCtx.putVariableObject("direction", EnumFacing.class);
         // TODO: Item models from "item/engine_stone.json"
         ENGINE_STONE = getModel("block/engine_stone.json", fnCtx);
         ENGINE_IRON = getModel("block/engine_iron.json", fnCtx);

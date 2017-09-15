@@ -7,10 +7,6 @@
 package buildcraft.lib.expression;
 
 import buildcraft.lib.expression.api.INodeFunc;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
 import buildcraft.lib.expression.node.func.StringFunctionBi;
 import buildcraft.lib.expression.node.func.StringFunctionTri;
 import buildcraft.lib.expression.node.func.StringFunctionQuad;

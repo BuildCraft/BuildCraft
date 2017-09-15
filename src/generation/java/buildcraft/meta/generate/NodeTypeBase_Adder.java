@@ -36,6 +36,7 @@ public class NodeTypeBase_Adder extends AutoGenerateFile {
                 }
             }
             String importStart = "import buildcraft.lib.expression.node.func.NodeFunc";
+            imports += importStart + replaceAll("{$Args}To{$ReturnOnly};\n", types);
             imports += importStart + replaceAll("{$Args}To{$ReturnOnly}.IFunc{$Args}To{$ReturnOnly};\n", types);
             System.out.println(ret + "_" + args + ":");
             if (objectCount > 2) {
@@ -91,13 +92,13 @@ public class NodeTypeBase_Adder extends AutoGenerateFile {
                 System.out.println(" - " + repl + ", TypeArgs2 = " + map.get("TypeArgs2") + ", TypeArgsPass2 = "
                     + map.get("TypeArgsPass2"));
 
-                String method = "\n\tpublic {$TypeArgs2} INodeFunc{$Return} put_{$a2}_{$r2}("
+                String method = "\n\tpublic {$TypeArgs2} NodeFunc{$Args}To{$ReturnOnly}{$TypeArgsPass2} put_{$a2}_{$r2}("
                     + "String name{$ObjectClassArgs2}IFunc{$Args}To{$ReturnOnly}{$TypeArgsPass2} func) {";
                 method += "\n\t\treturn put_{$a}_{$r}(name, {$ObjectClassArgsPass2}func);";
                 method.replace(" ", " ");
                 method += "\n\t}\n";
 
-                method += "\n\tpublic {$TypeArgs2} INodeFunc{$Return} put_{$a2}_{$r2}("
+                method += "\n\tpublic {$TypeArgs2} NodeFunc{$Args}To{$ReturnOnly}{$TypeArgsPass2} put_{$a2}_{$r2}("
                     + "String name{$ObjectClassArgs2}IFunc{$Args}To{$ReturnOnly}{$TypeArgsPass2} func, {$StringFunction} stringFunction) {";
                 method += "\n\t\treturn put_{$a}_{$r}(name, {$ObjectClassArgsPass2}func, stringFunction);";
                 method.replace(" ", " ");

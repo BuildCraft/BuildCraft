@@ -5,7 +5,7 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 
-import buildcraft.api.core.render.ISprite;
+import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
@@ -63,7 +63,7 @@ public class GuiElementStatementParam extends GuiElementSimple<GuiJson<?>>
             IStatementParameter s = get();
             if (s != null) {
                 String desc = s.getDescription();
-                if (desc != null) {
+                if (desc != null && !desc.isEmpty()) {
                     tooltips.add(new ToolTip(desc));
                 }
             }
@@ -75,10 +75,12 @@ public class GuiElementStatementParam extends GuiElementSimple<GuiJson<?>>
     @Override
     public void drawBackground(float partialTicks) {
         if (draw) {
-            int max = ref.get().maxParameters();
+            IStatement slot = ref.get();
+            int max = slot == null ? 0 : slot.maxParameters();
             double x = getX();
             double y = getY();
             if (paramIndex >= max) {
+                GuiElementStatement.SLOT_COLOUR.drawAt(x, y);
                 GuiElementStatement.ICON_SLOT_BLOCKED.drawAt(x, y);
                 return;
             }
@@ -86,22 +88,7 @@ public class GuiElementStatementParam extends GuiElementSimple<GuiJson<?>>
             if (stmnt == null) {
                 return;
             }
-            x += 1;
-            y += 1;
-            ItemStack stack = stmnt.getItemStack();
-
-            ISprite sprite = stmnt.getSprite();
-            if (stack.isEmpty()) {
-                if (sprite == null) {
-                    GuiElementStatement.ICON_SLOT_NOT_SET.drawAt(x - 1, y - 1);
-                } else {
-                    GuiIcon.drawAt(sprite, x, y, 16);
-                }
-            } else if (sprite == null) {
-                gui.drawItemStackAt(stack, (int) x, (int) y);
-            } else {
-                GuiIcon.drawAt(sprite, x, y, 16);
-            }
+            ParameterRenderer.draw(stmnt, x, y);
             if (!ref.canInteract) {
                 GuiIcon.drawAt(BCLibSprites.LOCK, x + 1, y + 7, 8);
             }
@@ -112,13 +99,14 @@ public class GuiElementStatementParam extends GuiElementSimple<GuiJson<?>>
 
     @Override
     public void onMouseClicked(int button) {
-        if (ref.canInteract && contains(gui.mouse)) {
+        if (ref.canInteract && contains(gui.mouse) && button == 0) {
             IStatementParameter param = get();
             if (param == null) {
                 return;
             }
             StatementMouseClick clickEvent = new StatementMouseClick(0, false);
-            IStatementParameter pNew = param.onClick(container, ref.get(), ItemStack.EMPTY, clickEvent);
+            ItemStack stack = gui.container.player.inventory.getItemStack();
+            IStatementParameter pNew = param.onClick(container, ref.get(), stack, clickEvent);
             if (pNew != null) {
                 set(pNew);
             } else {
@@ -136,11 +124,5 @@ public class GuiElementStatementParam extends GuiElementSimple<GuiJson<?>>
                 gui.currentMenu = GuiElementStatementVariant.create(this, this, possible);
             }
         }
-        // TODO!
-    }
-
-    @Override
-    public void onMouseReleased(int button) {
-        // TODO!
     }
 }

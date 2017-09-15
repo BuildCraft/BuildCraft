@@ -13,8 +13,6 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.MathHelper;
@@ -36,6 +34,7 @@ import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.GuiUtil;
+import buildcraft.lib.misc.GuiUtil.AutoGlScissor;
 import buildcraft.lib.misc.RenderUtil;
 
 // TODO: Json "parent" and "parent position" - useful for ledgers, and where ledgers begin and end.
@@ -275,35 +274,36 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
             pos2 = positionLedgerIconStart;
         }
 
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GuiUtil.scissor(pos2.getX(), pos2.getY(), interpWidth - 4, interpHeight - 8);
+        try (AutoGlScissor a = GuiUtil.scissor(pos2.getX(), pos2.getY(), interpWidth - 4, interpHeight - 8)) {
 
-        for (IGuiElement element : closedElements) {
-            element.drawBackground(partialTicks);
-        }
-        if (shouldDrawOpen()) {
-            for (IGuiElement element : openElements) {
+            for (IGuiElement element : closedElements) {
                 element.drawBackground(partialTicks);
             }
+            if (shouldDrawOpen()) {
+                for (IGuiElement element : openElements) {
+                    element.drawBackground(partialTicks);
+                }
+            }
         }
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
     @Override
     public void drawForeground(float partialTicks) {
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GuiUtil.scissor(positionLedgerIconStart.getX(), positionLedgerIconStart.getY(), interpWidth - 8,
-            interpHeight - 8);
+        double scissorX = positionLedgerIconStart.getX();
+        double scissorY = positionLedgerIconStart.getY();
+        double scissorWidth = interpWidth - 8;
+        double scissorHeight = interpHeight - 8;
+        try (AutoGlScissor a = GuiUtil.scissor(scissorX, scissorY, scissorWidth, scissorHeight)) {
 
-        for (IGuiElement element : closedElements) {
-            element.drawForeground(partialTicks);
-        }
-        if (shouldDrawOpen()) {
-            for (IGuiElement element : openElements) {
+            for (IGuiElement element : closedElements) {
                 element.drawForeground(partialTicks);
             }
+            if (shouldDrawOpen()) {
+                for (IGuiElement element : openElements) {
+                    element.drawForeground(partialTicks);
+                }
+            }
         }
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
     @Override

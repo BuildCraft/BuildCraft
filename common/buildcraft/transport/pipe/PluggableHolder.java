@@ -105,30 +105,47 @@ public final class PluggableHolder {
     }
 
     public void writePayload(PacketBufferBC buffer, Side netSide) {
-        if (pluggable == null) {
-            lastGeneralExisted = false;
-            buffer.writeByte(ID_REMOVE_PLUG);
-        } else if (lastGeneralExisted) {
+        if (netSide == Side.CLIENT) {
             buffer.writeByte(ID_UPDATE_PLUG);
-            pluggable.writePayload(buffer, netSide);
+            if (pluggable != null) {
+                pluggable.writePayload(buffer, netSide);
+            }
         } else {
-            // The last general one did NOT exist, and so we need to create it
-            lastGeneralExisted = true;
-            writeCreationPayload(buffer);
+            if (pluggable == null) {
+                lastGeneralExisted = false;
+                buffer.writeByte(ID_REMOVE_PLUG);
+            } else if (lastGeneralExisted) {
+                buffer.writeByte(ID_UPDATE_PLUG);
+                pluggable.writePayload(buffer, netSide);
+            } else {
+                // The last general one did NOT exist, and so we need to create it
+                lastGeneralExisted = true;
+                writeCreationPayload(buffer);
+            }
         }
     }
 
     public void readPayload(PacketBufferBC buffer, Side netSide, MessageContext ctx) throws IOException {
         int id = buffer.readUnsignedByte();
-        if (id == ID_REMOVE_PLUG) {
-            holder.eventBus.unregisterHandler(pluggable);
-            pluggable = null;
-        } else if (id == ID_UPDATE_PLUG) {
-            pluggable.readPayload(buffer, netSide, ctx);
-        } else if (id == ID_CREATE_PLUG) {
-            readCreateInternal(buffer);
+        if (netSide == Side.SERVER) {
+            if (id == ID_UPDATE_PLUG) {
+                if (pluggable != null) {
+                    pluggable.readPayload(buffer, netSide, ctx);
+                }
+            } else {
+                BCLog.logger.warn("[PluggableHolder] Unknown ID " + id);
+            }
         } else {
-            BCLog.logger.warn("[PluggableHolder] Unknown ID " + id);
+            if (id == ID_REMOVE_PLUG) {
+                holder.eventBus.unregisterHandler(pluggable);
+                pluggable = null;
+            } else if (id == ID_UPDATE_PLUG) {
+                pluggable.readPayload(buffer, netSide, ctx);
+            } else if (id == ID_CREATE_PLUG) {
+                readCreateInternal(buffer);
+            } else {
+                BCLog.logger.warn("[PluggableHolder] Unknown ID " + id);
+            }
         }
     }
 

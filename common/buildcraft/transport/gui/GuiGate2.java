@@ -3,6 +3,7 @@ package buildcraft.transport.gui;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.gui.button.IButtonBehaviour;
+import buildcraft.lib.gui.button.IButtonClickEventListener;
 import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.misc.MessageUtil;
 
@@ -39,16 +40,32 @@ public class GuiGate2 extends GuiJson<ContainerGate2> {
         properties.put("gate.actions.possible", container.possibleActionsContext);
 
         context.put_l_b("gate.is_connected", (i) -> {
+            if (i < 0 || i >= gate.connections.length) {
+                return false;
+            }
             return gate.connections[(int) i];
-        });
+        }).setNeverInline();
 
         context.put_l_b("gate.trigger.is_on", (i) -> {
+            if (i < 0 || i >= gate.triggerOn.length) {
+                return false;
+            }
             return gate.triggerOn[(int) i];
-        });
+        }).setNeverInline();
+
+        context.put_l_b("gate.set.is_on", (i) -> {
+            if (i < 0 || i >= gate.triggerOn.length) {
+                return false;
+            }
+            return gate.actionOn[(int) i];
+        }).setNeverInline();
 
         context.put_l_b("gate.action.is_on", (i) -> {
-            return gate.actionOn[(int) i];
-        });
+            if (i < 0 || i >= gate.actionOn.length) {
+                return false;
+            }
+            return gate.actionOn[(int) i] && gate.statements[(int) i].action.get() != null;
+        }).setNeverInline();
 
         for (int s = 0; s < gate.variant.numSlots; s++) {
             final int i = s;
@@ -57,20 +74,14 @@ public class GuiGate2 extends GuiJson<ContainerGate2> {
             properties.put(tName, gate.statements[i].trigger);
             properties.put(aName, gate.statements[i].action);
         }
-    }
 
-    @Override
-    protected void postLoad() {
-        super.postLoad();
-        GateLogic gate = container.gate;
-        for (int s = 0; s < gate.variant.numSlots; s++) {
-            final int i = s;
-            setupButton("gate_connection[" + s + "]", (button) -> {
-                button.setBehaviour(IButtonBehaviour.TOGGLE);
-                button.setActive(gate.connections[i]);
-                button.registerListener((b2, k) -> {
-                    container.setConnected(i, button.isActive());
-                });
+        for (int c = 0; c < gate.connections.length; c++) {
+            final int connection = c;
+            String name = "gate.connection/" + c;
+            properties.put(name, gate.connections[c]);
+            properties.put(name, IButtonBehaviour.TOGGLE);
+            properties.put(name, (IButtonClickEventListener) (b, k) -> {
+                container.setConnected(connection, b.isButtonActive());
             });
         }
     }

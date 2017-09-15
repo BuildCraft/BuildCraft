@@ -16,10 +16,11 @@ import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.StringFunctionTri;
+import buildcraft.lib.expression.node.func.NodeFuncBase;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 
 // AUTO_GENERATED FILE, DO NOT EDIT MANUALLY!
-public class NodeFuncObjectLongToLong<A> implements INodeFuncLong {
+public class NodeFuncObjectLongToLong<A> extends NodeFuncBase implements INodeFuncLong {
 
     public final IFuncObjectLongToLong<A> function;
     private final StringFunctionTri stringFunction;
@@ -67,8 +68,16 @@ public class NodeFuncObjectLongToLong<A> implements INodeFuncLong {
 
         @Override
         public INodeLong inline() {
-            return NodeInliningHelper.tryInline(this, argA, argB, (a, b) -> new Func(a, b),
-                    (a, b) -> NodeConstantLong.of(function.apply(a.evaluate(), b.evaluate()))
+            if (!canInline) {
+                // Note that we can still inline the arguments, just not *this* function
+                return NodeInliningHelper.tryInline(this, argA, argB,
+                    (a, b) -> new Func(a, b),
+                    (a, b) -> new Func(a, b)
+                );
+            }
+            return NodeInliningHelper.tryInline(this, argA, argB,
+                (a, b) -> new Func(a, b),
+                (a, b) -> NodeConstantLong.of(function.apply(a.evaluate(), b.evaluate()))
             );
         }
 

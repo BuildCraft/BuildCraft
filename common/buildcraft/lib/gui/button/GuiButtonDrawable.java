@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.GlStateManager;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.ISimpleDrawable;
-import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 

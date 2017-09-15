@@ -16,10 +16,11 @@ import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.StringFunctionBi;
+import buildcraft.lib.expression.node.func.NodeFuncBase;
 import buildcraft.lib.expression.node.value.NodeConstantObject;
 
 // AUTO_GENERATED FILE, DO NOT EDIT MANUALLY!
-public class NodeFuncDoubleToObject<R> implements INodeFuncObject<R> {
+public class NodeFuncDoubleToObject<R> extends NodeFuncBase implements INodeFuncObject<R> {
 
     public final IFuncDoubleToObject<R> function;
     private final StringFunctionBi stringFunction;
@@ -74,8 +75,16 @@ public class NodeFuncDoubleToObject<R> implements INodeFuncObject<R> {
 
         @Override
         public INodeObject<R> inline() {
-            return NodeInliningHelper.tryInline(this, argA, (a) -> new Func(a),
-                    (a) -> new NodeConstantObject<>(returnType, function.apply(a.evaluate()))
+            if (!canInline) {
+                // Note that we can still inline the arguments, just not *this* function
+                return NodeInliningHelper.tryInline(this, argA,
+                    (a) -> new Func(a),
+                    (a) -> new Func(a)
+                );
+            }
+            return NodeInliningHelper.tryInline(this, argA,
+                (a) -> new Func(a),
+                (a) -> new NodeConstantObject<>(returnType, function.apply(a.evaluate()))
             );
         }
 

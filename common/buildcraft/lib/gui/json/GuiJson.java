@@ -2,7 +2,8 @@ package buildcraft.lib.gui.json;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -19,13 +20,11 @@ import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.node.value.ITickableNode;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IContainingElement;
 import buildcraft.lib.gui.IGuiElement;
-import buildcraft.lib.gui.button.GuiAbstractButton;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.collect.TypedKeyMap;
@@ -38,8 +37,7 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
     public final ResourceLocation guiDefinition;
     protected final TypedKeyMap<String, Object> properties = TypedKeyMap.createHierachy();
     protected final FunctionContext context = DefaultContexts.createWithAll();
-    private ITickableNode[] tickableNodes = new ITickableNode[0];
-    private ModelVariableData varData = new ModelVariableData();
+    ModelVariableData varData = new ModelVariableData();
     private final NodeVariableDouble time;
     private int timeOpen;
 
@@ -88,6 +86,7 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
                         shownElements.add(e);
                     } else {
                         p.getChildElements().add(e);
+                        p.calculateSizes();
                     }
                 }
             }
@@ -114,26 +113,27 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
         super.drawBackgroundLayer(partialTicks);
     }
 
+    @Override
+    protected void drawForegroundLayer() {
+        super.drawForegroundLayer();
+        if (isDebuggingEnabled.evaluate()) {
+            List<String> debug = new ArrayList<>();
+            varData.addDebugInfo(debug);
+
+            int x = 6;
+            int y = 18;
+            for (String d : debug) {
+                // drawString(getFontRenderer(), d, x, y, -1);
+                y += getFontRenderer().FONT_HEIGHT + 2;
+            }
+        }
+    }
+
     /** Fill up {@link #properties} and {@link #context} */
     protected void preLoad() {
         properties.put("player.inventory", new InventorySlotHolder(container, container.player.inventory));
     }
 
-    /** Setup objects contained in {@link #properties}. Usually via {@link #setup(String, Class, Consumer)}. */
+    /** Called after the whole gui has been loaded. */
     protected void postLoad() {}
-
-    protected final <T> void setup(String name, Class<T> clazz, Consumer<T> ifNonNull) {
-        T value = properties.get(name, clazz);
-        if (value != null) {
-            ifNonNull.accept(value);
-        }
-    }
-
-    /** Helper method for setting up buttons in {@link #postLoad()}.
-     * 
-     * @param name The identifier for the button
-     * @param ifNonNull Code to be run if the button was defined in the JSON file, and so is not null */
-    protected final void setupButton(String name, Consumer<GuiAbstractButton> ifNonNull) {
-        setup(name, GuiAbstractButton.class, ifNonNull);
-    }
 }

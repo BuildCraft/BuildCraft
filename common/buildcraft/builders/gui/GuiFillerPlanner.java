@@ -4,7 +4,6 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.button.IButtonClickEventListener;
-import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.gui.json.SpriteDelegate;
 
@@ -26,12 +25,19 @@ public class GuiFillerPlanner extends GuiJson<ContainerFillerPlanner> {
         properties.put("filler.possible", FillerStatementContext.CONTEXT_ALL);
         properties.put("filler.pattern", container.patternClient);
         properties.put("filler.pattern.sprite", SPRITE_PATTERN);
+
+        context.put_b("filler.invert", () -> container.fillerPlanner.inverted);
+        properties.put("filler.invert", IButtonBehaviour.TOGGLE);
+        properties.put("filler.invert", container.fillerPlanner.inverted);
+        properties.put("filler.invert", (IButtonClickEventListener) (b, k) -> {
+            container.setInverted(b.isButtonActive());
+        });
     }
 
     @Override
     protected void postLoad() {
         super.postLoad();
-        setupButton("filler.invert", b -> {
+/*        setupButton("filler.invert", b -> {
             b.setBehaviour(IButtonBehaviour.TOGGLE);
             final ToolTip on = ToolTip.createLocalized("tip.filler.invert.on");
             final ToolTip off = ToolTip.createLocalized("tip.filler.invert.off");
@@ -42,7 +48,7 @@ public class GuiFillerPlanner extends GuiJson<ContainerFillerPlanner> {
             };
             listener.handleButtonClick(b, 0);
             b.registerListener(listener);
-        });
+        });*/
     }
 
     @Override

@@ -3,10 +3,12 @@ package buildcraft.lib.gui.statement;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IGuiSlot;
-import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementParameter;
 
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
@@ -17,20 +19,17 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.data.IReference;
 import buildcraft.lib.statement.StatementContext;
 import buildcraft.lib.statement.StatementContext.StatementGroup;
 import buildcraft.lib.statement.StatementWrapper;
-
-import buildcraft.transport.gui.GuiGate;
 
 public class GuiElementStatementSource<S extends IGuiSlot> implements IInteractionElement {
     public final GuiJson<?> gui;
     public final IGuiPosition position;
     public final StatementContext<S> ctx;
     private final boolean left;
-    private boolean isSelected = false;
-    private S selected;
+
+    public final GuiElementStatementDrag dragger;
 
     public GuiElementStatementSource(GuiJson<?> gui, boolean left, StatementContext<S> ctx) {
         this.gui = gui;
@@ -43,6 +42,18 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
             position = gui.lowerRightLedgerPos;
             gui.lowerRightLedgerPos = getPosition(-1, 1);
         }
+        GuiElementStatementDrag drag = null;
+        for (IGuiElement element : gui.shownElements) {
+            if (element instanceof GuiElementStatementDrag) {
+                drag = (GuiElementStatementDrag) element;
+                break;
+            }
+        }
+        if (drag == null) {
+            drag = new GuiElementStatementDrag(gui);
+            gui.shownElements.add(drag);
+        }
+        dragger = drag;
     }
 
     @Override
@@ -97,7 +108,7 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
     }
 
     interface ISlotIter<S extends IGuiSlot> {
-        void iterate(S slot, GuiRectangle area);
+        void iterate(@Nullable S slot, GuiRectangle area);
     }
 
     @Override
@@ -106,33 +117,39 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
             // ...oh. We need a way of drawing arbitrary slots from the API. Great :/
             drawAt(s, area.x, area.y);
         });
-        if (selected != null) {
-            double x = gui.mouse.getX();
-            double y = gui.mouse.getY();
-            drawAt(selected, x - 9, y - 9);
-        }
     }
 
-    private void drawAt(S slot, double x, double y) {
-        ISprite sprite = slot.getSprite();
-        GuiIcon background = GuiGate.SLOT_COLOUR;
-        if (slot instanceof StatementWrapper) {
-            EnumPipePart part = ((StatementWrapper) slot).sourcePart;
+    private void drawAt(@Nullable S slot, double x, double y) {
+        drawGuiSlot(slot, x, y);
+    }
+
+    public static void drawGuiSlot(@Nullable IGuiSlot stmnt, double x, double y) {
+        if (stmnt instanceof IStatementParameter) {
+            ParameterRenderer.draw((IStatementParameter) stmnt, x, y);
+            return;
+        }
+        GuiIcon background = GuiElementStatement.SLOT_COLOUR;
+        if (stmnt instanceof StatementWrapper) {
+            EnumPipePart part = ((StatementWrapper) stmnt).sourcePart;
             if (part != EnumPipePart.CENTER) {
                 background = background.offset(0, (1 + part.getIndex()) * 18);
             }
         }
         background.drawAt(x, y);
-        if (sprite != null) {
-            GuiIcon.drawAt(sprite, x + 1, y + 1, 16);
+        if (stmnt != null) {
+            ISprite sprite = stmnt.getSprite();
+            if (sprite != null) {
+                GuiIcon.drawAt(sprite, x + 1, y + 1, 16);
+            }
         }
     }
 
     @Override
     public void addToolTips(List<ToolTip> tooltips) {
         iterateSlots((slot, area) -> {
+            if (slot == null) return;
             if (area.contains(gui.mouse)) {
-                String[] lines = {slot.getDescription()};
+                String[] lines = { slot.getDescription() };
                 if (slot instanceof StatementWrapper) {
                     EnumPipePart part = ((StatementWrapper) slot).sourcePart;
                     if (part != EnumPipePart.CENTER) {
@@ -151,35 +168,9 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
         if (button == 0) {
             iterateSlots((slot, area) -> {
                 if (area.contains(gui.mouse)) {
-                    isSelected = true;
-                    selected = slot;
+                    dragger.startDragging(slot);
                 }
             });
-        } else if (button == 1) {
-            for (IGuiElement e : gui.getElementsAt(gui.mouse.getX(), gui.mouse.getX())) {
-                if (e instanceof IReference<?>) {
-                    IReference<?> elem = (IReference<?>) e;
-                    Object obj = elem.get();
-                    if (obj instanceof IStatement) {
-                        isSelected = true;
-                        selected = (S) obj;
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onMouseReleased(int button) {
-        if (isSelected) {
-            for (IGuiElement e : gui.getElementsAt(gui.mouse.getX(), gui.mouse.getY())) {
-                if (e instanceof IReference<?>) {
-                    IReference<?> elem = (IReference<?>) e;
-                    elem.setIfCan(selected);
-                }
-            }
-            isSelected = false;
-            selected = null;
         }
     }
 }

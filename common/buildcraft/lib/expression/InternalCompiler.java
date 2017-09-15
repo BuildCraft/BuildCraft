@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
+import buildcraft.lib.expression.Tokenizer.ITokenizingContext;
+import buildcraft.lib.expression.Tokenizer.ResultConsume;
+import buildcraft.lib.expression.Tokenizer.TokenResult;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
@@ -75,7 +78,7 @@ public class InternalCompiler {
         }
         try {
             ExpressionDebugManager.debugPrintln("Compiling " + expression);
-            String[] infix = tokenize(expression);
+            String[] infix = tokenize(expression, context);
             String[] postfix = convertToPostfix(infix);
             ExpressionDebugManager.debugPrintln(Arrays.toString(postfix));
             return makeExpression(postfix, context);
@@ -110,8 +113,70 @@ public class InternalCompiler {
         }
     }
 
-    private static String[] tokenize(String function) throws InvalidExpressionException {
-        return TokenizerDefaults.createTokenizer().tokenize(function);
+    private static String[] tokenize(String function, FunctionContext context) throws InvalidExpressionException {
+        String[] tokens = TokenizerDefaults.createTokenizer().tokenize(function);
+        List<String> actual = new ArrayList<>();
+        boolean changed = false;
+        ExpressionDebugManager.debugPrintln("Incoming = " + Arrays.toString(tokens));
+
+        for (int i = 0; i < tokens.length; i++) {
+            String before = "";
+            String token = tokens[i];
+            int start = i;
+            while (true) {
+                token = tokens[i];
+                ExpressionDebugManager.debugPrintln("  + " + token);
+                ITokenizingContext ctx = ITokenizingContext.createFromString(token);
+                TokenResult result = TokenizerDefaults.GOBBLER_WORD.tokenizePart(ctx);
+                if (!(result instanceof ResultConsume)) {
+                    i = start;
+                    token = tokens[start];
+                    ExpressionDebugManager.debugPrintln("  - not a word!");
+                    break;
+                }
+                if (((ResultConsume) result).length != token.length()) {
+                    i = start;
+                    token = tokens[start];
+                    ExpressionDebugManager.debugPrintln("  - different length!");
+                    break;
+                }
+                String whole = before + token;
+                String lookup = whole;
+                if (whole.startsWith(".")) {
+                    lookup = whole.substring(1);
+                }
+                int index = lookup.indexOf('.');
+                if (index != -1) {
+                    String type = lookup.substring(0, index);
+                    String after = lookup.substring(index + 1);
+                    FunctionContext ctx2 = NodeTypes.getContext(NodeTypes.getType(type));
+                    if (ctx2 != null) {
+                        if (ctx2.getVariable(after) != null || !ctx2.getFunctions(after).isEmpty()) {
+                            token = whole;
+                            break;
+                        }
+                    }
+                }
+                // Its a word -- but it might not be a valid one
+                if (context.getVariable(lookup) != null || !context.getFunctions(lookup).isEmpty()) {
+                    token = whole;
+                    break;
+                }
+                // This word wasn't valid -- try the next one?
+                before += token;
+                i++;
+                changed = true;
+                if (i >= tokens.length) {
+                    token = before;
+                    ExpressionDebugManager.debugPrintln("  - too long!");
+                    break;
+                }
+            }
+            ExpressionDebugManager.debugPrintln("  -> " + token);
+            actual.add(token);
+        }
+        return changed ? actual.toArray(new String[0]) : tokens;
+
     }
 
     private static int getPrecedence(String token) {
@@ -260,7 +325,8 @@ public class InternalCompiler {
     private static IExpressionNode makeExpression(String[] postfix, FunctionContext context)
         throws InvalidExpressionException {
         NodeStack stack = new NodeStack();
-        for (String op : postfix) {
+        for (int i = 0; i < postfix.length; i++) {
+            String op = postfix[i];
             if (OPERATORS.contains(op) && !"?".equals(op) && !":".equals(op)) {
                 boolean isNegation = UNARY_NEGATION.equals(op);
                 int count = 2;

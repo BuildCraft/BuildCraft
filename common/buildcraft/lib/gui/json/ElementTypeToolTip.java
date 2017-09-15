@@ -14,7 +14,7 @@ import buildcraft.lib.gui.GuiElementToolTip;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.ITooltipElement;
 import buildcraft.lib.gui.elem.ToolTip;
-import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
 public class ElementTypeToolTip extends ElementType {
@@ -86,16 +86,12 @@ public class ElementTypeToolTip extends ElementType {
             };
         }
 
-        inheritProperty(json, "area[0]", "pos[0]");
-        inheritProperty(json, "area[1]", "pos[1]");
-        inheritProperty(json, "area[2]", "size[0]");
-        inheritProperty(json, "area[3]", "size[1]");
+        inheritProperty(json, "pos[0]", "area[0]");
+        inheritProperty(json, "pos[1]", "area[1]");
+        inheritProperty(json, "size[0]", "area[2]");
+        inheritProperty(json, "size[1]", "area[3]");
 
-        int posX = resolveEquationInt(json, "pos[0]", ctx);
-        int posY = resolveEquationInt(json, "pos[1]", ctx);
-        int sizeX = resolveEquationInt(json, "size[0]", ctx);
-        int sizeY = resolveEquationInt(json, "size[1]", ctx);
-        GuiRectangle rect = new GuiRectangle(posX, posY, sizeX, sizeY);
-        return new GuiElementToolTip(gui, rect.offset(parent), source);
+        IGuiArea area = resolveArea(json, "area", parent, ctx);
+        return new GuiElementToolTip(gui, area, source);
     }
 }

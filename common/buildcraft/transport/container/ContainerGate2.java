@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.entity.player.EntityPlayer;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -105,9 +107,13 @@ public class ContainerGate2 extends ContainerBC_Neptune {
             parts.computeIfAbsent(val.sourcePart, p -> new ArrayList<>()).add(val);
         }
         List<T> list = parts.get(EnumPipePart.CENTER);
-        if (list != null) {
-            to.groups.add(new GateGroup<>(EnumPipePart.CENTER, list));
+        if (list == null) {
+            list = new ArrayList<>(1);
+            list.add(null);
+        } else {
+            list.add(0, null);
         }
+        to.groups.add(new GateGroup<>(EnumPipePart.CENTER, list));
         for (EnumPipePart part : EnumPipePart.FACES) {
             list = parts.get(part);
             if (list != null) {

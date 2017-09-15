@@ -6,20 +6,23 @@
 
 package buildcraft.lib.gui.elem;
 
+import java.util.List;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 
+import buildcraft.lib.expression.node.value.NodeConstantObject;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import buildcraft.lib.misc.RenderUtil;
 
 public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {
     public boolean dropShadow = false;
-    public boolean foreground = true;
+    public boolean foreground = false;
     public boolean centered = false;
 
     private final Supplier<String> text;
@@ -36,7 +39,7 @@ public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {
     }
 
     public GuiElementText(GuiBC8<?> gui, IGuiPosition parent, String text, int colour) {
-        this(gui, parent, () -> text, () -> colour);
+        this(gui, parent, new NodeConstantObject<>(String.class, text), () -> colour);
     }
 
     public GuiElementText setDropShadow(boolean value) {
@@ -90,5 +93,12 @@ public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {
         } else {
             fr.drawString(text.get(), (float) getX(), (float) getY(), colour.getAsInt(), dropShadow);
         }
+        RenderUtil.setGLColorFromInt(-1);
+    }
+
+    @Override
+    public String getDebugInfo(List<String> info) {
+        info.add("text = " + text);
+        return super.getDebugInfo(info);
     }
 }

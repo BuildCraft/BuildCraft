@@ -22,7 +22,7 @@ public class FunctionContextBase_Adder extends AutoGenerateFile {
 
         for (Map<String, String> types : allFunctionTypes) {
             // Base method
-            String method = "\n\tpublic {$TypeArgs} INodeFunc{$Return} put_{$a}_{$r}("
+            String method = "\n\tpublic {$TypeArgs} NodeFunc{$Args}To{$ReturnOnly}{$TypeArgs} put_{$a}_{$r}("
                 + "String name, {$ObjectClassArgs}IFunc{$Args}To{$ReturnOnly}{$TypeArgs} func) {";
             method += "\n\t\treturn putFunction(name, new NodeFunc{$Args}To{$ReturnOnly}";
             method.replace("  ", " ");
@@ -33,7 +33,7 @@ public class FunctionContextBase_Adder extends AutoGenerateFile {
             method += "\n\t}\n";
 
             // Variant with a string function
-            method += "\n\tpublic {$TypeArgs} INodeFunc{$Return} put_{$a}_{$r}("
+            method += "\n\tpublic {$TypeArgs} NodeFunc{$Args}To{$ReturnOnly}{$TypeArgs} put_{$a}_{$r}("
                 + "String name, {$ObjectClassArgs}IFunc{$Args}To{$ReturnOnly}{$TypeArgs} func, {$StringFunction} stringFunction) {";
             method += "\n\t\treturn putFunction(name, new NodeFunc{$Args}To{$ReturnOnly}";
             method.replace("  ", " ");

@@ -6,6 +6,7 @@
 
 package buildcraft.lib;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,9 @@ import buildcraft.lib.misc.LocaleUtil;
  * by a config file, but instead by BC Core. Feel free to set them yourself, from your own configs, if you do not depend
  * on BC COre itself, and it might not be loaded in the mod environment. */
 public class BCLibConfig {
+
+    public static File guiConfigFile = null;
+
     /** If true then items and blocks will display the colour of an item (one of {@link EnumDyeColor}) with the correct
      * {@link TextFormatting} colour value.<br>
      * This changes the behaviour of {@link ColourUtil#convertColourToTextFormat(EnumDyeColor)}. */

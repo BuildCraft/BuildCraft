@@ -28,6 +28,7 @@ import buildcraft.transport.gate.GateLogic;
 import buildcraft.transport.gate.GateVariant;
 import buildcraft.transport.gate.TriggerWrapper;
 
+@Deprecated
 public class GuiGate extends GuiStatementSelector<ContainerGate> {
 
     public static final ResourceLocation TEXTURE_GATE = new ResourceLocation("buildcrafttransport:textures/gui/gate_interface.png");

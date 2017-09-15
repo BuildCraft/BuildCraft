@@ -5,8 +5,10 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.client.sprite.SpriteRaw;
+import buildcraft.lib.client.sprite.SubSpriteChanging;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.gui.GuiSpriteScaled;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.ISimpleDrawable;
@@ -59,7 +61,7 @@ public class ElementTypeSprite extends ElementType {
         INodeBoolean visible = getEquationBool(json, "visible", ctx, true);
         boolean foreground = resolveEquationBool(json, "foreground", ctx, false);
 
-        // TODO: Allow this to be changing as well!
+        // TODO: Allow the source sprite to be changing as well!
         SrcTexture tex = resolveTexture(info, json, "source");
         String origin = tex.origin;
         int texSize = tex.texSize;
@@ -71,19 +73,29 @@ public class ElementTypeSprite extends ElementType {
         }
 
         ISprite sprite = gui.properties.get(origin, ISprite.class);
-        // TODO: Allow variable source area for the sprite
-        double u = srcArea.getX();
-        double v = srcArea.getY();
-        double uSize = srcArea.getWidth();
-        double vSize = srcArea.getHeight();
-        if (sprite != null) {
+
+        if (sprite == null) {
+            ResourceLocation loc = SpriteUtil.transformLocation(new ResourceLocation(origin));
+            sprite = new SpriteRaw(loc, 0, 0, 1, 1);
+        }
+
+        if (srcArea instanceof GuiRectangle) {
+            double u = srcArea.getX();
+            double v = srcArea.getY();
+            double uSize = srcArea.getWidth();
+            double vSize = srcArea.getHeight();
             sprite = GuiUtil.subRelative(sprite, u, v, uSize, vSize, texSize);
         } else {
-            ResourceLocation loc = SpriteUtil.transformLocation(new ResourceLocation(origin));
-            sprite = new SpriteRaw(loc, u, v, uSize, vSize, texSize);
+            final IGuiArea a = srcArea;
+            INodeDouble u = () -> a.getX() / texSize;
+            INodeDouble v = () -> a.getY() / texSize;
+            INodeDouble uSize = () -> a.getEndX() / texSize;
+            INodeDouble vSize = () -> a.getEndY() / texSize;
+            sprite = new SubSpriteChanging(sprite, u, v, uSize, vSize);
         }
 
         ISimpleDrawable icon = new GuiSpriteScaled(sprite, area.offsetToOrigin());
-        return new GuiElementDrawable(gui, area, icon, foreground, visible);
+        GuiElementDrawable element = new GuiElementDrawable(gui, area, icon, foreground, visible);
+        return element;
     }
 }

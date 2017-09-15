@@ -1,7 +1,6 @@
 package buildcraft.lib.gui.json;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,20 +9,19 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
+import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.util.JsonUtils;
 
-import buildcraft.api.core.BCLog;
-
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.json.JsonGuiIterator.ResolvedIterator;
+import buildcraft.lib.json.JsonVariableObject;
 
-public class JsonGuiElement {
+public class JsonGuiElement extends JsonVariableObject {
     public final String name;
     public final String fullName;
     /** Map of string -> property. non-primitives are expanded, so arrays are turned into key[index], and objects are
@@ -35,40 +33,59 @@ public class JsonGuiElement {
     @Nullable
     public final JsonGuiIterator iterator;
     public final FunctionContext context;
+    public final JsonObject json;
+    private final Map<String, JsonGuiElement> types;
 
-    private JsonGuiElement(String name, String fullName, Map<String, String> properties, JsonGuiIterator iter,
-        FunctionContext context) {
+    private JsonGuiElement(String name, String fullName, FunctionContext context, JsonObject json,
+        ResolvedIterator iter) {
         this.name = name;
         this.fullName = fullName;
-        this.properties.putAll(properties);
-        this.iterator = iter;
         this.context = new FunctionContext(context);
+        iter.putProperties(context, properties);
+        this.json = json;
+        iterator = null;
+        types = new LinkedHashMap<>();
+        if (json.has("variables") && json.get("variables").isJsonObject()) {
+            putVariables(json.getAsJsonObject("variables"), this.context);
+        }
+        finaliseVariables();
     }
 
     public JsonGuiElement(JsonObject json, String name, String fullName, Map<String, JsonGuiElement> typeLookup,
         FunctionContext context) {
-        this.name = name;
-        this.fullName = fullName;
-        this.context = new FunctionContext(context);
-        String str = JsonUtils.getString(json, "type", null);
-        if (str != null) {
-            JsonGuiElement parent = typeLookup.get(str);
-            if (parent != null) {
-                properties.putAll(parent.properties);
+        try {
+            this.json = json;
+            this.name = name;
+            this.fullName = fullName;
+            this.context = new FunctionContext(context);
+            this.types = typeLookup;
+
+            String str = JsonUtils.getString(json, "type", null);
+            if (str != null) {
+                JsonGuiElement parent = typeLookup.get(str);
+                if (parent != null) {
+                    properties.putAll(parent.properties);
+                }
             }
-        }
-        for (Entry<String, JsonElement> entry : json.entrySet()) {
-            String key = entry.getKey();
-            if ("type".equals(key) && properties.containsKey("type")) {
-                continue;
+            for (Entry<String, JsonElement> entry : json.entrySet()) {
+                String key = entry.getKey();
+                if ("type".equals(key) && properties.containsKey("type")) {
+                    continue;
+                }
+                JsonElement value = entry.getValue();
+                putProperties(key, value);
             }
-            JsonElement value = entry.getValue();
-            putProperties(key, value);
-        }
-        if (json.has("iterator")) {
-            iterator = new JsonGuiIterator(json.get("iterator"));
-        } else {
-            iterator = null;
+            if (json.has("iterator")) {
+                iterator = new JsonGuiIterator(json.get("iterator"));
+            } else {
+                iterator = null;
+                if (json.has("variables") && json.get("variables").isJsonObject()) {
+                    putVariables(json.getAsJsonObject("variables"), this.context);
+                }
+            }
+            finaliseVariables();
+        } catch (JsonSyntaxException jse) {
+            throw new JsonSyntaxException("Failed to read element " + name, jse);
         }
     }
 
@@ -98,56 +115,39 @@ public class JsonGuiElement {
             ResolvedIterator resolvedIterator = iterator.new ResolvedIterator(fnCtx);
             if (resolvedIterator.start()) {
                 do {
-                    JsonGuiElement elem = new JsonGuiElement(name, fullName, properties, null, context);
-                    resolvedIterator.putProperties(elem.context);
+                    JsonGuiElement elem = new JsonGuiElement(name, fullName, context, json, resolvedIterator);
+                    elem.types.putAll(types);
+                    elem.properties.putAll(properties);
                     list.add(elem);
                 } while (!resolvedIterator.iterate());
-            } else {
-                BCLog.logger
-                    .info("[lib.gui.json] Skipping " + fullName + " as its condition didn't include its start!");
             }
         }
         return list;
     }
 
-    public List<JsonGuiElement> getChildren(JsonGuiInfo info, String subName) {
-        List<JsonGuiElement> list = new ArrayList<>();
-        List<String> childKeys = new ArrayList<>();
-        Table<String, String, String> allChildren = HashBasedTable.create();
-        Map<String, String> parentProperties = new HashMap<>();
-        for (Entry<String, String> entry : properties.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            parentProperties.put("parent." + key, value);
-            if (!key.startsWith(subName)) {
-                continue;
-            }
-            String subKey = key.substring(subName.length() + 1);
-            int indexOf = subKey.indexOf('.');
-            String childName = subKey.substring(0, indexOf);
-            String childPropName = subKey.substring(indexOf + 1);
-            if (!childKeys.contains(childName)) {
-                childKeys.add(childName);
-            }
-            allChildren.put(childName, childPropName, value);
+    public List<JsonGuiElement> getChildren(String subName) {
+        JsonElement chElem = json.get(subName);
+        if (chElem == null || !chElem.isJsonObject()) {
+            return ImmutableList.of();
         }
+        JsonObject chObject = chElem.getAsJsonObject();
+        List<JsonGuiElement> list = new ArrayList<>();
 
-        for (String childName : childKeys) {
-            Map<String, String> childProperties = new HashMap<>(allChildren.row(childName));
-            childProperties.putAll(parentProperties);
-            String type = childProperties.get("type");
-            JsonGuiElement parent = info.types.get(type);
-            if (parent != null) {
-                Map<String, String> props2 = new HashMap<>();
-                props2.putAll(parent.properties);
-                props2.putAll(childProperties);
-                props2.put("type", parent.properties.get("type"));
-                childProperties = props2;
-            }
-            // TODO: Allow children to iterate!
-            list.add(new JsonGuiElement(childName, fullName + "." + childName, childProperties, null, context));
+        for (Entry<String, JsonElement> key : chObject.entrySet()) {
+            String chName = key.getKey();
+            JsonElement value = key.getValue();
+            list.add(getChildElement(chName, value));
         }
         return list;
+    }
+
+    public JsonGuiElement getChildElement(String childName, JsonElement elem) {
+        JsonElement value = elem;
+        if (!value.isJsonObject()) {
+            throw new JsonSyntaxException("Expected an object, got " + value);
+        }
+        JsonObject childObject = value.getAsJsonObject();
+        return new JsonGuiElement(childObject, childName, fullName + "." + childName, types, context);
     }
 
     @Override
