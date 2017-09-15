@@ -29,7 +29,6 @@ import buildcraft.transport.container.ContainerDiamondPipe;
 import buildcraft.transport.container.ContainerDiamondWoodPipe;
 import buildcraft.transport.container.ContainerEmzuliPipe_BC8;
 import buildcraft.transport.container.ContainerFilteredBuffer_BC8;
-import buildcraft.transport.container.ContainerGate;
 import buildcraft.transport.container.ContainerGate2;
 import buildcraft.transport.gui.GuiDiamondPipe;
 import buildcraft.transport.gui.GuiDiamondWoodPipe;
