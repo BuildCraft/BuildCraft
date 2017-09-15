@@ -13,6 +13,7 @@ import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -59,9 +60,7 @@ import buildcraft.lib.tile.item.StackInsertionFunction;
 
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.filler.FillerType;
-import buildcraft.builders.filling.Filling;
 import buildcraft.builders.snapshot.ITileForTemplateBuilder;
-import buildcraft.builders.snapshot.SnapshotBuilder;
 import buildcraft.builders.snapshot.Template;
 import buildcraft.builders.snapshot.Template.BuildingInfo;
 import buildcraft.builders.snapshot.TemplateBuilder;
@@ -104,7 +103,9 @@ public class TileFiller extends TileBC_Neptune
         pattern = new FullStatement<>(FillerType.INSTANCE, 4, this::onStatementChange);
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
         caps.addCapabilityInstance(TilesAPI.CAP_CONTROLLABLE, this, EnumPipePart.VALUES);
-        StackInsertionChecker checker = (slot, stack) -> Filling.getItemBlocks().contains(stack.getItem());
+        // TODO: Add a way of handling any itemstack or block properly,
+        // including valid placement locations and removal.
+        StackInsertionChecker checker = (slot, stack) -> stack.getItem() instanceof ItemBlock;
         StackInsertionFunction insertor = StackInsertionFunction.getDefaultInserter();
         ItemHandlerSimple handler = new ItemHandlerSimple(27, checker, insertor, this::onSlotChange);
         invResources = itemManager.addInvHandler("resources", handler, EnumAccess.BOTH, EnumPipePart.VALUES);
@@ -176,7 +177,8 @@ public class TileFiller extends TileBC_Neptune
                 for (int x = 0; x < sx; x++) {
                     for (int y = 0; y < sy; y++) {
                         for (int z = 0; z < sz; z++) {
-                            blueprintTemplate.data.set(blueprintTemplate.posToIndex(x, y, z), patternTemplate.get(x, y, z) ^ invertPattern);
+                            blueprintTemplate.data.set(blueprintTemplate.posToIndex(x, y, z),
+                                patternTemplate.get(x, y, z) ^ invertPattern);
                         }
                     }
                 }
@@ -191,13 +193,13 @@ public class TileFiller extends TileBC_Neptune
             finished = builder.tick();
         }
     }
-    
+
     @Override
     public void validate() {
         super.validate();
         builder.validate();
     }
-    
+
     @Override
     public void invalidate() {
         super.invalidate();
@@ -444,8 +446,8 @@ public class TileFiller extends TileBC_Neptune
         }
         finished = false;
         lockedTicks = 3;
-//        patternTemplate = null;
-//        blueprintTemplate = null;
+        // patternTemplate = null;
+        // blueprintTemplate = null;
     }
 
     // IControllable
