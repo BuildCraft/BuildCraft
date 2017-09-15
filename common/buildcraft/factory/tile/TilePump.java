@@ -7,10 +7,11 @@
 package buildcraft.factory.tile;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,7 +21,6 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.MinMaxPriorityQueue;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -53,17 +53,16 @@ import buildcraft.energy.tile.TileSpringOil;
 import buildcraft.factory.BCFactoryBlocks;
 
 public class TilePump extends TileMiner {
+    private static final EnumFacing[] SEARCH_DIRECTIONS = new EnumFacing[] { //
+        EnumFacing.UP, EnumFacing.NORTH, EnumFacing.SOUTH, //
+        EnumFacing.WEST, EnumFacing.EAST //
+    };
+
     private final Tank tank = new Tank("tank", 16 * Fluid.BUCKET_VOLUME, this);
     private boolean queueBuilt = false;
     private final Map<BlockPos, List<BlockPos>> paths = new HashMap<>();
     private BlockPos fluidConnection;
-    private final MinMaxPriorityQueue<BlockPos> queue = MinMaxPriorityQueue.orderedBy(
-        BlockUtil.uniqueBlockPosComparator(
-            Comparator.comparing(
-                blockPos -> paths.get(blockPos).size()
-            )
-        )
-    ).create();
+    private final Deque<BlockPos> queue = new ArrayDeque<>();
     private Fluid queueFluid;
 
     @Nullable
@@ -112,13 +111,7 @@ public class TilePump extends TileMiner {
             List<BlockPos> nextPosesToCheckCopy = new ArrayList<>(nextPosesToCheck);
             nextPosesToCheck.clear();
             for (BlockPos posToCheck : nextPosesToCheckCopy) {
-                for (EnumFacing side : new EnumFacing[] {
-                    EnumFacing.UP,
-                    EnumFacing.NORTH,
-                    EnumFacing.SOUTH,
-                    EnumFacing.WEST,
-                    EnumFacing.EAST
-                }) {
+                for (EnumFacing side : SEARCH_DIRECTIONS) {
                     BlockPos offsetPos = posToCheck.offset(side);
                     if ((offsetPos.getX() - pos.getX()) * (offsetPos.getX() - pos.getX()) +
                         (offsetPos.getZ() - pos.getZ()) * (offsetPos.getZ() - pos.getZ()) > 64 * 64) {
@@ -173,9 +166,7 @@ public class TilePump extends TileMiner {
 
     private void nextPos() {
         while (!queue.isEmpty()) {
-            currentPos = (queueFluid == null || !FluidUtilBC.areFluidsEqual(queueFluid, FluidRegistry.WATER))
-                ? queue.pollLast()
-                : queue.pollFirst();
+            currentPos = queue.removeLast();
             if (canDrain(currentPos)) {
                 updateLength();
                 return;
@@ -217,7 +208,7 @@ public class TilePump extends TileMiner {
         boolean prevResult = true;
         while (prevResult) {
             prevResult = false;
-            if (tank.isFull()) {
+            if (tank.getFluidAmount() > tank.getCapacity() / 2) {
                 return;
             }
             long target = 10 * MjAPI.MJ;
@@ -231,12 +222,13 @@ public class TilePump extends TileMiner {
                         canDrain(currentPos)) {
                         tank.fillInternal(drain, true);
                         progress = 0;
-                        if (drain.getFluid() != FluidRegistry.WATER ||
-                            Arrays.stream(EnumFacing.HORIZONTALS)
-                                .map(currentPos::offset)
-                                .map(p -> BlockUtil.getFluid(world, p))
-                                .filter(f -> FluidUtilBC.areFluidsEqual(f, FluidRegistry.WATER))
-                                .count() < 2) {
+                        boolean isInfiniteSource = false;
+                        if (FluidUtilBC.areFluidsEqual(drain.getFluid(), FluidRegistry.WATER)) {
+                            // TODO: This is a temprarary fix -- this isn't necessarily accurate if the y-level differs
+                            // or if their isn't a solid block underneath the water (or if a finite water mod is installed)
+                            isInfiniteSource = queue.size() > 2;
+                        }
+                        if (!isInfiniteSource) {
                             BlockUtil.drainBlock(world, currentPos, true);
                             if (FluidUtilBC.areFluidsEqual(drain.getFluid(), BCEnergyFluids.crudeOil[0])) {
                                 if (oilSpringPos != null) {

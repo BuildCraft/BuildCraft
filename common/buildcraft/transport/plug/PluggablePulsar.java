@@ -23,6 +23,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
+import buildcraft.api.transport.pipe.IFlowFluid;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
@@ -228,7 +229,20 @@ public class PluggablePulsar extends PipePluggable {
         if (pulseStage == PULSE_STAGE) {
             pulseStage = 0;
             IMjRedstoneReceiver rsRec = (IMjRedstoneReceiver) holder.getPipe().getBehaviour();
-            rsRec.receivePower(MjAPI.MJ, false);
+            if (gateSinglePulses > 0 && holder.getPipe().getFlow() instanceof IFlowFluid) {
+                // Special extration logic for fluids:
+                // Always extract either 1 bucket, or nothing.
+                long excess = rsRec.receivePower(MjAPI.MJ, true);
+                if (excess == 0) {
+                    rsRec.receivePower(MjAPI.MJ, false);
+                } else {
+                    // Nothing was extracted, so lets extract in the future
+                    gateSinglePulses++;
+                    // ParticleUtil.spawnFailureParticles
+                }
+            } else {
+                rsRec.receivePower(MjAPI.MJ, false);
+            }
             if (gateSinglePulses > 0) {
                 gateSinglePulses--;
             }

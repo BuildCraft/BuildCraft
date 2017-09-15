@@ -32,13 +32,11 @@ import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCLog;
 
-@SuppressWarnings("WeakerAccess")
 public final class NBTUtilBC {
     /** Deactivate constructor */
     private NBTUtilBC() {
     }
 
-    @SuppressWarnings("ConstantConditions")
     public static NBTBase merge(NBTBase destination, NBTBase source) {
         if (source == null) {
             return null;
@@ -292,28 +290,5 @@ public final class NBTUtilBC {
             throw new IllegalArgumentException();
         }
         return IntStream.range(0, ((NBTTagList) list).tagCount()).mapToObj(((NBTTagList) list)::getStringTagAt);
-    }
-
-    /**
-     * @deprecated As the only use should be a set...
-     */
-    public static NBTTagByteArray writeBooleanList(Stream<Boolean> stream) {
-        Boolean[] booleans = stream.toArray(Boolean[]::new);
-        BitSet bitSet = new BitSet(booleans.length);
-        for (int i = 0; i < booleans.length; i++) {
-            bitSet.set(i, bitSet.get(i));
-        }
-        return new NBTTagByteArray(bitSet.toByteArray());
-    }
-
-    public static Stream<Boolean> readBooleanList(NBTBase list) {
-        if (list == null) {
-            return Stream.empty();
-        }
-        if (!(list instanceof NBTTagByteArray)) {
-            throw new IllegalArgumentException();
-        }
-        BitSet bitSet = BitSet.valueOf(((NBTTagByteArray) list).getByteArray());
-        return IntStream.range(0, bitSet.length()).mapToObj(bitSet::get);
     }
 }

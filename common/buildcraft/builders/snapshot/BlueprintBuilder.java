@@ -35,6 +35,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.ISchematicEntity;
+import buildcraft.api.schematics.SchematicEntityContext;
 
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.FluidUtilBC;
@@ -249,7 +250,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             .filter(schematicEntity ->
                 entitiesWithinBox.stream()
                     .map(Entity::getPositionVector)
-                    .map(schematicEntity.getPos().add(new Vec3d(getBuildingInfo().basePos))::distanceTo)
+                    .map(schematicEntity.getPos().add(new Vec3d(getBuildingInfo().offsetPos))::distanceTo)
                     .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE)
             )
             .collect(Collectors.toList());
@@ -277,14 +278,14 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 entity != null &&
                     getBuildingInfo().entities.stream()
                         .map(ISchematicEntity::getPos)
-                        .map(new Vec3d(getBuildingInfo().basePos)::add)
+                        .map(new Vec3d(getBuildingInfo().offsetPos)::add)
                         .map(entity.getPositionVector()::distanceTo)
                         .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE) &&
-                    SchematicEntityManager.getSchematicEntity(
+                    SchematicEntityManager.getSchematicEntity(new SchematicEntityContext(
                         tile.getWorldBC(),
                         BlockPos.ORIGIN,
                         entity
-                    ) != null
+                    )) != null
             )
             .collect(Collectors.toList());
         if (!toKill.isEmpty()) {
@@ -314,7 +315,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                             ).isPresent()
                         )
                         .filter(schematicEntity ->
-                            schematicEntity.build(tile.getWorldBC(), getBuildingInfo().basePos) != null
+                            schematicEntity.build(tile.getWorldBC(), getBuildingInfo().offsetPos) != null
                         )
                         .forEach(schematicEntity ->
                             tryExtractRequired(

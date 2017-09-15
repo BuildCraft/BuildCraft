@@ -59,7 +59,7 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
         TileEntity tile = BlockUtil.getTileEntityForGetActualState(world, pos);
         if (tile instanceof TileFloodGate) {
             for (EnumFacing side : CONNECTED_MAP.keySet()) {
-                state = state.withProperty(CONNECTED_MAP.get(side), ((TileFloodGate) tile).openSides.get(side));
+                state = state.withProperty(CONNECTED_MAP.get(side), ((TileFloodGate) tile).openSides.contains(side));
             }
         }
         return state;
@@ -74,9 +74,12 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
                     TileEntity tile = world.getTileEntity(pos);
                     if (tile instanceof TileFloodGate) {
                         if (CONNECTED_MAP.containsKey(side)) {
-                            ((TileFloodGate) tile).openSides.put(side, !((TileFloodGate) tile).openSides.get(side));
-                            ((TileFloodGate) tile).queue.clear();
-                            ((TileFloodGate) tile).sendNetworkUpdate(TileBC_Neptune.NET_RENDER_DATA);
+                            TileFloodGate floodGate = (TileFloodGate) tile;
+                            if (!floodGate.openSides.remove(side)) {
+                                floodGate.openSides.add(side);
+                            }
+                            floodGate.queue.clear();
+                            floodGate.sendNetworkUpdate(TileBC_Neptune.NET_RENDER_DATA);
                             return true;
                         }
                     }
