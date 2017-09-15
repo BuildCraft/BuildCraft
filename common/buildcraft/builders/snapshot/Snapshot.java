@@ -303,11 +303,13 @@ public abstract class Snapshot {
     @SuppressWarnings("WeakerAccess")
     public abstract class BuildingInfo {
         public final BlockPos basePos;
+        public final BlockPos offsetPos;
         public final Rotation rotation;
         public final Box box = new Box();
 
         protected BuildingInfo(BlockPos basePos, Rotation rotation) {
             this.basePos = basePos;
+            this.offsetPos = basePos.add(offset.rotate(rotation));
             this.rotation = rotation;
             this.box.extendToEncompass(toWorld(BlockPos.ORIGIN));
             this.box.extendToEncompass(toWorld(size.subtract(new BlockPos(1, 1, 1))));
@@ -316,14 +318,12 @@ public abstract class Snapshot {
         public BlockPos toWorld(BlockPos blockPos) {
             return blockPos
                 .rotate(rotation)
-                .add(basePos)
-                .add(offset.rotate(rotation));
+                .add(offsetPos);
         }
 
         public BlockPos fromWorld(BlockPos blockPos) {
             return blockPos
-                .subtract(offset.rotate(rotation))
-                .subtract(basePos)
+                .subtract(offsetPos)
                 .rotate(RotationUtil.invert(rotation));
         }
 

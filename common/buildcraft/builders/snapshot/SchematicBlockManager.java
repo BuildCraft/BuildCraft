@@ -10,12 +10,8 @@ import javax.annotation.Nonnull;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
@@ -34,22 +30,6 @@ public class SchematicBlockManager {
             }
         }
         throw new UnsupportedOperationException();
-    }
-
-    public static ISchematicBlock getSchematicBlock(World world,
-                                                    BlockPos basePos,
-                                                    BlockPos pos,
-                                                    IBlockState blockState,
-                                                    Block block) {
-        return getSchematicBlock(
-            new SchematicBlockContext(
-                world,
-                basePos,
-                pos,
-                blockState,
-                block
-            )
-        );
     }
 
     @SuppressWarnings("WeakerAccess")

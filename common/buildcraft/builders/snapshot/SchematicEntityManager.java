@@ -10,11 +10,8 @@ import javax.annotation.Nonnull;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicEntity;
@@ -33,18 +30,6 @@ public class SchematicEntityManager {
             }
         }
         return null;
-    }
-
-    public static ISchematicEntity getSchematicEntity(World world,
-                                                      BlockPos basePos,
-                                                      Entity entity) {
-        return getSchematicEntity(
-            new SchematicEntityContext(
-                world,
-                basePos,
-                entity
-            )
-        );
     }
 
     @SuppressWarnings("WeakerAccess")
