@@ -7,18 +7,18 @@ import buildcraft.lib.gui.button.IButtonClickEventListener;
 import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.misc.MessageUtil;
 
-import buildcraft.transport.container.ContainerGate2;
+import buildcraft.transport.container.ContainerGate;
 import buildcraft.transport.gate.GateLogic;
 
-public class GuiGate2 extends GuiJson<ContainerGate2> {
+public class GuiGate extends GuiJson<ContainerGate> {
 
     public static final ResourceLocation GUI_DEFINITION = new ResourceLocation("buildcrafttransport:gui/gate.json");
 
-    public GuiGate2(ContainerGate2 container) {
+    public GuiGate(ContainerGate container) {
         super(container, GUI_DEFINITION);
 
         MessageUtil.doDelayed(() -> {
-            container.sendMessage(ContainerGate2.ID_VALID_STATEMENTS);
+            container.sendMessage(ContainerGate.ID_VALID_STATEMENTS);
         });
     }
 

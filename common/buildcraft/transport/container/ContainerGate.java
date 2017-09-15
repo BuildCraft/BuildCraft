@@ -33,7 +33,7 @@ import buildcraft.transport.gate.GateContext.GateGroup;
 import buildcraft.transport.gate.GateLogic;
 import buildcraft.transport.gate.TriggerWrapper;
 
-public class ContainerGate2 extends ContainerBC_Neptune {
+public class ContainerGate extends ContainerBC_Neptune {
     protected static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("gate");
 
     public static final int ID_CONNECTION = IDS.allocId("CONNECTION");
@@ -49,7 +49,7 @@ public class ContainerGate2 extends ContainerBC_Neptune {
     public final GateContext<TriggerWrapper> possibleTriggersContext;
     public final GateContext<ActionWrapper> possibleActionsContext;
 
-    public ContainerGate2(EntityPlayer player, GateLogic logic) {
+    public ContainerGate(EntityPlayer player, GateLogic logic) {
         super(player);
         this.gate = logic;
         gate.getPipeHolder().onPlayerOpen(player);

@@ -29,12 +29,12 @@ import buildcraft.transport.container.ContainerDiamondPipe;
 import buildcraft.transport.container.ContainerDiamondWoodPipe;
 import buildcraft.transport.container.ContainerEmzuliPipe_BC8;
 import buildcraft.transport.container.ContainerFilteredBuffer_BC8;
-import buildcraft.transport.container.ContainerGate2;
+import buildcraft.transport.container.ContainerGate;
 import buildcraft.transport.gui.GuiDiamondPipe;
 import buildcraft.transport.gui.GuiDiamondWoodPipe;
 import buildcraft.transport.gui.GuiEmzuliPipe_BC8;
 import buildcraft.transport.gui.GuiFilteredBuffer;
-import buildcraft.transport.gui.GuiGate2;
+import buildcraft.transport.gui.GuiGate;
 import buildcraft.transport.item.ItemPluggableFacade;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
@@ -114,7 +114,7 @@ public abstract class BCTransportProxy implements IGuiHandler {
                     IPipeHolder holder = (IPipeHolder) tile;
                     PipePluggable plug = holder.getPluggable(gateSide);
                     if (plug instanceof PluggableGate) {
-                        return new ContainerGate2(player, ((PluggableGate) plug).logic);
+                        return new ContainerGate(player, ((PluggableGate) plug).logic);
                     }
                 }
                 break;
@@ -238,7 +238,7 @@ public abstract class BCTransportProxy implements IGuiHandler {
                         IPipeHolder holder = (IPipeHolder) tile;
                         PipePluggable plug = holder.getPluggable(gateSide);
                         if (plug instanceof PluggableGate) {
-                            return new GuiGate2(new ContainerGate2(player, ((PluggableGate) plug).logic));
+                            return new GuiGate(new ContainerGate(player, ((PluggableGate) plug).logic));
                         }
                     }
                     break;
