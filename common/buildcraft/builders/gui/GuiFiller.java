@@ -37,7 +37,7 @@ public class GuiFiller extends GuiJson<ContainerFiller> {
         context.put_l("filler.to_break", container.tile::getCountToBreak);
         context.put_l("filler.to_place", container.tile::getCountToPlace);
         properties.put("filler.possible", FillerStatementContext.CONTEXT_ALL);
-        properties.put("filler.pattern", container.tile.pattern);
+        properties.put("filler.pattern", container.tile.patternStatement);
         properties.put("filler.pattern.sprite", SPRITE_PATTERN);
 
         context.put_b("filler.invert", container.tile::shouldInvert);
@@ -58,7 +58,7 @@ public class GuiFiller extends GuiJson<ContainerFiller> {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        SPRITE_PATTERN.delegate = container.tile.pattern.get().getSprite();
+        SPRITE_PATTERN.delegate = container.tile.patternStatement.get().getSprite();
         Mode mode = container.tile.getControlMode();
         SPRITE_CONTROL_MODE.delegate = BCCoreSprites.ACTION_MACHINE_CONTROL.get(mode);
     }

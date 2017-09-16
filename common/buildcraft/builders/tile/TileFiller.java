@@ -14,6 +14,7 @@ import java.util.List;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemBlockSpecial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -94,18 +95,20 @@ public class TileFiller extends TileBC_Neptune
     public boolean placedWithVolume = false;
     public boolean placedWithVolumeType = false;
 
-    public final FullStatement<IFillerPattern> pattern;
+    public final FullStatement<IFillerPattern> patternStatement;
     private FilledTemplate patternTemplate;
     private Template blueprintTemplate;
     private BuildingInfo buildingInfo;
 
     public TileFiller() {
-        pattern = new FullStatement<>(FillerType.INSTANCE, 4, this::onStatementChange);
+        patternStatement = new FullStatement<>(FillerType.INSTANCE, 4, this::onStatementChange);
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
         caps.addCapabilityInstance(TilesAPI.CAP_CONTROLLABLE, this, EnumPipePart.VALUES);
         // TODO: Add a way of handling any itemstack or block properly,
         // including valid placement locations and removal.
-        StackInsertionChecker checker = (slot, stack) -> stack.getItem() instanceof ItemBlock;
+        StackInsertionChecker checker = (slot, stack) -> {
+            return stack.getItem() instanceof ItemBlock || stack.getItem() instanceof ItemBlockSpecial;
+        };
         StackInsertionFunction insertor = StackInsertionFunction.getDefaultInserter();
         ItemHandlerSimple handler = new ItemHandlerSimple(27, checker, insertor, this::onSlotChange);
         invResources = itemManager.addInvHandler("resources", handler, EnumAccess.BOTH, EnumPipePart.VALUES);
@@ -148,7 +151,7 @@ public class TileFiller extends TileBC_Neptune
     public void update() {
         if (world.isRemote) {
             builder.tick();
-            pattern.canInteract = !isLocked();
+            patternStatement.canInteract = !isLocked();
             return;
         }
         sendNetworkUpdate(NET_RENDER_DATA);
@@ -156,11 +159,11 @@ public class TileFiller extends TileBC_Neptune
         if (lockedTicks < 0) {
             lockedTicks = 0;
         }
-        IFillerPattern p = pattern.get();
+        IFillerPattern p = patternStatement.get();
         if (hasBox() && p != null && patternTemplate == null) {
-            IStatementParameter[] params = new IStatementParameter[pattern.maxParams];
+            IStatementParameter[] params = new IStatementParameter[patternStatement.maxParams];
             for (int i = 0; i < params.length; i++) {
-                params[i] = pattern.get(i);
+                params[i] = patternStatement.get(i);
             }
             patternTemplate = p.createTemplate(this, params);
             if (patternTemplate == null) {
@@ -228,7 +231,7 @@ public class TileFiller extends TileBC_Neptune
             } else if (id == NET_INVERT) {
                 buffer.writeBoolean(invertPattern);
             } else if (id == NET_PATTERN) {
-                pattern.writeToBuffer(buffer);
+                patternStatement.writeToBuffer(buffer);
             }
         }
     }
@@ -255,7 +258,7 @@ public class TileFiller extends TileBC_Neptune
             } else if (id == NET_INVERT) {
                 invertPattern = buffer.readBoolean();
             } else if (id == NET_PATTERN) {
-                pattern.readFromBuffer(buffer);
+                patternStatement.readFromBuffer(buffer);
             }
         }
         if (side == Side.SERVER) {
@@ -269,7 +272,7 @@ public class TileFiller extends TileBC_Neptune
                 if (isLocked()) {
                     new FullStatement<>(FillerType.INSTANCE, 4, (a, b) -> {}).readFromBuffer(buffer);
                 } else {
-                    pattern.readFromBuffer(buffer);
+                    patternStatement.readFromBuffer(buffer);
                     sendNetworkUpdate(NET_PATTERN);
                     onStatementChange(null, -1);
                 }
@@ -286,7 +289,7 @@ public class TileFiller extends TileBC_Neptune
     }
 
     private void onStatementChange(FullStatement<?> stmnt, int paramIndex) {
-        createAndSendMessage(NET_PATTERN, b -> pattern.writeToBuffer(b));
+        createAndSendMessage(NET_PATTERN, b -> patternStatement.writeToBuffer(b));
         patternTemplate = null;
         blueprintTemplate = null;
         finished = false;
@@ -298,7 +301,7 @@ public class TileFiller extends TileBC_Neptune
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         nbt.setTag("battery", battery.serializeNBT());
-        nbt.setTag("pattern", pattern.writeToNbt());
+        nbt.setTag("pattern", patternStatement.writeToNbt());
         nbt.setTag("box", box.writeToNBT());
         nbt.setBoolean("canExcavate", canExcavate);
         nbt.setBoolean("invertPattern", invertPattern);
@@ -319,7 +322,7 @@ public class TileFiller extends TileBC_Neptune
         mode = NBTUtilBC.readEnum(nbt.getTag("mode"), Mode.class);
         if (mode == null) mode = Mode.ON;
         box.initialize(nbt.getCompoundTag("box"));
-        pattern.readFromNbt(nbt.getCompoundTag("pattern"));
+        patternStatement.readFromNbt(nbt.getCompoundTag("pattern"));
         patternTemplate = null;
     }
 
@@ -349,7 +352,7 @@ public class TileFiller extends TileBC_Neptune
         left.add("");
         left.add("battery = " + battery.getDebugString());
         left.add("box = " + box);
-        left.add("pattern = " + pattern.get());
+        left.add("pattern = " + patternStatement.get());
         left.add("mode = " + mode);
         left.add("is_finished = " + finished);
         left.add("lockedTicks = " + lockedTicks);
@@ -439,10 +442,10 @@ public class TileFiller extends TileBC_Neptune
 
     @Override
     public void setPattern(IFillerPattern pattern, IStatementParameter[] params) {
-        this.pattern.set(pattern);
-        params = Arrays.copyOf(params, this.pattern.maxParams);
-        for (int i = 0; i < this.pattern.maxParams; i++) {
-            this.pattern.set(i, params[i]);
+        this.patternStatement.set(pattern);
+        params = Arrays.copyOf(params, this.patternStatement.maxParams);
+        for (int i = 0; i < this.patternStatement.maxParams; i++) {
+            this.patternStatement.set(i, params[i]);
         }
         finished = false;
         lockedTicks = 3;
