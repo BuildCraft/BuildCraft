@@ -22,10 +22,6 @@
         }
     },
     "elements": {
-        "background": {
-            "type": "buildcraftlib:drawable",
-            "size": [176,241]
-        },
         "pattern_drag_target": {
             "type": "buildcraftlib:statement/slot",
             "source": "filler.pattern",
@@ -58,6 +54,7 @@
             },
             "help": {
                 "colour": "0xFF_88_AA_CC",
+                "area": "button_invert.area.expand(2)",
                 "title": "buildcraft.help.filler.invert.title",
                 "text": "buildcraft.help.filler.invert.desc"
             }

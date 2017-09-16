@@ -68,7 +68,7 @@
 				}
 			}
 		},
-		"button_no_excavate": {
+		"button_excavate": {
 			"type": "four_button",
 			"button": "filler.excavate",
 			"u_start": 192,
@@ -78,6 +78,7 @@
             },
 			"help": {
                 "colour": "0xFF_CC_AA_88",
+                "area": "button_excavate.area.expand(2)",
                 "title": "buildcraft.help.filler.excavate.title",
                 "text": "buildcraft.help.filler.excavate.desc"
 			}
