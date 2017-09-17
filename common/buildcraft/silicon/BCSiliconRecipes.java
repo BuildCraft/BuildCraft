@@ -29,7 +29,10 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.core.BCLog;
@@ -38,27 +41,27 @@ import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.AssemblyRecipeBasic;
 import buildcraft.api.recipes.IngredientStack;
-import buildcraft.api.recipes.IntegrationRecipe;
-import buildcraft.api.recipes.StackDefinition;
+import buildcraft.api.recipes.IntegrationRecipeBasic;
 
 import buildcraft.lib.BCLib;
-import buildcraft.lib.inventory.filter.ArrayStackFilter;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 
+@Mod.EventBusSubscriber(modid = BCSilicon.MODID)
 public class BCSiliconRecipes {
     private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
-    public static void init() {
+    @SubscribeEvent
+    public static void registerRecipes(RegistryEvent.Register<AssemblyRecipe> event) {
         if (BCLib.DEV) {
             OreDictionary.registerOre("dyeYellow", Blocks.GOLD_BLOCK);
             OreDictionary.registerOre("dyeBlue", Blocks.LAPIS_BLOCK);
             OreDictionary.registerOre("dyeRed", Blocks.REDSTONE_BLOCK);
 
-            StackDefinition target = ArrayStackFilter.definition(Items.POTATO);
+            IngredientStack target = IngredientStack.of(Items.POTATO);
             ImmutableList<IngredientStack> required = ImmutableList.of(new IngredientStack(CraftingHelper.getIngredient("dustRedstone")));
             ItemStack output = new ItemStack(Items.BAKED_POTATO, 4);
-            IntegrationRecipeRegistry.INSTANCE.addRecipe(new IntegrationRecipe("potato-baker", 100 * MjAPI.MJ, target, required, output));
+            IntegrationRecipeRegistry.INSTANCE.addRecipe(new IntegrationRecipeBasic("potato-baker", 100 * MjAPI.MJ, target, required, output));
         }
 
         Loader.instance().getActiveModList().forEach((mod) -> {

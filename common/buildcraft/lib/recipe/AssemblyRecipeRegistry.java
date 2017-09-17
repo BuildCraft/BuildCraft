@@ -15,15 +15,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 
 import buildcraft.api.recipes.AssemblyRecipe;
 
-public class AssemblyRecipeRegistry  {
-    public static final IForgeRegistry<AssemblyRecipe> REGISTRY;
+import buildcraft.silicon.BCSilicon;
 
-    static {
+@Mod.EventBusSubscriber(modid = BCSilicon.MODID)
+public class AssemblyRecipeRegistry  {
+    public static IForgeRegistry<AssemblyRecipe> REGISTRY;
+
+    @SubscribeEvent
+    public static void registerRecipes(RegistryEvent.NewRegistry event) {
         REGISTRY = new RegistryBuilder().disableSaving().setType(AssemblyRecipe.class).setName(new ResourceLocation("buildcraftlib:AssemblyRecipeRegistry")).create();
     }
 

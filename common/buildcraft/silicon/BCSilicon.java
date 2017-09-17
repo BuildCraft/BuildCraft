@@ -57,7 +57,6 @@ public class BCSilicon {
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
         BCSiliconProxy.getProxy().fmlInit();
-        BCSiliconRecipes.init();
 
         TileBC_Neptune.registerTile(TileLaser.class, "tile.laser");
         TileBC_Neptune.registerTile(TileAssemblyTable.class, "tile.assembly_table");
