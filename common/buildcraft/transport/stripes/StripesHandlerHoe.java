@@ -28,29 +28,39 @@ public enum StripesHandlerHoe implements IStripesHandlerItem {
                           ItemStack stack,
                           EntityPlayer player,
                           IStripesActivator activator) {
-        return stack.getItem() instanceof ItemHoe &&
-            (
-                stack.onItemUse(
-                    player,
-                    world,
-                    pos.offset(direction).down(),
-                    EnumHand.MAIN_HAND,
-                    EnumFacing.UP,
-                    0.0f,
-                    0.0f,
-                    0.0f
-                ) != EnumActionResult.PASS ||
-                    stack.onItemUse(
-                        player,
-                        world,
-                        pos.offset(direction),
-                        EnumHand.MAIN_HAND,
-                        EnumFacing.UP,
-                        0.0f,
-                        0.0f,
-                        0.0f
-                    ) != EnumActionResult.PASS
-            );
+
+        if (!(stack.getItem() instanceof ItemHoe)) {
+            return false;
+        }
+
+        pos = pos.offset(direction);
+        if (stack.onItemUse(
+                player,
+                world,
+                pos,
+                EnumHand.MAIN_HAND,
+                EnumFacing.UP,
+                0.0f,
+                0.0f,
+                0.0f
+        ) != EnumActionResult.PASS) {
+            return true;
+        }
+
+        if (direction != EnumFacing.UP && stack.onItemUse(
+                player,
+                world,
+                pos.down(),
+                EnumHand.MAIN_HAND,
+                EnumFacing.UP,
+                0.0f,
+                0.0f,
+                0.0f
+        ) != EnumActionResult.PASS) {
+            return true;
+        }
+
+        return false;
     }
 
 }
