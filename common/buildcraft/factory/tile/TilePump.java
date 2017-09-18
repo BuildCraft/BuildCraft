@@ -22,6 +22,8 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -31,6 +33,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -38,6 +41,7 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 
+import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
@@ -64,6 +68,7 @@ public class TilePump extends TileMiner {
     private BlockPos fluidConnection;
     private final Deque<BlockPos> queue = new ArrayDeque<>();
     private Fluid queueFluid;
+    private boolean isInfiniteWaterSource;
 
     @Nullable
     private BlockPos oilSpringPos;
@@ -84,6 +89,7 @@ public class TilePump extends TileMiner {
         queue.clear();
         paths.clear();
         queueFluid = null;
+        isInfiniteWaterSource = false;
         Set<BlockPos> checked = new HashSet<>();
         List<BlockPos> nextPosesToCheck = new ArrayList<>();
         for (BlockPos posToCheck = pos.down(); posToCheck.getY() > 0; posToCheck = posToCheck.down()) {
@@ -107,10 +113,12 @@ public class TilePump extends TileMiner {
             return;
         }
         world.profiler.endStartSection("build");
-        while (!nextPosesToCheck.isEmpty()) {
+        boolean isWater = /* BCFactoryConfig.consumeWaterSources && */ FluidUtilBC.areFluidsEqual(queueFluid, FluidRegistry.WATER);
+        outerLoop: while (!nextPosesToCheck.isEmpty()) {
             List<BlockPos> nextPosesToCheckCopy = new ArrayList<>(nextPosesToCheck);
             nextPosesToCheck.clear();
             for (BlockPos posToCheck : nextPosesToCheckCopy) {
+                int count = 0;
                 for (EnumFacing side : SEARCH_DIRECTIONS) {
                     BlockPos offsetPos = posToCheck.offset(side);
                     if ((offsetPos.getX() - pos.getX()) * (offsetPos.getX() - pos.getX()) +
@@ -127,7 +135,22 @@ public class TilePump extends TileMiner {
                                 queue.add(offsetPos);
                             }
                             nextPosesToCheck.add(offsetPos);
+                            count++;
                         }
+                    } else {
+                        // We've already tested this block: it *must* be a valid water source
+                        count++;
+                    }
+                }
+                if (isWater && count > 2) {
+                    IBlockState below = world.getBlockState(posToCheck.down());
+                    // Same check as in BlockDynamicLiquid.updateTick:
+                    // if that method changes how it checks for adjacent
+                    //  water sources then this also needs updating
+                    Fluid fluidBelow = BlockUtil.getFluidWithoutFlowing(below);
+                    if (FluidUtilBC.areFluidsEqual(fluidBelow, FluidRegistry.WATER) || below.getMaterial().isSolid()) {
+                        isInfiniteWaterSource = true;
+                        break outerLoop;
                     }
                 }
             }
@@ -222,13 +245,13 @@ public class TilePump extends TileMiner {
                         canDrain(currentPos)) {
                         tank.fillInternal(drain, true);
                         progress = 0;
-                        boolean isInfiniteSource = false;
-                        if (FluidUtilBC.areFluidsEqual(drain.getFluid(), FluidRegistry.WATER)) {
-                            // TODO: This is a temprarary fix -- this isn't necessarily accurate if the y-level differs
-                            // or if their isn't a solid block underneath the water (or if a finite water mod is installed)
-                            isInfiniteSource = queue.size() > 2;
+                        if (isInfiniteWaterSource) {
+                            if (!FluidUtilBC.areFluidsEqual(drain.getFluid(), FluidRegistry.WATER)) {
+                                // The pump must have re-used the water queue for some other fluid.
+                                isInfiniteWaterSource = false;
+                            }
                         }
-                        if (!isInfiniteSource) {
+                        if (!isInfiniteWaterSource) {
                             BlockUtil.drainBlock(world, currentPos, true);
                             if (FluidUtilBC.areFluidsEqual(drain.getFluid(), BCEnergyFluids.crudeOil[0])) {
                                 if (oilSpringPos != null) {
@@ -301,6 +324,7 @@ public class TilePump extends TileMiner {
         super.getDebugInfo(left, right, side);
         left.add("fluid = " + tank.getDebugString());
         left.add("queue size = " + queue.size());
+        left.add("infinite = " + isInfiniteWaterSource);
     }
 
     @Override
