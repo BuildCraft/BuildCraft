@@ -1,59 +1,58 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.transport.stripes;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.transport.IStripesActivator;
-import buildcraft.api.transport.IStripesHandler;
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.transport.ItemPipeWire;
-import buildcraft.transport.TileGenericPipe;
+import buildcraft.api.transport.IStripesHandlerItem;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeApi;
 
-public class StripesHandlerPipeWires implements IStripesHandler {
-    @Override
-    public StripesHandlerType getType() {
-        return StripesHandlerType.ITEM_USE;
-    }
+public class StripesHandlerPipeWires implements IStripesHandlerItem {
 
-    @Override
-    public boolean shouldHandle(ItemStack stack) {
-        return stack.getItem() instanceof ItemPipeWire;
-    }
+    private static final int PIPES_TO_TRY = 8;
 
     @Override
     public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        int pipesToTry = 8;
-        int pipeWireColor = stack.getItemDamage();
+        EnumDyeColor pipeWireColor = EnumDyeColor.byMetadata(stack.getMetadata());
 
-        Vec3d p = Utils.convert(pos);
+        for (int i = PIPES_TO_TRY; i > 0; i--) {
+            pos = pos.offset(direction.getOpposite());
 
-        while (pipesToTry > 0) {
-            p = p.add(Utils.convert(direction, -1));
+            TileEntity tile = world.getTileEntity(pos);
+            if (tile != null && tile.hasCapability(PipeApi.CAP_PIPE_HOLDER, null)) {
+                IPipeHolder pipeHolder = tile.getCapability(PipeApi.CAP_PIPE_HOLDER, null);
 
-            TileEntity tile = world.getTileEntity(Utils.convertFloor(p));
-            if (tile instanceof TileGenericPipe) {
-                TileGenericPipe pipeTile = (TileGenericPipe) tile;
+                /*
+                if (!pipeHolder.pipe.wireSet[pipeWireColor]) {
+                    pipeHolder.pipe.wireSet[pipeWireColor] = true;
+                    pipeHolder.pipe.signalStrength[pipeWireColor] = 0;
 
-                if (!pipeTile.pipe.wireSet[pipeWireColor]) {
-                    pipeTile.pipe.wireSet[pipeWireColor] = true;
-                    pipeTile.pipe.signalStrength[pipeWireColor] = 0;
-
-                    pipeTile.pipe.updateSignalState();
-                    pipeTile.scheduleRenderUpdate();
-                    world.notifyNeighborsOfStateChange(pipeTile.getPos(), pipeTile.getBlock());
+                    pipeHolder.pipe.updateSignalState();
+                    pipeHolder.scheduleRenderUpdate();
+                    world.notifyNeighborsOfStateChange(pipeHolder.getPipePos(), tile.getBlockType(), false);
+                    */
+                //stack.shrink(1);
+                    /*
                     return true;
-                } else {
-                    pipesToTry--;
-                    continue;
-                }
+
+            }
+            */
+
             } else {
                 // Not a pipe, don't follow chain
-                break;
+                return false;
             }
         }
 
