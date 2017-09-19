@@ -14,6 +14,7 @@ import java.util.List;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -53,6 +54,8 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     public final Tank tank = new Tank("tank", 16000, this);
     public final FluidSmoother smoothedTank = new FluidSmoother(w -> createAndSendMessage(NET_FLUID_DELTA, w), tank);
 
+    private int fluidAmountPrev;
+
     public TileTank() {
         tankManager.add(tank);// FIXME: SAVING IS ALL SORTS OF BUGGED
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, this, EnumPipePart.VALUES);
@@ -63,11 +66,27 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         return IDS;
     }
 
+    public int getComparatorLevel() {
+        return tank.getFluidAmount() * 15 / tank.getCapacity();
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+
+        fluidAmountPrev = tank.getFluidAmount();
+    }
+
     // ITickable
 
     @Override
     public void update() {
         smoothedTank.tick(getWorld());
+
+        if (tank.getFluidAmount() != fluidAmountPrev) {
+            fluidAmountPrev = tank.getFluidAmount();
+            markDirty();
+        }
     }
 
     // TileEntity
