@@ -28,7 +28,7 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 
-public class PipeExtensionListener {
+public class PipeExtensionManager {
     private class PipeExtensionRequest {
         public ItemStack stack;
         public BlockPos pos;
