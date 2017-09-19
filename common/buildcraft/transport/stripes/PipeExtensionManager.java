@@ -37,6 +37,7 @@ import buildcraft.api.transport.pipe.PipeBehaviour;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.SoundUtil;
 
 import buildcraft.transport.BCTransportBlocks;
 import buildcraft.transport.BCTransportPipes;
@@ -114,7 +115,10 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
                 if (retract) {
                     IBlockState state = w.getBlockState(p);
                     List<ItemStack> list = state.getBlock().getDrops(w, p, state, 0);
+
+                    SoundUtil.playBlockBreak(w, p, state);
                     w.setBlockToAir(p);
+                    
                     stacksToSendBack.add(r.stack);
                     if (list != null) {
                         stacksToSendBack.addAll(list);
