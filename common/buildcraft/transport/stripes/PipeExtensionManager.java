@@ -6,13 +6,12 @@
 
 package buildcraft.transport.stripes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.common.collect.Lists;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -50,12 +49,14 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
         public final BlockPos pos;
         public final EnumFacing dir;
         public final IStripesActivator stripes;
+        public final PipeDefinition pipeDef;
         public final ItemStack stack;
 
-        private PipeExtensionRequest(BlockPos pos, EnumFacing dir, IStripesActivator stripes, ItemStack stack) {
+        private PipeExtensionRequest(BlockPos pos, EnumFacing dir, IStripesActivator stripes, PipeDefinition pipeDef, ItemStack stack) {
             this.pos = pos;
             this.dir = dir;
             this.stripes = stripes;
+            this.pipeDef = pipeDef;
             this.stack = stack;
         }
     }
@@ -64,14 +65,12 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
 
     @Override
     public boolean requestPipeExtension(World world, BlockPos pos, EnumFacing dir, IStripesActivator stripes, ItemStack stack) {
-        if (world.isRemote) {
+        if (world.isRemote || stack.isEmpty() || !(stack.getItem() instanceof IItemPipe)) {
             return false;
         }
 
-        if (!requests.containsKey(world.provider.getDimension())) {
-            requests.put(world.provider.getDimension(), new LinkedHashSet<>());
-        }
-        return requests.get(world.provider.getDimension()).add(new PipeExtensionRequest(pos, dir, stripes, stack.copy()));
+        return requests.computeIfAbsent(world.provider.getDimension(), i -> new LinkedHashSet<>())
+            .add(new PipeExtensionRequest(pos, dir, stripes, ((IItemPipe) stack.getItem()).getDefinition(), stack.copy()));
     }
 
     @SubscribeEvent
@@ -80,16 +79,10 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
             Set<PipeExtensionRequest> rSet = requests.get(event.world.provider.getDimension());
             World w = event.world;
             for (PipeExtensionRequest r : rSet) {
-                if (!(r.stack.getItem() instanceof IItemPipe)) {
-                    BCLog.logger.warn("Found an invalid request at " + r.pos + " as " + r.stack + " was not a pipe item!");
-                    continue;
-                }
-
-                PipeDefinition pipeDef = ((IItemPipe) r.stack.getItem()).getDefinition();
                 BlockPos p = r.pos;
 
-                boolean retract = pipeDef == BCTransportPipes.voidItem;
-                List<ItemStack> stacksToSendBack = Lists.newArrayList();
+                boolean retract = r.pipeDef == BCTransportPipes.voidItem;
+                List<ItemStack> stacksToSendBack = new ArrayList<>();
 
                 if (retract) {
                     p = p.offset(r.dir.getOpposite());
@@ -148,7 +141,6 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
                 w.setBlockState(p, stripesStateOld, 3);
 
                 TileEntity stripesTileNew = w.getTileEntity(p);
-                stripesTileNew.setWorld(w);
                 stripesTileNew.readFromNBT(stripesNBTOld);
                 stripesTileNew.onLoad();
 
