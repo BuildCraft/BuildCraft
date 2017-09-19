@@ -118,7 +118,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
 
                     SoundUtil.playBlockBreak(w, p, state);
                     w.setBlockToAir(p);
-                    
+
                     stacksToSendBack.add(r.stack);
                     if (list != null) {
                         stacksToSendBack.addAll(list);
