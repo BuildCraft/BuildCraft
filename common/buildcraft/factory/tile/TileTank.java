@@ -50,8 +50,17 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
 
     private static boolean isPlayerInteracting = false;
 
-    public final Tank tank = new Tank("tank", 16000, this);
+    public final Tank tank = new Tank("tank", 16000, this) {
+
+        @Override
+        protected void onContentsChanged() {
+            super.onContentsChanged();
+            dirty = true;
+        }
+    };
     public final FluidSmoother smoothedTank = new FluidSmoother(w -> createAndSendMessage(NET_FLUID_DELTA, w), tank);
+
+    private boolean dirty = false;
 
     public TileTank() {
         tankManager.add(tank);// FIXME: SAVING IS ALL SORTS OF BUGGED
@@ -68,6 +77,11 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     @Override
     public void update() {
         smoothedTank.tick(getWorld());
+
+        if (!world.isRemote && dirty) {
+            markDirty();
+            dirty = false;
+        }
     }
 
     // TileEntity
