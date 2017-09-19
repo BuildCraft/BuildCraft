@@ -63,8 +63,8 @@ public class BCTransportRegistries {
 
     public static void init() {
         PipeConnectionAPI.registerConnection(
-                Blocks.BREWING_STAND,
-                (world, pos, face, state) -> face.getAxis().getPlane() == EnumFacing.Plane.HORIZONTAL ? 4 / 16F : 0
+            Blocks.BREWING_STAND,
+            (world, pos, face, state) -> face.getAxis().getPlane() == EnumFacing.Plane.HORIZONTAL ? 4 / 16F : 0
         );
 
         // Item use stripes handlers

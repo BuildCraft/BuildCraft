@@ -6,13 +6,13 @@
 
 package buildcraft.transport.stripes;
 
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -60,7 +60,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
         }
     }
 
-    private final Map<Integer, Set<PipeExtensionRequest>> requests = Maps.newHashMap();
+    private final Map<Integer, Set<PipeExtensionRequest>> requests = new HashMap<>();
 
     @Override
     public boolean requestPipeExtension(World world, BlockPos pos, EnumFacing dir, IStripesActivator stripes, ItemStack stack) {
@@ -69,7 +69,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
         }
 
         if (!requests.containsKey(world.provider.getDimension())) {
-            requests.put(world.provider.getDimension(), Sets.newLinkedHashSet());
+            requests.put(world.provider.getDimension(), new LinkedHashSet<>());
         }
         return requests.get(world.provider.getDimension()).add(new PipeExtensionRequest(pos, dir, stripes, stack.copy()));
     }
@@ -94,7 +94,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
                 if (retract) {
                     p = p.offset(r.dir.getOpposite());
                     if (w.getBlockState(p).getBlock() != BCTransportBlocks.pipeHolder ||
-                            w.getBlockState(p.offset(r.dir.getOpposite())).getBlock() != BCTransportBlocks.pipeHolder) {
+                        w.getBlockState(p.offset(r.dir.getOpposite())).getBlock() != BCTransportBlocks.pipeHolder) {
                         r.stripes.sendItem(r.stack.copy(), r.dir);
                         continue;
                     }
