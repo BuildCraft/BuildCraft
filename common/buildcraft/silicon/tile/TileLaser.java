@@ -64,7 +64,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     private final SafeTimeTracker clientLaserMoveInterval = new SafeTimeTracker(5, 10);
     private final SafeTimeTracker serverTargetMoveInterval = new SafeTimeTracker(10, 20);
 
-    private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
+    private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() { //TODO switch to using the BlockUpdateCollector
         @Override
         public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos eventPos, @Nonnull IBlockState oldState,
                                       @Nonnull IBlockState newState, int flags) {
