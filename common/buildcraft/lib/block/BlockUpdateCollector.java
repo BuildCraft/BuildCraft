@@ -55,7 +55,7 @@ public class BlockUpdateCollector {
      *
      * @return List<UpdateRecord></UpdateRecord>
      */
-    public List<UpdateRecord> getUpdtaesInLastTick() {
+    public List<UpdateRecord> getUpdatesInLastTick() {
         if (tickDetector.markTimeIfDelay(world)) {
             updatesInLastTick = updatesSinceLastTick;
             updatesSinceLastTick = new ArrayList<>();
