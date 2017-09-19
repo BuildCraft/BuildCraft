@@ -266,25 +266,23 @@ public final class BlockUtil {
     }
 
     public static Fluid getFluidWithoutFlowing(IBlockState state) {
-        if (state.getBlock() instanceof BlockFluidClassic) {
-            if (((BlockFluidClassic) state.getBlock()).isSourceBlock(
-                new SingleBlockAccess(state),
-                SingleBlockAccess.POS
-            )) {
-                return getFluid(state.getBlock());
+        Block block = state.getBlock();
+        if (block instanceof BlockFluidClassic) {
+            if (((BlockFluidClassic) block).isSourceBlock(new SingleBlockAccess(state), SingleBlockAccess.POS)) {
+                return getFluid(block);
             }
         }
-        if (state.getBlock() == Blocks.WATER) {
-            return FluidRegistry.WATER;
-        }
-        if (state.getBlock() == Blocks.FLOWING_WATER && state.getValue(BlockLiquid.LEVEL) == 0) {
-            return FluidRegistry.WATER;
-        }
-        if (state.getBlock() == Blocks.LAVA) {
-            return FluidRegistry.LAVA;
-        }
-        if (state.getBlock() == Blocks.FLOWING_LAVA && state.getValue(BlockLiquid.LEVEL) == 0) {
-            return FluidRegistry.LAVA;
+        if (block instanceof BlockLiquid) {
+            if (state.getValue(BlockLiquid.LEVEL) != 0) {
+                return null;
+            }
+            if (block == Blocks.WATER || block == Blocks.FLOWING_WATER) {
+                return FluidRegistry.WATER;
+            }
+            if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
+                return FluidRegistry.LAVA;
+            }
+            return FluidRegistry.lookupFluidForBlock(block);
         }
         return null;
     }

@@ -7,30 +7,29 @@
 package buildcraft.factory.tile;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.EnumMap;
+import java.util.BitSet;
+import java.util.Deque;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Booleans;
 
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTPrimitive;
+import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -47,7 +46,6 @@ import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;
 import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
@@ -55,33 +53,16 @@ import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.block.BlockFloodGate;
 
 public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebuggable {
-    private static final int[] REBUILD_DELAYS = new int[] {
-        1,
-        2,
-        4,
-        8,
-        16,
-        32,
-        64,
-        128,
-        256,
-        512,
-        1024,
-        2048,
-        4096,
-        8192,
-        16384
+    private static final EnumFacing[] SEARCH_DIRECTIONS = new EnumFacing[] { //
+        EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH, //
+        EnumFacing.WEST, EnumFacing.EAST //
     };
 
+    private static final int[] REBUILD_DELAYS = { 16, 32, 64, 128, 256 };
+
     private final Tank tank = new Tank("tank", 2 * Fluid.BUCKET_VOLUME, this);
-    public final EnumMap<EnumFacing, Boolean> openSides = new EnumMap<>(EnumFacing.class);
-    public final Queue<BlockPos> queue = new PriorityQueue<>(
-        Comparator.<BlockPos>comparingInt(blockPos ->
-            (blockPos.getX() - pos.getX()) * (blockPos.getX() - pos.getX()) +
-                (blockPos.getY() - pos.getY()) * (blockPos.getY() - pos.getY()) +
-                (blockPos.getZ() - pos.getZ()) * (blockPos.getZ() - pos.getZ())
-        )
-    );
+    public final Set<EnumFacing> openSides = EnumSet.noneOf(EnumFacing.class);
+    public final Deque<BlockPos> queue = new ArrayDeque<>();
     private final Map<BlockPos, List<BlockPos>> paths = new HashMap<>();
     private int delayIndex = 0;
     private int tick = 0;
@@ -89,8 +70,11 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     public TileFloodGate() {
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank, EnumPipePart.VALUES);
         tankManager.add(tank);
-        Arrays.stream(EnumFacing.VALUES)
-            .forEach(side -> openSides.put(side, BlockFloodGate.CONNECTED_MAP.containsKey(side)));
+        for (EnumFacing face : EnumFacing.VALUES) {
+            if (BlockFloodGate.CONNECTED_MAP.containsKey(face)) {
+                openSides.add(face);
+            }
+        }
     }
 
     private int getCurrentDelay() {
@@ -106,65 +90,41 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             return;
         }
         Set<BlockPos> checked = new HashSet<>();
+        checked.add(pos);
         List<BlockPos> nextPosesToCheck = new ArrayList<>();
-        openSides.entrySet().stream()
-            .filter(Entry::getValue)
-            .map(Entry::getKey)
-            .map(pos::offset)
-            .forEach(nextPosesToCheck::add);
+        for (EnumFacing face : openSides) {
+            BlockPos offset = pos.offset(face);
+            nextPosesToCheck.add(offset);
+            paths.put(offset, ImmutableList.of(offset));
+        }
         world.profiler.endStartSection("build");
-        outer:
-        while (!nextPosesToCheck.isEmpty()) {
+        outer: while (!nextPosesToCheck.isEmpty()) {
             List<BlockPos> nextPosesToCheckCopy = new ArrayList<>(nextPosesToCheck);
             nextPosesToCheck.clear();
-            for (BlockPos posToCheck : nextPosesToCheckCopy) {
-                for (EnumFacing side : new EnumFacing[] {
-                    EnumFacing.DOWN,
-                    EnumFacing.NORTH,
-                    EnumFacing.SOUTH,
-                    EnumFacing.WEST,
-                    EnumFacing.EAST
-                }) {
-                    BlockPos offsetPos = posToCheck.offset(side);
-                    if ((offsetPos.getX() - pos.getX()) * (offsetPos.getX() - pos.getX()) +
-                        (offsetPos.getZ() - pos.getZ()) * (offsetPos.getZ() - pos.getZ()) > 64 * 64) {
-                        continue;
-                    }
-                    if (!openSides.get(side)) {
-                        if (side == EnumFacing.NORTH && offsetPos.getZ() >= pos.getZ()) {
-                            continue;
-                        }
-                        if (side == EnumFacing.SOUTH && offsetPos.getZ() <= pos.getZ()) {
-                            continue;
-                        }
-                        if (side == EnumFacing.WEST && offsetPos.getX() >= pos.getX()) {
-                            continue;
-                        }
-                        if (side == EnumFacing.EAST && offsetPos.getX() <= pos.getX()) {
-                            continue;
-                        }
-                    }
-                    if (!checked.contains(offsetPos)) {
-                        if (canSearch(offsetPos)) {
-                            ImmutableList.Builder<BlockPos> pathBuilder = new ImmutableList.Builder<>();
-                            if (paths.containsKey(posToCheck)) {
-                                pathBuilder.addAll(paths.get(posToCheck));
+            for (BlockPos toCheck : nextPosesToCheckCopy) {
+                if (toCheck.distanceSq(pos) > 64 * 64) {
+                    continue;
+                }
+                if (checked.add(toCheck)) {
+                    if (canSearch(toCheck)) {
+                        if (canFill(toCheck)) {
+                            queue.push(toCheck);
+                            if (queue.size() >= 4096) {
+                                break outer;
                             }
-                            pathBuilder.add(offsetPos);
-                            paths.put(offsetPos, pathBuilder.build());
-                            if (canFill(offsetPos)) {
-                                if (openSides.get(EnumFacing.DOWN) ||
-                                    Math.abs(offsetPos.getY() - pos.getY()) < Math.abs(offsetPos.getX() - pos.getX()) ||
-                                    Math.abs(offsetPos.getY() - pos.getY()) < Math.abs(offsetPos.getZ() - pos.getZ())) {
-                                    queue.add(offsetPos);
-                                }
-                                if (queue.size() >= 4096) {
-                                    break outer;
-                                }
-                            }
-                            nextPosesToCheck.add(offsetPos);
                         }
-                        checked.add(offsetPos);
+                        List<BlockPos> checkPath = paths.get(toCheck);
+                        for (EnumFacing side : SEARCH_DIRECTIONS) {
+                            BlockPos next = toCheck.offset(side);
+                            if (checked.contains(next)) {
+                                continue;
+                            }
+                            ImmutableList.Builder<BlockPos> pathBuilder = ImmutableList.builder();
+                            pathBuilder.addAll(checkPath);
+                            pathBuilder.add(next);
+                            paths.put(next, pathBuilder.build());
+                            nextPosesToCheck.add(next);
+                        }
                     }
                 }
             }
@@ -177,13 +137,15 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             return true;
         }
         Fluid fluid = BlockUtil.getFluidWithFlowing(world, offsetPos);
-        // noinspection RedundantIfStatement
-        if (fluid != null &&
-            Objects.equals(fluid.getName(), tank.getFluidType().getName()) &&
-            BlockUtil.getFluid(world, offsetPos) == null) {
-            return true;
+        if (fluid == null) {
+            return false;
         }
-        return false;
+        if (!FluidUtilBC.areFluidsEqual(fluid, tank.getFluidType())) {
+            // Optional.ofNullable(blockState.getBlock().getRegistryName()).map(BCModules::isBcMod).orElse(false)
+            // BCModules.isBcMod(blockState.getBlock().getRegistryName());
+            return false;
+        }
+        return BlockUtil.getFluidWithoutFlowing(getLocalState(offsetPos)) == null;
     }
 
     private boolean canSearch(BlockPos offsetPos) {
@@ -191,7 +153,15 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             return true;
         }
         Fluid fluid = BlockUtil.getFluid(world, offsetPos);
-        return fluid != null && Objects.equals(fluid.getName(), tank.getFluidType().getName());
+        return FluidUtilBC.areFluidsEqual(fluid, tank.getFluidType());
+    }
+
+    private boolean canFillThrough(BlockPos pos) {
+        if (world.isAirBlock(pos)) {
+            return false;
+        }
+        Fluid fluid = BlockUtil.getFluidWithFlowing(world, pos);
+        return FluidUtilBC.areFluidsEqual(fluid, tank.getFluidType());
     }
 
     // ITickable
@@ -202,35 +172,39 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             return;
         }
 
-//        tank.fill(new FluidStack(FluidRegistry.WATER, 1000), true);
-        FluidUtilBC.pullFluidAround(world, pos, tank);
+        if (tank.getFluidAmount() < Fluid.BUCKET_VOLUME) {
+            return;
+        }
 
         tick++;
         if (tick % 16 == 0) {
             if (!tank.isEmpty() && !queue.isEmpty()) {
                 FluidStack fluid = tank.drain(Fluid.BUCKET_VOLUME, false);
                 if (fluid != null && fluid.amount >= Fluid.BUCKET_VOLUME) {
-                    BlockPos currentPos = queue.poll();
-                    if (paths.get(currentPos).stream().allMatch(this::canSearch) && canFill(currentPos)) {
-                        if (FluidUtil.tryPlaceFluid(
-                            BuildCraftAPI.fakePlayerProvider.getFakePlayer(
-                                (WorldServer) world,
-                                getOwner(),
-                                currentPos
-                            ),
-                            world,
-                            currentPos,
-                            tank,
-                            fluid
-                        )) {
+                    BlockPos currentPos = queue.removeLast();
+                    List<BlockPos> path = paths.get(currentPos);
+                    boolean canFill = true;
+                    if (path != null) {
+                        for (BlockPos p : path) {
+                            if (p.equals(currentPos)) {
+                                continue;
+                            }
+                            if (!canFillThrough(currentPos)) {
+                                canFill = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (canFill && canFill(currentPos)) {
+                        FakePlayer fakePlayer =
+                            BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) world, getOwner(), currentPos);
+                        if (FluidUtil.tryPlaceFluid(fakePlayer, world, currentPos, tank, fluid)) {
                             for (EnumFacing side : EnumFacing.VALUES) {
-                                world.notifyNeighborsOfStateChange(
-                                    currentPos.offset(side),
-                                    BCFactoryBlocks.floodGate,
-                                    false
-                                );
+                                world.notifyNeighborsOfStateChange(currentPos.offset(side), BCFactoryBlocks.floodGate,
+                                    false);
                             }
                             delayIndex = 0;
+                            tick = 0;
                         }
                     } else {
                         buildQueue();
@@ -241,6 +215,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
         if (queue.isEmpty() && tick % getCurrentDelay() == 0) {
             delayIndex = Math.min(delayIndex + 1, REBUILD_DELAYS.length - 1);
+            tick = 0;
             buildQueue();
         }
     }
@@ -250,16 +225,40 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
-        nbt.setTag("openSides", NBTUtilBC.writeBooleanList(openSides.values().stream()));
+        byte b = 0;
+        for (EnumFacing face : EnumFacing.VALUES) {
+            if (openSides.contains(face)) {
+                b |= 1 << face.getIndex();
+            }
+        }
+        nbt.setByte("openSides", b);
         return nbt;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        Boolean[] blockedSidesArray = NBTUtilBC.readBooleanList(nbt.getTag("openSides")).toArray(Boolean[]::new);
-        for (int i = 0; i < blockedSidesArray.length; i++) {
-            openSides.put(EnumFacing.getFront(i), blockedSidesArray[i]);
+        NBTBase open = nbt.getTag("openSides");
+        if (open instanceof NBTPrimitive) {
+            byte sides = ((NBTPrimitive) open).getByte();
+            for (EnumFacing face : EnumFacing.VALUES) {
+                if (((sides >> face.getIndex()) & 1) == 1) {
+                    openSides.add(face);
+                } else {
+                    openSides.remove(face);
+                }
+            }
+        } else if (open instanceof NBTTagByteArray) {
+            // Legacy: 7.99.7 and before
+            byte[] bytes = ((NBTTagByteArray) open).getByteArray();
+            BitSet bitSet = BitSet.valueOf(bytes);
+            for (EnumFacing face : EnumFacing.VALUES) {
+                if (bitSet.get(face.getIndex())) {
+                    openSides.add(face);
+                } else {
+                    openSides.remove(face);
+                }
+            }
         }
     }
 
@@ -271,7 +270,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
                 // tank.writeToBuffer(buffer);
-                MessageUtil.writeBooleanArray(buffer, Booleans.toArray(openSides.values()));
+                MessageUtil.writeEnumSet(buffer, openSides, EnumFacing.class);
             }
         }
     }
@@ -282,12 +281,10 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 // tank.readFromBuffer(buffer);
-                boolean[] old = Booleans.toArray(openSides.values());
-                boolean[] blockedSidesArray = MessageUtil.readBooleanArray(buffer, openSides.values().size());
-                for (int i = 0; i < blockedSidesArray.length; i++) {
-                    openSides.put(EnumFacing.getFront(i), blockedSidesArray[i]);
-                }
-                if (!Arrays.equals(old, Booleans.toArray(openSides.values()))) {
+                EnumSet<EnumFacing> _new = MessageUtil.readEnumSet(buffer, EnumFacing.class);
+                if (!_new.equals(openSides)) {
+                    openSides.clear();
+                    openSides.addAll(_new);
                     redrawBlock();
                 }
             }
@@ -300,11 +297,16 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("fluid = " + tank.getDebugString());
-        left.add("open sides = " + openSides.entrySet().stream()
-            .filter(Entry::getValue)
-            .map(Entry::getKey)
-            .map(Enum::name)
-            .collect(Collectors.joining(", ")));
+        String s = "";
+        for (EnumFacing f : EnumFacing.VALUES) {
+            if (openSides.contains(f)) {
+                if (s.length() > 0) {
+                    s += ", ";
+                }
+                s += f.getName();
+            }
+        }
+        left.add("open sides = " + s);
         left.add("delay = " + getCurrentDelay());
         left.add("tick = " + tick);
         left.add("queue size = " + queue.size());
