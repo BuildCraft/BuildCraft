@@ -12,13 +12,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.transport.IStripesActivator;
+import buildcraft.api.transport.pipe.PipeDefinition;
 
+// TODO: Move to API
 public interface IPipeExtensionManager {
 
     /**
      * Requests an extension by one from a IStripesActivator (usually a stripes transport pipe) with the pipe supplied
      * by the stack by moving the stripes pipe to the front and placing the new transport pipe behind.
-     * If the pipe is a void transport pipe it retracts the pipeline instead by moving the stripes pipe one block
+     * If the pipe is a registered retraction pipe (per default only the void transport pipe is) it retracts the pipeline instead by moving the stripes pipe one block
      * in the opposite direction, replacing the previous transport pipe.
      *
      * @param world   the world
@@ -29,5 +31,12 @@ public interface IPipeExtensionManager {
      * @return true on success, false otherwise
      */
     boolean requestPipeExtension(World world, BlockPos pos, EnumFacing dir, IStripesActivator stripes, ItemStack stack);
+
+    /**
+     * Registers a pipe as a retraction trigger for pipe extension requests
+     *
+     * @param pipeDefinition the pipe definition
+     */
+    void registerRetractionPipe(PipeDefinition pipeDefinition);
 
 }

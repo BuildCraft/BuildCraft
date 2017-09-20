@@ -7,6 +7,7 @@
 package buildcraft.transport.stripes;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,6 @@ import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.SoundUtil;
 
 import buildcraft.transport.BCTransportBlocks;
-import buildcraft.transport.BCTransportPipes;
 import buildcraft.transport.wire.WireManager;
 
 public enum PipeExtensionManager implements IPipeExtensionManager {
@@ -66,6 +66,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
     }
 
     private final Map<Integer, Set<PipeExtensionRequest>> requests = new HashMap<>();
+    private final Set<PipeDefinition> retractionPipeDefs = new HashSet<>();
 
     @Override
     public boolean requestPipeExtension(World world, BlockPos pos, EnumFacing dir, IStripesActivator stripes, ItemStack stack) {
@@ -77,6 +78,13 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
             .add(new PipeExtensionRequest(pos, dir, stripes, ((IItemPipe) stack.getItem()).getDefinition(), stack.copy()));
     }
 
+    @Override
+    public void registerRetractionPipe(PipeDefinition pipeDefinition) {
+        if (pipeDefinition != null) {
+            retractionPipeDefs.add(pipeDefinition);
+        }
+    }
+
     @SubscribeEvent
     public void tick(TickEvent.WorldTickEvent event) {
         if (event.phase == TickEvent.Phase.END && requests.containsKey(event.world.provider.getDimension())) {
@@ -85,7 +93,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
             for (PipeExtensionRequest r : rSet) {
                 BlockPos p = r.pos;
 
-                boolean retract = r.pipeDef == BCTransportPipes.voidItem;
+                boolean retract = retractionPipeDefs.contains(r.pipeDef);
                 NonNullList<ItemStack> stacksToSendBack = NonNullList.create();
 
                 if (retract) {
