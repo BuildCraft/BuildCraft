@@ -6,7 +6,6 @@
 
 package buildcraft.transport.stripes;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -20,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -39,6 +39,7 @@ import buildcraft.api.transport.pipe.PipeBehaviour;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.SoundUtil;
 
 import buildcraft.transport.BCTransportBlocks;
@@ -85,7 +86,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
                 BlockPos p = r.pos;
 
                 boolean retract = r.pipeDef == BCTransportPipes.voidItem;
-                List<ItemStack> stacksToSendBack = new ArrayList<>();
+                NonNullList<ItemStack> stacksToSendBack = NonNullList.create();
 
                 if (retract) {
                     p = p.offset(r.dir.getOpposite());
@@ -163,9 +164,16 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
                     if (behaviour instanceof IStripesActivator) {
                         IStripesActivator stripesNew = (IStripesActivator) behaviour;
                         for (ItemStack s : stacksToSendBack) {
-                            stripesNew.sendItem(s.copy(), r.dir);
+                            s = s.copy();
+                            if (!stripesNew.sendItem(s, r.dir)) {
+                                stripesNew.dropItem(s, r.dir);
+                            }
                         }
+                    } else {
+                        InventoryUtil.dropAll(w, p, stacksToSendBack);
                     }
+                } else {
+                    InventoryUtil.dropAll(w, p, stacksToSendBack);
                 }
 
             }
