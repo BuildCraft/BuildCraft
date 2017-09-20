@@ -7,7 +7,9 @@
 package buildcraft.lib.recipe;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
@@ -15,11 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegistryBuilder;
 
 import buildcraft.api.recipes.AssemblyRecipe;
 
@@ -27,17 +25,17 @@ import buildcraft.silicon.BCSilicon;
 
 @Mod.EventBusSubscriber(modid = BCSilicon.MODID)
 public class AssemblyRecipeRegistry  {
-    public static IForgeRegistry<AssemblyRecipe> REGISTRY;
+    public static final Map<ResourceLocation, AssemblyRecipe> REGISTRY = new HashMap<>();
 
-    @SubscribeEvent
-    public static void registerRecipes(RegistryEvent.NewRegistry event) {
-        REGISTRY = new RegistryBuilder().disableSaving().setType(AssemblyRecipe.class).setName(new ResourceLocation("buildcraftlib:AssemblyRecipeRegistry")).create();
+    public static void register(AssemblyRecipe recipe) {
+        REGISTRY.put(recipe.getRegistryName(), recipe);
     }
+
 
     @Nonnull
     public static List<AssemblyRecipe> getRecipesFor(@Nonnull NonNullList<ItemStack> possibleIn) {
         List<AssemblyRecipe> all = new ArrayList<>();
-        for (AssemblyRecipe ar : REGISTRY.getValues()) {
+        for (AssemblyRecipe ar : REGISTRY.values()) {
             if (!ar.getOutputs(possibleIn).isEmpty()) {
                 all.add(ar);
             }

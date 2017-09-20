@@ -29,7 +29,7 @@ public enum GuideAssemblyRecipes implements IStackRecipes {
     @Override
     public List<GuidePartFactory> getUsages(@Nonnull ItemStack stack) {
         List<GuidePartFactory> usages = new ArrayList<>();
-        for (AssemblyRecipe recipe : AssemblyRecipeRegistry.REGISTRY) {
+        for (AssemblyRecipe recipe : AssemblyRecipeRegistry.REGISTRY.values()) {
             for (ItemStack output: recipe.getOutputPreviews()) {
                 if (recipe.getInputsFor(output).stream().anyMatch((definition) -> definition.ingredient.apply(stack))) {
                     usages.add(getFactory(recipe, output));
@@ -43,7 +43,7 @@ public enum GuideAssemblyRecipes implements IStackRecipes {
     @Override
     public List<GuidePartFactory> getRecipes(@Nonnull ItemStack stack) {
         List<GuidePartFactory> recipes = new ArrayList<>();
-        for (AssemblyRecipe recipe : AssemblyRecipeRegistry.REGISTRY) {
+        for (AssemblyRecipe recipe : AssemblyRecipeRegistry.REGISTRY.values()) {
             for (ItemStack output: recipe.getOutputPreviews()) {
                 if (StackUtil.isCraftingEquivalent(output, stack, false)) {
                     recipes.add(getFactory(recipe, output));

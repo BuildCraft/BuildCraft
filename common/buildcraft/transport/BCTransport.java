@@ -20,7 +20,6 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
-import buildcraft.api.transport.pipe.PipeApi;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.config.EnumRestartRequirement;
@@ -67,7 +66,8 @@ public class BCTransport {
 
         BCTransportConfig.preInit();
         BCTransportStatements.preInit();
-        PipeApi.initCapabilites();
+
+        BCTransportRegistries.preInit();
 
         BCTransportPipes.preInit();
         BCTransportPlugs.preInit();
@@ -192,8 +192,6 @@ public class BCTransport {
         tabPipes = CreativeTabManager.createTab("buildcraft.pipes");
         tabPlugs = CreativeTabManager.createTab("buildcraft.plugs");
         tabFacades = CreativeTabManager.createTab("buildcraft.facades");
-
-        BCTransportRegistries.preInit();
     }
 
     private static TagEntry registerTag(String id) {

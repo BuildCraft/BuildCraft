@@ -66,7 +66,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
     private void updateRecipes() {
         //TODO: rework this to not iterate over every recipe every tick
         int count = recipesStates.size();
-        for (AssemblyRecipe recipe: AssemblyRecipeRegistry.REGISTRY) {
+        for (AssemblyRecipe recipe: AssemblyRecipeRegistry.REGISTRY.values()) {
             Set<ItemStack> outputs = recipe.getOutputs(inv.stacks);
             for (ItemStack out: outputs) {
                 boolean found = false;
@@ -280,7 +280,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
 
     @Nullable
     private AssemblyInstruction lookupRecipe(String name, ItemStack output) {
-        AssemblyRecipe recipe = AssemblyRecipeRegistry.REGISTRY.getValue(new ResourceLocation(name));
+        AssemblyRecipe recipe = AssemblyRecipeRegistry.REGISTRY.get(new ResourceLocation(name));
         return recipe != null ? new AssemblyInstruction(recipe, output) : null;
     }
 

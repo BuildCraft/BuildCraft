@@ -24,6 +24,7 @@ import org.apache.commons.io.IOUtils;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 
@@ -52,7 +53,7 @@ public class BCSiliconRecipes {
     private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     @SubscribeEvent
-    public static void registerRecipes(RegistryEvent.Register<AssemblyRecipe> event) {
+    public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         if (BCLib.DEV) {
             OreDictionary.registerOre("dyeYellow", Blocks.GOLD_BLOCK);
             OreDictionary.registerOre("dyeBlue", Blocks.LAPIS_BLOCK);
@@ -92,7 +93,46 @@ public class BCSiliconRecipes {
                             }
                         );
 
-                        AssemblyRecipeRegistry.REGISTRY.register(new AssemblyRecipeBasic(key, powercost, ImmutableSet.copyOf(ingredients), output));
+                        AssemblyRecipeRegistry.REGISTRY.put(key, new AssemblyRecipeBasic(key, powercost, ImmutableSet.copyOf(ingredients), output));
+
+
+                    } catch (IOException e) {
+                        BCLog.logger.error("Couldn't read recipe {} from {}", key, file, e);
+                        return false;
+                    } finally {
+                        IOUtils.closeQuietly(reader);
+                    }
+                    return true;
+                });
+
+            CraftingHelper.findFiles(mod, "assets/" + mod.getModId() + "/integrationRecipes", null,
+                (root, file) -> {
+                    String path = root.relativize(file).toString();
+                    if (!FilenameUtils.getExtension(file.toString()).equals("json"))
+                        return true;
+                    String name = FilenameUtils.removeExtension(path).replaceAll("\\\\", "/");
+                    ResourceLocation key = new ResourceLocation(mod.getModId(), name);
+                    BufferedReader reader = null;
+                    try {
+                        reader = Files.newBufferedReader(file);
+                        JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
+                        if (json == null || json.isJsonNull())
+                            throw new JsonSyntaxException("Json is null (empty file?)");
+
+                        ItemStack output = CraftingHelper.getItemStack(json.getAsJsonObject("result"), ctx);
+                        IngredientStack centerStack = IngredientStack.of(CraftingHelper.getIngredient(json.getAsJsonObject("centerStack"), ctx));
+                        long powercost = json.get("MJ").getAsLong() * MjAPI.MJ;
+
+                        ArrayList<IngredientStack> ingredients = new ArrayList<>();
+
+                        json.getAsJsonArray("components").forEach(
+                            element -> {
+                                JsonObject object = element.getAsJsonObject();
+                                ingredients.add(new IngredientStack(CraftingHelper.getIngredient(object.get("ingredient"), ctx), JsonUtils.getInt(object, "amount", 1)));
+                            }
+                        );
+
+                        IntegrationRecipeRegistry.INSTANCE.addRecipe(new IntegrationRecipeBasic(key, powercost, centerStack, ingredients, output));
 
 
                     } catch (IOException e) {
@@ -116,6 +156,6 @@ public class BCSiliconRecipes {
 
         String name = String.format("chipset-%s", type);
         AssemblyRecipe recp = new AssemblyRecipeBasic(name, multiplier * 10_000L * MjAPI.MJ, inputs.build(), output);
-        AssemblyRecipeRegistry.REGISTRY.register(recp);
+        AssemblyRecipeRegistry.REGISTRY.put(recp.getRegistryName(), recp);
     }
 }
