@@ -88,5 +88,7 @@ public class BCTransportRegistries {
 
         // Block breaking stripes handlers
         PipeApi.stripeRegistry.addHandler(StripesHandlerMinecartDestroy.INSTANCE);
+
+        BCTransportRegistries.extensionManager.registerRetractionPipe(BCTransportPipes.voidItem);
     }
 }

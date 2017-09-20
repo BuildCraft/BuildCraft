@@ -18,9 +18,9 @@ import buildcraft.api.transport.pipe.PipeDefinition;
 public interface IPipeExtensionManager {
 
     /**
-     * Requests an extension by one from a IStripesActivator (usually a stripes transport pipe) with the pipe supplied
+     * Requests an extension by one block from a IStripesActivator (usually a stripes transport pipe) with the pipe supplied
      * by the stack by moving the stripes pipe to the front and placing the new transport pipe behind.
-     * If the pipe is a registered retraction pipe (per default only the void transport pipe is) it retracts the pipeline instead by moving the stripes pipe one block
+     * If the pipe is a registered retraction pipe (per default only the void transport pipe is - register one with {@link #registerRetractionPipe(PipeDefinition)}) it retracts the pipeline instead by moving the stripes pipe one block
      * in the opposite direction, replacing the previous transport pipe.
      *
      * @param world   the world
