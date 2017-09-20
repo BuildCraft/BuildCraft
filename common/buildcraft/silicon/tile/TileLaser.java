@@ -59,12 +59,13 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     private long averageClient;
     private final MjBattery battery;
     private final int TARGETING_RANGE = 6;
+    private boolean worldHasUpdated = true;
     public Vec3d laserPos;
 
     private final SafeTimeTracker clientLaserMoveInterval = new SafeTimeTracker(5, 10);
     private final SafeTimeTracker serverTargetMoveInterval = new SafeTimeTracker(10, 20);
 
-    private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() { //TODO switch to using the BlockUpdateCollector
+    private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
         @Override
         public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos eventPos, @Nonnull IBlockState oldState,
                                       @Nonnull IBlockState newState, int flags) {
@@ -72,7 +73,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             if (Math.abs(pos.getX() - eventPos.getX()) <= TARGETING_RANGE &&
                     Math.abs(pos.getY() - eventPos.getY()) <= TARGETING_RANGE &&
                     Math.abs(pos.getZ() - eventPos.getZ()) <= TARGETING_RANGE ) {
-                findPossibleTargets();
+                worldHasUpdated = true;
             }
         }
     };
@@ -172,8 +173,9 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         avgPower.tick();
 
         BlockPos previousTargetPos = targetPos;
-        if (targetPositions == null) {
+        if (targetPositions == null || worldHasUpdated) {
             findPossibleTargets();
+            worldHasUpdated = false;
         }
 
         if (!powerNeededAt(targetPos)) {
