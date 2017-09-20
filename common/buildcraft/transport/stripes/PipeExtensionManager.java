@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -108,6 +110,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
                     BCLog.logger.warn("Found an invalid request at " + r.pos + " as " + stripesTileOld + " was not a pipe tile!");
                     continue;
                 }
+                GameProfile owner = stripesTileOld.getCapability(PipeApi.CAP_PIPE_HOLDER, null).getOwner();
                 stripesTileOld.writeToNBT(stripesNBTOld);
                 w.setBlockToAir(r.pos);
 
@@ -124,7 +127,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
                         stacksToSendBack.addAll(list);
                     }
                 } else {
-                    FakePlayer player = BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) w, null, r.pos);
+                    FakePlayer player = BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) w, owner, r.pos);
                     player.inventory.clear();
                     player.inventory.setInventorySlotContents(player.inventory.currentItem, r.stack);
                     BlockUtil.useItemOnBlock(w, player, r.stack, r.pos, r.dir.getOpposite());
