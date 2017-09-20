@@ -6,18 +6,16 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import com.mojang.authlib.GameProfile;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -25,7 +23,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -41,6 +39,7 @@ import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeBehaviour;
+import buildcraft.api.transport.pipe.PipeEventActionActivate;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventItem;
 import buildcraft.api.transport.pipe.PipeEventStatement;
@@ -105,7 +104,6 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
 
     // Actions
 
-    @SuppressWarnings("unused")
     @PipeEventHandler
     public void addInternalActions(PipeEventStatement.AddActionInternal event) {
         for (EnumFacing face : EnumFacing.VALUES) {
@@ -114,6 +112,15 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
                 if (plug == null || !plug.isBlocking()) {
                     event.actions.add(BCTransportStatements.ACTION_PIPE_DIRECTION[face.ordinal()]);
                 }
+            }
+        }
+    }
+
+    @PipeEventHandler
+    public void onActionActivate(PipeEventActionActivate event) {
+        for (EnumFacing face : EnumFacing.VALUES) {
+            if (event.action == BCTransportStatements.ACTION_PIPE_DIRECTION[face.ordinal()]) {
+                setDirection(face);
             }
         }
     }
@@ -149,48 +156,47 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
         if (world.isRemote) {
             return;
         }
-        List<EnumFacing> connected = Arrays.stream(EnumFacing.VALUES)
-            .filter(pipe::isConnected)
-            .collect(Collectors.toList());
-        setDirection(connected.size() == 1 ? connected.get(0).getOpposite() : null);
+        if (direction == null || pipe.isConnected(direction)) {
+            int sides = 0;
+            EnumFacing dir = null;
+            for (EnumFacing face : EnumFacing.VALUES) {
+                if (pipe.isConnected(face)) {
+                    sides++;
+                    dir = face;
+                }
+            }
+            if (sides == 1) {
+                setDirection(dir);
+            } else {
+                setDirection(null);
+            }
+        }
         battery.tick(world, pipe.getHolder().getPipePos());
         if (direction != null) {
-            long target = BlockUtil.computeBlockBreakPower(world, pos.offset(direction));
+            BlockPos offset = pos.offset(direction);
+            long target = BlockUtil.computeBlockBreakPower(world, offset);
             if (target > 0) {
+                int offsetHash = offset.hashCode();
                 if (progress < target) {
-                    progress += battery.extractPower(
-                        0,
-                        Math.min(target - progress, MjAPI.MJ * 10)
-                    );
+                    progress += battery.extractPower(0, Math.min(target - progress, MjAPI.MJ * 10));
                     if (progress > 0) {
-                        world.sendBlockBreakProgress(
-                            pos.offset(direction).hashCode(),
-                            pos.offset(direction),
-                            (int) (progress * 9 / target)
-                        );
+                        world.sendBlockBreakProgress(offsetHash, offset, (int) (progress * 9 / target));
                     }
                 } else {
-                    BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(
-                        world,
-                        pos.offset(direction),
-                        world.getBlockState(pos.offset(direction)),
-                        BuildCraftAPI.fakePlayerProvider.getFakePlayer(
-                            (WorldServer) world,
-                            pipe.getHolder().getOwner(),
-                            pos
-                        )
-                    );
+                    WorldServer server = (WorldServer) world;
+                    GameProfile owner = pipe.getHolder().getOwner();
+                    FakePlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(server, owner, pos);
+                    BreakEvent breakEvent = new BreakEvent(world, offset, world.getBlockState(offset), fakePlayer);
                     MinecraftForge.EVENT_BUS.post(breakEvent);
                     if (!breakEvent.isCanceled()) {
-                        Optional.ofNullable(
-                            BlockUtil.getItemStackFromBlock(
-                                (WorldServer) world,
-                                pos.offset(direction),
-                                pipe.getHolder().getOwner()
-                            )
-                        ).ifPresent(stacks -> stacks.forEach(stack -> sendItem(stack, direction)));
-                        world.sendBlockBreakProgress(pos.offset(direction).hashCode(), pos.offset(direction), -1);
-                        world.destroyBlock(pos.offset(direction), false);
+                        NonNullList<ItemStack> dropped = BlockUtil.getItemStackFromBlock(server, offset, owner);
+                        if (dropped != null) {
+                            for (ItemStack stack : dropped) {
+                                sendItem(stack, direction);
+                            }
+                        }
+                        world.sendBlockBreakProgress(offsetHash, offset, -1);
+                        world.destroyBlock(offset, false);
                     }
                     progress = 0;
                 }
@@ -200,7 +206,6 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
         }
     }
 
-    @SuppressWarnings("unused")
     @PipeEventHandler
     public void onDrop(PipeEventItem.Drop event) {
         if (direction == null) {

@@ -53,6 +53,8 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     public final Tank tank = new Tank("tank", 16000, this);
     public final FluidSmoother smoothedTank = new FluidSmoother(w -> createAndSendMessage(NET_FLUID_DELTA, w), tank);
 
+    private int lastComparatorLevel;
+
     public TileTank() {
         tankManager.add(tank);// FIXME: SAVING IS ALL SORTS OF BUGGED
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, this, EnumPipePart.VALUES);
@@ -63,11 +65,25 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         return IDS;
     }
 
+    public int getComparatorLevel() {
+        int amount = tank.getFluidAmount();
+        int cap = tank.getCapacity();
+        return amount * 14 / cap + (amount > 0 ? 1 : 0);
+    }
+
     // ITickable
 
     @Override
     public void update() {
-        smoothedTank.tick(getWorld());
+        smoothedTank.tick(world);
+
+        if (!world.isRemote) {
+            int compLevel = getComparatorLevel();
+            if (compLevel != lastComparatorLevel) {
+                lastComparatorLevel = compLevel;
+                markDirty();
+            }
+        }
     }
 
     // TileEntity

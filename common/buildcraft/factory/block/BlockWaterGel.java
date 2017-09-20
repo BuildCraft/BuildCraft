@@ -15,6 +15,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
 
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -144,7 +145,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
                 boolean water = isWater(world, test);
                 boolean spreadable = water || canSpread(world, test);
 
-                if (water) {
+                if (water && world.getBlockState(test).getValue(BlockLiquid.LEVEL) == 0) {
                     changeable.add(test);
                 }
                 if (spreadable) {
@@ -159,7 +160,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
                 tries++;
             }
             final int time = next.spreading ? 200 : 400;
-            if (changeable.size() == 3) {
+            if (changeable.size() == 3 || world.rand.nextDouble() < 0.5) {
                 for (BlockPos p : changeable) {
                     world.setBlockState(p, nextState);
                     world.scheduleUpdate(p, this, rand.nextInt(150) + time);

@@ -78,7 +78,7 @@ public class RenderSnapshotBuilder {
                 ModelUtil.createFace(
                     face,
                     new Point3f((float) robotPos.x, (float) robotPos.y, (float) robotPos.z),
-                    new Point3f(8 / 16F, 8 / 16F, 8 / 16F),
+                    new Point3f(4 / 16F, 4 / 16F, 4 / 16F),
                     new ModelUtil.UvFaceData(
                         BCBuildersSprites.ROBOT.getInterpU((i * 8) / 64D),
                         BCBuildersSprites.ROBOT.getInterpV(0 / 64D),
@@ -101,7 +101,7 @@ public class RenderSnapshotBuilder {
                                 1D
                             ) * (BuildCraftLaserManager.POWERS.length - 1)
                         )],
-                        robotPos.subtract(new Vec3d(0, 0.47, 0)),
+                        robotPos.subtract(new Vec3d(0, 0.27, 0)),
                         new Vec3d(breakTask.pos).add(VecUtil.VEC_HALF),
                         1 / 16D
                     ),

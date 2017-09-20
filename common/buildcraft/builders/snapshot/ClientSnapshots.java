@@ -168,36 +168,6 @@ public enum ClientSnapshots {
         // noinspection Guava
         for (Entity entity : world.getEntities(Entity.class, Predicates.alwaysTrue())) {
             Vec3d pos = entity.getPositionVector();
-            switch (snapshot.facing) {
-                case NORTH:
-                    pos = new Vec3d(
-                        pos.x + snapshot.size.getX() - 1,
-                        pos.y,
-                        pos.z
-                    );
-                    break;
-                case SOUTH:
-                    pos = new Vec3d(
-                        pos.x + snapshot.size.getX() - 1,
-                        pos.y,
-                        pos.z + snapshot.size.getZ() - 1
-                    );
-                    break;
-                case WEST:
-                    pos = new Vec3d(
-                        pos.x,
-                        pos.y,
-                        pos.z + snapshot.size.getZ() - 1
-                    );
-                    break;
-                case EAST:
-                    pos = new Vec3d(
-                        pos.x + snapshot.size.getX() - 1,
-                        pos.y,
-                        pos.z + snapshot.size.getZ() - 1
-                    );
-                    break;
-            }
             GlStateManager.pushAttrib();
             Minecraft.getMinecraft().getRenderManager().doRenderEntity(
                 entity,

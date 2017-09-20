@@ -53,6 +53,9 @@ public class GuidePageContents extends GuidePageBase {
         TypeOrder order = GuiGuide.SORTING_TYPES[gui.sortingOrderIndex];
 
         for (PageEntry entry : GuideManager.INSTANCE.getAllEntries()) {
+            if (GuideManager.INSTANCE.getFactoryFor(entry) == null) {
+                continue;
+            }
             String[] ordered = entry.typeTags.getOrdered(order);
 
             NodePageLine node = parentNode;

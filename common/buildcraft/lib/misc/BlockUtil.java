@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
@@ -65,6 +66,11 @@ import buildcraft.lib.compat.CompatManager;
 import buildcraft.lib.world.SingleBlockAccess;
 
 public final class BlockUtil {
+
+    /**
+     * @return A list of itemstacks that are dropped from the block, or null if the block is air
+     */
+    @Nullable
     public static NonNullList<ItemStack> getItemStackFromBlock(WorldServer world, BlockPos pos, GameProfile owner) {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
@@ -264,25 +270,23 @@ public final class BlockUtil {
     }
 
     public static Fluid getFluidWithoutFlowing(IBlockState state) {
-        if (state.getBlock() instanceof BlockFluidClassic) {
-            if (((BlockFluidClassic) state.getBlock()).isSourceBlock(
-                new SingleBlockAccess(state),
-                SingleBlockAccess.POS
-            )) {
-                return getFluid(state.getBlock());
+        Block block = state.getBlock();
+        if (block instanceof BlockFluidClassic) {
+            if (((BlockFluidClassic) block).isSourceBlock(new SingleBlockAccess(state), SingleBlockAccess.POS)) {
+                return getFluid(block);
             }
         }
-        if (state.getBlock() == Blocks.WATER) {
-            return FluidRegistry.WATER;
-        }
-        if (state.getBlock() == Blocks.FLOWING_WATER && state.getValue(BlockLiquid.LEVEL) == 0) {
-            return FluidRegistry.WATER;
-        }
-        if (state.getBlock() == Blocks.LAVA) {
-            return FluidRegistry.LAVA;
-        }
-        if (state.getBlock() == Blocks.FLOWING_LAVA && state.getValue(BlockLiquid.LEVEL) == 0) {
-            return FluidRegistry.LAVA;
+        if (block instanceof BlockLiquid) {
+            if (state.getValue(BlockLiquid.LEVEL) != 0) {
+                return null;
+            }
+            if (block == Blocks.WATER || block == Blocks.FLOWING_WATER) {
+                return FluidRegistry.WATER;
+            }
+            if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
+                return FluidRegistry.LAVA;
+            }
+            return FluidRegistry.lookupFluidForBlock(block);
         }
         return null;
     }
