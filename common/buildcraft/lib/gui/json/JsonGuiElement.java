@@ -24,7 +24,7 @@ import buildcraft.lib.json.JsonVariableObject;
 public class JsonGuiElement extends JsonVariableObject {
     public final String name;
     public final String fullName;
-    /** Map of string -> property. non-primitives are expanded, so arrays are turned into key[index], and objects are
+    /** Map of string {@code ->} property. Non-primitives are expanded, so arrays are turned into key[index], and objects are
      * turned into key.child.
      * <p>
      * For example: "size": [25, 30] is added to the map as two entries: "size[0]"="25", and "size[1]"="30". "data":
