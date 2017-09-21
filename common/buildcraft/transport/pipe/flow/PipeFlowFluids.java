@@ -289,7 +289,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         if (min > max) {
             throw new IllegalArgumentException("Minimum (" + min + ") > maximum (" + max + ")");
         }
-        if (max < 0 || max >= 0) {
+        if (max < 0) {
             return null;
         }
         Section s = sections.get(EnumPipePart.fromFacing(section));
