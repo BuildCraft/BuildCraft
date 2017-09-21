@@ -305,7 +305,6 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("In = " + tankIn.getDebugString());
         left.add("GasOut = " + tankGasOut.getDebugString());
@@ -314,16 +313,20 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         left.add("Progress = " + MjAPI.formatMj(distillPower));
         left.add("Rate = " + LocaleUtil.localizeMjFlow(powerAvgClient));
         left.add("CurrRecipe = " + currentRecipe);
-        if (world.isRemote) {
-            setClientModelVariables(1);
-            left.add("Model Variables:");
-            left.add("  facing = " + MODEL_FACING.value);
-            left.add("  active = " + MODEL_ACTIVE.value);
-            left.add("  power_average = " + MODEL_POWER_AVG.value);
-            left.add("  power_max = " + MODEL_POWER_MAX.value);
-            left.add("Current Model Variables:");
-            clientModelData.refresh();
-            clientModelData.addDebugInfo(left);
-        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void getClientDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        getDebugInfo(left, right, side);
+        setClientModelVariables(1);
+        left.add("Model Variables:");
+        left.add("  facing = " + MODEL_FACING.value);
+        left.add("  active = " + MODEL_ACTIVE.value);
+        left.add("  power_average = " + MODEL_POWER_AVG.value);
+        left.add("  power_max = " + MODEL_POWER_MAX.value);
+        left.add("Current Model Variables:");
+        clientModelData.refresh();
+        clientModelData.addDebugInfo(left);
     }
 }

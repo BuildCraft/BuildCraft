@@ -21,6 +21,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 public class MessageVolumeBoxes implements IMessage {
     public List<VolumeBox> boxes = new ArrayList<>();
 
+    @SuppressWarnings("unused")
     public MessageVolumeBoxes() {
     }
 

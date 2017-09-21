@@ -7,6 +7,7 @@ package buildcraft.core.client;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -33,36 +34,39 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.IBox;
 import buildcraft.api.items.IMapLocation.MapLocationType;
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import buildcraft.lib.debug.ClientDebuggables;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.net.MessageDebuggableRequest;
+import buildcraft.lib.net.MessageManager;
+import buildcraft.lib.tile.TileBC_Neptune;
 
-import buildcraft.core.BCCoreConfig;
 import buildcraft.core.BCCoreItems;
 import buildcraft.core.item.ItemMapLocation;
 import buildcraft.core.item.ItemMarkerConnector;
 
-public enum RenderTickListener {
-    INSTANCE;
-
+@SideOnly(Side.CLIENT)
+public class RenderTickListener {
     private static final Vec3d[][][] MAP_LOCATION_POINT = new Vec3d[6][][];
     private static final String DIFF_START, DIFF_HEADER_FORMATTING;
 
-    private static final Box lastRenderedMapLoc = new Box();
+    private static final Box LAST_RENDERED_MAP_LOC = new Box();
 
     static {
         double[][][] upFace = {// Comments for formatting
@@ -106,56 +110,33 @@ public enum RenderTickListener {
         if (mouseOver == null) {
             return;
         }
-        boolean both = BCCoreConfig.useLocalServerOnClient;
 
-        IDebuggable client = getDebuggableObject(mouseOver);
-        IDebuggable server = both ? getServer(client) : null;
-
-        if (client == null) return;
-        EnumFacing side = mouseOver.sideHit;
-        if (server == null) {
-            client.getDebugInfo(left, right, side);
-        } else {
-            List<String> serverLeft = new ArrayList<>();
-            List<String> serverRight = new ArrayList<>();
-
+        getDebuggableObject(mouseOver).ifPresent(client -> {
+            EnumFacing side = mouseOver.sideHit;
+            MessageManager.sendToServer(new MessageDebuggableRequest(client.getPos(), side));
             List<String> clientLeft = new ArrayList<>();
             List<String> clientRight = new ArrayList<>();
-
-            server.getDebugInfo(serverLeft, serverRight, side);
-            client.getDebugInfo(clientLeft, clientRight, side);
+            client.getClientDebugInfo(clientLeft, clientRight, side);
 
             final String headerFirst = DIFF_HEADER_FORMATTING + "SERVER:";
             final String headerSecond = DIFF_HEADER_FORMATTING + "CLIENT:";
-            appendDiff(left, serverLeft, clientLeft, headerFirst, headerSecond);
-            appendDiff(right, serverRight, clientRight, headerFirst, headerSecond);
-
-        }
+            appendDiff(left, ClientDebuggables.SERVER_LEFT, clientLeft, headerFirst, headerSecond);
+            appendDiff(right, ClientDebuggables.SERVER_RIGHT, clientRight, headerFirst, headerSecond);
+        });
     }
 
-    private static IDebuggable getDebuggableObject(RayTraceResult mouseOver) {
+    private static <T extends TileBC_Neptune & IDebuggable> Optional<T> getDebuggableObject(RayTraceResult mouseOver) {
         Type type = mouseOver.typeOfHit;
         WorldClient world = Minecraft.getMinecraft().world;
         if (type == Type.BLOCK) {
             BlockPos pos = mouseOver.getBlockPos();
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof IDebuggable) {
-                return (IDebuggable) tile;
+                // noinspection RedundantCast
+                return Optional.of((T) (TileEntity & IDebuggable) tile);
             }
         }
-        return null;
-    }
-
-    private static IDebuggable getServer(IDebuggable client) {
-        if (client == null) return null;
-        if (client instanceof TileEntity) {
-            TileEntity tile = (TileEntity) client;
-            tile = BCLibProxy.getProxy().getServerTile(tile);
-            if (tile != client && tile instanceof IDebuggable) {
-                return (IDebuggable) tile;
-            }
-        }
-        return null;
+        return Optional.empty();
     }
 
     private static void appendDiff(List<String> dest, List<String> first, List<String> second, String headerFirst, String headerSecond) {
@@ -223,19 +204,21 @@ public enum RenderTickListener {
         if (type == MapLocationType.SPOT) {
             EnumFacing face = ItemMapLocation.getPointFace(stack);
             IBox box = ItemMapLocation.getPointBox(stack);
-            Vec3d[][] vectors = MAP_LOCATION_POINT[face.ordinal()];
-            GL11.glTranslated(box.min().getX(), box.min().getY(), box.min().getZ());
-            for (Vec3d[] vec : vectors) {
-                LaserData_BC8 laser = new LaserData_BC8(BuildCraftLaserManager.STRIPES_WRITE, vec[0], vec[1], 1 / 16.0);
-                LaserRenderer_BC8.renderLaserStatic(laser);
+            if (box != null) {
+                Vec3d[][] vectors = MAP_LOCATION_POINT[face.ordinal()];
+                GL11.glTranslated(box.min().getX(), box.min().getY(), box.min().getZ());
+                for (Vec3d[] vec : vectors) {
+                    LaserData_BC8 laser = new LaserData_BC8(BuildCraftLaserManager.STRIPES_WRITE, vec[0], vec[1], 1 / 16.0);
+                    LaserRenderer_BC8.renderLaserStatic(laser);
+                }
             }
 
         } else if (type == MapLocationType.AREA) {
 
             IBox box = ItemMapLocation.getAreaBox(stack);
-            lastRenderedMapLoc.reset();
-            lastRenderedMapLoc.initialize(box);
-            LaserBoxRenderer.renderLaserBoxStatic(lastRenderedMapLoc, BuildCraftLaserManager.STRIPES_WRITE, false);
+            LAST_RENDERED_MAP_LOC.reset();
+            LAST_RENDERED_MAP_LOC.initialize(box);
+            LaserBoxRenderer.renderLaserBoxStatic(LAST_RENDERED_MAP_LOC, BuildCraftLaserManager.STRIPES_WRITE, false);
 
         } else if (type == MapLocationType.PATH) {
             List<BlockPos> path = BCCoreItems.mapLocation.getPath(stack);

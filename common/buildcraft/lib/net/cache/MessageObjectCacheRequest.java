@@ -17,16 +17,17 @@ import buildcraft.lib.net.PacketBufferBC;
 /**
  * Signifies a client to server request for the value of a cached object, given its ID.
  */
-public class MessageObjectCacheReq implements IMessage {
+public class MessageObjectCacheRequest implements IMessage {
 
     private int cacheId;
 
     private int[] ids;
 
-    public MessageObjectCacheReq() {
+    @SuppressWarnings("unused")
+    public MessageObjectCacheRequest() {
     }
 
-    MessageObjectCacheReq(NetworkedObjectCache<?> cache, int[] ids) {
+    MessageObjectCacheRequest(NetworkedObjectCache<?> cache, int[] ids) {
         this.cacheId = BuildCraftObjectCaches.CACHES.indexOf(cache);
         this.ids = ids;
         if (ids.length > Short.MAX_VALUE) {
@@ -53,7 +54,7 @@ public class MessageObjectCacheReq implements IMessage {
         }
     }
 
-    public static final IMessageHandler<MessageObjectCacheReq, MessageObjectCacheReply> HANDLER = (message, ctx) -> {
+    public static final IMessageHandler<MessageObjectCacheRequest, MessageObjectCacheResponse> HANDLER = (message, ctx) -> {
         NetworkedObjectCache<?> cache = BuildCraftObjectCaches.CACHES.get(message.cacheId);
         byte[][] values = new byte[message.ids.length][];
 
@@ -65,6 +66,6 @@ public class MessageObjectCacheReq implements IMessage {
             buffer.readBytes(values[i]);
             buffer.clear();
         }
-        return new MessageObjectCacheReply(message.cacheId, message.ids, values);
+        return new MessageObjectCacheResponse(message.cacheId, message.ids, values);
     };
 }

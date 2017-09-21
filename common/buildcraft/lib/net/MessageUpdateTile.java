@@ -29,7 +29,9 @@ public class MessageUpdateTile implements IMessage {
     private BlockPos pos;
     private PacketBufferBC payload;
 
-    public MessageUpdateTile() {}
+    @SuppressWarnings("unused")
+    public MessageUpdateTile() {
+    }
 
     public MessageUpdateTile(BlockPos pos, PacketBufferBC payload) {
         this.pos = pos;

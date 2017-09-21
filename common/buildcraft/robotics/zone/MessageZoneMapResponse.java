@@ -17,6 +17,7 @@ public class MessageZoneMapResponse implements IMessage {
     private ZonePlannerMapChunkKey key;
     private ZonePlannerMapChunk data;
 
+    @SuppressWarnings("unused")
     public MessageZoneMapResponse() {
     }
 

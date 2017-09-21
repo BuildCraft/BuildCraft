@@ -26,11 +26,8 @@ public class MessageContainer implements IMessage {
     private int msgId;
     private PacketBufferBC payload;
 
+    @SuppressWarnings("unused")
     public MessageContainer() {
-    }
-
-    public MessageContainer(ContainerBC_Neptune container, int msgId, PacketBufferBC payload) {
-        this(container.windowId, msgId, payload);
     }
 
     public MessageContainer(int windowId, int msgId, PacketBufferBC payload) {

@@ -16,21 +16,18 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 
 import buildcraft.lib.net.PacketBufferBC;
 
-public class MessageObjectCacheReply implements IMessage {
+public class MessageObjectCacheResponse implements IMessage {
 
     private int cacheId;
 
     private int[] ids;
     private byte[][] values;
 
-    /**
-     * Used by forge automatically to construct the message. Do not use!
-     */
-    @Deprecated
-    public MessageObjectCacheReply() {
+    @SuppressWarnings("unused")
+    public MessageObjectCacheResponse() {
     }
 
-    MessageObjectCacheReply(int cacheId, int[] ids, byte[][] values) {
+    MessageObjectCacheResponse(int cacheId, int[] ids, byte[][] values) {
         this.cacheId = cacheId;
         this.ids = ids;
         this.values = values;
@@ -60,7 +57,7 @@ public class MessageObjectCacheReply implements IMessage {
         }
     }
 
-    public static final IMessageHandler<MessageObjectCacheReply, IMessage> HANDLER = (message, ctx) -> {
+    public static final IMessageHandler<MessageObjectCacheResponse, IMessage> HANDLER = (message, ctx) -> {
         try {
             NetworkedObjectCache<?> cache = BuildCraftObjectCaches.CACHES.get(message.cacheId);
             for (int i = 0; i < message.ids.length; i++) {

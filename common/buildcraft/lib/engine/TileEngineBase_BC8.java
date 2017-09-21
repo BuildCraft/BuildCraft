@@ -579,7 +579,6 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("facing = " + currentDirection);
         left.add("heat = " + LocaleUtil.localizeHeat(heat) + " -- " + String.format("%.2f %%", getHeatLevel()));
@@ -587,10 +586,14 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         left.add("stage = " + powerStage);
         left.add("progress = " + progress);
         left.add("last = " + LocaleUtil.localizeMjFlow(lastPower));
-        if (world.isRemote) {
-            left.add("Current Model Variables:");
-            clientModelData.addDebugInfo(left);
-        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void getClientDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        getDebugInfo(left, right, side);
+        left.add("Current Model Variables:");
+        clientModelData.addDebugInfo(left);
     }
 
     @Override
