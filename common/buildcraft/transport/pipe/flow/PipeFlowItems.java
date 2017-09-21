@@ -144,7 +144,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         if (possible.isEmpty()) {
             return 0;
-        } 
+        }
         if (possible.getCount() > possible.getMaxStackSize()) {
             possible.setCount(possible.getMaxStackSize());
             count = possible.getMaxStackSize();
