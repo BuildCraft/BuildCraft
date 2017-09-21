@@ -1,9 +1,8 @@
 package buildcraft.lib.block;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import javax.annotation.Nonnull;
 
@@ -12,37 +11,40 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.SafeTimeTracker;
-
 import buildcraft.lib.world.WorldEventListenerAdapter;
 
+import buildcraft.silicon.tile.TileLaser;
+
 /**
- * Listens for block updates and collects all the updates within a tick to be available at once
+ * Listens for BlockUpdates in a given world and notifies all registered TileLasers of the update provided it was near
+ * the TileLaser
  */
 public class BlockUpdateCollector {
 
-    private static Map<World, BlockUpdateCollector> instanceMap = new HashMap<>();
-    private List<UpdateRecord> updatesSinceLastTick;
-    private List<UpdateRecord> updatesInLastTick;
-    private final SafeTimeTracker tickDetector = new SafeTimeTracker(1);
+    private static Map<World, BlockUpdateCollector> instanceMap = new WeakHashMap<>();
     private World world;
+    private Map<BlockPos, TileLaser> laserMap = new HashMap<>();
 
 
     private BlockUpdateCollector(World world) {
-        updatesInLastTick = new ArrayList<>();
-        updatesSinceLastTick = new ArrayList<>();
         this.world = world;
 
         IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
             @Override
             public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos eventPos, @Nonnull IBlockState oldState,
                                           @Nonnull IBlockState newState, int flags) {
-                updatesSinceLastTick.add(new UpdateRecord(oldState, newState, eventPos));
+                notifyNearbyLasers(eventPos);
             }
         };
         this.world.addEventListener(worldEventListener);
     }
 
+    /**
+     * Gets the BlockUpdateCollector for the given world
+     *
+     * @param world the World where BlockUpdate events will be listened for
+     * @return the instance of BlockUpdateCollector for the given world
+     */
     public static BlockUpdateCollector instance(World world) {
         if (!instanceMap.containsKey(world)) {
             instanceMap.put(world, new BlockUpdateCollector(world));
@@ -50,29 +52,31 @@ public class BlockUpdateCollector {
         return instanceMap.get(world);
     }
 
+    public void registerLaserForUpdateNotifications(TileLaser laser) {
+        laserMap.put(laser.getPos(), laser);
+    }
+
+    public void removeLaserFromUpdateNotifications(TileLaser laser) {
+        if (laserMap.containsKey(laser.getPos())) {
+            laserMap.remove(laser.getPos());
+        }
+    }
+
     /**
-     * Returns a list of all the block updates that took place in the previous tick
+     * Notifies all lasers near the given position that a world update took place. The distance used to determine if a
+     * laser is close enough to notify is the laser's targeting range
      *
-     * @return List<UpdateRecord></UpdateRecord>
+     * @param eventPos The position of the event that would cause a laser to have to rescan for valid targets
      */
-    public List<UpdateRecord> getUpdatesInLastTick() {
-        if (tickDetector.markTimeIfDelay(world)) {
-            updatesInLastTick = updatesSinceLastTick;
-            updatesSinceLastTick = new ArrayList<>();
+    private void notifyNearbyLasers(BlockPos eventPos) {
+        for (BlockPos keyPos : laserMap.keySet()) {
+            int targetingRange = laserMap.get(keyPos).getTargetingRange();
+            if (Math.abs(keyPos.getX() - eventPos.getX()) <= targetingRange &&
+                    Math.abs(keyPos.getY() - eventPos.getY()) <= targetingRange &&
+                    Math.abs(keyPos.getZ() - eventPos.getZ()) <= targetingRange) {
+                laserMap.get(keyPos).setWorldUpdated();
+            }
         }
-        return updatesInLastTick;
     }
 
-    public class UpdateRecord {
-        public IBlockState oldState;
-        public IBlockState newState;
-        public BlockPos position;
-
-        public UpdateRecord(IBlockState oldState, IBlockState newState, BlockPos position) {
-            this.oldState = oldState;
-            this.newState = newState;
-            this.position = position;
-        }
-
-    }
 }

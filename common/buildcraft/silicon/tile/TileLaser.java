@@ -37,6 +37,7 @@ import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IDebuggable;
 
+import buildcraft.lib.block.BlockUpdateCollector;
 import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
@@ -82,6 +83,17 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         super();
         battery = new MjBattery(1024 * MjAPI.MJ);
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
+    }
+
+    public int getTargetingRange() {
+        return TARGETING_RANGE;
+    }
+
+    /**
+     * Used to trigger a scan for valid laser targets in the next update
+     */
+    public void setWorldUpdated() {
+        this.worldHasUpdated = true;
     }
 
     private void findPossibleTargets() {
@@ -277,7 +289,9 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     public void validate() {
         super.validate();
         if (!world.isRemote) {
+            //TODO profile to find which method of scanning is preferred and remove code for other method
             world.addEventListener(worldEventListener);
+            //BlockUpdateCollector.instance(world).registerLaserForUpdateNotifications(this);
         }
     }
 
@@ -285,7 +299,9 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     public void invalidate() {
         super.invalidate();
         if (!world.isRemote) {
+            //TODO profile to find which method of scanning is preferred and remove code for other method
             world.removeEventListener(worldEventListener);
+            //BlockUpdateCollector.instance(world).removeLaserFromUpdateNotifications(this);
         }
     }
 
