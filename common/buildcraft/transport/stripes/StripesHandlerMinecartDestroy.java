@@ -43,13 +43,13 @@ public enum StripesHandlerMinecartDestroy implements IStripesHandlerBlock {
                         container.setInventorySlotContents(i, StackUtil.EMPTY);
                         // Safety check
                         if (container.getStackInSlot(i).isEmpty()) {
-                            activator.sendItem(s, direction.getOpposite());
+                            activator.sendItem(s, direction);
                         }
                     }
                 }
             }
             cart.setDead();
-            activator.sendItem(StackUtil.asNonNull(cart.getCartItem()), direction.getOpposite());
+            activator.sendItem(StackUtil.asNonNull(cart.getCartItem()), direction);
             return true;
         }
         return false;
