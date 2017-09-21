@@ -166,6 +166,42 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         return count;
     }
 
+    @Override
+    public void sendPhantomItem(ItemStack stack, EnumFacing from, EnumFacing to, EnumDyeColor colour) {
+        if (from == null && to == null) {
+            return;
+        }
+        EnumFacing face0, face1, face2;
+        boolean twoItems = from != null && to != null;
+        face0 = from;
+        face1 = from == null ? to : null;
+        face2 = to;
+
+        long now = pipe.getHolder().getPipeWorld().getTotalWorldTime();
+
+        TravellingItem firstItem = new TravellingItem(stack);
+        firstItem.isPhantom = true;
+        firstItem.toCenter = face1 == null;
+        firstItem.colour = colour;
+        firstItem.side = face0 == null ? face1 : face0;
+        firstItem.speed = EXTRACT_SPEED;
+        firstItem.genTimings(now, getPipeLength(firstItem.side));
+        items.add(firstItem.timeToDest, firstItem);
+        sendItemDataToClient(firstItem);
+
+        if (twoItems) {
+            TravellingItem secondItem = new TravellingItem(stack);
+            secondItem.isPhantom = true;
+            secondItem.toCenter = false;
+            secondItem.colour = colour;
+            secondItem.side = face2;
+            secondItem.speed = EXTRACT_SPEED;
+            secondItem.genTimings(firstItem.tickFinished, getPipeLength(secondItem.side));
+            items.add(secondItem.timeToDest, secondItem);
+            sendItemDataToClient(secondItem);
+        }
+    }
+
     // PipeFlow
 
     @Override
@@ -200,6 +236,9 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         }
 
         for (TravellingItem item : toTick) {
+            if (item.isPhantom) {
+                continue;
+            }
             if (item.toCenter) {
                 onItemReachCenter(item);
             } else {
@@ -463,7 +502,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         item.tried.add(from);
         addItemTryMerge(item);
     }
-    
+
     private void addItemTryMerge(TravellingItem item) {
         for (List<TravellingItem> list : items.getAllElements()) {
             for (TravellingItem item2 : list) {
