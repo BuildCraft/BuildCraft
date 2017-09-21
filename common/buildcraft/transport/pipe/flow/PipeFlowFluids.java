@@ -170,7 +170,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     // IFlowFluid
 
     @Override
-    public FluidStack tryExtractFluid(int millibuckets, EnumFacing from, FluidStack filter) {
+    public FluidStack tryExtractFluid(int millibuckets, EnumFacing from, FluidStack filter, boolean simulate) {
         // NOTE: all changes to this method probably also need to be applied to the advanced version below!
         if (from == null) {
             return null;
@@ -189,22 +189,23 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         if (millibuckets <= 0) {
             return null;
         }
+        boolean doDrain = !simulate;
         FluidStack toAdd;
         if (filter == null) {
-            toAdd = fluidHandler.drain(millibuckets, true);
+            toAdd = fluidHandler.drain(millibuckets, doDrain);
         } else {
             filter = filter.copy();
             filter.amount = millibuckets;
-            toAdd = fluidHandler.drain(filter, true);
+            toAdd = fluidHandler.drain(filter, doDrain);
         }
         if (toAdd == null || toAdd.amount <= 0) {
             return null;
         }
         int extracted = toAdd.amount;
-        if (currentFluid == null) {
+        if (currentFluid == null && doDrain) {
             setFluid(toAdd);
         }
-        int reallyFilled = section.fill(extracted, true);
+        int reallyFilled = section.fill(extracted, doDrain);
         section.ticksInDirection = COOLDOWN_INPUT;
         if (reallyFilled != extracted) {
             BCLog.logger.warn("[tryExtractFluid] Filled " + reallyFilled + " != extracted " + extracted //
@@ -215,7 +216,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     }
 
     @Override
-    public ActionResult<FluidStack> tryExtractFluidAdv(int millibuckets, EnumFacing from, IFluidFilter filter) {
+    public ActionResult<FluidStack> tryExtractFluidAdv(int millibuckets, EnumFacing from, IFluidFilter filter, boolean simulate) {
         // Mostly a copy of the above method
         if (from == null || filter == null || millibuckets <= 0) {
             return FAILED_EXTRACT;
@@ -237,7 +238,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         if (millibuckets <= 0) {
             return FAILED_EXTRACT;
         }
-        FluidStack toAdd = handlerAdv.drain(filter, millibuckets, true);
+        boolean doDrain = !simulate;
+        FluidStack toAdd = handlerAdv.drain(filter, millibuckets, doDrain);
         if (toAdd == null || toAdd.amount <= 0) {
             return FAILED_EXTRACT;
         }
@@ -245,8 +247,10 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         if (currentFluid == null) {
             setFluid(toAdd);
         }
-        int reallyFilled = section.fill(millibuckets, true);
-        section.ticksInDirection = COOLDOWN_INPUT;
+        int reallyFilled = section.fill(millibuckets, doDrain);
+        if (doDrain) {
+            section.ticksInDirection = COOLDOWN_INPUT;
+        }
         if (reallyFilled != millibuckets) {
             BCLog.logger.warn("[tryExtractFluidAdv] Filled " + reallyFilled + " != extracted " + millibuckets //
                 + " (handler = " + fluidHandler.getClass() + ") @" + pipe.getHolder().getPipePos());
