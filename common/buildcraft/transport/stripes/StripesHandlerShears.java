@@ -11,6 +11,7 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -36,6 +37,7 @@ public enum StripesHandlerShears implements IStripesHandlerItem {
             return false;
         }
 
+        pos = pos.offset(direction);
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
@@ -46,8 +48,9 @@ public enum StripesHandlerShears implements IStripesHandlerItem {
                 if (stack.attemptDamageItem(1, player.getRNG())) {
                     stack.shrink(1);
                 }
+                world.setBlockState(pos, Blocks.AIR.getDefaultState(), 11); // Might become obsolete in 1.12+
                 for (ItemStack dropStack : drops) {
-                    activator.sendItem(dropStack, direction.getOpposite());
+                    activator.sendItem(dropStack, direction);
                 }
                 return true;
             }

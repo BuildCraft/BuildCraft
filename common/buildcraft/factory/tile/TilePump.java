@@ -22,7 +22,6 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -33,7 +32,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -41,7 +39,6 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 
-import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
@@ -67,7 +64,6 @@ public class TilePump extends TileMiner {
     private final Map<BlockPos, List<BlockPos>> paths = new HashMap<>();
     private BlockPos fluidConnection;
     private final Deque<BlockPos> queue = new ArrayDeque<>();
-    private Fluid queueFluid;
     private boolean isInfiniteWaterSource;
 
     @Nullable
@@ -88,7 +84,7 @@ public class TilePump extends TileMiner {
         world.profiler.startSection("prepare");
         queue.clear();
         paths.clear();
-        queueFluid = null;
+        Fluid queueFluid = null;
         isInfiniteWaterSource = false;
         Set<BlockPos> checked = new HashSet<>();
         List<BlockPos> nextPosesToCheck = new ArrayList<>();
@@ -114,15 +110,14 @@ public class TilePump extends TileMiner {
         }
         world.profiler.endStartSection("build");
         boolean isWater = /* BCFactoryConfig.consumeWaterSources && */ FluidUtilBC.areFluidsEqual(queueFluid, FluidRegistry.WATER);
-        outerLoop: while (!nextPosesToCheck.isEmpty()) {
+        outer: while (!nextPosesToCheck.isEmpty()) {
             List<BlockPos> nextPosesToCheckCopy = new ArrayList<>(nextPosesToCheck);
             nextPosesToCheck.clear();
             for (BlockPos posToCheck : nextPosesToCheckCopy) {
                 int count = 0;
                 for (EnumFacing side : SEARCH_DIRECTIONS) {
                     BlockPos offsetPos = posToCheck.offset(side);
-                    if ((offsetPos.getX() - pos.getX()) * (offsetPos.getX() - pos.getX()) +
-                        (offsetPos.getZ() - pos.getZ()) * (offsetPos.getZ() - pos.getZ()) > 64 * 64) {
+                    if (offsetPos.distanceSq(pos) > 64 * 64) {
                         continue;
                     }
                     if (checked.add(offsetPos)) {
@@ -150,7 +145,7 @@ public class TilePump extends TileMiner {
                     Fluid fluidBelow = BlockUtil.getFluidWithoutFlowing(below);
                     if (FluidUtilBC.areFluidsEqual(fluidBelow, FluidRegistry.WATER) || below.getMaterial().isSolid()) {
                         isInfiniteWaterSource = true;
-                        break outerLoop;
+                        break outer;
                     }
                 }
             }
