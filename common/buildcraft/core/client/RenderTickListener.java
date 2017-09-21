@@ -55,7 +55,6 @@ import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.net.MessageDebuggableRequest;
 import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.core.BCCoreItems;
 import buildcraft.core.item.ItemMapLocation;
@@ -125,7 +124,7 @@ public class RenderTickListener {
         });
     }
 
-    private static <T extends TileBC_Neptune & IDebuggable> Optional<T> getDebuggableObject(RayTraceResult mouseOver) {
+    private static <T extends TileEntity & IDebuggable> Optional<T> getDebuggableObject(RayTraceResult mouseOver) {
         Type type = mouseOver.typeOfHit;
         WorldClient world = Minecraft.getMinecraft().world;
         if (type == Type.BLOCK) {
