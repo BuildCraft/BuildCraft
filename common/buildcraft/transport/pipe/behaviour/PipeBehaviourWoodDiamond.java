@@ -176,10 +176,10 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
             default:
             case WHITE_LIST:
                 if (filters.extract(s -> true, 1, 1, true).isEmpty()) {
-                    return flow.tryExtractFluid(millibuckets, dir, null, true);
+                    return flow.tryExtractFluid(millibuckets, dir, null, simulate);
                 }
                 // Firstly try the advanced version - if that fails we will need to try the basic version
-                ActionResult<FluidStack> result = flow.tryExtractFluidAdv(millibuckets, dir, new ArrayFluidFilter(filters.stacks), false);
+                ActionResult<FluidStack> result = flow.tryExtractFluidAdv(millibuckets, dir, new ArrayFluidFilter(filters.stacks), simulate);
                 FluidStack extracted = result.getResult();
                 if (result.getType() != EnumActionResult.PASS) {
                     return extracted;
@@ -191,7 +191,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
                         if (stack.isEmpty()) {
                             continue;
                         }
-                        extracted = flow.tryExtractFluid(millibuckets, dir, FluidUtil.getFluidContained(stack), true);
+                        extracted = flow.tryExtractFluid(millibuckets, dir, FluidUtil.getFluidContained(stack), simulate);
                         if (extracted != null && extracted.amount > 0) {
                             return extracted;
                         }
@@ -201,7 +201,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
             case BLACK_LIST:
                 // We cannot fallback to the basic version - only use the advanced version
                 InvertedFluidFilter filter = new InvertedFluidFilter(new ArrayFluidFilter(filters.stacks));
-                return flow.tryExtractFluidAdv(millibuckets, dir, filter, false).getResult();
+                return flow.tryExtractFluidAdv(millibuckets, dir, filter, simulate).getResult();
             case ROUND_ROBIN:
                 // We can't do this -- amounts might differ and its just ugly
                 return null;

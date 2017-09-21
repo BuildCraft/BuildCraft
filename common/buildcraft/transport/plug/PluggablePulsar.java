@@ -24,6 +24,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.IFlowFluid;
+import buildcraft.api.transport.pipe.IFlowItems;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
@@ -43,6 +44,7 @@ import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.PacketBufferBC;
 
+import buildcraft.transport.BCTransportConfig;
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugPulsar;
 
@@ -229,12 +231,20 @@ public class PluggablePulsar extends PipePluggable {
         if (pulseStage == PULSE_STAGE) {
             pulseStage = 0;
             IMjRedstoneReceiver rsRec = (IMjRedstoneReceiver) holder.getPipe().getBehaviour();
-            if (gateSinglePulses > 0 && holder.getPipe().getFlow() instanceof IFlowFluid) {
-                // Special extration logic for fluids:
-                // Always extract either 1 bucket, or nothing.
-                long excess = rsRec.receivePower(MjAPI.MJ, true);
+            if (gateSinglePulses > 0) {
+                long power = MjAPI.MJ;
+                if (holder.getPipe().getFlow() instanceof IFlowFluid) {
+                    // Special extration logic for fluids:
+                    // Always extract either 1 bucket, or nothing.
+                    power = BCTransportConfig.mjPerMillibucket * 1000;
+                } else if (holder.getPipe().getFlow() instanceof IFlowItems) {
+                    power = BCTransportConfig.mjPerItem;
+                } else {
+                    power = MjAPI.MJ;
+                }
+                long excess = rsRec.receivePower(power, true);
                 if (excess == 0) {
-                    rsRec.receivePower(MjAPI.MJ, false);
+                    rsRec.receivePower(power, false);
                 } else {
                     // Nothing was extracted, so lets extract in the future
                     gateSinglePulses++;

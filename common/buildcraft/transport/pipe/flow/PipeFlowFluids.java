@@ -219,13 +219,15 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             return FAILED_EXTRACT;
         }
         millibuckets = toAdd.amount;
-        if (currentFluid == null) {
+        if (currentFluid == null && !simulate) {
             setFluid(toAdd);
         }
         int reallyFilled = section.fillInternal(millibuckets, !simulate);
         int leftOver = millibuckets - reallyFilled;
         reallyFilled += middle.fillInternal(leftOver, !simulate);
-        section.ticksInDirection = COOLDOWN_INPUT;
+        if (!simulate) {
+            section.ticksInDirection = COOLDOWN_INPUT;
+        }
         if (reallyFilled != millibuckets) {
             BCLog.logger.warn("[tryExtractFluidAdv] Filled " + reallyFilled + " != extracted " + millibuckets //
                 + " (handler = " + fluidHandler.getClass() + ") @" + pipe.getHolder().getPipePos());
