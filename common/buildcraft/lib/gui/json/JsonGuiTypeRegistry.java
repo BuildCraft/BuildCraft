@@ -25,6 +25,7 @@ public class JsonGuiTypeRegistry {
         registerType(ElementTypeLedger.INSTANCE);
         registerType(ElementTypeToolTip.INSTANCE);
         registerType(ElementTypeContainer.INSTANCE);
+        registerType(ElementTypeDrawnStack.INSTANCE);
         registerType(ElementTypeStatementSlot.INSTANCE);
         registerType(ElementTypeStatementParam.INSTANCE);
         registerType(ElementTypeStatementSource.INSTANCE);

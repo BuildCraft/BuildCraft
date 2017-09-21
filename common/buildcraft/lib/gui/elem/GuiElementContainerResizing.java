@@ -46,6 +46,7 @@ public class GuiElementContainerResizing extends GuiElementContainer2 {
 
     @Override
     public void calculateSizes() {
+        maxX = minX = maxY = minY = 0;
         double x0, x1, y0, y1;
         double x = childRoot.getX();
         double y = childRoot.getY();
