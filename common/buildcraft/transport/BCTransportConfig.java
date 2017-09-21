@@ -86,7 +86,6 @@ public class BCTransportConfig {
 
             fluidTransfer(BCTransportPipes.cobbleFluid, baseFlowRate, 10);
             fluidTransfer(BCTransportPipes.woodFluid, baseFlowRate, 10);
-            fluidTransfer(BCTransportPipes.voidFluid, baseFlowRate, 10);
 
             fluidTransfer(BCTransportPipes.stoneFluid, baseFlowRate * 2, 10);
             fluidTransfer(BCTransportPipes.sandstoneFluid, baseFlowRate * 2, 10);
@@ -98,6 +97,7 @@ public class BCTransportConfig {
             fluidTransfer(BCTransportPipes.diamondFluid, baseFlowRate * 8, 10);
             fluidTransfer(BCTransportPipes.diaWoodFluid, baseFlowRate * 8, 10);
             fluidTransfer(BCTransportPipes.goldFluid, baseFlowRate * 8, 2);
+            fluidTransfer(BCTransportPipes.voidFluid, baseFlowRate * 8, 10);
 
             powerTransfer(BCTransportPipes.cobblePower, basePowerRate, 16, false);
             powerTransfer(BCTransportPipes.stonePower, basePowerRate * 2, 32, false);

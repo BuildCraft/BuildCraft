@@ -45,6 +45,9 @@ public class TravellingItem {
     EnumFacing side;
     /** A set of all the faces that this item has tried to go and failed. */
     EnumSet<EnumFacing> tried = EnumSet.noneOf(EnumFacing.class);
+    /** If true then events won't be fired for this, and this item won't be dropped by the pipe. However it will affect
+     * pipe.isEmpty and related gate triggers. */
+    boolean isPhantom = false;
 
     // @formatter:off
     /* States (server side):
@@ -95,6 +98,7 @@ public class TravellingItem {
             toCenter = true;
         }
         tried = NBTUtilBC.readEnumSet(nbt.getTag("tried"), EnumFacing.class);
+        isPhantom = nbt.getBoolean("isPhantom");
     }
 
     public NBTTagCompound writeToNbt(long tickNow) {
@@ -108,6 +112,9 @@ public class TravellingItem {
         nbt.setInteger("timeToDest", timeToDest);
         nbt.setTag("side", NBTUtilBC.writeEnum(side));
         nbt.setTag("tried", NBTUtilBC.writeEnumSet(tried, EnumFacing.class));
+        if (isPhantom) {
+            nbt.setBoolean("isPhantom", true);
+        }
         return nbt;
     }
 
@@ -133,6 +140,9 @@ public class TravellingItem {
     }
 
     public boolean canMerge(TravellingItem with) {
+        if (isPhantom || with.isPhantom) {
+            return false;
+        }
         return toCenter == with.toCenter//
             && colour == with.colour//
             && side == with.side//

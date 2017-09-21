@@ -267,6 +267,37 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         return filled;
     }
 
+    @Override
+    @Nullable
+    public FluidStack extractFluidsForce(int min, int max, @Nullable EnumFacing section, boolean simulate) {
+        if (min > max) {
+            throw new IllegalArgumentException("Minimum (" + min + ") > maximum (" + max + ")");
+        }
+        if (max < 0) {
+            return null;
+        }
+        Section s = sections.get(EnumPipePart.fromFacing(section));
+        if (s.amount < min) {
+            return null;
+        }
+        int amount = MathUtil.clamp(s.amount, min, max);
+        FluidStack fluid = new FluidStack(currentFluid, amount);
+        if (!simulate) {
+            s.amount -= amount;
+            s.drainInternal(amount, false);
+            if (s.amount == 0) {
+                boolean isEmpty = true;
+                for (Section s2 : sections.values()) {
+                    isEmpty &= s2.amount == 0;
+                }
+                if (isEmpty) {
+                    setFluid(null);
+                }
+            }
+        }
+        return fluid;
+    }
+
     // IDebuggable
 
     @Override

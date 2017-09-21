@@ -43,6 +43,7 @@ import buildcraft.api.mj.MjAPI;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.world.WorldEventListenerAdapter;
 
@@ -245,6 +246,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                 Vec3d newRobotPos = breakTasks.stream()
                     .map(breakTask -> breakTask.pos)
                     .map(Vec3d::new)
+                    .map(VecUtil.VEC_HALF::add)
                     .reduce(Vec3d.ZERO, Vec3d::add)
                     .scale(1D / breakTasks.size());
                 newRobotPos = new Vec3d(
@@ -376,6 +378,9 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
         if (!breakTasks.isEmpty()) {
             for (Iterator<BreakTask> iterator = breakTasks.iterator(); iterator.hasNext(); ) {
                 BreakTask breakTask = iterator.next();
+                if (breakTask.isImpossible()) {
+                    continue;
+                }
                 long target = breakTask.getTarget();
                 breakTask.power += tile.getBattery().extractPower(
                     0,
@@ -556,6 +561,11 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
         public BreakTask(NBTTagCompound nbt) {
             pos = NBTUtil.getPosFromTag(nbt.getCompoundTag("pos"));
             power = nbt.getLong("power");
+        }
+
+        @SuppressWarnings("WeakerAccess")
+        public boolean isImpossible() {
+            return BlockUtil.isUnbreakableBlock(tile.getWorldBC(), pos, tile.getOwner());
         }
 
         public long getTarget() {

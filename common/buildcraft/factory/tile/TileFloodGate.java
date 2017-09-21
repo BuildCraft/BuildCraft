@@ -25,6 +25,8 @@ import net.minecraft.nbt.NBTPrimitive;
 import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
@@ -46,6 +48,7 @@ import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
@@ -111,6 +114,16 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                         List<BlockPos> checkPath = paths.get(toCheck);
                         for (EnumFacing side : SEARCH_DIRECTIONS) {
                             BlockPos next = toCheck.offset(side);
+                            if (!openSides.contains(side)) {
+                                Axis axis = side.getAxis();
+                                int dist = VecUtil.getValue(next, axis) - VecUtil.getValue(getPos(), axis);
+                                if (side.getAxisDirection() == AxisDirection.NEGATIVE) {
+                                    dist = -dist;
+                                }
+                                if (dist > 0) {
+                                    continue;
+                                }
+                            }
                             if (checked.contains(next)) {
                                 continue;
                             }
@@ -132,15 +145,9 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             return true;
         }
         Fluid fluid = BlockUtil.getFluidWithFlowing(world, offsetPos);
-        if (fluid == null) {
-            return false;
-        }
-        if (!FluidUtilBC.areFluidsEqual(fluid, tank.getFluidType())) {
-            // Optional.ofNullable(blockState.getBlock().getRegistryName()).map(BCModules::isBcMod).orElse(false)
-            // BCModules.isBcMod(blockState.getBlock().getRegistryName());
-            return false;
-        }
-        return BlockUtil.getFluidWithoutFlowing(getLocalState(offsetPos)) == null;
+        return fluid != null &&
+            FluidUtilBC.areFluidsEqual(fluid, tank.getFluidType()) &&
+            BlockUtil.getFluidWithoutFlowing(getLocalState(offsetPos)) == null;
     }
 
     private boolean canSearch(BlockPos offsetPos) {

@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
@@ -67,6 +68,11 @@ import buildcraft.lib.compat.CompatManager;
 import buildcraft.lib.world.SingleBlockAccess;
 
 public final class BlockUtil {
+
+    /**
+     * @return A list of itemstacks that are dropped from the block, or null if the block is air
+     */
+    @Nullable
     public static NonNullList<ItemStack> getItemStackFromBlock(WorldServer world, BlockPos pos, GameProfile owner) {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
