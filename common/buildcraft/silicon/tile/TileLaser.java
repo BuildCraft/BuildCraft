@@ -6,6 +6,7 @@
 
 package buildcraft.silicon.tile;
 
+import java.io.Console;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +79,10 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             }
         }
     };
+
+    //TODO remove time tracking info
+    private static long numOfTicks = 0;
+    private static long totalTickTime = 0;
 
     public TileLaser() {
         super();
@@ -181,6 +186,9 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             }
             return;
         }
+        //TODO remove profiling code
+        long startMillis = System.nanoTime();
+
         // set target tile on server side
         avgPower.tick();
 
@@ -216,6 +224,19 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
 
         if (!Objects.equals(previousTargetPos, targetPos)) {
             sendNetworkUpdate(NET_RENDER_DATA);
+        }
+
+        //TODO remove this
+        long endMillis = System.nanoTime();
+        long duration = endMillis - startMillis;
+        totalTickTime += duration;
+        numOfTicks++;
+
+        if (numOfTicks % 10000 == 0) {
+            double averageTickTime = (double) totalTickTime / (double) numOfTicks;
+            System.out.println("Average Laser tick time = " + averageTickTime + " nanoseconds");
+            totalTickTime = 0;
+            numOfTicks = 0;
         }
     }
 
@@ -290,8 +311,8 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         super.validate();
         if (!world.isRemote) {
             //TODO profile to find which method of scanning is preferred and remove code for other method
-            world.addEventListener(worldEventListener);
-            //BlockUpdateCollector.instance(world).registerLaserForUpdateNotifications(this);
+            //world.addEventListener(worldEventListener);
+            BlockUpdateCollector.instance(world).registerLaserForUpdateNotifications(this);
         }
     }
 
@@ -300,8 +321,8 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         super.invalidate();
         if (!world.isRemote) {
             //TODO profile to find which method of scanning is preferred and remove code for other method
-            world.removeEventListener(worldEventListener);
-            //BlockUpdateCollector.instance(world).removeLaserFromUpdateNotifications(this);
+            //world.removeEventListener(worldEventListener);
+            BlockUpdateCollector.instance(world).removeLaserFromUpdateNotifications(this);
         }
     }
 
