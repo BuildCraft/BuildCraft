@@ -7,7 +7,6 @@ package buildcraft.core.client;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -23,11 +22,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.Profiler;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 
@@ -39,7 +35,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.IBox;
 import buildcraft.api.items.IMapLocation.MapLocationType;
-import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
@@ -53,8 +48,6 @@ import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
-import buildcraft.lib.net.MessageDebuggableRequest;
-import buildcraft.lib.net.MessageManager;
 
 import buildcraft.core.BCCoreItems;
 import buildcraft.core.item.ItemMapLocation;
@@ -105,37 +98,16 @@ public class RenderTickListener {
         List<String> left = event.getLeft();
         List<String> right = event.getRight();
 
-        RayTraceResult mouseOver = mc.objectMouseOver;
-        if (mouseOver == null) {
-            return;
-        }
-
-        getDebuggableObject(mouseOver).ifPresent(client -> {
-            EnumFacing side = mouseOver.sideHit;
-            MessageManager.sendToServer(new MessageDebuggableRequest(client.getPos(), side));
+        ClientDebuggables.getDebuggableTileSide().ifPresent(tileSide -> {
             List<String> clientLeft = new ArrayList<>();
             List<String> clientRight = new ArrayList<>();
-            client.getClientDebugInfo(clientLeft, clientRight, side);
+            tileSide.getLeft().getClientDebugInfo(clientLeft, clientRight, tileSide.getRight());
 
             final String headerFirst = DIFF_HEADER_FORMATTING + "SERVER:";
             final String headerSecond = DIFF_HEADER_FORMATTING + "CLIENT:";
             appendDiff(left, ClientDebuggables.SERVER_LEFT, clientLeft, headerFirst, headerSecond);
             appendDiff(right, ClientDebuggables.SERVER_RIGHT, clientRight, headerFirst, headerSecond);
         });
-    }
-
-    private static <T extends TileEntity & IDebuggable> Optional<T> getDebuggableObject(RayTraceResult mouseOver) {
-        Type type = mouseOver.typeOfHit;
-        WorldClient world = Minecraft.getMinecraft().world;
-        if (type == Type.BLOCK) {
-            BlockPos pos = mouseOver.getBlockPos();
-            TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof IDebuggable) {
-                // noinspection RedundantCast
-                return Optional.of((T) (TileEntity & IDebuggable) tile);
-            }
-        }
-        return Optional.empty();
     }
 
     private static void appendDiff(List<String> dest, List<String> first, List<String> second, String headerFirst, String headerSecond) {
