@@ -145,10 +145,10 @@ public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable, 
     @SideOnly(Side.CLIENT)
     @Override
     public void getClientDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("coolable:");
-        smoothedCoolableIn.getDebugInfo(left, right, side);
         left.add("");
-        left.add("heatable:");
+        left.add("heatable_out:");
+        smoothedCoolableIn.getDebugInfo(left, right, side);
+        left.add("coolable_in:");
         smoothedHeatableOut.getDebugInfo(left, right, side);
     }
 

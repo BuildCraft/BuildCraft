@@ -591,7 +591,6 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     @SideOnly(Side.CLIENT)
     @Override
     public void getClientDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        getDebugInfo(left, right, side);
         left.add("Current Model Variables:");
         clientModelData.addDebugInfo(left);
     }

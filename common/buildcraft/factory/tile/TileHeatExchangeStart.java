@@ -474,11 +474,10 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
     @Override
     public void getClientDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
-        left.add("coolable:");
-        smoothedCoolableOut.getDebugInfo(left, right, side);
-        left.add("");
-        left.add("heatable:");
+        left.add("heatable_in:");
         smoothedHeatableIn.getDebugInfo(left, right, side);
+        left.add("coolable_out:");
+        smoothedCoolableOut.getDebugInfo(left, right, side);
     }
 
     public enum EnumProgressState {

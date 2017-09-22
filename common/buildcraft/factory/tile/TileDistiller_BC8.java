@@ -318,7 +318,6 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
     @SideOnly(Side.CLIENT)
     @Override
     public void getClientDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        getDebugInfo(left, right, side);
         setClientModelVariables(1);
         left.add("Model Variables:");
         left.add("  facing = " + MODEL_FACING.value);

@@ -32,7 +32,7 @@ public class ClientDebuggables {
     private static <T extends TileEntity & IDebuggable> Optional<T> getDebuggableObject(RayTraceResult mouseOver) {
         RayTraceResult.Type type = mouseOver.typeOfHit;
         WorldClient world = Minecraft.getMinecraft().world;
-        if (type == RayTraceResult.Type.BLOCK) {
+        if (world != null && type == RayTraceResult.Type.BLOCK) {
             BlockPos pos = mouseOver.getBlockPos();
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof IDebuggable) {

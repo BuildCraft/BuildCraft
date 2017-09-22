@@ -62,11 +62,11 @@ public class RenderTickListener {
 
     static {
         double[][][] upFace = {// Comments for formatting
-            { { 0.5, 0.9, 0.5 }, { 0.5, 1.6, 0.5 } },// Main line
-            { { 0.5, 0.9, 0.5 }, { 0.8, 1.2, 0.5 } }, // First arrow part (+X)
-            { { 0.5, 0.9, 0.5 }, { 0.2, 1.2, 0.5 } }, // Second arrow part (-X)
-            { { 0.5, 0.9, 0.5 }, { 0.5, 1.2, 0.8 } }, // Third arrow part (+Z)
-            { { 0.5, 0.9, 0.5 }, { 0.5, 1.2, 0.2 } }, // Forth arrow part (-Z)
+            {{0.5, 0.9, 0.5}, {0.5, 1.6, 0.5}},// Main line
+            {{0.5, 0.9, 0.5}, {0.8, 1.2, 0.5}}, // First arrow part (+X)
+            {{0.5, 0.9, 0.5}, {0.2, 1.2, 0.5}}, // Second arrow part (-X)
+            {{0.5, 0.9, 0.5}, {0.5, 1.2, 0.8}}, // Third arrow part (+Z)
+            {{0.5, 0.9, 0.5}, {0.5, 1.2, 0.2}}, // Forth arrow part (-Z)
         };
 
         for (EnumFacing face : EnumFacing.VALUES) {
@@ -90,24 +90,21 @@ public class RenderTickListener {
 
     @SubscribeEvent
     public static void renderOverlay(RenderGameOverlayEvent.Text event) {
-        Minecraft mc = Minecraft.getMinecraft();
-        if (!mc.gameSettings.showDebugInfo) return;
-        if (mc.player.hasReducedDebug() || mc.gameSettings.reducedDebugInfo || !mc.player.capabilities.isCreativeMode) {
-            return;
+        if (Minecraft.getMinecraft().gameSettings.showDebugInfo &&
+            !Minecraft.getMinecraft().player.hasReducedDebug() &&
+            !Minecraft.getMinecraft().gameSettings.reducedDebugInfo &&
+            Minecraft.getMinecraft().player.capabilities.isCreativeMode) {
+            ClientDebuggables.getDebuggableTileSide().ifPresent(tileSide -> {
+                List<String> clientLeft = new ArrayList<>();
+                List<String> clientRight = new ArrayList<>();
+                tileSide.getLeft().getDebugInfo(clientLeft, clientRight, tileSide.getRight());
+                String headerFirst = DIFF_HEADER_FORMATTING + "SERVER:";
+                String headerSecond = DIFF_HEADER_FORMATTING + "CLIENT:";
+                appendDiff(event.getLeft(), ClientDebuggables.SERVER_LEFT, clientLeft, headerFirst, headerSecond);
+                appendDiff(event.getRight(), ClientDebuggables.SERVER_RIGHT, clientRight, headerFirst, headerSecond);
+                tileSide.getLeft().getClientDebugInfo(event.getLeft(), event.getRight(), tileSide.getRight());
+            });
         }
-        List<String> left = event.getLeft();
-        List<String> right = event.getRight();
-
-        ClientDebuggables.getDebuggableTileSide().ifPresent(tileSide -> {
-            List<String> clientLeft = new ArrayList<>();
-            List<String> clientRight = new ArrayList<>();
-            tileSide.getLeft().getClientDebugInfo(clientLeft, clientRight, tileSide.getRight());
-
-            final String headerFirst = DIFF_HEADER_FORMATTING + "SERVER:";
-            final String headerSecond = DIFF_HEADER_FORMATTING + "CLIENT:";
-            appendDiff(left, ClientDebuggables.SERVER_LEFT, clientLeft, headerFirst, headerSecond);
-            appendDiff(right, ClientDebuggables.SERVER_RIGHT, clientRight, headerFirst, headerSecond);
-        });
     }
 
     private static void appendDiff(List<String> dest, List<String> first, List<String> second, String headerFirst, String headerSecond) {
@@ -145,7 +142,9 @@ public class RenderTickListener {
     private static void renderHeldItemInWorld(float partialTicks) {
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayer player = Minecraft.getMinecraft().player;
-        if (player == null) return;
+        if (player == null) {
+            return;
+        }
         ItemStack mainHand = StackUtil.asNonNull(player.getHeldItemMainhand());
         ItemStack offHand = StackUtil.asNonNull(player.getHeldItemOffhand());
         WorldClient world = mc.world;
