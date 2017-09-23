@@ -33,7 +33,15 @@ public class BlockUpdateCollector {
             @Override
             public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos eventPos, @Nonnull IBlockState oldState,
                                           @Nonnull IBlockState newState, int flags) {
+                //TODO remove profiling code
+                long startMillis = System.nanoTime();
+
                 notifyNearbyLasers(eventPos);
+
+                //TODO remove this
+                long endMillis = System.nanoTime();
+                long duration = endMillis - startMillis;
+                TileLaser.totalScanTime += duration;
             }
         };
         this.world.addEventListener(worldEventListener);

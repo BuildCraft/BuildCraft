@@ -6,7 +6,6 @@
 
 package buildcraft.silicon.tile;
 
-import java.io.Console;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,18 +70,24 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         @Override
         public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos eventPos, @Nonnull IBlockState oldState,
                                       @Nonnull IBlockState newState, int flags) {
+            //TODO remove profiling code
+            long startMillis = System.nanoTime();
             // only scan for new targets if the update was within targeting range of the laser
             if (Math.abs(pos.getX() - eventPos.getX()) <= TARGETING_RANGE &&
                     Math.abs(pos.getY() - eventPos.getY()) <= TARGETING_RANGE &&
                     Math.abs(pos.getZ() - eventPos.getZ()) <= TARGETING_RANGE ) {
                 worldHasUpdated = true;
             }
+            //TODO remove this
+            long endMillis = System.nanoTime();
+            long duration = endMillis - startMillis;
+            totalScanTime += duration;
         }
     };
 
     //TODO remove time tracking info
     private static long numOfTicks = 0;
-    private static long totalTickTime = 0;
+    public static long totalScanTime = 0;
 
     public TileLaser() {
         super();
@@ -186,8 +191,6 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             }
             return;
         }
-        //TODO remove profiling code
-        long startMillis = System.nanoTime();
 
         // set target tile on server side
         avgPower.tick();
@@ -226,16 +229,13 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             sendNetworkUpdate(NET_RENDER_DATA);
         }
 
-        //TODO remove this
-        long endMillis = System.nanoTime();
-        long duration = endMillis - startMillis;
-        totalTickTime += duration;
+
         numOfTicks++;
 
+        //TODO remove benchmarking code
         if (numOfTicks % 10000 == 0) {
-            double averageTickTime = (double) totalTickTime / (double) numOfTicks;
-            System.out.println("Average Laser tick time = " + averageTickTime + " nanoseconds");
-            totalTickTime = 0;
+            System.out.println("Total Laser scan time = " + totalScanTime + " nanoseconds");
+            totalScanTime = 0;
             numOfTicks = 0;
         }
     }
@@ -311,7 +311,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         super.validate();
         if (!world.isRemote) {
             //TODO profile to find which method of scanning is preferred and remove code for other method
-            //world.addEventListener(worldEventListener);
+//            world.addEventListener(worldEventListener);
             BlockUpdateCollector.instance(world).registerLaserForUpdateNotifications(this);
         }
     }
@@ -321,7 +321,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         super.invalidate();
         if (!world.isRemote) {
             //TODO profile to find which method of scanning is preferred and remove code for other method
-            //world.removeEventListener(worldEventListener);
+//            world.removeEventListener(worldEventListener);
             BlockUpdateCollector.instance(world).removeLaserFromUpdateNotifications(this);
         }
     }
