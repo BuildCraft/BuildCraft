@@ -60,10 +60,12 @@ import buildcraft.lib.delta.DeltaManager.EnumDeltaMessage;
 import buildcraft.lib.fluid.TankManager;
 import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.FakePlayerProvider;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.PermissionUtil;
 import buildcraft.lib.misc.PermissionUtil.PermissionBlock;
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.IPayloadReceiver;
 import buildcraft.lib.net.IPayloadWriter;
@@ -287,6 +289,11 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     @Override
     public GameProfile getOwner() {
+        if (owner == null) {
+            String msg = "[lib.tile] Unknown owner for " + getClass() + " at ";
+            BCLog.logger.warn(msg + StringUtilBC.blockPosToString(getPos()));
+            return FakePlayerProvider.NULL_PROFILE;
+        }
         return owner;
     }
 

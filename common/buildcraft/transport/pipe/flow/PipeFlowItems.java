@@ -129,7 +129,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
     // IFlowItems
 
     @Override
-    public int tryExtractItems(int count, EnumFacing from, EnumDyeColor colour, IStackFilter filter) {
+    public int tryExtractItems(int count, EnumFacing from, EnumDyeColor colour, IStackFilter filter, boolean simulate) {
         if (pipe.getHolder().getPipeWorld().isRemote) {
             throw new IllegalStateException("Cannot extract items on the client side!");
         }
@@ -145,6 +145,10 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         if (possible.isEmpty()) {
             return 0;
         }
+        if (possible.getCount() > possible.getMaxStackSize()) {
+            possible.setCount(possible.getMaxStackSize());
+            count = possible.getMaxStackSize();
+        }
 
         IPipeHolder holder = pipe.getHolder();
         PipeEventItem.TryInsert tryInsert = new PipeEventItem.TryInsert(holder, this, colour, from, possible);
@@ -155,15 +159,53 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         count = Math.min(count, tryInsert.accepted);
 
-        ItemStack stack = trans.extract(filter, count, count, false);
+        ItemStack stack = trans.extract(filter, count, count, simulate);
 
         if (stack.isEmpty()) {
             throw new IllegalStateException("The transactor " + trans + " returned an empty itemstack from a known good request!");
         }
 
-        insertItemEvents(stack, colour, EXTRACT_SPEED, from);
+        if (!simulate) {
+            insertItemEvents(stack, colour, EXTRACT_SPEED, from);
+        }
 
         return count;
+    }
+
+    @Override
+    public void sendPhantomItem(ItemStack stack, EnumFacing from, EnumFacing to, EnumDyeColor colour) {
+        if (from == null && to == null) {
+            return;
+        }
+        EnumFacing face0, face1, face2;
+        boolean twoItems = from != null && to != null;
+        face0 = from;
+        face1 = from == null ? to : null;
+        face2 = to;
+
+        long now = pipe.getHolder().getPipeWorld().getTotalWorldTime();
+
+        TravellingItem firstItem = new TravellingItem(stack);
+        firstItem.isPhantom = true;
+        firstItem.toCenter = face1 == null;
+        firstItem.colour = colour;
+        firstItem.side = face0 == null ? face1 : face0;
+        firstItem.speed = EXTRACT_SPEED;
+        firstItem.genTimings(now, getPipeLength(firstItem.side));
+        items.add(firstItem.timeToDest, firstItem);
+        sendItemDataToClient(firstItem);
+
+        if (twoItems) {
+            TravellingItem secondItem = new TravellingItem(stack);
+            secondItem.isPhantom = true;
+            secondItem.toCenter = false;
+            secondItem.colour = colour;
+            secondItem.side = face2;
+            secondItem.speed = EXTRACT_SPEED;
+            secondItem.genTimings(firstItem.tickFinished, getPipeLength(secondItem.side));
+            items.add(secondItem.timeToDest, secondItem);
+            sendItemDataToClient(secondItem);
+        }
     }
 
     // PipeFlow
@@ -200,6 +242,9 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         }
 
         for (TravellingItem item : toTick) {
+            if (item.isPhantom) {
+                continue;
+            }
             if (item.toCenter) {
                 onItemReachCenter(item);
             } else {
@@ -463,7 +508,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         item.tried.add(from);
         addItemTryMerge(item);
     }
-    
+
     private void addItemTryMerge(TravellingItem item) {
         for (List<TravellingItem> list : items.getAllElements()) {
             for (TravellingItem item2 : list) {
