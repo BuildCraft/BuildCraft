@@ -1,7 +1,8 @@
 package buildcraft.lib.block;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.annotation.Nonnull;
@@ -20,8 +21,8 @@ import buildcraft.lib.world.WorldEventListenerAdapter;
  */
 public class LocalBlockUpdateNotifier {
 
-    private static Map<World, LocalBlockUpdateNotifier> instanceMap = new WeakHashMap<>();
-    private Map<BlockPos, ILocalBlockUpdateSubscriber> subscriberMap = new HashMap<>();
+    private static final Map<World, LocalBlockUpdateNotifier> instanceMap = new WeakHashMap<>();
+    private final Set<ILocalBlockUpdateSubscriber> subscriberSet = new HashSet<>();
 
 
     private LocalBlockUpdateNotifier(World world) {
@@ -51,20 +52,20 @@ public class LocalBlockUpdateNotifier {
 
     /**
      * Register an @{ILocalBlockUpdateSubscriber} to receive notifications about block updates
+     *
      * @param subscriber the subscriber to receive notifications about local block updates
      */
     public void registerSubscriberForUpdateNotifications(ILocalBlockUpdateSubscriber subscriber) {
-        subscriberMap.put(subscriber.getSubscriberPos(), subscriber);
+        subscriberSet.add(subscriber);
     }
 
     /**
      * Stop an @{ILocalBlockUpdateSubscriber} from receiving notifications about block updates
+     *
      * @param subscriber the subscriber to no longer receive notifications about local block update
      */
     public void removeSubscriberFromUpdateNotifications(ILocalBlockUpdateSubscriber subscriber) {
-        if (subscriberMap.containsKey(subscriber.getSubscriberPos())) {
-            subscriberMap.remove(subscriber.getSubscriberPos());
-        }
+        subscriberSet.remove(subscriber);
     }
 
     /**
@@ -72,20 +73,21 @@ public class LocalBlockUpdateNotifier {
      * if a subscriber is close enough to notify is determined by a call to the subscriber's implementation of
      * getUpdateRange
      *
-     * @param world from the Block Update
+     * @param world    from the Block Update
      * @param eventPos from the Block Update
      * @param oldState from the Block Update
      * @param newState from the Block Update
-     * @param flags from the Block Update
+     * @param flags    from the Block Update
      */
-    private void notifySubscribersInRange(@Nonnull World world, @Nonnull BlockPos eventPos, @Nonnull IBlockState oldState,
-                                          @Nonnull IBlockState newState, int flags) {
-        for (BlockPos keyPos : subscriberMap.keySet()) {
-            int updateRange = subscriberMap.get(keyPos).getUpdateRange();
+    private void notifySubscribersInRange(World world, BlockPos eventPos, IBlockState oldState, IBlockState newState,
+                                          int flags) {
+        for (ILocalBlockUpdateSubscriber subscriber : subscriberSet) {
+            BlockPos keyPos = subscriber.getSubscriberPos();
+            int updateRange = subscriber.getUpdateRange();
             if (Math.abs(keyPos.getX() - eventPos.getX()) <= updateRange &&
                     Math.abs(keyPos.getY() - eventPos.getY()) <= updateRange &&
                     Math.abs(keyPos.getZ() - eventPos.getZ()) <= updateRange) {
-                subscriberMap.get(keyPos).setWorldUpdated(world, eventPos, oldState, newState, flags);
+                subscriber.setWorldUpdated(world, eventPos, oldState, newState, flags);
             }
         }
     }
