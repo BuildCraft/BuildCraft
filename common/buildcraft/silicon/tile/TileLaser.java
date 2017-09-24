@@ -21,7 +21,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -37,7 +36,8 @@ import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.lib.block.BlockUpdateCollector;
+import buildcraft.lib.block.ILocalBlockUpdateSubscriber;
+import buildcraft.lib.block.LocalBlockUpdateNotifier;
 import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
@@ -48,12 +48,11 @@ import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.lib.world.WorldEventListenerAdapter;
 
 import buildcraft.silicon.BCSiliconBlocks;
 import buildcraft.silicon.client.render.AdvDebuggerLaser;
 
-public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable {
+public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable, ILocalBlockUpdateSubscriber {
     private List<BlockPos> targetPositions;
     private BlockPos targetPos;
     private final AverageLong avgPower = new AverageLong(100);
@@ -66,43 +65,25 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     private final SafeTimeTracker clientLaserMoveInterval = new SafeTimeTracker(5, 10);
     private final SafeTimeTracker serverTargetMoveInterval = new SafeTimeTracker(10, 20);
 
-    private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
-        @Override
-        public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos eventPos, @Nonnull IBlockState oldState,
-                                      @Nonnull IBlockState newState, int flags) {
-            //TODO remove profiling code
-            long startMillis = System.nanoTime();
-            // only scan for new targets if the update was within targeting range of the laser
-            if (Math.abs(pos.getX() - eventPos.getX()) <= TARGETING_RANGE &&
-                    Math.abs(pos.getY() - eventPos.getY()) <= TARGETING_RANGE &&
-                    Math.abs(pos.getZ() - eventPos.getZ()) <= TARGETING_RANGE ) {
-                worldHasUpdated = true;
-            }
-            //TODO remove this
-            long endMillis = System.nanoTime();
-            long duration = endMillis - startMillis;
-            totalScanTime += duration;
-        }
-    };
-
-    //TODO remove time tracking info
-    private static long numOfTicks = 0;
-    public static long totalScanTime = 0;
-
     public TileLaser() {
         super();
         battery = new MjBattery(1024 * MjAPI.MJ);
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
     }
 
-    public int getTargetingRange() {
+    @Override
+    public int getUpdateRange() {
         return TARGETING_RANGE;
     }
 
-    /**
-     * Used to trigger a scan for valid laser targets in the next update
-     */
-    public void setWorldUpdated() {
+    @Override
+    public BlockPos getSubscriberPos() {
+        return getPos();
+    }
+
+    @Override
+    public void setWorldUpdated(@Nonnull World world, @Nonnull BlockPos eventPos, @Nonnull IBlockState oldState,
+                                @Nonnull IBlockState newState, int flags) {
         this.worldHasUpdated = true;
     }
 
@@ -228,16 +209,6 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         if (!Objects.equals(previousTargetPos, targetPos)) {
             sendNetworkUpdate(NET_RENDER_DATA);
         }
-
-
-        numOfTicks++;
-
-        //TODO remove benchmarking code
-        if (numOfTicks % 10000 == 0) {
-            System.out.println("Total Laser scan time = " + totalScanTime + " nanoseconds");
-            totalScanTime = 0;
-            numOfTicks = 0;
-        }
     }
 
     @Override
@@ -310,9 +281,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     public void validate() {
         super.validate();
         if (!world.isRemote) {
-            //TODO profile to find which method of scanning is preferred and remove code for other method
-//            world.addEventListener(worldEventListener);
-            BlockUpdateCollector.instance(world).registerLaserForUpdateNotifications(this);
+            LocalBlockUpdateNotifier.instance(world).registerSubscriberForUpdateNotifications(this);
         }
     }
 
@@ -320,9 +289,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     public void invalidate() {
         super.invalidate();
         if (!world.isRemote) {
-            //TODO profile to find which method of scanning is preferred and remove code for other method
-//            world.removeEventListener(worldEventListener);
-            BlockUpdateCollector.instance(world).removeLaserFromUpdateNotifications(this);
+            LocalBlockUpdateNotifier.instance(world).removeSubscriberFromUpdateNotifications(this);
         }
     }
 
