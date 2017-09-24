@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -53,17 +51,19 @@ import buildcraft.silicon.BCSiliconBlocks;
 import buildcraft.silicon.client.render.AdvDebuggerLaser;
 
 public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable, ILocalBlockUpdateSubscriber {
-    private List<BlockPos> targetPositions;
-    private BlockPos targetPos;
-    private final AverageLong avgPower = new AverageLong(100);
-    private long averageClient;
-    private final MjBattery battery;
-    private final int TARGETING_RANGE = 6;
-    private boolean worldHasUpdated = true;
-    public Vec3d laserPos;
+    private static final int TARGETING_RANGE = 6;
 
     private final SafeTimeTracker clientLaserMoveInterval = new SafeTimeTracker(5, 10);
     private final SafeTimeTracker serverTargetMoveInterval = new SafeTimeTracker(10, 20);
+
+    private final List<BlockPos> targetPositions = new ArrayList<>();
+    private BlockPos targetPos;
+    public Vec3d laserPos;
+    private boolean worldHasUpdated = true;
+
+    private final AverageLong avgPower = new AverageLong(100);
+    private long averageClient;
+    private final MjBattery battery;
 
     public TileLaser() {
         super();
@@ -82,13 +82,12 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
     }
 
     @Override
-    public void setWorldUpdated(@Nonnull World world, @Nonnull BlockPos eventPos, @Nonnull IBlockState oldState,
-                                @Nonnull IBlockState newState, int flags) {
+    public void setWorldUpdated(World world, BlockPos eventPos, IBlockState oldState, IBlockState newState, int flags) {
         this.worldHasUpdated = true;
     }
 
     private void findPossibleTargets() {
-        targetPositions = new ArrayList<>();
+        targetPositions.clear();
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() != BCSiliconBlocks.laser) {
             return;
@@ -113,7 +112,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
     private void randomlyChooseTargetPos() {
         List<BlockPos> targetsNeedingPower = new ArrayList<>();
         for(BlockPos position: targetPositions) {
-            if (powerNeededAt(position)) {
+            if (isPowerNeededAt(position)) {
                 targetsNeedingPower.add(position);
             }
         }
@@ -124,7 +123,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
         targetPos = targetsNeedingPower.get(world.rand.nextInt(targetsNeedingPower.size()));
     }
 
-    private boolean powerNeededAt(BlockPos position) {
+    private boolean isPowerNeededAt(BlockPos position) {
         if (position != null) {
             TileEntity tile = world.getTileEntity(position);
             if (tile instanceof ILaserTarget) {
@@ -137,7 +136,9 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
 
     private ILaserTarget getTarget() {
         if (targetPos != null) {
-            return (ILaserTarget) world.getTileEntity(targetPos);
+            if (world.getTileEntity(targetPos) instanceof ILaserTarget) {
+                return (ILaserTarget) world.getTileEntity(targetPos);
+            }
         }
         return null;
     }
@@ -182,11 +183,11 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
             worldHasUpdated = false;
         }
 
-        if (!powerNeededAt(targetPos)) {
+        if (!isPowerNeededAt(targetPos)) {
             targetPos = null;
         }
 
-        if (serverTargetMoveInterval.markTimeIfDelay(world) || !powerNeededAt(targetPos)) {
+        if (serverTargetMoveInterval.markTimeIfDelay(world) || !isPowerNeededAt(targetPos)) {
             randomlyChooseTargetPos();
         }
 
