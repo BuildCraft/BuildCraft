@@ -178,7 +178,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
         avgPower.tick();
 
         BlockPos previousTargetPos = targetPos;
-        if (targetPositions == null || worldHasUpdated) {
+        if (worldHasUpdated) {
             findPossibleTargets();
             worldHasUpdated = false;
         }
