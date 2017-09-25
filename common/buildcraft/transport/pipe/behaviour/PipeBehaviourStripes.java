@@ -162,7 +162,7 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
             for (EnumFacing face : EnumFacing.VALUES) {
                 if (pipe.isConnected(face)) {
                     sides++;
-                    dir = face;
+                    dir = face.getOpposite();
                 }
             }
             if (sides == 1) {
