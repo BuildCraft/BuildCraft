@@ -1,4 +1,4 @@
-package buildcraft.core.builders.patterns;
+package buildcraft.core.patterns;
 
 import java.util.ArrayList;
 import java.util.HashSet;

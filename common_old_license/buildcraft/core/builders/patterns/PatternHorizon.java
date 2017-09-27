@@ -20,6 +20,7 @@ import buildcraft.lib.misc.VecUtil;
 
 import buildcraft.core.BCCoreConfig;
 import buildcraft.core.BCCoreSprites;
+import buildcraft.core.patterns.Pattern;
 
 public class PatternHorizon extends Pattern {
 

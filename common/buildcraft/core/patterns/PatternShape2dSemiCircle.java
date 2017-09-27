@@ -1,4 +1,4 @@
-package buildcraft.core.builders.patterns;
+package buildcraft.core.patterns;
 
 import buildcraft.api.core.render.ISprite;
 

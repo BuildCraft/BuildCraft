@@ -17,8 +17,8 @@ import buildcraft.api.tiles.IControllable;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
-import buildcraft.core.builders.patterns.PatternParameterCenter;
-import buildcraft.core.builders.patterns.PatternSpherePart.SpherePartType;
+import buildcraft.core.patterns.PatternParameterCenter;
+import buildcraft.core.patterns.PatternSpherePart.SpherePartType;
 import buildcraft.core.statements.TriggerFluidContainer;
 import buildcraft.core.statements.TriggerFluidContainerLevel;
 import buildcraft.core.statements.TriggerInventory;

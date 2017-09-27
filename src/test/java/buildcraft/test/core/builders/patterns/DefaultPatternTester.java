@@ -26,9 +26,9 @@ import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.registry.FillerRegistry;
 
 import buildcraft.core.BCCoreStatements;
-import buildcraft.core.builders.patterns.Pattern;
-import buildcraft.core.builders.patterns.PatternParameterFacing;
-import buildcraft.core.builders.patterns.PatternParameterHollow;
+import buildcraft.core.patterns.Pattern;
+import buildcraft.core.patterns.PatternParameterFacing;
+import buildcraft.core.patterns.PatternParameterHollow;
 import buildcraft.test.VanillaSetupBaseTester;
 
 @RunWith(Theories.class)

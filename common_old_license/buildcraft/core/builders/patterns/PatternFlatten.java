@@ -17,6 +17,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IFillerStatementContainer;
 
 import buildcraft.core.BCCoreSprites;
+import buildcraft.core.patterns.Pattern;
 
 public class PatternFlatten extends Pattern {
 

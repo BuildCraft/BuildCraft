@@ -1,4 +1,4 @@
-package buildcraft.core.builders.patterns;
+package buildcraft.core.patterns;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
