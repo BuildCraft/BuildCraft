@@ -56,9 +56,9 @@ public class DefaultPatternTester extends VanillaSetupBaseTester {
 
     @Theory
     public void testTinyTemplate(Pattern pattern, BlockPos size) {
-        // Horizon and flattern works a little differently, so don't test it here
-        Assume.assumeFalse(pattern == BCCoreStatements.PATTERN_HORIZON);
-        Assume.assumeFalse(pattern == BCCoreStatements.PATTERN_FLATTEN);
+        // Horizon and flattern works a little differently, so don't test them here
+        Assume.assumeFalse(pattern.getUniqueTag().contains("horizon"));
+        Assume.assumeFalse(pattern.getUniqueTag().contains("flatten"));
         System.out.print("Testing pattern " + pattern.getUniqueTag() + " in " + StringUtilBC.blockPosToString(size));
 
         try {
