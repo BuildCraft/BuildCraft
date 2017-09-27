@@ -77,7 +77,7 @@ public class PatternSphere extends Pattern {
             for (int x = 0; x <= tpl.maxX; x++) {
                 for (int y = 0; y <= tpl.maxY; y++) {
                     for (int z = 0; z <= tpl.maxZ; z++) {
-                        if (tpl.get(x, y, z)) {
+                        if (tpl.shouldFill(x, y, z)) {
                             tpl2.fill(x, y, z);
                             break;
                         }
@@ -87,7 +87,7 @@ public class PatternSphere extends Pattern {
                     }
 
                     for (int z = tpl.maxZ; z >= 0; z--) {
-                        if (tpl.get(x, y, z)) {
+                        if (tpl.shouldFill(x, y, z)) {
                             tpl2.fill(x, y, z);
                             break;
                         }
@@ -102,7 +102,7 @@ public class PatternSphere extends Pattern {
             for (int x = 0; x <= tpl.maxX; x++) {
                 for (int z = 0; z <= tpl.maxZ; z++) {
                     for (int y = 0; y <= tpl.maxY; y++) {
-                        if (tpl.get(x, y, z)) {
+                        if (tpl.shouldFill(x, y, z)) {
                             tpl2.fill(x, y, z);
                             break;
                         }
@@ -112,7 +112,7 @@ public class PatternSphere extends Pattern {
                     }
 
                     for (int y = tpl.maxY; y >= 0; y--) {
-                        if (tpl.get(x, y, z)) {
+                        if (tpl.shouldFill(x, y, z)) {
                             tpl2.fill(x, y, z);
                             break;
                         }
@@ -127,7 +127,7 @@ public class PatternSphere extends Pattern {
             for (int y = 0; y <= tpl.maxY; y++) {
                 for (int z = 0; z <= tpl.maxZ; z++) {
                     for (int x = 0; x <= tpl.maxX; x++) {
-                        if (tpl.get(x, y, z)) {
+                        if (tpl.shouldFill(x, y, z)) {
                             tpl2.fill(x, y, z);
                             break;
                         }
@@ -137,7 +137,7 @@ public class PatternSphere extends Pattern {
                     }
 
                     for (int x = tpl.maxX; x >= 0; x--) {
-                        if (tpl.get(x, y, z)) {
+                        if (tpl.shouldFill(x, y, z)) {
                             tpl2.fill(x, y, z);
                             break;
                         }

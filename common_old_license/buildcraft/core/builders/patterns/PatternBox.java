@@ -34,29 +34,22 @@ public class PatternBox extends Pattern {
         if (box == null) {
             return null;
         }
-        FilledTemplate template = new FilledTemplate(box);
-        int mx = template.size.getX() - 1;
-        int my = template.size.getY() - 1;
-        int mz = template.size.getZ() - 1;
+        FilledTemplate tpl = new FilledTemplate(box);
+        int mx = tpl.size.getX() - 1;
+        int my = tpl.size.getY() - 1;
+        int mz = tpl.size.getZ() - 1;
 
         // Plane YZ
-        template.fillPlaneYZ(0);
-        template.fillPlaneYZ(mx);
+        tpl.fillPlaneYZ(0);
+        tpl.fillPlaneYZ(mx);
 
         // Plane XZ
-        for (int x = 1; x < mx; x++) {
-            template.fillAxisZ(x, 0);
-            template.fillAxisZ(x, my);
-        }
+        tpl.fillPlaneXZ(0);
+        tpl.fillPlaneXZ(my);
 
-        // Plane XY
-        for (int x = 1; x < mx; x++) {
-            for (int y = 1; y < my; y++) {
-                template.fill(x, y, 0);
-                template.fill(x, y, mz);
-            }
-        }
+        tpl.fillPlaneXY(0);
+        tpl.fillPlaneXY(mz);
 
-        return template;
+        return tpl;
     }
 }

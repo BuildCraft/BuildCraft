@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ResourceLocation;
@@ -37,9 +38,8 @@ import buildcraft.lib.misc.RenderUtil;
 import buildcraft.lib.misc.VecUtil;
 
 /** Can render 3D fluid cuboid's, up to 1x1x1 in size. Note that they *must* be contained within the 1x1x1 block space -
- * you can't use this to render off large multiblocks.
- * 
- * Not thread safe -- this uses static variables so you should only call this from the main client thread. */
+ * you can't use this to render off large multiblocks. Not thread safe -- this uses static variables so you should only
+ * call this from the main client thread. */
 // TODO: thread safety (per thread context?)
 public class FluidRenderer {
 
@@ -100,7 +100,6 @@ public class FluidRenderer {
      * @param vbIn The {@link VertexBuffer} that the fluid will be rendered into.
      * @param sideRender A size 6 boolean array that determines if the face will be rendered. If it is null then all
      *            faces will be rendered. The indexes are determined by what {@link EnumFacing#ordinal()} returns.
-     * 
      * @see #renderFluid(FluidSpriteType, FluidStack, double, double, Vec3d, Vec3d, VertexBuffer, boolean[]) */
     public static void renderFluid(FluidSpriteType type, IFluidTank tank, Vec3d min, Vec3d max, VertexBuffer vbIn,
         boolean[] sideRender) {
@@ -141,6 +140,8 @@ public class FluidRenderer {
         if (fluid == null || fluid.getFluid() == null || amount <= 0) {
             return;
         }
+        Profiler prof = Minecraft.getMinecraft().mcProfiler;
+        prof.startSection("fluid");
         if (sideRender == null) {
             sideRender = DEFAULT_FACES;
         }
@@ -254,13 +255,14 @@ public class FluidRenderer {
         sprite = null;
         texmap = null;
         vb = null;
+        prof.endSection();
     }
 
     /** Helper function to add a vertex. */
     private static void vertex(double x, double y, double z) {
         vertex.positiond(x, y, z);
         texmap.apply(x - xTexDiff, y - yTexDiff, z - zTexDiff);
-        vertex.render(vb);
+        vertex.renderAsBlock(vb);
     }
 
     /** Fills up the given region with the fluids texture, repeated. Ignores the value of {@link FluidStack#amount}. Use
@@ -375,9 +377,8 @@ public class FluidRenderer {
             this.vy = vy;
         }
 
-        /** Changes the vertex's texture co-ord to be the same as the position, for that face.
-         * 
-         * (Uses {@link #ux} and {@link #vy} to determine how they are mapped). */
+        /** Changes the vertex's texture co-ord to be the same as the position, for that face. (Uses {@link #ux} and
+         * {@link #vy} to determine how they are mapped). */
         private void apply(double x, double y, double z) {
             double realu = ux ? x : z;
             double realv = vy ? y : z;
@@ -424,8 +425,8 @@ public class FluidRenderer {
 
         private static Vec3d rotateY(Vec3d vec) {
             return new Vec3d(//
-                1 - vec.zCoord,//
-                vec.yCoord,//
+                1 - vec.zCoord, //
+                vec.yCoord, //
                 vec.xCoord//
             );
         }

@@ -99,9 +99,7 @@ public class PatternPyramid extends Pattern {
         int zUpper = bpt.maxZ;
 
         while (y >= 0 && y <= bpt.maxY) {
-            for (int x = xLower; x <= xUpper; ++x) {
-                bpt.fillLineZ(x, y, zLower, zUpper);
-            }
+            bpt.fillAreaXZ(xLower, xUpper, y, zLower, zUpper);
 
             xLower += dir.xLowerDiff;
             xUpper += dir.xUpperDiff;

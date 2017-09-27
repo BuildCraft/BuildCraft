@@ -7,6 +7,7 @@ import java.util.Set;
 
 import buildcraft.api.core.IBox;
 import buildcraft.api.filler.FilledTemplate;
+import buildcraft.api.filler.FilledTemplate.TemplateState;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IFillerStatementContainer;
 
@@ -166,11 +167,11 @@ public abstract class PatternShape2d extends Pattern {
     private static PositionGetter getFillGetter(FilledTemplate template, PatternParameterAxis axis) {
         switch (axis) {
             case X:
-                return (a, b) -> template.get(0, a, b);
+                return (a, b) -> template.get(0, a, b) == TemplateState.FILL;
             case Y:
-                return (a, b) -> template.get(a, 0, b);
+                return (a, b) -> template.get(a, 0, b) == TemplateState.FILL;
             case Z:
-                return (a, b) -> template.get(a, b, 0);
+                return (a, b) -> template.get(a, b, 0) == TemplateState.FILL;
             default:
                 throw new IllegalArgumentException("Unknown axis " + axis);
         }

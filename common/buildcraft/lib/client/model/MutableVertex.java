@@ -18,6 +18,7 @@ import javax.vecmath.Vector3f;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
@@ -148,22 +149,38 @@ public class MutableVertex {
         tex_v = Float.intBitsToFloat(data[offset + 5]);
         // NORMAL_3B
         normali(data[offset + 6]);
-        lightf(1,1);
+        lightf(1, 1);
     }
 
     // Rendering
 
     public void render(VertexBuffer vb) {
         VertexFormat vf = vb.getVertexFormat();
-        for (VertexFormatElement vfe : vf.getElements()) {
-            if (vfe.getUsage() == EnumUsage.POSITION) renderPosition(vb);
-            else if (vfe.getUsage() == EnumUsage.NORMAL) renderNormal(vb);
-            else if (vfe.getUsage() == EnumUsage.COLOR) renderColour(vb);
-            else if (vfe.getUsage() == EnumUsage.UV) {
-                if (vfe.getIndex() == 0) renderTex(vb);
-                else if (vfe.getIndex() == 1) renderLightMap(vb);
+        if (vf == DefaultVertexFormats.BLOCK) {
+            renderAsBlock(vb);
+        } else {
+            for (VertexFormatElement vfe : vf.getElements()) {
+                if (vfe.getUsage() == EnumUsage.POSITION) renderPosition(vb);
+                else if (vfe.getUsage() == EnumUsage.NORMAL) renderNormal(vb);
+                else if (vfe.getUsage() == EnumUsage.COLOR) renderColour(vb);
+                else if (vfe.getUsage() == EnumUsage.UV) {
+                    if (vfe.getIndex() == 0) renderTex(vb);
+                    else if (vfe.getIndex() == 1) renderLightMap(vb);
+                }
             }
+            vb.endVertex();
         }
+    }
+
+    /** Renders this vertex into the given {@link VertexBuffer}, assuming that the {@link VertexFormat} is
+     * {@link DefaultVertexFormats#BLOCK}.
+     * <p>
+     * Slight performance increase over {@link #render(VertexBuffer)}. */
+    public void renderAsBlock(VertexBuffer vb) {
+        renderPosition(vb);
+        renderColour(vb);
+        renderTex(vb);
+        renderLightMap(vb);
         vb.endVertex();
     }
 

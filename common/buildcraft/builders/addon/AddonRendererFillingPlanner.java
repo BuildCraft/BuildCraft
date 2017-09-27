@@ -21,6 +21,8 @@ import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.client.model.ModelLoader;
 
+import buildcraft.api.filler.FilledTemplate.TemplateState;
+
 import buildcraft.builders.snapshot.Template;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
 
@@ -37,7 +39,8 @@ public class AddonRendererFillingPlanner implements IFastAddonRenderer<AddonFill
         List<BlockPos> list = new ArrayList<>();
         Template tpl = info.getSnapshot();
         for (BlockPos p : BlockPos.getAllInBoxMutable(info.box.min(), info.box.max())) {
-            if (tpl.data.get(tpl.posToIndex(info.fromWorld(p))) && player.world.isAirBlock(p)) {
+            TemplateState state = tpl.data.getOffset(info.fromWorld(p));
+            if (state == TemplateState.FILL && player.world.isAirBlock(p)) {
                 list.add(p.toImmutable());
             }
         }

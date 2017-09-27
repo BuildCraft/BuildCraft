@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders.patterns;
 
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -15,7 +16,9 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IFillerStatementContainer;
 
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.lib.misc.VecUtil;
 
+import buildcraft.core.BCCoreConfig;
 import buildcraft.core.BCCoreSprites;
 
 public class PatternHorizon extends Pattern {
@@ -33,15 +36,14 @@ public class PatternHorizon extends Pattern {
     @Override
     public FilledTemplate createTemplate(IFillerStatementContainer filler, IStatementParameter[] params) {
         IBox box = filler.getBox();
-        int minX = box.min().getX();
-        int minY = box.min().getY() > 0 ? box.min().getY() - 1 : 0;
-        int minZ = box.min().getZ();
+        BlockPos min = box.min().down();
+        if (filler.getFillerWorld().isOutsideBuildHeight(min)) {
+            min = box.min();
+        }
 
-        int maxX = box.max().getX();
-        int maxY = filler.getFillerWorld().getHeight();
-        int maxZ = box.max().getZ();
+        int y = Math.min(min.getY() + 256/* BCCoreConfig.maxMachineReachDistance*/, filler.getFillerWorld().getHeight());
 
-        FilledTemplate bpt = new FilledTemplate(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ));
+        FilledTemplate bpt = new FilledTemplate(min, VecUtil.replaceValue(box.max(), Axis.Y, y));
 
         if (box.size().getY() > 0) {
             bpt.fillPlaneXZ(0);

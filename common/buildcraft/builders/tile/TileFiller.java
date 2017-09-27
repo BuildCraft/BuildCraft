@@ -8,7 +8,6 @@ package buildcraft.builders.tile;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
@@ -173,19 +172,11 @@ public class TileFiller extends TileBC_Neptune
                 blueprintTemplate = new Template();
                 blueprintTemplate.size = patternTemplate.size;
                 blueprintTemplate.offset = BlockPos.ORIGIN;
-                int sx = patternTemplate.sizeX;
-                int sy = patternTemplate.sizeY;
-                int sz = patternTemplate.sizeZ;
-                blueprintTemplate.data = new BitSet();
-                for (int x = 0; x < sx; x++) {
-                    for (int y = 0; y < sy; y++) {
-                        for (int z = 0; z < sz; z++) {
-                            blueprintTemplate.data.set(blueprintTemplate.posToIndex(x, y, z),
-                                patternTemplate.get(x, y, z) ^ invertPattern);
-                        }
-                    }
+                blueprintTemplate.data = patternTemplate;
+                if (invertPattern) {
+                    blueprintTemplate.data.invert();
                 }
-                buildingInfo = blueprintTemplate.new BuildingInfo(box.min(), Rotation.NONE);
+                buildingInfo = blueprintTemplate.new BuildingInfo(patternTemplate.min, Rotation.NONE);
                 builder.updateSnapshot();
             }
         }

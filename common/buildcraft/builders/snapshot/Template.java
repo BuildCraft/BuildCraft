@@ -12,11 +12,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.common.util.Constants;
+
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.enums.EnumSnapshotType;
+import buildcraft.api.filler.FilledTemplate;
 
 public class Template extends Snapshot {
-    public BitSet data;
+    public FilledTemplate data;
 
     @Override
     public Template copy() {
@@ -24,7 +27,7 @@ public class Template extends Snapshot {
         template.size = size;
         template.facing = facing;
         template.offset = offset;
-        template.data = (BitSet) data.clone();
+        template.data = new FilledTemplate(data);
         template.computeKey();
         return template;
     }
@@ -32,20 +35,30 @@ public class Template extends Snapshot {
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = super.serializeNBT();
-        nbt.setByteArray("data", data.toByteArray());
+        nbt.setTag("data", data.writeToNbt());
         return nbt;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
         super.deserializeNBT(nbt);
-        data = BitSet.valueOf(nbt.getByteArray("data"));
-        if (data.length() > size.getX() * size.getY() * size.getZ()) {
-            throw new InvalidInputDataException(
-                "Serialized data has length of " + data.length() +
-                    ", but we expected at most " +
-                    size.getX() * size.getY() * size.getZ() + " (" + size.toString() + ")"
-            );
+        if (nbt.hasKey("data", Constants.NBT.TAG_BYTE_ARRAY)) {
+            data = new FilledTemplate(offset, offset.add(size).add(-1, -1, -1));
+            // Compat for 7.99.7 and below
+            byte[] oldData = nbt.getByteArray("data");
+            BitSet oldSet = BitSet.valueOf(oldData);
+            int i = 0;
+            for (int z = 0; z < data.sizeZ; z++) {
+                for (int y = 0; y < data.sizeY; y++) {
+                    for (int x = 0; x < data.sizeX; x++, i++) {
+                        if (oldSet.get(i)) {
+                            data.fill(x, y, z);
+                        }
+                    }
+                }
+            }
+        } else if (nbt.hasKey("data", Constants.NBT.TAG_COMPOUND)) {
+            data = new FilledTemplate(nbt.getCompoundTag("data"));
         }
     }
 

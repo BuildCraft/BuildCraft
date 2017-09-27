@@ -85,7 +85,7 @@ public class FakeWorld extends World {
                         }
                     }
                     if (snapshot instanceof Template) {
-                        if (((Template) snapshot).data.get(snapshot.posToIndex(x, y, z))) {
+                        if (((Template) snapshot).data.shouldFill(x, y, z)) {
                             setBlockState(pos, Blocks.QUARTZ_BLOCK.getDefaultState());
                         }
                     }

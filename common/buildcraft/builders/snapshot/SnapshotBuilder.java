@@ -98,7 +98,6 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
         this.tile = tile;
     }
 
-    @Nonnull
     protected abstract Snapshot.BuildingInfo getBuildingInfo();
 
     public void validate() {
@@ -114,6 +113,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
     }
 
     protected abstract boolean isAir(BlockPos blockPos);
+
+    protected abstract boolean shouldIgnore(BlockPos blockPos);
 
     protected abstract boolean canPlace(BlockPos blockPos);
 
@@ -483,7 +484,9 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
     protected boolean check(BlockPos blockPos) {
         int i = posToIndex(blockPos);
         byte prev = checkResults[i];
-        if (isAir(blockPos)) {
+        if (shouldIgnore(blockPos)) {
+            checkResults[i] = CHECK_RESULT_CORRECT;
+        } else if (isAir(blockPos)) {
             if (tile.getWorldBC().isAirBlock(blockPos)) {
                 checkResults[i] = CHECK_RESULT_CORRECT;
             } else {

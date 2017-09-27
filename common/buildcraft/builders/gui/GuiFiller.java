@@ -2,6 +2,7 @@ package buildcraft.builders.gui;
 
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.tiles.IControllable.Mode;
 
 import buildcraft.lib.gui.button.IButtonBehaviour;
@@ -58,7 +59,8 @@ public class GuiFiller extends GuiJson<ContainerFiller> {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        SPRITE_PATTERN.delegate = container.tile.patternStatement.get().getSprite();
+        IFillerPattern pattern = container.tile.patternStatement.get();
+        SPRITE_PATTERN.delegate = pattern == null ? null : pattern.getSprite();
         Mode mode = container.tile.getControlMode();
         SPRITE_CONTROL_MODE.delegate = BCCoreSprites.ACTION_MACHINE_CONTROL.get(mode);
     }

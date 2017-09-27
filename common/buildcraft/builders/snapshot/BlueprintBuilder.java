@@ -63,6 +63,11 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     }
 
     @Override
+    protected boolean shouldIgnore(BlockPos blockPos) {
+        return getSchematicBlock(blockPos) == null; // This might be wrong?
+    }
+
+    @Override
     protected boolean isAir(BlockPos blockPos) {
         // noinspection ConstantConditions
         return getSchematicBlock(blockPos) == null || getSchematicBlock(blockPos).isAir();

@@ -161,7 +161,7 @@ public final class PatternSpherePart extends Pattern {
                 for (int y = 0; y <= tpl.maxY; y++) {
                     if (!innerSides.contains(EnumFacing.NORTH)) {
                         for (int z = 0; z <= tpl.maxZ; z++) {
-                            if (tpl.get(x, y, z)) {
+                            if (tpl.shouldFill(x, y, z)) {
                                 tpl2.fill(x, y, z);
                                 break;
                             }
@@ -173,7 +173,7 @@ public final class PatternSpherePart extends Pattern {
 
                     if (!innerSides.contains(EnumFacing.SOUTH)) {
                         for (int z = tpl.maxZ; z >= 0; z--) {
-                            if (tpl.get(x, y, z)) {
+                            if (tpl.shouldFill(x, y, z)) {
                                 tpl2.fill(x, y, z);
                                 break;
                             }
@@ -190,7 +190,7 @@ public final class PatternSpherePart extends Pattern {
                 for (int z = 0; z <= tpl.maxZ; z++) {
                     if (!innerSides.contains(EnumFacing.DOWN)) {
                         for (int y = 0; y <= tpl.maxY; y++) {
-                            if (tpl.get(x, y, z)) {
+                            if (tpl.shouldFill(x, y, z)) {
                                 tpl2.fill(x, y, z);
                                 break;
                             }
@@ -202,7 +202,7 @@ public final class PatternSpherePart extends Pattern {
 
                     if (!innerSides.contains(EnumFacing.UP)) {
                         for (int y = tpl.maxY; y >= 0; y--) {
-                            if (tpl.get(x, y, z)) {
+                            if (tpl.shouldFill(x, y, z)) {
                                 tpl2.fill(x, y, z);
                                 break;
                             }
@@ -219,7 +219,7 @@ public final class PatternSpherePart extends Pattern {
                 for (int z = 0; z <= tpl.maxZ; z++) {
                     if (!innerSides.contains(EnumFacing.WEST)) {
                         for (int x = 0; x <= tpl.maxX; x++) {
-                            if (tpl.get(x, y, z)) {
+                            if (tpl.shouldFill(x, y, z)) {
                                 tpl2.fill(x, y, z);
                                 break;
                             }
@@ -231,7 +231,7 @@ public final class PatternSpherePart extends Pattern {
 
                     if (!innerSides.contains(EnumFacing.EAST)) {
                         for (int x = tpl.maxX; x >= 0; x--) {
-                            if (tpl.get(x, y, z)) {
+                            if (tpl.shouldFill(x, y, z)) {
                                 tpl2.fill(x, y, z);
                                 break;
                             }
