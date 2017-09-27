@@ -85,15 +85,7 @@ public class GuiElementStatementVariant extends GuiElementSimple<GuiBC8<?>> impl
         iteratePossible((pos, slot) -> {
             double x = pos.getX();
             double y = pos.getY();
-            if (slot instanceof IStatementParameter) {
-                ParameterRenderer.draw((IStatementParameter) slot, x, y);
-            } else {
-                ISprite sprite = slot.getSprite();
-                GuiElementStatement.SLOT_COLOUR.drawAt(pos);
-                if (sprite != null) {
-                    GuiIcon.drawAt(sprite, x + 1, y + 1, 16);
-                }
-            }
+            GuiElementStatementSource.drawGuiSlot(slot, x, y);
         });
     }
 
@@ -108,7 +100,7 @@ public class GuiElementStatementVariant extends GuiElementSimple<GuiBC8<?>> impl
     public void addToolTips(List<ToolTip> tooltips) {
         iteratePossible((pos, slot) -> {
             if (pos.contains(gui.mouse)) {
-                tooltips.add(new ToolTip(slot.getDescription()));
+                tooltips.add(new ToolTip(slot.getTooltip()));
             }
         });
     }

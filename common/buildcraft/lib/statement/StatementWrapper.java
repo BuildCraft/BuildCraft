@@ -5,7 +5,10 @@
  */
 package buildcraft.lib.statement;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 import net.minecraft.tileentity.TileEntity;
 
@@ -14,6 +17,9 @@ import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
+
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.misc.LocaleUtil;
 
 public abstract class StatementWrapper implements IStatement, Comparable<StatementWrapper> {
     public final IStatement delegate;
@@ -76,6 +82,22 @@ public abstract class StatementWrapper implements IStatement, Comparable<Stateme
     public abstract StatementWrapper[] getPossible();
 
     @Override
+    public boolean isPossibleOrdered() {
+        return delegate.isPossibleOrdered();
+    }
+
+    @Override
+    public List<String> getTooltip() {
+        List<String> list = delegate.getTooltip();
+        if (sourcePart != EnumPipePart.CENTER) {
+            list = new ArrayList<>(list);
+            String translated = ColourUtil.getTextFullTooltip(sourcePart.face);
+            list.add(LocaleUtil.localize("gate.side", translated));
+        }
+        return list;
+    }
+
+    @Override
     public int compareTo(StatementWrapper o) {
         if (sourcePart != o.sourcePart) {
             return Integer.compare(o.sourcePart.getIndex(), sourcePart.getIndex());
@@ -103,5 +125,21 @@ public abstract class StatementWrapper implements IStatement, Comparable<Stateme
             }
         }
         return getUniqueTag().compareTo(o.getUniqueTag());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sourcePart, getUniqueTag());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null) return false;
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        StatementWrapper other = (StatementWrapper) obj;
+        return sourcePart == other.sourcePart && getUniqueTag().equals(other.getUniqueTag());
     }
 }

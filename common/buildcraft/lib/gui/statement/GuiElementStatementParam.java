@@ -10,9 +10,7 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
-import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.gui.GuiElementSimple;
-import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IInteractionElement;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.json.GuiJson;
@@ -62,10 +60,7 @@ public class GuiElementStatementParam extends GuiElementSimple<GuiJson<?>>
         if (contains(gui.mouse)) {
             IStatementParameter s = get();
             if (s != null) {
-                String desc = s.getDescription();
-                if (desc != null && !desc.isEmpty()) {
-                    tooltips.add(new ToolTip(desc));
-                }
+                tooltips.add(new ToolTip(s.getTooltip()));
             }
         }
     }
@@ -85,13 +80,7 @@ public class GuiElementStatementParam extends GuiElementSimple<GuiJson<?>>
                 return;
             }
             IStatementParameter stmnt = get();
-            if (stmnt == null) {
-                return;
-            }
-            ParameterRenderer.draw(stmnt, x, y);
-            if (!ref.canInteract) {
-                GuiIcon.drawAt(BCLibSprites.LOCK, x + 1, y + 7, 8);
-            }
+            GuiElementStatementSource.drawGuiSlot(stmnt, x, y);
         }
     }
 
@@ -113,7 +102,6 @@ public class GuiElementStatementParam extends GuiElementSimple<GuiJson<?>>
                 IStatementParameter[] possible = param.getPossible(container);
                 if (!param.isPossibleOrdered()) {
                     List<IStatementParameter> list = new ArrayList<>();
-                    list.add(null);
                     for (IStatementParameter p2 : possible) {
                         if (p2 != null) {
                             list.add(p2);

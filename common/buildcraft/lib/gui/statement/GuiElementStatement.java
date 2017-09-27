@@ -75,10 +75,7 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple<
         if (contains(gui.mouse)) {
             S s = get();
             if (s != null) {
-                String desc = s.getDescription();
-                if (desc != null) {
-                    tooltips.add(new ToolTip(desc));
-                }
+                tooltips.add(new ToolTip(s.getTooltip()));
             }
         }
     }

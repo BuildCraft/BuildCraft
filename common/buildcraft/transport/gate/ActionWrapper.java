@@ -6,6 +6,9 @@
 
 package buildcraft.transport.gate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.tileentity.TileEntity;
@@ -62,19 +65,23 @@ public abstract class ActionWrapper extends StatementWrapper implements IActionI
     public ActionWrapper[] getPossible() {
         IStatement[] possible = delegate.getPossible();
         boolean andSides = sourcePart != EnumPipePart.CENTER;
-        ActionWrapper[] real = new ActionWrapper[possible.length + (andSides ? 5 : 0)];
+        List<ActionWrapper> list = new ArrayList<>(possible.length + 5);
         for (int i = 0; i < possible.length; i++) {
-            real[i] = wrap(possible[i], sourcePart.face);
+            list.add(wrap(possible[i], sourcePart.face));
         }
         if (andSides) {
             EnumPipePart part = sourcePart;
             for (int j = 0; j < 5; j++) {
                 int i = j + possible.length;
                 part = part.next();
-                real[i] = wrap(delegate, part.face);
+                ActionWrapper action = wrap(delegate, part.face);
+                if (true) {
+                    // TODO: Check the gui container to see if this is a valid action!
+                    list.add(action);
+                }
             }
         }
-        return real;
+        return list.toArray(new ActionWrapper[0]);
     }
 
     public void actionDeactivated(IStatementContainer source, IStatementParameter[] parameters) {

@@ -1,6 +1,5 @@
 package buildcraft.lib.gui.statement;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -17,8 +16,6 @@ import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
-import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.statement.StatementContext;
 import buildcraft.lib.statement.StatementContext.StatementGroup;
 import buildcraft.lib.statement.StatementWrapper;
@@ -149,16 +146,7 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
         iterateSlots((slot, area) -> {
             if (slot == null) return;
             if (area.contains(gui.mouse)) {
-                String[] lines = { slot.getDescription() };
-                if (slot instanceof StatementWrapper) {
-                    EnumPipePart part = ((StatementWrapper) slot).sourcePart;
-                    if (part != EnumPipePart.CENTER) {
-                        lines = Arrays.copyOf(lines, 2);
-                        String translated = ColourUtil.getTextFullTooltip(part.face);
-                        lines[1] = LocaleUtil.localize("gate.side", translated);
-                    }
-                }
-                tooltips.add(new ToolTip(lines));
+                tooltips.add(new ToolTip(slot.getTooltip()));
             }
         });
     }
