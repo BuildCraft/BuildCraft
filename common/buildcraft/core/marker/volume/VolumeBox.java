@@ -79,7 +79,7 @@ public class VolumeBox {
                 addon.readFromNBT(addonsEntryTag.getCompoundTag("addonData"));
                 EnumAddonSlot slot = NBTUtilBC.readEnum(addonsEntryTag.getTag("slot"), EnumAddonSlot.class);
                 addons.put(slot, addon);
-                addon.onAdded();
+                addon.postReadFromNbt();
             } catch (Exception e) {
                 e.printStackTrace();
             }

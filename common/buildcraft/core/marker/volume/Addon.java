@@ -51,6 +51,9 @@ public abstract class Addon {
 
     public abstract void readFromNBT(NBTTagCompound nbt);
 
+    public void postReadFromNbt() {
+    }
+
     public abstract void toBytes(PacketBufferBC buf);
 
     public abstract void fromBytes(PacketBufferBC buf) throws IOException;

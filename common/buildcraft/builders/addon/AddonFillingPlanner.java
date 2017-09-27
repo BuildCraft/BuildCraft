@@ -81,6 +81,12 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerS
     }
 
     @Override
+    public void postReadFromNbt() {
+        postReadFromNbt();
+        updateBuildingInfo();
+    }
+
+    @Override
     public void onPlayerRightClick(EntityPlayer player) {
         super.onPlayerRightClick(player);
         BCBuildersGuis.FILLING_PLANNER.openGUI(player);
