@@ -35,6 +35,7 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
         xSize = SIZE_BLUEPRINT_X;
         ySize = SIZE_Y;
 
+        // TODO: Convert this gui into JSON, and re-add the progress ledger!
 //        ledgersRight.ledgers.add(new LedgerCounters(ledgersRight, container.tile));
     }
 
