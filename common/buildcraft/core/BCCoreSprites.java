@@ -12,6 +12,7 @@ import java.util.Map;
 
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.tiles.IControllable;
 
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
@@ -78,6 +79,7 @@ public class BCCoreSprites {
     public static final Map<EnumFacing.Axis, SpriteHolder> PARAM_AXIS;
     public static final Map<EnumFacing, SpriteHolder> PARAM_FACE;
     public static final Map<SpherePartType, SpriteHolder> FILLER_SPHERE_PART;
+    public static final Map<EnumPowerStage, SpriteHolder> TRIGGER_POWER_STAGE;
 
     static {
         TRIGGER_TRUE = getHolder("triggers/trigger_true");
@@ -158,6 +160,13 @@ public class BCCoreSprites {
         for (TriggerFluidContainerLevel.TriggerType type : TriggerFluidContainerLevel.TriggerType.VALUES) {
             String tex = "triggers/trigger_liquidcontainer_" + type.name().toLowerCase(Locale.ROOT);
             TRIGGER_FLUID_LEVEL.put(type, getHolder(tex));
+        }
+
+        TRIGGER_POWER_STAGE = new EnumMap<>(EnumPowerStage.class);
+        for (EnumPowerStage stage : EnumPowerStage.values()) {
+            if (stage == EnumPowerStage.BLACK) continue;
+            String tex = "triggers/trigger_engineheat_" + stage.getName();
+            TRIGGER_POWER_STAGE.put(stage, getHolder(tex));
         }
 
         PARAM_XZ_DIR = new EnumMap<>(EnumFacing.class);

@@ -27,16 +27,6 @@ import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
 
 public class TriggerPower extends BCStatement implements ITriggerInternal, ITriggerExternal {
-    public static class Neighbor {
-        public TileEntity tile;
-        public EnumPipePart side;
-
-        public Neighbor(TileEntity tile, EnumPipePart side) {
-            this.tile = tile;
-            this.side = side;
-        }
-    }
-
     private final boolean high;
 
     public TriggerPower(boolean high) {

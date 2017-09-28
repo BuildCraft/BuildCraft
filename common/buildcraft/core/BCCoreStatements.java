@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core;
 
+import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.tiles.IControllable.Mode;
 
@@ -39,6 +40,7 @@ import buildcraft.core.statements.BCStatement;
 import buildcraft.core.statements.CoreActionProvider;
 import buildcraft.core.statements.CoreTriggerProvider;
 import buildcraft.core.statements.StatementParamGateSideOnly;
+import buildcraft.core.statements.TriggerEnginePowerStage;
 import buildcraft.core.statements.TriggerFluidContainer;
 import buildcraft.core.statements.TriggerFluidContainerLevel;
 import buildcraft.core.statements.TriggerInventory;
@@ -94,6 +96,13 @@ public class BCCoreStatements {
     public static final TriggerFluidContainerLevel TRIGGER_FLUID_BELOW_50;
     public static final TriggerFluidContainerLevel TRIGGER_FLUID_BELOW_75;
     public static final TriggerFluidContainerLevel[] TRIGGER_FLUID_LEVEL;
+
+    public static final TriggerEnginePowerStage TRIGGER_POWER_BLUE;
+    public static final TriggerEnginePowerStage TRIGGER_POWER_GREEN;
+    public static final TriggerEnginePowerStage TRIGGER_POWER_YELLOW;
+    public static final TriggerEnginePowerStage TRIGGER_POWER_RED;
+    public static final TriggerEnginePowerStage TRIGGER_POWER_OVERHEAT;
+    public static final TriggerEnginePowerStage[] TRIGGER_POWER_STAGES;
 
     public static final BCStatement[] TRIGGER_INVENTORY_ALL;
     public static final BCStatement[] TRIGGER_FLUID_ALL;
@@ -159,6 +168,13 @@ public class BCCoreStatements {
         TRIGGER_FLUID_LEVEL = new TriggerFluidContainerLevel[] { //
             TRIGGER_FLUID_BELOW_25, TRIGGER_FLUID_BELOW_50, TRIGGER_FLUID_BELOW_75 //
         };
+
+        TRIGGER_POWER_BLUE = new TriggerEnginePowerStage(EnumPowerStage.BLUE);
+        TRIGGER_POWER_GREEN = new TriggerEnginePowerStage(EnumPowerStage.GREEN);
+        TRIGGER_POWER_YELLOW = new TriggerEnginePowerStage(EnumPowerStage.YELLOW);
+        TRIGGER_POWER_RED = new TriggerEnginePowerStage(EnumPowerStage.RED);
+        TRIGGER_POWER_OVERHEAT = new TriggerEnginePowerStage(EnumPowerStage.OVERHEAT);
+        TRIGGER_POWER_STAGES = new TriggerEnginePowerStage[] {};
 
         TRIGGER_INVENTORY_ALL = new BCStatement[7];
         System.arraycopy(TRIGGER_INVENTORY, 0, TRIGGER_INVENTORY_ALL, 0, 4);

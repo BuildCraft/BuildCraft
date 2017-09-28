@@ -41,11 +41,6 @@ public abstract class BCStatement implements IStatement {
     }
 
     @Override
-    public String getDescription() {
-        return "";
-    }
-
-    @Override
     public IStatement rotateLeft() {
         return this;
     }
