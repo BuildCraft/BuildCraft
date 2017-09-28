@@ -12,8 +12,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
-import com.google.common.collect.ImmutableMap;
-
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextFormatting;
@@ -22,7 +20,8 @@ import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.client.render.font.SpecialColourFontRenderer;
 
 public class ColourUtil {
-    public static final String COLOUR_SPECIAL_START = "§z§";
+    public static final char MINECRAFT_FORMAT_CHAR;
+    public static final String COLOUR_SPECIAL_START;
 
     public static final Function<TextFormatting, TextFormatting> getTextFormatForBlack = ColourUtil::getTextFormatForBlack;
     public static final Function<TextFormatting, TextFormatting> getTextFormatForWhite = ColourUtil::getTextFormatForWhite;
@@ -61,6 +60,8 @@ public class ColourUtil {
     private static final TextFormatting[] FACE_TO_FORMAT = new TextFormatting[6];
 
     static {
+        MINECRAFT_FORMAT_CHAR = '\u00a7';
+        COLOUR_SPECIAL_START =  MINECRAFT_FORMAT_CHAR + "z" + MINECRAFT_FORMAT_CHAR;
         for (int i = 0; i < 16; i++) {
             DYES[i] = "dye" + NAMES[i];
             REPLACE_FOR_WHITE[i] = REPLACE_FOR_WHITE_HIGH_CONTRAST[i] = FORMATTING_VALUES[i];
