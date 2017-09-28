@@ -47,13 +47,15 @@ import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.world.WorldEventListenerAdapter;
 
-import buildcraft.builders.snapshot.Snapshot.BuildingInfo;
-
 public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> implements INBTSerializable<NBTTagCompound> {
     private static final int MAX_QUEUE_SIZE = 64;
+    @SuppressWarnings("WeakerAccess")
     protected static final byte CHECK_RESULT_UNKNOWN = 0;
+    @SuppressWarnings("WeakerAccess")
     protected static final byte CHECK_RESULT_CORRECT = 1;
+    @SuppressWarnings("WeakerAccess")
     protected static final byte CHECK_RESULT_TO_BREAK = 2;
+    @SuppressWarnings("WeakerAccess")
     protected static final byte CHECK_RESULT_TO_PLACE = 3;
     private static final byte REQUIRED_UNKNOWN = 0;
     private static final byte REQUIRED_TRUE = 1;
@@ -67,11 +69,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                                       @Nonnull IBlockState oldState,
                                       @Nonnull IBlockState newState,
                                       int flags) {
-            if (tile.getBuilder() != SnapshotBuilder.this) {
-                return;
-            }
-            BuildingInfo buildingInfo = getBuildingInfo();
-            if (buildingInfo != null && buildingInfo.box.contains(pos)) {
+            if (tile.getBuilder() == SnapshotBuilder.this && getBuildingInfo().box.contains(pos)) {
                 if (check(pos)) {
                     afterChecks();
                 }
@@ -80,11 +78,14 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
     };
     private final Queue<BreakTask> breakTasks = new ArrayDeque<>();
     public final Queue<BreakTask> clientBreakTasks = new ArrayDeque<>();
+    @SuppressWarnings("WeakerAccess")
     public final Queue<BreakTask> prevClientBreakTasks = new ArrayDeque<>();
     private final Queue<PlaceTask> placeTasks = new ArrayDeque<>();
     public final Queue<PlaceTask> clientPlaceTasks = new ArrayDeque<>();
+    @SuppressWarnings("WeakerAccess")
     public final Queue<PlaceTask> prevClientPlaceTasks = new ArrayDeque<>();
     private final LinkedList<BlockPos> toCheck = new LinkedList<>();
+    @SuppressWarnings("WeakerAccess")
     protected byte[] checkResults;
     private byte[] requiredCache;
     private int[] breakOrder;
@@ -94,6 +95,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
     public int leftToBreak = 0;
     public int leftToPlace = 0;
 
+    @SuppressWarnings("WeakerAccess")
     protected SnapshotBuilder(T tile) {
         this.tile = tile;
     }
@@ -470,10 +472,12 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
         return isDone;
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected int posToIndex(BlockPos blockPos) {
         return getBuildingInfo().getSnapshot().posToIndex(getBuildingInfo().fromWorld(blockPos));
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected BlockPos indexToPos(int i) {
         return getBuildingInfo().toWorld(getBuildingInfo().getSnapshot().indexToPos(i));
     }
@@ -551,16 +555,19 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
         public final BlockPos pos;
         public long power;
 
+        @SuppressWarnings("WeakerAccess")
         public BreakTask(BlockPos pos, long power) {
             this.pos = pos;
             this.power = power;
         }
 
+        @SuppressWarnings("WeakerAccess")
         public BreakTask(PacketBufferBC buffer) {
             pos = MessageUtil.readBlockPos(buffer);
             power = buffer.readLong();
         }
 
+        @SuppressWarnings("WeakerAccess")
         public BreakTask(NBTTagCompound nbt) {
             pos = NBTUtil.getPosFromTag(nbt.getCompoundTag("pos"));
             power = nbt.getLong("power");
@@ -593,12 +600,14 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
         public final List<ItemStack> items;
         public long power;
 
+        @SuppressWarnings("WeakerAccess")
         public PlaceTask(BlockPos pos, List<ItemStack> items, long power) {
             this.pos = pos;
             this.items = Optional.ofNullable(items).map(ImmutableList::copyOf).orElse(null);
             this.power = power;
         }
 
+        @SuppressWarnings("WeakerAccess")
         public PlaceTask(PacketBufferBC buffer) {
             pos = MessageUtil.readBlockPos(buffer);
             items = IntStream.range(0, buffer.readInt()).mapToObj(j -> {
@@ -611,6 +620,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
             power = buffer.readLong();
         }
 
+        @SuppressWarnings("WeakerAccess")
         public PlaceTask(NBTTagCompound nbt) {
             pos = NBTUtil.getPosFromTag(nbt.getCompoundTag("pos"));
             items = ImmutableList.copyOf(
