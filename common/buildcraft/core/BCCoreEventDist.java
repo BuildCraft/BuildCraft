@@ -39,6 +39,9 @@ public enum BCCoreEventDist {
                     (EntityPlayerMP) event.player
                 )
             );
+            WorldSavedDataVolumeBoxes.get(((EntityPlayerMP) event.player).world).boxes.stream()
+                .filter(box -> box.isPausedEditingBy(event.player))
+                .forEach(VolumeBox::resumeEditing);
         }
     }
 }

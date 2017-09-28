@@ -98,6 +98,7 @@ public class VolumeBox {
         fromBytes(buf);
     }
 
+    @SuppressWarnings("WeakerAccess")
     public boolean isEditing() {
         return player != null;
     }
@@ -122,6 +123,7 @@ public class VolumeBox {
         addons.values().forEach(Addon::onBoxSizeChange);
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void pauseEditing() {
         oldPlayer = player;
         player = null;
@@ -144,6 +146,7 @@ public class VolumeBox {
         return this.oldPlayer != null && Objects.equals(this.oldPlayer, player.getGameProfile().getId());
     }
 
+    @SuppressWarnings("WeakerAccess")
     public EntityPlayer getPlayer(World world) {
         return world.getPlayerEntityByUUID(player);
     }
@@ -155,10 +158,12 @@ public class VolumeBox {
         this.oldMax = oldMax;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public BlockPos getHeld() {
         return held;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public double getDist() {
         return dist;
     }
@@ -240,7 +245,7 @@ public class VolumeBox {
                 addon.fromBytes(buf);
                 newAddons.put(slot, addon);
             } catch (InstantiationException | IllegalAccessException e) {
-                throw new IOException("Failed to deserialise addon!", e);
+                throw new IOException("Failed to deserialize addon!", e);
             }
         }
         addons.keySet().removeIf(slot -> !newAddons.containsKey(slot));
