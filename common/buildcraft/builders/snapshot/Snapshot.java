@@ -49,30 +49,37 @@ public abstract class Snapshot {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public static int posToIndex(int sizeX, int sizeY, int sizeZ, int x, int y, int z) {
         return ((z * sizeY) + y) * sizeX + x;
     }
 
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public static int posToIndex(BlockPos size, int x, int y, int z) {
         return posToIndex(size.getX(), size.getY(), size.getZ(), x, y, z);
     }
 
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public static int posToIndex(int sizeX, int sizeY, int sizeZ, BlockPos pos) {
         return posToIndex(sizeX, sizeY, sizeZ, pos.getX(), pos.getY(), pos.getZ());
     }
 
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public static int posToIndex(BlockPos size, BlockPos pos) {
         return posToIndex(size.getX(), size.getY(), size.getZ(), pos.getX(), pos.getY(), pos.getZ());
     }
 
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public int posToIndex(int x, int y, int z) {
         return posToIndex(size, x, y, z);
     }
 
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public int posToIndex(BlockPos pos) {
         return posToIndex(size, pos);
     }
 
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public static BlockPos indexToPos(int sizeX, int sizeY, int sizeZ, int i) {
         return new BlockPos(
             i % sizeX,
@@ -81,10 +88,12 @@ public abstract class Snapshot {
         );
     }
 
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public static BlockPos indexToPos(BlockPos size, int i) {
         return indexToPos(size.getX(), size.getY(), size.getZ(), i);
     }
 
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public BlockPos indexToPos(int i) {
         return indexToPos(size, i);
     }
@@ -149,21 +158,25 @@ public abstract class Snapshot {
         @Nullable // for client storage
         public final Header header;
 
+        @SuppressWarnings("WeakerAccess")
         public Key() {
             this.hash = new byte[0];
             this.header = null;
         }
 
+        @SuppressWarnings("WeakerAccess")
         public Key(Key oldKey, byte[] hash) {
             this.hash = hash;
             this.header = oldKey.header;
         }
 
+        @SuppressWarnings("WeakerAccess")
         public Key(Key oldKey, @Nullable Header header) {
             this.hash = oldKey.hash;
             this.header = header;
         }
 
+        @SuppressWarnings("WeakerAccess")
         public Key(NBTTagCompound nbt) {
             hash = nbt.getByteArray("hash");
             header = nbt.hasKey("header") ? new Header(nbt.getCompoundTag("header")) : null;
@@ -217,6 +230,7 @@ public abstract class Snapshot {
         public final Date created;
         public final String name;
 
+        @SuppressWarnings("WeakerAccess")
         public Header(Key key, UUID owner, Date created, String name) {
             this.key = key;
             this.owner = owner;
@@ -224,6 +238,7 @@ public abstract class Snapshot {
             this.name = name;
         }
 
+        @SuppressWarnings("WeakerAccess")
         public Header(NBTTagCompound nbt) {
             key = new Key(nbt.getCompoundTag("key"));
             owner = nbt.getUniqueId("owner");
@@ -231,6 +246,7 @@ public abstract class Snapshot {
             name = nbt.getString("name");
         }
 
+        @SuppressWarnings("WeakerAccess")
         public Header(PacketBufferBC buffer) {
             key = new Key(buffer);
             owner = buffer.readUniqueId();
@@ -284,6 +300,7 @@ public abstract class Snapshot {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     public abstract class BuildingInfo {
         public final BlockPos basePos;
         public final BlockPos offsetPos;
@@ -294,8 +311,8 @@ public abstract class Snapshot {
             this.basePos = basePos;
             this.offsetPos = basePos.add(offset.rotate(rotation));
             this.rotation = rotation;
-            this.box.extendToEncompass(toWorld(BlockPos.ORIGIN));
-            this.box.extendToEncompass(toWorld(size.subtract(new BlockPos(1, 1, 1))));
+            this.box.setMin(toWorld(BlockPos.ORIGIN));
+            this.box.setMax(toWorld(size.subtract(new BlockPos(1, 1, 1))));
         }
 
         public BlockPos toWorld(BlockPos blockPos) {

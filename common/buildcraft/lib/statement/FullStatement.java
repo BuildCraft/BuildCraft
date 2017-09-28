@@ -194,9 +194,10 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
         }
     }
 
+    @FunctionalInterface
     public interface IStatementChangeListener {
-        /** @param stmnt The statement that changed
+        /** @param statement The statement that changed
          * @param paramIndex The index of the parameter that changed, or -1 if the main {@link IStatement} changed. */
-        void onChange(FullStatement<?> stmnt, int paramIndex);
+        void onChange(FullStatement<?> statement, int paramIndex);
     }
 }

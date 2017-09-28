@@ -55,9 +55,9 @@ public class TriggerType extends StatementType<TriggerWrapper> {
         if (buffer.readBoolean()) {
             String name = buffer.readString();
             EnumPipePart part = buffer.readEnumValue(EnumPipePart.class);
-            IStatement stmnt = StatementManager.statements.get(name);
-            if (stmnt instanceof ITrigger) {
-                return TriggerWrapper.wrap(stmnt, part.face);
+            IStatement statement = StatementManager.statements.get(name);
+            if (statement instanceof ITrigger) {
+                return TriggerWrapper.wrap(statement, part.face);
             } else {
                 throw new InvalidInputDataException("Unknown trigger '" + name + "'");
             }

@@ -8,6 +8,7 @@ package buildcraft.builders.addon;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 import javax.annotation.Nullable;
 
@@ -15,12 +16,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.IBox;
-import buildcraft.api.filler.FilledTemplate;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IFillerStatementContainer;
@@ -31,6 +29,7 @@ import buildcraft.lib.statement.FullStatement;
 import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.BCBuildersSprites;
 import buildcraft.builders.filler.FillerType;
+import buildcraft.builders.filler.Filling;
 import buildcraft.builders.snapshot.Template;
 import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.AddonDefaultRenderer;
@@ -38,29 +37,26 @@ import buildcraft.core.marker.volume.IFastAddonRenderer;
 import buildcraft.core.marker.volume.ISingleAddon;
 
 public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerStatementContainer {
-    public final FullStatement<IFillerPattern> pattern = new FullStatement<>(FillerType.INSTANCE, 4, null);
+    public final FullStatement<IFillerPattern> patternStatement = new FullStatement<>(
+        FillerType.INSTANCE,
+        4,
+        null
+    );
     public boolean inverted;
     @Nullable
     public Template.BuildingInfo buildingInfo;
 
     public void updateBuildingInfo() {
-        IStatementParameter[] params = new IStatementParameter[pattern.maxParams];
-        for (int i = 0; i < params.length; i++) {
-            params[i] = pattern.get(i);
-        }
-        FilledTemplate patternTemplate = pattern.get().createTemplate(this, params);
-        if (patternTemplate == null) {
-            buildingInfo = null;
-        } else {
-            Template blueprintTemplate = new Template();
-            blueprintTemplate.size = patternTemplate.size;
-            blueprintTemplate.offset = BlockPos.ORIGIN;
-            blueprintTemplate.data = patternTemplate;
-            if (inverted) {
-                blueprintTemplate.data.invert();
-            }
-            buildingInfo = blueprintTemplate.new BuildingInfo(patternTemplate.min, Rotation.NONE);
-        }
+        buildingInfo = Filling.createBuildingInfo(
+            box.box.min(),
+            box.box.size(),
+            patternStatement,
+            this,
+            IntStream.range(0, patternStatement.maxParams)
+                .mapToObj(patternStatement::get)
+                .toArray(IStatementParameter[]::new),
+            inverted
+        );
     }
 
     @Override
@@ -71,7 +67,7 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerS
     @Override
     public IFastAddonRenderer<AddonFillingPlanner> getRenderer() {
         return new AddonDefaultRenderer<AddonFillingPlanner>(BCBuildersSprites.FILLING_PLANNER.getSprite())
-                .then(new AddonRendererFillingPlanner());
+            .then(new AddonRendererFillingPlanner());
     }
 
     @Override
@@ -94,26 +90,26 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerS
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        nbt.setTag("pattern", pattern.writeToNbt());
+        nbt.setTag("patternStatement", patternStatement.writeToNbt());
         nbt.setBoolean("inverted", inverted);
         return nbt;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-        pattern.readFromNbt(nbt.getCompoundTag("pattern"));
+        patternStatement.readFromNbt(nbt.getCompoundTag("patternStatement"));
         inverted = nbt.getBoolean("inverted");
     }
 
     @Override
     public void toBytes(PacketBufferBC buf) {
-        pattern.writeToBuffer(buf);
+        patternStatement.writeToBuffer(buf);
         buf.writeBoolean(inverted);
     }
 
     @Override
     public void fromBytes(PacketBufferBC buf) throws IOException {
-        pattern.readFromBuffer(buf);
+        patternStatement.readFromBuffer(buf);
         inverted = buf.readBoolean();
         updateBuildingInfo();
     }
@@ -147,11 +143,8 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerS
 
     @Override
     public void setPattern(IFillerPattern pattern, IStatementParameter[] params) {
-        this.pattern.set(pattern);
-        params = Arrays.copyOf(params, this.pattern.maxParams);
-        for (int i = 0; i < this.pattern.maxParams; i++) {
-            this.pattern.set(i, params[i]);
-        }
+        patternStatement.set(pattern);
+        IntStream.range(0, patternStatement.maxParams).forEach(i -> patternStatement.set(i, params[i]));
         updateBuildingInfo();
     }
 }

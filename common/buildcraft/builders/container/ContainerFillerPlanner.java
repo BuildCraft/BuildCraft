@@ -58,7 +58,7 @@ public class ContainerFillerPlanner extends ContainerBC_Neptune {
         return true;
     }
 
-    private void onStatementChange(FullStatement<?> stmnt, int paramIndex) {
+    private void onStatementChange(FullStatement<?> statement, int paramIndex) {
         sendData();
     }
 
@@ -70,9 +70,11 @@ public class ContainerFillerPlanner extends ContainerBC_Neptune {
 
     private void sendData() {
         if (fillerPlanner == null) return;
-        final FullStatement<IFillerPattern> stmnt = player.world.isRemote ? patternClient : fillerPlanner.pattern;
+        final FullStatement<IFillerPattern> patternStatement = player.world.isRemote
+            ? patternClient
+            : fillerPlanner.patternStatement;
         sendMessage(NET_DATA, buffer -> {
-            stmnt.writeToBuffer(buffer);
+            patternStatement.writeToBuffer(buffer);
             buffer.writeBoolean(fillerPlanner.inverted);
         });
     }
@@ -82,18 +84,19 @@ public class ContainerFillerPlanner extends ContainerBC_Neptune {
         if (fillerPlanner == null) return;
         if (side == Side.SERVER) {
             if (id == NET_DATA) {
-                fillerPlanner.pattern.readFromBuffer(buffer);
+                fillerPlanner.patternStatement.readFromBuffer(buffer);
                 fillerPlanner.inverted = buffer.readBoolean();
                 fillerPlanner.updateBuildingInfo();
+                WorldSavedDataVolumeBoxes.get(player.world).markDirty();
                 sendData();
             }
         } else if (side == Side.CLIENT) {
             if (id == NET_DATA) {
-                fillerPlanner.pattern.readFromBuffer(buffer);
+                fillerPlanner.patternStatement.readFromBuffer(buffer);
                 fillerPlanner.inverted = buffer.readBoolean();
-                patternClient.set(fillerPlanner.pattern.get());
+                patternClient.set(fillerPlanner.patternStatement.get());
                 for (int i = 0; i < 4; i++) {
-                    patternClient.getParamRef(i).set(fillerPlanner.pattern.getParamRef(i).get());
+                    patternClient.getParamRef(i).set(fillerPlanner.patternStatement.getParamRef(i).get());
                 }
                 fillerPlanner.updateBuildingInfo();
             }

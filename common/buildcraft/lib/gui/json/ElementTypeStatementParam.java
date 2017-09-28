@@ -58,8 +58,8 @@ public class ElementTypeStatementParam extends ElementType {
 
         int index = resolveEquationInt(json, "index", ctx);
 
-        FullStatement<?> stmnt = gui.properties.get(source, FullStatement.class);
-        IStatementContainer stmntContainer = gui.properties.get("statement.container", IStatementContainer.class);
-        return new GuiElementStatementParam(gui, area, stmntContainer, stmnt, index, draw);
+        FullStatement<?> fullStatement = gui.properties.get(source, FullStatement.class);
+        IStatementContainer statementContainer = gui.properties.get("statement.container", IStatementContainer.class);
+        return new GuiElementStatementParam(gui, area, statementContainer, fullStatement, index, draw);
     }
 }

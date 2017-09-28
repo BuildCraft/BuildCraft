@@ -7,8 +7,10 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.IntStream;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -17,7 +19,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -27,8 +28,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
-import buildcraft.api.filler.FilledTemplate;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.mj.MjAPI;
@@ -38,7 +39,6 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IFillerStatementContainer;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.api.tiles.TilesAPI;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
@@ -54,13 +54,18 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
-import buildcraft.builders.BCBuildersBlocks;
+import buildcraft.builders.addon.AddonFillingPlanner;
 import buildcraft.builders.filler.FillerType;
+import buildcraft.builders.filler.Filling;
 import buildcraft.builders.snapshot.ITileForTemplateBuilder;
 import buildcraft.builders.snapshot.ItemBlocks;
+import buildcraft.builders.snapshot.SnapshotBuilder;
 import buildcraft.builders.snapshot.Template;
 import buildcraft.builders.snapshot.Template.BuildingInfo;
 import buildcraft.builders.snapshot.TemplateBuilder;
+import buildcraft.core.marker.volume.ClientVolumeBoxes;
+import buildcraft.core.marker.volume.EnumAddonSlot;
+import buildcraft.core.marker.volume.Lock;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 
@@ -68,9 +73,13 @@ public class TileFiller extends TileBC_Neptune
     implements ITickable, IDebuggable, ITileForTemplateBuilder, IFillerStatementContainer, IControllable {
 
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("filler");
+    @SuppressWarnings("WeakerAccess")
     public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
+    @SuppressWarnings("WeakerAccess")
     public static final int NET_INVERT = IDS.allocId("INVERT");
+    @SuppressWarnings("WeakerAccess")
     public static final int NET_PATTERN = IDS.allocId("PATTERN");
+    @SuppressWarnings("WeakerAccess")
     public static final int NET_BOX = IDS.allocId("BOX");
 
     @Override
@@ -87,24 +96,25 @@ public class TileFiller extends TileBC_Neptune
             EnumPipePart.VALUES
         );
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
-    public TemplateBuilder builder = new TemplateBuilder(this);
     private boolean canExcavate = true;
-    private boolean invertPattern = false;
+    private boolean inverted = false;
     private boolean finished = false;
-    private int lockedTicks = 0;
+    private byte lockedTicks = 0;
     private Mode mode = Mode.ON;
 
     public final Box box = new Box();
-    public boolean placedWithVolume = false;
-    public boolean placedWithVolumeType = false;
+    public AddonFillingPlanner addon;
+    public boolean markerBox = false;
 
-    public final FullStatement<IFillerPattern> patternStatement;
-    private FilledTemplate patternTemplate;
-    private Template blueprintTemplate;
+    public final FullStatement<IFillerPattern> patternStatement = new FullStatement<>(
+        FillerType.INSTANCE,
+        4,
+        (statement, paramIndex) -> onStatementChange()
+    );
     private BuildingInfo buildingInfo;
+    public TemplateBuilder builder = new TemplateBuilder(this);
 
     public TileFiller() {
-        patternStatement = new FullStatement<>(FillerType.INSTANCE, 4, this::onStatementChange);
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
         caps.addCapabilityInstance(TilesAPI.CAP_CONTROLLABLE, this, EnumPipePart.VALUES);
     }
@@ -115,37 +125,65 @@ public class TileFiller extends TileBC_Neptune
         if (world.isRemote) {
             return;
         }
-        IBlockState blockState = getCurrentStateForBlock(BCBuildersBlocks.filler);
-        if (blockState == null) {
-            return;
-        }
+        IBlockState blockState = world.getBlockState(pos);
         WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
-        EnumFacing facing = blockState.getValue(BlockBCBase_Neptune.PROP_FACING);
-        BlockPos volumePos = pos.offset(facing.getOpposite());
-        VolumeBox volumeBox = volumeBoxes.getBoxAt(volumePos);
-        if (volumeBox != null && volumeBox.box.isOnEdge(volumePos)) {
-            box.setMin(volumeBox.box.min());
-            box.setMax(volumeBox.box.max());
-            placedWithVolume = true;
-            sendNetworkUpdate(NET_BOX);
-        } else {
-            TileEntity areaProvider = getNeighbourTile(facing.getOpposite());
-            if (areaProvider != null) {
-                ITileAreaProvider provider = areaProvider.getCapability(TilesAPI.CAP_TILE_AREA_PROVIDER, facing);
-                if (provider != null && provider.isValidFromLocation(pos)) {
-                    box.setMin(provider.min());
-                    box.setMax(provider.max());
-                    provider.removeFromWorld();
-                    sendNetworkUpdate(NET_BOX);
-                }
+        BlockPos offsetPos = pos.offset(blockState.getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite());
+        VolumeBox volumeBox = volumeBoxes.getBoxAt(offsetPos);
+        TileEntity tile = world.getTileEntity(offsetPos);
+        if (volumeBox != null) {
+            addon = (AddonFillingPlanner) volumeBox.addons
+                .values()
+                .stream()
+                .filter(AddonFillingPlanner.class::isInstance)
+                .findFirst()
+                .orElse(null);
+            if (addon != null) {
+                volumeBox.locks.add(
+                    new Lock(
+                        new Lock.Cause.CauseBlock(pos, blockState.getBlock()),
+                        new Lock.Target.TargetAddon(addon.getSlot()),
+                        new Lock.Target.TargetResize(),
+                        new Lock.Target.TargetUsedByMachine(
+                            Lock.Target.TargetUsedByMachine.EnumType.STRIPES_WRITE
+                        )
+                    )
+                );
+                volumeBoxes.markDirty();
+                addon.updateBuildingInfo();
+            } else {
+                box.reset();
+                box.setMin(volumeBox.box.min());
+                box.setMax(volumeBox.box.max());
+                volumeBox.locks.add(
+                    new Lock(
+                        new Lock.Cause.CauseBlock(pos, blockState.getBlock()),
+                        new Lock.Target.TargetResize(),
+                        new Lock.Target.TargetUsedByMachine(
+                            Lock.Target.TargetUsedByMachine.EnumType.STRIPES_WRITE
+                        )
+                    )
+                );
+                volumeBoxes.markDirty();
+                updateBuildingInfo();
             }
+        } else if (tile instanceof IAreaProvider) {
+            IAreaProvider provider = (IAreaProvider) tile;
+            box.reset();
+            box.setMin(provider.min());
+            box.setMax(provider.max());
+            markerBox = true;
+            provider.removeFromWorld();
+            updateBuildingInfo();
         }
+        sendNetworkUpdate(NET_RENDER_DATA);
     }
 
     @Override
     public void update() {
         if (world.isRemote) {
-            builder.tick();
+            if (isValid()) {
+                builder.tick();
+            }
             patternStatement.canInteract = !isLocked();
             return;
         }
@@ -154,32 +192,10 @@ public class TileFiller extends TileBC_Neptune
         if (lockedTicks < 0) {
             lockedTicks = 0;
         }
-        IFillerPattern p = patternStatement.get();
-        if (hasBox() && p != null && patternTemplate == null) {
-            IStatementParameter[] params = new IStatementParameter[patternStatement.maxParams];
-            for (int i = 0; i < params.length; i++) {
-                params[i] = patternStatement.get(i);
-            }
-            patternTemplate = p.createTemplate(this, params);
-            if (patternTemplate == null) {
-                blueprintTemplate = null;
-                buildingInfo = null;
-            } else {
-                blueprintTemplate = new Template();
-                blueprintTemplate.size = patternTemplate.size;
-                blueprintTemplate.offset = BlockPos.ORIGIN;
-                blueprintTemplate.data = patternTemplate;
-                if (invertPattern) {
-                    blueprintTemplate.data.invert();
-                }
-                buildingInfo = blueprintTemplate.new BuildingInfo(patternTemplate.min, Rotation.NONE);
-                builder.updateSnapshot();
-            }
-        }
-        if (mode == Mode.OFF || (mode == Mode.ON && finished)) {
+        if (mode == Mode.OFF/* || (mode == Mode.ON && finished)*/) { // TODO: finished
             return;
         }
-        if (buildingInfo != null) {
+        if (isValid()) {
             finished = builder.tick();
         }
     }
@@ -213,10 +229,16 @@ public class TileFiller extends TileBC_Neptune
                 buffer.writeEnumValue(mode);
             } else if (id == NET_BOX) {
                 box.writeData(buffer);
+                buffer.writeBoolean(markerBox);
+                buffer.writeBoolean(addon != null);
+                if (addon != null) {
+                    buffer.writeUniqueId(addon.box.id);
+                    buffer.writeEnumValue(addon.getSlot());
+                }
             } else if (id == NET_CAN_EXCAVATE) {
                 buffer.writeBoolean(canExcavate);
             } else if (id == NET_INVERT) {
-                buffer.writeBoolean(invertPattern);
+                buffer.writeBoolean(inverted);
             } else if (id == NET_PATTERN) {
                 patternStatement.writeToBuffer(buffer);
             }
@@ -236,14 +258,27 @@ public class TileFiller extends TileBC_Neptune
                 readPayload(NET_PATTERN, buffer, side, ctx);
                 builder.readFromByteBuf(buffer);
                 finished = buffer.readBoolean();
-                lockedTicks = buffer.readBoolean() ? 1 : 0;
+                lockedTicks = buffer.readBoolean() ? (byte) 1 : (byte) 0;
                 mode = buffer.readEnumValue(Mode.class);
             } else if (id == NET_BOX) {
                 box.readData(buffer);
+                markerBox = buffer.readBoolean();
+                if (buffer.readBoolean()) {
+                    UUID boxId = buffer.readUniqueId();
+                    VolumeBox volumeBox = world.isRemote
+                        ? ClientVolumeBoxes.INSTANCE.boxes.stream()
+                        .filter(localVolumeBox -> localVolumeBox.id.equals(boxId))
+                        .findFirst()
+                        .orElseThrow(NullPointerException::new)
+                        : WorldSavedDataVolumeBoxes.get(world).getBoxFromId(boxId);
+                    addon = (AddonFillingPlanner) volumeBox
+                        .addons
+                        .get(buffer.readEnumValue(EnumAddonSlot.class));
+                }
             } else if (id == NET_CAN_EXCAVATE) {
                 canExcavate = buffer.readBoolean();
             } else if (id == NET_INVERT) {
-                invertPattern = buffer.readBoolean();
+                inverted = buffer.readBoolean();
             } else if (id == NET_PATTERN) {
                 patternStatement.readFromBuffer(buffer);
             }
@@ -253,18 +288,38 @@ public class TileFiller extends TileBC_Neptune
                 canExcavate = buffer.readBoolean();
                 sendNetworkGuiUpdate(NET_CAN_EXCAVATE);
             } else if (id == NET_INVERT) {
-                invertPattern = buffer.readBoolean();
+                inverted = buffer.readBoolean();
                 sendNetworkGuiUpdate(NET_INVERT);
             } else if (id == NET_PATTERN) {
                 if (isLocked()) {
-                    new FullStatement<>(FillerType.INSTANCE, 4, (a, b) -> {}).readFromBuffer(buffer);
+                    new FullStatement<>(
+                        FillerType.INSTANCE,
+                        4,
+                        (a, b) -> {
+                        }
+                    ).readFromBuffer(buffer);
                 } else {
                     patternStatement.readFromBuffer(buffer);
                     sendNetworkUpdate(NET_PATTERN);
-                    onStatementChange(null, -1);
+                    onStatementChange();
                 }
             }
         }
+    }
+
+    private void updateBuildingInfo() {
+        Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::cancel);
+        buildingInfo = (hasBox() && addon == null) ? Filling.createBuildingInfo(
+            box.min(),
+            box.size(),
+            patternStatement,
+            this,
+            IntStream.range(0, patternStatement.maxParams)
+                .mapToObj(patternStatement::get)
+                .toArray(IStatementParameter[]::new),
+            inverted
+        ) : null;
+        Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::updateSnapshot);
     }
 
     public void sendCanExcavate(boolean newValue) {
@@ -275,11 +330,10 @@ public class TileFiller extends TileBC_Neptune
         MessageManager.sendToServer(createMessage(NET_INVERT, buffer -> buffer.writeBoolean(newValue)));
     }
 
-    private void onStatementChange(FullStatement<?> stmnt, int paramIndex) {
-        createAndSendMessage(NET_PATTERN, b -> patternStatement.writeToBuffer(b));
-        patternTemplate = null;
-        blueprintTemplate = null;
+    private void onStatementChange() {
+        createAndSendMessage(NET_PATTERN, patternStatement::writeToBuffer);
         finished = false;
+        updateBuildingInfo();
     }
 
     // Read-write
@@ -288,13 +342,19 @@ public class TileFiller extends TileBC_Neptune
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         nbt.setTag("battery", battery.serializeNBT());
-        nbt.setTag("pattern", patternStatement.writeToNbt());
-        nbt.setTag("box", box.writeToNBT());
         nbt.setBoolean("canExcavate", canExcavate);
-        nbt.setBoolean("invertPattern", invertPattern);
+        nbt.setBoolean("inverted", inverted);
         nbt.setBoolean("finished", finished);
-        nbt.setByte("lockedTicks", (byte) lockedTicks);
+        nbt.setByte("lockedTicks", lockedTicks);
         nbt.setTag("mode", NBTUtilBC.writeEnum(mode));
+        nbt.setTag("box", box.writeToNBT());
+        if (addon != null) {
+            nbt.setUniqueId("addonBoxId", addon.box.id);
+            nbt.setTag("addonSlot", NBTUtilBC.writeEnum(addon.getSlot()));
+        }
+        nbt.setBoolean("markerBox", markerBox);
+        nbt.setTag("patternStatement", patternStatement.writeToNbt());
+        Optional.ofNullable(getBuilder()).ifPresent(builder -> nbt.setTag("builder", builder.serializeNBT()));
         return nbt;
     }
 
@@ -302,15 +362,24 @@ public class TileFiller extends TileBC_Neptune
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         battery.deserializeNBT(nbt.getCompoundTag("battery"));
-        invertPattern = nbt.getBoolean("invertPattern");
         canExcavate = nbt.getBoolean("canExcavate");
+        inverted = nbt.getBoolean("inverted");
         finished = nbt.getBoolean("finished");
         lockedTicks = nbt.getByte("lockedTicks");
-        mode = NBTUtilBC.readEnum(nbt.getTag("mode"), Mode.class);
-        if (mode == null) mode = Mode.ON;
+        mode = Optional.ofNullable(NBTUtilBC.readEnum(nbt.getTag("mode"), Mode.class)).orElse(Mode.ON);
         box.initialize(nbt.getCompoundTag("box"));
-        patternStatement.readFromNbt(nbt.getCompoundTag("pattern"));
-        patternTemplate = null;
+        if (nbt.hasKey("addonBoxId") && nbt.hasKey("addonSlot")) {
+            addon = (AddonFillingPlanner) WorldSavedDataVolumeBoxes.get(world)
+                .getBoxFromId(nbt.getUniqueId("addonBoxId"))
+                .addons
+                .get(NBTUtilBC.readEnum(nbt.getTag("addonSlot"), EnumAddonSlot.class));
+        }
+        markerBox = nbt.getBoolean("markerBox");
+        patternStatement.readFromNbt(nbt.getCompoundTag("patternStatement"));
+        if (nbt.hasKey("builder")) {
+            Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::updateSnapshot);
+            Optional.ofNullable(getBuilder()).ifPresent(builder -> builder.deserializeNBT(nbt.getCompoundTag("builder")));
+        }
     }
 
     // Rendering
@@ -321,6 +390,7 @@ public class TileFiller extends TileBC_Neptune
         return true;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
@@ -341,8 +411,7 @@ public class TileFiller extends TileBC_Neptune
         left.add("mode = " + mode);
         left.add("is_finished = " + finished);
         left.add("lockedTicks = " + lockedTicks);
-        left.add("pattern.template = " + (patternTemplate == null ? "null" : "[...]"));
-        left.add("builder.template = " + (blueprintTemplate == null ? "null" : "[...]"));
+        left.add("addon = " + addon);
     }
 
     @Override
@@ -374,11 +443,11 @@ public class TileFiller extends TileBC_Neptune
     }
 
     public boolean shouldInvert() {
-        return invertPattern;
+        return inverted;
     }
 
     public boolean isFinished() {
-        return mode == Mode.LOOP ? false : this.finished;
+        return mode != Mode.LOOP && this.finished;
     }
 
     public boolean isLocked() {
@@ -387,12 +456,14 @@ public class TileFiller extends TileBC_Neptune
 
     @Override
     public TemplateBuilder getBuilder() {
-        return builder;
+        return isValid() ? builder : null;
     }
 
     @Override
     public Template.BuildingInfo getTemplateBuildingInfo() {
-        return buildingInfo;
+        return isValid()
+            ? addon != null ? addon.buildingInfo : buildingInfo
+            : null;
     }
 
     @Override
@@ -400,7 +471,7 @@ public class TileFiller extends TileBC_Neptune
         return invResources;
     }
 
-    // IFillerStatmentContainer
+    // IFillerStatementContainer
 
     @Override
     public TileEntity getTile() {
@@ -414,7 +485,11 @@ public class TileFiller extends TileBC_Neptune
 
     @Override
     public boolean hasBox() {
-        return box.isInitialized();
+        return addon != null || box.isInitialized();
+    }
+
+    public boolean isValid() {
+        return hasBox() && buildingInfo != null;
     }
 
     @Override
@@ -422,20 +497,15 @@ public class TileFiller extends TileBC_Neptune
         if (!hasBox()) {
             throw new IllegalStateException("Called getBox() when hasBox() returned false!");
         }
-        return box;
+        return box.isInitialized() ? box : addon.box.box;
     }
 
     @Override
     public void setPattern(IFillerPattern pattern, IStatementParameter[] params) {
-        this.patternStatement.set(pattern);
-        params = Arrays.copyOf(params, this.patternStatement.maxParams);
-        for (int i = 0; i < this.patternStatement.maxParams; i++) {
-            this.patternStatement.set(i, params[i]);
-        }
+        patternStatement.set(pattern);
+        IntStream.range(0, patternStatement.maxParams).forEach(i -> patternStatement.set(i, params[i]));
         finished = false;
         lockedTicks = 3;
-        // patternTemplate = null;
-        // blueprintTemplate = null;
     }
 
     // IControllable

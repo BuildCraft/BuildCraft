@@ -85,10 +85,10 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple<
     @Override
     public void drawBackground(float partialTicks) {
         if (draw) {
-            S stmnt = ref.get();
+            S statement = ref.get();
             double x = getX();
             double y = getY();
-            GuiElementStatementSource.drawGuiSlot(stmnt, x, y);
+            GuiElementStatementSource.drawGuiSlot(statement, x, y);
             if (!ref.canInteract) {
                 GuiIcon.drawAt(BCLibSprites.LOCK, x + 1, y + 1, 16);
             }

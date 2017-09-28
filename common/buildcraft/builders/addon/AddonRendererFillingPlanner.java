@@ -29,26 +29,22 @@ import buildcraft.core.marker.volume.IFastAddonRenderer;
 public class AddonRendererFillingPlanner implements IFastAddonRenderer<AddonFillingPlanner> {
     @Override
     public void renderAddonFast(AddonFillingPlanner addon, EntityPlayer player, float partialTicks, VertexBuffer vb) {
-        Template.BuildingInfo info = addon.buildingInfo;
-        if (info == null) {
+        Template.BuildingInfo buildingInfo = addon.buildingInfo;
+        if (buildingInfo == null) {
             return;
         }
         Profiler prof = Minecraft.getMinecraft().mcProfiler;
         prof.startSection("filler_planner");
         prof.startSection("iter");
         List<BlockPos> list = new ArrayList<>();
-        Template tpl = info.getSnapshot();
-        for (BlockPos p : BlockPos.getAllInBoxMutable(info.box.min(), info.box.max())) {
-            TemplateState state = tpl.data.getOffset(info.fromWorld(p));
-            if (state == TemplateState.FILL && player.world.isAirBlock(p)) {
+        for (BlockPos p : BlockPos.getAllInBoxMutable(buildingInfo.box.min(), buildingInfo.box.max())) {
+            if (buildingInfo.getSnapshot().data.getOffset(buildingInfo.fromWorld(p)) == TemplateState.FILL && player.world.isAirBlock(p)) {
                 list.add(p.toImmutable());
             }
         }
 
         prof.endStartSection("sort");
-        list.sort(Comparator.<BlockPos>comparingDouble((p) -> {
-            return player.getPositionVector().squareDistanceTo(new Vec3d(p));
-        }).reversed());
+        list.sort(Comparator.<BlockPos>comparingDouble(p -> player.getPositionVector().squareDistanceTo(new Vec3d(p))).reversed());
 
         prof.endStartSection("render");
         for (BlockPos p : list) {

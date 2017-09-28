@@ -120,21 +120,21 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
         drawGuiSlot(slot, x, y);
     }
 
-    public static void drawGuiSlot(@Nullable IGuiSlot stmnt, double x, double y) {
-        if (stmnt instanceof IStatementParameter) {
-            ParameterRenderer.draw((IStatementParameter) stmnt, x, y);
+    public static void drawGuiSlot(@Nullable IGuiSlot guiSlot, double x, double y) {
+        if (guiSlot instanceof IStatementParameter) {
+            ParameterRenderer.draw((IStatementParameter) guiSlot, x, y);
             return;
         }
         GuiIcon background = GuiElementStatement.SLOT_COLOUR;
-        if (stmnt instanceof StatementWrapper) {
-            EnumPipePart part = ((StatementWrapper) stmnt).sourcePart;
+        if (guiSlot instanceof StatementWrapper) {
+            EnumPipePart part = ((StatementWrapper) guiSlot).sourcePart;
             if (part != EnumPipePart.CENTER) {
                 background = background.offset(0, (1 + part.getIndex()) * 18);
             }
         }
         background.drawAt(x, y);
-        if (stmnt != null) {
-            ISprite sprite = stmnt.getSprite();
+        if (guiSlot != null) {
+            ISprite sprite = guiSlot.getSprite();
             if (sprite != null) {
                 GuiIcon.drawAt(sprite, x + 1, y + 1, 16);
             }
