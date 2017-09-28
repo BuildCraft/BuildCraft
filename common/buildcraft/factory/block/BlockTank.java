@@ -22,7 +22,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -30,11 +29,10 @@ import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.transport.pipe.ICustomPipeConnection;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.factory.tile.TileTank;
 
-public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnection, TankBlockConnector {
+public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnection, ITankBlockConnector {
     private static final IProperty<Boolean> JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
     private static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(2 / 16D, 0 / 16D, 2 / 16D, 14 / 16D, 16 / 16D, 14 / 16D);
 
@@ -77,12 +75,12 @@ public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnect
     @SideOnly(Side.CLIENT)
     @Override
     public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        return side.getAxis() != Axis.Y || !(world.getBlockState(pos.offset(side)).getBlock() instanceof TankBlockConnector);
+        return side.getAxis() != Axis.Y || !(world.getBlockState(pos.offset(side)).getBlock() instanceof ITankBlockConnector);
     }
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        boolean isTankBelow = world.getBlockState(pos.down()).getBlock() instanceof TankBlockConnector;
+        boolean isTankBelow = world.getBlockState(pos.down()).getBlock() instanceof ITankBlockConnector;
         return state.withProperty(JOINED_BELOW, isTankBelow);
     }
 
