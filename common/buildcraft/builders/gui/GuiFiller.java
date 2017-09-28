@@ -22,8 +22,6 @@ public class GuiFiller extends GuiJson<ContainerFiller> {
 
     public GuiFiller(ContainerFiller container) {
         super(container, LOCATION);
-
-        shownElements.add(new LedgerCounters(this, true));
     }
 
     @Override
