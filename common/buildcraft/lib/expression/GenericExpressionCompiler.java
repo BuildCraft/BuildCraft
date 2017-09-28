@@ -10,12 +10,12 @@ import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncString;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.node.cast.NodeCasting;
 
@@ -97,21 +97,39 @@ public class GenericExpressionCompiler {
         }
     }
 
+    // Object support
+
+    public static <T> INodeObject<T> compileExpressionObject(Class<T> clazz, String function) throws InvalidExpressionException {
+        return compileExpressionObject(clazz, function, DefaultContexts.createWithAll());
+    }
+
+    public static <T> INodeObject<T> compileExpressionObject(Class<T> clazz, String function, FunctionContext context) throws InvalidExpressionException {
+        return NodeCasting.castToObject(InternalCompiler.compileExpression(function, context), clazz);
+    }
+
+    public static <T> INodeFuncObject<T> compileFunctionObject(Class<T> clazz, String function, Argument... args) throws InvalidExpressionException {
+        return compileFunctionObject(clazz, function, DefaultContexts.createWithAll(), args);
+    }
+
+    public static <T> INodeFuncObject<T> compileFunctionObject(Class<T> clazz, String function, FunctionContext context, Argument... args) throws InvalidExpressionException {
+        return NodeCasting.castToObject(InternalCompiler.compileFunction(function, context, args), clazz);
+    }
+
     // String support
 
-    public static INodeString compileExpressionString(String function) throws InvalidExpressionException {
+    public static INodeObject<String> compileExpressionString(String function) throws InvalidExpressionException {
         return compileExpressionString(function, DefaultContexts.createWithAll());
     }
 
-    public static INodeString compileExpressionString(String function, FunctionContext context) throws InvalidExpressionException {
+    public static INodeObject<String> compileExpressionString(String function, FunctionContext context) throws InvalidExpressionException {
         return NodeCasting.castToString(InternalCompiler.compileExpression(function, context)).inline();
     }
 
-    public static INodeFuncString compileFunctionString(String function, Argument... args) throws InvalidExpressionException {
+    public static INodeFuncObject<String> compileFunctionString(String function, Argument... args) throws InvalidExpressionException {
         return compileFunctionString(function, DefaultContexts.createWithAll(), args);
     }
 
-    public static INodeFuncString compileFunctionString(String function, FunctionContext context, Argument... args) throws InvalidExpressionException {
+    public static INodeFuncObject<String> compileFunctionString(String function, FunctionContext context, Argument... args) throws InvalidExpressionException {
         return NodeCasting.castToString(InternalCompiler.compileFunction(function, context, args));
     }
 }

@@ -31,8 +31,9 @@ import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.minecraft.ExpressionCompat;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
-import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.misc.data.ModelVariableData;
 
@@ -42,17 +43,17 @@ import buildcraft.energy.tile.TileEngineStone_BC8;
 public class BCEnergyModels {
 
     private static final NodeVariableDouble ENGINE_PROGRESS;
-    private static final NodeVariableString ENGINE_STAGE;
-    private static final NodeVariableString ENGINE_FACING;
+    private static final NodeVariableObject<EnumPowerStage> ENGINE_STAGE;
+    private static final NodeVariableObject<EnumFacing> ENGINE_FACING;
 
     private static final ModelHolderVariable ENGINE_STONE;
     private static final ModelHolderVariable ENGINE_IRON;
 
     static {
-        FunctionContext fnCtx = DefaultContexts.createWithAll();
+        FunctionContext fnCtx = new FunctionContext(ExpressionCompat.ENUM_POWER_STAGE, DefaultContexts.createWithAll());
         ENGINE_PROGRESS = fnCtx.putVariableDouble("progress");
-        ENGINE_STAGE = fnCtx.putVariableString("stage");
-        ENGINE_FACING = fnCtx.putVariableString("facing");
+        ENGINE_STAGE = fnCtx.putVariableObject("stage", EnumPowerStage.class);
+        ENGINE_FACING = fnCtx.putVariableObject("direction", EnumFacing.class);
         // TODO: Item models from "item/engine_stone.json"
         ENGINE_STONE = getModel("block/engine_stone.json", fnCtx);
         ENGINE_IRON = getModel("block/engine_iron.json", fnCtx);
@@ -70,8 +71,8 @@ public class BCEnergyModels {
     public static void onModelBake(ModelBakeEvent event) {
         IRegistry<ModelResourceLocation, IBakedModel> modelRegistry = event.getModelRegistry();
         ENGINE_PROGRESS.value = 0.2;
-        ENGINE_STAGE.value = EnumPowerStage.BLUE.getModelName();
-        ENGINE_FACING.value = EnumFacing.UP.getName();
+        ENGINE_STAGE.value = EnumPowerStage.BLUE;
+        ENGINE_FACING.value = EnumFacing.UP;
 
         ModelVariableData varData = new ModelVariableData();
         varData.setNodes(ENGINE_STONE.createTickableNodes());
@@ -81,7 +82,8 @@ public class BCEnergyModels {
         for (MutableQuad quad : ENGINE_STONE.getCutoutQuads()) {
             quads.add(quad.toBakedItem());
         }
-        registerModel(modelRegistry, EnumEngineType.STONE.getItemModelLocation() + "#inventory", new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK));
+        registerModel(modelRegistry, EnumEngineType.STONE.getItemModelLocation() + "#inventory",
+            new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK));
 
         quads = new ArrayList<>();
         varData.setNodes(ENGINE_IRON.createTickableNodes());
@@ -90,23 +92,27 @@ public class BCEnergyModels {
         for (MutableQuad quad : ENGINE_IRON.getCutoutQuads()) {
             quads.add(quad.toBakedItem());
         }
-        registerModel(modelRegistry, EnumEngineType.IRON.getItemModelLocation() + "#inventory", new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK));
+        registerModel(modelRegistry, EnumEngineType.IRON.getItemModelLocation() + "#inventory",
+            new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK));
 
         for (BCFluid fluid : BCEnergyFluids.allFluids) {
             String mrl = "buildcraftenergy:fluid_block_" + fluid.getBlockName();
             ModelFluid mdl = new ModelFluid(fluid);
-            registerModel(modelRegistry, mrl, mdl.bake(mdl.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter()));
+            registerModel(modelRegistry, mrl,
+                mdl.bake(mdl.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter()));
         }
     }
 
-    private static void registerModel(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, String reg, IBakedModel val) {
+    private static void registerModel(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, String reg,
+        IBakedModel val) {
         modelRegistry.putObject(new ModelResourceLocation(reg), val);
     }
 
-    private static MutableQuad[] getEngineQuads(ModelHolderVariable model, TileEngineBase_BC8 tile, float partialTicks) {
+    private static MutableQuad[] getEngineQuads(ModelHolderVariable model, TileEngineBase_BC8 tile,
+        float partialTicks) {
         ENGINE_PROGRESS.value = tile.getProgressClient(partialTicks);
-        ENGINE_STAGE.value = tile.getPowerStage().getModelName();
-        ENGINE_FACING.value = tile.getCurrentFacing().getName();
+        ENGINE_STAGE.value = tile.getPowerStage();
+        ENGINE_FACING.value = tile.getCurrentFacing();
         if (tile.clientModelData.hasNoNodes()) {
             tile.clientModelData.setNodes(model.createTickableNodes());
         }

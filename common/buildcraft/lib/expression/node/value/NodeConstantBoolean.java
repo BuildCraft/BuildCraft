@@ -19,7 +19,14 @@ public enum NodeConstantBoolean implements INodeBoolean, IConstantNode {
         this.value = b;
     }
 
+    /**
+     * @deprecated Use {@link #of(boolean)} instead
+     */
     public static NodeConstantBoolean get(boolean value) {
+        return of(value);
+    }
+
+    public static NodeConstantBoolean of(boolean value) {
         if (value) {
             return TRUE;
         } else {
@@ -38,6 +45,6 @@ public enum NodeConstantBoolean implements INodeBoolean, IConstantNode {
     }
 
     public NodeConstantBoolean invert() {
-        return get(!value);
+        return of(!value);
     }
 }

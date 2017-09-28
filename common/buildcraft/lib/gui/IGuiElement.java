@@ -6,30 +6,48 @@
 
 package buildcraft.lib.gui;
 
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
 
-/** Defines an element that can be interacted with, that exists inside of a rectangle. */
+/** Defines an element that can be irendered, that exists inside of a rectangle. */
 @SideOnly(Side.CLIENT)
-public interface IGuiElement extends IGuiArea, ITooltipElement {
+public interface IGuiElement extends IGuiArea, ITooltipElement, IHelpElement {
     default void drawBackground(float partialTicks) {}
 
     default void drawForeground(float partialTicks) {}
 
-    /** This is called EVEN IF the mouse is not inside your width and height! */
-    default void onMouseClicked(int button) {}
+    default void tick() {}
 
-    /** This is called EVEN IF the mouse is not inside your width and height! */
-    default void onMouseDragged(int button, long ticksSinceClick) {}
+    /** {@inheritDoc}
+     * <p>
+     * This is called EVEN IF the mouse is not inside your width and height! */
+    @Override
+    default void addToolTips(List<ToolTip> tooltips) {}
 
-    /** This is called EVEN IF the mouse is not inside your width and height! */
-    default void onMouseReleased(int button) {}
+    @Override
+    default void addHelpElements(List<HelpPosition> elements) {}
 
-    /** @return The {@link HelpPosition} pair, or null if this element shouldn't display help right now. */
-    default HelpPosition getHelpInfo() {
-        return null;
+    default List<IGuiElement> getThisAndChildrenAt(double x, double y) {
+        if (contains(x, y)) {
+            return ImmutableList.of(this);
+        } else {
+            return ImmutableList.of();
+        }
+    }
+
+    /** Add debugging information to the list. Note that a lot of elements will be called for this, so keep the amount
+     * of information minimal.
+     * 
+     * @return An identifier for this element (usually a name) */
+    default String getDebugInfo(List<String> info) {
+        return toString();
     }
 }

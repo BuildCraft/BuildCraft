@@ -6,6 +6,8 @@
 
 package buildcraft.lib.client.sprite;
 
+import buildcraft.api.core.render.ISprite;
+
 /** Defines a sprite which is part of a larger sprite. */
 public class SubSprite implements ISprite {
 

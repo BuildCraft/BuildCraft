@@ -6,8 +6,9 @@
 
 package buildcraft.lib.client.guide.parts;
 
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.client.guide.GuiGuide;
-import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.gui.GuiSpriteScaled;
 
 public class GuideImage extends GuidePart {

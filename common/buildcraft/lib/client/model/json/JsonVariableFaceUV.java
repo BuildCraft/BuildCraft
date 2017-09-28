@@ -16,7 +16,7 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 import buildcraft.lib.misc.JsonUtil;
@@ -25,7 +25,7 @@ public class JsonVariableFaceUV {
     final INodeDouble[] uv;
     final INodeLong textureRotation;
     final INodeBoolean visible;
-    final INodeString texture;
+    final INodeObject<String> texture;
 
     public JsonVariableFaceUV(JsonObject json, FunctionContext fnCtx) {
         uv = readVariableUV(json, "uv", fnCtx);
@@ -42,7 +42,7 @@ public class JsonVariableFaceUV {
         }
     }
 
-    private static INodeString readVariableString(JsonObject json, String member, FunctionContext fnCtx) {
+    private static INodeObject<String> readVariableString(JsonObject json, String member, FunctionContext fnCtx) {
         if (!json.has(member)) {
             throw new JsonSyntaxException("Required member " + member + " in '" + json + "'");
         }

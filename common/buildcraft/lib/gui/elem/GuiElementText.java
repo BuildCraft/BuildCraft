@@ -6,32 +6,40 @@
 
 package buildcraft.lib.gui.elem;
 
+import java.util.List;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 
+import buildcraft.lib.expression.node.value.NodeConstantObject;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import buildcraft.lib.misc.RenderUtil;
 
 public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {
     public boolean dropShadow = false;
-    public boolean foreground = true;
+    public boolean foreground = false;
+    public boolean centered = false;
 
     private final Supplier<String> text;
     private final IntSupplier colour;
 
     public GuiElementText(GuiBC8<?> gui, IGuiPosition parent, Supplier<String> text, IntSupplier colour) {
-        super(gui, parent, GuiRectangle.ZERO);
+        super(gui, GuiRectangle.ZERO.offset(parent));
         this.text = text;
         this.colour = colour;
     }
 
+    public GuiElementText(GuiBC8<?> gui, IGuiPosition parent, Supplier<String> text, int colour) {
+        this(gui, parent, text, () -> colour);
+    }
+
     public GuiElementText(GuiBC8<?> gui, IGuiPosition parent, String text, int colour) {
-        this(gui, parent, () -> text, () -> colour);
+        this(gui, parent, new NodeConstantObject<>(String.class, text), () -> colour);
     }
 
     public GuiElementText setDropShadow(boolean value) {
@@ -44,14 +52,19 @@ public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {
         return this;
     }
 
+    public GuiElementText setCentered(boolean centered) {
+        this.centered = centered;
+        return this;
+    }
+
     @Override
-    public int getWidth() {
+    public double getWidth() {
         FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
         return fr.getStringWidth(text.get());
     }
 
     @Override
-    public int getHeight() {
+    public double getHeight() {
         FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
         return fr.FONT_HEIGHT;
     }
@@ -72,6 +85,20 @@ public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {
 
     private void draw() {
         FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
-        fr.drawString(text.get(), getX(), getY(), colour.getAsInt(), dropShadow);
+        if (centered) {
+            String str = text.get();
+            int width = fr.getStringWidth(str);
+            double x = getX() - width / 2;
+            fr.drawString(str, (float) x, (float) getY(), colour.getAsInt(), dropShadow);
+        } else {
+            fr.drawString(text.get(), (float) getX(), (float) getY(), colour.getAsInt(), dropShadow);
+        }
+        RenderUtil.setGLColorFromInt(-1);
+    }
+
+    @Override
+    public String getDebugInfo(List<String> info) {
+        info.add("text = " + text);
+        return super.getDebugInfo(info);
     }
 }

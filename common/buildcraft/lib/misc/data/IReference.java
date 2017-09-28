@@ -11,4 +11,12 @@ public interface IReference<T> {
     T get();
 
     void set(T to);
+
+    boolean canSet(Object value);
+
+    default void setIfCan(Object value) {
+        if (canSet(value)) {
+            set((T) value);
+        }
+    }
 }

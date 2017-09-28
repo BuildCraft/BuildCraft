@@ -6,9 +6,10 @@
 
 package buildcraft.lib.client.render.laser;
 
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserSide;
-import buildcraft.lib.client.sprite.ISprite;
 
 public class CompiledLaserRow {
     public final LaserRow[] rows;

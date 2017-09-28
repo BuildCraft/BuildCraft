@@ -19,9 +19,10 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.BCLibSprites;
-import buildcraft.lib.client.sprite.ISprite;
-import buildcraft.lib.client.sprite.RawSprite;
+import buildcraft.lib.client.sprite.SpriteRaw;
 
 public class SpriteUtil {
 
@@ -67,7 +68,7 @@ public class SpriteUtil {
         MinecraftProfileTexture tex = map.get(Type.SKIN);
         if (tex != null) {
             ResourceLocation loc = mc.getSkinManager().loadSkin(tex, Type.SKIN);
-            return new RawSprite(loc, 8, 8, 8, 8, 64);
+            return new SpriteRaw(loc, 8, 8, 8, 8, 64);
         }
         return BCLibSprites.LOADING;
     }

@@ -19,8 +19,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.client.render.font.SpecialColourFontRenderer;
 
 public class ColourUtil {
+    public static final String COLOUR_SPECIAL_START = "§z§";
+
     public static final Function<TextFormatting, TextFormatting> getTextFormatForBlack = ColourUtil::getTextFormatForBlack;
     public static final Function<TextFormatting, TextFormatting> getTextFormatForWhite = ColourUtil::getTextFormatForWhite;
 
@@ -46,6 +49,7 @@ public class ColourUtil {
     };
     private static final String[] DYES = new String[16];
     private static final Map<String, EnumDyeColor> nameToColourMap;
+    private static final int[] FACE_TO_COLOUR;
 
     private static final TextFormatting[] FORMATTING_VALUES = TextFormatting.values();
 
@@ -108,6 +112,10 @@ public class ColourUtil {
             builder.put(c.getName(), c);
         }
         nameToColourMap = builder.build();
+
+        FACE_TO_COLOUR = new int[6];
+        FACE_TO_COLOUR[EnumFacing.DOWN.ordinal()] = 0xFF_33_33_33;
+        FACE_TO_COLOUR[EnumFacing.UP.ordinal()] = 0xFF_CC_CC_CC;
     }
 
     private static void replaceColourForBlack(TextFormatting colour, TextFormatting with) {
@@ -149,6 +157,10 @@ public class ColourUtil {
         return LIGHT_HEX[colour.getDyeDamage()];
     }
 
+    public static int getColourForSide(EnumFacing face) {
+        return FACE_TO_COLOUR[face.ordinal()];
+    }
+
     public static String[] getNameArray() {
         return Arrays.copyOf(NAMES, NAMES.length);
     }
@@ -163,6 +175,20 @@ public class ColourUtil {
         } else {
             return LocaleUtil.localizeColour(colour);
         }
+    }
+
+    /** Similar to {@link #getTextFullTooltip(EnumDyeColor)}, but outputs a string specifically designed for
+     * {@link SpecialColourFontRenderer}. MUST be the first string used! */
+    public static String getTextFullTooltipSpecial(EnumDyeColor colour) {
+        if (colour == EnumDyeColor.BLACK || colour == EnumDyeColor.BLUE) {
+            return getTextFullTooltip(colour);
+        }
+        if (BCLibConfig.useColouredLabels) {
+            TextFormatting formatColour = convertColourToTextFormat(colour);
+            return COLOUR_SPECIAL_START + Integer.toHexString(colour.getMetadata())//
+                + getTextFormatForBlack(formatColour) + LocaleUtil.localizeColour(colour) + TextFormatting.WHITE;
+        }
+        return LocaleUtil.localizeColour(colour);
     }
 
     /** Returns a string formatted for use in a tooltip (or anything else with a black background). If
@@ -215,7 +241,6 @@ public class ColourUtil {
         return FACE_TO_FORMAT[face.ordinal()];
     }
 
-    @SuppressWarnings("PointlessBitwiseExpression")
     public static int swapArgbToAbgr(int argb) {
         int a = (argb >> 24) & 0xFF;
         int r = (argb >> 16) & 0xFF;

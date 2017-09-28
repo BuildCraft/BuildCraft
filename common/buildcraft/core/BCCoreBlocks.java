@@ -16,6 +16,7 @@ import buildcraft.core.block.BlockDecoration;
 import buildcraft.core.block.BlockEngine_BC8;
 import buildcraft.core.block.BlockMarkerPath;
 import buildcraft.core.block.BlockMarkerVolume;
+import buildcraft.core.block.BlockPowerConsumerTester;
 import buildcraft.core.block.BlockSpring;
 import buildcraft.core.item.ItemBlockDecorated;
 import buildcraft.core.item.ItemBlockSpring;
@@ -24,6 +25,7 @@ import buildcraft.core.tile.TileEngineCreative;
 import buildcraft.core.tile.TileEngineRedstone_BC8;
 import buildcraft.core.tile.TileMarkerPath;
 import buildcraft.core.tile.TileMarkerVolume;
+import buildcraft.core.tile.TilePowerConsumerTester;
 
 public class BCCoreBlocks {
     public static BlockEngine_BC8 engine;
@@ -31,6 +33,8 @@ public class BCCoreBlocks {
     public static BlockDecoration decorated;
     public static BlockMarkerVolume markerVolume;
     public static BlockMarkerPath markerPath;
+
+    public static BlockPowerConsumerTester powerTester;
 
     public static void preInit() {
         spring = BlockBCBase_Neptune.register(new BlockSpring("block.spring"), ItemBlockSpring::new);
@@ -44,9 +48,14 @@ public class BCCoreBlocks {
         engine.registerEngine(EnumEngineType.WOOD, TileEngineRedstone_BC8::new);
         engine.registerEngine(EnumEngineType.CREATIVE, TileEngineCreative::new);
 
+        if (BCLib.DEV) {
+            powerTester = BlockBCBase_Neptune.register(new BlockPowerConsumerTester(Material.IRON, "block.power_tester"));
+        }
+
         TileBC_Neptune.registerTile(TileMarkerVolume.class, "tile.marker.volume");
         TileBC_Neptune.registerTile(TileMarkerPath.class, "tile.marker.path");
         TileBC_Neptune.registerTile(TileEngineRedstone_BC8.class, "tile.engine.wood");
         TileBC_Neptune.registerTile(TileEngineCreative.class, "tile.engine.creative");
+        TileBC_Neptune.registerTile(TilePowerConsumerTester.class, "tile.power_tester");
     }
 }

@@ -30,7 +30,8 @@ import buildcraft.lib.net.MessageManager;
 
 public class WorldSavedDataVolumeBoxes extends WorldSavedData {
     public static final String DATA_NAME = "buildcraft_volume_boxes";
-    public World world;
+    private static World currentWorld;
+    public World world = currentWorld;
     public final List<VolumeBox> boxes = new ArrayList<>();
 
     public WorldSavedDataVolumeBoxes() {
@@ -46,7 +47,7 @@ public class WorldSavedDataVolumeBoxes extends WorldSavedData {
     }
 
     public VolumeBox addBox(BlockPos pos) {
-        VolumeBox box = new VolumeBox(pos);
+        VolumeBox box = new VolumeBox(world, pos);
         boxes.add(box);
         return box;
     }
@@ -109,15 +110,19 @@ public class WorldSavedDataVolumeBoxes extends WorldSavedData {
     public void readFromNBT(NBTTagCompound nbt) {
         boxes.clear();
         NBTTagList boxesTag = nbt.getTagList("boxes", Constants.NBT.TAG_COMPOUND);
-        IntStream.range(0, boxesTag.tagCount()).mapToObj(boxesTag::getCompoundTagAt).map(VolumeBox::new).forEach(boxes::add);
+        for (int i = 0; i < boxesTag.tagCount(); i++) {
+            boxes.add(new VolumeBox(world, boxesTag.getCompoundTagAt(i)));
+        }
     }
 
     public static WorldSavedDataVolumeBoxes get(World world) {
-        if(world.isRemote) {
-            BCLog.logger.warn("Creating VolumeBoxes on client, this is a bug");
+        if (world.isRemote) {
+            throw new IllegalArgumentException("Tried to create a world saved data instance on the client!");
         }
         MapStorage storage = world.getPerWorldStorage();
+        currentWorld = world;
         WorldSavedDataVolumeBoxes instance = (WorldSavedDataVolumeBoxes) storage.getOrLoadData(WorldSavedDataVolumeBoxes.class, DATA_NAME);
+        currentWorld = null;
         if(instance == null) {
             instance = new WorldSavedDataVolumeBoxes();
             storage.setData(DATA_NAME, instance);

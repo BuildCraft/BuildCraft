@@ -12,7 +12,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -65,12 +64,6 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileFiller) {
-            if (!((TileFiller) tile).isValid()) {
-                return false;
-            }
-        }
         if (!world.isRemote) {
             BCBuildersGuis.FILLER.openGUI(player, pos);
         }
@@ -80,12 +73,5 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
     @Override
     public boolean canBeRotated(World world, BlockPos pos, IBlockState state) {
         return false;
-    }
-    
-    @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
-        // TODO: remove this! (Not localised b/c localisations happen AFTER this is removed)
-        tooltip.add("The icons + pattern types are WIP!");
     }
 }

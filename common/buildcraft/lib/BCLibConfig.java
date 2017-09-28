@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2017 SpaceToad and the BuildCraft team
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team This Source Code Form is subject to the terms of the Mozilla
+ * Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at
+ * https://mozilla.org/MPL/2.0/
  */
 
 package buildcraft.lib;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,9 @@ import buildcraft.lib.misc.LocaleUtil;
  * by a config file, but instead by BC Core. Feel free to set them yourself, from your own configs, if you do not depend
  * on BC COre itself, and it might not be loaded in the mod environment. */
 public class BCLibConfig {
+
+    public static File guiConfigFile = null;
+
     /** If true then items and blocks will display the colour of an item (one of {@link EnumDyeColor}) with the correct
      * {@link TextFormatting} colour value.<br>
      * This changes the behaviour of {@link ColourUtil#convertColourToTextFormat(EnumDyeColor)}. */
@@ -67,7 +71,7 @@ public class BCLibConfig {
             r.run();
         }
     }
-    
+
     public enum TimeGap {
         TICKS(1),
         SECONDS(20);
@@ -121,9 +125,11 @@ public class BCLibConfig {
     public enum ChunkLoaderType {
         /** Automatic chunkloading is ENABLED. */
         ON,
+
         /** Automatic chunkloading is ENABLED when using the integrated server (singleplayer + LAN), and DISABLED when
          * using a dedicated server. Currently NOT implemented */
         AUTO,
+
         /** Automatic chunkloading is DISABLED. Even for strict tiles (like the quarry) */
         OFF
     }
@@ -139,9 +145,8 @@ public class BCLibConfig {
         /** {@link TileEntity}'s that implement the {@link IChunkLoadingTile} interface will be loaded, provided they
          * DON'T return null. */
         SELF_TILES,
-    }
 
-    static {
-        configChangeListeners.add(LocaleUtil::onConfigChanged);
+        /** All {@link TileEntity}'s in the world. */
+        ALL_TILES;
     }
 }

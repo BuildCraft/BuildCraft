@@ -16,7 +16,6 @@ import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.misc.data.SimplexNoise;
 
-@SuppressWarnings("Duplicates")
 public abstract class GenLayerBiomeReplacer extends GenLayer {
     public static final int OFFSET_RANGE = 500000;
     protected final double xOffset;

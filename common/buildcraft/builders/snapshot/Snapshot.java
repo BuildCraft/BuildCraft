@@ -49,37 +49,30 @@ public abstract class Snapshot {
         throw new UnsupportedOperationException();
     }
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
     public static int posToIndex(int sizeX, int sizeY, int sizeZ, int x, int y, int z) {
         return ((z * sizeY) + y) * sizeX + x;
     }
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
     public static int posToIndex(BlockPos size, int x, int y, int z) {
         return posToIndex(size.getX(), size.getY(), size.getZ(), x, y, z);
     }
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
     public static int posToIndex(int sizeX, int sizeY, int sizeZ, BlockPos pos) {
         return posToIndex(sizeX, sizeY, sizeZ, pos.getX(), pos.getY(), pos.getZ());
     }
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
     public static int posToIndex(BlockPos size, BlockPos pos) {
         return posToIndex(size.getX(), size.getY(), size.getZ(), pos.getX(), pos.getY(), pos.getZ());
     }
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
     public int posToIndex(int x, int y, int z) {
         return posToIndex(size, x, y, z);
     }
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
     public int posToIndex(BlockPos pos) {
         return posToIndex(size, pos);
     }
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
     public static BlockPos indexToPos(int sizeX, int sizeY, int sizeZ, int i) {
         return new BlockPos(
             i % sizeX,
@@ -88,12 +81,10 @@ public abstract class Snapshot {
         );
     }
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
     public static BlockPos indexToPos(BlockPos size, int i) {
         return indexToPos(size.getX(), size.getY(), size.getZ(), i);
     }
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
     public BlockPos indexToPos(int i) {
         return indexToPos(size, i);
     }
@@ -155,35 +146,29 @@ public abstract class Snapshot {
 
     public static class Key {
         public final byte[] hash;
-        @SuppressWarnings("WeakerAccess")
         @Nullable // for client storage
         public final Header header;
 
-        @SuppressWarnings("WeakerAccess")
         public Key() {
             this.hash = new byte[0];
             this.header = null;
         }
 
-        @SuppressWarnings("WeakerAccess")
         public Key(Key oldKey, byte[] hash) {
             this.hash = hash;
             this.header = oldKey.header;
         }
 
-        @SuppressWarnings("WeakerAccess")
         public Key(Key oldKey, @Nullable Header header) {
             this.hash = oldKey.hash;
             this.header = header;
         }
 
-        @SuppressWarnings("WeakerAccess")
         public Key(NBTTagCompound nbt) {
             hash = nbt.getByteArray("hash");
             header = nbt.hasKey("header") ? new Header(nbt.getCompoundTag("header")) : null;
         }
 
-        @SuppressWarnings("WeakerAccess")
         public Key(PacketBufferBC buffer) {
             hash = buffer.readByteArray();
             header = buffer.readBoolean() ? new Header(buffer) : null;
@@ -246,7 +231,6 @@ public abstract class Snapshot {
             name = nbt.getString("name");
         }
 
-        @SuppressWarnings("WeakerAccess")
         public Header(PacketBufferBC buffer) {
             key = new Key(buffer);
             owner = buffer.readUniqueId();
@@ -300,7 +284,6 @@ public abstract class Snapshot {
         }
     }
 
-    @SuppressWarnings("WeakerAccess")
     public abstract class BuildingInfo {
         public final BlockPos basePos;
         public final BlockPos offsetPos;

@@ -56,7 +56,7 @@ public class ActionPipeDirection extends BCStatement implements IActionInternal 
 
     @Override
     @SideOnly(Side.CLIENT)
-    public SpriteHolder getSpriteHolder() {
+    public SpriteHolder getSprite() {
         return BCTransportSprites.getPipeDirection(direction);
     }
 

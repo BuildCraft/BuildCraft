@@ -44,7 +44,7 @@ public class ToolTip extends ForwardingList<String> implements RandomAccess {
         Collections.addAll(delegate, lines);
     }
 
-    private ToolTip(List<String> lines) {
+    public ToolTip(List<String> lines) {
         this.delay = 0;
         delegate.addAll(lines);
     }

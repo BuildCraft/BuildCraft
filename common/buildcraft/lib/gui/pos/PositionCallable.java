@@ -6,31 +6,36 @@
 
 package buildcraft.lib.gui.pos;
 
-import java.util.function.IntSupplier;
+import java.util.function.DoubleSupplier;
 
 public class PositionCallable implements IGuiPosition {
-    private final IntSupplier x, y;
+    private final DoubleSupplier x, y;
 
-    public PositionCallable(IntSupplier x, int y) {
+    public PositionCallable(DoubleSupplier x, double y) {
         this(x, () -> y);
     }
 
-    public PositionCallable(int x, IntSupplier y) {
+    public PositionCallable(double x, DoubleSupplier y) {
         this(() -> x, y);
     }
 
-    public PositionCallable(IntSupplier x, IntSupplier y) {
+    public PositionCallable(DoubleSupplier x, DoubleSupplier y) {
         this.x = x;
         this.y = y;
     }
 
     @Override
-    public int getX() {
-        return x.getAsInt();
+    public double getX() {
+        return x.getAsDouble();
     }
 
     @Override
-    public int getY() {
-        return y.getAsInt();
+    public double getY() {
+        return y.getAsDouble();
+    }
+
+    @Override
+    public String toString() {
+        return "{ " + x + ", " + y + " }";
     }
 }
