@@ -12,8 +12,6 @@ import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemBlockSpecial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -55,12 +53,11 @@ import buildcraft.lib.statement.FullStatement;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
-import buildcraft.lib.tile.item.StackInsertionChecker;
-import buildcraft.lib.tile.item.StackInsertionFunction;
 
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.filler.FillerType;
 import buildcraft.builders.snapshot.ITileForTemplateBuilder;
+import buildcraft.builders.snapshot.ItemBlocks;
 import buildcraft.builders.snapshot.Template;
 import buildcraft.builders.snapshot.Template.BuildingInfo;
 import buildcraft.builders.snapshot.TemplateBuilder;
@@ -81,7 +78,14 @@ public class TileFiller extends TileBC_Neptune
         return IDS;
     }
 
-    public final ItemHandlerSimple invResources;
+    public final ItemHandlerSimple invResources =
+        itemManager.addInvHandler(
+            "resources",
+            27,
+            (slot, stack) -> ItemBlocks.getList().contains(stack.getItem()),
+            EnumAccess.INSERT,
+            EnumPipePart.VALUES
+        );
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
     public TemplateBuilder builder = new TemplateBuilder(this);
     private boolean canExcavate = true;
@@ -103,14 +107,6 @@ public class TileFiller extends TileBC_Neptune
         patternStatement = new FullStatement<>(FillerType.INSTANCE, 4, this::onStatementChange);
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
         caps.addCapabilityInstance(TilesAPI.CAP_CONTROLLABLE, this, EnumPipePart.VALUES);
-        // TODO: Add a way of handling any itemstack or block properly,
-        // including valid placement locations and removal.
-        StackInsertionChecker checker = (slot, stack) -> {
-            return stack.getItem() instanceof ItemBlock || stack.getItem() instanceof ItemBlockSpecial;
-        };
-        StackInsertionFunction insertor = StackInsertionFunction.getDefaultInserter();
-        ItemHandlerSimple handler = new ItemHandlerSimple(27, checker, insertor, this::onSlotChange);
-        invResources = itemManager.addInvHandler("resources", handler, EnumAccess.BOTH, EnumPipePart.VALUES);
     }
 
     @Override
