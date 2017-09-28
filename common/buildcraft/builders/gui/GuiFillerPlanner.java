@@ -11,8 +11,7 @@ import buildcraft.builders.container.ContainerFillerPlanner;
 import buildcraft.builders.filler.FillerStatementContext;
 
 public class GuiFillerPlanner extends GuiJson<ContainerFillerPlanner> {
-
-    public static final ResourceLocation LOCATION = new ResourceLocation("buildcraftbuilders:gui/filler_planner.json");
+    private static final ResourceLocation LOCATION = new ResourceLocation("buildcraftbuilders:gui/filler_planner.json");
     private static final SpriteDelegate SPRITE_PATTERN = new SpriteDelegate();
 
     public GuiFillerPlanner(ContainerFillerPlanner container) {
@@ -29,9 +28,9 @@ public class GuiFillerPlanner extends GuiJson<ContainerFillerPlanner> {
         context.put_b("filler.invert", () -> container.fillerPlanner.inverted);
         properties.put("filler.invert", IButtonBehaviour.TOGGLE);
         properties.put("filler.invert", container.fillerPlanner.inverted);
-        properties.put("filler.invert", (IButtonClickEventListener) (b, k) -> {
-            container.setInverted(b.isButtonActive());
-        });
+        properties.put("filler.invert", (IButtonClickEventListener) (b, k) ->
+            container.setInverted(b.isButtonActive())
+        );
     }
 
     @Override

@@ -16,13 +16,14 @@ import buildcraft.builders.filler.FillerStatementContext;
 import buildcraft.core.BCCoreSprites;
 
 public class GuiFiller extends GuiJson<ContainerFiller> {
-
-    public static final ResourceLocation LOCATION = new ResourceLocation("buildcraftbuilders:gui/filler.json");
+    private static final ResourceLocation LOCATION = new ResourceLocation("buildcraftbuilders:gui/filler.json");
     private static final SpriteDelegate SPRITE_PATTERN = new SpriteDelegate();
     private static final SpriteDelegate SPRITE_CONTROL_MODE = new SpriteDelegate();
 
     public GuiFiller(ContainerFiller container) {
         super(container, LOCATION);
+
+        shownElements.add(new LedgerCounters(this, true));
     }
 
     @Override
@@ -44,16 +45,16 @@ public class GuiFiller extends GuiJson<ContainerFiller> {
         context.put_b("filler.invert", container.tile::shouldInvert);
         properties.put("filler.invert", IButtonBehaviour.TOGGLE);
         properties.put("filler.invert", container.tile.shouldInvert());
-        properties.put("filler.invert", (IButtonClickEventListener) (b, k) -> {
-            container.tile.sendInvert(b.isButtonActive());
-        });
+        properties.put("filler.invert", (IButtonClickEventListener) (b, k) ->
+            container.tile.sendInvert(b.isButtonActive())
+        );
 
         context.put_b("filler.excavate", container.tile::canExcavate);
         properties.put("filler.excavate", IButtonBehaviour.TOGGLE);
         properties.put("filler.excavate", container.tile.canExcavate());
-        properties.put("filler.excavate", (IButtonClickEventListener) (b, k) -> {
-            container.tile.sendCanExcavate(b.isButtonActive());
-        });
+        properties.put("filler.excavate", (IButtonClickEventListener) (b, k) ->
+            container.tile.sendCanExcavate(b.isButtonActive())
+        );
     }
 
     @Override
