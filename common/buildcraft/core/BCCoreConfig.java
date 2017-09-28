@@ -38,7 +38,6 @@ public class BCCoreConfig {
 
     public static boolean worldGen;
     public static boolean worldGenWaterSpring;
-    public static boolean useLocalServerOnClient;
     public static boolean minePlayerProtected;
     public static boolean hidePower;
     public static boolean hideFluid;
@@ -48,7 +47,6 @@ public class BCCoreConfig {
     private static Property propColourBlindMode;
     private static Property propWorldGen;
     private static Property propWorldGenWaterSpring;
-    private static Property propUseLocalServerOnClient;
     private static Property propMinePlayerProtected;
     private static Property propUseColouredLabels;
     private static Property propUseHighContrastColouredLabels;
@@ -92,11 +90,6 @@ public class BCCoreConfig {
         propWorldGenWaterSpring = config.get(worldgen, "generateWaterSprings", true);
         propWorldGenWaterSpring.setComment("Should BuildCraft generate water springs?");
         game.setTo(propWorldGenWaterSpring);
-
-        propUseLocalServerOnClient = config.get(general, "useServerDataOnClient", true);
-        propUseLocalServerOnClient.setComment(
-            "Allows BuildCraft to use the integrated server's data on the client on singleplayer worlds. Disable if you're getting the odd crash caused by it.");
-        none.setTo(propUseLocalServerOnClient);
 
         propMinePlayerProtected = config.get(general, "miningBreaksPlayerProtectedBlocks", false);
         propMinePlayerProtected.setComment(
@@ -192,7 +185,6 @@ public class BCCoreConfig {
     }
 
     public static void reloadConfig(EnumRestartRequirement restarted) {
-        useLocalServerOnClient = propUseLocalServerOnClient.getBoolean();
         minePlayerProtected = propMinePlayerProtected.getBoolean();
         BCLibConfig.useColouredLabels = propUseColouredLabels.getBoolean();
         BCLibConfig.useHighContrastLabelColours = propUseHighContrastColouredLabels.getBoolean();

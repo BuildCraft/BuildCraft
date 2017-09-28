@@ -338,9 +338,7 @@ public class TileFiller extends TileBC_Neptune
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("");
         left.add("battery = " + battery.getDebugString());
         left.add("box = " + box);
         left.add("pattern = " + patternStatement.get());

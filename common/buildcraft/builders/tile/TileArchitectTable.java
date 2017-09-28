@@ -383,7 +383,6 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("box:");
         left.add(" - min = " + box.min());

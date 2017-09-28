@@ -204,7 +204,6 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     // IDebuggable
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("fluid = " + tank.getDebugString());
         smoothedTank.getDebugInfo(left, right, side);

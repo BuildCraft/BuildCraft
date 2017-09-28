@@ -32,7 +32,6 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         super.getDebugInfo(left, right, side);
         left.add("Tanks:");

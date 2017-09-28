@@ -16,6 +16,7 @@ import buildcraft.lib.misc.MessageUtil;
 public class MessageZoneMapRequest implements IMessage {
     private ZonePlannerMapChunkKey key;
 
+    @SuppressWarnings("unused")
     public MessageZoneMapRequest() {
     }
 

@@ -33,9 +33,6 @@ public class MessageMarker implements IMessage {
     public int cacheId, count;
     public final List<BlockPos> positions = new ArrayList<>();
 
-    public MessageMarker() {
-    }
-
     @Override
     public void fromBytes(ByteBuf buf) {
         PacketBufferBC packet = PacketBufferBC.asPacketBufferBc(buf);

@@ -303,7 +303,6 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     // IDebuggable
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         boolean isRemote = pipe.getHolder().getPipeWorld().isRemote;
 

@@ -246,13 +246,13 @@ public abstract class NetworkedObjectCache<T> {
         return current;
     }
 
-    /** Used by {@link MessageObjectCacheReq#HANDLER} to write the actual object out. */
+    /** Used by {@link MessageObjectCacheRequest#HANDLER} to write the actual object out. */
     void writeObjectServer(int id, PacketBufferBC buffer) {
         T obj = serverIdToObject.get(id);
         writeObject(obj, buffer);
     }
 
-    /** Used by {@link MessageObjectCacheReply#HANDLER} to read an object in.
+    /** Used by {@link MessageObjectCacheResponse#HANDLER} to read an object in.
      * 
      * @param id
      * @param buffer
@@ -286,7 +286,7 @@ public abstract class NetworkedObjectCache<T> {
             if (DEBUG_CPLX) {
                 BCLog.logger.info("[lib.net.cache] The cache " + getNameAndId() + " requests ID's " + Arrays.toString(ids));
             }
-            MessageManager.sendToServer(new MessageObjectCacheReq(this, ids));
+            MessageManager.sendToServer(new MessageObjectCacheRequest(this, ids));
         }
     }
 

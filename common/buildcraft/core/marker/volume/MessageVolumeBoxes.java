@@ -24,6 +24,7 @@ import buildcraft.lib.net.PacketBufferBC;
 public class MessageVolumeBoxes implements IMessage {
     private final List<PacketBufferBC> boxes;
 
+    @SuppressWarnings("unused")
     public MessageVolumeBoxes() {
         boxes = new ArrayList<>();
     }

@@ -29,12 +29,14 @@ import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.net.MessageContainer;
+import buildcraft.lib.net.MessageDebuggableRequest;
+import buildcraft.lib.net.MessageDebuggableResponse;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.MessageMarker;
 import buildcraft.lib.net.MessageUpdateTile;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
-import buildcraft.lib.net.cache.MessageObjectCacheReply;
-import buildcraft.lib.net.cache.MessageObjectCacheReq;
+import buildcraft.lib.net.cache.MessageObjectCacheRequest;
+import buildcraft.lib.net.cache.MessageObjectCacheResponse;
 import buildcraft.lib.particle.MessageParticleVanilla;
 import buildcraft.lib.registry.MigrationManager;
 import buildcraft.lib.registry.TagManager;
@@ -85,8 +87,10 @@ public class BCLib {
         MessageManager.addMessageType(MessageContainer.class, MessageContainer.HANDLER, Side.CLIENT, Side.SERVER);
         MessageManager.addMessageType(MessageMarker.class, MessageMarker.HANDLER, Side.CLIENT);
         MessageManager.addMessageType(MessageParticleVanilla.class, MessageParticleVanilla.HANDLER, Side.CLIENT);
-        MessageManager.addMessageType(MessageObjectCacheReq.class, MessageObjectCacheReq.HANDLER, Side.SERVER);
-        MessageManager.addMessageType(MessageObjectCacheReply.class, MessageObjectCacheReply.HANDLER, Side.CLIENT);
+        MessageManager.addMessageType(MessageObjectCacheRequest.class, MessageObjectCacheRequest.HANDLER, Side.SERVER);
+        MessageManager.addMessageType(MessageObjectCacheResponse.class, MessageObjectCacheResponse.HANDLER, Side.CLIENT);
+        MessageManager.addMessageType(MessageDebuggableRequest.class, MessageDebuggableRequest.HANDLER, Side.SERVER);
+        MessageManager.addMessageType(MessageDebuggableResponse.class, MessageDebuggableResponse.HANDLER, Side.CLIENT);
 
         MinecraftForge.EVENT_BUS.register(BCLibEventDist.class);
 

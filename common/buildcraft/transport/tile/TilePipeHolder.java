@@ -536,7 +536,6 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     // Client side stuffs
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         if (pipe == null) {
             left.add("Pipe = null");
