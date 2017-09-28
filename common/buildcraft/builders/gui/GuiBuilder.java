@@ -14,6 +14,7 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 
 import buildcraft.builders.container.ContainerBuilder;
 
+// TODO: Convert this gui into JSON!
 public class GuiBuilder extends GuiBC8<ContainerBuilder> {
     private static final ResourceLocation TEXTURE_BASE =
             new ResourceLocation("buildcraftbuilders:textures/gui/builder.png");
@@ -35,8 +36,7 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
         xSize = SIZE_BLUEPRINT_X;
         ySize = SIZE_Y;
 
-        // TODO: Convert this gui into JSON, and re-add the progress ledger!
-//        ledgersRight.ledgers.add(new LedgerCounters(ledgersRight, container.tile));
+        shownElements.add(new LedgerCounters(this, true));
     }
 
     @Override
