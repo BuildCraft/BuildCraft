@@ -82,7 +82,7 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerS
 
     @Override
     public void postReadFromNbt() {
-        postReadFromNbt();
+        super.postReadFromNbt();
         updateBuildingInfo();
     }
 
