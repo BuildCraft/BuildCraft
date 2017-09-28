@@ -66,7 +66,6 @@ public abstract class TileMarker<C extends MarkerConnection<C>> extends TileBC_N
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         C current = getCurrentConnection();
         MarkerSubCache<C> cache = getLocalCache();

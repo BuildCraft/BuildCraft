@@ -20,22 +20,22 @@ public class GuiEngineIron_BC8 extends GuiBC8<ContainerEngineIron_BC8> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftenergy:textures/gui/combustion_engine_gui.png");
     private static final int SIZE_X = 176, SIZE_Y = 177;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
-    private static final GuiIcon ICON_TANK_OVERLAY = new GuiIcon(TEXTURE_BASE, 176, 0, 16, 58);
+    private static final GuiIcon ICON_TANK_OVERLAY = new GuiIcon(TEXTURE_BASE, 176, 0, 16, 60);
 
     public GuiEngineIron_BC8(ContainerEngineIron_BC8 container) {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
-        ledgersRight.ledgers.add(new LedgerEngine(ledgersRight, container.tile));
+        shownElements.add(new LedgerEngine(this, true));
     }
 
     @Override
     public void initGui() {
         super.initGui();
 
-        guiElements.add(container.widgetTankFuel.createGuiElement(this, rootElement, new GuiRectangle(26, 19, 16, 58), ICON_TANK_OVERLAY));
-        guiElements.add(container.widgetTankCoolant.createGuiElement(this, rootElement, new GuiRectangle(80, 19, 16, 58), ICON_TANK_OVERLAY));
-        guiElements.add(container.widgetTankResidue.createGuiElement(this, rootElement, new GuiRectangle(134, 19, 16, 58), ICON_TANK_OVERLAY));
+        shownElements.add(container.widgetTankFuel.createGuiElement(this, new GuiRectangle(26, 18, 16, 60).offset(rootElement), ICON_TANK_OVERLAY));
+        shownElements.add(container.widgetTankCoolant.createGuiElement(this, new GuiRectangle(80, 18, 16, 60).offset(rootElement), ICON_TANK_OVERLAY));
+        shownElements.add(container.widgetTankResidue.createGuiElement(this, new GuiRectangle(134, 18, 16, 60).offset(rootElement), ICON_TANK_OVERLAY));
     }
 
     @Override
@@ -47,7 +47,12 @@ public class GuiEngineIron_BC8 extends GuiBC8<ContainerEngineIron_BC8> {
     protected void drawForegroundLayer() {
         String str = LocaleUtil.localize("tile.engineIron.name");
         int strWidth = fontRenderer.getStringWidth(str);
-        fontRenderer.drawString(str, rootElement.getCenterX() - strWidth / 2, rootElement.getY() + 6, 0x404040);
-        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), rootElement.getX() + 8, rootElement.getY() + SIZE_Y - 96, 0x404040);
+        double titleX = rootElement.getCenterX() - strWidth / 2;
+        double titleY = rootElement.getY() + 6;
+        fontRenderer.drawString(str, (int) titleX, (int) titleY, 0x404040);
+
+        double invX = rootElement.getX() + 8;
+        double invY = rootElement.getY() + SIZE_Y - 96;
+        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), (int) invX, (int) invY, 0x404040);
     }
 }

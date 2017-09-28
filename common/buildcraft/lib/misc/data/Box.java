@@ -175,6 +175,7 @@ public class Box implements IBox {
         return max;
     }
 
+    @Override
     public BlockPos size() {
         if (!isInitialized()) return BlockPos.ORIGIN;
         return max.subtract(min).add(VecUtil.POS_ONE);
@@ -245,8 +246,19 @@ public class Box implements IBox {
         return PositionUtil.randomBlockPos(rand, min, max.add(1, 1, 1));
     }
 
+    /** Delegate for {@link PositionUtil#isCorner(BlockPos, BlockPos, BlockPos)} */
+    public boolean isCorner(BlockPos pos) {
+        return PositionUtil.isCorner(min, max, pos);
+    }
+
+    /** Delegate for {@link PositionUtil#isOnEdge(BlockPos, BlockPos, BlockPos)} */
     public boolean isOnEdge(BlockPos pos) {
         return PositionUtil.isOnEdge(min, max, pos);
+    }
+
+    /** Delegate for {@link PositionUtil#isOnFace(BlockPos, BlockPos, BlockPos)} */
+    public boolean isOnFace(BlockPos pos) {
+        return PositionUtil.isOnFace(min, max, pos);
     }
 
     public boolean doesIntersectWith(Box box) {

@@ -15,14 +15,14 @@
     "variables": {
         "progress_size": "(progress > 0.5 ? ((1 - progress) * (8 * 2 - 0.01)) : (progress * (8 * 2 - 0.01)))",
         "trunk_tex": "'#trunk_' + stage",
-        "stage_light":"(stage == 'overheat' || stage == 'red') ? 10 : stage == 'yellow' ? 7 : stage == 'green' ?  4 : 0"
+        "stage_light":"(stage == overheat || stage == red) ? 10 : stage == yellow ? 7 : stage == green ?  4 : 0"
     },
     "rules": [
         {
-            "when": "facing != 'up'",
+            "when": "direction != Facing.UP",
             "type": "builtin:rotate_facing",
-            "from": "'up'",
-            "to": "facing"
+            "from": "Facing.UP",
+            "to": "direction"
         }
     ],
     "elements": [

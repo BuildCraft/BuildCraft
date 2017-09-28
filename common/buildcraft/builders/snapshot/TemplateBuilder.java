@@ -9,8 +9,6 @@ package buildcraft.builders.snapshot;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
@@ -25,7 +23,6 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
         super(tile);
     }
 
-    @Nonnull
     @Override
     protected Template.BuildingInfo getBuildingInfo() {
         return tile.getTemplateBuildingInfo();
@@ -34,10 +31,10 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     @Override
     protected boolean isAir(BlockPos blockPos) {
         return !getBuildingInfo().box.contains(blockPos) ||
-            !getBuildingInfo().getSnapshot().data.get(
-                getBuildingInfo().getSnapshot().posToIndex(
-                    getBuildingInfo().fromWorld(blockPos)
-                )
+            !getBuildingInfo().getSnapshot().data.shouldFill(
+                getBuildingInfo().fromWorld(blockPos).getX(),
+                getBuildingInfo().fromWorld(blockPos).getY(),
+                getBuildingInfo().fromWorld(blockPos).getZ()
             );
     }
 
@@ -85,6 +82,6 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
 
     @Override
     protected boolean isBlockCorrect(BlockPos blockPos) {
-        return !isAir(blockPos) && !tile.getWorldBC().isAirBlock(blockPos);
+        return  !isAir(blockPos) && !tile.getWorldBC().isAirBlock(blockPos);
     }
 }

@@ -6,17 +6,14 @@
 
 package buildcraft.lib.gui;
 
-import buildcraft.lib.gui.pos.GuiRectangle;
+import java.util.List;
+
 import buildcraft.lib.gui.pos.IGuiArea;
-import buildcraft.lib.gui.pos.IGuiPosition;
 
 public class GuiElementSimple<G extends GuiBC8<?>> implements IGuiElement {
     public final G gui;
     private final IGuiArea element;
-
-    public GuiElementSimple(G gui, IGuiPosition parent, GuiRectangle rectangle) {
-        this(gui, rectangle.offset(parent));
-    }
+    public String name = null;
 
     public GuiElementSimple(G gui, IGuiArea element) {
         this.gui = gui;
@@ -24,22 +21,27 @@ public class GuiElementSimple<G extends GuiBC8<?>> implements IGuiElement {
     }
 
     @Override
-    public int getX() {
+    public double getX() {
         return element.getX();
     }
 
     @Override
-    public int getY() {
+    public double getY() {
         return element.getY();
     }
 
     @Override
-    public int getWidth() {
+    public double getWidth() {
         return element.getWidth();
     }
 
     @Override
-    public int getHeight() {
+    public double getHeight() {
         return element.getHeight();
+    }
+
+    @Override
+    public String getDebugInfo(List<String> info) {
+        return name == null ? toString() : name;
     }
 }

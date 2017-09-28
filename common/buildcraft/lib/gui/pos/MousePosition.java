@@ -7,20 +7,20 @@
 package buildcraft.lib.gui.pos;
 
 public final class MousePosition implements IGuiPosition {
-    private int x = -10, y = -10;
+    private double x = -10, y = -10;
 
-    public void setMousePosition(int mouseX, int mouseY) {
+    public void setMousePosition(double mouseX, double mouseY) {
         this.x = mouseX;
         this.y = mouseY;
     }
 
     @Override
-    public int getX() {
+    public double getX() {
         return x;
     }
 
     @Override
-    public int getY() {
+    public double getY() {
         return y;
     }
 

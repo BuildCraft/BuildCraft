@@ -6,25 +6,26 @@
 
 package buildcraft.lib;
 
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
 public class BCLibSprites {
-    public static final SpriteHolder LOCK;
-    public static final SpriteHolder WARNING_MINOR;
-    public static final SpriteHolder WARNING_MAJOR;
-    public static final SpriteHolder LOADING;
+    public static final ISprite LOCK;
+    public static final ISprite WARNING_MINOR;
+    public static final ISprite WARNING_MAJOR;
+    public static final ISprite LOADING;
 
-    public static final SpriteHolder LEDGER_LEFT;
-    public static final SpriteHolder LEDGER_RIGHT;
-    public static final SpriteHolder HELP;
-    public static final SpriteHolder HELP_SPLIT;
-    public static final SpriteHolder DEBUG;
+    public static final ISprite LEDGER_LEFT;
+    public static final ISprite LEDGER_RIGHT;
+    public static final ISprite HELP;
+    public static final ISprite HELP_SPLIT;
+    public static final ISprite DEBUG;
 
-    public static final SpriteHolder ENGINE_INACTIVE;
-    public static final SpriteHolder ENGINE_ACTIVE;
-    public static final SpriteHolder ENGINE_WARM;
-    public static final SpriteHolder ENGINE_OVERHEAT;
+    public static final ISprite ENGINE_INACTIVE;
+    public static final ISprite ENGINE_ACTIVE;
+    public static final ISprite ENGINE_WARM;
+    public static final ISprite ENGINE_OVERHEAT;
 
     static {
         LOCK = getHolder("icons/lock");
@@ -46,7 +47,7 @@ public class BCLibSprites {
         // Nothing, just to call the static method
     }
 
-    private static SpriteHolder getHolder(String suffix) {
+    private static ISprite getHolder(String suffix) {
         return SpriteHolderRegistry.getHolder("buildcraftlib:" + suffix);
     }
 }

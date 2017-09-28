@@ -6,57 +6,24 @@
 
 package buildcraft.builders.container;
 
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 
-import buildcraft.builders.filling.IParameter;
 import buildcraft.builders.tile.TileFiller;
 
-public class ContainerFiller extends ContainerBCTile<TileFiller> implements IContainerFilling {
+public class ContainerFiller extends ContainerBCTile<TileFiller> {
     public ContainerFiller(EntityPlayer player, TileFiller tile) {
         super(player, tile);
 
-        addFullPlayerInventory(108);
+        addFullPlayerInventory(153);
 
         for (int sy = 0; sy < 3; sy++) {
             for (int sx = 0; sx < 9; sx++) {
                 addSlotToContainer(new SlotBase(tile.invResources, sx + sy * 9, sx * 18 + 8, sy * 18 + 40));
             }
         }
-    }
-
-    @Override
-    public boolean isInverted() {
-        return tile.isInverted();
-    }
-
-    @Override
-    public void setInverted(boolean value) {
-        tile.sendInverted(value);
-    }
-
-    @Override
-    public List<IParameter> getParameters() {
-        return tile.getParameters();
-    }
-
-    @Override
-    public void setParameters(List<IParameter> value) {
-        tile.sendParameters(value);
-    }
-
-    @Override
-    public boolean isCanExcavate() {
-        return tile.isCanExcavate();
-    }
-
-    @Override
-    public void setCanExcavate(boolean value) {
-        tile.sendCanExcavate(value);
     }
 
     @Override

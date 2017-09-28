@@ -6,7 +6,6 @@
 
 package buildcraft.lib.gui.button;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
@@ -14,11 +13,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.pos.GuiRectangle;
 
 /** An image button that draws its states downwards, starting at baseU. */
 @SideOnly(Side.CLIENT)
-public class GuiImageButton extends GuiAbstractButton {
-    private final int size, u, v, baseU, baseV;
+@Deprecated
+public class GuiImageButton extends GuiAbstractButton<GuiBC8<?>> {
+    private final int u, v, baseU, baseV;
     private final ResourceLocation texture;
 
     public GuiImageButton(GuiBC8<?> gui, int id, int x, int y, int size, ResourceLocation texture, int u, int v) {
@@ -26,8 +27,7 @@ public class GuiImageButton extends GuiAbstractButton {
     }
 
     public GuiImageButton(GuiBC8<?> gui, int id, int x, int y, int size, ResourceLocation texture, int baseU, int baseV, int u, int v) {
-        super(gui, id, x, y, size, size, "");
-        this.size = size;
+        super(gui, "" + id, new GuiRectangle(x, y, size, size));
         this.u = u;
         this.v = v;
         this.baseU = baseU;
@@ -35,17 +35,13 @@ public class GuiImageButton extends GuiAbstractButton {
         this.texture = texture;
     }
 
-    public int getSize() {
-        return size;
-    }
-
     @Override
-    public void drawButton(Minecraft minecraft, int x, int y) {
+    public void drawBackground(float partialTicks) {
         if (!visible) {
             return;
         }
 
-        minecraft.renderEngine.bindTexture(texture);
+        gui.mc.renderEngine.bindTexture(texture);
 
         GlStateManager.color(1, 1, 1, 1);
         GlStateManager.enableAlpha();
@@ -53,8 +49,8 @@ public class GuiImageButton extends GuiAbstractButton {
 
         int buttonState = getButtonState();
 
-        drawTexturedModalRect(xPosition, yPosition, baseU + buttonState * size, baseV, size, size);
-        drawTexturedModalRect(xPosition + 1, yPosition + 1, u, v, size - 2, size - 2);
+        gui.drawTexturedModalRect(getX(), getY(), baseU + buttonState * getWidth(), baseV, getWidth(), getHeight());
+        gui.drawTexturedModalRect(getX() + 1, getY() + 1, u, v, getWidth() - 2, getHeight() - 2);
     }
 
     private int getButtonState() {

@@ -32,13 +32,11 @@ import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCLog;
 
-@SuppressWarnings("WeakerAccess")
 public final class NBTUtilBC {
     /** Deactivate constructor */
     private NBTUtilBC() {
     }
 
-    @SuppressWarnings("ConstantConditions")
     public static NBTBase merge(NBTBase destination, NBTBase source) {
         if (source == null) {
             return null;

@@ -6,21 +6,13 @@
 
 package buildcraft.lib.expression.node.value;
 
-import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
 
-public class NodeVariableBoolean implements IVariableNodeBoolean {
-    public final String name;
+public class NodeVariableBoolean extends NodeVariable implements IVariableNodeBoolean {
     public boolean value;
-    private boolean isConst = false;
 
     public NodeVariableBoolean(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public void setConstant(boolean isConst) {
-        this.isConst = isConst;
+        super(name);
     }
 
     @Override
@@ -31,28 +23,13 @@ public class NodeVariableBoolean implements IVariableNodeBoolean {
     @Override
     public INodeBoolean inline() {
         if (isConst) {
-            return NodeConstantBoolean.get(value);
+            return NodeConstantBoolean.of(value);
         }
         return this;
     }
 
     @Override
-    public String toString() {
-        return name + " = " + valueToString();
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void set(IExpressionNode from) {
-        value = ((INodeBoolean) from).evaluate();
-    }
-
-    @Override
-    public String valueToString() {
-        return Boolean.toString(value);
+    public void set(boolean value) {
+        this.value = value;
     }
 }

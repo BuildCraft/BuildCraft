@@ -108,14 +108,13 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                 BlockPos pos = taskBreakBlock.breakPos;
 
                 if (tile.drillPos == null) {
-                    LaserRenderer_BC8.renderLaserStatic(
-                        new LaserData_BC8(
-                            LASER,
-                            VecUtil.convertCenter(tile.getPos()),
-                            VecUtil.convertCenter(pos),
-                            1 / 16D
-                        )
-                    );
+                    if (taskBreakBlock.clientPower != 0) {
+                        // Don't render a laser before we have any power
+                        Vec3d from = VecUtil.convertCenter(tile.getPos());
+                        Vec3d to = VecUtil.convertCenter(pos);
+                        LaserData_BC8 laser = new LaserData_BC8(LASER, from, to, 1 / 16.0);
+                        LaserRenderer_BC8.renderLaserStatic(laser);
+                    }
                 } else {
                     long power = (long) (
                         taskBreakBlock.prevClientPower +

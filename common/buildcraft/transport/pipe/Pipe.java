@@ -374,7 +374,6 @@ public final class Pipe implements IPipe, IDebuggable {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("Colour = " + colour);
         left.add("Definition = " + definition.identifier);

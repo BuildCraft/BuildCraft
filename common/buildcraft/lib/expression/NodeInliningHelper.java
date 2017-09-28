@@ -21,7 +21,8 @@ public class NodeInliningHelper {
      *            attempting to inline itself.
      * @param inlinedChanger A changer that should return an immutable node from the inlined version.
      * @return A new node that has been inlined fully. */
-    public static <F extends IExpressionNode, T extends IExpressionNode> T tryInline(T node, F subNode, Function<F, T> changer, Function<F, T> inlinedChanger) {
+    public static <F extends IExpressionNode, T extends IExpressionNode> T tryInline(T node, F subNode,
+        Function<F, T> changer, Function<F, T> inlinedChanger) {
         ExpressionDebugManager.debugStart("Inlining " + node);
         // Nothing we can do about these unchecked warnings without making IExpressionNode generic
         @SuppressWarnings("unchecked")
@@ -40,13 +41,12 @@ public class NodeInliningHelper {
         }
     }
 
-    public static <F extends IExpressionNode, T extends IExpressionNode> T tryInline(T node, F subNodeLeft, F subNodeRight, BiFunction<F, F, T> changer, BiFunction<F, F, T> inlinedChanger) {
+    public static <L extends IExpressionNode, R extends IExpressionNode, T extends IExpressionNode> T tryInline(T node,
+        L subNodeLeft, R subNodeRight, BiFunction<L, R, T> changer, BiFunction<L, R, T> inlinedChanger) {
         ExpressionDebugManager.debugStart("Inlining " + node);
         // Nothing we can do about these unchecked warnings without making IExpressionNode generic
-        @SuppressWarnings("unchecked")
-        F leftInlined = (F) subNodeLeft.inline();
-        @SuppressWarnings("unchecked")
-        F rightInlined = (F) subNodeRight.inline();
+        L leftInlined = (L) subNodeLeft.inline();
+        R rightInlined = (R) subNodeRight.inline();
         if (leftInlined instanceof IConstantNode && rightInlined instanceof IConstantNode) {
             T to = inlinedChanger.apply(leftInlined, rightInlined);
             ExpressionDebugManager.debugEnd("Fully inlined to " + to);
@@ -59,5 +59,105 @@ public class NodeInliningHelper {
             ExpressionDebugManager.debugEnd("Partially inlined to " + to);
             return to;
         }
+    }
+
+    public static <
+        A extends IExpressionNode,
+        B extends IExpressionNode,
+        C extends IExpressionNode,
+        R extends IExpressionNode> R tryInline(R node, A nodeA, B nodeB, C nodeC, TriFunction<A, B, C, R> changer,
+            TriFunction<A, B, C, R> inlinedChanger) {
+        ExpressionDebugManager.debugStart("Inlining " + node);
+        // Nothing we can do about these unchecked warnings without making IExpressionNode generic
+        A inlinedA = (A) nodeA.inline();
+        B inlinedB = (B) nodeB.inline();
+        C inlinedC = (C) nodeC.inline();
+        if (inlinedA instanceof IConstantNode && inlinedB instanceof IConstantNode
+            && inlinedC instanceof IConstantNode) {
+            R to = inlinedChanger.apply(inlinedA, inlinedB, inlinedC);
+            ExpressionDebugManager.debugEnd("Fully inlined to " + to);
+            return to;
+        } else if (inlinedA == nodeA && inlinedB == nodeB && inlinedC == nodeC) {
+            ExpressionDebugManager.debugEnd("Unable to inline at all!");
+            return node;
+        } else {
+            R to = changer.apply(inlinedA, inlinedB, inlinedC);
+            ExpressionDebugManager.debugEnd("Partially inlined to " + to);
+            return to;
+        }
+    }
+
+    public static <
+        A extends IExpressionNode,
+        B extends IExpressionNode,
+        C extends IExpressionNode,
+        D extends IExpressionNode,
+        R extends IExpressionNode> R tryInline(R node, A nodeA, B nodeB, C nodeC, D nodeD,
+            QuadFunction<A, B, C, D, R> changer, QuadFunction<A, B, C, D, R> inlinedChanger) {
+        ExpressionDebugManager.debugStart("Inlining " + node);
+        // Nothing we can do about these unchecked warnings without making IExpressionNode generic
+        A inlinedA = (A) nodeA.inline();
+        B inlinedB = (B) nodeB.inline();
+        C inlinedC = (C) nodeC.inline();
+        D inlinedD = (D) nodeD.inline();
+        if (inlinedA instanceof IConstantNode && inlinedB instanceof IConstantNode && inlinedC instanceof IConstantNode
+            && inlinedD instanceof IConstantNode) {
+            R to = inlinedChanger.apply(inlinedA, inlinedB, inlinedC, inlinedD);
+            ExpressionDebugManager.debugEnd("Fully inlined to " + to);
+            return to;
+        } else if (inlinedA == nodeA && inlinedB == nodeB && inlinedC == nodeC && inlinedD == nodeD) {
+            ExpressionDebugManager.debugEnd("Unable to inline at all!");
+            return node;
+        } else {
+            R to = changer.apply(inlinedA, inlinedB, inlinedC, inlinedD);
+            ExpressionDebugManager.debugEnd("Partially inlined to " + to);
+            return to;
+        }
+    }
+
+    public static <
+        A extends IExpressionNode,
+        B extends IExpressionNode,
+        C extends IExpressionNode,
+        D extends IExpressionNode,
+        E extends IExpressionNode,
+        R extends IExpressionNode> R tryInline(R node, A nodeA, B nodeB, C nodeC, D nodeD, E nodeE,
+            PentaFunction<A, B, C, D, E, R> changer, PentaFunction<A, B, C, D, E, R> inlinedChanger) {
+        ExpressionDebugManager.debugStart("Inlining " + node);
+        // Nothing we can do about these unchecked warnings without making IExpressionNode generic
+        A inlinedA = (A) nodeA.inline();
+        B inlinedB = (B) nodeB.inline();
+        C inlinedC = (C) nodeC.inline();
+        D inlinedD = (D) nodeD.inline();
+        E inlinedE = (E) nodeE.inline();
+        if (inlinedA instanceof IConstantNode && inlinedB instanceof IConstantNode && inlinedC instanceof IConstantNode
+            && inlinedD instanceof IConstantNode && inlinedE instanceof IConstantNode) {
+            R to = inlinedChanger.apply(inlinedA, inlinedB, inlinedC, inlinedD, inlinedE);
+            ExpressionDebugManager.debugEnd("Fully inlined to " + to);
+            return to;
+        } else if (inlinedA == nodeA && inlinedB == nodeB && inlinedC == nodeC && inlinedD == nodeD
+            && inlinedE == nodeE) {
+            ExpressionDebugManager.debugEnd("Unable to inline at all!");
+            return node;
+        } else {
+            R to = changer.apply(inlinedA, inlinedB, inlinedC, inlinedD, inlinedE);
+            ExpressionDebugManager.debugEnd("Partially inlined to " + to);
+            return to;
+        }
+    }
+
+    @FunctionalInterface
+    public interface TriFunction<A, B, C, R> {
+        R apply(A a, B b, C c);
+    }
+
+    @FunctionalInterface
+    public interface QuadFunction<A, B, C, D, R> {
+        R apply(A a, B b, C c, D d);
+    }
+
+    @FunctionalInterface
+    public interface PentaFunction<A, B, C, D, E, R> {
+        R apply(A a, B b, C c, D d, E e);
     }
 }

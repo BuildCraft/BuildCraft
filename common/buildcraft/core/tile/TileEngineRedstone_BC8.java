@@ -51,12 +51,12 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
 
     @Override
     public long maxPowerReceived() {
-        return MjAPI.MJ;
+        return 4 * MjAPI.MJ;
     }
 
     @Override
     public long maxPowerExtracted() {
-        return MjAPI.MJ;
+        return 4 * MjAPI.MJ;
     }
 
     @Override

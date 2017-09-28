@@ -38,10 +38,13 @@ import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.debug.BCAdvDebugging;
+import buildcraft.lib.debug.ClientDebuggables;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.FakePlayerProvider;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
+import buildcraft.lib.net.MessageDebuggableRequest;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 
 public enum BCLibEventDist {
@@ -180,6 +183,14 @@ public enum BCLibEventDist {
         if (event.phase == Phase.END) {
             BuildCraftObjectCaches.onClientTick();
             MessageUtil.postTick();
+            ClientDebuggables.getDebuggableTileSide().ifPresent(tileSide ->
+                MessageManager.sendToServer(
+                    new MessageDebuggableRequest(
+                        tileSide.getLeft().getPos(),
+                        tileSide.getRight()
+                    )
+                )
+            );
         }
     }
 }

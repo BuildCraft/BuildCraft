@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -21,7 +22,7 @@ import buildcraft.lib.registry.TagManager.EnumTagType;
 
 public interface IItemBuildCraft {
     String id();
-
+    
     default void init() {
         Item thisItem = (Item) this;
         thisItem.setUnlocalizedName(TagManager.getTag(id(), EnumTagType.UNLOCALIZED_NAME));

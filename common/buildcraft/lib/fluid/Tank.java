@@ -26,6 +26,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IFluidFilter;
@@ -182,9 +184,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
 
     @Override
     public void setFluid(FluidStack fluid) {
-        if (fluid == null || filter.test(fluid)) {
-            super.setFluid(fluid);
-        }
+        super.setFluid(fluid);
     }
 
     @Override
@@ -206,6 +206,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         buffer.writeInt(getFluidAmount());
     }
 
+    @SideOnly(Side.CLIENT)
     public void readFromBuffer(PacketBufferBC buffer) {
         if (buffer.readBoolean()) {
             clientFluid = BuildCraftObjectCaches.CACHE_FLUIDS.client().retrieve(buffer.readInt());

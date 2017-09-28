@@ -6,9 +6,17 @@
 
 package buildcraft.lib.expression;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Supplier;
+
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Table;
 
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
@@ -16,41 +24,36 @@ import buildcraft.lib.expression.api.INodeFunc;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncString;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
 import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.api.NodeType;
-import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleToDouble;
-import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleToDouble.IFuncDoubleDoubleToDouble;
-import buildcraft.lib.expression.node.func.NodeFuncDoubleToDouble;
-import buildcraft.lib.expression.node.func.NodeFuncDoubleToDouble.IFuncDoubleToDouble;
-import buildcraft.lib.expression.node.func.NodeFuncDoubleToLong;
-import buildcraft.lib.expression.node.func.NodeFuncDoubleToLong.IFuncDoubleToLong;
-import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong;
-import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong.IFuncLongLongToLong;
-import buildcraft.lib.expression.node.func.NodeFuncLongToLong;
-import buildcraft.lib.expression.node.func.NodeFuncLongToLong.IFuncLongToLong;
-import buildcraft.lib.expression.node.func.NodeFuncStringToLong;
-import buildcraft.lib.expression.node.func.NodeFuncStringToLong.IFuncStringToLong;
+import buildcraft.lib.expression.api.NodeTypes;
+import buildcraft.lib.expression.node.func.NodeFuncObjectLongLongToLong.IFuncObjectLongLongToLong;
+import buildcraft.lib.expression.node.func.NodeFuncObjectLongToLong.IFuncObjectLongToLong;
+import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToObject.IFuncObjectObjectToObject;
+import buildcraft.lib.expression.node.func.NodeFuncObjectToLong.IFuncObjectToLong;
 import buildcraft.lib.expression.node.func.NodeFuncToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncToBoolean.IFuncToBoolean;
-import buildcraft.lib.expression.node.func.NodeFuncToString;
-import buildcraft.lib.expression.node.func.NodeFuncToString.IFuncToString;
+import buildcraft.lib.expression.node.func.NodeFuncToDouble;
+import buildcraft.lib.expression.node.func.NodeFuncToDouble.IFuncToDouble;
+import buildcraft.lib.expression.node.func.NodeFuncToLong;
+import buildcraft.lib.expression.node.func.NodeFuncToLong.IFuncToLong;
+import buildcraft.lib.expression.node.func.NodeFuncToObject;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
-import buildcraft.lib.expression.node.value.NodeConstantString;
+import buildcraft.lib.expression.node.value.NodeConstantObject;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableLong;
-import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.expression.node.value.NodeVariableObject;
 
-public class FunctionContext {
-    public static final String FUNCTION_ARG_SEPARATOR = "^";
+public class FunctionContext extends FunctionContextBase {
+    public static final String FUNCTION_ARG_SEPARATOR = "@";
 
     private final FunctionContext[] parents;
     private final Map<String, IExpressionNode> variables = new HashMap<>();
-    private final Map<String, INodeFunc> functions = new HashMap<>();
+    private final Table<String, List<Class<?>>, INodeFunc> functions = HashBasedTable.create();
 
     /** Creates a function context with no parents. You probably DON'T want this, as it doesn't have any of the useful
      * functions found in {@link DefaultContexts} */
@@ -66,7 +69,7 @@ public class FunctionContext {
 
     /** Constructs a function context that will delegate to the parents, in order, to find functions and variables if
      * they don't exist in this context. */
-    public FunctionContext(FunctionContext[] parents) {
+    public FunctionContext(FunctionContext... parents) {
         this.parents = parents.clone();
     }
 
@@ -82,6 +85,15 @@ public class FunctionContext {
             IExpressionNode node = parent.getVariable(name);
             if (node != null) return node;
         }
+        INodeFunc func = getFunction(name, ImmutableList.of());
+        if (func != null) {
+            try {
+                return func.getNode(new NodeStack());
+            } catch (InvalidExpressionException e) {
+                throw new IllegalStateException("Found a 0-args function that didn't allow us to get a node for it!",
+                    e);
+            }
+        }
         return null;
     }
 
@@ -92,23 +104,19 @@ public class FunctionContext {
 
     public <E extends IExpressionNode> E putVariable(String name, E node) {
         name = name.toLowerCase(Locale.ROOT);
+        if (NodeTypes.getType(name) != null) {
+            throw new IllegalArgumentException("Cannot add a variable that clashes with a type! (Name = '" + name
+                + "', Types = " + NodeTypes.getValidTypeNames() + ")");
+        }
         variables.put(name, node);
         return node;
     }
 
-    public IVariableNode putVariable(String name, NodeType type) {
-        switch (type) {
-            case BOOLEAN:
-                return putVariableBoolean(name);
-            case DOUBLE:
-                return putVariableDouble(name);
-            case LONG:
-                return putVariableLong(name);
-            case STRING:
-                return putVariableString(name);
-            default:
-                throw new IllegalArgumentException("Unknown node type " + type);
-        }
+    public IVariableNode putVariable(String name, Class<?> type) {
+        if (type == boolean.class) return putVariableBoolean(name);
+        if (type == long.class) return putVariableLong(name);
+        if (type == double.class) return putVariableDouble(name);
+        return putVariableObject(name, type);
     }
 
     public NodeVariableLong putVariableLong(String name) {
@@ -126,8 +134,12 @@ public class FunctionContext {
         return putVariable(name, node);
     }
 
-    public NodeVariableString putVariableString(String name) {
-        NodeVariableString node = new NodeVariableString(name);
+    public NodeVariableObject<String> putVariableString(String name) {
+        return putVariableObject(name, String.class);
+    }
+
+    public <T> NodeVariableObject<T> putVariableObject(String name, Class<T> type) {
+        NodeVariableObject<T> node = new NodeVariableObject<>(name, type);
         return putVariable(name, node);
     }
 
@@ -158,7 +170,7 @@ public class FunctionContext {
 
             @Override
             public INodeBoolean inline() {
-                return NodeConstantBoolean.get(value);
+                return NodeConstantBoolean.of(value);
             }
 
             @Override
@@ -168,13 +180,8 @@ public class FunctionContext {
         });
     }
 
-    public void putConstantString(String name, String value) {
-        putVariable(name, new NodeConstantString(value) {
-            @Override
-            public String toString() {
-                return name;
-            }
-        });
+    public <T> void putConstant(String name, Class<T> type, T value) {
+        putVariable(name, new NodeConstantObject<>(type, value));
     }
 
     public void putParsedConstant(String name, String value) {
@@ -185,76 +192,96 @@ public class FunctionContext {
         } else if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
             putConstantBoolean(name, "true".equalsIgnoreCase(value));
         } else {
-            putConstantString(name, value);
+            putConstant(name, String.class, value);
         }
     }
 
     // Function getter/setters
 
-    public INodeFunc getFunction(String name, int args) {
-        name = name.toLowerCase(Locale.ROOT);
-        return getFunction0(name + FUNCTION_ARG_SEPARATOR + args);
-    }
-
-    private INodeFunc getFunction0(String fullName) {
-        INodeFunc current = functions.get(fullName);
-        if (current != null) {
-            return current;
+    public INodeFunc getFunction(String name, List<Class<?>> args) {
+        INodeFunc func = functions.get(name, args);
+        if (func != null) {
+            return func;
         }
         for (FunctionContext parent : parents) {
-            INodeFunc func = parent.getFunction0(fullName);
+            func = parent.getFunction(name, args);
             if (func != null) return func;
         }
         return null;
     }
 
-    private static int getArgCount(INodeFunc function) {
+    public Map<List<Class<?>>, INodeFunc> getFunctions(String name) {
+        name = name.toLowerCase(Locale.ROOT);
+        Map<List<Class<?>>, INodeFunc> map = new HashMap<>();
+        getFunctions0(name, map);
+        return map;
+    }
+
+    public Table<String, List<Class<?>>, INodeFunc> getAllFunctions() {
+        return functions;
+    }
+
+    private void getFunctions0(String name, Map<List<Class<?>>, INodeFunc> map) {
+        for (FunctionContext parent : parents) {
+            parent.getFunctions0(name, map);
+        }
+        map.putAll(functions.row(name));
+    }
+
+    private static List<Class<?>> getArgTypes(INodeFunc function) {
         NodeStackRecording recorder = new NodeStackRecording();
         try {
             function.getNode(recorder);
         } catch (InvalidExpressionException e) {
             throw new IllegalStateException("This should never happen!", e);
         }
-        return recorder.types.size();
+        List<Class<?>> types = new ArrayList<>(recorder.types);
+        Collections.reverse(types);
+        return types;
     }
 
+    @Override
     public <F extends INodeFunc> F putFunction(String name, F function) {
         name = name.toLowerCase(Locale.ROOT);
-        functions.put(name + FUNCTION_ARG_SEPARATOR + getArgCount(function), function);
+        functions.put(name, getArgTypes(function), function);
         return function;
     }
 
     // Various putFunction_in_out methods that make adding a function quicker
 
+    public INodeFuncLong put_l(String name, IFuncToLong func) {
+        return putFunction(name, new NodeFuncToLong(name, func));
+    }
+
+    public INodeFuncDouble put_d(String name, IFuncToDouble func) {
+        return putFunction(name, new NodeFuncToDouble(name, func));
+    }
+
     public INodeFuncBoolean put_b(String name, IFuncToBoolean func) {
         return putFunction(name, new NodeFuncToBoolean(name, func));
     }
 
-    public INodeFuncString put_s(String name, IFuncToString func) {
-        return putFunction(name, new NodeFuncToString(name, func));
+    public INodeFuncObject<String> put_s(String name, Supplier<String> func) {
+        return put_o(name, String.class, func);
     }
 
-    public INodeFuncLong put_l_l(String name, IFuncLongToLong func) {
-        return putFunction(name, new NodeFuncLongToLong(func, (a) -> name + "(" + a + ")"));
+    public <T> INodeFuncObject<T> put_o(String name, Class<T> type, Supplier<T> func) {
+        return putFunction(name, new NodeFuncToObject<>(name, type, func));
     }
 
-    public INodeFuncLong put_ll_l(String name, IFuncLongLongToLong func) {
-        return putFunction(name, new NodeFuncLongLongToLong(func, (a, b) -> name + "(" + a + ", " + b + ")"));
+    public INodeFuncLong put_s_l(String name, IFuncObjectToLong<String> func) {
+        return put_o_l(name, String.class, func);
     }
 
-    public INodeFuncLong put_d_l(String name, IFuncDoubleToLong func) {
-        return putFunction(name, new NodeFuncDoubleToLong(func, (a) -> name + "(" + a + ")"));
+    public INodeFuncLong put_sl_l(String name, IFuncObjectLongToLong<String> func) {
+        return put_ol_l(name, String.class, func);
     }
 
-    public INodeFuncDouble put_d_d(String name, IFuncDoubleToDouble func) {
-        return putFunction(name, new NodeFuncDoubleToDouble(func, (a) -> name + "(" + a + ")"));
+    public INodeFuncLong put_sl_l(String name, IFuncObjectLongLongToLong<String> func) {
+        return put_oll_l(name, String.class, func);
     }
 
-    public INodeFuncDouble put_dd_d(String name, IFuncDoubleDoubleToDouble func) {
-        return putFunction(name, new NodeFuncDoubleDoubleToDouble(func, (a, b) -> name + "(" + a + ", " + b + ")"));
-    }
-
-    public INodeFuncLong put_s_l(String name, IFuncStringToLong func) {
-        return putFunction(name, new NodeFuncStringToLong(func, (a) -> name + "(" + a + ")"));
+    public INodeFuncObject<String> put_ss_s(String name, IFuncObjectObjectToObject<String, String, String> func) {
+        return put_oo_o(name, String.class, String.class, String.class, func);
     }
 }

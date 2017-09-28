@@ -55,6 +55,12 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
     protected void engineUpdate() {
         if (isBurning()) {
             power += getCurrentOutput();
+            long max = getMaxPower();
+            if (power > max) {
+                power = getMaxPower();
+            }
+        } else {
+            power = 0;
         }
     }
 
@@ -84,7 +90,7 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
 
     @Override
     public long getMaxPower() {
-        return getCurrentOutput();
+        return getCurrentOutput() * 10_000;
     }
 
     @Override
@@ -108,12 +114,14 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
     }
 
     @Override
-    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY,
+        float hitZ) {
         if (EntityUtil.getWrenchHand(player) != null && player.isSneaking()) {
             if (!world.isRemote) {
                 currentOutputIndex++;
                 currentOutputIndex %= outputs.length;
-                player.sendStatusMessage(new TextComponentTranslation("chat.pipe.power.iron.mode", outputs[currentOutputIndex]), true);
+                player.sendStatusMessage(
+                    new TextComponentTranslation("chat.pipe.power.iron.mode", outputs[currentOutputIndex]), true);
                 sendNetworkUpdate(NET_RENDER_DATA);
             }
             return true;

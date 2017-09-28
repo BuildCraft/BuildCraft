@@ -10,13 +10,13 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -28,8 +28,8 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.core.BCCoreSprites;
 
 public class StatementParameterRedstoneLevel implements IStatementParameter {
-    public int level;
-    private int minLevel, maxLevel;
+    public final int level;
+    private final int minLevel, maxLevel;
 
     public StatementParameterRedstoneLevel() {
         this(0, 0, 15);
@@ -45,6 +45,19 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
         maxLevel = max;
     }
 
+    public StatementParameterRedstoneLevel(NBTTagCompound nbt) {
+        level = nbt.getByte("l");
+        minLevel = nbt.getByte("ml");
+        maxLevel = nbt.getByte("ma");
+    }
+
+    @Override
+    public void writeToNbt(NBTTagCompound nbt) {
+        nbt.setByte("l", (byte) level);
+        nbt.setByte("mi", (byte) minLevel);
+        nbt.setByte("ma", (byte) maxLevel);
+    }
+
     @Nonnull
     @Override
     public ItemStack getItemStack() {
@@ -53,38 +66,25 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getGuiSprite() {
-        return BCCoreSprites.PARAM_REDSTONE_LEVEL[level & 15].getSprite();
+    public ISprite getSprite() {
+        return BCCoreSprites.PARAM_REDSTONE_LEVEL[level & 15];
     }
 
     @Override
-    public boolean onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
-//        if (mouse.getButton() == 0) {
-//            level = (level + 1) & 15;
-//            while (level < minLevel || level > maxLevel) {
-//                level = (level + 1) & 15;
-//            }
-//        } else {
-//            level = (level - 1) & 15;
-//            while (level < minLevel || level > maxLevel) {
-//                level = (level - 1) & 15;
-//            }
-//        }
-        return true;
-    }
-
-    @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        nbt.setByte("l", (byte) level);
-        nbt.setByte("mi", (byte) minLevel);
-        nbt.setByte("ma", (byte) maxLevel);
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        level = nbt.hasKey("l") ? nbt.getByte("l") : 15;
-        minLevel = nbt.hasKey("mi") ? nbt.getByte("mi") : 0;
-        maxLevel = nbt.hasKey("ma") ? nbt.getByte("ma") : 15;
+    public IStatementParameter onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+        int l;
+        if (mouse.getButton() == 0) {
+            l = (level + 1) & 15;
+            while (level < minLevel || level > maxLevel) {
+                l = (level + 1) & 15;
+            }
+        } else {
+            l = (level - 1) & 15;
+            while (level < minLevel || level > maxLevel) {
+                l = (level - 1) & 15;
+            }
+        }
+        return new StatementParameterRedstoneLevel(l, minLevel, maxLevel);
     }
 
     @Override
@@ -115,9 +115,9 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
     public IStatementParameter rotateLeft() {
         return this;
     }
-    
+
     @Override
-    public IStatementParameter[] getPossible(IStatementContainer source, IStatement stmt) {
+    public IStatementParameter[] getPossible(IStatementContainer source) {
         IStatementParameter[] possible = new IStatementParameter[maxLevel - minLevel];
         for (int i = 0; i < maxLevel - minLevel; i++) {
             int l = minLevel + i;

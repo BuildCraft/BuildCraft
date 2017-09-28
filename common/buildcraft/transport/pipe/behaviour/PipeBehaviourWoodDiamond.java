@@ -155,19 +155,19 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
     }
 
     @Override
-    protected int extractItems(IFlowItems flow, EnumFacing dir, int count) {
+    protected int extractItems(IFlowItems flow, EnumFacing dir, int count, boolean simulate) {
         if (filters.getStackInSlot(currentFilter).isEmpty()) {
             advanceFilter();
         }
-        int extracted = flow.tryExtractItems(1, getCurrentDir(), null, getStackFilter());
-        if (extracted > 0 & filterMode == FilterMode.ROUND_ROBIN) {
+        int extracted = flow.tryExtractItems(1, getCurrentDir(), null, getStackFilter(), simulate);
+        if (extracted > 0 & filterMode == FilterMode.ROUND_ROBIN && !simulate) {
             advanceFilter();
         }
         return extracted;
     }
 
     @Override
-    protected FluidStack extractFluid(IFlowFluid flow, EnumFacing dir, int millibuckets) {
+    protected FluidStack extractFluid(IFlowFluid flow, EnumFacing dir, int millibuckets, boolean simulate) {
         if (filters.getStackInSlot(currentFilter).isEmpty()) {
             advanceFilter();
         }
@@ -176,10 +176,10 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
             default:
             case WHITE_LIST:
                 if (filters.extract(s -> true, 1, 1, true).isEmpty()) {
-                    return flow.tryExtractFluid(millibuckets, dir, null);
+                    return flow.tryExtractFluid(millibuckets, dir, null, simulate);
                 }
                 // Firstly try the advanced version - if that fails we will need to try the basic version
-                ActionResult<FluidStack> result = flow.tryExtractFluidAdv(millibuckets, dir, new ArrayFluidFilter(filters.stacks));
+                ActionResult<FluidStack> result = flow.tryExtractFluidAdv(millibuckets, dir, new ArrayFluidFilter(filters.stacks), simulate);
                 FluidStack extracted = result.getResult();
                 if (result.getType() != EnumActionResult.PASS) {
                     return extracted;
@@ -191,7 +191,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
                         if (stack.isEmpty()) {
                             continue;
                         }
-                        extracted = flow.tryExtractFluid(millibuckets, dir, FluidUtil.getFluidContained(stack));
+                        extracted = flow.tryExtractFluid(millibuckets, dir, FluidUtil.getFluidContained(stack), simulate);
                         if (extracted != null && extracted.amount > 0) {
                             return extracted;
                         }
@@ -201,7 +201,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
             case BLACK_LIST:
                 // We cannot fallback to the basic version - only use the advanced version
                 InvertedFluidFilter filter = new InvertedFluidFilter(new ArrayFluidFilter(filters.stacks));
-                return flow.tryExtractFluidAdv(millibuckets, dir, filter).getResult();
+                return flow.tryExtractFluidAdv(millibuckets, dir, filter, simulate).getResult();
             case ROUND_ROBIN:
                 // We can't do this -- amounts might differ and its just ugly
                 return null;

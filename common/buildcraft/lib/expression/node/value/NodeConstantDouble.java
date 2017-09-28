@@ -19,6 +19,10 @@ public class NodeConstantDouble implements INodeDouble, IConstantNode {
         this.value = value;
     }
 
+    public static NodeConstantDouble of(double value) {
+        return new NodeConstantDouble(value);
+    }
+
     @Override
     public double evaluate() {
         return value;

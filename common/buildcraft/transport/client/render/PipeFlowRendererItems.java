@@ -19,13 +19,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import buildcraft.api.core.render.ISprite;
 import buildcraft.api.transport.pipe.IPipeFlowRenderer;
 
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.render.ItemRenderUtil;
-import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.misc.ColourUtil;
 
 import buildcraft.transport.BCTransportSprites;

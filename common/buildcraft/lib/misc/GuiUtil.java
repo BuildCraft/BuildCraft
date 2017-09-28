@@ -6,7 +6,9 @@
 
 package buildcraft.lib.misc;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -17,20 +19,29 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.client.render.fluid.FluidRenderer;
+import buildcraft.lib.client.sprite.SpriteNineSliced;
+import buildcraft.lib.client.sprite.SubSprite;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
 public class GuiUtil {
+
+    private static final Deque<GuiRectangle> scissorRegions = new ArrayDeque<>();
+
     public static ToolTip createToolTip(GuiBC8<?> gui, Supplier<ItemStack> stackRef) {
         return new ToolTip() {
             @Override
@@ -47,25 +58,34 @@ public class GuiUtil {
     }
 
     /** Draws multiple elements, one after each other. */
-    public static <D> void drawVerticallyAppending(IGuiPosition element, Iterable<? extends D> iterable, IVerticalAppendingDrawer<D> drawer) {
-        int x = element.getX();
-        int y = element.getY();
+    public static <D> void drawVerticallyAppending(IGuiPosition element, Iterable<? extends D> iterable,
+        IVerticalAppendingDrawer<D> drawer) {
+        double x = element.getX();
+        double y = element.getY();
         for (D drawable : iterable) {
             y += drawer.draw(drawable, x, y);
         }
     }
 
+    public static void drawItemStackAt(ItemStack stack, int x, int y) {
+        RenderHelper.enableGUIStandardItemLighting();
+        Minecraft mc = Minecraft.getMinecraft();
+        RenderItem itemRender = mc.getRenderItem();
+        itemRender.renderItemAndEffectIntoGUI(mc.player, stack, x, y);
+        itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, stack, x, y, null);
+        RenderHelper.disableStandardItemLighting();
+    }
+
     @FunctionalInterface
     public interface IVerticalAppendingDrawer<D> {
-        int draw(D drawable, int x, int y);
+        double draw(D drawable, double x, double y);
     }
 
     /** Straight copy of {@link GuiUtils#drawHoveringText(List, int, int, int, int, int, FontRenderer)}, except that we
-     * return the size of the box that was drawn.
-     * 
-     * Draws a tooltip box on the screen with text in it. Automatically positions the box relative to the mouse to match
-     * Mojang's implementation. Automatically wraps text when there is not enough space on the screen to display the
-     * text without wrapping. Can have a maximum width set to avoid creating very wide tooltips.
+     * return the size of the box that was drawn. Draws a tooltip box on the screen with text in it. Automatically
+     * positions the box relative to the mouse to match Mojang's implementation. Automatically wraps text when there is
+     * not enough space on the screen to display the text without wrapping. Can have a maximum width set to avoid
+     * creating very wide tooltips.
      *
      * @param textLines the lines of text to be drawn in a hovering tooltip box.
      * @param mouseX the mouse X position
@@ -75,7 +95,8 @@ public class GuiUtil {
      * @param maxTextWidth the maximum width of the text in the tooltip box. Set to a negative number to have no max
      *            width.
      * @param font the font for drawing the text in the tooltip box */
-    public static int drawHoveringText(List<String> textLines, final int mouseX, final int mouseY, final int screenWidth, final int screenHeight, final int maxTextWidth, FontRenderer font) {
+    public static int drawHoveringText(List<String> textLines, final int mouseX, final int mouseY,
+        final int screenWidth, final int screenHeight, final int maxTextWidth, FontRenderer font) {
         if (!textLines.isEmpty()) {
             GlStateManager.disableRescaleNormal();
             RenderHelper.disableStandardItemLighting();
@@ -157,17 +178,26 @@ public class GuiUtil {
 
             final int zLevel = 300;
             final int backgroundColor = 0xF0100010;
-            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 4, tooltipX + tooltipTextWidth + 3, tooltipY - 3, backgroundColor, backgroundColor);
-            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY + tooltipHeight + 3, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 4, backgroundColor, backgroundColor);
-            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
-            GuiUtils.drawGradientRect(zLevel, tooltipX - 4, tooltipY - 3, tooltipX - 3, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
-            GuiUtils.drawGradientRect(zLevel, tooltipX + tooltipTextWidth + 3, tooltipY - 3, tooltipX + tooltipTextWidth + 4, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
+            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 4, tooltipX + tooltipTextWidth + 3, tooltipY - 3,
+                backgroundColor, backgroundColor);
+            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY + tooltipHeight + 3,
+                tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 4, backgroundColor, backgroundColor);
+            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3,
+                tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
+            GuiUtils.drawGradientRect(zLevel, tooltipX - 4, tooltipY - 3, tooltipX - 3, tooltipY + tooltipHeight + 3,
+                backgroundColor, backgroundColor);
+            GuiUtils.drawGradientRect(zLevel, tooltipX + tooltipTextWidth + 3, tooltipY - 3,
+                tooltipX + tooltipTextWidth + 4, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
             final int borderColorStart = 0x505000FF;
             final int borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
-            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3 + 1, tooltipX - 3 + 1, tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
-            GuiUtils.drawGradientRect(zLevel, tooltipX + tooltipTextWidth + 2, tooltipY - 3 + 1, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
-            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3, tooltipY - 3 + 1, borderColorStart, borderColorStart);
-            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY + tooltipHeight + 2, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, borderColorEnd, borderColorEnd);
+            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3 + 1, tooltipX - 3 + 1,
+                tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
+            GuiUtils.drawGradientRect(zLevel, tooltipX + tooltipTextWidth + 2, tooltipY - 3 + 1,
+                tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
+            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3,
+                tooltipY - 3 + 1, borderColorStart, borderColorStart);
+            GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY + tooltipHeight + 2,
+                tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, borderColorEnd, borderColorEnd);
 
             for (int lineNumber = 0; lineNumber < textLines.size(); ++lineNumber) {
                 String line = textLines.get(lineNumber);
@@ -201,12 +231,12 @@ public class GuiUtil {
     public static void drawFluid(IGuiArea position, FluidStack fluid, int amount, int capacity) {
         if (fluid == null || amount <= 0) return;
 
-        int height = amount * position.getHeight() / capacity;
+        double height = amount * position.getHeight() / capacity;
 
-        int startX = position.getX();
-        int startY;
-        int endX = startX + position.getWidth();
-        int endY;
+        double startX = position.getX();
+        double startY;
+        double endX = startX + position.getWidth();
+        double endY;
 
         if (fluid.getFluid().isGaseous(fluid)) {
             startY = position.getY() + height;
@@ -219,7 +249,39 @@ public class GuiUtil {
         FluidRenderer.drawFluidForGui(fluid, startX, startY, endX, endY);
     }
 
-    public static void scissor(int x, int y, int width, int height) {
+    public static AutoGlScissor scissor(double x, double y, double width, double height) {
+        return scissor(new GuiRectangle(x, y, width, height));
+    }
+
+    public static AutoGlScissor scissor(IGuiArea area) {
+        GuiRectangle rect = area.asImmutable();
+        if (scissorRegions.isEmpty()) {
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        }
+        scissorRegions.push(rect);
+        scissor0(rect);
+        return new AutoGlScissor() {
+            @Override
+            public void close() {
+                GuiRectangle last = scissorRegions.pop();
+                if (last != rect) {
+                    throw new IllegalStateException("Popped rectangles in the wrong order!");
+                }
+                GuiRectangle next = scissorRegions.peek();
+                if (next == null) {
+                    GL11.glDisable(GL11.GL_SCISSOR_TEST);
+                } else {
+                    scissor0(next);
+                }
+            }
+        };
+    }
+
+    private static void scissor0(IGuiArea area) {
+        scissor0(area.getX(), area.getY(), area.getWidth(), area.getHeight());
+    }
+
+    private static void scissor0(double x, double y, double width, double height) {
         Minecraft mc = Minecraft.getMinecraft();
         ScaledResolution res = new ScaledResolution(mc);
         double scaleW = mc.displayWidth / res.getScaledWidth_double();
@@ -227,5 +289,41 @@ public class GuiUtil {
         int rx = (int) (x * scaleW);
         int ry = (int) (mc.displayHeight - (y + height) * scaleH);
         GL11.glScissor(rx, ry, (int) (width * scaleW), (int) (height * scaleH));
+    }
+
+    public static ISprite subRelative(ISprite sprite, double u, double v, double width, double height, double size) {
+        return GuiUtil.subRelative(sprite, u / size, v / size, width / size, height / size);
+    }
+
+    public static ISprite subAbsolute(ISprite sprite, double uMin, double vMin, double uMax, double vMax,
+        double spriteSize) {
+        double size = spriteSize;
+        return GuiUtil.subAbsolute(sprite, uMin / size, vMin / size, uMax / size, vMax / size);
+    }
+
+    public static ISprite subRelative(ISprite sprite, double u, double v, double width, double height) {
+        return GuiUtil.subAbsolute(sprite, u, v, u + width, v + height);
+    }
+
+    public static ISprite subAbsolute(ISprite sprite, double uMin, double vMin, double uMax, double vMax) {
+        if (uMin == 0 && vMin == 0 && uMax == 1 && vMax == 1) {
+            return sprite;
+        }
+        return new SubSprite(sprite, uMin, vMin, uMax, vMax);
+    }
+
+    public static SpriteNineSliced slice(ISprite sprite, int uMin, int vMin, int uMax, int vMax, int textureSize) {
+        return new SpriteNineSliced(sprite, uMin, vMin, uMax, vMax, textureSize);
+    }
+
+    public static SpriteNineSliced slice(ISprite sprite, double uMin, double vMin, double uMax, double vMax,
+        double scale) {
+        return new SpriteNineSliced(sprite, uMin, vMin, uMax, vMax, scale);
+    }
+
+    /** A type of {@link AutoCloseable} that will pop off the current {@link GL11#glScissor(int, int, int, int)}. */
+    public interface AutoGlScissor extends AutoCloseable {
+        @Override
+        void close();
     }
 }

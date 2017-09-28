@@ -141,13 +141,13 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
     }
 
     @Override
-    protected int extractItems(IFlowItems flow, EnumFacing dir, int count) {
+    protected int extractItems(IFlowItems flow, EnumFacing dir, int count, boolean simulate) {
         if (currentSlot == null && activeSlots.size() > 0) {
             currentSlot = getNextSlot();
         }
         if (currentSlot == null) return 0;
-        int extracted = flow.tryExtractItems(count, dir, slotColours.get(currentSlot), filter);
-        if (extracted > 0) {
+        int extracted = flow.tryExtractItems(count, dir, slotColours.get(currentSlot), filter, simulate);
+        if (extracted > 0 && !simulate) {
             currentSlot = getNextSlot();
             pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
         }

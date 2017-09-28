@@ -47,7 +47,8 @@ public enum CoreTriggerProvider implements ITriggerProvider {
     }
 
     @Override
-    public void addInternalSidedTriggers(Collection<ITriggerInternalSided> res, IStatementContainer container, @Nonnull EnumFacing side) {}
+    public void addInternalSidedTriggers(Collection<ITriggerInternalSided> res, IStatementContainer container,
+        @Nonnull EnumFacing side) {}
 
     @Override
     public void addExternalTriggers(Collection<ITriggerExternal> res, @Nonnull EnumFacing side, TileEntity tile) {
@@ -98,6 +99,14 @@ public enum CoreTriggerProvider implements ITriggerProvider {
         if (tile.hasCapability(TilesAPI.CAP_HAS_WORK, null)) {
             res.add(BCCoreStatements.TRIGGER_MACHINE_ACTIVE);
             res.add(BCCoreStatements.TRIGGER_MACHINE_INACTIVE);
+        }
+
+        if (TriggerEnginePowerStage.isTriggeringTile(tile)) {
+            res.add(BCCoreStatements.TRIGGER_POWER_BLUE);
+            res.add(BCCoreStatements.TRIGGER_POWER_GREEN);
+            res.add(BCCoreStatements.TRIGGER_POWER_YELLOW);
+            res.add(BCCoreStatements.TRIGGER_POWER_RED);
+            res.add(BCCoreStatements.TRIGGER_POWER_OVERHEAT);
         }
     }
 }

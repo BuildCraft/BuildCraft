@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -37,7 +38,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.EnumPipePart;
@@ -296,19 +296,9 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     // IDebuggable
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("fluid = " + tank.getDebugString());
-        String s = "";
-        for (EnumFacing f : EnumFacing.VALUES) {
-            if (openSides.contains(f)) {
-                if (s.length() > 0) {
-                    s += ", ";
-                }
-                s += f.getName();
-            }
-        }
-        left.add("open sides = " + s);
+        left.add("open sides = " + openSides.stream().map(Enum::name).collect(Collectors.joining(", ")));
         left.add("delay = " + getCurrentDelay());
         left.add("tick = " + tick);
         left.add("queue size = " + queue.size());

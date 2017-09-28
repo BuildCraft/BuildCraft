@@ -21,6 +21,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 public class MessageWireSystems implements IMessage {
     private Map<Integer, WireSystem> wireSystems = new HashMap<>();
 
+    @SuppressWarnings("unused")
     public MessageWireSystems() {
     }
 

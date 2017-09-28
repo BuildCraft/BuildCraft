@@ -20,6 +20,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 public class MessageSnapshotResponse implements IMessage {
     private Snapshot snapshot;
 
+    @SuppressWarnings("unused")
     public MessageSnapshotResponse() {
     }
 

@@ -84,6 +84,8 @@ sourceSets {
     main {
         java {
             srcDir "common"
+            srcDir "common_old_license"
+            srcDir "src/autogen/java"
             // srcDir "src_old_license"
         }
         resources {
@@ -103,14 +105,15 @@ sourceSets {
 if (gradle.startParameter.taskNames.contains("checkstyle")) {
 	checkstyle {
 		configFile = file("guidelines/buildcraft.checkstyle")
+        toolVersion = "7.2"
 	}
 
 	task checkstyle {}
 	tasks["checkstyle"].dependsOn checkstyleApi
 	tasks["checkstyle"].dependsOn checkstyleMain
 
-	tasks["checkstyleApi"].enabled = gradle.startParameter.taskNames.contains("checkstyle")
-	tasks["checkstyleMain"].enabled = gradle.startParameter.taskNames.contains("checkstyle")
+	tasks["checkstyleApi"].enabled = true
+	tasks["checkstyleMain"].enabled = true
 }
 
 runClient.jvmArgs += "-Dbuildcraft.dev=true"

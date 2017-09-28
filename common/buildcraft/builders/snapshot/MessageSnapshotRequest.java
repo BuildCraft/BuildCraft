@@ -17,6 +17,7 @@ import buildcraft.lib.net.PacketBufferBC;
 public class MessageSnapshotRequest implements IMessage {
     private Snapshot.Key key;
 
+    @SuppressWarnings("unused")
     public MessageSnapshotRequest() {
     }
 

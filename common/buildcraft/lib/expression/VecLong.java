@@ -13,6 +13,18 @@ public class VecLong {
 
     public final long a, b, c, d;
 
+    public VecLong(long a) {
+        this(a, 0, 0, 0);
+    }
+
+    public VecLong(long a, long b) {
+        this(a, b, 0, 0);
+    }
+
+    public VecLong(long a, long b, long c) {
+        this(a, b, c, 0);
+    }
+
     public VecLong(long a, long b, long c, long d) {
         this.a = a;
         this.b = b;
@@ -85,5 +97,10 @@ public class VecLong {
 
     public VecDouble castToDouble() {
         return new VecDouble(a, b, c, d);
+    }
+
+    @Override
+    public String toString() {
+        return "{ " + a + ", " + b + ", " + c + ", " + d + " }";
     }
 }

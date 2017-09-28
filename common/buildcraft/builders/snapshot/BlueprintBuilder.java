@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import javax.annotation.Nonnull;
-
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.entity.Entity;
@@ -68,7 +66,6 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         return getSchematicBlock(blockPos) == null || getSchematicBlock(blockPos).isAir();
     }
 
-    @Nonnull
     @Override
     protected Blueprint.BuildingInfo getBuildingInfo() {
         return tile.getBlueprintBuildingInfo();

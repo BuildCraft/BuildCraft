@@ -6,10 +6,16 @@
 
 package buildcraft.lib.gui.ledger;
 
+import net.minecraft.util.ResourceLocation;
+
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.BCLibSprites;
-import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.engine.TileEngineBase_BC8;
+import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.config.GuiConfigManager;
 import buildcraft.lib.misc.LocaleUtil;
 
 public class LedgerEngine extends Ledger_Neptune {
@@ -20,9 +26,9 @@ public class LedgerEngine extends Ledger_Neptune {
 
     public final TileEngineBase_BC8 engine;
 
-    public LedgerEngine(LedgerManager_Neptune manager, TileEngineBase_BC8 engine) {
-        super(manager);
-        this.engine = engine;
+    public LedgerEngine(GuiBC8<? extends ContainerBCTile<? extends TileEngineBase_BC8>> gui, boolean expandPositive) {
+        super(gui, OVERLAY_COLOUR, expandPositive);
+        this.engine = gui.container.tile;
         this.title = "gui.power";
 
         appendText(LocaleUtil.localize("gui.currentOutput") + ":", SUB_HEADER_COLOUR).setDropShadow(true);
@@ -32,11 +38,8 @@ public class LedgerEngine extends Ledger_Neptune {
         appendText(LocaleUtil.localize("gui.heat") + ":", SUB_HEADER_COLOUR).setDropShadow(true);
         appendText(() -> LocaleUtil.localizeHeat(engine.getHeat()), TEXT_COLOUR);
         calculateMaxSize();
-    }
 
-    @Override
-    public int getColour() {
-        return OVERLAY_COLOUR;
+        setOpenProperty(GuiConfigManager.getOrAddBoolean(new ResourceLocation("buildcraftlib:engine"), "ledger.power.is_open", false));
     }
 
     @Override
@@ -45,7 +48,7 @@ public class LedgerEngine extends Ledger_Neptune {
     }
 
     @Override
-    protected void drawIcon(int x, int y) {
+    protected void drawIcon(double x, double y) {
         ISprite sprite;
         switch (engine.getPowerStage()) {
             case OVERHEAT:
