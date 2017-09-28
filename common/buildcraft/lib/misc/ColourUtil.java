@@ -12,6 +12,8 @@ import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableMap;
+
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextFormatting;
