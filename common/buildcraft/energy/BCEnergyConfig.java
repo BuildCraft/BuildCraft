@@ -67,11 +67,13 @@ public class BCEnergyConfig {
         propExcludedBiomes = BCCoreConfig.config.get("worldgen", "excludedBiomes", _excluded);
         propExcludedBiomes.setComment("Biome registry names (e.g. 'minecraft:hell','minecraft:jungle')"
             + " of biomes that should never generate oil.");
+        world.setTo(propExcludedBiomes);
 
         int[] _dims = { -1, 1 };
         propExcludedDimensions = BCCoreConfig.config.get("worldgen", "excludedDimensions", _dims);
         propExcludedDimensions.setComment("Dimension ID's (e.g. '-1' for the nether,'1' for the end)"
             + " of dimensions that should never generate oil.");
+        world.setTo(propExcludedDimensions);
 
         reloadConfig(EnumRestartRequirement.GAME);
         BCCoreConfig.addReloadListener(BCEnergyConfig::reloadConfig);

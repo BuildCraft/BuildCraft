@@ -31,11 +31,12 @@ public class TransactorEntityItem implements IItemExtractable {
             return StackUtil.EMPTY;
         }
         ItemStack current = entity.getEntityItem();
-        if (current.isEmpty() || current.getCount() < min || min > 1 || max < 1 || max < min) {
+        if (current.isEmpty() || current.getCount() < min || min < 1 || max < min) {
             return StackUtil.EMPTY;
         }
         if (filter.matches(current)) {
-            ItemStack extracted = simulate ? current.copy().splitStack(max) : current.splitStack(max);
+            current = current.copy();
+            ItemStack extracted = current.splitStack(max);
             if (!simulate) {
                 if (current.getCount() == 0) {
                     entity.setDead();
@@ -47,5 +48,10 @@ public class TransactorEntityItem implements IItemExtractable {
         } else {
             return StackUtil.EMPTY;
         }
+    }
+
+    @Override
+    public String toString() {
+        return entity.toString();
     }
 }

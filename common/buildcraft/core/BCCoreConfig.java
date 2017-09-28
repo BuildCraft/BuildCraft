@@ -63,6 +63,7 @@ public class BCCoreConfig {
     public static void preInit(File cfgFolder) {
         config = new Configuration(new File(cfgFolder, "main.cfg"));
         objConfig = RegistryHelper.setRegistryConfig(BCCore.MODID, new File(cfgFolder, "objects.cfg"));
+        BCLibConfig.guiConfigFile = new File(cfgFolder, "gui.json");
 
         detailedConfigManager = new FileConfigManager(
             " The buildcraft detailed configuration file. This contains a lot of miscellaneous options that have no "

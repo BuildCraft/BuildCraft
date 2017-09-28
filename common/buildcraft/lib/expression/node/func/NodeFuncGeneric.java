@@ -12,15 +12,15 @@ import buildcraft.lib.expression.api.INodeFunc;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.api.NodeType;
+import buildcraft.lib.expression.api.NodeTypes;
 
 public abstract class NodeFuncGeneric implements INodeFunc {
 
     private final IExpressionNode node;
-    protected final NodeType[] types;
+    protected final Class<?>[] types;
     protected final IVariableNode[] variables;
 
-    public NodeFuncGeneric(IExpressionNode node, NodeType[] types, IVariableNode[] nodes) {
+    public NodeFuncGeneric(IExpressionNode node, Class<?>[] types, IVariableNode[] nodes) {
         this.node = node;
         this.types = types;
         this.variables = nodes;
@@ -29,8 +29,8 @@ public abstract class NodeFuncGeneric implements INodeFunc {
             throw new IllegalArgumentException("Lengths did not match! (" + types.length + " vs " + nodes.length + ")");
         }
         for (int i = 0; i < types.length; i++) {
-            NodeType givenType = types[i];
-            if (NodeType.getType(nodes[i]) != givenType) {
+            Class<?> givenType = types[i];
+            if (NodeTypes.getType(nodes[i]) != givenType) {
                 throw new IllegalArgumentException("Types did not match! (given " + givenType + ", node is " + nodes[i].getClass() + ")");
             }
         }

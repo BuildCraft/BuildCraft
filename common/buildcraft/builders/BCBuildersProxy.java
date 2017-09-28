@@ -27,12 +27,13 @@ import buildcraft.builders.container.ContainerArchitectTable;
 import buildcraft.builders.container.ContainerBuilder;
 import buildcraft.builders.container.ContainerElectronicLibrary;
 import buildcraft.builders.container.ContainerFiller;
-import buildcraft.builders.container.ContainerFillingPlanner;
+import buildcraft.builders.container.ContainerFillerPlanner;
 import buildcraft.builders.container.ContainerReplacer;
 import buildcraft.builders.gui.GuiArchitectTable;
 import buildcraft.builders.gui.GuiBuilder;
 import buildcraft.builders.gui.GuiElectronicLibrary;
-import buildcraft.builders.gui.GuiFilling;
+import buildcraft.builders.gui.GuiFiller;
+import buildcraft.builders.gui.GuiFillerPlanner;
 import buildcraft.builders.gui.GuiReplacer;
 import buildcraft.builders.tile.TileArchitectTable;
 import buildcraft.builders.tile.TileBuilder;
@@ -83,7 +84,7 @@ public abstract class BCBuildersProxy implements IGuiHandler {
             }
         }
         if (id == BCBuildersGuis.FILLING_PLANNER.ordinal()) {
-            return new ContainerFillingPlanner(player);
+            return new ContainerFillerPlanner(player);
         }
         return null;
     }
@@ -92,10 +93,9 @@ public abstract class BCBuildersProxy implements IGuiHandler {
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         return null;
     }
-    
 
     public void fmlPreInit() {
-        
+
     }
 
     public void fmlInit() {
@@ -127,7 +127,7 @@ public abstract class BCBuildersProxy implements IGuiHandler {
             if (id == BCBuildersGuis.FILLER.ordinal()) {
                 if (tile instanceof TileFiller) {
                     TileFiller filler = (TileFiller) tile;
-                    return new GuiFilling(new ContainerFiller(player, filler));
+                    return new GuiFiller(new ContainerFiller(player, filler));
                 }
             }
             if (id == BCBuildersGuis.ARCHITECT.ordinal()) {
@@ -143,7 +143,7 @@ public abstract class BCBuildersProxy implements IGuiHandler {
                 }
             }
             if (id == BCBuildersGuis.FILLING_PLANNER.ordinal()) {
-                return new GuiFilling(new ContainerFillingPlanner(player));
+                return new GuiFillerPlanner(new ContainerFillerPlanner(player));
             }
             return null;
         }

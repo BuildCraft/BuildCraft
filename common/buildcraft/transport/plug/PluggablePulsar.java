@@ -8,7 +8,6 @@ package buildcraft.transport.plug;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -24,6 +23,8 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
+import buildcraft.api.transport.pipe.IFlowFluid;
+import buildcraft.api.transport.pipe.IFlowItems;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
@@ -34,22 +35,23 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.info.ContextInfo;
 import buildcraft.lib.expression.info.VariableInfo.CacheType;
 import buildcraft.lib.expression.info.VariableInfo.VariableInfoDouble;
-import buildcraft.lib.expression.info.VariableInfo.VariableInfoString;
+import buildcraft.lib.expression.info.VariableInfo.VariableInfoObject;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
-import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.PacketBufferBC;
 
+import buildcraft.transport.BCTransportConfig;
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugPulsar;
 
 public class PluggablePulsar extends PipePluggable {
 
     public static final FunctionContext MODEL_FUNC_CTX;
-    private static final NodeVariableString MODEL_SIDE;
+    private static final NodeVariableObject<EnumFacing> MODEL_SIDE;
     private static final NodeVariableDouble MODEL_STAGE;
     private static final NodeVariableBoolean MODEL_ON;
     private static final NodeVariableBoolean MODEL_AUTO;
@@ -91,17 +93,17 @@ public class PluggablePulsar extends PipePluggable {
         BOXES[EnumFacing.EAST.ordinal()] = new AxisAlignedBB(ul, min, min, uu, max, max);
 
         MODEL_FUNC_CTX = DefaultContexts.createWithAll();
-        MODEL_SIDE = MODEL_FUNC_CTX.putVariableString("side");
+        MODEL_SIDE = MODEL_FUNC_CTX.putVariableObject("side", EnumFacing.class);
         MODEL_STAGE = MODEL_FUNC_CTX.putVariableDouble("stage");
         MODEL_ON = MODEL_FUNC_CTX.putVariableBoolean("on");
         MODEL_AUTO = MODEL_FUNC_CTX.putVariableBoolean("auto");
         MODEL_MANUAL = MODEL_FUNC_CTX.putVariableBoolean("manual");
 
         MODEL_VAR_INFO = new ContextInfo(MODEL_FUNC_CTX);
-        VariableInfoString infoSide = MODEL_VAR_INFO.createInfoString("side", MODEL_SIDE);
+        VariableInfoObject<EnumFacing> infoSide = MODEL_VAR_INFO.createInfoObject("side", MODEL_SIDE);
         infoSide.cacheType = CacheType.ALWAYS;
         infoSide.setIsComplete = true;
-        infoSide.possibleValues.addAll(Arrays.stream(EnumFacing.VALUES).map(EnumFacing::getName).collect(Collectors.toList()));
+        infoSide.possibleValues.addAll(Arrays.asList(EnumFacing.VALUES));
 
         VariableInfoDouble infoStage = MODEL_VAR_INFO.createInfoDouble("stage", MODEL_STAGE);
         infoStage.cacheType = CacheType.IN_SET;
@@ -229,7 +231,28 @@ public class PluggablePulsar extends PipePluggable {
         if (pulseStage == PULSE_STAGE) {
             pulseStage = 0;
             IMjRedstoneReceiver rsRec = (IMjRedstoneReceiver) holder.getPipe().getBehaviour();
-            rsRec.receivePower(MjAPI.MJ, false);
+            if (gateSinglePulses > 0) {
+                long power = MjAPI.MJ;
+                if (holder.getPipe().getFlow() instanceof IFlowFluid) {
+                    // Special extration logic for fluids:
+                    // Always extract either 1 bucket, or nothing.
+                    power = BCTransportConfig.mjPerMillibucket * 1000;
+                } else if (holder.getPipe().getFlow() instanceof IFlowItems) {
+                    power = BCTransportConfig.mjPerItem;
+                } else {
+                    power = MjAPI.MJ;
+                }
+                long excess = rsRec.receivePower(power, true);
+                if (excess == 0) {
+                    rsRec.receivePower(power, false);
+                } else {
+                    // Nothing was extracted, so lets extract in the future
+                    gateSinglePulses++;
+                    // ParticleUtil.spawnFailureParticles
+                }
+            } else {
+                rsRec.receivePower(MjAPI.MJ, false);
+            }
             if (gateSinglePulses > 0) {
                 gateSinglePulses--;
             }
@@ -275,7 +298,7 @@ public class PluggablePulsar extends PipePluggable {
         MODEL_AUTO.value = false;
         MODEL_MANUAL.value = false;
         MODEL_ON.value = false;
-        MODEL_SIDE.value = "west";
+        MODEL_SIDE.value = EnumFacing.WEST;
     }
 
     public void setModelVariables(float partialTicks) {
@@ -287,6 +310,6 @@ public class PluggablePulsar extends PipePluggable {
         MODEL_ON.value = isPulsing;
         MODEL_MANUAL.value = manuallyEnabled;
         MODEL_AUTO.value = autoEnabled;
-        MODEL_SIDE.value = side.getName();
+        MODEL_SIDE.value = side;
     }
 }

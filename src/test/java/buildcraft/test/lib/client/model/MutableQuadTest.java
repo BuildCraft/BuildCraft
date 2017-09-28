@@ -9,6 +9,7 @@ import net.minecraft.util.math.Vec3i;
 import buildcraft.lib.client.model.MutableQuad;
 
 public class MutableQuadTest {
+
     @Test
     public void testRotations() {
         for (EnumFacing from : EnumFacing.VALUES) {

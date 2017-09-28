@@ -22,7 +22,7 @@ public class TriggerTrue extends BCStatement implements ITriggerInternal {
     }
 
     @Override
-    public SpriteHolder getSpriteHolder() {
+    public SpriteHolder getSprite() {
         return BCCoreSprites.TRIGGER_TRUE;
     }
 

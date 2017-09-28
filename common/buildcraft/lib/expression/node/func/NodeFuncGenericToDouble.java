@@ -12,14 +12,13 @@ import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 
 public class NodeFuncGenericToDouble extends NodeFuncGeneric implements INodeFuncDouble {
 
     protected final INodeDouble node;
 
-    public NodeFuncGenericToDouble(INodeDouble node, NodeType[] types, IVariableNode[] nodes) {
+    public NodeFuncGenericToDouble(INodeDouble node, Class<?>[] types, IVariableNode[] nodes) {
         super(node, types, nodes);
         this.node = node;
     }

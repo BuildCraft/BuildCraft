@@ -50,9 +50,9 @@ public class GuideSmelting extends GuidePartItem {
             GlStateManager.enableRescaleNormal();
             RenderHelper.enableGUIStandardItemLighting();
 
-            drawItemStack(input.get(), x + IN_POS.x, y + IN_POS.y);
-            drawItemStack(output.get(), x + OUT_POS.x, y + OUT_POS.y);
-            drawItemStack(furnace, x + FURNACE_POS.x, y + FURNACE_POS.y);
+            drawItemStack(input.get(), x + (int) IN_POS.x, y + (int) IN_POS.y);
+            drawItemStack(output.get(), x + (int) OUT_POS.x, y + (int) OUT_POS.y);
+            drawItemStack(furnace, x + (int) FURNACE_POS.x, y + (int) FURNACE_POS.y);
 
             RenderHelper.disableStandardItemLighting();
             GlStateManager.disableRescaleNormal();
@@ -70,9 +70,9 @@ public class GuideSmelting extends GuidePartItem {
         y += OFFSET.y + current.pixel;
         if (current.page == index) {
 
-            testClickItemStack(input.get(), x + IN_POS.x, y + IN_POS.y);
-            testClickItemStack(output.get(), x + OUT_POS.x, y + OUT_POS.y);
-            testClickItemStack(furnace, x + FURNACE_POS.x, y + FURNACE_POS.y);
+            testClickItemStack(input.get(), x + (int) IN_POS.x, y + (int) IN_POS.y);
+            testClickItemStack(output.get(), x + (int) OUT_POS.x, y + (int) OUT_POS.y);
+            testClickItemStack(furnace, x + (int) FURNACE_POS.x, y + (int) FURNACE_POS.y);
 
         }
         current = current.nextLine(PIXEL_HEIGHT, height);

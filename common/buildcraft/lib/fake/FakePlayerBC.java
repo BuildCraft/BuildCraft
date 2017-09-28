@@ -20,5 +20,6 @@ public class FakePlayerBC extends FakePlayer {
 
     @Override
     public void openEditSign(TileEntitySign signTile) {
+        // TODO: Put this in forge!
     }
 }

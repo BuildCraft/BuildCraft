@@ -16,11 +16,11 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.client.guide.GuiGuide;
-import buildcraft.lib.client.sprite.ISprite;
-import buildcraft.lib.client.sprite.RawSprite;
 import buildcraft.lib.client.sprite.SpriteAtlas;
+import buildcraft.lib.client.sprite.SpriteRaw;
 
 public class GuideImageFactory implements GuidePartFactory {
     private final ISprite sprite;
@@ -44,7 +44,7 @@ public class GuideImageFactory implements GuidePartFactory {
             ResourceLocation resLoc = new ResourceLocation(location);
             try (IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(resLoc)) {
                 PngSizeInfo size = PngSizeInfo.makeFromResource(resource);
-                s = new RawSprite(resLoc, 0, 0, 1, 1);
+                s = new SpriteRaw(resLoc, 0, 0, 1, 1);
                 sw = size.pngWidth;
                 sh = size.pngHeight;
             } catch (IOException io) {

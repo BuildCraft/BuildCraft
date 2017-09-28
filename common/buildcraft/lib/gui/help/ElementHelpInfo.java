@@ -13,7 +13,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IGuiElement;
-import buildcraft.lib.gui.elem.GuiElementContainer;
+import buildcraft.lib.gui.elem.GuiElementContainerHelp;
 import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.LocaleUtil;
@@ -39,7 +39,7 @@ public class ElementHelpInfo {
     }
 
     @SideOnly(Side.CLIENT)
-    public void addGuiElements(GuiElementContainer container) {
+    public void addGuiElements(GuiElementContainerHelp container) {
         GuiBC8<?> gui = container.gui;
         int y = 20;
         for (String key : localeKeys) {

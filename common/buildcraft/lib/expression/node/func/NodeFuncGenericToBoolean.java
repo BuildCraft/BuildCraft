@@ -12,14 +12,13 @@ import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 
 public class NodeFuncGenericToBoolean extends NodeFuncGeneric implements INodeFuncBoolean {
 
     protected final INodeBoolean node;
 
-    public NodeFuncGenericToBoolean(INodeBoolean node, NodeType[] types, IVariableNode[] nodes) {
+    public NodeFuncGenericToBoolean(INodeBoolean node, Class<?>[] types, IVariableNode[] nodes) {
         super(node, types, nodes);
         this.node = node;
     }
@@ -47,7 +46,7 @@ public class NodeFuncGenericToBoolean extends NodeFuncGeneric implements INodeFu
             InlineType type = setupInline(newArgs);
             if (type == InlineType.FULL) {
                 setupEvaluate(newArgs);
-                return NodeConstantBoolean.get(node.evaluate());
+                return NodeConstantBoolean.of(node.evaluate());
             } else if (type == InlineType.PARTIAL) {
                 return new FuncBoolean(newArgs);
             }

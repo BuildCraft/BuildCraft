@@ -392,10 +392,8 @@ public class GuiGuide extends GuiScreen {
             chapter.reset();
         }
 
-        currentPage.renderFirstPage(minX + PAGE_LEFT_TEXT.x, minY + PAGE_LEFT_TEXT.y, PAGE_LEFT_TEXT.width,
-            PAGE_LEFT_TEXT.height);
-        currentPage.renderSecondPage(minX + PAGE_LEFT.width + PAGE_RIGHT_TEXT.x, minY + PAGE_RIGHT_TEXT.y,
-            PAGE_RIGHT_TEXT.width, PAGE_RIGHT_TEXT.height);
+        currentPage.renderFirstPage(minX + (int) PAGE_LEFT_TEXT.x, minY + (int) PAGE_LEFT_TEXT.y, (int) PAGE_LEFT_TEXT.width, (int) PAGE_LEFT_TEXT.height);
+        currentPage.renderSecondPage(minX + PAGE_LEFT.width + (int) PAGE_RIGHT_TEXT.x, minY + (int) PAGE_RIGHT_TEXT.y, (int) PAGE_RIGHT_TEXT.width, (int) PAGE_RIGHT_TEXT.height);
 
         int chapterIndex = 0;
         for (GuideChapter chapter : chapters) {
@@ -434,9 +432,9 @@ public class GuiGuide extends GuiScreen {
                 PEN_HIDDEN_WIDTH, h);
 
             if (tooltipStack != null) {
-                renderToolTip(tooltipStack, mouse.getX(), mouse.getY());
+                renderToolTip(tooltipStack, (int) mouse.getX(), (int) mouse.getY());
             } else if (!tooltip.isEmpty()) {
-                drawHoveringText(tooltip, mouse.getX(), mouse.getY());
+                drawHoveringText(tooltip, (int) mouse.getX(), (int) mouse.getY());
             }
         }
     }
@@ -451,12 +449,12 @@ public class GuiGuide extends GuiScreen {
         // Primary mouse button
         if (mouseButton == 0) {
             if (isOpen) {
-                int page0xMin = this.minX + PAGE_LEFT_TEXT.x;
-                int page0xMax = page0xMin + PAGE_LEFT_TEXT.width;
-                int page1xMin = this.minX + PAGE_LEFT.width + PAGE_RIGHT_TEXT.x;
-                int page1xMax = page1xMin + PAGE_RIGHT_TEXT.width;
-                int pageYMin = this.minY + PAGE_RIGHT_TEXT.y;
-                int pageYMax = pageYMin + PAGE_RIGHT_TEXT.height;
+                int page0xMin = this.minX + (int) PAGE_LEFT_TEXT.x;
+                int page0xMax = page0xMin + (int) PAGE_LEFT_TEXT.width;
+                int page1xMin = this.minX + PAGE_LEFT.width + (int) PAGE_RIGHT_TEXT.x;
+                int page1xMax = page1xMin + (int) PAGE_RIGHT_TEXT.width;
+                int pageYMin = this.minY + (int) PAGE_RIGHT_TEXT.y;
+                int pageYMax = pageYMin + (int) PAGE_RIGHT_TEXT.height;
 
                 GuidePageBase current = currentPage;
                 current.setFontRenderer(currentFont);

@@ -22,7 +22,6 @@ public class ContainerFilteredBuffer_BC8 extends ContainerBCTile<TileFilteredBuf
         for (int i = 0; i < 9; i++) {
             // Filtered Buffer filter slots
             addSlotToContainer(new SlotPhantom(tile.invFilter, i, 8 + i * 18, 27) {
-                @SuppressWarnings("NullableProblems")
                 @Override
                 public TextureAtlasSprite getBackgroundSprite() {
                     return BCTransportSprites.EMPTY_FILTERED_BUFFER_SLOT.getSprite();

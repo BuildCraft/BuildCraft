@@ -32,7 +32,7 @@ public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
-        ledgersRight.ledgers.add(new LedgerEngine(ledgersRight, container.tile));
+        shownElements.add(new LedgerEngine(this, true));
         helpFlame = new ElementHelpInfo("buildcraft.help.stone_engine.flame.title", 0xFF_FF_FF_1F, "buildcraft.help.stone_engine.flame");
         // TODO: Auto list of example fuels!
         helpFuel = new ElementHelpInfo("buildcraft.help.stone_engine.fuel.title", 0xFF_AA_33_33, "buildcraft.help.stone_engine.fuel");
@@ -41,8 +41,8 @@ public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
     @Override
     public void initGui() {
         super.initGui();
-        guiElements.add(new DummyHelpElement(flameRect.expand(2), helpFlame));
-        guiElements.add(new DummyHelpElement(fuelSlotRect, helpFuel));
+        shownElements.add(new DummyHelpElement(flameRect.expand(2), helpFlame));
+        shownElements.add(new DummyHelpElement(fuelSlotRect, helpFuel));
     }
 
     @Override
@@ -55,8 +55,8 @@ public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
             int flameHeight = (int) Math.ceil(amount * flameRect.getHeight());
 
             drawTexturedModalRect(//
-                    flameRect.getX(),//
-                    flameRect.getY() + flameRect.getHeight() - flameHeight,//
+                    (int) flameRect.getX(),//
+                    (int) (flameRect.getY() + flameRect.getHeight() - flameHeight),//
                     176, 14 - flameHeight, 14, flameHeight + 2);
         }
     }
@@ -65,7 +65,12 @@ public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
     protected void drawForegroundLayer() {
         String str = LocaleUtil.localize("tile.engineStone.name");
         int strWidth = fontRenderer.getStringWidth(str);
-        fontRenderer.drawString(str, rootElement.getCenterX() - strWidth / 2, rootElement.getY() + 6, 0x404040);
-        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), rootElement.getX() + 8, rootElement.getY() + SIZE_Y - 96, 0x404040);
+        double titleX = rootElement.getCenterX() - strWidth / 2;
+        double titleY = rootElement.getY() + 6;
+        fontRenderer.drawString(str, (int) titleX, (int) titleY, 0x404040);
+        
+        double invX = rootElement.getX() + 8;
+        double invY = rootElement.getY() + SIZE_Y - 96;
+        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), (int) invX, (int) invY, 0x404040);
     }
 }

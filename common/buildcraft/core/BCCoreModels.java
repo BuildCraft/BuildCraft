@@ -32,8 +32,9 @@ import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.minecraft.ExpressionCompat;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
-import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.misc.data.ModelVariableData;
 
 import buildcraft.core.client.render.RenderEngineCreative;
@@ -46,17 +47,17 @@ import buildcraft.core.tile.TileMarkerVolume;
 public class BCCoreModels {
 
     private static final NodeVariableDouble ENGINE_PROGRESS;
-    private static final NodeVariableString ENGINE_STAGE;
-    private static final NodeVariableString ENGINE_FACING;
+    private static final NodeVariableObject<EnumPowerStage> ENGINE_STAGE;
+    private static final NodeVariableObject<EnumFacing> ENGINE_FACING;
 
     private static final ModelHolderVariable ENGINE_REDSTONE;
     private static final ModelHolderVariable ENGINE_CREATIVE;
 
     static {
-        FunctionContext fnCtx = DefaultContexts.createWithAll();
+        FunctionContext fnCtx =  new FunctionContext(ExpressionCompat.ENUM_POWER_STAGE, DefaultContexts.createWithAll());
         ENGINE_PROGRESS = fnCtx.putVariableDouble("progress");
-        ENGINE_STAGE = fnCtx.putVariableString("stage");
-        ENGINE_FACING = fnCtx.putVariableString("facing");
+        ENGINE_STAGE = fnCtx.putVariableObject("stage", EnumPowerStage.class);
+        ENGINE_FACING = fnCtx.putVariableObject("direction", EnumFacing.class);
 
         ENGINE_REDSTONE = getModel("block/engine_redstone.json", fnCtx);
         ENGINE_CREATIVE = getModel("block/engine_creative.json", fnCtx);
@@ -81,8 +82,8 @@ public class BCCoreModels {
     public static void onModelBake(ModelBakeEvent event) {
         IRegistry<ModelResourceLocation, IBakedModel> modelRegistry = event.getModelRegistry();
         ENGINE_PROGRESS.value = 0.2;
-        ENGINE_STAGE.value = EnumPowerStage.BLUE.getModelName();
-        ENGINE_FACING.value = EnumFacing.UP.getName();
+        ENGINE_STAGE.value = EnumPowerStage.BLUE;
+        ENGINE_FACING.value = EnumFacing.UP;
         ModelVariableData varData = new ModelVariableData();
         varData.setNodes(ENGINE_REDSTONE.createTickableNodes());
         varData.tick();
@@ -91,27 +92,31 @@ public class BCCoreModels {
         for (MutableQuad quad : ENGINE_REDSTONE.getCutoutQuads()) {
             quads.add(quad.toBakedItem());
         }
-        registerModel(modelRegistry, EnumEngineType.WOOD.getItemModelLocation() + "#inventory", new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK));
+        registerModel(modelRegistry, EnumEngineType.WOOD.getItemModelLocation() + "#inventory",
+            new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK));
 
         quads = new ArrayList<>();
-        ENGINE_STAGE.value = EnumPowerStage.BLACK.getModelName();
+        ENGINE_STAGE.value = EnumPowerStage.BLACK;
         varData.setNodes(ENGINE_CREATIVE.createTickableNodes());
         varData.tick();
         varData.refresh();
         for (MutableQuad quad : ENGINE_CREATIVE.getCutoutQuads()) {
             quads.add(quad.toBakedItem());
         }
-        registerModel(modelRegistry, EnumEngineType.CREATIVE.getItemModelLocation() + "#inventory", new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK));
+        registerModel(modelRegistry, EnumEngineType.CREATIVE.getItemModelLocation() + "#inventory",
+            new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK));
     }
 
-    private static void registerModel(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, String reg, IBakedModel val) {
+    private static void registerModel(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, String reg,
+        IBakedModel val) {
         modelRegistry.putObject(new ModelResourceLocation(reg), val);
     }
 
-    private static MutableQuad[] getEngineQuads(ModelHolderVariable model, TileEngineBase_BC8 tile, float partialTicks) {
+    private static MutableQuad[] getEngineQuads(ModelHolderVariable model, TileEngineBase_BC8 tile,
+        float partialTicks) {
         ENGINE_PROGRESS.value = tile.getProgressClient(partialTicks);
-        ENGINE_STAGE.value = tile.getPowerStage().getModelName();
-        ENGINE_FACING.value = tile.getCurrentFacing().getName();
+        ENGINE_STAGE.value = tile.getPowerStage();
+        ENGINE_FACING.value = tile.getCurrentFacing();
         if (tile.clientModelData.hasNoNodes()) {
             tile.clientModelData.setNodes(model.createTickableNodes());
         }

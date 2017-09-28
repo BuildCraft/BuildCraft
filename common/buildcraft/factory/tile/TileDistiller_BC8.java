@@ -36,7 +36,7 @@ import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableLong;
-import buildcraft.lib.expression.node.value.NodeVariableString;
+import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.fluid.FluidSmoother;
 import buildcraft.lib.fluid.FluidSmoother.IFluidDataSender;
 import buildcraft.lib.fluid.Tank;
@@ -54,7 +54,7 @@ import buildcraft.factory.BCFactoryBlocks;
 
 public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final FunctionContext MODEL_FUNC_CTX;
-    private static final NodeVariableString MODEL_FACING;
+    private static final NodeVariableObject<EnumFacing> MODEL_FACING;
     private static final NodeVariableBoolean MODEL_ACTIVE;
     private static final NodeVariableLong MODEL_POWER_AVG;
     private static final NodeVariableLong MODEL_POWER_MAX;
@@ -66,7 +66,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
 
     static {
         MODEL_FUNC_CTX = DefaultContexts.createWithAll();
-        MODEL_FACING = MODEL_FUNC_CTX.putVariableString("facing");
+        MODEL_FACING = MODEL_FUNC_CTX.putVariableObject("direction", EnumFacing.class);
         MODEL_POWER_AVG = MODEL_FUNC_CTX.putVariableLong("power_average");
         MODEL_POWER_MAX = MODEL_FUNC_CTX.putVariableLong("power_max");
         MODEL_ACTIVE = MODEL_FUNC_CTX.putVariableBoolean("active");
@@ -221,7 +221,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         MODEL_ACTIVE.value = false;
         MODEL_POWER_AVG.value = 0;
         MODEL_POWER_MAX.value = 6;
-        MODEL_FACING.value = "west";
+        MODEL_FACING.value = EnumFacing.WEST;
     }
 
     public void setClientModelVariables(float partialTicks) {
@@ -230,16 +230,16 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         MODEL_ACTIVE.value = isActive;
         MODEL_POWER_AVG.value = powerAvgClient / MjAPI.MJ;
         MODEL_POWER_MAX.value = MAX_MJ_PER_TICK / MjAPI.MJ;
-        MODEL_FACING.value = "west";
+        MODEL_FACING.value = EnumFacing.WEST;
 
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() == BCFactoryBlocks.distiller) {
-            MODEL_FACING.value = state.getValue(BlockBCBase_Neptune.PROP_FACING).getName();
+            MODEL_FACING.value = state.getValue(BlockBCBase_Neptune.PROP_FACING);
         }
     }
 
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY,
-                               float hitZ) {
+        float hitZ) {
         return false;
     }
 

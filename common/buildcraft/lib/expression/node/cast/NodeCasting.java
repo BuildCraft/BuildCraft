@@ -6,89 +6,136 @@
 
 package buildcraft.lib.expression.node.cast;
 
-import buildcraft.lib.expression.ExpressionDebugManager;
+import com.google.common.collect.ImmutableList;
+
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.NodeStack;
 import buildcraft.lib.expression.api.IExpressionNode;
-import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
-import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncString;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
+import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
+import buildcraft.lib.expression.api.NodeTypes;
 
 public class NodeCasting {
-    public static INodeString castToString(IExpressionNode node) {
-        if (node instanceof INodeString) {
-            return (INodeString) node;
+    public static INodeObject<String> castToString(IExpressionNode node) {
+        if (node instanceof INodeObject) {
+            if (((INodeObject<?>) node).getType() == String.class) {
+                return (INodeObject<String>) node;
+            }
         }
+        return new NodeCastToString(node);
+    }
 
-        if (node instanceof INodeBoolean) {
-            return new NodeCastBooleanToString((INodeBoolean) node);
+    public static INodeFuncObject<String> castToString(INodeFunc func) {
+        if (func instanceof INodeFuncObject) {
+            if (((INodeFuncObject<?>) func).getType() == String.class) {
+                return (INodeFuncObject<String>) func;
+            }
         }
+        return new INodeFuncObject<String>() {
+            @Override
+            public Class<String> getType() {
+                return String.class;
+            }
 
-        if (node instanceof INodeLong) {
-            return new NodeCastLongToString((INodeLong) node);
-        }
-
-        if (node instanceof INodeDouble) {
-            return new NodeCastDoubleToString((INodeDouble) node);
-        }
-
-        // We have no idea what class this is, but it *must* be wrong
-        ExpressionDebugManager.debugNodeClass(node.getClass());
-        throw new IllegalStateException("Unknown node type " + node.getClass());
+            @Override
+            public INodeObject<String> getNode(INodeStack stack) throws InvalidExpressionException {
+                return new NodeCastToString(func.getNode(stack));
+            }
+        };
     }
 
     public static INodeDouble castToDouble(IExpressionNode node) throws InvalidExpressionException {
         if (node instanceof INodeDouble) {
             return (INodeDouble) node;
         }
-
-        if (node instanceof INodeLong) {
-            return new NodeCastLongToDouble((INodeLong) node);
+        Class<?> type = NodeTypes.getType(node);
+        FunctionContext ctx = NodeTypes.getContext(type);
+        if (ctx == null) {
+            throw new InvalidExpressionException("Cannot cast " + node + " to a double!");
         }
-
-        throw new InvalidExpressionException("Cannot cast " + node + " to a double!");
-    }
-
-    public static INodeFuncString castToString(INodeFunc func) {
-        if (func instanceof INodeFuncString) {
-            return (INodeFuncString) func;
+        INodeFunc func = ctx.getFunction("(double)", ImmutableList.of(type));
+        if (func == null || NodeTypes.getType(func) != double.class) {
+            throw new InvalidExpressionException("Cannot cast " + node + " to a double!");
         }
-
-        if (func instanceof INodeFuncBoolean) {
-            final INodeFuncBoolean funcBool = (INodeFuncBoolean) func;
-            return (stack) -> new NodeCastBooleanToString(funcBool.getNode(stack));
-        }
-
-        if (func instanceof INodeFuncLong) {
-            final INodeFuncLong funcLong = (INodeFuncLong) func;
-            return (stack) -> new NodeCastLongToString(funcLong.getNode(stack));
-        }
-
-        if (func instanceof INodeFuncDouble) {
-            final INodeFuncDouble funcDouble = (INodeFuncDouble) func;
-            return (stack) -> new NodeCastDoubleToString(funcDouble.getNode(stack));
-        }
-
-        // We have no idea what class this is, but it *must* be wrong
-        ExpressionDebugManager.debugNodeClass(func.getClass());
-        throw new IllegalStateException("Unknown node type " + func.getClass());
+        return (INodeDouble) func.getNode(new NodeStack(node));
     }
 
     public static INodeFuncDouble castToDouble(INodeFunc func) throws InvalidExpressionException {
         if (func instanceof INodeFuncDouble) {
             return (INodeFuncDouble) func;
         }
-
-        if (func instanceof INodeFuncLong) {
-            final INodeFuncLong funcLong = (INodeFuncLong) func;
-            return (stack) -> new NodeCastLongToDouble(funcLong.getNode(stack));
+        Class<?> type = NodeTypes.getType(func);
+        FunctionContext ctx = NodeTypes.getContext(type);
+        if (ctx == null) {
+            throw new InvalidExpressionException("Cannot cast " + func + " to a double!");
         }
+        INodeFunc caster = ctx.getFunction("(double)", ImmutableList.of(type));
+        if (caster == null || NodeTypes.getType(caster) != double.class) {
+            throw new InvalidExpressionException("Cannot cast " + func + " to a double!");
+        }
+        return (stack) -> (INodeDouble) caster.getNode(new NodeStack(func.getNode(stack)));
+    }
 
-        throw new InvalidExpressionException("Cannot cast " + func + " to a double!");
+    public static IExpressionNode castToType(IExpressionNode node, Class<?> to) throws InvalidExpressionException {
+        Class<?> from = NodeTypes.getType(node);
+        if (from == to) {
+            return node;
+        }
+        FunctionContext castingContext = new FunctionContext(NodeTypes.getContext(from), NodeTypes.getContext(to));
+        INodeFunc caster = castingContext.getFunction("(" + NodeTypes.getName(to) + ")", ImmutableList.of(from));
+        if (caster == null) {
+            if (to == String.class) {
+                return new NodeCastToString(node);
+            }
+            throw new InvalidExpressionException(
+                "Cannot cast from " + NodeTypes.getName(from) + " to " + NodeTypes.getName(to));
+        }
+        NodeStack stack = new NodeStack(node);
+        stack.setRecorder(ImmutableList.of(from), caster);
+        IExpressionNode casted = caster.getNode(stack);
+        stack.checkAndRemoveRecorder();
+        Class<?> actual = NodeTypes.getType(casted);
+        if (actual != to) {
+            throw new IllegalStateException("The caster " + caster + " didn't produce the correct result! (Expected "
+                + to + ", but got " + actual + ")");
+        }
+        return casted;
+    }
+
+    public static <T> INodeObject<T> castToObject(IExpressionNode node, Class<T> clazz)
+        throws InvalidExpressionException {
+        return (INodeObject<T>) castToType(node, clazz);
+    }
+
+    public static <T> INodeFuncObject<T> castToObject(INodeFunc func, Class<T> to) throws InvalidExpressionException {
+        Class<?> from = NodeTypes.getType(func);
+        if (from == to) {
+            return (INodeFuncObject<T>) func;
+        }
+        FunctionContext castingContext = new FunctionContext(NodeTypes.getContext(from), NodeTypes.getContext(to));
+        INodeFunc caster = castingContext.getFunction("(" + NodeTypes.getName(to) + ")", ImmutableList.of(from));
+        if (caster == null) {
+            if (to == String.class) {
+                return (INodeFuncObject<T>) castToString(func);
+            }
+            throw new InvalidExpressionException(
+                "Cannot cast from " + NodeTypes.getName(from) + " to " + NodeTypes.getName(to));
+        }
+        return new INodeFuncObject<T>() {
+            @Override
+            public INodeObject<T> getNode(INodeStack stack) throws InvalidExpressionException {
+                return (INodeObject<T>) caster.getNode(new NodeStack(func.getNode(stack)));
+            }
+
+            @Override
+            public Class<T> getType() {
+                return to;
+            }
+        };
     }
 }

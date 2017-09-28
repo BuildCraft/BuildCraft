@@ -6,27 +6,23 @@
 
 package buildcraft.lib.gui.pos;
 
-import javax.annotation.Nonnull;
-
 public class PositionOffset implements IGuiPosition {
-    @Nonnull
     public final IGuiPosition parent;
+    public final double xOffset, yOffset;
 
-    public final int xOffset, yOffset;
-
-    private PositionOffset(@Nonnull IGuiPosition parent, int xOffset, int yOffset) {
+    private PositionOffset(IGuiPosition parent, double xOffset, double yOffset) {
         this.parent = parent;
         this.xOffset = xOffset;
         this.yOffset = yOffset;
     }
 
-    public static IGuiPosition createOffset(IGuiPosition from, int x, int y) {
+    public static IGuiPosition createOffset(IGuiPosition from, double x, double y) {
         if (from == null) {
             return new PositionAbsolute(x, y);
         } else if (from instanceof PositionOffset) {
             PositionOffset parent = (PositionOffset) from;
-            int oX = x + parent.xOffset;
-            int oY = y + parent.yOffset;
+            double oX = x + parent.xOffset;
+            double oY = y + parent.yOffset;
             return parent.parent.offset(oX, oY);
         } else {
             return new PositionOffset(from, x, y);
@@ -34,24 +30,25 @@ public class PositionOffset implements IGuiPosition {
     }
 
     @Override
-    public int getX() {
+    public double getX() {
         return parent.getX() + xOffset;
     }
 
     @Override
-    public int getY() {
+    public double getY() {
         return parent.getY() + yOffset;
     }
 
     @Override
-    public IGuiPosition offset(int x, int y) {
+    public IGuiPosition offset(double x, double y) {
         return new PositionOffset(parent, x + xOffset, y + yOffset);
     }
 
     @Override
     public IGuiPosition offset(IGuiPosition by) {
         if (by instanceof PositionOffset) {
-            return offset(by.getX(), by.getY());
+            PositionOffset other = (PositionOffset) by;
+            return new PositionOffset(parent.offset(other.parent), xOffset + other.xOffset, yOffset + other.yOffset);
         } else {
             return IGuiPosition.super.offset(by);
         }

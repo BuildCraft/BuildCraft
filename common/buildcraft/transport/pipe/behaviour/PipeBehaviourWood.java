@@ -17,11 +17,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.pipe.IFlowFluid;
@@ -38,7 +38,6 @@ import buildcraft.transport.BCTransportConfig;
 
 public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRedstoneReceiver, IDebuggable {
 
-    private final MjBattery mjBattery = new MjBattery(2 * MjAPI.MJ);
     private final MjCapabilityHelper mjCaps = new MjCapabilityHelper(this);
 
     public PipeBehaviourWood(IPipe pipe) {
@@ -47,18 +46,6 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
 
     public PipeBehaviourWood(IPipe pipe, NBTTagCompound nbt) {
         super(pipe, nbt);
-        // TODO: remove in next version
-        if (nbt.hasKey("mjBattery")) {
-            nbt.setTag("battery", nbt.getTag("mjBattery"));
-        }
-        mjBattery.deserializeNBT(nbt.getCompoundTag("battery"));
-    }
-
-    @Override
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = super.writeToNbt();
-        nbt.setTag("battery", mjBattery.serializeNBT());
-        return nbt;
     }
 
     @Override
@@ -94,42 +81,40 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
         } else if (!canFaceDirection(getCurrentDir())) {
             currentDir = EnumPipePart.CENTER;
         }
+    }
 
-        mjBattery.tick(pipe.getHolder().getPipeWorld(), pipe.getHolder().getPipePos());
-        long potential = mjBattery.getStored();
-        if (potential > 0) {
+    protected long extract(long power, boolean simulate) {
+        if (power > 0) {
             if (pipe.getFlow() instanceof IFlowItems) {
                 IFlowItems flow = (IFlowItems) pipe.getFlow();
-                int maxItems = (int) (potential / BCTransportConfig.mjPerItem);
+                int maxItems = (int) (power / BCTransportConfig.mjPerItem);
                 if (maxItems > 0) {
-                    int extracted = extractItems(flow, getCurrentDir(), maxItems);
+                    int extracted = extractItems(flow, getCurrentDir(), maxItems, simulate);
                     if (extracted > 0) {
-                        mjBattery.extractPower(extracted * BCTransportConfig.mjPerItem);
-                        return;
+                        return power - extracted * BCTransportConfig.mjPerItem;
                     }
                 }
             } else if (pipe.getFlow() instanceof IFlowFluid) {
                 IFlowFluid flow = (IFlowFluid) pipe.getFlow();
-                int maxMillibuckets = (int) (potential / BCTransportConfig.mjPerMillibucket);
+                int maxMillibuckets = (int) (power / BCTransportConfig.mjPerMillibucket);
                 if (maxMillibuckets > 0) {
-                    FluidStack extracted = extractFluid(flow, getCurrentDir(), maxMillibuckets);
+                    FluidStack extracted = extractFluid(flow, getCurrentDir(), maxMillibuckets, simulate);
                     if (extracted != null && extracted.amount > 0) {
-                        mjBattery.extractPower(extracted.amount * BCTransportConfig.mjPerMillibucket);
-                        return;
+                        return power - extracted.amount * BCTransportConfig.mjPerMillibucket;
                     }
                 }
             }
-            mjBattery.extractPower(0, 5 * MjAPI.MJ / 100);
         }
+        return power;
     }
 
-    protected int extractItems(IFlowItems flow, EnumFacing dir, int count) {
-        return flow.tryExtractItems(count, dir, null, StackFilter.ALL);
+    protected int extractItems(IFlowItems flow, EnumFacing dir, int count, boolean simulate) {
+        return flow.tryExtractItems(count, dir, null, StackFilter.ALL, simulate);
     }
 
     @Nullable
-    protected FluidStack extractFluid(IFlowFluid flow, EnumFacing dir, int millibuckets) {
-        return flow.tryExtractFluid(millibuckets, dir, null);
+    protected FluidStack extractFluid(IFlowFluid flow, EnumFacing dir, int millibuckets, boolean simulate) {
+        return flow.tryExtractFluid(millibuckets, dir, null, simulate);
     }
 
     // IMjRedstoneReceiver
@@ -141,22 +126,22 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
 
     @Override
     public long getPowerRequested() {
-        return MjAPI.MJ;
+        final long power = 512 * MjAPI.MJ;
+        return power - extract(power, true);
     }
 
     @Override
     public long receivePower(long microJoules, boolean simulate) {
-        return mjBattery.addPowerChecking(microJoules, simulate);
+        return extract(microJoules, simulate);
     }
 
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         return mjCaps.getCapability(capability, facing);
     }
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("Power = " + mjBattery.getDebugString());
         left.add("Facing = " + currentDir);
     }
 }

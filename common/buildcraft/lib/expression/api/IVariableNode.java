@@ -12,19 +12,46 @@ public interface IVariableNode extends IExpressionNode {
      * not of the correct type. */
     void set(IExpressionNode from);
 
-    /** If isConstant is true, then calls to {@link #inline()} will return an {@link IConstantNode} (which is
-     * independent to this node), but if false then {@link #inline()} will return this variable. */
-    void setConstant(boolean isConstant);
+    public interface IVariableNodeLong extends IVariableNode, INodeLong {
+        void set(long value);
 
-    String valueToString();
+        @Override
+        default void set(IExpressionNode from) {
+            set(((INodeLong) from).evaluate());
+        }
+    }
 
-    String getName();
+    public interface IVariableNodeDouble extends IVariableNode, INodeDouble {
+        void set(double value);
 
-    interface IVariableNodeLong extends IVariableNode, INodeLong {}
+        @Override
+        default void set(IExpressionNode from) {
+            set(((INodeDouble) from).evaluate());
+        }
+    }
 
-    interface IVariableNodeDouble extends IVariableNode, INodeDouble {}
+    public interface IVariableNodeBoolean extends IVariableNode, INodeBoolean {
+        void set(boolean value);
 
-    interface IVariableNodeBoolean extends IVariableNode, INodeBoolean {}
+        @Override
+        default void set(IExpressionNode from) {
+            set(((INodeBoolean) from).evaluate());
+        }
+    }
 
-    interface IVariableNodeString extends IVariableNode, INodeString {}
+    public interface IVariableNodeObject<T> extends IVariableNode, INodeObject<T> {
+        void set(T value);
+
+        default void setUnchecked(Object to) {
+            if (to.getClass() != getType()) {
+                throw new ClassCastException(to.getClass() + " cannot be cast to " + getType());
+            }
+            set((T) to);
+        }
+
+        @Override
+        default void set(IExpressionNode from) {
+            setUnchecked(((INodeObject<?>) from).evaluate());
+        }
+    }
 }

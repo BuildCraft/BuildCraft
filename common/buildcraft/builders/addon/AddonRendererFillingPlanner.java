@@ -6,68 +6,86 @@
 
 package buildcraft.builders.addon;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.client.model.ModelLoader;
 
+import buildcraft.api.filler.FilledTemplate.TemplateState;
+
+import buildcraft.builders.snapshot.Template;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
 
 public class AddonRendererFillingPlanner implements IFastAddonRenderer<AddonFillingPlanner> {
     @Override
     public void renderAddonFast(AddonFillingPlanner addon, EntityPlayer player, float partialTicks, VertexBuffer vb) {
-        addon.buildingInfo.box.getBlocksInArea().stream()
-            .filter(blockPos ->
-                addon.buildingInfo.getSnapshot().data.get(
-                    addon.buildingInfo.getSnapshot().posToIndex(
-                        addon.buildingInfo.fromWorld(blockPos)
-                    )
-                )
-            )
-            .filter(player.world::isAirBlock)
-            .sorted(Comparator.comparing((BlockPos blockPos) ->
-                Math.pow(player.posX - blockPos.getX(), 2) +
-                    Math.pow(player.posY - blockPos.getY(), 2) +
-                    Math.pow(player.posZ - blockPos.getZ(), 2)
-            ).reversed())
-            .forEach(blockPos -> {
-                AxisAlignedBB bb = new AxisAlignedBB(blockPos, blockPos.add(1, 1, 1)).expandXyz(-0.1);
-                TextureAtlasSprite s = ModelLoader.White.INSTANCE;
+        Template.BuildingInfo info = addon.buildingInfo;
+        if (info == null) {
+            return;
+        }
+        Profiler prof = Minecraft.getMinecraft().mcProfiler;
+        prof.startSection("filler_planner");
+        prof.startSection("iter");
+        List<BlockPos> list = new ArrayList<>();
+        Template tpl = info.getSnapshot();
+        for (BlockPos p : BlockPos.getAllInBoxMutable(info.box.min(), info.box.max())) {
+            TemplateState state = tpl.data.getOffset(info.fromWorld(p));
+            if (state == TemplateState.FILL && player.world.isAirBlock(p)) {
+                list.add(p.toImmutable());
+            }
+        }
 
-                vb.pos(bb.minX, bb.maxY, bb.minZ).color(204, 204, 204, 127).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.maxX, bb.maxY, bb.minZ).color(204, 204, 204, 127).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.maxX, bb.minY, bb.minZ).color(204, 204, 204, 127).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.minX, bb.minY, bb.minZ).color(204, 204, 204, 127).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
+        prof.endStartSection("sort");
+        list.sort(Comparator.<BlockPos>comparingDouble((p) -> {
+            return player.getPositionVector().squareDistanceTo(new Vec3d(p));
+        }).reversed());
 
-                vb.pos(bb.minX, bb.minY, bb.maxZ).color(204, 204, 204, 127).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.maxX, bb.minY, bb.maxZ).color(204, 204, 204, 127).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.maxX, bb.maxY, bb.maxZ).color(204, 204, 204, 127).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.minX, bb.maxY, bb.maxZ).color(204, 204, 204, 127).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
+        prof.endStartSection("render");
+        for (BlockPos p : list) {
+            AxisAlignedBB bb = new AxisAlignedBB(p, p.add(1, 1, 1)).expandXyz(-0.1);
+            TextureAtlasSprite s = ModelLoader.White.INSTANCE;
 
-                vb.pos(bb.minX, bb.minY, bb.minZ).color(127, 127, 127, 127).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.maxX, bb.minY, bb.minZ).color(127, 127, 127, 127).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.maxX, bb.minY, bb.maxZ).color(127, 127, 127, 127).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.minX, bb.minY, bb.maxZ).color(127, 127, 127, 127).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.minX, bb.maxY, bb.minZ).color(204, 204, 204, 127).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.maxX, bb.maxY, bb.minZ).color(204, 204, 204, 127).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.maxX, bb.minY, bb.minZ).color(204, 204, 204, 127).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.minX, bb.minY, bb.minZ).color(204, 204, 204, 127).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
 
-                vb.pos(bb.minX, bb.maxY, bb.maxZ).color(255, 255, 255, 127).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.maxX, bb.maxY, bb.maxZ).color(255, 255, 255, 127).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.maxX, bb.maxY, bb.minZ).color(255, 255, 255, 127).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.minX, bb.maxY, bb.minZ).color(255, 255, 255, 127).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.minX, bb.minY, bb.maxZ).color(204, 204, 204, 127).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.maxX, bb.minY, bb.maxZ).color(204, 204, 204, 127).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.maxX, bb.maxY, bb.maxZ).color(204, 204, 204, 127).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.minX, bb.maxY, bb.maxZ).color(204, 204, 204, 127).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
 
-                vb.pos(bb.minX, bb.minY, bb.maxZ).color(153, 153, 153, 127).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.minX, bb.maxY, bb.maxZ).color(153, 153, 153, 127).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.minX, bb.maxY, bb.minZ).color(153, 153, 153, 127).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.minX, bb.minY, bb.minZ).color(153, 153, 153, 127).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.minX, bb.minY, bb.minZ).color(127, 127, 127, 127).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.maxX, bb.minY, bb.minZ).color(127, 127, 127, 127).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.maxX, bb.minY, bb.maxZ).color(127, 127, 127, 127).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.minX, bb.minY, bb.maxZ).color(127, 127, 127, 127).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
 
-                vb.pos(bb.maxX, bb.minY, bb.minZ).color(153, 153, 153, 127).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.maxX, bb.maxY, bb.minZ).color(153, 153, 153, 127).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.maxX, bb.maxY, bb.maxZ).color(153, 153, 153, 127).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
-                vb.pos(bb.maxX, bb.minY, bb.maxZ).color(153, 153, 153, 127).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
-            });
+            vb.pos(bb.minX, bb.maxY, bb.maxZ).color(255, 255, 255, 127).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.maxX, bb.maxY, bb.maxZ).color(255, 255, 255, 127).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.maxX, bb.maxY, bb.minZ).color(255, 255, 255, 127).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.minX, bb.maxY, bb.minZ).color(255, 255, 255, 127).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
+
+            vb.pos(bb.minX, bb.minY, bb.maxZ).color(153, 153, 153, 127).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.minX, bb.maxY, bb.maxZ).color(153, 153, 153, 127).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.minX, bb.maxY, bb.minZ).color(153, 153, 153, 127).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.minX, bb.minY, bb.minZ).color(153, 153, 153, 127).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
+
+            vb.pos(bb.maxX, bb.minY, bb.minZ).color(153, 153, 153, 127).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.maxX, bb.maxY, bb.minZ).color(153, 153, 153, 127).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.maxX, bb.maxY, bb.maxZ).color(153, 153, 153, 127).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
+            vb.pos(bb.maxX, bb.minY, bb.maxZ).color(153, 153, 153, 127).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
+        }
+        prof.endSection();
+        prof.endSection();
     }
 }

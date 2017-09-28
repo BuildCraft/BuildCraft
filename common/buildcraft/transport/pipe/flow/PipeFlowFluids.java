@@ -30,6 +30,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -77,11 +78,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
     private final FluidTransferInfo fluidTransferInfo = PipeApi.getFluidTransferInfo(pipe.getDefinition());
 
-    /*
-     * Default to an additional second of fluid inserting and removal. This means that (for a normal pipe like cobble)
-     * it will be 20 * (10 + 12) = 20 * 22 = 440 - oh that's not good is it
-     */
-    public final int capacity = fluidTransferInfo.transferPerTick * (10);// TEMP!
+    /* Default to an additional second of fluid inserting and removal. This means that (for a normal pipe like cobble)
+     * it will be 20 * (10 + 12) = 20 * 22 = 440 - oh that's not good is it */
+    public final int capacity = Math.max(Fluid.BUCKET_VOLUME, fluidTransferInfo.transferPerTick * (10));// TEMP!
 
     private final Map<EnumPipePart, Section> sections = new EnumMap<>(EnumPipePart.class);
     private FluidStack currentFluid;
@@ -171,84 +170,62 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
     @Override
     public FluidStack tryExtractFluid(int millibuckets, EnumFacing from, FluidStack filter, boolean simulate) {
-        // NOTE: all changes to this method probably also need to be applied to the advanced version below!
-        if (from == null) {
-            return null;
+        FluidExtractor extractor = (mb, c, handler) -> {
+            FluidStack f = filter == null ? c : filter;
+            return extractSimple(mb, f, handler, simulate);
+        };
+        return tryExtractFluidInternal(millibuckets, from, extractor, simulate).getResult();
+    }
+
+    @Override
+    public ActionResult<FluidStack> tryExtractFluidAdv(int millibuckets, EnumFacing from, IFluidFilter filter, boolean simulate) {
+        FluidExtractor extractor = (mb, c, handler) -> {
+            if (c != null) {
+                if (!filter.matches(c)) {
+                    return null;
+                }
+                return extractSimple(mb, c, handler, simulate);
+            }
+            if (!(handler instanceof IFluidHandlerAdv)) {
+                return null;
+            }
+            IFluidHandlerAdv handlerAdv = (IFluidHandlerAdv) handler;
+            return handlerAdv.drain(filter, mb, !simulate);
+        };
+        return tryExtractFluidInternal(millibuckets, from, extractor, simulate);
+    }
+
+    @FunctionalInterface
+    private interface FluidExtractor {
+        FluidStack extract(int millibuckets, FluidStack current, IFluidHandler handler);
+    }
+
+    private ActionResult<FluidStack> tryExtractFluidInternal(int millibuckets, EnumFacing from, FluidExtractor extractor, boolean simulate) {
+        if (from == null || millibuckets <= 0) {
+            return FAILED_EXTRACT;
         }
         IFluidHandler fluidHandler = pipe.getHolder().getCapabilityFromPipe(from, CapUtil.CAP_FLUIDS);
         if (fluidHandler == null) {
             return null;
         }
-        if (filter == null) {
-            filter = this.currentFluid;
-        } else if (currentFluid != null && !filter.isFluidEqual(currentFluid)) {
-            return null;
-        }
         Section section = sections.get(EnumPipePart.fromFacing(from));
-        millibuckets = Math.min(millibuckets, section.getMaxFilled());
-        if (millibuckets <= 0) {
-            return null;
-        }
-        boolean doDrain = !simulate;
-        FluidStack toAdd;
-        if (filter == null) {
-            toAdd = fluidHandler.drain(millibuckets, doDrain);
-        } else {
-            filter = filter.copy();
-            filter.amount = millibuckets;
-            toAdd = fluidHandler.drain(filter, doDrain);
-        }
-        if (toAdd == null || toAdd.amount <= 0) {
-            return null;
-        }
-        int extracted = toAdd.amount;
-        if (currentFluid == null && doDrain) {
-            setFluid(toAdd);
-        }
-        int reallyFilled = section.fill(extracted, doDrain);
-        section.ticksInDirection = COOLDOWN_INPUT;
-        if (reallyFilled != extracted) {
-            BCLog.logger.warn("[tryExtractFluid] Filled " + reallyFilled + " != extracted " + extracted //
-                + " (maxExtract = " + millibuckets + ")" //
-                + " (handler = " + fluidHandler.getClass() + ") @" + pipe.getHolder().getPipePos());
-        }
-        return toAdd;
-    }
-
-    @Override
-    public ActionResult<FluidStack> tryExtractFluidAdv(int millibuckets, EnumFacing from, IFluidFilter filter, boolean simulate) {
-        // Mostly a copy of the above method
-        if (from == null || filter == null || millibuckets <= 0) {
-            return FAILED_EXTRACT;
-        }
-        IFluidHandler fluidHandler = pipe.getHolder().getCapabilityFromPipe(from, CapUtil.CAP_FLUIDS);
-        if (!(fluidHandler instanceof IFluidHandlerAdv)) {
-            return PASSED_EXTRACT;
-        }
-        IFluidHandlerAdv handlerAdv = (IFluidHandlerAdv) fluidHandler;
-        if (currentFluid != null) {
-            if (!filter.matches(currentFluid)) {
-                return FAILED_EXTRACT;
-            }
-            final IFluidFilter existing = filter;
-            filter = (fluid) -> currentFluid.isFluidEqual(fluid) && existing.matches(fluid);
-        }
-        Section section = sections.get(EnumPipePart.fromFacing(from));
-        millibuckets = Math.min(millibuckets, section.getMaxFilled());
+        Section middle = sections.get(EnumPipePart.CENTER);
+        millibuckets = Math.min(millibuckets, capacity * 2 - section.amount - middle.amount);
         if (millibuckets <= 0) {
             return FAILED_EXTRACT;
         }
-        boolean doDrain = !simulate;
-        FluidStack toAdd = handlerAdv.drain(filter, millibuckets, doDrain);
+        FluidStack toAdd = extractor.extract(millibuckets, currentFluid, fluidHandler);
         if (toAdd == null || toAdd.amount <= 0) {
             return FAILED_EXTRACT;
         }
         millibuckets = toAdd.amount;
-        if (currentFluid == null) {
+        if (currentFluid == null && !simulate) {
             setFluid(toAdd);
         }
-        int reallyFilled = section.fill(millibuckets, doDrain);
-        if (doDrain) {
+        int reallyFilled = section.fillInternal(millibuckets, !simulate);
+        int leftOver = millibuckets - reallyFilled;
+        reallyFilled += middle.fillInternal(leftOver, !simulate);
+        if (!simulate) {
             section.ticksInDirection = COOLDOWN_INPUT;
         }
         if (reallyFilled != millibuckets) {
@@ -256,6 +233,15 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 + " (handler = " + fluidHandler.getClass() + ") @" + pipe.getHolder().getPipePos());
         }
         return ActionResult.newResult(EnumActionResult.SUCCESS, toAdd);
+    }
+
+    private static FluidStack extractSimple(int millibuckets, FluidStack filter, IFluidHandler handler, boolean simulate) {
+        if (filter == null) {
+            return handler.drain(millibuckets, !simulate);
+        }
+        filter = filter.copy();
+        filter.amount = millibuckets;
+        return handler.drain(filter, !simulate);
     }
 
     @Override
@@ -774,6 +760,18 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         /** @return The fluid filled */
         int fill(int maxFill, boolean doFill) {
             int amountToFill = Math.min(getMaxFilled(), maxFill);
+            if (amountToFill <= 0) {
+                return 0;
+            }
+            if (doFill) {
+                incoming[currentTime] += amountToFill;
+                amount += amountToFill;
+            }
+            return amountToFill;
+        }
+
+        public int fillInternal(int maxFill, boolean doFill) {
+            int amountToFill = Math.min(capacity - amount, maxFill);
             if (amountToFill <= 0) {
                 return 0;
             }
