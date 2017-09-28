@@ -32,7 +32,7 @@ public class LedgerTablePower extends Ledger_Neptune {
         title = "gui.power";
 
         appendText(LocaleUtil.localize("gui.assemblyCurrentRequired") + ":", SUB_HEADER_COLOUR).setDropShadow(true);
-        appendText(() -> LocaleUtil.localizeMj(tile.getTarget2()), TEXT_COLOUR);
+        appendText(() -> LocaleUtil.localizeMj(tile.getTarget()), TEXT_COLOUR);
         appendText(LocaleUtil.localize("gui.stored") + ":", SUB_HEADER_COLOUR).setDropShadow(true);
         appendText(() -> LocaleUtil.localizeMj(tile.power), TEXT_COLOUR);
         appendText(LocaleUtil.localize("gui.assemblyRate") + ":", SUB_HEADER_COLOUR).setDropShadow(true);

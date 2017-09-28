@@ -43,9 +43,7 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
         caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, () -> getTarget() > 0, EnumPipePart.VALUES);
     }
 
-    protected abstract long getTarget();
-
-    public final long getTarget2() {return getTarget();}
+    public abstract long getTarget();
 
     @Override
     public long getRequiredLaserPower() {
