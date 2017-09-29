@@ -6,16 +6,9 @@
 
 package buildcraft.core.statements;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
-
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
 public abstract class BCStatement implements IStatement {
 
@@ -48,11 +41,6 @@ public abstract class BCStatement implements IStatement {
     }
 
     @Override
-    public String getDescription() {
-        return "";
-    }
-
-    @Override
     public IStatement rotateLeft() {
         return this;
     }
@@ -67,13 +55,14 @@ public abstract class BCStatement implements IStatement {
         return null;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public final TextureAtlasSprite getGuiSprite() {
-        SpriteHolder holder = getSpriteHolder();
-        return holder == null ? null : holder.getSprite();
+    protected static <P extends IStatementParameter> P getParam(int index, IStatementParameter[] params, P _default) {
+        if (params == null || params.length <= index) {
+            return _default;
+        }
+        IStatementParameter atIndex = params[index];
+        if (atIndex != null && atIndex.getClass() == _default.getClass()) {
+            return (P) atIndex;
+        }
+        return _default;
     }
-
-    @SideOnly(Side.CLIENT)
-    public abstract SpriteHolder getSpriteHolder();
 }

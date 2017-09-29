@@ -36,7 +36,7 @@ public class GuiAssemblyTable extends GuiBC8<ContainerAssemblyTable> {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
-        ledgersRight.ledgers.add(new LedgerTablePower(ledgersRight, container.tile));
+        shownElements.add(new LedgerTablePower(this, true));
     }
 
     private IGuiPosition getPos(int index) {

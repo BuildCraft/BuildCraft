@@ -15,6 +15,8 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.gui.pos.IGuiArea;
 
 /** Defines and draws a 9-sliced sprite. */
@@ -46,7 +48,7 @@ public class SpriteNineSliced {
         draw(element.getX(), element.getY(), element.getWidth(), element.getHeight());
     }
 
-    public void draw(int x, int y, int width, int height) {
+    public void draw(double x, double y, double width, double height) {
         sprite.bindTexture();
         Tessellator tess = Tessellator.getInstance();
         BufferBuilder vb = tess.getBuffer();

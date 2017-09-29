@@ -25,6 +25,7 @@ import buildcraft.api.transport.pipe.IPipeHolder;
 public class MessageWireSystemsPowered implements IMessage {
     private Map<Integer, Boolean> hashesPowered = new HashMap<>();
 
+    @SuppressWarnings("unused")
     public MessageWireSystemsPowered() {
     }
 

@@ -9,7 +9,7 @@ package buildcraft.lib.expression.api;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 
 public interface INodeFunc {
     /** Pops values off of the stack to create an expression node. Note that this *must* operate without side effects,
@@ -17,23 +17,25 @@ public interface INodeFunc {
      * matches. */
     IExpressionNode getNode(INodeStack stack) throws InvalidExpressionException;
 
-    interface INodeFuncLong extends INodeFunc {
+    public interface INodeFuncLong extends INodeFunc {
         @Override
         INodeLong getNode(INodeStack stack) throws InvalidExpressionException;
     }
 
-    interface INodeFuncDouble extends INodeFunc {
+    public interface INodeFuncDouble extends INodeFunc {
         @Override
         INodeDouble getNode(INodeStack stack) throws InvalidExpressionException;
     }
 
-    interface INodeFuncBoolean extends INodeFunc {
+    public interface INodeFuncBoolean extends INodeFunc {
         @Override
         INodeBoolean getNode(INodeStack stack) throws InvalidExpressionException;
     }
 
-    interface INodeFuncString extends INodeFunc {
+    public interface INodeFuncObject<T> extends INodeFunc {
         @Override
-        INodeString getNode(INodeStack stack) throws InvalidExpressionException;
+        INodeObject<T> getNode(INodeStack stack) throws InvalidExpressionException;
+
+        Class<T> getType();
     }
 }

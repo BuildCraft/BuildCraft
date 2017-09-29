@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blocks.CustomPaintHelper;
 
+import buildcraft.lib.client.render.font.SpecialColourFontRenderer;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.ParticleUtil;
@@ -65,7 +67,7 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
 
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ItemStack stack = StackUtil.asNonNull( player.getHeldItem(hand));
+        ItemStack stack = StackUtil.asNonNull(player.getHeldItem(hand));
         Brush brush = new Brush(stack);
         Vec3d hitPos = VecUtil.add(new Vec3d(hitX, hitY, hitZ), pos);
         if (brush.useOnBlock(world, pos, world.getBlockState(pos), hitPos, facing)) {
@@ -89,9 +91,15 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
         Brush brush = getBrushFromStack(stack);
         String colourComponent = "";
         if (brush.colour != null) {
-            colourComponent = ColourUtil.getTextFullTooltip(brush.colour) + " ";
+            colourComponent = ColourUtil.getTextFullTooltipSpecial(brush.colour) + " ";
         }
         return colourComponent + super.getItemStackDisplayName(stack);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public FontRenderer getFontRenderer(ItemStack stack) {
+        return SpecialColourFontRenderer.INSTANCE;
     }
 
     @Override

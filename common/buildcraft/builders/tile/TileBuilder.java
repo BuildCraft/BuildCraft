@@ -79,9 +79,7 @@ import buildcraft.builders.snapshot.TemplateBuilder;
 public class TileBuilder extends TileBC_Neptune
     implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("builder");
-    @SuppressWarnings("WeakerAccess")
     public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
-    @SuppressWarnings("WeakerAccess")
     public static final int NET_SNAPSHOT_TYPE = IDS.allocId("SNAPSHOT_TYPE");
     private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftbuilders:paving_the_way");
 
@@ -258,8 +256,11 @@ public class TileBuilder extends TileBC_Neptune
 
     @Override
     public void update() {
+        world.profiler.startSection("main");
+        world.profiler.startSection("power");
         battery.tick(getWorld(), getPos());
         battery.addPowerChecking(64 * MjAPI.MJ, false);
+        world.profiler.endStartSection("builder");
         SnapshotBuilder<?> builder = getBuilder();
         if (builder != null) {
             isDone = builder.tick();
@@ -273,10 +274,12 @@ public class TileBuilder extends TileBC_Neptune
                     }
                     updateSnapshot(true);
                 }
-            } else if (world.getTotalWorldTime() % 10 == 0){
-                sendNetworkUpdate(NET_RENDER_DATA); // FIXME
             }
         }
+        world.profiler.endStartSection("net_update");
+        sendNetworkUpdate(NET_RENDER_DATA); // FIXME
+        world.profiler.endSection();
+        world.profiler.endSection();
     }
 
     // Networking
@@ -424,7 +427,6 @@ public class TileBuilder extends TileBC_Neptune
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("battery = " + battery.getDebugString());
         left.add("basePoses = " + (basePoses == null ? "null" : basePoses.size()));

@@ -44,7 +44,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 
     @Override
     @SideOnly(Side.CLIENT)
-    public SpriteHolder getSpriteHolder() {
+    public SpriteHolder getSprite() {
         return BCCoreSprites.TRIGGER_FLUID.get(state);
     }
 

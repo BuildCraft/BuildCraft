@@ -67,12 +67,13 @@ public class BCTransportRegistries {
         PipeApi.stripeRegistry.addHandler(StripesHandlerPlaceBlock.INSTANCE, EnumHandlerPriority.LOW);
         PipeApi.stripeRegistry.addHandler(StripesHandlerUse.INSTANCE, EnumHandlerPriority.LOW);
 
-        StripesHandlerDispenser.ITEM_CLASSES.add(ItemBucket.class);
-        StripesHandlerDispenser.ITEM_CLASSES.add(ItemMinecart.class);
+        // For testing
+        //StripesHandlerDispenser.ITEM_CLASSES.add(ItemBucket.class);
+        //StripesHandlerDispenser.ITEM_CLASSES.add(ItemMinecart.class);
+
         // StripesHandlerRightClick.items.add(Items.EGG);
         // StripesHandlerRightClick.items.add(Items.SNOWBALL);
         // StripesHandlerRightClick.items.add(Items.EXPERIENCE_BOTTLE);
-        StripesHandlerUse.ITEMS.add(Items.FIREWORKS);
 
         // Block breaking stripes handlers
         PipeApi.stripeRegistry.addHandler(StripesHandlerMinecartDestroy.INSTANCE);

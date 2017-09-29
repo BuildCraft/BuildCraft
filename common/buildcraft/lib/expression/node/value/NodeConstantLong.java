@@ -17,6 +17,10 @@ public class NodeConstantLong implements INodeLong, IConstantNode {
         this.value = value;
     }
 
+    public static NodeConstantLong of(long value) {
+        return new NodeConstantLong(value);
+    }
+
     @Override
     public long evaluate() {
         return value;

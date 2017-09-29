@@ -17,6 +17,8 @@ agreedFile="license_checker/out/merged_agreed.txt"
 tempOutDir="license_checker/out/work"
 goodOutDir="license_checker/out/safe"
 badOutDir="license_checker/out/need"
+allContrFile="license_checker/out/all_contributors.txt"
+allToContrFile="license_checker/out/all_nonagreeing_contributors.txt"
 
 ## variables
 
@@ -145,6 +147,9 @@ mkdir $badOutDir
 cat $agreeInput >> $agreedFile
 cat $unusedInput >> $agreedFile
 
+eval "git shortlog -sne --all" > "$allContrFile"
+eval "grep -vf $agreedFile $allContrFile" > "$allToContrFile"
+
 declare -a folders=("common" "common_old_license" "src_old_license" "BuildCraft-Localization" "buildcraft_resources")
 
 for i in "${folders[@]}"
@@ -163,6 +168,7 @@ done
 #scanFolder "BuildCraft-Localization"
 #scanFolder "buildcraft_resources"
 testFolder "."
+
 
 eval "git log --pretty=format:\"%an <%ae>\" -- $fle | sort | uniq" > "license_checker/out/all"
 eval "grep -vf $agreedFile license_checker/out/all" > "license_checker/out/req"

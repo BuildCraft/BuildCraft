@@ -14,7 +14,6 @@ import javax.annotation.Nonnull;
 
 import org.lwjgl.input.Keyboard;
 
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -25,6 +24,7 @@ import buildcraft.api.lists.ListMatchHandler;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.button.GuiImageButton;
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.button.IButtonClickEventListener;
@@ -65,7 +65,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
                 final WidgetListSlot listSlot = arr[slot];
                 GuiRectangle rectangle = new GuiRectangle(8 + slot * 18, 32 + line * 34, 16, 16);
 
-                guiElements.add(listSlot.new GuiElementPhantomSlot<GuiList>(this, rootElement, rectangle) {
+                shownElements.add(listSlot.new GuiElementPhantomSlot<GuiList>(this, rectangle.offset(rootElement)) {
                     @Override
                     protected boolean shouldDrawHighlight() {
                         return listSlot.slotIndex == 0 || !gui.container.lines[listSlot.lineIndex].isOneStackMode();
@@ -112,27 +112,33 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
             int bOffY = this.guiTop + 32 + sy * 34 + 18;
 
             GuiImageButton buttonPrecise = new GuiImageButton(this, bOff + 0, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28);
-            buttonPrecise.setToolTip(ToolTip.createLocalized("gui.list.nbt")).setBehaviour(IButtonBehaviour.TOGGLE);
-            buttonList.add(buttonPrecise);
+            buttonPrecise.setToolTip(ToolTip.createLocalized("gui.list.nbt"));
+            buttonPrecise.setBehaviour(IButtonBehaviour.TOGGLE);
+            shownElements.add(buttonPrecise);
 
             GuiImageButton buttonType = new GuiImageButton(this, bOff + 1, bOffX + 11, bOffY, 11, TEXTURE_BASE, 176, 16, 185, 28);
-            buttonType.setToolTip(ToolTip.createLocalized("gui.list.metadata")).setBehaviour(IButtonBehaviour.TOGGLE);
-            buttonList.add(buttonType);
+            buttonType.setToolTip(ToolTip.createLocalized("gui.list.metadata"));
+            buttonType.setBehaviour(IButtonBehaviour.TOGGLE);
+            shownElements.add(buttonType);
 
             GuiImageButton buttonMaterial = new GuiImageButton(this, bOff + 2, bOffX + 22, bOffY, 11, TEXTURE_BASE, 176, 16, 194, 28);
-            buttonMaterial.setToolTip(ToolTip.createLocalized("gui.list.oredict")).setBehaviour(IButtonBehaviour.TOGGLE);
-            buttonList.add(buttonMaterial);
+            buttonMaterial.setToolTip(ToolTip.createLocalized("gui.list.oredict"));
+            buttonMaterial.setBehaviour(IButtonBehaviour.TOGGLE);
+            shownElements.add(buttonMaterial);
         }
 
-        for (GuiButton o : buttonList) {
-            GuiImageButton b = (GuiImageButton) o;
-            int lineId = b.id / BUTTON_COUNT;
-            int buttonId = b.id % BUTTON_COUNT;
-            if (container.lines[lineId].getOption(buttonId)) {
-                b.activate();
-            }
+        for (IGuiElement elem : shownElements) {
+            if (elem instanceof GuiImageButton) {
+                GuiImageButton b = (GuiImageButton) elem;
+                int id = Integer.parseInt(b.id);
+                int lineId = id / BUTTON_COUNT;
+                int buttonId = id % BUTTON_COUNT;
+                if (container.lines[lineId].getOption(buttonId)) {
+                    b.activate();
+                }
 
-            b.registerListener(this);
+                b.registerListener(this);
+            }
         }
 
         textField = new GuiTextField(6, this.fontRenderer, guiLeft + 10, guiTop + 10, 156, 12);
@@ -188,7 +194,11 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
     }
 
     @Override
-    public void handleButtonClick(IButtonClickEventTrigger sender, int id, int buttonKey) {
+    public void handleButtonClick(IButtonClickEventTrigger sender, int buttonKey) {
+        if (!(sender instanceof GuiImageButton)) {
+            return;
+        }
+        int id = Integer.parseInt(((GuiImageButton) sender).id);
         int buttonId = id % BUTTON_COUNT;
         int lineId = id / BUTTON_COUNT;
 

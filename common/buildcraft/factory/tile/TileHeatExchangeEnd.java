@@ -137,18 +137,19 @@ public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable, 
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        if (hasWorld() && world.isRemote) {
-            left.add("coolable:");
-            smoothedCoolableIn.getDebugInfo(left, right, side);
-            left.add("");
-            left.add("heatable:");
-            smoothedHeatableOut.getDebugInfo(left, right, side);
-        } else {
-            left.add("heatable_out = " + tankHeatableOut.getDebugString());
-            left.add("coolable_in = " + tankCoolableIn.getDebugString());
-        }
+        left.add("heatable_out = " + tankHeatableOut.getDebugString());
+        left.add("coolable_in = " + tankCoolableIn.getDebugString());
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void getClientDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        left.add("");
+        left.add("heatable_out:");
+        smoothedCoolableIn.getDebugInfo(left, right, side);
+        left.add("coolable_in:");
+        smoothedHeatableOut.getDebugInfo(left, right, side);
     }
 
     @Nullable

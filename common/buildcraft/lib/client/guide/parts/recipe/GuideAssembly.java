@@ -60,10 +60,10 @@ public class GuideAssembly extends GuidePartItem {
             for (int i = 0; i < input.length; i++) {
                 GuiRectangle rect = ITEM_POSITION[i];
                 ItemStack stack = input[i].get();
-                drawItemStack(stack, x + rect.x, y + rect.y);
+                drawItemStack(stack, x + (int) rect.x, y + (int) rect.y);
             }
 
-            drawItemStack(output.get(), x + OUT_POSITION.x, y + OUT_POSITION.y);
+            drawItemStack(output.get(), x + (int) OUT_POSITION.x, y + (int) OUT_POSITION.y);
 
             if (MJ_POSITION.offset(x, y).contains(gui.mouse)) {
                 gui.tooltip.add(LocaleUtil.localizeMj(mjCost.get()));
@@ -87,10 +87,10 @@ public class GuideAssembly extends GuidePartItem {
             for (int i = 0; i < input.length; i++) {
                 GuiRectangle rect = ITEM_POSITION[i];
                 ItemStack stack = input[i].get();
-                testClickItemStack(stack, x + rect.x, y + rect.y);
+                testClickItemStack(stack, x + (int) rect.x, y + (int) rect.y);
             }
 
-            testClickItemStack(output.get(), x + OUT_POSITION.x, y + OUT_POSITION.y);
+            testClickItemStack(output.get(), x + (int) OUT_POSITION.x, y + (int) OUT_POSITION.y);
         }
         current = current.nextLine(PIXEL_HEIGHT, height);
         return current;

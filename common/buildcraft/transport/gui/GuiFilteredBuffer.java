@@ -36,16 +36,16 @@ public class GuiFilteredBuffer extends GuiBC8<ContainerFilteredBuffer_BC8> {
         RenderHelper.enableGUIStandardItemLighting();
         for (int i = 0; i < 9; i++) {
             ItemStack stack = container.tile.invFilter.getStackInSlot(i);
-            int currentX = rootElement.getX() + 8 + i * 18;
-            int currentY = rootElement.getY() + 61;
+            double currentX = rootElement.getX() + 8 + i * 18;
+            double currentY = rootElement.getY() + 61;
             // GL11.glEnable(GL11.GL_BLEND);
             // GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             // GL11.glColor4f(1, 1, 1, 0.5F);
             if (!stack.isEmpty()) {
-                this.itemRender.renderItemAndEffectIntoGUI(this.mc.player, stack, currentX, currentY);
+                this.itemRender.renderItemAndEffectIntoGUI(this.mc.player, stack, (int) currentX, (int) currentY);
             } else {
                 this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-                this.drawTexturedModalRect(currentX, currentY, BCTransportSprites.NOTHING_FILTERED_BUFFER_SLOT.getSprite(), 16, 16);
+                this.drawTexturedModalRect((int) currentX, (int) currentY, BCTransportSprites.NOTHING_FILTERED_BUFFER_SLOT.getSprite(), 16, 16);
             }
             // GL11.glColor4f(1, 1, 1, 1);
             // GL11.glDisable(GL11.GL_BLEND);

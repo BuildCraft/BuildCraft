@@ -49,7 +49,9 @@ public abstract class AtlasSpriteSwappable extends TextureAtlasSprite {
         }
         if (current.hasAnimationMetadata()) {
             p.startSection("update");
+            p.startSection(getIconName());
             current.updateAnimation();
+            p.endSection();
             p.endSection();
         } else if (needsSwapping) {
             p.startSection("swap");

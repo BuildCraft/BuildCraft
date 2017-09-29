@@ -1,7 +1,15 @@
 package buildcraft.test.lib.expression;
 
+import static buildcraft.lib.expression.Argument.argDouble;
+import static buildcraft.lib.expression.Argument.argLong;
+import static org.junit.Assert.assertEquals;
+
+import com.google.common.collect.ImmutableList;
+
 import org.junit.Assert;
 import org.junit.Test;
+
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.lib.expression.Argument;
 import buildcraft.lib.expression.DefaultContexts;
@@ -9,29 +17,19 @@ import buildcraft.lib.expression.ExpressionDebugManager;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.NodeStack;
-import buildcraft.lib.expression.NodeStackRecording;
+import buildcraft.lib.expression.VecLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
-import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.api.NodeType;
-import buildcraft.lib.expression.node.binary.BiNodeType;
-import buildcraft.lib.expression.node.func.NodeFuncGenericToLong;
-import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong;
-import buildcraft.lib.expression.node.func.NodeFuncLongToLong;
-import buildcraft.lib.expression.node.unary.UnaryNodeType;
+import buildcraft.lib.expression.minecraft.ExpressionCompat;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
-import buildcraft.lib.expression.node.value.NodeConstantLong;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableLong;
-import buildcraft.lib.expression.node.value.NodeVariableString;
-
-import static buildcraft.lib.expression.Argument.argDouble;
-import static buildcraft.lib.expression.Argument.argLong;
-import static org.junit.Assert.assertEquals;
+import buildcraft.lib.expression.node.value.NodeVariableObject;
+import buildcraft.lib.gui.pos.IGuiPosition;
 
 @SuppressWarnings("static-method")
 public class ExpressionTester {
@@ -41,11 +39,11 @@ public class ExpressionTester {
 
     @Test
     public void testLongBasics() {
-        bakeAndCallLong("0x0", 0);
-        bakeAndCallLong("0xa", 10);
-        bakeAndCallLong("0xA", 10);
-        bakeAndCallLong("0x10", 16);
-        bakeAndCallLong("0x1_0", 16);
+        bakeAndCallLong("0x0", 0x0);
+        bakeAndCallLong("0xa", 0xa);
+        bakeAndCallLong("0xA", 0xA);
+        bakeAndCallLong("0x10", 0x10);
+        bakeAndCallLong("0x1_0", 0x1_0);
     }
 
     @Test
@@ -53,9 +51,9 @@ public class ExpressionTester {
         // I COULD change all these to be in separate functions... except that's really long :/
         bakeAndCallDouble("0", 0);
         bakeAndCallDouble("-1", -1);
-        bakeAndCallDouble("0+1", 1);
+        bakeAndCallDouble("0+1", 0 + 1);
         bakeAndCallDouble("   0   +    1    ", 1);
-        bakeAndCallDouble("3-2", 1);
+        bakeAndCallDouble("3-2", 3 - 2);
         bakeAndCallDouble("1+1+1", 3);
         bakeAndCallDouble("1+2-1", 2);
         bakeAndCallDouble("1-2+1", 0);
@@ -88,6 +86,8 @@ public class ExpressionTester {
         bakeAndCallString("'A'", "A");
         bakeAndCallString("'a' + 'b'", "ab");
         bakeAndCallString("'aA' + 'b'", "aAb");
+        bakeAndCallString("'aAB'.toLowerCase()", "aab");
+        bakeAndCallString("'aAB'.tolOwercase()", "aab");
 
         bakeAndCallBoolean("'a' == 'a'", true);
         bakeAndCallBoolean("'a' != 'b'", true);
@@ -112,83 +112,34 @@ public class ExpressionTester {
         bakeAndCallLong("false ? 0 : true ? 1 : 2", 1);
         bakeAndCallLong("(true ? false : true) ? 0 : 1", 1);
         bakeAndCallLong("(false ? 0 : 2) - 1", 1);
+
+        bakeAndCallDouble("false ? 1 : 0.4", 0.4);
     }
 
     @Test
     public void testMath() throws InvalidExpressionException {
-        NodeVariableLong arg1 = new NodeVariableLong("arg1");
-
-        INodeLong node = BiNodeType.ADD.createLongNode(arg1, new NodeConstantLong(10));
-
-        arg1.value = 1;
-        System.out.println(node.evaluate());
-
-        arg1.value = 6;
-        System.out.println(node.evaluate());
-
-        IVariableNode[] vars = { arg1 };
-
-        NodeType[] ntArgs = { NodeType.LONG };
-
-        NodeFuncGenericToLong func = new NodeFuncGenericToLong(node, ntArgs, vars);
-
-        NodeStack nodeStack = new NodeStack();
-
-        nodeStack.push(new NodeConstantLong(14));
-        System.out.println(func.getNode(nodeStack).inline().evaluate());
-
-        nodeStack.push(new NodeConstantLong(27));
-        System.out.println(func.getNode(nodeStack).inline().evaluate());
-
-        NodeFuncLongToLong func2 = new NodeFuncLongToLong((a) -> (a * 2), "a * 2");
-
-        nodeStack.push(new NodeConstantLong(1));
-        System.out.println(func2.getNode(nodeStack).inline().evaluate());
-
-        nodeStack.push(new NodeConstantLong(13));
-        System.out.println(func2.getNode(nodeStack).inline().evaluate());
-
-        nodeStack.push(new NodeConstantLong(13));
-        INodeLong neg = UnaryNodeType.NEGATE.createLongNode(func2.getNode(nodeStack));
-        System.out.println(neg);
-        INodeLong negInlined = neg.inline();
-        System.out.println(negInlined);
-        System.out.println(negInlined.evaluate());
-
-        NodeStack stack = new NodeStack();
-
-        stack.push(neg);
-
-        NodeStackRecording recorder = new NodeStackRecording();
-
-        ExpressionDebugManager.debugStart("Recording " + func + " [");
-        func.getNode(recorder);
-        ExpressionDebugManager.debugEnd("]");
-
-        ExpressionDebugManager.debugStart("Compiling");
-        stack.setRecorder(recorder.types, func);
-        INodeLong node2 = func.getNode(stack);
-        stack.checkAndRemoveRecorder();
-        ExpressionDebugManager.debugEnd("Compiled as " + node2);
-        ExpressionDebugManager.debugPrintln("Inlined as " + node2.inline());
-
         FunctionContext ctx2 = DefaultContexts.createWithAll();
 
-        System.out.println(ctx2.getFunction("sin", 1));
-        System.out.println(ctx2.getFunction("cosh", 1));
-        System.out.println(ctx2.getFunction("round", 1));
-        System.out.println(ctx2.getFunction("ceil", 1));
-        System.out.println(ctx2.getFunction("max_long", 1));
-        System.out.println(ctx2.getFunction("max_long", 2));
+        ImmutableList<Class<?>> list_d = ImmutableList.of(double.class);
+        ImmutableList<Class<?>> list_l = ImmutableList.of(long.class);
+        ImmutableList<Class<?>> list_ll = ImmutableList.of(long.class, long.class);
+        System.out.println(ctx2.getFunctions("sin"));
+        System.out.println(ctx2.getFunction("sin", list_d));
+        System.out.println(ctx2.getFunction("cosh", list_d));
+        System.out.println(ctx2.getFunction("round", list_d));
+        System.out.println(ctx2.getFunction("ceil", list_d));
+        System.out.println(ctx2.getFunction("max", list_d));
+        System.out.println(ctx2.getFunction("max", list_l));
+        System.out.println(ctx2.getFunction("max", list_ll));
 
         NodeStack stack4 = new NodeStack();
 
         stack4.push(new NodeConstantDouble(0.4));
-        INodeLong out = (INodeLong) ctx2.getFunction("ceil", 1).getNode(stack4);
+        INodeLong out = (INodeLong) ctx2.getFunction("ceil", list_d).getNode(stack4);
         System.out.println(out + " = " + out.evaluate());
 
         stack4.push(new NodeConstantDouble(0.4));
-        out = (INodeLong) ctx2.getFunction("floor", 1).getNode(stack4);
+        out = (INodeLong) ctx2.getFunction("floor", list_d).getNode(stack4);
         System.out.println(out + " = " + out.evaluate());
 
         INodeDouble nd = (INodeDouble) ctx2.getVariable("pi");
@@ -197,7 +148,8 @@ public class ExpressionTester {
         nd = (INodeDouble) ctx2.getVariable("e");
         System.out.println(nd + " = " + nd.evaluate());
 
-        INodeFuncLong func3 = GenericExpressionCompiler.compileFunctionLong("input * 2 + 1", ctx2, Argument.argLong("input"));
+        INodeFuncLong func3 =
+            GenericExpressionCompiler.compileFunctionLong("input * 2 + 1", ctx2, Argument.argLong("input"));
         NodeStack stack3 = new NodeStack();
         NodeVariableLong input = stack3.push(new NodeVariableLong("input"));
         INodeLong node3 = func3.getNode(stack3);
@@ -208,7 +160,7 @@ public class ExpressionTester {
         input.value = 30;
         System.out.println(node3 + " = " + node3.evaluate());
 
-        ctx2.putFunction("sub", new NodeFuncLongLongToLong((a, b) -> a - b, (a, b) -> a + " - " + b));
+        ctx2.put_ll_l("sub", (a, b) -> a - b);
 
         testExpr("floor(ceil(0.5)+0.5)", ctx2);
         testExpr("sub(5, 6)", ctx2);
@@ -274,11 +226,13 @@ public class ExpressionTester {
         bakeAndCallDouble("powLong(3, 3)", 27, ctx);
     }
 
-    private static void compileFuncLong(FunctionContext ctx, String name, String expr, Argument... args) throws InvalidExpressionException {
+    private static void compileFuncLong(FunctionContext ctx, String name, String expr, Argument... args)
+        throws InvalidExpressionException {
         ctx.putFunction(name, GenericExpressionCompiler.compileFunctionLong(expr, ctx, args));
     }
 
-    private static void compileFuncDouble(FunctionContext ctx, String name, String expr, Argument... args) throws InvalidExpressionException {
+    private static void compileFuncDouble(FunctionContext ctx, String name, String expr, Argument... args)
+        throws InvalidExpressionException {
         ctx.putFunction(name, GenericExpressionCompiler.compileFunctionDouble(expr, ctx, args));
     }
 
@@ -292,7 +246,7 @@ public class ExpressionTester {
         someVariable.value = 1;
         bakeAndCallDouble("something", 1, ctx);
 
-        NodeVariableString variant = ctx.putVariableString("variant");
+        NodeVariableObject<String> variant = ctx.putVariableString("variant");
         String exp = "variant == 'gold'";
         INodeBoolean expBool = bakeFunctionBoolean(exp, ctx);
 
@@ -316,6 +270,69 @@ public class ExpressionTester {
         Assert.assertEquals(expLong.evaluate(), 3);
     }
 
+    @Test
+    public void testObjects() {
+        FunctionContext ctx = new FunctionContext();
+
+        ctx.putConstantLong("engine.rate", 6);
+        bakeAndCallLong("engine.rate", 6, ctx);
+
+        ctx.putConstantLong("engine.other_rate", 5);
+        bakeAndCallBoolean("engine.rate != engine.other_rate", true, ctx);
+
+        ctx.putConstant("engine.stage", String.class, "blue");
+        bakeAndCallString("engine.stage.toUpperCase()", "BLUE", ctx);
+    }
+
+    @Test
+    public void testMinecraftClasses() {
+        ExpressionCompat.setup();
+        FunctionContext ctx = DefaultContexts.createWithAll();
+
+        bakeAndCallString("Facing.UP", "up", ctx);
+        bakeAndCallString("Facing.uP", "up", ctx);
+        bakeAndCallString("Facing.up.getOpposite()", "down", ctx);
+        bakeAndCallString("Facing.up.getAxis()", "y", ctx);
+
+        bakeAndCallString("Axis.X", "x", ctx);
+        bakeAndCallString("axis.x", "x", ctx);
+
+        bakeAndCallBoolean("Axis.X == Axis.X", true);
+        bakeAndCallBoolean("Axis.Y == Axis.X", false);
+        bakeAndCallBoolean("Facing.up == Facing.west", false);
+        bakeAndCallBoolean("Facing.up.getOpposite().getAxis() == Axis.X", false);
+
+        ctx.putConstant("face", EnumFacing.class, EnumFacing.DOWN);
+        bakeAndCallBoolean("face == Facing.down", true, ctx);
+    }
+
+    @Test
+    public void testVectors() {
+        bakeAndCallString("VecLong.zero", VecLong.ZERO.toString());
+        bakeAndCallString("vec(0, 0, 0, 0)", VecLong.ZERO.toString());
+        bakeAndCallString("vec(3, 4) + vec(1, 2)", "{ 4, 6, 0, 0 }");
+        bakeAndCallString("vec(3, 4) - vec(1, 2)", "{ 2, 2, 0, 0 }");
+        bakeAndCallLong("vec(3, 4).dot2(vec(1, 2))", 11);
+        bakeAndCallLong("vec(3, 4).dot3(vec(1, 2))", 11);
+        bakeAndCallLong("vec(3, 4).dot4(vec(1, 2))", 11);
+        bakeAndCallDouble("vec(3, 4).length()", Math.sqrt(3 * 3 + 4 * 4));
+        bakeAndCallDouble("vec(3, 4).distanceTo(vec(3, 9))", 5);
+    }
+
+    @Test
+    public void testGuiClasses() {
+        FunctionContext ctx = DefaultContexts.createWithAll();
+        NodeVariableLong var = ctx.putVariableLong("value");
+        ExpressionCompat.setup();
+        IGuiPosition pos = bakeFunctionObject(IGuiPosition.class, "GuiPosition.pos(value + 3, 5)", ctx).evaluate();
+
+        var.value = 4;
+        Assert.assertEquals(7, pos.getX(), 0.01);
+
+        var.value = 5;
+        Assert.assertEquals(8, pos.getX(), 0.01);
+    }
+
     private static INodeDouble bakeFunctionDouble(String function, FunctionContext ctx) {
         try {
             return GenericExpressionCompiler.compileExpressionDouble(function, ctx);
@@ -333,7 +350,7 @@ public class ExpressionTester {
     }
 
     private static void bakeAndCallDouble(String function, double def) {
-        bakeAndCallDouble(function, def, null);
+        bakeAndCallDouble(function, def, DefaultContexts.createWithAll());
     }
 
     private static INodeBoolean bakeFunctionBoolean(String function, FunctionContext ctx) {
@@ -356,24 +373,28 @@ public class ExpressionTester {
         bakeAndCallBoolean(function, def, null);
     }
 
-    private static INodeString bakeFunctionString(String function, FunctionContext ctx) {
+    private static INodeObject<String> bakeFunctionString(String function, FunctionContext ctx) {
+        return bakeFunctionObject(String.class, function, ctx);
+    }
+
+    private static <T> INodeObject<T> bakeFunctionObject(Class<T> clazz, String function, FunctionContext ctx) {
         try {
-            return GenericExpressionCompiler.compileExpressionString(function, ctx);
-        } catch (buildcraft.lib.expression.api.InvalidExpressionException e) {
+            return GenericExpressionCompiler.compileExpressionObject(clazz, function, ctx);
+        } catch (InvalidExpressionException e) {
             throw new AssertionError(e);
         }
     }
 
     private static void bakeAndCallString(String function, String expected, FunctionContext ctx) {
         ExpressionDebugManager.debugPrintln("Testing \"" + function + "\", expecting " + expected);
-        INodeString node = bakeFunctionString(function, ctx);
+        INodeObject<String> node = bakeFunctionString(function, ctx);
         ExpressionDebugManager.debugPrintln("To " + node);
         String got = node.evaluate();
         assertEquals(expected, got);
     }
 
     private static void bakeAndCallString(String function, String def) {
-        bakeAndCallString(function, def, null);
+        bakeAndCallString(function, def, DefaultContexts.createWithAll());
     }
 
     private static INodeLong bakeFunctionLong(String function, FunctionContext ctx) {
@@ -385,7 +406,7 @@ public class ExpressionTester {
     }
 
     private static void testExpr(String expr, FunctionContext ctx) throws InvalidExpressionException {
-        INodeString node = GenericExpressionCompiler.compileExpressionString(expr, ctx);
+        INodeObject<String> node = GenericExpressionCompiler.compileExpressionString(expr, ctx);
         System.out.println(expr + " = " + node.evaluate());
     }
 
@@ -398,6 +419,6 @@ public class ExpressionTester {
     }
 
     private static void bakeAndCallLong(String function, long def) {
-        bakeAndCallLong(function, def, null);
+        bakeAndCallLong(function, def, DefaultContexts.createWithAll());
     }
 }

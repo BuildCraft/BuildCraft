@@ -25,7 +25,6 @@ import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.transport.pipe.IFlowFluid;
 import buildcraft.api.transport.pipe.IFlowItems;
@@ -41,10 +40,12 @@ import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.VecUtil;
 
 public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneReceiver {
+    private static final long POWER_PER_ITEM = MjAPI.MJ / 2;
+    private static final long POWER_PER_METRE = MjAPI.MJ / 4;
+
     private static final double INSERT_SPEED = 0.04;
     private static final int DROP_GAP = 20;
 
-    private final MjBattery battery = new MjBattery(256 * MjAPI.MJ);
     private final MjCapabilityHelper mjCaps = new MjCapabilityHelper(this);
     /** Map of recently dropped item to the tick when it can be picked up */
     private final WeakHashMap<EntityItem, Long> entityDropTime = new WeakHashMap<>();
@@ -56,7 +57,6 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
 
     public PipeBehaviourObsidian(IPipe pipe, NBTTagCompound nbt) {
         super(pipe, nbt);
-        battery.deserializeNBT(nbt.getCompoundTag("battery"));
         // Saves us from writing out the entity item's ID
         toWaitTicks = DROP_GAP;
     }
@@ -64,7 +64,6 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
     @Override
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = super.writeToNbt();
-        nbt.setTag("battery", battery.serializeNBT());
         return nbt;
     }
 
@@ -79,17 +78,6 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
         } else {
             toWaitTicks = 0;
         }
-        if (battery.getStored() > 0) {
-            EnumFacing openFace = getOpenFace();
-            if (openFace != null) {
-                for (int distance = 1; distance < 5; distance++) {
-                    if (suckEntity(openFace, distance)) {
-                        return;
-                    }
-                }
-            }
-            battery.extractPower(0, MjAPI.MJ / 2);
-        }
     }
 
     @Override
@@ -99,7 +87,7 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
         }
         EnumFacing openFace = getOpenFace();
         if (openFace != null) {
-            trySuckEntity(entity, openFace, false);
+            trySuckEntity(entity, openFace, 0, false);
         }
     }
 
@@ -115,20 +103,6 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
             }
         }
         return openFace;
-    }
-
-    protected boolean suckEntity(EnumFacing openFace, int distance) {
-        AxisAlignedBB aabb = getSuckingBox(openFace, distance);
-
-        List<Entity> discoveredEntities = pipe.getHolder().getPipeWorld().getEntitiesWithinAABB(Entity.class, aabb);
-
-        for (Entity entity : discoveredEntities) {
-            if (trySuckEntity(entity, openFace, true)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     protected AxisAlignedBB getSuckingBox(EnumFacing openFace, int distance) {
@@ -150,13 +124,10 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
         }
     }
 
-    /** Attempts to pull in the given */
-    protected boolean trySuckEntity(Entity entity, EnumFacing faceFrom, boolean requiresPower) {
-        if (entity.isDead || (requiresPower && battery.getStored() < MjAPI.MJ)) {
-            return false;
-        }
-        if (entity instanceof EntityLivingBase) {
-            return false;
+    /** @return The left over power */
+    protected long trySuckEntity(Entity entity, EnumFacing faceFrom, long power, boolean simulate) {
+        if (entity.isDead || entity instanceof EntityLivingBase) {
+            return power;
         }
 
         Long tickPickupObj = entityDropTime.get(entity);
@@ -164,7 +135,7 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
             long tickPickup = tickPickupObj;
             long tickNow = pipe.getHolder().getPipeWorld().getTotalWorldTime();
             if (tickNow < tickPickup) {
-                return false;
+                return power;
             } else {
                 entityDropTime.remove(entity);
             }
@@ -178,18 +149,22 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
         IItemTransactor transactor = ItemTransactorHelper.getTransactorForEntity(entity, faceFrom.getOpposite());
 
         if (flowItem != null) {
-            int max = requiresPower ? 1 : Integer.MAX_VALUE;
-            ItemStack extracted = transactor.extract(StackFilter.ALL, 1, max, false);
+            double distance = Math.sqrt(entity.getDistanceSqToCenter(pipe.getHolder().getPipePos()));
+            long powerReqPerItem = (long) (distance * POWER_PER_METRE + POWER_PER_ITEM);
+
+            int max = power == 0 ? 1 : (int) (power / powerReqPerItem);
+            ItemStack extracted = transactor.extract(StackFilter.ALL, 1, max, simulate);
             if (!extracted.isEmpty()) {
-                flowItem.insertItemsForce(extracted, faceFrom, null, INSERT_SPEED);
-                battery.extractPower(MjAPI.MJ);
-                return true;
+                if (!simulate) {
+                    flowItem.insertItemsForce(extracted, faceFrom, null, INSERT_SPEED);
+                }
+                return power - powerReqPerItem * extracted.getCount();
             }
         }
         if (flowFluid != null) {
             // TODO: Fluid extraction!
         }
-        return false;
+        return power;
     }
 
     @PipeEventHandler
@@ -206,12 +181,28 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
 
     @Override
     public long getPowerRequested() {
-        return MjAPI.MJ;
+        final long power = 512 * MjAPI.MJ;
+        return power - receivePower(power, true);
     }
 
     @Override
     public long receivePower(long microJoules, boolean simulate) {
-        return battery.addPowerChecking(microJoules, simulate);
+        if (toWaitTicks > 0) {
+            return microJoules;
+        }
+        EnumFacing openFace = getOpenFace();
+        for (int d = 1; d < 5; d++) {
+            AxisAlignedBB aabb = getSuckingBox(openFace, d);
+            List<Entity> discoveredEntities = pipe.getHolder().getPipeWorld().getEntitiesWithinAABB(Entity.class, aabb);
+
+            for (Entity entity : discoveredEntities) {
+                long leftOver = trySuckEntity(entity, openFace, microJoules, simulate);
+                if (leftOver < microJoules) {
+                    return leftOver;
+                }
+            }
+        }
+        return microJoules - MjAPI.MJ;
     }
 
     @Override

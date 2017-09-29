@@ -7,31 +7,29 @@
 package buildcraft.lib.expression.node.value;
 
 import buildcraft.lib.expression.DefaultContexts;
-import buildcraft.lib.expression.NodeStack;
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.api.NodeType;
-import buildcraft.lib.expression.node.binary.BiNodeType;
-import buildcraft.lib.expression.node.cast.NodeCastLongToDouble;
+import buildcraft.lib.expression.api.NodeTypes;
 
-/* TODO: Use this for the models so that models can increment a variable every tick */
 public class NodeStateful implements ITickableNode.Source {
     public final String name;
     public final IVariableNode getter, variable, last, rounderValue;
     final IExpressionNode getterReal;
-    final NodeType nodeType;
+    final Class<?> nodeType;
     private IExpressionNode source, rounder;
 
-    public NodeStateful(String name, NodeType nodeType, IGetterFunc func) throws InvalidExpressionException {
+    public NodeStateful(String name, Class<?> nodeType, IGetterFunc func) throws InvalidExpressionException {
         this.name = name;
         this.nodeType = nodeType;
-        this.variable = nodeType.makeVariableNode(name);
-        this.last = nodeType.makeVariableNode(name);
-        this.rounderValue = nodeType.makeVariableNode(name);
-        this.getter = nodeType.makeVariableNode(name);
+        this.variable = NodeTypes.makeVariableNode(nodeType, name);
+        this.last = NodeTypes.makeVariableNode(nodeType, name);
+        this.rounderValue = NodeTypes.makeVariableNode(nodeType, name);
+        this.getter = NodeTypes.makeVariableNode(nodeType, name);
         this.getterReal = func.createGetter(variable, last);
     }
 
@@ -41,7 +39,7 @@ public class NodeStateful implements ITickableNode.Source {
     }
 
     public void setRounder(IExpressionNode rounder) throws InvalidExpressionException {
-        this.rounder = nodeType.cast(rounder);
+        this.rounder = NodeTypes.cast(rounder, nodeType);
     }
 
     @Override
@@ -60,8 +58,8 @@ public class NodeStateful implements ITickableNode.Source {
         public final IVariableNode storedVar, storedLast;
 
         private Instance() {
-            storedVar = nodeType.makeVariableNode(name);
-            storedLast = nodeType.makeVariableNode(name);
+            storedVar = NodeTypes.makeVariableNode(nodeType, name);
+            storedLast = NodeTypes.makeVariableNode(nodeType, name);
         }
 
         public NodeStateful getContainer() {
@@ -100,48 +98,45 @@ public class NodeStateful implements ITickableNode.Source {
     public enum GetterType implements IGetterFunc {
         USE_VAR {
             @Override
-            public IExpressionNode createGetter(IVariableNode variable, IVariableNode last) throws InvalidExpressionException {
+            public IExpressionNode createGetter(IVariableNode variable, IVariableNode last)
+                throws InvalidExpressionException {
                 return variable;
             }
         },
         USE_LAST {
             @Override
-            public IExpressionNode createGetter(IVariableNode variable, IVariableNode last) throws InvalidExpressionException {
+            public IExpressionNode createGetter(IVariableNode variable, IVariableNode last)
+                throws InvalidExpressionException {
                 return last;
             }
         },
         INTERPOLATE_PARTIAL_TICKS {
             @Override
-            public IExpressionNode createGetter(IVariableNode variable, IVariableNode last) throws InvalidExpressionException {
-                NodeType type = NodeType.getType(variable);
-                switch (type) {
-                    case DOUBLE: {
-                        INodeDouble v = (INodeDouble) variable;
-                        INodeDouble l = (INodeDouble) last;
-                        INodeDouble p = DefaultContexts.RENDER_PARTIAL_TICKS;
-                        // return (l * (1 - p)) + (v * p)
-                        INodeDouble _1_minus_p = BiNodeType.SUB.createDoubleNode(NodeConstantDouble.ONE, p);
-                        INodeDouble l_times_1_minus_p = BiNodeType.MUL.createDoubleNode(l, _1_minus_p);
-                        INodeDouble v_times_p = BiNodeType.MUL.createDoubleNode(v, p);
-                        return BiNodeType.ADD.createDoubleNode(l_times_1_minus_p, v_times_p);
-                    }
-                    case LONG: {
-                        INodeLong v = (INodeLong) variable;
-                        INodeLong l = (INodeLong) last;
-                        INodeDouble p = DefaultContexts.RENDER_PARTIAL_TICKS;
+            public IExpressionNode createGetter(IVariableNode variable, IVariableNode last)
+                throws InvalidExpressionException {
+                Class<?> type = NodeTypes.getType(variable);
+                if (type == double.class) {
+                    INodeDouble v = (INodeDouble) variable;
+                    INodeDouble l = (INodeDouble) last;
+                    INodeDouble p = DefaultContexts.RENDER_PARTIAL_TICKS;
+                    FunctionContext ctx = new FunctionContext();
+                    ctx.putVariable("v", v);
+                    ctx.putVariable("l", l);
+                    ctx.putVariable("p", p);
+                    return GenericExpressionCompiler.compileExpressionDouble("l * (1 - p) + (v * p)", ctx);
+                } else if (type == long.class) {
+                    INodeLong v = (INodeLong) variable;
+                    INodeLong l = (INodeLong) last;
+                    INodeDouble p = DefaultContexts.RENDER_PARTIAL_TICKS;
 
-                        // return l + ( round( (v - l) * p ) )
-
-                        INodeLong d = BiNodeType.SUB.createLongNode(l, v);
-                        INodeDouble d_as_double = new NodeCastLongToDouble(d);
-                        INodeDouble d_times_p = BiNodeType.MUL.createDoubleNode(d_as_double, p);
-                        NodeStack stack = new NodeStack(d_times_p);
-                        INodeLong round_d_times_p = DefaultContexts.MATH_SCALAR_FUNC_ROUND.getNode(stack);
-                        return BiNodeType.ADD.createLongNode(l, round_d_times_p);
-                    }
-                    default: {
-                        throw new InvalidExpressionException("Cannot create an interpolated value for " + type);
-                    }
+                    // return l + ( round( (v - l) * p ) )
+                    FunctionContext ctx = new FunctionContext();
+                    ctx.putVariable("v", v);
+                    ctx.putVariable("l", l);
+                    ctx.putVariable("p", p);
+                    return GenericExpressionCompiler.compileExpressionLong("l + ( round( (v - l) * p ) )", ctx);
+                } else {
+                    throw new InvalidExpressionException("Cannot create an interpolated value for " + type);
                 }
             }
         }

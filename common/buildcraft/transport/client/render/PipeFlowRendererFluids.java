@@ -52,7 +52,7 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
 
         Profiler prof = Minecraft.getMinecraft().mcProfiler;
         prof.startSection("calc");
-        
+
         boolean[] sides = new boolean[6];
         Arrays.fill(sides, true);
 
@@ -73,8 +73,8 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
         boolean horizontal = false;
         boolean vertical = flow.pipe.isConnected(gas ? EnumFacing.DOWN : EnumFacing.UP);
 
+        prof.endStartSection("build");
         for (EnumFacing face : EnumFacing.VALUES) {
-            prof.endStartSection(face.name());
             double size = ((Pipe) flow.pipe).getConnectedDist(face);
             double amount = amounts[face.getIndex()];
             if (face.getAxis() != Axis.Y) {
@@ -114,7 +114,6 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
         if (offset == null) offset = Vec3d.ZERO;
         fluidBuffer.setTranslation(x - offset.x, y - offset.y, z - offset.z);
 
-        prof.endStartSection("c_horiz");
         if (horizontal | !vertical) {
             Vec3d min = new Vec3d(0.26, 0.26, 0.26);
             Vec3d max = new Vec3d(0.74, 0.74, 0.74);
@@ -126,7 +125,6 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
             horizPos += (max.y - min.y) * amount / flow.capacity;
         }
 
-        prof.endStartSection("c_vert");
         if (vertical && horizPos < 0.74) {
             double perc = amount / flow.capacity;
             perc = Math.sqrt(perc);

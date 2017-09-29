@@ -40,6 +40,7 @@ public class LocaleUtil {
     private static String localeKeyMjStatic, localeKeyMjFlow;
 
     static {
+        BCLibConfig.configChangeListeners.add(LocaleUtil::onConfigChanged);
         onConfigChanged();
     }
 

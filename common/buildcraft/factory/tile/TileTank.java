@@ -28,6 +28,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IFluidFilter;
@@ -129,7 +130,18 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
             return false;
         }
         boolean replace = !player.capabilities.isCreativeMode;
-        IFluidHandlerItem flItem = FluidUtil.getFluidHandler(replace ? held : held.copy());
+        boolean single = held.getCount() == 1;
+        IFluidHandlerItem flItem;
+        if (replace && single) {
+            flItem = FluidUtil.getFluidHandler(held);
+        } else {
+            // replace and not single - need a copy and count set to 1
+            // not replace and single - need a copy, does not need change of count but it should be ok
+            // not replace and not single - need a copy count set to 1
+            ItemStack copy = held.copy();
+            copy.setCount(1);
+            flItem = FluidUtil.getFluidHandler(copy);
+        }
         if (flItem == null) {
             return false;
         }
@@ -146,8 +158,16 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         } else {
             changed = false;
         }
-        if (changed & replace) {
-            player.setHeldItem(hand, flItem.getContainer());
+
+        if (changed && replace) {
+            if (single) {
+                // if it was the single item, replace with changed one
+                player.setHeldItem(hand, flItem.getContainer());
+            } else {
+                // if it was part of stack, shrink stack and give / drop the new one
+                held.shrink(1);
+                ItemHandlerHelper.giveItemToPlayer(player, flItem.getContainer());
+            }
             player.inventoryContainer.detectAndSendChanges();
         }
         isPlayerInteracting = false;
@@ -184,7 +204,6 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     // IDebuggable
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("fluid = " + tank.getDebugString());
         smoothedTank.getDebugInfo(left, right, side);

@@ -32,7 +32,7 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 
     public TriggerPipeSignal(boolean active, EnumDyeColor colour) {
         super("buildcraft:pipe.wire.input." + colour.getName().toLowerCase(Locale.ROOT) + (active ? ".active" : ".inactive"),//
-                "buildcraft.pipe.wire.input." + colour.getName().toLowerCase(Locale.ROOT) + (active ? ".active" : ".inactive"));
+            "buildcraft.pipe.wire.input." + colour.getName().toLowerCase(Locale.ROOT) + (active ? ".active" : ".inactive"));
 
         this.active = active;
         this.colour = colour;
@@ -55,29 +55,29 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 
     @Override
     public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
-        if(!(container instanceof IGate)) {
+        if (!(container instanceof IGate)) {
             return false;
         }
 
         IGate gate = (IGate) container;
         IWireManager wires = gate.getPipeHolder().getWireManager();
 
-        if(active) {
-            if(!wires.isAnyPowered(colour)) {
+        if (active) {
+            if (!wires.isAnyPowered(colour)) {
                 return false;
             }
-        } else if(wires.isAnyPowered(colour)) {
+        } else if (wires.isAnyPowered(colour)) {
             return false;
         }
 
-        for(IStatementParameter param : parameters) {
-            if(param != null && param instanceof TriggerParameterSignal) {
+        for (IStatementParameter param : parameters) {
+            if (param != null && param instanceof TriggerParameterSignal) {
                 TriggerParameterSignal signal = (TriggerParameterSignal) param;
-                if(signal.colour != null) {
-                    if(!wires.isAnyPowered(signal.colour)) {
+                if (signal.colour != null) {
+                    if (!wires.isAnyPowered(signal.colour)) {
                         return false;
                     }
-                } else if(wires.isAnyPowered(signal.colour)) {
+                } else if (wires.isAnyPowered(signal.colour)) {
                     return false;
                 }
             }
@@ -87,11 +87,11 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 
     @Override
     public IStatementParameter createParameter(int index) {
-        return new TriggerParameterSignal();
+        return TriggerParameterSignal.EMPTY;
     }
 
     @Override
-    public SpriteHolder getSpriteHolder() {
+    public SpriteHolder getSprite() {
         return BCTransportSprites.getPipeSignal(active, colour);
     }
 

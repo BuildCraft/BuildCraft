@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import buildcraft.api.enums.EnumEngineType;
 
 import buildcraft.lib.BCLib;
+import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.item.ItemBlockBC_Neptune;
 import buildcraft.lib.registry.RegistryHelper;
 
@@ -24,12 +25,16 @@ import buildcraft.core.block.BlockDecoration;
 import buildcraft.core.block.BlockEngine_BC8;
 import buildcraft.core.block.BlockMarkerPath;
 import buildcraft.core.block.BlockMarkerVolume;
+import buildcraft.core.block.BlockPowerConsumerTester;
 import buildcraft.core.block.BlockSpring;
 import buildcraft.core.item.ItemBlockDecorated;
 import buildcraft.core.item.ItemBlockSpring;
 import buildcraft.core.item.ItemEngine_BC8;
 import buildcraft.core.tile.TileEngineCreative;
 import buildcraft.core.tile.TileEngineRedstone_BC8;
+import buildcraft.core.tile.TileMarkerPath;
+import buildcraft.core.tile.TileMarkerVolume;
+import buildcraft.core.tile.TilePowerConsumerTester;
 
 @Mod.EventBusSubscriber(modid = BCCore.MODID)
 @GameRegistry.ObjectHolder(BCCore.MODID)
@@ -39,6 +44,7 @@ public class BCCoreBlocks {
     public static final BlockDecoration DECORATED = null;
     public static final BlockMarkerVolume MARKER_VOLUME = null;
     public static final BlockMarkerPath MARKER_PATH = null;
+    public static final BlockPowerConsumerTester powerTester = null;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -53,7 +59,8 @@ public class BCCoreBlocks {
         );
 
         if (BCLib.DEV) {
-            RegistryHelper.registerBlocks(event, new BlockDecoration("block.decorated"));
+            RegistryHelper.registerBlocks(event, new BlockDecoration("block.decorated"),
+                new BlockPowerConsumerTester(Material.IRON, "block.power_tester"));
         }
     }
 

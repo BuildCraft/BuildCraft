@@ -460,24 +460,24 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("progress = " + progress);
         left.add("state = " + progressState);
         left.add("has_end = " + (tileEnd != null));
         left.add("heatProvided = " + heatProvided);
         left.add("coolingProvided = " + coolingProvided);
-        if (hasWorld() && world.isRemote) {
-            left.add("");
-            left.add("coolable:");
-            smoothedCoolableOut.getDebugInfo(left, right, side);
-            left.add("");
-            left.add("heatable:");
-            smoothedHeatableIn.getDebugInfo(left, right, side);
-        } else {
-            left.add("heatable_in = " + tankHeatableIn.getDebugString());
-            left.add("coolable_out = " + tankCoolableOut.getDebugString());
-        }
+        left.add("heatable_in = " + tankHeatableIn.getDebugString());
+        left.add("coolable_out = " + tankCoolableOut.getDebugString());
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void getClientDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        left.add("");
+        left.add("heatable_in:");
+        smoothedHeatableIn.getDebugInfo(left, right, side);
+        left.add("coolable_out:");
+        smoothedCoolableOut.getDebugInfo(left, right, side);
     }
 
     public enum EnumProgressState {

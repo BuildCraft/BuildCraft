@@ -130,6 +130,7 @@ public class BCCore {
         registerTag("item.block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker_volume");
         registerTag("item.block.marker.path").reg("marker_path").locale("pathMarkerBlock").oldReg("pathMarkerBlock").model("marker_path");
         registerTag("item.block.spring").reg("spring").locale("spring").model("spring");
+        registerTag("item.block.power_tester").reg("power_tester").locale("power_tester").model("power_tester");
         registerTag("item.block.decorated").reg("decorated").locale("decorated").model("decorated/");
         TagEntry engine = registerTag("item.block.engine.bc").reg("engine").locale("engineBlock");
         // Blocks
@@ -142,11 +143,13 @@ public class BCCore {
         registerTag("block.engine.bc.creative").locale("engineCreative");
         registerTag("block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker_volume");
         registerTag("block.marker.path").reg("marker_path").locale("pathMarkerBlock").oldReg("pathMarkerBlock").model("marker_path");
+        registerTag("block.power_tester").reg("power_tester").locale("power_tester").oldReg("power_tester").model("power_tester");
         // Tiles
         registerTag("tile.marker.volume").reg("marker.volume").oldReg("buildcraft.builders.Marker", "Marker");
         registerTag("tile.marker.path").reg("marker.path");
         registerTag("tile.engine.wood").reg("engine.wood");
         registerTag("tile.engine.creative").reg("engine.creative");
+        registerTag("tile.power_tester").reg("power_tester");
 
         endBatch(TagManager.prependTags("buildcraftcore:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(TagManager.setTab("buildcraft.main")));
         engine.model("");// Clear model so that subtypes can set it properly

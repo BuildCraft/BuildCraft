@@ -10,6 +10,7 @@ import java.util.List;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -29,6 +30,7 @@ import buildcraft.api.transport.pipe.IItemPipe;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
+import buildcraft.lib.client.render.font.SpecialColourFontRenderer;
 import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
@@ -87,9 +89,15 @@ public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemP
         int meta = stack.getMetadata();
         if (meta > 0 && meta <= 16) {
             EnumDyeColor colour = EnumDyeColor.byMetadata(meta - 1);
-            colourComponent = ColourUtil.getTextFullTooltip(colour) + " ";
+            colourComponent = ColourUtil.getTextFullTooltipSpecial(colour) + " ";
         }
         return colourComponent + super.getItemStackDisplayName(stack);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public FontRenderer getFontRenderer(ItemStack stack) {
+        return SpecialColourFontRenderer.INSTANCE;
     }
 
     // ItemBlock overrides these to point to the block

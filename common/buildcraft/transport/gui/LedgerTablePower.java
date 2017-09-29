@@ -6,14 +6,17 @@
 
 package buildcraft.transport.gui;
 
+import net.minecraft.util.ResourceLocation;
+
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.BCLibSprites;
-import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.ledger.LedgerManager_Neptune;
+import buildcraft.lib.gui.config.GuiConfigManager;
 import buildcraft.lib.gui.ledger.Ledger_Neptune;
 import buildcraft.lib.misc.LocaleUtil;
 
-import buildcraft.silicon.tile.TileAssemblyTable;
+import buildcraft.silicon.gui.GuiAssemblyTable;
 import buildcraft.silicon.tile.TileLaserTableBase;
 
 public class LedgerTablePower extends Ledger_Neptune {
@@ -23,9 +26,9 @@ public class LedgerTablePower extends Ledger_Neptune {
 
     public final TileLaserTableBase tile;
 
-    public LedgerTablePower(LedgerManager_Neptune manager, TileAssemblyTable tile) {
-        super(manager);
-        this.tile = tile;
+    public LedgerTablePower(GuiAssemblyTable gui, boolean expandPositive) {
+        super(gui, OVERLAY_COLOUR, expandPositive);
+        this.tile = gui.container.tile;
         title = "gui.power";
 
         appendText(LocaleUtil.localize("gui.assemblyCurrentRequired") + ":", SUB_HEADER_COLOUR).setDropShadow(true);
@@ -35,15 +38,12 @@ public class LedgerTablePower extends Ledger_Neptune {
         appendText(LocaleUtil.localize("gui.assemblyRate") + ":", SUB_HEADER_COLOUR).setDropShadow(true);
         appendText(() -> LocaleUtil.localizeMjFlow(tile.avgPowerClient), TEXT_COLOUR);
         calculateMaxSize();
+
+        setOpenProperty(GuiConfigManager.getOrAddBoolean(new ResourceLocation("buildcraftsilicon:all_tables"), "ledger.power.is_open", false));
     }
 
     @Override
-    public int getColour() {
-        return OVERLAY_COLOUR;
-    }
-
-    @Override
-    protected void drawIcon(int x, int y) {
+    protected void drawIcon(double x, double y) {
         ISprite sprite = tile.avgPowerClient > 0 ? BCLibSprites.ENGINE_ACTIVE : BCLibSprites.ENGINE_INACTIVE;
         GuiIcon.draw(sprite, x, y, x + 16, y + 16);
     }

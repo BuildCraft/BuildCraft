@@ -155,7 +155,6 @@ public abstract class Snapshot {
 
     public static class Key {
         public final byte[] hash;
-        @SuppressWarnings("WeakerAccess")
         @Nullable // for client storage
         public final Header header;
 
@@ -183,7 +182,6 @@ public abstract class Snapshot {
             header = nbt.hasKey("header") ? new Header(nbt.getCompoundTag("header")) : null;
         }
 
-        @SuppressWarnings("WeakerAccess")
         public Key(PacketBufferBC buffer) {
             hash = buffer.readByteArray();
             header = buffer.readBoolean() ? new Header(buffer) : null;
@@ -232,6 +230,7 @@ public abstract class Snapshot {
         public final Date created;
         public final String name;
 
+        @SuppressWarnings("WeakerAccess")
         public Header(Key key, UUID owner, Date created, String name) {
             this.key = key;
             this.owner = owner;
@@ -239,6 +238,7 @@ public abstract class Snapshot {
             this.name = name;
         }
 
+        @SuppressWarnings("WeakerAccess")
         public Header(NBTTagCompound nbt) {
             key = new Key(nbt.getCompoundTag("key"));
             owner = nbt.getUniqueId("owner");
@@ -311,8 +311,8 @@ public abstract class Snapshot {
             this.basePos = basePos;
             this.offsetPos = basePos.add(offset.rotate(rotation));
             this.rotation = rotation;
-            this.box.extendToEncompass(toWorld(BlockPos.ORIGIN));
-            this.box.extendToEncompass(toWorld(size.subtract(new BlockPos(1, 1, 1))));
+            this.box.setMin(toWorld(BlockPos.ORIGIN));
+            this.box.setMax(toWorld(size.subtract(new BlockPos(1, 1, 1))));
         }
 
         public BlockPos toWorld(BlockPos blockPos) {

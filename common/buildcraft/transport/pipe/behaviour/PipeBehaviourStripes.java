@@ -166,7 +166,7 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
                 }
             }
             if (sides == 1) {
-                setDirection(dir);
+                setDirection(dir.getOpposite());
             } else {
                 setDirection(null);
             }

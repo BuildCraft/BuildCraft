@@ -18,6 +18,7 @@ import javax.vecmath.Vector3f;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
@@ -27,7 +28,7 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.client.sprite.ISprite;
+import buildcraft.api.core.render.ISprite;
 
 /**
  * Holds all of the information necessary to make one of the verticies in a {@link BakedQuad}. This provides a variety
@@ -154,22 +155,38 @@ public class MutableVertex {
         tex_v = Float.intBitsToFloat(data[offset + 5]);
         // NORMAL_3B
         normali(data[offset + 6]);
-        lightf(1,1);
+        lightf(1, 1);
     }
 
     // Rendering
 
     public void render(BufferBuilder bb) {
         VertexFormat vf = bb.getVertexFormat();
-        for (VertexFormatElement vfe : vf.getElements()) {
-            if (vfe.getUsage() == EnumUsage.POSITION) renderPosition(bb);
-            else if (vfe.getUsage() == EnumUsage.NORMAL) renderNormal(bb);
-            else if (vfe.getUsage() == EnumUsage.COLOR) renderColour(bb);
-            else if (vfe.getUsage() == EnumUsage.UV) {
-                if (vfe.getIndex() == 0) renderTex(bb);
-                else if (vfe.getIndex() == 1) renderLightMap(bb);
+        if (vf == DefaultVertexFormats.BLOCK) {
+            renderAsBlock(bb);
+        } else {
+            for (VertexFormatElement vfe : vf.getElements()) {
+                if (vfe.getUsage() == EnumUsage.POSITION) renderPosition(bb);
+                else if (vfe.getUsage() == EnumUsage.NORMAL) renderNormal(bb);
+                else if (vfe.getUsage() == EnumUsage.COLOR) renderColour(bb);
+                else if (vfe.getUsage() == EnumUsage.UV) {
+                    if (vfe.getIndex() == 0) renderTex(bb);
+                    else if (vfe.getIndex() == 1) renderLightMap(bb);
+                }
             }
+            bb.endVertex();
         }
+    }
+
+    /** Renders this vertex into the given {@link VertexBuffer}, assuming that the {@link VertexFormat} is
+     * {@link DefaultVertexFormats#BLOCK}.
+     * <p>
+     * Slight performance increase over {@link #render(VertexBuffer)}. */
+    public void renderAsBlock(BufferBuilder bb) {
+        renderPosition(bb);
+        renderColour(bb);
+        renderTex(bb);
+        renderLightMap(bb);
         bb.endVertex();
     }
 

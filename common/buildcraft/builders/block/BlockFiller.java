@@ -13,7 +13,6 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -53,7 +52,7 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity tile = BlockUtil.getTileEntityForGetActualState(world, pos);
-        if(tile instanceof TileFiller) {
+        if (tile instanceof TileFiller) {
             TileFiller filler = (TileFiller) tile;
             return state.withProperty(PATTERN, EnumFillerPattern.NONE); // FIXME
         }
@@ -71,7 +70,7 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileFiller) {
-            if (!((TileFiller) tile).isValid()) {
+            if (!((TileFiller) tile).hasBox()) {
                 return false;
             }
         }
@@ -84,13 +83,5 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
     @Override
     public boolean canBeRotated(World world, BlockPos pos, IBlockState state) {
         return false;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
-        super.addInformation(stack, world, tooltip, flag);
-        // TODO: remove this! (Not localised b/c localisations happen AFTER this is removed)
-        tooltip.add("The icons + pattern types are WIP!");
     }
 }

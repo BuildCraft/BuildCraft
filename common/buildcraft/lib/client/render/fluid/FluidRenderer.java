@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ResourceLocation;
@@ -39,9 +40,8 @@ import buildcraft.lib.misc.RenderUtil;
 import buildcraft.lib.misc.VecUtil;
 
 /** Can render 3D fluid cuboid's, up to 1x1x1 in size. Note that they *must* be contained within the 1x1x1 block space -
- * you can't use this to render off large multiblocks.
- * 
- * Not thread safe -- this uses static variables so you should only call this from the main client thread. */
+ * you can't use this to render off large multiblocks. Not thread safe -- this uses static variables so you should only
+ * call this from the main client thread. */
 // TODO: thread safety (per thread context?)
 @SideOnly(Side.CLIENT)
 public class FluidRenderer {
@@ -144,6 +144,8 @@ public class FluidRenderer {
         if (fluid == null || fluid.getFluid() == null || amount <= 0) {
             return;
         }
+        Profiler prof = Minecraft.getMinecraft().mcProfiler;
+        prof.startSection("fluid");
         if (sideRender == null) {
             sideRender = DEFAULT_FACES;
         }
@@ -257,18 +259,19 @@ public class FluidRenderer {
         sprite = null;
         texmap = null;
         bb = null;
+        prof.endSection();
     }
 
     /** Helper function to add a vertex. */
     private static void vertex(double x, double y, double z) {
         vertex.positiond(x, y, z);
         texmap.apply(x - xTexDiff, y - yTexDiff, z - zTexDiff);
-        vertex.render(bb);
+        vertex.renderAsBlock(bb);
     }
 
     /** Fills up the given region with the fluids texture, repeated. Ignores the value of {@link FluidStack#amount}. Use
      * {@link GuiUtil}'s fluid drawing methods in preference to this. */
-    public static void drawFluidForGui(FluidStack fluid, int startX, int startY, int endX, int endY) {
+    public static void drawFluidForGui(FluidStack fluid, double startX, double startY, double endX, double endY) {
 
         sprite = FluidRenderer.fluidSprites.get(FluidSpriteType.STILL).get(fluid.getFluid());
         if (sprite == null) {
@@ -283,55 +286,63 @@ public class FluidRenderer {
 
         // draw all the full sprites
 
-        int diffX = endX - startX;
-        int diffY = endY - startY;
+        double diffX = endX - startX;
+        double diffY = endY - startY;
 
         int stepX = diffX > 0 ? 16 : -16;
         int stepY = diffY > 0 ? 16 : -16;
 
-        int loopEndX = startX + 16 * (diffX / 16);
-        int loopEndY = startY + 16 * (diffY / 16);
+        int loopCountX = (int) Math.abs(diffX / 16);
+        int loopCountY = (int) Math.abs(diffY / 16);
 
-        for (int x = startX; x != loopEndX; x += stepX) {
-            for (int y = startY; y != loopEndY; y += stepY) {
+        double x = startX;
+        for (int xc = 0; xc < loopCountX; xc++) {
+            double y = startY;
+            for (int yc = 0; yc < loopCountY; yc++) {
                 guiVertex(x, y, 0, 0);
                 guiVertex(x + stepX, y, 16, 0);
                 guiVertex(x + stepX, y + stepY, 16, 16);
                 guiVertex(x, y + stepY, 0, 16);
+                y += stepY;
             }
+            x += stepX;
         }
 
         if (diffX % 16 != 0) {
-            int additionalWidth = diffX % 16;
-            int x = endX - additionalWidth;
-            int xTex = additionalWidth < 0 ? -additionalWidth : additionalWidth;
-            for (int y = startY; y != loopEndY; y += stepY) {
+            double additionalWidth = diffX % 16;
+            x = endX - additionalWidth;
+            double xTex = Math.abs(additionalWidth);
+            double y = startY;
+            for (int yc = 0; yc < loopCountY; y++) {
                 guiVertex(x, y, 0, 0);
                 guiVertex(endX, y, xTex, 0);
                 guiVertex(endX, y + stepY, xTex, 16);
                 guiVertex(x, y + stepY, 0, 16);
+                y += stepY;
             }
         }
 
         if (diffY % 16 != 0) {
-            int additionalHeight = diffY % 16;
-            int y = endY - additionalHeight;
-            int yTex = additionalHeight < 0 ? -additionalHeight : additionalHeight;
-            for (int x = startX; x != loopEndX; x += stepX) {
+            double additionalHeight = diffY % 16;
+            double y = endY - additionalHeight;
+            double yTex = Math.abs(additionalHeight);
+            x = startX;
+            for (int xc = 0; xc < loopCountX; xc++) {
                 guiVertex(x, y, 0, 0);
                 guiVertex(x + stepX, y, 16, 0);
                 guiVertex(x + stepX, endY, 16, yTex);
                 guiVertex(x, endY, 0, yTex);
+                x += stepX;
             }
         }
 
         if (diffX % 16 != 0 && diffY % 16 != 0) {
-            int w = diffX % 16;
-            int h = diffY % 16;
-            int x = endX - w;
-            int y = endY - h;
-            int tx = w < 0 ? -w : w;
-            int ty = h < 0 ? -h : h;
+            double w = diffX % 16;
+            double h = diffY % 16;
+            x = endX - w;
+            double y = endY - h;
+            double tx = w < 0 ? -w : w;
+            double ty = h < 0 ? -h : h;
             guiVertex(x, y, 0, 0);
             guiVertex(endX, y, tx, 0);
             guiVertex(endX, endY, tx, ty);
@@ -344,7 +355,7 @@ public class FluidRenderer {
         bb = null;
     }
 
-    private static void guiVertex(int x, int y, int u, int v) {
+    private static void guiVertex(double x, double y, double u, double v) {
         float ru = sprite.getInterpolatedU(u);
         float rv = sprite.getInterpolatedV(v);
         bb.pos(x, y, 0);
@@ -370,9 +381,8 @@ public class FluidRenderer {
             this.vy = vy;
         }
 
-        /** Changes the vertex's texture co-ord to be the same as the position, for that face.
-         * 
-         * (Uses {@link #ux} and {@link #vy} to determine how they are mapped). */
+        /** Changes the vertex's texture co-ord to be the same as the position, for that face. (Uses {@link #ux} and
+         * {@link #vy} to determine how they are mapped). */
         private void apply(double x, double y, double z) {
             double realu = ux ? x : z;
             double realv = vy ? y : z;
