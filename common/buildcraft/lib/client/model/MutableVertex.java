@@ -178,10 +178,10 @@ public class MutableVertex {
         }
     }
 
-    /** Renders this vertex into the given {@link VertexBuffer}, assuming that the {@link VertexFormat} is
+    /** Renders this vertex into the given {@link BufferBuilder}, assuming that the {@link VertexFormat} is
      * {@link DefaultVertexFormats#BLOCK}.
      * <p>
-     * Slight performance increase over {@link #render(VertexBuffer)}. */
+     * Slight performance increase over {@link #render(BufferBuilder)}. */
     public void renderAsBlock(BufferBuilder bb) {
         renderPosition(bb);
         renderColour(bb);
