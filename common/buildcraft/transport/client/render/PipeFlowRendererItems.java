@@ -7,6 +7,7 @@
 package buildcraft.transport.client.render;
 
 import java.util.List;
+
 import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
@@ -21,13 +22,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.render.ISprite;
 import buildcraft.api.transport.pipe.IPipeFlowRenderer;
 
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.render.ItemRenderUtil;
-import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.misc.ColourUtil;
 
 import buildcraft.transport.BCTransportSprites;

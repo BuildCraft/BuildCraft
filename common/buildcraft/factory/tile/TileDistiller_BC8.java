@@ -233,7 +233,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         MODEL_FACING.value = EnumFacing.WEST;
 
         IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() == BCFactoryBlocks.distiller) {
+        if (state.getBlock() == BCFactoryBlocks.DISTILLER) {
             MODEL_FACING.value = state.getValue(BlockBCBase_Neptune.PROP_FACING);
         }
     }

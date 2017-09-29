@@ -1,9 +1,5 @@
 package buildcraft.test.lib.expression;
 
-import static buildcraft.lib.expression.Argument.argDouble;
-import static buildcraft.lib.expression.Argument.argLong;
-import static org.junit.Assert.assertEquals;
-
 import com.google.common.collect.ImmutableList;
 
 import org.junit.Assert;
@@ -30,6 +26,10 @@ import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableLong;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.gui.pos.IGuiPosition;
+
+import static buildcraft.lib.expression.Argument.argDouble;
+import static buildcraft.lib.expression.Argument.argLong;
+import static org.junit.Assert.assertEquals;
 
 @SuppressWarnings("static-method")
 public class ExpressionTester {

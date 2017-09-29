@@ -11,8 +11,6 @@ import java.util.List;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.EnumPipePart;
 

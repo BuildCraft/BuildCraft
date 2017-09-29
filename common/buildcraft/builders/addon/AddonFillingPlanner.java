@@ -7,7 +7,6 @@
 package buildcraft.builders.addon;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.stream.IntStream;
 
 import javax.annotation.Nullable;

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.annotation.Nonnull;
 
 import org.lwjgl.input.Keyboard;

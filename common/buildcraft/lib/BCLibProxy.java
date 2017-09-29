@@ -38,8 +38,6 @@ import buildcraft.lib.debug.DebugRenderHelper;
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.fluid.FluidManager;
 import buildcraft.lib.gui.config.GuiConfigManager;
-import buildcraft.lib.item.IItemBuildCraft;
-import buildcraft.lib.item.ItemManager;
 
 public abstract class BCLibProxy implements IGuiHandler {
     @SidedProxy(modId = BCLib.MODID)

@@ -29,7 +29,6 @@ import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.chunkload.ChunkLoaderManager;
 import buildcraft.lib.expression.ExpressionDebugManager;
 import buildcraft.lib.expression.minecraft.ExpressionCompat;
-import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;

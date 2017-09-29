@@ -8,6 +8,7 @@ package buildcraft.transport.pipe.flow;
 
 import java.util.EnumSet;
 import java.util.function.Supplier;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.EnumDyeColor;

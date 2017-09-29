@@ -14,7 +14,6 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.PositionAbsolute;
-import buildcraft.lib.gui.pos.PositionCallable;
 import buildcraft.lib.misc.ColourUtil;
 
 public class ExpressionCompat {

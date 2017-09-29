@@ -28,15 +28,10 @@ import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
-import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.VolumeCache;
 import buildcraft.core.marker.volume.MessageVolumeBoxes;
-import buildcraft.core.tile.TileEngineCreative;
-import buildcraft.core.tile.TileEngineRedstone_BC8;
-import buildcraft.core.tile.TileMarkerPath;
-import buildcraft.core.tile.TileMarkerVolume;
 
 //@formatter:off
 @Mod(
@@ -79,11 +74,6 @@ public class BCCore {
 
         MinecraftForge.EVENT_BUS.register(BCCoreEventDist.INSTANCE);
         MessageManager.addMessageType(MessageVolumeBoxes.class, MessageVolumeBoxes.HANDLER, Side.CLIENT);
-
-        TileBC_Neptune.registerTile(TileMarkerVolume.class, "tile.marker.volume");
-        TileBC_Neptune.registerTile(TileMarkerPath.class, "tile.marker.path");
-        TileBC_Neptune.registerTile(TileEngineRedstone_BC8.class, "tile.engine.wood");
-        TileBC_Neptune.registerTile(TileEngineCreative.class, "tile.engine.creative");
     }
 
     @Mod.EventHandler

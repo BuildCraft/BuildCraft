@@ -44,7 +44,6 @@ import buildcraft.lib.expression.node.func.NodeFuncGenericToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncGenericToLong;
 import buildcraft.lib.expression.node.func.NodeFuncGenericToObject;
 import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToBoolean;
-import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToBoolean.IFuncObjectObjectToBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
@@ -572,7 +571,7 @@ public class InternalCompiler {
             boolean isNE = "!=".equals(name);
             if (count == 2 && (isEq | isNE) && functionOrder.get(0) == functionOrder.get(1)) {
                 Class<?> cls = functionOrder.get(0);
-                IFuncObjectObjectToBoolean<?, ?> func = isEq ? Objects::equal : (a, b) -> !Objects.equal(a, b);
+                NodeFuncObjectObjectToBoolean.IFuncObjectObjectToBoolean<?, ?> func = isEq ? Objects::equal : (a, b) -> !Objects.equal(a, b);
                 bestFunction = new NodeFuncObjectObjectToBoolean(name, cls, cls, func);
                 bestCastCount = 0;
                 bestCasters = Collections.emptyList();

@@ -28,10 +28,10 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.api.core.render.ISprite;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.render.ISprite;
 import buildcraft.api.transport.EnumWirePart;
 
 import buildcraft.lib.client.model.ModelUtil;

@@ -17,9 +17,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import buildcraft.api.enums.EnumEngineType;
 
 import buildcraft.lib.BCLib;
-import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.item.ItemBlockBC_Neptune;
 import buildcraft.lib.registry.RegistryHelper;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.core.block.BlockDecoration;
 import buildcraft.core.block.BlockEngine_BC8;
@@ -62,6 +62,12 @@ public class BCCoreBlocks {
             RegistryHelper.registerBlocks(event, new BlockDecoration("block.decorated"),
                 new BlockPowerConsumerTester(Material.IRON, "block.power_tester"));
         }
+
+        TileBC_Neptune.registerTile(TileMarkerVolume.class, "tile.marker.volume");
+        TileBC_Neptune.registerTile(TileMarkerPath.class, "tile.marker.path");
+        TileBC_Neptune.registerTile(TileEngineRedstone_BC8.class, "tile.engine.wood");
+        TileBC_Neptune.registerTile(TileEngineCreative.class, "tile.engine.creative");
+        TileBC_Neptune.registerTile(TilePowerConsumerTester.class, "tile.power_tester");
     }
 
     @SubscribeEvent

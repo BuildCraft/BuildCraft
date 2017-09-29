@@ -17,8 +17,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.client.sprite.ISprite;
-import buildcraft.lib.client.sprite.RawSprite;
 import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.client.sprite.SpriteRaw;
