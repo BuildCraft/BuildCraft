@@ -42,10 +42,10 @@ import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.AssemblyRecipeBasic;
 import buildcraft.api.recipes.IngredientStack;
-import buildcraft.api.recipes.IntegrationRecipeBasic;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
+import buildcraft.lib.recipe.IntegrationRecipeBasic;
 import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 
 @Mod.EventBusSubscriber(modid = BCSilicon.MODID)
