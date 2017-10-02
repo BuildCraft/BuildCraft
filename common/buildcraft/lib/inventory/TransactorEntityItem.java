@@ -30,8 +30,14 @@ public class TransactorEntityItem implements IItemExtractable {
         if (entity.isDead) {
             return StackUtil.EMPTY;
         }
+        if (min < 1) {
+            min = 1;
+        }
+        if (max < min) {
+            return StackUtil.EMPTY;
+        }
         ItemStack current = entity.getEntityItem();
-        if (current.isEmpty() || current.getCount() < min || min < 1 || max < min) {
+        if (current.isEmpty() || current.getCount() < min) {
             return StackUtil.EMPTY;
         }
         if (filter.matches(current)) {

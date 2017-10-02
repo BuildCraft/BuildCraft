@@ -12,10 +12,12 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -36,6 +38,8 @@ import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
+import buildcraft.core.BCCoreItems;
+import buildcraft.core.item.ItemFragileFluidContainer;
 import buildcraft.factory.BCFactoryBlocks;
 
 public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable, ITickable {
@@ -127,6 +131,16 @@ public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable, 
             } else if (id == NET_TANK_HEATABLE_OUT) {
                 smoothedHeatableOut.handleMessage(getWorld(), buffer);
             }
+        }
+    }
+
+    @Override
+    public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
+        super.addDrops(toDrop, fortune);
+        ItemFragileFluidContainer itemContainer = BCCoreItems.fragileFluidShard;
+        if (itemContainer != null) {
+            itemContainer.addFluidDrops(tankCoolableIn.getFluid(), toDrop);
+            itemContainer.addFluidDrops(tankHeatableOut.getFluid(), toDrop);
         }
     }
 

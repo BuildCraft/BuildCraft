@@ -10,10 +10,12 @@ import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -50,6 +52,8 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.core.BCCoreConfig;
+import buildcraft.core.BCCoreItems;
+import buildcraft.core.item.ItemFragileFluidContainer;
 import buildcraft.factory.BCFactoryBlocks;
 
 public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDebuggable {
@@ -241,6 +245,17 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY,
         float hitZ) {
         return false;
+    }
+
+    @Override
+    public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
+        super.addDrops(toDrop, fortune);
+        ItemFragileFluidContainer itemContainer = BCCoreItems.fragileFluidShard;
+        if (itemContainer != null) {
+            itemContainer.addFluidDrops(tankIn.getFluid(), toDrop);
+            itemContainer.addFluidDrops(tankGasOut.getFluid(), toDrop);
+            itemContainer.addFluidDrops(tankLiquidOut.getFluid(), toDrop);
+        }
     }
 
     @Override

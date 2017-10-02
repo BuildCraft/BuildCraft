@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
 
 import net.minecraftforge.fluids.FluidStack;
@@ -44,6 +45,8 @@ import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
+import buildcraft.core.BCCoreItems;
+import buildcraft.core.item.ItemFragileFluidContainer;
 import buildcraft.energy.BCEnergyGuis;
 
 public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
@@ -127,6 +130,17 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
             if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
                 tankManager.writeData(buffer);
             }
+        }
+    }
+
+    @Override
+    public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
+        super.addDrops(toDrop, fortune);
+        ItemFragileFluidContainer itemContainer = BCCoreItems.fragileFluidShard;
+        if (itemContainer != null) {
+            itemContainer.addFluidDrops(tankFuel.getFluid(), toDrop);
+            itemContainer.addFluidDrops(tankCoolant.getFluid(), toDrop);
+            itemContainer.addFluidDrops(tankResidue.getFluid(), toDrop);
         }
     }
 

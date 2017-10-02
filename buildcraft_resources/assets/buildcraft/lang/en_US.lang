@@ -164,25 +164,25 @@ direction.center.7=South
 direction.center.8=South-East
 
 buildcraft.fluid.empty=Empty
-buildcraft.fluid.static.milli.short=%s mB of %s
-buildcraft.fluid.static.bucket.short=%s B of %s
-buildcraft.fluid.static.milli.long=%s milli buckets of %s
-buildcraft.fluid.static.bucket.long=%s buckets of %s
+buildcraft.fluid.static.milli.short=%s mB
+buildcraft.fluid.static.bucket.short=%s B
+buildcraft.fluid.static.milli.long=%s milli buckets
+buildcraft.fluid.static.bucket.long=%s buckets
 
 buildcraft.fluid.empty.milli.short=0 / %s mB
 buildcraft.fluid.empty.bucket.short=0 / %s B
 buildcraft.fluid.empty.milli.long=Empty %s milli bucket tank
 buildcraft.fluid.empty.bucket.long=Empty %s bucket tank
 
-buildcraft.fluid.full.milli.short=%1$s / %1$s mB of %2$s
-buildcraft.fluid.full.bucket.short=%1$s / %1$s B of %2$s
-buildcraft.fluid.full.milli.long=Full %s milli bucket tank of %s
-buildcraft.fluid.full.bucket.long=Full %s bucket tank of %s
+buildcraft.fluid.full.milli.short=%1$s / %1$s mB
+buildcraft.fluid.full.bucket.short=%1$s / %1$s B
+buildcraft.fluid.full.milli.long=Full %s milli bucket tank
+buildcraft.fluid.full.bucket.long=Full %s bucket tank
 
-buildcraft.fluid.static.cap.milli.short=%s / %3$s mB of %2$s
-buildcraft.fluid.static.cap.bucket.short=%s / %3$s B of %2$s
-buildcraft.fluid.static.cap.milli.long=%s milli buckets of %s in a %s milli bucket tank
-buildcraft.fluid.static.cap.bucket.long=%s buckets of %s in a %s bucket tank
+buildcraft.fluid.static.cap.milli.short=%s / %s mB
+buildcraft.fluid.static.cap.bucket.short=%s / %s B
+buildcraft.fluid.static.cap.milli.long=%s milli buckets in a %s milli bucket tank
+buildcraft.fluid.static.cap.bucket.long=%s buckets in a %s bucket tank
 
 buildcraft.fluid.flow.milli.short=%s mB/t
 buildcraft.fluid.flow.bucket.short=%s B/s
@@ -402,6 +402,7 @@ item.gateCopier.name=Gate Copier
 item.plasticSheet.name=Plastic Sheet
 item.markerConnector.name=Marker Connector
 item.pulsar.name=Pipe Pulsar
+item.fragile_fluid_shard.name=Fragile %s Shard
 
 item.buildcraft_pipe_wood_item.name=Wooden Transport Pipe
 item.buildcraft_pipe_cobblestone_item.name=Cobblestone Transport Pipe

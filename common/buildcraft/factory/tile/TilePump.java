@@ -23,9 +23,11 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 
@@ -49,6 +51,8 @@ import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 
 import buildcraft.core.BCCoreBlocks;
+import buildcraft.core.BCCoreItems;
+import buildcraft.core.item.ItemFragileFluidContainer;
 import buildcraft.energy.BCEnergyFluids;
 import buildcraft.energy.tile.TileSpringOil;
 import buildcraft.factory.BCFactoryBlocks;
@@ -268,6 +272,15 @@ public class TilePump extends TileMiner {
                 buildQueue();
                 nextPos();
             }
+        }
+    }
+
+    @Override
+    public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
+        super.addDrops(toDrop, fortune);
+        ItemFragileFluidContainer itemContainer = BCCoreItems.fragileFluidShard;
+        if (itemContainer != null) {
+            itemContainer.addFluidDrops(tank.getFluid(), toDrop);
         }
     }
 

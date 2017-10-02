@@ -19,12 +19,14 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -61,6 +63,7 @@ import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.net.cache.NetworkedObjectCache;
 
 import buildcraft.core.BCCoreConfig;
+import buildcraft.core.BCCoreItems;
 
 public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable {
 
@@ -78,8 +81,10 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
     private final FluidTransferInfo fluidTransferInfo = PipeApi.getFluidTransferInfo(pipe.getDefinition());
 
-    /* Default to an additional second of fluid inserting and removal. This means that (for a normal pipe like cobble)
-     * it will be 20 * (10 + 12) = 20 * 22 = 440 - oh that's not good is it */
+    /*
+     * Default to an additional second of fluid inserting and removal. This means that (for a normal pipe like cobble)
+     * it will be 20 * (10 + 12) = 20 * 22 = 440 - oh that's not good is it
+     */
     public final int capacity = Math.max(Fluid.BUCKET_VOLUME, fluidTransferInfo.transferPerTick * (10));// TEMP!
 
     private final Map<EnumPipePart, Section> sections = new EnumMap<>(EnumPipePart.class);
@@ -166,6 +171,20 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         return super.getCapability(capability, facing);
     }
 
+    @Override
+    public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
+        super.addDrops(toDrop, fortune);
+        if (currentFluid != null && BCCoreItems.fragileFluidShard != null) {
+            int totalAmount = 0;
+            for (EnumPipePart part : EnumPipePart.VALUES) {
+                totalAmount += sections.get(part).amount;
+            }
+            if (totalAmount > 0) {
+                BCCoreItems.fragileFluidShard.addFluidDrops(new FluidStack(currentFluid, totalAmount), toDrop);
+            }
+        }
+    }
+
     // IFlowFluid
 
     @Override
@@ -178,7 +197,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     }
 
     @Override
-    public ActionResult<FluidStack> tryExtractFluidAdv(int millibuckets, EnumFacing from, IFluidFilter filter, boolean simulate) {
+    public ActionResult<FluidStack> tryExtractFluidAdv(int millibuckets, EnumFacing from, IFluidFilter filter,
+        boolean simulate) {
         FluidExtractor extractor = (mb, c, handler) -> {
             if (c != null) {
                 if (!filter.matches(c)) {
@@ -200,7 +220,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         FluidStack extract(int millibuckets, FluidStack current, IFluidHandler handler);
     }
 
-    private ActionResult<FluidStack> tryExtractFluidInternal(int millibuckets, EnumFacing from, FluidExtractor extractor, boolean simulate) {
+    private ActionResult<FluidStack> tryExtractFluidInternal(int millibuckets, EnumFacing from,
+        FluidExtractor extractor, boolean simulate) {
         if (from == null || millibuckets <= 0) {
             return FAILED_EXTRACT;
         }
@@ -235,7 +256,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         return ActionResult.newResult(EnumActionResult.SUCCESS, toAdd);
     }
 
-    private static FluidStack extractSimple(int millibuckets, FluidStack filter, IFluidHandler handler, boolean simulate) {
+    private static FluidStack extractSimple(int millibuckets, FluidStack filter, IFluidHandler handler,
+        boolean simulate) {
         if (filter == null) {
             return handler.drain(millibuckets, !simulate);
         }

@@ -1,0 +1,17 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "inventory": {
+      "model": "forge:forgebucket",
+      "textures": {
+        "base": "buildcraftcore:items/fragile_fluid_shard_base",
+        "fluid": "buildcraftcore:items/fragile_fluid_shard_fluid"
+      },
+      "transform": "forge:default-item",
+      "custom": {
+        "fluid": "water",
+        "flipGas": true
+      }
+    }
+  }
+}

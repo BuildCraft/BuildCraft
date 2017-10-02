@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTPrimitive;
 import net.minecraft.nbt.NBTTagByteArray;
@@ -29,6 +30,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 
@@ -52,6 +54,8 @@ import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
+import buildcraft.core.BCCoreItems;
+import buildcraft.core.item.ItemFragileFluidContainer;
 import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.block.BlockFloodGate;
 
@@ -164,6 +168,15 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
         }
         Fluid fluid = BlockUtil.getFluidWithFlowing(world, pos);
         return FluidUtilBC.areFluidsEqual(fluid, tank.getFluidType());
+    }
+
+    @Override
+    public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
+        super.addDrops(toDrop, fortune);
+        ItemFragileFluidContainer itemContainer = BCCoreItems.fragileFluidShard;
+        if (itemContainer != null) {
+            itemContainer.addFluidDrops(tank.getFluid(), toDrop);
+        }
     }
 
     // ITickable

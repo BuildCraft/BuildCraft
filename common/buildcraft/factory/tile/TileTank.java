@@ -18,6 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fluids.FluidStack;
@@ -44,6 +45,8 @@ import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+
+import buildcraft.core.BCCoreItems;
 
 public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, IFluidHandlerAdv {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("tank");
@@ -172,6 +175,14 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         }
         isPlayerInteracting = false;
         return true;
+    }
+
+    @Override
+    public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
+        super.addDrops(toDrop, fortune);
+        if (BCCoreItems.fragileFluidShard != null) {
+            BCCoreItems.fragileFluidShard.addFluidDrops(tank.getFluid(), toDrop);
+        }
     }
 
     // Networking
