@@ -108,7 +108,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public static final int NET_REDRAW = IDS.allocId("REDRAW");
 
     protected final CapabilityHelper caps = new CapabilityHelper();
-    protected final ItemHandlerManager itemManager = caps.addProvider(new ItemHandlerManager(this::onSlotChange));
+    protected final ItemHandlerManager itemManager = new ItemHandlerManager(this::onSlotChange);
     protected final TankManager tankManager = new TankManager();
 
     /** Handles all of the players that are currently using this tile (have a GUI open) */
@@ -534,9 +534,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) deltaManager.receiveDeltaData(false, EnumDeltaMessage.CURRENT_STATE, buffer);
             else if (id == NET_GUI_DATA) deltaManager.receiveDeltaData(true, EnumDeltaMessage.CURRENT_STATE, buffer);
-            else if (id == NET_REN_DELTA_SINGLE) deltaManager.receiveDeltaData(false, EnumDeltaMessage.ADD_SINGLE, buffer);
-            else if (id == NET_GUI_DELTA_SINGLE) deltaManager.receiveDeltaData(true, EnumDeltaMessage.ADD_SINGLE, buffer);
-            else if (id == NET_REN_DELTA_CLEAR) deltaManager.receiveDeltaData(false, EnumDeltaMessage.SET_VALUE, buffer);
+            else if (id == NET_REN_DELTA_SINGLE)
+                deltaManager.receiveDeltaData(false, EnumDeltaMessage.ADD_SINGLE, buffer);
+            else if (id == NET_GUI_DELTA_SINGLE)
+                deltaManager.receiveDeltaData(true, EnumDeltaMessage.ADD_SINGLE, buffer);
+            else if (id == NET_REN_DELTA_CLEAR)
+                deltaManager.receiveDeltaData(false, EnumDeltaMessage.SET_VALUE, buffer);
             else if (id == NET_GUI_DELTA_CLEAR) deltaManager.receiveDeltaData(true, EnumDeltaMessage.SET_VALUE, buffer);
             else if (id == NET_REDRAW) redrawBlock();
             else if (id == NET_ADV_DEBUG) {
