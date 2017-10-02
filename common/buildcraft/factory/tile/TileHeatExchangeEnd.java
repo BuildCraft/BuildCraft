@@ -12,12 +12,10 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -27,7 +25,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.items.FluidItemDrops;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.tiles.IDebuggable;
 
@@ -131,12 +128,6 @@ public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable, 
                 smoothedHeatableOut.handleMessage(getWorld(), buffer);
             }
         }
-    }
-
-    @Override
-    public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
-        super.addDrops(toDrop, fortune);
-        FluidItemDrops.addFluidDrops(toDrop, tankCoolableIn, tankHeatableOut);
     }
 
     @Override

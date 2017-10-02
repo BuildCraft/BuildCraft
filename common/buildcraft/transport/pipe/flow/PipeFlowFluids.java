@@ -227,6 +227,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         }
         IFluidHandler fluidHandler = pipe.getHolder().getCapabilityFromPipe(from, CapUtil.CAP_FLUIDS);
         if (fluidHandler == null) {
+            // FIXME: WRONG PLACE!!!
             return PASSED_EXTRACT;
         }
         Section section = sections.get(EnumPipePart.fromFacing(from));

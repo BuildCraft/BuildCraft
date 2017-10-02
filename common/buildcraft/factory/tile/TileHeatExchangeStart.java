@@ -13,13 +13,11 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -35,7 +33,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.items.FluidItemDrops;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IRefineryRecipeManager;
 import buildcraft.api.recipes.IRefineryRecipeManager.ICoolableRecipe;
@@ -178,12 +175,6 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
                 progressState = buffer.readEnumValue(EnumProgressState.class);
             }
         }
-    }
-
-    @Override
-    public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
-        super.addDrops(toDrop, fortune);
-        FluidItemDrops.addFluidDrops(toDrop, tankCoolableOut, tankHeatableIn);
     }
 
     @Override

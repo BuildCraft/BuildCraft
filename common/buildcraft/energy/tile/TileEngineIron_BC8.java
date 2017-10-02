@@ -15,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
 
 import net.minecraftforge.fluids.FluidStack;
@@ -31,7 +30,6 @@ import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.IFuelManager.IDirtyFuel;
 import buildcraft.api.fuels.ISolidCoolant;
-import buildcraft.api.items.FluidItemDrops;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.IItemPipe;
@@ -130,12 +128,6 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
                 tankManager.writeData(buffer);
             }
         }
-    }
-
-    @Override
-    public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
-        super.addDrops(toDrop, fortune);
-        FluidItemDrops.addFluidDrops(toDrop, tankFuel, tankCoolant, tankResidue);
     }
 
     // TileEngineBase overrides

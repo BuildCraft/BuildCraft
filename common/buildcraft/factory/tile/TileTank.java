@@ -18,7 +18,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fluids.FluidStack;
@@ -34,7 +33,6 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
-import buildcraft.api.items.FluidItemDrops;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.fluid.FluidSmoother;
@@ -59,7 +57,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     private int lastComparatorLevel;
 
     public TileTank() {
-        tankManager.add(tank);// FIXME: SAVING IS ALL SORTS OF BUGGED
+        tankManager.add(tank);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, this, EnumPipePart.VALUES);
     }
 
@@ -174,12 +172,6 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         }
         isPlayerInteracting = false;
         return true;
-    }
-
-    @Override
-    public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
-        super.addDrops(toDrop, fortune);
-        FluidItemDrops.addFluidDrops(toDrop, tank);
     }
 
     // Networking

@@ -13,7 +13,9 @@ import java.util.List;
 
 import com.google.common.collect.ForwardingList;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
@@ -23,6 +25,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
+import buildcraft.api.items.FluidItemDrops;
 
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -45,6 +48,10 @@ public class TankManager extends ForwardingList<Tank> implements IFluidHandlerAd
 
     public void addAll(Tank... values) {
         Collections.addAll(this, values);
+    }
+
+    public void addDrops(NonNullList<ItemStack> toDrop) {
+        FluidItemDrops.addFluidDrops(toDrop, toArray(new Tank[0]));
     }
 
     @Override

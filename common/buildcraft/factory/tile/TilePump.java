@@ -23,11 +23,9 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 
@@ -38,7 +36,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.items.FluidItemDrops;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 
@@ -52,8 +49,6 @@ import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 
 import buildcraft.core.BCCoreBlocks;
-import buildcraft.core.BCCoreItems;
-import buildcraft.core.item.ItemFragileFluidContainer;
 import buildcraft.energy.BCEnergyFluids;
 import buildcraft.energy.tile.TileSpringOil;
 import buildcraft.factory.BCFactoryBlocks;
@@ -104,8 +99,8 @@ public class TilePump extends TileMiner {
                 }
                 fluidConnection = posToCheck;
                 break;
-            } else if (!world.isAirBlock(posToCheck) &&
-                world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.tube) {
+            } else if (!world.isAirBlock(posToCheck)
+                && world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.tube) {
                 break;
             }
         }
@@ -114,7 +109,8 @@ public class TilePump extends TileMiner {
             return;
         }
         world.profiler.endStartSection("build");
-        boolean isWater = /* BCFactoryConfig.consumeWaterSources && */ FluidUtilBC.areFluidsEqual(queueFluid, FluidRegistry.WATER);
+        boolean isWater =
+            /* BCFactoryConfig.consumeWaterSources && */ FluidUtilBC.areFluidsEqual(queueFluid, FluidRegistry.WATER);
         outer: while (!nextPosesToCheck.isEmpty()) {
             List<BlockPos> nextPosesToCheckCopy = new ArrayList<>(nextPosesToCheck);
             nextPosesToCheck.clear();
@@ -146,7 +142,7 @@ public class TilePump extends TileMiner {
                     IBlockState below = world.getBlockState(posToCheck.down());
                     // Same check as in BlockDynamicLiquid.updateTick:
                     // if that method changes how it checks for adjacent
-                    //  water sources then this also needs updating
+                    // water sources then this also needs updating
                     Fluid fluidBelow = BlockUtil.getFluidWithoutFlowing(below);
                     if (FluidUtilBC.areFluidsEqual(fluidBelow, FluidRegistry.WATER) || below.getMaterial().isSolid()) {
                         isInfiniteWaterSource = true;
@@ -239,10 +235,10 @@ public class TilePump extends TileMiner {
                 progress += battery.extractPower(0, target - progress);
                 if (progress >= target) {
                     FluidStack drain = BlockUtil.drainBlock(world, currentPos, false);
-                    if (drain != null &&
-                        paths.get(currentPos).stream()
-                            .allMatch(blockPos -> BlockUtil.getFluidWithFlowing(world, blockPos) != null) &&
-                        canDrain(currentPos)) {
+                    if (drain != null
+                        && paths.get(currentPos).stream()
+                            .allMatch(blockPos -> BlockUtil.getFluidWithFlowing(world, blockPos) != null)
+                        && canDrain(currentPos)) {
                         tank.fillInternal(drain, true);
                         progress = 0;
                         if (isInfiniteWaterSource) {
@@ -274,12 +270,6 @@ public class TilePump extends TileMiner {
                 nextPos();
             }
         }
-    }
-
-    @Override
-    public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
-        super.addDrops(toDrop, fortune);
-        FluidItemDrops.addFluidDrops(toDrop, tank);
     }
 
     // NBT
