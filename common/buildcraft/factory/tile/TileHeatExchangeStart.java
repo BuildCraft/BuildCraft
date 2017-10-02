@@ -35,6 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.items.FluidItemDrops;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IRefineryRecipeManager;
 import buildcraft.api.recipes.IRefineryRecipeManager.ICoolableRecipe;
@@ -53,8 +54,6 @@ import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
-import buildcraft.core.BCCoreItems;
-import buildcraft.core.item.ItemFragileFluidContainer;
 import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.block.BlockHeatExchange;
 
@@ -184,11 +183,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
     @Override
     public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
         super.addDrops(toDrop, fortune);
-        ItemFragileFluidContainer itemContainer = BCCoreItems.fragileFluidShard;
-        if (itemContainer != null) {
-            itemContainer.addFluidDrops(tankHeatableIn.getFluid(), toDrop);
-            itemContainer.addFluidDrops(tankCoolableOut.getFluid(), toDrop);
-        }
+        FluidItemDrops.addFluidDrops(toDrop, tankCoolableOut, tankHeatableIn);
     }
 
     @Override

@@ -19,13 +19,15 @@ import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
+import buildcraft.api.items.IItemFluidShard;
+
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
 
-public class ItemFragileFluidContainer extends ItemBC_Neptune {
+public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFluidShard {
 
     // Half of a bucket
     public static final int MAX_FLUID_HELD = 500;
@@ -76,7 +78,8 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune {
         }
     }
 
-    public void addFluidDrops(FluidStack fluid, NonNullList<ItemStack> toDrop) {
+    @Override
+    public void addFluidDrops(NonNullList<ItemStack> toDrop, FluidStack fluid) {
         if (fluid == null) {
             return;
         }

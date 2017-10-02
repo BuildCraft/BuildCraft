@@ -43,6 +43,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.items.FluidItemDrops;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.fluid.Tank;
@@ -173,10 +174,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     @Override
     public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
         super.addDrops(toDrop, fortune);
-        ItemFragileFluidContainer itemContainer = BCCoreItems.fragileFluidShard;
-        if (itemContainer != null) {
-            itemContainer.addFluidDrops(tank.getFluid(), toDrop);
-        }
+        FluidItemDrops.addFluidDrops(toDrop, tank);
     }
 
     // ITickable

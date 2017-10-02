@@ -25,6 +25,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.items.FluidItemDrops;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
@@ -52,8 +53,6 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.core.BCCoreConfig;
-import buildcraft.core.BCCoreItems;
-import buildcraft.core.item.ItemFragileFluidContainer;
 import buildcraft.factory.BCFactoryBlocks;
 
 public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDebuggable {
@@ -78,25 +77,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
 
     public static final long MAX_MJ_PER_TICK = 6 * MjAPI.MJ;
 
-    private final Tank tankIn = new Tank("in", 4 * Fluid.BUCKET_VOLUME, this) {
-        @Override
-        public int fill(FluidStack resource, boolean doFill) {
-            IRefineryRecipeManager manager = BuildcraftRecipeRegistry.refineryRecipes;
-            IDistillationRecipe recipe = manager.getDistillationRegistry().getRecipeForInput(resource);
-            if (recipe == null) {
-                return 0;
-            }
-            // Quality-of-life change: Only accept full amounts of the input fluid, so
-            // we don't get small amounts left over
-            int amount = getFluidAmount() + resource.amount;
-            amount = Math.min(amount, getCapacity());
-            amount = resource.amount - (amount % recipe.in().amount);
-            if (amount <= 0) {
-                return 0;
-            }
-            return super.fill(new FluidStack(resource, amount), doFill);
-        }
-    };
+    private final Tank tankIn = new Tank("in", 4 * Fluid.BUCKET_VOLUME, this, this::isDistillableFluid);
     private final Tank tankGasOut = new Tank("gasOut", 4 * Fluid.BUCKET_VOLUME, this);
     private final Tank tankLiquidOut = new Tank("liquidOut", 4 * Fluid.BUCKET_VOLUME, this);
 
@@ -139,6 +120,12 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
 
     private IFluidDataSender createSender(int netId) {
         return writer -> createAndSendMessage(netId, writer);
+    }
+
+    private boolean isDistillableFluid(FluidStack fluid) {
+        IRefineryRecipeManager manager = BuildcraftRecipeRegistry.refineryRecipes;
+        IDistillationRecipe recipe = manager.getDistillationRegistry().getRecipeForInput(fluid);
+        return recipe != null;
     }
 
     @Override
@@ -250,12 +237,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
     @Override
     public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
         super.addDrops(toDrop, fortune);
-        ItemFragileFluidContainer itemContainer = BCCoreItems.fragileFluidShard;
-        if (itemContainer != null) {
-            itemContainer.addFluidDrops(tankIn.getFluid(), toDrop);
-            itemContainer.addFluidDrops(tankGasOut.getFluid(), toDrop);
-            itemContainer.addFluidDrops(tankLiquidOut.getFluid(), toDrop);
-        }
+        FluidItemDrops.addFluidDrops(toDrop, tankIn, tankGasOut, tankLiquidOut);
     }
 
     @Override

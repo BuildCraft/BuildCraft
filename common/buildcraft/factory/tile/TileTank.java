@@ -34,6 +34,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
+import buildcraft.api.items.FluidItemDrops;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.fluid.FluidSmoother;
@@ -45,8 +46,6 @@ import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
-
-import buildcraft.core.BCCoreItems;
 
 public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, IFluidHandlerAdv {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("tank");
@@ -180,9 +179,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     @Override
     public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
         super.addDrops(toDrop, fortune);
-        if (BCCoreItems.fragileFluidShard != null) {
-            BCCoreItems.fragileFluidShard.addFluidDrops(tank.getFluid(), toDrop);
-        }
+        FluidItemDrops.addFluidDrops(toDrop, tank);
     }
 
     // Networking

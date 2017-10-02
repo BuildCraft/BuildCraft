@@ -6,6 +6,8 @@ package buildcraft.core;
 
 import net.minecraft.creativetab.CreativeTabs;
 
+import buildcraft.api.items.FluidItemDrops;
+
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
 import buildcraft.lib.item.ItemBC_Neptune;
@@ -59,6 +61,7 @@ public class BCCoreItems {
             goggles = ItemManager.register(new ItemGoggles("item.goggles"));
         }
         fragileFluidShard = ItemManager.register(new ItemFragileFluidContainer("item.fragile_fluid_shard"));
+        FluidItemDrops.item = fragileFluidShard;
         CreativeTabs mainTab = CreativeTabManager.getTab("buildcraft.main");
         BCLibItems.guide.setCreativeTab(mainTab);
         BCLibItems.note.setCreativeTab(mainTab);

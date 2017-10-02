@@ -31,6 +31,7 @@ import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.IFuelManager.IDirtyFuel;
 import buildcraft.api.fuels.ISolidCoolant;
+import buildcraft.api.items.FluidItemDrops;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.IItemPipe;
@@ -45,8 +46,6 @@ import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
-import buildcraft.core.BCCoreItems;
-import buildcraft.core.item.ItemFragileFluidContainer;
 import buildcraft.energy.BCEnergyGuis;
 
 public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
@@ -136,12 +135,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     @Override
     public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
         super.addDrops(toDrop, fortune);
-        ItemFragileFluidContainer itemContainer = BCCoreItems.fragileFluidShard;
-        if (itemContainer != null) {
-            itemContainer.addFluidDrops(tankFuel.getFluid(), toDrop);
-            itemContainer.addFluidDrops(tankCoolant.getFluid(), toDrop);
-            itemContainer.addFluidDrops(tankResidue.getFluid(), toDrop);
-        }
+        FluidItemDrops.addFluidDrops(toDrop, tankFuel, tankCoolant, tankResidue);
     }
 
     // TileEngineBase overrides
@@ -217,26 +211,36 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
                         burnTime--;
                     }
                     if (burnTime <= 0) {
-                        if (--fuel.amount <= 0) {
-                            tankFuel.setFluid(null);
-                        }
-                        burnTime += currentFuel.getTotalBurningTime() / 1000.0;
+                        if (fuel.amount > 0) {
+                            fuel.amount--;
+                            burnTime += currentFuel.getTotalBurningTime() / 1000.0;
 
-                        // If we also produce residue then put it out too
-                        if (currentFuel instanceof IDirtyFuel) {
-                            IDirtyFuel dirtyFuel = (IDirtyFuel) currentFuel;
-                            residueAmount += dirtyFuel.getResidue().amount / 1000.0;
-                            if (residueAmount >= 1) {
-                                int residue = MathHelper.floor(residueAmount);
+                            // If we also produce residue then put it out too
+                            if (currentFuel instanceof IDirtyFuel) {
+                                IDirtyFuel dirtyFuel = (IDirtyFuel) currentFuel;
                                 FluidStack residueFluid = dirtyFuel.getResidue().copy();
-                                residueFluid.amount = residue;
-                                residueAmount -= tankResidue.fill(residueFluid, true);
+                                residueAmount += residueFluid.amount / 1000.0;
+                                if (residueAmount >= 1) {
+                                    residueFluid.amount = MathHelper.floor(residueAmount);
+                                    residueAmount -= tankResidue.fill(residueFluid, true);
+                                } else if (tankResidue.getFluid() == null) {
+                                    residueFluid.amount = 0;
+                                    tankResidue.setFluid(residueFluid);
+                                }
                             }
+                        } else {
+                            tankFuel.setFluid(null);
+                            currentFuel = null;
+                            currentOutput = 0;
+                            return;
                         }
                     }
                     currentOutput = currentFuel.getPowerPerCycle(); // Comment out for constant power
                     addPower(currentFuel.getPowerPerCycle());
                     heat += currentFuel.getPowerPerCycle() * HEAT_PER_MJ / MjAPI.MJ;// * getBiomeTempScalar();
+                } else {
+                    // Burn time == 0 AND fuel.amount == 0
+                    tankFuel.setFluid(null);
                 }
             } else if (lastPowered) {
                 lastPowered = false;
@@ -360,9 +364,9 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     }
 
     private class InternalFluidHandler implements IFluidHandlerAdv {
-        private final IFluidTankProperties[] properties = {//
-            new TankProperties(tankFuel, true, false),//
-            new TankProperties(tankCoolant, true, false),//
+        private final IFluidTankProperties[] properties = { //
+            new TankProperties(tankFuel, true, false), //
+            new TankProperties(tankCoolant, true, false), //
             new TankProperties(tankResidue, false, true),//
         };
 

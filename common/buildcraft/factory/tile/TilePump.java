@@ -38,6 +38,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.items.FluidItemDrops;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 
@@ -278,10 +279,7 @@ public class TilePump extends TileMiner {
     @Override
     public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
         super.addDrops(toDrop, fortune);
-        ItemFragileFluidContainer itemContainer = BCCoreItems.fragileFluidShard;
-        if (itemContainer != null) {
-            itemContainer.addFluidDrops(tank.getFluid(), toDrop);
-        }
+        FluidItemDrops.addFluidDrops(toDrop, tank);
     }
 
     // NBT

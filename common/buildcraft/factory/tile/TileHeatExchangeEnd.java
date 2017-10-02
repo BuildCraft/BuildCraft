@@ -27,6 +27,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.items.FluidItemDrops;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.tiles.IDebuggable;
 
@@ -38,8 +39,6 @@ import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
-import buildcraft.core.BCCoreItems;
-import buildcraft.core.item.ItemFragileFluidContainer;
 import buildcraft.factory.BCFactoryBlocks;
 
 public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable, ITickable {
@@ -137,11 +136,7 @@ public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable, 
     @Override
     public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
         super.addDrops(toDrop, fortune);
-        ItemFragileFluidContainer itemContainer = BCCoreItems.fragileFluidShard;
-        if (itemContainer != null) {
-            itemContainer.addFluidDrops(tankCoolableIn.getFluid(), toDrop);
-            itemContainer.addFluidDrops(tankHeatableOut.getFluid(), toDrop);
-        }
+        FluidItemDrops.addFluidDrops(toDrop, tankCoolableIn, tankHeatableOut);
     }
 
     @Override

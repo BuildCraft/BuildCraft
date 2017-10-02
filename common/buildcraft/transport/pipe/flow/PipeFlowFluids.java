@@ -180,7 +180,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 totalAmount += sections.get(part).amount;
             }
             if (totalAmount > 0) {
-                BCCoreItems.fragileFluidShard.addFluidDrops(new FluidStack(currentFluid, totalAmount), toDrop);
+                BCCoreItems.fragileFluidShard.addFluidDrops(toDrop, new FluidStack(currentFluid, totalAmount));
             }
         }
     }
