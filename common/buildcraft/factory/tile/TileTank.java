@@ -21,14 +21,11 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IFluidFilter;
@@ -40,7 +37,6 @@ import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;
-import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -124,54 +120,13 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         }
     }
 
-    public boolean onActivate(EntityPlayer player, EnumHand hand) {
-        ItemStack held = player.getHeldItem(hand);
-        if (held.isEmpty()) {
-            return false;
-        }
-        boolean replace = !player.capabilities.isCreativeMode;
-        boolean single = held.getCount() == 1;
-        IFluidHandlerItem flItem;
-        if (replace && single) {
-            flItem = FluidUtil.getFluidHandler(held);
-        } else {
-            // replace and not single - need a copy and count set to 1
-            // not replace and single - need a copy, does not need change of count but it should be ok
-            // not replace and not single - need a copy count set to 1
-            ItemStack copy = held.copy();
-            copy.setCount(1);
-            flItem = FluidUtil.getFluidHandler(copy);
-        }
-        if (flItem == null) {
-            return false;
-        }
-        if (getWorld().isRemote) {
-            return true;
-        }
+    @Override
+    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY,
+        float hitZ) {
         isPlayerInteracting = true;
-        boolean changed = true;
-        FluidStack moved;
-        if ((moved = FluidUtilBC.move(flItem, this)) != null) {
-            SoundUtil.playBucketEmpty(getWorld(), getPos(), moved);
-        } else if ((moved = FluidUtilBC.move(this, flItem)) != null) {
-            SoundUtil.playBucketFill(getWorld(), getPos(), moved);
-        } else {
-            changed = false;
-        }
-
-        if (changed && replace) {
-            if (single) {
-                // if it was the single item, replace with changed one
-                player.setHeldItem(hand, flItem.getContainer());
-            } else {
-                // if it was part of stack, shrink stack and give / drop the new one
-                held.shrink(1);
-                ItemHandlerHelper.giveItemToPlayer(player, flItem.getContainer());
-            }
-            player.inventoryContainer.detectAndSendChanges();
-        }
+        boolean didChange = FluidUtilBC.onTankActivated(player, pos, hand, this);
         isPlayerInteracting = false;
-        return true;
+        return didChange;
     }
 
     // Networking

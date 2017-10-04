@@ -31,6 +31,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -264,6 +265,11 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     public void onPlayerClose(EntityPlayer player) {
         usingPlayers.remove(player);
+    }
+
+    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY,
+        float hitZ) {
+        return tankManager.onActivated(player, getPos(), hand);
     }
 
     @Override

@@ -9,10 +9,8 @@ import java.io.IOException;
 import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 
 import net.minecraftforge.fluids.Fluid;
@@ -224,11 +222,6 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         if (state.getBlock() == BCFactoryBlocks.distiller) {
             MODEL_FACING.value = state.getValue(BlockBCBase_Neptune.PROP_FACING);
         }
-    }
-
-    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY,
-        float hitZ) {
-        return false;
     }
 
     @Override

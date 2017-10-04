@@ -18,7 +18,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -135,18 +134,18 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     @Override
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY,
         float hitZ) {
-        ItemStack current = player.getHeldItem(hand);
+        ItemStack current = player.getHeldItem(hand).copy();
+        if (super.onActivated(player, hand, side, hitX, hitY, hitZ)) {
+            if (!ItemStack.areItemStacksEqual(current, player.getHeldItem(hand))) {
+                return true;
+            }
+        }
         if (!current.isEmpty()) {
             if (EntityUtil.getWrenchHand(player) != null) {
                 return false;
             }
             if (current.getItem() instanceof IItemPipe) {
                 return false;
-            }
-            if (!world.isRemote) {
-                if (FluidUtil.interactWithFluidHandler(player, hand, world, pos, side)) {
-                    return true;
-                }
             }
         }
         if (!world.isRemote) {
