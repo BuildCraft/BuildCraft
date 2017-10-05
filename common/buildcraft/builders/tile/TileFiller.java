@@ -73,13 +73,9 @@ public class TileFiller extends TileBC_Neptune
     implements ITickable, IDebuggable, ITileForTemplateBuilder, IFillerStatementContainer, IControllable {
 
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("filler");
-    @SuppressWarnings("WeakerAccess")
     public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
-    @SuppressWarnings("WeakerAccess")
     public static final int NET_INVERT = IDS.allocId("INVERT");
-    @SuppressWarnings("WeakerAccess")
     public static final int NET_PATTERN = IDS.allocId("PATTERN");
-    @SuppressWarnings("WeakerAccess")
     public static final int NET_BOX = IDS.allocId("BOX");
 
     @Override
