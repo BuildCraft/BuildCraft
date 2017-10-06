@@ -71,12 +71,9 @@ public class BCCore {
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCCoreProxy.getProxy());
 
-        MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
-
         OreDictionary.registerOre("craftingTableWood", Blocks.CRAFTING_TABLE);
-
+        MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(BCCoreEventDist.INSTANCE);
-        MessageManager.addMessageType(MessageVolumeBoxes.class, MessageVolumeBoxes.HANDLER, Side.CLIENT);
     }
 
     @Mod.EventHandler

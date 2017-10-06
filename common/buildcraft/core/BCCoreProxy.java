@@ -15,12 +15,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.DetachedRenderer.RenderMatrixType;
+import buildcraft.lib.net.MessageManager;
+import buildcraft.lib.net.MessageManager.MessageId;
 
-import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.client.RenderTickListener;
 import buildcraft.core.client.render.RenderVolumeInWorld;
 import buildcraft.core.list.ContainerList;
 import buildcraft.core.list.GuiList;
+import buildcraft.core.marker.volume.MessageVolumeBoxes;
 
 public abstract class BCCoreProxy implements IGuiHandler {
     @SidedProxy(modId = BCCore.MODID)
@@ -51,7 +53,10 @@ public abstract class BCCoreProxy implements IGuiHandler {
 
     @SideOnly(Side.SERVER)
     public static class ServerProxy extends BCCoreProxy {
-
+        @Override
+        public void fmlPreInit() {
+            MessageManager.addTypeSent(MessageId.BC_CORE_VOLUME_BOX, MessageVolumeBoxes.class, Side.CLIENT);
+        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -69,8 +74,9 @@ public abstract class BCCoreProxy implements IGuiHandler {
             super.fmlPreInit();
             BCCoreSprites.fmlPreInit();
             BCCoreModels.fmlPreInit();
-            BuildCraftLaserManager.fmlPreInit();
             DetachedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, RenderVolumeInWorld.INSTANCE);
+            MessageManager.addType(MessageId.BC_CORE_VOLUME_BOX, MessageVolumeBoxes.class, MessageVolumeBoxes.HANDLER,
+                Side.CLIENT);
         }
 
         @Override

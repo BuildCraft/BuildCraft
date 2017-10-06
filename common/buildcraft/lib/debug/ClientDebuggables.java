@@ -8,19 +8,15 @@ package buildcraft.lib.debug;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import org.apache.commons.lang3.tuple.Pair;
+import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.tiles.IDebuggable;
 
@@ -28,28 +24,33 @@ public class ClientDebuggables {
     public static final List<String> SERVER_LEFT = new ArrayList<>();
     public static final List<String> SERVER_RIGHT = new ArrayList<>();
 
-    @SideOnly(Side.CLIENT)
-    private static <T extends TileEntity & IDebuggable> Optional<T> getDebuggableObject(RayTraceResult mouseOver) {
+    @Nullable
+    public static IDebuggable getDebuggableObject(RayTraceResult mouseOver) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.gameSettings.reducedDebugInfo || mc.player.hasReducedDebug() || !mc.player.capabilities.isCreativeMode
+            || !mc.gameSettings.showDebugInfo) {
+            return null;
+        }
+        if (mouseOver == null) {
+            return null;
+        }
         RayTraceResult.Type type = mouseOver.typeOfHit;
-        WorldClient world = Minecraft.getMinecraft().world;
-        if (world != null && type == RayTraceResult.Type.BLOCK) {
+        WorldClient world = mc.world;
+        if (world == null) {
+            return null;
+        }
+        if (type == RayTraceResult.Type.BLOCK) {
             BlockPos pos = mouseOver.getBlockPos();
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof IDebuggable) {
-                // noinspection RedundantCast
-                return Optional.of((T) (TileEntity & IDebuggable) tile);
+                return (IDebuggable) tile;
+            }
+        } else if (type == RayTraceResult.Type.ENTITY) {
+            Entity entity = mouseOver.entityHit;
+            if (entity instanceof IDebuggable) {
+                return (IDebuggable) entity;
             }
         }
-        return Optional.empty();
-    }
-
-
-    @SideOnly(Side.CLIENT)
-    public static <T extends TileEntity & IDebuggable> Optional<Pair<T, EnumFacing>> getDebuggableTileSide() {
-        return Optional.ofNullable(Minecraft.getMinecraft().objectMouseOver)
-            .flatMap(mouseOver ->
-                ClientDebuggables.<T>getDebuggableObject(mouseOver)
-                    .map(debuggableObject -> Pair.of(debuggableObject, mouseOver.sideHit))
-            );
+        return null;
     }
 }

@@ -102,15 +102,12 @@ public class TileFiller extends TileBC_Neptune
     public AddonFillingPlanner addon;
     public boolean markerBox = false;
 
-    public final FullStatement<IFillerPattern> patternStatement = new FullStatement<>(
-        FillerType.INSTANCE,
-        4,
-        (statement, paramIndex) -> onStatementChange()
-    );
+    public final FullStatement<IFillerPattern> patternStatement;
     private BuildingInfo buildingInfo;
     public TemplateBuilder builder = new TemplateBuilder(this);
 
     public TileFiller() {
+        patternStatement = new FullStatement<>(FillerType.INSTANCE, 4, this::onStatementChange);
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
         caps.addCapabilityInstance(TilesAPI.CAP_CONTROLLABLE, this, EnumPipePart.VALUES);
     }
@@ -146,6 +143,10 @@ public class TileFiller extends TileBC_Neptune
                 );
                 volumeBoxes.markDirty();
                 addon.updateBuildingInfo();
+                patternStatement.set(addon.patternStatement.get());
+                for (int p = 0; p < patternStatement.getParamCount(); p++) {
+                    addon.patternStatement.set(p, patternStatement.get(p));
+                }
             } else {
                 box.reset();
                 box.setMin(volumeBox.box.min());
@@ -176,6 +177,12 @@ public class TileFiller extends TileBC_Neptune
 
     @Override
     public void update() {
+        if (addon != null) {
+            addon.patternStatement.set(patternStatement.get());
+            for (int p = 0; p < patternStatement.getParamCount(); p++) {
+                addon.patternStatement.set(p, patternStatement.get(p));
+            }
+        }
         if (world.isRemote) {
             if (isValid()) {
                 builder.tick();
@@ -261,15 +268,13 @@ public class TileFiller extends TileBC_Neptune
                 markerBox = buffer.readBoolean();
                 if (buffer.readBoolean()) {
                     UUID boxId = buffer.readUniqueId();
-                    VolumeBox volumeBox = world.isRemote
-                        ? ClientVolumeBoxes.INSTANCE.boxes.stream()
-                        .filter(localVolumeBox -> localVolumeBox.id.equals(boxId))
-                        .findFirst()
-                        .orElseThrow(NullPointerException::new)
-                        : WorldSavedDataVolumeBoxes.get(world).getBoxFromId(boxId);
-                    addon = (AddonFillingPlanner) volumeBox
-                        .addons
-                        .get(buffer.readEnumValue(EnumAddonSlot.class));
+                    VolumeBox volumeBox =
+                        world.isRemote
+                            ? ClientVolumeBoxes.INSTANCE.boxes.stream()
+                                .filter(localVolumeBox -> localVolumeBox.id.equals(boxId)).findFirst()
+                                .orElseThrow(NullPointerException::new)
+                            : WorldSavedDataVolumeBoxes.get(world).getBoxFromId(boxId);
+                    addon = (AddonFillingPlanner) volumeBox.addons.get(buffer.readEnumValue(EnumAddonSlot.class));
                 }
             } else if (id == NET_CAN_EXCAVATE) {
                 canExcavate = buffer.readBoolean();
@@ -288,12 +293,7 @@ public class TileFiller extends TileBC_Neptune
                 sendNetworkGuiUpdate(NET_INVERT);
             } else if (id == NET_PATTERN) {
                 if (isLocked()) {
-                    new FullStatement<>(
-                        FillerType.INSTANCE,
-                        4,
-                        (a, b) -> {
-                        }
-                    ).readFromBuffer(buffer);
+                    new FullStatement<>(FillerType.INSTANCE, 4, (a, b) -> {}).readFromBuffer(buffer);
                 } else {
                     patternStatement.readFromBuffer(buffer);
                     sendNetworkUpdate(NET_PATTERN);
@@ -326,8 +326,15 @@ public class TileFiller extends TileBC_Neptune
         MessageManager.sendToServer(createMessage(NET_INVERT, buffer -> buffer.writeBoolean(newValue)));
     }
 
+    private void onStatementChange(FullStatement<?> statement, int paramIndex) {
+        onStatementChange();
+    }
+
     private void onStatementChange() {
         createAndSendMessage(NET_PATTERN, patternStatement::writeToBuffer);
+        if (addon != null) {
+            addon.setPattern(patternStatement.get(), patternStatement.getParameters());
+        }
         finished = false;
         updateBuildingInfo();
     }

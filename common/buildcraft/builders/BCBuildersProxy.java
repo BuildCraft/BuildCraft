@@ -17,6 +17,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.client.render.DetachedRenderer;
+import buildcraft.lib.net.MessageManager;
+import buildcraft.lib.net.MessageManager.MessageId;
 
 import buildcraft.builders.client.render.RenderArchitectTable;
 import buildcraft.builders.client.render.RenderArchitectTables;
@@ -35,6 +37,8 @@ import buildcraft.builders.gui.GuiElectronicLibrary;
 import buildcraft.builders.gui.GuiFiller;
 import buildcraft.builders.gui.GuiFillerPlanner;
 import buildcraft.builders.gui.GuiReplacer;
+import buildcraft.builders.snapshot.MessageSnapshotRequest;
+import buildcraft.builders.snapshot.MessageSnapshotResponse;
 import buildcraft.builders.tile.TileArchitectTable;
 import buildcraft.builders.tile.TileBuilder;
 import buildcraft.builders.tile.TileElectronicLibrary;
@@ -104,7 +108,12 @@ public abstract class BCBuildersProxy implements IGuiHandler {
 
     @SideOnly(Side.SERVER)
     public static class ServerProxy extends BCBuildersProxy {
-
+        @Override
+        public void fmlPreInit() {
+            MessageManager.addType(MessageId.BC_BUILDERS_SNAPSHOT_REQUEST, MessageSnapshotRequest.class,
+                MessageSnapshotRequest.HANDLER, Side.SERVER);
+            MessageManager.addTypeSent(MessageId.BC_BUILDERS_SNAPSHOT_REPLY, MessageSnapshotResponse.class, Side.CLIENT);
+        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -154,6 +163,9 @@ public abstract class BCBuildersProxy implements IGuiHandler {
                 Minecraft.getMinecraft().getFramebuffer().enableStencil();
             }
             BCBuildersSprites.fmlPreInit();
+            MessageManager.addTypeSent(MessageId.BC_BUILDERS_SNAPSHOT_REQUEST, MessageSnapshotRequest.class, Side.SERVER);
+            MessageManager.addType(MessageId.BC_BUILDERS_SNAPSHOT_REPLY, MessageSnapshotResponse.class,
+                MessageSnapshotResponse.HANDLER, Side.CLIENT);
         }
 
         @Override
@@ -163,10 +175,8 @@ public abstract class BCBuildersProxy implements IGuiHandler {
             ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilder());
             ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderFiller());
             ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderQuarry());
-            DetachedRenderer.INSTANCE.addRenderer(
-                DetachedRenderer.RenderMatrixType.FROM_WORLD_ORIGIN,
-                RenderArchitectTables.INSTANCE
-            );
+            DetachedRenderer.INSTANCE.addRenderer(DetachedRenderer.RenderMatrixType.FROM_WORLD_ORIGIN,
+                RenderArchitectTables.INSTANCE);
         }
     }
 }

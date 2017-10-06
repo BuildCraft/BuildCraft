@@ -12,37 +12,34 @@ import java.util.stream.IntStream;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraft.network.PacketBuffer;
-
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 
 import buildcraft.lib.debug.ClientDebuggables;
 
-public class MessageDebuggableResponse implements IMessage {
+public class MessageDebugResponse implements IMessage {
     private final List<String> left = new ArrayList<>();
     private final List<String> right = new ArrayList<>();
 
-    @SuppressWarnings("unused")
-    public MessageDebuggableResponse() {
-    }
+    public MessageDebugResponse() {}
 
-    @SuppressWarnings("WeakerAccess")
-    public MessageDebuggableResponse(List<String> left, List<String> right) {
+    public MessageDebugResponse(List<String> left, List<String> right) {
         this.left.addAll(left);
         this.right.addAll(right);
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(ByteBuf buffer) {
+        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
         buf.writeInt(left.size());
-        left.forEach(new PacketBuffer(buf)::writeString);
+        left.forEach(buf::writeString);
         buf.writeInt(right.size());
-        right.forEach(new PacketBuffer(buf)::writeString);
+        right.forEach(buf::writeString);
     }
 
     @Override
-    public void fromBytes(ByteBuf buf) {
+    public void fromBytes(ByteBuf buffer) {
+        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
         IntStream.range(0, buf.readInt())
             .mapToObj(i -> new PacketBufferBC(buf).readString())
             .forEach(left::add);
@@ -51,7 +48,7 @@ public class MessageDebuggableResponse implements IMessage {
             .forEach(right::add);
     }
 
-    public static final IMessageHandler<MessageDebuggableResponse, IMessage> HANDLER = (message, ctx) -> {
+    public static final IMessageHandler<MessageDebugResponse, IMessage> HANDLER = (message, ctx) -> {
         ClientDebuggables.SERVER_LEFT.clear();
         ClientDebuggables.SERVER_LEFT.addAll(message.left);
         ClientDebuggables.SERVER_RIGHT.clear();
