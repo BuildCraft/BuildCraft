@@ -1,5 +1,7 @@
 package buildcraft.core.patterns;
 
+import java.util.Locale;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -45,7 +47,7 @@ public enum PatternParameterAxis implements IStatementParameter {
 
     @Override
     public String getDescription() {
-        return LocaleUtil.localize("filler_axis_this_is_temp_" + name());
+        return LocaleUtil.localize("buildcraft.param.axis." + name().toLowerCase(Locale.ROOT));
     }
 
     @Override

@@ -203,12 +203,32 @@ fillerpattern.horizon=Horizon
 fillerpattern.pyramid=Pyramid
 fillerpattern.stairs=Stairs
 fillerpattern.box=Box
-fillerpattern.cylinder=Cylinder
 fillerpattern.frame=Frame
 fillerpattern.none=None
+fillerpattern.sphere_eighth=Eighth-Sphere
+fillerpattern.sphere_quarter=Quarter-sphere
+fillerpattern.sphere_half=Hemisphere
+fillerpattern.sphere=Sphere
+fillerpattern.2d_arc=Arc
+fillerpattern.2d_semi_circle=Semi-Circle
+fillerpattern.2d_circle=Circle
+fillerpattern.2d_triangle=Triangle
+fillerpattern.2d_square=Square
+fillerpattern.2d_pentagon=Pentagon
+fillerpattern.2d_hexagon=Hexagon
+fillerpattern.2d_octagon=Octagon
 fillerpattern.parameter.hollow=Hollow
 fillerpattern.parameter.filled=Filled
 fillerpattern.parameter.filled_outer=Surrounded
+
+buildcraft.param.rotation.0=No rotation
+buildcraft.param.rotation.1=90 degree rotation
+buildcraft.param.rotation.2=180 degree rotation
+buildcraft.param.rotation.3=270 degree rotation
+
+buildcraft.param.axis.x=X Axis
+buildcraft.param.axis.y=Y Axis
+buildcraft.param.axis.z=Z Axis
 
 fluid.oil=Oil
 fluid.fuel=Fuel
