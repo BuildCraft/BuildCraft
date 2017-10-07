@@ -25,12 +25,9 @@ import buildcraft.lib.misc.MessageUtil;
 
 public class MessageManager {
     public enum MessageId {
-        // ID Allocation:
-        // If you (an addon mod) want to add messages to be sent and received through this system
-        // then PR a network ID range to allocate. (Along with your modid and where the source is
-        // located so that we can keep track of it)
-
-        // BuildCraft: Reserves ID's 00-1F
+        // ID Allocation: TEMPORARY!
+        // TODO (AlexIIL): Replace this with a per-submod system for 7.99.9
+        // Most likely with a static Map<Class<?>, MessageManager>, to make registration simpler.
         BC_LIB_TILE_UPDATE(0x00),
         BC_LIB_CONTAINER(0x01),
         BC_LIB_MARKER(0x02),
@@ -50,7 +47,6 @@ public class MessageManager {
         BC_ROBOTICS_ZONE_REQUEST(0x0C),
         BC_ROBOTICS_ZONE_REPLY(0x0D),
         BC_ROBOTICS_ROBOTS(0x0E);
-        // End of BuildCraft
 
         static {
             // Sanity check
