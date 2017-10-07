@@ -46,8 +46,10 @@ public class BCLib {
     public static final String MODID = "buildcraftlib";
     public static final String VERSION = "${version}";
     public static final String MC_VERSION = "${mcversion}";
-    public static final String GIT_COMMIT_HASH = "${git_commit_hash}";
     public static final String GIT_BRANCH = "${git_branch}";
+    public static final String GIT_COMMIT_HASH = "${git_commit_hash}";
+    public static final String GIT_COMMIT_MSG = "${git_commit_msg}";
+    public static final String GIT_COMMIT_AUTHOR = "${git_commit_author}";
 
     public static final boolean DEV = VERSION.startsWith("$") || Boolean.getBoolean("buildcraft.dev");
 
@@ -59,7 +61,13 @@ public class BCLib {
         BCLog.logger.info("");
         BCLog.logger.info("Starting BuildCraft " + BCLib.VERSION);
         BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2017");
-        BCLog.logger.info("http://www.mod-buildcraft.com");
+        BCLog.logger.info("https://www.mod-buildcraft.com");
+        if (!GIT_COMMIT_HASH.startsWith("${")) {
+            BCLog.logger.info("Branch " + GIT_BRANCH);
+            BCLog.logger.info("Commit " + GIT_COMMIT_HASH);
+            BCLog.logger.info("  " + GIT_COMMIT_MSG);
+            BCLog.logger.info("  by " + GIT_COMMIT_AUTHOR);
+        }
         BCLog.logger.info("");
 
         ExpressionDebugManager.logger = BCLog.logger::info;
