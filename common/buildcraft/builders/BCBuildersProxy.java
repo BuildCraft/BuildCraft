@@ -163,7 +163,8 @@ public abstract class BCBuildersProxy implements IGuiHandler {
                 Minecraft.getMinecraft().getFramebuffer().enableStencil();
             }
             BCBuildersSprites.fmlPreInit();
-            MessageManager.addTypeSent(MessageId.BC_BUILDERS_SNAPSHOT_REQUEST, MessageSnapshotRequest.class, Side.SERVER);
+            MessageManager.addType(MessageId.BC_BUILDERS_SNAPSHOT_REQUEST, MessageSnapshotRequest.class,
+                MessageSnapshotRequest.HANDLER, Side.SERVER);
             MessageManager.addType(MessageId.BC_BUILDERS_SNAPSHOT_REPLY, MessageSnapshotResponse.class,
                 MessageSnapshotResponse.HANDLER, Side.CLIENT);
         }

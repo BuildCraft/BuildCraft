@@ -133,10 +133,12 @@ public abstract class BCLibProxy implements IGuiHandler {
             BCLibConfig.configChangeListeners.add(LibConfigChangeListener.INSTANCE);
 
             MessageManager.addType(MessageId.BC_LIB_MARKER, MessageMarker.class, MessageMarker.HANDLER, Side.CLIENT);
-            MessageManager.addTypeSent(MessageId.BC_LIB_CACHE_REQUEST, MessageObjectCacheRequest.class, Side.SERVER);
+            MessageManager.addType(MessageId.BC_LIB_CACHE_REQUEST, MessageObjectCacheRequest.class,
+                MessageObjectCacheRequest.HANDLER, Side.SERVER);
             MessageManager.addType(MessageId.BC_LIB_CACHE_REPLY, MessageObjectCacheResponse.class,
                 MessageObjectCacheResponse.HANDLER, Side.CLIENT);
-            MessageManager.addTypeSent(MessageId.BC_LIB_DEBUG_REQUEST, MessageDebugRequest.class, Side.SERVER);
+            MessageManager.addType(MessageId.BC_LIB_DEBUG_REQUEST, MessageDebugRequest.class,
+                MessageDebugRequest.HANDLER, Side.SERVER);
             MessageManager.addType(MessageId.BC_LIB_DEBUG_REPLY, MessageDebugResponse.class,
                 MessageDebugResponse.HANDLER, Side.CLIENT);
         }

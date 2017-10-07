@@ -84,7 +84,8 @@ public abstract class BCRoboticsProxy implements IGuiHandler {
         @Override
         public void fmlPreInit() {
             super.fmlPreInit();
-            MessageManager.addTypeSent(MessageId.BC_ROBOTICS_ZONE_REQUEST, MessageZoneMapRequest.class, Side.SERVER);
+            MessageManager.addType(MessageId.BC_ROBOTICS_ZONE_REQUEST, MessageZoneMapRequest.class,
+                MessageZoneMapRequest.HANDLER, Side.SERVER);
             MessageManager.addType(MessageId.BC_ROBOTICS_ZONE_REPLY, MessageZoneMapResponse.class,
                 MessageZoneMapResponse.HANDLER, Side.CLIENT);
         }
