@@ -186,12 +186,9 @@ public class MessageManager {
     private static void validateSendingMessage(IMessage message) {
         if (DEBUG) {
             Class<?> msgClass = message.getClass();
-            for (Class<?> cls : knownMessageClasses.keySet()) {
-                if (cls == msgClass) {
-                    return;
-                }
+            if (!knownMessageClasses.containsKey(msgClass)) {
+                throw new IllegalArgumentException("Unknown/unregistered message " + msgClass);
             }
-            throw new IllegalArgumentException("Unknown/unregistered message " + msgClass);
         }
     }
 }
