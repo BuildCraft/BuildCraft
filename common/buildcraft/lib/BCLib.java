@@ -63,10 +63,11 @@ public class BCLib {
         BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2017");
         BCLog.logger.info("https://www.mod-buildcraft.com");
         if (!GIT_COMMIT_HASH.startsWith("${")) {
-            BCLog.logger.info("Branch " + GIT_BRANCH);
-            BCLog.logger.info("Commit " + GIT_COMMIT_HASH);
-            BCLog.logger.info("  " + GIT_COMMIT_MSG);
-            BCLog.logger.info("  by " + GIT_COMMIT_AUTHOR);
+            BCLog.logger.info("Detailed Build Information:");
+            BCLog.logger.info("  Branch " + GIT_BRANCH);
+            BCLog.logger.info("  Commit " + GIT_COMMIT_HASH);
+            BCLog.logger.info("    " + GIT_COMMIT_MSG);
+            BCLog.logger.info("    committed by " + GIT_COMMIT_AUTHOR);
         }
         BCLog.logger.info("");
 
