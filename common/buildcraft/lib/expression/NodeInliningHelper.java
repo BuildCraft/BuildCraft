@@ -11,6 +11,9 @@ import java.util.function.Function;
 
 import buildcraft.lib.expression.api.IConstantNode;
 import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.function.PentaFunction;
+import buildcraft.lib.function.QuadFunction;
+import buildcraft.lib.function.TriFunction;
 
 public class NodeInliningHelper {
     /** Attempts to inline a specified node with only 1 input (a unary node)
@@ -93,7 +96,7 @@ public class NodeInliningHelper {
         C extends IExpressionNode,
         D extends IExpressionNode,
         R extends IExpressionNode> R tryInline(R node, A nodeA, B nodeB, C nodeC, D nodeD,
-            QuadFunction<A, B, C, D, R> changer, QuadFunction<A, B, C, D, R> inlinedChanger) {
+                                               QuadFunction<A, B, C, D, R> changer, QuadFunction<A, B, C, D, R> inlinedChanger) {
         ExpressionDebugManager.debugStart("Inlining " + node);
         // Nothing we can do about these unchecked warnings without making IExpressionNode generic
         A inlinedA = (A) nodeA.inline();
@@ -122,7 +125,7 @@ public class NodeInliningHelper {
         D extends IExpressionNode,
         E extends IExpressionNode,
         R extends IExpressionNode> R tryInline(R node, A nodeA, B nodeB, C nodeC, D nodeD, E nodeE,
-            PentaFunction<A, B, C, D, E, R> changer, PentaFunction<A, B, C, D, E, R> inlinedChanger) {
+                                               PentaFunction<A, B, C, D, E, R> changer, PentaFunction<A, B, C, D, E, R> inlinedChanger) {
         ExpressionDebugManager.debugStart("Inlining " + node);
         // Nothing we can do about these unchecked warnings without making IExpressionNode generic
         A inlinedA = (A) nodeA.inline();
@@ -144,20 +147,5 @@ public class NodeInliningHelper {
             ExpressionDebugManager.debugEnd("Partially inlined to " + to);
             return to;
         }
-    }
-
-    @FunctionalInterface
-    public interface TriFunction<A, B, C, R> {
-        R apply(A a, B b, C c);
-    }
-
-    @FunctionalInterface
-    public interface QuadFunction<A, B, C, D, R> {
-        R apply(A a, B b, C c, D d);
-    }
-
-    @FunctionalInterface
-    public interface PentaFunction<A, B, C, D, E, R> {
-        R apply(A a, B b, C c, D d, E e);
     }
 }
