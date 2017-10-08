@@ -22,14 +22,14 @@ public class GuiFillerPlanner extends GuiJson<ContainerFillerPlanner> {
     protected void preLoad() {
         super.preLoad();
         properties.put("filler.possible", FillerStatementContext.CONTEXT_ALL);
-        properties.put("filler.pattern", container.patternClient);
+        properties.put("filler.pattern", container.getPatternStatementClient());
         properties.put("filler.pattern.sprite", SPRITE_PATTERN);
 
-        context.put_b("filler.invert", () -> container.fillerPlanner.inverted);
+        context.put_b("filler.invert", () -> container.addon.inverted);
         properties.put("filler.invert", IButtonBehaviour.TOGGLE);
-        properties.put("filler.invert", container.fillerPlanner.inverted);
+        properties.put("filler.invert", container.addon.inverted);
         properties.put("filler.invert", (IButtonClickEventListener) (b, k) ->
-            container.setInverted(b.isButtonActive())
+            container.sendInverted(b.isButtonActive())
         );
     }
 
@@ -40,7 +40,7 @@ public class GuiFillerPlanner extends GuiJson<ContainerFillerPlanner> {
             b.setBehaviour(IButtonBehaviour.TOGGLE);
             final ToolTip on = ToolTip.createLocalized("tip.filler.invert.on");
             final ToolTip off = ToolTip.createLocalized("tip.filler.invert.off");
-            b.setActive(container.fillerPlanner.inverted);
+            b.setActive(container.addon.inverted);
             IButtonClickEventListener listener = (b2, k) -> {
                 b.setToolTip(b.active ? on : off);
                 container.setInverted(b.active);
@@ -53,6 +53,6 @@ public class GuiFillerPlanner extends GuiJson<ContainerFillerPlanner> {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        SPRITE_PATTERN.delegate = container.patternClient.get().getSprite();
+        SPRITE_PATTERN.delegate = container.getPatternStatementClient().get().getSprite();
     }
 }

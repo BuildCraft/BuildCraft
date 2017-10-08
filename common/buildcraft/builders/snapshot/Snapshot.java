@@ -30,6 +30,7 @@ import buildcraft.lib.misc.HashUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.RotationUtil;
 import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -312,7 +313,7 @@ public abstract class Snapshot {
             this.offsetPos = basePos.add(offset.rotate(rotation));
             this.rotation = rotation;
             this.box.setMin(toWorld(BlockPos.ORIGIN));
-            this.box.setMax(toWorld(size.subtract(new BlockPos(1, 1, 1))));
+            this.box.setMax(toWorld(size.subtract(VecUtil.POS_ONE)));
         }
 
         public BlockPos toWorld(BlockPos blockPos) {
