@@ -6,14 +6,13 @@
 
 package buildcraft.transport.stripes;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.mojang.authlib.GameProfile;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -70,7 +69,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
         }
     }
 
-    private final Map<Integer, Set<PipeExtensionRequest>> requests = new HashMap<>();
+    private final Int2ObjectOpenHashMap<List<PipeExtensionRequest>> requests = new Int2ObjectOpenHashMap<>();
     private final Set<PipeDefinition> retractionPipeDefs = new HashSet<>();
 
     @Override
@@ -79,8 +78,12 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
             return false;
         }
 
-        return requests.computeIfAbsent(world.provider.getDimension(), i -> new LinkedHashSet<>())
-            .add(new PipeExtensionRequest(pos, dir, stripes, ((IItemPipe) stack.getItem()).getDefinition(), stack.copy()));
+        int id = world.provider.getDimension();
+        List<PipeExtensionRequest> rList = requests.get(id);
+        if (rList == null) {
+            requests.put(id, rList = new ArrayList<>());
+        }
+        return rList.add(new PipeExtensionRequest(pos, dir, stripes, ((IItemPipe) stack.getItem()).getDefinition(), stack.copy()));
     }
 
     @Override
@@ -93,15 +96,15 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
     @SubscribeEvent
     public void tick(TickEvent.WorldTickEvent event) {
         if (event.phase == TickEvent.Phase.END && requests.containsKey(event.world.provider.getDimension())) {
-            Set<PipeExtensionRequest> rSet = requests.get(event.world.provider.getDimension());
-            for (PipeExtensionRequest r : rSet) {
+            List<PipeExtensionRequest> rList = requests.get(event.world.provider.getDimension());
+            for (PipeExtensionRequest r : rList) {
                 if (retractionPipeDefs.contains(r.pipeDef)) {
                     retract(event.world, r);
                 } else {
                     extend(event.world, r);
                 }
             }
-            rSet.clear();
+            rList.clear();
         }
     }
 

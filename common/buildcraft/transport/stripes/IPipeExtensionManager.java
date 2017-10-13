@@ -1,9 +1,7 @@
-/*
- * Copyright (c) 2017 SpaceToad and the BuildCraft team
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
- */
-
+/** Copyright (c) 2011-2017, SpaceToad and the BuildCraft Team https://mod-buildcraft.com/
+ *
+ * The BuildCraft API is distributed under the terms of the MIT License. Please check the contents of the license, which
+ * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.transport.stripes;
 
 import net.minecraft.item.ItemStack;
