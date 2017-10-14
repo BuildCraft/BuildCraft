@@ -146,7 +146,6 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     public EnumActionResult attemptRotation() {
-        BCLog.logger.info("[lib.engine] Attempt rotation @ " + StringUtilBC.blockPosToString(getPos()));
         OrderedEnumMap<EnumFacing> possible = VanillaRotationHandlers.ROTATE_FACING;
         EnumFacing current = currentDirection;
         for (int i = 0; i < 6; i++) {
@@ -175,7 +174,6 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     public void rotateIfInvalid() {
-        BCLog.logger.info("[lib.engine] rotateIfInvalid @ " + StringUtilBC.blockPosToString(getPos()));
         if (currentDirection != null && isFacingReceiver(currentDirection)) {
             return;
         }
