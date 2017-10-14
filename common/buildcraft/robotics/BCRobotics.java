@@ -13,11 +13,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.lib.BCLib;
-import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.net.MessageManager.MessageId;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
@@ -26,8 +23,6 @@ import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.core.BCCore;
 import buildcraft.robotics.tile.TileZonePlanner;
-import buildcraft.robotics.zone.MessageZoneMapRequest;
-import buildcraft.robotics.zone.MessageZoneMapResponse;
 
 //@formatter:off
 @Mod(

@@ -9,6 +9,7 @@ package buildcraft.lib.misc;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;

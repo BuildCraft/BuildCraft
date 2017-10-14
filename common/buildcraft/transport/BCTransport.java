@@ -37,8 +37,6 @@ import buildcraft.transport.plug.FacadeInstance;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.tile.TileFilteredBuffer;
 import buildcraft.transport.tile.TilePipeHolder;
-import buildcraft.transport.wire.MessageWireSystems;
-import buildcraft.transport.wire.MessageWireSystemsPowered;
 
 //@formatter:off
 @Mod(

@@ -16,22 +16,20 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
 import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
 
+import buildcraft.core.list.ListTooltipHandler;
 import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.VolumeCache;
-import buildcraft.core.marker.volume.MessageVolumeBoxes;
 
 //@formatter:off
 @Mod(

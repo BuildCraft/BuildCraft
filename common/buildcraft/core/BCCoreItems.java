@@ -44,7 +44,7 @@ public class BCCoreItems {
     public static final ItemMarkerConnector MARKER_CONNECTOR = null;
     public static final ItemVolumeBox VOLUME_BOX = null;
     public static final ItemGoggles GOGGLES = null;
-    public static ItemFragileFluidContainer FRAGILE_FLUID_SHARD
+    public static ItemFragileFluidContainer FRAGILE_FLUID_SHARD;
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -73,6 +73,7 @@ public class BCCoreItems {
 
     @SubscribeEvent
     public static void registerVariants(ModelRegistryEvent event) {
+        FluidItemDrops.item = FRAGILE_FLUID_SHARD;
         RegistryHelper.registerVariants(
             WRENCH,
             GEAR_WOOD,
