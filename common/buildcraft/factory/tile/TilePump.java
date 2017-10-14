@@ -109,7 +109,8 @@ public class TilePump extends TileMiner {
             return;
         }
         world.profiler.endStartSection("build");
-        boolean isWater = /* BCFactoryConfig.consumeWaterSources && */ FluidUtilBC.areFluidsEqual(queueFluid, FluidRegistry.WATER);
+        boolean isWater =
+            /* BCFactoryConfig.consumeWaterSources && */ FluidUtilBC.areFluidsEqual(queueFluid, FluidRegistry.WATER);
         outer: while (!nextPosesToCheck.isEmpty()) {
             List<BlockPos> nextPosesToCheckCopy = new ArrayList<>(nextPosesToCheck);
             nextPosesToCheck.clear();
@@ -141,7 +142,7 @@ public class TilePump extends TileMiner {
                     IBlockState below = world.getBlockState(posToCheck.down());
                     // Same check as in BlockDynamicLiquid.updateTick:
                     // if that method changes how it checks for adjacent
-                    //  water sources then this also needs updating
+                    // water sources then this also needs updating
                     Fluid fluidBelow = BlockUtil.getFluidWithoutFlowing(below);
                     if (FluidUtilBC.areFluidsEqual(fluidBelow, FluidRegistry.WATER) || below.getMaterial().isSolid()) {
                         isInfiniteWaterSource = true;

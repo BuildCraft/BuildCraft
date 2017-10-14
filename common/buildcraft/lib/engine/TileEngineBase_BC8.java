@@ -12,13 +12,11 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.biome.Biome;
 
@@ -192,10 +190,6 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         super.onPlacedBy(placer, stack);
         currentDirection = null;// Force rotateIfInvalid to always attempt to rotate
         rotateIfInvalid();
-    }
-
-    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        return false;
     }
 
     protected Biome getBiome() {

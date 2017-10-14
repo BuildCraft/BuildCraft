@@ -17,6 +17,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.net.MessageManager;
+import buildcraft.lib.net.MessageManager.MessageId;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
@@ -47,10 +48,9 @@ public class BCRobotics {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
 
-        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCRoboticsProxy.getProxy());
+        BCRoboticsProxy.getProxy().fmlPreInit();
 
-        MessageManager.addMessageType(MessageZoneMapRequest.class, MessageZoneMapRequest.HANDLER, Side.SERVER);
-        MessageManager.addMessageType(MessageZoneMapResponse.class, MessageZoneMapResponse.HANDLER, Side.CLIENT);
+        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCRoboticsProxy.getProxy());
     }
 
     @Mod.EventHandler

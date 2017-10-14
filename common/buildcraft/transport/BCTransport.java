@@ -16,14 +16,12 @@ import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.config.EnumRestartRequirement;
-import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
 import buildcraft.lib.registry.RegistryHelper;
@@ -77,18 +75,12 @@ public class BCTransport {
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCTransportProxy.getProxy());
 
-        SchematicBlockFactoryRegistry.registerFactory(
-            "pipe",
-            300,
-            SchematicBlockPipe::predicate,
-            SchematicBlockPipe::new
-        );
+        SchematicBlockFactoryRegistry.registerFactory("pipe", 300, SchematicBlockPipe::predicate,
+            SchematicBlockPipe::new);
 
         BCTransportProxy.getProxy().fmlPreInit();
 
         MinecraftForge.EVENT_BUS.register(BCTransportEventDist.INSTANCE);
-        MessageManager.addMessageType(MessageWireSystems.class, MessageWireSystems.HANDLER, Side.CLIENT);
-        MessageManager.addMessageType(MessageWireSystemsPowered.class, MessageWireSystemsPowered.HANDLER, Side.CLIENT);
     }
 
     @Mod.EventHandler
@@ -126,13 +118,18 @@ public class BCTransport {
     static {
         startBatch();
         // Items
-        registerTag("item.waterproof").reg("waterproof").locale("pipeWaterproof").oldReg("pipeWaterproof").model("waterproof");
-        registerTag("item.plug.blocker").reg("plug_blocker").locale("PipePlug").model("plug_blocker").tab("buildcraft.plugs");
+        registerTag("item.waterproof").reg("waterproof").locale("pipeWaterproof").oldReg("pipeWaterproof")
+            .model("waterproof");
+        registerTag("item.plug.blocker").reg("plug_blocker").locale("PipePlug").model("plug_blocker")
+            .tab("buildcraft.plugs");
         registerTag("item.plug.gate").reg("plug_gate").locale("gate").model("pluggable/gate").tab("buildcraft.plugs");
         registerTag("item.plug.lens").reg("plug_lens").locale("lens").model("pluggable/lens").tab("buildcraft.plugs");
-        registerTag("item.plug.pulsar").reg("plug_pulsar").locale("pulsar").model("plug_pulsar").tab("buildcraft.plugs");
-        registerTag("item.plug.light_sensor").reg("plug_light_sensor").locale("light_sensor").model("plug_light_sensor").tab("buildcraft.plugs");
-        registerTag("item.plug.facade").reg("plug_facade").locale("Facade").model("plug_facade").tab("buildcraft.facades");
+        registerTag("item.plug.pulsar").reg("plug_pulsar").locale("pulsar").model("plug_pulsar")
+            .tab("buildcraft.plugs");
+        registerTag("item.plug.light_sensor").reg("plug_light_sensor").locale("light_sensor").model("plug_light_sensor")
+            .tab("buildcraft.plugs");
+        registerTag("item.plug.facade").reg("plug_facade").locale("Facade").model("plug_facade")
+            .tab("buildcraft.facades");
         registerTag("item.wire").reg("wire").locale("pipeWire").model("wire/").tab("buildcraft.plugs");
         // Pipes
         startBatch();// Pipes
@@ -143,55 +140,70 @@ public class BCTransport {
         registerTag("item.pipe.buildcrafttransport.stone_item").reg("pipe_stone_item").locale("PipeItemsStone");
         registerTag("item.pipe.buildcrafttransport.stone_fluid").reg("pipe_stone_fluid").locale("PipeFluidsStone");
         registerTag("item.pipe.buildcrafttransport.stone_power").reg("pipe_stone_power").locale("PipePowerStone");
-        registerTag("item.pipe.buildcrafttransport.cobblestone_item").reg("pipe_cobble_item").locale("PipeItemsCobblestone");
-        registerTag("item.pipe.buildcrafttransport.cobblestone_fluid").reg("pipe_cobble_fluid").locale("PipeFluidsCobblestone");
-        registerTag("item.pipe.buildcrafttransport.cobblestone_power").reg("pipe_cobble_power").locale("PipePowerCobblestone");
+        registerTag("item.pipe.buildcrafttransport.cobblestone_item").reg("pipe_cobble_item")
+            .locale("PipeItemsCobblestone");
+        registerTag("item.pipe.buildcrafttransport.cobblestone_fluid").reg("pipe_cobble_fluid")
+            .locale("PipeFluidsCobblestone");
+        registerTag("item.pipe.buildcrafttransport.cobblestone_power").reg("pipe_cobble_power")
+            .locale("PipePowerCobblestone");
         registerTag("item.pipe.buildcrafttransport.quartz_item").reg("pipe_quartz_item").locale("PipeItemsQuartz");
         registerTag("item.pipe.buildcrafttransport.quartz_fluid").reg("pipe_quartz_fluid").locale("PipeFluidsQuartz");
         registerTag("item.pipe.buildcrafttransport.quartz_power").reg("pipe_quartz_power").locale("PipePowerQuartz");
         registerTag("item.pipe.buildcrafttransport.gold_item").reg("pipe_gold_item").locale("PipeItemsGold");
         registerTag("item.pipe.buildcrafttransport.gold_fluid").reg("pipe_gold_fluid").locale("PipeFluidsGold");
         registerTag("item.pipe.buildcrafttransport.gold_power").reg("pipe_gold_power").locale("PipePowerGold");
-        registerTag("item.pipe.buildcrafttransport.sandstone_item").reg("pipe_sandstone_item").locale("PipeItemsSandstone");
-        registerTag("item.pipe.buildcrafttransport.sandstone_fluid").reg("pipe_sandstone_fluid").locale("PipeFluidsSandstone");
-        registerTag("item.pipe.buildcrafttransport.sandstone_power").reg("pipe_sandstone_power").locale("PipePowerSandstone");
+        registerTag("item.pipe.buildcrafttransport.sandstone_item").reg("pipe_sandstone_item")
+            .locale("PipeItemsSandstone");
+        registerTag("item.pipe.buildcrafttransport.sandstone_fluid").reg("pipe_sandstone_fluid")
+            .locale("PipeFluidsSandstone");
+        registerTag("item.pipe.buildcrafttransport.sandstone_power").reg("pipe_sandstone_power")
+            .locale("PipePowerSandstone");
         registerTag("item.pipe.buildcrafttransport.iron_item").reg("pipe_iron_item").locale("PipeItemsIron");
         registerTag("item.pipe.buildcrafttransport.iron_fluid").reg("pipe_iron_fluid").locale("PipeFluidsIron");
         registerTag("item.pipe.buildcrafttransport.iron_power").reg("pipe_iron_power").locale("PipePowerIron");
         registerTag("item.pipe.buildcrafttransport.diamond_item").reg("pipe_diamond_item").locale("PipeItemsDiamond");
-        registerTag("item.pipe.buildcrafttransport.diamond_fluid").reg("pipe_diamond_fluid").locale("PipeFluidsDiamond");
+        registerTag("item.pipe.buildcrafttransport.diamond_fluid").reg("pipe_diamond_fluid")
+            .locale("PipeFluidsDiamond");
         registerTag("item.pipe.buildcrafttransport.diamond_power").reg("pipe_diamond_power").locale("PipePowerDiamond");
-        registerTag("item.pipe.buildcrafttransport.diamond_wood_item").reg("pipe_diamond_wood_item").locale("PipeItemsEmerald");
-        registerTag("item.pipe.buildcrafttransport.diamond_wood_fluid").reg("pipe_diamond_wood_fluid").locale("PipeFluidsEmerald");
-        registerTag("item.pipe.buildcrafttransport.diamond_wood_power").reg("pipe_diamond_wood_power").locale("PipePowerEmerald");
+        registerTag("item.pipe.buildcrafttransport.diamond_wood_item").reg("pipe_diamond_wood_item")
+            .locale("PipeItemsEmerald");
+        registerTag("item.pipe.buildcrafttransport.diamond_wood_fluid").reg("pipe_diamond_wood_fluid")
+            .locale("PipeFluidsEmerald");
+        registerTag("item.pipe.buildcrafttransport.diamond_wood_power").reg("pipe_diamond_wood_power")
+            .locale("PipePowerEmerald");
         registerTag("item.pipe.buildcrafttransport.clay_item").reg("pipe_clay_item").locale("PipeItemsClay");
         registerTag("item.pipe.buildcrafttransport.clay_fluid").reg("pipe_clay_fluid").locale("PipeFluidsClay");
         registerTag("item.pipe.buildcrafttransport.void_item").reg("pipe_void_item").locale("PipeItemsVoid");
         registerTag("item.pipe.buildcrafttransport.void_fluid").reg("pipe_void_fluid").locale("PipeFluidsVoid");
-        registerTag("item.pipe.buildcrafttransport.obsidian_item").reg("pipe_obsidian_item").locale("PipeItemsObsidian");
-        registerTag("item.pipe.buildcrafttransport.obsidian_fluid").reg("pipe_obsidian_fluid").locale("PipeFluidsObsidian");
+        registerTag("item.pipe.buildcrafttransport.obsidian_item").reg("pipe_obsidian_item")
+            .locale("PipeItemsObsidian");
+        registerTag("item.pipe.buildcrafttransport.obsidian_fluid").reg("pipe_obsidian_fluid")
+            .locale("PipeFluidsObsidian");
         registerTag("item.pipe.buildcrafttransport.lapis_item").reg("pipe_lapis_item").locale("PipeItemsLapis");
         registerTag("item.pipe.buildcrafttransport.daizuli_item").reg("pipe_daizuli_item").locale("PipeItemsDaizuli");
         registerTag("item.pipe.buildcrafttransport.emzuli_item").reg("pipe_emzuli_item").locale("PipeItemsEmzuli");
         registerTag("item.pipe.buildcrafttransport.stripes_item").reg("pipe_stripes_item").locale("PipeItemsStripes");
 
         registerTag("item.pipe.buildcrafttransport.wood_power_2").reg("pipe_wood_power_2").locale("PipePowerWood2");
-        registerTag("item.pipe.buildcrafttransport.quartz_power_2").reg("pipe_quartz_power_2").locale("PipePowerQuartz2");
+        registerTag("item.pipe.buildcrafttransport.quartz_power_2").reg("pipe_quartz_power_2")
+            .locale("PipePowerQuartz2");
         endBatch(TagManager.setTab("buildcraft.pipes"));
         // Item Blocks
-        registerTag("item.block.filtered_buffer").reg("filtered_buffer").locale("filteredBufferBlock").model("filtered_buffer");
+        registerTag("item.block.filtered_buffer").reg("filtered_buffer").locale("filteredBufferBlock")
+            .model("filtered_buffer");
         // Blocks
-        registerTag("block.filtered_buffer").reg("filtered_buffer").oldReg("filteredBufferBlock").locale("filteredBufferBlock").model("filtered_buffer");
+        registerTag("block.filtered_buffer").reg("filtered_buffer").oldReg("filteredBufferBlock")
+            .locale("filteredBufferBlock").model("filtered_buffer");
         registerTag("block.pipe_holder").reg("pipe_holder").locale("pipeHolder");
         // Tiles
         registerTag("tile.filtered_buffer").reg("filtered_buffer");
         registerTag("tile.pipe_holder").reg("pipe_holder");
 
-        endBatch(TagManager.prependTags("buildcrafttransport:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(TagManager.setTab("buildcraft.main")));
-
         tabPipes = CreativeTabManager.createTab("buildcraft.pipes");
         tabPlugs = CreativeTabManager.createTab("buildcraft.plugs");
         tabFacades = CreativeTabManager.createTab("buildcraft.facades");
+        endBatch(TagManager.prependTags("buildcrafttransport:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION)
+            .andThen(TagManager.setTab("buildcraft.main")));
     }
 
     private static TagEntry registerTag(String id) {

@@ -12,10 +12,13 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import buildcraft.api.items.FluidItemDrops;
+
 import buildcraft.lib.BCLib;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.registry.RegistryHelper;
 
+import buildcraft.core.item.ItemFragileFluidContainer;
 import buildcraft.core.item.ItemGoggles;
 import buildcraft.core.item.ItemList_BC8;
 import buildcraft.core.item.ItemMapLocation;
@@ -41,6 +44,7 @@ public class BCCoreItems {
     public static final ItemMarkerConnector MARKER_CONNECTOR = null;
     public static final ItemVolumeBox VOLUME_BOX = null;
     public static final ItemGoggles GOGGLES = null;
+    public static ItemFragileFluidContainer FRAGILE_FLUID_SHARD
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -55,7 +59,8 @@ public class BCCoreItems {
             new ItemList_BC8("item.list"),
             new ItemMarkerConnector("item.marker_connector"),
             new ItemVolumeBox("item.volume_box"),
-            new ItemBC_Neptune("item.diamond.shard")
+            new ItemBC_Neptune("item.diamond.shard"),
+            new ItemFragileFluidContainer("item.fragile_fluid_shard")
         );
         if (BCLib.DEV) {
             RegistryHelper.registerItems(event,

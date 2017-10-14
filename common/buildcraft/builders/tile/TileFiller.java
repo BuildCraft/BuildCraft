@@ -12,6 +12,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -26,6 +28,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
@@ -71,7 +74,6 @@ import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 
 public class TileFiller extends TileBC_Neptune
     implements ITickable, IDebuggable, ITileForTemplateBuilder, IFillerStatementContainer, IControllable {
-
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("filler");
     @SuppressWarnings("WeakerAccess")
     public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
@@ -97,7 +99,7 @@ public class TileFiller extends TileBC_Neptune
         );
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
     private boolean canExcavate = true;
-    private boolean inverted = false;
+    public boolean inverted = false;
     private boolean finished = false;
     private byte lockedTicks = 0;
     private Mode mode = Mode.ON;
@@ -164,7 +166,6 @@ public class TileFiller extends TileBC_Neptune
                     )
                 );
                 volumeBoxes.markDirty();
-                updateBuildingInfo();
             }
         } else if (tile instanceof IAreaProvider) {
             IAreaProvider provider = (IAreaProvider) tile;
@@ -173,9 +174,22 @@ public class TileFiller extends TileBC_Neptune
             box.setMax(provider.max());
             markerBox = true;
             provider.removeFromWorld();
-            updateBuildingInfo();
         }
+        updateBuildingInfo();
         sendNetworkUpdate(NET_RENDER_DATA);
+    }
+
+    @Override
+    protected void onSlotChange(IItemHandlerModifiable handler,
+                                int slot,
+                                @Nonnull ItemStack before,
+                                @Nonnull ItemStack after) {
+        if (!world.isRemote) {
+            if (handler == invResources) {
+                Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::resourcesChanged);
+            }
+        }
+        super.onSlotChange(handler, slot, before, after);
     }
 
     @Override
@@ -195,9 +209,7 @@ public class TileFiller extends TileBC_Neptune
         if (mode == Mode.OFF/* || (mode == Mode.ON && finished)*/) { // TODO: finished
             return;
         }
-        if (isValid()) {
-            finished = builder.tick();
-        }
+        Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::tick);
     }
 
     @Override
@@ -287,22 +299,6 @@ public class TileFiller extends TileBC_Neptune
             if (id == NET_CAN_EXCAVATE) {
                 canExcavate = buffer.readBoolean();
                 sendNetworkGuiUpdate(NET_CAN_EXCAVATE);
-            } else if (id == NET_INVERT) {
-                inverted = buffer.readBoolean();
-                sendNetworkGuiUpdate(NET_INVERT);
-            } else if (id == NET_PATTERN) {
-                if (isLocked()) {
-                    new FullStatement<>(
-                        FillerType.INSTANCE,
-                        4,
-                        (a, b) -> {
-                        }
-                    ).readFromBuffer(buffer);
-                } else {
-                    patternStatement.readFromBuffer(buffer);
-                    sendNetworkUpdate(NET_PATTERN);
-                    onStatementChange();
-                }
             }
         }
     }
@@ -326,12 +322,10 @@ public class TileFiller extends TileBC_Neptune
         MessageManager.sendToServer(createMessage(NET_CAN_EXCAVATE, buffer -> buffer.writeBoolean(newValue)));
     }
 
-    public void sendInvert(boolean newValue) {
-        MessageManager.sendToServer(createMessage(NET_INVERT, buffer -> buffer.writeBoolean(newValue)));
-    }
-
-    private void onStatementChange() {
-        createAndSendMessage(NET_PATTERN, patternStatement::writeToBuffer);
+    public void onStatementChange() {
+        if (!world.isRemote) {
+            createAndSendMessage(NET_PATTERN, patternStatement::writeToBuffer);
+        }
         finished = false;
         updateBuildingInfo();
     }
@@ -368,7 +362,7 @@ public class TileFiller extends TileBC_Neptune
         lockedTicks = nbt.getByte("lockedTicks");
         mode = Optional.ofNullable(NBTUtilBC.readEnum(nbt.getTag("mode"), Mode.class)).orElse(Mode.ON);
         box.initialize(nbt.getCompoundTag("box"));
-        if (nbt.hasKey("addonBoxId") && nbt.hasKey("addonSlot")) {
+        if (nbt.hasKey("addonSlot")) {
             addon = (AddonFillingPlanner) WorldSavedDataVolumeBoxes.get(world)
                 .getBoxFromId(nbt.getUniqueId("addonBoxId"))
                 .addons
@@ -377,7 +371,7 @@ public class TileFiller extends TileBC_Neptune
         markerBox = nbt.getBoolean("markerBox");
         patternStatement.readFromNbt(nbt.getCompoundTag("patternStatement"));
         if (nbt.hasKey("builder")) {
-            Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::updateSnapshot);
+            updateBuildingInfo();
             Optional.ofNullable(getBuilder()).ifPresent(builder -> builder.deserializeNBT(nbt.getCompoundTag("builder")));
         }
     }
@@ -394,7 +388,7 @@ public class TileFiller extends TileBC_Neptune
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        return BoundingBoxUtil.makeFrom(getPos(), box);
+        return BoundingBoxUtil.makeFrom(pos, addon != null ? addon.box.box : box);
     }
 
     @Override
@@ -442,10 +436,6 @@ public class TileFiller extends TileBC_Neptune
         return canExcavate;
     }
 
-    public boolean shouldInvert() {
-        return inverted;
-    }
-
     public boolean isFinished() {
         return mode != Mode.LOOP && this.finished;
     }
@@ -489,7 +479,7 @@ public class TileFiller extends TileBC_Neptune
     }
 
     public boolean isValid() {
-        return hasBox() && buildingInfo != null;
+        return hasBox() && (world.isRemote || (addon != null ? addon.buildingInfo : buildingInfo) != null);
     }
 
     @Override
@@ -497,7 +487,7 @@ public class TileFiller extends TileBC_Neptune
         if (!hasBox()) {
             throw new IllegalStateException("Called getBox() when hasBox() returned false!");
         }
-        return box.isInitialized() ? box : addon.box.box;
+        return addon != null ? addon.box.box : box;
     }
 
     @Override

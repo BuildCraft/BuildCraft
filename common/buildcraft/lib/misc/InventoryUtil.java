@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nonnull;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -55,7 +56,7 @@ public class InventoryUtil {
     }
 
     public static void drop(World world, BlockPos pos, @Nonnull ItemStack stack) {
-        drop(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
+        Block.spawnAsEntity(world, pos, stack);
     }
 
     public static void drop(World world, double x, double y, double z, @Nonnull ItemStack stack) {

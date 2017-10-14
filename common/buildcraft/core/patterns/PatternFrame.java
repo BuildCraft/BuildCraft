@@ -30,7 +30,7 @@ public class PatternFrame extends Pattern {
         int maxZ = template.maxZ;
 
         // X axis
-        if (maxX > 2) {
+        if (maxX > 1) {
             template.fillLineX(1, maxX - 1, 0, 0);
             template.fillLineX(1, maxX - 1, 0, maxZ);
             template.fillLineX(1, maxX - 1, maxY, 0);
@@ -38,7 +38,7 @@ public class PatternFrame extends Pattern {
         }
 
         // Y axis
-        if (maxY > 2) {
+        if (maxY > 1) {
             template.fillLineY(0, 1, maxY - 1, 0);
             template.fillLineY(0, 1, maxY - 1, maxZ);
             template.fillLineY(maxX, 1, maxY - 1, 0);

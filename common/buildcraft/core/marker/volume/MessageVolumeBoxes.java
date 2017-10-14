@@ -14,11 +14,10 @@ import java.util.stream.Collectors;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import net.minecraft.client.Minecraft;
-
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 
+import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.net.PacketBufferBC;
 
 public class MessageVolumeBoxes implements IMessage {
@@ -63,7 +62,7 @@ public class MessageVolumeBoxes implements IMessage {
         ClientVolumeBoxes.INSTANCE.boxes.removeIf(box -> !message.boxes.contains(box));
         try {
             for (PacketBufferBC packet : message.boxes) {
-                VolumeBox box = new VolumeBox(Minecraft.getMinecraft().world, packet);
+                VolumeBox box = new VolumeBox(BCLibProxy.getProxy().getClientWorld(), packet);
                 PacketBufferBC buf = new PacketBufferBC(Unpooled.buffer());
                 box.toBytes(buf);
                 boolean wasContained = false;

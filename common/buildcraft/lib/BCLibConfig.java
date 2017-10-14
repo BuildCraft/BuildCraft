@@ -43,11 +43,11 @@ public class BCLibConfig {
     public static int itemLifespan = 60;
 
     /** If true then fluidstacks will localize with something similar to "4B Water" rather than "4000mB of Water" when
-     * calling {@link LocaleUtil#localizeFluidStatic(net.minecraftforge.fluids.FluidStack)} */
+     * calling {@link LocaleUtil#localizeFluidStaticAmount(int)} */
     public static boolean useBucketsStatic = true;
 
     /** If true then fluidstacks will localize with something similar to "4B/s" rather than "4000mB/t" when calling
-     * {@link LocaleUtil#localizeFluidStatic(net.minecraftforge.fluids.FluidStack)} */
+     * {@link LocaleUtil#localizeFluidFlow(int)} */
     public static boolean useBucketsFlow = true;
 
     /** If true then fluidstacks and Mj will be localized with longer names (for example "1.2 Buckets per second" rather

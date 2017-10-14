@@ -332,6 +332,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                 )
                 .limit(MAX_QUEUE_SIZE - breakTasks.size())
                 .forEach(breakTasks::add);
+        } else {
+            leftToBreak = 0;
         }
         tile.getWorldBC().profiler.endSection();
         tile.getWorldBC().profiler.startSection("place");

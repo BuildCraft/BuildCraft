@@ -13,7 +13,12 @@ import java.util.List;
 
 import com.google.common.collect.ForwardingList;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
@@ -23,7 +28,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
+import buildcraft.api.items.FluidItemDrops;
 
+import buildcraft.lib.misc.FluidUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
 
 /** Provides a simple way to save+load and send+receive data for any number of tanks. This also attempts to fill all of
@@ -47,10 +54,48 @@ public class TankManager extends ForwardingList<Tank> implements IFluidHandlerAd
         Collections.addAll(this, values);
     }
 
+    public void addDrops(NonNullList<ItemStack> toDrop) {
+        FluidItemDrops.addFluidDrops(toDrop, toArray(new Tank[0]));
+    }
+
+    public boolean onActivated(EntityPlayer player, BlockPos pos, EnumHand hand) {
+        return FluidUtilBC.onTankActivated(player, pos, hand, this);
+    }
+
+    private List<Tank> getFillOrderTanks() {
+        List<Tank> list = new ArrayList<>();
+        for (Tank t : tanks) {
+            if (t.canFill() && !t.canDrain()) {
+                list.add(t);
+            }
+        }
+        for (Tank t : tanks) {
+            if (t.canFill() && t.canDrain()) {
+                list.add(t);
+            }
+        }
+        return list;
+    }
+
+    private List<Tank> getDrainOrderTanks() {
+        List<Tank> list = new ArrayList<>();
+        for (Tank t : tanks) {
+            if (!t.canFill() && t.canDrain()) {
+                list.add(t);
+            }
+        }
+        for (Tank t : tanks) {
+            if (t.canFill() && t.canDrain()) {
+                list.add(t);
+            }
+        }
+        return list;
+    }
+
     @Override
     public int fill(FluidStack resource, boolean doFill) {
         int filled = 0;
-        for (Tank tank : tanks) {
+        for (Tank tank : getFillOrderTanks()) {
             int used = tank.fill(resource, doFill);
             if (used > 0) {
                 resource.amount -= used;
@@ -70,7 +115,7 @@ public class TankManager extends ForwardingList<Tank> implements IFluidHandlerAd
         }
         FluidStack draining = new FluidStack(resource, 0);
         int left = resource.amount;
-        for (Tank tank : tanks) {
+        for (Tank tank : getDrainOrderTanks()) {
             if (!draining.isFluidEqual(tank.getFluid())) {
                 continue;
             }
@@ -86,7 +131,7 @@ public class TankManager extends ForwardingList<Tank> implements IFluidHandlerAd
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain) {
         FluidStack draining = null;
-        for (Tank tank : tanks) {
+        for (Tank tank : getDrainOrderTanks()) {
             if (draining == null) {
                 FluidStack drained = tank.drain(maxDrain, doDrain);
                 if (drained != null && drained.amount > 0) {
@@ -110,7 +155,7 @@ public class TankManager extends ForwardingList<Tank> implements IFluidHandlerAd
             return null;
         }
         FluidStack draining = null;
-        for (Tank tank : tanks) {
+        for (Tank tank : getDrainOrderTanks()) {
             if (!filter.matches(tank.getFluid())) {
                 continue;
             }

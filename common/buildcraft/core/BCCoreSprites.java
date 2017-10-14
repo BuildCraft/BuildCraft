@@ -26,6 +26,23 @@ import buildcraft.core.statements.TriggerInventory;
 import buildcraft.core.statements.TriggerInventoryLevel;
 
 public class BCCoreSprites {
+
+    public static final SpriteHolder MARKER_VOLUME_CONNECTED;
+    public static final SpriteHolder MARKER_VOLUME_POSSIBLE;
+    public static final SpriteHolder MARKER_VOLUME_SIGNAL;
+    public static final SpriteHolder MARKER_PATH_CONNECTED;
+    public static final SpriteHolder MARKER_PATH_POSSIBLE;
+    public static final SpriteHolder MARKER_DEFAULT_POSSIBLE;
+
+    public static final SpriteHolder STRIPES_READ;
+    public static final SpriteHolder STRIPES_WRITE;
+    public static final SpriteHolder STRIPES_WRITE_DIRECTION;
+
+    public static final SpriteHolder LASER_POWER_LOW;
+    public static final SpriteHolder LASER_POWER_MED;
+    public static final SpriteHolder LASER_POWER_HIGH;
+    public static final SpriteHolder LASER_POWER_FULL;
+
     public static final SpriteHolder TRIGGER_TRUE;
     public static final SpriteHolder PARAM_GATE_SIDE_ONLY;
 
@@ -82,6 +99,22 @@ public class BCCoreSprites {
     public static final Map<EnumPowerStage, SpriteHolder> TRIGGER_POWER_STAGE;
 
     static {
+        MARKER_VOLUME_CONNECTED = getHolder("lasers/marker_volume_connected");
+        MARKER_VOLUME_POSSIBLE = getHolder("lasers/marker_volume_possible");
+        MARKER_VOLUME_SIGNAL = getHolder("lasers/marker_volume_signal");
+        MARKER_PATH_CONNECTED = getHolder("lasers/marker_path_connected");
+        MARKER_PATH_POSSIBLE = getHolder("lasers/marker_path_possible");
+        MARKER_DEFAULT_POSSIBLE = getHolder("lasers/marker_default_possible");
+
+        STRIPES_READ = getHolder("lasers/stripes_read");
+        STRIPES_WRITE = getHolder("lasers/stripes_write");
+        STRIPES_WRITE_DIRECTION = getHolder("lasers/stripes_write_direction");
+
+        LASER_POWER_LOW = getHolder("lasers/power_low");
+        LASER_POWER_MED = getHolder("lasers/power_med");
+        LASER_POWER_HIGH = getHolder("lasers/power_high");
+        LASER_POWER_FULL = getHolder("lasers/power_full");
+        
         TRIGGER_TRUE = getHolder("triggers/trigger_true");
         PARAM_GATE_SIDE_ONLY = getHolder("triggers/redstone_gate_side_only");
 

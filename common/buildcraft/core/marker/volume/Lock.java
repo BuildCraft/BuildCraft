@@ -19,12 +19,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
-
-import buildcraft.core.client.BuildCraftLaserManager;
 
 public class Lock {
     public Cause cause;
@@ -263,14 +260,8 @@ public class Lock {
             }
 
             public enum EnumType {
-                STRIPES_WRITE(BuildCraftLaserManager.STRIPES_WRITE),
-                STRIPES_READ(BuildCraftLaserManager.STRIPES_READ);
-
-                public final LaserData_BC8.LaserType laserType;
-
-                EnumType(LaserData_BC8.LaserType laserType) {
-                    this.laserType = laserType;
-                }
+                STRIPES_WRITE,
+                STRIPES_READ;
             }
         }
 

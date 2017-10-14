@@ -11,14 +11,21 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
@@ -123,5 +130,54 @@ public class FluidUtilBC {
             throw new IllegalStateException("Mismatched IFluidHandler implementations!");
         }
         return new FluidStack(drained, accepted);
+    }
+
+    public static boolean onTankActivated(EntityPlayer player, BlockPos pos, EnumHand hand, IFluidHandler fluidHandler) {
+        ItemStack held = player.getHeldItem(hand);
+        if (held.isEmpty()) {
+            return false;
+        }
+        boolean replace = !player.capabilities.isCreativeMode;
+        boolean single = held.getCount() == 1;
+        IFluidHandlerItem flItem;
+        if (replace && single) {
+            flItem = FluidUtil.getFluidHandler(held);
+        } else {
+            // replace and not single - need a copy and count set to 1
+            // not replace and single - need a copy, does not need change of count but it should be ok
+            // not replace and not single - need a copy count set to 1
+            ItemStack copy = held.copy();
+            copy.setCount(1);
+            flItem = FluidUtil.getFluidHandler(copy);
+        }
+        if (flItem == null) {
+            return false;
+        }
+        World world = player.world;
+        if (world.isRemote) {
+            return true;
+        }
+        boolean changed = true;
+        FluidStack moved;
+        if ((moved = FluidUtilBC.move(flItem, fluidHandler)) != null) {
+            SoundUtil.playBucketEmpty(world, pos, moved);
+        } else if ((moved = FluidUtilBC.move(fluidHandler, flItem)) != null) {
+            SoundUtil.playBucketFill(world, pos, moved);
+        } else {
+            changed = false;
+        }
+
+        if (changed && replace) {
+            if (single) {
+                // if it was the single item, replace with changed one
+                player.setHeldItem(hand, flItem.getContainer());
+            } else {
+                // if it was part of stack, shrink stack and give / drop the new one
+                held.shrink(1);
+                ItemHandlerHelper.giveItemToPlayer(player, flItem.getContainer());
+            }
+            player.inventoryContainer.detectAndSendChanges();
+        }
+        return true;
     }
 }

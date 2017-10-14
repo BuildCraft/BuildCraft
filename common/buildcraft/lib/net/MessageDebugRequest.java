@@ -11,7 +11,7 @@ import java.util.List;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -21,40 +21,43 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.lib.BCLibProxy;
-
-public class MessageDebuggableRequest implements IMessage {
+public class MessageDebugRequest implements IMessage {
     private BlockPos pos;
     private EnumFacing side;
 
     @SuppressWarnings("unused")
-    public MessageDebuggableRequest() {
-    }
+    public MessageDebugRequest() {}
 
-    public MessageDebuggableRequest(BlockPos pos, EnumFacing side) {
+    public MessageDebugRequest(BlockPos pos, EnumFacing side) {
         this.pos = pos;
         this.side = side;
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
-        new PacketBuffer(buf).writeBlockPos(pos);
-        new PacketBufferBC(buf).writeEnumValue(side);
+    public void toBytes(ByteBuf buffer) {
+        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
+        buf.writeBlockPos(pos);
+        buf.writeEnumValue(side);
     }
 
     @Override
-    public void fromBytes(ByteBuf buf) {
-        pos = new PacketBuffer(buf).readBlockPos();
-        side = new PacketBufferBC(buf).readEnumValue(EnumFacing.class);
+    public void fromBytes(ByteBuf buffer) {
+        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
+        pos = buf.readBlockPos();
+        side = buf.readEnumValue(EnumFacing.class);
     }
 
-    public static final IMessageHandler<MessageDebuggableRequest, MessageDebuggableResponse> HANDLER = (message, ctx) -> {
-        TileEntity tile = BCLibProxy.getProxy().getPlayerForContext(ctx).world.getTileEntity(message.pos);
+    public static final IMessageHandler<MessageDebugRequest, MessageDebugResponse> HANDLER = (message, ctx) -> {
+        EntityPlayer player = ctx.getServerHandler().player;
+        if (!player.capabilities.isCreativeMode) {
+            return new MessageDebugResponse();
+        }
+        TileEntity tile = player.world.getTileEntity(message.pos);
         if (tile instanceof IDebuggable) {
             List<String> left = new ArrayList<>();
             List<String> right = new ArrayList<>();
             ((IDebuggable) tile).getDebugInfo(left, right, message.side);
-            return new MessageDebuggableResponse(left, right);
+            return new MessageDebugResponse(left, right);
         }
         return null;
     };

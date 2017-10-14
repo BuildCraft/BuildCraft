@@ -35,7 +35,6 @@ import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
 import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
 
 import buildcraft.lib.BCLib;
-import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
@@ -44,8 +43,6 @@ import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.builders.addon.AddonFillingPlanner;
 import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
-import buildcraft.builders.snapshot.MessageSnapshotRequest;
-import buildcraft.builders.snapshot.MessageSnapshotResponse;
 import buildcraft.builders.snapshot.RulesLoader;
 import buildcraft.builders.snapshot.SchematicBlockAir;
 import buildcraft.builders.snapshot.SchematicBlockDefault;
@@ -155,9 +152,6 @@ public class BCBuilders {
         BCBuildersProxy.getProxy().fmlPreInit();
 
         MinecraftForge.EVENT_BUS.register(BCBuildersEventDist.INSTANCE);
-
-        MessageManager.addMessageType(MessageSnapshotRequest.class, MessageSnapshotRequest.HANDLER, Side.SERVER);
-        MessageManager.addMessageType(MessageSnapshotResponse.class, MessageSnapshotResponse.HANDLER, Side.CLIENT);
     }
 
     @Mod.EventHandler

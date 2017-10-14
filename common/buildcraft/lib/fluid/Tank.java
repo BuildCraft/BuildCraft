@@ -18,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -148,10 +149,14 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         int amount = clientAmount;
         FluidStack fluidStack = clientFluid == null ? null : clientFluid.get().copy();
         if (fluidStack != null && amount > 0) {
-            // toolTip.add(TextFormatting.WHITE + fluidStack.getFluid().getLocalizedName(fluidStack));
-            toolTip.add(LocaleUtil.localizeFluidStatic(new FluidStack(fluidStack, amount), getCapacity()));
-        } else {
-            toolTip.add(LocaleUtil.localizeFluidStatic(null, getCapacity()));
+            toolTip.add(fluidStack.getLocalizedName());
+        }
+        toolTip.add(TextFormatting.GRAY + LocaleUtil.localizeFluidStaticAmount(amount, getCapacity()));
+        FluidStack serverFluid = getFluid();
+        if (serverFluid != null && serverFluid.amount > 0) {
+            toolTip.add(TextFormatting.RED + "BUG: Server-side fluid on client!");
+            toolTip.add(serverFluid.getLocalizedName());
+            toolTip.add(LocaleUtil.localizeFluidStaticAmount(serverFluid.amount, getCapacity()));
         }
     }
 
@@ -190,7 +195,10 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
     }
 
     public String getContentsString() {
-        return LocaleUtil.localizeFluidStatic(fluid, capacity);
+        if (fluid != null) {
+            return fluid.getLocalizedName() + LocaleUtil.localizeFluidStaticAmount(this);
+        }
+        return LocaleUtil.localizeFluidStaticAmount(0, getCapacity());
     }
 
     public void writeToBuffer(PacketBufferBC buffer) {
@@ -238,12 +246,24 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         if (held.isEmpty()) {
             return;
         }
+        ItemStack stack = transferStackToTank(container, held);
+        player.inventory.setItemStack(stack);
+        player.inventoryContainer.detectAndSendChanges();
+    }
 
+    /** Attempts to transfer the given stack to this tank.
+     *
+     * @return The left over item after attempting to add the stack to this tank. */
+    public ItemStack transferStackToTank(ContainerBC_Neptune container, ItemStack stack) {
+        EntityPlayer player = container.player;
         // first try to fill this tank from the item
 
-        boolean hasFilled = false;
+        if (!player.isServerWorld()) {
+            return stack;
+        }
 
-        ItemStack copy = held.copy();
+        ItemStack original = stack;
+        ItemStack copy = stack.copy();
         copy.setCount(1);
         int space = capacity - getFluidAmount();
 
@@ -253,52 +273,37 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         FluidGetResult result = map(copy, space);
         if (result != null && result.fluidStack != null && result.fluidStack.amount > 0) {
             if (isCreative) {
-                held = copy;// so we don't change the stack held by the player.
+                stack = copy;// so we don't change the stack held by the player.
             }
-            int potential = held.getCount();
-            // Insert a single item until a fluid was not accepted.
-            for (int p = 0; p < potential; p++) {
-                int accepted = fill(result.fluidStack, false);
-                if (isCreative ? (accepted > 0) : (accepted == result.fluidStack.amount)) {
-                    hasFilled = true;
-                    int reallyAccepted = fill(result.fluidStack, true);
-                    if (reallyAccepted != accepted) {
-                        throw new IllegalStateException("We seem to be buggy! (accepted = " + accepted
-                            + ", reallyAccepted = " + reallyAccepted + ")");
-                    }
-                    held.shrink(1);
-                    if (isSurvival) {
-                        if (held.isEmpty()) {
-                            held = result.itemStack;
-                            break;
-                        } else if (!result.itemStack.isEmpty()) {
-                            player.inventory.addItemStackToInventory(result.itemStack);
-                            player.inventoryContainer.detectAndSendChanges();
-                        }
-                    } else if (held.isEmpty()) {
-                        break;
-                    }
-                } else {
-                    break;
+            int accepted = fill(result.fluidStack, false);
+            if (isCreative ? (accepted > 0) : (accepted == result.fluidStack.amount)) {
+                int reallyAccepted = fill(result.fluidStack, true);
+                if (reallyAccepted != accepted) {
+                    throw new IllegalStateException(
+                        "We seem to be buggy! (accepted = " + accepted + ", reallyAccepted = " + reallyAccepted + ")");
                 }
-            }
-            if (isSurvival) {
-                player.inventory.setItemStack(held.isEmpty() ? StackUtil.EMPTY : held);
-                ((EntityPlayerMP) player).updateHeldItem();
-            }
-            if (hasFilled) {
+                stack.shrink(1);
                 FluidStack fl = getFluid();
                 if (fl != null) {
                     SoundUtil.playBucketEmpty(player.world, player.getPosition(), fl);
                 }
-                return;
+                if (isSurvival) {
+                    if (stack.isEmpty()) {
+                        return result.itemStack;
+                    } else if (!result.itemStack.isEmpty()) {
+                        player.inventory.addItemStackToInventory(result.itemStack);
+                        player.inventoryContainer.detectAndSendChanges();
+                        return stack;
+                    }
+                }
+                return original;
             }
         }
         // Now try to drain the fluid into the item
-        IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(held.copy());
-        if (fluidHandler == null) return;
+        IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(stack.copy());
+        if (fluidHandler == null) return stack;
         FluidStack drained = drain(capacity, false);
-        if (drained == null || drained.amount <= 0) return;
+        if (drained == null || drained.amount <= 0) return stack;
         int filled = fluidHandler.fill(drained, true);
         if (filled > 0) {
             FluidStack reallyDrained = drain(filled, true);
@@ -313,6 +318,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
             }
             SoundUtil.playBucketFill(player.world, player.getPosition(), reallyDrained);
         }
+        return stack;
     }
 
     /** Maps the given stack to a fluid result.

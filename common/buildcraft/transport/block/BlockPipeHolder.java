@@ -564,7 +564,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         for (EnumFacing face : EnumFacing.VALUES) {
             PipePluggable pluggable = tile.getPluggable(face);
             if (pluggable != null) {
-                pluggable.getDrops(toDrop);
+                pluggable.addDrops(toDrop, fortune);
             }
         }
         for (EnumDyeColor color : tile.wireManager.parts.values()) {
@@ -572,7 +572,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         }
         Pipe pipe = tile.getPipe();
         if (pipe != null) {
-            pipe.getDrops(toDrop);
+            pipe.addDrops(toDrop, fortune);
         }
         return toDrop;
     }
@@ -640,7 +640,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         PipePluggable removed = tile.replacePluggable(side, null);
         if (removed != null) {
             removed.onRemove();
-            removed.getDrops(toDrop);
+            removed.addDrops(toDrop, 0);
         }
     }
 

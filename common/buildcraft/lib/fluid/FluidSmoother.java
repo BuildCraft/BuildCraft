@@ -189,7 +189,7 @@ public class FluidSmoother implements IDebuggable {
             if (amount != target) {
                 int delta = target - amount;
                 long msgDelta = lastMessage - lastMessageMinus1;
-                msgDelta = MathUtil.clamp((int) msgDelta, 1, 60);
+                msgDelta = MathUtil.clamp((int) msgDelta, 1, 10);
                 if (Math.abs(delta) < msgDelta) {
                     amount += delta;
                 } else {

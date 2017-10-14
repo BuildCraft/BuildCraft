@@ -9,10 +9,8 @@ import java.io.IOException;
 import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 
 import net.minecraftforge.fluids.Fluid;
@@ -74,25 +72,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
 
     public static final long MAX_MJ_PER_TICK = 6 * MjAPI.MJ;
 
-    private final Tank tankIn = new Tank("in", 4 * Fluid.BUCKET_VOLUME, this) {
-        @Override
-        public int fill(FluidStack resource, boolean doFill) {
-            IRefineryRecipeManager manager = BuildcraftRecipeRegistry.refineryRecipes;
-            IDistillationRecipe recipe = manager.getDistillationRegistry().getRecipeForInput(resource);
-            if (recipe == null) {
-                return 0;
-            }
-            // Quality-of-life change: Only accept full amounts of the input fluid, so
-            // we don't get small amounts left over
-            int amount = getFluidAmount() + resource.amount;
-            amount = Math.min(amount, getCapacity());
-            amount = resource.amount - (amount % recipe.in().amount);
-            if (amount <= 0) {
-                return 0;
-            }
-            return super.fill(new FluidStack(resource, amount), doFill);
-        }
-    };
+    private final Tank tankIn = new Tank("in", 4 * Fluid.BUCKET_VOLUME, this, this::isDistillableFluid);
     private final Tank tankGasOut = new Tank("gasOut", 4 * Fluid.BUCKET_VOLUME, this);
     private final Tank tankLiquidOut = new Tank("liquidOut", 4 * Fluid.BUCKET_VOLUME, this);
 
@@ -135,6 +115,12 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
 
     private IFluidDataSender createSender(int netId) {
         return writer -> createAndSendMessage(netId, writer);
+    }
+
+    private boolean isDistillableFluid(FluidStack fluid) {
+        IRefineryRecipeManager manager = BuildcraftRecipeRegistry.refineryRecipes;
+        IDistillationRecipe recipe = manager.getDistillationRegistry().getRecipeForInput(fluid);
+        return recipe != null;
     }
 
     @Override
@@ -236,11 +222,6 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         if (state.getBlock() == BCFactoryBlocks.DISTILLER) {
             MODEL_FACING.value = state.getValue(BlockBCBase_Neptune.PROP_FACING);
         }
-    }
-
-    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY,
-        float hitZ) {
-        return false;
     }
 
     @Override
