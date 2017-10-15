@@ -71,6 +71,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
     public PipeFlowPower(IPipe pipe, NBTTagCompound nbt) {
         super(pipe, nbt);
+        isReceiver = nbt.getBoolean("isReceiver");
         sections = new EnumMap<>(EnumFacing.class);
         for (EnumFacing face : EnumFacing.VALUES) {
             sections.put(face, new Section(face));
@@ -80,7 +81,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     @Override
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = super.writeToNbt();
-
+        nbt.setBoolean("isReceiver", isReceiver);
         return nbt;
     }
 
