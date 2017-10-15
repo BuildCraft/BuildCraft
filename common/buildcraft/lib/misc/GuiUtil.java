@@ -259,7 +259,7 @@ public class GuiUtil {
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
         }
         scissorRegions.push(rect);
-        scissor0(rect);
+        scissor0();
         return new AutoGlScissor() {
             @Override
             public void close() {
@@ -271,10 +271,29 @@ public class GuiUtil {
                 if (next == null) {
                     GL11.glDisable(GL11.GL_SCISSOR_TEST);
                 } else {
-                    scissor0(next);
+                    scissor0();
                 }
             }
         };
+    }
+
+    private static void scissor0() {
+        GuiRectangle total = null;
+        for (GuiRectangle rect2 : scissorRegions) {
+            if (total == null) {
+                total = rect2;
+                continue;
+            }
+            double minX = Math.max(total.x, rect2.x);
+            double minY = Math.max(total.y, rect2.y);
+            double maxX = Math.min(total.getEndX(), rect2.getEndX());
+            double maxY = Math.min(total.getEndY(), rect2.getEndY());
+            total = new GuiRectangle(minX, minY, maxX - minX, maxY - minY);
+        }
+        if (total == null) {
+            throw new IllegalStateException("Cannot call scissor0 when there are no more regions!");
+        }
+        scissor0(total);
     }
 
     private static void scissor0(IGuiArea area) {

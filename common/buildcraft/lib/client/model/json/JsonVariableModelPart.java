@@ -47,11 +47,18 @@ public abstract class JsonVariableModelPart {
             }
         }
         if ("face".equals(type)) {
-            throw new AbstractMethodError("// TODO: Implement this!");
+            throw new AbstractMethodError("// TODO: Implement face type!");
         } else if ("led".equals(type)) {
             return new VariablePartLed(obj, fnCtx);
-        } else {
+        } else if ("texture_expand".equals(type)) {
+            return new VariablePartTextureExpand(obj, fnCtx);
+        } else if ("cuboid".equals(type)) {
             return new VariablePartCuboid(obj, fnCtx);
+        } else if ("container".equals(type)) {
+            return new VariablePartContainer(obj, fnCtx, ctx);
+        } else {
+            throw new JsonSyntaxException(
+                "Unknown type '" + type + "' -- known types are [ face, led, texture_expand, cuboid, container ]");
         }
     }
 
@@ -134,5 +141,24 @@ public abstract class JsonVariableModelPart {
         } else {
             throw new JsonSyntaxException("Expected a string, got " + elem);
         }
+    }
+
+    public static INodeObject<String> readVariableString(JsonObject obj, String member, FunctionContext context) {
+        if (!obj.has(member)) {
+            throw new JsonSyntaxException("Required '" + member + "' in '" + obj + "'");
+        }
+        JsonElement elem = obj.get(member);
+        if (elem.isJsonPrimitive()) {
+            return convertStringToStringNode(elem.getAsString(), context);
+        } else {
+            throw new JsonSyntaxException("Expected a string, got " + elem);
+        }
+    }
+
+    public static float[] bakePosition(INodeDouble[] in) {
+        float x = (float) in[0].evaluate() / 16f;
+        float y = (float) in[1].evaluate() / 16f;
+        float z = (float) in[2].evaluate() / 16f;
+        return new float[] { x, y, z };
     }
 }

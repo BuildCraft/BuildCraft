@@ -51,10 +51,11 @@ public class JsonVariableObject {
                 }
             }
 
-            if (!value.isJsonPrimitive() && value.getAsJsonPrimitive().isString()) {
+            if (!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isString()) {
                 throw new JsonSyntaxException("Expected a string, got " + value + " for the variable '" + name + "'");
             }
             NodeStateful stateful = null;
+            FunctionContext fnCtxValue = new FunctionContext("Value Object", fnCtx);
             if (getter != null) {
                 // stateful node
                 Class<?> nodeType;
@@ -70,10 +71,11 @@ public class JsonVariableObject {
                     throw new JsonSyntaxException("Could not create a getter for the variable '" + name + "'", iee);
                 }
                 fnCtx.putVariable(name, stateful.getter);
+                fnCtxValue.putVariable(name, stateful.variable);
                 if (rounder != null) {
-                    FunctionContext fnCtx2 = new FunctionContext(fnCtx);
+                    FunctionContext fnCtx2 = new FunctionContext("Rounding", fnCtx);
                     fnCtx2.putVariable("last", stateful.last);
-                    fnCtx2.putVariable("var", stateful.variable);
+                    fnCtx2.putVariable("current", stateful.variable);
                     fnCtx2.putVariable("value", stateful.rounderValue);
                     try {
                         IExpressionNode nodeRounder = InternalCompiler.compileExpression(rounder, fnCtx2);
@@ -88,9 +90,9 @@ public class JsonVariableObject {
             String expression = value.getAsString();
             IExpressionNode node;
             try {
-                node = InternalCompiler.compileExpression(expression, fnCtx);
+                node = InternalCompiler.compileExpression(expression, fnCtxValue);
             } catch (InvalidExpressionException e) {
-                throw new JsonSyntaxException("Invalid expression " + expression, e);
+                throw new JsonSyntaxException("Failed to compile variable " + name, e);
             }
             if (node instanceof IConstantNode) {
                 // No point in adding it to variables
@@ -122,7 +124,7 @@ public class JsonVariableObject {
             return NodeStateful.GetterType.USE_VAR;
         }
         return (var, last) -> {
-            FunctionContext fnCtx2 = new FunctionContext(fnCtx);
+            FunctionContext fnCtx2 = new FunctionContext("Getters", fnCtx);
             fnCtx2.putVariable("var", var);
             fnCtx2.putVariable("last", last);
             return InternalCompiler.compileExpression(getter, fnCtx2);

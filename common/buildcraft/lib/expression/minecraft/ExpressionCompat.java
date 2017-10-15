@@ -14,7 +14,6 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.PositionAbsolute;
-import buildcraft.lib.gui.pos.PositionCallable;
 import buildcraft.lib.misc.ColourUtil;
 
 public class ExpressionCompat {
@@ -33,13 +32,13 @@ public class ExpressionCompat {
     public static final NodeType<IGuiArea> GUI_AREA;
 
     static {
-        ENUM_AXIS = new NodeType<>(Axis.X);
+        ENUM_AXIS = new NodeType<>("Axis", Axis.X);
         NodeTypes.addType("Axis", ENUM_AXIS);
         for (Axis a : Axis.values()) {
             ENUM_AXIS.putConstant("" + a, a);
         }
 
-        ENUM_FACING = new NodeType<>(EnumFacing.UP);
+        ENUM_FACING = new NodeType<>("Facing", EnumFacing.UP);
         NodeTypes.addType("Facing", ENUM_FACING);
         ENUM_FACING.put_t_t("getOpposite", EnumFacing::getOpposite);
         ENUM_FACING.put_t_o("getAxis", Axis.class, EnumFacing::getAxis);
@@ -48,7 +47,7 @@ public class ExpressionCompat {
             ENUM_FACING.putConstant("" + f, f);
         }
 
-        ENUM_DYE_COLOUR = new NodeType<>(EnumDyeColor.WHITE);
+        ENUM_DYE_COLOUR = new NodeType<>("Dye Colour", EnumDyeColor.WHITE);
         NodeTypes.addType("DyeColor", ENUM_DYE_COLOUR);
         NodeTypes.addType("DyeColour", ENUM_DYE_COLOUR);
         ENUM_DYE_COLOUR.put_t_l("to_argb", c -> 0xFF_00_00_00 | ColourUtil.getLightHex(c));
@@ -57,22 +56,22 @@ public class ExpressionCompat {
             ENUM_DYE_COLOUR.putConstant("" + c, c);
         }
 
-        ENUM_POWER_STAGE = new NodeType<>(EnumPowerStage.BLUE);
+        ENUM_POWER_STAGE = new NodeType<>("Engine Power Stage", EnumPowerStage.BLUE);
         NodeTypes.addType("EnginePowerStage", ENUM_POWER_STAGE);
         ENUM_POWER_STAGE.put_t_o("(string)", String.class, EnumPowerStage::getName);
         for (EnumPowerStage stage : EnumPowerStage.VALUES) {
             ENUM_POWER_STAGE.putConstant("" + stage, stage);
         }
 
-        ENUM_CONTROL_MODE = new NodeType<>(IControllable.Mode.class, IControllable.Mode.ON);
+        ENUM_CONTROL_MODE = new NodeType<>("Controllable Mode", IControllable.Mode.class, IControllable.Mode.ON);
         NodeTypes.addType("ControlMode", ENUM_CONTROL_MODE);
         ENUM_CONTROL_MODE.put_t_o("(string)", String.class, e -> e.lowerCaseName);
         for (IControllable.Mode mode : IControllable.Mode.VALUES) {
             ENUM_CONTROL_MODE.putConstant("" + mode, mode);
         }
 
-        GUI_POSITION = new NodeType<>(IGuiPosition.class, new PositionAbsolute(0, 0));
-        GUI_AREA = new NodeType<>(IGuiArea.class, new GuiRectangle(0, 0));
+        GUI_POSITION = new NodeType<>("Gui Position", IGuiPosition.class, new PositionAbsolute(0, 0));
+        GUI_AREA = new NodeType<> ("Gui Area", IGuiArea.class, new GuiRectangle(0, 0));
         NodeTypes.addType("GuiPosition", GUI_POSITION);
         NodeTypes.addType("GuiArea", GUI_AREA);
 

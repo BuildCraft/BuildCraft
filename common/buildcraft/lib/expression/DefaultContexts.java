@@ -8,15 +8,16 @@ package buildcraft.lib.expression;
 
 import net.minecraft.item.EnumDyeColor;
 
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.misc.MathUtil;
 
 public class DefaultContexts {
-    public static final FunctionContext MATH_SCALAR = new FunctionContext();
-    public static final FunctionContext MATH_VECTOR = new FunctionContext(NodeTypes.VEC_LONG, NodeTypes.VEC_DOUBLE);
-    public static final FunctionContext RENDERING = new FunctionContext();
+    public static final FunctionContext MATH_SCALAR = new FunctionContext("Math: Scalar");
+    public static final FunctionContext MATH_VECTOR = new FunctionContext("Math: Vector", NodeTypes.VEC_LONG, NodeTypes.VEC_DOUBLE);
+    public static final FunctionContext RENDERING = new FunctionContext("Rendering");
+    public static final FunctionContext CONFIG = new FunctionContext("Config");
 
     public static final NodeVariableDouble RENDER_PARTIAL_TICKS;
 
@@ -24,7 +25,11 @@ public class DefaultContexts {
 
     /** Creates a new {@link FunctionContext} with all of the functions given in this class. */
     public static FunctionContext createWithAll() {
-        return new FunctionContext(CTX_ARRAY_ALL);
+        return createWithAll("all");
+    }
+
+    public static FunctionContext createWithAll(String name) {
+        return new FunctionContext(name, CTX_ARRAY_ALL);
     }
 
     static {
@@ -71,6 +76,9 @@ public class DefaultContexts {
         MATH_SCALAR.put_dd_d("min", Math::min);
         MATH_SCALAR.put_dd_d("max", Math::max);
         MATH_SCALAR.put_dd_d("pow", Math::pow);
+
+        MATH_SCALAR.put_ddd_d("clamp", MathUtil::clamp);
+        MATH_SCALAR.put_lll_l("clamp", MathUtil::clamp);
 
         // MATH_VECTOR.putConstantVecLong("origin", VecLong.ZERO);
         // MATH_VECTOR.putConstantVecLong("vec_zero", VecLong.ZERO);

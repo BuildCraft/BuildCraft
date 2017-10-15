@@ -47,6 +47,10 @@ public class EntityUtil {
         return new Vec3d(entity.posX, entity.posY, entity.posZ);
     }
 
+    public static void setVec(Entity entity, Vec3d vec) {
+        entity.setPosition(vec.xCoord, vec.yCoord, vec.zCoord);
+    }
+
     public static EnumHand getWrenchHand(EntityLivingBase entity) {
         ItemStack stack = entity.getHeldItemMainhand();
         if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {

@@ -16,6 +16,8 @@ import buildcraft.lib.expression.node.func.NodeFuncLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongToLong.IFuncLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong.IFuncLongLongToLong;
+import buildcraft.lib.expression.node.func.NodeFuncLongLongLongToLong;
+import buildcraft.lib.expression.node.func.NodeFuncLongLongLongToLong.IFuncLongLongLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleToLong;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleToLong.IFuncDoubleToLong;
 import buildcraft.lib.expression.node.func.NodeFuncBooleanToLong;
@@ -34,6 +36,8 @@ import buildcraft.lib.expression.node.func.NodeFuncDoubleToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleToDouble.IFuncDoubleToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleToDouble.IFuncDoubleDoubleToDouble;
+import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleDoubleToDouble;
+import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleDoubleToDouble.IFuncDoubleDoubleDoubleToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncObjectToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncObjectToDouble.IFuncObjectToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToDouble;
@@ -103,6 +107,14 @@ public abstract class FunctionContextBase {
 
     public  NodeFuncLongLongToLong put_ll_l(String name, IFuncLongLongToLong func, StringFunctionTri stringFunction) {
         return putFunction(name, new NodeFuncLongLongToLong(func, stringFunction));
+    }
+
+    public  NodeFuncLongLongLongToLong put_lll_l(String name, IFuncLongLongLongToLong func) {
+        return putFunction(name, new NodeFuncLongLongLongToLong(name, func));
+    }
+
+    public  NodeFuncLongLongLongToLong put_lll_l(String name, IFuncLongLongLongToLong func, StringFunctionQuad stringFunction) {
+        return putFunction(name, new NodeFuncLongLongLongToLong(func, stringFunction));
     }
 
     public  NodeFuncDoubleToLong put_d_l(String name, IFuncDoubleToLong func) {
@@ -175,6 +187,14 @@ public abstract class FunctionContextBase {
 
     public  NodeFuncDoubleDoubleToDouble put_dd_d(String name, IFuncDoubleDoubleToDouble func, StringFunctionTri stringFunction) {
         return putFunction(name, new NodeFuncDoubleDoubleToDouble(func, stringFunction));
+    }
+
+    public  NodeFuncDoubleDoubleDoubleToDouble put_ddd_d(String name, IFuncDoubleDoubleDoubleToDouble func) {
+        return putFunction(name, new NodeFuncDoubleDoubleDoubleToDouble(name, func));
+    }
+
+    public  NodeFuncDoubleDoubleDoubleToDouble put_ddd_d(String name, IFuncDoubleDoubleDoubleToDouble func, StringFunctionQuad stringFunction) {
+        return putFunction(name, new NodeFuncDoubleDoubleDoubleToDouble(func, stringFunction));
     }
 
     public <A> NodeFuncObjectToDouble<A> put_o_d(String name, Class<A> argTypeA, IFuncObjectToDouble<A> func) {

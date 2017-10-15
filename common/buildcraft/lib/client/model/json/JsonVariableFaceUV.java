@@ -12,6 +12,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
+import buildcraft.lib.client.model.ModelUtil.TexturedFace;
+import buildcraft.lib.client.model.json.JsonVariableModel.ITextureGetter;
+import buildcraft.lib.client.model.json.VariablePartCuboidBase.VariableFaceData;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
@@ -70,5 +73,18 @@ public class JsonVariableFaceUV {
             to[3] = JsonVariableModelPart.convertStringToDoubleNode(got[3], fnCtx);
         }
         return to;
+    }
+
+    public VariableFaceData evaluate(ITextureGetter spriteLookup) {
+        VariableFaceData data = new VariableFaceData();
+        TexturedFace face = spriteLookup.get(texture.evaluate());
+        data.sprite = face.sprite;
+        data.rotations = (int) textureRotation.evaluate();
+        data.uvs.minU = (float) (uv[0].evaluate() / 16.0);
+        data.uvs.minV = (float) (uv[1].evaluate() / 16.0);
+        data.uvs.maxU = (float) (uv[2].evaluate() / 16.0);
+        data.uvs.maxV = (float) (uv[3].evaluate() / 16.0);
+        data.uvs = data.uvs.inParent(face.faceData);
+        return data;
     }
 }

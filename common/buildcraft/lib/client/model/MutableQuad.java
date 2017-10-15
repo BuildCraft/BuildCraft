@@ -24,9 +24,7 @@ import buildcraft.lib.expression.VecDouble;
 import buildcraft.lib.expression.VecLong;
 
 /** Holds all of the information necessary to make a {@link BakedQuad}. This provides a variety of methods to quickly
- * set or get different elements.
- * 
- * This currently holds 4 {@link MutableVertex}. */
+ * set or get different elements. This currently holds 4 {@link MutableVertex}. */
 public class MutableQuad {
     public static final MutableQuad[] EMPTY_ARRAY = new MutableQuad[0];
 
@@ -501,6 +499,48 @@ public class MutableQuad {
 
     public MutableQuad scaled(double x, double y, double z) {
         return scalef((float) x, (float) y, (float) z);
+    }
+
+    public void rotateX(float angle) {
+        vertex_0.rotateX(angle);
+        vertex_1.rotateX(angle);
+        vertex_2.rotateX(angle);
+        vertex_3.rotateX(angle);
+    }
+
+    public void rotateY(float angle) {
+        vertex_0.rotateY(angle);
+        vertex_1.rotateY(angle);
+        vertex_2.rotateY(angle);
+        vertex_3.rotateY(angle);
+    }
+
+    public void rotateZ(float angle) {
+        vertex_0.rotateZ(angle);
+        vertex_1.rotateZ(angle);
+        vertex_2.rotateZ(angle);
+        vertex_3.rotateZ(angle);
+    }
+
+    public void rotateDirectlyX(float cos, float sin) {
+        vertex_0.rotateDirectlyX(cos, sin);
+        vertex_1.rotateDirectlyX(cos, sin);
+        vertex_2.rotateDirectlyX(cos, sin);
+        vertex_3.rotateDirectlyX(cos, sin);
+    }
+
+    public void rotateDirectlyY(float cos, float sin) {
+        vertex_0.rotateDirectlyY(cos, sin);
+        vertex_1.rotateDirectlyY(cos, sin);
+        vertex_2.rotateDirectlyY(cos, sin);
+        vertex_3.rotateDirectlyY(cos, sin);
+    }
+
+    public void rotateDirectlyZ(float cos, float sin) {
+        vertex_0.rotateDirectlyZ(cos, sin);
+        vertex_1.rotateDirectlyZ(cos, sin);
+        vertex_2.rotateDirectlyZ(cos, sin);
+        vertex_3.rotateDirectlyZ(cos, sin);
     }
 
     public MutableQuad rotate(EnumFacing from, EnumFacing to, float ox, float oy, float oz) {
