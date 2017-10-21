@@ -93,7 +93,7 @@ public class JsonUtil {
             }
             return floats;
         } else if (elem.isJsonPrimitive()) {
-            return new float[] { getAsFloat(elem) };
+            return new float[] {getAsFloat(elem)};
         } else {
             throw new JsonSyntaxException("Needed an array of floats or a single float but got " + elem);
         }
@@ -122,7 +122,7 @@ public class JsonUtil {
             }
             return strings;
         } else if (elem.isJsonPrimitive()) {
-            return new String[] { getAsString(elem) };
+            return new String[] {getAsString(elem)};
         } else {
             throw new JsonSyntaxException("Needed an array of strings or a single string but got " + elem);
         }
@@ -204,7 +204,9 @@ public class JsonUtil {
             }
             for (Entry<String, JsonElement> entry : toInline.entrySet()) {
                 String name = entry.getKey();
-                if ("inline".equals(name)) continue;
+                if ("inline".equals(name)) {
+                    continue;
+                }
                 if (!obj.has(name)) {
                     /* FIXME: We really need to deep-copy the element, as then we protect against removing an element
                      * from it and ruining it for everyone. */
@@ -222,7 +224,7 @@ public class JsonUtil {
             .registerTypeAdapter(
                 NBTBase.class,
                 (JsonSerializer<NBTBase>) (src, typeOfSrc, context) -> {
-                    if (src == null) {
+                    if (src == NBTUtilBC.NBT_NULL) {
                         return JsonNull.INSTANCE;
                     }
                     switch (src.getId()) {
@@ -257,7 +259,7 @@ public class JsonUtil {
                 NBTBase.class,
                 (JsonDeserializer<NBTBase>) (json, typeOfT, context) -> {
                     if (json.isJsonNull()) {
-                        return null;
+                        return NBTUtilBC.NBT_NULL;
                     }
                     if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isNumber()) {
                         Number number = json.getAsJsonPrimitive().getAsNumber();
@@ -420,7 +422,10 @@ public class JsonUtil {
                 (JsonDeserializer<NBTTagCompound>) (json, typeOfT, context) -> {
                     NBTTagCompound nbtTagCompound = new NBTTagCompound();
                     for (Map.Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet()) {
-                        nbtTagCompound.setTag(entry.getKey(), context.deserialize(entry.getValue(), NBTBase.class));
+                        nbtTagCompound.setTag(
+                            entry.getKey(),
+                            context.deserialize(entry.getValue(), NBTBase.class)
+                        );
                     }
                     return nbtTagCompound;
                 }
