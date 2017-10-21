@@ -34,11 +34,26 @@ public class ItemStackRef {
 
     public ItemStack get(NBTBase nbt) {
         ItemStack itemStack = new ItemStack(
-            Objects.requireNonNull(Item.getByNameOrId(item.get(nbt).getString())),
-            Optional.ofNullable(amount).map(ref -> ref.get(nbt)).map(NBTTagInt::getInt).orElse(1),
-            Optional.ofNullable(meta).map(ref -> ref.get(nbt)).map(NBTTagInt::getInt).orElse(0)
+            Objects.requireNonNull(
+                Item.getByNameOrId(
+                    item
+                        .get(nbt)
+                        .orElseThrow(NullPointerException::new)
+                        .getString()
+                )
+            ),
+            Optional.ofNullable(amount)
+                .flatMap(ref -> ref.get(nbt))
+                .map(NBTTagInt::getInt)
+                .orElse(1),
+            Optional.ofNullable(meta)
+                .flatMap(ref -> ref.get(nbt))
+                .map(NBTTagInt::getInt)
+                .orElse(0)
         );
-        Optional.ofNullable(tagCompound).map(ref -> ref.get(nbt)).ifPresent(itemStack::setTagCompound);
+        Optional.ofNullable(tagCompound)
+            .flatMap(ref -> ref.get(nbt))
+            .ifPresent(itemStack::setTagCompound);
         return itemStack;
     }
 }
