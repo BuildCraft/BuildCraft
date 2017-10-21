@@ -411,7 +411,9 @@ public class JsonUtil {
                 (JsonSerializer<NBTTagCompound>) (src, typeOfSrc, context) -> {
                     JsonObject jsonObject = new JsonObject();
                     for (String key : src.getKeySet()) {
-                        jsonObject.add(key, context.serialize(src.getTag(key), NBTBase.class));
+                        if (src.getTag(key) != NBTUtilBC.NULL_NBT) {
+                            jsonObject.add(key, context.serialize(src.getTag(key), NBTBase.class));
+                        }
                     }
                     return jsonObject;
                 }
