@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 import com.google.common.collect.ImmutableList;
@@ -420,7 +421,11 @@ public class JsonUtil {
                 (JsonDeserializer<NBTTagCompound>) (json, typeOfT, context) -> {
                     NBTTagCompound nbtTagCompound = new NBTTagCompound();
                     for (Map.Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet()) {
-                        nbtTagCompound.setTag(entry.getKey(), context.deserialize(entry.getValue(), NBTBase.class));
+                        nbtTagCompound.setTag(
+                            entry.getKey(),
+                            Optional.<NBTBase>ofNullable(context.deserialize(entry.getValue(), NBTBase.class))
+                                .orElse(NBTUtilBC.NULL_NBT)
+                        );
                     }
                     return nbtTagCompound;
                 }
