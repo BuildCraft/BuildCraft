@@ -34,7 +34,7 @@ import buildcraft.api.core.BCLog;
 
 public final class NBTUtilBC {
     @SuppressWarnings("WeakerAccess")
-    public static final NBTTagCompound NULL_NBT = new NBTTagCompound();
+    public static final NBTTagCompound NBT_NULL = new NBTTagCompound();
 
     public static NBTBase merge(NBTBase destination, NBTBase source) {
         if (source == null) {
@@ -51,7 +51,7 @@ public final class NBTUtilBC {
             )) {
                 if (!((NBTTagCompound) source).hasKey(key)) {
                     result.setTag(key, ((NBTTagCompound) destination).getTag(key));
-                } else if (((NBTTagCompound) source).getTag(key) != NULL_NBT) {
+                } else if (((NBTTagCompound) source).getTag(key) != NBT_NULL) {
                     if (!((NBTTagCompound) destination).hasKey(key)) {
                         result.setTag(key, ((NBTTagCompound) source).getTag(key));
                     } else {
