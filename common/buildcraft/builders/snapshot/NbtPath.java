@@ -26,6 +26,8 @@ import net.minecraft.nbt.NBTTagString;
 
 import net.minecraftforge.common.util.Constants;
 
+import buildcraft.lib.misc.NBTUtilBC;
+
 public class NbtPath {
     private final List<String> elements;
 
@@ -37,7 +39,7 @@ public class NbtPath {
         if (elements.isEmpty()) {
             return tag;
         } else {
-            return null;
+            return NBTUtilBC.NBT_NULL;
         }
     }
 
@@ -45,7 +47,7 @@ public class NbtPath {
         if (elements.isEmpty()) {
             return tag;
         } else {
-            return null;
+            return NBTUtilBC.NBT_NULL;
         }
     }
 
@@ -53,7 +55,7 @@ public class NbtPath {
         if (elements.isEmpty()) {
             return tag;
         } else {
-            return null;
+            return NBTUtilBC.NBT_NULL;
         }
     }
 
@@ -61,7 +63,7 @@ public class NbtPath {
         if (elements.isEmpty()) {
             return tag;
         } else {
-            return null;
+            return NBTUtilBC.NBT_NULL;
         }
     }
 
@@ -69,7 +71,7 @@ public class NbtPath {
         if (elements.isEmpty()) {
             return tag;
         } else {
-            return null;
+            return NBTUtilBC.NBT_NULL;
         }
     }
 
@@ -77,7 +79,7 @@ public class NbtPath {
         if (elements.isEmpty()) {
             return tag;
         } else {
-            return null;
+            return NBTUtilBC.NBT_NULL;
         }
     }
 
@@ -87,17 +89,17 @@ public class NbtPath {
             try {
                 key = Integer.parseInt(elements.get(0));
             } catch (NumberFormatException e) {
-                return null;
+                return NBTUtilBC.NBT_NULL;
             }
             if (key >= 0 && key < tag.getByteArray().length) {
                 return new NBTTagByte(tag.getByteArray()[key]);
             } else {
-                return null;
+                return NBTUtilBC.NBT_NULL;
             }
         } else if (elements.isEmpty()) {
             return tag;
         } else {
-            return null;
+            return NBTUtilBC.NBT_NULL;
         }
     }
 
@@ -105,7 +107,7 @@ public class NbtPath {
         if (elements.isEmpty()) {
             return tag;
         } else {
-            return null;
+            return NBTUtilBC.NBT_NULL;
         }
     }
 
@@ -115,17 +117,17 @@ public class NbtPath {
             try {
                 key = Integer.parseInt(elements.get(0));
             } catch (NumberFormatException e) {
-                return null;
+                return NBTUtilBC.NBT_NULL;
             }
             if (key >= 0 && key < tag.tagCount()) {
                 return new NbtPath(elements.subList(1, elements.size())).get(tag.get(key));
             } else {
-                return null;
+                return NBTUtilBC.NBT_NULL;
             }
         } else if (elements.isEmpty()) {
             return tag;
         } else {
-            return null;
+            return NBTUtilBC.NBT_NULL;
         }
     }
 
@@ -135,7 +137,7 @@ public class NbtPath {
             if (tag.hasKey(key)) {
                 return new NbtPath(elements.subList(1, elements.size())).get(tag.getTag(key));
             } else {
-                return null;
+                return NBTUtilBC.NBT_NULL;
             }
         } else {
             return tag;
@@ -148,17 +150,17 @@ public class NbtPath {
             try {
                 key = Integer.parseInt(elements.get(0));
             } catch (NumberFormatException e) {
-                return null;
+                return NBTUtilBC.NBT_NULL;
             }
             if (key >= 0 && key < tag.getIntArray().length) {
                 return new NBTTagInt(tag.getIntArray()[key]);
             } else {
-                return null;
+                return NBTUtilBC.NBT_NULL;
             }
         } else if (elements.isEmpty()) {
             return tag;
         } else {
-            return null;
+            return NBTUtilBC.NBT_NULL;
         }
     }
 
@@ -187,7 +189,7 @@ public class NbtPath {
             case Constants.NBT.TAG_INT_ARRAY:
                 return get((NBTTagIntArray) tag);
             default:
-                return null;
+                return NBTUtilBC.NBT_NULL;
         }
     }
 

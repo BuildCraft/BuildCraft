@@ -8,6 +8,7 @@ package buildcraft.lib.misc;
 
 import java.util.BitSet;
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -35,6 +36,10 @@ import buildcraft.api.core.BCLog;
 public final class NBTUtilBC {
     @SuppressWarnings("WeakerAccess")
     public static final NBTTagCompound NBT_NULL = new NBTTagCompound();
+
+    public static <N extends NBTBase> Optional<N> toOptional(N value) {
+        return value == NBTUtilBC.NBT_NULL ? Optional.empty() : Optional.of(value);
+    }
 
     public static NBTBase merge(NBTBase destination, NBTBase source) {
         if (source == null) {
